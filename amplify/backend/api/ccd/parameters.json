@@ -1,0 +1,11 @@
+{
+    "AppSyncApiName": "ccd",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authccdb1bcb9cf",
+            "Outputs.UserPoolId"
+        ]
+    }
+}
