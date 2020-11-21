@@ -1,5 +1,5 @@
 import Amplify from "aws-amplify";
-import config from "../src/aws-exports.js";
+import config from "./src/aws-exports.js";
 
 // import CdkBackendStack from "../src/cdk-exports.json";
 

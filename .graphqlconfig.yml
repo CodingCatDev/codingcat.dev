@@ -1,15 +1,15 @@
 projects:
   ccd:
-    schemaPath: src/graphql/schema.json
+    schemaPath: nextjs/src/graphql/schema.json
     includes:
-      - src/graphql/**/*.js
+      - nextjs/src/graphql/**/*.js
     excludes:
       - ./amplify/**
     extensions:
       amplify:
         codeGenTarget: javascript
-        generatedFileName: ''
-        docsFilePath: src/graphql
+        generatedFileName: ""
+        docsFilePath: nextjs/src/graphql
 extensions:
   amplify:
     version: 3

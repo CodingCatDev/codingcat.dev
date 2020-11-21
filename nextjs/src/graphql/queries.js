@@ -1,6 +1,54 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const searchPosts = /* GraphQL */ `
+  query SearchPosts(
+    $filter: SearchablePostFilterInput
+    $sort: SearchablePostSortInput
+    $limit: Int
+    $nextToken: String
+    $from: Int
+  ) {
+    searchPosts(
+      filter: $filter
+      sort: $sort
+      limit: $limit
+      nextToken: $nextToken
+      from: $from
+    ) {
+      items {
+        id
+        post_type
+        post_title
+        post_name
+        post_tags
+        post_content
+        post_excerpt
+        post_status
+        comment_status
+        ping_status
+        comment_count
+        post_featured_image
+        blog {
+          id
+          title
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+        comments {
+          nextToken
+        }
+        category {
+          nextToken
+        }
+      }
+      nextToken
+      total
+    }
+  }
+`;
 export const getBlog = /* GraphQL */ `
   query GetBlog($id: ID!) {
     getBlog(id: $id) {
@@ -19,6 +67,7 @@ export const getBlog = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_featured_image
           createdAt
           updatedAt
         }
@@ -63,6 +112,7 @@ export const getPost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_featured_image
       blog {
         id
         title
@@ -72,6 +122,8 @@ export const getPost = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      createdAt
+      updatedAt
       comments {
         items {
           id
@@ -91,8 +143,6 @@ export const getPost = /* GraphQL */ `
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -115,20 +165,21 @@ export const listPosts = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       nextToken
     }
@@ -151,20 +202,21 @@ export const getComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -194,6 +246,7 @@ export const listComments = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_featured_image
           createdAt
           updatedAt
         }
@@ -222,20 +275,21 @@ export const getCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -264,6 +318,7 @@ export const listCategorys = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_featured_image
           createdAt
           updatedAt
         }
@@ -280,14 +335,14 @@ export const getVodAsset = /* GraphQL */ `
       id
       title
       description
+      createdAt
+      updatedAt
       video {
         id
         token
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -302,26 +357,16 @@ export const listVodAssets = /* GraphQL */ `
         id
         title
         description
+        createdAt
+        updatedAt
         video {
           id
           token
           createdAt
           updatedAt
         }
-        createdAt
-        updatedAt
       }
       nextToken
-    }
-  }
-`;
-export const getVideoObject = /* GraphQL */ `
-  query GetVideoObject($id: ID!) {
-    getVideoObject(id: $id) {
-      id
-      token
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -342,50 +387,13 @@ export const listVideoObjects = /* GraphQL */ `
     }
   }
 `;
-export const searchPosts = /* GraphQL */ `
-  query SearchPosts(
-    $filter: SearchablePostFilterInput
-    $sort: SearchablePostSortInput
-    $limit: Int
-    $nextToken: String
-    $from: Int
-  ) {
-    searchPosts(
-      filter: $filter
-      sort: $sort
-      limit: $limit
-      nextToken: $nextToken
-      from: $from
-    ) {
-      items {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
-      nextToken
-      total
+export const getVideoObject = /* GraphQL */ `
+  query GetVideoObject($id: ID!) {
+    getVideoObject(id: $id) {
+      id
+      token
+      createdAt
+      updatedAt
     }
   }
 `;
