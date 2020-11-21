@@ -22,7 +22,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-6">
-            <button className="rounded shadow-md flex items-center shadow bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+            <button className="rounded shadow-md flex items-center shadow bg-ccd-primary-800 px-4 py-2 text-white hover:bg-blue-600">
               Default
             </button>
           </div>
