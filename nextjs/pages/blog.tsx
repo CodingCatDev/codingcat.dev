@@ -36,7 +36,7 @@ export default function Posts() {
       const postData: any = await client.query({
         query: listPosts,
       });
-      console.log(postData.data.listPosts.items);
+      // console.log(postData.data.listPosts.items);
       setPosts(postData.data.listPosts.items);
     }
   }, []);
@@ -45,7 +45,7 @@ export default function Posts() {
     <div>
       <h1>Posts</h1>
       {posts.map((post) => (
-        <Link href={`/post/${post.id}`} key={post.id}>
+        <Link href={`/blog/${post.id}`} key={post.id}>
           <a>{post.post_title}</a>
         </Link>
       ))}
