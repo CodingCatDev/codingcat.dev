@@ -5,11 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "aws-amplify": "^3.3.8",
     "aws-appsync": "^4.0.1",
+    "cross-env": "^7.0.2",
     "graphql-tag": "^2.11.0",
     "next": "10.0.2",
     "primeflex": "^2.0.0",
@@ -23,6 +27,7 @@
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^3.0.0",
+    "@next/bundle-analyzer": "^10.0.2",
     "@types/node": "^14.14.9",
     "@types/react": "^16.9.56",
     "@types/react-transition-group": "^4.4.0",
