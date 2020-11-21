@@ -56,7 +56,6 @@ export async function getStaticProps({ params }) {
     query: getPost,
     variables: { id: id },
   });
-  console.log(postData);
   return {
     props: {
       post: postData.data.getPost,
