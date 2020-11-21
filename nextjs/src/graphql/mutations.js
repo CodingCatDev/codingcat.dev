@@ -22,6 +22,7 @@ export const createBlog = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_featured_image
           createdAt
           updatedAt
         }
@@ -53,6 +54,7 @@ export const updateBlog = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_featured_image
           createdAt
           updatedAt
         }
@@ -84,6 +86,7 @@ export const deleteBlog = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_featured_image
           createdAt
           updatedAt
         }
@@ -111,6 +114,7 @@ export const createPost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_featured_image
       blog {
         id
         title
@@ -120,6 +124,8 @@ export const createPost = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      createdAt
+      updatedAt
       comments {
         items {
           id
@@ -139,8 +145,6 @@ export const createPost = /* GraphQL */ `
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -161,6 +165,7 @@ export const updatePost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_featured_image
       blog {
         id
         title
@@ -170,6 +175,8 @@ export const updatePost = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      createdAt
+      updatedAt
       comments {
         items {
           id
@@ -189,8 +196,6 @@ export const updatePost = /* GraphQL */ `
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -211,6 +216,7 @@ export const deletePost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_featured_image
       blog {
         id
         title
@@ -220,6 +226,8 @@ export const deletePost = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      createdAt
+      updatedAt
       comments {
         items {
           id
@@ -239,8 +247,6 @@ export const deletePost = /* GraphQL */ `
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -264,20 +270,21 @@ export const createComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -305,20 +312,21 @@ export const updateComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -346,20 +354,21 @@ export const deleteComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -387,20 +396,21 @@ export const createCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -427,20 +437,21 @@ export const updateCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -467,20 +478,21 @@ export const deleteCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -496,14 +508,14 @@ export const createVodAsset = /* GraphQL */ `
       id
       title
       description
+      createdAt
+      updatedAt
       video {
         id
         token
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -516,14 +528,14 @@ export const updateVodAsset = /* GraphQL */ `
       id
       title
       description
+      createdAt
+      updatedAt
       video {
         id
         token
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -536,14 +548,14 @@ export const deleteVodAsset = /* GraphQL */ `
       id
       title
       description
+      createdAt
+      updatedAt
       video {
         id
         token
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
     }
   }
 `;

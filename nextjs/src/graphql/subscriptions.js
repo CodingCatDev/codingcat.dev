@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateVodAsset = /* GraphQL */ `
+  subscription OnCreateVodAsset {
+    onCreateVodAsset {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const onUpdateVodAsset = /* GraphQL */ `
+  subscription OnUpdateVodAsset {
+    onUpdateVodAsset {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const onDeleteVodAsset = /* GraphQL */ `
+  subscription OnDeleteVodAsset {
+    onDeleteVodAsset {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
 export const onCreateComment = /* GraphQL */ `
   subscription OnCreateComment($owner: String!) {
     onCreateComment(owner: $owner) {
@@ -18,20 +69,21 @@ export const onCreateComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -56,20 +108,21 @@ export const onUpdateComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -94,20 +147,21 @@ export const onDeleteComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -132,20 +186,21 @@ export const onCreateCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -169,20 +224,21 @@ export const onUpdateCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -206,71 +262,21 @@ export const onDeleteCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_featured_image
         blog {
           id
           title
           createdAt
           updatedAt
         }
+        createdAt
+        updatedAt
         comments {
           nextToken
         }
         category {
           nextToken
         }
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateVodAsset = /* GraphQL */ `
-  subscription OnCreateVodAsset {
-    onCreateVodAsset {
-      id
-      title
-      description
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateVodAsset = /* GraphQL */ `
-  subscription OnUpdateVodAsset {
-    onUpdateVodAsset {
-      id
-      title
-      description
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteVodAsset = /* GraphQL */ `
-  subscription OnDeleteVodAsset {
-    onDeleteVodAsset {
-      id
-      title
-      description
-      video {
-        id
-        token
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
