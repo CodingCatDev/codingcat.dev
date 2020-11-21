@@ -11,6 +11,8 @@
     "aws-amplify": "^3.3.8",
     "aws-appsync": "^4.0.1",
     "next": "10.0.2",
+    "primeicons": "^4.1.0",
+    "primereact": "^5.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1"
   },

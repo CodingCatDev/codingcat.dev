@@ -1,6 +1,9 @@
-import '../styles/styles.css';
-import '../configureAmplify';
-import Link from 'next/link';
+import "../styles/styles.css";
+import "../configureAmplify";
+import Link from "next/link";
+import "primereact/resources/themes/saga-purple/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 function MyApp({ Component, pageProps }) {
   return (
