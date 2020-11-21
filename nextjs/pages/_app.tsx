@@ -1,15 +1,18 @@
+/* purgecss start ignore */
+import "../styles/globals.css";
+import "primereact/resources/themes/vela-purple/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
+import "../layout/layout.scss";
+/* purgecss end ignore */
+
 import React, { useState, useEffect, useRef } from "react";
 import classNames from "classnames";
 import { CSSTransition } from "react-transition-group";
 import Link from "next/link";
 
 import "../configureAmplify";
-import "primereact/resources/themes/vela-purple/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
-import "../layout/layout.scss";
-import "../styles/globals.css";
 
 import { AppTopbar } from "../layout/AppTopbar";
 import { AppMenu } from "../layout/AppMenu";
