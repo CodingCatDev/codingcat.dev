@@ -15,4 +15,4 @@ amplifytools.xcconfig
 amplify/team-provider-info.json
 
 #PUT THIS BACK FOR PUBLIC REPO
-aws-exports.js
+# aws-exports.js
