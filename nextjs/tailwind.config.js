@@ -9,7 +9,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        "ajonp-primary": {
+        "ccd-primary": {
           "050": "#EFE4F4",
           100: "#D7BCE3",
           200: "#BD8FD1",
@@ -21,7 +21,7 @@ module.exports = {
           800: "#5E1286",
           900: "#4B0A75",
         },
-        "ajonp-secondary": {
+        "ccd-secondary": {
           "050": "#FFEBEC",
           100: "#FFCDCF",
           200: "#FFACAF",
@@ -33,7 +33,7 @@ module.exports = {
           800: "#FF3E43",
           900: "#FF2E32",
         },
-        "ajonp-social": {
+        "ccd-social": {
           twitter: "#1da1f1",
           discord: "#7289da",
           github: "#23292d",
