@@ -1,19 +1,24 @@
-import { API } from 'aws-amplify';
-import { useRouter } from 'next/router';
-import '../../configureAmplify';
+import { API } from "aws-amplify";
+import { useRouter } from "next/router";
+import "../../configureAmplify";
+import gql from "graphql-tag";
 
 const getPost = `
-  query getPostById($postId: String!) {
-    getPostById(postId: $postId) {
-      id title content
+  query getPost($id: ID!) {
+    getPost(id: $id) {
+      id post_title post_content
     }
   }
 `;
 
-const listPosts = `
+const listPosts = gql`
   query listPosts {
     listPosts {
-      id title content
+      items {
+        post_title
+        id
+        post_content
+      }
     }
   }
 `;
@@ -26,8 +31,8 @@ export default function Post({ post }) {
   return (
     <div>
       <h1>Post</h1>
-      <h2>{post.title}</h2>
-      <h2>{post.content}</h2>
+      <h2>{post.post_title}</h2>
+      <h2>{post.post_content}</h2>
     </div>
   );
 }
@@ -36,7 +41,7 @@ export async function getStaticPaths() {
   const postData: any = await API.graphql({
     query: listPosts,
   });
-  const paths: any = postData.data.listPosts.map((post) => ({
+  const paths: any = postData.data.listPosts.items.map((post) => ({
     params: { id: post.id },
   }));
   return {
@@ -49,11 +54,12 @@ export async function getStaticProps({ params }) {
   const { id } = params;
   const postData: any = await API.graphql({
     query: getPost,
-    variables: { postId: id },
+    variables: { id: id },
   });
+  console.log(postData);
   return {
     props: {
-      post: postData.data.getPostById,
+      post: postData.data.getPost,
     },
   };
 }
