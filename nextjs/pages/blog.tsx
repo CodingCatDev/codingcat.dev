@@ -8,9 +8,11 @@ import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 const listPosts = gql`
   query listPosts {
     listPosts {
-      id
-      title
-      content
+      items {
+        post_title
+        id
+        post_content
+      }
     }
   }
 `;
@@ -34,8 +36,8 @@ export default function Posts() {
       const postData: any = await client.query({
         query: listPosts,
       });
-
-      setPosts(postData.data.listPosts);
+      // console.log(postData.data.listPosts.items);
+      setPosts(postData.data.listPosts.items);
     }
   }, []);
 
@@ -43,8 +45,8 @@ export default function Posts() {
     <div>
       <h1>Posts</h1>
       {posts.map((post) => (
-        <Link href={`/post/${post.id}`} key={post.id}>
-          <a>{post.title}</a>
+        <Link href={`/blog/${post.id}`} key={post.id}>
+          <a>{post.post_title}</a>
         </Link>
       ))}
     </div>

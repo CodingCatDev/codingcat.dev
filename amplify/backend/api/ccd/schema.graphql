@@ -4,6 +4,7 @@ type Blog
   @aws_cognito_user_pools
   @auth(
     rules: [
+      { allow: public, provider: apiKey }
       {
         allow: groups
         groups: ["Admin"]
@@ -29,6 +30,7 @@ type Post
   @searchable
   @auth(
     rules: [
+      { allow: public, provider: apiKey }
       {
         allow: groups
         groups: ["Admin"]
@@ -54,6 +56,7 @@ type Post
   comment_status: Boolean
   ping_status: Boolean
   comment_count: Int
+  post_featured_image: String
   blog: Blog @connection(name: "BlogPosts")
   comments: [Comment] @connection(name: "PostComments")
   category: [Category] @connection(name: "PostCategories")
