@@ -1,0 +1,16 @@
+{
+  "name": "data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dynamo_put.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.797.0",
+    "fs": "0.0.1-security",
+    "uuid": "^8.3.1"
+  }
+}
