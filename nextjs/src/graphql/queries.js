@@ -1,59 +1,51 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const searchPosts = /* GraphQL */ `
-  query SearchPosts(
-    $filter: SearchablePostFilterInput
-    $sort: SearchablePostSortInput
+export const listUsers = /* GraphQL */ `
+  query ListUsers(
+    $filter: ModelUserFilterInput
     $limit: Int
     $nextToken: String
-    $from: Int
   ) {
-    searchPosts(
-      filter: $filter
-      sort: $sort
-      limit: $limit
-      nextToken: $nextToken
-      from: $from
-    ) {
+    listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
+        username
         createdAt
         updatedAt
-        comments {
+        owner
+        sites {
           nextToken
         }
-        category {
+        posts {
+          nextToken
+        }
+        user {
           nextToken
         }
       }
       nextToken
-      total
     }
   }
 `;
-export const getBlog = /* GraphQL */ `
-  query GetBlog($id: ID!) {
-    getBlog(id: $id) {
+export const getUser = /* GraphQL */ `
+  query GetUser($id: ID!) {
+    getUser(id: $id) {
       id
-      title
+      username
+      createdAt
+      updatedAt
+      owner
+      sites {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          version
+        }
+        nextToken
+      }
       posts {
         items {
           id
@@ -63,38 +55,104 @@ export const getBlog = /* GraphQL */ `
           post_tags
           post_content
           post_excerpt
-          post_status
+          post_featured_image
           comment_status
           ping_status
           comment_count
-          post_featured_image
           createdAt
           updatedAt
+          version
+          owner
+          post_status
         }
         nextToken
       }
-      createdAt
-      updatedAt
+      user {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
     }
   }
 `;
-export const listBlogs = /* GraphQL */ `
-  query ListBlogs(
-    $filter: ModelBlogFilterInput
+export const listSites = /* GraphQL */ `
+  query ListSites(
+    $filter: ModelSiteFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listBlogs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listSites(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         title
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
         posts {
           nextToken
         }
-        createdAt
-        updatedAt
       }
       nextToken
+    }
+  }
+`;
+export const getSite = /* GraphQL */ `
+  query GetSite($id: ID!) {
+    getSite(id: $id) {
+      id
+      title
+      createdAt
+      updatedAt
+      version
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+        owner
+        sites {
+          nextToken
+        }
+        posts {
+          nextToken
+        }
+        user {
+          nextToken
+        }
+      }
+      posts {
+        items {
+          id
+          post_type
+          post_title
+          post_name
+          post_tags
+          post_content
+          post_excerpt
+          post_featured_image
+          comment_status
+          ping_status
+          comment_count
+          createdAt
+          updatedAt
+          version
+          owner
+          post_status
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -108,22 +166,48 @@ export const getPost = /* GraphQL */ `
       post_tags
       post_content
       post_excerpt
-      post_status
+      post_featured_image
       comment_status
       ping_status
       comment_count
-      post_featured_image
-      blog {
+      createdAt
+      updatedAt
+      version
+      user {
         id
-        title
+        username
+        createdAt
+        updatedAt
+        owner
+        sites {
+          nextToken
+        }
         posts {
           nextToken
         }
+        user {
+          nextToken
+        }
+      }
+      site {
+        id
+        title
         createdAt
         updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        posts {
+          nextToken
+        }
       }
-      createdAt
-      updatedAt
+      owner
+      post_status
       comments {
         items {
           id
@@ -161,19 +245,29 @@ export const listPosts = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -190,6 +284,24 @@ export const getComment = /* GraphQL */ `
     getComment(id: $id) {
       id
       content
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+        owner
+        sites {
+          nextToken
+        }
+        posts {
+          nextToken
+        }
+        user {
+          nextToken
+        }
+      }
       post {
         id
         post_type
@@ -198,19 +310,29 @@ export const getComment = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -218,8 +340,6 @@ export const getComment = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
       owner
     }
   }
@@ -234,6 +354,15 @@ export const listComments = /* GraphQL */ `
       items {
         id
         content
+        createdAt
+        updatedAt
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
         post {
           id
           post_type
@@ -242,16 +371,16 @@ export const listComments = /* GraphQL */ `
           post_tags
           post_content
           post_excerpt
-          post_status
+          post_featured_image
           comment_status
           ping_status
           comment_count
-          post_featured_image
           createdAt
           updatedAt
+          version
+          owner
+          post_status
         }
-        createdAt
-        updatedAt
         owner
       }
       nextToken
@@ -263,6 +392,8 @@ export const getCategory = /* GraphQL */ `
     getCategory(id: $id) {
       id
       name
+      createdAt
+      updatedAt
       post {
         id
         post_type
@@ -271,19 +402,29 @@ export const getCategory = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -291,8 +432,6 @@ export const getCategory = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -306,6 +445,8 @@ export const listCategorys = /* GraphQL */ `
       items {
         id
         name
+        createdAt
+        updatedAt
         post {
           id
           post_type
@@ -314,86 +455,18 @@ export const listCategorys = /* GraphQL */ `
           post_tags
           post_content
           post_excerpt
-          post_status
+          post_featured_image
           comment_status
           ping_status
           comment_count
-          post_featured_image
           createdAt
           updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getVodAsset = /* GraphQL */ `
-  query GetVodAsset($id: ID!) {
-    getVodAsset(id: $id) {
-      id
-      title
-      description
-      createdAt
-      updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const listVodAssets = /* GraphQL */ `
-  query ListVodAssets(
-    $filter: ModelvodAssetFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listVodAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        title
-        description
-        createdAt
-        updatedAt
-        video {
-          id
-          token
-          createdAt
-          updatedAt
+          version
+          owner
+          post_status
         }
       }
       nextToken
-    }
-  }
-`;
-export const listVideoObjects = /* GraphQL */ `
-  query ListVideoObjects(
-    $filter: ModelvideoObjectFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listVideoObjects(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getVideoObject = /* GraphQL */ `
-  query GetVideoObject($id: ID!) {
-    getVideoObject(id: $id) {
-      id
-      token
-      createdAt
-      updatedAt
     }
   }
 `;

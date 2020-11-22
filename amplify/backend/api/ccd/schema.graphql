@@ -1,47 +1,67 @@
-type Blog
+"""
+Admin - Entire LMS
+Subscriber - Anyone Logged in get Subscriber Group
+siteAdmin - Anyone give rights to the site as an admin, one step below Admin
+sitePostEditors - Anyone approved to edit a post, typically only given within a single site
+sitePostPublishers- Anyone approved to publish posts
+"""
+type User
+  @model
+  @auth(
+    rules: [
+      { allow: owner, ownerField: "owner", operations: [update, read] }
+      { allow: groups, groups: ["Admin"] }
+    ]
+  ) {
+  id: ID!
+  username: String
+  sites: [Site] @connection(name: "UserSites")
+  posts: [Post] @connection(name: "UserPosts")
+  user: [Comment] @connection(name: "UserComments")
+}
+type Site
   @model(subscriptions: null)
+  @versioned
   @aws_api_key
   @aws_cognito_user_pools
   @auth(
     rules: [
-      { allow: public, provider: apiKey }
+      { allow: public, provider: apiKey, operations: [read] }
+      { allow: owner, ownerField: "owner", operations: [create, update, read] }
+      { allow: groups, groups: ["Admin"] }
       {
         allow: groups
-        groups: ["Admin"]
-        queries: null
-        mutations: [create, update, delete]
-      }
-      {
-        allow: groups
-        groups: ["Subscriber"]
-        queries: [get, list]
-        mutations: null
+        groupsField: "siteAdmin"
+        operations: [read, create, update]
       }
     ]
   ) {
   id: ID!
   title: String!
-  posts: [Post] @connection(name: "BlogPosts")
+  user: User @connection(name: "UserSites")
+  posts: [Post] @connection(name: "SitePosts")
 }
+
 type Post
   @model(subscriptions: null)
+  @versioned
   @aws_api_key
   @aws_cognito_user_pools
   @searchable
   @auth(
     rules: [
-      { allow: public, provider: apiKey }
+      { allow: public, provider: apiKey, operations: [read] }
+      { allow: owner, ownerField: "owner", operations: [create, update, read] }
+      { allow: groups, groups: ["Admin"] }
       {
         allow: groups
-        groups: ["Admin"]
-        queries: null
-        mutations: [create, update, delete]
+        groupsField: "siteAdmin"
+        operations: [read, create, update]
       }
       {
         allow: groups
-        groups: ["Subscriber"]
-        queries: [get, list]
-        mutations: null
+        groupsField: "sitePostEditors"
+        operations: [read, create, update]
       }
     ]
   ) {
@@ -52,38 +72,48 @@ type Post
   post_tags: [String!]
   post_content: String
   post_excerpt: String
-  post_status: Boolean
+  post_status: String
+    @auth(
+      rules: [
+        { allow: owner, ownerField: "owner", operations: [read, create] }
+        { allow: groups, groups: ["Admin"], operations: [create, update, read] }
+        {
+          allow: groups
+          groupsField: "sitePostEditors"
+          operations: [update, read]
+        }
+        {
+          allow: groups
+          groupsField: "sitePostPublishers"
+          operations: [update, read]
+        }
+      ]
+    )
+  post_featured_image: String
   comment_status: Boolean
   ping_status: Boolean
   comment_count: Int
-  post_featured_image: String
-  blog: Blog @connection(name: "BlogPosts")
+  user: User @connection(name: "UserPosts")
+  site: Site @connection(name: "SitePosts")
   comments: [Comment] @connection(name: "PostComments")
   category: [Category] @connection(name: "PostCategories")
 }
+
 type Comment
   @aws_api_key
   @aws_cognito_user_pools
   @model
   @auth(
     rules: [
+      { allow: public, provider: apiKey, operations: [read] }
       { allow: owner }
-      {
-        allow: groups
-        groups: ["Admin"]
-        queries: null
-        mutations: [create, update, delete]
-      }
-      {
-        allow: groups
-        groups: ["Subscriber"]
-        queries: [get, list]
-        mutations: null
-      }
+      { allow: groups, groups: ["Admin"] }
+      { allow: groups, groups: ["Subscriber"], operations: [read] }
     ]
   ) {
   id: ID!
   content: String
+  user: User @connection(name: "UserComments")
   post: Post @connection(name: "PostComments")
 }
 type Category @model @auth(rules: [{ allow: groups, groups: ["Admin"] }]) {

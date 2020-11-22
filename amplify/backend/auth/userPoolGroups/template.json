@@ -90,27 +90,169 @@
                             }
                         }
                     ]
-                },
-                "Policies": [
-    {
-        "PolicyName": "ccdb1bcb9cf-admin-group-policy",
-        "PolicyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Sid": "VisualEditor0",
-                    "Effect": "Allow",
-                    "Action": [
-                        "s3:PutObject",
-                        "s3:DeleteObject"
-                    ],
-                    "Resource": "arn:aws:s3:::ccdvod-dev-input-xzkln6vc/*"
                 }
-            ]
-        }
-    }
-]
-                
+            }
+        },
+     
+    
+        "siteAdminGroup": {
+          "Type" : "AWS::Cognito::UserPoolGroup",
+          "Properties" : {
+              "GroupName" : "siteAdmin",
+              "Precedence" : 2,
+              
+              "RoleArn" : {
+                "Fn::GetAtt": [
+                    "siteAdminGroupRole",
+                    "Arn"
+                ]
+              },
+              
+              "UserPoolId" : {
+                "Ref": "authccdb1bcb9cfUserPoolId"
+              } 
+            }
+        },
+        
+        "siteAdminGroupRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName":{
+                    "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "authccdb1bcb9cfUserPoolId"
+                          },
+                          "-siteAdminGroupRole"
+                        ]
+                    ]
+                },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": "cognito-identity.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authccdb1bcb9cfIdentityPoolId"}},
+                              "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "authenticated"}
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+     
+    
+        "sitePostEditorsGroup": {
+          "Type" : "AWS::Cognito::UserPoolGroup",
+          "Properties" : {
+              "GroupName" : "sitePostEditors",
+              "Precedence" : 3,
+              
+              "RoleArn" : {
+                "Fn::GetAtt": [
+                    "sitePostEditorsGroupRole",
+                    "Arn"
+                ]
+              },
+              
+              "UserPoolId" : {
+                "Ref": "authccdb1bcb9cfUserPoolId"
+              } 
+            }
+        },
+        
+        "sitePostEditorsGroupRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName":{
+                    "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "authccdb1bcb9cfUserPoolId"
+                          },
+                          "-sitePostEditorsGroupRole"
+                        ]
+                    ]
+                },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": "cognito-identity.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authccdb1bcb9cfIdentityPoolId"}},
+                              "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "authenticated"}
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+     
+    
+        "sitePostPublishersGroup": {
+          "Type" : "AWS::Cognito::UserPoolGroup",
+          "Properties" : {
+              "GroupName" : "sitePostPublishers",
+              "Precedence" : 4,
+              
+              "RoleArn" : {
+                "Fn::GetAtt": [
+                    "sitePostPublishersGroupRole",
+                    "Arn"
+                ]
+              },
+              
+              "UserPoolId" : {
+                "Ref": "authccdb1bcb9cfUserPoolId"
+              } 
+            }
+        },
+        
+        "sitePostPublishersGroupRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName":{
+                    "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "authccdb1bcb9cfUserPoolId"
+                          },
+                          "-sitePostPublishersGroupRole"
+                        ]
+                    ]
+                },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": "cognito-identity.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authccdb1bcb9cfIdentityPoolId"}},
+                              "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "authenticated"}
+                            }
+                        }
+                    ]
+                }
             }
         },
      
@@ -319,6 +461,39 @@
             "Value": {
                 "Fn::GetAtt": [
                     "AdminGroupRole",
+                    "Arn"
+                ]
+            }
+         
+        },
+        
+      
+        "siteAdminGroupRole": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "siteAdminGroupRole",
+                    "Arn"
+                ]
+            }
+         
+        },
+        
+      
+        "sitePostEditorsGroupRole": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "sitePostEditorsGroupRole",
+                    "Arn"
+                ]
+            }
+         
+        },
+        
+      
+        "sitePostPublishersGroupRole": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "sitePostPublishersGroupRole",
                     "Arn"
                 ]
             }

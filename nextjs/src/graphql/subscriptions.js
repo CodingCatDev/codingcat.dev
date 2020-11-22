@@ -1,62 +1,185 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateVodAsset = /* GraphQL */ `
-  subscription OnCreateVodAsset {
-    onCreateVodAsset {
+export const onCreateUser = /* GraphQL */ `
+  subscription OnCreateUser($owner: String) {
+    onCreateUser(owner: $owner) {
       id
-      title
-      description
+      username
       createdAt
       updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
+      owner
+      sites {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          version
+        }
+        nextToken
+      }
+      posts {
+        items {
+          id
+          post_type
+          post_title
+          post_name
+          post_tags
+          post_content
+          post_excerpt
+          post_featured_image
+          comment_status
+          ping_status
+          comment_count
+          createdAt
+          updatedAt
+          version
+          owner
+          post_status
+        }
+        nextToken
+      }
+      user {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
       }
     }
   }
 `;
-export const onUpdateVodAsset = /* GraphQL */ `
-  subscription OnUpdateVodAsset {
-    onUpdateVodAsset {
+export const onUpdateUser = /* GraphQL */ `
+  subscription OnUpdateUser($owner: String) {
+    onUpdateUser(owner: $owner) {
       id
-      title
-      description
+      username
       createdAt
       updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
+      owner
+      sites {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          version
+        }
+        nextToken
+      }
+      posts {
+        items {
+          id
+          post_type
+          post_title
+          post_name
+          post_tags
+          post_content
+          post_excerpt
+          post_featured_image
+          comment_status
+          ping_status
+          comment_count
+          createdAt
+          updatedAt
+          version
+          owner
+          post_status
+        }
+        nextToken
+      }
+      user {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
       }
     }
   }
 `;
-export const onDeleteVodAsset = /* GraphQL */ `
-  subscription OnDeleteVodAsset {
-    onDeleteVodAsset {
+export const onDeleteUser = /* GraphQL */ `
+  subscription OnDeleteUser($owner: String) {
+    onDeleteUser(owner: $owner) {
       id
-      title
-      description
+      username
       createdAt
       updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
+      owner
+      sites {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          version
+        }
+        nextToken
+      }
+      posts {
+        items {
+          id
+          post_type
+          post_title
+          post_name
+          post_tags
+          post_content
+          post_excerpt
+          post_featured_image
+          comment_status
+          ping_status
+          comment_count
+          createdAt
+          updatedAt
+          version
+          owner
+          post_status
+        }
+        nextToken
+      }
+      user {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
       }
     }
   }
 `;
 export const onCreateComment = /* GraphQL */ `
-  subscription OnCreateComment($owner: String!) {
+  subscription OnCreateComment($owner: String) {
     onCreateComment(owner: $owner) {
       id
       content
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+        owner
+        sites {
+          nextToken
+        }
+        posts {
+          nextToken
+        }
+        user {
+          nextToken
+        }
+      }
       post {
         id
         post_type
@@ -65,19 +188,29 @@ export const onCreateComment = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -85,17 +218,33 @@ export const onCreateComment = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
       owner
     }
   }
 `;
 export const onUpdateComment = /* GraphQL */ `
-  subscription OnUpdateComment($owner: String!) {
+  subscription OnUpdateComment($owner: String) {
     onUpdateComment(owner: $owner) {
       id
       content
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+        owner
+        sites {
+          nextToken
+        }
+        posts {
+          nextToken
+        }
+        user {
+          nextToken
+        }
+      }
       post {
         id
         post_type
@@ -104,19 +253,29 @@ export const onUpdateComment = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -124,17 +283,33 @@ export const onUpdateComment = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
       owner
     }
   }
 `;
 export const onDeleteComment = /* GraphQL */ `
-  subscription OnDeleteComment($owner: String!) {
+  subscription OnDeleteComment($owner: String) {
     onDeleteComment(owner: $owner) {
       id
       content
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+        owner
+        sites {
+          nextToken
+        }
+        posts {
+          nextToken
+        }
+        user {
+          nextToken
+        }
+      }
       post {
         id
         post_type
@@ -143,19 +318,29 @@ export const onDeleteComment = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -163,8 +348,6 @@ export const onDeleteComment = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
       owner
     }
   }
@@ -174,6 +357,8 @@ export const onCreateCategory = /* GraphQL */ `
     onCreateCategory {
       id
       name
+      createdAt
+      updatedAt
       post {
         id
         post_type
@@ -182,19 +367,29 @@ export const onCreateCategory = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -202,8 +397,6 @@ export const onCreateCategory = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -212,6 +405,8 @@ export const onUpdateCategory = /* GraphQL */ `
     onUpdateCategory {
       id
       name
+      createdAt
+      updatedAt
       post {
         id
         post_type
@@ -220,19 +415,29 @@ export const onUpdateCategory = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -240,8 +445,6 @@ export const onUpdateCategory = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -250,6 +453,8 @@ export const onDeleteCategory = /* GraphQL */ `
     onDeleteCategory {
       id
       name
+      createdAt
+      updatedAt
       post {
         id
         post_type
@@ -258,19 +463,29 @@ export const onDeleteCategory = /* GraphQL */ `
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
           id
           title
           createdAt
           updatedAt
+          version
         }
-        createdAt
-        updatedAt
+        owner
+        post_status
         comments {
           nextToken
         }
@@ -278,38 +493,6 @@ export const onDeleteCategory = /* GraphQL */ `
           nextToken
         }
       }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateVideoObject = /* GraphQL */ `
-  subscription OnCreateVideoObject {
-    onCreateVideoObject {
-      id
-      token
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateVideoObject = /* GraphQL */ `
-  subscription OnUpdateVideoObject {
-    onUpdateVideoObject {
-      id
-      token
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteVideoObject = /* GraphQL */ `
-  subscription OnDeleteVideoObject {
-    onDeleteVideoObject {
-      id
-      token
-      createdAt
-      updatedAt
     }
   }
 `;
