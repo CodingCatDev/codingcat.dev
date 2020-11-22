@@ -9,7 +9,7 @@ type User
   @model
   @auth(
     rules: [
-      { allow: owner, ownerField: "owner", operations: [update, read] }
+      { allow: owner, operations: [update, read] }
       { allow: groups, groups: ["Admin"] }
     ]
   ) {
@@ -66,14 +66,14 @@ type Post
   id: ID!
   post_type: String!
   post_title: String!
-  post_name: String!
+  post_basename: String!
   post_tags: [String!]
   post_content: String
   post_excerpt: String
   post_status: String
     @auth(
       rules: [
-        { allow: owner, ownerField: "owner", operations: [read, create] }
+        { allow: owner, operations: [read, create] }
         { allow: groups, groups: ["Admin"], operations: [create, update, read] }
         {
           allow: groups
@@ -91,8 +91,13 @@ type Post
   comment_status: Boolean
   ping_status: Boolean
   comment_count: Int
+  post_permalink: String!
+  post_author: String!
+  post_thumbnail: String!
+  post_formats: [String!]
+  post_preview: String!
   user: User @connection(name: "UserPosts")
-  site: Site @connection(name: "SitePosts")
+  site: Site! @connection(name: "SitePosts")
   comments: [Comment] @connection(name: "PostComments")
   category: [Category] @connection(name: "PostCategories")
 }

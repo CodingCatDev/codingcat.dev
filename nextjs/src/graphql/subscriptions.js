@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateVodAsset = /* GraphQL */ `
+  subscription OnCreateVodAsset {
+    onCreateVodAsset {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const onUpdateVodAsset = /* GraphQL */ `
+  subscription OnUpdateVodAsset {
+    onUpdateVodAsset {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const onDeleteVodAsset = /* GraphQL */ `
+  subscription OnDeleteVodAsset {
+    onDeleteVodAsset {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
 export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser($owner: String) {
     onCreateUser(owner: $owner) {
@@ -24,7 +75,7 @@ export const onCreateUser = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -32,6 +83,11 @@ export const onCreateUser = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -76,7 +132,7 @@ export const onUpdateUser = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -84,6 +140,11 @@ export const onUpdateUser = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -128,7 +189,7 @@ export const onDeleteUser = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -136,6 +197,11 @@ export const onDeleteUser = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -184,7 +250,7 @@ export const onCreateComment = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -192,6 +258,11 @@ export const onCreateComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -249,7 +320,7 @@ export const onUpdateComment = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -257,6 +328,11 @@ export const onUpdateComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -314,7 +390,7 @@ export const onDeleteComment = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -322,6 +398,11 @@ export const onDeleteComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -363,7 +444,7 @@ export const onCreateCategory = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -371,6 +452,11 @@ export const onCreateCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -411,7 +497,7 @@ export const onUpdateCategory = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -419,6 +505,11 @@ export const onUpdateCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -459,7 +550,7 @@ export const onDeleteCategory = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -467,6 +558,11 @@ export const onDeleteCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -493,6 +589,36 @@ export const onDeleteCategory = /* GraphQL */ `
           nextToken
         }
       }
+    }
+  }
+`;
+export const onCreateVideoObject = /* GraphQL */ `
+  subscription OnCreateVideoObject {
+    onCreateVideoObject {
+      id
+      token
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateVideoObject = /* GraphQL */ `
+  subscription OnUpdateVideoObject {
+    onUpdateVideoObject {
+      id
+      token
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteVideoObject = /* GraphQL */ `
+  subscription OnDeleteVideoObject {
+    onDeleteVideoObject {
+      id
+      token
+      createdAt
+      updatedAt
     }
   }
 `;

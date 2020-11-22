@@ -27,7 +27,7 @@ export const createUser = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -35,6 +35,11 @@ export const createUser = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -82,7 +87,7 @@ export const updateUser = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -90,6 +95,11 @@ export const updateUser = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -137,7 +147,7 @@ export const deleteUser = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -145,6 +155,11 @@ export const deleteUser = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -198,7 +213,7 @@ export const createSite = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -206,6 +221,11 @@ export const createSite = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -249,7 +269,7 @@ export const updateSite = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -257,6 +277,11 @@ export const updateSite = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -300,7 +325,7 @@ export const deleteSite = /* GraphQL */ `
           id
           post_type
           post_title
-          post_name
+          post_basename
           post_tags
           post_content
           post_excerpt
@@ -308,6 +333,11 @@ export const deleteSite = /* GraphQL */ `
           comment_status
           ping_status
           comment_count
+          post_permalink
+          post_author
+          post_thumbnail
+          post_formats
+          post_preview
           createdAt
           updatedAt
           version
@@ -328,7 +358,7 @@ export const deletePost = /* GraphQL */ `
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
@@ -336,6 +366,11 @@ export const deletePost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
       createdAt
       updatedAt
       version
@@ -405,7 +440,7 @@ export const createPost = /* GraphQL */ `
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
@@ -413,6 +448,11 @@ export const createPost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
       createdAt
       updatedAt
       version
@@ -482,7 +522,7 @@ export const updatePost = /* GraphQL */ `
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
@@ -490,6 +530,11 @@ export const updatePost = /* GraphQL */ `
       comment_status
       ping_status
       comment_count
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
       createdAt
       updatedAt
       version
@@ -580,7 +625,7 @@ export const createComment = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -588,6 +633,11 @@ export const createComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -648,7 +698,7 @@ export const updateComment = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -656,6 +706,11 @@ export const updateComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -716,7 +771,7 @@ export const deleteComment = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -724,6 +779,11 @@ export const deleteComment = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -768,7 +828,7 @@ export const createCategory = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -776,6 +836,11 @@ export const createCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -819,7 +884,7 @@ export const updateCategory = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -827,6 +892,11 @@ export const updateCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -870,7 +940,7 @@ export const deleteCategory = /* GraphQL */ `
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
@@ -878,6 +948,11 @@ export const deleteCategory = /* GraphQL */ `
         comment_status
         ping_status
         comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
         createdAt
         updatedAt
         version
@@ -904,6 +979,105 @@ export const deleteCategory = /* GraphQL */ `
           nextToken
         }
       }
+    }
+  }
+`;
+export const createVodAsset = /* GraphQL */ `
+  mutation CreateVodAsset(
+    $input: CreateVodAssetInput!
+    $condition: ModelvodAssetConditionInput
+  ) {
+    createVodAsset(input: $input, condition: $condition) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const updateVodAsset = /* GraphQL */ `
+  mutation UpdateVodAsset(
+    $input: UpdateVodAssetInput!
+    $condition: ModelvodAssetConditionInput
+  ) {
+    updateVodAsset(input: $input, condition: $condition) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const deleteVodAsset = /* GraphQL */ `
+  mutation DeleteVodAsset(
+    $input: DeleteVodAssetInput!
+    $condition: ModelvodAssetConditionInput
+  ) {
+    deleteVodAsset(input: $input, condition: $condition) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+      video {
+        id
+        token
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const createVideoObject = /* GraphQL */ `
+  mutation CreateVideoObject(
+    $input: CreateVideoObjectInput!
+    $condition: ModelvideoObjectConditionInput
+  ) {
+    createVideoObject(input: $input, condition: $condition) {
+      id
+      token
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateVideoObject = /* GraphQL */ `
+  mutation UpdateVideoObject(
+    $input: UpdateVideoObjectInput!
+    $condition: ModelvideoObjectConditionInput
+  ) {
+    updateVideoObject(input: $input, condition: $condition) {
+      id
+      token
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteVideoObject = /* GraphQL */ `
+  mutation DeleteVideoObject(
+    $input: DeleteVideoObjectInput!
+    $condition: ModelvideoObjectConditionInput
+  ) {
+    deleteVideoObject(input: $input, condition: $condition) {
+      id
+      token
+      createdAt
+      updatedAt
     }
   }
 `;
