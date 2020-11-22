@@ -15,15 +15,15 @@ const readline = require("readline").createInterface({
 
 readline.question("Enter Table Name: ", (tableName) => {
   console.log("Importing data into DynamoDB. Please wait.");
-  var posts = JSON.parse(fs.readFileSync("posts.json", "utf8"));
+  var posts = JSON.parse(fs.readFileSync("./posts.json", "utf8"));
   for (const [key, post] of Object.entries(posts)) {
     var params = {
       TableName: tableName,
       Item: {
         id: uuid.v4(),
-        postBlogId: "1",
-        createdAt: post.date,
-        updatedAt: new Date().toISOString(),
+        postSiteId: "d6ffe0b6-a8ab-4ba2-8204-861b74633126",
+        createdAt: post.date + "Z",
+        updatedAt: post.date + "Z",
         post_title: post.title,
         post_status: post.status,
         post_permalink: post.post_permalink,
