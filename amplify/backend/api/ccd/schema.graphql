@@ -27,7 +27,6 @@ type Site
   @auth(
     rules: [
       { allow: public, provider: apiKey, operations: [read] }
-      { allow: owner, ownerField: "owner", operations: [create, update, read] }
       { allow: groups, groups: ["Admin"] }
       {
         allow: groups
@@ -51,7 +50,6 @@ type Post
   @auth(
     rules: [
       { allow: public, provider: apiKey, operations: [read] }
-      { allow: owner, ownerField: "owner", operations: [create, update, read] }
       { allow: groups, groups: ["Admin"] }
       {
         allow: groups
