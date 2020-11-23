@@ -47,7 +47,7 @@ readline.question("Enter Table Name: ", (tableName) => {
         post_publish_datetime: post.date,
         post_title: post.title,
         post_status: post.status,
-        post_permalink: post.post_permalink,
+        post_permalink: post.permalink,
         post_author: post.author,
         post_excerpt: post.excerpt,
         post_type: post.type,
