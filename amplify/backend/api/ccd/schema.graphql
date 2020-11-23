@@ -48,6 +48,11 @@ type Post
     fields: ["post_status", "post_publish_datetime"]
     queryField: "postsByStatusPublish"
   )
+  @key(
+    name: "byPermalink"
+    fields: ["post_permalink"]
+    queryField: "postsByPermalink"
+  )
   @versioned
   @aws_api_key
   @aws_cognito_user_pools

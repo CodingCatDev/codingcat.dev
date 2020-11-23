@@ -233,6 +233,69 @@ export const postsByStatusPublish = /* GraphQL */ `
     }
   }
 `;
+export const postsByPermalink = /* GraphQL */ `
+  query PostsByPermalink(
+    $post_permalink: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    postsByPermalink(
+      post_permalink: $post_permalink
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        post_type
+        post_title
+        post_basename
+        post_tags
+        post_content
+        post_excerpt
+        post_featured_image
+        comment_status
+        ping_status
+        comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
+        post_publish_datetime
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
+          id
+          title
+          createdAt
+          updatedAt
+          version
+        }
+        owner
+        post_status
+        comments {
+          nextToken
+        }
+        category {
+          nextToken
+        }
+      }
+      nextToken
+    }
+  }
+`;
 export const searchPosts = /* GraphQL */ `
   query SearchPosts(
     $filter: SearchablePostFilterInput

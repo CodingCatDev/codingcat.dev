@@ -15,10 +15,12 @@ const postsByStatusPublish = gql`
       post_status: "publish"
     ) {
       items {
+        id
         post_title
         post_thumbnail
         post_publish_datetime
         post_excerpt
+        post_permalink
       }
     }
   }
@@ -59,14 +61,16 @@ export default function Home() {
         {posts.map((post) => (
           <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
             <div>
-              <Image
-                src={post.post_thumbnail}
-                alt={post.post_title}
-                width="480"
-                height="270"
-                layout="responsive"
-                className="rounded"
-              />
+              <Link href={post.post_permalink}>
+                <Image
+                  src={post.post_thumbnail}
+                  alt={post.post_title}
+                  width="480"
+                  height="270"
+                  layout="responsive"
+                  className="rounded"
+                />
+              </Link>
             </div>
             <div className="mt-6">
               <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
