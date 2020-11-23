@@ -22,9 +22,9 @@ readline.question("Enter Table Name: ", (tableName) => {
       Item: {
         id: uuid.v4(),
         postSiteId: "d6ffe0b6-a8ab-4ba2-8204-861b74633126",
-        createdAt: post.date + "Z",
-        updatedAt: post.date + "Z",
-        post_publish_datetime: post.date + "Z",
+        createdAt: post.date,
+        updatedAt: post.date,
+        post_publish_datetime: post.date,
         post_title: post.title,
         post_status: post.status,
         post_permalink: post.post_permalink,

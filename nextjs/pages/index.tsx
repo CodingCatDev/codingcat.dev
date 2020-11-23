@@ -1,6 +1,53 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
+import Image from "next/image";
+
+import config from "../configureAmplify";
+import gql from "graphql-tag";
+import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
+
+const postsByStatusPublish = gql`
+  query postsByStatusPublish {
+    postsByStatusPublish(
+      sortDirection: DESC
+      limit: 3
+      post_status: "publish"
+    ) {
+      items {
+        post_title
+        post_thumbnail
+        post_publish_datetime
+        post_excerpt
+      }
+    }
+  }
+`;
+const client = new AWSAppSyncClient({
+  url: config.aws_appsync_graphqlEndpoint,
+  region: config.aws_appsync_region,
+  auth: {
+    type: AUTH_TYPE.API_KEY,
+    apiKey: config.aws_appsync_apiKey,
+  },
+  disableOffline: true,
+  offlineConfig: {
+    keyPrefix: "public",
+  },
+});
 
 export default function Home() {
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    fetchPosts();
+    async function fetchPosts() {
+      const postData: any = await client.query({
+        query: postsByStatusPublish,
+      });
+      console.log(postData.data.postsByStatusPublish.items);
+      setPosts(postData.data.postsByStatusPublish.items);
+    }
+  }, []);
   return (
     <div>
       <Head>
@@ -8,25 +55,29 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <div className="bg-white shadow p-3 rounded lg:w-64">
-          <div>
-            <div className="bg-cover bg-center bg-gray-300 h-32 rounded"></div>
+      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto">
+        {posts.map((post) => (
+          <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
+            <div>
+              <Image
+                src={post.post_thumbnail}
+                alt={post.post_title}
+                width="480"
+                height="270"
+                layout="responsive"
+                className="rounded"
+              />
+            </div>
+            <div className="mt-6">
+              <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
+                {post.post_title}
+              </p>
+              <p className="text-sm text-gray-600 font-hairline">
+                {post.post_excerpt}
+              </p>
+            </div>
           </div>
-          <div className="mt-6">
-            <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
-              Title
-            </p>
-            <p className="text-sm text-gray-600 font-hairline">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </p>
-          </div>
-          <div className="mt-6">
-            <button className="rounded shadow-md flex items-center shadow bg-ccd-primary-800 px-4 py-2 text-white hover:bg-blue-600">
-              Default
-            </button>
-          </div>
-        </div>
+        ))}
       </main>
 
       <footer></footer>
