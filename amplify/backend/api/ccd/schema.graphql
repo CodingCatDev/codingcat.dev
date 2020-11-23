@@ -4,49 +4,18 @@ Subscriber - Anyone Logged in get Subscriber Group
 siteAdmin - Anyone give rights to the site as an admin, one step below Admin
 sitePostEditors - Anyone approved to edit a post, typically only given within a single site
 sitePostPublishers- Anyone approved to publish posts
-"""
-type User
-  @model
-  @auth(
-    rules: [
-      { allow: owner, operations: [update, read] }
-      { allow: groups, groups: ["Admin"] }
-    ]
-  ) {
+
+type User @model {
   id: ID!
   username: String
-  sites: [Site] @connection(name: "UserSites")
-  posts: [Post] @connection(name: "UserPosts")
-  user: [Comment] @connection(name: "UserComments")
 }
-type Site
-  @model(subscriptions: null)
-  @versioned
-  @aws_api_key
-  @aws_cognito_user_pools
-  @auth(
-    rules: [
-      { allow: public, provider: apiKey, operations: [read] }
-      { allow: groups, groups: ["Admin"] }
-      {
-        allow: groups
-        groupsField: "siteAdmin"
-        operations: [read, create, update]
-      }
-    ]
-  ) {
-  id: ID!
-  title: String!
-  user: User @connection(name: "UserSites")
-  posts: [Post] @connection(name: "SitePosts")
-}
-
-type Post
+"""
+type API
   @model(subscriptions: null)
   @key(
-    name: "byStatusPublish"
-    fields: ["post_status", "post_publish_datetime"]
-    queryField: "postsByStatusPublish"
+    name: "byPostTypePublished"
+    fields: ["post_type", "post_publish_datetime"]
+    queryField: "postsByPostTypePublished"
   )
   @key(
     name: "byPermalink"
@@ -56,7 +25,6 @@ type Post
   @versioned
   @aws_api_key
   @aws_cognito_user_pools
-  @searchable
   @auth(
     rules: [
       { allow: public, provider: apiKey, operations: [read] }
@@ -74,9 +42,9 @@ type Post
     ]
   ) {
   id: ID!
-  post_type: String!
-  post_title: String!
-  post_basename: String!
+  post_type: String
+  post_title: String
+  post_basename: String
   post_tags: [String!]
   post_content: String
   post_excerpt: String
@@ -101,75 +69,61 @@ type Post
   comment_status: Boolean
   ping_status: Boolean
   comment_count: Int
-  post_permalink: String!
-  post_author: String!
-  post_thumbnail: String!
+  post_permalink: String
+  post_author: String
+  post_thumbnail: String
   post_formats: [String!]
-  post_preview: String!
+  post_preview: String
   post_publish_datetime: AWSDateTime
-  user: User @connection(name: "UserPosts")
-  site: Site! @connection(name: "SitePosts")
-  comments: [Comment] @connection(name: "PostComments")
-  category: [Category] @connection(name: "PostCategories")
+
+  site_title: String
+
+  user_username: String
+  user_sites: [ID!]
+  user_posts: [ID!]
+  user_user: [ID!]
+
+  comment_content: String
+  comment_user: ID
+
+  category_title: String
+  category_description: String
 }
 
-type Comment
-  @aws_api_key
-  @aws_cognito_user_pools
-  @model
-  @auth(
-    rules: [
-      { allow: public, provider: apiKey, operations: [read] }
-      { allow: owner }
-      { allow: groups, groups: ["Admin"] }
-      { allow: groups, groups: ["Subscriber"], operations: [read] }
-    ]
-  ) {
-  id: ID!
-  content: String
-  user: User @connection(name: "UserComments")
-  post: Post @connection(name: "PostComments")
-}
-type Category @model @auth(rules: [{ allow: groups, groups: ["Admin"] }]) {
-  id: ID!
-  name: String!
-  post: Post @connection(name: "PostCategories")
-}
+# type vodAsset
+#   @model(subscriptions: { level: public })
+#   @auth(
+#     rules: [
+#       {
+#         allow: groups
+#         groups: ["Admin"]
+#         operations: [create, update, delete, read]
+#       }
+#       { allow: private, operations: [read] }
+#     ]
+#   ) {
+#   id: ID!
+#   title: String!
+#   description: String!
 
-type vodAsset
-  @model(subscriptions: { level: public })
-  @auth(
-    rules: [
-      {
-        allow: groups
-        groups: ["Admin"]
-        operations: [create, update, delete, read]
-      }
-      { allow: private, operations: [read] }
-    ]
-  ) {
-  id: ID!
-  title: String!
-  description: String!
+#   #DO NOT EDIT
+#   video: videoObject @connection
+# }
 
-  #DO NOT EDIT
-  video: videoObject @connection
-}
+# #DO NOT EDIT
+# type videoObject
+#   @model
+#   @auth(
+#     rules: [
+#       {
+#         allow: groups
+#         groups: ["Admin"]
+#         operations: [create, update, delete, read]
+#       }
+#       { allow: private, operations: [read] }
+#     ]
+#   ) {
+#   id: ID!
 
-#DO NOT EDIT
-type videoObject
-  @model
-  @auth(
-    rules: [
-      {
-        allow: groups
-        groups: ["Admin"]
-        operations: [create, update, delete, read]
-      }
-      { allow: private, operations: [read] }
-    ]
-  ) {
-  id: ID!
-
-  token: String @function(name: "ccdvod-{env}-tokenGen")
-}
+#   token: String @function(name: "ccdvod-{env}-tokenGen")
+# }
