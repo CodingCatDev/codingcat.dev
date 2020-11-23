@@ -7,6 +7,8 @@ import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 import renderToString from "next-mdx-remote/render-to-string";
 import hydrate from "next-mdx-remote/hydrate";
 
+import RecentPosts from "../components/RecentPosts";
+
 const postsByPermalink = gql`
   query postsByPermalink($post_permalink: String!) {
     postsByPermalink(post_permalink: $post_permalink) {
@@ -47,9 +49,19 @@ export default function Post({ post, markdown }) {
   }
   const content = hydrate(markdown);
   return (
-    <div>
-      <h1>{post.post_title}</h1>
-      <h2>{content}</h2>
+    <div className="grid grid-cols-12 gap-2">
+      <div className="col-span-12 xl:col-span-10">
+        <h1>{post.post_title}</h1>
+        <article>{content}</article>
+      </div>
+      <div className="col-span-12 xl:col-span-2">
+        <div className="bg-white shadow p-3 m-3 rounded-lg">
+          <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
+            Recent Posts
+          </p>
+          <RecentPosts />
+        </div>
+      </div>
     </div>
   );
 }

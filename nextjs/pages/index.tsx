@@ -46,7 +46,6 @@ export default function Home() {
       const postData: any = await client.query({
         query: postsByStatusPublish,
       });
-      console.log(postData.data.postsByStatusPublish.items);
       setPosts(postData.data.postsByStatusPublish.items);
     }
   }, []);
