@@ -43,14 +43,12 @@ Many of this solutions would have worked but ultimately we felt that for long te
 
 One of our biggest feature requests when moving to an LMS was to allow progress to be shown for the end users for each course.
 
-![Progress of Course shown.](https://res.cloudinary.com/ajonp/images/f_auto,q_auto/w_217,h_300,c_scale,f_auto/v1603737569/codingcat.dev/image-1603737568572/image-1603737568572-217x300.png)
+![Progress of Course shown.](https://res.cloudinary.com/ajonp/images/f_auto,q_auto/v1603737569/ccd-cloudinary/image-1603737568572/image-1603737568572-217x300.png)
 
 We also wanted to allow for copying code blocks more easily so this was a must have for a technical project
 
 ```javascript
-  <script>
-    alert( 'Hello, world!' );
-  </script>
+<script>alert( 'Hello, world!' );</script>
 ```
 
 ## Wordpress with Learndash
