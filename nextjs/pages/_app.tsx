@@ -152,7 +152,9 @@ function MyApp({ Component, pageProps }) {
         >
           <div className="layout-logo">
             <Link href={"/"}>
-              <img alt="Logo" src={logo} />
+              <a>
+                <img alt="Logo" src={logo} />
+              </a>
             </Link>
           </div>
           <AppMenu onMenuItemClick={onMenuItemClick} />

@@ -64,7 +64,7 @@ export default function Post({ post, markdown }) {
           <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
             Recent Posts
           </p>
-          <RecentPosts />
+          <RecentPostsList />
         </div>
       </div>
     </div>

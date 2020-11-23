@@ -7,9 +7,9 @@ import config from "../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 
-const postsByStatusPublish = gql`
-  query postsByStatusPublish {
-    postsByStatusPublish(sortDirection: DESC, post_status: "publish") {
+const postsByPostTypePublished = gql`
+  query postsByPostTypePublished {
+    postsByPostTypePublished(sortDirection: DESC, post_type: "tutorials") {
       items {
         id
         post_title
@@ -34,15 +34,15 @@ const client = new AWSAppSyncClient({
   },
 });
 
-export default function Blog() {
+export default function Tutorials() {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetchPosts();
     async function fetchPosts() {
       const postData: any = await client.query({
-        query: postsByStatusPublish,
+        query: postsByPostTypePublished,
       });
-      setPosts(postData.data.postsByStatusPublish.items);
+      setPosts(postData.data.postsByPostTypePublished.items);
     }
   }, []);
   return (
@@ -57,21 +57,23 @@ export default function Blog() {
           <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
             <div>
               <Link href={post.post_permalink}>
-                <>
+                <a>
                   <Image
                     src={post.post_thumbnail}
                     alt={post.post_title}
                     width="480"
                     height="270"
                     layout="responsive"
-                    className="rounded cursor-pointer"
+                    className="rounded"
                   />
-                </>
+                </a>
               </Link>
             </div>
             <div className="mt-6">
               <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
-                {post.post_title}
+                <Link href={post.post_permalink}>
+                  <a>{post.post_title}</a>
+                </Link>
               </p>
               <p className="text-sm text-gray-600 font-hairline">
                 {post.post_excerpt}
