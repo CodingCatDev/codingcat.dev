@@ -1,6 +1,7 @@
 var AWS = require("aws-sdk");
 var fs = require("fs");
 var uuid = require("uuid");
+var path = require("path");
 
 AWS.config.update({
   region: "us-east-1",
@@ -14,9 +15,28 @@ const readline = require("readline").createInterface({
 });
 
 readline.question("Enter Table Name: ", (tableName) => {
+  // Post-ta3xuq6qtfbxtasib7i52xbn7e-dev
   console.log("Importing data into DynamoDB. Please wait.");
-  var posts = JSON.parse(fs.readFileSync("./posts.json", "utf8"));
+  var posts = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "./posts.json"), "utf8")
+  );
+  var postsMd = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, "../markdown/posts/_posts.json"),
+      "utf8"
+    )
+  );
   for (const [key, post] of Object.entries(posts)) {
+    let postMd;
+    for (const [mdKey, md] of Object.entries(postsMd)) {
+      if (key === mdKey) {
+        postMd = md;
+        break;
+      }
+    }
+    if (postMd == undefined) {
+      break;
+    }
     var params = {
       TableName: tableName,
       Item: {
@@ -36,7 +56,7 @@ readline.question("Enter Table Name: ", (tableName) => {
         post_tags: post.tag,
         post_formats: post.post_format,
         post_preview: post.preview,
-        post_content: post.content,
+        post_content: postMd.content,
         ping_status: false,
         comment_count: 0,
         post_iso8601Date: post.iso8601Date,
