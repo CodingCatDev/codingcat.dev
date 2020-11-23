@@ -6,7 +6,7 @@ $textSecondaryColor: #707070;
 $borderRadius: 3px;
 $dividerColor: #e3e3e3;
 $transitionDuration: 0.2s;
-$maskBgColor: #424242;
+$maskBgColor: #5e1286;
 $focusShadowColor: #8dcdff;
 
 /* Menu Common */
@@ -25,13 +25,13 @@ $menuitemActiveBgColor: #ffffff;
 $menuitemBorderColor: rgba(207, 211, 224, 0.6);
 
 /* Menu Dark */
-$menuDarkBgColorFirst: #4d505b;
-$menuDarkBgColorLast: #3b3e47;
+$menuDarkBgColorFirst: #5e1286;
+$menuDarkBgColorLast: #8f41b0;
 $menuitemDarkColor: #ffffff;
-$menuitemDarkHoverColor: #5e1286;
-$menuitemDarkActiveColor: #5e1286;
-$menuitemDarkActiveBgColor: #2e3035;
-$menuitemDarkBorderColor: rgba(52, 56, 65, 0.6);
+$menuitemDarkHoverColor: #000000;
+$menuitemDarkActiveColor: #ffffff;
+$menuitemDarkActiveBgColor: #5e1286;
+$menuitemDarkBorderColor: inherit;
 
 /* Topbar */
 $topbarLeftBgColor: #5e1286;

@@ -7,9 +7,9 @@ import config from "../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 
-const postsByStatusPublish = gql`
-  query postsByStatusPublish {
-    postsByStatusPublish(sortDirection: DESC, post_status: "publish") {
+const postsByPostTypePublished = gql`
+  query postsByPostTypePublished {
+    postsByPostTypePublished(sortDirection: DESC, post_type: "post") {
       items {
         id
         post_title
@@ -40,9 +40,9 @@ export default function Blog() {
     fetchPosts();
     async function fetchPosts() {
       const postData: any = await client.query({
-        query: postsByStatusPublish,
+        query: postsByPostTypePublished,
       });
-      setPosts(postData.data.postsByStatusPublish.items);
+      setPosts(postData.data.postsByPostTypePublished.items);
     }
   }, []);
   return (

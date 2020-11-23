@@ -7,9 +7,9 @@ import config from "../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 
-const postsByPostTypePublished = gql`
-  query postsByPostTypePublished {
-    postsByPostTypePublished(sortDirection: DESC, limit: 3, post_type: "post") {
+const postsByStatusPublish = gql`
+  query postsByStatusPublish {
+    postsByStatusPublish(sortDirection: DESC, post_status: "publish") {
       items {
         id
         post_title
@@ -34,15 +34,15 @@ const client = new AWSAppSyncClient({
   },
 });
 
-export default function Home() {
+export default function Blog() {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetchPosts();
     async function fetchPosts() {
       const postData: any = await client.query({
-        query: postsByPostTypePublished,
+        query: postsByStatusPublish,
       });
-      setPosts(postData.data.postsByPostTypePublished.items);
+      setPosts(postData.data.postsByStatusPublish.items);
     }
   }, []);
   return (
@@ -57,14 +57,16 @@ export default function Home() {
           <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
             <div>
               <Link href={post.post_permalink}>
-                <Image
-                  src={post.post_thumbnail}
-                  alt={post.post_title}
-                  width="480"
-                  height="270"
-                  layout="responsive"
-                  className="rounded cursor-pointer"
-                />
+                <>
+                  <Image
+                    src={post.post_thumbnail}
+                    alt={post.post_title}
+                    width="480"
+                    height="270"
+                    layout="responsive"
+                    className="rounded cursor-pointer"
+                  />
+                </>
               </Link>
             </div>
             <div className="mt-6">

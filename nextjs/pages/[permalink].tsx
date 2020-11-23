@@ -20,10 +20,15 @@ const postsByPermalink = gql`
   }
 `;
 
-const listPosts = gql`
-  query listPosts {
-    listPosts {
+const postsByPostTypePublished = gql`
+  query postsByPostTypePublished {
+    postsByPostTypePublished(sortDirection: DESC, post_type: "post") {
       items {
+        id
+        post_title
+        post_thumbnail
+        post_publish_datetime
+        post_excerpt
         post_permalink
       }
     }
@@ -68,13 +73,15 @@ export default function Post({ post, markdown }) {
 
 export async function getStaticPaths() {
   const postData: any = await client.query({
-    query: listPosts,
+    query: postsByPostTypePublished,
   });
-  const paths: any = postData.data.listPosts.items.map((post) => {
-    return {
-      params: { permalink: post.post_permalink.substring(1) },
-    };
-  });
+  const paths: any = postData.data.postsByPostTypePublished.items.map(
+    (post) => {
+      return {
+        params: { permalink: post.post_permalink.substring(1) },
+      };
+    }
+  );
   return {
     paths,
     fallback: true,

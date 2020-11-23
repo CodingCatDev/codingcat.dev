@@ -15,14 +15,14 @@ const readline = require("readline").createInterface({
 });
 
 readline.question("Enter Table Name: ", (tableName) => {
-  // API-ta3xuq6qtfbxtasib7i52xbn7e-dev
+  // Post-ta3xuq6qtfbxtasib7i52xbn7e-dev
   console.log("Importing data into DynamoDB. Please wait.");
   var posts = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "./posts.json"), "utf8")
+    fs.readFileSync(path.join(__dirname, "./tutorials.json"), "utf8")
   );
   var postsMd = JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, "../markdown/posts/_posts.json"),
+      path.join(__dirname, "../markdown/tutorials/_tutorials.json"),
       "utf8"
     )
   );

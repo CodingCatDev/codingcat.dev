@@ -7,16 +7,15 @@ import config from "../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 
-const postsByStatusPublish = gql`
-  query postsByStatusPublish {
-    postsByStatusPublish(
-      sortDirection: DESC
-      limit: 3
-      post_status: "publish"
-    ) {
+const postsByPostTypePublished = gql`
+  query postsByPostTypePublished {
+    postsByPostTypePublished(sortDirection: DESC, limit: 3, post_type: "post") {
       items {
         id
         post_title
+        post_thumbnail
+        post_publish_datetime
+        post_excerpt
         post_permalink
       }
     }
@@ -41,9 +40,9 @@ export default function RecentPosts() {
     fetchPosts();
     async function fetchPosts() {
       const postData: any = await client.query({
-        query: postsByStatusPublish,
+        query: postsByPostTypePublished,
       });
-      setPosts(postData.data.postsByStatusPublish.items);
+      setPosts(postData.data.postsByPostTypePublished.items);
     }
   }, []);
   return (
