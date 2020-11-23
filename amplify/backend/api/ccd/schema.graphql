@@ -43,6 +43,11 @@ type Site
 
 type Post
   @model(subscriptions: null)
+  @key(
+    name: "byStatusPublish"
+    fields: ["post_status", "post_publish_datetime"]
+    queryField: "postsByStatusPublish"
+  )
   @versioned
   @aws_api_key
   @aws_cognito_user_pools
@@ -96,6 +101,7 @@ type Post
   post_thumbnail: String!
   post_formats: [String!]
   post_preview: String!
+  post_publish_datetime: AWSDateTime
   user: User @connection(name: "UserPosts")
   site: Site! @connection(name: "SitePosts")
   comments: [Comment] @connection(name: "PostComments")

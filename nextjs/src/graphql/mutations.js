@@ -40,6 +40,7 @@ export const createUser = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -100,6 +101,7 @@ export const updateUser = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -160,6 +162,7 @@ export const deleteUser = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -226,6 +229,7 @@ export const createSite = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -282,6 +286,7 @@ export const updateSite = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -338,6 +343,7 @@ export const deleteSite = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -371,6 +377,7 @@ export const deletePost = /* GraphQL */ `
       post_thumbnail
       post_formats
       post_preview
+      post_publish_datetime
       createdAt
       updatedAt
       version
@@ -453,6 +460,7 @@ export const createPost = /* GraphQL */ `
       post_thumbnail
       post_formats
       post_preview
+      post_publish_datetime
       createdAt
       updatedAt
       version
@@ -535,6 +543,7 @@ export const updatePost = /* GraphQL */ `
       post_thumbnail
       post_formats
       post_preview
+      post_publish_datetime
       createdAt
       updatedAt
       version
@@ -638,6 +647,7 @@ export const createComment = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -711,6 +721,7 @@ export const updateComment = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -784,6 +795,7 @@ export const deleteComment = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -841,6 +853,7 @@ export const createCategory = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -897,6 +910,7 @@ export const updateCategory = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -953,6 +967,7 @@ export const deleteCategory = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version

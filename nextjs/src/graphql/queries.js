@@ -64,6 +64,7 @@ export const getUser = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -155,6 +156,7 @@ export const getSite = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -163,6 +165,71 @@ export const getSite = /* GraphQL */ `
         }
         nextToken
       }
+    }
+  }
+`;
+export const postsByStatusPublish = /* GraphQL */ `
+  query PostsByStatusPublish(
+    $post_status: String
+    $post_publish_datetime: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    postsByStatusPublish(
+      post_status: $post_status
+      post_publish_datetime: $post_publish_datetime
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        post_type
+        post_title
+        post_basename
+        post_tags
+        post_content
+        post_excerpt
+        post_featured_image
+        comment_status
+        ping_status
+        comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
+        post_publish_datetime
+        createdAt
+        updatedAt
+        version
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+          owner
+        }
+        site {
+          id
+          title
+          createdAt
+          updatedAt
+          version
+        }
+        owner
+        post_status
+        comments {
+          nextToken
+        }
+        category {
+          nextToken
+        }
+      }
+      nextToken
     }
   }
 `;
@@ -198,6 +265,7 @@ export const searchPosts = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -248,6 +316,7 @@ export const getPost = /* GraphQL */ `
       post_thumbnail
       post_formats
       post_preview
+      post_publish_datetime
       createdAt
       updatedAt
       version
@@ -332,6 +401,7 @@ export const listPosts = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -402,6 +472,7 @@ export const getComment = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -468,6 +539,7 @@ export const listComments = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
@@ -504,6 +576,7 @@ export const getCategory = /* GraphQL */ `
         post_thumbnail
         post_formats
         post_preview
+        post_publish_datetime
         createdAt
         updatedAt
         version
@@ -562,6 +635,7 @@ export const listCategorys = /* GraphQL */ `
           post_thumbnail
           post_formats
           post_preview
+          post_publish_datetime
           createdAt
           updatedAt
           version
