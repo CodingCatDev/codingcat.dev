@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }) {
         </div>
         <div className="grid grid-cols-12 h-full">
           <div className="col-span-12 md:col-span-12 h-screen">
-            <div className="h-full overflow-y-auto pt-12">
+            <div className="h-full overflow-y-auto pt-20">
               <Component {...pageProps} />
             </div>
           </div>
