@@ -95,6 +95,7 @@ class MyDocument extends Document {
             sizes="16x16"
             href="/static/icons/favicon-16x16.png"
           />
+          <link rel="icon" href="/favicon.ico" />
 
           {/* Socials */}
           <meta name="twitter:card" content="summary" />

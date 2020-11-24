@@ -5,7 +5,6 @@ export default function Courses() {
     <div>
       <Head>
         <title>Courses | CodingCatDev</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto">
