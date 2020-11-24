@@ -1,145 +1,177 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { CSSTransition } from "react-transition-group";
-import classNames from "classnames";
-
-const AppSubmenu = (props) => {
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  const onMenuItemClick = (event, item, index) => {
-    //avoid processing disabled items
-    if (item.disabled) {
-      event.preventDefault();
-      return true;
-    }
-
-    //execute command
-    if (item.command) {
-      item.command({ originalEvent: event, item: item });
-    }
-
-    if (index === activeIndex) setActiveIndex(null);
-    else setActiveIndex(index);
-
-    if (props.onMenuItemClick) {
-      props.onMenuItemClick({
-        originalEvent: event,
-        item: item,
-      });
-    }
-  };
-
-  const renderLinkContent = (item) => {
-    let submenuIcon = item.items && (
-      <i className="pi pi-fw pi-angle-down menuitem-toggle-icon"></i>
-    );
-    let badge = item.badge && (
-      <span className="menuitem-badge">{item.badge}</span>
-    );
-
-    return (
-      <React.Fragment>
-        <i className={item.icon}></i>
-        <span>{item.label}</span>
-        {submenuIcon}
-        {badge}
-      </React.Fragment>
-    );
-  };
-
-  const renderLink = (item, i) => {
-    let content = renderLinkContent(item);
-
-    if (item.to) {
-      return (
-        <Link href={item.to}>
-          <a>{content}</a>
-        </Link>
-      );
-    } else {
-      return (
-        <a
-          href={item.url}
-          onClick={(e) => onMenuItemClick(e, item, i)}
-          target={item.target}
-        >
-          {content}
-        </a>
-      );
-    }
-  };
-
-  let items =
-    props.items &&
-    props.items.map((item, i) => {
-      let active = activeIndex === i;
-      let styleClass = classNames(item.badgeStyleClass, {
-        "active-menuitem": active && !item.to,
-      });
-
-      return (
-        <li className={styleClass} key={i}>
-          {item.items && props.root === true && <div className="arrow"></div>}
-          {renderLink(item, i)}
-          <CSSTransition
-            classNames="p-toggleable-content"
-            timeout={{ enter: 1000, exit: 450 }}
-            in={active}
-            unmountOnExit
-          >
-            <AppSubmenu
-              items={item.items}
-              onMenuItemClick={props.onMenuItemClick}
-            />
-          </CSSTransition>
-        </li>
-      );
-    });
-
-  return items ? <ul className={props.className}>{items}</ul> : null;
-};
-
-const menu = [
-  { label: "Blog", icon: "pi pi-fw pi-home", to: "/blog/" },
-  {
-    label: "UI Kit",
-    icon: "pi pi-fw pi-sitemap",
-    items: [
-      {
-        label: "Form Layout",
-        icon: "pi pi-fw pi-id-card",
-        to: "/formlayout",
-      },
-      { label: "Input", icon: "pi pi-fw pi-check-square", to: "/input" },
-      {
-        label: "Float Label",
-        icon: "pi pi-fw pi-bookmark",
-        to: "/floatlabel",
-      },
-      { label: "Button", icon: "pi pi-fw pi-mobile", to: "/button" },
-      { label: "Table", icon: "pi pi-fw pi-table", to: "/table" },
-      { label: "List", icon: "pi pi-fw pi-list", to: "/list" },
-      { label: "Tree", icon: "pi pi-fw pi-share-alt", to: "/tree" },
-      { label: "Panel", icon: "pi pi-fw pi-tablet", to: "/panel" },
-      { label: "Overlay", icon: "pi pi-fw pi-clone", to: "/overlay" },
-      { label: "Menu", icon: "pi pi-fw pi-bars", to: "/menu" },
-      { label: "Message", icon: "pi pi-fw pi-comment", to: "/messages" },
-      { label: "File", icon: "pi pi-fw pi-file", to: "/file" },
-      { label: "Chart", icon: "pi pi-fw pi-chart-bar", to: "/chart" },
-      { label: "Misc", icon: "pi pi-fw pi-circle-off", to: "/misc" },
-    ],
-  },
-];
+import classNameNames from "classnames";
 
 export const AppMenu = (props) => {
   return (
-    <div className="layout-menu-container">
-      <AppSubmenu
-        items={menu}
-        className="layout-menu"
-        onMenuItemClick={props.onMenuItemClick}
-        root={true}
-      />
+    <div className="flex flex-col h-0 flex-1 w-full bg-ccd-primary-700">
+      <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+        <nav
+          className="flex-1 px-2 bg-ccd-primary-800 space-y-1"
+          aria-label="Sidebar"
+        >
+          <a
+            href="#"
+            className="group flex items-center px-2 py-2 text-sm font-medium text-white rounded-md bg-ccd-primary-900"
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-300 group-hover:text-gray-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+            Dashboard
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-ccd-primary-700"
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+              />
+            </svg>
+            Team
+            <span className="ml-auto inline-block py-0.5 px-3 text-xs font-medium rounded-full bg-ccd-primary-900 group-hover:bg-ccd-primary-800">
+              3
+            </span>
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-ccd-primary-700"
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              />
+            </svg>
+            Projects
+            <span className="ml-auto inline-block py-0.5 px-3 text-xs font-medium rounded-full bg-ccd-primary-900 group-hover:bg-ccd-primary-800">
+              4
+            </span>
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-ccd-primary-700"
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Calendar
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-ccd-primary-700"
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
+            </svg>
+            Documents
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-ccd-primary-700"
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            Reports
+            <span className="ml-auto inline-block py-0.5 px-3 text-xs font-medium rounded-full bg-ccd-primary-900 group-hover:bg-ccd-primary-800">
+              12
+            </span>
+          </a>
+        </nav>
+      </div>
+      <div className="flex-shrink-0 flex bg-ccd-primary-700 p-4">
+        <a href="#" className="flex-shrink-0 w-full group block">
+          <div className="flex items-center">
+            <div>
+              <img
+                className="inline-block h-9 w-9 rounded-full"
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-white">Tom Cook</p>
+              <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
+                View profile
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
     </div>
   );
 };

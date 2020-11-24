@@ -11,6 +11,7 @@
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
+    "@tailwindui/react": "^0.1.1",
     "aws-amplify": "^3.3.8",
     "aws-appsync": "^4.0.1",
     "cross-env": "^7.0.2",
@@ -22,7 +23,6 @@
     "primereact": "^5.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-transition-group": "^4.4.1",
     "sass": "^1.29.0",
     "typeface-nunito-sans": "^1.1.13"
   },
