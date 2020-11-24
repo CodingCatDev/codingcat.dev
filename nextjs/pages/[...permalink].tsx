@@ -21,8 +21,8 @@ const postsByPermalink = gql`
 `;
 
 const postsByPostTypePublished = gql`
-  query postsByPostTypePublished {
-    postsByPostTypePublished(sortDirection: DESC, post_type: "post") {
+  query postsByPostTypePublished($post_type: String!) {
+    postsByPostTypePublished(sortDirection: DESC, post_type: $post_type) {
       items {
         id
         post_title
@@ -34,6 +34,7 @@ const postsByPostTypePublished = gql`
     }
   }
 `;
+
 const client = new AWSAppSyncClient({
   url: config.aws_appsync_graphqlEndpoint,
   region: config.aws_appsync_region,
@@ -57,7 +58,7 @@ export default function Post({ post, markdown }) {
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-12 xl:col-span-10">
         <h1>{post.post_title}</h1>
-        <article>{content}</article>
+        <article className="prose lg:prose-xl prose-red">{content}</article>
       </div>
       <div className="col-span-12 xl:col-span-2">
         <div className="bg-white shadow p-3 m-3 rounded-lg">
@@ -72,18 +73,23 @@ export default function Post({ post, markdown }) {
 }
 
 export async function getStaticPaths() {
-  const postData: any = await client.query({
-    query: postsByPostTypePublished,
+  const POSTS = [];
+  ["post", "tutorials", "podcasts"].forEach(async (post_type) => {
+    const postData: any = await client.query({
+      query: postsByPostTypePublished,
+      variables: { post_type },
+    });
+    const posts: any = postData.data.postsByPostTypePublished.items.map(
+      (post) => {
+        return {
+          params: { permalink: post.post_permalink.substring(1).split("/") },
+        };
+      }
+    );
+    POSTS.join(posts);
   });
-  const paths: any = postData.data.postsByPostTypePublished.items.map(
-    (post) => {
-      return {
-        params: { permalink: post.post_permalink.substring(1) },
-      };
-    }
-  );
   return {
-    paths,
+    paths: POSTS,
     fallback: true,
   };
 }
@@ -92,7 +98,7 @@ export async function getStaticProps({ params }) {
   const { permalink } = params;
   const postData: any = await client.query({
     query: postsByPermalink,
-    variables: { post_permalink: `/${permalink}` },
+    variables: { post_permalink: `/${permalink.join("/")}` },
   });
   const post = postData.data.postsByPermalink.items[0];
   const markdown = await renderToString(post.post_content);
