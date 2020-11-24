@@ -7,7 +7,7 @@ import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 import renderToString from "next-mdx-remote/render-to-string";
 import hydrate from "next-mdx-remote/hydrate";
 
-import RecentPosts from "../components/RecentPosts";
+import RecentPostsList from "../components/RecentPostsList";
 
 const postsByPermalink = gql`
   query postsByPermalink($post_permalink: String!) {
