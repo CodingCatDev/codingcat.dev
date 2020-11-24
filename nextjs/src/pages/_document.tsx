@@ -10,6 +10,8 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <link rel="canonical" href="https://codingcat.dev/" />
+          <link rel="shortlink" href="https://codingcat.dev/" />
           <meta name="application-name" content="CodingCatDev" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta
