@@ -18,11 +18,11 @@ readline.question("Enter Table Name: ", (tableName) => {
   // API-ta3xuq6qtfbxtasib7i52xbn7e-dev
   console.log("Importing data into DynamoDB. Please wait.");
   var posts = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "./tutorials.json"), "utf8")
+    fs.readFileSync(path.join(__dirname, "./podcasts.json"), "utf8")
   );
   var postsMd = JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, "../markdown/tutorials/_tutorials.json"),
+      path.join(__dirname, "../markdown/podcasts/_podcasts.json"),
       "utf8"
     )
   );

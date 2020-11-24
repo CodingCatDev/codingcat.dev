@@ -4,6 +4,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 module.exports = withBundleAnalyzer({
   images: {
     loader: "cloudinary",
-    path: "https://res.cloudinary.com/ajonp/images/",
+    path: "https://media.codingcat.dev/images/",
   },
 });

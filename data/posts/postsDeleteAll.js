@@ -1,4 +1,4 @@
-const TABLE = process.env.ATLAS_TABLE || "Post-ta3xuq6qtfbxtasib7i52xbn7e-dev";
+const TABLE = process.env.ATLAS_TABLE || "API-ta3xuq6qtfbxtasib7i52xbn7e-dev";
 const PROFILE = process.env.PROFILE || "default";
 
 var AWS = require("aws-sdk");

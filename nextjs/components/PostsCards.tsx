@@ -53,14 +53,25 @@ export default function PostsCards({ post_type }) {
           <div>
             <Link href={post.post_permalink}>
               <a>
-                <Image
-                  src={post.post_thumbnail}
-                  alt={post.post_title}
-                  width="480"
-                  height="270"
-                  layout="responsive"
-                  className="rounded"
-                />
+                {post_type === "podcasts" ? (
+                  <Image
+                    src={post.post_thumbnail}
+                    alt={post.post_title}
+                    width="150"
+                    height="150"
+                    layout="responsive"
+                    className="rounded"
+                  />
+                ) : (
+                  <Image
+                    src={post.post_thumbnail}
+                    alt={post.post_title}
+                    width="480"
+                    height="270"
+                    layout="responsive"
+                    className="rounded"
+                  />
+                )}
               </a>
             </Link>
           </div>
