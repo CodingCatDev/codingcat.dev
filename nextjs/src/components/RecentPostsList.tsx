@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 
-import config from "../configureAmplify";
+import config from "../../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 

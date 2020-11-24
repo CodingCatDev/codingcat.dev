@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import React, { useState, useEffect, useRef } from "react";
-import "../configureAmplify";
+import "../../configureAmplify";
 import { Transition } from "@tailwindui/react";
 
 import OutsideClick from "../components/OutsideClick";

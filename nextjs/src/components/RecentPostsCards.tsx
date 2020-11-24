@@ -3,13 +3,17 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 
-import config from "../configureAmplify";
+import config from "../../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 
 const postsByPostTypePublished = gql`
-  query postsByPostTypePublished($post_type: String!) {
-    postsByPostTypePublished(sortDirection: DESC, post_type: $post_type) {
+  query postsByPostTypePublished($postType: String!) {
+    postsByPostTypePublished(
+      sortDirection: DESC
+      limit: 3
+      post_type: $postType
+    ) {
       items {
         id
         post_title
@@ -21,6 +25,7 @@ const postsByPostTypePublished = gql`
     }
   }
 `;
+
 const client = new AWSAppSyncClient({
   url: config.aws_appsync_graphqlEndpoint,
   region: config.aws_appsync_region,
@@ -34,14 +39,14 @@ const client = new AWSAppSyncClient({
   },
 });
 
-export default function PostsCards({ post_type }) {
+export default function Home({ postType }) {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetchPosts();
     async function fetchPosts() {
       const postData: any = await client.query({
         query: postsByPostTypePublished,
-        variables: { post_type },
+        variables: { postType },
       });
       setPosts(postData.data.postsByPostTypePublished.items);
     }
@@ -53,33 +58,20 @@ export default function PostsCards({ post_type }) {
           <div>
             <Link href={post.post_permalink}>
               <a>
-                {post_type === "podcasts" ? (
-                  <Image
-                    src={post.post_thumbnail}
-                    alt={post.post_title}
-                    width="150"
-                    height="150"
-                    layout="responsive"
-                    className="rounded"
-                  />
-                ) : (
-                  <Image
-                    src={post.post_thumbnail}
-                    alt={post.post_title}
-                    width="480"
-                    height="270"
-                    layout="responsive"
-                    className="rounded"
-                  />
-                )}
+                <Image
+                  src={post.post_thumbnail}
+                  alt={post.post_title}
+                  width="480"
+                  height="270"
+                  layout="responsive"
+                  className="rounded cursor-pointer"
+                />
               </a>
             </Link>
           </div>
           <div className="mt-6">
             <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
-              <Link href={post.post_permalink}>
-                <a>{post.post_title}</a>
-              </Link>
+              {post.post_title}
             </p>
             <p className="text-sm text-gray-600 font-hairline">
               {post.post_excerpt}

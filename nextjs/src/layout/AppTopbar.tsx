@@ -201,9 +201,9 @@ export const AppTopbar = (props) => {
               </Link>
             </div>
             <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-              <ActiveLink activeClassName="bg-ccd-primary-900" href="/blog">
+              <ActiveLink activeClassName="bg-ccd-primary-900" href="/courses">
                 <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
-                  Blog
+                  Courses
                 </a>
               </ActiveLink>
               <ActiveLink
@@ -214,9 +214,22 @@ export const AppTopbar = (props) => {
                   Tutorials
                 </a>
               </ActiveLink>
+              <ActiveLink activeClassName="bg-ccd-primary-900" href="/blog">
+                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+                  Blog
+                </a>
+              </ActiveLink>
               <ActiveLink activeClassName="bg-ccd-primary-900" href="/podcasts">
                 <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
                   Podcasts
+                </a>
+              </ActiveLink>
+              <ActiveLink
+                activeClassName="bg-ccd-primary-900"
+                href="/community"
+              >
+                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+                  Community
                 </a>
               </ActiveLink>
             </div>

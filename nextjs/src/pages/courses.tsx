@@ -1,16 +1,15 @@
 import Head from "next/head";
-import PostsCards from "../components/PostsCards";
 
-export default function Tutorials() {
+export default function Courses() {
   return (
     <div>
       <Head>
-        <title>Blog | CodingCatDev</title>
+        <title>Courses | CodingCatDev</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto">
-        <PostsCards post_type={"podcasts"} />
+        Courses coming soon
       </main>
 
       <footer></footer>

@@ -1,6 +1,8 @@
-import { API } from "aws-amplify";
+import Head from "next/head";
+import DefaultErrorPage from "next/error";
+
 import { useRouter } from "next/router";
-import config from "../configureAmplify";
+import config from "../../configureAmplify";
 import gql from "graphql-tag";
 import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
 
@@ -53,6 +55,18 @@ export default function Post({ post, markdown }) {
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
   }
+
+  if (!post) {
+    return (
+      <>
+        <Head>
+          <meta name="robots" content="noindex" />
+        </Head>
+        <DefaultErrorPage statusCode={404} />
+      </>
+    );
+  }
+
   const content = hydrate(markdown);
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -100,8 +114,10 @@ export async function getStaticProps({ params }) {
     query: postsByPermalink,
     variables: { post_permalink: `/${permalink.join("/")}` },
   });
-  const post = postData.data.postsByPermalink.items[0];
-  const markdown = await renderToString(post.post_content);
+  const post = postData.data.postsByPermalink.items[0]
+    ? postData.data.postsByPermalink.items[0]
+    : null;
+  const markdown = post ? await renderToString(post.post_content) : null;
   return {
     props: {
       post,

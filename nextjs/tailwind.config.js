@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ["./pages/**/*.tsx", "./components/**/*.tsx"],
+  purge: ["./src/**/*.{js,mdx,jsx,tsx}", './next.config.js'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
