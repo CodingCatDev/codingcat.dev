@@ -3,9 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
-      sans: ["nunito"],
-      serif: ["nunito"],
-      mono: ["nunito"],
+      sans: ["nunito", 'ui-sans-serif'],
+      serif: ["nunito", 'ui-serif'],
+      mono: ["nunito", 'ui-monospace'],
     },
     extend: {
       colors: {

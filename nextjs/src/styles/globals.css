@@ -4,5 +4,7 @@
 
 @font-face {
   font-family: nunito;
+  font-style: normal;
+  font-weight: 600;
   src: url(../../node_modules/typeface-nunito-sans/files/nunito-sans-latin-600.woff);
 }
