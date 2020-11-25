@@ -1,8 +1,0 @@
-{
-    "Version": 5,
-    "ElasticsearchWarning": true,
-    "StackMapping": {
-        "QuerypostsByStatusPublishResolver": "Post",
-        "QuerypostsByPermalinkResolver": "Post"
-    }
-}
