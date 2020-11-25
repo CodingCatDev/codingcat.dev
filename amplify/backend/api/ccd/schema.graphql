@@ -79,6 +79,7 @@ type API
   site_title: String
 
   user_username: String
+  user_email: String
   user_sites: [ID!]
   user_posts: [ID!]
   user_user: [ID!]
@@ -90,40 +91,40 @@ type API
   category_description: String
 }
 
-# type vodAsset
-#   @model(subscriptions: { level: public })
-#   @auth(
-#     rules: [
-#       {
-#         allow: groups
-#         groups: ["Admin"]
-#         operations: [create, update, delete, read]
-#       }
-#       { allow: private, operations: [read] }
-#     ]
-#   ) {
-#   id: ID!
-#   title: String!
-#   description: String!
+type vodAsset
+  @model(subscriptions: { level: public })
+  @auth(
+    rules: [
+      {
+        allow: groups
+        groups: ["Admin"]
+        operations: [create, update, delete, read]
+      }
+      { allow: private, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  title: String!
+  description: String!
 
-#   #DO NOT EDIT
-#   video: videoObject @connection
-# }
+  # DO NOT EDIT
+  video: videoObject @connection
+}
 
-# #DO NOT EDIT
-# type videoObject
-#   @model
-#   @auth(
-#     rules: [
-#       {
-#         allow: groups
-#         groups: ["Admin"]
-#         operations: [create, update, delete, read]
-#       }
-#       { allow: private, operations: [read] }
-#     ]
-#   ) {
-#   id: ID!
+# DO NOT EDIT
+type videoObject
+  @model
+  @auth(
+    rules: [
+      {
+        allow: groups
+        groups: ["Admin"]
+        operations: [create, update, delete, read]
+      }
+      { allow: private, operations: [read] }
+    ]
+  ) {
+  id: ID!
 
-#   token: String @function(name: "ccdvod-{env}-tokenGen")
-# }
+  token: String @function(name: "ccdvod-{env}-tokenGen")
+}
