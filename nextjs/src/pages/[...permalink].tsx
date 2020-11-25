@@ -11,46 +11,7 @@ import hydrate from "next-mdx-remote/hydrate";
 
 import RecentPostsList from "../components/RecentPostsList";
 
-const postsByPermalink = gql`
-  query postsByPermalink($post_permalink: String!) {
-    postsByPermalink(post_permalink: $post_permalink) {
-      items {
-        post_title
-        post_content
-      }
-    }
-  }
-`;
-
-const postsByPostTypePublished = gql`
-  query postsByPostTypePublished($post_type: String!) {
-    postsByPostTypePublished(sortDirection: DESC, post_type: $post_type) {
-      items {
-        id
-        post_title
-        post_thumbnail
-        post_publish_datetime
-        post_excerpt
-        post_permalink
-      }
-    }
-  }
-`;
-
-const client = new AWSAppSyncClient({
-  url: config.aws_appsync_graphqlEndpoint,
-  region: config.aws_appsync_region,
-  auth: {
-    type: AUTH_TYPE.API_KEY,
-    apiKey: config.aws_appsync_apiKey,
-  },
-  disableOffline: true,
-  offlineConfig: {
-    keyPrefix: "public",
-  },
-});
-
-export default function Post({ post, markdown }) {
+export default function Post({ post, markdown, recentPosts }) {
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
@@ -79,7 +40,7 @@ export default function Post({ post, markdown }) {
           <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
             Recent Posts
           </p>
-          <RecentPostsList />
+          <RecentPostsList recentPosts={recentPosts} />
         </div>
       </div>
     </div>
@@ -87,6 +48,32 @@ export default function Post({ post, markdown }) {
 }
 
 export async function getStaticPaths() {
+  const client = new AWSAppSyncClient({
+    url: config.aws_appsync_graphqlEndpoint,
+    region: config.aws_appsync_region,
+    auth: {
+      type: AUTH_TYPE.API_KEY,
+      apiKey: config.aws_appsync_apiKey,
+    },
+    disableOffline: true,
+    offlineConfig: {
+      keyPrefix: "public",
+    },
+  });
+  const postsByPostTypePublished = gql`
+    query postsByPostTypePublished($post_type: String!) {
+      postsByPostTypePublished(sortDirection: DESC, post_type: $post_type) {
+        items {
+          id
+          post_title
+          post_thumbnail
+          post_publish_datetime
+          post_excerpt
+          post_permalink
+        }
+      }
+    }
+  `;
   const POSTS = [];
   ["post", "tutorials", "podcasts"].forEach(async (post_type) => {
     const postData: any = await client.query({
@@ -109,6 +96,28 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
+  const client = new AWSAppSyncClient({
+    url: config.aws_appsync_graphqlEndpoint,
+    region: config.aws_appsync_region,
+    auth: {
+      type: AUTH_TYPE.API_KEY,
+      apiKey: config.aws_appsync_apiKey,
+    },
+    disableOffline: true,
+    offlineConfig: {
+      keyPrefix: "public",
+    },
+  });
+  const postsByPermalink = gql`
+    query postsByPermalink($post_permalink: String!) {
+      postsByPermalink(post_permalink: $post_permalink) {
+        items {
+          post_title
+          post_content
+        }
+      }
+    }
+  `;
   const { permalink } = params;
   const postData: any = await client.query({
     query: postsByPermalink,
@@ -118,10 +127,42 @@ export async function getStaticProps({ params }) {
     ? postData.data.postsByPermalink.items[0]
     : null;
   const markdown = post ? await renderToString(post.post_content) : null;
+
+  const postsByPostTypePublished = gql`
+    query postsByPostTypePublished($post_type: String!) {
+      postsByPostTypePublished(
+        sortDirection: DESC
+        limit: 3
+        post_type: $post_type
+      ) {
+        items {
+          id
+          post_title
+          post_thumbnail
+          post_publish_datetime
+          post_excerpt
+          post_permalink
+        }
+      }
+    }
+  `;
+
+  const recentPosts = { post: [], tutorials: [], podcasts: [] };
+  await Promise.all(
+    Object.keys(recentPosts).map(async (post_type) => {
+      const postData: any = await client.query({
+        query: postsByPostTypePublished,
+        variables: { post_type },
+      });
+      recentPosts[post_type] = postData.data.postsByPostTypePublished.items;
+    })
+  );
+
   return {
     props: {
       post,
       markdown,
+      recentPosts,
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in

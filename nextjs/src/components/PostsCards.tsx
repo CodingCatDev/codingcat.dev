@@ -1,51 +1,7 @@
-import { useEffect, useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-
-import config from "../../configureAmplify";
-import gql from "graphql-tag";
-import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
-
-const postsByPostTypePublished = gql`
-  query postsByPostTypePublished($post_type: String!) {
-    postsByPostTypePublished(sortDirection: DESC, post_type: $post_type) {
-      items {
-        id
-        post_title
-        post_thumbnail
-        post_publish_datetime
-        post_excerpt
-        post_permalink
-      }
-    }
-  }
-`;
-const client = new AWSAppSyncClient({
-  url: config.aws_appsync_graphqlEndpoint,
-  region: config.aws_appsync_region,
-  auth: {
-    type: AUTH_TYPE.API_KEY,
-    apiKey: config.aws_appsync_apiKey,
-  },
-  disableOffline: true,
-  offlineConfig: {
-    keyPrefix: "public",
-  },
-});
-
-export default function PostsCards({ post_type }) {
-  const [posts, setPosts] = useState([]);
-  useEffect(() => {
-    fetchPosts();
-    async function fetchPosts() {
-      const postData: any = await client.query({
-        query: postsByPostTypePublished,
-        variables: { post_type },
-      });
-      setPosts(postData.data.postsByPostTypePublished.items);
-    }
-  }, []);
+import PropTypes from "prop-types";
+function PostsCards({ posts, post_type }) {
   return (
     <>
       {posts.map((post) => (
@@ -90,3 +46,8 @@ export default function PostsCards({ post_type }) {
     </>
   );
 }
+PostsCards.propTypes = {
+  recentPosts: PropTypes.object.isRequired,
+};
+
+export default PostsCards;
