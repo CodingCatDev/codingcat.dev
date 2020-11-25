@@ -14,7 +14,7 @@
     "@aws-amplify/ui-react": "^0.2.30",
     "@tailwindcss/typography": "^0.3.1",
     "@tailwindui/react": "^0.1.1",
-    "aws-amplify": "^3.3.8",
+    "aws-amplify": "^3.3.10",
     "aws-appsync": "^4.0.1",
     "cross-env": "^7.0.2",
     "graphql-tag": "^2.11.0",
