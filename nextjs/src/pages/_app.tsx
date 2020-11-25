@@ -1,9 +1,7 @@
 import "../styles/globals.css";
-import React, { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import "../../configureAmplify";
 import { Transition } from "@tailwindui/react";
-
-import OutsideClick from "../components/OutsideClick";
 
 import { AppTopbar } from "../layout/AppTopbar";
 import { AppMenu } from "../layout/AppMenu";
@@ -12,7 +10,6 @@ function MyApp({ Component, pageProps }) {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
   let menuClick = false;
-  const sidebar = useRef();
 
   const onSidebarClick = () => {
     menuClick = true;

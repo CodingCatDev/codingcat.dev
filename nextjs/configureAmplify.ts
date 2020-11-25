@@ -1,4 +1,3 @@
-import Amplify from "aws-amplify";
 import config from "./src/aws-exports.js";
 
 // import CdkBackendStack from "../src/cdk-exports.json";
@@ -16,7 +15,5 @@ const combinedConfig = {
   ...config,
   // ...CDKConfig,
 };
-
-Amplify.configure(combinedConfig);
 
 export default combinedConfig;

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { InputText } from "primereact/inputtext";
+import { useState } from "react";
 import Link from "next/link";
 import ActiveLink from "../components/ActiveLink";
 import { Transition } from "@tailwindui/react";
