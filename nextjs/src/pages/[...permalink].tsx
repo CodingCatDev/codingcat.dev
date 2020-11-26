@@ -2,8 +2,7 @@ import Head from "next/head";
 import DefaultErrorPage from "next/error";
 import { useRouter } from "next/router";
 
-import * as admin from "firebase-admin";
-import { serviceAccountKey, config } from "../config/firebase";
+import admin from "../util/firebaseAdmin";
 
 import renderToString from "next-mdx-remote/render-to-string";
 import hydrate from "next-mdx-remote/hydrate";
@@ -57,13 +56,6 @@ export default function Post({ post, markdown, recentPosts }) {
 }
 
 export async function getStaticPaths() {
-  if (admin.apps.length === 0) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey),
-      databaseURL: config.databaseURL,
-      storageBucket: config.storageBucket,
-    });
-  }
   const POSTS = [];
   ["post", "tutorials", "podcasts"].forEach(async (postType) => {
     const posts = await admin
@@ -86,14 +78,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  if (admin.apps.length === 0) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey),
-      databaseURL: config.databaseURL,
-      storageBucket: config.storageBucket,
-    });
-  }
-
   const { permalink } = params;
 
   const posts = await admin

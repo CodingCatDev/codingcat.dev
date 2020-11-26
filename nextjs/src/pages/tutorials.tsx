@@ -1,8 +1,6 @@
 import Head from "next/head";
 import PostsCards from "../components/PostsCards";
-import * as admin from "firebase-admin";
-
-import { serviceAccountKey, config } from "../config/firebase";
+import admin from "../util/firebaseAdmin";
 
 export default function Tutorials({ posts }) {
   return (
@@ -21,14 +19,6 @@ export default function Tutorials({ posts }) {
 }
 
 export async function getStaticProps() {
-  if (admin.apps.length === 0) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey),
-      databaseURL: config.databaseURL,
-      storageBucket: config.storageBucket,
-    });
-  }
-
   const postDocs = await admin
     .firestore()
     .collection("tutorials")
