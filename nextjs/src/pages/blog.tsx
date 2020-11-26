@@ -1,7 +1,7 @@
 import Head from "next/head";
 import PostsCards from "../components/PostsCards";
 
-import admin from "../util/firebaseAdmin";
+import admin from "../utils/firebaseAdmin";
 
 export default function Blog({ posts }) {
   return (

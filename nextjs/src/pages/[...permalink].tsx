@@ -2,7 +2,7 @@ import Head from "next/head";
 import DefaultErrorPage from "next/error";
 import { useRouter } from "next/router";
 
-import admin from "../util/firebaseAdmin";
+import admin from "../utils/firebaseAdmin";
 
 import renderToString from "next-mdx-remote/render-to-string";
 import hydrate from "next-mdx-remote/hydrate";

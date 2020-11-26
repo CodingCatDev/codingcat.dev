@@ -1,5 +1,5 @@
 import Head from "next/head";
-import admin from "../util/firebaseAdmin";
+import admin from "../utils/firebaseAdmin";
 
 import RecentPostsCards from "../components/RecentPostsCards";
 
