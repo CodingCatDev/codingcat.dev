@@ -11,7 +11,7 @@ export default function Blog({ posts }) {
         <title>Blog | CodingCatDev</title>
       </Head>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto">
+      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto mt-16">
         <PostsCards post_type={"post"} posts={posts} />
       </main>
 

@@ -1,11 +1,11 @@
 module.exports = {
-  purge: ["./src/**/*.{js,mdx,jsx,tsx}", './next.config.js'],
+  purge: ["./src/**/*.{js,mdx,jsx,tsx}", "./next.config.js"],
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
-      sans: ["nunito", 'ui-sans-serif'],
-      serif: ["nunito", 'ui-serif'],
-      mono: ["nunito", 'ui-monospace'],
+      sans: ["nunito", "ui-sans-serif"],
+      serif: ["nunito", "ui-serif"],
+      mono: ["nunito", "ui-monospace"],
     },
     extend: {
       colors: {
@@ -88,7 +88,5 @@ module.exports = {
     //   },
     // }),
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")],
 };

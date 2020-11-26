@@ -1,13 +1,10 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
 
-const AmplifyLogin = dynamic(
-  () => import("../components/amplify/AmplifyLogin"),
-  {
-    ssr: false,
-    loading: () => <p>Catching the Login...</p>,
-  }
-);
+const Login = dynamic(() => import("../components/Login"), {
+  ssr: false,
+  loading: () => <p>Catching the Login...</p>,
+});
 
 export default function Admin() {
   return (
@@ -18,7 +15,7 @@ export default function Admin() {
       </Head>
 
       <main>
-        <AmplifyLogin />
+        <Login />
       </main>
 
       <footer></footer>
