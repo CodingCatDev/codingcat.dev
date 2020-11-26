@@ -1,7 +1,6 @@
 import Head from "next/head";
-import gql from "graphql-tag";
-import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
-import config from "../../configureAmplify";
+import * as admin from "firebase-admin";
+import { serviceAccountKey, config } from "../config/firebase";
 
 import RecentPostsCards from "../components/RecentPostsCards";
 
@@ -22,45 +21,26 @@ export default function Home({ recentPosts }) {
 }
 
 export async function getStaticProps({ params }) {
-  const client = new AWSAppSyncClient({
-    url: config.aws_appsync_graphqlEndpoint,
-    region: config.aws_appsync_region,
-    auth: {
-      type: AUTH_TYPE.API_KEY,
-      apiKey: config.aws_appsync_apiKey,
-    },
-    disableOffline: true,
-    offlineConfig: {
-      keyPrefix: "public",
-    },
-  });
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccountKey),
+      databaseURL: config.databaseURL,
+      storageBucket: config.storageBucket,
+    });
+  }
 
-  const postsByPostTypePublished = gql`
-    query postsByPostTypePublished($post_type: String!) {
-      postsByPostTypePublished(
-        sortDirection: DESC
-        limit: 3
-        post_type: $post_type
-      ) {
-        items {
-          id
-          post_title
-          post_thumbnail
-          post_publish_datetime
-          post_excerpt
-          post_permalink
-        }
-      }
-    }
-  `;
   const recentPosts = { post: [], tutorials: [], podcasts: [] };
   await Promise.all(
-    Object.keys(recentPosts).map(async (post_type) => {
-      const postData: any = await client.query({
-        query: postsByPostTypePublished,
-        variables: { post_type },
-      });
-      recentPosts[post_type] = postData.data.postsByPostTypePublished.items;
+    Object.keys(recentPosts).map(async (postType) => {
+      const posts = await admin
+        .firestore()
+        .collection(postType === "post" ? "posts" : postType)
+        .orderBy("post_publish_datetime", "desc")
+        .limit(3)
+        .get();
+      for (const doc of posts.docs) {
+        recentPosts[postType].push(doc.data());
+      }
     })
   );
 

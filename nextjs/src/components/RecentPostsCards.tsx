@@ -6,7 +6,10 @@ function RecentPostsCards({ recentPosts }) {
   return (
     <>
       {recentPosts.tutorials.map((post) => (
-        <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
+        <div
+          className="bg-white shadow p-3 m-3 rounded"
+          key={post.post_basename}
+        >
           <div>
             <Link href={post.post_permalink}>
               <a>
@@ -32,7 +35,10 @@ function RecentPostsCards({ recentPosts }) {
         </div>
       ))}
       {recentPosts.post.map((post) => (
-        <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
+        <div
+          className="bg-white shadow p-3 m-3 rounded"
+          key={post.post_basename}
+        >
           <div>
             <Link href={post.post_permalink}>
               <a>
@@ -58,7 +64,10 @@ function RecentPostsCards({ recentPosts }) {
         </div>
       ))}
       {recentPosts.podcasts.map((post) => (
-        <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
+        <div
+          className="bg-white shadow p-3 m-3 rounded"
+          key={post.post_basename}
+        >
           <div>
             <Link href={post.post_permalink}>
               <a>

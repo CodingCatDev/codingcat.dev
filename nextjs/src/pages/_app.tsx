@@ -1,6 +1,5 @@
 import "../styles/globals.css";
 import { useState } from "react";
-import "../../configureAmplify";
 import { Transition } from "@tailwindui/react";
 
 import { AppTopbar } from "../layout/AppTopbar";

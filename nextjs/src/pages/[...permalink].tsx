@@ -1,13 +1,14 @@
 import Head from "next/head";
 import DefaultErrorPage from "next/error";
-
 import { useRouter } from "next/router";
-import config from "../../configureAmplify";
-import gql from "graphql-tag";
-import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
+
+import * as admin from "firebase-admin";
+import { serviceAccountKey, config } from "../config/firebase";
 
 import renderToString from "next-mdx-remote/render-to-string";
 import hydrate from "next-mdx-remote/hydrate";
+import parse from "remark-parse";
+import remark2react from "remark-react";
 
 import RecentPostsList from "../components/RecentPostsList";
 
@@ -40,7 +41,15 @@ export default function Post({ post, markdown, recentPosts }) {
           <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
             Recent Posts
           </p>
-          <RecentPostsList recentPosts={recentPosts} />
+          <RecentPostsList posts={recentPosts.post} />
+          <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
+            Recent Tutorials
+          </p>
+          <RecentPostsList posts={recentPosts.tutorials} />
+          <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
+            Recent Podcasts
+          </p>
+          <RecentPostsList posts={recentPosts.podcasts} />
         </div>
       </div>
     </div>
@@ -48,46 +57,27 @@ export default function Post({ post, markdown, recentPosts }) {
 }
 
 export async function getStaticPaths() {
-  const client = new AWSAppSyncClient({
-    url: config.aws_appsync_graphqlEndpoint,
-    region: config.aws_appsync_region,
-    auth: {
-      type: AUTH_TYPE.API_KEY,
-      apiKey: config.aws_appsync_apiKey,
-    },
-    disableOffline: true,
-    offlineConfig: {
-      keyPrefix: "public",
-    },
-  });
-  const postsByPostTypePublished = gql`
-    query postsByPostTypePublished($post_type: String!) {
-      postsByPostTypePublished(sortDirection: DESC, post_type: $post_type) {
-        items {
-          id
-          post_title
-          post_thumbnail
-          post_publish_datetime
-          post_excerpt
-          post_permalink
-        }
-      }
-    }
-  `;
-  const POSTS = [];
-  ["post", "tutorials", "podcasts"].forEach(async (post_type) => {
-    const postData: any = await client.query({
-      query: postsByPostTypePublished,
-      variables: { post_type },
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccountKey),
+      databaseURL: config.databaseURL,
+      storageBucket: config.storageBucket,
     });
-    const posts: any = postData.data.postsByPostTypePublished.items.map(
-      (post) => {
-        return {
-          params: { permalink: post.post_permalink.substring(1).split("/") },
-        };
-      }
-    );
-    POSTS.join(posts);
+  }
+  const POSTS = [];
+  ["post", "tutorials", "podcasts"].forEach(async (postType) => {
+    const posts = await admin
+      .firestore()
+      .collection(postType === "post" ? "posts" : postType)
+      .orderBy("post_publish_datetime", "desc")
+      .get();
+    for (const doc of posts.docs) {
+      POSTS.push({
+        params: {
+          permalink: doc.data().post_permalink.substring(1).split("/"),
+        },
+      });
+    }
   });
   return {
     paths: POSTS,
@@ -96,65 +86,47 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const client = new AWSAppSyncClient({
-    url: config.aws_appsync_graphqlEndpoint,
-    region: config.aws_appsync_region,
-    auth: {
-      type: AUTH_TYPE.API_KEY,
-      apiKey: config.aws_appsync_apiKey,
-    },
-    disableOffline: true,
-    offlineConfig: {
-      keyPrefix: "public",
-    },
-  });
-  const postsByPermalink = gql`
-    query postsByPermalink($post_permalink: String!) {
-      postsByPermalink(post_permalink: $post_permalink) {
-        items {
-          post_title
-          post_content
-        }
-      }
-    }
-  `;
-  const { permalink } = params;
-  const postData: any = await client.query({
-    query: postsByPermalink,
-    variables: { post_permalink: `/${permalink.join("/")}` },
-  });
-  const post = postData.data.postsByPermalink.items[0]
-    ? postData.data.postsByPermalink.items[0]
-    : null;
-  const markdown = post ? await renderToString(post.post_content) : null;
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccountKey),
+      databaseURL: config.databaseURL,
+      storageBucket: config.storageBucket,
+    });
+  }
 
-  const postsByPostTypePublished = gql`
-    query postsByPostTypePublished($post_type: String!) {
-      postsByPostTypePublished(
-        sortDirection: DESC
-        limit: 3
-        post_type: $post_type
-      ) {
-        items {
-          id
-          post_title
-          post_thumbnail
-          post_publish_datetime
-          post_excerpt
-          post_permalink
-        }
-      }
-    }
-  `;
+  const { permalink } = params;
+
+  const posts = await admin
+    .firestore()
+    .collection(permalink.length > 1 ? `${permalink[0]}` : "posts")
+    .where("post_permalink", "==", `/${permalink.join("/")}`)
+    .get();
+
+  let postData;
+  for (const doc of posts.docs) {
+    postData = doc.data();
+  }
+  const post = posts.docs.length > 0 ? postData : null;
+  const markdown = post
+    ? await renderToString(postData.post_content, {
+        mdxOptions: {
+          remarkPlugins: [parse, remark2react],
+        },
+      })
+    : null;
 
   const recentPosts = { post: [], tutorials: [], podcasts: [] };
   await Promise.all(
-    Object.keys(recentPosts).map(async (post_type) => {
-      const postData: any = await client.query({
-        query: postsByPostTypePublished,
-        variables: { post_type },
-      });
-      recentPosts[post_type] = postData.data.postsByPostTypePublished.items;
+    Object.keys(recentPosts).map(async (postType) => {
+      const posts = await admin
+        .firestore()
+        .collection(postType === "post" ? "posts" : postType)
+        .orderBy("post_publish_datetime", "desc")
+        .limit(3)
+        .get();
+      for (const doc of posts.docs) {
+        recentPosts[postType].push(doc.data());
+      }
     })
   );
 

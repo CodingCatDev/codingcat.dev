@@ -11,21 +11,13 @@
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
     "category": [],
     "tag": [],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "d502cba6-0ff3-4253-9f7f-182ba3f1a973"
-    ],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["d502cba6-0ff3-4253-9f7f-182ba3f1a973"],
     "secondline_themes_external_embed": [
       "<iframe src=\"https://anchor.fm/purrfect-dev/embed/episodes/Infrastructure-as-Code-with-Pulumi-embr6v\" height=\"180px\" width=\"100%\" frameborder=\"0\" scrolling=\"no\" style=\"width:100%; height:180px;\"></iframe>"
     ],
-    "rank_math_title": [
-      "%title%"
-    ],
-    "pmpro_default_level": [
-      "0"
-    ],
+    "rank_math_title": ["%title%"],
+    "pmpro_default_level": ["0"],
     "preview": "<figure class=\"wp-block-embed-youtube wp-block-embed is-type-video …",
     "content": "\n<figure class=\"wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio\"><div class=\"wp-block-embed__wrapper\"><iframe allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen=\"\" frameborder=\"0\" height=\"360\" src=\"https://www.youtube.com/embed/csOQut3UiTM?feature=oembed\" title=\"1.1 - Infrastructure as Code with Pulumi\" width=\"640\"></iframe></div></figure><iframe frameborder=\"0\" height=\"180px\" scrolling=\"no\" src=\"https://anchor.fm/purrfect-dev/embed/episodes/Infrastructure-as-Code-with-Pulumi-embr6v\" style=\"width: 100%; height: 180px;\" width=\"100%\"></iframe>\n\n**Today we are going to talk with Lee Briggs from Pulumi. Pulumi allows you to create modern Infrastructure as Code, using any cloud using familiar programming languages and tools.**\n\n**The BEST part is that Pulumi is 100% open source.**\n\n**Guest Details**\n\n### **Lee Briggs**\n\n#### **Links**\n\n[<u>**https://www.linkedin.com/in/briggsl/**</u>](https://www.linkedin.com/in/briggsl/)\n\n**General Questions**\n---------------------\n\n**What is Infrastructure as Code (IaC)?**\n\n**Why would you want to adopt IaC?**\n\n- **Who made changes to the code**\n- **Ticket that was linked**\n- **Collaboration**\n- **Documentation**\n\n**Does IaC document your infrastructure?**\n\n**Does IaC allow for solid Dev Ops?**\n\n**Pulumi**\n----------\n\n**What is Pulumi?**\n\n**What makes Pulumi different than**\n\n- **Serverless Framework –** [<u>**https://www.pulumi.com/docs/intro/vs/serverless/** </u>](https://www.pulumi.com/docs/intro/vs/serverless/)\n- **Cloud Formation –** [<u>**https://www.pulumi.com/docs/intro/vs/cloud\\_templates/** </u>](https://www.pulumi.com/docs/intro/vs/cloud_templates/)\n- **Terraform –** [<u>**https://www.pulumi.com/docs/intro/vs/terraform/** </u>](https://www.pulumi.com/docs/intro/vs/terraform/)\n- **Arm**\n\n**Will IaC take longer?**\n\n- **Should it be used for an MVP?**\n- **How large of a team would you have before using IaC?**\n- **Is it worth the time to set up if it is just something quick.**\n\n**Is Pulumi good for single code shops that know only a single language?**\n\n- **Speed to market is easier.**\n- **No need to learn markup language**\n\n**How big is the learning curve of IaC?**\n\n- **Serverless is YAML**\n\n**Pulumi support “ecosystems”**\n\n- **NodeJS**\n- **Go**\n- **.Net**\n\n\n**Purrfect Picks**\n------------------\n\n### **Lee**\n\n**Great examples**\n\n[<u>**https://github.com/pulumi/examples**</u>](https://github.com/pulumi/examples)\n\n[<u>**https://www.pulumi.com/resources/introduction-to-pulumi?utm\\_source=codingcat**</u>](https://www.pulumi.com/resources/introduction-to-pulumi?utm_source=codingcat)\n\n**Queen’s Gambit**\n\n### **Alex**\n\n**FUN Stuff**\n\n[<u>**https://reinvent.awsevents.com/**</u>](https://reinvent.awsevents.com/)\n\n—\n\nThis episode is sponsored by  \n· Anchor: The easiest way to make a podcast. [https://anchor.fm/app](https://anchor.fm/s/115b203c/podcast/sponsor/acugj9/url/https%3A%2F%2Fanchor.fm%2Fapp)\n\n—\n\nSend in a voice message: https://anchor.fm/purrfect-dev/message",
     "iso8601Date": "2020-11-11T18:01:05-05:00",
@@ -41,22 +33,11 @@
     "type": "podcasts",
     "id": 1436,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Amazon Web Services",
-      "Purrfect.dev"
-    ],
-    "tag": [
-      "amplify"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "cea07d79-06ae-4174-91bd-d1ed7b6a6ba7"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Amazon Web Services", "Purrfect.dev"],
+    "tag": ["amplify"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["cea07d79-06ae-4174-91bd-d1ed7b6a6ba7"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb297a1dc1be\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:62:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/kUM8Zcb369U?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -75,19 +56,11 @@
     "type": "podcasts",
     "id": 1438,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev"
-    ],
+    "category": ["Purrfect.dev"],
     "tag": [],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "7cac65f5-41a7-409c-a958-014684d8bd42"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["7cac65f5-41a7-409c-a958-014684d8bd42"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bbaf981bf\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/V66gCW2CrYg?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -106,21 +79,11 @@
     "type": "podcasts",
     "id": 1439,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev"
-    ],
-    "tag": [
-      "cloudinary"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "d152c398-1e39-4b52-ad68-e6a27b4a694e"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Purrfect.dev"],
+    "tag": ["cloudinary"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["d152c398-1e39-4b52-ad68-e6a27b4a694e"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bbf3034e9\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/ODiO4Kxn8bo?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -139,24 +102,11 @@
     "type": "podcasts",
     "id": 1440,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev",
-      "Web"
-    ],
-    "tag": [
-      "angular",
-      "scully.io",
-      "ssg"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "39a8e193-e8cb-40d5-a6ee-e610650043ee"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Purrfect.dev", "Web"],
+    "tag": ["angular", "scully.io", "ssg"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["39a8e193-e8cb-40d5-a6ee-e610650043ee"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bbfd81425\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/mbbOtlc78tw?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -175,22 +125,11 @@
     "type": "podcasts",
     "id": 1441,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev",
-      "Web"
-    ],
-    "tag": [
-      "next.js"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "1658e0e7-2760-4b82-9a1f-5935420062b5"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Purrfect.dev", "Web"],
+    "tag": ["next.js"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["1658e0e7-2760-4b82-9a1f-5935420062b5"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bc0c7a5f4\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/msPNMQrrVTE?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -209,23 +148,11 @@
     "type": "podcasts",
     "id": 1442,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev",
-      "Soft Skills"
-    ],
-    "tag": [
-      "agile",
-      "scrum"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "39573617-d8e1-4989-8e2d-405587168e38"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Purrfect.dev", "Soft Skills"],
+    "tag": ["agile", "scrum"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["39573617-d8e1-4989-8e2d-405587168e38"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bc1c40a58\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/Vz8CXssVsMM?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -244,22 +171,11 @@
     "type": "podcasts",
     "id": 1443,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Content Management System",
-      "Purrfect.dev"
-    ],
-    "tag": [
-      "sanity.io"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "0dcd1cee-343e-45f3-9606-592e7201034f"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Content Management System", "Purrfect.dev"],
+    "tag": ["sanity.io"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["0dcd1cee-343e-45f3-9606-592e7201034f"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bc319f878\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/xs7cZICMtcc?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -278,23 +194,11 @@
     "type": "podcasts",
     "id": 1444,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev"
-    ],
-    "tag": [
-      "cloudinary",
-      "dam",
-      "media"
-    ],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "8d97c562-fecf-4278-a75f-86c660f1c5e3"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "category": ["Purrfect.dev"],
+    "tag": ["cloudinary", "dam", "media"],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["8d97c562-fecf-4278-a75f-86c660f1c5e3"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bc435a0a2\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/4yt2V12gwHA?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -313,19 +217,11 @@
     "type": "podcasts",
     "id": 1445,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev"
-    ],
+    "category": ["Purrfect.dev"],
     "tag": [],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "b2e9027c-72f9-40dc-b471-5dccbe9f72dd"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["b2e9027c-72f9-40dc-b471-5dccbe9f72dd"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bc5d35a1c\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/JYAUlZ0Z8lo?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:480;s:6:\"height\";i:270;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -344,19 +240,11 @@
     "type": "podcasts",
     "id": 1446,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev"
-    ],
+    "category": ["Purrfect.dev"],
     "tag": [],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "104b4fcb-9aa5-40a9-9c75-e5d1c2a33891"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["104b4fcb-9aa5-40a9-9c75-e5d1c2a33891"],
+    "rank_math_title": ["%title%"],
     "rank_math_schema_VideoObject": [
       "a:12:{s:5:\"@type\";s:11:\"VideoObject\";s:8:\"metadata\";a:7:{s:5:\"title\";s:5:\"Video\";s:4:\"type\";s:8:\"template\";s:9:\"shortcode\";s:15:\"s-5fb2bc6c4ff1c\";s:9:\"isPrimary\";b:1;s:23:\"reviewLocationShortcode\";s:24:\"[rank_math_rich_snippet]\";s:8:\"category\";s:12:\"%categories%\";s:4:\"tags\";s:6:\"%tags%\";}s:4:\"name\";s:11:\"%seo_title%\";s:11:\"description\";s:17:\"%seo_description%\";s:10:\"uploadDate\";s:20:\"%date(Y-m-dTH:i:sP)%\";s:12:\"thumbnailUrl\";s:64:\"https://codingcat.dev/wp-content/uploads/2020/11/hqdefault-1.jpg\";s:8:\"embedUrl\";s:56:\"https://www.youtube.com/embed/XWCOknS-d0s?feature=oembed\";s:10:\"contentUrl\";s:0:\"\";s:8:\"duration\";s:0:\"\";s:5:\"width\";i:459;s:6:\"height\";i:344;s:16:\"isFamilyFriendly\";b:1;}"
     ],
@@ -375,19 +263,11 @@
     "type": "podcasts",
     "id": 1447,
     "thumbnail": "/v1603830343/ccd-cloudinary/2811847-1575947269925-83f7270acff2a/2811847-1575947269925-83f7270acff2a-150x150.jpg",
-    "category": [
-      "Purrfect.dev"
-    ],
+    "category": ["Purrfect.dev"],
     "tag": [],
-    "post_format": [
-      "Audio"
-    ],
-    "secondline_imported_guid": [
-      "5aac9078-820e-5d53-a976-50c3bd6e37bb"
-    ],
-    "rank_math_title": [
-      "%title%"
-    ],
+    "post_format": ["Audio"],
+    "secondline_imported_guid": ["5aac9078-820e-5d53-a976-50c3bd6e37bb"],
+    "rank_math_title": ["%title%"],
     "preview": "<iframe frameborder=\"0\" height=\"180px\" scrolling=\"no\" …",
     "content": "\n<iframe frameborder=\"0\" height=\"180px\" scrolling=\"no\" src=\"https://anchor.fm/purrfect-dev/embed/episodes/0-0---The-Purrfect-Beginning-e9hebf\" style=\"width: 100%; height: 180px;\" width=\"100%\"></iframe>\n\n**We are on a mission to provide you with the latest tools and trends, that take you from a house cat to a fierce LION.**\n\n**Even when your code isn’t feline that good, we ensure you’ll get there with the right cat-i-tude.**\n\n**Alright.. Let’s get up and GIT moving..**\n\n**Right Meow!!!**\n\n**Learning how to be a developer is hard, Purrfect.dev will show you how to grow as a developer bit by bit.**\n\n**What We Cover**\n\n- JAMStack (Javascript, API, MarkUp)\n- HTML\n- CSS\n- Gaming (Unity)\n- Mobile\n- AWS, GCP, Azure\n- Serverless\n- Agile\n- Scrum\n- Project and Program Management\n- Showing developers the successful path\n- Quickest way to get PAID\n\n**Links**\n\n???? YouTube: <https://link.ajonp.com/youtube>  \n???? Site: <https://link.ajonp.com/>????  \n???? GitHub: <https://link.ajonp.com/github>  \n????Lessons: <https://link.ajonp.com/lessons>  \n????AJ’s Week in Web: <https://link.ajonp.com/week-in-web>  \n???? Slack: <https://link.ajonp.com/slack>  \n???? Twitter: <https://link.ajonp.com/twitter>  \n???? LinkedIn: <http://link.ajonp.com/linkedin>\n\n—\n\nSend in a voice message: <https://anchor.fm/purrfect-dev/message>",
     "iso8601Date": "2019-12-14T15:26:58-05:00",

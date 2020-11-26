@@ -17,6 +17,7 @@
     "aws-amplify": "^3.3.10",
     "aws-appsync": "^4.0.1",
     "cross-env": "^7.0.2",
+    "firebase-admin": "^9.4.1",
     "graphql-tag": "^2.11.0",
     "next": "10.0.2",
     "next-mdx-remote": "^1.0.0",
@@ -25,6 +26,9 @@
     "primereact": "^5.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "remark-html": "^13.0.1",
+    "remark-parse": "^9.0.0",
+    "remark-react": "^8.0.0",
     "sass": "^1.29.0",
     "typeface-nunito-sans": "^1.1.13"
   },

@@ -2,10 +2,6 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { AmplifyAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 import { AuthState, onAuthUIStateChange } from "@aws-amplify/ui-components";
-import config from "../../../configureAmplify";
-import Amplify from "aws-amplify";
-
-Amplify.configure(config);
 
 export default function AmplifyLogin() {
   const [authState, setAuthState] = useState<AuthState>();
