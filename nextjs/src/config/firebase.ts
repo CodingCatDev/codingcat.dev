@@ -2,7 +2,7 @@ export const serviceAccountKey = {
   type: process.env.FIREBASE_SERVICE_TYPE,
   projectId: process.env.FIREBASE_SERVICE_PROJECT_ID,
   privateKeyId: process.env.FIREBASE_SERVICE_PRIVATE_KEY_ID,
-  privateKey: process.env.FIREBASE_SERVICE_PRIVATE_KEY,
+  privateKey: Buffer.from(`${process.env.FIREBASE_SERVICE_PRIVATE_KEY}`,'base64').toString(),
   clientEmail: process.env.FIREBASE_SERVICE_CLIENT_EMAIL,
   clientOd: process.env.FIREBASE_SERVICE_CLIENT_ID,
   authUri: process.env.FIREBASE_SERVICE_AUTH_URI,
