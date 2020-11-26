@@ -67,3 +67,5 @@ node_modules/
 
 # firebase secrets
 serviceAccountKey.json
+
+.DS_Store
