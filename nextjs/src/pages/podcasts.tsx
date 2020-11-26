@@ -1,9 +1,8 @@
 import Head from "next/head";
 import PostsCards from "../components/PostsCards";
+import * as admin from "firebase-admin";
 
-import config from "../../configureAmplify";
-import gql from "graphql-tag";
-import AWSAppSyncClient, { AUTH_TYPE } from "aws-appsync";
+import { serviceAccountKey, config } from "../config/firebase";
 
 export default function Podcasts({ posts }) {
   return (
@@ -22,43 +21,25 @@ export default function Podcasts({ posts }) {
 }
 
 export async function getStaticProps() {
-  const client = new AWSAppSyncClient({
-    url: config.aws_appsync_graphqlEndpoint,
-    region: config.aws_appsync_region,
-    auth: {
-      type: AUTH_TYPE.API_KEY,
-      apiKey: config.aws_appsync_apiKey,
-    },
-    disableOffline: true,
-    offlineConfig: {
-      keyPrefix: "public",
-    },
-  });
+  if (admin.apps.length === 0) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccountKey),
+      databaseURL: config.databaseURL,
+      storageBucket: config.storageBucket,
+    });
+  }
 
-  const postsByPostTypePublished = gql`
-    query postsByPostTypePublished($post_type: String!) {
-      postsByPostTypePublished(
-        sortDirection: DESC
-        limit: 3
-        post_type: $post_type
-      ) {
-        items {
-          id
-          post_title
-          post_thumbnail
-          post_publish_datetime
-          post_excerpt
-          post_permalink
-        }
-      }
-    }
-  `;
+  const postDocs = await admin
+    .firestore()
+    .collection("podcasts")
+    .orderBy("post_publish_datetime", "desc")
+    .get();
 
-  const postData: any = await client.query({
-    query: postsByPostTypePublished,
-    variables: { post_type: "podcasts" },
-  });
-  const posts = postData.data.postsByPostTypePublished.items;
+  const posts = [];
+  for (const doc of postDocs.docs) {
+    posts.push(doc.data());
+  }
+
   return {
     props: {
       posts,

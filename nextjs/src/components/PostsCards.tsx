@@ -5,7 +5,10 @@ function PostsCards({ posts, post_type }) {
   return (
     <>
       {posts.map((post) => (
-        <div className="bg-white shadow p-3 m-3 rounded" key={post.id}>
+        <div
+          className="bg-white shadow p-3 m-3 rounded"
+          key={post.post_basename}
+        >
           <div>
             <Link href={post.post_permalink}>
               <a>
@@ -47,7 +50,7 @@ function PostsCards({ posts, post_type }) {
   );
 }
 PostsCards.propTypes = {
-  recentPosts: PropTypes.object.isRequired,
+  posts: PropTypes.array.isRequired,
 };
 
 export default PostsCards;

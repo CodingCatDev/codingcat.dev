@@ -1,7 +1,6 @@
 import Head from "next/head";
 import * as admin from "firebase-admin";
-import serviceAccount from "../../../serviceAccountKey.json";
-import firebaseConfig from "../firebaseConfig";
+import { serviceAccountKey, config } from "../config/firebase";
 
 import RecentPostsCards from "../components/RecentPostsCards";
 
@@ -22,11 +21,11 @@ export default function Home({ recentPosts }) {
 }
 
 export async function getStaticProps({ params }) {
-  if (admin.apps.length < 0) {
+  if (admin.apps.length === 0) {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      databaseURL: firebaseConfig.databaseURL,
-      storageBucket: firebaseConfig.storageBucket,
+      credential: admin.credential.cert(serviceAccountKey),
+      databaseURL: config.databaseURL,
+      storageBucket: config.storageBucket,
     });
   }
 
