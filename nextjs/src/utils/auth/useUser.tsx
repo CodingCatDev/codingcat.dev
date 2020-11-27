@@ -48,7 +48,6 @@ const useUser = () => {
 
     const userFromCookie = getUserFromCookie();
     if (!userFromCookie) {
-      router.push("/signin");
       return;
     }
     setUser(userFromCookie);
@@ -56,6 +55,7 @@ const useUser = () => {
     return () => {
       cancelAuthListener();
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

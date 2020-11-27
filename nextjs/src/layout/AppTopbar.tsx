@@ -162,7 +162,7 @@ export const AppTopbar = (props) => {
                       aria-labelledby="user-menu"
                     >
                       <ActiveLink
-                        activeClassName="border-2 border-ccd-primary-800 rounded bg-ccd-primary-100"
+                        activeClassName="border-2 border-ccd-primary-800 rounded bg-ccd-primary-100 first-child:text-white"
                         href="/user/profile"
                       >
                         <a

@@ -7,7 +7,9 @@ export default function UserSignin() {
 
   if (!user) {
     return (
-      <div>
+      <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <p>You must be signed in to access this page.</p>
+
         <Link href="/signin">
           <a
             type="button"

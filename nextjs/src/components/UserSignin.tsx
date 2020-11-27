@@ -27,17 +27,15 @@ export default function UserSignin() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <p>You're signed in. Email: {user.email}</p>
-          <p
-            style={{
-              display: "inline-block",
-              color: "blue",
-              textDecoration: "underline",
-              cursor: "pointer",
-            }}
+
+          <button
+            type="button"
+            className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-800 focus:ring-red-500"
             onClick={() => logout()}
           >
-            Log out
-          </p>{" "}
+            <span>Sign out</span>
+          </button>
+
           <p>Or you can access these areas</p>
           <Link href="/user/profile">
             <a>

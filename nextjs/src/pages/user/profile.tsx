@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 
 const ProfileCard = dynamic(() => import("../../components/User/ProfileCard"), {
   ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
+  loading: () => <p>Chasing my tail..</p>,
 });
 
 export default function Profile() {

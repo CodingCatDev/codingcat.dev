@@ -1,4 +1,5 @@
 import Head from "next/head";
+import dynamic from "next/dynamic";
 
 import Blog from "../../components/icons/Blog";
 import Community from "../../components/icons/Community";
@@ -6,7 +7,10 @@ import Courses from "../../components/icons/Courses";
 import Podcasts from "../../components/icons/Podcasts";
 import Tutorials from "../../components/icons/Tutorials";
 
-import EditList from "../../components/Admin/EditList";
+const EditList = dynamic(() => import("../../components/Admin/EditList"), {
+  ssr: false,
+  loading: () => <p>Climbing a tree...</p>,
+});
 
 export default function AdminDashboard() {
   return (
