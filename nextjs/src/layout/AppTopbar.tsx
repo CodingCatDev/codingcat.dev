@@ -146,38 +146,33 @@ export const AppTopbar = (props) => {
                       />
                     </button>
                   </div>
-                  {/*
-                  Profile dropdown panel, show/hide based on dropdown state.
-    
-                  Entering: "transition ease-out duration-200"
-                    From: "transform opacity-0 scale-95"
-                    To: "transform opacity-100 scale-100"
-                  Leaving: "transition ease-in duration-75"
-                    From: "transform opacity-100 scale-100"
-                    To: "transform opacity-0 scale-95"
-                --> */}
                   <Transition
                     show={userMenu}
-                    enter="transition ease-out duration-200"
+                    enter="transition ease-out duration-100"
                     enterFrom="transform opacity-0 scale-95"
                     enterTo="transform opacity-100 scale-100"
                     leave="transition ease-in duration-75"
+                    d
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <div
-                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-40"
+                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-40 p-2"
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu"
                     >
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-ccd-primary-100"
-                        role="menuitem"
+                      <ActiveLink
+                        activeClassName="border-2 border-ccd-primary-800 rounded bg-ccd-primary-100"
+                        href="/user/profile"
                       >
-                        Your Profile
-                      </a>
+                        <a
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-ccd-primary-100"
+                          role="menuitem"
+                        >
+                          Your Profile
+                        </a>
+                      </ActiveLink>
                       <a
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-ccd-primary-100"

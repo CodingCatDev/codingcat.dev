@@ -1,7 +1,7 @@
 import AJLogo from "./icons/AJLogo";
 import FirebaseAuth from "./FirebaseAuth";
 
-function Signin() {
+function FirebaseSignin() {
   return (
     <>
       <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -22,4 +22,4 @@ function Signin() {
     </>
   );
 }
-export default Signin;
+export default FirebaseSignin;
