@@ -1,6 +1,6 @@
-import Link from "next/link";
-import Image from "next/image";
-import PropTypes from "prop-types";
+import Link from 'next/link';
+import Image from 'next/image';
+import PropTypes from 'prop-types';
 
 function RecentPostsCards({ recentPosts }) {
   return (

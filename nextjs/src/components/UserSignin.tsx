@@ -1,9 +1,9 @@
-import dynamic from "next/dynamic";
-import Link from "next/link";
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
-import { useUser } from "../utils/auth/useUser";
+import { useUser } from '@/utils/auth/useUser';
 
-const FirebaseSignin = dynamic(() => import("../components/FirebaseSignin"), {
+const FirebaseSignin = dynamic(() => import('@/components/FirebaseSignin'), {
   ssr: false,
   loading: () => <p>Playing with yarn...</p>,
 });

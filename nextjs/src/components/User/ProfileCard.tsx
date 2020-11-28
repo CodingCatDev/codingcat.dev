@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { useUser } from "../../utils/auth/useUser";
+import { useUser } from '@/utils/auth/useUser';
 
 export default function UserSignin() {
   const { user, logout }: { user: any; logout: any } = useUser();

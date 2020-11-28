@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import firebase from "firebase/app";
-import "firebase/auth";
-import initFirebase from "../initFirebase";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import initFirebase from '../initFirebase';
 import {
   removeUserCookie,
   setUserCookie,
   getUserFromCookie,
-} from "./userCookies";
-import { mapUserData } from "./mapUserData";
+} from './userCookies';
+import { mapUserData } from './mapUserData';
 
 initFirebase();
 
@@ -22,7 +22,7 @@ const useUser = () => {
       .signOut()
       .then(() => {
         // Sign-out successful.
-        router.push("/signin");
+        router.push('/signin');
       })
       .catch((e) => {
         console.error(e);

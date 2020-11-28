@@ -1,6 +1,6 @@
-import Link from "next/link";
-import Image from "next/image";
-import PropTypes from "prop-types";
+import Link from 'next/link';
+import Image from 'next/image';
+import PropTypes from 'prop-types';
 function PostsCards({ posts, post_type }) {
   return (
     <>
@@ -12,7 +12,7 @@ function PostsCards({ posts, post_type }) {
           <div>
             <Link href={post.post_permalink}>
               <a>
-                {post_type === "podcasts" ? (
+                {post_type === 'podcasts' ? (
                   <Image
                     src={post.post_thumbnail}
                     alt={post.post_title}

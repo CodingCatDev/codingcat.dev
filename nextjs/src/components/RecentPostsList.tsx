@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 function RecentPostsList({ posts }) {
   return (

@@ -1,9 +1,9 @@
-import "../styles/globals.css";
-import { useState } from "react";
-import { Transition } from "@tailwindui/react";
+import '../styles/globals.css';
+import { useState } from 'react';
+import { Transition } from '@tailwindui/react';
 
-import { AppTopbar } from "../layout/AppTopbar";
-import { AppMenu } from "../layout/AppMenu";
+import { AppTopbar } from '../layout/AppTopbar';
+import { AppMenu } from '../layout/AppMenu';
 
 function MyApp({ Component, pageProps }) {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);

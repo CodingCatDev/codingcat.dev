@@ -1,6 +1,6 @@
-import Head from "next/head";
-import PostsCards from "../components/PostsCards";
-import admin from "../utils/firebaseAdmin";
+import Head from 'next/head';
+import PostsCards from '@/components/PostsCards';
+import admin from '@/utils/firebaseAdmin';
 
 export default function Tutorials({ posts }) {
   return (
@@ -10,7 +10,7 @@ export default function Tutorials({ posts }) {
       </Head>
 
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto mt-16">
-        <PostsCards post_type={"tutorials"} posts={posts} />
+        <PostsCards post_type={'tutorials'} posts={posts} />
       </main>
 
       <footer></footer>
@@ -21,8 +21,8 @@ export default function Tutorials({ posts }) {
 export async function getStaticProps() {
   const postDocs = await admin
     .firestore()
-    .collection("tutorials")
-    .orderBy("post_publish_datetime", "desc")
+    .collection('tutorials')
+    .orderBy('post_publish_datetime', 'desc')
     .get();
 
   const posts = [];

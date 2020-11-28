@@ -1,15 +1,15 @@
-import Head from "next/head";
-import DefaultErrorPage from "next/error";
-import { useRouter } from "next/router";
+import Head from 'next/head';
+import DefaultErrorPage from 'next/error';
+import { useRouter } from 'next/router';
 
-import admin from "../utils/firebaseAdmin";
+import admin from '@/utils/firebaseAdmin';
 
-import renderToString from "next-mdx-remote/render-to-string";
-import hydrate from "next-mdx-remote/hydrate";
-import parse from "remark-parse";
-import remark2react from "remark-react";
+import renderToString from 'next-mdx-remote/render-to-string';
+import hydrate from 'next-mdx-remote/hydrate';
+import parse from 'remark-parse';
+import remark2react from 'remark-react';
 
-import RecentPostsList from "../components/RecentPostsList";
+import RecentPostsList from '@/components/RecentPostsList';
 
 export default function Post({ post, markdown, recentPosts }) {
   const router = useRouter();
@@ -57,16 +57,16 @@ export default function Post({ post, markdown, recentPosts }) {
 
 export async function getStaticPaths() {
   const POSTS = [];
-  ["post", "tutorials", "podcasts"].forEach(async (postType) => {
+  ['post', 'tutorials', 'podcasts'].forEach(async (postType) => {
     const posts = await admin
       .firestore()
-      .collection(postType === "post" ? "posts" : postType)
-      .orderBy("post_publish_datetime", "desc")
+      .collection(postType === 'post' ? 'posts' : postType)
+      .orderBy('post_publish_datetime', 'desc')
       .get();
     for (const doc of posts.docs) {
       POSTS.push({
         params: {
-          permalink: doc.data().post_permalink.substring(1).split("/"),
+          permalink: doc.data().post_permalink.substring(1).split('/'),
         },
       });
     }
@@ -82,8 +82,8 @@ export async function getStaticProps({ params }) {
 
   const posts = await admin
     .firestore()
-    .collection(permalink.length > 1 ? `${permalink[0]}` : "posts")
-    .where("post_permalink", "==", `/${permalink.join("/")}`)
+    .collection(permalink.length > 1 ? `${permalink[0]}` : 'posts')
+    .where('post_permalink', '==', `/${permalink.join('/')}`)
     .get();
 
   let postData;
@@ -104,8 +104,8 @@ export async function getStaticProps({ params }) {
     Object.keys(recentPosts).map(async (postType) => {
       const posts = await admin
         .firestore()
-        .collection(postType === "post" ? "posts" : postType)
-        .orderBy("post_publish_datetime", "desc")
+        .collection(postType === 'post' ? 'posts' : postType)
+        .orderBy('post_publish_datetime', 'desc')
         .limit(3)
         .get();
       for (const doc of posts.docs) {

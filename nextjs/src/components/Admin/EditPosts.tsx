@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import Link from "next/link";
+import React, { useState, useEffect } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import Link from 'next/link';
 
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
-import "primereact/resources/themes/saga-purple/theme.css";
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
+import 'primereact/resources/themes/saga-purple/theme.css';
 
-import { useUser } from "../../utils/auth/useUser";
-import { getPosts } from "../../services/firestore";
+import { useUser } from '@/utils/auth/useUser';
+import { getPosts } from '@/services/firestore';
 
 function EditPosts({ path }) {
   const { user, logout }: { user: any; logout: any } = useUser();
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     getPosts(
-      path.substring(1) === "blog" ? "posts" : path.substring(1),
+      path.substring(1) === 'blog' ? 'posts' : path.substring(1),
       5
     ).then((postRef) =>
       setPosts(
@@ -38,13 +38,13 @@ function EditPosts({ path }) {
     );
   }
   function postCategories(rowData) {
-    return <span>{rowData.post_categories.join(",")}</span>;
+    return <span>{rowData.post_categories.join(',')}</span>;
   }
   function postStatus(rowData) {
     return (
       <span
         className={`p-2 capitalize text-green-800 rounded
-          ${rowData.post_status === "publish" ? `bg-green-200` : `bg-red`}
+          ${rowData.post_status === 'publish' ? `bg-green-200` : `bg-red`}
           `}
       >
         {rowData.post_status}

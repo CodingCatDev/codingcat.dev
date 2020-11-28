@@ -1,7 +1,7 @@
-import Head from "next/head";
-import admin from "../utils/firebaseAdmin";
+import Head from 'next/head';
+import admin from '@/utils/firebaseAdmin';
 
-import RecentPostsCards from "../components/RecentPostsCards";
+import RecentPostsCards from '@/components/RecentPostsCards';
 
 export default function Home({ recentPosts }) {
   return (
@@ -25,8 +25,8 @@ export async function getStaticProps({ params }) {
     Object.keys(recentPosts).map(async (postType) => {
       const posts = await admin
         .firestore()
-        .collection(postType === "post" ? "posts" : postType)
-        .orderBy("post_publish_datetime", "desc")
+        .collection(postType === 'post' ? 'posts' : postType)
+        .orderBy('post_publish_datetime', 'desc')
         .limit(3)
         .get();
       for (const doc of posts.docs) {

@@ -1,18 +1,18 @@
-import Head from "next/head";
-import dynamic from "next/dynamic";
-import { withRouter } from "next/router";
+import Head from 'next/head';
+import dynamic from 'next/dynamic';
+import { withRouter } from 'next/router';
 
-import AdminMenu from "../../components/Admin/AdminMenu";
-import AdminTopBar from "../../components/Admin/AdminTopBar";
+import AdminMenu from '@/components/Admin/AdminMenu';
+import AdminTopBar from '@/components/Admin/AdminTopBar';
 
-const EditPosts = dynamic(() => import("../../components/Admin/EditPosts"), {
+const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   ssr: false,
   loading: () => <p>Climbing a tree...</p>,
 });
 
 function AdminDashboard({ router }) {
   const path = `/${router.asPath.substring(
-    router.asPath.lastIndexOf("/") + 1
+    router.asPath.lastIndexOf('/') + 1
   )}`;
   return (
     <div>

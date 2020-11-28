@@ -1,10 +1,10 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import Blog from "../icons/Blog";
-import Community from "../icons/Community";
-import Courses from "../icons/Courses";
-import Podcasts from "../icons/Podcasts";
-import Tutorials from "../icons/Tutorials";
+import Blog from '../icons/Blog';
+import Community from '../icons/Community';
+import Courses from '../icons/Courses';
+import Podcasts from '../icons/Podcasts';
+import Tutorials from '../icons/Tutorials';
 
 export default function AdminMenu({ router }) {
   return (

@@ -1,9 +1,9 @@
-import { useState } from "react";
-import Link from "next/link";
-import ActiveLink from "../components/ActiveLink";
-import { Transition } from "@tailwindui/react";
-import OutsideClick from "../components/OutsideClick";
-import AJLogo from "../components/icons/AJLogo";
+import { useState } from 'react';
+import Link from 'next/link';
+import ActiveLink from '@/components/ActiveLink';
+import { Transition } from '@tailwindui/react';
+import OutsideClick from '@/components/OutsideClick';
+import AJLogo from '@/components/icons/AJLogo';
 
 export const AppTopbar = (props) => {
   const { setOverlayMenuActive, overlayMenuActive } = props;

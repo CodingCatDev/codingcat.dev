@@ -1,7 +1,7 @@
-import Head from "next/head";
-import dynamic from "next/dynamic";
+import Head from 'next/head';
+import dynamic from 'next/dynamic';
 
-const ProfileCard = dynamic(() => import("../../components/User/ProfileCard"), {
+const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
   ssr: false,
   loading: () => <p>Chasing my tail..</p>,
 });

@@ -1,5 +1,5 @@
-import AJLogo from "./icons/AJLogo";
-import FirebaseAuth from "./FirebaseAuth";
+import AJLogo from './icons/AJLogo';
+import FirebaseAuth from './FirebaseAuth';
 
 function FirebaseSignin() {
   return (
