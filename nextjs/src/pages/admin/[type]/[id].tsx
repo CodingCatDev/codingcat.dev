@@ -24,7 +24,7 @@ function AdminDashboard({ router }) {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <main className="mt-16">
+      <main>
         <>
           <div className="h-screen flex overflow-hidden bg-gray-100">
             <AdminMenu router={router} />

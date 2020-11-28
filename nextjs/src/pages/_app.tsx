@@ -23,21 +23,15 @@ function MyApp({ Component, pageProps }) {
   };
   return (
     <>
+      <div className="fixed w-full z-50">
+        <AppTopbar
+          setOverlayMenuActive={setOverlayMenuActive}
+          overlayMenuActive={overlayMenuActive}
+          onMenuItemClick={onMenuItemClick}
+        />
+      </div>
       <div className="h-screen">
-        <div className="fixed w-full z-50">
-          <AppTopbar
-            setOverlayMenuActive={setOverlayMenuActive}
-            overlayMenuActive={overlayMenuActive}
-            onMenuItemClick={onMenuItemClick}
-          />
-        </div>
-        <div className="grid grid-cols-12 h-full">
-          <div className="col-span-12 md:col-span-12 h-screen">
-            <div className="h-full overflow-y-auto">
-              <Component {...pageProps} />
-            </div>
-          </div>
-        </div>
+        <Component {...pageProps} />
         <Transition
           show={overlayMenuActive}
           enter="transform transition ease-in-out"

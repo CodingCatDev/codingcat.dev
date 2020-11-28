@@ -18,17 +18,18 @@ function AdminDashboard({ router }) {
     <div>
       <Head>
         <title>
-          {`${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(2)}`} |
-          CodingCatDev
+          {`Admin-${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(
+            2
+          )} | CodingCatDev`}
         </title>
         <meta name="robots" content="noindex" />
       </Head>
 
-      <main className="mt-16">
+      <main>
         <>
           <div className="h-screen flex overflow-hidden bg-gray-100">
             <AdminMenu router={router} />
-            <div className="flex flex-col w-0 flex-1 overflow-hidden">
+            <div className="flex flex-col w-0 flex-1 overflow-hidden pt-16">
               <AdminTopBar router={router} />
               <main
                 className="flex-1 relative overflow-y-auto focus:outline-none"
