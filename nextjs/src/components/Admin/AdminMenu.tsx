@@ -220,25 +220,23 @@ To: "-translate-x-full"
             </div>
             <div className="flex-1 flex flex-col overflow-y-auto">
               <nav className="flex-1 px-2 py-4 bg-gray-800 space-y-1">
-                <a
-                  href="#"
-                  className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700"
-                >
-                  <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
-                    <Courses />
-                  </div>
-                  Courses
-                </a>
-                <a
-                  href="#"
-                  className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700"
-                >
-                  <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
-                    <Tutorials />
-                  </div>
-                  Tutorials
-                </a>
-                <Link href={`/admin/blog`}>
+                <Link href="/admin/courses">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
+                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                      <Courses />
+                    </div>
+                    Courses
+                  </a>
+                </Link>
+                <Link href="/admin/tutorials">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
+                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                      <Tutorials />
+                    </div>
+                    Tutorials
+                  </a>
+                </Link>
+                <Link href="/admin/blog">
                   <a className="group flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-gray-700">
                     <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full ">
                       <Blog />
@@ -246,47 +244,22 @@ To: "-translate-x-full"
                     Blog
                   </a>
                 </Link>
-                <a
-                  href="#"
-                  className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700"
-                >
-                  <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
-                    <Podcasts />
-                  </div>
-                  Podcasts
-                </a>
-
-                <a
-                  href="#"
-                  className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700"
-                >
-                  <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
-                    <Community />
-                  </div>
-                  Community
-                </a>
-                <a
-                  href="#"
-                  className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700"
-                >
-                  {/* Heroicon name: chart-bar */}
-                  <svg
-                    className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                    />
-                  </svg>
-                  Reports
-                </a>
+                <Link href="/admin/podcasts">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
+                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                      <Podcasts />
+                    </div>
+                    Podcasts
+                  </a>
+                </Link>
+                <Link href="/admin/community">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
+                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                      <Community />
+                    </div>
+                    Community
+                  </a>
+                </Link>
               </nav>
             </div>
           </div>

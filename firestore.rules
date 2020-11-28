@@ -4,15 +4,23 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
 
-      match /podcasts/{courseId} {
+      match /podcasts/{id} {
         allow read: if true;
         allow write: if false;
       }
-      match /posts/{courseId} {
+      match /posts/{id} {
         allow read: if true;
         allow write: if false;
       }
-      match /tutorials/{courseId} {
+      match /tutorials/{id} {
+        allow read: if true;
+        allow write: if false;
+      }
+      match /courses/{id} {
+        allow read: if true;
+        allow write: if false;
+      }
+      match /community/{id} {
         allow read: if true;
         allow write: if false;
       }

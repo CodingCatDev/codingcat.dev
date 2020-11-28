@@ -2,10 +2,10 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 
-import AdminMenu from "../../../components/Admin/AdminMenu";
-import AdminTopBar from "../../../components/Admin/AdminTopBar";
+import AdminMenu from "@/components/Admin/AdminMenu";
+import AdminTopBar from "@/components/Admin/AdminTopBar";
 
-const EditPosts = dynamic(() => import("../../../components/Admin/EditPosts"), {
+const EditPosts = dynamic(() => import("@/components/Admin/EditPosts"), {
   ssr: false,
   loading: () => <p>Climbing a tree...</p>,
 });
@@ -17,7 +17,10 @@ function AdminDashboard({ router }) {
   return (
     <div>
       <Head>
-        <title>Admin | CodingCatDev</title>
+        <title>
+          {`${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(2)}`} |
+          CodingCatDev
+        </title>
         <meta name="robots" content="noindex" />
       </Head>
 
@@ -31,7 +34,22 @@ function AdminDashboard({ router }) {
                 className="flex-1 relative overflow-y-auto focus:outline-none"
                 tabIndex={0}
               >
-                <div className="py-6">blog editor</div>
+                <div className="py-6">
+                  {router.asPath === path ? (
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                      <h1 className="text-2xl font-semibold text-gray-900">
+                        Dashboard
+                      </h1>
+                      <p className="text-lg">
+                        Show some welcoming things here.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                      <EditPosts path={path} />
+                    </div>
+                  )}
+                </div>
               </main>
             </div>
           </div>

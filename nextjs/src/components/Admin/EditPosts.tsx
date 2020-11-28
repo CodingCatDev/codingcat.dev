@@ -15,7 +15,10 @@ function EditPosts({ path }) {
   const { user, logout }: { user: any; logout: any } = useUser();
   const [posts, setPosts] = useState([]);
   useEffect(() => {
-    getPosts("posts", 5).then((postRef) =>
+    getPosts(
+      path.substring(1) === "blog" ? "posts" : path.substring(1),
+      5
+    ).then((postRef) =>
       setPosts(
         postRef.docs.map((doc) => {
           return {
@@ -25,7 +28,7 @@ function EditPosts({ path }) {
         })
       )
     );
-  }, []);
+  }, [path]);
 
   function postId(rowData) {
     return (
