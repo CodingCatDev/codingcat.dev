@@ -17,7 +17,7 @@ function EditPosts({ path }) {
   useEffect(() => {
     getPosts(
       path.substring(1) === 'blog' ? 'posts' : path.substring(1),
-      5
+      0
     ).then((postRef) =>
       setPosts(
         postRef.docs.map((doc) => {
@@ -55,7 +55,7 @@ function EditPosts({ path }) {
   return (
     <div>
       <div className="card">
-        <DataTable value={posts}>
+        <DataTable value={posts} scrollable scrollHeight="calc(100vh - 300px)">
           <Column field="id" header="Id" body={postId}></Column>
           <Column field="post_title" header="Title"></Column>
           <Column field="post_author" header="Author"></Column>

@@ -12,9 +12,13 @@ export const getPost = async (postId) => {
 };
 
 export const getPosts = async (post_type: string, limit: number) => {
-  return await db
-    .collection(post_type)
-    .limit(limit)
-    .orderBy('updatedAt', 'desc')
-    .get();
+  if (limit && limit > 0) {
+    return await db
+      .collection(post_type)
+      .limit(limit)
+      .orderBy('updatedAt', 'desc')
+      .get();
+  } else {
+    return await db.collection(post_type).orderBy('updatedAt', 'desc').get();
+  }
 };
