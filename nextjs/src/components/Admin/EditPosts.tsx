@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 
 import { useUser } from '@/utils/auth/useUser';

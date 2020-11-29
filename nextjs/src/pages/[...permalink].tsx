@@ -33,7 +33,9 @@ export default function Post({ post, markdown, recentPosts }) {
     <div className="grid grid-cols-12 gap-2 mt-16">
       <div className="col-span-12 xl:col-span-10">
         <h1>{post.post_title}</h1>
-        <article className="prose lg:prose-xl prose-red">{content}</article>
+        <article className="prose prose-ccd-primary lg:prose-xl">
+          {content}
+        </article>
       </div>
       <div className="col-span-12 xl:col-span-2">
         <div className="bg-white shadow p-3 m-3 rounded-lg">

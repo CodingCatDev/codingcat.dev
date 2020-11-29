@@ -37,6 +37,8 @@
     "remark-parse": "^9.0.0",
     "remark-react": "^8.0.0",
     "sass": "^1.29.0",
+    "slate": "^0.59.0",
+    "slate-react": "^0.59.0",
     "typeface-nunito-sans": "^1.1.13"
   },
   "devDependencies": {

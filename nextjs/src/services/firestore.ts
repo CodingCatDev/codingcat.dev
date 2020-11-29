@@ -7,8 +7,8 @@ import initFirebase from '@/utils/initFirebase';
 initFirebase();
 const db = firebase.firestore();
 
-export const getPost = async (postId) => {
-  return await db.collection('posts').doc(postId).get();
+export const getPost = async (doc: string) => {
+  return await db.doc(doc).get();
 };
 
 export const getPosts = async (post_type: string, limit: number) => {
