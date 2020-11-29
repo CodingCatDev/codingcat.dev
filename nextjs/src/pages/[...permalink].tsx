@@ -7,7 +7,7 @@ import admin from '@/utils/firebaseAdmin';
 import renderToString from 'next-mdx-remote/render-to-string';
 import hydrate from 'next-mdx-remote/hydrate';
 import parse from 'remark-parse';
-import remark2react from 'remark-react';
+import mdx from 'remark-mdx';
 
 import RecentPostsList from '@/components/RecentPostsList';
 
@@ -96,7 +96,7 @@ export async function getStaticProps({ params }) {
   const markdown = post
     ? await renderToString(postData.post_content, {
         mdxOptions: {
-          remarkPlugins: [parse, remark2react],
+          remarkPlugins: [parse, mdx],
         },
       })
     : null;
