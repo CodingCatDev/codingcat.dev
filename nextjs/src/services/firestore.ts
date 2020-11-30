@@ -3,22 +3,47 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 import initFirebase from '@/utils/initFirebase';
-
+import { docData, collection, collectionData } from 'rxfire/firestore';
+import { map } from 'rxjs/operators';
 initFirebase();
-const db = firebase.firestore();
+const firestore = firebase.firestore();
 
-export const getPost = async (docId: string) => {
-  return await (await db.doc(docId).get()).data();
+export const postDataObservable = (docId: string) => {
+  return docData(firestore.doc(docId));
 };
 
-export const getPosts = async (post_type: string, limit: number) => {
+export const postsDataObservable = (post_type: string, limit: number) => {
   if (limit && limit > 0) {
-    return await db
-      .collection(post_type)
-      .limit(limit)
-      .orderBy('updatedAt', 'desc')
-      .get();
+    return collectionData(
+      firestore.collection(post_type).limit(limit).orderBy('updatedAt', 'desc')
+    );
   } else {
-    return await db.collection(post_type).orderBy('updatedAt', 'desc').get();
+    return collectionData(
+      firestore.collection(post_type).orderBy('updatedAt', 'desc')
+    );
+  }
+};
+
+export const postsObservable = (post_type: string, limit: number = null) => {
+  if (limit && limit > 0) {
+    return collection(
+      firestore.collection(post_type).limit(limit).orderBy('updatedAt', 'desc')
+    ).pipe(
+      map((docs) =>
+        docs.map((d) => {
+          return { ...d.data(), id: d.id };
+        })
+      )
+    );
+  } else {
+    return collection(
+      firestore.collection(post_type).orderBy('updatedAt', 'desc')
+    ).pipe(
+      map((docs) =>
+        docs.map((d) => {
+          return { ...d.data(), id: d.id };
+        })
+      )
+    );
   }
 };

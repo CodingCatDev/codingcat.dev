@@ -8,25 +8,15 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 
 import { useUser } from '@/utils/auth/useUser';
-import { getPosts } from '@/services/firestore';
+import { postsObservable } from '@/services/firestore';
 
 function EditPosts({ path }) {
   const { user, logout }: { user: any; logout: any } = useUser();
   const [posts, setPosts] = useState([]);
   useEffect(() => {
-    getPosts(
-      path.substring(1) === 'blog' ? 'posts' : path.substring(1),
-      0
-    ).then((postRef) =>
-      setPosts(
-        postRef.docs.map((doc) => {
-          return {
-            ...doc.data(),
-            id: doc.id,
-          };
-        })
-      )
-    );
+    postsObservable(
+      path.substring(1) === 'blog' ? 'posts' : path.substring(1)
+    ).subscribe((posts) => setPosts(posts));
   }, [path]);
 
   function postId(rowData) {

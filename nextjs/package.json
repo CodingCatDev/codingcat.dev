@@ -36,6 +36,8 @@
     "remark-html": "^13.0.1",
     "remark-mdx": "^1.6.21",
     "remark-parse": "^9.0.0",
+    "rxfire": "^4.0.0",
+    "rxjs": "^6.6.3",
     "sass": "^1.29.0",
     "slate": "^0.59.0",
     "slate-history": "^0.59.0",
