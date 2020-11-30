@@ -8,7 +8,7 @@ import 'primereact/resources/themes/saga-purple/theme.css';
 
 import { getPost } from '@/services/firestore';
 
-function EditPost({ className, router }) {
+function EditPost({ router }) {
   const [post, setPost] = useState(null);
   useEffect(() => {
     getPost(
@@ -20,16 +20,14 @@ function EditPost({ className, router }) {
     });
   }, [router]);
   return (
-    <div className={className}>
-      <textarea
-        id="about"
-        name="about"
-        rows={10}
-        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md resize-none"
-        placeholder="Markdown goes here..."
-        value={post ? post.post_content : ''}
-      ></textarea>
-    </div>
+    <textarea
+      id="about"
+      name="about"
+      // rows={10}
+      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block h-full w-full sm:text-sm border-gray-300 rounded-md resize-none"
+      placeholder="Markdown goes here..."
+      value={post ? post.post_content : ''}
+    ></textarea>
   );
 }
 

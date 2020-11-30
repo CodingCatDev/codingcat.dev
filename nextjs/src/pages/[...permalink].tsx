@@ -30,7 +30,7 @@ export default function Post({ post, markdown, recentPosts }) {
 
   const content = hydrate(markdown);
   return (
-    <div className="grid grid-cols-12 gap-2 pt-16">
+    <div className="grid grid-cols-12 gap-2 ">
       <div className="col-span-12 xl:col-span-10">
         <h1>{post.post_title}</h1>
         <article className="prose prose-ccd-primary lg:prose-xl">

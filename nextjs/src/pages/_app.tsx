@@ -23,39 +23,43 @@ function MyApp({ Component, pageProps }) {
   };
   return (
     <>
-      <div className="fixed w-full z-50">
-        <AppTopbar
-          setOverlayMenuActive={setOverlayMenuActive}
-          overlayMenuActive={overlayMenuActive}
-          onMenuItemClick={onMenuItemClick}
-        />
-      </div>
-      <div className="h-screen">
-        <Component {...pageProps} />
-        <Transition
-          show={overlayMenuActive}
-          enter="transform transition ease-in-out"
-          enterFrom="translate-x-8"
-          enterTo="translate-x-0"
-          leave="transform transition ease-in-out"
-          leaveFrom="translate-x-8"
-          leaveTo="translate-x-0"
-        >
-          <div className="fixed inset-0 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden">
-              <section
-                className="absolute inset-y-0 left-0 max-w-full flex"
-                aria-labelledby="slide-over-heading"
-              >
-                <div className="w-screen max-w-md">
-                  <div className="h-full flex flex-col shadow-xl pt-16 bg-gray-800">
-                    <AppMenu onMenuItemClick={onMenuItemClick} />
+      <div className="flex h-screen bg-gray-200">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header>
+            <AppTopbar
+              setOverlayMenuActive={setOverlayMenuActive}
+              overlayMenuActive={overlayMenuActive}
+              onMenuItemClick={onMenuItemClick}
+            />
+          </header>
+          <main className="flex flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+            <Component {...pageProps} />
+          </main>
+          <Transition
+            show={overlayMenuActive}
+            enter="transform transition ease-in-out"
+            enterFrom="translate-x-8"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in-out"
+            leaveFrom="translate-x-8"
+            leaveTo="translate-x-0"
+          >
+            <div className="fixed inset-0 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <section
+                  className="absolute inset-y-0 left-0 max-w-full flex"
+                  aria-labelledby="slide-over-heading"
+                >
+                  <div className="w-screen max-w-md">
+                    <div className="h-full flex flex-col shadow-xl  bg-gray-800">
+                      <AppMenu onMenuItemClick={onMenuItemClick} />
+                    </div>
                   </div>
-                </div>
-              </section>
+                </section>
+              </div>
             </div>
-          </div>
-        </Transition>
+          </Transition>
+        </div>
       </div>
     </>
   );

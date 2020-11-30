@@ -52,26 +52,20 @@ function EditPosts({ path }) {
   }
 
   return (
-    <div>
-      <div className="card">
-        <DataTable value={posts} scrollable scrollHeight="calc(100vh - 300px)">
-          <Column field="id" header="Id" body={postId}></Column>
-          <Column field="post_title" header="Title"></Column>
-          <Column field="post_author" header="Author"></Column>
-          <Column
-            field="post_categories"
-            header="Category"
-            body={postCategories}
-          ></Column>
-          <Column
-            field="post_status"
-            header="Status"
-            body={postStatus}
-          ></Column>
-          <Column field="updatedAt" header="Updated"></Column>
-        </DataTable>
-      </div>
-    </div>
+    <>
+      <DataTable value={posts} scrollable scrollHeight="100%">
+        <Column field="id" header="Id" body={postId}></Column>
+        <Column field="post_title" header="Title"></Column>
+        <Column field="post_author" header="Author"></Column>
+        <Column
+          field="post_categories"
+          header="Category"
+          body={postCategories}
+        ></Column>
+        <Column field="post_status" header="Status" body={postStatus}></Column>
+        <Column field="updatedAt" header="Updated"></Column>
+      </DataTable>
+    </>
   );
 }
 
