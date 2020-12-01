@@ -8,7 +8,7 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 
 import { useUser } from '@/utils/auth/useUser';
-import { postsObservable } from '@/services/firestore';
+import { postsObservable } from '@/services/api';
 
 function EditPosts({ path }) {
   const { user, logout }: { user: any; logout: any } = useUser();

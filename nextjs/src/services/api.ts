@@ -8,8 +8,10 @@ import { map } from 'rxjs/operators';
 initFirebase();
 const firestore = firebase.firestore();
 
-export const postDataObservable = (docId: string) => {
-  return docData(firestore.doc(docId));
+/* POST */
+
+export const postDataObservable = (id: string) => {
+  return docData(firestore.doc(id));
 };
 
 export const postsDataObservable = (post_type: string, limit: number) => {
@@ -23,6 +25,12 @@ export const postsDataObservable = (post_type: string, limit: number) => {
     );
   }
 };
+
+export const postUpdate = (id: string, post_content: string) => {
+  firestore.doc(id).set({ post_content }, { merge: true });
+};
+
+/* POSTS */
 
 export const postsObservable = (post_type: string, limit: number = null) => {
   if (limit && limit > 0) {

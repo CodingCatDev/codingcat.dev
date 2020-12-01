@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react';
 
-import dynamic from 'next/dynamic';
-
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
+import { TabView, TabPanel } from 'primereact/tabview';
 
-import { postDataObservable } from '@/services/firestore';
+import { postDataObservable, postUpdate } from '@/services/api';
 
 function EditPost({ router }) {
   const [post, setPost] = useState(null);
-
+  const [path, setPath] = useState(null);
   // Sets initial state
   useEffect(() => {
-    postDataObservable(
+    const path =
       router.query.type === 'blog'
         ? `/posts/${router.query.id}`
-        : `/${router.query.type}/${router.query.id}`
-    ).subscribe((postRef) => {
-      setPost(postRef);
+        : `/${router.query.type}/${router.query.id}`;
+    setPath(path);
+    postDataObservable(path).subscribe((post) => {
+      setPost(post);
+      console.log(post);
     });
   }, [router]);
 
   function handleChange(event) {
+    postUpdate(path, event.target.value);
     setPost(event.target.value);
   }
   return (
