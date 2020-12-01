@@ -7,10 +7,19 @@ import { TabView, TabPanel } from 'primereact/tabview';
 
 import { postDataObservable, postUpdate } from '@/services/api';
 
+// import renderToString from 'next-mdx-remote/render-to-string';
+// import hydrate from 'next-mdx-remote/hydrate';
+// import parse from 'remark-parse';
+// import mdx from 'remark-mdx';
+
+import Markdown from 'markdown-to-jsx';
+
 function EditPost({ router }) {
   const [post, setPost] = useState(null);
   const [path, setPath] = useState(null);
   const [tab, setTab] = useState('edit');
+  const [preview, setPreview] = useState('');
+
   // Sets initial state
   useEffect(() => {
     const path =
@@ -22,6 +31,13 @@ function EditPost({ router }) {
       setPost(post);
     });
   }, [router]);
+
+  useEffect(() => {
+    if (tab === 'preview') {
+    } else {
+      setPreview('');
+    }
+  }, [tab]);
 
   function handleChange(event) {
     postUpdate(path, event.target.value);
@@ -52,23 +68,24 @@ function EditPost({ router }) {
           </li>
         </ul>
       </div>
-      <textarea
-        id="post_content"
-        name="post_content"
-        onChange={handleChange}
-        className={`${
-          tab === 'edit' ? 'block' : 'hidden'
-        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
-        placeholder="Markdown goes here..."
-        value={post ? post.post_content : ''}
-      ></textarea>
-      <div
-        className={`${
-          tab === 'preview' ? 'block' : 'hidden'
-        } block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto`}
-      >
-        {post ? post.post_content : ''}
-      </div>
+      {tab === 'edit' ? (
+        <textarea
+          id="post_content"
+          name="post_content"
+          onChange={handleChange}
+          className={`form-textarea shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
+          placeholder="Markdown goes here..."
+          value={post ? post.post_content : ''}
+        ></textarea>
+      ) : (
+        <div
+          className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto bg-gray-100`}
+        >
+          <article className="prose prose-ccd-primary lg:prose-xl">
+            <Markdown>{post ? post.post_content : ''}</Markdown>
+          </article>
+        </div>
+      )}
     </>
   );
 }
