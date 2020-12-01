@@ -53,25 +53,22 @@ function EditPost({ router }) {
         </ul>
       </div>
       <textarea
-        id="about"
-        name="about"
+        id="post_content"
+        name="post_content"
         onChange={handleChange}
         className={`${
           tab === 'edit' ? 'block' : 'hidden'
-        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block h-full w-full sm:text-sm border-gray-300 rounded-md resize-none`}
+        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
         placeholder="Markdown goes here..."
         value={post ? post.post_content : ''}
       ></textarea>
-      <textarea
-        id="about"
-        name="about"
-        onChange={handleChange}
+      <div
         className={`${
           tab === 'preview' ? 'block' : 'hidden'
-        } shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block h-full w-full sm:text-sm border-gray-300 rounded-md resize-none`}
-        placeholder="Markdown goes here..."
-        value={`preview`}
-      ></textarea>
+        } block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto`}
+      >
+        {post ? post.post_content : ''}
+      </div>
     </>
   );
 }

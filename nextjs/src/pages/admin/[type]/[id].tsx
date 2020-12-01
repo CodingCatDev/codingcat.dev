@@ -26,7 +26,7 @@ function AdminDashboard({ router }) {
             tabIndex={0}
           >
             <div className="flex flex-col flex-1 py-6">
-              <div className="flex flex-col flex-1 max-w-7xl px-4 sm:px-6 md:px-8">
+              <div className="flex flex-col flex-1 max-w-7xl px-4 sm:px-6 md:px-8 overflow-y-hidden">
                 <EditPost router={router} />
               </div>
             </div>
