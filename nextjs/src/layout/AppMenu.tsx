@@ -1,7 +1,51 @@
 export const AppMenu = (props) => {
+  const { setOverlayMenuActive, overlayMenuActive } = props;
+
   return (
     <div className="flex flex-col h-0 flex-1 w-full bg-ccd-primary-700">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+        <div className="mr-2 flex items-center justify-end">
+          {/* Mobile menu button --> */}
+          <button
+            className="inline-flex items-center justify-center p-2 rounded-md text-xl text-white hover:text-white hover:bg-ccd-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            aria-expanded="false"
+            onClick={() => setOverlayMenuActive(!overlayMenuActive)}
+          >
+            <span className="sr-only">Open main menu</span>
+            {!overlayMenuActive ? (
+              <svg
+                className="block h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="block h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
         <nav
           className="flex-1 px-2 bg-ccd-primary-800 space-y-1"
           aria-label="Sidebar"

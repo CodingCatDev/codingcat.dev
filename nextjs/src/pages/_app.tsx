@@ -5,6 +5,8 @@ import { Transition } from '@tailwindui/react';
 import { AppTopbar } from '../layout/AppTopbar';
 import { AppMenu } from '../layout/AppMenu';
 
+import OutsideClick from '@/components/OutsideClick';
+
 function MyApp({ Component, pageProps }) {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
@@ -44,18 +46,24 @@ function MyApp({ Component, pageProps }) {
             leaveFrom="translate-x-8"
             leaveTo="translate-x-0"
           >
-            <div className="fixed inset-0 overflow-hidden">
+            <div className="fixed inset-0 overflow-hidden bg-ccd-primary-100 bg-opacity-70">
               <div className="absolute inset-0 overflow-hidden">
-                <section
-                  className="absolute inset-y-0 left-0 max-w-full flex"
-                  aria-labelledby="slide-over-heading"
-                >
-                  <div className="w-screen max-w-md">
-                    <div className="h-full flex flex-col shadow-xl  bg-gray-800">
-                      <AppMenu onMenuItemClick={onMenuItemClick} />
+                <OutsideClick toggle={setOverlayMenuActive} value={false}>
+                  <section
+                    className="absolute inset-y-0 left-0 max-w-full flex"
+                    aria-labelledby="slide-over-heading"
+                  >
+                    <div className="w-screen max-w-md">
+                      <div className="h-full flex flex-col shadow-xl  bg-gray-800">
+                        <AppMenu
+                          onMenuItemClick={onMenuItemClick}
+                          setOverlayMenuActive={setOverlayMenuActive}
+                          overlayMenuActive={overlayMenuActive}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </section>
+                  </section>
+                </OutsideClick>
               </div>
             </div>
           </Transition>
