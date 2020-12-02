@@ -36,7 +36,7 @@ function AdminDashboard({ router }) {
             <div className="flex flex-col flex-1 py-6">
               {router.asPath === path ? (
                 <div className="flex flex-col flex-1 max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                  <h1 className="text-2xl font-semibold text-gray-900">
+                  <h1 className="text-2xl font-semibold text-ccd-basics-900">
                     Dashboard
                   </h1>
                   <p className="text-lg">Show some welcoming things here.</p>

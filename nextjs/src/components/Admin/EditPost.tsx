@@ -52,7 +52,7 @@ function EditPost({ router }) {
         <ul className="flex cursor-pointer">
           <li
             className={`py-2 px-6 bg-white rounded-t-lg ${
-              tab === 'edit' ? '' : 'text-gray-500 bg-gray-200'
+              tab === 'edit' ? '' : 'text-ccd-basics-500 bg-ccd-basics-200'
             }`}
             onClick={() => selectTab('edit')}
           >
@@ -60,7 +60,7 @@ function EditPost({ router }) {
           </li>
           <li
             className={`py-2 px-6 bg-white rounded-t-lg ${
-              tab === 'preview' ? '' : 'text-gray-500 bg-gray-200'
+              tab === 'preview' ? '' : 'text-ccd-basics-500 bg-ccd-basics-200'
             }`}
             onClick={() => selectTab('preview')}
           >
@@ -79,9 +79,9 @@ function EditPost({ router }) {
         ></textarea>
       ) : (
         <div
-          className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto bg-gray-100`}
+          className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto bg-ccd-basics-100`}
         >
-          <article className="prose prose-ccd-primary lg:prose-xl">
+          <article className="prose prose-ccd-purples lg:prose-xl">
             <Markdown>{post ? post.post_content : ''}</Markdown>
           </article>
         </div>

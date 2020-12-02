@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import ActiveLink from '@/components/ActiveLink';
-import { Transition } from '@tailwindui/react';
+import { Transition } from '@headlessui/react';
 import OutsideClick from '@/components/OutsideClick';
-import AJLogo from '@/components/icons/AJLogo';
+import TitleLogo from '@/components/global/logos/TitleLogo';
 
 export const AppTopbar = (props) => {
   const { setOverlayMenuActive, overlayMenuActive } = props;
@@ -11,108 +11,58 @@ export const AppTopbar = (props) => {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <nav className="bg-ccd-primary-800">
+    <nav className="bg-ccd-purples-900">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="-ml-2 mr-2 flex items-center ">
-              {/* Mobile menu button --> */}
-              <button
-                className="inline-flex items-center justify-center p-2 rounded-md text-xl text-white hover:text-white hover:bg-ccd-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                aria-expanded="false"
-                onClick={() => setOverlayMenuActive(!overlayMenuActive)}
-              >
-                <span className="sr-only">Open main menu</span>
-                {!overlayMenuActive ? (
-                  <svg
-                    className="block h-6 w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="block h-6 w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-            <div className="flex-shrink-0 flex items-center">
+            <div className="flex items-center flex-shrink-0">
               <Link href="/">
                 <a>
-                  <AJLogo />
+                  <TitleLogo ajFaceStandard={false} />
                 </a>
               </Link>
             </div>
             <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-              <ActiveLink activeClassName="bg-ccd-primary-900" href="/courses">
-                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+              <ActiveLink activeClassName="bg-ccd-purples-900" href="/courses">
+                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
                   Courses
                 </a>
               </ActiveLink>
               <ActiveLink
-                activeClassName="bg-ccd-primary-900"
+                activeClassName="bg-ccd-purples-900"
                 href="/tutorials"
               >
-                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
                   Tutorials
                 </a>
               </ActiveLink>
-              <ActiveLink activeClassName="bg-ccd-primary-900" href="/blog">
-                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+              <ActiveLink activeClassName="bg-ccd-purples-900" href="/blog">
+                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
                   Blog
                 </a>
               </ActiveLink>
-              <ActiveLink activeClassName="bg-ccd-primary-900" href="/podcasts">
-                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+              <ActiveLink activeClassName="bg-ccd-purples-900" href="/podcasts">
+                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
                   Podcasts
                 </a>
               </ActiveLink>
               <ActiveLink
-                activeClassName="bg-ccd-primary-900"
+                activeClassName="bg-ccd-purples-900"
                 href="/community"
               >
-                <a className="px-3 py-2 rounded-md text-sm font-medium text-white ">
+                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
                   Community
                 </a>
               </ActiveLink>
             </div>
           </div>
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <button
-                type="button"
-                className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-ccd-secondary-500 hover:bg-ccd-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-primary-800 focus:ring-ccd-secondary-500"
-              >
-                <span>Go Pro</span>
-              </button>
-            </div>
             <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
-              <button className="bg-ccd-primary-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-primary-800 focus:ring-white">
+              <button className="p-1 rounded-full bg-ccd-purples-800 text-ccd-basics-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white">
                 <span className="sr-only">View notifications</span>
                 {/* Heroicon name: bell --> */}
                 <svg
-                  className="h-6 w-6"
+                  className="w-6 h-6"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -130,17 +80,17 @@ export const AppTopbar = (props) => {
 
               {/* Profile dropdown --> */}
               <OutsideClick toggle={setUserMenu} value={false}>
-                <div className="ml-3 relative">
+                <div className="relative ml-3">
                   <div>
                     <button
-                      className="bg-ccd-primary-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-primary-800 focus:ring-white"
+                      className="flex text-sm rounded-full bg-ccd-purples-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white"
                       id="user-menu"
                       aria-haspopup="true"
                       onClick={() => setUserMenu(!userMenu)}
                     >
                       <span className="sr-only">Open user menu</span>
                       <img
-                        className="h-8 w-8 rounded-full"
+                        className="w-8 h-8 rounded-full"
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt=""
                       />
@@ -156,17 +106,17 @@ export const AppTopbar = (props) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <div
-                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-40 p-2"
+                      className="absolute right-0 z-40 w-48 p-2 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu"
                     >
                       <ActiveLink
-                        activeClassName="border-2 border-ccd-primary-800 rounded bg-ccd-primary-100 first-child:text-white"
+                        activeClassName="border-2 border-ccd-purples-800 rounded bg-ccd-purples-100 first-child:text-white"
                         href="/user/profile"
                       >
                         <a
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-ccd-primary-100"
+                          className="block px-4 py-2 text-sm text-ccd-basics-700 hover:bg-ccd-purples-100"
                           role="menuitem"
                         >
                           Your Profile
@@ -174,14 +124,14 @@ export const AppTopbar = (props) => {
                       </ActiveLink>
                       <a
                         href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-ccd-primary-100"
+                        className="block px-4 py-2 text-sm text-ccd-basics-700 hover:bg-ccd-purples-100"
                         role="menuitem"
                       >
                         Settings
                       </a>
                       <a
                         href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-ccd-primary-100"
+                        className="block px-4 py-2 text-sm text-ccd-basics-700 hover:bg-ccd-purples-100"
                         role="menuitem"
                       >
                         Sign out
@@ -191,6 +141,47 @@ export const AppTopbar = (props) => {
                 </div>
               </OutsideClick>
             </div>
+            <div className="flex items-center">
+              <button
+                className="inline-flex items-center justify-center p-2 text-xl text-white rounded-md hover:text-white hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                aria-expanded="false"
+                onClick={() => setOverlayMenuActive(!overlayMenuActive)}
+              >
+                <span className="sr-only">Open main menu</span>
+                {!overlayMenuActive ? (
+                  <svg
+                    className="block w-8 h-8"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="block w-8 h-8"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -199,54 +190,54 @@ export const AppTopbar = (props) => {
         Mobile menu, toggle classNamees based on menu state.
     
         Menu open: "block", Menu closed: "hidden"
-      --> */}
+      --> 
       <div className="hidden md:hidden">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <a
             href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-white bg-ccd-primary-500"
+            className="block px-3 py-2 text-base font-medium text-white rounded-md bg-ccd-purples-500"
           >
             Dashboard
           </a>
           <a
             href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-ccd-primary-700"
+            className="block px-3 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-purples-700"
           >
             Team
           </a>
           <a
             href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-ccd-primary-700"
+            className="block px-3 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-purples-700"
           >
             Projects
           </a>
           <a
             href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-ccd-primary-700"
+            className="block px-3 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-purples-700"
           >
             Calendar
           </a>
         </div>
-        <div className="pt-4 pb-3 border-t border-gray-700">
+        <div className="pt-4 pb-3 border-t border-ccd-basics-700">
           <div className="flex items-center px-5 sm:px-6">
             <div className="flex-shrink-0">
               <img
-                className="h-10 w-10 rounded-full"
+                className="w-10 h-10 rounded-full"
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                 alt=""
               />
             </div>
             <div className="ml-3">
               <div className="text-base font-medium text-white">Tom Cook</div>
-              <div className="text-sm font-medium text-gray-400">
+              <div className="text-sm font-medium text-ccd-basics-400">
                 tom@example.com
               </div>
             </div>
-            <button className="ml-auto flex-shrink-0 bg-ccd-primary-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-primary-800 focus:ring-white">
+            <button className="flex-shrink-0 p-1 ml-auto rounded-full bg-ccd-purples-800 text-ccd-basics-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white">
               <span className="sr-only">View notifications</span>
-              {/* Heroicon name: bell --> */}
+              {/* Heroicon name: bell --> 
               <svg
-                className="h-6 w-6"
+                className="w-6 h-6"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -262,28 +253,28 @@ export const AppTopbar = (props) => {
               </svg>
             </button>
           </div>
-          <div className="mt-3 px-2 sm:px-3">
+          <div className="px-2 mt-3 sm:px-3">
             <a
               href="#"
-              className="block px-3 py-2 rounded-md space-y-1 text-base font-medium text-gray-400 hover:text-white hover:bg-ccd-primary-700"
+              className="block px-3 py-2 space-y-1 text-base font-medium rounded-md text-ccd-basics-400 hover:text-white hover:bg-ccd-purples-700"
             >
               Your Profile
             </a>
             <a
               href="#"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-ccd-primary-700"
+              className="block px-3 py-2 text-base font-medium rounded-md text-ccd-basics-400 hover:text-white hover:bg-ccd-purples-700"
             >
               Settings
             </a>
             <a
               href="#"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-ccd-primary-700"
+              className="block px-3 py-2 text-base font-medium rounded-md text-ccd-basics-400 hover:text-white hover:bg-ccd-purples-700"
             >
               Sign out
             </a>
           </div>
         </div>
-      </div>
+      </div>;*/}
     </nav>
   );
 };

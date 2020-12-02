@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import { useState } from 'react';
-import { Transition } from '@tailwindui/react';
+import { Transition } from '@headlessui/react';
+import router from 'next/router';
 
 import { AppTopbar } from '../layout/AppTopbar';
 import { AppMenu } from '../layout/AppMenu';
@@ -23,10 +24,13 @@ function MyApp({ Component, pageProps }) {
   const onShowMenuButton = (event) => {
     console.log(event);
   };
+
+  router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
+
   return (
     <>
-      <div className="flex h-screen bg-gray-200">
-        <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex h-screen">
+        <div className="flex flex-col flex-1 overflow-hidden">
           <header>
             <AppTopbar
               setOverlayMenuActive={setOverlayMenuActive}
@@ -34,27 +38,27 @@ function MyApp({ Component, pageProps }) {
               onMenuItemClick={onMenuItemClick}
             />
           </header>
-          <main className="flex flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+          <main className="flex flex-1 overflow-x-hidden overflow-y-auto bg-ccd-purples-050">
             <Component {...pageProps} />
           </main>
           <Transition
             show={overlayMenuActive}
-            enter="transform transition ease-in-out"
-            enterFrom="translate-x-8"
-            enterTo="translate-x-0"
-            leave="transform transition ease-in-out"
-            leaveFrom="translate-x-8"
-            leaveTo="translate-x-0"
+            enter="transition-opacity duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-75"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 overflow-hidden bg-ccd-primary-100 bg-opacity-70">
+            <div className="fixed inset-0 overflow-hidden bg-ccd-purples-100 bg-opacity-70">
               <div className="absolute inset-0 overflow-hidden">
                 <OutsideClick toggle={setOverlayMenuActive} value={false}>
                   <section
-                    className="absolute inset-y-0 left-0 max-w-full flex"
+                    className="absolute inset-y-0 right-0 flex max-w-full"
                     aria-labelledby="slide-over-heading"
                   >
                     <div className="w-screen max-w-md">
-                      <div className="h-full flex flex-col shadow-xl  bg-gray-800">
+                      <div className="flex flex-col h-full shadow-xl bg-ccd-basics-800">
                         <AppMenu
                           onMenuItemClick={onMenuItemClick}
                           setOverlayMenuActive={setOverlayMenuActive}

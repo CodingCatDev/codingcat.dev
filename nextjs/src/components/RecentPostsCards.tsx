@@ -25,10 +25,10 @@ function RecentPostsCards({ recentPosts }) {
             </Link>
           </div>
           <div className="mt-6">
-            <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
+            <p className="text-lg text-bold tracking-wide text-ccd-basics-600 mb-2">
               {post.post_title}
             </p>
-            <p className="text-sm text-gray-600 font-hairline">
+            <p className="text-sm text-ccd-basics-600 font-hairline">
               {post.post_excerpt}
             </p>
           </div>
@@ -54,10 +54,10 @@ function RecentPostsCards({ recentPosts }) {
             </Link>
           </div>
           <div className="mt-6">
-            <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
+            <p className="text-lg text-bold tracking-wide text-ccd-basics-600 mb-2">
               {post.post_title}
             </p>
-            <p className="text-sm text-gray-600 font-hairline">
+            <p className="text-sm text-ccd-basics-600 font-hairline">
               {post.post_excerpt}
             </p>
           </div>
@@ -83,10 +83,10 @@ function RecentPostsCards({ recentPosts }) {
             </Link>
           </div>
           <div className="mt-6">
-            <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
+            <p className="text-lg text-bold tracking-wide text-ccd-basics-600 mb-2">
               {post.post_title}
             </p>
-            <p className="text-sm text-gray-600 font-hairline">
+            <p className="text-sm text-ccd-basics-600 font-hairline">
               {post.post_excerpt}
             </p>
           </div>

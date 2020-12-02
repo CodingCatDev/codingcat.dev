@@ -22,7 +22,7 @@ function EditPosts({ path }) {
   function postId(rowData) {
     return (
       <Link href={`.${path}/${rowData.id}`}>
-        <a className="underline text-ccd-primary-500">{rowData.id}</a>
+        <a className="underline text-ccd-purples-500">{rowData.id}</a>
       </Link>
     );
   }

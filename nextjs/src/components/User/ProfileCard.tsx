@@ -13,7 +13,7 @@ export default function UserSignin() {
         <Link href="/signin">
           <a
             type="button"
-            className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-ccd-secondary-500 hover:bg-ccd-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-primary-800 focus:ring-ccd-secondary-500"
+            className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-ccd-reds-500 hover:bg-ccd-reds-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-ccd-reds-500"
           >
             <span>Signin</span>
           </a>
@@ -27,7 +27,7 @@ export default function UserSignin() {
       <button
         onClick={() => logout()}
         type="button"
-        className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-ccd-primary-500 hover:bg-ccd-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-primary-800 focus:ring-ccd-primary-500"
+        className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-ccd-purples-500 hover:bg-ccd-purples-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-ccd-purples-500"
       >
         <span>Sign Out</span>
       </button>

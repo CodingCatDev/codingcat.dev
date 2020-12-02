@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import Blog from '../icons/Blog';
-import Community from '../icons/Community';
-import Courses from '../icons/Courses';
-import Podcasts from '../icons/Podcasts';
-import Tutorials from '../icons/Tutorials';
+import Blog from '../global/icons/Blog';
+import Community from '../global/icons/Community';
+import Courses from '../global/icons/Courses';
+import Podcasts from '../global/icons/Podcasts';
+import Tutorials from '../global/icons/Tutorials';
 
 export default function AdminMenu({ router }) {
   return (
@@ -23,7 +23,7 @@ From: "opacity-100"
 To: "opacity-0"
 */}
           <div className="fixed inset-0" aria-hidden="true">
-            <div className="absolute inset-0 bg-gray-600 opacity-75" />
+            <div className="absolute inset-0 bg-ccd-basics-600 opacity-75" />
           </div>
           {/*
 Off-canvas menu, show/hide based on off-canvas menu state.
@@ -35,7 +35,7 @@ Leaving: "transition ease-in-out duration-300 transform"
 From: "translate-x-0"
 To: "-translate-x-full"
 */}
-          <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-800">
+          <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-ccd-basics-800">
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <button className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="sr-only">Close sidebar</span>
@@ -68,11 +68,11 @@ To: "-translate-x-full"
               <nav className="px-2 space-y-1">
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-white bg-gray-900"
+                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-white bg-ccd-basics-900"
                 >
                   {/* Heroicon name: home */}
                   <svg
-                    className="mr-4 h-6 w-6 text-gray-300"
+                    className="mr-4 h-6 w-6 text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -90,11 +90,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700"
+                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: users */}
                   <svg
-                    className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -112,11 +112,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700"
+                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: folder */}
                   <svg
-                    className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -134,11 +134,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700"
+                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: calendar */}
                   <svg
-                    className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -156,11 +156,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700"
+                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: inbox */}
                   <svg
-                    className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -178,11 +178,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700"
+                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: chart-bar */}
                   <svg
-                    className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-300"
+                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -211,7 +211,7 @@ To: "-translate-x-full"
         <div className="flex flex-col w-64">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex flex-col h-0 flex-1 ">
-            <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900 text-white">
+            <div className="flex items-center h-16 flex-shrink-0 px-4 bg-ccd-basics-900 text-white">
               <Link href="/admin">
                 <a>
                   <div>Dashboard</div>
@@ -219,42 +219,42 @@ To: "-translate-x-full"
               </Link>
             </div>
             <div className="flex-1 flex flex-col overflow-y-auto">
-              <nav className="flex-1 px-2 py-4 bg-gray-800 space-y-1">
+              <nav className="flex-1 px-2 py-4 bg-ccd-basics-800 space-y-1">
                 <Link href="/admin/courses">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
-                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
+                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
                       <Courses />
                     </div>
                     Courses
                   </a>
                 </Link>
                 <Link href="/admin/tutorials">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
-                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
+                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
                       <Tutorials />
                     </div>
                     Tutorials
                   </a>
                 </Link>
                 <Link href="/admin/blog">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-gray-700">
-                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full ">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-ccd-basics-700">
+                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full ">
                       <Blog />
                     </div>
                     Blog
                   </a>
                 </Link>
                 <Link href="/admin/podcasts">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
-                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
+                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
                       <Podcasts />
                     </div>
                     Podcasts
                   </a>
                 </Link>
                 <Link href="/admin/community">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700">
-                    <div className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 flex flex-col justify-content h-full">
+                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
+                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
                       <Community />
                     </div>
                     Community

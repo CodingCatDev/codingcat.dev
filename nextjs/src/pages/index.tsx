@@ -2,6 +2,7 @@ import Head from 'next/head';
 import admin from '@/utils/firebaseAdmin';
 
 import RecentPostsCards from '@/components/RecentPostsCards';
+import Intro from '@/components/Home/Intro';
 
 export default function Home({ recentPosts }) {
   return (
@@ -9,8 +10,10 @@ export default function Home({ recentPosts }) {
       <Head>
         <title>CodingCatDev</title>
       </Head>
-
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto ">
+      <div>
+        <Intro />
+      </div>
+      <main className="z-10 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto">
         <RecentPostsCards recentPosts={recentPosts} />
       </main>
 

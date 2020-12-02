@@ -26,7 +26,7 @@ function AdminDashboard({ router }) {
 
       <main className="">
         <>
-          <div className="h-screen flex overflow-hidden bg-gray-100">
+          <div className="h-screen flex overflow-hidden bg-ccd-basics-100">
             <AdminMenu router={router} />
             <div className="flex flex-col w-0 flex-1 overflow-hidden">
               <AdminTopBar router={router} />
@@ -37,7 +37,7 @@ function AdminDashboard({ router }) {
                 <div className="py-6">
                   {router.asPath === path ? (
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                      <h1 className="text-2xl font-semibold text-gray-900">
+                      <h1 className="text-2xl font-semibold text-ccd-basics-900">
                         Dashboard
                       </h1>
                       <p className="text-lg">

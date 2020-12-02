@@ -6,10 +6,31 @@ module.exports = {
       sans: ['nunito', 'ui-sans-serif'],
       serif: ['nunito', 'ui-serif'],
       mono: ['nunito', 'ui-monospace'],
+      heading: ['Henny Penny', 'nunito'],
     },
+    // boxShadow: {
+    //   'b-lg': {
+    //     '--tw-shadow':
+    //       '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);',
+    //     'box-shadow':
+    //       'var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);',
+    //   },
+    // },
     extend: {
       colors: {
-        'ccd-primary': {
+        'ccd-basics': {
+          '050': '#FBFBFB',
+          100: '#F1F1F1',
+          200: '#DCDCDC',
+          300: '#B3AFB5',
+          400: '#7F7982',
+          500: '#6E6B70',
+          600: '#333034',
+          700: '#1E1D1F',
+          800: '#141214',
+          900: '#171717',
+        },
+        'ccd-purples': {
           '050': '#EFE4F4',
           100: '#D7BCE3',
           200: '#BD8FD1',
@@ -21,7 +42,7 @@ module.exports = {
           800: '#5E1286',
           900: '#4B0A75',
         },
-        'ccd-secondary': {
+        'ccd-reds': {
           '050': '#FFEBEC',
           100: '#FFCDCF',
           200: '#FFACAF',
@@ -33,6 +54,55 @@ module.exports = {
           800: '#FF3E43',
           900: '#FF2E32',
         },
+        'ccd-yellows': {
+          '050': '#FFFCF6',
+          100: '#FEFAED',
+          200: '#FEF1D1',
+          300: '#FDE9B5',
+          400: '#FBD97E',
+          500: '#F9C846',
+          600: '#E0B43F',
+          700: '#CDA438',
+          800: '#BA9532',
+          900: '#9A7B28',
+        },
+        'ccd-blues': {
+          '050': '#F2FEFF',
+          100: '#E6FDFF',
+          200: '#BFF9FE',
+          300: '#FDE9B5',
+          400: '#4DEFFD',
+          500: '#00E8FC',
+          600: '#00D1E3',
+          700: '#008B97',
+          800: '#00464C',
+          900: '#03272B',
+        },
+        'ccd-greens': {
+          '050': '#F5FDF9',
+          100: '#EAFBF2',
+          200: '#CBF5E0',
+          300: '#ABEFCD',
+          400: '#6CE4A7',
+          500: '#2DD881',
+          600: '#29C274',
+          700: '#1B824D',
+          800: '#14613A',
+          900: '#0E462A',
+        },
+        'ccd-lime-greens': {
+          '050': '#FCFEF9',
+          100: '#FAFEF2',
+          200: '#F2FCDF',
+          300: '#E9F9CC',
+          400: '#D9F5A6',
+          500: '#C9F180',
+          600: '#B5D973',
+          700: '#86A949',
+          800: '#637C35',
+          900: '#42561E',
+        },
+
         'ccd-social': {
           twitter: '#1da1f1',
           discord: '#7289da',
@@ -47,46 +117,6 @@ module.exports = {
         },
       },
     },
-    // typography: (theme) => ({
-    //   default: {
-    //     css: {
-    //       "h1,\nh2,\nh3,\nh4,\nh5,\nh6": {
-    //         margin: "1.5rem 0 1rem 0",
-    //         fontFamily: "nunito",
-    //         fontWeight: "normal",
-    //         lineHeight: 1.2,
-    //         color: theme('colors.ccd-primary.700'),
-    //         "&:first-child": { marginTop: "0" }
-    //       },
-    //       h1: { fontSize: "2.5rem" },
-    //       h2: { fontSize: "2rem" },
-    //       h3: { fontSize: "1.75rem" },
-    //       h4: { fontSize: "1.5rem" },
-    //       h5: { fontSize: "1.25rem" },
-    //       h6: { fontSize: "1rem" },
-    //       mark: {
-    //         background: "#fff8e1",
-    //         padding: "0.25rem 0.4rem",
-    //         borderRadius: "$borderRadius",
-    //         fontFamily: "monospace"
-    //       },
-    //       blockquote: {
-    //         margin: "1rem 0",
-    //         padding: "0 2rem",
-    //         borderLeft: "4px solid #90a4ae"
-    //       },
-    //       hr: {
-    //         borderTop: "solid $dividerColor",
-    //         borderWidth: "1px 0 0 0",
-    //         margin: "1rem 0"
-    //       },
-    //       p: {
-    //         margin: "0 0 1rem 0",
-    //         lineHeight: 1.5,
-    //       }
-    //     },
-    //   },
-    // }),
     customForms: (theme) => ({
       default: {
         'input, textarea, multiselect': {

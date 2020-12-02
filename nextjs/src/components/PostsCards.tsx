@@ -35,12 +35,12 @@ function PostsCards({ posts, post_type }) {
             </Link>
           </div>
           <div className="mt-6">
-            <p className="text-lg text-bold tracking-wide text-gray-600 mb-2">
+            <p className="text-lg text-bold tracking-wide text-ccd-basics-600 mb-2">
               <Link href={post.post_permalink}>
                 <a>{post.post_title}</a>
               </Link>
             </p>
-            <p className="text-sm text-gray-600 font-hairline">
+            <p className="text-sm text-ccd-basics-600 font-hairline">
               {post.post_excerpt}
             </p>
           </div>

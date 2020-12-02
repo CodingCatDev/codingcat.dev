@@ -7,19 +7,15 @@ import { mapUserData } from '@/utils/auth/mapUserData';
 
 // Init the Firebase app.
 initFirebase();
-
+// Auth providers
+// https://github.com/firebase/firebaseui-web#configure-oauth-providers
 const firebaseAuthConfig = {
   signInFlow: 'popup',
-  // Auth providers
-  // https://github.com/firebase/firebaseui-web#configure-oauth-providers
   signInOptions: [
-    {
-      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-      requireDisplayName: false,
-    },
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+    firebase.auth.GithubAuthProvider.PROVIDER_ID,
   ],
-  signInSuccessUrl: '/user/profile',
   credentialHelper: 'none',
   callbacks: {
     signInSuccessWithAuthResult: async ({ user }, redirectUrl) => {
@@ -29,14 +25,51 @@ const firebaseAuthConfig = {
   },
 };
 
-const FirebaseAuth = () => {
+const firebaseAuthFull = {
+  signInFlow: 'popup',
+  signInOptions: [
+    {
+      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+      requireDisplayName: false,
+    },
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+    firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+    firebase.auth.GithubAuthProvider.PROVIDER_ID,
+    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    'apple.com',
+    'microsoft.com',
+    'yahoo.com',
+  ],
+  // signInSuccessUrl: '/',
+  credentialHelper: 'none',
+  callbacks: {
+    signInSuccessWithAuthResult: async ({ user }, redirectUrl) => {
+      const userData = await mapUserData(user);
+      setUserCookie(userData);
+    },
+  },
+};
+
+const FirebaseAuth = ({ full = true }) => {
   return (
-    <div>
-      <StyledFirebaseAuth
-        uiConfig={firebaseAuthConfig as any}
-        firebaseAuth={firebase.auth()}
-      />
-    </div>
+    <>
+      {full ? (
+        <div>
+          <StyledFirebaseAuth
+            uiConfig={firebaseAuthFull as any}
+            firebaseAuth={firebase.auth()}
+          />
+        </div>
+      ) : (
+        <div>
+          <StyledFirebaseAuth
+            uiConfig={firebaseAuthConfig as any}
+            firebaseAuth={firebase.auth()}
+          />
+        </div>
+      )}
+    </>
   );
 };
 

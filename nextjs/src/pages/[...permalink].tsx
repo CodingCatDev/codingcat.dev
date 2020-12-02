@@ -33,21 +33,21 @@ export default function Post({ post, markdown, recentPosts }) {
     <div className="grid grid-cols-12 gap-2 ">
       <div className="col-span-12 xl:col-span-10">
         <h1>{post.post_title}</h1>
-        <article className="prose prose-ccd-primary lg:prose-xl">
+        <article className="prose prose-ccd-purples lg:prose-xl">
           {content}
         </article>
       </div>
       <div className="col-span-12 xl:col-span-2">
         <div className="bg-white shadow p-3 m-3 rounded-lg">
-          <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
+          <p className="text-xl text-bold tracking-wide text-ccd-basics-800 mb-2">
             Recent Posts
           </p>
           <RecentPostsList posts={recentPosts.post} />
-          <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
+          <p className="text-xl text-bold tracking-wide text-ccd-basics-800 mb-2">
             Recent Tutorials
           </p>
           <RecentPostsList posts={recentPosts.tutorials} />
-          <p className="text-xl text-bold tracking-wide text-gray-800 mb-2">
+          <p className="text-xl text-bold tracking-wide text-ccd-basics-800 mb-2">
             Recent Podcasts
           </p>
           <RecentPostsList posts={recentPosts.podcasts} />

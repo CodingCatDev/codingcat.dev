@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
-const UserSignin = dynamic(() => import('@/components/UserSignin'), {
+const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
-  loading: () => <p>Scratching the couch...</p>,
+  loading: () => <p>Playing with yarn...</p>,
 });
 
 export default function Signin() {
@@ -15,7 +15,7 @@ export default function Signin() {
       </Head>
 
       <main>
-        <UserSignin />
+        <FirebaseAuth />
       </main>
 
       <footer></footer>
