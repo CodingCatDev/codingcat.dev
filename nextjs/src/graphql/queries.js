@@ -1,399 +1,190 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const searchPosts = /* GraphQL */ `
-  query SearchPosts(
-    $filter: SearchablePostFilterInput
-    $sort: SearchablePostSortInput
+export const postsByPostTypePublished = /* GraphQL */ `
+  query PostsByPostTypePublished(
+    $post_type: String
+    $post_publish_datetime: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelAPIFilterInput
     $limit: Int
     $nextToken: String
-    $from: Int
   ) {
-    searchPosts(
+    postsByPostTypePublished(
+      post_type: $post_type
+      post_publish_datetime: $post_publish_datetime
+      sortDirection: $sortDirection
       filter: $filter
-      sort: $sort
       limit: $limit
       nextToken: $nextToken
-      from: $from
     ) {
       items {
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
+        post_publish_datetime
+        site_title
+        user_username
+        user_sites
+        user_posts
+        user_user
+        comment_content
+        comment_user
+        category_title
+        category_description
         createdAt
         updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
+        version
+        owner
+        post_status
       }
       nextToken
-      total
     }
   }
 `;
-export const getBlog = /* GraphQL */ `
-  query GetBlog($id: ID!) {
-    getBlog(id: $id) {
-      id
-      title
-      posts {
-        items {
-          id
-          post_type
-          post_title
-          post_name
-          post_tags
-          post_content
-          post_excerpt
-          post_status
-          comment_status
-          ping_status
-          comment_count
-          post_featured_image
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listBlogs = /* GraphQL */ `
-  query ListBlogs(
-    $filter: ModelBlogFilterInput
+export const postsByPermalink = /* GraphQL */ `
+  query PostsByPermalink(
+    $post_permalink: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelAPIFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listBlogs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    postsByPermalink(
+      post_permalink: $post_permalink
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
       items {
         id
-        title
-        posts {
-          nextToken
-        }
+        post_type
+        post_title
+        post_basename
+        post_tags
+        post_content
+        post_excerpt
+        post_featured_image
+        comment_status
+        ping_status
+        comment_count
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
+        post_publish_datetime
+        site_title
+        user_username
+        user_sites
+        user_posts
+        user_user
+        comment_content
+        comment_user
+        category_title
+        category_description
         createdAt
         updatedAt
+        version
+        owner
+        post_status
       }
       nextToken
     }
   }
 `;
-export const getPost = /* GraphQL */ `
-  query GetPost($id: ID!) {
-    getPost(id: $id) {
+export const getApi = /* GraphQL */ `
+  query GetApi($id: ID!) {
+    getAPI(id: $id) {
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
-      post_status
+      post_featured_image
       comment_status
       ping_status
       comment_count
-      post_featured_image
-      blog {
-        id
-        title
-        posts {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
+      post_publish_datetime
+      site_title
+      user_username
+      user_sites
+      user_posts
+      user_user
+      comment_content
+      comment_user
+      category_title
+      category_description
       createdAt
       updatedAt
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          owner
-        }
-        nextToken
-      }
-      category {
-        items {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-    }
-  }
-`;
-export const listPosts = /* GraphQL */ `
-  query ListPosts(
-    $filter: ModelPostFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listPosts(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      nextToken
-    }
-  }
-`;
-export const getComment = /* GraphQL */ `
-  query GetComment($id: ID!) {
-    getComment(id: $id) {
-      id
-      content
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
+      version
       owner
+      post_status
     }
   }
 `;
-export const listComments = /* GraphQL */ `
-  query ListComments(
-    $filter: ModelCommentFilterInput
+export const listApIs = /* GraphQL */ `
+  query ListApIs(
+    $filter: ModelAPIFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listAPIs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        id
-        content
-        post {
-          id
-          post_type
-          post_title
-          post_name
-          post_tags
-          post_content
-          post_excerpt
-          post_status
-          comment_status
-          ping_status
-          comment_count
-          post_featured_image
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        owner
-      }
-      nextToken
-    }
-  }
-`;
-export const getCategory = /* GraphQL */ `
-  query GetCategory($id: ID!) {
-    getCategory(id: $id) {
-      id
-      name
-      post {
         id
         post_type
         post_title
-        post_name
+        post_basename
         post_tags
         post_content
         post_excerpt
-        post_status
+        post_featured_image
         comment_status
         ping_status
         comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
+        post_permalink
+        post_author
+        post_thumbnail
+        post_formats
+        post_preview
+        post_publish_datetime
+        site_title
+        user_username
+        user_sites
+        user_posts
+        user_user
+        comment_content
+        comment_user
+        category_title
+        category_description
         createdAt
         updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listCategorys = /* GraphQL */ `
-  query ListCategorys(
-    $filter: ModelCategoryFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listCategorys(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        post {
-          id
-          post_type
-          post_title
-          post_name
-          post_tags
-          post_content
-          post_excerpt
-          post_status
-          comment_status
-          ping_status
-          comment_count
-          post_featured_image
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        version
+        owner
+        post_status
       }
       nextToken
-    }
-  }
-`;
-export const getVodAsset = /* GraphQL */ `
-  query GetVodAsset($id: ID!) {
-    getVodAsset(id: $id) {
-      id
-      title
-      description
-      createdAt
-      updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const listVodAssets = /* GraphQL */ `
-  query ListVodAssets(
-    $filter: ModelvodAssetFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listVodAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        title
-        description
-        createdAt
-        updatedAt
-        video {
-          id
-          token
-          createdAt
-          updatedAt
-        }
-      }
-      nextToken
-    }
-  }
-`;
-export const listVideoObjects = /* GraphQL */ `
-  query ListVideoObjects(
-    $filter: ModelvideoObjectFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listVideoObjects(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getVideoObject = /* GraphQL */ `
-  query GetVideoObject($id: ID!) {
-    getVideoObject(id: $id) {
-      id
-      token
-      createdAt
-      updatedAt
     }
   }
 `;

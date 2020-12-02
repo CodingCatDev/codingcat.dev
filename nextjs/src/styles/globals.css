@@ -1,0 +1,42 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  @font-face {
+    font-family: nunito;
+    font-style: normal;
+    font-weight: 600;
+    src: url(../../node_modules/typeface-nunito-sans/files/nunito-sans-latin-600.woff);
+  }
+  @font-face {
+    font-family: Henny Penny;
+    font-style: normal;
+    font-weight: 400;
+    src: url(../fonts/HennyPenny-Regular.ttf);
+  }
+  h1 {
+    @apply leading-loose text-7xl font-heading;
+  }
+  h2 {
+    @apply text-6xl leading-loose font-heading;
+  }
+  h3 {
+    @apply text-5xl leading-loose font-heading;
+  }
+  h4 {
+    @apply text-4xl leading-loose font-heading;
+  }
+  h5 {
+    @apply text-3xl leading-loose font-heading;
+  }
+  h6 {
+    @apply text-2xl leading-loose font-heading;
+  }
+}
+
+@layer components {
+  .vertical-text-clip {
+    @apply text-transparent bg-clip-text bg-gradient-to-b from-ccd-purples-800 via-ccd-purples-400 to-ccd-reds-500;
+  }
+}

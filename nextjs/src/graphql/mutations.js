@@ -1,600 +1,123 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createBlog = /* GraphQL */ `
-  mutation CreateBlog(
-    $input: CreateBlogInput!
-    $condition: ModelBlogConditionInput
+export const deleteApi = /* GraphQL */ `
+  mutation DeleteApi(
+    $input: DeleteAPIInput!
+    $condition: ModelAPIConditionInput
   ) {
-    createBlog(input: $input, condition: $condition) {
-      id
-      title
-      posts {
-        items {
-          id
-          post_type
-          post_title
-          post_name
-          post_tags
-          post_content
-          post_excerpt
-          post_status
-          comment_status
-          ping_status
-          comment_count
-          post_featured_image
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateBlog = /* GraphQL */ `
-  mutation UpdateBlog(
-    $input: UpdateBlogInput!
-    $condition: ModelBlogConditionInput
-  ) {
-    updateBlog(input: $input, condition: $condition) {
-      id
-      title
-      posts {
-        items {
-          id
-          post_type
-          post_title
-          post_name
-          post_tags
-          post_content
-          post_excerpt
-          post_status
-          comment_status
-          ping_status
-          comment_count
-          post_featured_image
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteBlog = /* GraphQL */ `
-  mutation DeleteBlog(
-    $input: DeleteBlogInput!
-    $condition: ModelBlogConditionInput
-  ) {
-    deleteBlog(input: $input, condition: $condition) {
-      id
-      title
-      posts {
-        items {
-          id
-          post_type
-          post_title
-          post_name
-          post_tags
-          post_content
-          post_excerpt
-          post_status
-          comment_status
-          ping_status
-          comment_count
-          post_featured_image
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const createPost = /* GraphQL */ `
-  mutation CreatePost(
-    $input: CreatePostInput!
-    $condition: ModelPostConditionInput
-  ) {
-    createPost(input: $input, condition: $condition) {
+    deleteAPI(input: $input, condition: $condition) {
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
-      post_status
+      post_featured_image
       comment_status
       ping_status
       comment_count
-      post_featured_image
-      blog {
-        id
-        title
-        posts {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
+      post_publish_datetime
+      site_title
+      user_username
+      user_sites
+      user_posts
+      user_user
+      comment_content
+      comment_user
+      category_title
+      category_description
       createdAt
       updatedAt
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          owner
-        }
-        nextToken
-      }
-      category {
-        items {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
+      version
+      owner
+      post_status
     }
   }
 `;
-export const updatePost = /* GraphQL */ `
-  mutation UpdatePost(
-    $input: UpdatePostInput!
-    $condition: ModelPostConditionInput
+export const createApi = /* GraphQL */ `
+  mutation CreateApi(
+    $input: CreateAPIInput!
+    $condition: ModelAPIConditionInput
   ) {
-    updatePost(input: $input, condition: $condition) {
+    createAPI(input: $input, condition: $condition) {
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
-      post_status
+      post_featured_image
       comment_status
       ping_status
       comment_count
-      post_featured_image
-      blog {
-        id
-        title
-        posts {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
+      post_publish_datetime
+      site_title
+      user_username
+      user_sites
+      user_posts
+      user_user
+      comment_content
+      comment_user
+      category_title
+      category_description
       createdAt
       updatedAt
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          owner
-        }
-        nextToken
-      }
-      category {
-        items {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
+      version
+      owner
+      post_status
     }
   }
 `;
-export const deletePost = /* GraphQL */ `
-  mutation DeletePost(
-    $input: DeletePostInput!
-    $condition: ModelPostConditionInput
+export const updateApi = /* GraphQL */ `
+  mutation UpdateApi(
+    $input: UpdateAPIInput!
+    $condition: ModelAPIConditionInput
   ) {
-    deletePost(input: $input, condition: $condition) {
+    updateAPI(input: $input, condition: $condition) {
       id
       post_type
       post_title
-      post_name
+      post_basename
       post_tags
       post_content
       post_excerpt
-      post_status
+      post_featured_image
       comment_status
       ping_status
       comment_count
-      post_featured_image
-      blog {
-        id
-        title
-        posts {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
+      post_permalink
+      post_author
+      post_thumbnail
+      post_formats
+      post_preview
+      post_publish_datetime
+      site_title
+      user_username
+      user_sites
+      user_posts
+      user_user
+      comment_content
+      comment_user
+      category_title
+      category_description
       createdAt
       updatedAt
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          owner
-        }
-        nextToken
-      }
-      category {
-        items {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-    }
-  }
-`;
-export const createComment = /* GraphQL */ `
-  mutation CreateComment(
-    $input: CreateCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    createComment(input: $input, condition: $condition) {
-      id
-      content
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
+      version
       owner
-    }
-  }
-`;
-export const updateComment = /* GraphQL */ `
-  mutation UpdateComment(
-    $input: UpdateCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    updateComment(input: $input, condition: $condition) {
-      id
-      content
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
-      owner
-    }
-  }
-`;
-export const deleteComment = /* GraphQL */ `
-  mutation DeleteComment(
-    $input: DeleteCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    deleteComment(input: $input, condition: $condition) {
-      id
-      content
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
-      owner
-    }
-  }
-`;
-export const createCategory = /* GraphQL */ `
-  mutation CreateCategory(
-    $input: CreateCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    createCategory(input: $input, condition: $condition) {
-      id
-      name
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateCategory = /* GraphQL */ `
-  mutation UpdateCategory(
-    $input: UpdateCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    updateCategory(input: $input, condition: $condition) {
-      id
-      name
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteCategory = /* GraphQL */ `
-  mutation DeleteCategory(
-    $input: DeleteCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    deleteCategory(input: $input, condition: $condition) {
-      id
-      name
-      post {
-        id
-        post_type
-        post_title
-        post_name
-        post_tags
-        post_content
-        post_excerpt
-        post_status
-        comment_status
-        ping_status
-        comment_count
-        post_featured_image
-        blog {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        comments {
-          nextToken
-        }
-        category {
-          nextToken
-        }
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const createVodAsset = /* GraphQL */ `
-  mutation CreateVodAsset(
-    $input: CreateVodAssetInput!
-    $condition: ModelvodAssetConditionInput
-  ) {
-    createVodAsset(input: $input, condition: $condition) {
-      id
-      title
-      description
-      createdAt
-      updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const updateVodAsset = /* GraphQL */ `
-  mutation UpdateVodAsset(
-    $input: UpdateVodAssetInput!
-    $condition: ModelvodAssetConditionInput
-  ) {
-    updateVodAsset(input: $input, condition: $condition) {
-      id
-      title
-      description
-      createdAt
-      updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const deleteVodAsset = /* GraphQL */ `
-  mutation DeleteVodAsset(
-    $input: DeleteVodAssetInput!
-    $condition: ModelvodAssetConditionInput
-  ) {
-    deleteVodAsset(input: $input, condition: $condition) {
-      id
-      title
-      description
-      createdAt
-      updatedAt
-      video {
-        id
-        token
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const createVideoObject = /* GraphQL */ `
-  mutation CreateVideoObject(
-    $input: CreateVideoObjectInput!
-    $condition: ModelvideoObjectConditionInput
-  ) {
-    createVideoObject(input: $input, condition: $condition) {
-      id
-      token
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateVideoObject = /* GraphQL */ `
-  mutation UpdateVideoObject(
-    $input: UpdateVideoObjectInput!
-    $condition: ModelvideoObjectConditionInput
-  ) {
-    updateVideoObject(input: $input, condition: $condition) {
-      id
-      token
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteVideoObject = /* GraphQL */ `
-  mutation DeleteVideoObject(
-    $input: DeleteVideoObjectInput!
-    $condition: ModelvideoObjectConditionInput
-  ) {
-    deleteVideoObject(input: $input, condition: $condition) {
-      id
-      token
-      createdAt
-      updatedAt
+      post_status
     }
   }
 `;
