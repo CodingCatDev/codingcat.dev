@@ -1,4 +1,4 @@
-export default function AJLogo({ className = 'block w-12 h-12' }) {
+export default function AJPrimary({ className = 'block w-12 h-12' }) {
   return (
     <svg
       className={className}

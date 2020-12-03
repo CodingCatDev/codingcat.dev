@@ -16,7 +16,7 @@ const useUser = () => {
   const [user, setUser] = useState();
   const router = useRouter();
 
-  const logout = async () => {
+  const signout = async () => {
     return firebase
       .auth()
       .signOut()
@@ -59,7 +59,7 @@ const useUser = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { user, logout };
+  return { user, signout };
 };
 
 export { useUser };

@@ -1,4 +1,4 @@
-export default function AJLogoLeft({ className = 'block w-12 h-12' }) {
+export default function AJHeartAlt({ className = 'block w-12 h-12' }) {
   return (
     <svg
       className={className}

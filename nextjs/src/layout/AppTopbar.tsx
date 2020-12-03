@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
 import ActiveLink from '@/components/ActiveLink';
-import { Transition } from '@headlessui/react';
 import OutsideClick from '@/components/OutsideClick';
-import TitleLogo from '@/components/global/logos/TitleLogo';
+import AJLogoLeft from '@/components/global/icons/AJAlt';
+
+const AvatarMenu = dynamic(() => import('@/components/User/AvatarMenu'), {
+  ssr: false,
+  loading: () => <p>Playing with yarn...</p>,
+});
 
 export const AppTopbar = (props) => {
   const { setOverlayMenuActive, overlayMenuActive } = props;
@@ -11,17 +17,19 @@ export const AppTopbar = (props) => {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <nav className="bg-ccd-purples-900">
-      <div className="px-4 sm:px-6 lg:px-8">
+    <nav className="mx-auto bg-ccd-purples-900 sm::max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl ">
+      <div className="px-2 md:px-0">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="flex items-center flex-shrink-0">
-              <Link href="/">
-                <a>
-                  <TitleLogo ajFaceStandard={false} />
-                </a>
-              </Link>
-            </div>
+            <Link href="/">
+              <a>
+                <div className="flex items-center content-center flex-shrink-0 h-full">
+                  <AJLogoLeft />
+                  <h6 className="hidden text-white lg:block">CodingCat.dev</h6>
+                </div>
+              </a>
+            </Link>
+
             <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
               <ActiveLink activeClassName="bg-ccd-purples-900" href="/courses">
                 <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
@@ -80,65 +88,7 @@ export const AppTopbar = (props) => {
 
               {/* Profile dropdown --> */}
               <OutsideClick toggle={setUserMenu} value={false}>
-                <div className="relative ml-3">
-                  <div>
-                    <button
-                      className="flex text-sm rounded-full bg-ccd-purples-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white"
-                      id="user-menu"
-                      aria-haspopup="true"
-                      onClick={() => setUserMenu(!userMenu)}
-                    >
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        className="w-8 h-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
-                    </button>
-                  </div>
-                  <Transition
-                    show={userMenu}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <div
-                      className="absolute right-0 z-40 w-48 p-2 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby="user-menu"
-                    >
-                      <ActiveLink
-                        activeClassName="border-2 border-ccd-purples-800 rounded bg-ccd-purples-100 first-child:text-white"
-                        href="/user/profile"
-                      >
-                        <a
-                          className="block px-4 py-2 text-sm text-ccd-basics-700 hover:bg-ccd-purples-100"
-                          role="menuitem"
-                        >
-                          Your Profile
-                        </a>
-                      </ActiveLink>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-ccd-basics-700 hover:bg-ccd-purples-100"
-                        role="menuitem"
-                      >
-                        Settings
-                      </a>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-ccd-basics-700 hover:bg-ccd-purples-100"
-                        role="menuitem"
-                      >
-                        Sign out
-                      </a>
-                    </div>
-                  </Transition>
-                </div>
+                <AvatarMenu userMenu={userMenu} setUserMenu={setUserMenu} />
               </OutsideClick>
             </div>
             <div className="flex items-center">

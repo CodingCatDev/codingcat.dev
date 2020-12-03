@@ -16,6 +16,7 @@ const firebaseAuthConfig = {
     firebase.auth.TwitterAuthProvider.PROVIDER_ID,
     firebase.auth.GithubAuthProvider.PROVIDER_ID,
   ],
+  signInSuccessUrl: '/user/profile',
   credentialHelper: 'none',
   callbacks: {
     signInSuccessWithAuthResult: async ({ user }, redirectUrl) => {
@@ -41,7 +42,7 @@ const firebaseAuthFull = {
     'microsoft.com',
     'yahoo.com',
   ],
-  // signInSuccessUrl: '/',
+  signInSuccessUrl: '/user/profile',
   credentialHelper: 'none',
   callbacks: {
     signInSuccessWithAuthResult: async ({ user }, redirectUrl) => {

@@ -11,7 +11,7 @@ import { useUser } from '@/utils/auth/useUser';
 import { postsObservable } from '@/services/api';
 
 function EditPosts({ path }) {
-  const { user, logout }: { user: any; logout: any } = useUser();
+  const { user, signout }: { user: any; signout: any } = useUser();
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     postsObservable(

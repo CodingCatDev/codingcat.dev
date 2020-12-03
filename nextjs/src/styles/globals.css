@@ -37,6 +37,9 @@
 
 @layer components {
   .vertical-text-clip {
-    @apply text-transparent bg-clip-text bg-gradient-to-b from-ccd-purples-800 via-ccd-purples-400 to-ccd-reds-500;
+    @apply text-transparent bg-clip-text bg-gradient-to-b from-ccd-purples-800 to-ccd-reds-300;
+  }
+  .vertical-clip {
+    @apply bg-clip-border bg-gradient-to-b from-ccd-purples-800 via-ccd-purples-700 to-ccd-reds-900;
   }
 }

@@ -6,7 +6,7 @@ module.exports = {
       sans: ['nunito', 'ui-sans-serif'],
       serif: ['nunito', 'ui-serif'],
       mono: ['nunito', 'ui-monospace'],
-      heading: ['Henny Penny', 'nunito'],
+      heading: ['Henny Penny', 'nunito', 'ui-monospace'],
     },
     // boxShadow: {
     //   'b-lg': {

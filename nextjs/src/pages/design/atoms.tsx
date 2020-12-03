@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import AJLogo from '../../components/global/icons/AJLogo';
+import AJLogo from '../../components/global/icons/AJPrimary';
 
 export default function Blog({ posts }) {
   return (

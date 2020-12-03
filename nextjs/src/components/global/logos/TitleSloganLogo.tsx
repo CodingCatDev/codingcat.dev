@@ -1,5 +1,5 @@
-import AJLogo from '../icons/AJLogo';
-import AJLogoLeft from '../icons/AJLogoLeft';
+import AJLogo from '../icons/AJPrimary';
+import AJLogoLeft from '../icons/AJAlt';
 import SloganNunito from './SloganNunito';
 import TitleNunito from './TitleNunito';
 

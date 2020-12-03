@@ -4,9 +4,8 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { useUser } from '@/utils/auth/useUser';
-import Drip from '@/components/global/icons/Drip';
-import AJLogo from './global/icons/AJLogo';
-import AJLogoLeft from './global/icons/AJLogoLeft';
+import AJLogo from './global/icons/AJPrimary';
+import AJLogoLeft from './global/icons/AJAlt';
 import { sign } from 'crypto';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
@@ -15,23 +14,27 @@ const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
 });
 
 export default function UserSignin() {
-  const { user, logout }: { user: any; logout: any } = useUser();
+  const { user, signout }: { user: any; signout: any } = useUser();
   const [signin, setSignIn] = useState(false);
 
   return (
     <>
-      <>
-        <div className="relative flex justify-center mb-48 h-96">
-          <div className="relative left-0 z-10 w-full pt-40 mx-2 sm:w-auto sm:absolute sm:pl-16 md:pl-20 lg:pl-48">
-            <div className="flex justify-between w-full h-16">
+      {user ? (
+        <></>
+      ) : (
+        <>
+          <div className="flex flex-col justify-start mb-48 h-96">
+            <div className="flex justify-between w-full">
               <div
-                className={`flex justify-center h-full rounded-t p-2 ${
-                  !signin ? 'bg-white' : ''
+                className={`flex justify-center h-full w-1/3 rounded-t p-2 ${
+                  !signin ? 'bg-ccd-basics-050' : ''
                 }`}
               >
                 {' '}
                 <h5
-                  className="cursor-pointer vertical-text-clip"
+                  className={`cursor-pointer ${
+                    !signin ? 'vertical-text-clip' : 'text-white'
+                  }`}
                   onClick={() => setSignIn(false)}
                 >
                   Sign Up
@@ -45,12 +48,14 @@ export default function UserSignin() {
                 )}
               </div>
               <div
-                className={`flex justify-center h-full rounded-t  p-2 ${
-                  signin ? 'bg-white' : ''
+                className={`flex justify-center h-full w-1/3 rounded-t  p-2 ${
+                  signin ? 'bg-ccd-basics-050' : ''
                 }`}
               >
                 <h5
-                  className="cursor-pointer vertical-text-clip"
+                  className={`cursor-pointer ${
+                    signin ? 'vertical-text-clip' : 'text-white'
+                  }`}
                   onClick={() => setSignIn(true)}
                 >
                   Sign In
@@ -58,13 +63,13 @@ export default function UserSignin() {
               </div>
             </div>
             <div
-              className={`px-4 py-8 bg-white rounded-b sm:px-10 ${
+              className={`px-4 py-8 bg-ccd-basics-050 rounded-b sm:px-10 shadow-xl  ${
                 signin ? 'rounded-tl' : 'rounded-tr'
               }`}
             >
               <div className={!signin ? 'hidden' : 'block'}>
                 <FirebaseAuth full={false} />
-                <Link href="/signin">
+                <Link href="/user/profile">
                   <a>
                     <button className="flex items-center justify-between w-full h-10 px-2 rounded shadow-lg bg-ccd-purples-800">
                       <span className="">
@@ -90,18 +95,19 @@ export default function UserSignin() {
               </div>
               <div className={signin ? 'hidden' : 'block'}>
                 <div className="flex flex-col">
-                  <div className="mb-4">
+                  <div className="mb-6">
                     <label
                       className="block mb-2 text-sm font-bold text-grey-darker"
                       htmlFor="username"
                     >
-                      Username
+                      Email
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded shadow appearance-none text-grey-darker"
-                      id="username"
-                      type="text"
-                      placeholder="Username"
+                      id="email"
+                      type="email"
+                      placeholder="alex@codingcat.dev"
+                      required
                     />
                   </div>
                   <div className="mb-6">
@@ -116,35 +122,70 @@ export default function UserSignin() {
                       id="password"
                       type="password"
                       placeholder="******************"
+                      required
                     />
-                    <p className="text-xs italic text-red">
-                      Please choose a password.
-                    </p>
+                  </div>
+                  <div className="mb-6">
+                    <label
+                      className="block mb-2 text-sm font-bold text-grey-darker"
+                      htmlFor="passwordConfirm"
+                    >
+                      Confirm Password
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-grey-darker"
+                      id="passwordConfirm"
+                      type="password"
+                      placeholder="******************"
+                      required
+                    />
+                  </div>
+                  <div className="mb-6">
+                    <label
+                      className="block mb-2 text-sm font-bold text-grey-darker"
+                      htmlFor="name"
+                    >
+                      Name
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-grey-darker"
+                      id="name"
+                      type="text"
+                      placeholder="Alex"
+                      required
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <button
-                      className="px-4 py-2 font-bold text-white rounded bg-blue hover:bg-blue-dark"
+                      className="px-4 py-2 font-bold text-white rounded bg-ccd-purples-900 hover:bg-blue-dark"
                       type="button"
                     >
-                      Sign In
+                      Create Account
                     </button>
-                    <a
-                      className="inline-block text-sm font-bold align-baseline text-blue hover:text-blue-darker"
-                      href="#"
+                  </div>
+                  <div className="mt-6 mb-6">
+                    <label
+                      className="block mb-2 text-sm font-bold text-grey-darker"
+                      htmlFor="name"
                     >
-                      Forgot Password?
-                    </a>
+                      Name
+                    </label>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <button
+                      className="w-full px-4 py-2 font-bold text-white rounded bg-ccd-purples-900 hover:bg-blue-dark"
+                      type="button"
+                    >
+                      Go Pro
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="absolute left-0 z-0 sm:pl-16 lg:pl-48">
-            <Drip />
-          </div>
-        </div>
-        <div className="relative flex justify-center h-96"></div>
-      </>
+          <div className="flex justify-center hidden h-48 lg:block"></div>
+        </>
+      )}
     </>
   );
 }
