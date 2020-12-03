@@ -2,12 +2,13 @@ export const serviceAccountKey = {
   type: process.env.FIREBASE_SERVICE_TYPE,
   projectId: process.env.FIREBASE_SERVICE_PROJECT_ID,
   privateKeyId: process.env.FIREBASE_SERVICE_PRIVATE_KEY_ID,
-  privateKey: Buffer.from(`${process.env.FIREBASE_SERVICE_PRIVATE_KEY}`,'base64').toString(),
+  privateKey: process.env.FIREBASE_SERVICE_PRIVATE_KEY,
   clientEmail: process.env.FIREBASE_SERVICE_CLIENT_EMAIL,
   clientOd: process.env.FIREBASE_SERVICE_CLIENT_ID,
   authUri: process.env.FIREBASE_SERVICE_AUTH_URI,
   tokenUri: process.env.FIREBASE_SERVICE_TOKEN_URI,
-  authProviderX509CertUrl: process.env.FIREBASE_SERVICE_AUTH_PROVIDER_X509_CERT_URL,
+  authProviderX509CertUrl:
+    process.env.FIREBASE_SERVICE_AUTH_PROVIDER_X509_CERT_URL,
   clientX509CertUrl: process.env.FIREBASE_SERVICE_CLIENT_509_CERT_URL,
 };
 
