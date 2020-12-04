@@ -20,49 +20,41 @@ export const AppTopbar = (props) => {
     <nav className="mx-auto bg-ccd-purples-900 sm::max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl ">
       <div className="px-2 md:px-0">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <Link href="/">
-              <a>
-                <div className="flex items-center content-center flex-shrink-0 h-full">
-                  <AJLogoLeft />
-                  <h6 className="hidden text-white lg:block">CodingCat.dev</h6>
-                </div>
-              </a>
-            </Link>
+          <Link href="/">
+            <a>
+              <div className="flex items-center content-center flex-shrink-0 h-full">
+                <AJLogoLeft />
+                <h6 className="hidden text-white lg:block">CodingCat.dev</h6>
+              </div>
+            </a>
+          </Link>
 
-            <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-              <ActiveLink activeClassName="bg-ccd-purples-900" href="/courses">
-                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
-                  Courses
-                </a>
-              </ActiveLink>
-              <ActiveLink
-                activeClassName="bg-ccd-purples-900"
-                href="/tutorials"
-              >
-                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
-                  Tutorials
-                </a>
-              </ActiveLink>
-              <ActiveLink activeClassName="bg-ccd-purples-900" href="/blog">
-                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
-                  Blog
-                </a>
-              </ActiveLink>
-              <ActiveLink activeClassName="bg-ccd-purples-900" href="/podcasts">
-                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
-                  Podcasts
-                </a>
-              </ActiveLink>
-              <ActiveLink
-                activeClassName="bg-ccd-purples-900"
-                href="/community"
-              >
-                <a className="px-3 py-2 text-sm font-medium text-white rounded-md ">
-                  Community
-                </a>
-              </ActiveLink>
-            </div>
+          <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
+            <ActiveLink activeClassName="bg-ccd-purples-900" href="/courses">
+              <a className="px-3 py-2 font-medium text-white rounded-md ">
+                Courses
+              </a>
+            </ActiveLink>
+            <ActiveLink activeClassName="bg-ccd-purples-900" href="/tutorials">
+              <a className="px-3 py-2 font-medium text-white rounded-md ">
+                Tutorials
+              </a>
+            </ActiveLink>
+            <ActiveLink activeClassName="bg-ccd-purples-900" href="/blog">
+              <a className="px-3 py-2 font-medium text-white rounded-md ">
+                Blog
+              </a>
+            </ActiveLink>
+            <ActiveLink activeClassName="bg-ccd-purples-900" href="/podcasts">
+              <a className="px-3 py-2 font-medium text-white rounded-md ">
+                Podcasts
+              </a>
+            </ActiveLink>
+            <ActiveLink activeClassName="bg-ccd-purples-900" href="/community">
+              <a className="px-3 py-2 font-medium text-white rounded-md ">
+                Community
+              </a>
+            </ActiveLink>
           </div>
           <div className="flex items-center">
             <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
