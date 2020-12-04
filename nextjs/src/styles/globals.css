@@ -4,17 +4,18 @@
 
 @layer base {
   @font-face {
-    font-family: nunito;
+    font-family: 'nunito';
     font-style: normal;
-    font-weight: 600;
-    src: url(../../node_modules/typeface-nunito-sans/files/nunito-sans-latin-600.woff);
+    src: url(../fonts/Nunito-Regular.ttf) format('truetype');
   }
+
   @font-face {
-    font-family: Henny Penny;
+    font-family: 'Henny Penny';
     font-style: normal;
     font-weight: 400;
-    src: url(../fonts/HennyPenny-Regular.ttf);
+    src: url(../fonts/HennyPenny-Regular.ttf) format('truetype');
   }
+
   h1 {
     @apply leading-loose text-7xl font-heading;
   }
