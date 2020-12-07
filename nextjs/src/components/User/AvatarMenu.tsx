@@ -5,11 +5,6 @@ import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';
 import { Transition } from '@headlessui/react';
 
-const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
-  ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
-});
-
 export default function UserSignin({ userMenu, setUserMenu }) {
   const { user, signout }: { user: any; signout: any } = useUser();
 

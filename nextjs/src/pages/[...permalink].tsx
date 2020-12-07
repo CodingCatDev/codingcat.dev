@@ -10,6 +10,11 @@ import parse from 'remark-parse';
 import mdx from 'remark-mdx';
 
 import RecentPostsList from '@/components/RecentPostsList';
+import {
+  postByPermalinkService,
+  postsRecentService,
+  postsService,
+} from '@/services/serversideApi';
 
 export default function Post({ post, markdown, recentPosts }) {
   const router = useRouter();
@@ -38,16 +43,16 @@ export default function Post({ post, markdown, recentPosts }) {
         </article>
       </div>
       <div className="col-span-12 xl:col-span-2">
-        <div className="bg-white shadow p-3 m-3 rounded-lg">
-          <p className="text-xl text-bold tracking-wide text-ccd-basics-800 mb-2">
+        <div className="p-3 m-3 bg-white rounded-lg shadow">
+          <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
             Recent Posts
           </p>
           <RecentPostsList posts={recentPosts.post} />
-          <p className="text-xl text-bold tracking-wide text-ccd-basics-800 mb-2">
+          <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
             Recent Tutorials
           </p>
           <RecentPostsList posts={recentPosts.tutorials} />
-          <p className="text-xl text-bold tracking-wide text-ccd-basics-800 mb-2">
+          <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
             Recent Podcasts
           </p>
           <RecentPostsList posts={recentPosts.podcasts} />
@@ -60,15 +65,11 @@ export default function Post({ post, markdown, recentPosts }) {
 export async function getStaticPaths() {
   const POSTS = [];
   ['post', 'tutorials', 'podcasts'].forEach(async (postType) => {
-    const posts = await admin
-      .firestore()
-      .collection(postType === 'post' ? 'posts' : postType)
-      .orderBy('post_publish_datetime', 'desc')
-      .get();
-    for (const doc of posts.docs) {
+    const docData = await postsService(postType);
+    for (const doc of docData) {
       POSTS.push({
         params: {
-          permalink: doc.data().post_permalink.substring(1).split('/'),
+          permalink: doc.permalink.substring(1).split('/'),
         },
       });
     }
@@ -82,39 +83,22 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { permalink } = params;
 
-  const posts = await admin
-    .firestore()
-    .collection(permalink.length > 1 ? `${permalink[0]}` : 'posts')
-    .where('post_permalink', '==', `/${permalink.join('/')}`)
-    .get();
-
-  let postData;
-  for (const doc of posts.docs) {
-    postData = doc.data();
-  }
-  const post = posts.docs.length > 0 ? postData : null;
+  const posts = await postByPermalinkService(permalink);
+  const post = posts.length > 0 ? posts[0] : null;
   const markdown = post
-    ? await renderToString(postData.post_content, {
+    ? await renderToString(post.content, {
         mdxOptions: {
           remarkPlugins: [parse, mdx],
         },
       })
     : null;
 
-  const recentPosts = { post: [], tutorials: [], podcasts: [] };
-  await Promise.all(
-    Object.keys(recentPosts).map(async (postType) => {
-      const posts = await admin
-        .firestore()
-        .collection(postType === 'post' ? 'posts' : postType)
-        .orderBy('post_publish_datetime', 'desc')
-        .limit(3)
-        .get();
-      for (const doc of posts.docs) {
-        recentPosts[postType].push(doc.data());
-      }
-    })
-  );
+  const recentPosts = await postsRecentService([
+    'courses',
+    'post',
+    'tutorials',
+    'podcasts',
+  ]);
 
   return {
     props: {

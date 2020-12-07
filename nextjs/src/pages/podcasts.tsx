@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import PostsCards from '@/components/PostsCards';
-import admin from '@/utils/firebaseAdmin';
+import { postsService } from '@/services/serversideApi';
 
 export default function Podcasts({ posts }) {
   return (
@@ -9,8 +9,8 @@ export default function Podcasts({ posts }) {
         <title>Podcasts | CodingCatDev</title>
       </Head>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2 place-items-auto mt-16">
-        <PostsCards post_type={'podcasts'} posts={posts} />
+      <main className="grid grid-cols-1 gap-2 mt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 place-items-auto">
+        <PostsCards type={'podcasts'} posts={posts} />
       </main>
 
       <footer></footer>
@@ -19,16 +19,7 @@ export default function Podcasts({ posts }) {
 }
 
 export async function getStaticProps() {
-  const postDocs = await admin
-    .firestore()
-    .collection('podcasts')
-    .orderBy('post_publish_datetime', 'desc')
-    .get();
-
-  const posts = [];
-  for (const doc of postDocs.docs) {
-    posts.push(doc.data());
-  }
+  const posts = await postsService('podcasts');
 
   return {
     props: {

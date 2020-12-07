@@ -7,6 +7,7 @@ if (admin.apps.length === 0) {
     credential: admin.credential.cert(serviceAccountKey),
     databaseURL: config.databaseURL,
     storageBucket: config.storageBucket,
+    projectId: config.projectId,
   });
 }
 

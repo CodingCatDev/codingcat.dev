@@ -19,13 +19,11 @@ function EditPost({ router }) {
   const [path, setPath] = useState(null);
   const [tab, setTab] = useState('edit');
   const [preview, setPreview] = useState('');
+  const [saving, setSaving] = useState(false);
 
   // Sets initial state
   useEffect(() => {
-    const path =
-      router.query.type === 'blog'
-        ? `/posts/${router.query.id}`
-        : `/${router.query.type}/${router.query.id}`;
+    const path = `/posts/${router.query.id}`;
     setPath(path);
     postDataObservable(path).subscribe((post) => {
       setPost(post);
@@ -40,11 +38,14 @@ function EditPost({ router }) {
   }, [tab]);
 
   function handleChange(event) {
-    postUpdate(path, event.target.value);
-    setPost(event.target.value);
+    setPost({ ...post, content: event.target.value });
   }
   function selectTab(tab) {
     setTab(tab);
+  }
+  function save() {
+    setSaving(true);
+    postUpdate(path, post.content).then(() => setSaving(false));
   }
   return (
     <>
@@ -66,23 +67,36 @@ function EditPost({ router }) {
           >
             Preview
           </li>
+          <li className="flex-grow"></li>
+          <li>
+            {saving ? (
+              <div>Saving...</div>
+            ) : (
+              <button
+                className="p-2 text-white rounded bg-ccd-greens-600"
+                onClick={() => save()}
+              >
+                Save
+              </button>
+            )}
+          </li>
         </ul>
       </div>
       {tab === 'edit' ? (
         <textarea
-          id="post_content"
-          name="post_content"
+          id="content"
+          name="content"
           onChange={handleChange}
           className={`form-textarea shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
           placeholder="Markdown goes here..."
-          value={post ? post.post_content : ''}
+          value={post ? post.content : ''}
         ></textarea>
       ) : (
         <div
           className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto bg-ccd-basics-100`}
         >
           <article className="prose prose-ccd-purples lg:prose-xl">
-            <Markdown>{post ? post.post_content : ''}</Markdown>
+            <Markdown>{post ? post.content : ''}</Markdown>
           </article>
         </div>
       )}

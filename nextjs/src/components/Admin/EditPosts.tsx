@@ -15,7 +15,7 @@ function EditPosts({ path }) {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     postsObservable(
-      path.substring(1) === 'blog' ? 'posts' : path.substring(1)
+      path.substring(1) === 'blog' ? 'post' : path.substring(1)
     ).subscribe((posts) => setPosts(posts));
   }, [path]);
 
@@ -27,16 +27,16 @@ function EditPosts({ path }) {
     );
   }
   function postCategories(rowData) {
-    return <span>{rowData.post_categories.join(',')}</span>;
+    return <span>{rowData.category.join(',')}</span>;
   }
   function postStatus(rowData) {
     return (
       <span
         className={`p-2 capitalize text-green-800 rounded
-          ${rowData.post_status === 'publish' ? `bg-green-200` : `bg-red`}
+          ${rowData.status === 'publishedAt' ? `bg-green-200` : `bg-red`}
           `}
       >
-        {rowData.post_status}
+        {rowData.status}
       </span>
     );
   }
@@ -45,14 +45,14 @@ function EditPosts({ path }) {
     <>
       <DataTable value={posts} scrollable scrollHeight="100%">
         <Column field="id" header="Id" body={postId}></Column>
-        <Column field="post_title" header="Title"></Column>
-        <Column field="post_author" header="Author"></Column>
+        <Column field="title" header="Title"></Column>
+        <Column field="createdBy" header="Author"></Column>
         <Column
           field="post_categories"
           header="Category"
           body={postCategories}
         ></Column>
-        <Column field="post_status" header="Status" body={postStatus}></Column>
+        <Column field="status" header="Status" body={postStatus}></Column>
         <Column field="updatedAt" header="Updated"></Column>
       </DataTable>
     </>

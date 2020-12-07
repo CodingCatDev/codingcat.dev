@@ -47,6 +47,13 @@ function MyApp({ Component, pageProps }) {
             <footer className="flex"></footer>
           </div>
         </main>
+        {process.env.NEXT_PUBLIC_CCD_EMULATED ? (
+          <div className="flex justify-center text-white bg-yellow-400">
+            <span className="text-center">Firebase is being Emulated</span>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <Transition
         show={overlayMenuActive}

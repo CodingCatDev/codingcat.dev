@@ -7,7 +7,7 @@ import AdminTopBar from '@/components/Admin/AdminTopBar';
 
 const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   ssr: false,
-  loading: () => <p>Climbing a tree...</p>,
+  loading: () => <p>Finding Admin...</p>,
 });
 
 function AdminDashboard({ router }) {

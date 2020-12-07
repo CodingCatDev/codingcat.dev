@@ -1,19 +1,22 @@
-import firebase from 'firebase/app'
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+import 'firebase/database';
 
-const config = {
-  apiKey: process.env.NEXT_PUBLIC_FB_CONFIG_APIKEY,
-  authDomain: process.env.NEXT_PUBLIC_FB_CONFIG_AUTHDOMAIN,
-  databaseURL: process.env.NEXT_PUBLIC_FB_CONFIG_DATABASEURL,
-  projectId: process.env.NEXT_PUBLIC_FB_CONFIG_PROJECTID,
-  storageBucket: process.env.NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FB_CONFIG_MESSAGINGSENDERID,
-  appId: process.env.NEXT_PUBLIC_FB_CONFIG_APPID,
-  measurementId: process.env.NEXT_PUBLIC_FB_CONFIG_MEASUREMENTID
-}
-
+import { config } from '@/config/firebase';
 
 export default function initFirebase() {
   if (!firebase.apps.length) {
-    firebase.initializeApp(config)
+    firebase.initializeApp(config);
+    if (process.env.NEXT_PUBLIC_CCD_EMULATED) {
+      firebase.auth().useEmulator('http://localhost:9099/');
+      firebase.firestore().useEmulator('localhost', 8080);
+      firebase.database().useEmulator('localhost', 9000);
+    } else {
+      firebase.auth();
+      firebase.firestore();
+      firebase.database();
+    }
   }
+  return firebase;
 }

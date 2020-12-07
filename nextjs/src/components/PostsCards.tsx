@@ -1,21 +1,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import PropTypes from 'prop-types';
-function PostsCards({ posts, post_type }) {
+function PostsCards({ posts, type }) {
   return (
     <>
       {posts.map((post) => (
-        <div
-          className="bg-white shadow p-3 m-3 rounded"
-          key={post.post_basename}
-        >
+        <div className="p-3 m-3 bg-white rounded shadow" key={post.basename}>
           <div>
-            <Link href={post.post_permalink}>
+            <Link href={post.permalink}>
               <a>
-                {post_type === 'podcasts' ? (
+                {type === 'podcasts' ? (
                   <Image
-                    src={post.post_thumbnail}
-                    alt={post.post_title}
+                    src={post.thumbnail}
+                    alt={post.title}
                     width="150"
                     height="150"
                     layout="responsive"
@@ -23,8 +20,8 @@ function PostsCards({ posts, post_type }) {
                   />
                 ) : (
                   <Image
-                    src={post.post_thumbnail}
-                    alt={post.post_title}
+                    src={post.thumbnail}
+                    alt={post.title}
                     width="480"
                     height="270"
                     layout="responsive"
@@ -35,13 +32,13 @@ function PostsCards({ posts, post_type }) {
             </Link>
           </div>
           <div className="mt-6">
-            <p className="text-lg text-bold tracking-wide text-ccd-basics-600 mb-2">
-              <Link href={post.post_permalink}>
-                <a>{post.post_title}</a>
+            <p className="mb-2 text-lg tracking-wide text-bold text-ccd-basics-600">
+              <Link href={post.permalink}>
+                <a>{post.title}</a>
               </Link>
             </p>
-            <p className="text-sm text-ccd-basics-600 font-hairline">
-              {post.post_excerpt}
+            <p className="text-sm font-hairline text-ccd-basics-600">
+              {post.excerpt}
             </p>
           </div>
         </div>

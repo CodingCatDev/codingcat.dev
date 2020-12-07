@@ -1,8 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 
-import admin from '@/utils/firebaseAdmin';
-
+import { postsRecentService } from '@/services/serversideApi';
 import RecentPostsCards from '@/components/RecentPostsCards';
 import Intro from '@/components/Home/Intro';
 
@@ -66,7 +65,7 @@ export default function Home({ recentPosts }) {
                 Latest Courses
               </p>
             </div>
-            <RecentPostsCards recentPosts={recentPosts.courses} />
+            <RecentPostsCards recentPosts={recentPosts['courses']} />
             <div className="pt-16 col-span-full justify-self-center ">
               <Link href="/courses">
                 <button
@@ -111,7 +110,7 @@ export default function Home({ recentPosts }) {
                 Latest Tutorials
               </p>
             </div>
-            <RecentPostsCards recentPosts={recentPosts.tutorials} />
+            <RecentPostsCards recentPosts={recentPosts['tutorials']} />
             <div className="pt-16 col-span-full justify-self-center ">
               <Link href="/tutorials">
                 <button
@@ -220,21 +219,12 @@ export default function Home({ recentPosts }) {
 }
 
 export async function getStaticProps({ params }) {
-  const recentPosts = { courses: [], tutorials: [], post: [], podcasts: [] };
-  await Promise.all(
-    Object.keys(recentPosts).map(async (postType) => {
-      const posts = await admin
-        .firestore()
-        .collection(postType === 'post' ? 'posts' : postType)
-        .orderBy('post_publish_datetime', 'desc')
-        .limit(4)
-        .get();
-      for (const doc of posts.docs) {
-        recentPosts[postType].push(doc.data());
-      }
-    })
-  );
-
+  const recentPosts = await postsRecentService([
+    'courses',
+    'post',
+    'tutorials',
+    'podcasts',
+  ]);
   return {
     props: {
       recentPosts,

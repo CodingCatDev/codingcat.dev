@@ -8,7 +8,7 @@ import AJLogoLeft from '@/components/global/icons/AJAlt';
 
 const AvatarMenu = dynamic(() => import('@/components/User/AvatarMenu'), {
   ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
+  loading: () => <p>Place Image Here...</p>,
 });
 
 export const AppTopbar = (props) => {
