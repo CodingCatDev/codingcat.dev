@@ -33,7 +33,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      {/* <div className="grid grid-rows-3 h-screen overflow-hidden bg-ccd-purples-900"> */}
+      {/* <div className="grid h-screen grid-rows-3 overflow-hidden bg-ccd-purples-900"> */}
       {/* <AppTopbar
           setOverlayMenuActive={setOverlayMenuActive}
           overlayMenuActive={overlayMenuActive}

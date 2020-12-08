@@ -4,27 +4,79 @@ import dynamic from 'next/dynamic';
 import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';
 import { Transition } from '@headlessui/react';
+import { useEffect, useState } from 'react';
+import { Observable, Subscription } from 'rxjs';
 
 export default function UserSignin({ userMenu, setUserMenu }) {
-  const { user, signout }: { user: any; signout: any } = useUser();
+  const {
+    user,
+    signout,
+    userProfile,
+  }: { user: any; signout: any; userProfile: Observable<unknown> } = useUser();
+
+  const [profile, setProfile] = useState(null);
+
+  let subscription: Subscription;
+  useEffect(() => {
+    if (userProfile) {
+      subscription = userProfile.subscribe((profile) => setProfile(profile));
+    }
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  }, [userProfile]);
 
   return (
     <>
       <div className="relative ml-3">
         <div>
-          <button
-            className="flex text-sm rounded-full bg-ccd-purples-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white"
-            id="user-menu"
-            aria-haspopup="true"
-            onClick={() => setUserMenu(!userMenu)}
-          >
-            <span className="sr-only">Open user menu</span>
-            <img
-              className="w-8 h-8 rounded-full"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt=""
-            />
-          </button>
+          {user ? (
+            <button
+              className="flex text-sm rounded-full bg-ccd-purples-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white"
+              id="user-menu"
+              aria-haspopup="true"
+              onClick={() => setUserMenu(!userMenu)}
+            >
+              <span className="sr-only">Open user menu</span>
+              {profile ? (
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={profile.photoURL}
+                  alt={profile.displayName}
+                />
+              ) : (
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt=""
+                />
+              )}
+            </button>
+          ) : (
+            <Link href="/user/profile">
+              <a className="flex items-center justify-center p-2 text-white rounded bg-ccd-purples-900 hover:bg-ccd-purples-700">
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-8 h-8"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </div>
+                <div>Sign In</div>
+              </a>
+            </Link>
+          )}
         </div>
         <Transition
           show={userMenu}

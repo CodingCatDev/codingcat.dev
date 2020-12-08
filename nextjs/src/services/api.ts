@@ -66,6 +66,11 @@ export const postsObservable = (postType: string, limit: number = null) => {
   }
 };
 
+// User
+export const userProfileDataObservable = (uid: string) => {
+  return docData(firestore.doc(`/profiles/${uid}`));
+};
+
 /* Utilities may be used on front end */
 export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
   const docData = { ...data };

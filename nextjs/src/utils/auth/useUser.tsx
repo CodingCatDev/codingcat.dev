@@ -8,11 +8,16 @@ import {
   getUserFromCookie,
 } from './userCookies';
 import { mapUserData } from './mapUserData';
+import { userProfileDataObservable } from '@/services/api';
+import { Observable } from 'rxjs';
 
 initFirebase();
 
 const useUser = () => {
   const [user, setUser] = useState();
+  const [userProfile, setUserProfile]: [Observable<unknown>, any] = useState(
+    null
+  );
   const router = useRouter();
 
   const signout = async () => {
@@ -39,6 +44,7 @@ const useUser = () => {
           const userData = await mapUserData(user);
           setUserCookie(userData);
           setUser(userData as any);
+          setUserProfile(userProfileDataObservable(userData.id));
         } else {
           removeUserCookie();
           setUser(null);
@@ -50,6 +56,7 @@ const useUser = () => {
       return;
     }
     setUser(userFromCookie);
+    setUserProfile(userProfileDataObservable(userFromCookie.id));
 
     return () => {
       cancelAuthListener();
@@ -58,7 +65,7 @@ const useUser = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { user, signout };
+  return { user, signout, userProfile };
 };
 
 export { useUser };
