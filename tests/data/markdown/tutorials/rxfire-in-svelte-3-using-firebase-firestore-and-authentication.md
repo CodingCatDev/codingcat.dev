@@ -1,6 +1,6 @@
 ---
-title: 'RxFire in Svelte 3 using Firebase Firestore and Authentication'
-date: '2019-04-29'
+title: "RxFire in Svelte 3 using Firebase Firestore and Authentication"
+date: "2019-04-29"
 ---
 
 https://youtu.be/ju80EzhnCE8

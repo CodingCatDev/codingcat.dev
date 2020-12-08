@@ -1,6 +1,6 @@
 ---
-title: 'JAMStackGR #3-Getting Started with Serverless'
-date: '2019-12-10'
+title: "JAMStackGR #3-Getting Started with Serverless"
+date: "2019-12-10"
 ---
 
 https://youtu.be/11w6Lm-Nkrk

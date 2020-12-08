@@ -1,6 +1,6 @@
 ---
 title: "Updating AJonP's Brand"
-date: '2019-10-10'
+date: "2019-10-10"
 ---
 
 Another evolution in the AJonP brand has come in the form of standardizing on acceptance. Making the most of neutral (non-stereotyped) colors. Taking a nod from Dev.to and updating AJ's tag to include a rainbow, as every mascot should have gender neutrality.

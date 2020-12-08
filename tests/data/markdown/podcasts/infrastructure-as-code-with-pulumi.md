@@ -1,6 +1,6 @@
 ---
-title: '1.1 - Infrastructure as Code with Pulumi'
-date: '2020-11-11'
+title: "1.1 - Infrastructure as Code with Pulumi"
+date: "2020-11-11"
 ---
 
 https://youtu.be/csOQut3UiTM

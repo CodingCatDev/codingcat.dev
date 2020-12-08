@@ -1,6 +1,6 @@
 ---
-title: 'AWS Amplify vs. AWS CDK What is the most powerful AWS IaC in 2020?'
-date: '2020-11-18'
+title: "AWS Amplify vs. AWS CDK What is the most powerful AWS IaC in 2020?"
+date: "2020-11-18"
 ---
 
 ![Adding AWS Amplify or CDK to AWS deploying several services.](https://res.cloudinary.com/ajonp/images/w_1024,h_576,c_scale/v1605701532/ccd-cloudinary/AWS-Amplify-vs-CDK/AWS-Amplify-vs-CDK-1024x576.png)

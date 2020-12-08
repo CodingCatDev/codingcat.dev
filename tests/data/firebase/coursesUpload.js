@@ -1,21 +1,21 @@
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 // serviceAccountKey.json can be generated in Firebase Console.
-const serviceAccountKey = require('../../../serviceAccountKey.json');
-const seed = require('firestore-seed');
-var uuid = require('uuid');
-var path = require('path');
-var fs = require('fs');
+const serviceAccountKey = require("../../../serviceAccountKey.json");
+const seed = require("firestore-seed");
+var uuid = require("uuid");
+var path = require("path");
+var fs = require("fs");
 
 // Initialize firebase-admin.
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountKey),
-  databaseURL: 'https://dev-codingcat-dev.firebaseio.com',
-  storageBucket: 'dev-codingcat-dev.appspot.com',
+  databaseURL: "https://dev-codingcat-dev.firebaseio.com",
+  storageBucket: "dev-codingcat-dev.appspot.com",
 });
 
-['courses'].forEach((postType) => {
+["courses"].forEach((postType) => {
   var posts = JSON.parse(
-    fs.readFileSync(path.join(__dirname, `../posts/${postType}.json`), 'utf8')
+    fs.readFileSync(path.join(__dirname, `../posts/${postType}.json`), "utf8")
   );
   // var postsMd = JSON.parse(
   //   fs.readFileSync(
@@ -71,9 +71,9 @@ admin.initializeApp({
   postCollection
     .importDocuments(admin)
     .then(() => {
-      console.log('Successfully imported documents.');
+      console.log("Successfully imported documents.");
     })
     .catch((e) => {
-      console.log('Failed to import documents: ' + e);
+      console.log("Failed to import documents: " + e);
     });
 });

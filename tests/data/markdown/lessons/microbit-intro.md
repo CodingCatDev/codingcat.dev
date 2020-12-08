@@ -1,6 +1,6 @@
 ---
-title: 'micro:bit Intro'
-date: '2020-09-17'
+title: "micro:bit Intro"
+date: "2020-09-17"
 ---
 
 ## What is a micro:bit[](https://codingcat.dev/courses/microbit-for-a-10-year-old/micro-bit-intro#what-is-a-microbit)

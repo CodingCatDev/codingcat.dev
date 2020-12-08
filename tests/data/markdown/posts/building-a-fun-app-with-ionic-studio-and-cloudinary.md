@@ -1,6 +1,6 @@
 ---
-title: 'Building a Fun App With Ionic Studio and Cloudinary'
-date: '2019-08-12'
+title: "Building a Fun App With Ionic Studio and Cloudinary"
+date: "2019-08-12"
 ---
 
 In the [JAMstack](https://jamstack.org/) world, [Cloudinary](https://cloudinary.com/) is the market leader as a comprehensive, cloud-based image- and video-management platform that’s in use by hundreds of thousands of users around the world, from startups to enterprises. In fact, it’s widely acclaimed as the best solution for hosting visual media on the web.[Ionic Studio](https://ionicframework.com/studio) is a robust IDE that efficiently and smoothly enables the development of cross-platform apps. In his November 2018 [announcement](https://ionicframework.com/blog/announcing-ionic-studio-a-powerful-new-way-to-build-apps/), CEO [Max Lynch](https://twitter.com/maxlynch) cogently elaborates on Ionic Studio’s many impressive capabilities, complete with a demo video.This post describes the procedure of uploading images to Cloudinary as a prelude for building a fun app called Face Smash with Ionic Studio. You upload a photo to Cloudinary with its [upload API](https://cloudinary.com/documentation/image_upload_api_reference) and then, by leveraging [Cloudinary’s face-detection feature](https://cloudinary.com/blog/face_detection_based_cropping), have Cloudinary display all the uploaded people photos with the one you just uploaded at the top. Click that photo and a water balloon appears and smashes the face in the photo.Read on for the steps.

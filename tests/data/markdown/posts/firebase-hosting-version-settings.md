@@ -1,6 +1,6 @@
 ---
-title: 'Firebase Hosting Version Settings'
-date: '2019-08-22'
+title: "Firebase Hosting Version Settings"
+date: "2019-08-22"
 ---
 
 If you start to get that feeling like "Why am I getting billed for this tiny app" from Firebase, then this blog is for you!

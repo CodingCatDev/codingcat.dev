@@ -1,6 +1,6 @@
 ---
-title: 'Front End Web Development Podcasts'
-date: '2019-08-18'
+title: "Front End Web Development Podcasts"
+date: "2019-08-18"
 ---
 
 I listen to all of my podcasts using [Pocket Casts](https://www.pocketcasts.com/), it makes my life easy to switch from mobile over to desktop super easy. I also love the [Android](https://play.google.com/store/apps/details?id=au.com.shiftyjelly.pocketcasts) and [iOS](https://itunes.apple.com/au/app/pocket-casts/id414834813) app designs. I am not affiliated with Pocket Casts at time of writing this blog. This list is in no particular order (yet).

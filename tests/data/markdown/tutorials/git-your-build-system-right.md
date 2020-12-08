@@ -1,6 +1,6 @@
 ---
-title: 'Git Your Build System Right'
-date: '2019-11-10'
+title: "Git Your Build System Right"
+date: "2019-11-10"
 ---
 
 This lesson is on setting up CI (Continuous Integration) and CD (Continuous Delivery) across four of the most popular systems today Google Cloud Platform Cloud Build, Azure Pipelines, AWS Code Pipelines, and GitHub Actions. We will be using a simple Angular application (although you could replace this with almost any app) and using GitHub as a source repository. We will then create triggers from git branch commits to launch the processes.

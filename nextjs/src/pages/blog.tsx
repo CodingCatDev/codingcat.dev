@@ -1,11 +1,12 @@
 import Head from 'next/head';
+import Layout from '../layout/Layout';
 import PostsCards from '@/components/PostsCards';
 
 import { postsService } from '@/services/serversideApi';
 
 export default function Blog({ posts }) {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>Blog | CodingCatDev</title>
       </Head>
@@ -15,7 +16,7 @@ export default function Blog({ posts }) {
       </main>
 
       <footer></footer>
-    </div>
+    </Layout>
   );
 }
 

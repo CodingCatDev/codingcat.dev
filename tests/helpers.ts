@@ -3,10 +3,10 @@ import {
   initializeTestApp,
   clearFirestoreData,
   initializeAdminApp,
-} from '@firebase/rules-unit-testing';
-import firebase from 'firebase/app';
-import { readFileSync } from 'fs';
-const serviceAccountKeyFile = readFileSync('serviceAccountKey.json', 'utf8');
+} from "@firebase/rules-unit-testing";
+import firebase from "firebase/app";
+import { readFileSync } from "fs";
+const serviceAccountKeyFile = readFileSync("serviceAccountKey.json", "utf8");
 const serviceAccountKey = JSON.parse(serviceAccountKeyFile);
 
 export async function setup(auth: any, data: any) {
@@ -33,7 +33,7 @@ export async function setup(auth: any, data: any) {
   // Apply rules
   await loadFirestoreRules({
     projectId,
-    rules: readFileSync('firestore.rules', 'utf8'),
+    rules: readFileSync("firestore.rules", "utf8"),
   });
 
   return db;

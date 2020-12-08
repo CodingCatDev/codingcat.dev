@@ -1,6 +1,6 @@
 ---
 title: "Kinsta saved CodingCatDev's LMS dream after 3 others failed!"
-date: '2020-11-10'
+date: "2020-11-10"
 ---
 
 [![Kinsta we love developers](https://res.cloudinary.com/ajonp/images/v1605119203/ccd-cloudinary/600x300-developers-light/600x300-developers-light.jpg)](https://kinsta.com?kaid=XIIHFPADWOKE)

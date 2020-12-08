@@ -1,6 +1,6 @@
 ---
-title: '0.10 - Amplify with Nader Dabit'
-date: '2020-05-12'
+title: "0.10 - Amplify with Nader Dabit"
+date: "2020-05-12"
 ---
 
 https://youtu.be/kUM8Zcb369U

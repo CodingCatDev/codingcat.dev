@@ -1,6 +1,6 @@
 ---
-title: 'Setup'
-date: '2019-08-28'
+title: "Setup"
+date: "2019-08-28"
 ---
 
 https://youtu.be/oUTz8JbQQww

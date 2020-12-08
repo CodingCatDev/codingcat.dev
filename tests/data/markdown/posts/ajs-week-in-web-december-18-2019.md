@@ -1,6 +1,6 @@
 ---
 title: "AJ's Week In Web December 18, 2019"
-date: '2019-12-18'
+date: "2019-12-18"
 ---
 
 https://youtu.be/TVoHCotfklQ

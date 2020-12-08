@@ -1,14 +1,14 @@
-const TABLE = process.env.ATLAS_TABLE || 'API-ta3xuq6qtfbxtasib7i52xbn7e-dev';
-const PROFILE = process.env.PROFILE || 'default';
+const TABLE = process.env.ATLAS_TABLE || "API-ta3xuq6qtfbxtasib7i52xbn7e-dev";
+const PROFILE = process.env.PROFILE || "default";
 
-var AWS = require('aws-sdk');
+var AWS = require("aws-sdk");
 
 AWS.config.update({
-  region: 'us-east-1',
+  region: "us-east-1",
 });
 
 if (!TABLE || !PROFILE) {
-  throw new Error('Dude come on add your table and profile!');
+  throw new Error("Dude come on add your table and profile!");
 }
 
 var creds = new AWS.SharedIniFileCredentials({ profile: PROFILE });
@@ -23,13 +23,13 @@ async function deletePosts() {
   console.log(`Deleting ${posts.length}`);
 
   posts.forEach(function (obj, i) {
-    console.log('deleting', obj.id);
+    console.log("deleting", obj.id);
     var params = {
       TableName: TABLE,
       Key: buildKey(obj),
-      ReturnValues: 'NONE',
-      ReturnConsumedCapacity: 'NONE',
-      ReturnItemCollectionMetrics: 'NONE',
+      ReturnValues: "NONE",
+      ReturnConsumedCapacity: "NONE",
+      ReturnItemCollectionMetrics: "NONE",
     };
 
     docClient.delete(params, function (err, data) {
@@ -71,6 +71,6 @@ function getDeleteData(exclusiveStartKey) {
 }
 function buildKey(obj) {
   var key = {};
-  key['id'] = obj['id'];
+  key["id"] = obj["id"];
   return key;
 }

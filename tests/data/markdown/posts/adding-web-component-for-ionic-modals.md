@@ -1,6 +1,6 @@
 ---
-title: 'Adding Web Component for Ionic Modals'
-date: '2019-09-11'
+title: "Adding Web Component for Ionic Modals"
+date: "2019-09-11"
 ---
 
 # Adding dynamic features to a static site.

@@ -1,6 +1,6 @@
 ---
-title: '0.6 - NextJS with Guillermo Rauch'
-date: '2020-02-08'
+title: "0.6 - NextJS with Guillermo Rauch"
+date: "2020-02-08"
 ---
 
 https://youtu.be/msPNMQrrVTE

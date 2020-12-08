@@ -1,6 +1,6 @@
 ---
-title: 'Cloud Function GitHub Update'
-date: '2018-12-26'
+title: "Cloud Function GitHub Update"
+date: "2018-12-26"
 ---
 
 # Goal

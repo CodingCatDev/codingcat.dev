@@ -1,6 +1,6 @@
 ---
-title: 'RxFire in ReactJS using Firebase Firestore and Authentication'
-date: '2019-04-26'
+title: "RxFire in ReactJS using Firebase Firestore and Authentication"
+date: "2019-04-26"
 ---
 
 https://youtu.be/hTzcRCAm5e0
@@ -71,6 +71,7 @@ import Instructions from "./components/Instructions";
 class App extends React.Component {
 render() {
 return (
+
 <div
 style={{
           display: "flex",
@@ -101,6 +102,7 @@ import React from "react";
 class Instructions extends React.Component {
 render() {
 return (
+
 <div
 style={{
           display: "flex",
@@ -247,6 +249,7 @@ this.setState({ user: user }); };
 ...
 <Instructions />
 <SignIn user={this.state.user} authHandler={this.authHandler} setUser={this.setUser} />
+
 <div style={{ maxWidth: '800px' }}>
 <AddCat user={this.state.user} />
 ...

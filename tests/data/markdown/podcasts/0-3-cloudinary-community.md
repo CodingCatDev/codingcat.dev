@@ -1,6 +1,6 @@
 ---
-title: '0.3 - Cloudinary Community'
-date: '2020-02-08'
+title: "0.3 - Cloudinary Community"
+date: "2020-02-08"
 ---
 
 https://youtu.be/4yt2V12gwHA

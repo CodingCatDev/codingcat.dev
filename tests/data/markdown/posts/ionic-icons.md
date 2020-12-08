@@ -1,6 +1,6 @@
 ---
-title: 'Ionic Icons'
-date: '2019-01-20'
+title: "Ionic Icons"
+date: "2019-01-20"
 ---
 
 # Ever want to just use Ionic Icons?

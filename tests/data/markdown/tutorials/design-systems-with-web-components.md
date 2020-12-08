@@ -1,6 +1,6 @@
 ---
-title: 'Design Systems with Web Components'
-date: '2019-05-07'
+title: "Design Systems with Web Components"
+date: "2019-05-07"
 ---
 
 If you have ever worked for a company that has several disparate sites, built with multiple technologies, keep reading. We will walk through building principles behind good Atomic Design, how to create Web Components using Stencil, and finally (perhaps most importantly) how to allow your company to create and adopt a design system.

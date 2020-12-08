@@ -1,6 +1,6 @@
 ---
-title: 'Better Performance through analysis'
-date: '2019-08-17'
+title: "Better Performance through analysis"
+date: "2019-08-17"
 ---
 
 > Please note I wrote this on my phone driving 6 hours, so I hope to update in more detail. Fun fact I now know how to do git remote recursive from Android ????

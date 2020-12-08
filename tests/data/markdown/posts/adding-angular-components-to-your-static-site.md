@@ -1,6 +1,6 @@
 ---
-title: 'Adding Angular Components to your static site'
-date: '2019-09-12'
+title: "Adding Angular Components to your static site"
+date: "2019-09-12"
 ---
 
 # Adding dynamic features to a static site.

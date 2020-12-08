@@ -1,6 +1,6 @@
 ---
-title: '0.7 - Scully with Aaron Frost'
-date: '2020-02-08'
+title: "0.7 - Scully with Aaron Frost"
+date: "2020-02-08"
 ---
 
 https://youtu.be/mbbOtlc78tw

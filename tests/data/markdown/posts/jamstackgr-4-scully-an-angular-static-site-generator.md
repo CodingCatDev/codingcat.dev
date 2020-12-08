@@ -1,6 +1,6 @@
 ---
-title: 'JAMStackGR #4-Scully An Angular Static Site Generator'
-date: '2020-01-21'
+title: "JAMStackGR #4-Scully An Angular Static Site Generator"
+date: "2020-01-21"
 ---
 
 https://youtu.be/fg\_ueOGeWlM

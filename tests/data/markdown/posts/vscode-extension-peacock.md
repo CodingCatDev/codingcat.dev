@@ -1,6 +1,6 @@
 ---
-title: 'VSCode Extension Peacock'
-date: '2019-05-10'
+title: "VSCode Extension Peacock"
+date: "2019-05-10"
 ---
 
 https://youtu.be/VYuSbZxbBoE

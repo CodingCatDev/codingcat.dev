@@ -1,11 +1,11 @@
 ---
-title: 'Excited for move to Wordpress'
-date: '2020-10-26'
+title: "Excited for move to Wordpress"
+date: "2020-10-26"
 ---
 
 ## Why is CodingCatDev switching to Wordpress
 
-CodingCatDev has been using [Sanity.io](https://www.sanity.io/ 'Sanity.io') and [Firebase](https://firebase.com/ 'Firebase') for the backend, [Gatsby](https://www.gatsbyjs.com/ 'Gatsby') for the frontend and [Google Cloud Platform](https://cloud.google.com/ 'Google Cloud Platform')\> for the build pipeline. It resulted in an absolutely blazing fast site with fantastic Search Engine Optimization and Social Meta Data.
+CodingCatDev has been using [Sanity.io](https://www.sanity.io/ "Sanity.io") and [Firebase](https://firebase.com/ "Firebase") for the backend, [Gatsby](https://www.gatsbyjs.com/ "Gatsby") for the frontend and [Google Cloud Platform](https://cloud.google.com/ "Google Cloud Platform")\> for the build pipeline. It resulted in an absolutely blazing fast site with fantastic Search Engine Optimization and Social Meta Data.
 
 **So why would we switch?**
 
@@ -13,7 +13,7 @@ The main goal for CodingCatDev is to allow others (not just Alex) to create wond
 
 ## Content Management System
 
-Knowing the only reason that we left Sanity.io was because of the fine grained control restriction we did a lot of research on CMS platforms that might do the trick and the only two that we could find (at the base level) were [Dato CMS](https://www.datocms.com/pricing/compare 'Dato CMS') and [Flamelink](https://flamelink.io/features 'Flamelink').
+Knowing the only reason that we left Sanity.io was because of the fine grained control restriction we did a lot of research on CMS platforms that might do the trick and the only two that we could find (at the base level) were [Dato CMS](https://www.datocms.com/pricing/compare "Dato CMS") and [Flamelink](https://flamelink.io/features "Flamelink").
 
 For one of our upcoming courses [AngularFire Master Course](/angularfire-master-course/) we will actually build a CMS that handles a great deal of these challenges and is backed by Firebase, but it wasn't ready for full consumption.
 
@@ -21,10 +21,10 @@ For one of our upcoming courses [AngularFire Master Course](/angularfire-master-
 
 We did extensive research with all of the hosted solutions that are available today including
 
-- [Learnworlds](http://https://www.learnworlds.com/ 'Learnworlds')
-- [Thinkific](https://www.thinkific.com/ 'Thinkific')
-- [Teachable](https://teachable.com/ 'Teachable')
-- [Podia](https://www.podia.com/ 'Podia')
+- [Learnworlds](http://https://www.learnworlds.com/ "Learnworlds")
+- [Thinkific](https://www.thinkific.com/ "Thinkific")
+- [Teachable](https://teachable.com/ "Teachable")
+- [Podia](https://www.podia.com/ "Podia")
 
 Many of this solutions would have worked but ultimately we felt that for long term success we needed to have control over the system that hosts our content. We don't want to be stuck in a situation where a hosted LMS company fails and we lose decades worth of peoples work.
 

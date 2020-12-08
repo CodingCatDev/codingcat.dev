@@ -1,6 +1,6 @@
 ---
-title: 'Angular Material Theming'
-date: '2019-01-22'
+title: "Angular Material Theming"
+date: "2019-01-22"
 ---
 
 https://youtu.be/V3WiBs-igaY

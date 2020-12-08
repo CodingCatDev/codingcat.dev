@@ -1,6 +1,6 @@
 ---
-title: 'JAMStackGR #1-Sanity.io as a Backend'
-date: '2019-10-25'
+title: "JAMStackGR #1-Sanity.io as a Backend"
+date: "2019-10-25"
 ---
 
 https://youtu.be/DrUabMWNYCw

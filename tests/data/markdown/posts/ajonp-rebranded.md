@@ -1,6 +1,6 @@
 ---
-title: 'AJonP - Rebranded'
-date: '2018-11-04'
+title: "AJonP - Rebranded"
+date: "2018-11-04"
 ---
 
 https://youtu.be/NlXVWtgLNjY

@@ -1,6 +1,6 @@
 ---
-title: 'Use Firestore to Build Hugo Content'
-date: '2018-12-28'
+title: "Use Firestore to Build Hugo Content"
+date: "2018-12-28"
 ---
 
 This lesson will explore some fairly complex triggers and Git practices.

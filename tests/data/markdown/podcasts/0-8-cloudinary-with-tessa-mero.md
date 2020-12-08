@@ -1,6 +1,6 @@
 ---
-title: '0.8 - Cloudinary with Tessa Mero'
-date: '2020-02-08'
+title: "0.8 - Cloudinary with Tessa Mero"
+date: "2020-02-08"
 ---
 
 https://youtu.be/ODiO4Kxn8bo

@@ -1,6 +1,6 @@
 ---
-title: 'Gatsby Cloud with Sanity CMS'
-date: '2019-11-14'
+title: "Gatsby Cloud with Sanity CMS"
+date: "2019-11-14"
 ---
 
 [https://youtu.be/zaKZeusS2u8](https://youtu.be/zaKZeusS2u8)

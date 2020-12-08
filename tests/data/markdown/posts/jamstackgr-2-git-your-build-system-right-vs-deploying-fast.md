@@ -1,6 +1,6 @@
 ---
-title: 'JAMStackGR #2-Git Your Build System Right vs. Deploying Fast'
-date: '2019-11-12'
+title: "JAMStackGR #2-Git Your Build System Right vs. Deploying Fast"
+date: "2019-11-12"
 ---
 
 https://youtu.be/vhc0ws2cweA

@@ -1,6 +1,6 @@
 ---
-title: 'Sendinblue is our #1 WordPress Solution for Email Marketing'
-date: '2020-11-16'
+title: "Sendinblue is our #1 WordPress Solution for Email Marketing"
+date: "2020-11-16"
 ---
 
 [![](https://static.tapfiliate.com/5cf83d25b40c6.png?a=50905-b26a4f&s=1231845-90ca44)](https://www.sendinblue.com/?tap_a=50905-b26a4f&tap_s=1231845-90ca44)

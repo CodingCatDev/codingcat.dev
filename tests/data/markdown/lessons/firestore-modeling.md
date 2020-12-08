@@ -1,6 +1,6 @@
 ---
-title: 'Firestore Modeling'
-date: '2020-09-16'
+title: "Firestore Modeling"
+date: "2020-09-16"
 ---
 
 https://youtu.be/XfOaUonBTsk?t=4048

@@ -1,6 +1,6 @@
 ---
-title: 'Angular Material Reactive Forms Update Firestore'
-date: '2019-01-22'
+title: "Angular Material Reactive Forms Update Firestore"
+date: "2019-01-22"
 ---
 
 https://youtu.be/92hYB6jivvQ

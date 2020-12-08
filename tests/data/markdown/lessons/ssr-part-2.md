@@ -1,6 +1,6 @@
 ---
-title: 'SSR Part 2'
-date: '2020-09-16'
+title: "SSR Part 2"
+date: "2020-09-16"
 ---
 
 https://youtu.be/XfOaUonBTsk?t=5938

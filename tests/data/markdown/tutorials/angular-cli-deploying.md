@@ -1,9 +1,7 @@
 ---
-title: 'Angular CLI Deploying'
-date: '2019-11-09'
+title: "Angular CLI Deploying"
+date: "2019-11-09"
 ---
-
-
 
 ## Deploying Fast
 

@@ -14,16 +14,18 @@ const UserSignin = dynamic(() => import('@/components/UserSignin'), {
 export default function Intro() {
   return (
     <>
+      {/*Remove wrapper divs */}
       <div className="flex flex-row flex-wrap sm::max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl ">
         <div className="w-full px-2 pt-40 pb-40 md:w-1/2 sm:pl-16 md:pl-20 lg:pl-48">
           <UserSignin />
         </div>
         <div className="flex flex-wrap content-start justify-center w-full pt-16 lg:pl-8 lg:pr-16 lg:pl-48 lg:pt-48 lg:w-1/2">
           <div className="flex flex-col px-2 ml-8 bg-ccd-purples-050 align-content-start md:rounded-xl">
-            <h3 className="p-4">
-              <div className="vertical-text-clip">Purrfect</div>
-              <div className="vertical-text-clip">Web Tutorials</div>
-            </h3>
+            <h1 className="p-4 vertical-text-clip">
+              Purrfect
+              <br />
+              Web Tutorials
+            </h1>
             <p className="p-4 text-xl text-ccd-purples-900">
               Get the skills you need to become a better web developer today.
               High quality courses with custom certificates and projects to show
@@ -37,6 +39,7 @@ export default function Intro() {
                 Go Pro
               </button>
             </div>
+            {/* Note to remove these */}
           </div>
         </div>
       </div>

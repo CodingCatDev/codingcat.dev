@@ -1,6 +1,6 @@
 ---
-title: 'Angular Material Dynamic Navigation using Firestore'
-date: '2019-01-22'
+title: "Angular Material Dynamic Navigation using Firestore"
+date: "2019-01-22"
 ---
 
 https://youtu.be/sZoiLcq7N6Q

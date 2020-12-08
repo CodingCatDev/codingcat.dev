@@ -1,6 +1,6 @@
 ---
-title: 'HTML Basics'
-date: '2020-09-17'
+title: "HTML Basics"
+date: "2020-09-17"
 ---
 
 ![](https://codingcat.dev/wp-content/uploads/2020/09/ForA10YearOldHTMLBasics-1024x576.png)

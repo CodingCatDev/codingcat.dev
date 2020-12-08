@@ -1,6 +1,6 @@
 ---
 title: "AJ's Week In Web January 08, 2020"
-date: '2020-01-08'
+date: "2020-01-08"
 ---
 
 https://youtu.be/TXNgr375NI0

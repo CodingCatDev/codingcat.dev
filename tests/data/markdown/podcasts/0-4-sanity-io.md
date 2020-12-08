@@ -1,6 +1,6 @@
 ---
-title: '0.4 - Sanity.io'
-date: '2020-02-08'
+title: "0.4 - Sanity.io"
+date: "2020-02-08"
 ---
 
 https://youtu.be/xs7cZICMtcc

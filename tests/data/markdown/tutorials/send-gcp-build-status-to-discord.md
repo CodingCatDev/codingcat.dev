@@ -1,6 +1,6 @@
 ---
-title: 'Send GCP Build Status to Discord'
-date: '2020-05-02'
+title: "Send GCP Build Status to Discord"
+date: "2020-05-02"
 ---
 
 https://youtu.be/J4ImOB5etB4

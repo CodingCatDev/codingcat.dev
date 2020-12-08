@@ -1,6 +1,6 @@
 ---
-title: 'Hugo Ionic Template'
-date: '2018-12-12'
+title: "Hugo Ionic Template"
+date: "2018-12-12"
 ---
 
 https://youtu.be/tgXFNqInA0w

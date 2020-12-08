@@ -1,6 +1,6 @@
 ---
-title: 'Increasing Productivity with Notion'
-date: '2019-10-28'
+title: "Increasing Productivity with Notion"
+date: "2019-10-28"
 ---
 
 # Productivity Weekend

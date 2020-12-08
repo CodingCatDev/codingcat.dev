@@ -1,10 +1,11 @@
 import Head from 'next/head';
+import Layout from '../layout/Layout';
 import PostsCards from '@/components/PostsCards';
 import { postsService } from '@/services/serversideApi';
 
 export default function Podcasts({ posts }) {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>Podcasts | CodingCatDev</title>
       </Head>
@@ -14,7 +15,7 @@ export default function Podcasts({ posts }) {
       </main>
 
       <footer></footer>
-    </div>
+    </Layout>
   );
 }
 

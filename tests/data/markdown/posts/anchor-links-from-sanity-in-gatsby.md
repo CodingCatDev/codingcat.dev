@@ -1,6 +1,6 @@
 ---
-title: 'Anchor Links From Sanity in Gatsby'
-date: '2019-10-14'
+title: "Anchor Links From Sanity in Gatsby"
+date: "2019-10-14"
 ---
 
 > TL;DR version is make sure you implement **`onRouteUpdate`** and **`shouldUpdateScroll`** in **`gatsby-browser.js`**.

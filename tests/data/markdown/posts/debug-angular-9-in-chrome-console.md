@@ -1,6 +1,6 @@
 ---
-title: 'Debug Angular 9 in Chrome Console'
-date: '2020-04-22'
+title: "Debug Angular 9 in Chrome Console"
+date: "2020-04-22"
 ---
 
 [](https://youtu.be/H8GrzgQS-6c)[](https://youtu.be/H8GrzgQS-6c)[https://youtu.be/H8GrzgQS-6c](https://youtu.be/H8GrzgQS-6c)

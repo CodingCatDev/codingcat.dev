@@ -1,6 +1,6 @@
 ---
-title: 'Firebase Authentication and Authorization'
-date: '2019-01-09'
+title: "Firebase Authentication and Authorization"
+date: "2019-01-09"
 ---
 
 https://youtu.be/II6TAjPWg54

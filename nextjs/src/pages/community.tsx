@@ -1,8 +1,9 @@
 import Head from 'next/head';
+import Layout from '../layout/Layout';
 
 export default function Tutorials() {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>Community | CodingCatDev</title>
       </Head>
@@ -12,6 +13,6 @@ export default function Tutorials() {
       </main>
 
       <footer></footer>
-    </div>
+    </Layout>
   );
 }

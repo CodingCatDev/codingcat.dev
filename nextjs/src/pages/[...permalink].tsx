@@ -9,6 +9,7 @@ import hydrate from 'next-mdx-remote/hydrate';
 import parse from 'remark-parse';
 import mdx from 'remark-mdx';
 
+import Layout from '../layout/Layout';
 import RecentPostsList from '@/components/RecentPostsList';
 import {
   postByPermalinkService,
@@ -24,41 +25,43 @@ export default function Post({ post, markdown, recentPosts }) {
 
   if (!post) {
     return (
-      <>
+      <Layout>
         <Head>
           <meta name="robots" content="noindex" />
         </Head>
         <DefaultErrorPage statusCode={404} />
-      </>
+      </Layout>
     );
   }
 
   const content = hydrate(markdown);
   return (
-    <div className="grid grid-cols-12 gap-2 ">
-      <div className="col-span-12 xl:col-span-10">
-        <h1>{post.post_title}</h1>
-        <article className="prose prose-ccd-purples lg:prose-xl">
-          {content}
-        </article>
-      </div>
-      <div className="col-span-12 xl:col-span-2">
-        <div className="p-3 m-3 bg-white rounded-lg shadow">
-          <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
-            Recent Posts
-          </p>
-          <RecentPostsList posts={recentPosts.post} />
-          <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
-            Recent Tutorials
-          </p>
-          <RecentPostsList posts={recentPosts.tutorials} />
-          <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
-            Recent Podcasts
-          </p>
-          <RecentPostsList posts={recentPosts.podcasts} />
+    <Layout>
+      <div className="grid grid-cols-12 gap-2 ">
+        <div className="col-span-12 xl:col-span-10">
+          <h1>{post.post_title}</h1>
+          <article className="prose prose-ccd-purples lg:prose-xl">
+            {content}
+          </article>
+        </div>
+        <div className="col-span-12 xl:col-span-2">
+          <div className="p-3 m-3 bg-white rounded-lg shadow">
+            <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
+              Recent Posts
+            </p>
+            <RecentPostsList posts={recentPosts.post} />
+            <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
+              Recent Tutorials
+            </p>
+            <RecentPostsList posts={recentPosts.tutorials} />
+            <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
+              Recent Podcasts
+            </p>
+            <RecentPostsList posts={recentPosts.podcasts} />
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

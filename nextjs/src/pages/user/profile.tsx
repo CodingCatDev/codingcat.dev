@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
+import Layout from '../../layout/Layout';
+
 const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
   ssr: false,
   loading: () => <p>Chasing my tail..</p>,
@@ -8,7 +10,7 @@ const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
 
 export default function Profile() {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
@@ -20,6 +22,6 @@ export default function Profile() {
       </main>
 
       <footer></footer>
-    </div>
+    </Layout>
   );
 }

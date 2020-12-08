@@ -1,6 +1,6 @@
 ---
-title: 'Scully.io - Anguler Static Site Generator'
-date: '2019-12-17'
+title: "Scully.io - Anguler Static Site Generator"
+date: "2019-12-17"
 ---
 
 ## JAMStack with SSG[](https://codingcat.dev/blog/scully-io#scullyio---angular-static-site-generator)

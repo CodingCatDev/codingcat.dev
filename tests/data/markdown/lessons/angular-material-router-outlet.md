@@ -1,6 +1,6 @@
 ---
-title: 'Angular Material Router Outlet'
-date: '2019-01-09'
+title: "Angular Material Router Outlet"
+date: "2019-01-09"
 ---
 
 https://youtu.be/niJrSNQ1KwI

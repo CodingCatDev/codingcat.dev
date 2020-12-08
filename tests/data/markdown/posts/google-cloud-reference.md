@@ -1,6 +1,6 @@
 ---
-title: 'Google Cloud Reference'
-date: '2020-09-16'
+title: "Google Cloud Reference"
+date: "2020-09-16"
 ---
 
 # The Google Cloud Developer's Cheat Sheet

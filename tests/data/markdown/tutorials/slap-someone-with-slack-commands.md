@@ -1,6 +1,6 @@
 ---
-title: 'Slap Someone with Slack Commands'
-date: '2019-08-24'
+title: "Slap Someone with Slack Commands"
+date: "2019-08-24"
 ---
 
 https://youtu.be/3A4iucpZiwo

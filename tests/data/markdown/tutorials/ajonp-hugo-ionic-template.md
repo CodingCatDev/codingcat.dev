@@ -1,6 +1,6 @@
 ---
-title: 'AJonP Hugo Ionic Template'
-date: '2018-12-09'
+title: "AJonP Hugo Ionic Template"
+date: "2018-12-09"
 ---
 
 https://youtu.be/CZmEZ62yMFA

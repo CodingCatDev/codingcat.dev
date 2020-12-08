@@ -1,6 +1,6 @@
 ---
-title: 'HTML Table'
-date: '2020-09-17'
+title: "HTML Table"
+date: "2020-09-17"
 ---
 
 ![HTML for a 10 Year Old Tables](https://codingcat.dev/wp-content/uploads/2020/09/ForA10YearOldHTMLTable-1024x576.png)

@@ -1,6 +1,6 @@
 ---
-title: '0.9 Jeff Delaney of fireship.io'
-date: '2020-04-25'
+title: "0.9 Jeff Delaney of fireship.io"
+date: "2020-04-25"
 ---
 
 https://youtu.be/V66gCW2CrYg

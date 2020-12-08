@@ -1,6 +1,6 @@
 ---
 title: "AJ's Week In Web November 13, 2019"
-date: '2019-11-13'
+date: "2019-11-13"
 ---
 
 [https://youtu.be/wtfBXmdzElI](https://youtu.be/wtfBXmdzElI)

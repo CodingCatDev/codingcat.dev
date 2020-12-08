@@ -1,6 +1,6 @@
 ---
-title: 'AWS Amplify Video'
-date: '2020-05-04'
+title: "AWS Amplify Video"
+date: "2020-05-04"
 ---
 
 https://youtu.be/vM\_YoZbLQQ0?rel=0

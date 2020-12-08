@@ -1,6 +1,6 @@
 ---
-title: 'Firebase Project Hosting'
-date: '2018-11-26'
+title: "Firebase Project Hosting"
+date: "2018-11-26"
 ---
 
 https://youtu.be/sOn3YMdpYR4

@@ -16,23 +16,27 @@
     src: url(../fonts/HennyPenny-Regular.ttf) format('truetype');
   }
 
+  body {
+    @apply bg-ccd-purples-900;
+  }
+
   h1 {
-    @apply leading-loose text-7xl font-heading;
+    @apply tracking-wide leading-relaxed text-7xl font-heading;
   }
   h2 {
-    @apply text-6xl leading-loose font-heading;
+    @apply text-6xl tracking-wide leading-relaxed font-heading;
   }
   h3 {
-    @apply text-5xl leading-loose font-heading;
+    @apply text-5xl tracking-wide leading-relaxed font-heading;
   }
   h4 {
-    @apply text-4xl leading-loose font-heading;
+    @apply text-4xl tracking-wide leading-relaxed font-heading;
   }
   h5 {
-    @apply text-3xl leading-loose font-heading;
+    @apply text-3xl tracking-wide leading-relaxed font-heading;
   }
   h6 {
-    @apply text-2xl leading-loose font-heading;
+    @apply text-2xl tracking-wide leading-relaxed font-heading;
   }
 }
 

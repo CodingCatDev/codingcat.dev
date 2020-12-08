@@ -1,6 +1,6 @@
 ---
-title: '0.5 - Agile Methodology'
-date: '2020-02-08'
+title: "0.5 - Agile Methodology"
+date: "2020-02-08"
 ---
 
 https://youtu.be/Vz8CXssVsMM

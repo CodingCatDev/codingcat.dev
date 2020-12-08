@@ -1,6 +1,6 @@
 ---
-title: 'AJ is Loving Sticker Mule'
-date: '2019-10-11'
+title: "AJ is Loving Sticker Mule"
+date: "2019-10-11"
 ---
 
 I have tried several sticker places and the images always come back terrible and the customer service stinks. Then I found Sticker Mule and everything has been like a dream!  

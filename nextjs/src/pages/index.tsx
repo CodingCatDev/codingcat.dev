@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { postsRecentService } from '@/services/serversideApi';
 import RecentPostsCards from '@/components/RecentPostsCards';
 import Intro from '@/components/Home/Intro';
+import Layout from '../layout/Layout';
 
 import {
   React,
@@ -20,7 +21,7 @@ import AJHeadphones from '@/components/global/icons/AJHeadphones';
 
 export default function Home({ recentPosts }) {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>CodingCatDev</title>
       </Head>
@@ -214,7 +215,7 @@ export default function Home({ recentPosts }) {
       </div>
 
       <footer></footer>
-    </div>
+    </Layout>
   );
 }
 

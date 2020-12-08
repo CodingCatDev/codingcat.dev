@@ -1,6 +1,6 @@
 ---
-title: 'Google Cloud Repositories CI/CD'
-date: '2018-11-26'
+title: "Google Cloud Repositories CI/CD"
+date: "2018-11-26"
 ---
 
 https://youtu.be/MijHRE5h6Gg

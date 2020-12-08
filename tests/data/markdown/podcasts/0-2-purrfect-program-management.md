@@ -1,6 +1,6 @@
 ---
-title: '0.2 - Purrfect Program Management'
-date: '2020-02-08'
+title: "0.2 - Purrfect Program Management"
+date: "2020-02-08"
 ---
 
 https://youtu.be/JYAUlZ0Z8lo

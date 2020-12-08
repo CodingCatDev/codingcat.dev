@@ -1,6 +1,6 @@
 ---
-title: 'Cloudinary in JAMStacks using Webp'
-date: '2019-07-31'
+title: "Cloudinary in JAMStacks using Webp"
+date: "2019-07-31"
 ---
 
 # Cloudinary and Jamstacks

@@ -1,6 +1,6 @@
 ---
-title: 'Slack Workspace Theme Customization'
-date: '2019-08-01'
+title: "Slack Workspace Theme Customization"
+date: "2019-08-01"
 ---
 
 https://youtu.be/vbtncEcoO9o

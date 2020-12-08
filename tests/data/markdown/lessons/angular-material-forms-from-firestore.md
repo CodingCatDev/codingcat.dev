@@ -1,6 +1,6 @@
 ---
-title: 'Angular Material Forms from Firestore'
-date: '2019-01-22'
+title: "Angular Material Forms from Firestore"
+date: "2019-01-22"
 ---
 
 https://youtu.be/LLupkLEszdY

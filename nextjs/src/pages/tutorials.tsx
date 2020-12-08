@@ -1,20 +1,21 @@
 import Head from 'next/head';
+import Layout from '../layout/Layout';
 import PostsCards from '@/components/PostsCards';
 import { postsService } from '@/services/serversideApi';
 
 export default function Tutorials({ posts }) {
   return (
-    <>
+    <Layout>
       <Head>
         <title>Tutorials | CodingCatDev</title>
       </Head>
 
-      <main className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 place-items-auto ">
         <PostsCards type={'tutorials'} posts={posts} />
-      </main>
+      </section>
 
       <footer></footer>
-    </>
+    </Layout>
   );
 }
 

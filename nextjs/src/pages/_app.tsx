@@ -1,61 +1,52 @@
 import '../styles/globals.css';
-import { useState, useEffect } from 'react';
-import { Transition } from '@headlessui/react';
-import router from 'next/router';
+// import { useState, useEffect } from 'react';
+// import { Transition } from '@headlessui/react';
+// import router from 'next/router';
 
-import { AppTopbar } from '../layout/AppTopbar';
-import { AppMenu } from '../layout/AppMenu';
+// import { AppTopbar } from '../layout/AppTopbar';
+// import { AppMenu } from '../layout/AppMenu';
 
-import OutsideClick from '@/components/OutsideClick';
+// import OutsideClick from '@/components/OutsideClick';
 
 function MyApp({ Component, pageProps }) {
-  const [overlayMenuActive, setOverlayMenuActive] = useState(false);
+  // const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
-  let menuClick = false;
+  // let menuClick = false;
 
-  const onSidebarClick = () => {
-    menuClick = true;
-  };
-  const onMenuItemClick = (event) => {
-    if (!event.item.items) {
-      setOverlayMenuActive(false);
-    }
-  };
-  const onShowMenuButton = (event) => {
-    console.log(event);
-  };
+  // const onSidebarClick = () => {
+  //   menuClick = true;
+  // };
+  // const onMenuItemClick = (event) => {
+  //   if (!event.item.items) {
+  //     setOverlayMenuActive(false);
+  //   }
+  // };
+  // const onShowMenuButton = (event) => {
+  //   console.log(event);
+  // };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [overlayMenuActive]);
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, [overlayMenuActive]);
 
-  router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
+  // router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
 
   return (
     <>
-      <div className="flex flex-col content-center h-screen overflow-hidden bg-ccd-purples-900">
-        <header className="">
-          <AppTopbar
-            setOverlayMenuActive={setOverlayMenuActive}
-            overlayMenuActive={overlayMenuActive}
-            onMenuItemClick={onMenuItemClick}
-          />
-        </header>
-        <main className="flex justify-center overflow-y-auto">
-          <div className="">
-            <Component {...pageProps} />
-            <footer className="flex"></footer>
-          </div>
-        </main>
-        {process.env.NEXT_PUBLIC_CCD_EMULATED ? (
-          <div className="flex justify-center text-white bg-yellow-400">
-            <span className="text-center">Firebase is being Emulated</span>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
-      <Transition
+      {/* <div className="grid grid-rows-3 h-screen overflow-hidden bg-ccd-purples-900"> */}
+      {/* <AppTopbar
+          setOverlayMenuActive={setOverlayMenuActive}
+          overlayMenuActive={overlayMenuActive}
+          onMenuItemClick={onMenuItemClick}
+        /> */}
+      {/* <div className="overflow-y-auto"> */}
+      {/* <main className="flex justify-center "> */}
+      <Component {...pageProps} />
+      {/* </main> */}
+      {/* <footer className="flex text-ccd-basics-050">Footer</footer> */}
+      {/* </div> */}
+      {/* </div> */}
+      {/* <Transition
         show={overlayMenuActive}
         enter="transition-opacity duration-200"
         enterFrom="opacity-0"
@@ -84,7 +75,7 @@ function MyApp({ Component, pageProps }) {
             </OutsideClick>
           </div>
         </div>
-      </Transition>
+      </Transition> */}
     </>
   );
 }
