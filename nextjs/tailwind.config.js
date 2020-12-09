@@ -7,6 +7,7 @@ module.exports = {
       serif: ['nunito', 'ui-serif'],
       mono: ['nunito', 'ui-monospace'],
       heading: ['Henny Penny', 'nunito', 'ui-monospace'],
+      light: ['nunito-light', 'ui-sans-serif'],
     },
     // boxShadow: {
     //   'b-lg': {
@@ -17,6 +18,9 @@ module.exports = {
     //   },
     // },
     extend: {
+      boxShadow: {
+        outline: '0 0 0 3px #FC5390',
+      },
       colors: {
         'ccd-basics': {
           '050': '#FBFBFB',
@@ -101,6 +105,18 @@ module.exports = {
           700: '#86A949',
           800: '#637C35',
           900: '#42561E',
+        },
+        'ccd-pinks': {
+          '050': '#FDF3F7',
+          100: '#FBE6EF',
+          200: '#F4C1D6',
+          300: '#EE9CBE',
+          400: '#E1528D',
+          500: '#D11663',
+          600: '#BC2261',
+          700: '#9D1948',
+          800: '#81133B',
+          900: '#7B042F',
         },
 
         'ccd-social': {

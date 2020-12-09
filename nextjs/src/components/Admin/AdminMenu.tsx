@@ -1,17 +1,17 @@
 import Link from 'next/link';
 
-import Blog from '../global/icons/Blog';
-import Community from '../global/icons/Community';
-import Courses from '../global/icons/Courses';
-import Podcasts from '../global/icons/Podcasts';
-import Tutorials from '../global/icons/Tutorials';
+import Blog from '@/components/global/icons/nav/Blog';
+import Community from '@/components/global/icons/nav/Community';
+import Courses from '@/components/global/icons/nav/Courses';
+import Podcasts from '@/components/global/icons/nav/Podcasts';
+import Tutorials from '@/components/global/icons/nav/Tutorials';
 
 export default function AdminMenu({ router }) {
   return (
     <>
       {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}
       <div className="md:hidden">
-        <div className="fixed inset-0 flex z-40">
+        <div className="fixed inset-0 z-40 flex">
           {/*
 Off-canvas menu overlay, show/hide based on off-canvas menu state.
 
@@ -23,7 +23,7 @@ From: "opacity-100"
 To: "opacity-0"
 */}
           <div className="fixed inset-0" aria-hidden="true">
-            <div className="absolute inset-0 bg-ccd-basics-600 opacity-75" />
+            <div className="absolute inset-0 opacity-75 bg-ccd-basics-600" />
           </div>
           {/*
 Off-canvas menu, show/hide based on off-canvas menu state.
@@ -35,13 +35,13 @@ Leaving: "transition ease-in-out duration-300 transform"
 From: "translate-x-0"
 To: "-translate-x-full"
 */}
-          <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-ccd-basics-800">
-            <div className="absolute top-0 right-0 -mr-12 pt-2">
-              <button className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+          <div className="relative flex flex-col flex-1 w-full max-w-xs pt-5 pb-4 bg-ccd-basics-800">
+            <div className="absolute top-0 right-0 pt-2 -mr-12">
+              <button className="flex items-center justify-center w-10 h-10 ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="sr-only">Close sidebar</span>
                 {/* Heroicon name: x */}
                 <svg
-                  className="h-6 w-6 text-white"
+                  className="w-6 h-6 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -57,22 +57,22 @@ To: "-translate-x-full"
                 </svg>
               </button>
             </div>
-            <div className="flex-shrink-0 flex items-center px-4">
+            <div className="flex items-center flex-shrink-0 px-4">
               <img
-                className="h-8 w-auto"
+                className="w-auto h-8"
                 src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
                 alt="Workflow"
               />
             </div>
-            <div className="mt-5 flex-1 h-0 overflow-y-auto">
+            <div className="flex-1 h-0 mt-5 overflow-y-auto">
               <nav className="px-2 space-y-1">
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-white bg-ccd-basics-900"
+                  className="flex items-center px-2 py-2 text-base font-medium text-white rounded-md group bg-ccd-basics-900"
                 >
                   {/* Heroicon name: home */}
                   <svg
-                    className="mr-4 h-6 w-6 text-ccd-basics-300"
+                    className="w-6 h-6 mr-4 text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -90,11 +90,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
+                  className="flex items-center px-2 py-2 text-base font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: users */}
                   <svg
-                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
+                    className="w-6 h-6 mr-4 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -112,11 +112,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
+                  className="flex items-center px-2 py-2 text-base font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: folder */}
                   <svg
-                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
+                    className="w-6 h-6 mr-4 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -134,11 +134,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
+                  className="flex items-center px-2 py-2 text-base font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: calendar */}
                   <svg
-                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
+                    className="w-6 h-6 mr-4 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -156,11 +156,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
+                  className="flex items-center px-2 py-2 text-base font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: inbox */}
                   <svg
-                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
+                    className="w-6 h-6 mr-4 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -178,11 +178,11 @@ To: "-translate-x-full"
                 </a>
                 <a
                   href="#"
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
+                  className="flex items-center px-2 py-2 text-base font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700"
                 >
                   {/* Heroicon name: chart-bar */}
                   <svg
-                    className="mr-4 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300"
+                    className="w-6 h-6 mr-4 text-ccd-basics-400 group-hover:text-ccd-basics-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -210,51 +210,51 @@ To: "-translate-x-full"
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-64">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex flex-col h-0 flex-1 ">
-            <div className="flex items-center h-16 flex-shrink-0 px-4 bg-ccd-basics-900 text-white">
+          <div className="flex flex-col flex-1 h-0 ">
+            <div className="flex items-center flex-shrink-0 h-16 px-4 text-white bg-ccd-basics-900">
               <Link href="/admin">
                 <a>
                   <div>Dashboard</div>
                 </a>
               </Link>
             </div>
-            <div className="flex-1 flex flex-col overflow-y-auto">
-              <nav className="flex-1 px-2 py-4 bg-ccd-basics-800 space-y-1">
+            <div className="flex flex-col flex-1 overflow-y-auto">
+              <nav className="flex-1 px-2 py-4 space-y-1 bg-ccd-basics-800">
                 <Link href="/admin/courses">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
-                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
+                  <a className="flex items-center px-2 py-2 text-sm font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700">
+                    <div className="flex flex-col w-6 h-6 h-full mr-3 text-ccd-basics-400 group-hover:text-ccd-basics-300 justify-content">
                       <Courses />
                     </div>
                     Courses
                   </a>
                 </Link>
                 <Link href="/admin/tutorials">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
-                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
+                  <a className="flex items-center px-2 py-2 text-sm font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700">
+                    <div className="flex flex-col w-6 h-6 h-full mr-3 text-ccd-basics-400 group-hover:text-ccd-basics-300 justify-content">
                       <Tutorials />
                     </div>
                     Tutorials
                   </a>
                 </Link>
                 <Link href="/admin/blog">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-white rounded-md hover:bg-ccd-basics-700">
-                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full ">
+                  <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group hover:bg-ccd-basics-700">
+                    <div className="flex flex-col w-6 h-6 h-full mr-3 text-ccd-basics-400 group-hover:text-ccd-basics-300 justify-content ">
                       <Blog />
                     </div>
                     Blog
                   </a>
                 </Link>
                 <Link href="/admin/podcasts">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
-                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
+                  <a className="flex items-center px-2 py-2 text-sm font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700">
+                    <div className="flex flex-col w-6 h-6 h-full mr-3 text-ccd-basics-400 group-hover:text-ccd-basics-300 justify-content">
                       <Podcasts />
                     </div>
                     Podcasts
                   </a>
                 </Link>
                 <Link href="/admin/community">
-                  <a className="group flex items-center px-2 py-2 text-sm font-medium text-ccd-basics-300 rounded-md hover:text-white hover:bg-ccd-basics-700">
-                    <div className="mr-3 h-6 w-6 text-ccd-basics-400 group-hover:text-ccd-basics-300 flex flex-col justify-content h-full">
+                  <a className="flex items-center px-2 py-2 text-sm font-medium rounded-md group text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700">
+                    <div className="flex flex-col w-6 h-6 h-full mr-3 text-ccd-basics-400 group-hover:text-ccd-basics-300 justify-content">
                       <Community />
                     </div>
                     Community

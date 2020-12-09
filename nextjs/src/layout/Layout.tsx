@@ -32,13 +32,13 @@ const Layout = ({ children }) => {
   router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
 
   return (
-    <div className="flex flex-col w-full h-screen mx-2 overflow-hidden bg-ccd-purples-900 max-w-7xl md:mx-auto">
+    <div className="flex flex-col h-screen overflow-hidden bg-ccd-purples-900 md:w-4/5 md:mx-auto">
       <AppTopbar
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
         onMenuItemClick={onMenuItemClick}
       />
-      <div className="overflow-y-auto calc-height-wrapper">
+      <div className="overflow-y-auto overflow-x-hidden calc-height-wrapper">
         <main className="flex justify-center calc-height bg-ccd-purples-050">
           {children}
         </main>

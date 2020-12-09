@@ -2,18 +2,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-import ActiveLink from '@/components/ActiveLink';
 import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
-import Blog from '@/components/icons/Blog';
-import Courses from '@/components/icons/Courses';
-import Community from '@/components/icons/Community';
-import Podcasts from '@/components/icons/Podcasts';
-import Tutorials from '@/components/icons/Tutorials';
+import NavLinks from '../layout/NavLinks';
 
 // STYLES
-
-const navLinks = `text-md font-medium text-white transition-colors hover:text-ccd-blues-400 rounded-md grid place-items-center content-between`;
 
 const AvatarMenu = dynamic(() => import('@/components/User/AvatarMenu'), {
   ssr: false,
@@ -26,7 +19,7 @@ export const AppTopbar = (props) => {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <header className="max-w-7xl w-full h-20 py-4 mx-2 md:mx-auto flex justify-between">
+    <header className="max-w-7xl w-full h-20 p-4 md:px-0 md:mx-auto flex justify-between">
       <Link href="/">
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">
@@ -36,42 +29,7 @@ export const AppTopbar = (props) => {
         </a>
       </Link>
       {/* <div className="flex justify-between h-16"> */}
-
-      <nav className="flex mx-auto bg-ccd-purples-900 sm::max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl">
-        <div className="hidden md:flex md:space-x-4">
-          <ActiveLink activeClassName="bg-ccd-purples-900" href="/courses">
-            <a className={`${navLinks}`}>
-              <Courses />
-              Courses
-            </a>
-          </ActiveLink>
-          <ActiveLink activeClassName="bg-ccd-purples-900" href="/tutorials">
-            <a className={`${navLinks}`}>
-              <Tutorials />
-              Tutorials
-            </a>
-          </ActiveLink>
-          <ActiveLink activeClassName="bg-ccd-purples-900" href="/podcasts">
-            <a className={`${navLinks}`}>
-              <Podcasts />
-              Podcasts
-            </a>
-          </ActiveLink>
-          <ActiveLink activeClassName="bg-ccd-purples-900" href="/blog">
-            <a className={`${navLinks}`}>
-              <Blog />
-              Blog
-            </a>
-          </ActiveLink>
-
-          <ActiveLink activeClassName="bg-ccd-purples-900" href="/community">
-            <a className={`${navLinks}`}>
-              <Community />
-              Community
-            </a>
-          </ActiveLink>
-        </div>
-      </nav>
+      <NavLinks />
       <div className="flex items-center">
         <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
           <button className="p-1 rounded-full bg-ccd-purples-800 text-ccd-basics-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white">
