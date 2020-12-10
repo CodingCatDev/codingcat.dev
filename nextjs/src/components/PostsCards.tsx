@@ -11,7 +11,7 @@ export default function PostsCards({
 }) {
   return (
     <>
-      {posts.length > 0 ? (
+      {posts && posts.length > 0 ? (
         <>
           {posts.map((post) => (
             <div
