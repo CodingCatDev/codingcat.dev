@@ -1,5 +1,5 @@
-import admin from "firebase-admin";
-const serviceAccountKey = require("../../serviceAccountKey.json");
+const admin = require("firebase-admin");
+const serviceAccountKey = require("../../../serviceAccountKey.json");
 const seed = require("firestore-seed");
 import { posts } from "./postsCreator";
 var uuid = require("uuid");
@@ -12,7 +12,21 @@ admin.initializeApp({
 });
 
 const postDocs = [];
-posts().forEach((postDoc) => {
+posts().forEach((post) => {
+  const postDoc = {
+    ...post,
+    createdAt: admin.firestore.Timestamp.fromDate(
+      new Date(post.createdAt as any)
+    ),
+    updatedAt: admin.firestore.Timestamp.fromDate(
+      new Date(post.updatedAt as any)
+    ),
+    publishedAt: admin.firestore.Timestamp.fromDate(
+      new Date(post.publishedAt as any)
+    ),
+    createdBy: "i6YGgcTIzpQd2aHhbZqNJPZxy6Z2",
+    updatedBy: "i6YGgcTIzpQd2aHhbZqNJPZxy6Z2",
+  };
   postDocs.push(seed.doc(uuid.v4(), postDoc));
 });
 
