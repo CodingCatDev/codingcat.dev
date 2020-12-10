@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 
 import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';

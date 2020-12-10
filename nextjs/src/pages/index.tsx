@@ -1,25 +1,27 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
 import { postsRecentService } from '@/services/serversideApi';
-import RecentPostsCards from '@/components/RecentPostsCards';
 import Intro from '@/components/Home/Intro';
 import Layout from '../layout/Layout';
 
 import {
-  React,
-  Angular,
-  Vue,
-  Svelte,
-  CSS,
-  HTML,
+  ReactLogo,
+  AngularLogo,
+  VueLogo,
+  SvelteLogo,
+  CssLogo,
+  HtmlLogo,
 } from '@/components/global/icons/VendorLogos';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import KCLogo from '@/components/global/icons/KCLogo';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import AJHeadphones from '@/components/global/icons/AJHeadphones';
+import { Post } from '@/models/post.model';
+import { RecentPostsCards } from '@/components/RecentPostsCards';
 
-export default function Home({ recentPosts }) {
+export default function Home({ recentPosts }: { recentPosts: Post[] }) {
   return (
     <Layout>
       <Head>
@@ -41,12 +43,12 @@ export default function Home({ recentPosts }) {
           <div className="static flex flex-col justify-center w-full h-20 px-2 md:h-32 vertical-clip">
             {
               <div className="flex content-center justify-between px-8">
-                <React className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <Angular className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <Vue className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <Svelte className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <CSS className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <HTML className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
+                <ReactLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
+                <AngularLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
+                <VueLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
+                <SvelteLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
+                <CssLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
+                <HtmlLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
               </div>
             }
           </div>
@@ -154,7 +156,7 @@ export default function Home({ recentPosts }) {
                 Blog Posts
               </p>
             </div>
-            <RecentPostsCards recentPosts={recentPosts.post} />
+            <RecentPostsCards recentPosts={recentPosts['post']} />
             <div className="pt-16 col-span-full justify-self-center ">
               <Link href="/blog">
                 <button
@@ -199,7 +201,7 @@ export default function Home({ recentPosts }) {
                 Latest Podcasts
               </p>
             </div>
-            <RecentPostsCards recentPosts={recentPosts.podcasts} />
+            <RecentPostsCards recentPosts={recentPosts['podcasts']} />
             <div className="pt-16 col-span-full justify-self-center ">
               <Link href="/podcasts">
                 <button
@@ -213,8 +215,6 @@ export default function Home({ recentPosts }) {
           </div>
         </div>
       </div>
-
-      <footer></footer>
     </Layout>
   );
 }

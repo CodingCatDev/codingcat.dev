@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import PropTypes from 'prop-types';
 import { Post } from '@/models/post.model';
-function RecentPostsCards({ recentPosts }) {
+import { ComponentType } from 'react';
+
+export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
+  props
+) => {
+  const { recentPosts } = props;
   return (
     <>
       {recentPosts.map((post: Post) => (
@@ -33,9 +37,4 @@ function RecentPostsCards({ recentPosts }) {
       ))}
     </>
   );
-}
-RecentPostsCards.propTypes = {
-  recentPosts: PropTypes.array.isRequired,
 };
-
-export default RecentPostsCards;

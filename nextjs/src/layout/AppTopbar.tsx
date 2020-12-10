@@ -10,7 +10,7 @@ import NavLinks from '../layout/NavLinks';
 
 const AvatarMenu = dynamic(() => import('@/components/User/AvatarMenu'), {
   ssr: false,
-  loading: () => <p>Place Image Here...</p>,
+  loading: () => <div className="w-8 h-8 bg-white rounded-full"></div>,
 });
 
 export const AppTopbar = (props) => {
@@ -19,7 +19,7 @@ export const AppTopbar = (props) => {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <header className="max-w-7xl w-full h-20 p-4 md:px-0 md:mx-auto flex justify-between">
+    <header className="flex justify-between w-full h-20 p-4 max-w-7xl md:px-0 md:mx-auto">
       <Link href="/">
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">

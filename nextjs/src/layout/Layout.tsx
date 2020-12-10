@@ -1,12 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Transition } from '@headlessui/react';
 import router from 'next/router';
+import dynamic from 'next/dynamic';
 
-import { AppMenu } from './AppMenu';
 import { AppTopbar } from './AppTopbar';
-import { Footer } from './Footer';
 
-import OutsideClick from '@/components/OutsideClick';
+const AppMenu = dynamic(
+  () => import('@/layout/AppMenu').then((mod) => mod.AppMenu),
+  {
+    ssr: false,
+    loading: () => <p>Adding the Menu...</p>,
+  }
+);
+
+const Footer = dynamic(
+  () => import('@/layout/Footer').then((mod) => mod.Footer),
+  {
+    ssr: false,
+    loading: () => <p>Adding the Menu...</p>,
+  }
+);
 
 const Layout = ({ children }) => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
@@ -38,43 +50,17 @@ const Layout = ({ children }) => {
         overlayMenuActive={overlayMenuActive}
         onMenuItemClick={onMenuItemClick}
       />
-      <div className="overflow-y-auto overflow-x-hidden calc-height-wrapper">
+      <div className="overflow-x-hidden overflow-y-auto calc-height-wrapper">
         <main className="flex justify-center calc-height bg-ccd-purples-050">
           {children}
         </main>
 
         <Footer />
       </div>
-      <Transition
-        show={overlayMenuActive}
-        enter="transition-opacity duration-200"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-75"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div className="fixed inset-0 overflow-hidden bg-ccd-purples-100 bg-opacity-70">
-          <div className="absolute inset-0 overflow-hidden">
-            <OutsideClick toggle={setOverlayMenuActive} value={false}>
-              <section
-                className="absolute inset-y-0 right-0 flex max-w-full"
-                aria-labelledby="slide-over-heading"
-              >
-                <div className="w-screen max-w-md">
-                  <div className="flex flex-col h-full shadow-xl bg-ccd-basics-800">
-                    <AppMenu
-                      onMenuItemClick={onMenuItemClick}
-                      setOverlayMenuActive={setOverlayMenuActive}
-                      overlayMenuActive={overlayMenuActive}
-                    />
-                  </div>
-                </div>
-              </section>
-            </OutsideClick>
-          </div>
-        </div>
-      </Transition>
+      <AppMenu
+        setOverlayMenuActive={setOverlayMenuActive}
+        overlayMenuActive={overlayMenuActive}
+      />
       <style jsx>
         {`
           .calc-height-wrapper {

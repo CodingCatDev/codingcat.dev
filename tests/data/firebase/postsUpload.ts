@@ -2,7 +2,6 @@ const admin = require("firebase-admin");
 const serviceAccountKey = require("../../../serviceAccountKey.json");
 const seed = require("firestore-seed");
 import { posts } from "./postsCreator";
-var uuid = require("uuid");
 
 // Initialize firebase-admin.
 admin.initializeApp({
@@ -27,7 +26,7 @@ posts().forEach((post) => {
     createdBy: "i6YGgcTIzpQd2aHhbZqNJPZxy6Z2",
     updatedBy: "i6YGgcTIzpQd2aHhbZqNJPZxy6Z2",
   };
-  postDocs.push(seed.doc(uuid.v4(), postDoc));
+  postDocs.push(seed.doc(postDoc.id, postDoc));
 });
 
 const postCollection = seed.collection(`posts`, postDocs);
