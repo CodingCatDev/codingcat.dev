@@ -1,8 +1,9 @@
+import { Post } from '@/models/post.model';
 import admin from '@/utils/firebaseAdmin';
 
 // Firebase Admin, or any other services you need for Server Side
 export async function postsRecentService(recentPostsTypes: string[]) {
-  const recentPosts = {};
+  const recentPosts: { [key: string]: Post[] } = {};
 
   recentPostsTypes.map((key) => (recentPosts[key] = []));
   await Promise.all(
@@ -15,7 +16,7 @@ export async function postsRecentService(recentPostsTypes: string[]) {
         .limit(4)
         .get();
       for (const doc of posts.docs) {
-        recentPosts[postType].push(cleanTimestamp(doc.data()));
+        recentPosts[postType].push(cleanTimestamp(doc.data()) as Post);
       }
     })
   );

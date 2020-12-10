@@ -10,7 +10,7 @@ const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   loading: () => <p>Finding Admin...</p>,
 });
 
-function AdminDashboard({ router }) {
+function AdminDashboard({ router }: { router: any }) {
   const path = `/${router.asPath.substring(
     router.asPath.lastIndexOf('/') + 1
   )}`;
@@ -25,9 +25,9 @@ function AdminDashboard({ router }) {
       </Head>
 
       <div className="flex w-screen h-screen overflow-hidden bg-ccd-basics-100">
-        <AdminMenu router={router} />
+        <AdminMenu />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <AdminTopBar router={router} />
+          <AdminTopBar />
           <main
             className="relative flex-1 overflow-y-auto focus:outline-none"
             tabIndex={0}

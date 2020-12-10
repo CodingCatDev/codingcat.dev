@@ -1,4 +1,4 @@
-export const HtmlLogo = (props) => (
+export const HtmlLogo = (props: any) => (
   <svg viewBox="0 0 65 65" fill="none" {...props}>
     <path
       d="M11.988 55.252L7.424 4.062h50.152l-4.57 51.182-20.537 5.694-20.48-5.686z"
@@ -16,7 +16,7 @@ export const HtmlLogo = (props) => (
   </svg>
 );
 
-export const CssLogo = (props) => (
+export const CssLogo = (props: any) => (
   <svg viewBox="0 0 65 65" fill="none" {...props}>
     <path
       d="M11.989 55.252L7.426 4.062h50.148l-4.569 51.182-20.536 5.694-20.48-5.686z"
@@ -41,7 +41,7 @@ export const CssLogo = (props) => (
     />
   </svg>
 );
-export const SvelteLogo = (props) => (
+export const SvelteLogo = (props: any) => (
   <svg viewBox="0 0 70 70" fill="none" {...props}>
     <path
       d="M57.903 12.469A19.628 19.628 0 0032.106 7.1l-14.694 9.087a16.321 16.321 0 00-7.614 10.958 16.813 16.813 0 001.75 11.064 16.097 16.097 0 00-2.518 6.125 17.039 17.039 0 003.063 13.186 19.637 19.637 0 0025.799 5.377l14.695-9.085a16.338 16.338 0 007.615-10.957 16.785 16.785 0 00-1.75-11.073 16.074 16.074 0 002.52-6.125 17.03 17.03 0 00-3.069-13.188z"
@@ -53,7 +53,7 @@ export const SvelteLogo = (props) => (
     />
   </svg>
 );
-export const VueLogo = (props) => (
+export const VueLogo = (props: any) => (
   <svg viewBox="0 0 63 54" fill="none" {...props}>
     <path
       d="M50.4 0H63L31.5 53.951 0 0h24.098L31.5 12.51 38.745 0H50.4z"
@@ -69,7 +69,7 @@ export const VueLogo = (props) => (
     />
   </svg>
 );
-export const AngularLogo = (props) => (
+export const AngularLogo = (props: any) => (
   <svg viewBox="0 0 51 54" fill="none" {...props}>
     <path
       d="M.02 9.037L25.083.138 50.822 8.88l-4.168 33.045-21.57 11.905L3.85 42.083.02 9.037z"
@@ -85,7 +85,7 @@ export const AngularLogo = (props) => (
     />
   </svg>
 );
-export const ReactLogo = (props) => (
+export const ReactLogo = (props: any) => (
   <svg viewBox="0 0 57 50" fill="none" {...props}>
     <g clipPath="url(#reactclip)">
       <path

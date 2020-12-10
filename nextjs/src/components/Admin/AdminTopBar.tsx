@@ -1,12 +1,12 @@
-export default function AdminTopBar({ router }) {
+export default function AdminTopBar() {
   return (
     <>
-      <div className="relative flex-shrink-0 flex h-16 bg-white shadow">
+      <div className="relative flex flex-shrink-0 h-16 bg-white shadow">
         <button className="px-4 border-r border-ccd-basics-200 text-ccd-basics-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden">
           <span className="sr-only">Open sidebar</span>
           {/* Heroicon name: menu-alt-2 */}
           <svg
-            className="h-6 w-6"
+            className="w-6 h-6"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -21,9 +21,9 @@ export default function AdminTopBar({ router }) {
             />
           </svg>
         </button>
-        <div className="flex-1 px-4 flex justify-between">
-          <div className="flex-1 flex">
-            <form className="w-full flex md:ml-0" action="#" method="GET">
+        <div className="flex justify-between flex-1 px-4">
+          <div className="flex flex-1">
+            <form className="flex w-full md:ml-0" action="#" method="GET">
               <label htmlFor="search_field" className="sr-only">
                 Search
               </label>
@@ -31,7 +31,7 @@ export default function AdminTopBar({ router }) {
                 <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
                   {/* Heroicon name: search */}
                   <svg
-                    className="h-5 w-5"
+                    className="w-5 h-5"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -46,7 +46,7 @@ export default function AdminTopBar({ router }) {
                 </div>
                 <input
                   id="search_field"
-                  className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-ccd-basics-900 placeholder-ccd-basics-500 focus:outline-none focus:placeholder-ccd-basics-400 focus:ring-0 focus:border-transparent sm:text-sm"
+                  className="block w-full h-full py-2 pl-8 pr-3 border-transparent text-ccd-basics-900 placeholder-ccd-basics-500 focus:outline-none focus:placeholder-ccd-basics-400 focus:ring-0 focus:border-transparent sm:text-sm"
                   placeholder="Search"
                   type="search"
                 />

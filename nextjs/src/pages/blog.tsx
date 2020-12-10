@@ -3,8 +3,9 @@ import Layout from '../layout/Layout';
 import PostsCards from '@/components/PostsCards';
 
 import { postsService } from '@/services/serversideApi';
+import { Post, PostType } from '@/models/post.model';
 
-export default function Blog({ posts }) {
+export default function Blog({ posts }: { posts: Post[] }) {
   return (
     <Layout>
       <Head>
@@ -12,7 +13,7 @@ export default function Blog({ posts }) {
       </Head>
 
       <main className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
-        <PostsCards type={'post'} posts={posts} />
+        <PostsCards type={PostType.blog} posts={posts} />
       </main>
 
       <footer></footer>

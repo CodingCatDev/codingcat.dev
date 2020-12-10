@@ -3,17 +3,20 @@ import Link from 'next/link';
 import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';
 import { Transition } from '@headlessui/react';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Observable, Subscription } from 'rxjs';
+import { UserInfo } from '@/models/userInfo.model';
 
-export default function UserSignin({ userMenu, setUserMenu }) {
-  const {
-    user,
-    signout,
-    userProfile,
-  }: { user: any; signout: any; userProfile: Observable<unknown> } = useUser();
+export default function UserSignin({
+  userMenu,
+  setUserMenu,
+}: {
+  userMenu: boolean;
+  setUserMenu: Dispatch<SetStateAction<boolean>>;
+}) {
+  const { user, signout, userProfile } = useUser();
 
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<UserInfo | null>(null);
 
   let subscription: Subscription;
   useEffect(() => {
@@ -39,11 +42,15 @@ export default function UserSignin({ userMenu, setUserMenu }) {
               onClick={() => setUserMenu(!userMenu)}
             >
               <span className="sr-only">Open user menu</span>
-              {profile ? (
+              {profile && profile.photoURL ? (
                 <img
                   className="w-8 h-8 rounded-full"
                   src={profile.photoURL}
-                  alt={profile.displayName}
+                  alt={
+                    profile.displayName
+                      ? profile.displayName
+                      : 'A Good Description'
+                  }
                 />
               ) : (
                 <img

@@ -2,8 +2,9 @@ import Head from 'next/head';
 import Layout from '../layout/Layout';
 import PostsCards from '@/components/PostsCards';
 import { postsService } from '@/services/serversideApi';
+import { Post, PostType } from '@/models/post.model';
 
-export default function Podcasts({ posts }) {
+export default function Podcasts({ posts }: { posts: Post[] }) {
   return (
     <Layout>
       <Head>
@@ -11,7 +12,7 @@ export default function Podcasts({ posts }) {
       </Head>
 
       <main className="grid grid-cols-1 gap-2 mt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 place-items-auto">
-        <PostsCards type={'podcasts'} posts={posts} />
+        <PostsCards type={PostType.podcasts} posts={posts} />
       </main>
 
       <footer></footer>

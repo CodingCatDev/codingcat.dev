@@ -9,31 +9,38 @@ import 'primereact/resources/themes/saga-purple/theme.css';
 
 import { useUser } from '@/utils/auth/useUser';
 import { postsObservable } from '@/services/api';
+import { Post, PostStatus } from '@/models/post.model';
 
-function EditPosts({ path }) {
+function EditPosts({ path }: { path: string }) {
   const { user, signout }: { user: any; signout: any } = useUser();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   useEffect(() => {
     postsObservable(
       path.substring(1) === 'blog' ? 'post' : path.substring(1)
     ).subscribe((posts) => setPosts(posts));
   }, [path]);
 
-  function postId(rowData) {
+  function postId(rowData: Post) {
     return (
       <Link href={`.${path}/${rowData.id}`}>
         <a className="underline text-ccd-purples-500">{rowData.id}</a>
       </Link>
     );
   }
-  function postCategories(rowData) {
-    return <span>{rowData.category.join(',')}</span>;
+  function postCategories(rowData: Post) {
+    return <span>{rowData.category ? rowData.category.join(',') : ''}</span>;
   }
-  function postStatus(rowData) {
+  function postStatus(rowData: Post) {
     return (
       <span
         className={`p-2 capitalize text-green-800 rounded
-          ${rowData.status === 'publishedAt' ? `bg-green-200` : `bg-red`}
+          ${
+            rowData.status
+              ? rowData.status === PostStatus.publish
+                ? `bg-green-200`
+                : `bg-red`
+              : ''
+          }
           `}
       >
         {rowData.status}

@@ -10,12 +10,13 @@ import {
 import { mapUserData } from './mapUserData';
 import { userProfileDataObservable } from '@/services/api';
 import { Observable } from 'rxjs';
+import { UserInfo } from '@/models/userInfo.model';
 
 initFirebase();
 
 const useUser = () => {
-  const [user, setUser] = useState();
-  const [userProfile, setUserProfile]: [Observable<unknown>, any] = useState(
+  const [user, setUser] = useState<UserInfo | null>();
+  const [userProfile, setUserProfile] = useState<Observable<UserInfo> | null>(
     null
   );
   const router = useRouter();
@@ -44,7 +45,7 @@ const useUser = () => {
           const userData = await mapUserData(user);
           setUserCookie(userData);
           setUser(userData as any);
-          setUserProfile(userProfileDataObservable(userData.id));
+          setUserProfile(userProfileDataObservable(userData.uid));
         } else {
           removeUserCookie();
           setUser(null);

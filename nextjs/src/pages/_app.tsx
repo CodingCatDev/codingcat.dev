@@ -8,7 +8,7 @@ import '../styles/globals.css';
 
 // import OutsideClick from '@/components/OutsideClick';
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: { Component: any; pageProps: any }) {
   // const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
   // let menuClick = false;

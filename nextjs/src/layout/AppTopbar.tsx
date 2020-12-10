@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
@@ -13,7 +13,10 @@ const AvatarMenu = dynamic(() => import('@/components/User/AvatarMenu'), {
   loading: () => <div className="w-8 h-8 bg-white rounded-full"></div>,
 });
 
-export const AppTopbar = (props) => {
+export const AppTopbar = (props: {
+  setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
+  overlayMenuActive: boolean;
+}) => {
   const { setOverlayMenuActive, overlayMenuActive } = props;
 
   const [userMenu, setUserMenu] = useState(false);

@@ -14,14 +14,20 @@ export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
           <div>
             <Link href={post.permalink}>
               <a>
-                <Image
-                  src={post.thumbnail}
-                  alt={post.title}
-                  width={post.type === 'podcasts' ? 200 : 480}
-                  height={post.type === 'podcasts' ? 200 : 270}
-                  layout="responsive"
-                  className="rounded cursor-pointer"
-                />
+                {post.thumbnail ? (
+                  <>
+                    <Image
+                      src={post.thumbnail}
+                      alt={post.title}
+                      width={post.type === 'podcasts' ? 200 : 480}
+                      height={post.type === 'podcasts' ? 200 : 270}
+                      layout="responsive"
+                      className="rounded cursor-pointer"
+                    />
+                  </>
+                ) : (
+                  <div>Image Placeholder</div>
+                )}
               </a>
             </Link>
           </div>

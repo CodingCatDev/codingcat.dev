@@ -5,14 +5,15 @@ import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { setUserCookie } from '@/utils/auth/userCookies';
 import { mapUserData } from '@/utils/auth/mapUserData';
+import { UserInfo } from '@/models/userInfo.model';
 
 // Init the Firebase app.
 initFirebase();
 // Auth providers
 
 const FirebaseAuth = ({ full = true }) => {
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   let signInOptions = [];
   if (full) {
@@ -45,14 +46,17 @@ const FirebaseAuth = ({ full = true }) => {
     signInSuccessUrl: '/user/profile',
     credentialHelper: 'none',
     callbacks: {
-      signInSuccessWithAuthResult: async ({ user }, redirectUrl) => {
+      signInSuccessWithAuthResult: async (
+        { user }: { user: firebase.User },
+        redirectUrl: string
+      ) => {
         const userData = await mapUserData(user);
         setUserCookie(userData);
       },
     },
   };
 
-  function signin() {
+  function signin(email: string, password: string) {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -105,7 +109,7 @@ const FirebaseAuth = ({ full = true }) => {
           <div>
             <button
               className="p-4 mb-16 text-white rounded bg-ccd-reds-500"
-              onClick={() => signin()}
+              onClick={() => signin(email, password)}
             >
               Sign In
             </button>

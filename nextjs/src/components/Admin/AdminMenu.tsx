@@ -6,7 +6,7 @@ import Courses from '@/components/global/icons/nav/Courses';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
 
-export default function AdminMenu({ router }) {
+export default function AdminMenu() {
   return (
     <>
       {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}

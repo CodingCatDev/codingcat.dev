@@ -1,8 +1,9 @@
+import { Post } from '@/models/post.model';
 import Link from 'next/link';
 
 import PropTypes from 'prop-types';
 
-function RecentPostsList({ posts }) {
+export default function RecentPostsList({ posts }: { posts: Post[] }) {
   return (
     <div>
       {posts.map((post) => (
@@ -19,8 +20,3 @@ function RecentPostsList({ posts }) {
     </div>
   );
 }
-RecentPostsList.propTypes = {
-  recentPosts: PropTypes.array.isRequired,
-};
-
-export default RecentPostsList;

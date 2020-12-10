@@ -15,7 +15,17 @@ import {
   postsService,
 } from '@/services/serversideApi';
 
-export default function Post({ post, markdown, recentPosts }) {
+import { Post as PostType } from '@/models/post.model';
+
+export default function Post({
+  post,
+  markdown,
+  recentPosts,
+}: {
+  post: PostType;
+  markdown: any;
+  recentPosts: { [key: string]: PostType[] };
+}) {
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
@@ -37,7 +47,7 @@ export default function Post({ post, markdown, recentPosts }) {
     <Layout>
       <div className="grid grid-cols-12 gap-2 ">
         <div className="col-span-12 xl:col-span-10">
-          <h1>{post.post_title}</h1>
+          <h1>{post.title}</h1>
           <article className="prose prose-ccd-purples lg:prose-xl">
             {content}
           </article>
@@ -64,11 +74,11 @@ export default function Post({ post, markdown, recentPosts }) {
 }
 
 export async function getStaticPaths() {
-  const POSTS = [];
+  const paths: any = [];
   ['post', 'tutorials', 'podcasts'].forEach(async (postType) => {
     const docData = await postsService(postType);
     for (const doc of docData) {
-      POSTS.push({
+      paths.push({
         params: {
           permalink: doc.permalink.substring(1).split('/'),
         },
@@ -76,12 +86,16 @@ export async function getStaticPaths() {
     }
   });
   return {
-    paths: POSTS,
+    paths,
     fallback: true,
   };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({
+  params,
+}: {
+  params: { permalink: [] };
+}) {
   const { permalink } = params;
 
   const posts = await postByPermalinkService(permalink);

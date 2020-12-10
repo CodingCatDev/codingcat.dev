@@ -10,7 +10,7 @@ const EditPost = dynamic(() => import('@/components/Admin/EditPost'), {
   loading: () => <p>Chasing a mouse...</p>,
 });
 
-function AdminDashboard({ router }) {
+function AdminDashboard({ router }: { router: any }) {
   return (
     <>
       <Head>
@@ -19,9 +19,9 @@ function AdminDashboard({ router }) {
       </Head>
 
       <div className="flex w-screen h-screen overflow-hidden bg-ccd-basics-100">
-        <AdminMenu router={router} />
+        <AdminMenu />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <AdminTopBar router={router} />
+          <AdminTopBar />
           <main
             className="relative flex-1 overflow-y-auto focus:outline-none"
             tabIndex={0}

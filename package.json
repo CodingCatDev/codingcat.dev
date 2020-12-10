@@ -20,7 +20,8 @@
   "scripts": {
     "emulated:firebase": "firebase emulators:start --inspect-functions --export-on-exit=./tests/data/firebase/emulator --import=./tests/data/firebase/emulator",
     "test": "jest --env=node --forceExit --detectOpenHandles",
-    "ci:emulator": "firebase emulators:exec 'npm test'"
+    "ci:emulator": "firebase emulators:exec 'npm test'",
+    "dev": "cd nextjs && npm run dev"
   },
   "repository": {
     "type": "git",

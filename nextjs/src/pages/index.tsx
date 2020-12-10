@@ -21,7 +21,13 @@ import AJHeadphones from '@/components/global/icons/AJHeadphones';
 import { Post } from '@/models/post.model';
 import { RecentPostsCards } from '@/components/RecentPostsCards';
 
-export default function Home({ recentPosts }: { recentPosts: Post[] }) {
+export default function Home({
+  recentPosts,
+}: {
+  recentPosts: {
+    [key: string]: Post[];
+  };
+}) {
   return (
     <Layout>
       <Head>
@@ -219,7 +225,7 @@ export default function Home({ recentPosts }: { recentPosts: Post[] }) {
   );
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps() {
   const recentPosts = await postsRecentService([
     'courses',
     'post',

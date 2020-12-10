@@ -1,4 +1,10 @@
-export default function LinkedIn({ className = 'block w-8 h-8', fill }) {
+export default function LinkedIn({
+  className = 'block w-8 h-8',
+  fill,
+}: {
+  className?: string;
+  fill: string;
+}) {
   return (
     <svg
       className={className}

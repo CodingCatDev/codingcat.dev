@@ -1,26 +1,32 @@
-import { useState, useEffect } from 'react';
+import {
+  useState,
+  useEffect,
+  ComponentType,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import router from 'next/router';
 import dynamic from 'next/dynamic';
 
 import { AppTopbar } from './AppTopbar';
 
-const AppMenu = dynamic(
-  () => import('@/layout/AppMenu').then((mod) => mod.AppMenu),
-  {
-    ssr: false,
-    loading: () => <p>Adding the Menu...</p>,
-  }
-);
+const AppMenu: ComponentType<{
+  setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
+  overlayMenuActive: boolean;
+}> = dynamic(() => import('@/layout/AppMenu').then((mod: any) => mod.AppMenu), {
+  ssr: false,
+  loading: () => <p>Adding the Menu...</p>,
+});
 
 const Footer = dynamic(
-  () => import('@/layout/Footer').then((mod) => mod.Footer),
+  () => import('@/layout/Footer').then((mod: any) => mod.Footer),
   {
     ssr: false,
     loading: () => <p>Adding the Menu...</p>,
   }
 );
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: any }) => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
   let menuClick = false;
@@ -28,12 +34,8 @@ const Layout = ({ children }) => {
   const onSidebarClick = () => {
     menuClick = true;
   };
-  const onMenuItemClick = (event) => {
-    if (!event.item.items) {
-      setOverlayMenuActive(false);
-    }
-  };
-  const onShowMenuButton = (event) => {
+
+  const onShowMenuButton = (event: any) => {
     console.log(event);
   };
 
@@ -48,7 +50,6 @@ const Layout = ({ children }) => {
       <AppTopbar
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
-        onMenuItemClick={onMenuItemClick}
       />
       <div className="overflow-x-hidden overflow-y-auto calc-height-wrapper">
         <main className="flex justify-center calc-height bg-ccd-purples-050">

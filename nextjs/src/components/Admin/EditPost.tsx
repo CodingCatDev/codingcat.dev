@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import router from 'next/router';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
@@ -13,13 +13,14 @@ import { postDataObservable, postUpdate } from '@/services/api';
 // import mdx from 'remark-mdx';
 
 import Markdown from 'markdown-to-jsx';
+import { Post } from '@/models/post.model';
 
-function EditPost({ router }) {
-  const [post, setPost] = useState(null);
-  const [path, setPath] = useState(null);
-  const [tab, setTab] = useState('edit');
-  const [preview, setPreview] = useState('');
-  const [saving, setSaving] = useState(false);
+export default function EditPost({ router }: { router: any }) {
+  const [post, setPost] = useState<Post | null>(null);
+  const [path, setPath] = useState<string>('');
+  const [tab, setTab] = useState<string>('edit');
+  const [preview, setPreview] = useState<string>('');
+  const [saving, setSaving] = useState<boolean>(false);
 
   // Sets initial state
   useEffect(() => {
@@ -37,15 +38,17 @@ function EditPost({ router }) {
     }
   }, [tab]);
 
-  function handleChange(event) {
-    setPost({ ...post, content: event.target.value });
+  function handleChange(event: { target: { value: string } }) {
+    setPost({ ...post, content: event.target.value } as Post);
   }
-  function selectTab(tab) {
+  function selectTab(tab: string) {
     setTab(tab);
   }
   function save() {
-    setSaving(true);
-    postUpdate(path, post.content).then(() => setSaving(false));
+    if (post && post.content) {
+      setSaving(true);
+      postUpdate(path, post.content).then(() => setSaving(false));
+    }
   }
   return (
     <>
@@ -96,12 +99,10 @@ function EditPost({ router }) {
           className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto bg-ccd-basics-100`}
         >
           <article className="prose prose-ccd-purples lg:prose-xl">
-            <Markdown>{post ? post.content : ''}</Markdown>
+            <Markdown>{post && post.content ? post.content : ''}</Markdown>
           </article>
         </div>
       )}
     </>
   );
 }
-
-export default EditPost;

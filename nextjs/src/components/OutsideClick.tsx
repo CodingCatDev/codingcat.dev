@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 /**
  * Hook that alerts clicks outside of the passed ref
  */
-function useOutsideClick(ref, toggle, value) {
+function useOutsideClick(ref: any, toggle: any, value: any) {
   useEffect(() => {
     /**
      * Alert if clicked on outside of element
      */
-    function handleClickOutside(event) {
+    function handleClickOutside(event: any) {
       if (ref.current && !ref.current.contains(event.target)) {
         toggle(value);
       }
@@ -26,7 +26,7 @@ function useOutsideClick(ref, toggle, value) {
 /**
  * Component that alerts if you click outside of it
  */
-function OutsideClick(props) {
+function OutsideClick(props: any) {
   const wrapperRef = useRef(null);
   const { toggle, value } = props;
   useOutsideClick(wrapperRef, toggle, value);

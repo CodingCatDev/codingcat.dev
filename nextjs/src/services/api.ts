@@ -5,13 +5,16 @@ import 'firebase/auth';
 import initFirebase from '@/utils/initFirebase';
 import { docData, collection, collectionData } from 'rxfire/firestore';
 import { map } from 'rxjs/operators';
+import { Post } from '@/models/post.model';
+import { Observable } from 'rxjs';
+import { UserInfo } from '@/models/userInfo.model';
 
 initFirebase();
 const firestore = firebase.firestore();
 /* POST */
 
 export const postDataObservable = (id: string) => {
-  return docData(firestore.doc(id));
+  return docData<Post>(firestore.doc(id));
 };
 
 export const postsDataObservable = (postType: string, limit: number) => {
@@ -32,43 +35,29 @@ export const postUpdate = (id: string, content: string) => {
 
 /* POSTS */
 
-export const postsObservable = (postType: string, limit: number = null) => {
+export const postsObservable = (postType: string, limit: number = 0) => {
+  let ref = firestore
+    .collection('posts')
+    .where('type', '==', postType)
+    .where('publishedAt', '!=', null)
+    .orderBy('publishedAt', 'desc');
+
   if (limit && limit > 0) {
-    return collection(
-      firestore
-        .collection('posts')
-        .limit(limit)
-        .where('type', '==', postType)
-        .where('publishedAt', '!=', null)
-        .orderBy('publishedAt', 'desc')
-    ).pipe(
-      map((docs) =>
-        docs.map((d) => {
-          return { ...d.data(), id: d.id };
-        })
-      )
-    );
-  } else {
-    return collection(
-      firestore
-        .collection('posts')
-        .where('type', '==', postType)
-        .where('publishedAt', '!=', null)
-        .orderBy('publishedAt', 'desc')
-    ).pipe(
-      map((docs) =>
-        docs.map((d) => {
-          const docData = cleanTimestamp(d.data());
-          return { ...docData, id: d.id };
-        })
-      )
-    );
+    ref = ref.limit(limit);
   }
+
+  return collectionData<Post>(ref, 'id').pipe(
+    map((docs) =>
+      docs.map((d) => {
+        return cleanTimestamp(d) as Post;
+      })
+    )
+  );
 };
 
 // User
 export const userProfileDataObservable = (uid: string) => {
-  return docData(firestore.doc(`/profiles/${uid}`));
+  return docData<UserInfo>(firestore.doc(`/profiles/${uid}`), uid);
 };
 
 /* Utilities may be used on front end */
