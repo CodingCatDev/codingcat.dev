@@ -7,12 +7,14 @@
     font-family: 'nunito';
     font-style: normal;
     src: url(../fonts/Nunito-Regular.ttf) format('truetype');
+    font-display: swap;
   }
 
   @font-face {
     font-family: 'nunito-light';
     src: url(../fonts/Nunito-ExtraLight.ttf) format('truetype');
     font-weight: 200;
+    font-display: swap;
   }
 
   @font-face {
@@ -21,6 +23,7 @@
     font-weight: 400;
     src: url(../fonts/HennyPenny-Regular.ttf) format('truetype');
     line-height: 1.2;
+    font-display: swap;
   }
 
   a {
