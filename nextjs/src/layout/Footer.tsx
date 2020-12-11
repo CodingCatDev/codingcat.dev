@@ -103,7 +103,7 @@ export const Footer = () => {
               href="https://brittneypostma.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ccd-pinks-600 hover:underline hover:text-ccd-pinks-500"
+              className="font-bold text-ccd-basics-050 hover:underline rounded-md hover:text-ccd-basics-050"
             >
               Brittney Postma
             </a>
