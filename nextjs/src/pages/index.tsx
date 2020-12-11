@@ -1,25 +1,21 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
+
+// import dynamic from 'next/dynamic';
 
 import { postsRecentService } from '@/services/serversideApi';
-import Intro from '@/components/Home/Intro';
+import { RecentPostsCards } from '@/components/RecentPostsCards';
+import { Post } from '@/models/post.model';
 import Layout from '../layout/Layout';
+import Intro from '@/components/Home/Intro';
+import BreakBarLeft from '@/components/Home/BreakBarLeft';
+import BreakBarRight from '@/components/Home/BreakBarRight';
 
-import {
-  ReactLogo,
-  AngularLogo,
-  VueLogo,
-  SvelteLogo,
-  CssLogo,
-  HtmlLogo,
-} from '@/components/global/icons/VendorLogos';
+import Skills from '@/components/Home/Skills';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import KCLogo from '@/components/global/icons/KCLogo';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
-import AJHeadphones from '@/components/global/icons/AJHeadphones';
-import { Post } from '@/models/post.model';
-import { RecentPostsCards } from '@/components/RecentPostsCards';
+import Podcasts from '../components/global/icons/nav/Podcasts';
 
 export default function Home({
   recentPosts,
@@ -33,8 +29,7 @@ export default function Home({
       <Head>
         <title>CodingCatDev</title>
       </Head>
-      <div className="bg-ccd-purples-050 sm::max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl">
-        <div
+      {/* <div
           className="col-span-full"
           style={{
             backgroundImage: 'url(/static/images/drip.svg)',
@@ -42,185 +37,100 @@ export default function Home({
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
           }}
-        >
-          <Intro />
+        > */}
+      <Intro />
+      {/* </div> */}
+      {/* COURSES */}
+      <BreakBarLeft>
+        <Skills />
+      </BreakBarLeft>
+      <section className="grid gap-10 px-10">
+        <h2 className="mt-4 text-4xl lg:text-5xl text-ccd-purples-900">
+          Latest Courses
+        </h2>
+        <div className="grid grid-cols-fit">
+          <RecentPostsCards recentPosts={recentPosts['tutorials']} />
         </div>
-        <div className="col-span-full">
-          <div className="static flex flex-col justify-center w-full h-20 px-2 md:h-32 vertical-clip">
-            {
-              <div className="flex content-center justify-between px-8">
-                <ReactLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <AngularLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <VueLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <SvelteLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <CssLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-                <HtmlLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24 " />
-              </div>
-            }
-          </div>
-          <div
-            className="w-8 h-8 ml-8 text-ccd-reds-900"
-            style={{
-              borderLeft: '30px solid transparent',
-              borderRight: '30px solid transparent',
-              borderTop: '30px solid currentColor',
-            }}
-          ></div>
+        <Link href="/courses">
+          <a className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Courses
+            </button>
+          </a>
+        </Link>
+      </section>
+      {/* TUTORIALS */}
+      <BreakBarRight>
+        <AJLogoLeft className="w-16 sm:w-16 md:w-20" />
+        <h3 className="absolute text-center w-full text-ccd-basics-050 text-2xl sm:text-4xl lg:text-4xl">
+          Learn with AJ and KC
+        </h3>
+        <KCLogo className="w-14 sm:w-14 md:w-20" />
+      </BreakBarRight>
+      <section className="grid gap-10 px-10">
+        <h2 className="mt-4 text-right text-4xl lg:text-5xl text-ccd-purples-900">
+          Latest Tutorials
+        </h2>
+        <div className="grid grid-cols-fit">
+          <RecentPostsCards recentPosts={recentPosts['tutorials']} />
         </div>
-        <div className="bg-ccd-purples-900">
-          <div className="grid w-full grid-cols-1 gap-2 px-12 pt-10 pb-10 mx-auto md:pb-20 lg:pb-40 md:pt-20 lg:pt-40 bg-ccd-purples-050 justify-items-stretch md:grid-cols-2 lg:grid-cols-2 place-items-auto ">
-            <div className="col-span-full sm:place-self-start">
-              <p className="text-5xl text-center font-heading text-ccd-purples-900">
-                Latest Courses
-              </p>
-            </div>
-            <RecentPostsCards recentPosts={recentPosts['courses']} />
-            <div className="pt-16 col-span-full justify-self-center ">
-              <Link href="/courses">
-                <button
-                  className="h-16 px-16 py-2 font-bold text-white rounded shadow-xl bg-ccd-purples-900 hover:bg-blue-dark w-96"
-                  type="button"
-                >
-                  View All Courses
-                </button>
-              </Link>
-            </div>
-          </div>
+        <Link href="/tutorials">
+          <a className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Tutorials
+            </button>
+          </a>
+        </Link>
+      </section>
+      {/* BLOG */}
+      <BreakBarLeft>
+        <div className="relative w-full flex items-center">
+          <AJHeartAlt className="w-16 sm:w-16 md:w-20" />
+          <h3 className="absolute left-6 sm:left-8 md:left-0 text-center w-full text-ccd-basics-050 text-2xl sm:text-3xl lg:text-4xl">
+            Read what's going on in web dev
+          </h3>
         </div>
-        <div className="col-span-full">
-          <div className="static flex flex-col justify-center w-full h-20 px-2 md:h-32 vertical-clip">
-            {
-              <div className="flex content-center justify-between p-8">
-                <AJLogoLeft className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24" />
-                <div className="flex flex-col content-center justify-center">
-                  <p className="text-2xl tracking-widest text-center text-white md:text-5xl font-heading">
-                    Learn with AJ and KC
-                  </p>
-                </div>
-                <KCLogo className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24" />
-              </div>
-            }
-          </div>
-          <div className="flex justify-end">
-            <div
-              className="right-0 w-8 h-8 mr-8 text-ccd-reds-900"
-              style={{
-                borderLeft: '30px solid transparent',
-                borderRight: '30px solid transparent',
-                borderTop: '30px solid currentColor',
-              }}
-            ></div>
-          </div>
+      </BreakBarLeft>
+      <section className="grid gap-10 px-10">
+        <h2 className="mt-4 text-4xl lg:text-5xl text-ccd-purples-900">
+          Blog Posts
+        </h2>
+        <div className="grid grid-cols-fit">
+          <RecentPostsCards recentPosts={recentPosts['post']} />
         </div>
-        <div className="bg-ccd-purples-900">
-          <div className="grid w-full grid-cols-1 gap-2 px-12 pt-10 pb-10 mx-auto md:pb-20 lg:pb-40 md:pt-20 lg:pt-40 bg-ccd-purples-050 justify-items-stretch md:grid-cols-2 lg:grid-cols-2 place-items-auto ">
-            <div className="col-span-full sm:place-self-end">
-              <p className="text-5xl text-center font-heading text-ccd-purples-900">
-                Latest Tutorials
-              </p>
-            </div>
-            <RecentPostsCards recentPosts={recentPosts['tutorials']} />
-            <div className="pt-16 col-span-full justify-self-center ">
-              <Link href="/tutorials">
-                <button
-                  className="h-16 px-16 py-2 font-bold text-white rounded shadow-xl bg-ccd-purples-900 hover:bg-blue-dark w-96"
-                  type="button"
-                >
-                  View All Tutorials
-                </button>
-              </Link>
-            </div>
-          </div>
+        <Link href="/blog">
+          <a className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Posts
+            </button>
+          </a>
+        </Link>
+      </section>
+      {/* PODCASTS */}
+      <BreakBarRight>
+        <div className="relative w-full flex justify-end items-center">
+          <h3 className="absolute right-6 sm:right-8 md:right-0 text-center w-full text-ccd-basics-050 text-2xl sm:text-3xl lg:text-4xl">
+            Listen to the latest tech news
+          </h3>
+          <Podcasts className="w-16 sm:w-16 md:w-20" />
         </div>
-        <div className="col-span-full">
-          <div className="static flex flex-col justify-center w-full h-20 px-2 md:h-32 vertical-clip">
-            {
-              <div className="flex content-center justify-between p-8">
-                <AJHeartAlt className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24" />
-                <div className="flex flex-col content-center justify-center">
-                  <p className="text-2xl tracking-widest text-center text-white md:text-5xl font-heading">
-                    Read what's going on in web dev
-                  </p>
-                </div>
-                <div className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24"></div>
-              </div>
-            }
-          </div>
-          <div
-            className="w-8 h-8 ml-8 text-ccd-reds-900"
-            style={{
-              borderLeft: '30px solid transparent',
-              borderRight: '30px solid transparent',
-              borderTop: '30px solid currentColor',
-            }}
-          ></div>
+      </BreakBarRight>
+      <section className="grid gap-10 px-10">
+        <h2 className="mt-4 text-right text-4xl lg:text-5xl text-ccd-purples-900">
+          Latest Podcasts
+        </h2>
+        <div className="grid grid-cols-fit">
+          <RecentPostsCards recentPosts={recentPosts['podcasts']} />
         </div>
-        <div className="bg-ccd-purples-900">
-          <div className="grid w-full grid-cols-1 gap-2 px-12 pt-10 pb-10 mx-auto md:pb-20 lg:pb-40 md:pt-20 lg:pt-40 bg-ccd-purples-050 justify-items-stretch md:grid-cols-2 lg:grid-cols-2 place-items-auto ">
-            <div className="col-span-full sm:place-self-start">
-              <p className="text-5xl text-center font-heading text-ccd-purples-900">
-                Blog Posts
-              </p>
-            </div>
-            <RecentPostsCards recentPosts={recentPosts['post']} />
-            <div className="pt-16 col-span-full justify-self-center ">
-              <Link href="/blog">
-                <button
-                  className="h-16 px-16 py-2 font-bold text-white rounded shadow-xl bg-ccd-purples-900 hover:bg-blue-dark w-96"
-                  type="button"
-                >
-                  View All Posts
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="col-span-full">
-          <div className="static flex flex-col justify-center w-full h-20 px-2 md:h-32 vertical-clip">
-            {
-              <div className="flex content-center justify-between p-8">
-                <div className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24"></div>
-                <div className="flex flex-col content-center justify-center">
-                  <p className="text-2xl tracking-widest text-center text-white md:text-5xl font-heading">
-                    Listen to the latest tech news
-                  </p>
-                </div>
-                <AJHeadphones className="w-8 h-8 sm:w-12 sm:h-12 md:w-24 md:h-24" />
-              </div>
-            }
-          </div>
-          <div className="flex justify-end">
-            <div
-              className="right-0 w-8 h-8 mr-8 text-ccd-reds-900"
-              style={{
-                borderLeft: '30px solid transparent',
-                borderRight: '30px solid transparent',
-                borderTop: '30px solid currentColor',
-              }}
-            ></div>
-          </div>
-        </div>
-        <div className="bg-ccd-purples-900">
-          <div className="grid w-full grid-cols-1 gap-2 px-12 pt-10 pb-10 mx-auto md:pb-20 lg:pb-40 md:pt-20 lg:pt-40 bg-ccd-purples-050 justify-items-stretch md:grid-cols-2 lg:grid-cols-2 place-items-auto ">
-            <div className="col-span-full sm:place-self-end">
-              <p className="text-5xl text-center font-heading text-ccd-purples-900">
-                Latest Podcasts
-              </p>
-            </div>
-            <RecentPostsCards recentPosts={recentPosts['podcasts']} />
-            <div className="pt-16 col-span-full justify-self-center ">
-              <Link href="/podcasts">
-                <button
-                  className="h-16 px-16 py-2 font-bold text-white rounded shadow-xl bg-ccd-purples-900 hover:bg-blue-dark w-96"
-                  type="button"
-                >
-                  View All Podcasts
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+        <Link href="/podcasts">
+          <a className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Podcasts
+            </button>
+          </a>
+        </Link>
+      </section>
+      `
     </Layout>
   );
 }

@@ -25,7 +25,7 @@ const NavLinks = () => {
         </ActiveLink>
         <ActiveLink activeClassName="bg-ccd-purples-900" href="/podcasts">
           <a className={`${navLinks} nav-links`}>
-            <Podcasts />
+            <Podcasts className="w-35 h-35" />
             Podcasts
           </a>
         </ActiveLink>

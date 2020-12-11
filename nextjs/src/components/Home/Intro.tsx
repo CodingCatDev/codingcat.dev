@@ -1,7 +1,7 @@
 import { url } from 'inspector';
 import dynamic from 'next/dynamic';
 
-const UserSignin = dynamic(() => import('@/components/UserSignin'), {
+const UserSignin = dynamic(() => import('@/components/Home/UserSignin'), {
   ssr: false,
   loading: () => (
     <>
@@ -13,36 +13,27 @@ const UserSignin = dynamic(() => import('@/components/UserSignin'), {
 
 export default function Intro() {
   return (
-    <>
-      {/*Remove wrapper divs */}
-      <div className="flex flex-row flex-wrap sm::max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl ">
-        <div className="w-full px-2 pt-40 pb-40 md:w-1/2 sm:pl-16 md:pl-20 lg:pl-48">
-          <UserSignin />
-        </div>
-        <div className="flex flex-wrap content-start justify-center w-full pt-16 lg:pl-8 lg:pr-16 lg:pl-48 lg:pt-48 lg:w-1/2">
-          <div className="flex flex-col px-2 ml-8 bg-ccd-purples-050 align-content-start md:rounded-xl">
-            <h1 className="p-4 vertical-text-clip">
-              Purrfect
-              <br />
-              Web Tutorials
-            </h1>
-            <p className="p-4 text-xl text-ccd-purples-900">
-              Get the skills you need to become a better web developer today.
-              High quality courses with custom certificates and projects to show
-              off your new skills.
-            </p>
-            <div className="flex items-center justify-between p-4">
-              <button
-                className="px-4 py-2 font-bold text-white rounded bg-ccd-purples-900 hover:bg-blue-dark"
-                type="button"
-              >
-                Go Pro
-              </button>
-            </div>
-            {/* Note to remove these */}
-          </div>
-        </div>
-      </div>
-    </>
+    <section className="p-2 lg:p-10 grid gap-10 lg:grid-cols-2 2xl:grid-cols-hero ">
+      <UserSignin />
+      <section className="justify-self-center grid content-center gap-10">
+        <h1 className="vertical-text-clip pt-8 tracking-tight xl:tracking-wide text-5xl sm:text-7xl lg:text-6xl 2xl:text-7xl">
+          Purrfect
+          <br />
+          Web Tutorials
+        </h1>
+        <p
+          className="font-light sm:text-2xl lg:text-xl xl:text-2xl"
+          style={{ maxWidth: `40ch` }}
+        >
+          Get the skills you need to become a better web developer today. High
+          quality courses with custom certificates and projects to show off your
+          new skills.
+        </p>
+
+        <button className="btn-primary justify-self-start" type="button">
+          Go Pro
+        </button>
+      </section>
+    </section>
   );
 }

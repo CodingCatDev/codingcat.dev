@@ -20,6 +20,7 @@
     font-style: normal;
     font-weight: 400;
     src: url(../fonts/HennyPenny-Regular.ttf) format('truetype');
+    line-height: 1.2;
   }
 
   a {
@@ -27,42 +28,42 @@
   }
 
   body {
-    @apply bg-ccd-purples-900 box-border;
+    @apply bg-ccd-purples-900 text-ccd-purples-900 box-border;
   }
 
   footer {
   }
 
   h1 {
-    @apply tracking-wide leading-relaxed text-7xl font-heading;
+    @apply tracking-wide leading-tight text-7xl font-heading;
   }
   h2 {
-    @apply text-6xl tracking-wide leading-relaxed font-heading;
+    @apply text-6xl tracking-wide leading-tight font-heading;
   }
   h3 {
-    @apply text-5xl tracking-wide leading-relaxed font-heading;
+    @apply text-5xl tracking-wide leading-tight font-heading;
   }
   h4 {
-    @apply text-4xl tracking-wide leading-relaxed font-heading;
+    @apply text-4xl tracking-wide leading-tight font-heading;
   }
   h5 {
-    @apply text-3xl tracking-wide leading-relaxed font-heading;
+    @apply text-3xl tracking-wide leading-tight font-heading;
   }
   h6 {
-    @apply text-2xl tracking-wide leading-relaxed font-heading;
+    @apply text-2xl tracking-wide leading-tight font-heading;
   }
 
   input {
-    @apply appearance-none border border-ccd-basics-200 w-full py-2 px-4 bg-ccd-basics-050 text-ccd-basics-600 placeholder-ccd-basics-400 shadow-md rounded-sm text-base focus:outline-none focus:ring-2 focus:ring-ccd-pinks-400 focus:border-transparent;
+    @apply appearance-none border border-ccd-basics-200 w-full py-2 px-4 bg-ccd-basics-050 text-ccd-basics-600 placeholder-ccd-basics-400 shadow-md rounded-md text-base focus:outline-none focus:ring-2 focus:ring-ccd-pinks-400 focus:border-transparent;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply leading-loose outline-none px-4 rounded-sm font-bold  shadow-md text-ccd-basics-050 bg-ccd-purples-900 transition duration-500 ease-in-out hover:bg-ccd-purples-800 hover:shadow-sm focus:shadow-outline;
+    @apply leading-loose outline-none px-6 py-2 rounded-md font-bold  shadow-md text-ccd-basics-050 bg-ccd-purples-900 transition duration-500 ease-in-out hover:bg-ccd-purples-800 hover:shadow-sm focus:shadow-outline;
   }
   .btn-secondary {
-    @apply leading-loose outline-none px-4 rounded-sm font-bold  shadow-md bg-ccd-basics-050 text-ccd-purples-900 hover:text-ccd-basics-050 transition duration-500 ease-in-out hover:bg-ccd-purples-400 hover:shadow-sm focus:shadow-outline;
+    @apply leading-loose outline-none px-6 py-2 rounded-md font-bold  shadow-md bg-ccd-basics-050 text-ccd-purples-900 hover:text-ccd-basics-050 transition duration-500 ease-in-out hover:bg-ccd-purples-400 hover:shadow-sm focus:shadow-outline;
   }
   .links-secondary {
     @apply text-ccd-basics-050 transition-colors hover:text-ccd-basics-050 hover:underline;
@@ -77,8 +78,10 @@
   }
   .vertical-clip {
     background-color: #4b0a75;
-    background-image: linear-gradient(180deg, #5e1286 0%, #c5235d 100%);
-    background-size: 100%;
-    background-repeat: repeat;
+    background: radial-gradient(
+      46.71% 197.88% at 50% 43.5%,
+      #b42164 0%,
+      #4b0a75 100%
+    );
   }
 }

@@ -132,6 +132,16 @@ module.exports = {
           reddit: '#ff4500',
         },
       },
+      gridTemplateColumns: {
+        fit: 'repeat(auto-fit, minmax(250px, 1fr))',
+        hero: '1.5fr 2fr',
+      },
+      height: {
+        35: '35px',
+      },
+      width: {
+        35: '35px',
+      },
     },
     customForms: (theme) => ({
       default: {

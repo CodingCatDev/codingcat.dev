@@ -101,6 +101,8 @@ export const Footer = () => {
             Site designed by{' '}
             <a
               href="https://brittneypostma.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-ccd-pinks-600 hover:underline hover:text-ccd-pinks-500"
             >
               Brittney Postma
