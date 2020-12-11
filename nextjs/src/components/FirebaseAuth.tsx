@@ -114,7 +114,7 @@ const FirebaseAuth = ({ full = true }) => {
           </div>
         </div>
       ) : (
-        <div>
+        <div className="grid justify-center">
           <StyledFirebaseAuth
             uiConfig={firebaseAuthConfig as any}
             firebaseAuth={firebase.auth()}

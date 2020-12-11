@@ -20,7 +20,7 @@ export const AppMenu: ComponentType<{
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
-      <div className="fixed inset-0 overflow-hidden bg-ccd-purples-100 bg-opacity-70">
+      <div className="z-50 fixed inset-0 overflow-hidden bg-ccd-purples-100 bg-opacity-70">
         <div className="absolute inset-0 overflow-hidden">
           <OutsideClick toggle={setOverlayMenuActive} value={false}>
             <section
