@@ -106,7 +106,7 @@ const FirebaseAuth = ({ full = true }) => {
           </div>
           <div>
             <button
-              className="p-4 mb-16 text-white rounded bg-ccd-reds-500"
+              className="p-4 mb-16 text-ccd-basics-050 rounded bg-ccd-reds-500"
               onClick={() => signin(email, password)}
             >
               Sign In
@@ -132,8 +132,8 @@ const FirebaseAuth = ({ full = true }) => {
                         >
                           <span className="firebaseui-idp-icon-wrapper">
                             <svg
-                              width="24"
-                              height="24"
+                              width="16"
+                              height="16"
                               viewBox="0 0 24 24"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"

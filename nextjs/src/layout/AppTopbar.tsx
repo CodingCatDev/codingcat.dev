@@ -35,11 +35,11 @@ export const AppTopbar = (props: {
       <NavLinks />
       <div className="flex items-center">
         <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
-          <button className="p-1 rounded-full bg-ccd-purples-800 text-ccd-basics-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white">
+          <button className="p-1 rounded-full text-ccd-yellows-400 hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-ccd-basics-050">
             <span className="sr-only">View notifications</span>
             {/* Heroicon name: bell --> */}
             <svg
-              className="w-6 h-6"
+              className="w-6"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -62,7 +62,7 @@ export const AppTopbar = (props: {
         </div>
         <div className="flex items-center">
           <button
-            className="inline-flex items-center justify-center p-2 text-xl text-white rounded-md hover:text-white hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            className="inline-flex items-center justify-center text-xl p-2 text-ccd-basics-050 rounded-md hover:text-white hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             aria-expanded="false"
             onClick={() => setOverlayMenuActive(!overlayMenuActive)}
           >

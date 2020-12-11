@@ -13,7 +13,7 @@ const UserSignin = dynamic(() => import('@/components/Home/UserSignin'), {
 
 export default function Intro() {
   return (
-    <section className="p-2 lg:p-10 grid gap-10 lg:grid-cols-2 2xl:grid-cols-hero ">
+    <section className="p-2 lg:p-10 grid gap-10  lg:grid-cols-2 xl:grid-cols-hero ">
       <UserSignin />
       <section className="justify-self-center grid content-center gap-10">
         <h1 className="vertical-text-clip pt-8 tracking-tight xl:tracking-wide text-5xl sm:text-7xl lg:text-6xl 2xl:text-7xl">

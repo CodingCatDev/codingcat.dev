@@ -26,7 +26,7 @@ export const Footer = () => {
           stroke="transparent"
         />
       </svg>
-      <footer className="pt-16 pb-8 grid gap-4 xl:flex justify-around items-end text-ccd-basics-050 bg-ccd-purples-900">
+      <footer className="pt-16 pb-8 grid gap-10 xl:flex xl:gap-4 justify-around items-end text-ccd-basics-050 bg-ccd-purples-900">
         {/* LOGO & COPYRIGHT */}
         <section className="grid">
           <div className="flex">

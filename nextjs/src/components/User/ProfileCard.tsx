@@ -14,12 +14,15 @@ export default function UserSignin() {
   return (
     <>
       {user ? (
-        <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
-          <p>You're signed in. Email: {user.email}</p>
+        <div className="grid gap-4 px-4 py-8 bg-white shadow-2xl sm:rounded-lg sm:px-10">
+          <p>You're signed in.</p>
+          <p>
+            Email: <span className="font-bold">{user.email}</span>
+          </p>
           <button
             onClick={() => signout()}
             type="button"
-            className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md shadow-sm bg-ccd-purples-500 hover:bg-ccd-purples-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-ccd-purples-500"
+            className="btn-primary"
           >
             <span>Sign Out</span>
           </button>
