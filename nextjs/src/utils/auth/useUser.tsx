@@ -11,6 +11,8 @@ import { mapUserData } from './mapUserData';
 import { userProfileDataObservable } from '@/services/api';
 import { Observable } from 'rxjs';
 import { UserInfo } from '@/models/userInfo.model';
+import { authState } from 'rxfire/auth';
+import { filter, map, switchMap, takeWhile } from 'rxjs/operators';
 
 initFirebase();
 
@@ -45,7 +47,6 @@ const useUser = () => {
           const userData = await mapUserData(user);
           setUserCookie(userData);
           setUser(userData as any);
-          setUserProfile(userProfileDataObservable(userData.uid));
         } else {
           removeUserCookie();
           setUser(null);
@@ -57,7 +58,6 @@ const useUser = () => {
       return;
     }
     setUser(userFromCookie);
-    setUserProfile(userProfileDataObservable(userFromCookie.id));
 
     return () => {
       cancelAuthListener();

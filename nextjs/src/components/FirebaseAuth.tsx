@@ -19,10 +19,6 @@ const FirebaseAuth = ({ full = true }) => {
   let signInOptions = [];
   if (full) {
     signInOptions = [
-      {
-        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        requireDisplayName: false,
-      },
       firebase.auth.EmailAuthProvider.PROVIDER_ID,
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -123,47 +119,47 @@ const FirebaseAuth = ({ full = true }) => {
             uiConfig={firebaseAuthConfig as any}
             firebaseAuth={firebase.auth()}
           />
-
-          <Link href="/user/profile">
-            <a>
-              <button className="btn-primary rounded-none text-sm">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M24 3.88235C24 1.73819 22.287 0 20.1739 0H10.087V2.11765H20.1739C21.1344 2.11765 21.913 2.90773 21.913 3.88235V20.1176C21.913 21.0923 21.1344 21.8824 20.1739 21.8824H10.087V24H20.1739C22.287 24 24 22.2618 24 20.1176V3.88235ZM10.087 18.1131L20.5217 12L10.087 5.88688V10.9412H-4.47035e-07V13.0588H10.087V18.1131Z"
-                        fill="#FBFBFB"
-                      />
-                    </svg>
-
-                    {/* <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="w-6 h-6 text-ccd-basics-050"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg> */}
+          {!full && (
+            <Link href="/user/profile">
+              <a>
+                <div className="firebaseui-container firebaseui-page-provider-sign-in firebaseui-id-page-provider-sign-in firebaseui-use-spinner">
+                  <div className="firebaseui-card-content">
+                    <ul className="firebaseui-idp-list">
+                      <li className="firebaseui-list-item">
+                        <button
+                          className="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-id-idp-button"
+                          style={{ backgroundColor: '#5e1186' }}
+                        >
+                          <span className="firebaseui-idp-icon-wrapper">
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M24 3.88235C24 1.73819 22.287 0 20.1739 0H10.087V2.11765H20.1739C21.1344 2.11765 21.913 2.90773 21.913 3.88235V20.1176C21.913 21.0923 21.1344 21.8824 20.1739 21.8824H10.087V24H20.1739C22.287 24 24 22.2618 24 20.1176V3.88235ZM10.087 18.1131L20.5217 12L10.087 5.88688V10.9412H-4.47035e-07V13.0588H10.087V18.1131Z"
+                                fill="#FBFBFB"
+                              />
+                            </svg>
+                          </span>
+                          <span className="firebaseui-idp-text firebaseui-idp-text-long">
+                            All Sign in Options
+                          </span>
+                          <span className="firebaseui-idp-text firebaseui-idp-text-short">
+                            GitHub
+                          </span>
+                        </button>
+                      </li>
+                    </ul>
                   </div>
-                  <p className="ml-4 text-ccd-basics-050">
-                    Sign In with any provider
-                  </p>
                 </div>
-              </button>
-            </a>
-          </Link>
+              </a>
+            </Link>
+          )}
         </div>
       )}
     </>

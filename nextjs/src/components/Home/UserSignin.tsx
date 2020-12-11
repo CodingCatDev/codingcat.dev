@@ -21,7 +21,7 @@ export default function UserSignin() {
       {user ? (
         <></>
       ) : (
-        <section className="pt-4 lg:pt-0 grid content-start relative">
+        <section className="relative grid content-start pt-4 lg:pt-0">
           {/* Sign Up & Sign In Bar */}
           <div className="flex items-end justify-between">
             <div
@@ -40,7 +40,7 @@ export default function UserSignin() {
               </h2>
             </div>
             <div
-              className="absolute left-1/2 top-0 lg:-top-4 xl:-top-6"
+              className="absolute top-0 left-1/2 lg:-top-4 xl:-top-6"
               style={{ transform: `translateX(-50%)` }}
             >
               {signin ? (
@@ -73,84 +73,10 @@ export default function UserSignin() {
               signin ? 'rounded-tl' : 'rounded-tr'
             }`}
           >
-            <div className={!signin ? 'hidden' : 'grid justify-center'}>
+            {/* SIGN UP */}
+            <div className="grid justify-center">
               <FirebaseAuth full={false} />
             </div>
-            {/* SIGN UP */}
-            <form className={signin ? 'hidden' : 'grid gap-4'}>
-              <div className="flex justify-between w-full">
-                <p>Create an account:</p>
-                <p>
-                  or{' '}
-                  <span
-                    role="link"
-                    className="cursor-pointer hover:underline"
-                    onClick={() => setSignIn(true)}
-                  >
-                    Sign In
-                  </span>
-                </p>
-              </div>
-              <label
-                className="block mb-2 text-sm font-bold text-grey-darker"
-                htmlFor="username"
-              >
-                Email
-                <input
-                  className="w-full px-3 py-2 border rounded shadow appearance-none text-grey-darker"
-                  id="email"
-                  type="email"
-                  placeholder="alex@codingcat.dev"
-                  required
-                />
-              </label>
-              <label
-                className="block mb-2 text-sm font-bold text-grey-darker"
-                htmlFor="password"
-              >
-                Password
-                <input
-                  className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-grey-darker"
-                  id="password"
-                  type="password"
-                  placeholder="******************"
-                  required
-                />{' '}
-              </label>
-              <label
-                className="block mb-2 text-sm font-bold text-grey-darker"
-                htmlFor="passwordConfirm"
-              >
-                Confirm Password
-                <input
-                  className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-grey-darker"
-                  id="passwordConfirm"
-                  type="password"
-                  placeholder="******************"
-                  required
-                />{' '}
-              </label>
-              <label
-                className="block mb-2 text-sm font-bold text-grey-darker"
-                htmlFor="name"
-              >
-                Name
-                <input
-                  className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-grey-darker"
-                  id="name"
-                  type="text"
-                  placeholder="Alex"
-                  required
-                />{' '}
-              </label>
-              <button className="justify-self-start btn-primary" type="button">
-                Create Account
-              </button>
-
-              <button className="btn-primary w-full" type="button">
-                Go Pro
-              </button>
-            </form>
           </div>
         </section>
       )}

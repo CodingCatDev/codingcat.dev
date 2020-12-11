@@ -6,6 +6,10 @@ import { Transition } from '@headlessui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Observable, Subscription } from 'rxjs';
 import { UserInfo } from '@/models/userInfo.model';
+import { userProfileDataObservable } from '@/services/api';
+import firebase from 'firebase/app';
+import { authState } from 'rxfire/auth';
+import { takeWhile, switchMap } from 'rxjs/operators';
 
 export default function UserSignin({
   userMenu,
@@ -14,21 +18,35 @@ export default function UserSignin({
   userMenu: boolean;
   setUserMenu: Dispatch<SetStateAction<boolean>>;
 }) {
-  const { user, signout, userProfile } = useUser();
+  const { user, signout } = useUser();
 
   const [profile, setProfile] = useState<UserInfo | null>(null);
 
   let subscription: Subscription;
   useEffect(() => {
-    if (userProfile) {
-      subscription = userProfile.subscribe((profile) => setProfile(profile));
-    }
+    subscription = authState(firebase.auth())
+      .pipe(
+        takeWhile((user) => {
+          if (!user && subscription) {
+            subscription.unsubscribe();
+          }
+          return user != null;
+        }),
+        switchMap((u: firebase.UserInfo) => {
+          console.log(u);
+          return userProfileDataObservable(u.uid);
+        })
+      )
+      .subscribe((profile) => {
+        console.log(profile);
+        setProfile(profile);
+      });
     return () => {
       if (subscription) {
         subscription.unsubscribe();
       }
     };
-  }, [userProfile]);
+  }, []);
 
   return (
     <>
