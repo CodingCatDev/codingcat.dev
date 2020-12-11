@@ -89,9 +89,13 @@ export const Footer = () => {
           <h4 className="underline">Newsletter</h4>
           <p>Subscribe for all the latest updates.</p>
           <form className="grid">
-            <label>Email</label>
+            <label htmlFor="subEmail">Email</label>
             <div className="flex items-stretch">
-              <input id="email" type="email" placeholder="email@email.com" />
+              <input
+                id="subEmail"
+                type="email"
+                placeholder="alex@codingcat.dev"
+              />
 
               <button className="btn-secondary ml-4">Subscribe</button>
             </div>
