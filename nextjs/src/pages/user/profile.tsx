@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
-import Layout from '../../layout/Layout';
+import Layout from '@/layout/Layout';
 
 const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
   ssr: false,
@@ -15,7 +15,7 @@ export default function Profile() {
         <title>Profile | CodingCatDev</title>
       </Head>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-12 gap-2 place-items-auto mt-20 mx-16">
+      <main className="grid grid-cols-1 gap-2 mx-16 mt-20 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-12 place-items-auto">
         <div className="col-span-1 lg:col-span-6">
           <ProfileCard />
         </div>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { postsRecentService } from '@/services/serversideApi';
 import { RecentPostsCards } from '@/components/RecentPostsCards';
 import { Post } from '@/models/post.model';
-import Layout from '../layout/Layout';
+import Layout from '@/layout/Layout';
 import Intro from '@/components/Home/Intro';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
 import BreakBarRight from '@/components/Home/BreakBarRight';

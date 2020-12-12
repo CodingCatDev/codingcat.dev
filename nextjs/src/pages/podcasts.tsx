@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Layout from '../layout/Layout';
+import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
 import { postsService } from '@/services/serversideApi';
 import { Post, PostType } from '@/models/post.model';

@@ -7,7 +7,7 @@ import hydrate from 'next-mdx-remote/hydrate';
 import parse from 'remark-parse';
 import mdx from 'remark-mdx';
 
-import Layout from '../layout/Layout';
+import Layout from '@/layout/Layout';
 import RecentPostsList from '@/components/RecentPostsList';
 import {
   postByPermalinkService,
