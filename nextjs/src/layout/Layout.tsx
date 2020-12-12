@@ -51,7 +51,7 @@ const Layout = ({ children }: { children: any }) => {
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
       />
-      <div className="overflow-x-hidden overflow-y-auto calc-height-wrapper">
+      <div className="scrollbar overflow-x-hidden overflow-y-auto calc-height-wrapper">
         <main className="grid grid-cols-1 gap-10 justify-center calc-height bg-ccd-purples-050">
           {children}
         </main>

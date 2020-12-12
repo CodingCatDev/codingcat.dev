@@ -34,6 +34,25 @@
     @apply bg-ccd-purples-900 text-ccd-purples-900 box-border;
   }
 
+  ::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #5e1286;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #d11663;
+    border-radius: 1rem;
+    border: 2px solid #5e1286;
+  }
+
+  .scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #d11663 #5e1286;
+  }
+
   footer {
   }
 
