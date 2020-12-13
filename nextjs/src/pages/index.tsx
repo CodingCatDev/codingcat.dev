@@ -13,7 +13,7 @@ import BreakBarRight from '@/components/Home/BreakBarRight';
 
 import Skills from '@/components/Home/Skills';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
-import KCLogo from '@/components/global/icons/KCLogo';
+import KCAlt from '@/components/global/icons/KCAlt';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import Podcasts from '../components/global/icons/nav/Podcasts';
 
@@ -65,7 +65,7 @@ export default function Home({
         <h3 className="absolute text-center w-full text-ccd-basics-050 text-2xl sm:text-4xl lg:text-4xl">
           Learn with AJ and KC
         </h3>
-        <KCLogo className="w-14 sm:w-14 md:w-20" />
+        <KCAlt className="w-14 sm:w-14 md:w-20" />
       </BreakBarRight>
       <section className="grid gap-10 px-10">
         <h2 className="mt-4 text-right text-4xl lg:text-5xl text-ccd-purples-900">
