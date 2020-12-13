@@ -32,15 +32,9 @@ export default function UserSignin({
           }
           return user != null;
         }),
-        switchMap((u: firebase.UserInfo) => {
-          console.log(u);
-          return userProfileDataObservable(u.uid);
-        })
+        switchMap((u: firebase.UserInfo) => userProfileDataObservable(u.uid))
       )
-      .subscribe((profile) => {
-        console.log(profile);
-        setProfile(profile);
-      });
+      .subscribe((profile) => setProfile(profile));
     return () => {
       if (subscription) {
         subscription.unsubscribe();

@@ -10,7 +10,7 @@ import algoliasearch from "algoliasearch";
 const ALGOLIA_INDEX_NAME = algoliaIndex;
 const client = algoliasearch(algoliaAppId, algoliaApiKey);
 
-export const onPostWrite = functions.firestore
+export const onPostWriteSearch = functions.firestore
   .document("posts/{postId}")
   .onWrite((snap, context) => {
     console.log("Adding Data for", context.params.postId);
@@ -28,7 +28,7 @@ export const onPostWrite = functions.firestore
     return index.saveObject(post);
   });
 
-export const onPostDelete = functions.firestore
+export const onPostDeleteSearch = functions.firestore
   .document("posts/{postId}")
   .onDelete((snap, context) => {
     // Write to the algolia index

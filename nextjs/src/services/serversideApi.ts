@@ -12,6 +12,7 @@ export async function postsRecentService(recentPostsTypes: string[]) {
         .firestore()
         .collection('posts')
         .where('type', '==', postType)
+        .where('publishedAt', '<', admin.firestore.Timestamp.now())
         .orderBy('publishedAt', 'desc')
         .limit(4)
         .get();
@@ -28,6 +29,7 @@ export async function postsService(postType: string) {
     .firestore()
     .collection('posts')
     .where('type', '==', postType)
+    .where('publishedAt', '<', admin.firestore.Timestamp.now())
     .orderBy('publishedAt', 'desc')
     .get();
 

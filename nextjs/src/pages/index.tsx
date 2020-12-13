@@ -49,7 +49,7 @@ export default function Home({
           Latest Courses
         </h2>
         <div className="grid grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts['tutorials']} />
+          <RecentPostsCards recentPosts={recentPosts['courses']} />
         </div>
         <Link href="/courses">
           <a className="justify-self-center">
@@ -62,13 +62,13 @@ export default function Home({
       {/* TUTORIALS */}
       <BreakBarRight>
         <AJLogoLeft className="w-16 sm:w-16 md:w-20" />
-        <h3 className="absolute text-center w-full text-ccd-basics-050 text-2xl sm:text-4xl lg:text-4xl">
+        <h3 className="absolute w-full text-2xl text-center text-ccd-basics-050 sm:text-4xl lg:text-4xl">
           Learn with AJ and KC
         </h3>
         <KCAlt className="w-14 sm:w-14 md:w-20" />
       </BreakBarRight>
       <section className="grid gap-10 px-10">
-        <h2 className="mt-4 text-right text-4xl lg:text-5xl text-ccd-purples-900">
+        <h2 className="mt-4 text-4xl text-right lg:text-5xl text-ccd-purples-900">
           Latest Tutorials
         </h2>
         <div className="grid grid-cols-fit">
@@ -84,9 +84,9 @@ export default function Home({
       </section>
       {/* BLOG */}
       <BreakBarLeft>
-        <div className="relative w-full flex items-center">
+        <div className="relative flex items-center w-full">
           <AJHeartAlt className="w-16 sm:w-16 md:w-20" />
-          <h3 className="absolute left-6 sm:left-8 md:left-0 text-center w-full text-ccd-basics-050 text-2xl sm:text-3xl lg:text-4xl">
+          <h3 className="absolute w-full text-2xl text-center left-6 sm:left-8 md:left-0 text-ccd-basics-050 sm:text-3xl lg:text-4xl">
             Read what's going on in web dev
           </h3>
         </div>
@@ -108,15 +108,15 @@ export default function Home({
       </section>
       {/* PODCASTS */}
       <BreakBarRight>
-        <div className="relative w-full flex justify-end items-center">
-          <h3 className="absolute right-6 sm:right-8 md:right-0 text-center w-full text-ccd-basics-050 text-2xl sm:text-3xl lg:text-4xl">
+        <div className="relative flex items-center justify-end w-full">
+          <h3 className="absolute w-full text-2xl text-center right-6 sm:right-8 md:right-0 text-ccd-basics-050 sm:text-3xl lg:text-4xl">
             Listen to the latest tech news
           </h3>
           <Podcasts className="w-16 sm:w-16 md:w-20" />
         </div>
       </BreakBarRight>
       <section className="grid gap-10 px-10">
-        <h2 className="mt-4 text-right text-4xl lg:text-5xl text-ccd-purples-900">
+        <h2 className="mt-4 text-4xl text-right lg:text-5xl text-ccd-purples-900">
           Latest Podcasts
         </h2>
         <div className="grid grid-cols-fit">

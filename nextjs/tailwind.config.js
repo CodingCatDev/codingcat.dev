@@ -1,6 +1,11 @@
 module.exports = {
   purge: ['./src/**/*.{js,mdx,jsx,tsx}', './next.config.js'],
   darkMode: false, // or 'media' or 'class'
+  variants: {
+    extend: {
+      opacity: ['disabled'],
+    },
+  },
   theme: {
     fontFamily: {
       sans: ['nunito', 'ui-sans-serif'],
@@ -9,14 +14,6 @@ module.exports = {
       heading: ['Henny Penny', 'nunito', 'ui-monospace'],
       light: ['nunito-light', 'ui-sans-serif'],
     },
-    // boxShadow: {
-    //   'b-lg': {
-    //     '--tw-shadow':
-    //       '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);',
-    //     'box-shadow':
-    //       'var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);',
-    //   },
-    // },
     extend: {
       boxShadow: {
         outline: '0 0 0 3px #FC5390',

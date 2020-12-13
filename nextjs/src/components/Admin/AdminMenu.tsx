@@ -212,9 +212,20 @@ To: "-translate-x-full"
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex flex-col flex-1 h-0 ">
             <div className="flex items-center flex-shrink-0 h-16 px-4 text-white bg-ccd-basics-900">
+              <Link href="/">
+                <a>
+                  <div className="text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700">
+                    Main site
+                  </div>
+                </a>
+              </Link>
+            </div>
+            <div className="flex items-center flex-shrink-0 h-16 px-4 text-white bg-ccd-basics-900">
               <Link href="/admin">
                 <a>
-                  <div>Dashboard</div>
+                  <div className="text-ccd-basics-300 hover:text-white hover:bg-ccd-basics-700">
+                    Dashboard
+                  </div>
                 </a>
               </Link>
             </div>

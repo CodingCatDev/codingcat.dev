@@ -3,19 +3,19 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import Link from 'next/link';
 
+import { useUser } from '@/utils/auth/useUser';
+import { postsByUpdatedAtObservable } from '@/services/api';
+import { Post, PostStatus } from '@/models/post.model';
+
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
-
-import { useUser } from '@/utils/auth/useUser';
-import { postsObservable } from '@/services/api';
-import { Post, PostStatus } from '@/models/post.model';
 
 function EditPosts({ path }: { path: string }) {
   const { user, signout }: { user: any; signout: any } = useUser();
   const [posts, setPosts] = useState<Post[]>([]);
   useEffect(() => {
-    postsObservable(
+    postsByUpdatedAtObservable(
       path.substring(1) === 'blog' ? 'post' : path.substring(1)
     ).subscribe((posts) => setPosts(posts));
   }, [path]);

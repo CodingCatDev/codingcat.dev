@@ -113,8 +113,9 @@ service cloud.firestore {
       let hasRequiredFields = post.keys().hasAll([
         'id', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy',
         'type', 'title', 'status', 'visibility', 'permalink']);
-
-      return isOwner && hasRequiredFields;
+      let statusNotPublished = post.status == 'draft' && !post.keys().hasAny(['publishedAt']);
+      let isUnique = !exists(/databases/$(database)/documents/postBasenames/$(post.basename));
+      return isOwner && hasRequiredFields && statusNotPublished && isUnique;
     }
     function postsIsValidUpdate() {
       let notDeniedFields = !request.resource.data.diff(resource.data).changedKeys().hasAny([

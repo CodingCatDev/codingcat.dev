@@ -37,7 +37,7 @@ export enum PostVisibility {
 }
 
 export enum PostType {
-  blog = 'blog',
+  post = 'post',
   tutorials = 'tutorials',
   podcasts = 'podcasts',
   courses = 'courses',

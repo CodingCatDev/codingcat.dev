@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import router from 'next/router';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primereact/resources/themes/saga-purple/theme.css';
-import { TabView, TabPanel } from 'primereact/tabview';
-
 import { postDataObservable, postUpdate } from '@/services/api';
-
-// import renderToString from 'next-mdx-remote/render-to-string';
-// import hydrate from 'next-mdx-remote/hydrate';
-// import parse from 'remark-parse';
-// import mdx from 'remark-mdx';
 
 import Markdown from 'markdown-to-jsx';
 import { Post } from '@/models/post.model';

@@ -4,6 +4,7 @@ import { withRouter } from 'next/router';
 
 import AdminMenu from '@/components/Admin/AdminMenu';
 import AdminTopBar from '@/components/Admin/AdminTopBar';
+import CreatePost from '@/components/Admin/CreatePost';
 
 const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   ssr: false,
@@ -33,7 +34,7 @@ function AdminDashboard({ router }: { router: any }) {
             className="relative flex flex-col flex-1 overflow-y-auto focus:outline-none"
             tabIndex={0}
           >
-            <div className="flex flex-col flex-1 py-6">
+            <div className="flex flex-col flex-1">
               {router.asPath === path ? (
                 <div className="flex flex-col flex-1 px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
                   <h1 className="text-2xl font-semibold text-ccd-basics-900">
@@ -42,9 +43,12 @@ function AdminDashboard({ router }: { router: any }) {
                   <p className="text-lg">Show some welcoming things here.</p>
                 </div>
               ) : (
-                <div className="flex flex-col flex-1 px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
-                  <EditPosts path={path} />
-                </div>
+                <>
+                  <div className="flex flex-col flex-1 px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
+                    <CreatePost />
+                    <EditPosts path={path} />
+                  </div>
+                </>
               )}
             </div>
           </main>
