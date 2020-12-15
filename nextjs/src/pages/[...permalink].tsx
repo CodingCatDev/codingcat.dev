@@ -8,6 +8,7 @@ import parse from 'remark-parse';
 import mdx from 'remark-mdx';
 
 import Layout from '@/layout/Layout';
+import BreakBarLeft from '@/components/Home/BreakBarLeft';
 import RecentPostsList from '@/components/RecentPostsList';
 import {
   postByPermalinkService,
@@ -45,30 +46,50 @@ export default function Post({
   const content = hydrate(markdown);
   return (
     <Layout>
-      <div className="grid grid-cols-12 gap-2 ">
-        <div className="col-span-12 xl:col-span-10">
-          <h1>{post.title}</h1>
-          <article className="prose prose-ccd-purples lg:prose-xl">
-            {content}
-          </article>
-        </div>
-        <div className="col-span-12 xl:col-span-2">
-          <div className="p-3 m-3 bg-white rounded-lg shadow">
-            <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
+      <section className="sticky top-0 z-10">
+        <BreakBarLeft>
+          <h1 className="w-1/2 font-sans text-4xl leading-relaxed text-ccd-basics-050">
+            {post.title}
+          </h1>
+          <label htmlFor="search_blog" className="sr-only">
+            Search bar
+          </label>
+          <input
+            type="text"
+            id="search_blog"
+            placeholder="search"
+            className="w-1/3 rounded-full"
+          />
+        </BreakBarLeft>
+      </section>
+      {/* BLOG POST */}
+      <section className="relative grid items-start justify-center gap-10 px-4 2xl:px-16 2xl:justify-start">
+        <article className="prose sm:prose-sm lg:prose-lg 2xl:prose-xl">
+          {content}
+        </article>
+        {/* RECENTS */}
+        <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-ccd-basics-050 2xl:fixed scrollbar">
+          <section className="grid gap-4">
+            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
               Recent Posts
-            </p>
+            </h3>
             <RecentPostsList posts={recentPosts.post} />
-            <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
+          </section>
+
+          <section className="grid gap-4">
+            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
               Recent Tutorials
-            </p>
+            </h3>
             <RecentPostsList posts={recentPosts.tutorials} />
-            <p className="mb-2 text-xl tracking-wide text-bold text-ccd-basics-800">
+          </section>
+          <section className="grid gap-4">
+            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
               Recent Podcasts
-            </p>
+            </h3>
             <RecentPostsList posts={recentPosts.podcasts} />
-          </div>
-        </div>
-      </div>
+          </section>
+        </section>
+      </section>
     </Layout>
   );
 }

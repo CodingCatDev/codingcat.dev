@@ -9,7 +9,7 @@ import { map, take } from 'rxjs/operators';
 import { Post } from '@/models/post.model';
 import { Observable } from 'rxjs';
 import { UserInfo } from '@/models/userInfo.model';
-import { v4 as uuid } from 'uuid';
+const uuid = require('uuid');
 
 initFirebase();
 const firestore = firebase.firestore();

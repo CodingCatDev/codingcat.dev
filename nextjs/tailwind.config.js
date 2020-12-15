@@ -130,6 +130,7 @@ module.exports = {
         },
       },
       gridTemplateColumns: {
+        sidebar: '1fr minmax(200px, 25%)',
         fit: 'repeat(auto-fit, minmax(250px, 1fr))',
         hero: '1.5fr 2fr',
       },
@@ -138,6 +139,37 @@ module.exports = {
       },
       width: {
         35: '35px',
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            color: '#171717',
+            a: {
+              color: '#4B0A75',
+              '&:hover': {
+                color: '#D11663',
+              },
+            },
+            h1: {
+              fontFamily: 'nunito',
+            },
+            h2: {
+              fontFamily: 'nunito',
+            },
+            h3: {
+              fontFamily: 'nunito',
+            },
+            h4: {
+              fontFamily: 'nunito',
+            },
+            h5: {
+              fontFamily: 'nunito',
+            },
+            h6: {
+              fontFamily: 'nunito',
+            },
+          },
+        },
       },
     },
     customForms: (theme) => ({
