@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import NavLinks from '../layout/NavLinks';
+import SearchModal from '@/components/algolia/SearchModal';
 
 // STYLES
 
@@ -22,7 +23,7 @@ export const AppTopbar = (props: {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <header className="flex justify-between w-full h-20 p-4 max-w-7xl md:px-0 md:mx-auto">
+    <header className="flex justify-between w-full h-20 p-4 space-x-10 md:px-0 md:mx-auto">
       <Link href="/">
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">
@@ -33,13 +34,14 @@ export const AppTopbar = (props: {
       </Link>
       {/* <div className="flex justify-between h-16"> */}
       <NavLinks />
-      <div className="flex items-center">
-        <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
+      <div className="flex items-center justify-end">
+        <div className="flex items-center w-full space-x-2">
+          <SearchModal />
           <button className="p-1 rounded-full text-ccd-yellows-400 hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-ccd-basics-050">
             <span className="sr-only">View notifications</span>
             {/* Heroicon name: bell --> */}
             <svg
-              className="w-6"
+              className="w-8"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -60,16 +62,16 @@ export const AppTopbar = (props: {
             <AvatarMenu userMenu={userMenu} setUserMenu={setUserMenu} />
           </OutsideClick>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center ml-2">
           <button
-            className="inline-flex items-center justify-center text-xl p-2 text-ccd-basics-050 rounded-md hover:text-white hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            className="inline-flex items-center justify-center p-1 text-xl rounded-md text-ccd-basics-050 hover:text-white hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             aria-expanded="false"
             onClick={() => setOverlayMenuActive(!overlayMenuActive)}
           >
             <span className="sr-only">Open main menu</span>
             {!overlayMenuActive ? (
               <svg
-                className="block w-8 h-8"
+                className="block w-10"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -85,7 +87,7 @@ export const AppTopbar = (props: {
               </svg>
             ) : (
               <svg
-                className="block w-8 h-8"
+                className="block w-10"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

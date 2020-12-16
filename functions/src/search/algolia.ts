@@ -6,6 +6,7 @@ import {
 } from "./../config/config";
 import * as functions from "firebase-functions";
 import algoliasearch from "algoliasearch";
+import { cleanTimestamp } from "../utilities/timestamps";
 
 const ALGOLIA_INDEX_NAME = algoliaIndex;
 const client = algoliasearch(algoliaAppId, algoliaApiKey);
@@ -25,7 +26,7 @@ export const onPostWriteSearch = functions.firestore
 
     // Write to the algolia index
     const index = client.initIndex(ALGOLIA_INDEX_NAME);
-    return index.saveObject(post);
+    return index.saveObject(cleanTimestamp(post));
   });
 
 export const onPostDeleteSearch = functions.firestore
