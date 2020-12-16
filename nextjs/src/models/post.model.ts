@@ -21,11 +21,13 @@ export interface Post {
   tag?: string[] | null;
   format?: PostFormat; //If null this will be auto assigned 'standard'
   content?: string;
-  basename: string;
+  slug: string;
+  historyId?: string;
+  postId?: string;
 }
 
 export enum PostStatus {
-  publish = 'publish',
+  published = 'published',
   draft = 'draft',
   pendingreview = 'pendingreview',
 }
@@ -38,10 +40,10 @@ export enum PostVisibility {
 
 export enum PostType {
   post = 'post',
-  tutorials = 'tutorials',
-  podcasts = 'podcasts',
-  courses = 'courses',
-  lessons = 'lessons',
+  tutorial = 'tutorial',
+  podcast = 'podcast',
+  course = 'course',
+  lesson = 'lesson',
 }
 export enum PostFormat {
   standard = 'standard',

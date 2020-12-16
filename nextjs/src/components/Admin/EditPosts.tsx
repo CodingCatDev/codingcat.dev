@@ -36,7 +36,7 @@ function EditPosts({ path }: { path: string }) {
         className={`p-2 capitalize text-green-800 rounded
           ${
             rowData.status
-              ? rowData.status === PostStatus.publish
+              ? rowData.status === PostStatus.published
                 ? `bg-green-200`
                 : `bg-red`
               : ''

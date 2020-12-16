@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
 import { postsService } from '@/services/serversideApi';
-import { Post } from '@/models/post.model';
+import { Post, PostType } from '@/models/post.model';
 
 export default function Tutorials({ posts }: { posts: Post[] }) {
   return (
@@ -21,7 +21,7 @@ export default function Tutorials({ posts }: { posts: Post[] }) {
 }
 
 export async function getStaticProps() {
-  const posts = await postsService('tutorials');
+  const posts = await postsService(PostType.tutorial);
   return {
     props: {
       posts,

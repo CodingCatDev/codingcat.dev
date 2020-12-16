@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { postsRecentService } from '@/services/serversideApi';
 import { RecentPostsCards } from '@/components/RecentPostsCards';
-import { Post } from '@/models/post.model';
+import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import Intro from '@/components/Home/Intro';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
@@ -49,7 +49,7 @@ export default function Home({
           Latest Courses
         </h2>
         <div className="grid grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts['courses']} />
+          <RecentPostsCards recentPosts={recentPosts[PostType.course]} />
         </div>
         <Link href="/courses">
           <a className="justify-self-center">
@@ -72,7 +72,7 @@ export default function Home({
           Latest Tutorials
         </h2>
         <div className="grid grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts['tutorials']} />
+          <RecentPostsCards recentPosts={recentPosts[PostType.tutorial]} />
         </div>
         <Link href="/tutorials">
           <a className="justify-self-center">
@@ -96,7 +96,7 @@ export default function Home({
           Blog Posts
         </h2>
         <div className="grid grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts['post']} />
+          <RecentPostsCards recentPosts={recentPosts[PostType.post]} />
         </div>
         <Link href="/blog">
           <a className="justify-self-center">
@@ -120,7 +120,7 @@ export default function Home({
           Latest Podcasts
         </h2>
         <div className="grid grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts['podcasts']} />
+          <RecentPostsCards recentPosts={recentPosts[PostType.podcast]} />
         </div>
         <Link href="/podcasts">
           <a className="justify-self-center">
@@ -137,10 +137,10 @@ export default function Home({
 
 export async function getStaticProps() {
   const recentPosts = await postsRecentService([
-    'courses',
-    'post',
-    'tutorials',
-    'podcasts',
+    PostType.course,
+    PostType.post,
+    PostType.tutorial,
+    PostType.podcast,
   ]);
   return {
     props: {

@@ -1,7 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react';
 import OutsideClick from '@/components/OutsideClick';
 import { useEffect, useState } from 'react';
-import { postCreate, postsBaseNameUnique } from '@/services/api';
+import { postCreate, postsSlugUnique } from '@/services/api';
 import {
   Post,
   PostStatus,
@@ -12,6 +12,7 @@ import {
 import { InputText } from 'primereact/inputtext';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { take } from 'rxjs/operators';
+import router from 'next/router';
 
 const postInitial = {
   type: PostType.post,
@@ -19,44 +20,48 @@ const postInitial = {
   status: PostStatus.draft,
   visibility: PostVisibility.private,
   permalink: '',
-  basename: '',
+  slug: '',
 };
 
 export default function CreatePost() {
   const [showModal, setShowModal] = useState(false);
   const [post, setPost] = useState<Post>(postInitial);
-  const [basenameUnique, setBasenameUnique] = useState(false);
+  const [slugUnique, setSlugUnique] = useState(false);
 
   //TODO: We should pull these from firebase config or remote config
   const postTypeSelectItems = [
     { label: PostType.post, value: PostType.post },
-    { label: PostType.tutorials, value: PostType.tutorials },
-    { label: PostType.podcasts, value: PostType.podcasts },
+    { label: PostType.tutorial, value: PostType.tutorial },
+    { label: PostType.podcast, value: PostType.podcast },
   ];
 
   const create = async () => {
-    await postCreate(post.type, post.title, post.basename);
-    setShowModal(false);
-    setPost(postInitial);
+    postCreate(post.type, post.title, post.slug)
+      .pipe(take(1))
+      .subscribe((p) => {
+        setShowModal(false);
+        setPost(postInitial);
+        router.push(`/admin/${router.query.type}/${p.id}`);
+      });
   };
 
-  const basenameInput = async (e: any, isTitle: any) => {
-    const basename = toKebabCase(e.target.value);
+  const slugInput = async (e: any, isTitle: any) => {
+    const slug = toKebabCase(e.target.value);
     let postUpdate;
     if (isTitle) {
       postUpdate = {
         ...post,
         title: e.target.value,
-        basename,
+        slug,
       };
     } else {
       postUpdate = {
         ...post,
-        basename,
+        slug,
       };
     }
     setPost(postUpdate);
-    setBasenameUnique(await postsBaseNameUnique(postUpdate.basename));
+    setSlugUnique(await postsSlugUnique(postUpdate.slug));
   };
 
   return (
@@ -224,7 +229,7 @@ export default function CreatePost() {
                                     required
                                     value={post.title}
                                     onChange={(e) => {
-                                      basenameInput(e, true);
+                                      slugInput(e, true);
                                     }}
                                   />
                                 </label>
@@ -234,8 +239,8 @@ export default function CreatePost() {
                                     htmlFor="username"
                                   >
                                     <div className="flex">
-                                      Basename
-                                      {basenameUnique ? (
+                                      Slug
+                                      {slugUnique ? (
                                         <div>
                                           <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -273,11 +278,11 @@ export default function CreatePost() {
                                     </div>
                                     <input
                                       className="w-full px-3 py-2 border rounded shadow appearance-none text-grey-darker"
-                                      id="basename"
-                                      type="basename"
+                                      id="slug"
+                                      type="slug"
                                       required
-                                      value={post.basename}
-                                      onChange={(e) => basenameInput(e, false)}
+                                      value={post.slug}
+                                      onChange={(e) => slugInput(e, false)}
                                     />
                                   </label>
                                 </div>
@@ -288,13 +293,11 @@ export default function CreatePost() {
                       </div>
                       <div className="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button
-                          type="submit"
+                          type="button"
                           onClick={() => create()}
                           className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-sm disabled:opacity-25 bg-ccd-purples-900 hover:bg-ccd-purples-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ccd-purples-500 sm:ml-3 sm:w-auto sm:text-sm"
                           disabled={
-                            post.title === '' ||
-                            post.basename === '' ||
-                            !basenameUnique
+                            post.title === '' || post.slug === '' || !slugUnique
                           }
                         >
                           Create

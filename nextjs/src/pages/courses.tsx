@@ -10,7 +10,7 @@ export default function Courses({ posts }: { posts: Post[] }) {
   return (
     <Layout>
       <Head>
-        <title>Blog | CodingCatDev</title>
+        <title>Courses | CodingCatDev</title>
       </Head>
 
       <section className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
@@ -23,7 +23,7 @@ export default function Courses({ posts }: { posts: Post[] }) {
 }
 
 export async function getStaticProps() {
-  const posts = await postsService('courses');
+  const posts = await postsService(PostType.course);
   return {
     props: {
       posts,

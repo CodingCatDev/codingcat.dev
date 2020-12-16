@@ -32,6 +32,14 @@ service cloud.firestore {
         allow read: if postsCanRead();
         allow update: if postsCanUpdate();
         allow delete: if postsCanDelete();
+
+        match /history/{id} {
+          allow create: if hasAnyRole(['author', 'editor', 'admin'])
+          allow read: if postsCanRead();
+          allow update: if postsCanUpdate();
+          allow delete: if postsCanDelete();
+        }
+
       }
 
       match /courses/{id} {
@@ -114,7 +122,7 @@ service cloud.firestore {
         'id', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy',
         'type', 'title', 'status', 'visibility', 'permalink']);
       let statusNotPublished = post.status == 'draft' && !post.keys().hasAny(['publishedAt']);
-      let isUnique = !exists(/databases/$(database)/documents/postBasenames/$(post.basename));
+      let isUnique = !exists(/databases/$(database)/documents/postSlugs/$(post.slug));
       return isOwner && hasRequiredFields && statusNotPublished && isUnique;
     }
     function postsIsValidUpdate() {

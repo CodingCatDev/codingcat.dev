@@ -2,7 +2,11 @@ import * as path from "path";
 import * as fs from "fs";
 import { v4 as uuid } from "uuid";
 
-import { Post, PostVisibility } from "../../../nextjs/src/models/post.model";
+import {
+  Post,
+  PostStatus,
+  PostVisibility,
+} from "../../../nextjs/src/models/post.model";
 
 export function posts(): [Post] {
   const POSTS: any = [];
@@ -33,9 +37,12 @@ export function posts(): [Post] {
         publishedAt: post.date,
         createdAt: post.date,
         updatedAt: post.date,
-        type: post.type,
+        type:
+          post.type === "post"
+            ? "post"
+            : post.type.substring(0, post.type.length - 1),
         title: post.title,
-        status: post.status,
+        status: PostStatus.published,
         visibility: PostVisibility.public,
         permalink: post.permalink,
         excerpt: post.excerpt,
@@ -44,7 +51,7 @@ export function posts(): [Post] {
         tag: post.tag,
         format: post.post_format,
         content: postMd.content,
-        basename: post.basename,
+        slug: post.basename,
       };
       POSTS.push(postDoc);
     }

@@ -16,16 +16,16 @@ import {
   postsService,
 } from '@/services/serversideApi';
 
-import { Post as PostType } from '@/models/post.model';
+import { Post as PostModel, PostType } from '@/models/post.model';
 
 export default function Post({
   post,
   markdown,
   recentPosts,
 }: {
-  post: PostType;
+  post: PostModel;
   markdown: any;
-  recentPosts: { [key: string]: PostType[] };
+  recentPosts: { [key: string]: PostModel[] };
 }) {
   const router = useRouter();
   if (router.isFallback) {
@@ -71,22 +71,27 @@ export default function Post({
         <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-ccd-basics-050 2xl:fixed scrollbar">
           <section className="grid gap-4">
             <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
-              Recent Posts
+              Recent Courses
             </h3>
-            <RecentPostsList posts={recentPosts.post} />
+            <RecentPostsList posts={recentPosts[PostType.course]} />
           </section>
-
           <section className="grid gap-4">
             <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
               Recent Tutorials
             </h3>
-            <RecentPostsList posts={recentPosts.tutorials} />
+            <RecentPostsList posts={recentPosts[PostType.tutorial]} />
+          </section>
+          <section className="grid gap-4">
+            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
+              Recent Blog
+            </h3>
+            <RecentPostsList posts={recentPosts[PostType.post]} />
           </section>
           <section className="grid gap-4">
             <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
               Recent Podcasts
             </h3>
-            <RecentPostsList posts={recentPosts.podcasts} />
+            <RecentPostsList posts={recentPosts[PostType.podcast]} />
           </section>
         </section>
       </section>
@@ -96,16 +101,18 @@ export default function Post({
 
 export async function getStaticPaths() {
   const paths: any = [];
-  ['post', 'tutorials', 'podcasts'].forEach(async (postType) => {
-    const docData = await postsService(postType);
-    for (const doc of docData) {
-      paths.push({
-        params: {
-          permalink: doc.permalink.substring(1).split('/'),
-        },
-      });
+  [PostType.course, PostType.post, PostType.tutorial, PostType.podcast].forEach(
+    async (postType) => {
+      const docData = await postsService(postType);
+      for (const doc of docData) {
+        paths.push({
+          params: {
+            permalink: doc.permalink.substring(1).split('/'),
+          },
+        });
+      }
     }
-  });
+  );
   return {
     paths,
     fallback: true,
@@ -130,10 +137,10 @@ export async function getStaticProps({
     : null;
 
   const recentPosts = await postsRecentService([
-    'courses',
-    'post',
-    'tutorials',
-    'podcasts',
+    PostType.course,
+    PostType.post,
+    PostType.tutorial,
+    PostType.podcast,
   ]);
 
   return {

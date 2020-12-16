@@ -4,19 +4,18 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 import initFirebase from '@/utils/initFirebase';
-import { docData, collection, collectionData } from 'rxfire/firestore';
+import { docData, collectionData, doc } from 'rxfire/firestore';
 import { map, take } from 'rxjs/operators';
 import { Post } from '@/models/post.model';
-import { Observable } from 'rxjs';
 import { UserInfo } from '@/models/userInfo.model';
-const uuid = require('uuid');
+import { v4 as uuid } from 'uuid';
 
 initFirebase();
 const firestore = firebase.firestore();
 /* POST */
 
-export const postDataObservable = (id: string) => {
-  return docData<Post>(firestore.doc(id));
+export const postDataObservable = (path: string) => {
+  return docData<Post>(firestore.doc(path));
 };
 
 export const postsDataObservable = (postType: string, limit: number) => {
@@ -31,7 +30,7 @@ export const postsDataObservable = (postType: string, limit: number) => {
   }
 };
 
-export const postCreate = (type: PostType, title: string, basename: string) => {
+export const postCreate = (type: PostType, title: string, slug: string) => {
   const id = uuid();
   const uid = firebase.auth().currentUser?.uid;
   const post: Post = {
@@ -45,10 +44,12 @@ export const postCreate = (type: PostType, title: string, basename: string) => {
     title,
     status: PostStatus.draft,
     visibility: PostVisibility.private,
-    basename,
-    permalink: `/${basename}`,
+    slug,
+    permalink: `/${slug}`,
   };
-  return firestore.collection('posts').doc(id).set(post);
+  const docRef = firestore.collection('posts').doc(id);
+  docRef.set(post);
+  return docData<Post>(docRef);
 };
 
 export const postUpdate = (id: string, content: string) => {
@@ -102,12 +103,54 @@ export const postsByPublishedAtObservable = (
   );
 };
 
-export const postsBaseNameUnique = async (basename: string) => {
-  let ref = await firestore
-    .collection('posts')
-    .where('basename', '==', basename)
-    .get();
+export const postsSlugUnique = async (slug: string) => {
+  let ref = await firestore.collection('posts').where('slug', '==', slug).get();
   return ref.size > 0 ? false : true;
+};
+
+/* Post History */
+
+export const postHistoryDataObservable = (
+  postId: string,
+  historyId: string
+) => {
+  return docData<Post>(firestore.doc(`posts/${postId}/history/${historyId}`));
+};
+
+export const postHistoriesDataObservable = (postId: string) => {
+  return collectionData<Post>(
+    firestore.collection(`posts/${postId}/history`).orderBy('updatedAt', 'desc')
+  );
+};
+
+export const postHistoryUpdate = (history: Post) => {
+  const docRef = firestore.doc(
+    `posts/${history.postId}/history/${history.historyId}`
+  );
+  docRef.set(
+    {
+      ...history,
+      updatedAt: firebase.firestore.Timestamp.now(),
+      updatedBy: firebase.auth()?.currentUser?.uid,
+    },
+    { merge: true }
+  );
+  return docData(docRef);
+};
+
+export const postHistoryCreate = (history: Post) => {
+  const id = uuid();
+
+  const docRef = firestore.doc(`posts/${history.postId}/history/${id}`);
+  docRef.set({
+    ...history,
+    publishedAt: firebase.firestore.FieldValue.delete(),
+    status: PostStatus.draft,
+    updatedAt: firebase.firestore.Timestamp.now(),
+    updatedBy: firebase.auth()?.currentUser?.uid,
+    id: id,
+  });
+  return docData(docRef);
 };
 
 // User

@@ -7,7 +7,7 @@ export default function RecentPostsList({ posts }: { posts: Post[] }) {
   return (
     <>
       {posts.map((post) => (
-        <div key={post.basename}>
+        <div className="mt-6" key={post.slug}>
           <Link href={post.permalink}>
             <a className="links-primary">{post.title}</a>
           </Link>

@@ -12,7 +12,7 @@ export default function Podcasts({ posts }: { posts: Post[] }) {
       </Head>
 
       <main className="grid grid-cols-1 gap-2 mt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 place-items-auto">
-        <PostsCards type={PostType.podcasts} posts={posts} />
+        <PostsCards type={PostType.podcast} posts={posts} />
       </main>
 
       <footer></footer>
@@ -21,7 +21,7 @@ export default function Podcasts({ posts }: { posts: Post[] }) {
 }
 
 export async function getStaticProps() {
-  const posts = await postsService('podcasts');
+  const posts = await postsService(PostType.podcast);
 
   return {
     props: {

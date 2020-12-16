@@ -14,16 +14,13 @@ export default function PostsCards({
       {posts && posts.length > 0 ? (
         <>
           {posts.map((post) => (
-            <div
-              className="p-3 m-3 bg-white rounded shadow"
-              key={post.basename}
-            >
+            <div className="p-3 m-3 bg-white rounded shadow" key={post.slug}>
               <div>
                 <Link href={post.permalink}>
                   <a>
                     {post.thumbnail ? (
                       <>
-                        {type === PostType.podcasts ? (
+                        {type === PostType.podcast ? (
                           <Image
                             src={post.thumbnail}
                             alt={post.title}

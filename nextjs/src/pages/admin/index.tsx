@@ -4,6 +4,7 @@ import { withRouter } from 'next/router';
 
 import AdminMenu from '@/components/Admin/AdminMenu';
 import AdminTopBar from '@/components/Admin/AdminTopBar';
+import Layout from '@/layout/Layout';
 
 const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   ssr: false,
@@ -16,39 +17,27 @@ function AdminDashboard({ router }: { router: any }) {
   )}`;
   return (
     <>
-      <Head>
-        <title>
-          {`${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(2)}`} |
-          CodingCatDev
-        </title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      <Layout>
+        <Head>
+          <title>
+            {`${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(2)}`} |
+            CodingCatDev
+          </title>
+          <meta name="robots" content="noindex" />
+        </Head>
 
-      <div className="flex w-screen h-screen overflow-hidden bg-ccd-basics-100">
-        <AdminMenu />
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <AdminTopBar />
-          <main
-            className="relative flex-1 overflow-y-auto focus:outline-none"
-            tabIndex={0}
-          >
-            <div className="py-6">
-              {router.asPath === path ? (
-                <div className="px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
-                  <h1 className="text-2xl font-semibold text-ccd-basics-900">
-                    Dashboard
-                  </h1>
-                  <p className="text-lg">Show some welcoming things here.</p>
-                </div>
-              ) : (
-                <div className="px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
-                  <EditPosts path={path} />
-                </div>
-              )}
-            </div>
-          </main>
+        <div className="grid grid-cols-12 justify-items-stretch">
+          <div className="col-span-2">
+            <AdminMenu />
+          </div>
+          <div className="grid col-span-10 place-content-center">
+            <h1 className="text-2xl font-semibold text-ccd-basics-900">
+              Dashboard
+            </h1>
+            <p className="text-lg">Show some welcoming things here.</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     </>
   );
 }
