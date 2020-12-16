@@ -26,16 +26,16 @@ export const Footer = () => {
           stroke="transparent"
         />
       </svg>
-      <footer className="pt-16 pb-8 grid gap-10 xl:flex xl:gap-4 justify-around items-end text-ccd-basics-050 bg-ccd-purples-900">
+      <footer className="grid items-end justify-around gap-10 pt-16 pb-8 xl:flex xl:gap-4 text-ccd-basics-050 bg-ccd-purples-900">
         {/* LOGO & COPYRIGHT */}
         <section className="grid">
           <div className="flex">
-            <AJAlt className="h-24 w-24" />
+            <AJAlt className="w-24 h-24" />
             <section className="grid">
               <div className="grid ">
-                <h4 className="leading-tight mt-6">CodingCat.Dev</h4>
+                <h4 className="mt-6 leading-tight">CodingCat.Dev</h4>
                 <p className="text-xl font-bold">Purrfect Web Tutorials</p>
-                <p className="font-light text-xs leading-5 mt-4">
+                <p className="mt-4 text-xs font-light leading-5">
                   Copyright &#169; {new Date().getFullYear()} AJONP LLC.
                   <br />
                   All Rights Reserved
@@ -44,7 +44,7 @@ export const Footer = () => {
             </section>
           </div>
           {/* SOCIALS */}
-          <section className="mt-4 items-end flex w-full justify-between">
+          <section className="flex items-end justify-between w-full mt-4">
             <a href="" className={`${socialLinks} social-links`}>
               <Mail fill="#BC2261" />
             </a>
@@ -97,17 +97,17 @@ export const Footer = () => {
                 placeholder="alex@codingcat.dev"
               />
 
-              <button className="btn-secondary ml-4">Subscribe</button>
+              <button className="ml-4 btn-secondary">Subscribe</button>
             </div>
           </form>
 
-          <p className="text-right w-full">
+          <p className="w-full text-right">
             Site designed by{' '}
             <a
               href="https://brittneypostma.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold text-ccd-basics-050 hover:underline rounded-md hover:text-ccd-basics-050"
+              className="font-bold rounded-md text-ccd-basics-050 hover:underline hover:text-ccd-basics-050"
             >
               Brittney Postma
             </a>
@@ -116,7 +116,7 @@ export const Footer = () => {
         </section>
         <style jsx>{`
           .social-links:hover {
-            filter: brightness(1.5);
+            filter: brightness(1.2);
           }
         `}</style>
       </footer>

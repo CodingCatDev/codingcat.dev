@@ -35,6 +35,10 @@
   }
 
   @media (min-width: 768px) {
+    .scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #d11663 #5e1286;
+    }
     .scrollbar::-webkit-scrollbar {
       width: 8px;
     }
@@ -48,10 +52,6 @@
     }
     .scrollbar::-webkit-scrollbar-thumb:hover {
       background-color: #fd2087;
-    }
-    .scrollbar {
-      scrollbar-width: thin;
-      scrollbar-color: #d11663 #5e1286;
     }
   }
 
