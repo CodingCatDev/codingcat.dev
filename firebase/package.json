@@ -1,0 +1,21 @@
+{
+  "name": "ccd-firebase",
+  "version": "0.0.1",
+  "description": "Firebase for codingcat.cev",
+  "devDependencies": {
+    "ts-jest": "^26.4.4",
+    "typescript": "^4.1.2",
+    "prettier": "^2.2.1"
+  },
+  "scripts": {
+    "emulated:firebase-debug": "firebase emulators:start --inspect-functions --export-on-exit=./tests/data/firebase/emulator --import=./tests/data/firebase/emulator",
+    "emulated:firebase": "firebase emulators:start --export-on-exit=./tests/data/firebase/emulator --import=./tests/data/firebase/emulator",
+    "ci:emulator": "firebase emulators:exec 'cd tests && npm test'"
+  },
+  "author": "Alex Patterson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ajonp/ccd-nextjs/issues"
+  },
+  "homepage": "https://github.com/ajonp/ccd-nextjs#readme"
+}

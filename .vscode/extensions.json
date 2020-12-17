@@ -20,7 +20,6 @@
     "dbaeumer.vscode-eslint",
     "GraphQL.vscode-graphql",
     "wix.vscode-import-cost",
-    "stylelint.vscode-stylelint",
     "bradlc.vscode-tailwindcss",
     "PeterMekhaeil.vscode-tailwindcss-explorer",
     "ms-vscode.vscode-typescript-tslint-plugin"
