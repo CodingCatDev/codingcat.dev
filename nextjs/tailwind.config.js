@@ -86,6 +86,7 @@ module.exports = {
       },
       gridTemplateColumns: {
         sidebar: '1fr minmax(200px, 25%)',
+        settings: 'minmax(200px, 20%) 1fr',
         fit: 'repeat(auto-fit, minmax(250px, 1fr))',
         hero: '1.5fr 2fr',
       },

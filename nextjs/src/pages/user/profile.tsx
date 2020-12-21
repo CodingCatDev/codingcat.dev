@@ -2,6 +2,8 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
 import Layout from '@/layout/Layout';
+import SettingsLinks from '@/components/Settings/SettingsLinks';
+import UserProfile from '@/components/Settings/UserProfile';
 
 const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
   ssr: false,
@@ -14,14 +16,16 @@ export default function Profile() {
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
-
-      <main className="grid grid-cols-1 gap-2 mx-16 mt-20 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-12 place-items-auto">
-        <div className="col-span-1 lg:col-span-6">
-          <ProfileCard />
-        </div>
-      </main>
-
-      <footer></footer>
+      {/* <ProfileCard /> */}
+      <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
+        <section>
+          <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
+            Settings
+          </h2>
+          <SettingsLinks />
+        </section>
+        <UserProfile />
+      </section>
     </Layout>
   );
 }
