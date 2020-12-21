@@ -19,7 +19,7 @@ export const AppMenu: ComponentType<{
       leave="transition-opacity duration-75"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
-    >
+
       <div className="z-50 fixed inset-0 overflow-hidden bg-purple-100 bg-opacity-70">
         <div className="absolute inset-0 overflow-hidden">
           <OutsideClick toggle={setOverlayMenuActive} value={false}>
@@ -135,13 +135,13 @@ export const AppMenu: ComponentType<{
                           <div>
                             <img
                               className="inline-block rounded-full h-9 w-9"
-                              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              src="/static/images/avatar.png"
                               alt=""
                             />
                           </div>
                           <div className="ml-3">
                             <p className="text-sm font-medium text-white">
-                              Tom Cook
+                              User Name
                             </p>
                             <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
                               View profile
