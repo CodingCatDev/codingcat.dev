@@ -11,6 +11,7 @@ export interface Post {
   //Core Fields
   type: PostType;
   title: string;
+  titleSearch: string;
   status: PostStatus;
   publishedAt?: firebase.firestore.Timestamp;
   visibility: PostVisibility;

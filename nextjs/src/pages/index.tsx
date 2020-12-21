@@ -1,13 +1,11 @@
 import Head from 'next/head';
 import Link from 'next/link';
-
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
 
 import { postsRecentService } from '@/services/serversideApi';
 import { RecentPostsCards } from '@/components/RecentPostsCards';
 import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
-import Intro from '@/components/Home/Intro';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
 import BreakBarRight from '@/components/Home/BreakBarRight';
 
@@ -29,23 +27,42 @@ export default function Home({
       <Head>
         <title>CodingCatDev</title>
       </Head>
-      {/* <div
-          className="col-span-full"
-          style={{
-            backgroundImage: 'url(/static/images/drip.svg)',
-            backgroundPosition: '4rem -1rem',
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-          }}
-        > */}
-      <Intro />
-      {/* </div> */}
+      <section className="grid content-center gap-10 justify-self-center">
+        <h1 className="pt-8 text-5xl tracking-tight vertical-text-clip xl:tracking-wide sm:text-7xl lg:text-6xl 2xl:text-7xl">
+          Purrfect
+          <br />
+          Web Tutorials
+        </h1>
+        <p
+          className="font-light sm:text-2xl lg:text-xl xl:text-2xl"
+          style={{ maxWidth: `40ch` }}
+        >
+          Get the skills you need to become a better web developer today. High
+          quality courses with custom certificates and projects to show off your
+          new skills.
+        </p>
+        <div className="grid grid-flow-col gap-2">
+          <Link href="/courses">
+            <a
+              className="bg-red-400 btn-primary justify-self-end"
+              type="button"
+            >
+              Start Now
+            </a>
+          </Link>
+          <Link href="/courses">
+            <a className="btn-primary justify-self-start" type="button">
+              Go Pro
+            </a>
+          </Link>
+        </div>
+      </section>
       {/* COURSES */}
       <BreakBarLeft>
         <Skills />
       </BreakBarLeft>
       <section className="grid gap-10 px-10">
-        <h2 className="mt-4 text-4xl lg:text-5xl text-ccd-purples-900">
+        <h2 className="mt-4 text-4xl text-purple-900 lg:text-5xl">
           Latest Courses
         </h2>
         <div className="grid grid-cols-fit">
@@ -62,13 +79,13 @@ export default function Home({
       {/* TUTORIALS */}
       <BreakBarRight>
         <AJLogoLeft className="w-16 sm:w-16 md:w-20" />
-        <h3 className="absolute w-full text-2xl text-center text-ccd-basics-050 sm:text-4xl lg:text-4xl">
+        <h3 className="absolute w-full text-2xl text-center text-gray-050 sm:text-4xl lg:text-4xl">
           Learn with AJ and KC
         </h3>
         <KCAlt className="w-14 sm:w-14 md:w-20" />
       </BreakBarRight>
       <section className="grid gap-10 px-10">
-        <h2 className="mt-4 text-4xl text-right lg:text-5xl text-ccd-purples-900">
+        <h2 className="mt-4 text-4xl text-right text-purple-900 lg:text-5xl">
           Latest Tutorials
         </h2>
         <div className="grid grid-cols-fit">
@@ -86,13 +103,13 @@ export default function Home({
       <BreakBarLeft>
         <div className="relative flex items-center w-full">
           <AJHeartAlt className="w-16 sm:w-16 md:w-20" />
-          <h3 className="absolute w-full text-2xl text-center left-6 sm:left-8 md:left-0 text-ccd-basics-050 sm:text-3xl lg:text-4xl">
+          <h3 className="absolute w-full text-2xl text-center left-6 sm:left-8 md:left-0 text-gray-050 sm:text-3xl lg:text-4xl">
             Read what's going on in web dev
           </h3>
         </div>
       </BreakBarLeft>
       <section className="grid gap-10 px-10">
-        <h2 className="mt-4 text-4xl lg:text-5xl text-ccd-purples-900">
+        <h2 className="mt-4 text-4xl text-purple-900 lg:text-5xl">
           Blog Posts
         </h2>
         <div className="grid grid-cols-fit">
@@ -109,14 +126,14 @@ export default function Home({
       {/* PODCASTS */}
       <BreakBarRight>
         <div className="relative flex items-center justify-end w-full">
-          <h3 className="absolute w-full text-2xl text-center right-6 sm:right-8 md:right-0 text-ccd-basics-050 sm:text-3xl lg:text-4xl">
+          <h3 className="absolute w-full text-2xl text-center right-6 sm:right-8 md:right-0 text-gray-050 sm:text-3xl lg:text-4xl">
             Listen to the latest tech news
           </h3>
           <Podcasts className="w-16 sm:w-16 md:w-20" />
         </div>
       </BreakBarRight>
       <section className="grid gap-10 px-10">
-        <h2 className="mt-4 text-4xl text-right lg:text-5xl text-ccd-purples-900">
+        <h2 className="mt-4 text-4xl text-right text-purple-900 lg:text-5xl">
           Latest Podcasts
         </h2>
         <div className="grid grid-cols-fit">
@@ -130,7 +147,6 @@ export default function Home({
           </a>
         </Link>
       </section>
-      `
     </Layout>
   );
 }

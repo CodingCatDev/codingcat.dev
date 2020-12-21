@@ -82,16 +82,11 @@ const HitList = (show: any) => {
             <div className="w-full" key={name}>
               <Index indexName={name}>
                 <hr />
-                <header className="flex items-center space-x-4">
-                  <h2 className="font-sans text-2xl text-ccd-purples-900">
-                    {title}:{' '}
-                  </h2>
-                  <div className="text-ajonp-secondary-500">
-                    <Stats />
-                  </div>
-                </header>
                 <Results>
-                  <div className="overflow-auto" style={{ height: `50vh` }}>
+                  <div
+                    className="pt-2 overflow-auto"
+                    style={{ height: `50vh` }}
+                  >
                     <Hits
                       hitComponent={ahitComps[hitComp](() => setFocus(false))}
                     />

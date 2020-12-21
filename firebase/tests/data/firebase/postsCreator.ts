@@ -42,6 +42,7 @@ export function posts(): [Post] {
             ? 'post'
             : post.type.substring(0, post.type.length - 1),
         title: post.title,
+        titleSearch: post.title.toLowerCase(),
         status: PostStatus.published,
         visibility: PostVisibility.public,
         permalink: post.permalink,

@@ -17,30 +17,30 @@ import router from 'next/router';
 const postInitial = {
   type: PostType.post,
   title: '',
+  titleSearch: '',
   status: PostStatus.draft,
   visibility: PostVisibility.private,
   permalink: '',
   slug: '',
 };
 
-export default function CreatePost() {
+export default function CreatePost({ type }: { type: PostType }) {
   const [showModal, setShowModal] = useState(false);
   const [post, setPost] = useState<Post>(postInitial);
   const [slugUnique, setSlugUnique] = useState(false);
 
-  //TODO: We should pull these from firebase config or remote config
-  const postTypeSelectItems = [
-    { label: PostType.post, value: PostType.post },
-    { label: PostType.tutorial, value: PostType.tutorial },
-    { label: PostType.podcast, value: PostType.podcast },
-  ];
+  useEffect(() => {
+    setPost({
+      ...postInitial,
+      type,
+    });
+  }, [type]);
 
   const create = async () => {
     postCreate(post.type, post.title, post.slug)
       .pipe(take(1))
       .subscribe((p) => {
         setShowModal(false);
-        setPost(postInitial);
         router.push(`/admin/${router.query.type}/${p.id}`);
       });
   };
@@ -61,7 +61,9 @@ export default function CreatePost() {
       };
     }
     setPost(postUpdate);
-    setSlugUnique(await postsSlugUnique(postUpdate.slug));
+    postsSlugUnique(postUpdate.slug)
+      .pipe(take(1))
+      .subscribe((unique) => setSlugUnique(unique));
   };
 
   return (
@@ -71,7 +73,7 @@ export default function CreatePost() {
           className="cursor-pointer btn-primary"
           onClick={() => setShowModal(true)}
         >
-          Create Post
+          Create {post.type}
         </button>
       </div>
 
@@ -81,14 +83,13 @@ export default function CreatePost() {
           enter="ease-out duration-75"
           leave="ease-in duration-75"
         >
-          {/* This example requires Tailwind CSS v2.0+ */}
           <div className="fixed inset-0 z-10 overflow-y-auto">
             <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
               <div
                 className="fixed inset-0 transition-opacity"
                 aria-hidden="true"
               >
-                <div className="absolute inset-0 bg-ccd-purples-100 bg-opacity-70" />
+                <div className="absolute inset-0 bg-purple-100 bg-opacity-70" />
               </div>
               {/* This element is to trick the browser into centering the modal contents. */}
               <span
@@ -111,112 +112,10 @@ export default function CreatePost() {
                         <div className="sm:flex sm:items-start">
                           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 className="pb-2" id="modal-headline">
-                              Create Post
+                              Create {post.type}
                             </h3>
                             <div className="flex">
                               <div className={'grid gap-4'}>
-                                <Listbox
-                                  as="div"
-                                  className="space-y-1"
-                                  value={postTypeSelectItems}
-                                  onChange={() => setPost(post)}
-                                >
-                                  {({ open }) => (
-                                    <>
-                                      <Listbox.Label className="block text-sm font-bold leading-5">
-                                        Type
-                                      </Listbox.Label>
-                                      <div className="relative">
-                                        <span className="inline-block w-full rounded-md shadow-sm">
-                                          <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md cursor-default focus:outline-none focus:shadow-outline-blue focus:border-ccd-purples-300 sm:text-sm sm:leading-5">
-                                            <span className="block truncate">
-                                              {post.type}
-                                            </span>
-                                            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                              <svg
-                                                className="w-5 h-5 text-gray-400"
-                                                viewBox="0 0 20 20"
-                                                fill="none"
-                                                stroke="currentColor"
-                                              >
-                                                <path
-                                                  d="M7 7l3-3 3 3m0 6l-3 3-3-3"
-                                                  strokeWidth="1.5"
-                                                  strokeLinecap="round"
-                                                  strokeLinejoin="round"
-                                                />
-                                              </svg>
-                                            </span>
-                                          </Listbox.Button>
-                                        </span>
-
-                                        <Transition
-                                          show={open}
-                                          leave="transition ease-in duration-100"
-                                          leaveFrom="opacity-100"
-                                          leaveTo="opacity-0"
-                                          className="absolute w-full mt-1 bg-white rounded-md shadow-lg"
-                                        >
-                                          <Listbox.Options
-                                            static
-                                            className="py-1 overflow-auto text-base leading-6 rounded-md shadow-xs max-h-60 focus:outline-none sm:text-sm sm:leading-5"
-                                          >
-                                            {postTypeSelectItems.map(
-                                              (postType) => (
-                                                <Listbox.Option
-                                                  key={postType.value}
-                                                  value={postType.value}
-                                                >
-                                                  {({ selected, active }) => (
-                                                    <div
-                                                      className={`${
-                                                        active
-                                                          ? 'text-white bg-ccd-purples-600'
-                                                          : 'text-gray-900'
-                                                      } cursor-default select-none relative py-2 pl-8 pr-4`}
-                                                    >
-                                                      <span
-                                                        className={`${
-                                                          selected
-                                                            ? 'font-semibold'
-                                                            : 'font-normal'
-                                                        } block truncate`}
-                                                      >
-                                                        {postType.label}
-                                                      </span>
-                                                      {selected && (
-                                                        <span
-                                                          className={`${
-                                                            active
-                                                              ? 'text-white'
-                                                              : 'text-ccd-purples-600'
-                                                          } absolute inset-y-0 left-0 flex items-center pl-1.5`}
-                                                        >
-                                                          <svg
-                                                            className="w-5 h-5"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 20 20"
-                                                            fill="currentColor"
-                                                          >
-                                                            <path
-                                                              fillRule="evenodd"
-                                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                              clipRule="evenodd"
-                                                            />
-                                                          </svg>
-                                                        </span>
-                                                      )}
-                                                    </div>
-                                                  )}
-                                                </Listbox.Option>
-                                              )
-                                            )}
-                                          </Listbox.Options>
-                                        </Transition>
-                                      </div>
-                                    </>
-                                  )}
-                                </Listbox>
                                 <label
                                   className="block mb-2 text-sm font-bold leading-5"
                                   htmlFor="username"
@@ -247,7 +146,7 @@ export default function CreatePost() {
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
-                                            className="h-4 text-ccd-greens-600"
+                                            className="h-4 text-green-600"
                                           >
                                             <path
                                               strokeLinecap="round"
@@ -264,7 +163,7 @@ export default function CreatePost() {
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
-                                            className="h-4 text-ccd-reds-800"
+                                            className="h-4 text-red-800"
                                           >
                                             <path
                                               strokeLinecap="round"
@@ -295,7 +194,7 @@ export default function CreatePost() {
                         <button
                           type="button"
                           onClick={() => create()}
-                          className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-sm disabled:opacity-25 bg-ccd-purples-900 hover:bg-ccd-purples-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ccd-purples-500 sm:ml-3 sm:w-auto sm:text-sm"
+                          className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-purple-900 border border-transparent rounded-md shadow-sm disabled:opacity-25 hover:bg-purple-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm"
                           disabled={
                             post.title === '' || post.slug === '' || !slugUnique
                           }

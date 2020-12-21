@@ -2,7 +2,7 @@ export default function AdminTopBar() {
   return (
     <>
       <div className="relative flex flex-shrink-0 h-16 bg-white shadow">
-        <button className="px-4 border-r border-ccd-basics-200 text-ccd-basics-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden">
+        <button className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden">
           <span className="sr-only">Open sidebar</span>
           {/* Heroicon name: menu-alt-2 */}
           <svg
@@ -27,7 +27,7 @@ export default function AdminTopBar() {
               <label htmlFor="search_field" className="sr-only">
                 Search
               </label>
-              <div className="relative w-full text-ccd-basics-400 focus-within:text-ccd-basics-600">
+              <div className="relative w-full text-gray-400 focus-within:text-gray-600">
                 <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
                   {/* Heroicon name: search */}
                   <svg
@@ -46,7 +46,7 @@ export default function AdminTopBar() {
                 </div>
                 <input
                   id="search_field"
-                  className="block w-full h-full py-2 pl-8 pr-3 border-transparent text-ccd-basics-900 placeholder-ccd-basics-500 focus:outline-none focus:placeholder-ccd-basics-400 focus:ring-0 focus:border-transparent sm:text-sm"
+                  className="block w-full h-full py-2 pl-8 pr-3 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
                   placeholder="Search"
                   type="search"
                 />

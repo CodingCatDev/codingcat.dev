@@ -14,7 +14,7 @@ export default () => {
 
   const Modal = ({ handleClose, show, children }: any) => {
     const showHideclassNameName = show
-      ? 'w-screen h-screen fixed inset-0 z-50 grid bg-ccd-basics-900 bg-opacity-50 place-items-center'
+      ? 'w-screen h-screen fixed inset-0 z-50 grid bg-gray-900 bg-opacity-50 place-items-center'
       : 'hidden';
     return <section className={showHideclassNameName}>{children}</section>;
   };
@@ -23,7 +23,7 @@ export default () => {
     <>
       <Modal show={show} handleClose={hideModal}>
         <div
-          className="flex items-center w-full max-w-md min-h-0 p-4 mx-auto space-x-4 rounded-md bg-ccd-basics-050"
+          className="flex items-center w-full max-w-md min-h-0 p-4 mx-auto space-x-4 rounded-md bg-gray-050"
           style={{
             animation:
               'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
@@ -32,10 +32,10 @@ export default () => {
           {/* <div className="fixed inset-0 h-screen bg-black opacity-75"></div>
           <div className="relative flex flex-col flex-wrap bg-white rounded">
             <div className="absolute top-0 right-0 p-1"> */}
-          <div className="relative grid w-full gap-4">
+          <div className="relative grid w-full grid-cols-1 gap-4 place-content-start">
             <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
             <button
-              className="absolute top-0 right-0 p-1 text-2xl transition-colors rounded-full text-ccd-purples-900 hover:text-ccd-pinks-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ccd-purples-900"
+              className="absolute top-0 right-0 p-1 text-2xl transition-colors rounded-full text-purple-900 hover:text-pink-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-900"
               onClick={hideModal}
               aria-label="Close Search Modal"
             >
@@ -49,7 +49,7 @@ export default () => {
         className={
           show
             ? 'hidden'
-            : 'flex items-center p-1 rounded-full hover:bg-ccd-purples-800 text-ccd-basics-050'
+            : 'flex items-center p-1 rounded-full hover:bg-purple-800 text-gray-050'
         }
         onClick={showModal}
         aria-label="Show Search Modal"

@@ -1,6 +1,5 @@
-const admin = require('firebase-admin');
+import admin from 'firebase-admin';
 const serviceAccountKey = require('../../../serviceAccountKey.json');
-const seed = require('firestore-seed');
 import { posts } from './postsCreator';
 
 // Initialize firebase-admin.
@@ -10,7 +9,6 @@ admin.initializeApp({
   storageBucket: 'dev-codingcat-dev.appspot.com',
 });
 
-const postDocs = [];
 posts().forEach((post) => {
   const postDoc = {
     ...post,
@@ -26,16 +24,5 @@ posts().forEach((post) => {
     createdBy: 'i6YGgcTIzpQd2aHhbZqNJPZxy6Z2',
     updatedBy: 'i6YGgcTIzpQd2aHhbZqNJPZxy6Z2',
   };
-  postDocs.push(seed.doc(postDoc.id, postDoc));
+  admin.firestore().doc(`/posts/${postDoc.id}`).set(postDoc);
 });
-
-const postCollection = seed.collection(`posts`, postDocs);
-
-postCollection
-  .importDocuments(admin)
-  .then(() => {
-    console.log('Successfully imported documents.');
-  })
-  .catch((e) => {
-    console.log('Failed to import documents: ' + e);
-  });

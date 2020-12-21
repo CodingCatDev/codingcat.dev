@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Blog from '@/components/global/icons/nav/Blog';
 import Community from '@/components/global/icons/nav/Community';
 import Courses from '@/components/global/icons/nav/Courses';
+import Lessons from '@/components/global/icons/nav/Lessons';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
 
@@ -10,7 +11,7 @@ export default function AdminMenu() {
   return (
     <>
       {/* Static sidebar for desktop */}
-      <div className="hidden h-full bg-gray-800 md:block text-ccd-basics-300">
+      <div className="hidden h-full bg-gray-800 md:block text-gray-300">
         <div className="flex items-center flex-shrink-0 h-16 px-4">
           <Link href="/">
             <a>
@@ -33,6 +34,14 @@ export default function AdminMenu() {
                   <Courses />
                 </div>
                 Courses
+              </a>
+            </Link>
+            <Link href="/admin/lessons">
+              <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group">
+                <div className="mr-2">
+                  <Lessons />
+                </div>
+                Lessons
               </a>
             </Link>
             <Link href="/admin/tutorials">

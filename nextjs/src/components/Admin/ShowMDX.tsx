@@ -21,7 +21,7 @@ class ErrorBoundary extends React.Component<
       return (
         <div className="grid grid-cols-1">
           <p>You have an error in your markdown.</p>
-          <p className="text-ccd-reds-800">{this.state.error.message}</p>
+          <p className="text-red-800">{this.state.error.message}</p>
         </div>
       );
     }

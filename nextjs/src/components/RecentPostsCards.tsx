@@ -10,7 +10,7 @@ export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
   return (
     <>
       {recentPosts.map((post: Post) => (
-        <div className="p-3 m-3 bg-white rounded shadow " key={post.slug}>
+        <div className="p-3 m-3 bg-white rounded shadow " key={post.id}>
           <div>
             <Link href={post.permalink}>
               <a>
@@ -32,10 +32,10 @@ export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
             </Link>
           </div>
           <div className="mt-6">
-            <p className="mb-2 text-lg tracking-wide text-bold text-ccd-basics-600">
+            <p className="mb-2 text-lg tracking-wide text-gray-600 text-bold">
               {post.title}
             </p>
-            <p className="text-sm font-hairline text-ccd-basics-600">
+            <p className="text-sm font-hairline text-gray-600">
               {post.excerpt}
             </p>
           </div>

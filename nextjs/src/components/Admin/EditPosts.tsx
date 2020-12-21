@@ -16,14 +16,14 @@ function EditPosts({ path }: { path: string }) {
   const [posts, setPosts] = useState<Post[]>([]);
   useEffect(() => {
     postsByUpdatedAtObservable(
-      path.substring(1) === 'blog' ? 'post' : path.substring(1)
+      path.substring(1) === 'blog' ? 'post' : path.substring(1, path.length - 1)
     ).subscribe((posts) => setPosts(posts));
   }, [path]);
 
   function postId(rowData: Post) {
     return (
       <Link href={`.${path}/${rowData.id}`}>
-        <a className="underline text-ccd-purples-500">{rowData.id}</a>
+        <a className="underline text-purple-500">{rowData.id}</a>
       </Link>
     );
   }

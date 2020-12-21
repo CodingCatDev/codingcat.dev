@@ -10,11 +10,13 @@ import {
   postHistoriesDataObservable,
   postHistoryCreate,
   postHistoryDataObservable,
+  postHistoryPublish,
   postHistoryUpdate,
   postUpdate,
 } from '@/services/api';
 
-import { Post } from '@/models/post.model';
+import { Post, PostStatus, PostType } from '@/models/post.model.ts';
+import { Course } from '@/models/course.model.ts';
 
 import { debounce, switchMap, take } from 'rxjs/operators';
 import { interval, Subject } from 'rxjs';
@@ -22,17 +24,30 @@ import matter from 'gray-matter';
 import Link from 'next/link';
 import ShowMDX from '@/components/Admin/ShowMDX';
 import PostHistories from '@/components/Admin/PostHistories';
+import CourseSections from '@/components/Admin/CourseSections';
 
-export default function EditPost({ router }: { router: any }) {
+enum TabType {
+  edit = 'edit',
+  sections = 'sections',
+  preview = 'preview',
+}
+
+export default function EditPost({
+  router,
+  type,
+}: {
+  router: any;
+  type: PostType;
+}) {
   const [postFound, setPostFound] = useState(false);
-  const [postHistories, setPostHistories] = useState<Post[]>([]);
-  const [history, setHistory] = useState<Post | null>(null);
-  const [post, setPost] = useState<Post | null>(null);
+  const [postHistories, setPostHistories] = useState<Post[] | Course[]>([]);
+  const [history, setHistory] = useState<Post | Course>();
+  const [post, setPost] = useState<Post | Course>();
   const [path, setPath] = useState<string>('');
-  const [tab, setTab] = useState<string>('edit');
+  const [tab, setTab] = useState<TabType>(TabType.edit);
   const [saving, setSaving] = useState<boolean>(false);
-  const [updateContent$, setUpdateContent$] = useState<Subject<Post>>(
-    new Subject<Post>()
+  const [updateContent$, setUpdateContent$] = useState<Subject<Post | Course>>(
+    new Subject<Post | Course>()
   );
   const [preview, setPreview] = useState<string>('');
   const [scope, setScope] = useState<
@@ -107,16 +122,55 @@ export default function EditPost({ router }: { router: any }) {
 
   function handleChange(event: { target: { value: string } }) {
     const content = event.target.value;
-    const update: Post = { ...history, content } as Post;
+    const update: Post | Course = { ...history, content } as Post | Course;
     setHistory(update);
     updateContent$.next({ ...update, historyId: history?.id });
-  }
-  function selectTab(tab: string) {
-    setTab(tab);
   }
 
   function toggleShowHistory() {
     setShowHistory(!showHistory);
+  }
+
+  function onPublish() {
+    if (history) {
+      setSaving(true);
+      postHistoryPublish(history)
+        .pipe(take(1))
+        .subscribe(() => setSaving(false));
+    }
+  }
+  function selectTab(tab: TabType) {
+    setTab(tab);
+  }
+
+  function onTab() {
+    switch (tab) {
+      case TabType.sections:
+        return <CourseSections historyInput={history as Course} />;
+      case TabType.preview:
+        return (
+          <div
+            className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto`}
+          >
+            <article className="pt-8 prose prose-purple lg:prose-xl">
+              <ShowMDX components={components} scope={scope}>
+                {preview}
+              </ShowMDX>
+            </article>
+          </div>
+        );
+      default:
+        return (
+          <textarea
+            id="content"
+            name="content"
+            onChange={handleChange}
+            className={`form-textarea shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
+            placeholder="Markdown goes here..."
+            value={history ? history.content : ''}
+          ></textarea>
+        );
+    }
   }
 
   return (
@@ -127,7 +181,15 @@ export default function EditPost({ router }: { router: any }) {
             <div className="flex w-full p-2 text-sm bg-gray-800">
               <div className="flex flex-col items-start flex-grow">
                 <div className="flex flex-wrap items-center flex-grow text-white">
-                  <div className="p-1 rounded-sm bg-ccd-basics-300">Draft</div>
+                  <div
+                    className={`p-1 rounded-sm ${
+                      history.status === PostStatus.draft
+                        ? 'bg-gray-300'
+                        : 'bg-green-300'
+                    }`}
+                  >
+                    {history.status}
+                  </div>
 
                   <span
                     className="ml-1 text-xs underline cursor-pointer"
@@ -164,7 +226,7 @@ export default function EditPost({ router }: { router: any }) {
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        className="w-8 h-8 text-ccd-greens-500"
+                        className="w-8 h-8 text-green-500"
                       >
                         <path
                           strokeLinecap="round"
@@ -179,12 +241,34 @@ export default function EditPost({ router }: { router: any }) {
               </div>
               <div>
                 <button
-                  className={`text-white btn-primary bg-ccd-basics-300 ${
+                  className={`text-white btn-primary bg-gray-300 ${
                     showHistory ? 'block' : 'hidden'
                   }`}
                   onClick={() => toggleShowHistory()}
                 >
                   Back
+                </button>
+                <button
+                  className={`text-white text-sm btn-primary bg-purple-800 flex items-center ${
+                    !showHistory ? 'block' : 'hidden'
+                  }`}
+                  onClick={() => onPublish()}
+                >
+                  Publish
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-6 ml-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -193,48 +277,41 @@ export default function EditPost({ router }: { router: any }) {
                 <PostHistories postHistories={postHistories} />
               ) : (
                 <>
-                  <ul className="grid grid-cols-2">
+                  <ul className="grid grid-flow-col bg-gray-800">
                     <li
-                      className={`py-2 px-6 rounded-t-lg cursor-pointer ${
-                        tab === 'edit'
-                          ? 'bg-ccd-purples-800 text-white'
-                          : 'bg-ccd-basics-200 text-ccd-basics-500'
+                      className={`py-2 px-6 rounded-t-xl cursor-pointer ${
+                        tab === TabType.edit
+                          ? 'bg-purple-800 text-white'
+                          : 'bg-gray-200 text-gray-500'
                       }`}
-                      onClick={() => selectTab('edit')}
+                      onClick={() => selectTab(TabType.edit)}
                     >
                       Edit
                     </li>
                     <li
-                      className={`py-2 px-6 rounded-t-lg cursor-pointer ${
-                        tab === 'preview'
-                          ? 'bg-ccd-purples-800 text-white'
-                          : 'bg-ccd-basics-200 text-ccd-basics-500'
+                      className={`py-2 px-6 rounded-t-xl cursor-pointer
+                      ${type === PostType.course ? 'block' : 'hidden'} 
+                      ${
+                        tab === TabType.sections
+                          ? 'bg-purple-800 text-white'
+                          : 'bg-gray-200 text-gray-500'
                       }`}
-                      onClick={() => selectTab('preview')}
+                      onClick={() => selectTab(TabType.sections)}
+                    >
+                      Sections
+                    </li>
+                    <li
+                      className={`py-2 px-6 rounded-t-xl cursor-pointer ${
+                        tab === TabType.preview
+                          ? 'bg-purple-800 text-white'
+                          : 'bg-gray-200 text-gray-500'
+                      }`}
+                      onClick={() => selectTab(TabType.preview)}
                     >
                       Preview
                     </li>
                   </ul>
-                  {tab === 'edit' ? (
-                    <textarea
-                      id="content"
-                      name="content"
-                      onChange={handleChange}
-                      className={`form-textarea shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
-                      placeholder="Markdown goes here..."
-                      value={history ? history.content : ''}
-                    ></textarea>
-                  ) : (
-                    <div
-                      className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto bg-ccd-basics-100`}
-                    >
-                      <article className="pt-8 prose prose-ccd-purples lg:prose-xl">
-                        <ShowMDX components={components} scope={scope}>
-                          {preview}
-                        </ShowMDX>
-                      </article>
-                    </div>
-                  )}
+                  {onTab()}
                 </>
               )}
             </div>

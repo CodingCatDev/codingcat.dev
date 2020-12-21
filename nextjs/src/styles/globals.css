@@ -1,18 +1,18 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   @font-face {
     font-family: 'nunito';
     font-style: normal;
-    src: url(../fonts/Nunito-Regular.ttf) format('truetype');
+    src: url(/static/fonts/Nunito-Regular.ttf) format('truetype');
     font-display: swap;
   }
 
   @font-face {
     font-family: 'nunito-light';
-    src: url(../fonts/Nunito-ExtraLight.ttf) format('truetype');
+    src: url(/static/fonts/Nunito-ExtraLight.ttf) format('truetype');
     font-weight: 200;
     font-display: swap;
   }
@@ -21,17 +21,17 @@
     font-family: 'Henny Penny';
     font-style: normal;
     font-weight: 400;
-    src: url(../fonts/HennyPenny-Regular.ttf) format('truetype');
+    src: url(/static/fonts/HennyPenny-Regular.ttf) format('truetype');
     line-height: 1.2;
     font-display: swap;
   }
 
   a {
-    @apply transition-colors text-ccd-purples-900 hover:text-ccd-pinks-600;
+    @apply text-purple-900 transition-colors hover:text-pink-600;
   }
 
   body {
-    @apply box-border bg-ccd-purples-900 text-ccd-purples-900;
+    @apply box-border text-purple-900 bg-purple-900;
   }
 
   @media (min-width: 768px) {
@@ -78,19 +78,19 @@
   }
 
   input {
-    @apply w-full px-4 py-2 text-base border rounded-md shadow-md appearance-none border-ccd-basics-200 bg-ccd-basics-050 text-ccd-basics-600 placeholder-ccd-basics-400 focus:outline-none focus:ring-2 focus:ring-ccd-purples-400 focus:border-transparent;
+    @apply w-full px-4 py-2 text-base text-gray-600 placeholder-gray-400 border border-gray-200 rounded-md shadow-md appearance-none bg-gray-050 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none text-ccd-basics-050 bg-ccd-purples-900 hover:bg-ccd-purples-800 hover:shadow-sm focus:shadow-outline;
+    @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out bg-purple-900 rounded-md shadow-md outline-none text-gray-050 hover:bg-purple-800 hover:shadow-sm focus:shadow-outline;
   }
   .btn-secondary {
-    @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none bg-ccd-basics-050 text-ccd-purples-900 hover:text-ccd-basics-050 hover:bg-ccd-purples-400 hover:shadow-sm focus:shadow-outline;
+    @apply px-6 py-2 font-bold leading-loose text-purple-900 transition duration-500 ease-in-out rounded-md shadow-md outline-none bg-gray-050 hover:text-gray-050 hover:bg-purple-400 hover:shadow-sm focus:shadow-outline;
   }
   .links-secondary {
-    @apply transition-colors text-ccd-basics-050 hover:text-ccd-basics-050 hover:underline;
+    @apply transition-colors text-gray-050 hover:text-gray-050 hover:underline;
   }
   .vertical-text-clip {
     background-color: #4b0a75;

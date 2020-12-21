@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Observable, Subscription } from 'rxjs';
 import { UserInfo } from '@/models/userInfo.model';
 import { userProfileDataObservable } from '@/services/api';
-import firebase from 'firebase/app';
+import firebaseApp from 'firebase/app';
 import { authState } from 'rxfire/auth';
 import { takeWhile, switchMap } from 'rxjs/operators';
 
@@ -18,36 +18,40 @@ export default function UserSignin({
   userMenu: boolean;
   setUserMenu: Dispatch<SetStateAction<boolean>>;
 }) {
-  const { user, signout } = useUser();
+  const { user, signout, app } = useUser();
 
   const [profile, setProfile] = useState<UserInfo | null>(null);
 
   let subscription: Subscription;
   useEffect(() => {
-    subscription = authState(firebase.auth())
-      .pipe(
-        takeWhile((user) => {
-          if (!user && subscription) {
-            subscription.unsubscribe();
-          }
-          return user != null;
-        }),
-        switchMap((u: firebase.UserInfo) => userProfileDataObservable(u.uid))
-      )
-      .subscribe((profile) => setProfile(profile));
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, []);
+    if (app) {
+      subscription = authState(app.auth())
+        .pipe(
+          takeWhile((user) => {
+            if (!user && subscription) {
+              subscription.unsubscribe();
+            }
+            return user != null;
+          }),
+          switchMap((u: firebaseApp.UserInfo) =>
+            userProfileDataObservable(u.uid)
+          )
+        )
+        .subscribe((profile) => setProfile(profile));
+      return () => {
+        if (subscription) {
+          subscription.unsubscribe();
+        }
+      };
+    }
+  }, [app]);
 
   return (
     <>
       <div className="relative">
         {user ? (
           <button
-            className="flex p-1 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ccd-purples-800 focus:ring-white hover:bg-ccd-purples-800"
+            className="flex p-1 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-800 focus:ring-white hover:bg-purple-800"
             id="user-menu"
             aria-haspopup="true"
             onClick={() => setUserMenu(!userMenu)}
@@ -73,7 +77,7 @@ export default function UserSignin({
           </button>
         ) : (
           <Link href="/user/profile">
-            <a className="flex items-center justify-center p-2 rounded text-ccd-basics-050 hover:bg-ccd-purples-800 hover:text-ccd-basics-050 focus:ring-2 focus:ring-ccd-basics-050">
+            <a className="flex items-center justify-center p-2 rounded text-gray-050 hover:bg-purple-800 hover:text-gray-050 focus:ring-2 focus:ring-gray-050">
               <svg
                 width="20"
                 height="20"
@@ -88,7 +92,7 @@ export default function UserSignin({
                   fill="#FBFBFB"
                 />
               </svg>
-              <span className="ml-2 hover:text-ccd-basics-050 whitespace-nowrap">
+              <span className="ml-2 hover:text-gray-050 whitespace-nowrap">
                 Sign In
               </span>
             </a>
@@ -105,17 +109,17 @@ export default function UserSignin({
         leaveTo="transform opacity-0 scale-95"
       >
         <div
-          className="absolute right-0 z-40 w-48 p-2 py-1 mt-2 origin-top-right rounded-md shadow-lg bg-ccd-basics-050 ring-1 ring-black ring-opacity-5"
+          className="absolute right-0 z-40 w-48 p-2 py-1 mt-2 origin-top-right rounded-md shadow-lg bg-gray-050 ring-1 ring-black ring-opacity-5"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="user-menu"
         >
           <ActiveLink
-            activeClassName="rounded first-child:text-ccd-purples-900"
+            activeClassName="rounded first-child:text-purple-900"
             href="/user/profile"
           >
             <a
-              className="flex items-center p-2 text-sm text-ccd-basics-900 hover:bg-ccd-purples-050"
+              className="flex items-center p-2 text-sm text-gray-900 hover:bg-purple-050"
               role="menuitem"
             >
               <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -143,7 +147,7 @@ export default function UserSignin({
           </ActiveLink>
           <a
             href="#"
-            className="flex items-center p-2 text-sm text-ccd-basics-900 hover:bg-ccd-purples-050"
+            className="flex items-center p-2 text-sm text-gray-900 hover:bg-purple-050"
             role="menuitem"
           >
             <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -189,7 +193,7 @@ export default function UserSignin({
           </a>
           <a
             href="#"
-            className="flex items-center p-2 text-sm text-ccd-basics-900 hover:bg-ccd-purples-050"
+            className="flex items-center p-2 text-sm text-gray-900 hover:bg-purple-050"
             role="menuitem"
             onClick={() => signout()}
           >

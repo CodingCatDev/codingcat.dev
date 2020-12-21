@@ -47,12 +47,12 @@ export default function PostsCards({
                 </Link>
               </div>
               <div className="mt-6">
-                <p className="mb-2 text-lg tracking-wide text-bold text-ccd-basics-600">
+                <p className="mb-2 text-lg tracking-wide text-bold text-gray-600">
                   <Link href={post.permalink}>
                     <a>{post.title}</a>
                   </Link>
                 </p>
-                <p className="text-sm font-hairline text-ccd-basics-600">
+                <p className="text-sm font-hairline text-gray-600">
                   {post.excerpt}
                 </p>
               </div>

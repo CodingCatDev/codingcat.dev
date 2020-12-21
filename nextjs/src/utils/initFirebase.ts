@@ -1,28 +1,39 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
-import 'firebase/database';
-import 'firebase/analytics';
-import 'firebase/remote-config';
-import 'firebase/messaging';
-
 import { config } from '@/config/firebase';
 
-export default function initFirebase() {
-  if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-    if (process.env.NEXT_PUBLIC_CCD_EMULATED) {
-      firebase.auth().useEmulator('http://localhost:9099/');
-      firebase.firestore().useEmulator('localhost', 8080);
-      firebase.database().useEmulator('localhost', 9000);
-    } else {
-      firebase.auth();
-      firebase.firestore();
-      firebase.database();
-    }
-    firebase.analytics();
-    firebase.remoteConfig();
-    firebase.messaging();
+export default async function initFirebase() {
+  if (typeof window === 'undefined') {
+    return;
   }
-  return firebase;
+  try {
+    const firebase = await import('firebase/app');
+    await import('firebase/auth');
+    await import('firebase/firestore');
+    await import('firebase/database');
+    await import('firebase/analytics');
+    await import('firebase/remote-config');
+    await import('firebase/messaging');
+    if (!firebase.default.apps.length) {
+      firebase.default.initializeApp(config);
+      if (process.env.NEXT_PUBLIC_CCD_EMULATED) {
+        firebase.default.auth().useEmulator('http://localhost:9099/');
+        firebase.default.firestore().useEmulator('localhost', 8080);
+        firebase.default.database().useEmulator('localhost', 9000);
+      } else {
+        firebase.default.auth();
+        firebase.default.firestore();
+        firebase.default.database();
+      }
+      firebase.default.analytics();
+      firebase.default.remoteConfig();
+      firebase.default.messaging();
+    }
+    return firebase.default.app();
+  } catch (err) {
+    // we skip the "already exists" message which is
+    // not an actual error when we're hot-reloading
+    console.log(err);
+    if (!/already exists/.test(err.message)) {
+      console.error('Firebase initialization error', err.stack);
+    }
+  }
 }

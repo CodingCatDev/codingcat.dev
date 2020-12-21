@@ -48,7 +48,7 @@ export default function Post({
     <Layout>
       <section className="sticky top-0 z-10">
         <BreakBarLeft>
-          <h1 className="w-1/2 font-sans text-4xl leading-relaxed text-ccd-basics-050">
+          <h1 className="w-1/2 font-sans text-4xl leading-relaxed text-gray-050">
             {post.title}
           </h1>
           <label htmlFor="search_blog" className="sr-only">
@@ -68,27 +68,27 @@ export default function Post({
           {content}
         </article>
         {/* RECENTS */}
-        <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-ccd-basics-050 2xl:fixed scrollbar">
+        <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-gray-050 2xl:fixed scrollbar">
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
+            <h3 className="font-sans text-3xl text-pink-500 underline text-mt-4">
               Recent Courses
             </h3>
             <RecentPostsList posts={recentPosts[PostType.course]} />
           </section>
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
+            <h3 className="font-sans text-3xl text-pink-500 underline text-mt-4">
               Recent Tutorials
             </h3>
             <RecentPostsList posts={recentPosts[PostType.tutorial]} />
           </section>
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
+            <h3 className="font-sans text-3xl text-pink-500 underline text-mt-4">
               Recent Blog
             </h3>
             <RecentPostsList posts={recentPosts[PostType.post]} />
           </section>
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-mt-4 text-ccd-pinks-500">
+            <h3 className="font-sans text-3xl text-pink-500 underline text-mt-4">
               Recent Podcasts
             </h3>
             <RecentPostsList posts={recentPosts[PostType.podcast]} />

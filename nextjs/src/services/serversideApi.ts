@@ -14,10 +14,12 @@ export async function postsRecentService(recentPostsTypes: string[]) {
         .where('type', '==', postType)
         .where('publishedAt', '<', admin.firestore.Timestamp.now())
         .orderBy('publishedAt', 'desc')
-        .limit(4)
+        .limit(3)
         .get();
       for (const doc of posts.docs) {
-        recentPosts[postType].push(cleanTimestamp(doc.data()) as Post);
+        recentPosts[postType].push(
+          cleanTimestamp(smallPostPayload(doc)) as Post
+        );
       }
     })
   );
@@ -35,7 +37,7 @@ export async function postsService(postType: string) {
 
   const posts: FirebaseFirestore.DocumentData[] = [];
   for (const doc of postDocs.docs) {
-    posts.push(cleanTimestamp(doc.data()));
+    posts.push(cleanTimestamp(smallPostPayload(doc)));
   }
   return posts;
 }
@@ -69,4 +71,10 @@ export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
     }
   });
   return docData;
+}
+
+function smallPostPayload(doc: FirebaseFirestore.DocumentData) {
+  const post = doc.data() as Post;
+  delete post.content;
+  return post;
 }

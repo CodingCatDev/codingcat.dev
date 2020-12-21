@@ -5,6 +5,8 @@ import { withRouter } from 'next/router';
 import Layout from '@/layout/Layout';
 import AdminMenu from '@/components/Admin/AdminMenu';
 import AdminTopBar from '@/components/Admin/AdminTopBar';
+import { useEffect, useState } from 'react';
+import { PostType } from '@/models/post.model';
 
 const EditPost = dynamic(() => import('@/components/Admin/EditPost'), {
   ssr: false,
@@ -12,6 +14,28 @@ const EditPost = dynamic(() => import('@/components/Admin/EditPost'), {
 });
 
 function AdminDashboard({ router }: { router: any }) {
+  const [type, setType] = useState(PostType.post);
+
+  useEffect(() => {
+    const pathType = router.query.type;
+    switch (pathType) {
+      case 'courses':
+        setType(PostType.course);
+        break;
+      case 'lessons':
+        setType(PostType.lesson);
+        break;
+      case 'tutorials':
+        setType(PostType.tutorial);
+        break;
+      case 'podcasts':
+        setType(PostType.podcast);
+        break;
+      default:
+        setType(PostType.post);
+        break;
+    }
+  }, [router]);
   return (
     <>
       <Layout>
@@ -24,7 +48,7 @@ function AdminDashboard({ router }: { router: any }) {
             <AdminMenu />
           </div>
           <div className="col-span-10">
-            <EditPost router={router} />
+            <EditPost router={router} type={type} />
           </div>
         </div>
       </Layout>

@@ -31,9 +31,7 @@ function AdminDashboard({ router }: { router: any }) {
             <AdminMenu />
           </div>
           <div className="grid col-span-10 place-content-center">
-            <h1 className="text-2xl font-semibold text-ccd-basics-900">
-              Dashboard
-            </h1>
+            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
             <p className="text-lg">Show some welcoming things here.</p>
           </div>
         </div>

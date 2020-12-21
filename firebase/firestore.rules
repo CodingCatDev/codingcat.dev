@@ -42,16 +42,6 @@ service cloud.firestore {
 
       }
 
-      match /courses/{id} {
-        allow read: if true;
-        allow write: if isAlex();
-      }
-
-      match /lessons/{id} {
-        allow read: if true;
-        allow write: if isAlex();
-      }
-
       match /tags/{id} {
         allow read: if true;
         allow write: if isAlex();
@@ -112,6 +102,10 @@ service cloud.firestore {
       return isSignedIn()
               && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(roles)
     }
+    function hasAnyGroup(groups) {
+      return isSignedIn()
+              && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groups.hasAny(groups)
+    }
 
     // POSTS
     function postsIsValidNew() {
@@ -133,12 +127,16 @@ service cloud.firestore {
       ]);
       return notDeniedFields;
     }
+    function postsIsValidRead(){
+      let memberAllowed = request.resource.data.type != 'lesson' || (request.resource.data.type == 'lesson' && hasAnyGroup(['pro']) );
+      return hasAnyRole(['author', 'editor', 'admin']) || ( isSignedIn() && resource.data.keys().hasAll(['publishedAt']) && memberAllowed ) ;
+    }
 
     function postsCanCreate() {
       return postsIsValidNew() && hasAnyRole(['author', 'editor', 'admin']);
     }
     function postsCanRead() {
-      return ( isSignedIn() && resource.data.keys().hasAll(['publishedAt']) ) || hasAnyRole(['author', 'editor', 'admin']);
+      return postsIsValidRead(); 
     }
     function postsCanUpdate() {
       return postsIsValidUpdate() && hasAnyRole(['author', 'editor', 'admin']);

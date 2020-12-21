@@ -20,7 +20,7 @@ export const AppMenu: ComponentType<{
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
-      <div className="z-50 fixed inset-0 overflow-hidden bg-ccd-purples-100 bg-opacity-70">
+      <div className="z-50 fixed inset-0 overflow-hidden bg-purple-100 bg-opacity-70">
         <div className="absolute inset-0 overflow-hidden">
           <OutsideClick toggle={setOverlayMenuActive} value={false}>
             <section
@@ -28,8 +28,8 @@ export const AppMenu: ComponentType<{
               aria-labelledby="slide-over-heading"
             >
               <div className="w-screen max-w-md">
-                <div className="flex flex-col h-full shadow-xl bg-ccd-basics-800">
-                  <div className="flex flex-col flex-1 w-full h-0 bg-ccd-purples-700">
+                <div className="flex flex-col h-full shadow-xl bg-gray-800">
+                  <div className="flex flex-col flex-1 w-full h-0 bg-purple-700">
                     <div className="flex flex-col flex-1 pb-4 overflow-y-auto">
                       <div className="flex items-center justify-between h-16 mx-4">
                         <div className="flex items-center flex-shrink-0">
@@ -41,7 +41,7 @@ export const AppMenu: ComponentType<{
                         </div>
 
                         <button
-                          className="inline-flex items-center justify-center p-2 text-xl text-white rounded-md hover:text-white hover:bg-ccd-purples-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                          className="inline-flex items-center justify-center p-2 text-xl text-white rounded-md hover:text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                           aria-expanded="false"
                           onClick={() =>
                             setOverlayMenuActive(!overlayMenuActive)
@@ -84,52 +84,52 @@ export const AppMenu: ComponentType<{
                       </div>
 
                       <nav
-                        className="flex-1 px-2 space-y-1 bg-ccd-purples-800"
+                        className="flex-1 px-2 space-y-1 bg-purple-800"
                         aria-label="Sidebar"
                       >
                         <ActiveLink
-                          activeClassName="bg-ccd-purples-900"
+                          activeClassName="bg-purple-900"
                           href="/courses"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-ccd-purples-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
                             Courses
                           </a>
                         </ActiveLink>
                         <ActiveLink
-                          activeClassName="bg-ccd-purples-900"
+                          activeClassName="bg-purple-900"
                           href="/tutorials"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-ccd-purples-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
                             Tutorials
                           </a>
                         </ActiveLink>
                         <ActiveLink
-                          activeClassName="bg-ccd-purples-900"
+                          activeClassName="bg-purple-900"
                           href="/blog"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-ccd-purples-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
                             Blog
                           </a>
                         </ActiveLink>
                         <ActiveLink
-                          activeClassName="bg-ccd-purples-900"
+                          activeClassName="bg-purple-900"
                           href="/podcasts"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-ccd-purples-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
                             Podcasts
                           </a>
                         </ActiveLink>
                         <ActiveLink
-                          activeClassName="bg-ccd-purples-900"
+                          activeClassName="bg-purple-900"
                           href="/community"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-ccd-purples-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
                             Community
                           </a>
                         </ActiveLink>
                       </nav>
                     </div>
-                    <div className="flex flex-shrink-0 p-4 bg-ccd-purples-700">
+                    <div className="flex flex-shrink-0 p-4 bg-purple-700">
                       <a href="#" className="flex-shrink-0 block w-full group">
                         <div className="flex items-center">
                           <div>
@@ -143,7 +143,7 @@ export const AppMenu: ComponentType<{
                             <p className="text-sm font-medium text-white">
                               Tom Cook
                             </p>
-                            <p className="text-xs font-medium text-ccd-basics-300 group-hover:text-ccd-basics-200">
+                            <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
                               View profile
                             </p>
                           </div>

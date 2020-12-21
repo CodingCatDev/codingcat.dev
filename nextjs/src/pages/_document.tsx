@@ -16,6 +16,30 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+          <link
+            rel="preload"
+            href="/static/fonts/Nunito-Regular.ttf"
+            as="font"
+            type="font/ttf"
+            crossOrigin="anonymous"
+          />
+
+          <link
+            rel="preload"
+            href="/static/fonts/Nunito-ExtraLight.ttf"
+            as="font"
+            type="font/ttf"
+            crossOrigin="anonymous"
+          />
+
+          <link
+            rel="preload"
+            href="/static/fonts/HennyPenny-Regular.ttf"
+            as="font"
+            type="font/ttf"
+            crossOrigin="anonymous"
+          />
+
           <link rel="canonical" href="https://codingcat.dev/" />
           <link rel="shortlink" href="https://codingcat.dev/" />
           <meta name="application-name" content="CodingCatDev" />

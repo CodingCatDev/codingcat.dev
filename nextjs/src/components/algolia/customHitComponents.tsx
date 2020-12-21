@@ -29,12 +29,12 @@ export const BlogPostHit = (
   return (
     <Link href={hit.permalink}>
       <a>
-        <div className="rounded hover:bg-ccd-purples-900 hover:text-white focus:bg-ccd-purples-900 focus:text-white">
+        <div className="rounded hover:bg-purple-900 hover:text-white focus:bg-purple-900 focus:text-white">
           <div className="grid grid-cols-12 gap-2">
             <span className="grid grid-cols-2 col-span-3">
               <div className="col-span-1">{typeIcon(hit.type)}</div>
               <div className="hidden col-span-1 sm:block ">
-                <p className="p-1 text-xs text-center text-white rounded-lg bg-ccd-reds-700">
+                <p className="p-1 text-xs text-center text-white rounded-lg bg-red-700">
                   {hit.type}
                 </p>
               </div>
