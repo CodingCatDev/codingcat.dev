@@ -19,8 +19,8 @@ export const AppMenu: ComponentType<{
       leave="transition-opacity duration-75"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
-
-      <div className="z-50 fixed inset-0 overflow-hidden bg-purple-100 bg-opacity-70">
+    >
+      <div className="fixed inset-0 z-50 overflow-hidden bg-purple-100 bg-opacity-70">
         <div className="absolute inset-0 overflow-hidden">
           <OutsideClick toggle={setOverlayMenuActive} value={false}>
             <section
@@ -28,7 +28,7 @@ export const AppMenu: ComponentType<{
               aria-labelledby="slide-over-heading"
             >
               <div className="w-screen max-w-md">
-                <div className="flex flex-col h-full shadow-xl bg-gray-800">
+                <div className="flex flex-col h-full bg-gray-800 shadow-xl">
                   <div className="flex flex-col flex-1 w-full h-0 bg-purple-700">
                     <div className="flex flex-col flex-1 pb-4 overflow-y-auto">
                       <div className="flex items-center justify-between h-16 mx-4">
@@ -91,7 +91,7 @@ export const AppMenu: ComponentType<{
                           activeClassName="bg-purple-900"
                           href="/courses"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white bg-purple-800 rounded-md group ">
                             Courses
                           </a>
                         </ActiveLink>
@@ -99,7 +99,7 @@ export const AppMenu: ComponentType<{
                           activeClassName="bg-purple-900"
                           href="/tutorials"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white bg-purple-800 rounded-md group ">
                             Tutorials
                           </a>
                         </ActiveLink>
@@ -107,7 +107,7 @@ export const AppMenu: ComponentType<{
                           activeClassName="bg-purple-900"
                           href="/blog"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white bg-purple-800 rounded-md group ">
                             Blog
                           </a>
                         </ActiveLink>
@@ -115,7 +115,7 @@ export const AppMenu: ComponentType<{
                           activeClassName="bg-purple-900"
                           href="/podcasts"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white bg-purple-800 rounded-md group ">
                             Podcasts
                           </a>
                         </ActiveLink>
@@ -123,7 +123,7 @@ export const AppMenu: ComponentType<{
                           activeClassName="bg-purple-900"
                           href="/community"
                         >
-                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white rounded-md group bg-purple-800 ">
+                          <a className="flex items-center px-2 py-2 text-sm font-medium text-white bg-purple-800 rounded-md group ">
                             Community
                           </a>
                         </ActiveLink>
