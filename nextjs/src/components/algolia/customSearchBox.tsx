@@ -19,7 +19,7 @@ export default connectSearchBox(({ refine, ...rest }) => (
       type="search"
       name="search"
       placeholder="Search for anything fun!"
-      className="w-5/6 leading-tight border rounded shadow-none appearance-none text-gray-400 focus:outline-none focus:ring-purple-900"
+      className="w-5/6 leading-tight text-gray-400 border rounded shadow-none appearance-none focus:outline-none focus:ring-purple-900"
       aria-label="Search"
       onChange={(e) => refine(e.target.value)}
     />

@@ -35,7 +35,7 @@ export default () => {
           <div className="relative grid w-full grid-cols-1 gap-4 place-content-start">
             <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
             <button
-              className="absolute top-0 right-0 p-1 text-2xl transition-colors rounded-full text-purple-900 hover:text-pink-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-900"
+              className="absolute top-0 right-0 p-1 text-2xl text-purple-900 transition-colors rounded-full hover:text-pink-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-900"
               onClick={hideModal}
               aria-label="Close Search Modal"
             >

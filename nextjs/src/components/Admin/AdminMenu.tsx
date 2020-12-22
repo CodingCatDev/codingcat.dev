@@ -11,7 +11,7 @@ export default function AdminMenu() {
   return (
     <>
       {/* Static sidebar for desktop */}
-      <div className="hidden h-full bg-gray-800 md:block text-gray-300">
+      <div className="hidden h-full text-gray-300 bg-gray-800 md:block">
         <div className="flex items-center flex-shrink-0 h-16 px-4">
           <Link href="/">
             <a>

@@ -34,7 +34,7 @@ export const BlogPostHit = (
             <span className="grid grid-cols-2 col-span-3">
               <div className="col-span-1">{typeIcon(hit.type)}</div>
               <div className="hidden col-span-1 sm:block ">
-                <p className="p-1 text-xs text-center text-white rounded-lg bg-red-700">
+                <p className="p-1 text-xs text-center text-white bg-red-700 rounded-lg">
                   {hit.type}
                 </p>
               </div>

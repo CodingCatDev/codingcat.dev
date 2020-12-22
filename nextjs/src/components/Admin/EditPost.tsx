@@ -4,7 +4,6 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 
 import TimeAgo from 'react-timeago';
-
 import {
   postDataObservable,
   postHistoriesDataObservable,
@@ -20,7 +19,6 @@ import { Course } from '@/models/course.model.ts';
 
 import { debounce, switchMap, take } from 'rxjs/operators';
 import { interval, Subject } from 'rxjs';
-import matter from 'gray-matter';
 import Link from 'next/link';
 import ShowMDX from '@/components/Admin/ShowMDX';
 import PostHistories from '@/components/Admin/PostHistories';
@@ -50,12 +48,6 @@ export default function EditPost({
     new Subject<Post | Course>()
   );
   const [preview, setPreview] = useState<string>('');
-  const [scope, setScope] = useState<
-    { [variableName: string]: unknown } | undefined
-  >(undefined);
-  const [components, setComponents] = useState<
-    { [name: string]: ComponentType<any> } | undefined
-  >({});
   const [showHistory, setShowHistory] = useState(false);
 
   // Sets initial state
@@ -97,6 +89,7 @@ export default function EditPost({
             .subscribe(() => setSaving(false));
         }
       });
+
     return () => {
       postSubscribe.unsubscribe();
       contentSubscribe.unsubscribe();
@@ -105,20 +98,11 @@ export default function EditPost({
 
   useEffect(() => {
     if (tab === 'preview') {
-      createContentFromMdx();
+      setPreview(history?.content || '');
     } else {
       setPreview('');
     }
   }, [tab]);
-
-  async function createContentFromMdx() {
-    if (!history || !history.content) {
-      return;
-    }
-    const { content, data } = matter(history.content);
-    setPreview(content);
-    setScope(data);
-  }
 
   function handleChange(event: { target: { value: string } }) {
     const content = event.target.value;
@@ -153,9 +137,7 @@ export default function EditPost({
             className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto`}
           >
             <article className="pt-8 prose prose-purple lg:prose-xl">
-              <ShowMDX components={components} scope={scope}>
-                {preview}
-              </ShowMDX>
+              <ShowMDX markdown={preview}></ShowMDX>
             </article>
           </div>
         );
@@ -184,8 +166,8 @@ export default function EditPost({
                   <div
                     className={`p-1 rounded-sm ${
                       history.status === PostStatus.draft
-                        ? 'bg-gray-300'
-                        : 'bg-green-300'
+                        ? 'bg-gray-300 text-gray-800'
+                        : 'bg-green-400 text-green-800'
                     }`}
                   >
                     {history.status}
@@ -241,7 +223,7 @@ export default function EditPost({
               </div>
               <div>
                 <button
-                  className={`text-white btn-primary bg-gray-300 ${
+                  className={`text-gray-800 btn-primary bg-gray-300 ${
                     showHistory ? 'block' : 'hidden'
                   }`}
                   onClick={() => toggleShowHistory()}

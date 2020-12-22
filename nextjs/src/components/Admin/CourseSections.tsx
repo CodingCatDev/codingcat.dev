@@ -272,7 +272,7 @@ export default function CourseSections({
                                     {...provided.droppableProps}
                                     ref={provided.innerRef}
                                   >
-                                    <div className="flex items-center justify-between border-b-2 border-solid border-purple-900">
+                                    <div className="flex items-center justify-between border-b-2 border-purple-900 border-solid">
                                       {section.title}
                                       <button
                                         onClick={() => onSectionDelete(si)}

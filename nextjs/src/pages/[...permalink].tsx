@@ -1,11 +1,7 @@
 import Head from 'next/head';
 import DefaultErrorPage from 'next/error';
 import { useRouter } from 'next/router';
-
-import renderToString from 'next-mdx-remote/render-to-string';
-import hydrate from 'next-mdx-remote/hydrate';
-import parse from 'remark-parse';
-import mdx from 'remark-mdx';
+import ReactDOMServer from 'react-dom/server';
 
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
@@ -15,16 +11,17 @@ import {
   postsRecentService,
   postsService,
 } from '@/services/serversideApi';
+import ShowMDX from '@/components/Admin/ShowMDX';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 
 export default function Post({
   post,
-  markdown,
+  mdxHtml,
   recentPosts,
 }: {
   post: PostModel;
-  markdown: any;
+  mdxHtml: any;
   recentPosts: { [key: string]: PostModel[] };
 }) {
   const router = useRouter();
@@ -43,7 +40,7 @@ export default function Post({
     );
   }
 
-  const content = hydrate(markdown);
+  // const content = hydrate(markdown, { components });
   return (
     <Layout>
       <section className="sticky top-0 z-10">
@@ -64,9 +61,10 @@ export default function Post({
       </section>
       {/* BLOG POST */}
       <section className="relative grid items-start justify-center gap-10 px-4 2xl:px-16 2xl:justify-start">
-        <article className="prose sm:prose-sm lg:prose-lg 2xl:prose-xl">
-          {content}
-        </article>
+        <article
+          className="prose sm:prose-sm lg:prose-lg 2xl:prose-xl"
+          dangerouslySetInnerHTML={{ __html: mdxHtml }}
+        />
         {/* RECENTS */}
         <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-gray-050 2xl:fixed scrollbar">
           <section className="grid gap-4">
@@ -128,14 +126,6 @@ export async function getStaticProps({
 
   const posts = await postByPermalinkService(permalink);
   const post = posts.length > 0 ? posts[0] : null;
-  const markdown = post
-    ? await renderToString(post.content, {
-        mdxOptions: {
-          remarkPlugins: [parse, mdx],
-        },
-      })
-    : null;
-
   const recentPosts = await postsRecentService([
     PostType.course,
     PostType.post,
@@ -146,12 +136,11 @@ export async function getStaticProps({
   return {
     props: {
       post,
-      markdown,
       recentPosts,
+      mdxHtml: ReactDOMServer.renderToStaticMarkup(
+        <ShowMDX markdown={post?.content || 'No Post Found.'}></ShowMDX>
+      ),
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 1, // In seconds
+    revalidate: 60,
   };
 }
