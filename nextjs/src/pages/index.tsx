@@ -42,7 +42,7 @@ export default function Home({
           new skills.
         </p>
         <div className="grid grid-flow-col gap-2">
-          <Link href="/courses">
+          <Link href="/user/profile">
             <a
               className="bg-red-400 btn-primary justify-self-end"
               type="button"
@@ -50,7 +50,7 @@ export default function Home({
               Start Now
             </a>
           </Link>
-          <Link href="/courses">
+          <Link href="/user/pro">
             <a className="btn-primary justify-self-start" type="button">
               Go Pro
             </a>

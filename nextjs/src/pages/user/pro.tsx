@@ -27,13 +27,7 @@ export default function Profile() {
       </Head>
       {user ? (
         <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
-          <section>
-            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
-              Settings
-            </h2>
-            <SettingsLinks />
-          </section>
-          <UserProfile />
+          Put Stripe Pro selections here
         </section>
       ) : (
         <FirebaseAuth />
