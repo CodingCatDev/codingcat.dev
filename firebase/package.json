@@ -8,12 +8,12 @@
     "prettier": "^2.2.1"
   },
   "scripts": {
-    "emulated:firebase-debug": "firebase emulators:start --inspect-functions --export-on-exit=./tests/data/firebase/emulator --import=./tests/data/firebase/emulator",
-    "emulated:firebase": "firebase emulators:start --export-on-exit=./tests/data/firebase/emulator --import=./tests/data/firebase/emulator",
-    "ci:emulator": "firebase emulators:exec 'cd tests && npm test'"
+    "emulated:firebase-debug": "npm run --prefix ./functions build && firebase --inspect-functions emulators:start --export-on-exit=./backup/data/emulator --import=./backup/data/emulator",
+    "emulated:firebase": "npm run --prefix ./functions build && firebase emulators:start --export-on-exit=./backup/data/emulator --import=./backup/data/emulator",
+    "ci:emulator": "firebase emulators:exec 'npm run --prefix ./tests test'"
   },
   "author": "Alex Patterson",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/ajonp/ccd-nextjs/issues"
   },
