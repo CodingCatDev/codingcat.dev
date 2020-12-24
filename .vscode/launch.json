@@ -7,11 +7,31 @@
     {
       "type": "node",
       "request": "attach",
-      "name": "Next.js Debug",
+      "name": "Firebase Debug",
       "skipFiles": ["<node_internals>/**"],
       "port": 9229,
       "sourceMapPathOverrides": {
         "webpack:///./*": "${workspaceRoot}/nextjs/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Main Debug",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 9230,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${workspaceRoot}/frontend/main/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Admin Debug",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 9231,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${workspaceRoot}/frontend/admin/*"
       }
     },
     {

@@ -3,7 +3,7 @@
   "private": "true",
   "version": "0.0.1",
   "description": "Main codingcat.dev site",
-  "main": "nextjs/",
+  "main": "frontend/main/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ajonp/ccd-amplify-nextjs.git"
@@ -13,5 +13,13 @@
   "bugs": {
     "url": "https://github.com/ajonp/ccd-amplify-nextjs/issues"
   },
-  "homepage": "https://github.com/ajonp/ccd-amplify-nextjs#readme"
+  "homepage": "https://github.com/ajonp/ccd-amplify-nextjs#readme",
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "dev": "lerna run --parallel dev",
+    "start": "lerna run --parallel build && lerna run --parallel start "
+  }
 }
