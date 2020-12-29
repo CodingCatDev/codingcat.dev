@@ -6,21 +6,30 @@ This is the main repo for https://codingcat.dev
 
 ## Setup
 
-To install you will run `npm run bootstrap`
+First install [Learna](https://lerna.js.org/)
+Install Learn by running `npm run install`
+To install dependencies run `npm run bootstrap`
 
-## Firebase Backend
+### Firebase Backend
 
 You must obtain your private key information from
 https://console.firebase.google.com/u/0/project/[YOURPROJECT]/settings/serviceaccounts/adminsdk
 
+Then you will add this to `backend/firebase/serviceAccountKey.json`.
+You can find an example template at `backend/firebase/serviceAccountKey.json.template`.
+
 TODO: Build out sample test data
 
-## Run Locally
+### Run Locally
 
 Connect with vercel project
 TODO: Add logic for using console
 
 You will need to setup a `.env.local` within any project that requires Firebase.
+
+There are example files located at
+`frontend/main/.env.local.template`
+`frontend/admin/.env.local.template`
 
 To run all repos in frontend you can run either
 
