@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import { withRouter } from 'next/router';
 
 import Layout from '@/layout/Layout';
-import AdminMenu from '@/layout/AdminMenu';
 import { useEffect, useState } from 'react';
 import { PostType } from '@/models/post.model';
 

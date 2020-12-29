@@ -83,7 +83,7 @@ export default function EditPost({
   const [post, setPost] = useState<Post | Course>();
   const [path, setPath] = useState<string>('');
   const [tab, setTab] = useState<TabType>(TabType.edit);
-  const [tabIndex, setTabIndex] = useState<nubmer>(0);
+  const [tabIndex, setTabIndex] = useState(0);
   const [saving, setSaving] = useState<boolean>(false);
   const [updateContent$, setUpdateContent$] = useState<Subject<Post | Course>>(
     new Subject<Post | Course>()
