@@ -12,7 +12,15 @@ const EditPost = dynamic(() => import('@/components/Admin/EditPost'), {
   loading: () => <p>Chasing a mouse...</p>,
 });
 
-function AdminDashboard({ router }: { router: any }) {
+function AdminDashboard({
+  router,
+  handleThemeChange,
+  darkMode,
+}: {
+  router: any;
+  handleThemeChange: any;
+  darkMode: boolean;
+}) {
   const [type, setType] = useState(PostType.post);
 
   useEffect(() => {
@@ -36,7 +44,7 @@ function AdminDashboard({ router }: { router: any }) {
     }
   }, [router]);
   return (
-    <Layout>
+    <Layout handleThemeChange={handleThemeChange} darkMode={darkMode}>
       <Head>
         <title>{`Edit ${router.query.type} | CodingCatDev`}</title>
         <meta name="robots" content="noindex" />

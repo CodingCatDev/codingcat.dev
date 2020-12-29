@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic';
 
 import { useUser } from '@/utils/auth/useUser';
 
+import Button from '@material-ui/core/Button';
+
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
   loading: () => <p>Playing with yarn...</p>,
@@ -14,18 +16,14 @@ export default function UserSignin() {
   return (
     <>
       {user ? (
-        <div className="grid gap-4 px-4 py-8 bg-white shadow-2xl sm:rounded-lg sm:px-10">
+        <div>
           <p>You're signed in.</p>
           <p>
-            Email: <span className="font-bold">{user.email}</span>
+            Email: <span style={{ fontWeight: 800 }}>{user.email}</span>
           </p>
-          <button
-            onClick={() => signout()}
-            type="button"
-            className="btn-primary"
-          >
+          <Button onClick={() => signout()} variant="contained">
             <span>Sign Out</span>
-          </button>
+          </Button>
         </div>
       ) : (
         <FirebaseAuth />

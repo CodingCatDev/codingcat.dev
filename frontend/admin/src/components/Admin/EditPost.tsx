@@ -1,7 +1,16 @@
 import React, { useState, ComponentType, useEffect } from 'react';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primereact/resources/themes/saga-purple/theme.css';
+import {
+  Box,
+  Grid,
+  Button,
+  makeStyles,
+  Tabs,
+  Tab,
+  AppBar,
+  createStyles,
+  Theme as AugmentedTheme,
+} from '@material-ui/core';
+import { green, grey } from '@material-ui/core/colors';
 
 import TimeAgo from 'react-timeago';
 import {
@@ -24,11 +33,42 @@ import ShowMDX from '@/components/ShowMDX';
 import PostHistories from '@/components/Admin/PostHistories';
 import CourseSections from '@/components/Admin/CourseSections';
 
+import SimpleMDE from 'react-simplemde-editor';
+import 'easymde/dist/easymde.min.css';
+
 enum TabType {
   edit = 'edit',
   sections = 'sections',
   preview = 'preview',
 }
+
+const useStyles = makeStyles((theme: AugmentedTheme) =>
+  createStyles({
+    table: {
+      minWidth: 650,
+    },
+    status: {
+      borderRadius: '0.25rem',
+      padding: '0.25rem',
+    },
+    statusPublished: {
+      color: green[900],
+      backgroundColor: green[400],
+    },
+    statusDraft: {
+      color: grey[900],
+      backgroundColor: grey[500],
+    },
+    link: {
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+    tabs: {
+      color: 'white',
+      backgroundColor: theme.palette.primary.main,
+    },
+  })
+);
 
 export default function EditPost({
   router,
@@ -43,6 +83,7 @@ export default function EditPost({
   const [post, setPost] = useState<Post | Course>();
   const [path, setPath] = useState<string>('');
   const [tab, setTab] = useState<TabType>(TabType.edit);
+  const [tabIndex, setTabIndex] = useState<nubmer>(0);
   const [saving, setSaving] = useState<boolean>(false);
   const [updateContent$, setUpdateContent$] = useState<Subject<Post | Course>>(
     new Subject<Post | Course>()
@@ -104,8 +145,8 @@ export default function EditPost({
     }
   }, [tab]);
 
-  function handleChange(event: { target: { value: string } }) {
-    const content = event.target.value;
+  function handleChange(value: string) {
+    const content = value;
     const update: Post | Course = { ...history, content } as Post | Course;
     setHistory(update);
     updateContent$.next({ ...update, historyId: history?.id });
@@ -123,8 +164,9 @@ export default function EditPost({
         .subscribe(() => setSaving(false));
     }
   }
-  function selectTab(tab: TabType) {
+  function selectTab(tab: TabType, index: number) {
     setTab(tab);
+    setTabIndex(index);
   }
 
   function onTab() {
@@ -143,160 +185,204 @@ export default function EditPost({
         );
       default:
         return (
-          <textarea
-            id="content"
-            name="content"
+          <SimpleMDE
             onChange={handleChange}
-            className={`form-textarea shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-0 block h-full w-full sm:text-sm rounded-md rounded-t-none resize-none`}
-            placeholder="Markdown goes here..."
             value={history ? history.content : ''}
-          ></textarea>
+            options={{
+              sideBySideFullscreen: false,
+            }}
+          />
         );
     }
   }
-
+  const classes = useStyles();
   return (
     <>
-      <div className="relative w-full h-full">
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignContent="flex-start"
+        style={{ paddingTop: '0.25rem' }}
+      >
+        {' '}
         {history && Object.keys(history).length > 0 ? (
           <>
-            <div className="flex w-full p-2 text-sm bg-gray-800">
-              <div className="flex flex-col items-start flex-grow">
-                <div className="flex flex-wrap items-center flex-grow text-white">
-                  <div
-                    className={`p-1 rounded-sm ${
-                      history.status === PostStatus.draft
-                        ? 'bg-gray-300 text-gray-800'
-                        : 'bg-green-400 text-green-800'
-                    }`}
+            <Grid
+              container
+              item
+              direction="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  bgcolor: 'background.paper',
+                }}
+                style={{ width: '100%' }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexGrow: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      m: 1,
+                    }}
                   >
-                    {history.status}
-                  </div>
+                    <span
+                      className={`${classes.status} ${
+                        history.status === PostStatus.published
+                          ? classes.statusPublished
+                          : classes.statusDraft
+                      }`}
+                    >
+                      {history.status}
+                    </span>
 
-                  <span
-                    className="ml-1 text-xs underline cursor-pointer"
-                    onClick={() => toggleShowHistory()}
+                    <span
+                      className={classes.link}
+                      onClick={() => toggleShowHistory()}
+                    >
+                      {history?.id}
+                    </span>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      m: 1,
+                      flexGrow: 1,
+                    }}
                   >
-                    {history?.id}
-                  </span>
-                </div>
-                <div className="flex items-center justify-center pr-2 text-white">
-                  <span>
-                    <TimeAgo date={history?.updatedAt?.toDate() as Date} />
-                  </span>
-                  {saving ? (
                     <span>
+                      <TimeAgo date={history?.updatedAt?.toDate() as Date} />
+                    </span>
+                    {saving ? (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          className="w-8 h-8"
+                          style={{ height: '2rem', width: '2rem' }}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                      </span>
+                    ) : (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          className="w-8 h-8 text-green-500"
+                          style={{ height: '2rem', width: '2rem' }}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                  </Box>
+                </Box>
+                <div>
+                  <Box sx={{ display: `${showHistory ? 'block' : 'none'}` }}>
+                    <Button
+                      variant="contained"
+                      onClick={() => toggleShowHistory()}
+                    >
+                      Back
+                    </Button>
+                  </Box>
+                  <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
+                    <Button variant="contained" onClick={() => onPublish()}>
+                      Publish
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        className="w-8 h-8"
+                        style={{ height: '2rem', width: '2rem' }}
                       >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                         />
                       </svg>
-                    </span>
-                  ) : (
-                    <span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="w-8 h-8 text-green-500"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </span>
-                  )}
+                    </Button>
+                  </Box>
                 </div>
-              </div>
-              <div>
-                <button
-                  className={`text-gray-800 btn-primary bg-gray-300 ${
-                    showHistory ? 'block' : 'hidden'
-                  }`}
-                  onClick={() => toggleShowHistory()}
-                >
-                  Back
-                </button>
-                <button
-                  className={`text-white text-sm btn-primary bg-purple-800 flex items-center ${
-                    !showHistory ? 'block' : 'hidden'
-                  }`}
-                  onClick={() => onPublish()}
-                >
-                  Publish
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-6 ml-2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div className="w-full h-full">
+              </Box>
+            </Grid>
+            <Grid
+              container
+              item
+              direction="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
               {showHistory ? (
                 <PostHistories postHistories={postHistories} />
               ) : (
                 <>
-                  <ul className="grid grid-flow-col bg-gray-800">
-                    <li
-                      className={`py-2 px-6 rounded-t-xl cursor-pointer ${
-                        tab === TabType.edit
-                          ? 'bg-purple-800 text-white'
-                          : 'bg-gray-200 text-gray-500'
-                      }`}
-                      onClick={() => selectTab(TabType.edit)}
-                    >
-                      Edit
-                    </li>
-                    <li
-                      className={`py-2 px-6 rounded-t-xl cursor-pointer
-                      ${type === PostType.course ? 'block' : 'hidden'} 
-                      ${
-                        tab === TabType.sections
-                          ? 'bg-purple-800 text-white'
-                          : 'bg-gray-200 text-gray-500'
-                      }`}
-                      onClick={() => selectTab(TabType.sections)}
-                    >
-                      Sections
-                    </li>
-                    <li
-                      className={`py-2 px-6 rounded-t-xl cursor-pointer ${
-                        tab === TabType.preview
-                          ? 'bg-purple-800 text-white'
-                          : 'bg-gray-200 text-gray-500'
-                      }`}
-                      onClick={() => selectTab(TabType.preview)}
-                    >
-                      Preview
-                    </li>
-                  </ul>
-                  {onTab()}
+                  <Box sx={{ width: '100%' }}>
+                    <AppBar position="static" color="default">
+                      <Tabs
+                        value={tabIndex}
+                        indicatorColor="secondary"
+                        textColor="inherit"
+                        variant="fullWidth"
+                        aria-label="Editor for Post with Preview"
+                        className={classes.tabs}
+                      >
+                        <Tab
+                          label="Edit"
+                          onClick={() => selectTab(TabType.edit, 0)}
+                        />
+                        <Tab
+                          label="Sections"
+                          onClick={() => selectTab(TabType.sections, 1)}
+                          style={{
+                            display: `${
+                              type === PostType.course ? 'block' : 'none'
+                            }`,
+                          }}
+                        />
+                        <Tab
+                          label="MDX Preview"
+                          onClick={() => selectTab(TabType.preview, 2)}
+                        />
+                      </Tabs>
+                    </AppBar>
+                    <Box sx={{ padding: '1rem' }}>{onTab()}</Box>
+                  </Box>
                 </>
               )}
-            </div>
+            </Grid>
           </>
         ) : (
           <div className="grid w-full h-full grid-cols-1 place-content-center place-items-center">
@@ -318,7 +404,7 @@ export default function EditPost({
             </Link>
           </div>
         )}
-      </div>
+      </Grid>
     </>
   );
 }

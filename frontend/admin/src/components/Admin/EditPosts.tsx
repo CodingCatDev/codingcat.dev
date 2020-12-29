@@ -2,14 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import Link from 'next/link';
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
 import { useUser } from '@/utils/auth/useUser';
 import { postsByUpdatedAtObservable } from '@/services/api';
 import { Post, PostStatus } from '@/models/post.model';
+import { green, grey } from '@material-ui/core/colors';
 
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primereact/resources/themes/saga-purple/theme.css';
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650,
+  },
+  status: {
+    borderRadius: '0.25rem',
+    padding: '0.25rem',
+  },
+  statusPublished: {
+    color: green[900],
+    backgroundColor: green[400],
+  },
+  statusDraft: {
+    color: grey[900],
+    backgroundColor: grey[500],
+  },
+});
 
 function EditPosts({ path }: { path: string }) {
   const { user, signout }: { user: any; signout: any } = useUser();
@@ -20,48 +43,49 @@ function EditPosts({ path }: { path: string }) {
     ).subscribe((posts) => setPosts(posts));
   }, [path]);
 
-  function postId(rowData: Post) {
-    return (
-      <Link href={`.${path}/${rowData.id}`}>
-        <a className="underline text-purple-500">{rowData.id}</a>
-      </Link>
-    );
-  }
-  function postCategories(rowData: Post) {
-    return <span>{rowData.category ? rowData.category.join(',') : ''}</span>;
-  }
-  function postStatus(rowData: Post) {
-    return (
-      <span
-        className={`p-2 capitalize text-green-800 rounded
-          ${
-            rowData.status
-              ? rowData.status === PostStatus.published
-                ? `bg-green-200`
-                : `bg-red`
-              : ''
-          }
-          `}
-      >
-        {rowData.status}
-      </span>
-    );
-  }
+  const classes = useStyles();
 
   return (
     <>
-      <DataTable value={posts} scrollable scrollHeight="100%">
-        <Column field="id" header="Id" body={postId}></Column>
-        <Column field="title" header="Title"></Column>
-        <Column field="createdBy" header="Author"></Column>
-        <Column
-          field="post_categories"
-          header="Category"
-          body={postCategories}
-        ></Column>
-        <Column field="status" header="Status" body={postStatus}></Column>
-        <Column field="updatedAt" header="Updated"></Column>
-      </DataTable>
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Id</TableCell>
+              <TableCell align="right">Title</TableCell>
+              <TableCell align="right">Author</TableCell>
+              <TableCell align="right">Status</TableCell>
+              <TableCell align="right">Updated</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {posts.map((post) => (
+              <TableRow key={post.id}>
+                <TableCell component="td" scope="row">
+                  <Link href={`.${path}/${post.id}`}>
+                    <a>{post.id}</a>
+                  </Link>
+                </TableCell>
+                <TableCell align="right">{post.title}</TableCell>
+                <TableCell align="right">{post.createdBy}</TableCell>
+                <TableCell align="right">
+                  {' '}
+                  <span
+                    className={`${classes.status} ${
+                      post.status === PostStatus.published
+                        ? classes.statusPublished
+                        : classes.statusDraft
+                    }`}
+                  >
+                    {post.status}
+                  </span>
+                </TableCell>
+                <TableCell align="right">{post.updatedAt}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   );
 }

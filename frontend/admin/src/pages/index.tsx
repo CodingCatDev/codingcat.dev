@@ -2,12 +2,20 @@ import Head from 'next/head';
 import { withRouter } from 'next/router';
 import Layout from '@/layout/Layout';
 
-function AdminDashboard({ router }: { router: any }) {
+function AdminDashboard({
+  router,
+  handleThemeChange,
+  darkMode,
+}: {
+  router: any;
+  handleThemeChange: any;
+  darkMode: boolean;
+}) {
   const path = `/${router.asPath.substring(
     router.asPath.lastIndexOf('/') + 1
   )}`;
   return (
-    <Layout>
+    <Layout handleThemeChange={handleThemeChange} darkMode={darkMode}>
       <Head>
         <title>
           {`${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(2)}`} |

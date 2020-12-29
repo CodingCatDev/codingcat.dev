@@ -3,11 +3,10 @@ import dynamic from 'next/dynamic';
 import { withRouter } from 'next/router';
 
 import Layout from '@/layout/Layout';
+import { Grid } from '@material-ui/core';
 
-import AdminMenu from '@/layout/AdminMenu';
 import { PostType } from '@/models/post.model';
 import { useState, useEffect } from 'react';
-
 const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   ssr: false,
   loading: () => <p>Climbing a tree...</p>,
@@ -17,7 +16,15 @@ const CreatePost = dynamic(() => import('@/components/Admin/CreatePost'), {
   ssr: false,
 });
 
-function AdminDashboard({ router }: { router: any }) {
+function AdminDashboard({
+  router,
+  handleThemeChange,
+  darkMode,
+}: {
+  router: any;
+  handleThemeChange: any;
+  darkMode: boolean;
+}) {
   const [type, setType] = useState(PostType.post);
 
   useEffect(() => {
@@ -45,7 +52,7 @@ function AdminDashboard({ router }: { router: any }) {
     router.asPath.lastIndexOf('/') + 1
   )}`;
   return (
-    <Layout>
+    <Layout handleThemeChange={handleThemeChange} darkMode={darkMode}>
       <Head>
         <title>
           {`Admin-${path.substr(1).substr(0, 1).toUpperCase()}${path.substr(
@@ -55,21 +62,28 @@ function AdminDashboard({ router }: { router: any }) {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="flex flex-col flex-1 h-full">
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignContent="flex-start"
+        style={{ paddingTop: '0.25rem' }}
+      >
+        {' '}
         {router.asPath === path ? (
-          <div className="flex flex-col flex-1 px-4 mx-auto sm:px-6 md:px-8">
-            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-            <p className="text-lg">Show some welcoming things here.</p>
+          <div>
+            <h1>Dashboard</h1>
+            <p>Show some welcoming things here.</p>
           </div>
         ) : (
           <>
-            <div className="flex flex-col flex-1 h-full px-4 mx-auto sm:px-6 md:px-8">
+            <div style={{ width: '100%' }}>
               <CreatePost type={type} />
               <EditPosts path={path} />
             </div>
           </>
         )}
-      </div>
+      </Grid>
     </Layout>
   );
 }

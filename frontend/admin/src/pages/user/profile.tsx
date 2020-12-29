@@ -14,26 +14,21 @@ const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
   loading: () => <p>Chasing my tail..</p>,
 });
 
-export default function Profile() {
+export default function Profile({
+  handleThemeChange,
+  darkMode,
+}: {
+  handleThemeChange: any;
+  darkMode: boolean;
+}) {
   const { user, signout }: { user: any; signout: any } = useUser();
 
   return (
-    <Layout>
+    <Layout handleThemeChange={handleThemeChange} darkMode={darkMode}>
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
-      {user ? (
-        <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
-          <section>
-            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
-              Settings
-            </h2>
-            <ProfileCard />
-          </section>
-        </section>
-      ) : (
-        <FirebaseAuth />
-      )}
+      {user ? <ProfileCard /> : <FirebaseAuth />}
     </Layout>
   );
 }
