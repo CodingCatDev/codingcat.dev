@@ -19,7 +19,7 @@ module.exports = {
       current: 'currentColor',
       black: '#000',
       white: '#fff',
-      gray: {
+      basics: {
         '050': '#FBFBFB',
         100: '#F1F1F1',
         200: '#DCDCDC',
@@ -31,7 +31,7 @@ module.exports = {
         800: '#141214',
         900: '#171717',
       },
-      purple: {
+      primary: {
         '050': '#EFE4F4',
         100: '#D7BCE3',
         200: '#BD8FD1',
@@ -43,7 +43,19 @@ module.exports = {
         800: '#5E1286',
         900: '#4B0A75',
       },
-      red: {
+      secondary: {
+        '050': '#FDF3F7',
+        100: '#FBE6EF',
+        200: '#F4C1D6',
+        300: '#EE9CBE',
+        400: '#E1528D',
+        500: '#D11663',
+        600: '#BC2261',
+        700: '#9D1948',
+        800: '#81133B',
+        900: '#7B042F',
+      },
+      error: {
         '050': '#FFEBEC',
         100: '#FFCDCF',
         200: '#FFACAF',
@@ -55,7 +67,7 @@ module.exports = {
         800: '#FF3E43',
         900: '#FF2E32',
       },
-      green: {
+      success: {
         '050': '#F5FDF9',
         100: '#EAFBF2',
         200: '#CBF5E0',
@@ -66,18 +78,6 @@ module.exports = {
         700: '#1B824D',
         800: '#14613A',
         900: '#0E462A',
-      },
-      pink: {
-        '050': '#FDF3F7',
-        100: '#FBE6EF',
-        200: '#F4C1D6',
-        300: '#EE9CBE',
-        400: '#E1528D',
-        500: '#D11663',
-        600: '#BC2261',
-        700: '#9D1948',
-        800: '#81133B',
-        900: '#7B042F',
       },
     },
     extend: {

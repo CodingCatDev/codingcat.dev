@@ -27,11 +27,11 @@
   }
 
   a {
-    @apply text-purple-900 transition-colors hover:text-pink-600;
+    @apply transition-colors text-primary-900 hover:text-secondary-600;
   }
 
   body {
-    @apply box-border text-purple-900 bg-purple-900;
+    @apply box-border text-primary-900 bg-primary-900;
   }
 
   @media (min-width: 768px) {
@@ -78,19 +78,19 @@
   }
 
   input {
-    @apply w-full px-4 py-2 text-base text-gray-600 placeholder-gray-400 border border-gray-200 rounded-md shadow-md appearance-none bg-gray-050 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent;
+    @apply w-full px-4 py-2 text-base border rounded-md shadow-md appearance-none text-basics-600 placeholder-basics-400 border-basics-200 bg-basics-050 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out bg-purple-900 rounded-md shadow-md outline-none text-gray-050 hover:bg-purple-800 hover:shadow-sm focus:shadow-outline;
+    @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none bg-primary-900 text-basics-050 hover:bg-primary-700 hover:text-basics-050 hover:shadow-sm focus:shadow-outline;
   }
   .btn-secondary {
-    @apply px-6 py-2 font-bold leading-loose text-purple-900 transition duration-500 ease-in-out rounded-md shadow-md outline-none bg-gray-050 hover:text-gray-050 hover:bg-purple-400 hover:shadow-sm focus:shadow-outline;
+    @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none text-primary-900 hover:text-primary-050 bg-basics-050 hover:bg-primary-700 hover:shadow-sm focus:shadow-outline;
   }
   .links-secondary {
-    @apply transition-colors text-gray-050 hover:text-gray-050 hover:underline;
+    @apply transition-colors text-basics-050 hover:text-basics-050 hover:underline;
   }
   .vertical-text-clip {
     background-color: #4b0a75;

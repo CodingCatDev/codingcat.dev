@@ -93,13 +93,13 @@ const FirebaseAuth = ({ full = true }) => {
         <div className="grid gap-4">
           <div className="">
             <label
-              className="block mb-2 text-sm font-bold text-grey-darker"
+              className="block mb-2 text-sm font-bold text-basics-800"
               htmlFor="username"
             >
               Email
             </label>
             <input
-              className="w-full px-3 py-2 border rounded shadow appearance-none text-grey-darker"
+              className="w-full px-3 py-2 border rounded shadow appearance-none text-basics-800"
               id="email"
               type="email"
               value={email}
@@ -110,13 +110,13 @@ const FirebaseAuth = ({ full = true }) => {
           </div>
           <div className="">
             <label
-              className="block mb-2 text-sm font-bold text-grey-darker"
+              className="block mb-2 text-sm font-bold text-basics-800"
               htmlFor="password"
             >
               Password
             </label>
             <input
-              className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-grey-darker"
+              className="w-full px-3 py-2 mb-3 border rounded shadow appearance-none border-red text-basics-800"
               id="password"
               type="password"
               value={password}
@@ -127,7 +127,7 @@ const FirebaseAuth = ({ full = true }) => {
           </div>
           <div>
             <button
-              className="p-4 mb-16 bg-red-500 rounded text-gray-050"
+              className="p-4 mb-16 rounded bg-error-500 text-basics-050"
               onClick={() => signin(email, password)}
             >
               Sign In

@@ -14,7 +14,7 @@ export default function PostsCards({
       {posts && posts.length > 0 ? (
         <>
           {posts.map((post) => (
-            <div className="p-3 m-3 bg-white rounded shadow" key={post.slug}>
+            <div className="p-3 m-3 rounded shadow bg-basics-050" key={post.slug}>
               <div>
                 <Link href={post.permalink}>
                   <a>
@@ -47,12 +47,12 @@ export default function PostsCards({
                 </Link>
               </div>
               <div className="mt-6">
-                <p className="mb-2 text-lg tracking-wide text-bold text-gray-600">
+                <p className="mb-2 text-lg tracking-wide text-basics-600 text-bold">
                   <Link href={post.permalink}>
                     <a>{post.title}</a>
                   </Link>
                 </p>
-                <p className="text-sm font-hairline text-gray-600">
+                <p className="text-sm font-hairline text-basics-600">
                   {post.excerpt}
                 </p>
               </div>

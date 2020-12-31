@@ -26,13 +26,13 @@ export default function UserSignin() {
           <div className="flex items-end justify-between">
             <div
               className={`flex justify-center rounded-t p-4 ${
-                !signin ? 'bg-gray-050' : ''
+                !signin ? 'bg-basics-050' : ''
               }`}
             >
               {' '}
               <h2
                 className={`cursor-pointer text-2xl sm:text-3xl ${
-                  !signin ? 'vertical-text-clip pb-1' : 'text-purple-900'
+                  !signin ? 'vertical-text-clip pb-1' : 'text-primary-900'
                 }`}
                 onClick={() => setSignIn(false)}
               >
@@ -51,14 +51,14 @@ export default function UserSignin() {
             </div>
             <div
               className={`flex justify-center rounded-t  p-4 ${
-                signin ? 'bg-gray-050' : ''
+                signin ? 'bg-basics-050' : ''
               }`}
             >
               <h2
                 className={`cursor-pointer text-2xl sm:text-3xl ${
                   signin
                     ? 'vertical-text-clip pb-1 '
-                    : 'text-purple-900 relative z-10'
+                    : 'text-primary-900 relative z-10'
                 }`}
                 onClick={() => setSignIn(true)}
               >
@@ -69,7 +69,7 @@ export default function UserSignin() {
           {/* End Sign Up & Sign In Bar */}
           {/* Forms */}
           <div
-            className={`p-10 bg-gray-050 rounded-b shadow-xl  ${
+            className={`p-10 bg-basics-050 rounded-b shadow-xl  ${
               signin ? 'rounded-tl' : 'rounded-tr'
             }`}
           >

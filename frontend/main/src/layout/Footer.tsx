@@ -26,7 +26,7 @@ export const Footer = () => {
           stroke="transparent"
         />
       </svg>
-      <footer className="grid items-end justify-around gap-10 pt-16 pb-8 bg-purple-900 xl:flex xl:gap-4 text-gray-050">
+      <footer className="grid items-end justify-around gap-10 pt-16 pb-8 bg-purple-900 xl:flex xl:gap-4 text-basics-050">
         {/* LOGO & COPYRIGHT */}
         <section className="grid">
           <div className="flex">
@@ -107,7 +107,7 @@ export const Footer = () => {
               href="https://brittneypostma.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold rounded-md text-gray-050 hover:underline hover:text-gray-050"
+              className="text-basics-050 hover:underline hover:text-basics-050"
             >
               Brittney Postma
             </a>

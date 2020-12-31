@@ -22,7 +22,7 @@ export const AppTopbar = (props: {
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">
             <AJLogoLeft />
-            <h6 className="hidden text-white lg:block">CodingCat.dev</h6>
+            <h6 className="hidden text-basics-050 lg:block">CodingCat.dev</h6>
           </div>
         </a>
       </Link>
@@ -31,7 +31,7 @@ export const AppTopbar = (props: {
       <div className="flex items-center justify-end">
         <div className="flex items-center w-full space-x-2">
           <SearchModal />
-          <button className="p-1 text-white rounded-full hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-gray-050">
+          <button className="p-1 rounded-full text-basics-050 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-basics-050">
             <span className="sr-only">View notifications</span>
             {/* Heroicon name: bell --> */}
             <svg
@@ -58,7 +58,7 @@ export const AppTopbar = (props: {
         </div>
         <div className="flex items-center ml-2">
           <button
-            className="inline-flex items-center justify-center p-1 text-xl rounded-md text-gray-050 hover:text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            className="inline-flex items-center justify-center p-1 text-xl rounded-md text-basics-050 hover:text-basics-050 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-050"
             aria-expanded="false"
             onClick={() => setOverlayMenuActive(!overlayMenuActive)}
           >

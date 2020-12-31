@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const links = `cursor-pointer tracking-wide text-xl text-ccd-purples-900`;
+const links = `cursor-pointer tracking-wide text-xl text-ccd-primary-900`;
 
 export default function UserProfile() {
   return (
