@@ -10,7 +10,7 @@ import {
   createStyles,
   Theme as AugmentedTheme,
 } from '@material-ui/core';
-import { green, grey } from '@material-ui/core/colors';
+import { green, grey, purple, pink } from '@material-ui/core/colors';
 
 import TimeAgo from 'react-timeago';
 import {
@@ -23,7 +23,7 @@ import {
   postUpdate,
 } from '@/services/api';
 
-import { Post, PostStatus, PostType } from '@/models/post.model.ts';
+import { Post, PostStatus, PostType, MediaType } from '@/models/post.model.ts';
 import { Course } from '@/models/course.model.ts';
 
 import { debounce, switchMap, take } from 'rxjs/operators';
@@ -35,6 +35,7 @@ import CourseSections from '@/components/Admin/CourseSections';
 
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
+import CloudinaryUpload from '@/components/Cloudinary/CloudinaryUpload';
 
 enum TabType {
   edit = 'edit',
@@ -90,6 +91,17 @@ export default function EditPost({
   );
   const [preview, setPreview] = useState<string>('');
   const [showHistory, setShowHistory] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
+    script.async = true;
+    script.type = 'text/javascript';
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Sets initial state
   useEffect(() => {
@@ -196,6 +208,7 @@ export default function EditPost({
     }
   }
   const classes = useStyles();
+
   return (
     <>
       <Grid
@@ -221,6 +234,7 @@ export default function EditPost({
                   flexDirection: 'row',
                   flexWrap: 'wrap',
                   bgcolor: 'background.paper',
+                  justifyContent: 'space-between',
                 }}
                 style={{ width: '100%' }}
               >
@@ -228,7 +242,6 @@ export default function EditPost({
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    flexGrow: 1,
                   }}
                 >
                   <Box
@@ -307,6 +320,48 @@ export default function EditPost({
                     )}
                   </Box>
                 </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    flexGrow: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      marginRight: '0.5rem',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                    }}
+                  >
+                    <CloudinaryUpload
+                      setHistory={setHistory}
+                      history={history}
+                      type={MediaType.video}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      marginLeft: '0.5rem',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                    }}
+                  >
+                    <CloudinaryUpload
+                      setHistory={setHistory}
+                      history={history}
+                      type={MediaType.photo}
+                    />
+                  </Box>
+                </Box>
                 <div>
                   <Box sx={{ display: `${showHistory ? 'block' : 'none'}` }}>
                     <Button
@@ -316,6 +371,7 @@ export default function EditPost({
                       Back
                     </Button>
                   </Box>
+
                   <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
                     <Button variant="contained" onClick={() => onPublish()}>
                       Publish
@@ -324,7 +380,11 @@ export default function EditPost({
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        style={{ height: '2rem', width: '2rem' }}
+                        style={{
+                          height: '1.5rem',
+                          width: '1.5rem',
+                          marginLeft: '1rem',
+                        }}
                       >
                         <path
                           strokeLinecap="round"

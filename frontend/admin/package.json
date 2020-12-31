@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--inspect=9231' next -p 3001",
-    "emulated": "cross-env NODE_OPTIONS='--inspect=9231' NEXT_PUBLIC_CCD_EMULATED=true FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIREBASE_DATABASE_EMULATOR_HOST='localhost:9000' FIRESTORE_EMULATOR_HOST='localhost:8080' next",
+    "emulated": "cross-env NODE_OPTIONS='--inspect=9231' NEXT_PUBLIC_CCD_EMULATED=true FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIREBASE_DATABASE_EMULATOR_HOST='localhost:9000' FIRESTORE_EMULATOR_HOST='localhost:8080' next -p 3001",
     "build": "next build",
     "start": "next start -p 3001",
     "analyze": "cross-env ANALYZE=true next build",
@@ -18,12 +18,12 @@
     }
   },
   "dependencies": {
-    "@emotion/cache": "latest",
+    "@emotion/cache": "^11.1.3",
     "@emotion/react": "^11.1.4",
     "@emotion/server": "latest",
     "@emotion/styled": "^11.0.0",
-    "@material-ui/core": "next",
-    "@material-ui/icons": "^5.0.0-alpha.20",
+    "@material-ui/core": "5.0.0-alpha.20",
+    "@material-ui/icons": "5.0.0-alpha.20",
     "@mdx-js/runtime": "^2.0.0-next.8",
     "algoliasearch": "^4.8.3",
     "array-move": "^3.0.1",

@@ -6,10 +6,12 @@ import Layout from '@/layout/Layout';
 import { useEffect, useState } from 'react';
 import { PostType } from '@/models/post.model';
 
-const EditPost = dynamic(() => import('@/components/Admin/EditPost'), {
-  ssr: false,
-  loading: () => <p>Chasing a mouse...</p>,
-});
+// const EditPost = dynamic(() => import('@/components/Admin/EditPost'), {
+//   ssr: false,
+//   loading: () => <p>Loading EditPost...</p>,
+// });
+
+import EditPost from '@/components/Admin/EditPost';
 
 function AdminDashboard({
   router,

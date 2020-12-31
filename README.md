@@ -12,6 +12,34 @@ To install dependencies run `npm run bootstrap`
 
 ### Firebase Backend
 
+You must first setup a project in the firebase [console](https://console.firebase.google.com/).
+Then you will need to `cd backend/firebase` and add firebase by running `firebase use --add` and provide your new project.
+
+There are several keys that you will need to set for your functions to work fully.
+You can add them by running `firebase functions:config:set`
+For example to set the cloudinary.api_secret you would run `firebase functions:config:set cloudinary.api_secret=abcdefg`
+
+Validate this is setup correctly by running `firebase functions:config:get` you should get something like below when you are done
+
+```json
+{
+  "firestore_backup": {
+    "bucket": ""
+  },
+  "algolia": {
+    "search_key": "",
+    "index": "",
+    "app_id": "",
+    "api_key": ""
+  },
+  "cloudinary": {
+    "name": "",
+    "api_key": "",
+    "api_secret": ""
+  }
+}
+```
+
 You must obtain your private key information from
 https://console.firebase.google.com/u/0/project/[YOURPROJECT]/settings/serviceaccounts/adminsdk
 
@@ -19,6 +47,19 @@ Then you will add this to `backend/firebase/serviceAccountKey.json`.
 You can find an example template at `backend/firebase/serviceAccountKey.json.template`.
 
 TODO: Build out sample test data
+
+### Firebase Emulator
+
+In order to run locally you will need your config values, you can get those by running the following
+
+> Make sure you are in the backend/firebase/functions when running!
+
+```bash
+firebase functions:config:get > .runtimeconfig.json
+# If using Windows PowerShell, replace the above with:
+# firebase functions:config:get | ac .runtimeconfig.json
+firebase functions:shell
+```
 
 ### Run Locally
 

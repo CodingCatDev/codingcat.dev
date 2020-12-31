@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 import { useUser } from '@/utils/auth/useUser';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Observable, Subscription } from 'rxjs';
+import { useEffect, useState } from 'react';
+import { Subscription } from 'rxjs';
 import { UserInfo } from '@/models/userInfo.model';
 import { userProfileDataObservable } from '@/services/api';
 import firebaseApp from 'firebase/app';
@@ -13,11 +13,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
 import { IconButton, Box } from '@material-ui/core';
 
 const StyledMenu = withStyles({

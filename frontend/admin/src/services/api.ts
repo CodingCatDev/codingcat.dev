@@ -1,9 +1,16 @@
-import { PostType, PostStatus, PostVisibility } from './../models/post.model';
+import { Cloudinary } from './../models/cloudinary.model';
+import {
+  PostType,
+  PostStatus,
+  PostVisibility,
+  CoverMedia,
+} from './../models/post.model';
 import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { docData, collectionData, doc } from 'rxfire/firestore';
+import { httpsCallable } from 'rxfire/functions';
 import { filter, map, switchMap, take } from 'rxjs/operators';
-import { Post } from '@/models/post.model';
+import { Post, MediaType } from '@/models/post.model';
 import { UserInfo } from '@/models/userInfo.model';
 import { v4 as uuid } from 'uuid';
 import { from } from 'rxjs';
@@ -13,6 +20,12 @@ const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
   map((app) => app as firebase.app.App),
   map((app) => app.firestore() as firebase.firestore.Firestore)
+);
+
+const functions$ = from(initFirebase()).pipe(
+  filter((app) => app !== undefined),
+  map((app) => app as firebase.app.App),
+  map((app) => app.functions() as firebase.functions.Functions)
 );
 
 /* POST */
@@ -204,7 +217,7 @@ export const postHistoryUpdate = (history: Post) => {
   return firestore$.pipe(
     switchMap((firestore) => {
       const docRef = firestore.doc(
-        `posts/${history.postId}/history/${history.historyId}`
+        `posts/${history.postId}/history/${history.id}`
       );
       docRef.set(
         {
@@ -214,7 +227,7 @@ export const postHistoryUpdate = (history: Post) => {
         },
         { merge: true }
       );
-      return docData(docRef);
+      return docData<Post>(docRef);
     })
   );
 };
@@ -236,7 +249,7 @@ export const postHistoryCreate = (history: Post) => {
         updatedBy: firebase.auth()?.currentUser?.uid,
         id: id,
       });
-      return docData(docRef);
+      return docData<Post>(docRef);
     })
   );
 };
@@ -268,10 +281,67 @@ export const postHistoryPublish = (history: Post) => {
   );
 };
 
+export const postHistoryMediaCreate = (
+  history: Post,
+  cloudinary: Cloudinary,
+  type: MediaType
+) => {
+  const mediaId = uuid();
+
+  const coverMedia: CoverMedia = {
+    thumbnail_url: cloudinary.thumbnail_url,
+    path: cloudinary.path,
+    mediaId,
+  };
+
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const batch = firestore.batch();
+      const mediaRef = firestore.doc(
+        `posts/${history.postId}/history/${history.id}/media/${mediaId}`
+      );
+
+      batch.set(mediaRef, {
+        id: mediaId,
+        cloudinary,
+      });
+
+      const historyRef = firestore.doc(
+        `posts/${history.postId}/history/${history.id}`
+      );
+      batch.set(historyRef, {
+        ...history,
+        updatedAt: firebase.firestore.Timestamp.now(),
+        updatedBy: firebase.auth()?.currentUser?.uid,
+        [type === MediaType.photo ? 'coverPhoto' : 'coverVideo']: coverMedia,
+      });
+      return from(batch.commit()).pipe(
+        switchMap((b) => docData<Post>(historyRef))
+      );
+    })
+  );
+};
+
+/* Cloudinary */
+export const getCloudinarySignature = (params: any) => {
+  return functions$.pipe(
+    switchMap((functions) =>
+      httpsCallable(functions, 'cloudinarysignature').call('params', params)
+    )
+  );
+};
+
+export const getCloudinaryCookieToken = () => {
+  return functions$.pipe(
+    switchMap((functions) =>
+      httpsCallable(functions, 'cloudinaryCookieToken').call('params', {})
+    )
+  );
+};
+
 /* Course 
    Course is a type of post, but it also has sections, with lessons
 */
-
 export const addCourseSection = (history: Course, section: Section) => {
   return firestore$.pipe(
     switchMap((firestore) => {

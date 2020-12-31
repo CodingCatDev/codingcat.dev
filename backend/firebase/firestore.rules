@@ -38,8 +38,14 @@ service cloud.firestore {
           allow read: if postsCanRead();
           allow update: if postsCanUpdate();
           allow delete: if postsCanDelete();
-        }
 
+          match /media/{id} {
+            allow create: if hasAnyRole(['author', 'editor', 'admin'])
+            allow read: if hasAnyRole(['author', 'editor', 'admin'])
+            allow update: if hasAnyRole(['author', 'editor', 'admin'])
+            allow delete: if hasAnyRole(['author', 'editor', 'admin'])
+          }
+        }
       }
 
       match /tags/{id} {

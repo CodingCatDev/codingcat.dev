@@ -9,7 +9,7 @@ import { PostType } from '@/models/post.model';
 import { useState, useEffect } from 'react';
 const EditPosts = dynamic(() => import('@/components/Admin/EditPosts'), {
   ssr: false,
-  loading: () => <p>Climbing a tree...</p>,
+  loading: () => <p>Loading EditPosts...</p>,
 });
 
 const CreatePost = dynamic(() => import('@/components/Admin/CreatePost'), {
