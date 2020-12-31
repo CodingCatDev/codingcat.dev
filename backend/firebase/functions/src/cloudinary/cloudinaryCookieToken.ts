@@ -7,6 +7,8 @@ import {
   cloudinaryName,
   cloudinaryApiKey,
   cloudinaryApiSecret,
+  cloudinaryTokenKey,
+
 } from './../config/config';
 
 const config = {
@@ -46,7 +48,7 @@ export const cloudinaryCookieToken = functions.https.onCall(
     // }
 
     const cookieToken = await cloudinary.utils.generate_auth_token({
-      key: cloudinaryApiKey,
+      key: cloudinaryTokenKey,
       provisioning_api_key: cloudinaryApiKey,
       provisioning_api_secret: cloudinaryApiSecret,
       account_id: cloudinaryName,

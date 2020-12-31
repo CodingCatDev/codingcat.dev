@@ -159,7 +159,8 @@ export default function CloudinaryUpload({
     try {
       const cookieToken = await getCloudinaryCookieToken().toPromise();
       const myDocument = document as any;
-      myDocument.cookie = cookieToken;
+      myDocument.cookie = `${cookieToken};domain=media.codingcat.dev;path=/`;
+
     } catch (err) {
       console.log('error fetching signature');
     }
@@ -219,7 +220,6 @@ export default function CloudinaryUpload({
       <Video
         cloudName="ajonp"
         secure={true}
-        cname="media.codingcat.dev"
         privateCdn={true}
         /*
       // @ts-ignore */

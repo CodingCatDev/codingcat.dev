@@ -16,3 +16,5 @@ export const algoliaIndex = functions.config().algolia.index;
 export const cloudinaryName = functions.config().cloudinary.name;
 export const cloudinaryApiKey = functions.config().cloudinary.api_key;
 export const cloudinaryApiSecret = functions.config().cloudinary.api_secret;
+export const cloudinaryTokenKey = functions.config().cloudinary.token_key;
+
