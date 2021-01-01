@@ -14,7 +14,10 @@ export default function PostsCards({
       {posts && posts.length > 0 ? (
         <>
           {posts.map((post) => (
-            <div className="p-3 m-3 rounded shadow bg-basics-050" key={post.slug}>
+            <div
+              className="p-3 m-3 rounded shadow bg-basics-050"
+              key={post.slug}
+            >
               <div>
                 <Link href={post.permalink}>
                   <a>

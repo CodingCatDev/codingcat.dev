@@ -43,10 +43,7 @@ export default function Home({
         </p>
         <div className="grid grid-flow-col gap-2">
           <Link href="/user/profile">
-            <a
-              className="btn-secondary justify-self-end"
-              role="button"
-            >
+            <a className="btn-secondary justify-self-end" role="button">
               Start Now
             </a>
           </Link>

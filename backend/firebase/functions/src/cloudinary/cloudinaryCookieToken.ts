@@ -8,7 +8,6 @@ import {
   cloudinaryApiKey,
   cloudinaryApiSecret,
   cloudinaryTokenKey,
-
 } from './../config/config';
 
 const config = {
@@ -51,12 +50,12 @@ export const cloudinaryCookieToken = functions.https.onCall(
       key: cloudinaryTokenKey,
       provisioning_api_key: cloudinaryApiKey,
       provisioning_api_secret: cloudinaryApiSecret,
-      account_id: cloudinaryName,
+      // account_id: cloudinaryName,
       duration: 600,
-      acl: '/ccd-cloudinary/videos',
-      private_cdn: true,
-      secure_distribution: true,
-      cname: 'media.codingcat.dev',
+      acl: '*/ccd-cloudinary/videos/*',
+      // private_cdn: true,
+      // secure_distribution: true,
+      // cname: 'media.codingcat.dev',
     });
     return cookieToken;
   }

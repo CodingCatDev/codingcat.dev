@@ -1,6 +1,7 @@
-import React, { useState, ComponentType, useEffect } from 'react';
+import React, { useState, ComponentType, useEffect, useRef } from 'react';
 import {
   Box,
+  Chip,
   Grid,
   Button,
   makeStyles,
@@ -14,6 +15,7 @@ import { green, grey, purple, pink } from '@material-ui/core/colors';
 
 import TimeAgo from 'react-timeago';
 import {
+  getCloudinaryCookieToken,
   postDataObservable,
   postHistoriesDataObservable,
   postHistoryCreate,
@@ -22,6 +24,7 @@ import {
   postHistoryUpdate,
   postUpdate,
 } from '@/services/api';
+import firebase from 'firebase/app';
 
 import { Post, PostStatus, PostType, MediaType } from '@/models/post.model.ts';
 import { Course } from '@/models/course.model.ts';
@@ -35,7 +38,12 @@ import CourseSections from '@/components/Admin/CourseSections';
 
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
+import Player from '@/components/global/video/Player';
 import CloudinaryUpload from '@/components/Cloudinary/CloudinaryUpload';
+
+import videojs from 'video.js';
+import 'videojs-youtube';
+import 'video.js/dist/video-js.css';
 
 enum TabType {
   edit = 'edit',
@@ -92,16 +100,47 @@ export default function EditPost({
   const [preview, setPreview] = useState<string>('');
   const [showHistory, setShowHistory] = useState(false);
 
+  const [player, setPlayer] = useState<any>();
+  const [playerOptions, setPlayerOptions] = useState<object>({});
+  const videoEl = useRef<any>();
+
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
-    script.async = true;
-    script.type = 'text/javascript';
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+    if (history && history.coverVideo && history.coverVideo.public_id) {
+      getCloudinaryCookieToken()
+        .pipe(take(1))
+        .subscribe((cookieToken) => {
+          var now = new Date();
+          var time = now.getTime();
+          time += 3600 * 1000;
+          now.setTime(time);
+          document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toISOString()}; path=/`;
+
+          // Example that works
+          // document.cookie = '__cld_token__=exp=1609523857~acl=*%2fccd-cloudinary%2fvideos%2f*~hmac=e6fbd91e8115245c2af22f38930c060d397a6a820ee844a880f9f3e8b2336b53; domain=.codingcat.dev;expires=Thu, 18 Dec 2025 12:00:00 UTC; path=/';
+
+          setPlayerOptions({
+            autoplay: false,
+            controls: true,
+            fluid: true,
+            sources: [
+              // {
+              //   src: `https://media.codingcat.dev/video/private/v1/${history.coverVideo?.public_id}.m3u8?${cookieToken}`,
+              //   type: 'application/x-mpegURL',
+              // },
+              {
+                src: `https://media.codingcat.dev/video/private/v1/${history.coverVideo?.public_id}.webm`,
+                type: 'video/webm',
+              },
+              {
+                src: `https://media.codingcat.dev/video/private/v1/${history.coverVideo?.public_id}.mp4`,
+                type: 'video/mp4',
+              },
+            ],
+          });
+        });
+    }
+    return () => {};
+  }, [history]);
 
   // Sets initial state
   useEffect(() => {
@@ -157,6 +196,14 @@ export default function EditPost({
     }
   }, [tab]);
 
+  useEffect(() => {
+    if (videoEl.current == null) return;
+    setPlayer(videojs(videoEl.current, playerOptions));
+    return () => {
+      if (player) player.dispose();
+    };
+  }, [playerOptions]);
+
   function handleChange(value: string) {
     const content = value;
     const update: Post | Course = { ...history, content } as Post | Course;
@@ -179,6 +226,53 @@ export default function EditPost({
   function selectTab(tab: TabType, index: number) {
     setTab(tab);
     setTabIndex(index);
+  }
+
+  async function onVideoDelete() {
+    if (history) {
+      if (history.publishedAt) {
+        postHistoryCreate(history)
+          .pipe(take(1))
+          .subscribe((h) =>
+            postHistoryUpdate({
+              ...h,
+              coverVideo: firebase.firestore.FieldValue.delete() as any,
+            })
+              .pipe(take(1))
+              .subscribe((newHistory) => setHistory(newHistory))
+          );
+      } else {
+        postHistoryUpdate({
+          ...history,
+          coverVideo: firebase.firestore.FieldValue.delete() as any,
+        })
+          .pipe(take(1))
+          .subscribe((newHistory) => setHistory(newHistory));
+      }
+    }
+  }
+  async function onImageDelete() {
+    if (history) {
+      if (history && history.publishedAt) {
+        postHistoryCreate(history)
+          .pipe(take(1))
+          .subscribe((h) =>
+            postHistoryUpdate({
+              ...h,
+              coverPhoto: firebase.firestore.FieldValue.delete() as any,
+            })
+              .pipe(take(1))
+              .subscribe((newHistory) => setHistory(newHistory))
+          );
+      } else {
+        postHistoryUpdate({
+          ...history,
+          coverPhoto: firebase.firestore.FieldValue.delete() as any,
+        })
+          .pipe(take(1))
+          .subscribe((newHistory) => setHistory(newHistory));
+      }
+    }
   }
 
   function onTab() {
@@ -319,59 +413,6 @@ export default function EditPost({
                       </span>
                     )}
                   </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    justifyContent: 'center',
-                    flexGrow: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      marginRight: '0.5rem',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                      alignContent: 'center',
-                    }}
-                  >
-                    <CloudinaryUpload
-                      setHistory={setHistory}
-                      history={history}
-                      type={MediaType.video}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      marginLeft: '0.5rem',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                      alignContent: 'center',
-                    }}
-                  >
-                    <CloudinaryUpload
-                      setHistory={setHistory}
-                      history={history}
-                      type={MediaType.photo}
-                    />
-                  </Box>
-                </Box>
-                <div>
-                  <Box sx={{ display: `${showHistory ? 'block' : 'none'}` }}>
-                    <Button
-                      variant="contained"
-                      onClick={() => toggleShowHistory()}
-                    >
-                      Back
-                    </Button>
-                  </Box>
-
                   <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
                     <Button variant="contained" onClick={() => onPublish()}>
                       Publish
@@ -393,6 +434,118 @@ export default function EditPost({
                           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                         />
                       </svg>
+                    </Button>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    flexGrow: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      marginRight: '0.5rem',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: history.coverVideo ? 'flex' : 'none',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        minWidth: '300px',
+                      }}
+                    >
+                      <>
+                        <div data-vjs-player>
+                          <video
+                            ref={videoEl}
+                            className="video-js"
+                            playsInline
+                          />
+                        </div>
+                      </>
+                      <Chip
+                        label="Cover Video"
+                        onDelete={() => onVideoDelete()}
+                        color="default"
+                      />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: history.coverVideo ? 'none' : 'flex',
+                      }}
+                    >
+                      <CloudinaryUpload
+                        setHistory={setHistory}
+                        history={history}
+                        type={MediaType.video}
+                      />
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      marginLeft: '0.5rem',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                    }}
+                  >
+                    {history.coverPhoto ? (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          minWidth: '300px',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            minWidth: '300px',
+                          }}
+                        >
+                          <img
+                            src={history.coverPhoto?.thumbnail_url}
+                            height="100%"
+                            width="100%"
+                          />
+                          <Chip
+                            label="Cover Image"
+                            onDelete={() => onImageDelete()}
+                            color="default"
+                          />
+                        </Box>
+                      </Box>
+                    ) : (
+                      <CloudinaryUpload
+                        setHistory={setHistory}
+                        history={history}
+                        type={MediaType.photo}
+                      />
+                    )}
+                  </Box>
+                </Box>
+                <div>
+                  <Box sx={{ display: `${showHistory ? 'block' : 'none'}` }}>
+                    <Button
+                      variant="contained"
+                      onClick={() => toggleShowHistory()}
+                    >
+                      Back
                     </Button>
                   </Box>
                 </div>

@@ -21,5 +21,6 @@
     "bootstrap": "lerna bootstrap",
     "dev": "lerna run --parallel dev",
     "start": "lerna run --parallel build && lerna run --parallel start "
-  }
+  },
+  "dependencies": {}
 }

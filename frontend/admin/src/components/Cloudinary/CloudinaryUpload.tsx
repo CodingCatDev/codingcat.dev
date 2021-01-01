@@ -1,22 +1,17 @@
 import { useEffect } from 'react';
-import { makeStyles, createStyles, Button, Box, Chip } from '@material-ui/core';
+import { makeStyles, createStyles, Button } from '@material-ui/core';
 import { pink, purple } from '@material-ui/core/colors';
 
 import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
 import { config } from '@/config/cloudinary';
 import {
   getCloudinarySignature,
-  postHistoryUpdate,
   postHistoryMediaCreate,
   postHistoryCreate,
-  getCloudinaryCookieToken,
 } from '@/services/api';
-import { switchMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { Post, MediaType } from '@/models/post.model';
-import firebase from 'firebase/app';
 import { Course } from '@/models/course.model.ts';
-
-import { Video } from 'cloudinary-react';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -68,6 +63,7 @@ export default function CloudinaryUpload({
     script.async = true;
     script.type = 'text/javascript';
     document.body.appendChild(script);
+
     return () => {
       document.body.removeChild(script);
     };
@@ -112,120 +108,18 @@ export default function CloudinaryUpload({
       }
     }
   }
-  async function onVideoDelete() {
-    if (history.publishedAt) {
-      postHistoryCreate(history)
-        .pipe(take(1))
-        .subscribe((h) =>
-          postHistoryUpdate({
-            ...h,
-            coverVideo: firebase.firestore.FieldValue.delete() as any,
-          })
-            .pipe(take(1))
-            .subscribe((newHistory) => setHistory(newHistory))
-        );
-    } else {
-      postHistoryUpdate({
-        ...history,
-        coverVideo: firebase.firestore.FieldValue.delete() as any,
-      })
-        .pipe(take(1))
-        .subscribe((newHistory) => setHistory(newHistory));
-    }
-  }
-  async function onImageDelete() {
-    if (history.publishedAt) {
-      postHistoryCreate(history)
-        .pipe(take(1))
-        .subscribe((h) =>
-          postHistoryUpdate({
-            ...h,
-            coverPhoto: firebase.firestore.FieldValue.delete() as any,
-          })
-            .pipe(take(1))
-            .subscribe((newHistory) => setHistory(newHistory))
-        );
-    } else {
-      postHistoryUpdate({
-        ...history,
-        coverPhoto: firebase.firestore.FieldValue.delete() as any,
-      })
-        .pipe(take(1))
-        .subscribe((newHistory) => setHistory(newHistory));
-    }
-  }
-
-  async function fetchCloudinaryCookieToken() {
-    try {
-      const cookieToken = await getCloudinaryCookieToken().toPromise();
-      const myDocument = document as any;
-      myDocument.cookie = `${cookieToken};domain=media.codingcat.dev;path=/`;
-
-    } catch (err) {
-      console.log('error fetching signature');
-    }
-  }
 
   const classes = useStyles();
   return (
     <>
-      {(type === MediaType.video && history.coverVideo) ||
-      (type === MediaType.photo && history.coverPhoto) ? (
-        <>
-          {type === MediaType.video ? (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <img src={history.coverVideo?.thumbnail_url} />
-              <Chip
-                label="Cover Video"
-                onDelete={() => onVideoDelete()}
-                color="default"
-              />
-            </Box>
-          ) : (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <img src={history.coverPhoto?.thumbnail_url} />
-              <Chip
-                label="Cover Image"
-                onDelete={() => onImageDelete()}
-                color="default"
-              />
-            </Box>
-          )}
-        </>
-      ) : (
-        <Button
-          variant="contained"
-          className={type === MediaType.photo ? classes.photo : classes.video}
-          onClick={() => onUpload()}
-        >
-          Add {type === MediaType.photo ? 'Photo' : 'Video'}
-          <InsertPhotoIcon />
-        </Button>
-      )}
-      <Button variant="contained" onClick={() => fetchCloudinaryCookieToken()}>
-        Cookie Token
+      <Button
+        variant="contained"
+        className={type === MediaType.photo ? classes.photo : classes.video}
+        onClick={() => onUpload()}
+      >
+        Add {type === MediaType.photo ? 'Photo' : 'Video'}
+        <InsertPhotoIcon />
       </Button>
-      <Video
-        cloudName="ajonp"
-        secure={true}
-        privateCdn={true}
-        /*
-      // @ts-ignore */
-        secureDistribution="media.codingcat.dev"
-        publicId="ccd-cloudinary/videos/j017lpqsvvzdrgzcegku"
-      ></Video>
     </>
   );
 }
