@@ -114,25 +114,21 @@ export default function EditPost({
           time += 3600 * 1000;
           now.setTime(time);
           document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toISOString()}; path=/`;
-
-          // Example that works
-          // document.cookie = '__cld_token__=exp=1609523857~acl=*%2fccd-cloudinary%2fvideos%2f*~hmac=e6fbd91e8115245c2af22f38930c060d397a6a820ee844a880f9f3e8b2336b53; domain=.codingcat.dev;expires=Thu, 18 Dec 2025 12:00:00 UTC; path=/';
-
-          setPlayerOptions({
+          https: setPlayerOptions({
             autoplay: false,
             controls: true,
             fluid: true,
             sources: [
-              // {
-              //   src: `https://media.codingcat.dev/video/private/v1/${history.coverVideo?.public_id}.m3u8?${cookieToken}`,
-              //   type: 'application/x-mpegURL',
-              // },
               {
-                src: `https://media.codingcat.dev/video/private/v1/${history.coverVideo?.public_id}.webm`,
+                src: `https://media.codingcat.dev/video/upload/${history.coverVideo?.public_id}.m3u8`,
+                type: 'application/x-mpegURL',
+              },
+              {
+                src: `https://media.codingcat.dev/video/upload/${history.coverVideo?.public_id}.webm`,
                 type: 'video/webm',
               },
               {
-                src: `https://media.codingcat.dev/video/private/v1/${history.coverVideo?.public_id}.mp4`,
+                src: `https://media.codingcat.dev/video/upload/${history.coverVideo?.public_id}.mp4`,
                 type: 'video/mp4',
               },
             ],
