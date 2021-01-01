@@ -120,7 +120,7 @@ export default function EditPost({
             fluid: true,
             sources: [
               {
-                src: `https://media.codingcat.dev/video/upload/${history.coverVideo?.public_id}.m3u8`,
+                src: `https://media.codingcat.dev/video/upload/sp_full_hd/${history.coverVideo?.public_id}.m3u8`,
                 type: 'application/x-mpegURL',
               },
               {
