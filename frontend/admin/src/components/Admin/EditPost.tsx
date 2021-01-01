@@ -460,7 +460,7 @@ export default function EditPost({
                         minWidth: '300px',
                       }}
                     >
-                      <>
+                      {/* <>
                         <div data-vjs-player>
                           <video
                             ref={videoEl}
@@ -468,7 +468,15 @@ export default function EditPost({
                             playsInline
                           />
                         </div>
-                      </>
+                      </> */}
+                      <img
+                        src={history.coverVideo?.thumbnail_url?.replace(
+                          'c_limit,h_60,w_90/',
+                          ''
+                        )}
+                        height="100%"
+                        width="100%"
+                      />
                       <Chip
                         label="Cover Video"
                         onDelete={() => onVideoDelete()}
