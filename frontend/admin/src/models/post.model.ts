@@ -34,6 +34,7 @@ export interface CoverMedia {
   thumbnail_url?: string;
   public_id?: string;
   mediaId?: string;
+  url?: string;
 }
 
 export enum PostStatus {

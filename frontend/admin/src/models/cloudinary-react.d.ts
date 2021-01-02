@@ -193,7 +193,7 @@ declare module 'cloudinary-react' {
     radius?: number | string;
     rawTransformation?: any;
     size?: string;
-    sourceTypes?: string;
+    sourceTypes?: string[];
     sourceTransformation?: string;
     startOffset?: number | string;
     streamingProfile?: StreamingProfiles;

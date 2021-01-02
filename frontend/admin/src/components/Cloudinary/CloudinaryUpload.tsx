@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { makeStyles, createStyles, Button } from '@material-ui/core';
 import { pink, purple } from '@material-ui/core/colors';
 
-import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
+import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
+import AddToQueueIcon from '@material-ui/icons/AddToQueue';
 import { config } from '@/config/cloudinary';
 import {
   getCloudinarySignature,
@@ -112,14 +113,25 @@ export default function CloudinaryUpload({
   const classes = useStyles();
   return (
     <>
-      <Button
-        variant="contained"
-        className={type === MediaType.photo ? classes.photo : classes.video}
-        onClick={() => onUpload()}
-      >
-        Add {type === MediaType.photo ? 'Photo' : 'Video'}
-        <InsertPhotoIcon />
-      </Button>
+      {type === MediaType.photo ? (
+        <Button
+          variant="contained"
+          className={classes.photo}
+          onClick={() => onUpload()}
+        >
+          Add Photo
+          <AddPhotoAlternateIcon />
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          className={classes.video}
+          onClick={() => onUpload()}
+        >
+          Add Video
+          <AddToQueueIcon />
+        </Button>
+      )}
     </>
   );
 }

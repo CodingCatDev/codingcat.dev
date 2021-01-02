@@ -1,7 +1,6 @@
-import React, { useState, ComponentType, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Chip,
   Grid,
   Button,
   makeStyles,
@@ -11,7 +10,7 @@ import {
   createStyles,
   Theme as AugmentedTheme,
 } from '@material-ui/core';
-import { green, grey, purple, pink } from '@material-ui/core/colors';
+import { green, grey } from '@material-ui/core/colors';
 
 import TimeAgo from 'react-timeago';
 import {
@@ -19,12 +18,9 @@ import {
   postDataObservable,
   postHistoriesDataObservable,
   postHistoryCreate,
-  postHistoryDataObservable,
   postHistoryPublish,
   postHistoryUpdate,
-  postUpdate,
 } from '@/services/api';
-import firebase from 'firebase/app';
 
 import { Post, PostStatus, PostType, MediaType } from '@/models/post.model.ts';
 import { Course } from '@/models/course.model.ts';
@@ -38,12 +34,10 @@ import CourseSections from '@/components/Admin/CourseSections';
 
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import Player from '@/components/global/video/Player';
 import CloudinaryUpload from '@/components/Cloudinary/CloudinaryUpload';
 
-import videojs from 'video.js';
-import 'videojs-youtube';
-import 'video.js/dist/video-js.css';
+import ImageModal from '@/components/Cloudinary/ImageModal';
+import VideoModal from '@/components/Cloudinary/VideoModal';
 
 enum TabType {
   edit = 'edit',
@@ -89,50 +83,28 @@ export default function EditPost({
   const [postFound, setPostFound] = useState(false);
   const [postHistories, setPostHistories] = useState<Post[] | Course[]>([]);
   const [history, setHistory] = useState<Post | Course>();
-  const [post, setPost] = useState<Post | Course>();
-  const [path, setPath] = useState<string>('');
+  const [, setPost] = useState<Post | Course>();
+  const [, setPath] = useState<string>('');
   const [tab, setTab] = useState<TabType>(TabType.edit);
   const [tabIndex, setTabIndex] = useState(0);
   const [saving, setSaving] = useState<boolean>(false);
-  const [updateContent$, setUpdateContent$] = useState<Subject<Post | Course>>(
+  const [updateContent$] = useState<Subject<Post | Course>>(
     new Subject<Post | Course>()
   );
   const [preview, setPreview] = useState<string>('');
   const [showHistory, setShowHistory] = useState(false);
-
-  const [player, setPlayer] = useState<any>();
-  const [playerOptions, setPlayerOptions] = useState<object>({});
-  const videoEl = useRef<any>();
 
   useEffect(() => {
     if (history && history.coverVideo && history.coverVideo.public_id) {
       getCloudinaryCookieToken()
         .pipe(take(1))
         .subscribe((cookieToken) => {
+          //TODO : There is probably a better way to set cookies.
           var now = new Date();
           var time = now.getTime();
           time += 3600 * 1000;
           now.setTime(time);
           document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toISOString()}; path=/`;
-          https: setPlayerOptions({
-            autoplay: false,
-            controls: true,
-            fluid: true,
-            sources: [
-              {
-                src: `https://media.codingcat.dev/video/upload/sp_full_hd/${history.coverVideo?.public_id}.m3u8`,
-                type: 'application/x-mpegURL',
-              },
-              {
-                src: `https://media.codingcat.dev/video/upload/${history.coverVideo?.public_id}.webm`,
-                type: 'video/webm',
-              },
-              {
-                src: `https://media.codingcat.dev/video/upload/${history.coverVideo?.public_id}.mp4`,
-                type: 'video/mp4',
-              },
-            ],
-          });
         });
     }
     return () => {};
@@ -168,7 +140,7 @@ export default function EditPost({
         if (h?.publishedAt) {
           postHistoryCreate(h)
             .pipe(take(1))
-            .subscribe((u) => {
+            .subscribe(() => {
               setSaving(false);
             });
         } else {
@@ -192,14 +164,6 @@ export default function EditPost({
     }
   }, [tab]);
 
-  useEffect(() => {
-    if (videoEl.current == null) return;
-    setPlayer(videojs(videoEl.current, playerOptions));
-    return () => {
-      if (player) player.dispose();
-    };
-  }, [playerOptions]);
-
   function handleChange(value: string) {
     const content = value;
     const update: Post | Course = { ...history, content } as Post | Course;
@@ -222,53 +186,6 @@ export default function EditPost({
   function selectTab(tab: TabType, index: number) {
     setTab(tab);
     setTabIndex(index);
-  }
-
-  async function onVideoDelete() {
-    if (history) {
-      if (history.publishedAt) {
-        postHistoryCreate(history)
-          .pipe(take(1))
-          .subscribe((h) =>
-            postHistoryUpdate({
-              ...h,
-              coverVideo: firebase.firestore.FieldValue.delete() as any,
-            })
-              .pipe(take(1))
-              .subscribe((newHistory) => setHistory(newHistory))
-          );
-      } else {
-        postHistoryUpdate({
-          ...history,
-          coverVideo: firebase.firestore.FieldValue.delete() as any,
-        })
-          .pipe(take(1))
-          .subscribe((newHistory) => setHistory(newHistory));
-      }
-    }
-  }
-  async function onImageDelete() {
-    if (history) {
-      if (history && history.publishedAt) {
-        postHistoryCreate(history)
-          .pipe(take(1))
-          .subscribe((h) =>
-            postHistoryUpdate({
-              ...h,
-              coverPhoto: firebase.firestore.FieldValue.delete() as any,
-            })
-              .pipe(take(1))
-              .subscribe((newHistory) => setHistory(newHistory))
-          );
-      } else {
-        postHistoryUpdate({
-          ...history,
-          coverPhoto: firebase.firestore.FieldValue.delete() as any,
-        })
-          .pipe(take(1))
-          .subscribe((newHistory) => setHistory(newHistory));
-      }
-    }
   }
 
   function onTab() {
@@ -460,28 +377,7 @@ export default function EditPost({
                         minWidth: '300px',
                       }}
                     >
-                      {/* <>
-                        <div data-vjs-player>
-                          <video
-                            ref={videoEl}
-                            className="video-js"
-                            playsInline
-                          />
-                        </div>
-                      </> */}
-                      <img
-                        src={history.coverVideo?.thumbnail_url?.replace(
-                          'c_limit,h_60,w_90/',
-                          ''
-                        )}
-                        height="100%"
-                        width="100%"
-                      />
-                      <Chip
-                        label="Cover Video"
-                        onDelete={() => onVideoDelete()}
-                        color="default"
-                      />
+                      <VideoModal post={history} />
                     </Box>
                     <Box
                       sx={{
@@ -505,42 +401,27 @@ export default function EditPost({
                       alignContent: 'center',
                     }}
                   >
-                    {history.coverPhoto ? (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'center',
-                          minWidth: '300px',
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            minWidth: '300px',
-                          }}
-                        >
-                          <img
-                            src={history.coverPhoto?.thumbnail_url}
-                            height="100%"
-                            width="100%"
-                          />
-                          <Chip
-                            label="Cover Image"
-                            onDelete={() => onImageDelete()}
-                            color="default"
-                          />
-                        </Box>
-                      </Box>
-                    ) : (
+                    <Box
+                      sx={{
+                        display: history.coverPhoto ? 'flex' : 'none',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        minWidth: '300px',
+                      }}
+                    >
+                      <ImageModal post={history} />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: history.coverPhoto ? 'none' : 'flex',
+                      }}
+                    >
                       <CloudinaryUpload
                         setHistory={setHistory}
                         history={history}
                         type={MediaType.photo}
                       />
-                    )}
+                    </Box>
                   </Box>
                 </Box>
                 <div>

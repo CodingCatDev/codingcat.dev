@@ -293,6 +293,7 @@ export const postHistoryMediaCreate = (
     path: cloudinary.path,
     mediaId,
     public_id: cloudinary.public_id,
+    url: cloudinary.url,
   };
 
   return firestore$.pipe(
