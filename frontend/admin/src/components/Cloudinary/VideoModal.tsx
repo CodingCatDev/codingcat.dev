@@ -108,17 +108,20 @@ export default function ImageModal({ post }: { post: Post }) {
       .pipe(take(1))
       .subscribe((ct) => {
         //TODO : There is probably a better way to set cookies.
-        setCookieToken(ct);
         var now = new Date();
         var time = now.getTime();
         time += 3600 * 1000;
         now.setTime(time);
-        document.cookie = `${cookieToken}; domain=${
-          config.cname
-        }; expires=${now.toISOString()}; path=/; SameSite=None; Secure`;
+        // document.cookie = `${cookieToken}; domain=${
+        //   config.cname
+        // }; expires=${now.toISOString()}; path=/; SameSite=None; Secure`;
+
+        document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toISOString()}; path=/`;
+
+        setCookieToken(ct);
       });
     return () => {};
-  }, []);
+  }, [post]);
 
   const handleClickOpen = () => {
     setOpen(true);
