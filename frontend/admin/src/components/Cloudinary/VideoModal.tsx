@@ -119,12 +119,12 @@ export default function ImageModal({ post }: { post: Post }) {
         var time = now.getTime();
         time += 3600 * 1000;
         now.setTime(time);
-        // document.cookie = `${cookieToken}; domain=${
-        //   config.cname
-        // }; expires=${now.toISOString()}; path=/; SameSite=None; Secure`;
+        const match = config?.cname
+          ? config?.cname.match(/([a-z0-9-]*?)\.[a-z]{2,}$/)
+          : null;
+        const baseDomain = match && match?.length > 0 ? match[0] : '';
 
-        document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toUTCString()}; path=/`;
-
+        document.cookie = `${ct}; domain=.${baseDomain}; expires=${now.toUTCString()}; path=/; SameSite=None; Secure`;
         setCookieToken(ct);
       });
   }, [post]);
