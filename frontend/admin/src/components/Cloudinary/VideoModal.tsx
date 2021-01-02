@@ -104,6 +104,13 @@ export default function ImageModal({ post }: { post: Post }) {
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {
+    setCookieToken('');
+    return () => {
+      setCookieToken('');
+    };
+  }, []);
+
+  useEffect(() => {
     getCloudinaryCookieToken()
       .pipe(take(1))
       .subscribe((ct) => {
@@ -116,11 +123,10 @@ export default function ImageModal({ post }: { post: Post }) {
         //   config.cname
         // }; expires=${now.toISOString()}; path=/; SameSite=None; Secure`;
 
-        document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toISOString()}; path=/`;
+        document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toUTCString()}; path=/`;
 
         setCookieToken(ct);
       });
-    return () => {};
   }, [post]);
 
   const handleClickOpen = () => {
