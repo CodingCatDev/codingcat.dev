@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -15,7 +15,11 @@ import { Post } from '@/models/post.model';
 
 import { config } from '@/config/cloudinary';
 
-import { postHistoryCreate, postHistoryUpdate } from '@/services/api';
+import {
+  getCloudinaryCookieToken,
+  postHistoryCreate,
+  postHistoryUpdate,
+} from '@/services/api';
 import firebase from 'firebase/app';
 import { take } from 'rxjs/operators';
 
@@ -97,6 +101,24 @@ async function onVideoDelete(post: Post) {
 
 export default function ImageModal({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
+  const [cookieToken, setCookieToken] = useState('');
+
+  useEffect(() => {
+    getCloudinaryCookieToken()
+      .pipe(take(1))
+      .subscribe((ct) => {
+        //TODO : There is probably a better way to set cookies.
+        setCookieToken(ct);
+        var now = new Date();
+        var time = now.getTime();
+        time += 3600 * 1000;
+        now.setTime(time);
+        document.cookie = `${cookieToken}; domain=${
+          config.cname
+        }; expires=${now.toISOString()}; path=/; SameSite=None; Secure`;
+      });
+    return () => {};
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -116,19 +138,27 @@ export default function ImageModal({ post }: { post: Post }) {
         aria-labelledby="customized-dialog-title"
         open={open}
         fullWidth={true}
+        maxWidth="xl"
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           {post.coverVideo?.url}
         </DialogTitle>
         <DialogContent dividers>
-          <Video
-            cloudName={config.name}
-            publicId={post.coverVideo?.public_id}
-            cname={config.cname ? config.cname : ''}
-            privateCdn={config.privateCdn ? true : false}
-            style={{ height: '100%', width: '100%' }}
-            sourceTypes={['hls', 'webm', 'ogv', 'mp4']}
-          />
+          {cookieToken === '' ? (
+            <div>Getting Cookie for Private View</div>
+          ) : (
+            <Video
+              cloudName={config.name}
+              publicId={post.coverVideo?.public_id}
+              privateCdn={config.cname ? true : false}
+              secure={config.cname ? true : false}
+              secureDistribution={config.cname ? config.cname : ''}
+              sourceTypes={['hls', 'webm', 'ogv', 'mp4']}
+              controls={true}
+              fluid="true"
+              style={{ height: '100%', width: '100%' }}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button

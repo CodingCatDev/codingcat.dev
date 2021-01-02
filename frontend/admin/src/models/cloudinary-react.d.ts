@@ -223,13 +223,14 @@ declare module 'cloudinary-react' {
     roundDpr?: boolean;
     secure?: boolean;
     secureCdnSubdomain?: boolean;
-    secureDistribution?: boolean;
     shorten?: string;
     type?: string;
     urlSuffix?: string;
     useRootPath?: boolean;
     version?: string;
     publicId?: string;
+    fluid?: string;
+    secureDistribution?: string;
   }
 
   export class CloudinaryComponent extends React.PureComponent<

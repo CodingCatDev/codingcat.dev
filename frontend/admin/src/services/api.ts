@@ -336,7 +336,10 @@ export const getCloudinarySignature = (params: any) => {
 export const getCloudinaryCookieToken = () => {
   return functions$.pipe(
     switchMap((functions) =>
-      httpsCallable(functions, 'cloudinaryCookieToken').call('params', {})
+      httpsCallable<unknown, string>(functions, 'cloudinaryCookieToken').call(
+        'params',
+        {}
+      )
     )
   );
 };

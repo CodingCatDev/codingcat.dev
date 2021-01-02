@@ -14,7 +14,6 @@ import { green, grey } from '@material-ui/core/colors';
 
 import TimeAgo from 'react-timeago';
 import {
-  getCloudinaryCookieToken,
   postDataObservable,
   postHistoriesDataObservable,
   postHistoryCreate,
@@ -93,22 +92,6 @@ export default function EditPost({
   );
   const [preview, setPreview] = useState<string>('');
   const [showHistory, setShowHistory] = useState(false);
-
-  useEffect(() => {
-    if (history && history.coverVideo && history.coverVideo.public_id) {
-      getCloudinaryCookieToken()
-        .pipe(take(1))
-        .subscribe((cookieToken) => {
-          //TODO : There is probably a better way to set cookies.
-          var now = new Date();
-          var time = now.getTime();
-          time += 3600 * 1000;
-          now.setTime(time);
-          document.cookie = `${cookieToken}; domain=.codingcat.dev; expires=${now.toISOString()}; path=/`;
-        });
-    }
-    return () => {};
-  }, [history]);
 
   // Sets initial state
   useEffect(() => {
