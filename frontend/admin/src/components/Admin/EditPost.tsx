@@ -235,108 +235,11 @@ export default function EditPost({
                     flexDirection: 'column',
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      m: 1,
-                    }}
-                  >
-                    <span
-                      className={`${classes.status} ${
-                        history.status === PostStatus.published
-                          ? classes.statusPublished
-                          : classes.statusDraft
-                      }`}
-                    >
-                      {history.status}
-                    </span>
-
-                    <span
-                      className={classes.link}
-                      onClick={() => toggleShowHistory()}
-                    >
-                      {history?.id}
-                    </span>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      m: 1,
-                      flexGrow: 1,
-                    }}
-                  >
-                    <span>
-                      <TimeAgo date={history?.updatedAt?.toDate() as Date} />
-                    </span>
-                    {saving ? (
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="w-8 h-8"
-                          style={{ height: '2rem', width: '2rem' }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                          />
-                        </svg>
-                      </span>
-                    ) : (
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="w-8 h-8 text-green-500"
-                          style={{ height: '2rem', width: '2rem' }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      </span>
-                    )}
-                  </Box>
-                  <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
-                    <Button variant="contained" onClick={() => onPublish()}>
-                      Publish
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        style={{
-                          height: '1.5rem',
-                          width: '1.5rem',
-                          marginLeft: '1rem',
-                        }}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                        />
-                      </svg>
-                    </Button>
-                  </Box>
+                  <h1>{history.title}</h1>
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: `${showHistory ? 'none' : 'flex'}`,
                     flexDirection: 'row',
                     flexWrap: 'wrap',
                     justifyContent: 'center',
@@ -429,6 +332,111 @@ export default function EditPost({
                     </Button>
                   </Box>
                 </div>
+                <Box
+                  sx={{
+                    display: `${showHistory ? 'none' : 'flex'}`,
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      m: 1,
+                    }}
+                  >
+                    <span
+                      className={`${classes.status} ${
+                        history.status === PostStatus.published
+                          ? classes.statusPublished
+                          : classes.statusDraft
+                      }`}
+                    >
+                      {history.status}
+                    </span>
+
+                    <span
+                      className={classes.link}
+                      onClick={() => toggleShowHistory()}
+                    >
+                      {history?.id}
+                    </span>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      m: 1,
+                      flexGrow: 1,
+                    }}
+                  >
+                    <span>
+                      <TimeAgo date={history?.updatedAt?.toDate() as Date} />
+                    </span>
+                    {saving ? (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          className="w-8 h-8"
+                          style={{ height: '2rem', width: '2rem' }}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                      </span>
+                    ) : (
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          className="w-8 h-8 text-green-500"
+                          style={{ height: '2rem', width: '2rem' }}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                    <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
+                      <Button variant="contained" onClick={() => onPublish()}>
+                        Publish
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          style={{
+                            height: '1.5rem',
+                            width: '1.5rem',
+                            marginLeft: '1rem',
+                          }}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                          />
+                        </svg>
+                      </Button>
+                    </Box>
+                  </Box>
+                </Box>
               </Box>
             </Grid>
             <Grid
