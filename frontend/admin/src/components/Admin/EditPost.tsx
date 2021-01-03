@@ -11,7 +11,7 @@ import {
   Theme as AugmentedTheme,
 } from '@material-ui/core';
 import { green, grey } from '@material-ui/core/colors';
-
+import matter from 'gray-matter';
 import TimeAgo from 'react-timeago';
 import {
   postDataObservable,
@@ -98,7 +98,8 @@ export default function EditPost({
   useEffect(() => {
     const path = `/posts/${router.query.id}`;
     setPath(path);
-
+    setTab(TabType.edit);
+    setTabIndex(0);
     // Set initial post to created
     const postSubscribe = postDataObservable(path)
       .pipe(
@@ -111,7 +112,36 @@ export default function EditPost({
       .subscribe((histories) => {
         setPostHistories(histories);
         if (histories.length > 0) {
-          setHistory(histories[0]);
+          const dbHistory = histories[0];
+
+          // Most likely this is the first time creation
+          // Update the frontmatter with the correct data
+          // the database
+          if (dbHistory) {
+            let title = dbHistory.title;
+            let excerpt = dbHistory.excerpt;
+            let slug = dbHistory.slug;
+
+            const fm = matter(dbHistory.content || '');
+            if (fm && fm.data) {
+              if (fm.data.title) {
+                title = fm.data.title;
+              }
+              if (fm.data.excerpt) {
+                excerpt = fm.data.excerpt;
+              }
+              if (fm.data.slug) {
+                slug = fm.data.slug;
+              }
+            }
+            const content = matter.stringify(fm.content, {
+              title,
+              excerpt,
+              slug,
+            });
+            dbHistory.content = content;
+            setHistory(dbHistory);
+          }
         }
       });
 
@@ -150,6 +180,20 @@ export default function EditPost({
 
   function handleChange(value: string) {
     const content = value;
+    try {
+      const fm = matter(content);
+      if (history) {
+        if (fm.data.title) {
+          history.title = fm.data.title;
+        }
+        if (fm.data.excerpt) {
+          history.excerpt = fm.data.excerpt;
+        }
+        if (fm.data.slug) {
+          history.slug = fm.data.slug;
+        }
+      }
+    } catch (e) {}
     const update: Post | Course = { ...history, content } as Post | Course;
     setHistory(update);
     updateContent$.next({ ...update, historyId: history?.id });

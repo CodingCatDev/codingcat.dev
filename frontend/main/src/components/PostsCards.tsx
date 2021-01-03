@@ -21,27 +21,16 @@ export default function PostsCards({
               <div>
                 <Link href={post.permalink}>
                   <a>
-                    {post.thumbnail ? (
+                    {post.coverPhoto?.path ? (
                       <>
-                        {type === PostType.podcast ? (
-                          <Image
-                            src={post.thumbnail}
-                            alt={post.title}
-                            width="150"
-                            height="150"
-                            layout="responsive"
-                            className="rounded"
-                          />
-                        ) : (
-                          <Image
-                            src={post.thumbnail}
-                            alt={post.title}
-                            width="480"
-                            height="270"
-                            layout="responsive"
-                            className="rounded"
-                          />
-                        )}
+                        <Image
+                          src={post.coverPhoto?.path}
+                          alt={post.title}
+                          width="480"
+                          height="270"
+                          layout="responsive"
+                          className="rounded"
+                        />
                       </>
                     ) : (
                       <div>Image Placeholder</div>

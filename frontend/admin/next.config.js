@@ -4,7 +4,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 module.exports = withBundleAnalyzer({
   images: {
     loader: 'cloudinary',
-    path: 'https://media.codingcat.dev/images/',
+    path: 'https://media.codingcat.dev/image/upload/',
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     if (!isServer) {

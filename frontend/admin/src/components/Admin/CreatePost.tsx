@@ -91,6 +91,7 @@ export default function CreatePost({ type }: { type: PostType }) {
           <TextField
             autoFocus
             margin="dense"
+            variant="filled"
             id="title"
             label="Title"
             type="text"
@@ -106,6 +107,7 @@ export default function CreatePost({ type }: { type: PostType }) {
             label="Slug"
             type="text"
             fullWidth
+            variant="filled"
             value={post.slug}
             onChange={(e) => slugInput(e, false)}
           />
@@ -114,10 +116,10 @@ export default function CreatePost({ type }: { type: PostType }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowModal(false)} color="primary">
+          <Button onClick={() => setShowModal(false)} color="secondary">
             Cancel
           </Button>
-          <Button onClick={() => create()} color="primary">
+          <Button onClick={() => create()} color="primary" variant="contained">
             Create
           </Button>
         </DialogActions>

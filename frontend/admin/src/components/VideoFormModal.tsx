@@ -176,7 +176,7 @@ export default function VideoFormModal({
             label="Video URL"
             type="url"
             fullWidth
-            variant="outlined"
+            variant="filled"
             required={true}
             value={video.url}
             onChange={onUrlInput}

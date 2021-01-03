@@ -17,7 +17,6 @@ export interface Post {
   visibility: PostVisibility;
   permalink: string;
   excerpt?: string;
-  thumbnail?: string;
   category?: string[] | null; //If null this will be auto assigned 'Unassigned'
   tag?: string[] | null;
   format?: PostFormat; //If null this will be auto assigned 'standard'
@@ -25,6 +24,23 @@ export interface Post {
   slug: string;
   historyId?: string;
   postId?: string;
+  coverPhoto?: CoverMedia;
+  coverVideo?: CoverMedia;
+}
+
+export interface CoverMedia {
+  path?: string;
+  thumbnail_url?: string;
+  public_id?: string;
+  mediaId?: string;
+  url: string;
+  type: MediaType;
+  source: MediaSource;
+}
+
+export enum MediaSource {
+  video = 'video',
+  cloudinary = 'cloudinary',
 }
 
 export enum PostStatus {
@@ -51,4 +67,8 @@ export enum PostFormat {
   video = 'video',
   image = 'image',
   audio = 'audio',
+}
+export enum MediaType {
+  photo = 'photo',
+  video = 'video',
 }

@@ -11,9 +11,9 @@ export default function Podcasts({ posts }: { posts: Post[] }) {
         <title>Podcasts | CodingCatDev</title>
       </Head>
 
-      <main className="grid grid-cols-1 gap-2 mt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 place-items-auto">
-        <PostsCards type={PostType.podcast} posts={posts} />
-      </main>
+      <section className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
+        <PostsCards posts={posts} />
+      </section>
 
       <footer></footer>
     </Layout>

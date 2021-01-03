@@ -14,13 +14,13 @@ export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
           <div>
             <Link href={post.permalink}>
               <a>
-                {post.thumbnail ? (
+                {post.coverPhoto && post.coverPhoto.path ? (
                   <>
                     <Image
-                      src={post.thumbnail}
+                      src={post.coverPhoto.path}
                       alt={post.title}
-                      width={post.type === PostType.podcast ? 200 : 480}
-                      height={post.type === PostType.podcast ? 200 : 270}
+                      width={480}
+                      height={270}
                       layout="responsive"
                       className="rounded cursor-pointer"
                     />

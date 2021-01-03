@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   Box,
   Grid,
@@ -28,6 +29,7 @@ import {
 } from 'react-beautiful-dnd';
 const arrayMove = require('array-move');
 import { Post } from '@/models/post.model';
+import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles((theme: AugmentedTheme) =>
   createStyles({
@@ -64,6 +66,9 @@ const useStyles = makeStyles((theme: AugmentedTheme) =>
       '&:hover': {
         color: 'red',
       },
+    },
+    lessonTitle: {
+      color: 'white',
     },
   })
 );
@@ -390,7 +395,19 @@ export default function CourseSections({
                                               ref={provided.innerRef}
                                               className={classes.lesson}
                                             >
-                                              <h3>{lesson.title}</h3>
+                                              <Link
+                                                href={`/admin/lessons/${lesson.id}`}
+                                              >
+                                                <a>
+                                                  <h3
+                                                    className={
+                                                      classes.lessonTitle
+                                                    }
+                                                  >
+                                                    {lesson.title}
+                                                  </h3>
+                                                </a>
+                                              </Link>
                                               <IconButton
                                                 onClick={() =>
                                                   onLessonDelete(si, li)
