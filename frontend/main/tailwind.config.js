@@ -5,6 +5,7 @@ module.exports = {
   variants: {
     extend: {
       opacity: ['disabled'],
+      backgroundOpacity: ['dark'],
     },
   },
 

@@ -93,39 +93,11 @@ module.exports = {
       height: {
         35: '35px',
       },
+      screens: {
+        '3xl': '2000px',
+      },
       width: {
         35: '35px',
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            color: '#171717',
-            a: {
-              color: '#4B0A75',
-              '&:hover': {
-                color: '#D11663',
-              },
-            },
-            h1: {
-              fontFamily: 'nunito',
-            },
-            h2: {
-              fontFamily: 'nunito',
-            },
-            h3: {
-              fontFamily: 'nunito',
-            },
-            h4: {
-              fontFamily: 'nunito',
-            },
-            h5: {
-              fontFamily: 'nunito',
-            },
-            h6: {
-              fontFamily: 'nunito',
-            },
-          },
-        },
       },
     },
     customForms: (theme) => ({

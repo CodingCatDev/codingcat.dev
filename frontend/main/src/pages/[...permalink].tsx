@@ -48,7 +48,7 @@ export default function Post({
     <Layout>
       <section className="sticky top-0 z-10">
         <BreakBarLeft>
-          <h1 className="w-1/2 font-sans text-4xl leading-relaxed text-basics-50 dark:text-basics-50">
+          <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
             {post.title}
           </h1>
           <label htmlFor="search_blog" className="sr-only">
@@ -63,38 +63,62 @@ export default function Post({
         </BreakBarLeft>
       </section>
       {/* BLOG POST */}
-      <section className="relative grid items-start justify-center gap-10 px-4 2xl:px-16 2xl:justify-start">
-        <article className="prose sm:prose-sm lg:prose-lg 2xl:prose-xl text-basics-900">
+      <section className="relative grid items-start justify-center gap-10 px-4 leading-relaxed 2xl:px-16 2xl:justify-start">
+        <article className="text-basics-900 max-w-prose xl:max-w-4xl 2xl:max-w-4xl 3xl:max-w-6xl">
           {content}
         </article>
         {/* RECENTS */}
-        <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-basics-50 2xl:fixed scrollbar">
+        <section className="grid max-w-full gap-10 p-4 rounded-md shadow-2xl 2xl:overflow-y-scroll 2xl:h-72 right-64 top-80 bg-basics-50 2xl:fixed scrollbar 2xl:max-w-xs">
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-secondary-500 text-mt-4">
+            <h3 className="m-0 font-sans text-3xl underline text-secondary-500 text-mt-4">
               Recent Courses
             </h3>
             <RecentPostsList posts={recentPosts[PostType.course]} />
           </section>
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-secondary-500 text-mt-4">
+            <h3 className="m-0 font-sans text-3xl underline text-secondary-500 text-mt-4">
               Recent Tutorials
             </h3>
             <RecentPostsList posts={recentPosts[PostType.tutorial]} />
           </section>
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-secondary-500 text-mt-4">
+            <h3 className="m-0 font-sans text-3xl underline text-secondary-500 text-mt-4">
               Recent Blog
             </h3>
             <RecentPostsList posts={recentPosts[PostType.post]} />
           </section>
           <section className="grid gap-4">
-            <h3 className="font-sans text-3xl underline text-secondary-500 text-mt-4">
+            <h3 className="m-0 font-sans text-3xl underline text-secondary-500 text-mt-4">
               Recent Podcasts
             </h3>
             <RecentPostsList posts={recentPosts[PostType.podcast]} />
           </section>
         </section>
       </section>
+      <style global jsx>{`
+        a {
+          text-decoration: underline;
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: 'Nunito', sans-serif;
+          margin: 1rem 0;
+        }
+        article p:first-child a img {
+          width: 100%;
+        }
+        p {
+          margin: 1rem 0;
+        }
+        ul li {
+          margin-left: 2rem;
+          list-style-type: circle;
+        }
+      `}</style>
     </Layout>
   );
 }

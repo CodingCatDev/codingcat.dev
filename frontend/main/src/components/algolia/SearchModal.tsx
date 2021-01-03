@@ -14,7 +14,7 @@ export default () => {
 
   const Modal = ({ handleClose, show, children }: any) => {
     const showHideclassNameName = show
-      ? 'w-screen h-screen fixed inset-0 z-50 grid bg-basics-900 bg-opacity-50 place-items-center'
+      ? 'w-screen h-screen fixed inset-0 z-50 grid bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 place-items-center'
       : 'hidden';
     return <section className={showHideclassNameName}>{children}</section>;
   };
@@ -29,9 +29,6 @@ export default () => {
               'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
           }}
         >
-          {/* <div className="fixed inset-0 h-screen bg-black opacity-75"></div>
-          <div className="relative flex flex-col flex-wrap bg-white rounded">
-            <div className="absolute top-0 right-0 p-1"> */}
           <div className="relative grid w-full grid-cols-1 gap-4 place-content-start">
             <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
             <button
@@ -43,7 +40,6 @@ export default () => {
             </button>
           </div>
         </div>
-        {/* </div> */}
       </Modal>
       <button
         className={
