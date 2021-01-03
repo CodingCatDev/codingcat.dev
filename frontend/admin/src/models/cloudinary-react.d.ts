@@ -231,6 +231,7 @@ declare module 'cloudinary-react' {
     publicId?: string;
     fluid?: string;
     secureDistribution?: string;
+    videoJS?: object;
   }
 
   export class CloudinaryComponent extends React.PureComponent<

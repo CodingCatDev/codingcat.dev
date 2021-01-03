@@ -34,9 +34,10 @@ import CourseSections from '@/components/Admin/CourseSections';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import CloudinaryUpload from '@/components/Cloudinary/CloudinaryUpload';
+import VideoFormModal from '@/components/VideoFormModal';
 
-import ImageModal from '@/components/Cloudinary/ImageModal';
-import VideoModal from '@/components/Cloudinary/VideoModal';
+import ImageModal from '@/components/Admin/ImageModal';
+import VideoModal from '@/components/Admin/VideoModal';
 
 enum TabType {
   edit = 'edit',
@@ -352,27 +353,35 @@ export default function EditPost({
                       alignContent: 'center',
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: history.coverVideo ? 'flex' : 'none',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        minWidth: '300px',
-                      }}
-                    >
-                      <VideoModal post={history} />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: history.coverVideo ? 'none' : 'flex',
-                      }}
-                    >
-                      <CloudinaryUpload
-                        setHistory={setHistory}
-                        history={history}
-                        type={MediaType.video}
-                      />
-                    </Box>
+                    {history.coverVideo ? (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          minWidth: '300px',
+                        }}
+                      >
+                        <VideoModal post={history} />
+                      </Box>
+                    ) : (
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <CloudinaryUpload
+                          setHistory={setHistory}
+                          history={history}
+                          type={MediaType.video}
+                        />
+                        <VideoFormModal
+                          setHistory={setHistory}
+                          post={history}
+                        />
+                      </Box>
+                    )}
                   </Box>
                   <Box
                     sx={{
@@ -384,27 +393,30 @@ export default function EditPost({
                       alignContent: 'center',
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: history.coverPhoto ? 'flex' : 'none',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        minWidth: '300px',
-                      }}
-                    >
-                      <ImageModal post={history} />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: history.coverPhoto ? 'none' : 'flex',
-                      }}
-                    >
-                      <CloudinaryUpload
-                        setHistory={setHistory}
-                        history={history}
-                        type={MediaType.photo}
-                      />
-                    </Box>
+                    {history.coverPhoto ? (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          minWidth: '300px',
+                        }}
+                      >
+                        <ImageModal post={history} />
+                      </Box>
+                    ) : (
+                      <Box
+                        sx={{
+                          display: history.coverPhoto ? 'none' : 'flex',
+                        }}
+                      >
+                        <CloudinaryUpload
+                          setHistory={setHistory}
+                          history={history}
+                          type={MediaType.photo}
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </Box>
                 <div>

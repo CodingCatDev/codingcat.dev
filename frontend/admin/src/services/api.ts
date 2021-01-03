@@ -1,9 +1,9 @@
-import { Cloudinary } from './../models/cloudinary.model';
 import {
   PostType,
   PostStatus,
   PostVisibility,
   CoverMedia,
+  MediaSource,
 } from './../models/post.model';
 import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
@@ -15,6 +15,8 @@ import { UserInfo } from '@/models/userInfo.model';
 import { v4 as uuid } from 'uuid';
 import { from } from 'rxjs';
 import { Course, Section } from '@/models/course.model.ts';
+import { Cloudinary } from '@/models/cloudinary.model';
+import { Video } from '@/models/video.model';
 
 const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
@@ -283,18 +285,30 @@ export const postHistoryPublish = (history: Post) => {
 
 export const postHistoryMediaCreate = (
   history: Post,
-  cloudinary: Cloudinary,
-  type: MediaType
+  type: MediaType,
+  cloudinary?: Cloudinary,
+  video?: Video
 ) => {
   const mediaId = uuid();
-
-  const coverMedia: CoverMedia = {
-    thumbnail_url: cloudinary.thumbnail_url,
-    path: cloudinary.path,
-    mediaId,
-    public_id: cloudinary.public_id,
-    url: cloudinary.url,
-  };
+  let coverMedia: CoverMedia;
+  if (cloudinary) {
+    coverMedia = {
+      thumbnail_url: cloudinary.thumbnail_url,
+      path: cloudinary.path,
+      mediaId,
+      public_id: cloudinary.public_id,
+      url: cloudinary.url,
+      type,
+      source: MediaSource.cloudinary,
+    };
+  } else if (video) {
+    coverMedia = {
+      mediaId,
+      url: video.url,
+      type,
+      source: MediaSource.video,
+    };
+  }
 
   return firestore$.pipe(
     switchMap((firestore) => {
@@ -302,10 +316,11 @@ export const postHistoryMediaCreate = (
       const mediaRef = firestore.doc(
         `posts/${history.postId}/history/${history.id}/media/${mediaId}`
       );
-
       batch.set(mediaRef, {
         id: mediaId,
-        cloudinary,
+        type,
+        cloudinary: cloudinary || null,
+        video: video || null,
       });
 
       const historyRef = firestore.doc(

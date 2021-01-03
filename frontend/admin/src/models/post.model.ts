@@ -34,7 +34,14 @@ export interface CoverMedia {
   thumbnail_url?: string;
   public_id?: string;
   mediaId?: string;
-  url?: string;
+  url: string;
+  type: MediaType;
+  source: MediaSource;
+}
+
+export enum MediaSource {
+  video = 'video',
+  cloudinary = 'cloudinary',
 }
 
 export enum PostStatus {

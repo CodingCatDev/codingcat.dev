@@ -69,30 +69,6 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-async function onPhotoDelete(post: Post) {
-  if (post) {
-    if (post.publishedAt) {
-      postHistoryCreate(post)
-        .pipe(take(1))
-        .subscribe((p) =>
-          postHistoryUpdate({
-            ...p,
-            coverPhoto: firebase.firestore.FieldValue.delete() as any,
-          })
-            .pipe(take(1))
-            .subscribe()
-        );
-    } else {
-      postHistoryUpdate({
-        ...post,
-        coverPhoto: firebase.firestore.FieldValue.delete() as any,
-      })
-        .pipe(take(1))
-        .subscribe();
-    }
-  }
-}
-
 export default function ImageModal({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
 
@@ -102,6 +78,31 @@ export default function ImageModal({ post }: { post: Post }) {
   const handleClose = () => {
     setOpen(false);
   };
+
+  async function onPhotoDelete(post: Post) {
+    setOpen(false);
+    if (post) {
+      if (post.publishedAt) {
+        postHistoryCreate(post)
+          .pipe(take(1))
+          .subscribe((p) =>
+            postHistoryUpdate({
+              ...p,
+              coverPhoto: firebase.firestore.FieldValue.delete() as any,
+            })
+              .pipe(take(1))
+              .subscribe()
+          );
+      } else {
+        postHistoryUpdate({
+          ...post,
+          coverPhoto: firebase.firestore.FieldValue.delete() as any,
+        })
+          .pipe(take(1))
+          .subscribe();
+      }
+    }
+  }
 
   return (
     <div>

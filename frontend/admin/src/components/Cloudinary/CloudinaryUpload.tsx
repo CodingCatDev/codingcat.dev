@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { makeStyles, createStyles, Button } from '@material-ui/core';
+import { makeStyles, createStyles, Button, Box } from '@material-ui/core';
 import { pink, purple } from '@material-ui/core/colors';
 
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
@@ -17,15 +17,15 @@ import { Course } from '@/models/course.model.ts';
 const useStyles = makeStyles(() =>
   createStyles({
     photo: {
-      backgroundColor: pink[300],
+      backgroundColor: pink[500],
       '&:hover': {
-        backgroundColor: pink[500],
+        backgroundColor: pink[300],
       },
     },
     video: {
-      backgroundColor: purple[300],
+      backgroundColor: purple[500],
       '&:hover': {
-        backgroundColor: purple[500],
+        backgroundColor: purple[300],
       },
     },
   })
@@ -90,12 +90,12 @@ export default function CloudinaryUpload({
                   postHistoryCreate(history)
                     .pipe(take(1))
                     .subscribe((h) =>
-                      postHistoryMediaCreate(h, result.info, type)
+                      postHistoryMediaCreate(h, type, result.info)
                         .pipe(take(1))
                         .subscribe((newHistory) => setHistory(newHistory))
                     );
                 } else {
-                  postHistoryMediaCreate(history, result.info, type)
+                  postHistoryMediaCreate(history, type, result.info)
                     .pipe(take(1))
                     .subscribe((newHistory) => setHistory(newHistory));
                 }
@@ -119,7 +119,13 @@ export default function CloudinaryUpload({
           className={classes.photo}
           onClick={() => onUpload()}
         >
-          Add Photo
+          <Box
+            sx={{
+              paddingRight: '0.5rem',
+            }}
+          >
+            Add Cloudinary Photo Cover
+          </Box>
           <AddPhotoAlternateIcon />
         </Button>
       ) : (
@@ -128,7 +134,13 @@ export default function CloudinaryUpload({
           className={classes.video}
           onClick={() => onUpload()}
         >
-          Add Video
+          <Box
+            sx={{
+              paddingRight: '0.5rem',
+            }}
+          >
+            Add Cloudinary Video Cover
+          </Box>
           <AddToQueueIcon />
         </Button>
       )}

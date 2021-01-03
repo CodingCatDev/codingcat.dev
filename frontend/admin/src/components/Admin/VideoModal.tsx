@@ -9,9 +9,10 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import MovieIcon from '@material-ui/icons/Movie';
+import Box from '@material-ui/core/Box';
 
 import { Theme as AugmentedTheme } from '@material-ui/core';
-import { Post } from '@/models/post.model';
+import { MediaSource, Post } from '@/models/post.model';
 
 import { config } from '@/config/cloudinary';
 
@@ -24,6 +25,7 @@ import firebase from 'firebase/app';
 import { take } from 'rxjs/operators';
 
 import { Video } from 'cloudinary-react';
+import ReactPlayer from 'react-player/lazy';
 
 const styles = (theme: AugmentedTheme) => ({
   root: {
@@ -32,8 +34,8 @@ const styles = (theme: AugmentedTheme) => ({
     display: 'flex',
   },
   title: {
-    // width: '90%',
     wordBreak: 'break-all',
+    flexGrow: 1,
   },
   closeButton: {
     color: theme.palette.grey[500],
@@ -75,30 +77,6 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-async function onVideoDelete(post: Post) {
-  if (post) {
-    if (post.publishedAt) {
-      postHistoryCreate(post)
-        .pipe(take(1))
-        .subscribe((p) =>
-          postHistoryUpdate({
-            ...p,
-            coverVideo: firebase.firestore.FieldValue.delete() as any,
-          })
-            .pipe(take(1))
-            .subscribe()
-        );
-    } else {
-      postHistoryUpdate({
-        ...post,
-        coverVideo: firebase.firestore.FieldValue.delete() as any,
-      })
-        .pipe(take(1))
-        .subscribe();
-    }
-  }
-}
-
 export default function ImageModal({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
   const [cookieToken, setCookieToken] = useState('');
@@ -136,6 +114,32 @@ export default function ImageModal({ post }: { post: Post }) {
     setOpen(false);
   };
 
+  async function onVideoDelete(post: Post) {
+    setOpen(false);
+    setCookieToken('');
+    if (post) {
+      if (post.publishedAt) {
+        postHistoryCreate(post)
+          .pipe(take(1))
+          .subscribe((p) =>
+            postHistoryUpdate({
+              ...p,
+              coverVideo: firebase.firestore.FieldValue.delete() as any,
+            })
+              .pipe(take(1))
+              .subscribe()
+          );
+      } else {
+        postHistoryUpdate({
+          ...post,
+          coverVideo: firebase.firestore.FieldValue.delete() as any,
+        })
+          .pipe(take(1))
+          .subscribe();
+      }
+    }
+  }
+
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen}>
@@ -148,25 +152,56 @@ export default function ImageModal({ post }: { post: Post }) {
         open={open}
         fullWidth={true}
         maxWidth="xl"
+        fullScreen
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           {post.coverVideo?.url}
         </DialogTitle>
-        <DialogContent dividers>
-          {cookieToken === '' ? (
-            <div>Getting Cookie for Private View</div>
+        <DialogContent dividers style={{ height: '100%', width: '100%' }}>
+          {post.coverVideo?.source === MediaSource.cloudinary ? (
+            <>
+              {cookieToken !== '' ? (
+                <Video
+                  cloudName={config.name}
+                  publicId={post.coverVideo?.public_id}
+                  privateCdn={config.cname ? true : false}
+                  secure={config.cname ? true : false}
+                  secureDistribution={config.cname ? config.cname : ''}
+                  sourceTypes={['hls', 'webm', 'ogv', 'mp4']}
+                  controls={true}
+                  fluid="true"
+                  style={{ height: '100%', width: '100%' }}
+                />
+              ) : (
+                <div>Getting Cookie for Private View</div>
+              )}
+            </>
           ) : (
-            <Video
-              cloudName={config.name}
-              publicId={post.coverVideo?.public_id}
-              privateCdn={config.cname ? true : false}
-              secure={config.cname ? true : false}
-              secureDistribution={config.cname ? config.cname : ''}
-              sourceTypes={['hls', 'webm', 'ogv', 'mp4']}
-              controls={true}
-              fluid="true"
-              style={{ height: '100%', width: '100%' }}
-            />
+            <>
+              {post.coverVideo?.url.includes('youtu.be') ||
+              post.coverVideo?.url.includes('youtube') ? (
+                <ReactPlayer
+                  className="react-player"
+                  url={post.coverVideo?.url}
+                  controls={true}
+                  height="0"
+                  width="100%"
+                  style={{
+                    overflow: 'hidden',
+                    paddingTop: '56.25%',
+                    position: 'relative',
+                  }}
+                />
+              ) : (
+                <ReactPlayer
+                  className="react-player"
+                  url={post.coverVideo?.url}
+                  controls={true}
+                  height="100%"
+                  width="100%"
+                />
+              )}
+            </>
           )}
         </DialogContent>
         <DialogActions>
