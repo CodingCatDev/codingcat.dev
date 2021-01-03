@@ -10,7 +10,7 @@ export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
   return (
     <>
       {recentPosts.map((post: Post) => (
-        <div className="p-3 m-3 rounded shadow bg-basics-050" key={post.id}>
+        <div className="p-3 m-3 rounded shadow bg-basics-50" key={post.id}>
           <div>
             <Link href={post.permalink}>
               <a>

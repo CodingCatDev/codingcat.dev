@@ -14,7 +14,7 @@ function FirebaseSignin() {
           </h2>
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="px-4 py-8 shadow bg-basics-050 sm:rounded-lg sm:px-10">
+          <div className="px-4 py-8 shadow bg-basics-50 sm:rounded-lg sm:px-10">
             <FirebaseAuth />
           </div>
         </div>

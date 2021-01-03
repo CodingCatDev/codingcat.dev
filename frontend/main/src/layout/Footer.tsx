@@ -19,14 +19,14 @@ export const Footer = () => {
         width="100%"
         viewBox="0 0 90 20"
         preserveAspectRatio="none"
+        className="fill-current text-primary-50 dark:text-basics-700"
       >
         <path
           d="M0 5 H5 C25 5 25 20 45 20 S65 5 85 5 H90 V-5 H0z"
-          fill="#EFE4F4"
           stroke="transparent"
         />
       </svg>
-      <footer className="grid items-end justify-around gap-10 pt-16 pb-8 bg-purple-900 xl:flex xl:gap-4 text-basics-050">
+      <footer className="grid items-end justify-around gap-10 pt-16 pb-8 bg-purple-900 xl:flex xl:gap-4 text-basics-50 dark:text-basics-50">
         {/* LOGO & COPYRIGHT */}
         <section className="grid">
           <div className="flex">
@@ -107,7 +107,7 @@ export const Footer = () => {
               href="https://brittneypostma.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-basics-050 hover:underline hover:text-basics-050"
+              className="links-secondary"
             >
               Brittney Postma
             </a>

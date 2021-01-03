@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
+import Toggle from '@/components/global/icons/Toggle';
+
 import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import NavLinks from '../layout/NavLinks';
@@ -22,16 +24,20 @@ export const AppTopbar = (props: {
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">
             <AJLogoLeft />
-            <h6 className="hidden text-basics-050 lg:block">CodingCat.dev</h6>
+            <h2 className="hidden text-2xl text-basics-50 dark:text-basics-50 lg:block">
+              CodingCat.dev
+            </h2>
           </div>
         </a>
       </Link>
       {/* <div className="flex justify-between h-16"> */}
       <NavLinks />
+
+      <Toggle />
       <div className="flex items-center justify-end">
         <div className="flex items-center w-full space-x-2">
           <SearchModal />
-          <button className="p-1 rounded-full text-basics-050 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-basics-050">
+          <button className="p-1 rounded-full text-basics-50 hover:bg-primary-700 dark:text-basics-50 dark:hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-basics-50">
             <span className="sr-only">View notifications</span>
             {/* Heroicon name: bell --> */}
             <svg
@@ -56,9 +62,10 @@ export const AppTopbar = (props: {
             <AvatarMenu userMenu={userMenu} setUserMenu={setUserMenu} />
           </OutsideClick>
         </div>
+
         <div className="flex items-center ml-2">
           <button
-            className="inline-flex items-center justify-center p-1 text-xl rounded-md text-basics-050 hover:text-basics-050 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-050"
+            className="inline-flex items-center justify-center p-1 text-xl rounded-md text-basics-50 hover:bg-primary-700 dark:hover:bg-primary-700 dark:text-basics-50 dark:hover:bg-primary-700focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
             aria-expanded="false"
             onClick={() => setOverlayMenuActive(!overlayMenuActive)}
           >

@@ -1,7 +1,7 @@
 export default function UserProfile() {
   return (
     <section className="grid gap-4">
-      <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-050">
+      <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-50">
         <h2 className="font-sans text-2xl">User</h2>
         <form className="grid gap-4">
           <label htmlFor="name">
@@ -18,7 +18,7 @@ export default function UserProfile() {
           </label>
         </form>
       </section>
-      <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-050">
+      <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-50">
         <h2 className="font-sans text-2xl">Basic Info</h2>
         <form className="grid gap-4">
           <label htmlFor="location">

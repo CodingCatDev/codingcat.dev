@@ -26,7 +26,7 @@ export default function UserSignin() {
           <div className="flex items-end justify-between">
             <div
               className={`flex justify-center rounded-t p-4 ${
-                !signin ? 'bg-basics-050' : ''
+                !signin ? 'bg-basics-50' : ''
               }`}
             >
               {' '}
@@ -51,7 +51,7 @@ export default function UserSignin() {
             </div>
             <div
               className={`flex justify-center rounded-t  p-4 ${
-                signin ? 'bg-basics-050' : ''
+                signin ? 'bg-basics-50' : ''
               }`}
             >
               <h2
@@ -69,7 +69,7 @@ export default function UserSignin() {
           {/* End Sign Up & Sign In Bar */}
           {/* Forms */}
           <div
-            className={`p-10 bg-basics-050 rounded-b shadow-xl  ${
+            className={`p-10 bg-basics-50 rounded-b shadow-xl  ${
               signin ? 'rounded-tl' : 'rounded-tr'
             }`}
           >

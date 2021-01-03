@@ -15,7 +15,7 @@ export default function PostsCards({
         <>
           {posts.map((post) => (
             <div
-              className="p-3 m-3 rounded shadow bg-basics-050"
+              className="p-3 m-3 rounded shadow bg-basics-50"
               key={post.slug}
             >
               <div>

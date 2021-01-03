@@ -51,7 +51,7 @@ export default function UserSignin({
       <div className="relative">
         {user ? (
           <button
-            className="flex p-1 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-050 hover:bg-primary-800"
+            className="flex p-1 text-sm rounded-full text-basics-50 dark:text-basics-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 dark:hover:text-basics-50"
             id="user-menu"
             aria-haspopup="true"
             onClick={() => setUserMenu(!userMenu)}
@@ -77,7 +77,7 @@ export default function UserSignin({
           </button>
         ) : (
           <Link href="/user/profile">
-            <a className="flex items-center justify-center p-2 rounded text-basics-050 hover:bg-primary-800 hover:text-basics-050 focus:ring-2 focus:ring-basics-050">
+            <a className="flex items-center justify-center p-2 rounded text-basics-50 dark:text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 hover:text-basics-50 dark:hover:text-basics-50 focus:ring-2 focus:ring-basics-50">
               <svg
                 width="20"
                 height="20"
@@ -92,7 +92,7 @@ export default function UserSignin({
                   fill="#FBFBFB"
                 />
               </svg>
-              <span className="ml-2 hover:text-basics-050 basics-050space-nowrap">
+              <span className="ml-2 hover:text-basics-50 dark:hover:text-basics-50 space-nowrap">
                 Sign In
               </span>
             </a>
@@ -109,7 +109,7 @@ export default function UserSignin({
         leaveTo="transform opacity-0 scale-95"
       >
         <div
-          className="absolute right-0 z-40 w-48 p-2 py-1 mt-2 origin-top-right rounded-md shadow-lg bg-basics-050 ring-1 ring-black ring-opacity-5"
+          className="absolute right-0 z-40 w-48 p-2 py-1 mt-2 origin-top-right rounded-md shadow-lg bg-basics-50 ring-1 ring-black ring-opacity-5"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="user-menu"
@@ -119,7 +119,7 @@ export default function UserSignin({
             href="/user/profile"
           >
             <a
-              className="flex items-center p-2 text-sm text-basics-900 hover:bg-primary-050"
+              className="flex items-center p-2 text-sm text-basics-900 dark:text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-50"
               role="menuitem"
             >
               <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -147,7 +147,7 @@ export default function UserSignin({
           </ActiveLink>
           <a
             href="#"
-            className="flex items-center p-2 text-sm text-basics-900 hover:bg-primary-050"
+            className="flex items-center p-2 text-sm text-basics-900 hover:bg-primary-50"
             role="menuitem"
           >
             <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -193,7 +193,7 @@ export default function UserSignin({
           </a>
           <a
             href="#"
-            className="flex items-center p-2 text-sm text-basics-900 hover:bg-primary-050"
+            className="flex items-center p-2 text-sm text-basics-900 hover:bg-primary-50"
             role="menuitem"
             onClick={() => signout()}
           >

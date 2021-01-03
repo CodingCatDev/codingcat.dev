@@ -34,6 +34,7 @@
     "js-cookie": "^2.2.1",
     "next": "^10.0.3",
     "next-mdx-remote": "^1.0.1",
+    "nightwind": "^1.0.8",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primereact": "^5.0.2",

@@ -127,7 +127,7 @@ const FirebaseAuth = ({ full = true }) => {
           </div>
           <div>
             <button
-              className="p-4 mb-16 rounded bg-error-500 text-basics-050"
+              className="p-4 mb-16 rounded bg-error-500 text-basics-50"
               onClick={() => signin(email, password)}
             >
               Sign In

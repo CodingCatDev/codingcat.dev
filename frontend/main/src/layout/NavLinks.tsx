@@ -11,32 +11,32 @@ const NavLinks = () => {
   return (
     <nav className="flex mx-auto">
       <div className="hidden md:flex md:space-x-4">
-        <ActiveLink activeClassName="bg-primary-900" href="/courses">
+        <ActiveLink activeClassName="" href="/courses">
           <a className={`${navLinks} nav-links`}>
             <Courses />
             Courses
           </a>
         </ActiveLink>
-        <ActiveLink activeClassName="bg-primary-900" href="/tutorials">
+        <ActiveLink activeClassName="" href="/tutorials">
           <a className={`${navLinks} nav-links`}>
             <Tutorials />
             Tutorials
           </a>
         </ActiveLink>
-        <ActiveLink activeClassName="bg-primary-900" href="/podcasts">
+        <ActiveLink activeClassName="" href="/podcasts">
           <a className={`${navLinks} nav-links`}>
             <Podcasts className="w-35 h-35" />
             Podcasts
           </a>
         </ActiveLink>
-        <ActiveLink activeClassName="bg-primary-900" href="/blog">
+        <ActiveLink activeClassName="" href="/blog">
           <a className={`${navLinks} nav-links`}>
             <Blog />
             Blog
           </a>
         </ActiveLink>
 
-        <ActiveLink activeClassName="bg-primary-900" href="/community">
+        <ActiveLink activeClassName="" href="/community">
           <a className={`${navLinks} nav-links`}>
             <Community />
             Community

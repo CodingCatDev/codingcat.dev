@@ -48,7 +48,7 @@ export default function Post({
     <Layout>
       <section className="sticky top-0 z-10">
         <BreakBarLeft>
-          <h1 className="w-1/2 font-sans text-4xl leading-relaxed text-basics-050">
+          <h1 className="w-1/2 font-sans text-4xl leading-relaxed text-basics-50 dark:text-basics-50">
             {post.title}
           </h1>
           <label htmlFor="search_blog" className="sr-only">
@@ -64,11 +64,11 @@ export default function Post({
       </section>
       {/* BLOG POST */}
       <section className="relative grid items-start justify-center gap-10 px-4 2xl:px-16 2xl:justify-start">
-        <article className="prose sm:prose-sm lg:prose-lg 2xl:prose-xl">
+        <article className="prose sm:prose-sm lg:prose-lg 2xl:prose-xl text-basics-900">
           {content}
         </article>
         {/* RECENTS */}
-        <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-basics-050 2xl:fixed scrollbar">
+        <section className="grid max-w-xs gap-10 p-4 overflow-y-scroll rounded-md shadow-2xl h-72 right-64 top-80 bg-basics-50 2xl:fixed scrollbar">
           <section className="grid gap-4">
             <h3 className="font-sans text-3xl underline text-secondary-500 text-mt-4">
               Recent Courses
