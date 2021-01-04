@@ -224,6 +224,7 @@ export const postHistoryUpdate = (history: Post) => {
       docRef.set(
         {
           ...history,
+          titleSearch: history.title.toLowerCase(),
           updatedAt: firebase.firestore.Timestamp.now(),
           updatedBy: firebase.auth()?.currentUser?.uid,
         },
