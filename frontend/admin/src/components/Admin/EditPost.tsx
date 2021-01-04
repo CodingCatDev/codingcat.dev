@@ -118,9 +118,9 @@ export default function EditPost({
           // Update the frontmatter with the correct data
           // the database
           if (dbHistory) {
-            let title = dbHistory.title;
-            let excerpt = dbHistory.excerpt;
-            let slug = dbHistory.slug;
+            let title = dbHistory.title || '';
+            let excerpt = dbHistory.excerpt || '';
+            let slug = dbHistory.slug || '';
 
             const fm = matter(dbHistory.content || '');
             if (fm && fm.data) {
