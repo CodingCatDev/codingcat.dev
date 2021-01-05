@@ -268,8 +268,6 @@ export const postHistoryPublish = (history: Post) => {
 
       const update = {
         ...history,
-        publishedAt: firebase.firestore.Timestamp.now(),
-        status: PostStatus.published,
         updatedAt: firebase.firestore.Timestamp.now(),
         updatedBy: firebase.auth()?.currentUser?.uid,
       };

@@ -34,10 +34,11 @@ import CourseSections from '@/components/Admin/CourseSections';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import CloudinaryUpload from '@/components/Cloudinary/CloudinaryUpload';
-import VideoFormModal from '@/components/VideoFormModal';
+import VideoFormModal from '@/components/Admin/VideoFormModal';
 
 import ImageModal from '@/components/Admin/ImageModal';
 import VideoModal from '@/components/Admin/VideoModal';
+import PublishModal from '@/components/Admin/PublishModal';
 
 enum TabType {
   edit = 'edit',
@@ -203,14 +204,6 @@ export default function EditPost({
     setShowHistory(!showHistory);
   }
 
-  function onPublish() {
-    if (history) {
-      setSaving(true);
-      postHistoryPublish(history)
-        .pipe(take(1))
-        .subscribe(() => setSaving(false));
-    }
-  }
   function selectTab(tab: TabType, index: number) {
     setTab(tab);
     setTabIndex(index);
@@ -457,27 +450,7 @@ export default function EditPost({
                       </span>
                     )}
                     <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
-                      <Button variant="contained" onClick={() => onPublish()}>
-                        Publish
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          style={{
-                            height: '1.5rem',
-                            width: '1.5rem',
-                            marginLeft: '1rem',
-                          }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                          />
-                        </svg>
-                      </Button>
+                      <PublishModal history={history} setSaving={setSaving} />
                     </Box>
                   </Box>
                 </Box>
