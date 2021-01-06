@@ -14,13 +14,22 @@
     "url": "https://github.com/ajonp/ccd-amplify-nextjs/issues"
   },
   "homepage": "https://github.com/ajonp/ccd-amplify-nextjs#readme",
-  "devDependencies": {
-    "lerna": "^3.22.1"
-  },
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "dev": "lerna run --parallel dev",
-    "start": "lerna run --parallel build && lerna run --parallel start "
+    "build": "lerna run --parallel build",
+    "start": "lerna run --parallel start ",
+    "lint": "lerna run --parallel lint"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run build"
+    }
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "husky": "^4.3.6"
+  }
 }

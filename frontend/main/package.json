@@ -12,12 +12,6 @@
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
     "lint": "eslint . --quiet --ext .ts,.tsx"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && npm run lint",
-      "pre-push": "npm run build"
-    }
-  },
   "dependencies": {
     "@headlessui/react": "^0.2.0",
     "@mdx-js/runtime": "^2.0.0-next.8",
@@ -80,11 +74,9 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-react": "^7.21.5",
-    "husky": "^4.3.6",
     "postcss": "^8.2.1",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.2.1",
-    "pretty-quick": "^3.1.0",
     "tailwindcss": "^2.0.2",
     "tailwindcss-animatecss": "^1.0.7",
     "tailwindcss-transforms": "^2.2.0",

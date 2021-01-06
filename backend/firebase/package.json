@@ -10,7 +10,8 @@
   "scripts": {
     "emulated-debug": "npm run --prefix ./functions build && firebase emulators:start  --inspect-functions --export-on-exit=./backup/data/emulator --import=./backup/data/emulator",
     "emulated": "npm run --prefix ./functions build && firebase emulators:start --export-on-exit=./backup/data/emulator --import=./backup/data/emulator",
-    "ci:emulator": "firebase emulators:exec 'npm run --prefix ./tests test'"
+    "ci:emulator": "firebase emulators:exec 'npm run --prefix ./tests test'",
+    "lint": "npm run --prefix ./functions lint"
   },
   "author": "Alex Patterson",
   "license": "SEE LICENSE IN LICENSE",
