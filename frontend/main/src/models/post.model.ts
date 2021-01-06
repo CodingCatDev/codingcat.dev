@@ -26,6 +26,7 @@ export interface Post {
   postId?: string;
   coverPhoto?: CoverMedia;
   coverVideo?: CoverMedia;
+  sections?: Section[];
 }
 
 export interface CoverMedia {
@@ -71,4 +72,17 @@ export enum PostFormat {
 export enum MediaType {
   photo = 'photo',
   video = 'video',
+}
+
+export interface Section {
+  id: string;
+  title: string;
+  lessons?: SectionLesson[];
+}
+
+export interface SectionLesson {
+  id: string;
+  permalink: string;
+  slug: string;
+  title: string;
 }

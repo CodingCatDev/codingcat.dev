@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import DefaultErrorPage from 'next/error';
 import { useRouter } from 'next/router';
-import ReactDOMServer from 'react-dom/server';
 
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
@@ -11,20 +10,16 @@ import {
   postsRecentService,
   postsService,
 } from '@/services/serversideApi';
+import ShowMDX from '@/components/ShowMDX';
+import PostMedia from '@/components/PostMedia';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
-import renderToString from 'next-mdx-remote/render-to-string';
-import hydrate from 'next-mdx-remote/hydrate';
-import parse from 'remark-parse';
-import mdx from 'remark-mdx';
 
 export default function Post({
   post,
-  markdown,
   recentPosts,
 }: {
   post: PostModel;
-  markdown: any;
   recentPosts: { [key: string]: PostModel[] };
 }) {
   const router = useRouter();
@@ -43,10 +38,9 @@ export default function Post({
     );
   }
 
-  const content = hydrate(markdown);
   return (
     <Layout>
-      <section className="sticky top-0 z-10">
+      <section className="sticky top-0 z-10 bg-primary-50">
         <BreakBarLeft>
           <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
             {post.title}
@@ -61,11 +55,14 @@ export default function Post({
             className="w-1/3 rounded-full"
           />
         </BreakBarLeft>
+        <div className="p-2 pt-8 z-9">
+          <PostMedia post={post} />
+        </div>
       </section>
       {/* BLOG POST */}
       <section className="relative grid items-start justify-center gap-10 px-4 leading-relaxed 2xl:px-16 2xl:justify-start">
-        <article className="text-basics-900 max-w-prose xl:max-w-4xl 2xl:max-w-4xl 3xl:max-w-6xl">
-          {content}
+        <article className="text-basics-900 ">
+          <ShowMDX markdown={post.content || ''} />
         </article>
         {/* RECENTS */}
         <section className="grid max-w-full gap-10 p-4 rounded-md shadow-2xl 2xl:overflow-y-scroll 2xl:h-72 right-64 top-80 bg-basics-50 2xl:fixed scrollbar 2xl:max-w-xs">
@@ -125,7 +122,7 @@ export default function Post({
 
 export async function getStaticPaths() {
   const paths: any = [];
-  [PostType.course, PostType.post, PostType.tutorial, PostType.podcast].forEach(
+  [PostType.post, PostType.tutorial, PostType.podcast].forEach(
     async (postType) => {
       const docData = await postsService(postType);
       for (const doc of docData) {
@@ -158,19 +155,11 @@ export async function getStaticProps({
     PostType.tutorial,
     PostType.podcast,
   ]);
-  const markdown = post
-    ? await renderToString(post.content, {
-        mdxOptions: {
-          remarkPlugins: [parse, mdx],
-        },
-      })
-    : null;
 
   return {
     props: {
       post,
       recentPosts,
-      markdown,
     },
     revalidate: 60,
   };

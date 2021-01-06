@@ -13,10 +13,11 @@ export default function Courses({ posts }: { posts: Post[] }) {
         <title>Courses | CodingCatDev</title>
       </Head>
 
-      <section className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
-        <PostsCards posts={posts} />
-      </section>
-
+      <div className="w-full mx-auto max-w-7xl">
+        <section className="grid grid-cols-1 ">
+          <PostsCards posts={posts} />
+        </section>
+      </div>
       <footer></footer>
     </Layout>
   );

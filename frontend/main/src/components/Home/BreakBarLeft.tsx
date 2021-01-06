@@ -1,6 +1,6 @@
 export default function BreakBarLeft({ children }: { children: any }) {
   return (
-    <section className="relative flex items-center justify-between w-full p-4 vertical-clip">
+    <section className="relative flex items-center justify-between w-full p-4 -mt-1 vertical-clip">
       {children}
       <style jsx>{`
         section:after {

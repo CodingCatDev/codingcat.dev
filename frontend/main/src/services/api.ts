@@ -1,3 +1,4 @@
+import { httpsCallable } from 'rxfire/functions';
 import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { docData } from 'rxfire/firestore';
@@ -9,6 +10,12 @@ const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
   map((app) => app as firebase.app.App),
   map((app) => app.firestore() as firebase.firestore.Firestore)
+);
+
+const functions$ = from(initFirebase()).pipe(
+  filter((app) => app !== undefined),
+  map((app) => app as firebase.app.App),
+  map((app) => app.functions() as firebase.functions.Functions)
 );
 
 // User
@@ -36,3 +43,15 @@ export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
   });
   return docData;
 }
+
+//Cloudinary
+export const getCloudinaryCookieToken = () => {
+  return functions$.pipe(
+    switchMap((functions) =>
+      httpsCallable<unknown, string>(functions, 'cloudinaryCookieToken').call(
+        'params',
+        {}
+      )
+    )
+  );
+};

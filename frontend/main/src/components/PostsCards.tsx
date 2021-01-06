@@ -19,7 +19,13 @@ export default function PostsCards({
               key={post.slug}
             >
               <div>
-                <Link href={post.permalink}>
+                <Link
+                  href={
+                    post.type === PostType.course
+                      ? `courses${post.permalink}`
+                      : post.permalink
+                  }
+                >
                   <a>
                     {post.coverPhoto?.path ? (
                       <>

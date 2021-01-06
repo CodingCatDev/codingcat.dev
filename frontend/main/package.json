@@ -43,6 +43,7 @@
     "react-dom": "^17.0.1",
     "react-firebaseui": "^4.1.0",
     "react-instantsearch-dom": "^6.8.2",
+    "react-player": "^2.7.2",
     "react-timeago": "^5.2.0",
     "react-transition-group": "^4.4.1",
     "remark-html": "^13.0.1",

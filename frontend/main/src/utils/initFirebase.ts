@@ -12,16 +12,19 @@ export default async function initFirebase() {
     await import('firebase/analytics');
     await import('firebase/remote-config');
     await import('firebase/messaging');
+    await import('firebase/functions');
     if (!firebase.default.apps.length) {
       firebase.default.initializeApp(config);
       if (process.env.NEXT_PUBLIC_CCD_EMULATED) {
         firebase.default.auth().useEmulator('http://localhost:9099/');
         firebase.default.firestore().useEmulator('localhost', 8080);
         firebase.default.database().useEmulator('localhost', 9000);
+        firebase.default.functions().useEmulator('localhost', 5001);
       } else {
         firebase.default.auth();
         firebase.default.firestore();
         firebase.default.database();
+        firebase.default.functions();
       }
       firebase.default.analytics();
       firebase.default.remoteConfig();

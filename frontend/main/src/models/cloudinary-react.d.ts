@@ -193,7 +193,7 @@ declare module 'cloudinary-react' {
     radius?: number | string;
     rawTransformation?: any;
     size?: string;
-    sourceTypes?: string;
+    sourceTypes?: string[];
     sourceTransformation?: string;
     startOffset?: number | string;
     streamingProfile?: StreamingProfiles;
@@ -223,13 +223,15 @@ declare module 'cloudinary-react' {
     roundDpr?: boolean;
     secure?: boolean;
     secureCdnSubdomain?: boolean;
-    secureDistribution?: boolean;
     shorten?: string;
     type?: string;
     urlSuffix?: string;
     useRootPath?: boolean;
     version?: string;
     publicId?: string;
+    fluid?: string;
+    secureDistribution?: string;
+    videoJS?: object;
   }
 
   export class CloudinaryComponent extends React.PureComponent<
