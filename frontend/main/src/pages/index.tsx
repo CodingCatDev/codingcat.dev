@@ -13,7 +13,7 @@ import Skills from '@/components/Home/Skills';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import KCAlt from '@/components/global/icons/KCAlt';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
-import Podcasts from '../components/global/icons/nav/Podcasts';
+import Podcasts from '@/components/global/icons/nav/Podcasts';
 
 export default function Home({
   recentPosts,
@@ -101,7 +101,7 @@ export default function Home({
         <div className="relative flex items-center w-full">
           <AJHeartAlt className="w-16 sm:w-16 md:w-20" />
           <h3 className="absolute w-full text-2xl text-center left-6 sm:left-8 md:left-0 text-basics-50 dark:text-basics-50 sm:text-3xl lg:text-4xl">
-            Read what's going on in web dev
+            Read what`&#39;`s going on in web dev
           </h3>
         </div>
       </BreakBarLeft>

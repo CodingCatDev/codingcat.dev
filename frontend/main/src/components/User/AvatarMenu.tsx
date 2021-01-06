@@ -5,7 +5,6 @@ import ActiveLink from '@/components/ActiveLink';
 import { Transition } from '@headlessui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Observable, Subscription } from 'rxjs';
-import { UserInfo } from '@/models/userInfo.model';
 import { userProfileDataObservable } from '@/services/api';
 import firebaseApp from 'firebase/app';
 import { authState } from 'rxfire/auth';
@@ -20,7 +19,7 @@ export default function UserSignin({
 }) {
   const { user, signout, app } = useUser();
 
-  const [profile, setProfile] = useState<UserInfo | null>(null);
+  const [profile, setProfile] = useState<firebaseApp.UserInfo | null>(null);
 
   let subscription: Subscription;
   useEffect(() => {

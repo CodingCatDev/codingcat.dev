@@ -3,7 +3,6 @@ import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { docData } from 'rxfire/firestore';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { UserInfo } from '@/models/userInfo.model';
 import { from } from 'rxjs';
 
 const firestore$ = from(initFirebase()).pipe(
@@ -22,7 +21,7 @@ const functions$ = from(initFirebase()).pipe(
 export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
-      docData<UserInfo>(firestore.doc(`/profiles/${uid}`), uid)
+      docData<firebase.UserInfo>(firestore.doc(`/profiles/${uid}`), uid)
     )
   );
 };

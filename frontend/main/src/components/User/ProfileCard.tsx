@@ -15,7 +15,7 @@ export default function UserSignin() {
     <>
       {user ? (
         <div className="grid gap-4 px-4 py-8 bg-white shadow-2xl sm:rounded-lg sm:px-10">
-          <p>You're signed in.</p>
+          <p>You`&#39;`re signed in.</p>
           <p>
             Email: <span className="font-bold">{user.email}</span>
           </p>

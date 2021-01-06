@@ -3,10 +3,7 @@ import Image from 'next/image';
 import { Post, PostType } from '@/models/post.model';
 import { ComponentType } from 'react';
 
-export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
-  props
-) => {
-  const { recentPosts } = props;
+export function RecentPostsCards({ recentPosts }: { recentPosts: Post[] }) {
   return (
     <>
       {recentPosts.map((post: Post) => (
@@ -43,4 +40,4 @@ export const RecentPostsCards: ComponentType<{ recentPosts: Post[] }> = (
       ))}
     </>
   );
-};
+}

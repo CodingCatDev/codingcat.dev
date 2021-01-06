@@ -1,4 +1,4 @@
-import '../styles/globals.css';
+import '@/styles/globals.css';
 import Head from 'next/head';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';

@@ -3,14 +3,18 @@
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:prettier/recommended",
-    "plugin:prettier/react",
-    "plugin:prettier/@typescript-eslint"
+    "plugin:prettier/recommended"
   ],
   "plugins": ["@typescript-eslint", "react", "prettier"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "import/no-relative-parent-imports": "error"
+    "react/display-name": 0,
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["../*"]
+      }
+    ]
   },
   "globals": {
     "React": "writable"

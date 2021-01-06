@@ -2,14 +2,15 @@ import ActiveLink from '@/components/ActiveLink';
 import TitleLogo from '@/components/global/logos/TitleLogo';
 import OutsideClick from '@/components/OutsideClick';
 import { Transition } from '@headlessui/react';
-import { ComponentType, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
-export const AppMenu: ComponentType<{
+export default function AppMenu({
+  setOverlayMenuActive,
+  overlayMenuActive,
+}: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
   overlayMenuActive: boolean;
-}> = (props) => {
-  const { setOverlayMenuActive, overlayMenuActive } = props;
-
+}): JSX.Element {
   return (
     <Transition
       show={overlayMenuActive}
@@ -136,4 +137,4 @@ export const AppMenu: ComponentType<{
       </div>
     </Transition>
   );
-};
+}

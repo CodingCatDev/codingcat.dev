@@ -6,14 +6,14 @@ import Toggle from '@/components/global/icons/Toggle';
 
 import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
-import NavLinks from '../layout/NavLinks';
+import NavLinks from '@/layout/NavLinks';
 import SearchModal from '@/components/algolia/SearchModal';
 import AvatarMenu from '@/components/User/AvatarMenu';
 
 export const AppTopbar = (props: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
   overlayMenuActive: boolean;
-}) => {
+}): JSX.Element => {
   const { setOverlayMenuActive, overlayMenuActive } = props;
 
   const [userMenu, setUserMenu] = useState(false);

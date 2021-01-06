@@ -93,7 +93,9 @@ export default function PublishModal({
           setSelectedDate(new Date());
         }
       });
-    return () => {};
+    return () => {
+      false;
+    };
   }, [history]);
 
   const handleClickOpen = () => {

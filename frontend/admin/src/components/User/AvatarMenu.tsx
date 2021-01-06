@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useUser } from '@/utils/auth/useUser';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
-import { UserInfo } from '@/models/userInfo.model';
 import { userProfileDataObservable } from '@/services/api';
 import firebaseApp from 'firebase/app';
 import { authState } from 'rxfire/auth';
@@ -50,7 +49,7 @@ const StyledMenuItem = withStyles((theme) => ({
 export default function AvatarMenu() {
   const { user, signout, app } = useUser();
 
-  const [profile, setProfile] = useState<UserInfo | null>(null);
+  const [profile, setProfile] = useState<firebaseApp.UserInfo | null>(null);
 
   let subscription: Subscription;
   useEffect(() => {

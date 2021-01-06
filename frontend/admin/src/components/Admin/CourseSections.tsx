@@ -27,6 +27,7 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const arrayMove = require('array-move');
 import { Post } from '@/models/post.model';
 import EditIcon from '@material-ui/icons/Edit';

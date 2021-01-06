@@ -3,6 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import TimeAgo from 'react-timeago';
 
+import firebase from 'firebase/app';
 import { useUser } from '@/utils/auth/useUser';
 import {
   cleanTimestamp,
@@ -15,7 +16,6 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 import { take } from 'rxjs/operators';
-import { UserInfo } from '@/models/userInfo.model';
 import { user } from 'rxfire/auth';
 import { BehaviorSubject } from 'rxjs';
 import RestoreHistory from '@/components/Admin/RestoreHistory';
@@ -23,7 +23,7 @@ import ShowMDX from '@/components/ShowMDX';
 
 function PostHistories({ postHistories }: { postHistories: Post[] }) {
   const [histories, setHistories] = useState<
-    { post: Post; user: UserInfo }[]
+    { post: Post; user: firebase.UserInfo }[]
   >();
   const [count, setCount] = useState(0);
   const [expandedRows, setExpandedRows] = useState([]);
@@ -34,7 +34,9 @@ function PostHistories({ postHistories }: { postHistories: Post[] }) {
     });
     setHistories(postsUpdated as any);
     setCount(postHistories.length);
-    return () => {};
+    return () => {
+      false;
+    };
   }, [postHistories]);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ function PostHistories({ postHistories }: { postHistories: Post[] }) {
   }, [count]);
 
   function statusBodyTemplate(rowData: {
-    post: { status: {} } | null | undefined;
+    post: { status: string } | null | undefined;
   }) {
     return (
       <span

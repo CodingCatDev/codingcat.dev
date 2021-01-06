@@ -11,7 +11,6 @@ import { docData, collectionData, doc } from 'rxfire/firestore';
 import { httpsCallable } from 'rxfire/functions';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import { Post, MediaType } from '@/models/post.model';
-import { UserInfo } from '@/models/userInfo.model';
 import { v4 as uuid } from 'uuid';
 import { from } from 'rxjs';
 import { Course, Section } from '@/models/course.model.ts';
@@ -98,10 +97,7 @@ export const postUpdate = (id: string, content: string) => {
 
 /* POSTS */
 
-export const postsByUpdatedAtObservable = (
-  postType: string,
-  limit: number = 0
-) => {
+export const postsByUpdatedAtObservable = (postType: string, limit = 0) => {
   return firestore$.pipe(
     switchMap((firestore) => {
       let ref = firestore
@@ -124,10 +120,7 @@ export const postsByUpdatedAtObservable = (
   );
 };
 
-export const postsByPublishedAtObservable = (
-  postType: string,
-  limit: number = 0
-) => {
+export const postsByPublishedAtObservable = (postType: string, limit = 0) => {
   return firestore$.pipe(
     switchMap((firestore) => {
       let ref = firestore
@@ -154,7 +147,7 @@ export const postsByPublishedAtObservable = (
 export const postsSearchByTitleObservable = (
   postType: string,
   title: string,
-  limit: number = 20
+  limit = 20
 ) => {
   return firestore$.pipe(
     switchMap((firestore) => {
@@ -379,7 +372,7 @@ export const addCourseSection = (history: Course, section: Section) => {
 export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
-      docData<UserInfo>(firestore.doc(`/profiles/${uid}`), uid)
+      docData<firebase.UserInfo>(firestore.doc(`/profiles/${uid}`), uid)
     )
   );
 };

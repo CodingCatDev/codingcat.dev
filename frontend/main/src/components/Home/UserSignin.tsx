@@ -3,9 +3,8 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 
 import { useUser } from '@/utils/auth/useUser';
-import AJLogo from '../global/icons/AJPrimary';
-import AJLogoLeft from '../global/icons/AJAlt';
-import { sign } from 'crypto';
+import AJLogo from '@/components/global/icons/AJPrimary';
+import AJLogoLeft from '@/components/global/icons/AJAlt';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,

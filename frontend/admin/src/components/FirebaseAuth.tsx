@@ -6,7 +6,6 @@ import firebaseApp from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { setUserCookie } from '@/utils/auth/userCookies';
 import { mapUserData } from '@/utils/auth/mapUserData';
-import { UserInfo } from '@/models/userInfo.model';
 import { useEffect } from 'react';
 
 const FirebaseAuth = ({ full = true }) => {

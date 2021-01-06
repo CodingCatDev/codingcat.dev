@@ -93,8 +93,8 @@ export default function ImageModal({ post }: { post: Post }) {
       .pipe(take(1))
       .subscribe((ct) => {
         //TODO : There is probably a better way to set cookies.
-        var now = new Date();
-        var time = now.getTime();
+        const now = new Date();
+        let time = now.getTime();
         time += 3600 * 1000;
         now.setTime(time);
         const match = config?.cname

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import initFirebase from '../initFirebase';
+import initFirebase from '@/utils/initFirebase';
 import {
   removeUserCookie,
   setUserCookie,
@@ -9,16 +9,16 @@ import {
 import { mapUserData } from './mapUserData';
 import { userProfileDataObservable } from '@/services/api';
 import { Observable } from 'rxjs';
-import { UserInfo } from '@/models/userInfo.model';
 import { authState } from 'rxfire/auth';
 import { filter, map, switchMap, takeWhile } from 'rxjs/operators';
 import firebase from 'firebase/app';
 const useUser = () => {
   const [app, setApp] = useState<firebase.app.App>();
-  const [user, setUser] = useState<UserInfo | null>();
-  const [userProfile, setUserProfile] = useState<Observable<UserInfo> | null>(
-    null
-  );
+  const [user, setUser] = useState<firebase.UserInfo | null>();
+  const [
+    userProfile,
+    setUserProfile,
+  ] = useState<Observable<firebase.UserInfo> | null>(null);
   const router = useRouter();
 
   const signout = async () => {

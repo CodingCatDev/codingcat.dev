@@ -17,7 +17,7 @@ export default function UserSignin() {
     <>
       {user ? (
         <div>
-          <p>You're signed in.</p>
+          <p>You`&#39;`re signed in.</p>
           <p>
             Email: <span style={{ fontWeight: 800 }}>{user.email}</span>
           </p>
