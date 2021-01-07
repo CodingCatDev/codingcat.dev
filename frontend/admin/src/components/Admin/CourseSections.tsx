@@ -208,7 +208,6 @@ export default function CourseSections({
               id: selectedLesson.id as string,
               title: selectedLesson.title,
               slug: selectedLesson.slug,
-              permalink: selectedLesson.permalink,
             };
             if (finishSection.lessons?.length) {
               const finishSectionLessons = [...finishSection.lessons];

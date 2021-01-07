@@ -6,7 +6,7 @@ import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
 import RecentPostsList from '@/components/RecentPostsList';
 import {
-  postByPermalinkService,
+  postBySlugService,
   postsRecentService,
   postsService,
 } from '@/services/serversideApi';
@@ -21,7 +21,7 @@ export default function Post({
 }: {
   post: PostModel;
   recentPosts: { [key: string]: PostModel[] };
-}) {
+}): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
@@ -95,25 +95,25 @@ export default function Post({
         </section>
       </section>
       <style global jsx>{`
-        a {
+        main a {
           text-decoration: underline;
         }
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
+        main h1,
+        main h2,
+        main h3,
+        main h4,
+        main h5,
+        main h6 {
           font-family: 'Nunito', sans-serif;
           margin: 1rem 0;
         }
-        article p:first-child a img {
+        main article p:first-child a img {
           width: 100%;
         }
-        p {
+        main p {
           margin: 1rem 0;
         }
-        ul li {
+        main ul li {
           margin-left: 2rem;
           list-style-type: circle;
         }
@@ -122,15 +122,19 @@ export default function Post({
   );
 }
 
-export async function getStaticPaths() {
-  const paths: any = [];
+export async function getStaticPaths(): Promise<{
+  paths: { params: { type: PostType; slug: string } }[];
+  fallback: boolean;
+}> {
+  const paths: { params: { type: PostType; slug: string } }[] = [];
   [PostType.post, PostType.tutorial, PostType.podcast].forEach(
     async (postType) => {
       const docData = await postsService(postType);
       for (const doc of docData) {
         paths.push({
           params: {
-            permalink: doc.permalink.substring(1).split('/'),
+            type: doc.type,
+            slug: doc.slug,
           },
         });
       }
@@ -145,11 +149,40 @@ export async function getStaticPaths() {
 export async function getStaticProps({
   params,
 }: {
-  params: { permalink: [] };
-}) {
-  const { permalink } = params;
+  params: { permalink: string[] };
+}): Promise<
+  | {
+      props: {
+        post: PostModel | null;
+        recentPosts: { [key: string]: PostModel[] };
+      };
+      revalidate: number;
+    }
+  | { redirect: { destination: string; permanent: boolean } }
+> {
+  if (params.permalink.length !== 2) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
-  const posts = await postByPermalinkService(permalink);
+  const type = params.permalink[0] as PostType;
+  const slug = params.permalink[1] as string;
+
+  const allowedTypes = [PostType.post, PostType.podcast, PostType.tutorial];
+  if (!type || !slug || !allowedTypes.includes(type)) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  const posts = await postBySlugService(type, slug);
   const post = posts.length > 0 ? posts[0] : null;
   const recentPosts = await postsRecentService([
     PostType.course,

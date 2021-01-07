@@ -27,7 +27,7 @@ export const BlogPostHit = (
   }
 
   return (
-    <Link href={hit.permalink}>
+    <Link href={`/${hit.type}/${hit.slug}`}>
       <a>
         <div className="rounded hover:bg-purple-900 hover:text-white focus:bg-purple-900 focus:text-white">
           <div className="grid grid-cols-12 gap-2">

@@ -1,8 +1,11 @@
+import { PostType } from './../models/post.model';
 import { Post } from '@/models/post.model';
 import admin from '@/utils/firebaseAdmin';
 
 // Firebase Admin, or any other services you need for Server Side
-export async function postsRecentService(recentPostsTypes: string[]) {
+export async function postsRecentService(
+  recentPostsTypes: string[]
+): Promise<{ [key: string]: Post[] }> {
   const recentPosts: { [key: string]: Post[] } = {};
 
   recentPostsTypes.map((key) => (recentPosts[key] = []));
@@ -42,18 +45,19 @@ export async function postsService(postType: string) {
   return posts;
 }
 
-export async function postByPermalinkService(permalink: []) {
+export async function postBySlugService(type: PostType, slug: string) {
   const postDocs = await admin
     .firestore()
     .collection('posts')
-    .where('permalink', '==', `/${permalink.join('/')}`)
+    .where('type', '==', type)
+    .where('slug', '==', slug)
     .get();
 
   const posts: FirebaseFirestore.DocumentData[] = [];
   for (const doc of postDocs.docs) {
     posts.push(cleanTimestamp(doc.data()));
   }
-  return posts;
+  return posts as Post[];
 }
 
 /* Utilities */

@@ -1,8 +1,9 @@
 import Head from 'next/head';
-import DefaultErrorPage from 'next/error';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+
+import DefaultErrorPage from 'next/error';
+import { useRouter } from 'next/router';
+
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
 import { postBySlugService, postsService } from '@/services/serversideApi';
@@ -15,7 +16,13 @@ import {
 import ShowMDX from '@/components/ShowMDX';
 import PostMedia from '@/components/PostMedia';
 
-export default function Post({ post }: { post: PostModel }) {
+export default function Post({
+  post,
+  course,
+}: {
+  post: PostModel;
+  course: PostModel;
+}): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
@@ -31,6 +38,7 @@ export default function Post({ post }: { post: PostModel }) {
       </Layout>
     );
   }
+
   function isActiveLink(course: PostModel, lesson: SectionLesson) {
     if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
       return true;
@@ -55,79 +63,67 @@ export default function Post({ post }: { post: PostModel }) {
           />
         </BreakBarLeft>
       </section>
-      <section className="grid p-10 xl:grid-flow-col xl:grid-cols-12 bg-primary-200 rounded-xl">
-        {/* Pricing */}
-        <section className="xl:col-end-13 xl:col-span-4">
-          <div className="m-2 shadow rounded-xl xl:ml-6 bg-basics-50">
-            {post.coverPhoto?.path ? (
-              <>
-                <Image
-                  src={post.coverPhoto?.path}
-                  alt={post.title}
-                  width="1920"
-                  height="1080"
-                  layout="responsive"
-                  className="rounded-tl-xl rounded-tr-xl"
-                />
-              </>
-            ) : (
-              <div>Image Placeholder</div>
-            )}
-            <div className="grid justify-center grid-cols-1">
-              <div className="grid justify-center px-2 py-1 mx-12 mt-6 text-xl bg-basics-100 text-basics-900 rounded-2xl">
-                Not Enrolled
-              </div>
-              <div className="grid justify-center px-2 py-1 mx-12 mt-6 mb-6 text-xl text-white bg-primary-900 hover:bg-primary-400 rounded-2xl">
-                Login to Enroll
-              </div>
-            </div>
-          </div>
-        </section>
+      {/* MEDIA AREA */}
+      <section className="p-10">
+        {/* <div className="grid grid-flow-col grid-cols-12"> */}
         {/* MEDIA */}
-        <div className="grid grid-flow-col grid-cols-12 pt-2 pl-2 row-start-8 xl:col-span-8">
-          <div className="col-span-full">
-            <PostMedia post={post} />
-          </div>
-          <div className="col-span-full">
-            {/* LESSONS */}
-            <div className="flex justify-start">
-              {post.sections &&
-                post.sections.map((section) => (
-                  <div className="w-full my-2" key={section.title}>
-                    <div className="text-2xl font-bold">{section.title}</div>
-                    <div className="flex flex-col justify-items-stretch bg-primary-900 rounded-xl">
-                      {section.lessons &&
-                        section.lessons.map((lesson) => (
+        {/* <div className="col-span-full xl:col-span-8 2xl:col-span-8"> */}
+        <section className="grid gap-10 xl:grid-cols-sidebar">
+          <PostMedia post={post} />
+
+          {/* </div> */}
+          {/* <div className="col-span-full xl:col-span-4 2xl:col-span-4"> */}
+          {/* LESSONS */}
+          {/* <div className="flex justify-start p-4 bg-primary-200"> */}
+          <section>
+            {course.sections &&
+              course.sections.map((section) => (
+                <div
+                  className="w-full bg-primary-900 dark:bg-primary-900"
+                  key={section.title}
+                >
+                  <h2 className="p-4 m-0 font-sans text-2xl text-basics-50 dark:text-basics-50">
+                    {section.title}
+                  </h2>
+                  <ul className="grid overflow-y-auto justify-items-stretch bg-basics-50">
+                    {section.lessons &&
+                      section.lessons.map((lesson) => (
+                        <li key={lesson.id} className="ml-0 list-none">
                           <Link
-                            href={`/courses/${post.slug}/lessons/${lesson.slug}`}
+                            href={`/courses/${course.slug}/lessons/${lesson.slug}`}
                             key={lesson.id}
                           >
                             <div
-                              className={`p-2 cursor-pointer hover:bg-primary-600
-                            ${
-                              isActiveLink(post, lesson) ? 'bg-primary-200' : ''
-                            }
-                            `}
+                              className={`p-2 cursor-pointer
+                              ${
+                                isActiveLink(course, lesson)
+                                  ? 'bg-primary-200'
+                                  : 'bg-transparent'
+                              }
+                              `}
                             >
-                              <a className="text-xl text-white no-underline hover:text-white">
+                              <a className="no-underline text-basics-900 hover:text-basics-600">
                                 {lesson.title}
                               </a>
                             </div>
                           </Link>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* BLOG POST */}
-      <section className="relative grid items-start justify-center gap-10 px-4 leading-relaxed 2xl:px-16 2xl:justify-start">
-        <article className="text-basics-900 ">
-          {/* {content} */}
-          <ShowMDX markdown={post.content || ''} />
-        </article>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ))}
+          </section>
+
+          {/* BLOG POST */}
+          <section className="grid leading-relaxed">
+            <article className="text-basics-900 ">
+              <ShowMDX markdown={post.content || ''} />
+            </article>
+          </section>
+          {/* </div> */}
+          {/* </div> */}
+          {/* </div> */}
+        </section>
       </section>
       <style global jsx>{`
         main a {
@@ -162,7 +158,7 @@ export async function getStaticPaths(): Promise<{
   fallback: boolean;
 }> {
   const paths: { params: { type: PostType; slug: string } }[] = [];
-  [PostType.course].forEach(async (postType) => {
+  [PostType.lesson].forEach(async (postType) => {
     const docData = await postsService(postType);
     for (const doc of docData) {
       paths.push({
@@ -182,19 +178,20 @@ export async function getStaticPaths(): Promise<{
 export async function getStaticProps({
   params,
 }: {
-  params: { coursePath: string };
+  params: { coursePath: string; lessonPath: string };
 }): Promise<
   | {
       props: {
         post: PostModel | null;
+        course: PostModel | null;
       };
       revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
 > {
-  const { coursePath } = params;
+  const { coursePath, lessonPath } = params;
 
-  if (!coursePath) {
+  if (!coursePath || !lessonPath) {
     return {
       redirect: {
         destination: '/',
@@ -203,12 +200,19 @@ export async function getStaticProps({
     };
   }
 
-  const posts = await postBySlugService(PostType.course, coursePath);
+  const posts = await postBySlugService(PostType.lesson, lessonPath);
   const post = posts.length > 0 ? posts[0] : null;
+
+  const courses = await postBySlugService(
+    PostType.course,
+    coursePath as string
+  );
+  const course = courses.length > 0 ? courses[0] : null;
 
   return {
     props: {
       post,
+      course,
     },
     revalidate: 60,
   };

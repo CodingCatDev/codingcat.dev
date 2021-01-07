@@ -120,7 +120,7 @@ service cloud.firestore {
       let isOwner = post.createdBy == request.auth.uid && post.updatedBy == request.auth.uid;
       let hasRequiredFields = post.keys().hasAll([
         'id', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy',
-        'type', 'title', 'status', 'visibility', 'permalink']);
+        'type', 'title', 'status', 'visibility']);
       let statusNotPublished = post.status == 'draft' && !post.keys().hasAny(['publishedAt']);
       let isUnique = !exists(/databases/$(database)/documents/postSlugs/$(post.slug));
       return isOwner && hasRequiredFields && statusNotPublished && isUnique;

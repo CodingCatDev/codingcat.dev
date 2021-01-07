@@ -9,7 +9,7 @@ export function RecentPostsCards({ recentPosts }: { recentPosts: Post[] }) {
       {recentPosts.map((post: Post) => (
         <div className="p-3 m-3 rounded shadow bg-basics-50" key={post.id}>
           <div>
-            <Link href={post.permalink}>
+            <Link href={`/${post.type}/${post.slug}`}>
               <a>
                 {post.coverPhoto && post.coverPhoto.path ? (
                   <>

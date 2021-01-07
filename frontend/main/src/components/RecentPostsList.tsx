@@ -8,7 +8,7 @@ export default function RecentPostsList({ posts }: { posts: Post[] }) {
     <>
       {posts.map((post) => (
         <div className="mt-6" key={post.slug}>
-          <Link href={post.permalink}>
+          <Link href={`/${post.type}/${post.slug}`}>
             <a className="links-primary">{post.title}</a>
           </Link>
         </div>

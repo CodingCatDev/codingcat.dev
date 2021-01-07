@@ -19,7 +19,6 @@ const postInitial = {
   titleSearch: '',
   status: PostStatus.draft,
   visibility: PostVisibility.private,
-  permalink: '',
   slug: '',
 };
 

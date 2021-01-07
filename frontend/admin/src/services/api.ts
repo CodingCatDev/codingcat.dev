@@ -75,7 +75,6 @@ export const postCreate = (type: PostType, title: string, slug: string) => {
     status: PostStatus.draft,
     visibility: PostVisibility.private,
     slug,
-    permalink: `/${slug}`,
   };
 
   return firestore$.pipe(

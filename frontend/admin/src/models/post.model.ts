@@ -15,7 +15,6 @@ export interface Post {
   status: PostStatus;
   publishedAt?: firebase.firestore.Timestamp;
   visibility: PostVisibility;
-  permalink: string;
   excerpt?: string;
   category?: string[] | null; //If null this will be auto assigned 'Unassigned'
   tag?: string[] | null;

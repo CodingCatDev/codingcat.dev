@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
-import { postByPermalinkService, postsService } from '@/services/serversideApi';
+import { postBySlugService, postsService } from '@/services/serversideApi';
 
 import {
   Post as PostModel,
@@ -22,7 +22,7 @@ export default function Post({
 }: {
   post: PostModel;
   course: PostModel;
-}) {
+}): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
@@ -40,9 +40,7 @@ export default function Post({
   }
 
   function isActiveLink(course: PostModel, lesson: SectionLesson) {
-    if (
-      router.asPath === `/courses${course.permalink}/lessons${lesson.permalink}`
-    )
+    if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
       return true;
     return false;
   }
@@ -66,74 +64,87 @@ export default function Post({
         </BreakBarLeft>
       </section>
       {/* MEDIA AREA */}
-      <div className="p-2 pt-8 z-9">
-        <div className="grid grid-flow-col grid-cols-12">
-          {/* MEDIA */}
-          <div className="col-span-full xl:col-span-8 2xl:col-span-8">
-            <PostMedia post={post} />
-          </div>
-          <div className="col-span-full xl:col-span-4 2xl:col-span-4">
-            {/* LESSONS */}
-            <div className="flex justify-start p-4 bg-primary-200">
-              {course.sections &&
-                course.sections.map((section) => (
-                  <div className="w-full" key={section.title}>
+      <section className="p-10">
+        {/* <div className="grid grid-flow-col grid-cols-12"> */}
+        {/* MEDIA */}
+        {/* <div className="col-span-full xl:col-span-8 2xl:col-span-8"> */}
+        <section className="grid gap-10 xl:grid-cols-sidebar">
+          <PostMedia post={post} />
+
+          {/* </div> */}
+          {/* <div className="col-span-full xl:col-span-4 2xl:col-span-4"> */}
+          {/* LESSONS */}
+          {/* <div className="flex justify-start p-4 bg-primary-200"> */}
+          <section>
+            {course.sections &&
+              course.sections.map((section) => (
+                <div
+                  className="w-full bg-primary-900 dark:bg-primary-900"
+                  key={section.title}
+                >
+                  <h2 className="p-4 m-0 font-sans text-2xl text-basics-50 dark:text-basics-50">
                     {section.title}
-                    <div className="flex flex-col justify-items-stretch">
-                      {section.lessons &&
-                        section.lessons.map((lesson) => (
+                  </h2>
+                  <ul className="grid overflow-y-auto justify-items-stretch bg-basics-50">
+                    {section.lessons &&
+                      section.lessons.map((lesson) => (
+                        <li key={lesson.id} className="ml-0 list-none">
                           <Link
-                            href={`/courses${course.permalink}/lessons${lesson.permalink}`}
+                            href={`/courses/${course.slug}/lessons/${lesson.slug}`}
                             key={lesson.id}
                           >
                             <div
-                              className={`p-2 cursor-pointer hover:bg-primary-600
-                            ${
-                              isActiveLink(course, lesson)
-                                ? 'bg-primary-600'
-                                : 'bg-primary-900'
-                            }
-                            `}
+                              className={`p-2 cursor-pointer
+                              ${
+                                isActiveLink(course, lesson)
+                                  ? 'bg-primary-200'
+                                  : 'bg-transparent'
+                              }
+                              `}
                             >
-                              <a className="text-white hover:text-white">
+                              <a className="no-underline text-basics-900 hover:text-basics-600">
                                 {lesson.title}
                               </a>
                             </div>
                           </Link>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* BLOG POST */}
-      <section className="relative grid items-start justify-center gap-10 px-4 leading-relaxed 2xl:px-16 2xl:justify-start">
-        <article className="text-basics-900 ">
-          <ShowMDX markdown={post.content || ''} />
-        </article>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ))}
+          </section>
+
+          {/* BLOG POST */}
+          <section className="leading-relaxed">
+            <article className="text-basics-900 ">
+              <ShowMDX markdown={post.content || ''} />
+            </article>
+          </section>
+          {/* </div> */}
+          {/* </div> */}
+          {/* </div> */}
+        </section>
       </section>
       <style global jsx>{`
-        a {
+        main a {
           text-decoration: underline;
         }
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
+        main h1,
+        main h2,
+        main h3,
+        main h4,
+        main h5,
+        main h6 {
           font-family: 'Nunito', sans-serif;
           margin: 1rem 0;
         }
-        article p:first-child a img {
+        main article p:first-child a img {
           width: 100%;
         }
-        p {
+        main p {
           margin: 1rem 0;
         }
-        ul li {
+        main ul li {
           margin-left: 2rem;
           list-style-type: circle;
         }
@@ -142,14 +153,18 @@ export default function Post({
   );
 }
 
-export async function getStaticPaths() {
-  const paths: any = [];
+export async function getStaticPaths(): Promise<{
+  paths: { params: { type: PostType; slug: string } }[];
+  fallback: boolean;
+}> {
+  const paths: { params: { type: PostType; slug: string } }[] = [];
   [PostType.lesson].forEach(async (postType) => {
     const docData = await postsService(postType);
     for (const doc of docData) {
       paths.push({
         params: {
-          lessonPath: doc.permalink.substring(1).split('/'),
+          type: doc.type,
+          slug: doc.slug,
         },
       });
     }
@@ -163,13 +178,37 @@ export async function getStaticPaths() {
 export async function getStaticProps({
   params,
 }: {
-  params: { lessonPath: string; coursePath: string };
-}) {
-  const { lessonPath, coursePath } = params;
-  const posts = await postByPermalinkService([lessonPath] as any);
-  const courses = await postByPermalinkService([coursePath] as any);
+  params: { coursePath: string; lessonPath: string };
+}): Promise<
+  | {
+      props: {
+        post: PostModel | null;
+        course: PostModel | null;
+      };
+      revalidate: number;
+    }
+  | { redirect: { destination: string; permanent: boolean } }
+> {
+  const { coursePath, lessonPath } = params;
+
+  if (!coursePath || !lessonPath) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  const posts = await postBySlugService(PostType.lesson, lessonPath);
   const post = posts.length > 0 ? posts[0] : null;
+
+  const courses = await postBySlugService(
+    PostType.course,
+    coursePath as string
+  );
   const course = courses.length > 0 ? courses[0] : null;
+
   return {
     props: {
       post,

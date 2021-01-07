@@ -2,13 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Post, PostType } from '@/models/post.model';
 
-export default function PostsCards({
-  posts,
-  type,
-}: {
-  posts: Post[];
-  type?: PostType;
-}) {
+export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
   return (
     <>
       {posts && posts.length > 0 ? (
@@ -19,13 +13,7 @@ export default function PostsCards({
               key={post.slug}
             >
               <div>
-                <Link
-                  href={
-                    post.type === PostType.course
-                      ? `courses${post.permalink}`
-                      : post.permalink
-                  }
-                >
+                <Link href={`/${post.type}/${post.slug}`}>
                   <a>
                     {post.coverPhoto?.path ? (
                       <>
@@ -46,7 +34,7 @@ export default function PostsCards({
               </div>
               <div className="mt-6">
                 <p className="mb-2 text-lg tracking-wide text-basics-600 text-bold">
-                  <Link href={post.permalink}>
+                  <Link href={`/${post.type}/${post.slug}`}>
                     <a>{post.title}</a>
                   </Link>
                 </p>

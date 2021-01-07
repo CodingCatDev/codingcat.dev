@@ -32,7 +32,7 @@ export default function Post({ post }: { post: PostModel }) {
     );
   }
   function isActiveLink(course: PostModel, lesson: SectionLesson) {
-    if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
+    if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
       return true;
     return false;
   }
@@ -99,7 +99,7 @@ export default function Post({ post }: { post: PostModel }) {
                       {section.lessons &&
                         section.lessons.map((lesson) => (
                           <Link
-                            href={`/courses/${post.slug}/lessons/${lesson.slug}`}
+                            href={`/course/${post.slug}/lesson/${lesson.slug}`}
                             key={lesson.id}
                           >
                             <div
@@ -123,7 +123,7 @@ export default function Post({ post }: { post: PostModel }) {
         </div>
       </section>
       {/* BLOG POST */}
-      <section className="relative grid items-start justify-center gap-10 px-4 leading-relaxed 2xl:px-16 2xl:justify-start">
+      <section className="relative grid items-start justify-center gap-10 leading-relaxed 2xl:px-16 2xl:justify-start">
         <article className="text-basics-900 ">
           {/* {content} */}
           <ShowMDX markdown={post.content || ''} />
