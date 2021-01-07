@@ -66,7 +66,7 @@ export default function ShowMDX({ markdown }: { markdown: string }) {
     //   .toString();
     const parsed = content;
     setProcessed(parsed);
-  }, []);
+  }, [markdown]);
 
   return (
     <div className="App">

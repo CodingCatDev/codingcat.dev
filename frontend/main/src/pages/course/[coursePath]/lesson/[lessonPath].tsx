@@ -95,7 +95,7 @@ export default function Post({
                       section.lessons.map((lesson) => (
                         <li key={lesson.id} className="ml-0 list-none">
                           <Link
-                            href={`/courses/${course.slug}/lessons/${lesson.slug}`}
+                            href={`/course/${course.slug}/lesson/${lesson.slug}`}
                             key={lesson.id}
                           >
                             <div
