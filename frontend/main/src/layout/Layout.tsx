@@ -12,13 +12,7 @@ import nightwind from 'nightwind/helper';
 
 import { AppTopbar } from './AppTopbar';
 
-const AppMenu: ComponentType<{
-  setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
-  overlayMenuActive: boolean;
-}> = dynamic(() => import('@/layout/AppMenu').then((mod: any) => mod.AppMenu), {
-  ssr: false,
-  loading: () => <p>Adding the Menu...</p>,
-});
+import AppMenu from '@/layout/AppMenu';
 
 const Footer = dynamic(
   () => import('@/layout/Footer').then((mod: any) => mod.Footer),

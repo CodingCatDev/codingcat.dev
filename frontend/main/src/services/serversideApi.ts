@@ -29,7 +29,7 @@ export async function postsRecentService(
   return recentPosts;
 }
 
-export async function postsService(postType: string) {
+export async function postsService(postType: string): Promise<Post[]> {
   const postDocs = await admin
     .firestore()
     .collection('posts')
@@ -42,10 +42,13 @@ export async function postsService(postType: string) {
   for (const doc of postDocs.docs) {
     posts.push(cleanTimestamp(smallPostPayload(doc)));
   }
-  return posts;
+  return posts as Post[];
 }
 
-export async function postBySlugService(type: PostType, slug: string) {
+export async function postBySlugService(
+  type: PostType,
+  slug: string
+): Promise<Post[]> {
   const postDocs = await admin
     .firestore()
     .collection('posts')
@@ -60,8 +63,44 @@ export async function postBySlugService(type: PostType, slug: string) {
   return posts as Post[];
 }
 
+/* USER Authentication */
+
+export async function validateCourseUser(idToken: string): Promise<boolean> {
+  //Verify Token
+  const decodedToken = admin.auth().verifyIdToken(idToken);
+
+  if (!decodedToken) {
+    return false;
+  }
+
+  const userRecord = await admin.auth().getUser((await decodedToken).uid);
+  if (userRecord) {
+    // Verify user has the correct roles
+    const userRef = await admin
+      .firestore()
+      .doc(`users/${userRecord.uid}`)
+      .get();
+
+    const userData = userRef.data() as { uid: string; roles: string[] };
+    // TODO: Include Stripe Custom Claim for memberships
+    if (
+      userData &&
+      userData.roles &&
+      userData.roles.some((r) => ['admin', 'editor', 'author'].indexOf(r) >= 0)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 /* Utilities */
-export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
+export function cleanTimestamp(
+  data: FirebaseFirestore.DocumentData
+): FirebaseFirestore.DocumentData {
   const docData = { ...data };
   Object.keys(docData).map((key) => {
     if (

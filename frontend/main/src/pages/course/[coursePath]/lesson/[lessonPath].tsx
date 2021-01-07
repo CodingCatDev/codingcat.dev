@@ -1,3 +1,5 @@
+import http from 'http';
+import cookie from 'cookie';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -6,7 +8,10 @@ import { useRouter } from 'next/router';
 
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/Home/BreakBarLeft';
-import { postBySlugService, postsService } from '@/services/serversideApi';
+import {
+  validateCourseUser,
+  postBySlugService,
+} from '@/services/serversideApi';
 
 import {
   Post as PostModel,
@@ -153,43 +158,53 @@ export default function Post({
   );
 }
 
-export async function getStaticPaths(): Promise<{
-  paths: { params: { type: PostType; slug: string } }[];
-  fallback: boolean;
-}> {
-  const paths: { params: { type: PostType; slug: string } }[] = [];
-  [PostType.lesson].forEach(async (postType) => {
-    const docData = await postsService(postType);
-    for (const doc of docData) {
-      paths.push({
-        params: {
-          type: doc.type,
-          slug: doc.slug,
-        },
-      });
-    }
-  });
-  return {
-    paths,
-    fallback: true,
-  };
-}
-
-export async function getStaticProps({
+export async function getServerSideProps({
   params,
+  req,
 }: {
   params: { coursePath: string; lessonPath: string };
+  req: http.IncomingMessage;
 }): Promise<
   | {
       props: {
         post: PostModel | null;
         course: PostModel | null;
       };
-      revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
+  | { notFound: boolean }
 > {
   const { coursePath, lessonPath } = params;
+
+  const cookies = cookie.parse(req.headers.cookie || '');
+  const auth = cookies.auth;
+  // Check for user authentication from cookie
+  let validUser = true;
+  if (auth) {
+    const user = JSON.parse(auth) as {
+      uid: string;
+      email: string;
+      token: string;
+    };
+    validUser = await validateCourseUser(user.token);
+  } else {
+    validUser = false;
+  }
+
+  if (!validUser) {
+    if (coursePath) {
+      return {
+        redirect: {
+          destination: `/course/${coursePath}`,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        notFound: true,
+      };
+    }
+  }
 
   if (!coursePath || !lessonPath) {
     return {
@@ -214,6 +229,5 @@ export async function getStaticProps({
       post,
       course,
     },
-    revalidate: 60,
   };
 }
