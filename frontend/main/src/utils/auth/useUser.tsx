@@ -12,9 +12,11 @@ import { Observable } from 'rxjs';
 import { authState } from 'rxfire/auth';
 import { filter, map, switchMap, takeWhile } from 'rxjs/operators';
 import firebase from 'firebase/app';
+import { UserInfoExtended } from '@/models/user.model';
+
 const useUser = () => {
   const [app, setApp] = useState<firebase.app.App>();
-  const [user, setUser] = useState<firebase.UserInfo | null>();
+  const [user, setUser] = useState<UserInfoExtended | null>();
   const [
     userProfile,
     setUserProfile,
@@ -56,7 +58,7 @@ const useUser = () => {
         if (user) {
           const userData = await mapUserData(user);
           setUserCookie(userData);
-          setUser(userData as any);
+          setUser(userData as UserInfoExtended);
         } else {
           removeUserCookie();
           setUser(null);

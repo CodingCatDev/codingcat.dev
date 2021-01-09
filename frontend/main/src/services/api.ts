@@ -1,9 +1,13 @@
+import { StripePrice } from './../models/stripe.model';
 import { httpsCallable } from 'rxfire/functions';
 import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { docData } from 'rxfire/firestore';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
+
+import { loadStripe } from '@stripe/stripe-js';
+import { config } from '@/config/stripe';
 
 const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
@@ -43,7 +47,7 @@ export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
   return docData;
 }
 
-//Cloudinary
+/* Cloudinary */
 export const getCloudinaryCookieToken = () => {
   return functions$.pipe(
     switchMap((functions) =>
@@ -52,5 +56,40 @@ export const getCloudinaryCookieToken = () => {
         {}
       )
     )
+  );
+};
+
+/* Stripe */
+export const stripeCheckout = (price: StripePrice, uid: string) => {
+  return firestore$.pipe(
+    switchMap(async (firestore) => {
+      const docRef = await firestore
+        .collection('customers')
+        .doc(uid)
+        .collection('checkout_sessions')
+        .add({
+          price: price.id,
+          success_url: window.location.origin,
+          cancel_url: window.location.href,
+        });
+      docRef.onSnapshot(async (snap) => {
+        const { error, sessionId } = snap.data() as string | any;
+        if (error) {
+          // Show an error to your customer and
+          // inspect your Cloud Function logs in the Firebase console.
+          alert(`An error occured: ${error.message}`);
+        }
+        if (sessionId) {
+          // We have a session, let's redirect to Checkout
+          // Init Stripe
+          if (config.apiKey) {
+            const stripe = await loadStripe(config.apiKey);
+            if (stripe) stripe.redirectToCheckout({ sessionId });
+          } else {
+            console.error('Missing Stripe API Key');
+          }
+        }
+      });
+    })
   );
 };

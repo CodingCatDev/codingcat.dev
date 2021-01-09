@@ -1,3 +1,4 @@
+import { StripePrice, StripeProduct } from './../models/stripe.model';
 import { PostType } from './../models/post.model';
 import { Post } from '@/models/post.model';
 import admin from '@/utils/firebaseAdmin';
@@ -120,4 +121,35 @@ function smallPostPayload(doc: FirebaseFirestore.DocumentData) {
   const post = doc.data() as Post;
   delete post.content;
   return post;
+}
+
+/* Stripe */
+
+export async function getActiveProducts(): Promise<StripeProduct[]> {
+  const productDocs = await admin
+    .firestore()
+    .collection('products')
+    .where('active', '==', true)
+    .get();
+
+  const products: FirebaseFirestore.DocumentData[] = [];
+  for (const productDoc of productDocs.docs) {
+    const priceDocs = await admin
+      .firestore()
+      .collection(`products/${productDoc.id}/prices`)
+      .where('active', '==', true)
+      .get();
+
+    const prices: StripePrice[] = [];
+    for (const priceDoc of priceDocs.docs) {
+      const price = priceDoc.data() as StripePrice;
+      price.id = priceDoc.id;
+      prices.push(price);
+    }
+    const product = productDoc.data() as StripeProduct;
+    product.id = productDoc.id;
+    product.prices = prices;
+    products.push(product);
+  }
+  return products as StripeProduct[];
 }

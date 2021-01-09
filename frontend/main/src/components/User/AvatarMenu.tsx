@@ -4,11 +4,11 @@ import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';
 import { Transition } from '@headlessui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { userProfileDataObservable } from '@/services/api';
-import firebaseApp from 'firebase/app';
 import { authState } from 'rxfire/auth';
 import { takeWhile, switchMap } from 'rxjs/operators';
+import { UserInfoExtended } from '@/models/user.model';
 
 export default function UserSignin({
   userMenu,
@@ -16,10 +16,10 @@ export default function UserSignin({
 }: {
   userMenu: boolean;
   setUserMenu: Dispatch<SetStateAction<boolean>>;
-}) {
+}): JSX.Element {
   const { user, signout, app } = useUser();
 
-  const [profile, setProfile] = useState<firebaseApp.UserInfo | null>(null);
+  const [profile, setProfile] = useState<UserInfoExtended | null>(null);
 
   let subscription: Subscription;
   useEffect(() => {
@@ -32,9 +32,7 @@ export default function UserSignin({
             }
             return user != null;
           }),
-          switchMap((u: firebaseApp.UserInfo) =>
-            userProfileDataObservable(u.uid)
-          )
+          switchMap((u: UserInfoExtended) => userProfileDataObservable(u.uid))
         )
         .subscribe((profile) => setProfile(profile));
       return () => {

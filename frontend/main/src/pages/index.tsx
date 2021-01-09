@@ -21,7 +21,7 @@ export default function Home({
   recentPosts: {
     [key: string]: Post[];
   };
-}) {
+}): JSX.Element {
   return (
     <Layout>
       <Head>
@@ -42,14 +42,14 @@ export default function Home({
           new skills.
         </p>
         <div className="grid grid-flow-col gap-2">
-          <Link href="/user/profile">
+          <Link href="/courses">
             <a className="btn-secondary justify-self-end" role="button">
               Start Now
             </a>
           </Link>
-          <Link href="/user/pro">
+          <Link href="/membership">
             <a className="btn-primary justify-self-start" role="button">
-              Go Pro
+              Join CodingCat.dev
             </a>
           </Link>
         </div>

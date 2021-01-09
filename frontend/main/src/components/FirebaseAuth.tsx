@@ -57,7 +57,7 @@ const FirebaseAuth = ({ full = true }) => {
     const config = {
       signInFlow: 'popup',
       signInOptions,
-      signInSuccessUrl: '/user/profile',
+      // signInSuccessUrl: '/user/profile',
       credentialHelper: 'none',
       callbacks: {
         signInSuccessWithAuthResult: async (
@@ -67,6 +67,11 @@ const FirebaseAuth = ({ full = true }) => {
           const userData = await mapUserData(user);
           setUserCookie(userData);
         },
+      },
+      tosUrl: `${window.location.origin}/terms`,
+      // Privacy policy url/callback.
+      privacyPolicyUrl() {
+        window.open(`${window.location.origin}/privacy`);
       },
     };
     setFirebaseAuthConfig(config as any);
