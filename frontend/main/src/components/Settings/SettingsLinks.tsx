@@ -12,13 +12,8 @@ export default function UserProfile() {
           </Link>
         </li>
         <li>
-          <Link href="/user/account">
-            <a className={links}>Account</a>
-          </Link>
-        </li>
-        <li>
-          <Link href="/user/billing">
-            <a className={links}>Billing</a>
+          <Link href="/user/membership">
+            <a className={links}>Membership</a>
           </Link>
         </li>
         <li>

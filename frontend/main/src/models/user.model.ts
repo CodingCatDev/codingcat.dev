@@ -5,8 +5,9 @@ export interface UserInfoExtended extends firebase.UserInfo {
 }
 
 export interface UserMembership {
-  membership?: boolean;
-  membershipType?: MembershipType;
+  membership: boolean;
+  membershipType: MembershipType;
+  subscriptionId: string;
 }
 
 export enum MembershipType {

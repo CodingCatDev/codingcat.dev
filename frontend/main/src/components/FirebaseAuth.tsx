@@ -57,7 +57,7 @@ const FirebaseAuth = ({ full = true }) => {
     const config = {
       signInFlow: 'popup',
       signInOptions,
-      // signInSuccessUrl: '/user/profile',
+      signInSuccessUrl: window.location.href,
       credentialHelper: 'none',
       callbacks: {
         signInSuccessWithAuthResult: async (

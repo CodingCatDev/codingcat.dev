@@ -1,3 +1,4 @@
+import { UserInfoExtended } from '@/models/user.model';
 import { StripePrice } from './../models/stripe.model';
 import { httpsCallable } from 'rxfire/functions';
 import firebase from 'firebase/app';
@@ -26,6 +27,14 @@ export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
       docData<firebase.UserInfo>(firestore.doc(`/profiles/${uid}`), uid)
+    )
+  );
+};
+
+export const userDataObservable = (uid: string) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      docData<UserInfoExtended>(firestore.doc(`/users/${uid}`), uid)
     )
   );
 };
@@ -91,5 +100,27 @@ export const stripeCheckout = (price: StripePrice, uid: string) => {
         }
       });
     })
+  );
+};
+
+export const getStripePortal = () => {
+  return functions$.pipe(
+    switchMap((functions) =>
+      httpsCallable<
+        unknown,
+        {
+          id: string;
+          object: string;
+          created: number;
+          customer: string;
+          livemode: boolean;
+          return_url: string;
+          url: string;
+        }
+      >(
+        functions,
+        'ext-firestore-stripe-subscriptions-createPortalLink'
+      ).call('params', { returnUrl: window.location.href })
+    )
   );
 };
