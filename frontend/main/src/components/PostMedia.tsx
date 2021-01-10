@@ -57,7 +57,7 @@ export default function PostMedia({ post }: { post: Post }) {
                   controls={true}
                   fluid="true"
                   style={{ height: '100%', width: '100%' }}
-                  className="rounded-xl"
+                  className="rounded-md"
                 />
               ) : (
                 <div>Getting Cookie for Private View</div>
@@ -68,7 +68,7 @@ export default function PostMedia({ post }: { post: Post }) {
               {post.coverVideo?.url.includes('youtu.be') ||
               post.coverVideo?.url.includes('youtube') ? (
                 <ReactPlayer
-                  className="react-player"
+                  className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md react-player"
                   url={post.coverVideo?.url}
                   controls={true}
                   height="0"
@@ -81,7 +81,7 @@ export default function PostMedia({ post }: { post: Post }) {
                 />
               ) : (
                 <ReactPlayer
-                  className="react-player"
+                  className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md react-player"
                   url={post.coverVideo?.url}
                   controls={true}
                   height="100%"
@@ -100,7 +100,7 @@ export default function PostMedia({ post }: { post: Post }) {
               width="480"
               height="270"
               layout="responsive"
-              className="rounded-xl"
+              className="rounded-md"
             />
           ) : (
             <></>

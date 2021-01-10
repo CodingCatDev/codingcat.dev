@@ -1,3 +1,5 @@
+import { Post, PostType } from '@/models/post.model';
+
 export const toKebabCase = (str: string) => {
   if (!str) {
     return '';
@@ -12,4 +14,14 @@ export const toKebabCase = (str: string) => {
     }
     return match.map((x) => x.toLowerCase()).join('-');
   }
+};
+
+export const pluralize = (post: Post) => {
+  return `${post.type === PostType.post ? 'blog' : post.type + 's'}`;
+};
+
+export const toTitleCase = (str: string) => {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 };

@@ -47,23 +47,19 @@ export default function Post({ post }: { post: PostModel }) {
             <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
               {post.title}
             </h1>
-            <label htmlFor="search_blog" className="sr-only">
-              Search bar
-            </label>
-            <input
-              type="text"
-              id="search_blog"
-              placeholder="search"
-              className="w-1/3 rounded-full"
-            />
+            <Link href={`/courses`}>
+              <a role="link" className="no-underline btn-secondary">
+                back to Courses
+              </a>
+            </Link>
           </BreakBarLeft>
         </section>
 
         {/* MAIN CONTENT */}
-        <section className="grid gap-4 p-4 xl:p-10 xl:grid-cols-sidebar">
+        <section className="grid gap-4 px-4 py-10 xl:p-10 xl:grid-cols-sidebar">
           {/* Pricing */}
           <div className="grid grid-cols-1 gap-4">
-            <section className="bg-basics-50 xl:self-start">
+            <section className="rounded-md bg-basics-50 xl:self-start">
               {post.coverPhoto?.path ? (
                 <>
                   <Image
@@ -88,14 +84,14 @@ export default function Post({ post }: { post: PostModel }) {
             {/* Course Content - Similar to lesson content, should it be extracted to it's own component? */}
             {/* LESSONS */}
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-              <section className="w-full bg-basics-50">
+              <section className="w-full rounded-md bg-basics-50">
                 {post.sections &&
                   post.sections.map((section) => (
                     <div key={section.title}>
-                      <h2 className="p-4 m-0 text-2xl font-bold bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+                      <h2 className="p-4 m-0 text-2xl font-bold rounded-t-md bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
                         {section.title}
                       </h2>
-                      <ul className="grid overflow-y-auto justify-items-stretch bg-basics-50">
+                      <ul className="grid overflow-y-auto justify-items-stretch">
                         {section.lessons &&
                           section.lessons.map((lesson) => (
                             <li key={lesson.id} className="ml-0 list-none">
@@ -126,7 +122,7 @@ export default function Post({ post }: { post: PostModel }) {
               </section>
 
               {/* Author Content */}
-              <section className="grid gap-4 p-4 sm:self-start bg-basics-50">
+              <section className="grid gap-4 p-4 rounded-md sm:self-start bg-basics-50">
                 <header className="flex space-x-4">
                   <img
                     src="https://avatars0.githubusercontent.com/u/45889730?s=460&u=74587a01abf2a7f33ae964c69856f3fe71b175b6&v=4"

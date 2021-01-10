@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import DefaultErrorPage from 'next/error';
 import { useRouter } from 'next/router';
 
@@ -14,6 +15,7 @@ import ShowMDX from '@/components/ShowMDX';
 import PostMedia from '@/components/PostMedia';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
+import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 
 export default function Post({
   post,
@@ -37,29 +39,21 @@ export default function Post({
       </Layout>
     );
   }
+  const pluralType = pluralize(post);
 
   return (
     <Layout>
       <section className="sticky top-0 z-10 bg-primary-50">
         <BreakBarLeft>
-          <div className="grid items-center justify-center lg:flex lg:justify-between">
-            <h1 className="font-sans text-2xl lg:text-4xl lg:w-1/2 text-basics-50 dark:text-basics-50">
-              {post.title}
-            </h1>
-            <label htmlFor="search_blog" className="sr-only">
-              Search bar
-            </label>
-            <input
-              type="text"
-              id="search_blog"
-              placeholder="search"
-              className="rounded-full lg:w-1/3"
-            />
-          </div>
+          <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
+            {post.title}
+          </h1>
+          <Link href={`/${pluralType}`}>
+            <a role="link" className="no-underline btn-secondary">
+              {`back to ${toTitleCase(pluralType)}`}
+            </a>
+          </Link>
         </BreakBarLeft>
-        <div className="p-2 pt-8 z-9">
-          <PostMedia post={post} />
-        </div>
       </section>
       {/* BLOG POST */}
       <section className="relative grid items-start justify-center gap-10 px-4 leading-relaxed 2xl:px-16 2xl:justify-start">

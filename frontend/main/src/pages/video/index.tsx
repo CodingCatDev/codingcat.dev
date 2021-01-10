@@ -45,7 +45,7 @@ export default function Video() {
             </label>
           </div>
         </div> */}
-        <div className="h-full px-4 pt-5 pb-4 bg-purple-300 bg-gradient-to-r sm:p-6 sm:pb-4 rounded-xl">
+        <div className="h-full px-4 pt-5 pb-4 bg-purple-300 rounded-md bg-gradient-to-r sm:p-6 sm:pb-4">
           <div className="grid h-full grid-cols-1 gap-8 justify-items-stretch place-content-center place-items-center">
             <p className="text-3xl text-white justify-self-center">
               So how does this work?

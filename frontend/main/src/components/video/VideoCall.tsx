@@ -6,7 +6,7 @@ export default function VideoCall() {
   return (
     <>
       <div className="grid w-full grid-rows-1 gap-4 p-2 sm:grid-rows-6">
-        <div className="w-full row-span-1 px-4 pt-5 pb-4 justify-self-center max-w-screen-2xl bg-gradient-to-r from-purple-500 via-ccd-reds-400 to-ccd-pinks-400 sm:p-6 sm:pb-4 rounded-xl">
+        <div className="w-full row-span-1 px-4 pt-5 pb-4 rounded-md justify-self-center max-w-screen-2xl bg-gradient-to-r from-purple-500 via-ccd-reds-400 to-ccd-pinks-400 sm:p-6 sm:pb-4">
           <div className="grid w-full h-full grid-cols-1 gap-8 sm:grid-cols-2 justify-items-stretch place-content-center place-items-center">
             <div className="flex items-center content-center justify-center">
               <p className="text-3xl text-white justify-self-center">
@@ -41,7 +41,7 @@ export default function VideoCall() {
         </div>
         <div className="row-span-1 sm:row-span-5 justify-items-stretch">
           <div className="grid grid-cols-1 ">
-            <div className="w-full h-full px-2 pt-5 pb-4 justify-self-center max-w-screen-2xl bg-gradient-to-r from-purple-500 via-ccd-reds-400 to-ccd-pinks-400 rounded-xl">
+            <div className="w-full h-full px-2 pt-5 pb-4 rounded-md justify-self-center max-w-screen-2xl bg-gradient-to-r from-purple-500 via-ccd-reds-400 to-ccd-pinks-400">
               <div
                 id="videos"
                 className="grid w-full h-full grid-cols-1 gap-2 place-content-center place-items-end"
@@ -51,13 +51,13 @@ export default function VideoCall() {
                   muted
                   autoPlay
                   playsInline
-                  className="w-full bg-black rounded-xl"
+                  className="w-full bg-black rounded-md"
                 ></video>
                 <video
                   id="remoteVideo"
                   autoPlay
                   playsInline
-                  className="w-3/12 bg-purple-900 rounded"
+                  className="w-3/12 bg-purple-900 rounded-md"
                 ></video>
               </div>
             </div>

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import http from 'http';
 import cookie from 'cookie';
 import Head from 'next/head';
@@ -59,22 +61,18 @@ export default function Post({
             <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
               {post.title}
             </h1>
-            <label htmlFor="search_blog" className="sr-only">
-              Search bar
-            </label>
-            <input
-              type="text"
-              id="search_blog"
-              placeholder="search"
-              className="w-1/3 rounded-full"
-            />
+            <Link href={`/course/${course.slug}`}>
+              <a role="link" className="no-underline btn-secondary">
+                back to Course
+              </a>
+            </Link>
           </BreakBarLeft>
         </section>
 
         {/* MEDIA AREA */}
         {/* <section className="grid grid-cols-1 gap-4 p-4 xl:grid-cols-sidebar xl:gap-0"> */}
         <section className="w-full">
-          <div className="flex flex-col p-4 xl:flex-row xl:mx-auto">
+          <div className="flex flex-col px-4 py-10 xl:p-10 xl:flex-row xl:mx-auto">
             {/* MEDIA */}
             <section className="flex-1 xl:w-3/4 xl:flex-auto">
               <PostMedia post={post} />
@@ -85,12 +83,12 @@ export default function Post({
                 course.sections.map((section) => (
                   <div
                     key={section.title}
-                    className="flex flex-col xl:absolute xl:w-full xl:h-full bg-basics-50"
+                    className="flex flex-col xl:absolute xl:w-full xl:h-full bg-basics-50 rounded-b-md xl:rounded-bl-none"
                   >
-                    <h2 className="p-4 m-0 text-2xl font-bold xl:flex-shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+                    <h2 className="p-4 m-0 text-2xl font-bold xl:rounded-tr-md xl:flex-shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
                       {section.title}
                     </h2>
-                    <ul className="flex flex-col flex-grow xl:overflow-auto scrollbar justify-items-stretch bg-basics-50">
+                    <ul className="flex flex-col flex-grow xl:overflow-auto scrollbar justify-items-stretch">
                       {section.lessons &&
                         section.lessons.map((lesson) => (
                           <li key={lesson.id} className="ml-0 list-none">
