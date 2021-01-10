@@ -5,7 +5,6 @@ import { take } from 'rxjs/operators';
 import AJPrimary from './global/icons/AJPrimary';
 import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
-import { Transition } from '@headlessui/react';
 
 export default function MembershipCards({
   products,
@@ -18,6 +17,7 @@ export default function MembershipCards({
 
   function onSelectPlan(product: StripeProduct) {
     if (product.prices && user?.uid) {
+      setStripe(true);
       stripeCheckout(product.prices[0], user?.uid)
         .pipe(take(1))
         .subscribe((sessionId) => {
@@ -30,56 +30,43 @@ export default function MembershipCards({
 
   return (
     <>
-      <Transition
-        show={showMustSignin}
-        enter="transition-opacity duration-75"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-75"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
+      <div
+        className={`${
+          showMustSignin ? 'block' : 'hidden'
+        } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
       >
-        <div className="fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80">
-          <section
-            className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
-            aria-labelledby="slide-over-heading"
-          >
-            <OutsideClick toggle={setShowMustSignin} value={false}>
-              <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
-                <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
-                  <div>Please Sign in First.</div>
-                  <div>Then make your Membership selection.</div>
-                </div>
-              </section>
-            </OutsideClick>
-          </section>
-        </div>
-      </Transition>
-      <Transition
-        show={stripe}
-        enter="transition-opacity duration-75"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-75"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
+        <section
+          className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
+          aria-labelledby="slide-over-heading"
+        >
+          <OutsideClick toggle={setShowMustSignin} value={false}>
+            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
+              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
+                <div>Please Sign in First.</div>
+                <div>Then make your Membership selection.</div>
+              </div>
+            </section>
+          </OutsideClick>
+        </section>
+      </div>
+      <div
+        className={`${
+          stripe ? 'block' : 'hidden'
+        } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
       >
-        <div className="fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80">
-          <section
-            className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
-            aria-labelledby="slide-over-heading"
-          >
-            <OutsideClick toggle={setStripe} value={false}>
-              <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
-                <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
-                  <div>Please Sign in First.</div>
-                  <div>Then make your Membership selection.</div>
-                </div>
-              </section>
-            </OutsideClick>
-          </section>
-        </div>
-      </Transition>
+        <section
+          className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
+          aria-labelledby="slide-over-heading"
+        >
+          <OutsideClick toggle={setStripe} value={false}>
+            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
+              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
+                Redirecting to Stripe...
+              </div>
+            </section>
+          </OutsideClick>
+        </section>
+      </div>
       <section className="mx-auto text-center">
         <div className="grid items-stretch justify-center gap-1 lg:grid-flow-col justify-items-stretch">
           {products.map((product) => (
