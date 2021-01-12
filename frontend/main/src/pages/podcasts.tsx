@@ -11,7 +11,7 @@ export default function Podcasts({ posts }: { posts: Post[] }) {
         <title>Podcasts | CodingCatDev</title>
       </Head>
 
-      <section className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
+      <section className="grid gap-4 p-4 sm:gap-10 sm:p-10 grid-cols-fit ">
         <PostsCards posts={posts} />
       </section>
 

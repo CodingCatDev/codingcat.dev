@@ -93,6 +93,7 @@
   .btn-secondary {
     @apply px-6 py-2 font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none text-primary-900 dark:text-primary-900 hover:text-primary-50 dark:hover:text-primary-50 bg-basics-50 dark:bg-basics-50 hover:bg-secondary-600 dark:hover:bg-secondary-600 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent;
   }
+
   .links-secondary {
     @apply transition-colors text-basics-50 dark:text-basics-50 hover:text-error-400 dark:hover:text-error-400 hover:underline;
   }

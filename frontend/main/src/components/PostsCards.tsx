@@ -8,10 +8,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
       {posts && posts.length > 0 ? (
         <>
           {posts.map((post) => (
-            <div
-              className="p-3 m-3 rounded shadow bg-basics-50"
-              key={post.slug}
-            >
+            <div className="rounded-md shadow bg-basics-50" key={post.slug}>
               <div>
                 <Link href={`/${post.type}/${post.slug}`}>
                   <a>
@@ -23,7 +20,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                           width="480"
                           height="270"
                           layout="responsive"
-                          className="rounded"
+                          className="rounded-md rounded-b-none cursor-pointer"
                         />
                       </>
                     ) : (
@@ -32,13 +29,13 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   </a>
                 </Link>
               </div>
-              <div className="mt-6">
-                <p className="mb-2 text-lg tracking-wide text-basics-600 text-bold">
+              <div className="p-4 space-y-2">
+                <p className="text-lg tracking-wide text-basics-900 text-bold">
                   <Link href={`/${post.type}/${post.slug}`}>
                     <a>{post.title}</a>
                   </Link>
                 </p>
-                <p className="text-sm font-hairline text-basics-600">
+                <p className="text-sm font-hairline text-basics-900">
                   {post.excerpt}
                 </p>
               </div>
@@ -47,7 +44,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
         </>
       ) : (
         <>
-          <div className="p-3 m-3 bg-white rounded shadow col-span-full">
+          <div className="bg-white rounded-md shadow">
             Nothing to Show Just yet
           </div>
         </>

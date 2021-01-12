@@ -14,7 +14,7 @@ export default function Courses({ posts }: { posts: Post[] }) {
       </Head>
 
       <div className="w-full mx-auto max-w-7xl">
-        <section className="grid grid-cols-1 ">
+        <section className="grid gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
           <PostsCards posts={posts} />
         </section>
       </div>

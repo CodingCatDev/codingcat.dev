@@ -92,6 +92,7 @@ module.exports = {
       },
       height: {
         35: '35px',
+        500: '500px',
       },
       screens: {
         '3xl': '2000px',

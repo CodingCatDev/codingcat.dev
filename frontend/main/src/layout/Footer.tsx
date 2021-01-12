@@ -26,14 +26,16 @@ export const Footer = () => {
           stroke="transparent"
         />
       </svg>
-      <footer className="grid items-end justify-around gap-10 pt-16 pb-8 bg-purple-900 xl:flex xl:gap-4 text-basics-50 dark:text-basics-50">
+      <footer className="grid items-start grid-cols-1 gap-10 p-4 bg-purple-900 2xl:justify-items-center lg:grid-cols-2 lg:p-10 2xl:grid-cols-3 2xl:items-end 2xl:gap-4 text-basics-50 dark:text-basics-50">
         {/* LOGO & COPYRIGHT */}
-        <section className="grid">
+        <section className="grid grid-cols-1">
           <div className="flex">
-            <AJAlt className="w-24 h-24" />
+            <AJAlt className="-mt-6 w-36 h-36" />
             <section className="grid">
               <div className="grid ">
-                <h4 className="mt-6 leading-tight">CodingCat.Dev</h4>
+                <h4 className="text-2xl leading-tight sm:text-4xl">
+                  CodingCat.Dev
+                </h4>
                 <p className="text-xl font-bold">Purrfect Web Tutorials</p>
                 <p className="mt-4 text-xs font-light leading-5">
                   Copyright &#169; {new Date().getFullYear()} AJONP LLC.
@@ -44,7 +46,7 @@ export const Footer = () => {
             </section>
           </div>
           {/* SOCIALS */}
-          <section className="flex items-end justify-between w-full mt-4">
+          <section className="flex flex-wrap items-end w-full gap-8 mt-4 lg:justify-between">
             <a href="" className={`${socialLinks} social-links`}>
               <Mail fill="#BC2261" />
             </a>
@@ -69,8 +71,8 @@ export const Footer = () => {
           </section>
         </section>
         {/* HELPFUL LINKS */}
-        <section className="grid gap-4">
-          <h4 className="underline">Helpful Links</h4>
+        <section className="grid grid-cols-1 gap-4">
+          <h4 className="underline whitespace-nowrap">Helpful Links</h4>
           <a href="" className="links-secondary">
             FTC Disclosure
           </a>
@@ -85,7 +87,7 @@ export const Footer = () => {
           </a>
         </section>
         {/* NEWSLETTER */}
-        <section className="grid gap-4">
+        <section className="grid grid-cols-1 gap-4 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:col-start-3 2xl:col-end-4">
           <h4 className="underline">Newsletter</h4>
           <p>Subscribe for all the latest updates.</p>
           <form className="grid">

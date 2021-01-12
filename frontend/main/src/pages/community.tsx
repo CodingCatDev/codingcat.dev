@@ -10,7 +10,7 @@ export default function Community({ posts }: { posts: Post[] }) {
         <title>Community | CodingCatDev</title>
       </Head>
 
-      <main className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-auto ">
+      <main className="grid gap-4 p-4 sm:gap-10 grid-cols-fit sm:p-10">
         <PostsCards posts={posts} />
       </main>
 

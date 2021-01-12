@@ -78,10 +78,12 @@ export default function PostLayout({
         {/* TOP BAR */}
         <section className="sticky top-0 z-10 bg-primary-50">
           <BreakBarLeft>
-            <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
-              {post.title}
-            </h1>
-            {backButton()}
+            <div className="flex flex-wrap justify-between w-full gap-4">
+              <h1 className="self-center font-sans text-2xl sm:text-4xl text-basics-50 dark:text-basics-50">
+                {post.title}
+              </h1>
+              {backButton()}
+            </div>
           </BreakBarLeft>
         </section>
 
