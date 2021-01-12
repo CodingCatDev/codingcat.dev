@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 
 export interface UserInfoExtended extends firebase.UserInfo {
   memberships?: UserMembership[];
+  token?: string;
 }
 
 export interface UserMembership {

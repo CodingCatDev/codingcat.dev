@@ -59,15 +59,6 @@ const FirebaseAuth = ({ full = true }) => {
       signInOptions,
       signInSuccessUrl: window.location.href,
       credentialHelper: 'none',
-      callbacks: {
-        signInSuccessWithAuthResult: async (
-          { user }: { user: firebaseApp.User },
-          redirectUrl: string
-        ) => {
-          const userData = await mapUserData(user);
-          setUserCookie(userData);
-        },
-      },
       tosUrl: `${window.location.origin}/terms`,
       // Privacy policy url/callback.
       privacyPolicyUrl() {

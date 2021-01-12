@@ -7,21 +7,16 @@ import {
   getUserFromCookie,
 } from './userCookies';
 import { mapUserData } from './mapUserData';
-import { userDataObservable, userProfileDataObservable } from '@/services/api';
+import { userDataObservable } from '@/services/api';
 import { Observable } from 'rxjs';
-import { authState } from 'rxfire/auth';
-import { filter, map, switchMap, takeWhile } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import firebase from 'firebase/app';
 import { UserInfoExtended } from '@/models/user.model';
 
 const useUser = () => {
   const [app, setApp] = useState<firebase.app.App>();
   const [user, setUser] = useState<UserInfoExtended | null>();
-  const [user$, setUser$] = useState<Observable<UserInfoExtended>>();
-  const [
-    userProfile,
-    setUserProfile,
-  ] = useState<Observable<firebase.UserInfo> | null>(null);
+  const [userProfile] = useState<Observable<firebase.UserInfo> | null>(null);
   const router = useRouter();
 
   const signout = async () => {
@@ -57,13 +52,14 @@ const useUser = () => {
     if (app) {
       const cancelAuthListener = app.auth().onIdTokenChanged(async (user) => {
         if (user) {
-          const userData = await mapUserData(user);
-          const userExtended = await userDataObservable(
-            userData.uid
-          ).toPromise();
-          const cookieUser = { ...userExtended, userData } as any;
-          setUserCookie(cookieUser);
-          setUser(userExtended);
+          userDataObservable(user.uid)
+            .pipe(take(1))
+            .subscribe(async (u) => {
+              const userData = await mapUserData(user);
+              const utoken = { ...u, ...userData };
+              setUserCookie(utoken);
+              setUser(utoken);
+            });
         } else {
           removeUserCookie();
           setUser(null);
@@ -74,20 +70,13 @@ const useUser = () => {
       if (!userFromCookie) {
         return;
       }
+      setUser(userFromCookie);
 
-      setUser$(userDataObservable(userFromCookie.uid));
       return () => {
         cancelAuthListener();
       };
     }
   }, [app]);
-
-  useEffect(() => {
-    const cancelUser$ = user$?.subscribe((u) => setUser(u));
-    return () => {
-      cancelUser$?.unsubscribe();
-    };
-  }, [user$]);
 
   return { user, signout, userProfile, app };
 };
