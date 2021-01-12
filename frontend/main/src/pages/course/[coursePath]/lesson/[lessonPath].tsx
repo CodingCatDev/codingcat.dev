@@ -1,159 +1,34 @@
-import { useEffect } from 'react';
-
 import http from 'http';
 import cookie from 'cookie';
-import Head from 'next/head';
-import Link from 'next/link';
 
-import DefaultErrorPage from 'next/error';
 import { useRouter } from 'next/router';
-
-import Layout from '@/layout/Layout';
-import BreakBarLeft from '@/components/Home/BreakBarLeft';
 import {
   validateCourseUser,
   postBySlugService,
 } from '@/services/serversideApi';
 
-import {
-  Post as PostModel,
-  PostType,
-  SectionLesson,
-} from '@/models/post.model';
-import ShowMDX from '@/components/ShowMDX';
-import PostMedia from '@/components/PostMedia';
+import { Post as PostModel, PostType } from '@/models/post.model';
+import renderToString from 'next-mdx-remote/render-to-string';
+import { Source } from 'next-mdx-remote/hydrate';
+
+import PostLayout from '@/components/PostLayout';
 
 export default function Post({
   post,
   course,
+  source,
 }: {
   post: PostModel;
   course: PostModel;
+  source: Source | null;
 }): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
   }
 
-  if (!post) {
-    return (
-      <Layout>
-        <Head>
-          <meta name="robots" content="noindex" />
-        </Head>
-        <DefaultErrorPage statusCode={404} />
-      </Layout>
-    );
-  }
-
-  function isActiveLink(course: PostModel, lesson: SectionLesson) {
-    if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
-      return true;
-    return false;
-  }
-
   return (
-    <Layout>
-      {/* DIV TO AVOID GRID GAP */}
-      <div>
-        <section className="sticky top-0 z-10 bg-primary-50">
-          <BreakBarLeft>
-            <h1 className="w-1/2 font-sans text-4xl text-basics-50 dark:text-basics-50">
-              {post.title}
-            </h1>
-            <Link href={`/course/${course.slug}`}>
-              <a role="link" className="no-underline btn-secondary">
-                back to Course
-              </a>
-            </Link>
-          </BreakBarLeft>
-        </section>
-
-        {/* MEDIA AREA */}
-        {/* <section className="grid grid-cols-1 gap-4 p-4 xl:grid-cols-sidebar xl:gap-0"> */}
-        <section className="w-full">
-          <div className="flex flex-col px-4 py-10 xl:p-10 xl:flex-row xl:mx-auto">
-            {/* MEDIA */}
-            <section className="flex-1 xl:w-3/4 xl:flex-auto">
-              <PostMedia post={post} />
-            </section>
-            {/* LESSONS */}
-            <section className="relative xl:w-1/4">
-              {course.sections &&
-                course.sections.map((section) => (
-                  <div
-                    key={section.title}
-                    className="flex flex-col xl:absolute xl:w-full xl:h-full bg-basics-50 rounded-b-md xl:rounded-bl-none"
-                  >
-                    <h2 className="p-4 m-0 text-2xl font-bold xl:rounded-tr-md xl:flex-shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
-                      {section.title}
-                    </h2>
-                    <ul className="flex flex-col flex-grow xl:overflow-auto scrollbar justify-items-stretch">
-                      {section.lessons &&
-                        section.lessons.map((lesson) => (
-                          <li key={lesson.id} className="ml-0 list-none">
-                            <Link
-                              href={`/course/${course.slug}/lesson/${lesson.slug}`}
-                              key={lesson.id}
-                            >
-                              <div
-                                className={`p-2 cursor-pointer
-                              ${
-                                isActiveLink(course, lesson)
-                                  ? 'bg-primary-200'
-                                  : 'bg-transparent'
-                              }
-                              `}
-                              >
-                                <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
-                                  {lesson.title}
-                                </a>
-                              </div>
-                            </Link>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                ))}
-            </section>
-          </div>
-        </section>
-        {/* BLOG POST */}
-        <section className="max-w-5xl px-4 mx-auto leading-relaxed">
-          <article className="text-basics-900 ">
-            <ShowMDX markdown={post.content || ''} />
-          </article>
-        </section>
-      </div>
-      <style global jsx>{`
-        main a {
-          text-decoration: underline;
-        }
-
-        main h1,
-        main h2 {
-          font-family: 'Nunito', sans-serif;
-          margin: 0;
-        }
-        main h3,
-        main h4,
-        main h5,
-        main h6 {
-          font-family: 'Nunito', sans-serif;
-          margin: 1rem 0;
-        }
-        main article p:first-child a img {
-          width: 100%;
-        }
-        main p {
-          margin: 1rem 0;
-        }
-        main ul li {
-          margin-left: 2rem;
-          list-style-type: circle;
-        }
-      `}</style>
-    </Layout>
+    <PostLayout router={router} post={post} course={course} source={source} />
   );
 }
 
@@ -168,6 +43,7 @@ export async function getServerSideProps({
       props: {
         post: PostModel | null;
         course: PostModel | null;
+        source: Source | null;
       };
     }
   | { redirect: { destination: string; permanent: boolean } }
@@ -223,10 +99,20 @@ export async function getServerSideProps({
   );
   const course = courses.length > 0 ? courses[0] : null;
 
+  const source: Source | null =
+    post && post.content
+      ? await renderToString(post.content, {
+          mdxOptions: {
+            // remarkPlugins: [parse, mdx],
+          },
+        })
+      : null;
+
   return {
     props: {
       post,
       course,
+      source,
     },
   };
 }
