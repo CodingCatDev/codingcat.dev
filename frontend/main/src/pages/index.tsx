@@ -57,8 +57,8 @@ export default function Home({
             </Link>
           </div>
         </section>
-        <section className="self-center justify-self-center">
-          <AJPrimary className="w-64 xl:w-500" />
+        <section className="grid self-center w-full grid-cols-1 place-items-center justify-self-center">
+          <AJPrimary className="w-full sm:w-64 lg:w-full" />
         </section>
       </section>
       {/* COURSES */}

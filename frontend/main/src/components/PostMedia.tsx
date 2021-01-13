@@ -57,7 +57,7 @@ export default function PostMedia({ post }: { post: Post }) {
                   controls={true}
                   fluid="true"
                   style={{ height: '100%', width: '100%' }}
-                  className="rounded-md"
+                  className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md"
                 />
               ) : (
                 <div>Getting Cookie for Private View</div>
@@ -100,7 +100,7 @@ export default function PostMedia({ post }: { post: Post }) {
               width="480"
               height="270"
               layout="responsive"
-              className="rounded-md"
+              className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md"
             />
           ) : (
             <></>

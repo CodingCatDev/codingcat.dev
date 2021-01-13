@@ -5,12 +5,12 @@ import Community from '@/components/global/icons/nav/Community';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
 
-const navLinks = `grid place-items-center content-between links-secondary`;
+const navLinks = `grid place-items-center links-secondary`;
 
 const NavLinks = () => {
   return (
     <nav className="flex mx-auto">
-      <div className="hidden md:flex md:space-x-4">
+      <div className="hidden md:flex md:gap-4 md:place-items-center">
         <ActiveLink activeClassName="" href="/courses">
           <a className={`${navLinks} nav-links`}>
             <Courses />
@@ -25,7 +25,7 @@ const NavLinks = () => {
         </ActiveLink>
         <ActiveLink activeClassName="" href="/podcasts">
           <a className={`${navLinks} nav-links`}>
-            <Podcasts className="w-35 h-35" />
+            <Podcasts />
             Podcasts
           </a>
         </ActiveLink>
