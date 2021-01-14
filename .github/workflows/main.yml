@@ -1,0 +1,65 @@
+name: dev-main-build
+
+on:
+  push:
+    branches: [ dev ]
+    paths: 'frontend/main'
+  pull_request:
+    branches: [ dev ]
+    paths: 'frontend/main'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./frontend/main
+
+jobs:
+  build:
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: NPM Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install deps
+        run: npm ci
+      # Build
+      - name: Nextjs build
+        env:
+          FIREBASE_SERVICE_CLIENT_EMAIL: ${{ secrets.FIREBASE_SERVICE_CLIENT_EMAIL }}
+          FIREBASE_SERVICE_PRIVATE_KEY: ${{ secrets.FIREBASE_SERVICE_PRIVATE_KEY }}
+          FIREBASE_SERVICE_PROJECT_ID: ${{ secrets.FIREBASE_SERVICE_PROJECT_ID }}
+          NEXT_PUBLIC_ALGOLIA_APP_ID: ${{ secrets.NEXT_PUBLIC_ALGOLIA_APP_ID }}
+          NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: ${{ secrets.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY }}
+          NEXT_PUBLIC_CLOUDINARY_APIKEY: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_APIKEY }}
+          NEXT_PUBLIC_CLOUDINARY_CNAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CNAME }}
+          NEXT_PUBLIC_CLOUDINARY_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_NAME }}
+          NEXT_PUBLIC_CLOUDINARY_PHOTO_PRESET: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_PHOTO_PRESET }}
+          NEXT_PUBLIC_CLOUDINARY_VIDEO_PRESET: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_VIDEO_PRESET }}
+          NEXT_PUBLIC_FB_CONFIG_APIKEY: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_APIKEY }}
+          NEXT_PUBLIC_FB_CONFIG_APPID: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_APPID }}
+          NEXT_PUBLIC_FB_CONFIG_AUTHDOMAIN: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_AUTHDOMAIN }}
+          NEXT_PUBLIC_FB_CONFIG_DATABASEURL: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_DATABASEURL }}
+          NEXT_PUBLIC_FB_CONFIG_MEASUREMENTID: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_MEASUREMENTID }}
+          NEXT_PUBLIC_FB_CONFIG_MESSAGINGSENDERID: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_MESSAGINGSENDERID }}
+          NEXT_PUBLIC_FB_CONFIG_PROJECTID: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_PROJECTID }}
+          NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET }}
+          NEXT_PUBLIC_STRIPE_APIKEY: ${{ secrets.NEXT_PUBLIC_STRIPE_APIKEY }}
+        run: npm run build
+      # Deploy
+      - name: Deploy dev to Vercel
+        uses: amondnet/vercel-action@v19
+        id: vercel-action-staging
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: '--prod'
+          working-directory: ./frontend/main/.next
