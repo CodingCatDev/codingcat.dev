@@ -12,9 +12,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
         <title>Blog | CodingCatDev</title>
       </Head>
 
-      <section className="grid gap-4 p-4 sm:gap-10 grid-cols-fit sm:p-10">
-        <PostsCards posts={posts} />
-      </section>
+      <PostsCards posts={posts} />
 
       <footer></footer>
     </Layout>
