@@ -1,5 +1,4 @@
 name: dev-main-build
-environment: dev
 
 on:
   push:
@@ -16,6 +15,7 @@ defaults:
 
 jobs:
   build:
+    environment: dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
