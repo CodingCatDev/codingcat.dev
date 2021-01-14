@@ -52,8 +52,8 @@ jobs:
           NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET }}
           NEXT_PUBLIC_STRIPE_APIKEY: ${{ secrets.NEXT_PUBLIC_STRIPE_APIKEY }}
         run: npm run build
-    steps:
-      - name: Deploy dev
+      # Deploy
+      - name: Deploy dev to Vercel
         uses: amondnet/vercel-action@v19
         id: vercel-action-staging
         with:
