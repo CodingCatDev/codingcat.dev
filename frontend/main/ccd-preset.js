@@ -89,10 +89,14 @@ module.exports = {
       },
       gridTemplateRows: {
         sidebar: '100px 1fr 100px',
+        search: '38px 1fr 68px',
       },
       height: {
         35: '35px',
         500: '500px',
+      },
+      minHeight: {
+        '1/2': '50%',
       },
       screens: {
         '3xl': '2000px',

@@ -14,7 +14,7 @@ export default () => {
 
   const Modal = ({ handleClose, show, children }: any) => {
     const showHideclassNameName = show
-      ? 'w-screen h-screen fixed inset-0 z-50 grid bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 place-items-center'
+      ? 'w-screen h-screen fixed inset-0 z-50 bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 p-24'
       : 'hidden';
     return <section className={showHideclassNameName}>{children}</section>;
   };
@@ -22,24 +22,24 @@ export default () => {
   return (
     <>
       <Modal show={show} handleClose={hideModal}>
-        <div
-          className="flex items-center w-full max-w-md min-h-0 p-4 mx-auto space-x-4 rounded-md bg-basics-50"
+        <section
+          className="grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 bg-basics-50"
           style={{
             animation:
               'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
           }}
         >
-          <div className="relative grid w-full grid-cols-1 gap-4 place-content-start">
+          <section className="relative grid w-full h-full grid-cols-1 gap-4 p-4 grid-rows-search">
             <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
             <button
-              className="absolute top-0 right-0 p-1 text-2xl transition-colors rounded-full text-primary-900 hover:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-900"
+              className="absolute top-0 right-0 p-5 text-2xl transition-colors rounded-full text-primary-900 hover:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-900"
               onClick={hideModal}
               aria-label="Close Search Modal"
             >
               X
             </button>
-          </div>
-        </div>
+          </section>
+        </section>
       </Modal>
       <button
         className={

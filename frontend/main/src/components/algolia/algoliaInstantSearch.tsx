@@ -6,6 +6,7 @@ import {
   Hits,
   Index,
   connectStateResults,
+  PoweredBy,
 } from 'react-instantsearch-dom';
 import CustomSearchBox from './customSearchBox';
 import * as hitComps from './customHitComponents';
@@ -77,25 +78,27 @@ const HitList = (show: any) => {
           indexName={searchIndices[0].name}
           searchClient={searchClient}
         >
-          <CustomSearchBox />
+          <header className="grid grid-cols-1 gap-4">
+            <CustomSearchBox />
+            <hr className="opacity-20 text-primary-900" />
+          </header>
           {searchIndices.map(({ name, title, hitComp }) => (
-            <div className="w-full" key={name}>
+            <main className="w-full my-4" key={name}>
               <Index indexName={name}>
-                <hr />
                 <Results>
-                  <div
-                    className="pt-2 overflow-auto"
-                    style={{ height: `50vh` }}
-                  >
-                    <Hits
-                      hitComponent={ahitComps[hitComp](() => setFocus(false))}
-                    />
-                  </div>
+                  <Hits
+                    hitComponent={ahitComps[hitComp](() => setFocus(false))}
+                  />
                 </Results>
               </Index>
-            </div>
+            </main>
           ))}
-          {/* </div> */}
+          <footer className="grid w-full grid-cols-1 row-start-3 gap-4">
+            <hr className="opacity-20 text-primary-900" />
+            <div className="justify-self-end">
+              <PoweredBy />
+            </div>
+          </footer>
         </InstantSearch>
       )}
     </>

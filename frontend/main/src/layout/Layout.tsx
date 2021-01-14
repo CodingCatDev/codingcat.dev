@@ -61,7 +61,7 @@ const Layout = ({ children }: { children: any }) => {
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
       />
-      <style jsx>
+      {/* <style jsx>
         {`
           .calc-height-wrapper {
             min-height: calc(100vh - 5rem);
@@ -71,7 +71,7 @@ const Layout = ({ children }: { children: any }) => {
             min-height: calc(100vh - 6.5rem);
           }
         `}
-      </style>
+      </style> */}
     </div>
   );
 };
