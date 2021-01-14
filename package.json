@@ -1,0 +1,35 @@
+{
+  "name": "codingcat.dev",
+  "private": "true",
+  "version": "0.0.1",
+  "description": "Main codingcat.dev site",
+  "main": "frontend/main/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajonp/ccd-amplify-nextjs.git"
+  },
+  "author": "Alex Patterson",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/ajonp/ccd-amplify-nextjs/issues"
+  },
+  "homepage": "https://github.com/ajonp/ccd-amplify-nextjs#readme",
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "dev": "lerna run --parallel dev",
+    "build": "lerna run --parallel build",
+    "start": "lerna run --parallel start ",
+    "lint": "lerna run --parallel lint"
+  },
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run build"
+    }
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "husky": "^4.3.6"
+  }
+}

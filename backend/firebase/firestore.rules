@@ -1,0 +1,154 @@
+rules_version = '2';
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+    // Top Level
+
+    match /{document=**} {
+      allow read, write: if false;
+
+      //User Level
+      match /accounts/{userId} {
+        allow read, write: if false;
+      }
+
+      match /users/{userId} {
+        allow read: if belongsTo(userId);
+        allow update, delete: if hasAnyRole(['admin']);
+      }
+
+      match /profiles/{userId} {
+        allow read: if isSignedIn();
+        allow write: if belongsTo(userId);
+      }
+
+      match /followers/{userId} {
+        allow read, write: if userId == request.auth.uid;
+      }
+
+      //Data Level
+      match /posts/{id} {
+        allow create: if postsCanCreate();
+        allow read: if postsCanRead();
+        allow update: if postsCanUpdate();
+        allow delete: if postsCanDelete();
+
+        match /history/{id} {
+          allow create: if hasAnyRole(['author', 'editor', 'admin'])
+          allow read: if postsCanRead();
+          allow update: if postsCanUpdate();
+          allow delete: if postsCanDelete();
+
+          match /media/{id} {
+            allow create: if hasAnyRole(['author', 'editor', 'admin'])
+            allow read: if hasAnyRole(['author', 'editor', 'admin'])
+            allow update: if hasAnyRole(['author', 'editor', 'admin'])
+            allow delete: if hasAnyRole(['author', 'editor', 'admin'])
+          }
+        }
+      }
+
+      match /tags/{id} {
+        allow read: if true;
+        allow write: if isAlex();
+      }
+
+      match /categories/{id} {
+        allow read: if true;
+        allow write: if isAlex();
+      }
+
+      match /community/{id} {
+        allow read: if true;
+        allow write: if isAlex();
+      }
+
+      //Stripe Specific
+      match /customers/{uid} {
+        allow read: if request.auth.uid == uid;
+
+        match /checkout_sessions/{id} {
+          allow read, write: if request.auth.uid == uid;
+        }
+
+        match /subscriptions/{id} {
+          allow read: if request.auth.uid == uid;
+        }
+      }
+
+      match /products/{id} {
+        allow read: if true;
+
+        match /prices/{id} {
+          allow read: if true;
+        }
+
+        match /tax_rates/{id} {
+          allow read: if true;
+        }
+      }
+    }
+
+    function isAlex(){
+    return request.auth.uid == 'xdtuIhzUlhPKRCCnatKTt2lm7Nl1';
+    }
+    // function hasFirebaseMembershipLifetime() {
+    // return request.auth.token.stripeRole == "lifetime";
+    // }
+    // function hasFirebaseMembershipTypePro() {
+    // return request.auth.token.stripeRole == "pro";
+    // }
+    function isSignedIn() { 
+      return request.auth.uid != null;
+    }
+    function belongsTo(userId) {    
+      return request.auth.uid == userId || request.auth.uid == resource.data.uid;
+    }
+    function hasAnyRole(roles) {
+      return isSignedIn()
+              && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(roles)
+    }
+    function hasAnyGroup(groups) {
+      return isSignedIn()
+              && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groups.hasAny(groups)
+    }
+
+    // POSTS
+    function postsIsValidNew() {
+      let post = request.resource.data;
+      let isNow = request.time == request.resource.data.createdAt;
+      let isOwner = post.createdBy == request.auth.uid && post.updatedBy == request.auth.uid;
+      let hasRequiredFields = post.keys().hasAll([
+        'id', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy',
+        'type', 'title', 'status', 'visibility']);
+      let statusNotPublished = post.status == 'draft' && !post.keys().hasAny(['publishedAt']);
+      let isUnique = !exists(/databases/$(database)/documents/postSlugs/$(post.slug));
+      return isOwner && hasRequiredFields && statusNotPublished && isUnique;
+    }
+    function postsIsValidUpdate() {
+      let notDeniedFields = !request.resource.data.diff(resource.data).changedKeys().hasAny([
+      'id',
+      'createdAt',
+      'createdBy',
+      ]);
+      return notDeniedFields;
+    }
+    function postsIsValidRead(){
+      let memberAllowed = request.resource.data.type != 'lesson' || (request.resource.data.type == 'lesson' && hasAnyGroup(['pro']) );
+      return hasAnyRole(['author', 'editor', 'admin']) || ( isSignedIn() && resource.data.keys().hasAll(['publishedAt']) && memberAllowed ) ;
+    }
+
+    function postsCanCreate() {
+      return postsIsValidNew() && hasAnyRole(['author', 'editor', 'admin']);
+    }
+    function postsCanRead() {
+      return postsIsValidRead(); 
+    }
+    function postsCanUpdate() {
+      return postsIsValidUpdate() && hasAnyRole(['author', 'editor', 'admin']);
+    }
+    function postsCanDelete() {
+      return hasAnyRole(['admin']);
+    }
+  }
+}

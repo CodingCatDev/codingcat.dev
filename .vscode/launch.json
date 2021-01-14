@@ -5,23 +5,45 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/data/posts/postsPutAll.js",
-      "request": "launch",
-      "skipFiles": ["<node_internals>/**"],
-      "type": "pwa-node",
-      "console": "integratedTerminal"
-    },
-
-    {
       "type": "node",
       "request": "attach",
-      "name": "Next.js Debug",
+      "name": "Firebase Debug",
       "skipFiles": ["<node_internals>/**"],
       "port": 9229,
       "sourceMapPathOverrides": {
         "webpack:///./*": "${workspaceRoot}/nextjs/*"
       }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Main Debug",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 9230,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${workspaceRoot}/frontend/main/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Admin Debug",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 9231,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${workspaceRoot}/frontend/admin/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Tests",
+      "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+      "args": ["-i"],
+      // "preLaunchTask": "build",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": ["${workspaceRoot}/dist/**/*"],
+      "envFile": "${workspaceRoot}/.env"
     }
   ]
 }
