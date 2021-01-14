@@ -1,4 +1,5 @@
 name: dev-main-build
+environment: dev
 
 on:
   push:
@@ -24,3 +25,13 @@ jobs:
           node-version: 12
       - run: npm install
       - run: npm run build
+      - name: Deploy dev
+        uses: amondnet/vercel-action@v19
+        id: vercel-action-staging
+        if: github.event_name == 'push'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: '--prod'
