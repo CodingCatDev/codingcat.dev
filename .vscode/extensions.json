@@ -1,0 +1,27 @@
+{
+  "recommendations": [
+    "steoates.autoimport",
+    "Shan.code-settings-sync",
+    "Nixon.env-cmd-file-syntax",
+    "dsznajder.es7-react-js-snippets",
+    "ChFlick.firecode",
+    "mhutchie.git-graph",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "heybourn.headwind",
+    "yzhang.markdown-all-in-one",
+    "PKief.material-icon-theme",
+    "esbenp.prettier-vscode",
+    "jock.svg",
+    "sodatea.velocity",
+    "Equinusocio.vsc-community-material-theme",
+    "Equinusocio.vsc-material-theme",
+    "equinusocio.vsc-material-theme-icons",
+    "dbaeumer.vscode-eslint",
+    "GraphQL.vscode-graphql",
+    "wix.vscode-import-cost",
+    "bradlc.vscode-tailwindcss",
+    "PeterMekhaeil.vscode-tailwindcss-explorer",
+    "ms-vscode.vscode-typescript-tslint-plugin"
+  ]
+}
