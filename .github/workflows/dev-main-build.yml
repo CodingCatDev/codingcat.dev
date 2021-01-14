@@ -52,7 +52,10 @@ jobs:
           NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET: ${{ secrets.NEXT_PUBLIC_FB_CONFIG_STORAGEBUCKET }}
           NEXT_PUBLIC_STRIPE_APIKEY: ${{ secrets.NEXT_PUBLIC_STRIPE_APIKEY }}
         run: npm run build
-      # Deploy
+  deploy:
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy dev
         uses: amondnet/vercel-action@v19
         id: vercel-action-staging
@@ -62,3 +65,4 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-args: '--prod'
+          working-directory: ./.next
