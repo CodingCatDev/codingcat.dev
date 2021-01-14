@@ -29,8 +29,8 @@ export default function Home({
         <title>CodingCatDev</title>
       </Head>
       {/* Hero */}
-      <section className="grid justify-center grid-cols-1 gap-10 p-4 lg:grid-cols-2 lg:px-10 ">
-        <section className="grid content-center gap-10 justify-self-center">
+      <section className="grid justify-center grid-cols-1 gap-10 p-4 lg:grid-cols-2 lg:px-10 calc-height lg:gap-0">
+        <section className="grid content-center justify-center gap-10 lg:justify-self-end">
           <h1 className="pt-8 text-5xl leading-snug tracking-tight vertical-text-clip xl:tracking-wide sm:text-7xl sm:leading-snug lg:text-6xl lg:leading-snug 2xl:text-7xl 2xl:leading-snug">
             Purrfect
             <br />
@@ -57,8 +57,8 @@ export default function Home({
             </Link>
           </div>
         </section>
-        <section className="grid self-center w-full grid-cols-1 place-items-center justify-self-center">
-          <AJPrimary className="w-full sm:w-64 lg:w-full" />
+        <section className="grid -ml-10 place-items-center">
+          <AJPrimary className="w-1/2 lg:w-3/5" />
         </section>
       </section>
       {/* COURSES */}
