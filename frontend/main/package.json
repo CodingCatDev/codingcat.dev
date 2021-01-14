@@ -10,7 +10,7 @@
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
-    "lint": "eslint . --quiet --ext .ts,.tsx"
+    "lint": "eslint . --quiet --ext .ts,.tsx && tsc --noEmit"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
