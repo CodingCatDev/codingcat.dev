@@ -1,4 +1,4 @@
-name: frontend-main-deploy
+name: dev-frontend-main-deploy
 
 on:
   push:
@@ -8,7 +8,8 @@ on:
 
 jobs:
   deploy:
-    environment: echo ${GITHUB_REF##*/}
+    needs: tag
+    environment: dev
     runs-on: ubuntu-latest
     steps:
       - name: checkout

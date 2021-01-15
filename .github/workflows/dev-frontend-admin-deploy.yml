@@ -1,4 +1,4 @@
-name: frontend-admin-deploy
+name: dev-frontend-admin-deploy
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
   deploy:
     needs: tag
-    environment: ${GITHUB_REF##*/}
+    environment: dev
     runs-on: ubuntu-latest
     steps:
       - name: checkout
