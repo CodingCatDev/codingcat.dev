@@ -28,7 +28,7 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
   deploy:
     needs: tag
-    environment: ${GITHUB_REF##*/}
+    environment: ${{ GITHUB_REF##*/ }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
