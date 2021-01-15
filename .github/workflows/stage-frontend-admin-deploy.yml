@@ -1,8 +1,8 @@
-name: dev-frontend-admin-deploy
+name: stage-frontend-admin-deploy
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ stage ]
     paths: 'frontend/admin/**'
   workflow_dispatch:
 
@@ -28,7 +28,7 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
   deploy:
     needs: tag
-    environment: dev
+    environment: stage
     runs-on: ubuntu-latest
     steps:
       - name: checkout
