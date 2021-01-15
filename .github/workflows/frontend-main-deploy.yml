@@ -1,14 +1,10 @@
-name: dev-frontend-main-deploy
+name: frontend-admin-deploy
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, stage, master ]
     paths: 'frontend/main/**'
   workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: ./frontend/main
 
 jobs:
   tag:
@@ -21,6 +17,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag_prefix: main
+          release_branches: master
       - name: Create a GitHub release
         uses: actions/create-release@v1
         env:
@@ -31,13 +28,13 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
   deploy:
     needs: tag
-    environment: dev
+    environment: ${GITHUB_REF##*/}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
       # Deploy
-      - name: Deploy dev to Vercel
+      - name: Deploy ${GITHUB_REF##*/} to Vercel
         uses: amondnet/vercel-action@v19
         id: vercel-action-staging
         with:
