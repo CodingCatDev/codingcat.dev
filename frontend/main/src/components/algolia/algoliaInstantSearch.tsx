@@ -35,7 +35,11 @@ const algoliaClient = algoliasearch(
 );
 
 const searchIndices = [
-  { name: `dev_codingcatdev`, title: `Courses`, hitComp: `BlogPostHit` },
+  {
+    name: `${process.env.NEXT_PUBLIC_ALGOLIA_INDEX || ''}`,
+    title: `Courses`,
+    hitComp: `BlogPostHit`,
+  },
 ];
 
 const Results = connectStateResults(
