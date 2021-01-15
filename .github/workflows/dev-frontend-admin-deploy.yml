@@ -1,0 +1,40 @@
+name: dev-frontend-admin-deploy
+
+on:
+  push:
+    branches: [ dev ]
+    paths: 'frontend/admin/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./frontend/admin
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Bump version and push tag
+        uses: hennejg/github-tag-action@v4.1.jh1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag_prefix: admin
+  build:
+    needs: tag
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      # Deploy
+      - name: Deploy dev to Vercel
+        uses: amondnet/vercel-action@v19
+        id: vercel-action-staging
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: '--prod'
+          working-directory: ./frontend/admin
