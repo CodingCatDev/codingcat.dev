@@ -26,10 +26,10 @@ export const Footer = () => {
           stroke="transparent"
         />
       </svg>
-      <div className="grid grid-cols-1 place-items-center">
+      <div className="grid grid-cols-1 place-items-center lg:place-items-start">
         <footer className="grid grid-cols-1 gap-10 p-4 bg-purple-900 justify-items-start lg:grid-cols-2 lg:p-10 2xl:grid-cols-3 2xl:items-end 2xl:gap-4 text-basics-50 dark:text-basics-50">
           {/* LOGO & COPYRIGHT */}
-          <section className="grid grid-cols-1">
+          <section className="grid grid-cols-1 place-items-center">
             <div className="flex">
               <AJAlt className="-mt-6 w-36 h-36" />
               <section className="grid">
@@ -72,7 +72,7 @@ export const Footer = () => {
             </section>
           </section>
           {/* HELPFUL LINKS */}
-          <section className="grid grid-cols-1 gap-4">
+          <section className="grid grid-cols-1 gap-4 lg:justify-self-end 2xl:justify-self-center">
             <h4 className="underline whitespace-nowrap">Helpful Links</h4>
             <a href="" className="links-secondary">
               FTC Disclosure
