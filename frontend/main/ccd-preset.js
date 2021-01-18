@@ -97,7 +97,7 @@ module.exports = {
       },
       minHeight: {
         '1/2': '50%',
-        1080: '1080px',
+        768: '768px',
       },
       screens: {
         '3xl': '2000px',
