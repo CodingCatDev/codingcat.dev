@@ -94,10 +94,12 @@ module.exports = {
       height: {
         35: '35px',
         500: '500px',
+        610: '610px',
       },
       minHeight: {
         '1/2': '50%',
-        768: '768px',
+        300: '300px',
+        1080: '1080px',
       },
       screens: {
         '3xl': '2000px',
