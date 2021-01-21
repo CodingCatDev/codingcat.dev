@@ -29,7 +29,7 @@ export default function Home({
         <title>CodingCatDev</title>
       </Head>
       {/* Hero */}
-      <section className="grid justify-center grid-cols-1 p-8 2xl:gap-10 lg:grid-cols-2 lg:px-10 2xl:min-h-1080">
+      <section className="grid justify-center grid-cols-1 p-8 mx-auto 2xl:gap-10 lg:grid-cols-2 lg:px-10 2xl:min-h-768 max-w-7xl">
         <section className="grid items-center content-center grid-cols-1 gap-4 mx-auto 2xl:mx-0 2xl:justify-self-end">
           <h1 className="pt-4 -mb-4 text-5xl leading-snug tracking-tight vertical-text-clip xl:tracking-wide xl:text-6xl xl:leading-snug 2xl:text-7xl 2xl:leading-snug">
             Purrfect
@@ -66,7 +66,7 @@ export default function Home({
         <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
           Latest Courses
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
+        <div className="grid gap-4 mx-auto grid-cols-fit max-w-7xl">
           <RecentPostsCards recentPosts={recentPosts[PostType.course]} />
         </div>
         <Link href="/courses">
@@ -85,11 +85,11 @@ export default function Home({
         </h3>
         <KCAlt className="w-14 sm:w-14 md:w-20" />
       </BreakBarRight>
-      <section className="grid gap-10 px-4 xl:px-10">
+      <section className="grid gap-10 px-4 xl:px-10 ">
         <h2 className="mt-4 text-4xl text-right text-primary-900 lg:text-5xl">
           Latest Tutorials
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
+        <div className="grid gap-4 mx-auto grid-cols-fit max-w-7xl">
           <RecentPostsCards recentPosts={recentPosts[PostType.tutorial]} />
         </div>
         <Link href="/tutorials">
@@ -113,7 +113,7 @@ export default function Home({
         <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
           Blog Posts
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
+        <div className="grid gap-4 mx-auto grid-cols-fit max-w-7xl">
           <RecentPostsCards recentPosts={recentPosts[PostType.post]} />
         </div>
         <Link href="/blog">
@@ -137,7 +137,7 @@ export default function Home({
         <h2 className="mt-4 text-4xl text-right text-primary-900 lg:text-5xl">
           Latest Podcasts
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
+        <div className="grid gap-4 mx-auto grid-cols-fit max-w-7xl">
           <RecentPostsCards recentPosts={recentPosts[PostType.podcast]} />
         </div>
         <Link href="/podcasts">
