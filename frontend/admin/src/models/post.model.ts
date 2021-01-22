@@ -60,6 +60,9 @@ export enum PostType {
   podcast = 'podcast',
   course = 'course',
   lesson = 'lesson',
+  page = 'page',
+  group = 'group',
+  forum = 'forum',
 }
 export enum PostFormat {
   standard = 'standard',
