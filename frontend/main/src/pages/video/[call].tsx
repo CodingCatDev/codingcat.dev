@@ -25,7 +25,7 @@ export default function VideoCall({
     </Layout>
   );
 }
-export async function getStaticProps(): Promise<{
+export async function getServerSideProps(): Promise<{
   props: {
     site: Site | null;
   };
