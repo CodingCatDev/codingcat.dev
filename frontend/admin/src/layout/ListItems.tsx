@@ -3,7 +3,6 @@ import Link from 'next/link';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import List from '@material-ui/core/List';
 import Courses from '@/components/global/icons/nav/Courses';
@@ -12,8 +11,8 @@ import Tutorials from '@/components/global/icons/nav/Tutorials';
 import Blog from '@/components/global/icons/nav/Blog';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Community from '@/components/global/icons/nav/Community';
+import Pages from '@/components/global/icons/nav/Pages';
 import { makeStyles } from '@material-ui/core/styles';
-import { forwardRef, useMemo } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -84,6 +83,14 @@ export const MainListItems = () => {
             <Community className={`${classes.icon}`} />
           </ListItemIcon>
           <ListItemText primary="Community" />
+        </ListItem>
+      </Link>
+      <Link href="/admin/pages" passHref>
+        <ListItem button component="a">
+          <ListItemIcon>
+            <Pages className={`${classes.icon}`} />
+          </ListItemIcon>
+          <ListItemText primary="Pages" />
         </ListItem>
       </Link>
     </List>

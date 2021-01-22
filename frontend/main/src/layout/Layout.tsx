@@ -13,16 +13,25 @@ import nightwind from 'nightwind/helper';
 import { AppTopbar } from './AppTopbar';
 
 import AppMenu from '@/layout/AppMenu';
+import { Site } from '@/models/site.model';
 
-const Footer = dynamic(
-  () => import('@/layout/Footer').then((mod: any) => mod.Footer),
-  {
-    ssr: false,
-    loading: () => <p>Adding the Menu...</p>,
-  }
-);
+// const Footer = dynamic(
+//   () => import('@/layout/Footer').then((mod: any) => mod.Footer),
+//   {
+//     ssr: false,
+//     loading: () => <p>Adding the Menu...</p>,
+//   }
+// );
 
-const Layout = ({ children }: { children: any }) => {
+import Footer from '@/layout/Footer';
+
+const Layout = ({
+  site,
+  children,
+}: {
+  site: Site | null;
+  children: any;
+}): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
   let menuClick = false;
@@ -55,7 +64,7 @@ const Layout = ({ children }: { children: any }) => {
           {children}
         </main>
 
-        <Footer />
+        <Footer site={site} />
       </div>
       <AppMenu
         setOverlayMenuActive={setOverlayMenuActive}

@@ -1,8 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 
-import { postsRecentService } from '@/services/serversideApi';
+import { getSite, postsRecentService } from '@/services/serversideApi';
 import { RecentPostsCards } from '@/components/RecentPostsCards';
 import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
@@ -15,16 +14,19 @@ import KCAlt from '@/components/global/icons/KCAlt';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import AJPrimary from '@/components/global/icons/AJPrimary';
+import { Site } from '@/models/site.model';
 
 export default function Home({
+  site,
   recentPosts,
 }: {
+  site: Site | null;
   recentPosts: {
     [key: string]: Post[];
   };
 }): JSX.Element {
   return (
-    <Layout>
+    <Layout site={site}>
       <Head>
         <title>CodingCatDev</title>
       </Head>
@@ -152,7 +154,17 @@ export default function Home({
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps(): Promise<{
+  props: {
+    site: Site | null;
+    recentPosts: {
+      [key: string]: Post[];
+    };
+  };
+  revalidate: number;
+}> {
+  const site = await getSite();
+
   const recentPosts = await postsRecentService([
     PostType.course,
     PostType.post,
@@ -161,6 +173,7 @@ export async function getStaticProps() {
   ]);
   return {
     props: {
+      site,
       recentPosts,
     },
     // Next.js will attempt to re-generate the page:

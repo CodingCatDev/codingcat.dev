@@ -39,11 +39,17 @@ function AdminDashboard({
       case 'tutorials':
         setType(PostType.tutorial);
         break;
+      case 'posts':
+        setType(PostType.podcast);
+        break;
       case 'podcasts':
         setType(PostType.podcast);
         break;
+      case 'community':
+        setType(PostType.group);
+        break;
       default:
-        setType(PostType.post);
+        setType(PostType.page);
         break;
     }
   }, [router]);
