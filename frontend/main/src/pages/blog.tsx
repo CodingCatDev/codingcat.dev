@@ -2,12 +2,19 @@ import Head from 'next/head';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
 
-import { postsService } from '@/services/serversideApi';
+import { getSite, postsService } from '@/services/serversideApi';
 import { Post, PostType } from '@/models/post.model';
+import { Site } from '@/models/site.model';
 
-export default function Blog({ posts }: { posts: Post[] }) {
+export default function Blog({
+  site,
+  posts,
+}: {
+  site: Site | null;
+  posts: Post[];
+}): JSX.Element {
   return (
-    <Layout>
+    <Layout site={site}>
       <Head>
         <title>Blog | CodingCatDev</title>
       </Head>
@@ -19,10 +26,18 @@ export default function Blog({ posts }: { posts: Post[] }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps(): Promise<{
+  props: {
+    site: Site | null;
+    posts: Post[];
+  };
+  revalidate: number;
+}> {
+  const site = await getSite();
   const posts = await postsService(PostType.post);
   return {
     props: {
+      site,
       posts,
     },
     // Next.js will attempt to re-generate the page:

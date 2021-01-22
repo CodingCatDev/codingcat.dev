@@ -6,22 +6,19 @@ import SettingsLinks from '@/components/Settings/SettingsLinks';
 import UserProfile from '@/components/Settings/UserProfile';
 
 import { useUser } from '@/utils/auth/useUser';
+import { Site } from '@/models/site.model';
+import { getSite } from '@/services/serversideApi';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
   loading: () => <p>Playing with yarn...</p>,
 });
 
-const ProfileCard = dynamic(() => import('@/components/User/ProfileCard'), {
-  ssr: false,
-  loading: () => <p>Chasing my tail..</p>,
-});
-
-export default function Profile() {
-  const { user, signout }: { user: any; signout: any } = useUser();
+export default function Profile({ site }: { site: Site | null }): JSX.Element {
+  const { user } = useUser();
 
   return (
-    <Layout>
+    <Layout site={site}>
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
@@ -40,4 +37,21 @@ export default function Profile() {
       )}
     </Layout>
   );
+}
+export async function getStaticProps(): Promise<{
+  props: {
+    site: Site | null;
+  };
+  revalidate: number;
+}> {
+  const site = await getSite();
+  return {
+    props: {
+      site,
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every second
+    revalidate: 60, // In seconds
+  };
 }

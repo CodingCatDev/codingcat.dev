@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 
 import {
+  getSite,
   postBySlugService,
   postsRecentService,
   postsService,
@@ -11,12 +12,15 @@ import matter from 'gray-matter';
 import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
+import { Site } from '@/models/site.model';
 
 export default function Post({
+  site,
   post,
   source,
   recentPosts,
 }: {
+  site: Site | null;
   post: PostModel;
   recentPosts: { [key: string]: PostModel[] };
   source: Source | null;
@@ -29,6 +33,7 @@ export default function Post({
   return (
     <PostLayout
       router={router}
+      site={site}
       post={post}
       source={source}
       recentPosts={recentPosts}
@@ -67,6 +72,7 @@ export async function getStaticProps({
 }): Promise<
   | {
       props: {
+        site: Site | null;
         post: PostModel | null;
         recentPosts: { [key: string]: PostModel[] };
         source: Source | null;
@@ -75,14 +81,7 @@ export async function getStaticProps({
     }
   | { redirect: { destination: string; permanent: boolean } }
 > {
-  // if (params.permalink.length !== 2) {
-  //   return {
-  //     redirect: {
-  //       destination: '/',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
+  const site = await getSite();
 
   let type = params.permalink[0] as PostType;
   let slug = params.permalink[1] as string;
@@ -132,6 +131,7 @@ export async function getStaticProps({
 
   return {
     props: {
+      site,
       post,
       recentPosts,
       source,

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import {
   validateCourseUser,
   postBySlugService,
+  getSite,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
@@ -12,12 +13,15 @@ import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 
 import PostLayout from '@/components/PostLayout';
+import { Site } from '@/models/site.model';
 
 export default function Post({
+  site,
   post,
   course,
   source,
 }: {
+  site: Site | null;
   post: PostModel;
   course: PostModel;
   source: Source | null;
@@ -28,7 +32,13 @@ export default function Post({
   }
 
   return (
-    <PostLayout router={router} post={post} course={course} source={source} />
+    <PostLayout
+      site={site}
+      router={router}
+      post={post}
+      course={course}
+      source={source}
+    />
   );
 }
 
@@ -41,6 +51,7 @@ export async function getServerSideProps({
 }): Promise<
   | {
       props: {
+        site: Site | null;
         post: PostModel | null;
         course: PostModel | null;
         source: Source | null;
@@ -89,7 +100,7 @@ export async function getServerSideProps({
       },
     };
   }
-
+  const site = await getSite();
   const posts = await postBySlugService(PostType.lesson, lessonPath);
   const post = posts.length > 0 ? posts[0] : null;
 
@@ -110,6 +121,7 @@ export async function getServerSideProps({
 
   return {
     props: {
+      site,
       post,
       course,
       source,

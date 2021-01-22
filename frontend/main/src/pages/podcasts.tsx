@@ -1,30 +1,43 @@
 import Head from 'next/head';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
-import { postsService } from '@/services/serversideApi';
-import { Post, PostType } from '@/models/post.model';
 
-export default function Podcasts({ posts }: { posts: Post[] }) {
+import { getSite, postsService } from '@/services/serversideApi';
+import { Post, PostType } from '@/models/post.model';
+import { Site } from '@/models/site.model';
+
+export default function Blog({
+  site,
+  posts,
+}: {
+  site: Site | null;
+  posts: Post[];
+}): JSX.Element {
   return (
-    <Layout>
+    <Layout site={site}>
       <Head>
         <title>Podcasts | CodingCatDev</title>
       </Head>
 
-      <section className="grid gap-4 p-4 sm:gap-10 sm:p-10 grid-cols-fit ">
-        <PostsCards posts={posts} />
-      </section>
+      <PostsCards posts={posts} />
 
       <footer></footer>
     </Layout>
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps(): Promise<{
+  props: {
+    site: Site | null;
+    posts: Post[];
+  };
+  revalidate: number;
+}> {
+  const site = await getSite();
   const posts = await postsService(PostType.podcast);
-
   return {
     props: {
+      site,
       posts,
     },
     // Next.js will attempt to re-generate the page:

@@ -6,10 +6,11 @@ import LinkedIn from '@/components/global/icons/socials/LinkedIn';
 import Medium from '@/components/global/icons/socials/Medium';
 import Twitter from '@/components/global/icons/socials/Twitter';
 import YouTube from '@/components/global/icons/socials/YouTube';
+import { Site } from '@/models/site.model';
 
 const socialLinks = ``;
 
-export const Footer = () => {
+export default function Footer({ site }: { site: Site | null }): JSX.Element {
   return (
     <>
       <svg
@@ -74,18 +75,15 @@ export const Footer = () => {
           {/* HELPFUL LINKS */}
           <section className="grid grid-cols-1 gap-4 lg:justify-self-end 2xl:justify-self-center">
             <h4 className="underline whitespace-nowrap">Helpful Links</h4>
-            <a href="" className="links-secondary">
-              FTC Disclosure
-            </a>
-            <a href="" className="links-secondary">
-              Privacy Policy
-            </a>
-            <a href="" className="links-secondary">
-              Terms of Service
-            </a>
-            <a href="" className="links-secondary">
-              Sitemap
-            </a>
+            {site?.pageLinks?.map((pageLinks) => (
+              <a
+                href={pageLinks.slug}
+                className="links-secondary"
+                key={pageLinks.slug}
+              >
+                {pageLinks.title}
+              </a>
+            ))}
           </section>
           {/* NEWSLETTER */}
           <section className="grid grid-cols-1 gap-4 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:col-start-3 2xl:col-end-4">
@@ -126,4 +124,4 @@ export const Footer = () => {
       `}</style>
     </>
   );
-};
+}
