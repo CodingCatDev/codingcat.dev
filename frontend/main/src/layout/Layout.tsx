@@ -60,7 +60,7 @@ const Layout = ({
         overlayMenuActive={overlayMenuActive}
       />
       <div className="overflow-x-hidden overflow-y-auto scrollbar calc-height-wrapper">
-        <main className="grid justify-center grid-cols-1 gap-10 calc-height bg-primary-50 dark:bg-basics-700">
+        <main className="grid justify-center grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
           {children}
         </main>
 
