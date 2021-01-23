@@ -51,7 +51,7 @@ const Layout = ({
   router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-primary-900 dark:bg-primary-900 md:w-4/5 md:mx-auto">
+    <>
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
@@ -70,18 +70,7 @@ const Layout = ({
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
       />
-      {/* <style jsx>
-        {`
-          .calc-height-wrapper {
-            min-height: calc(100vh - 5rem);
-          }
-
-          .calc-height {
-            min-height: calc(100vh - 6.5rem);
-          }
-        `}
-      </style> */}
-    </div>
+    </>
   );
 };
 

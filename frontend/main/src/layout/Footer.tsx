@@ -90,16 +90,16 @@ export default function Footer({ site }: { site: Site | null }): JSX.Element {
         <section className="grid grid-cols-1 gap-4 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
           <h4 className="underline">Newsletter</h4>
           <p>Subscribe for all the latest updates.</p>
-          <form className="grid">
+          <form className="grid grid-cols-1 gap-4">
             <label htmlFor="subEmail">Email</label>
-            <div className="flex items-stretch">
+            <div className="flex flex-wrap gap-4">
               <input
                 id="subEmail"
                 type="email"
                 placeholder="alex@codingcat.dev"
               />
 
-              <button className="ml-4 btn-secondary">Subscribe</button>
+              <button className="btn-secondary">Subscribe</button>
             </div>
           </form>
 
