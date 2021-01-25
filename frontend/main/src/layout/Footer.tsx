@@ -92,7 +92,7 @@ export default function Footer({ site }: { site: Site | null }): JSX.Element {
           <p>Subscribe for all the latest updates.</p>
           <form className="grid grid-cols-1 gap-4">
             <label htmlFor="subEmail">Email</label>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 lg:flex-nowrap">
               <input
                 id="subEmail"
                 type="email"

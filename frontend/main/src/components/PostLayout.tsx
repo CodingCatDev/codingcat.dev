@@ -81,7 +81,7 @@ export default function PostLayout({
         {/* TOP BAR */}
         <section className="sticky top-0 z-10 bg-primary-50">
           <BreakBarLeft>
-            <div className="flex flex-wrap justify-between w-full gap-4">
+            <div className="flex flex-wrap justify-between w-full gap-4 ">
               <h1 className="self-center font-sans text-2xl sm:text-4xl text-basics-50 dark:text-basics-50">
                 {post.title}
               </h1>
@@ -99,10 +99,10 @@ export default function PostLayout({
                 <PostMedia post={post} />
               </section>
               <section className="relative xl:w-1/4">
-                <div className="flex flex-col gap-4 p-4 overflow-y-auto xl:absolute xl:w-full xl:h-full scrollbar bg-primary-900 dark:bg-primary-900">
+                <div className="flex flex-col gap-4 p-2 overflow-y-auto xl:p-4 xl:absolute xl:w-full xl:h-full scrollbar bg-primary-900 dark:bg-primary-900">
                   {/* Pricing */}
                   {post.type === PostType.course && (
-                    <section className="p-4 bg-basics-50">
+                    <section className="p-2 xl:p-4 bg-basics-50">
                       {post.coverPhoto?.path ? (
                         <>
                           <Image
@@ -132,7 +132,7 @@ export default function PostLayout({
                         key={section.id}
                         className="flex flex-col bg-basics-50 rounded-t-md"
                       >
-                        <h2 className="p-4 m-0 text-2xl font-bold rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {section.title}
                         </h2>
                         <ul className="flex flex-col flex-grow justify-items-stretch">
@@ -144,7 +144,7 @@ export default function PostLayout({
                                   key={lesson.id}
                                 >
                                   <div
-                                    className={`p-2 cursor-pointer
+                                    className={`p-2  cursor-pointer
                               ${
                                 isActiveLink(course, lesson)
                                   ? 'bg-primary-200'
@@ -164,9 +164,9 @@ export default function PostLayout({
                     ))}
                   {/* RECENTS */}
                   {recentPosts && (
-                    <section className="grid gap-4">
+                    <section className="hidden xl:grid-cols-1 xl:gap-4 xl:grid">
                       <div className="rounded-t-md bg-basics-50">
-                        <h2 className="p-4 m-0 text-2xl font-bold rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Courses`}
                         </h2>
 
@@ -177,7 +177,7 @@ export default function PostLayout({
                         </ul>
                       </div>
                       <div className="rounded-t-md bg-basics-50">
-                        <h2 className="p-4 m-0 text-2xl font-bold rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Tutorials`}
                         </h2>
                         <ul className="mx-4 space-y-2">
@@ -187,7 +187,7 @@ export default function PostLayout({
                         </ul>
                       </div>
                       <div className="rounded-t-md bg-basics-50">
-                        <h2 className="p-4 m-0 text-2xl font-bold rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Podcasts`}
                         </h2>
                         <ul className="mx-4 space-y-2">
@@ -197,7 +197,7 @@ export default function PostLayout({
                         </ul>
                       </div>
                       <div className="rounded-t-md bg-basics-50">
-                        <h2 className="p-4 m-0 text-2xl font-bold rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Blog`}
                         </h2>
                         <ul className="mx-4 space-y-2">
@@ -207,20 +207,24 @@ export default function PostLayout({
                     </section>
                   )}
                   {/* Author Content */}
-                  <section className="p-4 bg-basics-50 rounded-t-md">
-                    <header className="flex gap-4">
-                      <img
-                        src="https://avatars0.githubusercontent.com/u/45889730?s=460&u=74587a01abf2a7f33ae964c69856f3fe71b175b6&v=4"
-                        alt="instructor"
-                        className="w-20 h-20 border-2 rounded-full border-primary-900"
-                      />
+                  <section className="bg-basics-50">
+                    <div className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600">
+                      <header className="flex gap-4 ">
+                        <img
+                          src="https://avatars0.githubusercontent.com/u/45889730?s=460&u=74587a01abf2a7f33ae964c69856f3fe71b175b6&v=4"
+                          alt="instructor"
+                          className="w-20 h-20 border-2 rounded-full border-primary-900"
+                        />
 
-                      <div className="flex flex-col justify-center">
-                        <h3 className="m-0 text-base font-light">Instructor</h3>
-                        <h4 className="m-0 text-xl">Instructor Name</h4>
-                      </div>
-                    </header>
-                    <p>
+                        <div className="flex flex-col justify-center">
+                          <h3 className="m-0 text-base font-light">
+                            Instructor
+                          </h3>
+                          <h4 className="m-0 text-xl">Instructor Name</h4>
+                        </div>
+                      </header>
+                    </div>
+                    <p className="p-2 xl:p-4">
                       Instructor description: Lorem ipsum dolor sit amet
                       consectetur adipisicing elit. Sint ad iusto nobis
                       excepturi deserunt exercitationem ex aspernatur sit culpa
