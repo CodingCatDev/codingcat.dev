@@ -101,11 +101,15 @@ module.exports = {
         300: '300px',
         1080: '1080px',
       },
+      maxWidth: {
+        '8xl': '2000px',
+      },
       screens: {
         '3xl': '2000px',
       },
       width: {
         35: '35px',
+        80: '80vw',
       },
     },
     customForms: (theme) => ({

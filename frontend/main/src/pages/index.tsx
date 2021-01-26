@@ -38,7 +38,7 @@ export default function Home({
             <br />
             Web Tutorials
           </h1>
-          <p className="font-light 2xl:text-2xl" style={{ maxWidth: `40ch` }}>
+          <p className="font-sans 2xl:text-2xl" style={{ maxWidth: `40ch` }}>
             Get the skills you need to become a better web developer today. High
             quality courses with custom certificates and projects to show off
             your new skills.
