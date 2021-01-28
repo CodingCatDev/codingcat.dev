@@ -27,9 +27,9 @@ export default function Footer({ site }: { site: Site | null }): JSX.Element {
           stroke="transparent"
         />
       </svg>
-      <footer className="grid grid-cols-1 gap-10 px-4 pt-20 pb-4 bg-purple-900 justify-items-start lg:grid-cols-2 lg:px-10 2xl:grid-cols-3 2xl:items-start 2xl:gap-4 text-basics-50 dark:text-basics-50">
+      <footer className="grid grid-cols-1 gap-10 px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 2xl:grid-cols-3 2xl:items-start 2xl:gap-4 text-basics-50 dark:text-basics-50">
         {/* LOGO & COPYRIGHT */}
-        <section className="grid grid-cols-1 place-items-center">
+        <section className="grid grid-cols-1 lg:justify-items-start">
           <div className="flex">
             <AJAlt className="-mt-6 w-36 h-36" />
             <section className="grid">
@@ -47,7 +47,7 @@ export default function Footer({ site }: { site: Site | null }): JSX.Element {
             </section>
           </div>
           {/* SOCIALS */}
-          <section className="flex items-end justify-around w-full mt-4 lg:justify-between">
+          <section className="flex items-end justify-around w-full gap-8 mt-4 lg:justify-start">
             <a href="" className={`${socialLinks} social-links`}>
               <Mail fill="#BC2261" />
             </a>
