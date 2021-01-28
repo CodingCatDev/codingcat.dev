@@ -81,8 +81,8 @@ export default function PostLayout({
         {/* TOP BAR */}
         <section className="sticky top-0 z-10 bg-primary-50">
           <BreakBarLeft>
-            <div className="flex flex-wrap justify-between w-full gap-4 ">
-              <h1 className="self-center font-sans text-2xl sm:text-4xl text-basics-50 dark:text-basics-50">
+            <div className="flex flex-wrap items-center justify-between w-full gap-4">
+              <h1 className="self-center font-sans text-2xl sm:text-6xl text-basics-50 dark:text-basics-50">
                 {post.title}
               </h1>
               {backButton()}
@@ -238,10 +238,10 @@ export default function PostLayout({
           </section>
         )}
         {/* Main Blog Area */}
-        <section className="w-full max-w-5xl px-4 mx-auto xl:px-10">
+        <section className="w-full max-w-5xl px-4 pt-4 mx-auto xl:px-10">
           {/* BLOG POST */}
-          <h3 className="m-0 vertical-text-clip">{post.title}</h3>
-          <article className="leading-relaxed text-basics-900 ">
+          {/* <h2 className="m-0 vertical-text-clip">{post.title}</h2> */}
+          <article className="relative grid grid-cols-1 gap-4 leading-relaxed top-2 text-basics-900">
             {content}
           </article>
         </section>
@@ -256,6 +256,15 @@ export default function PostLayout({
           font-family: 'Nunito', sans-serif;
           margin: 0;
         }
+
+        main h2 {
+          font-size: 3rem;
+        }
+
+        main h3 {
+          font-size: 2.25rem;
+        }
+
         main h3,
         main h4,
         main h5,
