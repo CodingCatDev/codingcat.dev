@@ -1,0 +1,34 @@
+{
+  "name": "@codingcatdev/shared",
+  "version": "0.0.1",
+  "private": true,
+  "main": "src/index.tsx",
+  "description": "CodingCatDev Shared Package",
+  "author": "Alex Patterson <alex@codingcat.dev>",
+  "homepage": "https://github.com/ajonp/ccd-amplify-nextjs/tree/master/frontend/shared#readme",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodingCatDev/codingcat.dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CodingCatDev/codingcat.dev/issues"
+  },
+  "dependencies": {
+    "@aws-amplify/ui-react": "^0.2.35",
+    "aws-amplify": "^3.3.15",
+    "next-transpile-modules": "^6.1.0"
+  },
+  "devDependencies": {
+    "next": "^10.0.3",
+    "@types/react": "^17.0.0",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.21.5",
+    "@typescript-eslint/eslint-plugin": "^4.8.2",
+    "@typescript-eslint/parser": "^4.8.2",
+    "typescript": "^4.1.3",
+    "prettier": "^2.2.1"
+  }
+}

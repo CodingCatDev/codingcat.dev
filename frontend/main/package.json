@@ -1,7 +1,9 @@
 {
-  "name": "ccd-main",
+  "name": "@codingcatdev/main",
+  "author": "Alex Patterson <alex@codingcat.dev>",
   "version": "0.1.0",
   "private": true,
+  "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--inspect=9230' next -p 3000",
     "emulated": "cross-env NODE_OPTIONS='--inspect=9230' NEXT_PUBLIC_CCD_EMULATED=true FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIREBASE_DATABASE_EMULATOR_HOST='localhost:9000' FIRESTORE_EMULATOR_HOST='localhost:8080' next",
@@ -13,6 +15,7 @@
     "lint": "eslint . --quiet --ext .ts,.tsx && tsc --noEmit"
   },
   "dependencies": {
+    "@codingcatdev/shared": "0.0.1",
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
@@ -21,6 +24,7 @@
     "@tailwindcss/typography": "^0.3.1",
     "algoliasearch": "^4.8.3",
     "array-move": "^3.0.1",
+    "aws-amplify": "^3.3.15",
     "cloudinary-react": "^1.6.8",
     "concurrently": "^5.3.0",
     "cookie": "^0.4.1",
@@ -32,12 +36,13 @@
     "js-cookie": "^2.2.1",
     "next": "^10.0.3",
     "next-mdx-remote": "^2.1.1",
+    "next-transpile-modules": "^6.1.0",
     "nightwind": "^1.0.8",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primereact": "^5.0.2",
-    "react": "17.0.1",
     "react-beautiful-dnd": "^13.0.0",
+    "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-firebaseui": "^4.1.0",
     "react-instantsearch-dom": "^6.8.2",

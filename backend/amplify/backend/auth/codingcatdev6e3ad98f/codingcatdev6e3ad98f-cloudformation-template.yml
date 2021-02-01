@@ -121,6 +121,54 @@ Parameters:
   usernameAttributes:
     Type: CommaDelimitedList
       
+        
+  userPoolGroupList:
+    Type: CommaDelimitedList
+      
+  serviceName:
+    Type: String
+  
+            
+  
+  usernameCaseSensitive:
+    Type: String
+            
+        
+  dependsOn:
+    Type: CommaDelimitedList
+      
+  hostedUIProviderCreds:
+    Type: String
+  
+            
+  
+  thirdPartyAuth:
+    Type: String
+            
+        
+  authProviders:
+    Type: CommaDelimitedList
+      
+  facebookAppId:
+    Type: String
+  
+            
+  googleClientId:
+    Type: String
+  
+            
+  
+  userPoolGroups:
+    Type: String
+            
+  
+  adminQueries:
+    Type: String
+            
+  triggers:
+    Type: String
+  
+            
   hostedUIDomainName:
     Type: String
   
@@ -133,29 +181,17 @@ Parameters:
     Type: String
   
             
-  hostedUIProviderCreds:
-    Type: String
-  
-            
   oAuthMetadata:
     Type: String
   
             
-        
-  userPoolGroupList:
-    Type: CommaDelimitedList
+            
       
-            
-  serviceName:
+  parentStack:
     Type: String
-  
-            
-  
-  usernameCaseSensitive:
-    Type: String
-            
         
-  dependsOn:
+        
+  permissions:
     Type: CommaDelimitedList
       
 Conditions:
@@ -238,6 +274,18 @@ Resources:
         SnsCallerArn: !GetAtt SNSRole.Arn
         ExternalId: coding6e3ad98f_role_external_id
     
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  # Updating lambda role with permissions to Cognito
+  
   
   UserPoolClientWeb:
   # Created provide application access to user pool
@@ -738,6 +786,15 @@ Resources:
             - cognito-idp.${region}.amazonaws.com/${client}
             - { region: !Ref "AWS::Region",  client: !Ref UserPool}
             
+      SupportedLoginProviders:
+        
+        graph.facebook.com: !Ref facebookAppId
+        
+        
+        accounts.google.com: !Ref googleClientId
+        
+        
+      
       AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
       
     
@@ -788,8 +845,14 @@ Outputs :
     Value: !GetAtt UserPoolClientInputs.appSecret
   
   
+  GoogleWebClient:
+    Value: !Ref googleClientId
   
   
+  
+  
+  FacebookWebClient:
+    Value: !Ref facebookAppId
   
   
   

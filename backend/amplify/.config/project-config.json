@@ -5,7 +5,7 @@
   "javascript": {
     "framework": "react",
     "config": {
-      "SourceDir": "../frontend/shared/src",
+      "SourceDir": "../frontend/shared/src/amplify/",
       "DistributionDir": "build",
       "BuildCommand": "npm run-script build",
       "StartCommand": "npm run-script start"

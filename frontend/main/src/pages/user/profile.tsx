@@ -9,10 +9,7 @@ import { useUser } from '@/utils/auth/useUser';
 import { Site } from '@/models/site.model';
 import { getSite } from '@/services/serversideApi';
 
-const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
-  ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
-});
+import { SignIn } from '@codingcatdev/shared';
 
 export default function Profile({ site }: { site: Site | null }): JSX.Element {
   const { user } = useUser();
@@ -33,7 +30,7 @@ export default function Profile({ site }: { site: Site | null }): JSX.Element {
           <UserProfile />
         </section>
       ) : (
-        <FirebaseAuth />
+        <SignIn />
       )}
     </Layout>
   );
