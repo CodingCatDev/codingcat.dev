@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "codingcatdev6e3ad98f_identitypool_6e3ad98f",
+    "identityPoolName": "codingcatdevdae34f16_identitypool_dae34f16",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "coding6e3ad98f",
-    "userPoolName": "codingcatdev6e3ad98f_userpool_6e3ad98f",
+    "resourceNameTruncated": "codingdae34f16",
+    "userPoolName": "codingcatdevdae34f16_userpool_dae34f16",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "coding6e3ad98f_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "codingdae34f16_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "6e3ad98f",
-    "resourceName": "codingcatdev6e3ad98f",
+    "sharedId": "dae34f16",
+    "resourceName": "codingcatdevdae34f16",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -45,34 +45,20 @@
             "Arn"
         ]
     },
-    "useDefault": "manual",
+    "useDefault": "defaultSocial",
     "hostedUI": true,
     "usernameAttributes": [
         "email"
     ],
-    "userPoolGroupList": [
-        "devcodingcatdev"
-    ],
-    "serviceName": "Cognito",
-    "usernameCaseSensitive": false,
-    "dependsOn": [],
-    "thirdPartyAuth": true,
-    "authProviders": [
-        "graph.facebook.com",
-        "accounts.google.com"
-    ],
-    "userPoolGroups": true,
-    "adminQueries": false,
-    "triggers": "{}",
-    "hostedUIDomainName": "codingcatdev6fd8ab57-6fd8ab57",
+    "hostedUIDomainName": "codingcatdevdae34f16-dae34f16",
     "authProvidersUserPool": [
         "Facebook",
         "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"email,public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"id\"}},{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/user/profile/\"],\"LogoutURLs\":[\"http://localhost:3000/user/profile/\"]}",
-    "parentStack": {
-        "Ref": "AWS::StackId"
-    },
-    "permissions": []
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\"],\"LogoutURLs\":[\"http://localhost:3000/\"]}",
+    "userPoolGroupList": [],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "dependsOn": []
 }

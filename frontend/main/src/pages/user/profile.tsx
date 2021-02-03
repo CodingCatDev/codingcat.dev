@@ -9,7 +9,7 @@ import { useUser } from '@/utils/auth/useUser';
 import { Site } from '@/models/site.model';
 import { getSite } from '@/services/serversideApi';
 
-import { SignIn } from '@codingcatdev/shared';
+import { SignIn } from '@/components/amplify/auth/SignIn';
 
 export default function Profile({ site }: { site: Site | null }): JSX.Element {
   const { user } = useUser();
