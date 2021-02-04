@@ -1,6 +1,6 @@
-import Input from '@/components/amplify/auth/Input';
+import { Input } from './Input';
 
-function FogotPassword({ setUiState, onChange, forgotPassword }: any) {
+export function ForgotPassword({ setUiState, onChange, forgotPassword }: any) {
   return (
     <>
       <p className="text-3xl font-black">Reset password</p>
@@ -23,5 +23,3 @@ function FogotPassword({ setUiState, onChange, forgotPassword }: any) {
     </>
   );
 }
-
-export default FogotPassword;

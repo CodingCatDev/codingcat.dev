@@ -1,23 +1,15 @@
-import Input from '@/components/amplify/auth/Input';
+import { Input } from './Input';
 
-function FogotPasswordSubmit({
-  setUiState,
-  onChange,
-  forgotPasswordSubmit,
-}: any) {
+export function ConfirmSignUp({ setUiState, onChange, confirmSignUp }:any) {
   return (
     <>
-      <p className="text-3xl font-black">Reset password</p>
+      <p className="text-3xl font-black">Confirm Sign Up</p>
       <div className="mt-10">
         <label className="text-sm">Confirmation Code</label>
         <Input onChange={onChange} name="authCode" />
       </div>
-      <div className="mt-6">
-        <label className="text-sm">New Password</label>
-        <Input type="password" name="password" onChange={onChange} />
-      </div>
       <button
-        onClick={() => forgotPasswordSubmit()}
+        onClick={() => confirmSignUp()}
         className="w-full p-3 mt-4 text-white bg-pink-600 rounded"
       >
         Continue
@@ -31,5 +23,3 @@ function FogotPasswordSubmit({
     </>
   );
 }
-
-export default FogotPasswordSubmit;

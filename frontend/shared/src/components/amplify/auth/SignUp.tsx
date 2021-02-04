@@ -1,6 +1,6 @@
-import Input from '@/components/amplify/auth/Input';
+import { Input } from './Input';
 
-function SignUp({ setUiState, signUp, onChange }: any) {
+export function SignUp({ setUiState, signUp, onChange }: any) {
   return (
     <>
       <p className="text-3xl font-black">Sign up for an account</p>
@@ -36,5 +36,3 @@ function SignUp({ setUiState, signUp, onChange }: any) {
     </>
   );
 }
-
-export default SignUp;

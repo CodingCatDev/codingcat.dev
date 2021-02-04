@@ -1,7 +1,7 @@
-import Input from '@/components/amplify/auth/Input';
-import SocialSignIn from '@/components/amplify/auth/SocialSignIn';
+import { Input } from './Input';
+import { SocialSignIn } from './SocialSignIn';
 
-export default function SignInDetail({ setUiState, onChange, signIn }: any) {
+export function SignIn({ setUiState, onChange, signIn }: any): JSX.Element {
   return (
     <>
       <p className="text-3xl font-black">Sign in to your account</p>
@@ -29,7 +29,7 @@ export default function SignInDetail({ setUiState, onChange, signIn }: any) {
       </button>
       <SocialSignIn />
       <p className="mt-12 text-sm font-light">
-        Dont have an account?
+        Don't have an account?
         <span
           onClick={() => setUiState('signUp')}
           role="button"
