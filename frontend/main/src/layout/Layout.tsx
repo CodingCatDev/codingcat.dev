@@ -14,15 +14,6 @@ import { AppTopbar } from './AppTopbar';
 
 import AppMenu from '@/layout/AppMenu';
 import { Site } from '@/models/site.model';
-
-// const Footer = dynamic(
-//   () => import('@/layout/Footer').then((mod: any) => mod.Footer),
-//   {
-//     ssr: false,
-//     loading: () => <p>Adding the Menu...</p>,
-//   }
-// );
-
 import Footer from '@/layout/Footer';
 
 const Layout = ({

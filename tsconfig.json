@@ -14,16 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "@/components/*": ["src/components/*"],
-      "@/config/*": ["src/config/*"],
-      "@/layout/*": ["src/layout/*"],
-      "@/pages/*": ["src/pages/*"],
-      "@/services/*": ["src/services/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/models/*": ["src/models/*"]
-    }
+    "baseUrl": "."
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
