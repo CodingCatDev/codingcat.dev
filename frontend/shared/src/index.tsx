@@ -7,3 +7,5 @@ export { Profile } from './components/amplify/auth/Profile';
 export { SignIn } from './components/amplify/auth/SignIn';
 export { SignUp } from './components/amplify/auth/SignUp';
 export { SocialSignIn } from './components/amplify/auth/SocialSignIn';
+
+export { Hello } from './components/core/hello';
