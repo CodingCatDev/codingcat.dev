@@ -10,23 +10,31 @@ import { Site } from '@/models/site.model';
 
 const socialLinks = ``;
 
-export default function Footer({ site }: { site: Site | null }): JSX.Element {
+export default function Footer({
+  site,
+  hideWave,
+}: {
+  site: Site | null;
+  hideWave?: boolean;
+}): JSX.Element {
   return (
     <>
-      <svg
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        height="100"
-        width="100%"
-        viewBox="0 0 90 20"
-        preserveAspectRatio="none"
-        className="fill-current text-primary-50 dark:text-basics-700"
-      >
-        <path
-          d="M0 5 H5 C25 5 25 20 45 20 S65 5 85 5 H90 V-5 H0z"
-          stroke="transparent"
-        />
-      </svg>
+      {!hideWave && (
+        <svg
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          height="100"
+          width="100%"
+          viewBox="0 0 90 20"
+          preserveAspectRatio="none"
+          className="fill-current text-primary-50 dark:text-basics-700"
+        >
+          <path
+            d="M0 5 H5 C25 5 25 20 45 20 S65 5 85 5 H90 V-5 H0z"
+            stroke="transparent"
+          />
+        </svg>
+      )}
       <footer className="grid grid-cols-1 gap-10 px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 2xl:grid-cols-3 2xl:items-start 2xl:gap-4 text-basics-50 dark:text-basics-50">
         {/* LOGO & COPYRIGHT */}
         <section className="grid grid-cols-1 lg:justify-items-start">
