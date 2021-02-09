@@ -39,8 +39,10 @@ export default function AdminDashboard({
           </div>
         ) : (
           <>
-            <div style={{ width: '100%' }}>
-              <CreatePost type={type} />
+            <div className="flex flex-col p-2">
+              <div className="flex my-4">
+                <CreatePost type={type} />
+              </div>
               <EditPosts type={type} />
             </div>
           </>
