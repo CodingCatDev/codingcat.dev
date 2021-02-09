@@ -16,55 +16,45 @@ function EditPosts({ type }: { type: PostType }) {
 
   return (
     <>
-      TODO: EditPosts
-      <div className="flex flex-col">
-        {posts.map((post) => (
-          <div key={post.id}>
-            <Link href={`${type}/${post.id}`}>
-              <a>{post.id}</a>
-            </Link>
-          </div>
-        ))}
-      </div>
-      {/* <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell align="right">Title</TableCell>
-              <TableCell align="right">Author</TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Updated</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {posts.map((post) => (
-              <TableRow key={post.id}>
-                <TableCell component="td" scope="row">
-                  <Link href={`.${path}/${post.id}`}>
-                    <a>{post.id}</a>
-                  </Link>
-                </TableCell>
-                <TableCell align="right">{post.title}</TableCell>
-                <TableCell align="right">{post.createdBy}</TableCell>
-                <TableCell align="right">
-                  {' '}
-                  <span
-                    className={`${classes.status} ${
-                      post.status === PostStatus.published
-                        ? classes.statusPublished
-                        : classes.statusDraft
-                    }`}
-                  >
-                    {post.status}
-                  </span>
-                </TableCell>
-                <TableCell align="right">{post.updatedAt}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
+      <table className="table-auto">
+        <thead className="text-white bg-secondary-500 bold">
+          <tr>
+            <th className="p-2">Title</th>
+            <th>Id</th>
+            <th>Date</th>
+            <th>Author</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {posts.map((post, index) => (
+            <tr
+              key={post.id}
+              className={`${index % 2 ? 'bg-primary-200' : ''}`}
+            >
+              <td>
+                <Link href={`${type}/${post.id}`}>
+                  <a>{post.title}</a>
+                </Link>
+              </td>
+              <td>{post.id}</td>
+              <td>{post.updatedAt}</td>
+              <td>{post.createdBy}</td>
+              <td>
+                <span
+                  className={`m-1 ${
+                    post && post.status === PostStatus.draft
+                      ? `p-1 rounded-sm bg-primary-300 text-white`
+                      : `p-1 rounded-sm bg-secondary-400 text-secondary-900`
+                  }`}
+                >
+                  {post.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }
