@@ -36,7 +36,7 @@ export default function AdminNavItems(): JSX.Element {
           <p className="ml-2 text-white">Tutorials</p>
         </a>
       </Link>
-      <Link href="/admin/blog">
+      <Link href="/admin/post">
         <a className="flex p-2">
           <Blog />
           <p className="ml-2 text-white">Blog</p>
