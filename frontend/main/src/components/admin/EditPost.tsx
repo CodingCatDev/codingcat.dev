@@ -11,7 +11,6 @@ import {
 } from '@/services/api';
 
 import { Post, PostStatus, PostType, MediaType } from '@/models/post.model.ts';
-import { Course } from '@/models/course.model.ts';
 
 import { debounce, switchMap, take } from 'rxjs/operators';
 import { interval, Subject } from 'rxjs';
@@ -33,6 +32,7 @@ enum TabType {
   edit = 'edit',
   sections = 'sections',
   preview = 'preview',
+  history = 'history',
 }
 
 export default function EditPost({
@@ -46,7 +46,6 @@ export default function EditPost({
   const [, setPost] = useState<Post | Course>();
   const [, setPath] = useState<string>('');
   const [tab, setTab] = useState<TabType>(TabType.edit);
-  const [tabIndex, setTabIndex] = useState(0);
   const [saving, setSaving] = useState<boolean>(false);
   const [updateContent$] = useState<Subject<Post | Course>>(
     new Subject<Post | Course>()
@@ -59,7 +58,6 @@ export default function EditPost({
     const path = `/posts/${type}`;
     setPath(path);
     setTab(TabType.edit);
-    setTabIndex(0);
     // Set initial post to created
     const postSubscribe = postDataObservable(path)
       .pipe(
@@ -163,9 +161,8 @@ export default function EditPost({
     setShowHistory(!showHistory);
   }
 
-  function selectTab(tab: TabType, index: number) {
+  function selectTab(tab: TabType) {
     setTab(tab);
-    setTabIndex(index);
   }
 
   function onTab() {
@@ -196,10 +193,43 @@ export default function EditPost({
   }
 
   return (
-    <>
-      TODO: EditPost
-      {JSON.stringify(history)}
-      {/* <Grid
+    <div className="w-full">
+      <nav className="flex w-full h-12">
+        <button
+          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+            tab == TabType.edit ? 'border-b-2' : ''
+          }`}
+          onClick={() => selectTab(TabType.edit)}
+        >
+          EDIT
+        </button>
+        <button
+          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+            tab == TabType.sections ? 'border-b-2' : ''
+          }`}
+          onClick={() => selectTab(TabType.sections)}
+        >
+          SECTIONS
+        </button>
+        <button
+          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+            tab == TabType.preview ? 'border-b-2' : ''
+          }`}
+          onClick={() => selectTab(TabType.preview)}
+        >
+          MDX PREVIEW
+        </button>
+        <button
+          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+            tab == TabType.history ? 'border-b-2' : ''
+          }`}
+          onClick={() => selectTab(TabType.history)}
+        >
+          HISTORY
+        </button>
+      </nav>
+      <section>{onTab()}</section>
+      <Grid
         container
         direction="row"
         justifyContent="center"
@@ -483,6 +513,6 @@ export default function EditPost({
           </div>
         )}
       </Grid> */}
-    </>
+    </div>
   );
 }
