@@ -1,12 +1,6 @@
-import {
-  useState,
-  useEffect,
-  ComponentType,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useState, useEffect } from 'react';
 import router from 'next/router';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import nightwind from 'nightwind/helper';
 
@@ -25,15 +19,15 @@ const Layout = ({
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
-  let menuClick = false;
+  // let menuClick = false;
 
-  const onSidebarClick = () => {
-    menuClick = true;
-  };
+  // const onSidebarClick = () => {
+  //   menuClick = true;
+  // };
 
-  const onShowMenuButton = (event: any) => {
-    console.log(event);
-  };
+  // const onShowMenuButton = (event: any) => {
+  //   console.log(event);
+  // };
 
   useEffect(() => {
     window.scrollTo(0, 0);

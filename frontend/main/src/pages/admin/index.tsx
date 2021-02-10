@@ -14,13 +14,10 @@ export default function AdminDashboard({
         <title>Admin Dashboard | CodingCatDev</title>
         <meta name="robots" content="noindex" />
       </Head>
-
-      <div className="grid h-screen grid-cols-12 justify-items-stretch">
-        <div className="grid col-span-10 place-content-center">
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-          <p className="text-lg">Show some welcoming things here.</p>
-        </div>
-      </div>
+      <section className="dark:text-basics-50 text-basics-50">
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
+        <p className="text-lg">Show some welcoming things here.</p>
+      </section>
     </AdminLayout>
   );
 }

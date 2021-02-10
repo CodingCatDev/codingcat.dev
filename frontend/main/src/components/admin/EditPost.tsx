@@ -229,7 +229,7 @@ export default function EditPost({
         </button>
       </nav>
       <section>{onTab()}</section>
-      <Grid
+      {/* <Grid
         container
         direction="row"
         justifyContent="center"
@@ -512,7 +512,7 @@ export default function EditPost({
             </Link>
           </div>
         )}
-      </Grid> */}
+      </Grid>  */}
     </div>
   );
 }

@@ -31,7 +31,7 @@ export default function AdminDashboard({
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="flex">
+      <>
         {!type ? (
           <div>
             <h1>Dashboard</h1>
@@ -39,15 +39,16 @@ export default function AdminDashboard({
           </div>
         ) : (
           <>
-            <div className="flex flex-col p-2">
-              <div className="flex my-4">
-                <CreatePost type={type} />
-              </div>
-              <EditPosts type={type} />
-            </div>
+            <header className="grid justify-start gap-4">
+              <h1 className="font-sans text-4xl font-bold capitalize">
+                {type}
+              </h1>
+              <CreatePost type={type} />
+            </header>
+            <EditPosts type={type} />
           </>
         )}
-      </div>
+      </>
     </AdminLayout>
   );
 }

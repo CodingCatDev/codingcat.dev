@@ -114,7 +114,7 @@ export default function CreatePost({ type }: { type: PostType }) {
           </Button>
         </DialogActions>
       </Dialog> */}
-      <button className="btn-primary" onClick={() => setShowModal(true)}>
+      <button className="btn-secondary" onClick={() => setShowModal(true)}>
         Create {post.type}
       </button>
     </>
