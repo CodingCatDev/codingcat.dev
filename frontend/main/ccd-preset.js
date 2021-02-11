@@ -82,12 +82,14 @@ module.exports = {
         outline: '0 0 0 3px #FC5390',
       },
       gridTemplateColumns: {
-        sidebar: '1fr minmax(200px, 25%)',
-        settings: 'minmax(200px, 20%) 1fr',
+        admin: 'minmax(64px, auto) 1fr;',
         fit: 'repeat(auto-fit, minmax(250px, 1fr))',
         hero: '1.5fr 2fr',
+        sidebar: '1fr minmax(200px, 25%)',
+        settings: 'minmax(200px, 20%) 1fr',
       },
       gridTemplateRows: {
+        admin: '100px 1fr 64px',
         sidebar: '100px 1fr 100px',
         search: '38px 1fr 68px',
       },

@@ -1,32 +1,15 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import Link from 'next/link';
-
+import { useState } from 'react';
 import Toggle from '@/components/global/icons/Toggle';
-
 import OutsideClick from '@/components/OutsideClick';
-import AJLogoLeft from '@/components/global/icons/AJAlt';
+
 import SearchModal from '@/components/algolia/SearchModal';
 import AvatarMenu from '@/components/user/AvatarMenu';
-import { Hamburger } from '@/components/global/icons/Hamburger';
 
-export const AdminHeader = (props: {
-  setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
-  overlayMenuActive: boolean;
-}): JSX.Element => {
-  const { setOverlayMenuActive, overlayMenuActive } = props;
+export const AdminHeader = (): JSX.Element => {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <header className="flex items-center justify-between w-full h-20 p-4">
-      {/* Left Menu */}
-      <div className="flex">
-        <AJLogoLeft />
-        <Hamburger
-          setOverlayMenuActive={setOverlayMenuActive}
-          overlayMenuActive={overlayMenuActive}
-        />
-      </div>
-      {/* Right Icons */}
+    <header className="flex items-center justify-end w-full p-4">
       <div className="flex items-center justify-end">
         <div className="flex items-center w-full space-x-2">
           <SearchModal />

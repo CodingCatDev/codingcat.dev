@@ -27,17 +27,22 @@ const AdminLayout = ({
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
-      <AdminHeader
+      <div className="grid h-screen grid-cols-admin">
+        <AdminMenu />
+        <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
+          <AdminHeader />
+          <main className="h-full p-4 text-primary-900 bg-primary-50 dark:bg-basics-900">
+            {children}
+          </main>
+          <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">
+            &copy; Coding Cat Dev {new Date().getFullYear()}
+          </footer>
+        </div>
+      </div>
+      {/* <AdminMenu
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
-      />
-      <main className="grid grid-cols-1 gap-4 p-4 bg-primary-50 dark:bg-basics-700">
-        {children}
-      </main>
-      <AdminMenu
-        setOverlayMenuActive={setOverlayMenuActive}
-        overlayMenuActive={overlayMenuActive}
-      />
+      /> */}
     </>
   );
 };
