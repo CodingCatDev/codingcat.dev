@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import ActiveLink from '@/components/ActiveLink';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import AdminNavItems from '@/layout/admin/AdminNavItems';
 
 export default function AdminMenu(): JSX.Element {
-  const [isNavOpen, setIsNavOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(true);
   function toggleNav() {
-    setIsNavOpen(!isNavOpen);
+    setNavOpen(!navOpen);
   }
-  if (isNavOpen) {
+  if (navOpen) {
     return (
-      <section className="grid h-screen grid-cols-1 grid-rows-admin">
+      <section className="relative z-40 grid h-full grid-cols-1 grid-rows-admin">
         <section className="flex items-center justify-between gap-4 pl-4 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
           <AJLogoLeft />
           <h2 className="hidden mr-4 text-2xl lg:block">CodingCat.dev</h2>
@@ -36,7 +35,7 @@ export default function AdminMenu(): JSX.Element {
             </svg>
           </button>
         </section>
-        <AdminNavItems isNavOpen={isNavOpen} />
+        <AdminNavItems navOpen={navOpen} />
         <section className="self-stretch p-4 bg-secondary-600 dark:bg-secondary-600">
           <a href="#" className="flex items-center links-secondary">
             <img
@@ -59,7 +58,7 @@ export default function AdminMenu(): JSX.Element {
     );
   } else {
     return (
-      <section className="relative grid w-16 h-screen grid-cols-1 grid-rows-admin">
+      <section className="relative grid w-16 h-full grid-cols-1 grid-rows-admin">
         <section className="flex items-center justify-between gap-4 pl-4 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
           <AJLogoLeft />
           <button
@@ -84,7 +83,7 @@ export default function AdminMenu(): JSX.Element {
             </svg>
           </button>
         </section>
-        <AdminNavItems isNavOpen={isNavOpen} />
+        <AdminNavItems navOpen={navOpen} />
         <section className="self-stretch p-4 bg-secondary-600 dark:bg-secondary-600">
           <a href="#" className="flex items-center links-secondary">
             <img

@@ -81,6 +81,9 @@ module.exports = {
       boxShadow: {
         outline: '0 0 0 3px #FC5390',
       },
+      flex: {
+        full: '0 0 auto',
+      },
       gridTemplateColumns: {
         admin: 'minmax(64px, auto) 1fr;',
         fit: 'repeat(auto-fit, minmax(250px, 1fr))',
