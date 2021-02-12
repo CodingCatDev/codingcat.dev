@@ -22,7 +22,7 @@ function EditPosts({ type }: { type: PostType }) {
     <table className="block w-full lg:table bg-basics-50" role="table">
       <tbody role="rowgroup">
         <tr
-          className="hidden lg:flex bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
+          className="hidden lg:justify-between lg:flex bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
           role="row"
         >
           <th className="p-2 text-left" role="columnheader">
@@ -65,25 +65,25 @@ function EditPosts({ type }: { type: PostType }) {
               </th>{' '}
             </tr>
             <tr
-              className={`grid w-full lg:flex ${
+              className={`grid w-full lg:grid-cols-5 ${
                 index % 2 ? 'bg-primary-100' : 'bg-basics-50'
               }`}
             >
-              <td className="p-2" role="cell">
+              <td className="p-2 text-left" role="cell">
                 <Link href={`${type}/${post.id}`}>
                   <a>{post.title} </a>
                 </Link>
               </td>
-              <td className="p-2" role="cell">
+              <td className="p-2 text-left" role="cell">
                 {post.id}
               </td>
-              <td className="p-2" role="cell">
+              <td className="p-2 text-left" role="cell">
                 {post.updatedAt}
               </td>
-              <td className="p-2" role="cell">
+              <td className="p-2 text-left" role="cell">
                 {post.createdBy}
               </td>
-              <td className="p-2" role="cell">
+              <td className="p-2 text-left justify-self-end" role="cell">
                 <span
                   className={`m-1 ${
                     post && post.status === PostStatus.draft
