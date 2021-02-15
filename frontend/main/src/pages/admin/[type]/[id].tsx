@@ -12,9 +12,11 @@ import EditPost from '@/components/admin/EditPost';
 
 export default function Edit({
   type,
+  id,
   site,
 }: {
   type: PostType | null;
+  id: string | null;
   site: Site | null;
 }): JSX.Element {
   return (
@@ -24,7 +26,11 @@ export default function Edit({
         <meta name="robots" content="noindex" />
       </Head>
 
-      <EditPost type={type} />
+      {type && id ? (
+        <EditPost type={type} id={id} />
+      ) : (
+        <div>Post Not Found.</div>
+      )}
     </AdminLayout>
   );
 }
@@ -32,18 +38,20 @@ export default function Edit({
 export async function getServerSideProps({
   params,
 }: {
-  params: { type: PostType };
+  params: { type: PostType; id: string };
 }): Promise<{
   props: {
     type: PostType | null;
+    id: string | null;
     site: Site | null;
   };
 }> {
   const site = await getSite();
-  const { type } = params;
+  const { type, id } = params;
   return {
     props: {
       type,
+      id,
       site,
     },
   };

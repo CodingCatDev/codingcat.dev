@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import matter from 'gray-matter';
 import TimeAgo from 'react-timeago';
 import {
   postDataObservable,
@@ -37,29 +36,26 @@ enum TabType {
 
 export default function EditPost({
   type,
+  id,
 }: {
-  type: PostType | null;
+  type: PostType;
+  id: string;
 }): JSX.Element {
   const [postFound, setPostFound] = useState(false);
-  const [postHistories, setPostHistories] = useState<Post[] | Course[]>([]);
-  const [history, setHistory] = useState<Post | Course>();
-  const [, setPost] = useState<Post | Course>();
-  const [, setPath] = useState<string>('');
+  const [postHistories, setPostHistories] = useState<Post[]>([]);
+  const [history, setHistory] = useState<Post>();
+  const [, setPost] = useState<Post>();
   const [tab, setTab] = useState<TabType>(TabType.edit);
   const [saving, setSaving] = useState<boolean>(false);
-  const [updateContent$] = useState<Subject<Post | Course>>(
-    new Subject<Post | Course>()
-  );
+  const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
   const [preview, setPreview] = useState<string>('');
   const [showHistory, setShowHistory] = useState(false);
 
   // Sets initial state
   useEffect(() => {
-    const path = `/posts/${type}`;
-    setPath(path);
     setTab(TabType.edit);
     // Set initial post to created
-    const postSubscribe = postDataObservable(path)
+    const postSubscribe = postDataObservable(`posts/${id}`)
       .pipe(
         switchMap((post) => {
           setPostFound(true);
@@ -80,24 +76,6 @@ export default function EditPost({
             let excerpt = dbHistory.excerpt || '';
             let slug = dbHistory.slug || '';
 
-            const fm = matter(dbHistory.content || '');
-            if (fm && fm.data) {
-              if (fm.data.title) {
-                title = fm.data.title;
-              }
-              if (fm.data.excerpt) {
-                excerpt = fm.data.excerpt;
-              }
-              if (fm.data.slug) {
-                slug = fm.data.slug;
-              }
-            }
-            const content = matter.stringify(fm.content, {
-              title,
-              excerpt,
-              slug,
-            });
-            dbHistory.content = content;
             setHistory(dbHistory);
           }
         }
@@ -126,7 +104,7 @@ export default function EditPost({
       postSubscribe.unsubscribe();
       contentSubscribe.unsubscribe();
     };
-  }, [type]);
+  }, [type, id]);
 
   useEffect(() => {
     if (tab === 'preview') {
@@ -138,21 +116,7 @@ export default function EditPost({
 
   function handleChange(value: string) {
     const content = value;
-    try {
-      const fm = matter(content);
-      if (history) {
-        if (fm.data.title) {
-          history.title = fm.data.title;
-        }
-        if (fm.data.excerpt) {
-          history.excerpt = fm.data.excerpt;
-        }
-        if (fm.data.slug) {
-          history.slug = fm.data.slug;
-        }
-      }
-    } catch (e) {}
-    const update: Post | Course = { ...history, content } as Post | Course;
+    const update: Post = { ...history, content } as Post;
     setHistory(update);
     updateContent$.next({ ...update, historyId: history?.id });
   }
@@ -168,7 +132,7 @@ export default function EditPost({
   function onTab() {
     switch (tab) {
       case TabType.sections:
-        return <CourseSections historyInput={history as Course} />;
+        return <CourseSections historyInput={history as Post} />;
       case TabType.preview:
         return (
           <div
@@ -194,9 +158,9 @@ export default function EditPost({
 
   return (
     <div className="w-full">
-      <nav className="flex w-full h-12">
+      <nav className="flex w-full h-12 bg-secondary-500">
         <button
-          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none  ${
             tab == TabType.edit ? 'border-b-2' : ''
           }`}
           onClick={() => selectTab(TabType.edit)}
@@ -204,7 +168,7 @@ export default function EditPost({
           EDIT
         </button>
         <button
-          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
             tab == TabType.sections ? 'border-b-2' : ''
           }`}
           onClick={() => selectTab(TabType.sections)}
@@ -212,7 +176,7 @@ export default function EditPost({
           SECTIONS
         </button>
         <button
-          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
             tab == TabType.preview ? 'border-b-2' : ''
           }`}
           onClick={() => selectTab(TabType.preview)}
@@ -220,7 +184,7 @@ export default function EditPost({
           MDX PREVIEW
         </button>
         <button
-          className={`block px-6 font-medium border-blue-500 text-primary-900 hover:text-secondary-500 focus:outline-none ${
+          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
             tab == TabType.history ? 'border-b-2' : ''
           }`}
           onClick={() => selectTab(TabType.history)}
