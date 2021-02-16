@@ -1,4 +1,8 @@
-export default function Community({ className = 'block w-8 h-8' }) {
+export default function Community({
+  className = 'block w-8 h-8',
+}: {
+  className?: string;
+}) {
   return (
     <svg
       viewBox="0 0 35 35"

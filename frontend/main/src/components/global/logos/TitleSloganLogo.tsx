@@ -10,6 +10,13 @@ export default function TitleSloganLogo({
   sloganFill = 'white',
   ajClassName = 'block w-16 h-16',
   ajFaceStandard = true,
+}: {
+  titleClassName?: string;
+  titleFill?: string;
+  sloganClassName?: string;
+  sloganFill?: string;
+  ajClassName?: string;
+  ajFaceStandard?: boolean;
 }) {
   return (
     <div className="flex content-center">

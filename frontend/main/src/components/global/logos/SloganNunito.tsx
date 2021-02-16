@@ -1,6 +1,9 @@
 export default function TitleNunito({
   className = 'block w-12 h-12',
   fill = '#FFF',
+}: {
+  className?: string;
+  fill?: string;
 }) {
   return (
     <svg className={className} viewBox="0 0 372 56" fill="none">

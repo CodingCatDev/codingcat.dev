@@ -1,4 +1,8 @@
-export default function AJPrimary({ className = 'block w-12 h-12' }) {
+export default function AJPrimary({
+  className = 'block w-12 h-12',
+}: {
+  className?: string;
+}) {
   return (
     <svg
       className={className}
