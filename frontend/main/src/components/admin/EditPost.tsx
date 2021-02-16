@@ -165,12 +165,14 @@ export default function EditPost({
     switch (tab) {
       case TabType.edit:
         return (
-          <div className="max-w-5xl">
+          <>
             {/* Top Inputs */}
-            <section className="flex py-2">
+            <section className="flex flex-wrap space-y-2">
               <div className="flex flex-col pr-2">
                 <div className="flex">
-                  <p className="mr-2 uppercase text-primary-900">Title: </p>
+                  <p className="flex items-center mr-2 font-bold uppercase text-primary-900">
+                    Title:{' '}
+                  </p>
                   <input
                     type="text"
                     placeholder="Title"
@@ -179,7 +181,9 @@ export default function EditPost({
                   ></input>
                 </div>
                 <div className="flex mt-2">
-                  <p className="mr-2 uppercase text-primary-900">Slug: </p>
+                  <p className="flex items-center mr-2 font-bold uppercase text-primary-900">
+                    Slug:{' '}
+                  </p>
                   <input
                     type="text"
                     placeholder="type/slug"
@@ -190,7 +194,9 @@ export default function EditPost({
               </div>
               <div className="flex flex-grow">
                 <div className="flex w-full">
-                  <p className="mr-2 uppercase text-primary-900">Excerpt: </p>
+                  <p className="flex items-center mr-2 font-bold uppercase text-primary-900">
+                    Excerpt:{' '}
+                  </p>
                   <textarea
                     placeholder="Details about Post"
                     className="resize-none"
@@ -207,7 +213,7 @@ export default function EditPost({
                 sideBySideFullscreen: false,
               }}
             />
-          </div>
+          </>
         );
       case TabType.media:
         return (
@@ -256,10 +262,10 @@ export default function EditPost({
   return (
     <>
       {history && Object.keys(history).length > 0 ? (
-        <div className="w-full">
-          <nav className="flex w-full h-12 bg-secondary-500">
+        <div className="w-full ">
+          <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-500">
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none  ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-white focus:outline-none  ${
                 tab == TabType.edit
                   ? 'border-b-4 border-primary-900'
                   : 'border-b-4 border-secondary-500'
@@ -269,7 +275,7 @@ export default function EditPost({
               EDIT
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none  ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-white focus:outline-none  ${
                 tab == TabType.media
                   ? 'border-b-4 border-primary-900'
                   : 'border-b-4 border-secondary-500'
@@ -279,7 +285,7 @@ export default function EditPost({
               MEDIA
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-white focus:outline-none ${
                 tab == TabType.preview
                   ? 'border-b-4 border-primary-900'
                   : 'border-b-4 border-secondary-500'
@@ -289,7 +295,7 @@ export default function EditPost({
               MDX PREVIEW
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-white focus:outline-none ${
                 tab == TabType.sections
                   ? 'border-b-4 border-primary-900'
                   : 'border-b-4 border-secondary-500'
@@ -299,7 +305,7 @@ export default function EditPost({
               SECTIONS
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-white focus:outline-none ${
                 tab == TabType.history
                   ? 'border-b-4 border-primary-900'
                   : 'border-b-4 border-secondary-500'
@@ -309,18 +315,18 @@ export default function EditPost({
               HISTORY
             </button>
           </nav>
-          <div className="p-2">
+          <div className="p-4 ">
             {/* Tab Section */}
-            <div className="grid grid-flow-row gap-2 sm:grid-flow-col">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-sidebar">
               {/* Main Input */}
-              <section className="">{onTab()}</section>
+              <section className="grid grid-cols-1 gap-2">{onTab()}</section>
               {/* Side Input */}
               <aside
                 className={`pt-2 ${tab === TabType.edit ? 'block' : 'hidden'}`}
               >
                 <PublishModal history={history} setSaving={setSaving} />
                 <div className="flex flex-wrap content-center">
-                  <div className="flex content-center h-full">
+                  <div className="flex content-center">
                     <p className="flex">saved: </p>
                     <TimeAgo date={history?.updatedAt?.toDate() as Date} />
                   </div>

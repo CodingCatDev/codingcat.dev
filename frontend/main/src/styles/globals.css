@@ -26,6 +26,25 @@
     font-display: swap;
   }
 
+  :root {
+    scrollbar-width: thin;
+    scrollbar-color: #bc2261 #5e1286;
+  }
+  :root::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  :root::-webkit-scrollbar-track {
+    background: #5e1286;
+  }
+
+  :root::-webkit-scrollbar-thumb {
+    background-color: #bc2261;
+  }
+  :root::-webkit-scrollbar-thumb:hover {
+    background-color: #fd2087;
+  }
+
   a {
     @apply transition-colors text-primary-900 hover:text-secondary-600;
   }
@@ -36,27 +55,6 @@
 
   body {
     @apply box-border text-primary-900 bg-primary-900 dark:bg-primary-900;
-  }
-
-  @media (min-width: 768px) {
-    .scrollbar {
-      scrollbar-width: thin;
-      scrollbar-color: #d11663 #bc2261;
-    }
-    .scrollbar::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .scrollbar::-webkit-scrollbar-track {
-      background: #5e1286;
-    }
-
-    .scrollbar::-webkit-scrollbar-thumb {
-      background-color: #bc2261;
-    }
-    .scrollbar::-webkit-scrollbar-thumb:hover {
-      background-color: #fd2087;
-    }
   }
 
   footer {
