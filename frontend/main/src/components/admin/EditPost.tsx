@@ -29,6 +29,7 @@ import PublishModal from '@/components/admin/PublishModal';
 
 enum TabType {
   edit = 'edit',
+  media = 'media',
   sections = 'sections',
   preview = 'preview',
   history = 'history',
@@ -141,6 +142,31 @@ export default function EditPost({
             }}
           />
         );
+      case TabType.media:
+        return (
+          <>
+            {history && (
+              <>
+                <VideoModal post={history} />
+                <CloudinaryUpload
+                  setHistory={setHistory}
+                  history={history}
+                  type={MediaType.video}
+                />
+                <VideoFormModal setHistory={setHistory} post={history} />
+                {history.coverPhoto ? (
+                  <ImageModal post={history} />
+                ) : (
+                  <CloudinaryUpload
+                    setHistory={setHistory}
+                    history={history}
+                    type={MediaType.photo}
+                  />
+                )}
+              </>
+            )}
+          </>
+        );
       case TabType.sections:
         return <CourseSections historyInput={history as Post} />;
       case TabType.preview:
@@ -156,331 +182,148 @@ export default function EditPost({
       case TabType.history:
         return <PostHistories postHistories={postHistories} />;
       default:
-        return <p>This Tab is not defined yet.</p>;
+        return <p>This tab is not defined yet.</p>;
     }
   }
 
   return (
-    <div className="w-full">
-      <nav className="flex w-full h-12 rounded-t-lg bg-secondary-500">
-        <button
-          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none  ${
-            tab == TabType.edit ? 'border-b-2' : ''
-          }`}
-          onClick={() => selectTab(TabType.edit)}
-        >
-          EDIT
-        </button>
-        <button
-          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
-            tab == TabType.sections ? 'border-b-2' : ''
-          }`}
-          onClick={() => selectTab(TabType.sections)}
-        >
-          SECTIONS
-        </button>
-        <button
-          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
-            tab == TabType.preview ? 'border-b-2' : ''
-          }`}
-          onClick={() => selectTab(TabType.preview)}
-        >
-          MDX PREVIEW
-        </button>
-        <button
-          className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
-            tab == TabType.history ? 'border-b-2' : ''
-          }`}
-          onClick={() => selectTab(TabType.history)}
-        >
-          HISTORY
-        </button>
-      </nav>
-      <section>{onTab()}</section>
-      {/* <Grid
-        container
-        direction="row"
-        justifyContent="center"
-        alignContent="flex-start"
-        style={{ paddingTop: '0.25rem' }}
-      >
-        {' '}
-        {history && Object.keys(history).length > 0 ? (
-          <>
-            <Grid
-              container
-              item
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="center"
+    <>
+      {history && Object.keys(history).length > 0 ? (
+        <div className="w-full">
+          <nav className="flex w-full h-12 rounded-t-lg bg-secondary-500">
+            <button
+              className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none  ${
+                tab == TabType.edit ? 'border-b-2' : ''
+              }`}
+              onClick={() => selectTab(TabType.edit)}
             >
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  bgcolor: 'background.paper',
-                  justifyContent: 'space-between',
-                }}
-                style={{ width: '100%' }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  <h1>{history.title}</h1>
-                </Box>
-                <Box
-                  sx={{
-                    display: `${showHistory ? 'none' : 'flex'}`,
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    justifyContent: 'center',
-                    flexGrow: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      marginRight: '0.5rem',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                      alignContent: 'center',
-                    }}
-                  >
-                    {history.coverVideo ? (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'center',
-                          minWidth: '300px',
-                        }}
-                      >
-                        <VideoModal post={history} />
-                      </Box>
-                    ) : (
-                      <Box
-                        sx={{
-                          display: 'grid',
-                          gap: '0.5rem',
-                        }}
-                      >
-                        <CloudinaryUpload
-                          setHistory={setHistory}
-                          history={history}
-                          type={MediaType.video}
-                        />
-                        <VideoFormModal
-                          setHistory={setHistory}
-                          post={history}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                  <Box
-                    sx={{
-                      marginLeft: '0.5rem',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                      alignContent: 'center',
-                    }}
-                  >
-                    {history.coverPhoto ? (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'center',
-                          minWidth: '300px',
-                        }}
-                      >
-                        <ImageModal post={history} />
-                      </Box>
-                    ) : (
-                      <Box
-                        sx={{
-                          display: history.coverPhoto ? 'none' : 'flex',
-                        }}
-                      >
-                        <CloudinaryUpload
-                          setHistory={setHistory}
-                          history={history}
-                          type={MediaType.photo}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                </Box>
-                <div>
-                  <Box sx={{ display: `${showHistory ? 'block' : 'none'}` }}>
-                    <Button
-                      variant="contained"
-                      onClick={() => toggleShowHistory()}
-                    >
-                      Back
-                    </Button>
-                  </Box>
-                </div>
-                <Box
-                  sx={{
-                    display: `${showHistory ? 'none' : 'flex'}`,
-                    flexDirection: 'column',
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      m: 1,
-                    }}
-                  >
-                    <span
-                      className={`${classes.status} ${
-                        history.status === PostStatus.published
-                          ? classes.statusPublished
-                          : classes.statusDraft
-                      }`}
-                    >
-                      {history.status}
-                    </span>
-
-                    <span
-                      className={classes.link}
-                      onClick={() => toggleShowHistory()}
-                    >
-                      {history?.id}
-                    </span>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      m: 1,
-                      flexGrow: 1,
-                    }}
-                  >
-                    <span>
-                      <TimeAgo date={history?.updatedAt?.toDate() as Date} />
-                    </span>
-                    {saving ? (
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="w-8 h-8"
-                          style={{ height: '2rem', width: '2rem' }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                          />
-                        </svg>
-                      </span>
-                    ) : (
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="w-8 h-8 text-green-500"
-                          style={{ height: '2rem', width: '2rem' }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      </span>
-                    )}
-                    <Box sx={{ display: `${showHistory ? 'none' : 'block'}` }}>
-                      <PublishModal history={history} setSaving={setSaving} />
-                    </Box>
-                  </Box>
-                </Box>
-              </Box>
-            </Grid>
-            <Grid
-              container
-              item
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="center"
+              EDIT
+            </button>
+            <button
+              className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none  ${
+                tab == TabType.media ? 'border-b-2' : ''
+              }`}
+              onClick={() => selectTab(TabType.media)}
             >
-              {showHistory ? (
-                <PostHistories postHistories={postHistories} />
+              MEDIA
+            </button>
+            <button
+              className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
+                tab == TabType.preview ? 'border-b-2' : ''
+              }`}
+              onClick={() => selectTab(TabType.preview)}
+            >
+              MDX PREVIEW
+            </button>
+            <button
+              className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
+                tab == TabType.sections ? 'border-b-2' : ''
+              }`}
+              onClick={() => selectTab(TabType.sections)}
+            >
+              SECTIONS
+            </button>
+            <button
+              className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none ${
+                tab == TabType.history ? 'border-b-2' : ''
+              }`}
+              onClick={() => selectTab(TabType.history)}
+            >
+              HISTORY
+            </button>
+          </nav>
+          {/* Top Inputs */}
+          <section className="flex py-2">
+            <div className="flex flex-col flex-grow pr-2">
+              <div className="flex">
+                <p className="mr-2 uppercase text-primary-900">Title: </p>
+                <input type="text" placeholder="Title"></input>
+              </div>
+              <div className="flex mt-2">
+                <p className="mr-2 uppercase text-primary-900">Slug: </p>
+                <input type="text" placeholder="type/slug"></input>
+              </div>
+            </div>
+            <div className="flex">
+              <div className="flex">
+                <p className="mr-2 uppercase text-primary-900">Excerpt: </p>
+                <textarea
+                  placeholder="Details about Post"
+                  className="resize-none"
+                ></textarea>
+              </div>
+            </div>
+            <div className="flex">
+              <TimeAgo date={history?.updatedAt?.toDate() as Date} />
+              {saving ? (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-8 h-8"
+                    style={{ height: '2rem', width: '2rem' }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                </span>
               ) : (
-                <>
-                  <Box sx={{ width: '100%' }}>
-                    <AppBar position="static" color="default">
-                      <Tabs
-                        value={tabIndex}
-                        indicatorColor="secondary"
-                        textColor="inherit"
-                        variant="fullWidth"
-                        aria-label="Editor for Post with Preview"
-                        className={classes.tabs}
-                      >
-                        <Tab
-                          label="Edit"
-                          onClick={() => selectTab(TabType.edit, 0)}
-                        />
-                        <Tab
-                          label="Sections"
-                          onClick={() => selectTab(TabType.sections, 1)}
-                          style={{
-                            display: `${
-                              type === PostType.course ? 'block' : 'none'
-                            }`,
-                          }}
-                        />
-                        <Tab
-                          label="MDX Preview"
-                          onClick={() => selectTab(TabType.preview, 2)}
-                        />
-                      </Tabs>
-                    </AppBar>
-                    <Box sx={{ padding: '1rem' }}>{onTab()}</Box>
-                  </Box>
-                </>
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-8 h-8 text-green-500"
+                    style={{ height: '2rem', width: '2rem' }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </span>
               )}
-            </Grid>
-          </>
-        ) : (
-          <div className="grid w-full h-full grid-cols-1 place-content-center place-items-center">
-            {postFound ? (
-              <div className="pb-8">
-                Creating your first history of this post...
-              </div>
-            ) : (
-              <div className="pb-8">
-                It appears you have found a page without data.
-              </div>
-            )}
-            <Link href={`/admin/${router.query.type}`}>
-              <a>
-                <button className="btn-primary">
-                  {`Return to ${router.query.type} list.`}
-                </button>
-              </a>
-            </Link>
-          </div>
-        )}
-      </Grid>  */}
-    </div>
+            </div>
+          </section>
+
+          {/* Tab Section */}
+          <section>{onTab()}</section>
+
+          {/* Side Input */}
+
+          <section>
+            <PublishModal history={history} setSaving={setSaving} />
+          </section>
+        </div>
+      ) : (
+        <div className="grid w-full h-full grid-cols-1 place-content-center place-items-center">
+          {postFound ? (
+            <div className="pb-8">
+              Creating your first history of this post...
+            </div>
+          ) : (
+            <div className="pb-8">
+              It appears you have found a page without data.
+            </div>
+          )}
+          <Link href={`/admin/${type}`}>
+            <a>
+              <button className="btn-primary">
+                {`Return to ${type} list.`}
+              </button>
+            </a>
+          </Link>
+        </div>
+      )}
+    </>
   );
 }

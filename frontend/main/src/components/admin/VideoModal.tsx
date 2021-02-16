@@ -1,17 +1,4 @@
 import { useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import MovieIcon from '@material-ui/icons/Movie';
-import Box from '@material-ui/core/Box';
-
-import { Theme as AugmentedTheme } from '@material-ui/core';
 import { MediaSource, Post } from '@/models/post.model';
 
 import { config } from '@/config/cloudinary';
@@ -26,56 +13,6 @@ import { take } from 'rxjs/operators';
 
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
-
-const styles = (theme: AugmentedTheme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: 'flex',
-  },
-  title: {
-    wordBreak: 'break-all',
-    flexGrow: 1,
-  },
-  closeButton: {
-    color: theme.palette.grey[500],
-  },
-});
-
-const DialogTitle = withStyles(styles as any)((props: any) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6" className={classes.title}>
-        {children}
-      </Typography>
-      <div>
-        {onClose ? (
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </div>
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
 
 export default function ImageModal({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
@@ -142,22 +79,25 @@ export default function ImageModal({ post }: { post: Post }) {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleClickOpen}>
+      <button className="btn-primary" onClick={handleClickOpen}>
         View Video
-        <MovieIcon />
-      </Button>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        fullWidth={true}
-        maxWidth="xl"
-        fullScreen
-      >
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          {post.coverVideo?.url}
-        </DialogTitle>
-        <DialogContent dividers style={{ height: '100%', width: '100%' }}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+          />
+        </svg>
+      </button>
+      <section className={`${open ? 'block' : 'hidden'}`}>
+        <p>{post.coverVideo?.url}</p>
+        <div style={{ height: '100%', width: '100%' }}>
           {post.coverVideo?.source === MediaSource.cloudinary ? (
             <>
               {cookieToken !== '' ? (
@@ -203,17 +143,16 @@ export default function ImageModal({ post }: { post: Post }) {
               )}
             </>
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button
+        </div>
+        <div>
+          <button
             onClick={() => onVideoDelete(post)}
-            variant="contained"
-            color="secondary"
+            className="btn-primary bg-secondary-500"
           >
             Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

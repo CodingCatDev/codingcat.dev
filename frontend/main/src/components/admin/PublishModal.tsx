@@ -1,77 +1,10 @@
 import { useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import MovieIcon from '@material-ui/icons/Movie';
-import Box from '@material-ui/core/Box';
-
-import { Theme as AugmentedTheme } from '@material-ui/core';
 import { Post, PostStatus } from '@/models/post.model';
-
-import TextField from '@material-ui/core/TextField';
-import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
-import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
-import DateTimePicker from '@material-ui/lab/DateTimePicker';
-
 import { postDataObservable, postHistoryPublish } from '@/services/api';
 import firebase from 'firebase/app';
 import { take } from 'rxjs/operators';
 
-const styles = (theme: AugmentedTheme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: 'flex',
-  },
-  title: {
-    wordBreak: 'break-all',
-    flexGrow: 1,
-  },
-  closeButton: {
-    color: theme.palette.grey[500],
-  },
-});
-
-const DialogTitle = withStyles(styles as any)((props: any) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6" className={classes.title}>
-        {children}
-      </Typography>
-      <div>
-        {onClose ? (
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </div>
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
+import { Calendar } from 'primereact/calendar';
 
 export default function PublishModal({
   history,
@@ -127,7 +60,7 @@ export default function PublishModal({
 
   return (
     <div>
-      <Button variant="contained" onClick={handleClickOpen}>
+      <button className="btn-primary" onClick={handleClickOpen}>
         Publish
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -147,42 +80,30 @@ export default function PublishModal({
             d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
           />
         </svg>
-      </Button>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Select Post Date/Time
-        </DialogTitle>
-        <DialogContent dividers style={{ height: '100%', width: '100%' }}>
+      </button>
+      <section className={`${open ? 'block' : 'hidden'}`}>
+        <p>Select Post Date/Time</p>
+        <div style={{ height: '100%', width: '100%' }}>
           {selectedDate ? (
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateTimePicker
-                renderInput={(props) => <TextField {...props} />}
-                label="DateTimePicker"
-                value={selectedDate}
-                onChange={handleDateChange}
-              />
-            </LocalizationProvider>
+            <Calendar
+              showTime
+              hourFormat="24"
+              value={selectedDate}
+              onChange={(e) => handleDateChange(e.value as Date)}
+            ></Calendar>
           ) : (
-            <Typography>Checking Post for publishedAt...</Typography>
+            <p>Checking Post for publishedAt...</p>
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="secondary">
+        </div>
+        <div>
+          <button onClick={() => setOpen(false)} color="secondary">
             Cancel
-          </Button>
-          <Button
-            onClick={() => onPublish()}
-            variant="contained"
-            color="primary"
-          >
+          </button>
+          <button onClick={() => onPublish()} className="btn-primary">
             Publish
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
