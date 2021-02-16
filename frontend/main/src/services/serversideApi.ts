@@ -65,6 +65,11 @@ export async function postBySlugService(
   return posts as Post[];
 }
 
+export async function postById(id: string): Promise<Post | null> {
+  const postDoc = await admin.firestore().doc(`posts/${id}`).get();
+  return cleanTimestamp(smallPostPayload(postDoc)) as Post;
+}
+
 /* Site Configuration */
 export async function getSite(): Promise<Site | null> {
   const siteDocs = await admin.firestore().collection('site').get();

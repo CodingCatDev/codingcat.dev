@@ -131,6 +131,16 @@ export default function EditPost({
 
   function onTab() {
     switch (tab) {
+      case TabType.edit:
+        return (
+          <SimpleMDE
+            onChange={handleChange}
+            value={history ? history.content : ''}
+            options={{
+              sideBySideFullscreen: false,
+            }}
+          />
+        );
       case TabType.sections:
         return <CourseSections historyInput={history as Post} />;
       case TabType.preview:
@@ -143,22 +153,16 @@ export default function EditPost({
             </article>
           </div>
         );
+      case TabType.history:
+        return <PostHistories postHistories={postHistories} />;
       default:
-        return (
-          <SimpleMDE
-            onChange={handleChange}
-            value={history ? history.content : ''}
-            options={{
-              sideBySideFullscreen: false,
-            }}
-          />
-        );
+        return <p>This Tab is not defined yet.</p>;
     }
   }
 
   return (
     <div className="w-full">
-      <nav className="flex w-full h-12 bg-secondary-500">
+      <nav className="flex w-full h-12 rounded-t-lg bg-secondary-500">
         <button
           className={`block px-6 font-medium  text-primary-900 hover:text-white focus:outline-none  ${
             tab == TabType.edit ? 'border-b-2' : ''

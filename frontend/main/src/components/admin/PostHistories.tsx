@@ -124,7 +124,7 @@ function PostHistories({ postHistories }: { postHistories: Post[] }) {
       <DataTable
         value={histories}
         scrollable
-        scrollHeight="100%"
+        scrollHeight="800px"
         className="p-datatable-sm"
         expandedRows={expandedRows}
         onRowToggle={(e) => setExpandedRows(e.data as any)}
