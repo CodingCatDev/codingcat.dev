@@ -50,10 +50,7 @@ export default function EditPost({
   const [saving, setSaving] = useState<boolean>(false);
   const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
   const [preview, setPreview] = useState<string>('');
-  const [showHistory, setShowHistory] = useState(false);
-  const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [excerpt, setExcerpt] = useState('');
+  const [tag, setTag] = useState('');
 
   // Sets initial state
   useEffect(() => {
@@ -134,8 +131,30 @@ export default function EditPost({
     updateContent$.next({ ...update, historyId: history?.id });
   }
 
-  function toggleShowHistory() {
-    setShowHistory(!showHistory);
+  function addTag(tag: string) {
+    if (!tag) {
+      return;
+    }
+    if (history?.tag) {
+      history.tag.push(tag);
+    } else if (history && !history?.tag) {
+      history.tag = [tag];
+    }
+    const update: Post = { ...history } as Post;
+    setHistory(update);
+    setTag('');
+    updateContent$.next({ ...update, historyId: history?.id });
+  }
+
+  function removeTag(index: number) {
+    if (history?.tag) {
+      history.tag = history.tag
+        .slice(0, index)
+        .concat(history.tag.slice(index + 1, history.tag.length));
+    }
+    const update: Post = { ...history } as Post;
+    setHistory(update);
+    updateContent$.next({ ...update, historyId: history?.id });
   }
 
   function selectTab(tab: TabType) {
@@ -146,7 +165,7 @@ export default function EditPost({
     switch (tab) {
       case TabType.edit:
         return (
-          <>
+          <div className="max-w-5xl">
             {/* Top Inputs */}
             <section className="flex py-2">
               <div className="flex flex-col pr-2">
@@ -188,7 +207,7 @@ export default function EditPost({
                 sideBySideFullscreen: false,
               }}
             />
-          </>
+          </div>
         );
       case TabType.media:
         return (
@@ -292,14 +311,12 @@ export default function EditPost({
           </nav>
           <div className="p-2">
             {/* Tab Section */}
-            <div className="grid grid-flow-row sm:grid-flow-col">
+            <div className="grid grid-flow-row gap-2 sm:grid-flow-col">
               {/* Main Input */}
               <section className="">{onTab()}</section>
               {/* Side Input */}
               <aside
-                className={`pt-2 pl-2 ${
-                  tab === TabType.edit ? 'block' : 'hidden'
-                }`}
+                className={`pt-2 ${tab === TabType.edit ? 'block' : 'hidden'}`}
               >
                 <PublishModal history={history} setSaving={setSaving} />
                 <div className="flex flex-wrap content-center">
@@ -380,17 +397,44 @@ export default function EditPost({
                   <div className="pl-2 text-2xl text-white bg-primary-900">
                     Tags
                   </div>
-                  <div className=" bg-basics-50">
+                  <div className="bg-basics-50">
                     <div className="flex flex-wrap p-2">
-                      <input type="text" className="w-3/4" />
-                      <button className="flex-grow ml-1 border-2 border-primary-900 rounded-xl hover:text-secondary-500 hover:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent">
+                      <input
+                        type="text"
+                        className="w-3/4"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
+                      />
+                      <button
+                        className="flex-grow ml-1 border-2 border-primary-900 rounded-xl hover:text-secondary-500 hover:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent"
+                        onClick={(e) => addTag(tag)}
+                      >
                         Add
                       </button>
                     </div>
-                    <div className="flex flex-wrap max-w-xs pl-2">
-                      {history.tag?.map((t) => (
-                        <div className="px-2 py-1 m-1 text-white rounded-full bg-secondary-500">
-                          {t}
+                    <div className="flex flex-wrap pl-2">
+                      {history.tag?.map((t, i) => (
+                        <div
+                          className="flex px-2 py-1 m-1 text-white rounded-full bg-secondary-500"
+                          key={i}
+                        >
+                          <p>{t}</p>
+                          <button onClick={() => removeTag(i)}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              className="w-4"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
                         </div>
                       ))}
                     </div>
