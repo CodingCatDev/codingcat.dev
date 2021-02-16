@@ -11,10 +11,6 @@ export const PostHeader = ({ post }: { post?: Post }): JSX.Element => {
             </p>
             <p>{post.id}</p>
           </div>
-          <div className="grid grid-flow-col gap-1 place-items-center">
-            <p className="text-xl font-bold">{`SLUG: `.toUpperCase()}</p>
-            <p>{post.slug}</p>
-          </div>
         </>
       )}
     </div>

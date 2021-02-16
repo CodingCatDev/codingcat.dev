@@ -60,8 +60,11 @@ export default function PublishModal({
 
   return (
     <div>
-      <button className="btn-primary" onClick={handleClickOpen}>
-        Publish
+      <button
+        className="flex justify-center w-full btn-primary"
+        onClick={handleClickOpen}
+      >
+        <p>Publish</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
