@@ -1,8 +1,18 @@
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
-
 # CodingCatDev
 
 This is the main repo for https://codingcat.dev
+
+## Status
+### Dev
+![dev-frontend-main-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/dev-frontend-main-deploy/badge.svg)
+![dev-frontend-admin-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/dev-frontend-admin-deploy/badge.svg)
+
+### Stage
+![stage-frontend-main-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/stage-frontend-main-deploy/badge.svg)
+![stage-frontend-admin-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/stage-frontend-admin-deploy/badge.svg)
+### Prod (Main)
+![main-frontend-main-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/main-frontend-main-deploy/badge.svg)
+![main-frontend-admin-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/main-frontend-admin-deploy/badge.svg)
 
 ## Setup
 
@@ -76,3 +86,5 @@ To run all repos in frontend you can run either
 
 `npm run dev` for all the dev builds and live reload
 `npm run start` for all production builds (builds and runs local server)
+
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)

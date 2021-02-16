@@ -13,29 +13,23 @@ export default function AppMenu({
   return (
     <div
       className={`${
-        overlayMenuActive ? 'block' : 'hidden'
-      } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-70`}
+        overlayMenuActive
+          ? 'fixed inset-0 bg-primary-100 bg-opacity-70'
+          : 'hidden'
+      }`}
     >
-      {/* <div className="absolute inset-0 overflow-hidden"> */}
       <OutsideClick toggle={setOverlayMenuActive} value={false}>
         <section
-          className="absolute inset-y-0 right-0 flex max-w-full"
+          className="absolute inset-y-0 right-0 grid grid-cols-1"
           aria-labelledby="slide-over-heading"
         >
-          {/* <div className="w-screen max-w-md">
-                <div className="grid h-full shadow-xl bg-basics-800">
-                  <div className="flex flex-col flex-1 w-full h-0 bg-secondary-600 dark:bg-secondary-600"> */}
-          {/* <div className="flex flex-col flex-1 pb-4 overflow-y-auto">
-                      <div className="flex items-center justify-between h-16 mx-4">
-                        <div className="flex items-center flex-shrink-0"> */}
-          <section className="grid h-full shadow-xl grid-rows-sidebar bg-primary-900 dark:bg-primary-900">
-            <section className="flex items-center p-4 space-x-20 space-between bg-primary-800 dark:bg-primary-800">
+          <section className="grid h-full grid-cols-1 shadow-xl grid-rows-sidebar bg-primary-900 dark:bg-primary-900">
+            <section className="flex items-center gap-4 p-4 space-between bg-primary-800 dark:bg-primary-800">
               <ActiveLink href="/">
                 <a>
                   <TitleLogo ajFaceStandard={false} />
                 </a>
               </ActiveLink>
-              {/* </div> */}
 
               <button
                 className="inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
@@ -77,7 +71,6 @@ export default function AppMenu({
                 )}
               </button>
             </section>
-            {/* </div> */}
 
             <nav
               className="grid content-start h-full gap-4 p-4 bg-primary-900 dark:bg-primary-900"
@@ -99,8 +92,7 @@ export default function AppMenu({
                 <a className="links-secondary">Community</a>
               </ActiveLink>
             </nav>
-            {/* </div> */}
-            <div className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">
+            <section className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">
               <a href="#" className="links-secondary">
                 <div className="flex items-center">
                   <div>
@@ -120,10 +112,7 @@ export default function AppMenu({
                   </div>
                 </div>
               </a>
-            </div>
-            {/* </div> */}
-            {/* </div>
-              </div> */}
+            </section>
           </section>
         </section>
       </OutsideClick>

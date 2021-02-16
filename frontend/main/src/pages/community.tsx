@@ -1,20 +1,47 @@
 import Head from 'next/head';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
-import { Post } from '@/models/post.model';
 
-export default function Community({ posts }: { posts: Post[] }) {
+import { getSite, postsService } from '@/services/serversideApi';
+import { Post, PostType } from '@/models/post.model';
+import { Site } from '@/models/site.model';
+
+export default function Community({
+  site,
+  posts,
+}: {
+  site: Site | null;
+  posts: Post[];
+}): JSX.Element {
   return (
-    <Layout>
+    <Layout site={site}>
       <Head>
         <title>Community | CodingCatDev</title>
       </Head>
-
-      <main className="grid gap-4 p-4 sm:gap-10 grid-cols-fit sm:p-10">
-        <PostsCards posts={posts} />
-      </main>
-
+      {/* <PostsCards posts={posts} /> */}
+      Coming Soon...
       <footer></footer>
     </Layout>
   );
+}
+
+export async function getStaticProps(): Promise<{
+  props: {
+    site: Site | null;
+    posts: Post[];
+  };
+  revalidate: number;
+}> {
+  const site = await getSite();
+  const posts = await postsService(PostType.group);
+  return {
+    props: {
+      site,
+      posts,
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every second
+    revalidate: 1, // In seconds
+  };
 }

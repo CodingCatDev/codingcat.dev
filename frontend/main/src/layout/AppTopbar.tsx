@@ -8,7 +8,7 @@ import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import NavLinks from '@/layout/NavLinks';
 import SearchModal from '@/components/algolia/SearchModal';
-import AvatarMenu from '@/components/User/AvatarMenu';
+import AvatarMenu from '@/components/user/AvatarMenu';
 
 export const AppTopbar = (props: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
@@ -19,7 +19,7 @@ export const AppTopbar = (props: {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <header className="flex justify-between w-full h-20 p-4 md:px-0 md:mx-auto">
+    <header className="flex justify-between w-full h-20 p-4 lg:px-0 lg:mx-auto lg:w-80 lg:max-w-8xl">
       <Link href="/">
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">

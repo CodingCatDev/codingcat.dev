@@ -1,21 +1,26 @@
 import { useRouter } from 'next/router';
 
 import {
+  getSite,
   postBySlugService,
   postsRecentService,
   postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
+import matter from 'gray-matter';
 import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
+import { Site } from '@/models/site.model';
 
 export default function Post({
+  site,
   post,
   source,
   recentPosts,
 }: {
+  site: Site | null;
   post: PostModel;
   recentPosts: { [key: string]: PostModel[] };
   source: Source | null;
@@ -28,6 +33,7 @@ export default function Post({
   return (
     <PostLayout
       router={router}
+      site={site}
       post={post}
       source={source}
       recentPosts={recentPosts}
@@ -40,7 +46,7 @@ export async function getStaticPaths(): Promise<{
   fallback: boolean;
 }> {
   const paths: { params: { type: PostType; slug: string } }[] = [];
-  [PostType.post, PostType.tutorial, PostType.podcast].forEach(
+  [PostType.post, PostType.tutorial, PostType.podcast, PostType.page].forEach(
     async (postType) => {
       const docData = await postsService(postType);
       for (const doc of docData) {
@@ -66,6 +72,7 @@ export async function getStaticProps({
 }): Promise<
   | {
       props: {
+        site: Site | null;
         post: PostModel | null;
         recentPosts: { [key: string]: PostModel[] };
         source: Source | null;
@@ -74,19 +81,23 @@ export async function getStaticProps({
     }
   | { redirect: { destination: string; permanent: boolean } }
 > {
-  if (params.permalink.length !== 2) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
+  const site = await getSite();
+
+  let type = params.permalink[0] as PostType;
+  let slug = params.permalink[1] as string;
+
+  // Make assumption that this should be a base page.
+  if (type && !slug) {
+    slug = type;
+    type = PostType.page;
   }
 
-  const type = params.permalink[0] as PostType;
-  const slug = params.permalink[1] as string;
-
-  const allowedTypes = [PostType.post, PostType.podcast, PostType.tutorial];
+  const allowedTypes = [
+    PostType.post,
+    PostType.podcast,
+    PostType.tutorial,
+    PostType.page,
+  ];
   if (!type || !slug || !allowedTypes.includes(type)) {
     return {
       redirect: {
@@ -105,17 +116,22 @@ export async function getStaticProps({
     PostType.podcast,
   ]);
 
-  const source: Source | null =
-    post && post.content
-      ? await renderToString(post.content, {
-          mdxOptions: {
-            // remarkPlugins: [parse, mdx],
-          },
-        })
-      : null;
+  let source: Source | null;
+
+  if (post && post.content) {
+    const { content } = matter(post.content);
+    source = await renderToString(content, {
+      mdxOptions: {
+        // remarkPlugins: [parse, mdx],
+      },
+    });
+  } else {
+    source = null;
+  }
 
   return {
     props: {
+      site,
       post,
       recentPosts,
       source,

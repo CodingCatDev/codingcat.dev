@@ -81,28 +81,40 @@ module.exports = {
       boxShadow: {
         outline: '0 0 0 3px #FC5390',
       },
+      flex: {
+        full: '0 0 auto',
+      },
       gridTemplateColumns: {
-        sidebar: '1fr minmax(200px, 25%)',
-        settings: 'minmax(200px, 20%) 1fr',
+        admin: 'minmax(64px, auto) 1fr;',
         fit: 'repeat(auto-fit, minmax(250px, 1fr))',
         hero: '1.5fr 2fr',
+        sidebar: '1fr minmax(200px, 25%)',
+        settings: 'minmax(200px, 20%) 1fr',
       },
       gridTemplateRows: {
+        admin: '100px 1fr 64px',
         sidebar: '100px 1fr 100px',
         search: '38px 1fr 68px',
       },
       height: {
         35: '35px',
         500: '500px',
+        610: '610px',
       },
       minHeight: {
         '1/2': '50%',
+        300: '300px',
+        1080: '1080px',
+      },
+      maxWidth: {
+        '8xl': '2000px',
       },
       screens: {
         '3xl': '2000px',
       },
       width: {
         35: '35px',
+        80: '80vw',
       },
     },
     customForms: (theme) => ({
