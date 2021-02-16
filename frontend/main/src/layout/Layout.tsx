@@ -1,39 +1,33 @@
-import {
-  useState,
-  useEffect,
-  ComponentType,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useState, useEffect } from 'react';
 import router from 'next/router';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import nightwind from 'nightwind/helper';
 
-import { AppTopbar } from './AppTopbar';
+import { AppTopbar } from '@/layout/AppTopbar';
 
 import AppMenu from '@/layout/AppMenu';
+import { Site } from '@/models/site.model';
+import Footer from '@/layout/Footer';
 
-const Footer = dynamic(
-  () => import('@/layout/Footer').then((mod: any) => mod.Footer),
-  {
-    ssr: false,
-    loading: () => <p>Adding the Menu...</p>,
-  }
-);
-
-const Layout = ({ children }: { children: any }) => {
+const Layout = ({
+  site,
+  children,
+}: {
+  site: Site | null;
+  children: any;
+}): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
 
-  let menuClick = false;
+  // let menuClick = false;
 
-  const onSidebarClick = () => {
-    menuClick = true;
-  };
+  // const onSidebarClick = () => {
+  //   menuClick = true;
+  // };
 
-  const onShowMenuButton = (event: any) => {
-    console.log(event);
-  };
+  // const onShowMenuButton = (event: any) => {
+  //   console.log(event);
+  // };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,7 +36,7 @@ const Layout = ({ children }: { children: any }) => {
   router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-primary-900 dark:bg-primary-900 md:w-4/5 md:mx-auto">
+    <>
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
@@ -50,29 +44,18 @@ const Layout = ({ children }: { children: any }) => {
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
       />
-      <div className="overflow-x-hidden overflow-y-auto scrollbar calc-height-wrapper">
-        <main className="grid justify-center grid-cols-1 gap-10 calc-height bg-primary-50 dark:bg-basics-700">
+      <div className="grid grid-cols-1 overflow-x-hidden overflow-y-auto justify-items-center scrollbar calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
+        <main className="grid justify-center grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
           {children}
         </main>
 
-        <Footer />
+        <Footer site={site} />
       </div>
       <AppMenu
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
       />
-      {/* <style jsx>
-        {`
-          .calc-height-wrapper {
-            min-height: calc(100vh - 5rem);
-          }
-
-          .calc-height {
-            min-height: calc(100vh - 6.5rem);
-          }
-        `}
-      </style> */}
-    </div>
+    </>
   );
 };
 

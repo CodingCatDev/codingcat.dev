@@ -60,7 +60,9 @@ export default function PostMedia({ post }: { post: Post }) {
                   className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md"
                 />
               ) : (
-                <div>Getting Cookie for Private View</div>
+                <div className="grid border-2 border-secondary-600 dark:border-secondary-600 place-items-center min-h-300 xl:h-610">
+                  Getting Cookie for Private View
+                </div>
               )}
             </>
           ) : (

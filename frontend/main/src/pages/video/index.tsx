@@ -4,12 +4,14 @@ import Layout from '@/layout/Layout';
 import { useState } from 'react';
 import AJAlt from '@/components/global/icons/AJAlt';
 import KCAlt from '@/components/global/icons/KCAlt';
+import { Site } from '@/models/site.model';
+import { getSite } from '@/services/serversideApi';
 
-export default function Video() {
+export default function Video({ site }: { site: Site | null }): JSX.Element {
   const [callName, setCallName] = useState('CodingCatChat');
 
   return (
-    <Layout>
+    <Layout site={site}>
       <Head>
         <title>Video | CodingCatDev</title>
       </Head>
@@ -97,4 +99,22 @@ export default function Video() {
       </div>
     </Layout>
   );
+}
+
+export async function getStaticProps(): Promise<{
+  props: {
+    site: Site | null;
+  };
+  revalidate: number;
+}> {
+  const site = await getSite();
+  return {
+    props: {
+      site,
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every second
+    revalidate: 60,
+  };
 }

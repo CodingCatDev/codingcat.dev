@@ -1,15 +1,22 @@
 import { useRouter } from 'next/router';
-import { postBySlugService, postsService } from '@/services/serversideApi';
+import {
+  getSite,
+  postBySlugService,
+  postsService,
+} from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
+import { Site } from '@/models/site.model';
 
 export default function Post({
+  site,
   post,
   source,
 }: {
+  site: Site | null;
   post: PostModel;
   source: Source | null;
 }): JSX.Element {
@@ -19,7 +26,13 @@ export default function Post({
   }
 
   return (
-    <PostLayout router={router} post={post} course={post} source={source} />
+    <PostLayout
+      site={site}
+      router={router}
+      post={post}
+      course={post}
+      source={source}
+    />
   );
 }
 
@@ -52,6 +65,7 @@ export async function getStaticProps({
 }): Promise<
   | {
       props: {
+        site: Site | null;
         post: PostModel | null;
         source: Source | null;
       };
@@ -69,7 +83,7 @@ export async function getStaticProps({
       },
     };
   }
-
+  const site = await getSite();
   const posts = await postBySlugService(PostType.course, coursePath);
   const post = posts.length > 0 ? posts[0] : null;
 
@@ -84,6 +98,7 @@ export async function getStaticProps({
 
   return {
     props: {
+      site,
       post,
       source,
     },

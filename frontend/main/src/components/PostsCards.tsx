@@ -10,7 +10,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
           {posts.map((post) => {
             return (
               <>
-                <div className="rounded-md shadow bg-basics-50" key={post.slug}>
+                <div className="rounded-md shadow bg-basics-50" key={post.id}>
                   <Link href={`/${post.type}/${post.slug}`}>
                     <a>
                       {post.coverPhoto?.path ? (

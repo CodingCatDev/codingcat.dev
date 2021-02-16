@@ -2,6 +2,7 @@ import { StripePrice, StripeProduct } from './../models/stripe.model';
 import { PostType } from './../models/post.model';
 import { Post } from '@/models/post.model';
 import admin from '@/utils/firebaseAdmin';
+import { PageLink, Site } from '@/models/site.model';
 
 // Firebase Admin, or any other services you need for Server Side
 export async function postsRecentService(
@@ -62,6 +63,21 @@ export async function postBySlugService(
     posts.push(cleanTimestamp(doc.data()));
   }
   return posts as Post[];
+}
+
+export async function postById(id: string): Promise<Post | null> {
+  const postDoc = await admin.firestore().doc(`posts/${id}`).get();
+  return cleanTimestamp(smallPostPayload(postDoc)) as Post;
+}
+
+/* Site Configuration */
+export async function getSite(): Promise<Site | null> {
+  const siteDocs = await admin.firestore().collection('site').get();
+  let site: Site | null = null;
+  for (const siteDoc of siteDocs.docs) {
+    site = siteDoc.data();
+  }
+  return site;
 }
 
 /* USER Authentication */
