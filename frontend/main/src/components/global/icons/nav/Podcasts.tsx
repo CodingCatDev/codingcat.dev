@@ -1,4 +1,8 @@
-export default function Podcasts({ className = 'block w-8 h-8' }) {
+export default function Podcasts({
+  className = 'block w-8 h-8',
+}: {
+  className?: string;
+}) {
   return (
     <svg
       className={className}

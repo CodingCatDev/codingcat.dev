@@ -8,7 +8,7 @@ import { setUserCookie } from '@/utils/auth/userCookies';
 import { mapUserData } from '@/utils/auth/mapUserData';
 import { useEffect } from 'react';
 
-const FirebaseAuth = ({ full = true }) => {
+const FirebaseAuth = ({ full = true }: { full?: boolean }) => {
   const [app, setApp] = useState<firebaseApp.app.App>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

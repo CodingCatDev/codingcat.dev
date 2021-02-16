@@ -9,7 +9,11 @@ import Community from '@/components/global/icons/nav/Community';
 import Pages from '@/components/global/icons/nav/Pages';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 
-export default function AdminNavItems({ navOpen }): JSX.Element {
+export default function AdminNavItems({
+  navOpen,
+}: {
+  navOpen: boolean;
+}): JSX.Element {
   if (navOpen) {
     return (
       <nav className="h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
