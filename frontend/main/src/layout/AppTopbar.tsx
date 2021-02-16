@@ -8,7 +8,7 @@ import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import NavLinks from '@/layout/NavLinks';
 import SearchModal from '@/components/algolia/SearchModal';
-import AvatarMenu from '@/components/User/AvatarMenu';
+import AvatarMenu from '@/components/user/AvatarMenu';
 
 export const AppTopbar = (props: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;

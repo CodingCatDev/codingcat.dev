@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useEffect } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import Layout from '@/layout/Layout';
-import BreakBarLeft from '@/components/Home/BreakBarLeft';
+import BreakBarLeft from '@/components/home/BreakBarLeft';
 import hydrate, { Source } from 'next-mdx-remote/hydrate';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';

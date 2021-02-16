@@ -5,10 +5,10 @@ import { getSite, postsRecentService } from '@/services/serversideApi';
 import { RecentPostsCards } from '@/components/RecentPostsCards';
 import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
-import BreakBarLeft from '@/components/Home/BreakBarLeft';
-import BreakBarRight from '@/components/Home/BreakBarRight';
+import BreakBarLeft from '@/components/home/BreakBarLeft';
+import BreakBarRight from '@/components/home/BreakBarRight';
 
-import Skills from '@/components/Home/Skills';
+import Skills from '@/components/home/Skills';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import KCAlt from '@/components/global/icons/KCAlt';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';

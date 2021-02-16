@@ -2,7 +2,7 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
 import Layout from '@/layout/Layout';
-import SettingsLinks from '@/components/Settings/SettingsLinks';
+import SettingsLinks from '@/components/settings/SettingsLinks';
 
 import { useUser } from '@/utils/auth/useUser';
 import { getStripePortal } from '@/services/api';
