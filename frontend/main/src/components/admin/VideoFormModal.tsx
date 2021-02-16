@@ -1,108 +1,14 @@
 import { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Box from '@material-ui/core/Box';
-import VideoIcon from '@material-ui/icons/FeaturedVideo';
-import { makeStyles, createStyles } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
-
-import { Theme as AugmentedTheme } from '@material-ui/core';
 import { MediaType, Post } from '@/models/post.model';
 
 import { postHistoryCreate, postHistoryMediaCreate } from '@/services/api';
 import { take } from 'rxjs/operators';
 import { Video } from '@/models/video.model';
-import { Course } from '@/models/course.model.ts';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    video: {
-      backgroundColor: red[500],
-      '&:hover': {
-        backgroundColor: red[300],
-      },
-    },
-    root: {
-      '& label.Mui-focused': {
-        color: 'white',
-      },
-      '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-          borderColor: 'white',
-        },
-        '&:hover fieldset': {
-          borderColor: 'white',
-        },
-        '&.Mui-focused fieldset': {
-          borderColor: 'white',
-        },
-      },
-    },
-  })
-);
-
-const styles = (theme: AugmentedTheme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: 'flex',
-  },
-  title: {
-    // width: '90%',
-    wordBreak: 'break-all',
-  },
-  closeButton: {
-    color: theme.palette.grey[500],
-  },
-});
-
-const DialogTitle = withStyles(styles as any)((props: any) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6" className={classes.title}>
-        {children}
-      </Typography>
-      <div>
-        {onClose ? (
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </div>
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
 
 export default function VideoFormModal({
   post,
 }: {
-  setHistory: React.Dispatch<React.SetStateAction<Post | Course | undefined>>;
+  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   post: Post;
 }) {
   const [open, setOpen] = useState(false);
@@ -140,58 +46,41 @@ export default function VideoFormModal({
     });
   };
 
-  const classes = useStyles();
-
   return (
     <>
-      <Button
-        variant="contained"
-        className={classes.video}
-        onClick={handleClickOpen}
-      >
-        <Box
-          sx={{
-            paddingRight: '0.5rem',
-          }}
-        >
+      <button onClick={handleClickOpen}>
+        <div className="flex">
           Add Video Cover
-        </Box>
-        <VideoIcon />
-      </Button>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="video-upload"
-        open={open}
-        fullWidth={true}
-        maxWidth="xl"
-      >
-        <DialogTitle id="video-upload" onClose={handleClose}>
-          Video
-        </DialogTitle>
-        <DialogContent dividers className={classes.root}>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Video URL"
-            type="url"
-            fullWidth
-            variant="filled"
-            required={true}
-            value={video.url}
-            onChange={onUrlInput}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => onUpload(post)}
-            variant="contained"
-            color="primary"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            Upload
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
+      </button>
+      <section>
+        <input
+          type="text"
+          value={video.url}
+          onChange={onUrlInput}
+          autoFocus
+          id="videoUrl"
+          className="w-full"
+          required={true}
+        ></input>
+      </section>
+
+      <button onClick={() => onUpload(post)} className="btn-primary">
+        Upload
+      </button>
     </>
   );
 }

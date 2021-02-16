@@ -4,27 +4,35 @@ import { withRouter } from 'next/router';
 
 import AdminLayout from '@/layout/admin/AdminLayout';
 
-import { PostType } from '@/models/post.model';
+import { Post, PostType } from '@/models/post.model';
 import { useState, useEffect } from 'react';
 import { Site } from '@/models/site.model';
-import { getSite } from '@/services/serversideApi';
+import { getSite, postById } from '@/services/serversideApi';
 import EditPost from '@/components/admin/EditPost';
 
 export default function Edit({
   type,
+  id,
   site,
+  post,
 }: {
   type: PostType | null;
+  id: string | null;
   site: Site | null;
+  post: Post;
 }): JSX.Element {
   return (
-    <AdminLayout site={site}>
+    <AdminLayout site={site} post={post}>
       <Head>
         <title>{`${type} | CodingCatDev`}</title>
         <meta name="robots" content="noindex" />
       </Head>
 
-      <EditPost type={type} />
+      {type && id ? (
+        <EditPost type={type} id={id} />
+      ) : (
+        <div>Post Not Found.</div>
+      )}
     </AdminLayout>
   );
 }
@@ -32,19 +40,39 @@ export default function Edit({
 export async function getServerSideProps({
   params,
 }: {
-  params: { type: PostType };
+  params: { type: PostType; id: string };
 }): Promise<{
-  props: {
+  props?: {
     type: PostType | null;
+    id: string | null;
     site: Site | null;
+    post: Post;
   };
+  notFound?: boolean;
 }> {
   const site = await getSite();
-  const { type } = params;
+  const { type, id } = params;
+
+  if (!type || !id || !site) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const post = await postById(id);
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       type,
+      id,
       site,
+      post,
     },
   };
 }

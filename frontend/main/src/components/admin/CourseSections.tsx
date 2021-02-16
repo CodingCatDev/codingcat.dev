@@ -204,54 +204,31 @@ export default function CourseSections({
 
   return (
     <>
-      TODO: CourseSections
-      {/* <Grid container direction="row" style={{ paddingTop: '0.25rem' }}>
-        <Grid
-          container
-          item
-          direction="column"
-          justifyContent="center"
-          alignContent="flex-start"
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              width: '100%',
-              paddingLeft: '1rem',
-              paddingRight: '1rem',
-            }}
-          >
-            <Box sx={{ flexGrow: 1, marginRight: '1rem' }}>
-              <TextField
-                label="Section Name"
+      <div className="grid grid-flow-row">
+        <div className="grid grid-flow-col px-2 py-4 rounded-b-lg bg-primary-100">
+          <div className="flex content-center justify-center px-1">
+            <div className="flex-grow">
+              <input
                 id="title"
                 type="title"
+                placeholder="New Section Title"
                 value={section?.title}
-                fullWidth
-                variant="filled"
+                className="w-full"
                 onChange={(e) => {
                   sectionInput(e);
                 }}
               />
-            </Box>
-            <Button
-              variant="contained"
-              className="cursor-pointer btn-primary"
+            </div>
+            <button
+              className="ml-1 cursor-pointer btn-primary"
               onClick={() => createSection()}
             >
               Add Section
-            </Button>
-          </Box>
-        </Grid>
+            </button>
+          </div>
+        </div>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Grid
-            container
-            direction="row"
-            justifyContent="flex-start"
-            alignContent="flex-start"
-            style={{ paddingTop: '0.25rem' }}
-          >
+          <div className="flex content-start pt-2 justify-items-start">
             <div style={{ width: '60%', marginRight: '1rem' }}>
               <Droppable droppableId={`Sections`} type="Sections">
                 {(provided, snapshot) => (
@@ -269,6 +246,7 @@ export default function CourseSections({
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               ref={provided.innerRef}
+                              className="mt-2 bg-secondary-500 rounded-xl"
                             >
                               <Droppable
                                 droppableId={`${si}`}
@@ -276,29 +254,16 @@ export default function CourseSections({
                                 type="Lessons"
                               >
                                 {(provided, snapshot) => (
-                                  <Grid
-                                    container
-                                    item
-                                    direction="row"
-                                    className={
-                                      snapshot.isDraggingOver
-                                        ? classes.sectionDragging
-                                        : classes.section
-                                    }
+                                  <div
+                                    className="grid grid-flow-row p-2"
                                     {...provided.droppableProps}
                                     ref={provided.innerRef}
                                   >
-                                    <Box
-                                      sx={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        flexWrap: 'wrap',
-                                        justifyContent: 'space-between',
-                                      }}
-                                      style={{ width: '100%' }}
-                                    >
-                                      <h2>{section.title}</h2>
-                                      <IconButton
+                                    <div className="flex flex-wrap justify-between w-full p-4">
+                                      <p className="text-4xl text-white">
+                                        {section.title}
+                                      </p>
+                                      <button
                                         onClick={() => onSectionDelete(si)}
                                       >
                                         <svg
@@ -306,7 +271,7 @@ export default function CourseSections({
                                           fill="none"
                                           viewBox="0 0 24 24"
                                           stroke="currentColor"
-                                          className={classes.sectionDeleteIcon}
+                                          className="w-12"
                                         >
                                           <path
                                             strokeLinecap="round"
@@ -315,8 +280,8 @@ export default function CourseSections({
                                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                           />
                                         </svg>
-                                      </IconButton>
-                                    </Box>
+                                      </button>
+                                    </div>
                                     {section &&
                                       section.lessons?.map((lesson, li) => (
                                         <Draggable
@@ -325,46 +290,33 @@ export default function CourseSections({
                                           key={`${si}${li}`}
                                         >
                                           {(provided, snapshot) => (
-                                            <Box
-                                              sx={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                flexWrap: 'wrap',
-                                                justifyContent: 'space-between',
-                                                width: '100%',
-                                                marginTop: '0.5rem',
-                                              }}
+                                            <div
                                               {...provided.draggableProps}
                                               {...provided.dragHandleProps}
                                               ref={provided.innerRef}
-                                              className={classes.lesson}
+                                              className="flex flex-row flex-wrap justify-between w-full p-3 mt-1 rounded-xl bg-primary-900"
                                             >
                                               <Link
                                                 href={`/admin/lessons/${lesson.id}`}
                                               >
                                                 <a>
-                                                  <h3
-                                                    className={
-                                                      classes.lessonTitle
-                                                    }
-                                                  >
+                                                  <p className="text-4xl text-white underline">
                                                     {lesson.title}
-                                                  </h3>
+                                                  </p>
                                                 </a>
                                               </Link>
-                                              <IconButton
+                                              <button
                                                 onClick={() =>
                                                   onLessonDelete(si, li)
                                                 }
+                                                className="text-white"
                                               >
                                                 <svg
                                                   xmlns="http://www.w3.org/2000/svg"
                                                   fill="none"
                                                   viewBox="0 0 24 24"
                                                   stroke="currentColor"
-                                                  className={
-                                                    classes.lessonDeleteIcon
-                                                  }
+                                                  className="w-8"
                                                 >
                                                   <path
                                                     strokeLinecap="round"
@@ -373,13 +325,13 @@ export default function CourseSections({
                                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                                   />
                                                 </svg>
-                                              </IconButton>
-                                            </Box>
+                                              </button>
+                                            </div>
                                           )}
                                         </Draggable>
                                       ))}
                                     {provided.placeholder}
-                                  </Grid>
+                                  </div>
                                 )}
                               </Droppable>
                             </div>
@@ -391,32 +343,18 @@ export default function CourseSections({
               </Droppable>
             </div>
             <div style={{ width: '35%' }}>
-              <Grid
-                item
-                container
-                direction="row"
-                justifyContent="center"
-                alignContent="flex-start"
-                style={{ paddingTop: '0.25rem' }}
-              >
+              <div className="grid justify-center grid-flow-row pt-1 align-middle">
                 {' '}
-                <TextField
-                  label="Lesson Search"
+                <input
+                  type="text"
                   placeholder="Lesson Search"
-                  fullWidth
-                  variant="filled"
+                  className="w-full"
                   value={lessonSearch}
                   onChange={(e) => {
                     onLessonSearch(e);
                   }}
                 />
-                <Grid
-                  item
-                  container
-                  direction="column"
-                  style={{ paddingTop: '0.25rem' }}
-                >
-                  {' '}
+                <div className="grid grid-flow-col pt-1">
                   <Droppable
                     droppableId={'LesssonSearch'}
                     type="Lessons"
@@ -437,22 +375,14 @@ export default function CourseSections({
                                 key={l.id}
                               >
                                 {(provided, snapshot) => (
-                                  <Box
-                                    sx={{
-                                      display: 'flex',
-                                      flexDirection: 'row',
-                                      flexWrap: 'wrap',
-                                      justifyContent: 'space-between',
-                                      width: '100%',
-                                      marginTop: '0.5rem',
-                                    }}
+                                  <div
+                                    className="flex flex-wrap justify-between w-full px-2 mt-1 text-2xl bg-primary-900 rounded-xl"
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     ref={provided.innerRef}
-                                    className={classes.lesson}
                                   >
-                                    <h3>{l.title}</h3>
-                                  </Box>
+                                    <p className="text-white">{l.title}</p>
+                                  </div>
                                 )}
                               </Draggable>
                             )
@@ -461,12 +391,12 @@ export default function CourseSections({
                       </div>
                     )}
                   </Droppable>
-                </Grid>
-              </Grid>
+                </div>
+              </div>
             </div>
-          </Grid>
+          </div>
         </DragDropContext>
-      </Grid> */}
+      </div>
     </>
   );
 }

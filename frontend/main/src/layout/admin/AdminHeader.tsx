@@ -2,14 +2,25 @@ import { useState } from 'react';
 import Toggle from '@/components/global/icons/Toggle';
 import OutsideClick from '@/components/OutsideClick';
 
+import { PostHeader } from '@/layout/admin/PostHeader';
 import SearchModal from '@/components/algolia/SearchModal';
 import AvatarMenu from '@/components/user/AvatarMenu';
+import { Post } from '@/models/post.model';
+import { Site } from '@/models/site.model';
 
-export const AdminHeader = (): JSX.Element => {
+export const AdminHeader = ({
+  site,
+  post,
+}: {
+  site?: Site | null;
+  post?: Post;
+}): JSX.Element => {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
     <header className="flex items-center justify-end w-full p-4">
+      {/* Displays on EditPost Pages */}
+      <PostHeader post={post} />
       <div className="flex items-center justify-end">
         <div className="flex items-center w-full space-x-2">
           <SearchModal />
