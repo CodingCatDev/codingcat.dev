@@ -35,7 +35,7 @@ const AdminLayout = ({
             {children}
           </main>
           <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">
-            &copy; Coding Cat Dev {new Date().getFullYear()}
+            &copy; CodingCatDev {new Date().getFullYear()}
           </footer>
         </div>
       </div>
