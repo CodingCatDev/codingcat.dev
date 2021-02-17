@@ -1,4 +1,4 @@
-// import Link from 'next/link';
+import { Dispatch, SetStateAction } from 'react';
 import Link from 'next/link';
 import Courses from '@/components/global/icons/nav/Courses';
 import Lessons from '@/components/global/icons/nav/Lessons';
@@ -11,12 +11,36 @@ import AJPrimary from '@/components/global/icons/AJPrimary';
 
 export default function AdminNavItems({
   navOpen,
+  setNavOpen,
 }: {
   navOpen: boolean;
+  setNavOpen: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
   if (navOpen) {
     return (
-      <nav className="h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
+      <nav className="relative h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
+        <button
+          className="absolute bottom-0 right-0 inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
+          aria-expanded="true"
+          onClick={() => setNavOpen(false)}
+        >
+          <span className="sr-only">Minimize navigation</span>
+          <svg
+            className="w-8"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
         <ul className="grid grid-cols-1 gap-4">
           <li>
             <Link href="/admin">
@@ -87,7 +111,28 @@ export default function AdminNavItems({
     );
   } else {
     return (
-      <nav className="h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
+      <nav className="relative h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
+        <button
+          className="absolute bottom-0 right-0 inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
+          aria-expanded="false"
+          onClick={() => setNavOpen(true)}
+        >
+          <span className="sr-only">Maximize navigation</span>
+          <svg
+            className="w-8"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
         <ul className="grid grid-cols-1 gap-4">
           <li>
             <Link href="/admin">

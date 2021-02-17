@@ -1,5 +1,6 @@
-import Toggle from '@/components/global/icons/Toggle';
+import { Dispatch, SetStateAction } from 'react';
 
+import Toggle from '@/components/global/icons/Toggle';
 import { PostHeader } from '@/layout/admin/PostHeader';
 import SearchModal from '@/components/algolia/SearchModal';
 import { Post } from '@/models/post.model';
@@ -8,9 +9,17 @@ import { Site } from '@/models/site.model';
 export const AdminHeader = ({
   site,
   post,
+  navOpen,
+  setNavOpen,
+  userMenu,
+  setUserMenu,
 }: {
   site?: Site | null;
   post?: Post;
+  navOpen: boolean;
+  setNavOpen: Dispatch<SetStateAction<boolean>>;
+  userMenu: boolean;
+  setUserMenu: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element => {
   return (
     <header className="flex items-center justify-end w-full p-4">
