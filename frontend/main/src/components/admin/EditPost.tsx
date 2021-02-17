@@ -199,7 +199,8 @@ export default function EditPost({
                   </p>
                   <textarea
                     placeholder="Details about Post"
-                    className="resize-none"
+                    className="h-full resize-none"
+                    cols={2}
                     value={history?.excerpt}
                     onChange={(e) => onExcerpt(e.target.value)}
                   ></textarea>
@@ -332,7 +333,7 @@ export default function EditPost({
                   </div>
                 </div>
                 <section className="flex-col w-full">
-                  <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
+                  <div className="p-2 text-2xl rounded-t-lg text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Status
                   </div>
                   <div className="flex p-2 bg-basics-50">
