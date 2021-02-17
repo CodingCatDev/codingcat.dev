@@ -47,11 +47,13 @@ function EditPosts({ type }: { type: PostType }) {
           </tr>
           <tr
             className={`w-full ${
-              index % 2 ? 'bg-primary-100' : 'bg-basics-50'
+              index % 2
+                ? 'bg-primary-100 hover:bg-primary-200'
+                : 'bg-basics-100 hover:bg-basics-200'
             }`}
           >
             <Link href={`${type}/${post.id}`}>
-              <a className="grid lg:grid-cols-5">
+              <a className="grid items-center lg:grid-cols-5 hover:text-current dark:hover:text-current">
                 <td className="p-2 text-left" role="cell">
                   {post.title}
                 </td>
