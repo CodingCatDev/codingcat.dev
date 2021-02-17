@@ -34,7 +34,7 @@ const AdminLayout = ({
         <AdminMenu />
         <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
           <AdminHeader site={site} post={post} />
-          <main className="h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
+          <main className="h-full p-4 text-primary-900 bg-primary-50 dark:bg-basics-900">
             {children}
           </main>
           <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">

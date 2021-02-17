@@ -38,7 +38,7 @@ export default function AdminDashboard({
             <p>Show some welcoming things here.</p>
           </div>
         ) : (
-          <div className="p-4">
+          <>
             <header className="grid gap-4 mb-4 justify-items-start">
               <h1 className="font-sans text-4xl font-bold capitalize">
                 {type}
@@ -46,7 +46,7 @@ export default function AdminDashboard({
               <CreatePost type={type} />
             </header>
             <EditPosts type={type} />
-          </div>
+          </>
         )}
       </>
     </AdminLayout>
