@@ -165,12 +165,14 @@ export default function EditPost({
     switch (tab) {
       case TabType.edit:
         return (
-          <div className="max-w-5xl">
+          <>
             {/* Top Inputs */}
-            <section className="flex py-2">
+            <section className="flex flex-wrap space-y-2 lg:space-y-0">
               <div className="flex flex-col pr-2">
                 <div className="flex">
-                  <p className="mr-2 uppercase text-primary-900">Title: </p>
+                  <p className="flex items-center mr-2 font-bold uppercase text-primary-900 dark:text-basics-50">
+                    Title:{' '}
+                  </p>
                   <input
                     type="text"
                     placeholder="Title"
@@ -179,7 +181,9 @@ export default function EditPost({
                   ></input>
                 </div>
                 <div className="flex mt-2">
-                  <p className="mr-2 uppercase text-primary-900">Slug: </p>
+                  <p className="flex items-center mr-2 font-bold uppercase text-primary-900 dark:text-basics-50">
+                    Slug:{' '}
+                  </p>
                   <input
                     type="text"
                     placeholder="type/slug"
@@ -190,10 +194,13 @@ export default function EditPost({
               </div>
               <div className="flex flex-grow">
                 <div className="flex w-full">
-                  <p className="mr-2 uppercase text-primary-900">Excerpt: </p>
+                  <p className="flex items-center mr-2 font-bold uppercase text-primary-900 dark:text-basics-50">
+                    Excerpt:{' '}
+                  </p>
                   <textarea
                     placeholder="Details about Post"
-                    className="resize-none"
+                    className="h-full resize-none"
+                    cols={2}
                     value={history?.excerpt}
                     onChange={(e) => onExcerpt(e.target.value)}
                   ></textarea>
@@ -207,7 +214,7 @@ export default function EditPost({
                 sideBySideFullscreen: false,
               }}
             />
-          </div>
+          </>
         );
       case TabType.media:
         return (
@@ -256,80 +263,80 @@ export default function EditPost({
   return (
     <>
       {history && Object.keys(history).length > 0 ? (
-        <div className="w-full">
-          <nav className="flex w-full h-12 bg-secondary-500">
+        <div className="w-full ">
+          <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-500 dark:bg-secondary-600">
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none  ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
                 tab == TabType.edit
-                  ? 'border-b-4 border-primary-900'
-                  : 'border-b-4 border-secondary-500'
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
               }`}
               onClick={() => selectTab(TabType.edit)}
             >
               EDIT
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none  ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
                 tab == TabType.media
-                  ? 'border-b-4 border-primary-900'
-                  : 'border-b-4 border-secondary-500'
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
               }`}
               onClick={() => selectTab(TabType.media)}
             >
               MEDIA
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
                 tab == TabType.preview
-                  ? 'border-b-4 border-primary-900'
-                  : 'border-b-4 border-secondary-500'
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
               }`}
               onClick={() => selectTab(TabType.preview)}
             >
               MDX PREVIEW
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
                 tab == TabType.sections
-                  ? 'border-b-4 border-primary-900'
-                  : 'border-b-4 border-secondary-500'
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
               } ${history.type == PostType.course ? 'block' : 'hidden'}`}
               onClick={() => selectTab(TabType.sections)}
             >
               SECTIONS
             </button>
             <button
-              className={`block px-6 font-medium  hover:text-primary-900 text-white focus:outline-none ${
+              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
                 tab == TabType.history
-                  ? 'border-b-4 border-primary-900'
-                  : 'border-b-4 border-secondary-500'
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
               }`}
               onClick={() => selectTab(TabType.history)}
             >
               HISTORY
             </button>
           </nav>
-          <div className="p-2">
+          <div className="p-4">
             {/* Tab Section */}
-            <div className="grid grid-flow-row gap-2 sm:grid-flow-col">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-sidebar">
               {/* Main Input */}
-              <section className="">{onTab()}</section>
+              <section className="grid grid-cols-1 gap-2">{onTab()}</section>
               {/* Side Input */}
               <aside
                 className={`pt-2 ${tab === TabType.edit ? 'block' : 'hidden'}`}
               >
                 <PublishModal history={history} setSaving={setSaving} />
                 <div className="flex flex-wrap content-center">
-                  <div className="flex content-center h-full">
+                  <div className="flex content-center">
                     <p className="flex">saved: </p>
                     <TimeAgo date={history?.updatedAt?.toDate() as Date} />
                   </div>
                 </div>
-                <div className="flex-col w-full">
-                  <div className="pl-2 text-2xl text-white bg-primary-900">
+                <section className="flex-col w-full">
+                  <div className="p-2 text-2xl rounded-t-lg text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Status
                   </div>
-                  <div className="flex pl-2 bg-basics-50">
+                  <div className="flex p-2 bg-basics-50">
                     {/* Current Post History */}
                     <div
                       className={`my-1 flex ${
@@ -352,12 +359,12 @@ export default function EditPost({
                       ''
                     )}
                   </div>
-                </div>
+                </section>
                 <div className="flex-col w-full">
-                  <div className="pl-2 text-2xl text-white bg-primary-900">
+                  <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Published On
                   </div>
-                  <div className="pl-2 bg-basics-50">
+                  <div className="p-2 bg-basics-50 dark:bg-basics-800">
                     {' '}
                     {postHistories.find(
                       (h) => h.status === PostStatus.published
@@ -374,16 +381,18 @@ export default function EditPost({
                   </div>
                 </div>
                 <div className="flex-col w-full">
-                  <div className="pl-2 text-2xl text-white bg-primary-900">
+                  <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Author
                   </div>
-                  <div className="pl-2 bg-basics-50">{history.createdBy}</div>
+                  <div className="p-2 bg-basics-50 dark:bg-basics-800">
+                    {history.createdBy}
+                  </div>
                 </div>
                 <div className="flex-col w-full">
-                  <div className="pl-2 text-2xl text-white bg-primary-900">
+                  <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Revisions
                   </div>
-                  <div className="pl-2 bg-basics-50">
+                  <div className="p-2 bg-basics-50 dark:bg-basics-800">
                     {postHistories.length}
                     <a
                       className="pl-2 cursor-pointer"
@@ -394,7 +403,7 @@ export default function EditPost({
                   </div>
                 </div>
                 <div className="flex-col w-full">
-                  <div className="pl-2 text-2xl text-white bg-primary-900">
+                  <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Tags
                   </div>
                   <div className="bg-basics-50">

@@ -25,7 +25,7 @@ function EditPosts({ type }: { type: PostType }) {
     >
       {posts.map((post, index) => (
         <tbody role="rowgroup" key={post.id} className="flex lg:block">
-          <thead
+          <tr
             className="grid justify-between rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:flex bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
             role="row"
           >
@@ -44,43 +44,50 @@ function EditPosts({ type }: { type: PostType }) {
             <th className="p-2 text-left" role="columnheader">
               Status
             </th>
-          </thead>
+          </tr>
           <tr
-            className={`grid w-full lg:grid-cols-5 ${
-              index % 2 ? 'bg-primary-100' : 'bg-basics-50'
+            className={`w-full ${
+              index % 2
+                ? 'bg-primary-100 hover:bg-primary-200'
+                : 'bg-basics-100 hover:bg-basics-200'
             }`}
           >
-            <td className="p-2 text-left" role="cell">
-              <Link href={`${type}/${post.id}`}>
-                <a>{post.title} </a>
-              </Link>
-            </td>
-            <td className="p-2 text-left" role="cell">
-              {post.id}
-            </td>
-            <td className="p-2 text-left" role="cell">
-              {post.updatedAt}
-            </td>
-            <td className="p-2 text-left" role="cell">
-              {post.createdBy}
-            </td>
-            <td className="p-2 text-left lg:justify-self-end" role="cell">
-              <span
-                className={`m-1 ${
-                  post && post.status === PostStatus.draft
-                    ? `px-2 py-1 rounded-full bg-basics-400 text-white dark:bg-basics-400 dark:text-white`
-                    : `px-2 py-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50`
-                }`}
-              >
-                {post.status}
-              </span>
-            </td>
+            <Link href={`${type}/${post.id}`}>
+              <a className="grid items-center lg:grid-cols-5 hover:text-current dark:hover:text-current">
+                <td className="p-2 text-left" role="cell">
+                  {post.title}
+                </td>
+                <td className="p-2 text-left" role="cell">
+                  {post.id}
+                </td>
+                <td className="p-2 text-left" role="cell">
+                  {post.updatedAt}
+                </td>
+                <td className="p-2 text-left" role="cell">
+                  {post.createdBy}
+                </td>
+                <td className="p-2 text-left lg:justify-self-end" role="cell">
+                  <span
+                    className={`m-1 ${
+                      post && post.status === PostStatus.draft
+                        ? `px-2 py-1 rounded-full bg-basics-400 text-white dark:bg-basics-400 dark:text-white`
+                        : `px-2 py-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50`
+                    }`}
+                  >
+                    {post.status}
+                  </span>
+                </td>
+              </a>
+            </Link>
           </tr>
         </tbody>
       ))}
       <style jsx>{`
+        td {
+          word-break: break-word;
+        }
         @media (min-width: 1024px) {
-          tbody:not(:first-child) thead {
+          tbody:not(:first-child) tr:first-child {
             display: none;
           }
         }
