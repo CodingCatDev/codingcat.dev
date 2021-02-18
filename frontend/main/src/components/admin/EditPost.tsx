@@ -7,7 +7,10 @@ import {
   postHistoryCreate,
   postHistoryPublish,
   postHistoryUpdate,
+  postsSlugUnique,
 } from '@/services/api';
+
+import { toKebabCase } from '@/utils/basics/stringManipulation';
 
 import { Post, PostStatus, PostType, MediaType } from '@/models/post.model.ts';
 
@@ -51,6 +54,7 @@ export default function EditPost({
   const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
   const [preview, setPreview] = useState<string>('');
   const [tag, setTag] = useState('');
+  const [slugUnique, setSlugUnique] = useState(true);
 
   // Sets initial state
   useEffect(() => {
@@ -116,7 +120,15 @@ export default function EditPost({
   function onSlug(slug: string) {
     const update: Post = { ...history, slug } as Post;
     setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    validSlug(slug).subscribe((unique) => {
+      setSlugUnique(unique);
+      updateContent$.next({ ...update, historyId: history?.id });
+    });
+  }
+
+  function validSlug(slugInput: string) {
+    const slug = toKebabCase(slugInput);
+    return postsSlugUnique(slug).pipe(take(1));
   }
 
   function onExcerpt(excerpt: string) {
@@ -190,6 +202,13 @@ export default function EditPost({
                     value={history?.slug}
                     onChange={(e) => onSlug(e.target.value)}
                   ></input>
+                </div>
+                <div
+                  className={`border-b-2 text-error-900 border-error-900 ${
+                    slugUnique ? 'hidden' : 'block'
+                  }`}
+                >
+                  Slug is not unique
                 </div>
               </div>
               <div className="flex flex-grow">
@@ -327,7 +346,11 @@ export default function EditPost({
               <aside
                 className={`pt-2 ${tab === TabType.edit ? 'block' : 'hidden'}`}
               >
-                <PublishModal history={history} setSaving={setSaving} />
+                <PublishModal
+                  history={history}
+                  setSaving={setSaving}
+                  setSlugUnique={setSlugUnique}
+                />
                 <div className="flex flex-wrap content-center">
                   <div className="flex content-center">
                     <p className="flex">saved: </p>
