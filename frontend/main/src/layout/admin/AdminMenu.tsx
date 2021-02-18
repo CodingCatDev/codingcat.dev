@@ -27,7 +27,7 @@ export default function AdminMenu({
         )}
       </section>
       <AdminNavItems navOpen={navOpen} setNavOpen={setNavOpen} />
-      <section className="self-stretch p-4 bg-secondary-600 dark:bg-secondary-600">
+      <section className="p-4 bg-secondary-600 dark:bg-secondary-600">
         <div className="flex items-center cursor-pointer links-secondary">
           {/* Profile dropdown --> */}
           <OutsideClick toggle={setUserMenu} value={false}>
@@ -39,11 +39,11 @@ export default function AdminMenu({
           </OutsideClick>
           {navOpen && (
             <OutsideClick toggle={setUserMenu} value={false}>
-              <button className="ml-3" onClick={() => setUserMenu(true)}>
-                <p className="text-sm font-medium text-basics-50 dark:text-basics-50">
+              <button className="ml-2" onClick={() => setUserMenu(true)}>
+                <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
                   {user?.displayName}
                 </p>
-                <p className="text-xs font-medium text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
+                <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
                   {user?.email}
                 </p>
               </button>
