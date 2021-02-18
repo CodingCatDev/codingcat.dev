@@ -31,24 +31,15 @@ export default function AdminDashboard({
         <meta name="robots" content="noindex" />
       </Head>
 
-      <>
-        {!type ? (
-          <div>
-            <h1>Dashboard</h1>
-            <p>Show some welcoming things here.</p>
-          </div>
-        ) : (
-          <>
-            <header className="grid gap-4 mb-4 justify-items-start">
-              <h1 className="font-sans text-4xl font-bold capitalize">
-                {type}
-              </h1>
-              <CreatePost type={type} />
-            </header>
-            <EditPosts type={type} />
-          </>
-        )}
-      </>
+      {type && (
+        <div className="p-4">
+          <header className="grid gap-4 mb-4 justify-items-start">
+            <h1 className="font-sans text-4xl font-bold capitalize">{type}</h1>
+            <CreatePost type={type} />
+          </header>
+          <EditPosts type={type} />
+        </div>
+      )}
     </AdminLayout>
   );
 }

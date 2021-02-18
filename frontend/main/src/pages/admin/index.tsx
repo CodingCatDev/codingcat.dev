@@ -14,7 +14,7 @@ export default function AdminDashboard({
         <title>Admin Dashboard | CodingCatDev</title>
         <meta name="robots" content="noindex" />
       </Head>
-      <section>
+      <section className="p-4">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <p className="text-lg">Show some welcoming things here.</p>
       </section>

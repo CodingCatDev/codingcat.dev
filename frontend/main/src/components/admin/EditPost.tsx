@@ -212,6 +212,8 @@ export default function EditPost({
               value={history ? history.content : ''}
               options={{
                 sideBySideFullscreen: false,
+                status: false,
+                minHeight: '60vh',
               }}
             />
           </>
