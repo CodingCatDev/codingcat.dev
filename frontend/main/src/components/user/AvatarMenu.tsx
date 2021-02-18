@@ -12,9 +12,11 @@ import { UserInfoExtended } from '@/models/user.model';
 export default function UserSignin({
   userMenu,
   setUserMenu,
+  positionClass = 'right-0',
 }: {
   userMenu: boolean;
   setUserMenu: Dispatch<SetStateAction<boolean>>;
+  positionClass?: string;
 }): JSX.Element {
   const { user, signout, app } = useUser();
 
@@ -95,7 +97,7 @@ export default function UserSignin({
         <div
           className={`${
             userMenu ? 'block' : 'hidden'
-          } absolute right-0 z-40 w-48 p-2 py-1 mt-2 rounded-md shadow-lg bg-basics-50 ring-1 ring-black ring-opacity-5`}
+          } ${positionClass} absolute z-40 w-48 p-2 py-1 mt-2 rounded-md shadow-lg bg-basics-50 ring-1 ring-black ring-opacity-5`}
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="user-menu"
