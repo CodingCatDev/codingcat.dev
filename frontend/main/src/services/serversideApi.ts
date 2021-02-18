@@ -114,6 +114,37 @@ export async function validateCourseUser(idToken: string): Promise<boolean> {
   }
 }
 
+export async function validateAdminUser(idToken: string): Promise<boolean> {
+  //Verify Token
+  const decodedToken = admin.auth().verifyIdToken(idToken);
+
+  if (!decodedToken) {
+    return false;
+  }
+
+  const userRecord = await admin.auth().getUser((await decodedToken).uid);
+  if (userRecord) {
+    // Verify user has the correct roles
+    const userRef = await admin
+      .firestore()
+      .doc(`users/${userRecord.uid}`)
+      .get();
+
+    const userData = userRef.data() as { uid: string; roles: string[] };
+    if (
+      userData &&
+      userData.roles &&
+      userData.roles.some((r) => ['admin', 'editor', 'author'].indexOf(r) >= 0)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 /* Utilities */
 export function cleanTimestamp(
   data: FirebaseFirestore.DocumentData
