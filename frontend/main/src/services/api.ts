@@ -188,7 +188,7 @@ export const postCreate = (type: PostType, title: string, slug: string) => {
     titleSearch: title.toLowerCase(),
     status: PostStatus.draft,
     visibility: PostVisibility.private,
-    slug,
+    slug: slug ? slug : id,
   };
 
   return firestore$.pipe(
