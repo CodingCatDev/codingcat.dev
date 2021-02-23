@@ -7,10 +7,11 @@ import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 import VideoFormModal from '@/components/admin/VideoFormModal';
 
 import ImageModal from '@/components/admin/ImageModal';
-import VideoModal from '@/components/admin/VideoModal';
+import CloudinaryCover from '@/components/admin/EditPostCloudinaryCover';
 import { Post } from '@/models/post.model';
 import { Media, MediaType } from '@/models/media.model';
 import { Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export default function EditPostMedia({
   history,
@@ -29,11 +30,15 @@ export default function EditPostMedia({
     if (!history) {
       return;
     }
-    setMedia$(historyMediaDataObservable(history));
-  }, [history]);
+    setMedia$(
+      historyMediaDataObservable(history).pipe(
+        map((media) => media.filter((m) => m.type === type))
+      )
+    );
+  }, [history, type]);
 
   useEffect(() => {
-    if (!setMedia$) {
+    if (!media$) {
       return;
     }
     const mediaSub = media$.subscribe((m) => setMedia(m));
@@ -42,14 +47,14 @@ export default function EditPostMedia({
         mediaSub.unsubscribe();
       }
     };
-  }, [setMedia$]);
+  }, [media$]);
 
   if (!history) {
     return <></>;
   }
   return (
     <section className="grid grid-cols-1 gap-4">
-      <section className="flex flex-wrap space-x-4">
+      <section className="grid grid-cols-2">
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Image</h3>
           <div className="w-full">
@@ -69,24 +74,42 @@ export default function EditPostMedia({
         </div>
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Video</h3>
-          {/* For some reason this is showing up in the browser as 400x200, not sure if it's aspect ratio or what, but may need to be restyled after video is coded in. */}
-          <video width="400" height="250">
-            <source src="" type="video/mp4" />
-          </video>
+          <div className="w-full">
+            {history.coverVideo?.path ? (
+              <CloudinaryCover post={history} />
+            ) : (
+              <div>Placeholder</div>
+            )}
+          </div>
         </div>
       </section>
       <section>
         <header className="flex justify-between space-x-4">
           <nav className="flex">
-            {/* Going to need some state here to determine which tab it's on */}
-            <button className="px-4 py-2 uppercase rounded-t-lg font-2xl bold text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
+            <button
+              className={`px-4 py-2 uppercase rounded-t-lg font-2xl bold 
+              ${
+                type === MediaType.photo
+                  ? 'text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900'
+                  : 'text-primary-900 dark:text-primary-900 bg-basics-50 dark:bg-basics-50'
+              }`}
+              onClick={() => setType(MediaType.photo)}
+            >
               Images
             </button>
-            <button className="px-4 py-2 uppercase rounded-t-lg text-primary-900 dark:text-primary-900 font-2xl bold bg-basics-50 dark:bg-basics-50">
+            <button
+              className={`px-4 py-2 uppercase rounded-t-lg font-2xl bold 
+              ${
+                type === MediaType.video
+                  ? 'text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900'
+                  : 'text-primary-900 dark:text-primary-900 bg-basics-50 dark:bg-basics-50'
+              }`}
+              onClick={() => setType(MediaType.video)}
+            >
               Videos
             </button>
           </nav>
-          <div className="flex">
+          <div className="flex pb-1">
             <CloudinaryUpload
               history={history}
               setHistory={setHistory}
@@ -97,14 +120,36 @@ export default function EditPostMedia({
         <section className="grid w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit lg:max-h-96">
           {media.map((m) => (
             <>
-              {m.cloudinary &&
+              {m.type == MediaType.photo &&
+                m.cloudinary &&
                 m.cloudinary.path &&
                 m.cloudinary.height &&
                 m.cloudinary.width && (
-                  <div key={m.id} className="w-full">
+                  <div key={m.id} className="w-full max-w-md">
                     {
                       <Image
                         src={m.cloudinary?.path}
+                        alt={m.cloudinary?.original_filename}
+                        width={m.cloudinary?.width}
+                        height={m.cloudinary?.height}
+                        layout="responsive"
+                        className=""
+                      />
+                    }
+                  </div>
+                )}
+              {m.type == MediaType.video &&
+                m.cloudinary &&
+                m.cloudinary.thumbnail_url &&
+                m.cloudinary.height &&
+                m.cloudinary.width && (
+                  <div key={m.id} className="w-full max-w-md">
+                    {
+                      <Image
+                        loader={({ src }) =>
+                          src.replace('/c_limit,h_60,w_90', '')
+                        }
+                        src={m.cloudinary?.thumbnail_url}
                         alt={m.cloudinary?.original_filename}
                         width={m.cloudinary?.width}
                         height={m.cloudinary?.height}

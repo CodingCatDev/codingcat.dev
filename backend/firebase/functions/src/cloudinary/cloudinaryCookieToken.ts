@@ -8,6 +8,7 @@ import {
   cloudinaryApiKey,
   cloudinaryApiSecret,
   cloudinaryTokenKey,
+  cloudinaryVideo,
 } from './../config/config';
 
 const config = {
@@ -49,7 +50,7 @@ export const cloudinaryCookieToken = functions.https.onCall(
     const cookieToken = await cloudinary.utils.generate_auth_token({
       key: cloudinaryTokenKey,
       duration: 600,
-      acl: '*/ccd-cloudinary/videos/*',
+      acl: `*/${cloudinaryVideo}/*`,
     });
     return cookieToken;
   }
