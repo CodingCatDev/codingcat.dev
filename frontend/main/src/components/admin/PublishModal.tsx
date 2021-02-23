@@ -79,7 +79,7 @@ export default function PublishModal({
   }
 
   return (
-    <div className="py-10">
+    <div className="mb-4">
       <button
         className="flex items-center justify-center w-full h-16 uppercase btn-primary"
         onClick={handleClickOpen}

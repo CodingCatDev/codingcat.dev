@@ -232,7 +232,7 @@ export default function EditPost({
               options={{
                 sideBySideFullscreen: false,
                 status: false,
-                minHeight: '60vh',
+                minHeight: '55vh',
               }}
             />
           </>
@@ -284,7 +284,7 @@ export default function EditPost({
   return (
     <>
       {history && Object.keys(history).length > 0 ? (
-        <div className="w-full ">
+        <div className="w-full max-w-8xl">
           <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-500 dark:bg-secondary-600">
             <button
               className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
@@ -361,24 +361,57 @@ export default function EditPost({
                   <div className="p-2 text-2xl rounded-t-lg text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
                     Status
                   </div>
-                  <div className="flex p-2 bg-basics-50">
-                    {/* Current Post History */}
-                    <div
-                      className={`my-1 flex ${
-                        history.status === PostStatus.draft
-                          ? `px-2 py-1 rounded-full bg-basics-400 text-white dark:bg-basics-400 dark:text-white`
-                          : `px-2 py-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50`
-                      }`}
-                    >
-                      {history.status}
+                  <div className="grid gap-2 p-2 justify-items-start bg-basics-50">
+                    <div className="flex items-center space-x-2">
+                      {/* Current Post History */}
+                      <div
+                        className={`my-1 flex ${
+                          history.status === PostStatus.draft
+                            ? `px-2 py-1 rounded-full bg-basics-400 text-white dark:bg-basics-400 dark:text-white`
+                            : `px-2 py-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50`
+                        }`}
+                      >
+                        {history.status}
+                      </div>
+                      {/* Date of History */}
+                      <div>
+                        {postHistories.find(
+                          (h) => h.status === PostStatus.published
+                        ) ? (
+                          <div className="bg-basics-50">
+                            {postHistories
+                              .find((h) => h.status === PostStatus.published)
+                              ?.publishedAt?.toDate()
+                              .toDateString()}
+                          </div>
+                        ) : (
+                          ''
+                        )}
+                      </div>
                     </div>
                     {/* Any Post History showing Published */}
                     {history.status != PostStatus.published &&
                     postHistories.find(
                       (h) => h.status === PostStatus.published
                     ) ? (
-                      <div className="px-2 py-1 m-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50">
-                        {PostStatus.published}
+                      <div className="flex items-center space-x-2">
+                        <div className="px-2 py-1 m-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50">
+                          {PostStatus.published}
+                        </div>
+                        <div>
+                          {postHistories.find(
+                            (h) => h.status === PostStatus.published
+                          ) ? (
+                            <div className="bg-basics-50">
+                              {postHistories
+                                .find((h) => h.status === PostStatus.published)
+                                ?.publishedAt?.toDate()
+                                .toDateString()}
+                            </div>
+                          ) : (
+                            ''
+                          )}
+                        </div>
                       </div>
                     ) : (
                       ''
@@ -387,22 +420,11 @@ export default function EditPost({
                 </section>
                 <div className="flex-col w-full">
                   <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
-                    Published On
+                    Media
                   </div>
                   <div className="p-2 bg-basics-50 dark:bg-basics-800">
-                    {' '}
-                    {postHistories.find(
-                      (h) => h.status === PostStatus.published
-                    ) ? (
-                      <div className="bg-basics-50">
-                        {postHistories
-                          .find((h) => h.status === PostStatus.published)
-                          ?.publishedAt?.toDate()
-                          .toDateString()}
-                      </div>
-                    ) : (
-                      ''
-                    )}
+                    <img src="" alt="" className="" />
+                    <button className="w-full btn-secondary">Add Media</button>
                   </div>
                 </div>
                 <div className="flex-col w-full">

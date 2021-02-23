@@ -19,34 +19,40 @@ function EditPosts({ type }: { type: PostType }) {
   }, [type]);
 
   return (
-    <table
+    <section
       className="block w-full space-y-4 lg:space-y-0 lg:table"
       role="table"
     >
       {posts.map((post, index) => (
-        <tbody role="rowgroup" key={post.id} className="flex lg:block">
-          <tr
-            className="grid justify-between rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:flex bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
+        <section role="rowgroup" key={post.id} className="flex tbody lg:block">
+          <ul
             role="row"
+            className="grid justify-between text-center tr rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:grid-cols-5 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
           >
-            <th className="p-2 text-left" role="columnheader">
+            <li
+              className="p-2 text-left lg:justify-self-start"
+              role="columnheader"
+            >
               Title
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li className="p-2 text-left" role="columnheader">
               Id
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li className="p-2 text-left" role="columnheader">
               Date
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li className="p-2 text-left" role="columnheader">
               Author
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li
+              className="p-2 text-left lg:justify-self-center"
+              role="columnheader"
+            >
               Status
-            </th>
-          </tr>
-          <tr
-            className={`w-full ${
+            </li>
+          </ul>
+          <ul
+            className={`w-full tr ${
               index % 2
                 ? 'bg-primary-100 hover:bg-primary-200'
                 : 'bg-basics-100 hover:bg-basics-200'
@@ -54,19 +60,22 @@ function EditPosts({ type }: { type: PostType }) {
           >
             <Link href={`${type}/${post.id}`}>
               <a className="grid items-center lg:grid-cols-5 hover:text-current dark:hover:text-current">
-                <td className="p-2 text-left" role="cell">
+                <li className="p-2 text-left td" role="cell">
                   {post.title}
-                </td>
-                <td className="p-2 text-left" role="cell">
+                </li>
+                <li className="p-2 text-left td" role="cell">
                   {post.id}
-                </td>
-                <td className="p-2 text-left" role="cell">
+                </li>
+                <li className="p-2 text-left td" role="cell">
                   {post.updatedAt}
-                </td>
-                <td className="p-2 text-left" role="cell">
+                </li>
+                <li className="p-2 text-left td" role="cell">
                   {post.createdBy}
-                </td>
-                <td className="p-2 text-left lg:justify-self-end" role="cell">
+                </li>
+                <li
+                  className="p-2 text-left lg:justify-self-center"
+                  role="cell"
+                >
                   <span
                     className={`m-1 ${
                       post && post.status === PostStatus.draft
@@ -76,23 +85,23 @@ function EditPosts({ type }: { type: PostType }) {
                   >
                     {post.status}
                   </span>
-                </td>
+                </li>
               </a>
             </Link>
-          </tr>
-        </tbody>
+          </ul>
+        </section>
       ))}
       <style jsx>{`
-        td {
+        .td {
           word-break: break-word;
         }
         @media (min-width: 1024px) {
-          tbody:not(:first-child) tr:first-child {
+          .tbody:not(:first-child) .tr:first-child {
             display: none;
           }
         }
       `}</style>
-    </table>
+    </section>
   );
 }
 
