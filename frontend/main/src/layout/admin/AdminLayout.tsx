@@ -18,6 +18,8 @@ const AdminLayout = ({
   children: any;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
+  const [userMenu, setUserMenu] = useState(false);
+  const [navOpen, setNavOpen] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,9 +33,21 @@ const AdminLayout = ({
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
       <div className="grid h-screen grid-cols-admin">
-        <AdminMenu />
+        <AdminMenu
+          userMenu={userMenu}
+          setUserMenu={setUserMenu}
+          navOpen={navOpen}
+          setNavOpen={setNavOpen}
+        />
         <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
-          <AdminHeader site={site} post={post} />
+          <AdminHeader
+            site={site}
+            post={post}
+            userMenu={userMenu}
+            setUserMenu={setUserMenu}
+            navOpen={navOpen}
+            setNavOpen={setNavOpen}
+          />
           <main className="h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
             {children}
           </main>
@@ -42,10 +56,6 @@ const AdminLayout = ({
           </footer>
         </div>
       </div>
-      {/* <AdminMenu
-        setOverlayMenuActive={setOverlayMenuActive}
-        overlayMenuActive={overlayMenuActive}
-      /> */}
     </>
   );
 };

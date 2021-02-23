@@ -1,4 +1,8 @@
-export default function AJHeadphones({ className = 'block w-12 h-12' }) {
+export default function AJHeadphones({
+  className = 'block w-12 h-12',
+}: {
+  className?: string;
+}) {
   return (
     <svg className={className} viewBox="0 0 100 101" fill="none">
       <ellipse

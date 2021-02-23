@@ -36,7 +36,7 @@ export default function CourseSections({
 
   const sectionInput = async (e: any) => {
     const title = e.target.value;
-    setSection({ ...section, title });
+    setSection({ ...(section as Section), title });
   };
 
   const createSection = async () => {
@@ -47,7 +47,7 @@ export default function CourseSections({
       .pipe(take(1))
       .subscribe((h) => {
         setHistory(h);
-        setSection({ title: '' });
+        setSection({ title: '' } as Section);
       });
   };
 

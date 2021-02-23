@@ -21,15 +21,14 @@
     "start": "lerna run --parallel start ",
     "lint": "lerna run --parallel lint"
   },
-  "dependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": ""
+      "pre-commit": "npm run lint"
     }
   },
   "devDependencies": {
-    "lerna": "^3.22.1",
-    "husky": "^4.3.6"
+    "husky": "^4.3.6",
+    "lerna": "^3.22.1"
   },
   "resolutions": {
     "react": "^17.0.1",

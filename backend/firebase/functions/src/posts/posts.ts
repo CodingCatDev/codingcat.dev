@@ -36,14 +36,19 @@ export const onPostWrite = functions.firestore
       console.log('post missing data');
       return;
     }
-    const slugCheck = await firestore
-      .collection('postBaseNames')
-      .doc(post.slug)
+    /* Remove existing slugs */
+    const slugs = await firestore
+      .collection('postSlugs')
+      .where('postId', '==', context.params.postId)
       .get();
-    if (slugCheck.exists) {
-      console.log('Slug already found, fail!');
-      return false;
-    }
+    await Promise.all(
+      slugs.docs.map((slug) => {
+        console.log('Deleting', slug.id);
+        return firestore.collection('postSlugs').doc(slug.id).delete();
+      })
+    );
+
+    /* Add New Slug */
     return firestore
       .collection('postSlugs')
       .doc(post.slug)

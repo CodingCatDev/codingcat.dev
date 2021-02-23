@@ -67,7 +67,11 @@ export async function postBySlugService(
 
 export async function postById(id: string): Promise<Post | null> {
   const postDoc = await admin.firestore().doc(`posts/${id}`).get();
-  return cleanTimestamp(smallPostPayload(postDoc)) as Post;
+  if (postDoc.exists) {
+    return cleanTimestamp(smallPostPayload(postDoc)) as Post;
+  } else {
+    return null;
+  }
 }
 
 /* Site Configuration */
@@ -100,6 +104,37 @@ export async function validateCourseUser(idToken: string): Promise<boolean> {
 
     const userData = userRef.data() as { uid: string; roles: string[] };
     // TODO: Include Stripe Custom Claim for memberships
+    if (
+      userData &&
+      userData.roles &&
+      userData.roles.some((r) => ['admin', 'editor', 'author'].indexOf(r) >= 0)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+export async function validateAdminUser(idToken: string): Promise<boolean> {
+  //Verify Token
+  const decodedToken = admin.auth().verifyIdToken(idToken);
+
+  if (!decodedToken) {
+    return false;
+  }
+
+  const userRecord = await admin.auth().getUser((await decodedToken).uid);
+  if (userRecord) {
+    // Verify user has the correct roles
+    const userRef = await admin
+      .firestore()
+      .doc(`users/${userRecord.uid}`)
+      .get();
+
+    const userData = userRef.data() as { uid: string; roles: string[] };
     if (
       userData &&
       userData.roles &&

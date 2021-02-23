@@ -17,9 +17,9 @@ import {
   PostVisibility,
   CoverMedia,
   MediaSource,
+  Section,
 } from '@/models/post.model';
 import { v4 as uuid } from 'uuid';
-import { Course, Section } from '@/models/course.model.ts';
 import { Cloudinary } from '@/models/cloudinary.model';
 import { Video } from '@/models/video.model';
 
@@ -188,7 +188,7 @@ export const postCreate = (type: PostType, title: string, slug: string) => {
     titleSearch: title.toLowerCase(),
     status: PostStatus.draft,
     visibility: PostVisibility.private,
-    slug,
+    slug: slug ? slug : id,
   };
 
   return firestore$.pipe(
@@ -456,7 +456,7 @@ export const getCloudinarySignature = (params: any) => {
 /* Course 
    Course is a type of post, but it also has sections, with lessons
 */
-export const addCourseSection = (history: Course, section: Section) => {
+export const addCourseSection = (history: Post, section: Section) => {
   return firestore$.pipe(
     switchMap((firestore) => {
       const historyRef = firestore.doc(
@@ -465,7 +465,7 @@ export const addCourseSection = (history: Course, section: Section) => {
       historyRef.update({
         sections: firebase.firestore.FieldValue.arrayUnion(section),
       });
-      return docData<Course>(historyRef);
+      return docData<Post>(historyRef);
     })
   );
 };

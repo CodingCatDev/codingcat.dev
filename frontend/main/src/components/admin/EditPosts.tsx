@@ -19,73 +19,89 @@ function EditPosts({ type }: { type: PostType }) {
   }, [type]);
 
   return (
-    <table
+    <section
       className="block w-full space-y-4 lg:space-y-0 lg:table"
       role="table"
     >
       {posts.map((post, index) => (
-        <tbody role="rowgroup" key={post.id} className="flex lg:block">
-          <thead
-            className="grid justify-between rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:flex bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
+        <section role="rowgroup" key={post.id} className="flex tbody lg:block">
+          <ul
             role="row"
+            className="grid justify-between text-center tr rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:grid-cols-5 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
           >
-            <th className="p-2 text-left" role="columnheader">
+            <li
+              className="p-2 text-left lg:justify-self-start"
+              role="columnheader"
+            >
               Title
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li className="p-2 text-left" role="columnheader">
               Id
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li className="p-2 text-left" role="columnheader">
               Date
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li className="p-2 text-left" role="columnheader">
               Author
-            </th>
-            <th className="p-2 text-left" role="columnheader">
+            </li>
+            <li
+              className="p-2 text-left lg:justify-self-center"
+              role="columnheader"
+            >
               Status
-            </th>
-          </thead>
-          <tr
-            className={`grid w-full lg:grid-cols-5 ${
-              index % 2 ? 'bg-primary-100' : 'bg-basics-50'
+            </li>
+          </ul>
+          <ul
+            className={`w-full tr ${
+              index % 2
+                ? 'bg-primary-100 hover:bg-primary-200'
+                : 'bg-basics-100 hover:bg-basics-200'
             }`}
           >
-            <td className="p-2 text-left" role="cell">
-              <Link href={`${type}/${post.id}`}>
-                <a>{post.title} </a>
-              </Link>
-            </td>
-            <td className="p-2 text-left" role="cell">
-              {post.id}
-            </td>
-            <td className="p-2 text-left" role="cell">
-              {post.updatedAt}
-            </td>
-            <td className="p-2 text-left" role="cell">
-              {post.createdBy}
-            </td>
-            <td className="p-2 text-left lg:justify-self-end" role="cell">
-              <span
-                className={`m-1 ${
-                  post && post.status === PostStatus.draft
-                    ? `px-2 py-1 rounded-full bg-basics-400 text-white dark:bg-basics-400 dark:text-white`
-                    : `px-2 py-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50`
-                }`}
-              >
-                {post.status}
-              </span>
-            </td>
-          </tr>
-        </tbody>
+            <Link href={`${type}/${post.id}`}>
+              <a className="grid items-center lg:grid-cols-5 hover:text-current dark:hover:text-current">
+                <li className="p-2 text-left td" role="cell">
+                  {post.title}
+                </li>
+                <li className="p-2 text-left td" role="cell">
+                  {post.id}
+                </li>
+                <li className="p-2 text-left td" role="cell">
+                  {post.updatedAt}
+                </li>
+                <li className="p-2 text-left td" role="cell">
+                  {post.createdBy}
+                </li>
+                <li
+                  className="p-2 text-left lg:justify-self-center"
+                  role="cell"
+                >
+                  <span
+                    className={`m-1 ${
+                      post && post.status === PostStatus.draft
+                        ? `px-2 py-1 rounded-full bg-basics-400 text-white dark:bg-basics-400 dark:text-white`
+                        : `px-2 py-1 rounded-full bg-success-600 text-basics-50 dark:bg-success-600 dark:text-basics-50`
+                    }`}
+                  >
+                    {post.status}
+                  </span>
+                </li>
+              </a>
+            </Link>
+          </ul>
+        </section>
       ))}
       <style jsx>{`
+        .td {
+          word-break: break-word;
+        }
         @media (min-width: 1024px) {
-          tbody:not(:first-child) thead {
+          .tbody:not(:first-child) .tr:first-child {
             display: none;
           }
         }
       `}</style>
-    </table>
+    </section>
   );
 }
 
