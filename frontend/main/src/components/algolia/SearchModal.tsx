@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import AlgoliaInstantSearch from './algoliaInstantSearch';
 
-export default () => {
-  const [show, setShow] = useState(false);
+export default function SearchModal(): JSX.Element {
+  const [show, setShow] = useState<boolean>(false);
 
   const showModal = () => {
     setShow(true);
@@ -12,16 +12,16 @@ export default () => {
     setShow(false);
   };
 
-  const Modal = ({ handleClose, show, children }: any) => {
-    const showHideclassNameName = show
-      ? 'w-screen h-screen fixed inset-0 z-50 bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 p-24'
-      : 'hidden';
-    return <section className={showHideclassNameName}>{children}</section>;
-  };
-
   return (
     <>
-      <Modal show={show} handleClose={hideModal}>
+      <div
+        className={`${
+          show
+            ? 'w-screen h-screen fixed inset-0 z-50 bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 p-24'
+            : 'hidden'
+        }
+          `}
+      >
         <section
           className="grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 bg-basics-50"
           style={{
@@ -40,7 +40,7 @@ export default () => {
             </button>
           </section>
         </section>
-      </Modal>
+      </div>
       <button
         className={
           show
@@ -63,4 +63,4 @@ export default () => {
       </button>
     </>
   );
-};
+}

@@ -56,7 +56,7 @@ const Stats = connectStateResults(({ searchResults: res }: any) => {
   );
 });
 
-const HitList = (show: any) => {
+const HitList = ({ show }: { show: boolean }): JSX.Element => {
   const [query, setQuery] = useState(``);
   const [focus, setFocus] = useState(false);
 
@@ -75,37 +75,36 @@ const HitList = (show: any) => {
     searchForFacetValues: algoliaClient.searchForFacetValues,
   };
   const ahitComps = hitComps as any;
+
+  if (!show) {
+    return <></>;
+  }
+
   return (
-    <>
-      {show && (
-        <InstantSearch
-          indexName={searchIndices[0].name}
-          searchClient={searchClient}
-        >
-          <header className="grid grid-cols-1 gap-4">
-            <CustomSearchBox />
-            <hr className="opacity-20 text-primary-900" />
-          </header>
-          {searchIndices.map(({ name, title, hitComp }) => (
-            <main className="w-full my-4" key={name}>
-              <Index indexName={name}>
-                <Results>
-                  <Hits
-                    hitComponent={ahitComps[hitComp](() => setFocus(false))}
-                  />
-                </Results>
-              </Index>
-            </main>
-          ))}
-          <footer className="grid w-full grid-cols-1 row-start-3 gap-4">
-            <hr className="opacity-20 text-primary-900" />
-            <div className="justify-self-end">
-              <PoweredBy />
-            </div>
-          </footer>
-        </InstantSearch>
-      )}
-    </>
+    <InstantSearch
+      indexName={searchIndices[0].name}
+      searchClient={searchClient}
+    >
+      <header className="grid grid-cols-1 gap-4">
+        <CustomSearchBox />
+        <hr className="opacity-20 text-primary-900" />
+      </header>
+      {searchIndices.map(({ name, title, hitComp }) => (
+        <main className="w-full my-4" key={name}>
+          <Index indexName={name}>
+            <Results>
+              <Hits hitComponent={ahitComps[hitComp](() => setFocus(false))} />
+            </Results>
+          </Index>
+        </main>
+      ))}
+      <footer className="grid w-full grid-cols-1 row-start-3 gap-4">
+        <hr className="opacity-20 text-primary-900" />
+        <div className="justify-self-end">
+          <PoweredBy />
+        </div>
+      </footer>
+    </InstantSearch>
   );
 };
 export default HitList;
