@@ -97,20 +97,23 @@ export default function EditPostMedia({
         <section className="grid w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit lg:max-h-96">
           {media.map((m) => (
             <>
-              {m.cloudinary && m.cloudinary.path && (
-                <div key={m.id} className="w-full">
-                  {
-                    <Image
-                      src={m.cloudinary?.path}
-                      alt={m.cloudinary?.original_filename}
-                      width="240"
-                      height="135"
-                      layout="responsive"
-                      className=""
-                    />
-                  }
-                </div>
-              )}
+              {m.cloudinary &&
+                m.cloudinary.path &&
+                m.cloudinary.height &&
+                m.cloudinary.width && (
+                  <div key={m.id} className="w-full">
+                    {
+                      <Image
+                        src={m.cloudinary?.path}
+                        alt={m.cloudinary?.original_filename}
+                        width={m.cloudinary?.width}
+                        height={m.cloudinary?.height}
+                        layout="responsive"
+                        className=""
+                      />
+                    }
+                  </div>
+                )}
             </>
           ))}
         </section>
