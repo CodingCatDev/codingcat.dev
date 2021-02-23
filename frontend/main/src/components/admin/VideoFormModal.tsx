@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { MediaType, Post } from '@/models/post.model';
+import { Post } from '@/models/post.model';
+import { MediaType } from '@/models/media.model';
 
 import { postHistoryCreate, postHistoryMediaCreate } from '@/services/api';
 import { take } from 'rxjs/operators';

@@ -11,17 +11,16 @@ import { loadStripe } from '@stripe/stripe-js';
 import { config } from '@/config/stripe';
 import {
   Post,
-  MediaType,
   PostType,
   PostStatus,
   PostVisibility,
   CoverMedia,
-  MediaSource,
   Section,
 } from '@/models/post.model';
 import { v4 as uuid } from 'uuid';
 import { Cloudinary } from '@/models/cloudinary.model';
 import { Video } from '@/models/video.model';
+import { Media, MediaSource, MediaType } from '@/models/media.model';
 
 const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
@@ -426,6 +425,7 @@ export const postHistoryMediaCreate = (
         type,
         cloudinary: cloudinary || null,
         video: video || null,
+        createdAt: firebase.firestore.Timestamp.now(),
       });
 
       const historyRef = firestore.doc(
@@ -441,6 +441,18 @@ export const postHistoryMediaCreate = (
         switchMap((b) => docData<Post>(historyRef))
       );
     })
+  );
+};
+
+export const historyMediaDataObservable = (history: Post) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      collectionData<Media>(
+        firestore
+          .collection(`posts/${history.postId}/history/${history.id}/media/`)
+          .orderBy('createdAt', 'desc')
+      )
+    )
   );
 };
 

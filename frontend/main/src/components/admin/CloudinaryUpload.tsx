@@ -7,7 +7,8 @@ import {
   postHistoryCreate,
 } from '@/services/api';
 import { take } from 'rxjs/operators';
-import { Post, MediaType } from '@/models/post.model';
+import { Post } from '@/models/post.model';
+import { MediaType } from '@/models/media.model';
 
 async function fetchCloudinarySignature(cb: any, params: any) {
   try {
@@ -35,7 +36,7 @@ export default function CloudinaryUpload({
   setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   history: Post;
   type: MediaType;
-}) {
+}): JSX.Element {
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
@@ -90,38 +91,23 @@ export default function CloudinaryUpload({
 
   return (
     <>
-      TODO: CloudinaryUpload
-      {/* {type === MediaType.photo ? (
-        <Button
-          variant="contained"
-          className={classes.photo}
-          onClick={() => onUpload()}
+      <button className="flex space-x-4 btn-primary" onClick={() => onUpload()}>
+        <svg
+          className="w-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <Box
-            sx={{
-              paddingRight: '0.5rem',
-            }}
-          >
-            Add Cloudinary Photo Cover
-          </Box>
-          <AddPhotoAlternateIcon />
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          className={classes.video}
-          onClick={() => onUpload()}
-        >
-          <Box
-            sx={{
-              paddingRight: '0.5rem',
-            }}
-          >
-            Add Cloudinary Video Cover
-          </Box>
-          <AddToQueueIcon />
-        </Button>
-      )} */}
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>{' '}
+        Upload Media
+      </button>
     </>
   );
 }

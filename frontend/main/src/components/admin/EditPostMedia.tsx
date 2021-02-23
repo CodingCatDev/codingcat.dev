@@ -1,16 +1,71 @@
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+
+import { historyMediaDataObservable } from '@/services/api';
+
 import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 import VideoFormModal from '@/components/admin/VideoFormModal';
 
 import ImageModal from '@/components/admin/ImageModal';
 import VideoModal from '@/components/admin/VideoModal';
+import { Post } from '@/models/post.model';
+import { Media, MediaType } from '@/models/media.model';
+import { Observable, Subject } from 'rxjs';
 
-export default function EditPostMedia(): JSX.Element {
+export default function EditPostMedia({
+  history,
+  setHistory,
+}: {
+  history: Post | undefined;
+  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
+}): JSX.Element {
+  const [type, setType] = useState<MediaType>(MediaType.photo);
+  const [media$, setMedia$] = useState<Observable<Media[]>>(
+    new Subject<Media[]>()
+  );
+  const [media, setMedia] = useState<Media[]>([]);
+
+  useEffect(() => {
+    if (!history) {
+      return;
+    }
+    setMedia$(historyMediaDataObservable(history));
+  }, [history]);
+
+  useEffect(() => {
+    if (!setMedia$) {
+      return;
+    }
+    const mediaSub = media$.subscribe((m) => setMedia(m));
+    return () => {
+      if (mediaSub) {
+        mediaSub.unsubscribe();
+      }
+    };
+  }, [setMedia$]);
+
+  if (!history) {
+    return <></>;
+  }
   return (
     <section className="grid grid-cols-1 gap-4">
       <section className="flex flex-wrap space-x-4">
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Image</h3>
-          <img src="" alt="" width="400px" height="250px" />
+          <div className="w-full">
+            {history.coverPhoto?.path ? (
+              <Image
+                src={history.coverPhoto?.path}
+                alt={history.title}
+                width="1920"
+                height="1080"
+                layout="responsive"
+                className=""
+              />
+            ) : (
+              <div>Placeholder</div>
+            )}
+          </div>
         </div>
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Video</h3>
@@ -32,61 +87,34 @@ export default function EditPostMedia(): JSX.Element {
             </button>
           </nav>
           <div className="flex">
-            <button className="flex space-x-4 btn-primary">
-              <svg
-                className="w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>{' '}
-              Upload Media
-            </button>
-            <select></select>
+            <CloudinaryUpload
+              history={history}
+              setHistory={setHistory}
+              type={type}
+            />
           </div>
         </header>
         <section className="grid w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit lg:max-h-96">
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-          <img src="" alt="" width="300px" height="150px" />
-        </section>
-      </section>
-      {/* {history && (
+          {media.map((m) => (
             <>
-              <VideoModal post={history} />
-              <CloudinaryUpload
-                setHistory={setHistory}
-                history={history}
-                type={MediaType.video}
-              />
-              <VideoFormModal setHistory={setHistory} post={history} />
-              {history.coverPhoto ? (
-                <ImageModal post={history} />
-              ) : (
-                <CloudinaryUpload
-                  setHistory={setHistory}
-                  history={history}
-                  type={MediaType.photo}
-                />
+              {m.cloudinary && m.cloudinary.path && (
+                <div key={m.id} className="w-full">
+                  {
+                    <Image
+                      src={m.cloudinary?.path}
+                      alt={m.cloudinary?.original_filename}
+                      width="240"
+                      height="135"
+                      layout="responsive"
+                      className=""
+                    />
+                  }
+                </div>
               )}
             </>
-          )} */}
+          ))}
+        </section>
+      </section>
     </section>
   );
 }

@@ -110,7 +110,7 @@ export default function EditPost({
           />
         );
       case TabType.media:
-        return <EditPostMedia />;
+        return <EditPostMedia history={history} setHistory={setHistory} />;
       case TabType.sections:
         return <CourseSections historyInput={history as Post} />;
       case TabType.preview:
