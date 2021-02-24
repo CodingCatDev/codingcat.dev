@@ -4,9 +4,8 @@ import Image from 'next/image';
 import { historyMediaDataObservable } from '@/services/api';
 
 import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
-import VideoFormModal from '@/components/admin/VideoFormModal';
+import EditPostMediaVideoForm from '@/components/admin/EditPostMediaVideoForm';
 
-import ImageModal from '@/components/admin/ImageModal';
 import CloudinaryCover from '@/components/admin/EditPostCloudinaryCover';
 import { Post } from '@/models/post.model';
 import { Media, MediaType } from '@/models/media.model';
@@ -75,7 +74,7 @@ export default function EditPostMedia({
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Video</h3>
           <div className="w-full">
-            {history.coverVideo?.path ? (
+            {history.coverVideo ? (
               <CloudinaryCover post={history} />
             ) : (
               <div>Placeholder</div>
@@ -109,7 +108,10 @@ export default function EditPostMedia({
               Videos
             </button>
           </nav>
-          <div className="flex pb-1">
+          <div className="flex pb-1 space-x-2">
+            {type === MediaType.video && (
+              <EditPostMediaVideoForm history={history} />
+            )}
             <CloudinaryUpload
               history={history}
               setHistory={setHistory}
@@ -159,6 +161,26 @@ export default function EditPostMedia({
                     }
                   </div>
                 )}
+              {m.type == MediaType.video && m.video && (
+                <div key={m.id} className="w-full max-w-md">
+                  {
+                    <Image
+                      loader={({ src }) =>
+                        `https://img.youtube.com/vi/${src.replace(
+                          'https://youtu.be/',
+                          ''
+                        )}/0.jpg`
+                      }
+                      src={m.video.url}
+                      alt={m.video.url}
+                      width="1920"
+                      height="1080"
+                      layout="responsive"
+                      className=""
+                    />
+                  }
+                </div>
+              )}
             </>
           ))}
         </section>
