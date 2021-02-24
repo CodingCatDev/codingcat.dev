@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 import {
   postDataObservable,
@@ -37,13 +38,17 @@ export default function EditPost({
   const [tab, setTab] = useState<TabType>(TabType.edit);
   const [saving, setSaving] = useState<boolean>(false);
   const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
-  const [preview, setPreview] = useState<string>('');
+  // const [preview, setPreview] = useState<string>('');
   const [slugUnique, setSlugUnique] = useState(true);
+
+  const router = useRouter();
 
   // Sets initial state
   useEffect(() => {
-    setTab(TabType.edit);
-    // Set initial post to created
+    // Set Tab after refresh
+    const { tab } = router.query;
+    selectTab(tab ? (tab as TabType) : TabType.edit);
+
     const postSubscribe = postDataObservable(`posts/${id}`)
       .pipe(
         switchMap((post) => {
@@ -87,16 +92,27 @@ export default function EditPost({
     };
   }, [type, id]);
 
-  useEffect(() => {
-    if (tab === 'preview') {
-      setPreview(history?.content || '');
-    } else {
-      setPreview('');
-    }
-  }, [tab]);
+  // useEffect(() => {
+  //   if (tab === 'preview') {
+  //     setPreview(history?.content || '');
+  //   } else {
+  //     setPreview('');
+  //   }
+  // }, [tab]);
 
   function selectTab(tab: TabType) {
     setTab(tab);
+    const { id, type } = router.query;
+    router.push(
+      {
+        pathname: `/admin/${type}/${id}`,
+        query: {
+          tab: tab,
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
   }
 
   function onTab() {
@@ -119,7 +135,7 @@ export default function EditPost({
             className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto`}
           >
             <article className="pt-8 prose prose-purple lg:prose-xl">
-              <ShowMDX markdown={preview}></ShowMDX>
+              <ShowMDX markdown={history?.content || ''}></ShowMDX>
             </article>
           </div>
         );
