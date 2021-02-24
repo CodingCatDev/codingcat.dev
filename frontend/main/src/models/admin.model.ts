@@ -4,4 +4,6 @@ export enum TabType {
   sections = 'sections',
   preview = 'preview',
   history = 'history',
+  settings = 'settings',
+  groups = 'groups',
 }
