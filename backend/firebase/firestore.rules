@@ -45,6 +45,13 @@ service cloud.firestore {
             allow update: if hasAnyRole(['author', 'editor', 'admin'])
             allow delete: if hasAnyRole(['author', 'editor', 'admin'])
           }
+
+          match /customers/{id} {
+            allow create: if hasAnyRole(['admin'])
+            allow read: if hasAnyRole(['admin'])
+            allow update: if hasAnyRole(['admin'])
+            allow delete: if hasAnyRole(['admin'])
+          }
         }
       }
 

@@ -43,6 +43,24 @@ export const userProfileDataObservable = (uid: string) => {
   );
 };
 
+export const usersDataObservable = (limit: number) => {
+  if (limit && limit > 0) {
+    return firestore$.pipe(
+      switchMap((firestore) =>
+        collectionData(
+          firestore.collection('/users').limit(limit).orderBy('email', 'asc')
+        )
+      )
+    );
+  } else {
+    return firestore$.pipe(
+      switchMap((firestore) =>
+        collectionData(firestore.collection('/users').orderBy('email', 'asc'))
+      )
+    );
+  }
+};
+
 export const userDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>

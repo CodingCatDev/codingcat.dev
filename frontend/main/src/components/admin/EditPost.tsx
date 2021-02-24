@@ -16,10 +16,12 @@ import { interval, Subject } from 'rxjs';
 import Link from 'next/link';
 import ShowMDX from '@/components/admin/ShowMDX';
 import PostHistories from '@/components/admin/PostHistories';
-import CourseSections from '@/components/admin/CourseSections';
 import EditPostEditor from '@/components/admin/EditPostEditor';
 import EditPostSidebar from '@/components/admin/EditPostSidebar';
 import EditPostMedia from '@/components/admin/EditPostMedia';
+import EditPostCourseSections from '@/components/admin/EditPostCourseSections';
+import EditPostCourseSettings from '@/components/admin/EditPostCourseSettings';
+import EditPostCourseGroups from '@/components/admin/EditPostCourseGroups';
 
 export default function EditPost({
   type,
@@ -111,8 +113,6 @@ export default function EditPost({
         );
       case TabType.media:
         return <EditPostMedia history={history} setHistory={setHistory} />;
-      case TabType.sections:
-        return <CourseSections historyInput={history as Post} />;
       case TabType.preview:
         return (
           <div
@@ -123,6 +123,12 @@ export default function EditPost({
             </article>
           </div>
         );
+      case TabType.sections:
+        return <EditPostCourseSections historyInput={history as Post} />;
+      case TabType.settings:
+        return <EditPostCourseSettings historyInput={history as Post} />;
+      case TabType.groups:
+        return <EditPostCourseGroups historyInput={history as Post} />;
       case TabType.history:
         return <PostHistories postHistories={postHistories} />;
       default:
@@ -136,7 +142,7 @@ export default function EditPost({
         <div className="w-full max-w-8xl">
           <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-500 dark:bg-secondary-600">
             <button
-              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
                 tab == TabType.edit
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -146,7 +152,7 @@ export default function EditPost({
               EDIT
             </button>
             <button
-              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
                 tab == TabType.media
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -156,7 +162,7 @@ export default function EditPost({
               MEDIA
             </button>
             <button
-              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
                 tab == TabType.preview
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -166,7 +172,7 @@ export default function EditPost({
               MDX PREVIEW
             </button>
             <button
-              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
                 tab == TabType.sections
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -176,7 +182,27 @@ export default function EditPost({
               SECTIONS
             </button>
             <button
-              className={`block px-4 2xl:px-20 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+                tab == TabType.settings
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
+              } ${history.type == PostType.course ? 'block' : 'hidden'}`}
+              onClick={() => selectTab(TabType.settings)}
+            >
+              SETTINGS
+            </button>
+            <button
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+                tab == TabType.groups
+                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
+                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
+              } ${history.type == PostType.course ? 'block' : 'hidden'}`}
+              onClick={() => selectTab(TabType.groups)}
+            >
+              GROUPS
+            </button>
+            <button
+              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
                 tab == TabType.history
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'

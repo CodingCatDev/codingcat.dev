@@ -17,11 +17,11 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const arrayMove = require('array-move');
 
-export default function CourseSections({
+export default function EditPostCourseSections({
   historyInput,
 }: {
   historyInput: Post;
-}) {
+}): JSX.Element {
   const [history, setHistory] = useState<Post>();
   const [section, setSection] = useState<Section>();
   const [lessonSearch, setLessonSearch] = useState<string>('');
