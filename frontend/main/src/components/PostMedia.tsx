@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { MediaSource, Post } from '@/models/post.model';
-
+import { Post } from '@/models/post.model';
+import { MediaSource } from '@/models/media.model';
 import { config } from '@/config/cloudinary';
 
 import { getCloudinaryCookieToken } from '@/services/api';

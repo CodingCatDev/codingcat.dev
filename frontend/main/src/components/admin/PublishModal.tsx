@@ -16,14 +16,17 @@ export default function PublishModal({
   setSaving,
   setSlugUnique,
 }: {
-  history: Post;
+  history: Post | undefined;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
-  setSlugUnique: any;
-}) {
+  setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
+}): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
 
   useEffect(() => {
+    if (!history) {
+      return;
+    }
     postDataObservable(`/posts/${history.postId}`)
       .pipe(take(1))
       .subscribe((p) => {
