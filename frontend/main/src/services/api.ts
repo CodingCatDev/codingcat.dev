@@ -303,11 +303,14 @@ export const postsSearchByTitleObservable = (
   );
 };
 
-export const postsSlugUnique = (slug: string) => {
+export const postsSlugUnique = (slug: string, postId: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
       collectionData<Post>(
-        firestore.collection('posts').where('slug', '==', slug)
+        firestore
+          .collection('posts')
+          .where('slug', '==', slug)
+          .where('id', '!=', postId)
       ).pipe(map((posts) => (posts.length > 0 ? false : true)))
     )
   );

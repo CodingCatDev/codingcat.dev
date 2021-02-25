@@ -29,30 +29,8 @@ export const onPostCreate = functions.firestore
 export const onPostWrite = functions.firestore
   .document('posts/{postId}')
   .onWrite(async (snap, context) => {
-    console.log('Adding slug to collection');
-    const post = snap.after.data();
-
-    if (!post) {
-      console.log('post missing data');
-      return;
-    }
-    /* Remove existing slugs */
-    const slugs = await firestore
-      .collection('postSlugs')
-      .where('postId', '==', context.params.postId)
-      .get();
-    await Promise.all(
-      slugs.docs.map((slug) => {
-        console.log('Deleting', slug.id);
-        return firestore.collection('postSlugs').doc(slug.id).delete();
-      })
-    );
-
-    /* Add New Slug */
-    return firestore
-      .collection('postSlugs')
-      .doc(post.slug)
-      .set({ postId: context.params.postId });
+    // Saving when needed later
+    return true;
   });
 
 export const onPostDelete = functions.firestore
