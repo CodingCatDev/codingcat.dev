@@ -14,7 +14,7 @@ export default function AppMenu({
     <div
       className={`${
         overlayMenuActive
-          ? 'fixed inset-0 bg-primary-100 bg-opacity-70'
+          ? 'fixed inset-0 bg-primary-100 bg-opacity-70 z-50'
           : 'hidden'
       }`}
     >

@@ -79,8 +79,10 @@
     @apply text-2xl leading-snug tracking-wide font-heading;
   }
 
-  input {
-    @apply w-full px-4 py-2 text-base border rounded-md shadow-md appearance-none text-basics-900 dark:text-basics-900 placeholder-basics-500 dark:placeholder-basics-500 border-basics-200 bg-basics-50 dark:bg-basics-50 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent;
+  input[type='text'],
+  input[type='email'],
+  input[type='number'] {
+    @apply px-4 py-2 text-base border rounded-md shadow-md appearance-none text-basics-900 dark:text-basics-900 placeholder-basics-500 dark:placeholder-basics-500 border-basics-200 bg-basics-50 dark:bg-basics-50 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent;
   }
   textarea {
     @apply w-full px-4 py-2 text-base border rounded-md shadow-md appearance-none text-basics-900 dark:text-basics-900 placeholder-basics-500 dark:placeholder-basics-500 border-basics-200 bg-basics-50 dark:bg-basics-50 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent;
