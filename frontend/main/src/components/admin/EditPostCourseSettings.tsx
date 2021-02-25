@@ -1,21 +1,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  addCourseSection,
-  postHistoryUpdate,
-  usersDataObservable,
-} from '@/services/api';
-import { Post, Section } from '@/models/post.model.ts';
+import { postHistoryUpdate } from '@/services/api';
+import { NavigationSettings, Post } from '@/models/post.model.ts';
 import { take } from 'rxjs/operators';
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from 'react-beautiful-dnd';
-import { UserInfoExtended } from '@/models/user.model';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const arrayMove = require('array-move');
+import { AccessMode } from '@/models/access.model';
 
 export default function EditPostCourseSettings({
   historyInput,
@@ -23,10 +11,76 @@ export default function EditPostCourseSettings({
   historyInput: Post;
 }): JSX.Element {
   const [history, setHistory] = useState<Post>();
+  const [accessMode, setAccessMode] = useState<AccessMode | unknown>();
+  const [navigationSettings, setNavigationSettings] = useState<
+    NavigationSettings | unknown
+  >();
 
   useEffect(() => {
     setHistory(historyInput);
+    setAccessMode(historyInput.accessSettings?.accessMode);
+    setNavigationSettings(historyInput.navigationSettings);
   }, [historyInput]);
+
+  function onAccessModeChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    let accessMode: AccessMode = e.target.value as AccessMode;
+    let historyUpdate: Post | undefined = undefined;
+
+    if (e.target.type !== 'radio') {
+      accessMode = AccessMode.closed;
+      if (e.target.id === 'course-price') {
+        historyUpdate = {
+          ...history,
+          accessSettings: {
+            accessMode,
+            price: parseFloat(e.target.value) as number,
+            buttonUrl: history?.accessSettings?.buttonUrl || null,
+          },
+        } as Post;
+      }
+      if (e.target.id === 'button-url') {
+        historyUpdate = {
+          ...history,
+          accessSettings: {
+            accessMode,
+            price: history?.accessSettings?.price || null,
+            buttonUrl: e.target.value,
+          },
+        } as Post;
+      }
+    } else {
+      historyUpdate = {
+        ...history,
+        accessSettings: {
+          accessMode,
+        },
+      } as Post;
+    }
+    if (historyUpdate) {
+      setAccessMode(accessMode);
+      setHistory(historyUpdate);
+      postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+    }
+  }
+
+  function onCourseNavigationChange(
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void {
+    const navigationSettings: NavigationSettings = e.target
+      .value as NavigationSettings;
+    const historyUpdate = {
+      ...history,
+      navigationSettings,
+    } as Post;
+
+    setNavigationSettings(navigationSettings);
+    setHistory(historyUpdate);
+    postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+  }
+
+  if (!history) {
+    return <></>;
+  }
 
   return (
     <div className="grid grid-cols-1 gap-10">
@@ -46,15 +100,26 @@ export default function EditPostCourseSettings({
                   <input
                     type="radio"
                     id="open"
-                    name="open"
+                    name="accessmode"
                     value="open"
-                    className="mt-1"
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={accessMode === AccessMode.open}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="open" className="font-bold">
+                    <label
+                      htmlFor="open"
+                      className={`font-bold ${
+                        accessMode !== AccessMode.open ? 'opacity-50' : ''
+                      }`}
+                    >
                       Open
                     </label>
-                    <p>
+                    <p
+                      className={` ${
+                        accessMode !== AccessMode.open ? 'opacity-50' : ''
+                      }`}
+                    >
                       The course is not protected. Any user can access its
                       content without the need to be logged-in or enrolled.
                     </p>
@@ -64,15 +129,26 @@ export default function EditPostCourseSettings({
                   <input
                     type="radio"
                     id="free"
-                    name="free"
+                    name="accessmode"
                     value="free"
-                    className="mt-1"
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={accessMode === AccessMode.free}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="free" className="font-bold">
+                    <label
+                      htmlFor="free"
+                      className={`font-bold ${
+                        accessMode !== AccessMode.free ? 'opacity-50' : ''
+                      }`}
+                    >
                       Free
                     </label>
-                    <p>
+                    <p
+                      className={` ${
+                        accessMode !== AccessMode.free ? 'opacity-50' : ''
+                      }`}
+                    >
                       The course is protected. Resistration and enrollment are
                       required in order to access the content.
                     </p>
@@ -81,16 +157,27 @@ export default function EditPostCourseSettings({
                 <li className="flex items-start space-x-2">
                   <input
                     type="radio"
-                    id="buy-now"
-                    name="buy-now"
-                    value="buy-now"
-                    className="mt-1"
+                    id="buynow"
+                    name="accessmode"
+                    value="buynow"
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={accessMode === AccessMode.buynow}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="buy-now" className="font-bold">
+                    <label
+                      htmlFor="buynow"
+                      className={`font-bold ${
+                        accessMode !== AccessMode.buynow ? 'opacity-50' : ''
+                      }`}
+                    >
                       Buy now
                     </label>
-                    <p>
+                    <p
+                      className={` ${
+                        accessMode !== AccessMode.buynow ? 'opacity-50' : ''
+                      }`}
+                    >
                       The course is protected via the LearnDash built-in Stripe.
                       Users need to purchase the course (one-time fee) in order
                       to gain access.
@@ -101,15 +188,26 @@ export default function EditPostCourseSettings({
                   <input
                     type="radio"
                     id="recurring"
-                    name="recurring"
+                    name="accessmode"
                     value="recurring"
-                    className="mt-1"
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={accessMode === AccessMode.recurring}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="recurring" className="font-bold">
+                    <label
+                      htmlFor="recurring"
+                      className={`font-bold ${
+                        accessMode !== AccessMode.recurring ? 'opacity-50' : ''
+                      }`}
+                    >
                       Recurring
                     </label>
-                    <p>
+                    <p
+                      className={` ${
+                        accessMode !== AccessMode.recurring ? 'opacity-50' : ''
+                      }`}
+                    >
                       The course is protected via the LearnDash built-in Stripe.
                       Users need to purchase the course (recurring fee) in order
                       to gain access.
@@ -120,94 +218,87 @@ export default function EditPostCourseSettings({
                   <input
                     type="radio"
                     id="closed"
-                    name="closed"
+                    name="accessmode"
                     value="closed"
-                    className="mt-1"
-                    checked
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={accessMode === AccessMode.closed}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="closed" className="font-bold">
+                    <label
+                      htmlFor="closed"
+                      className={`font-bold ${
+                        accessMode !== AccessMode.closed ? 'opacity-50' : ''
+                      }`}
+                    >
                       Closed
                     </label>
-                    <p>
+                    <p
+                      className={`${
+                        accessMode !== AccessMode.closed ? 'opacity-50' : ''
+                      }`}
+                    >
                       The course can only be accessed through admin enrollment
                       (manual), group enrollment, or integration (shopping cart
                       or membership) enrollment. No enrollment button will be
                       displayed, unless a URL is set (optional).
                     </p>
-                    <blockquote className="flex flex-wrap w-full pl-4 space-x-4 border-l-2 border-primary-900">
+                    <blockquote
+                      className={`flex flex-wrap w-full pl-4 space-x-4 border-l-2 ${
+                        accessMode !== AccessMode.closed
+                          ? 'border-basics-300'
+                          : 'border-primary-900'
+                      }`}
+                    >
                       <ul className="grid grid-cols-1 gap-2">
                         <li className="flex flex-wrap w-full">
-                          <label htmlFor="course-price" className="font-bold">
+                          <label
+                            htmlFor="course-price"
+                            className={`font-bold ${
+                              accessMode !== AccessMode.closed
+                                ? 'opacity-50'
+                                : ''
+                            }`}
+                          >
                             Course Price
                           </label>
                           <input
                             type="number"
                             id="course-price"
                             name="course-price"
+                            value={history?.accessSettings?.price}
                             placeholder="$9.99"
+                            disabled={accessMode !== AccessMode.closed}
+                            onChange={(e) => onAccessModeChange(e as any)}
+                            className="block w-full mt-1 border-gray-300 rounded-md shadow-sm disabled:opacity-50 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                           />
                         </li>
                         <li className="flex flex-wrap w-full">
-                          <label htmlFor="button-url" className="font-bold">
+                          <label
+                            htmlFor="button-url"
+                            className={`font-bold ${
+                              accessMode !== AccessMode.closed
+                                ? 'opacity-50'
+                                : ''
+                            }`}
+                          >
                             Button URL
                           </label>
                           <input
                             type="url"
                             id="button-url"
                             name="button-url"
-                            placeholder="https://condingcat.dev"
+                            placeholder="https://codingcat.dev"
                             pattern="https://.*"
-                            required
+                            value={history?.accessSettings?.buttonUrl}
+                            disabled={accessMode !== AccessMode.closed}
+                            onChange={(e) => onAccessModeChange(e as any)}
+                            className="block w-full mt-1 border-gray-300 rounded-md shadow-sm disabled:opacity-50 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                           />
                         </li>
                       </ul>
                     </blockquote>
                   </div>
-                </li>
-              </ul>
-            </li>
-            <li className="flex flex-wrap space-x-4 space-y-4">
-              <h2 className="py-4 font-sans text-xl">Course Prerequisites</h2>
-              <ul className="grid max-w-2xl grid-cols-1 gap-4">
-                <li>
-                  <label htmlFor="course-prereq"></label>
-                  <input
-                    type="checkbox"
-                    id="course-prereq"
-                    name="course-prereq"
-                    className="mt-1"
-                  />
-                </li>
-              </ul>
-            </li>
-            <li className="flex flex-wrap space-x-4 space-y-4">
-              <h2 className="py-4 font-sans text-xl">Course Points</h2>
-              <ul className="grid max-w-2xl grid-cols-1 gap-4">
-                <li>
-                  <label htmlFor="course-points"></label>
-                  <input
-                    type="checkbox"
-                    id="course-points"
-                    name="course-points"
-                    className="mt-1"
-                  />
-                </li>
-              </ul>
-            </li>
-            <li className="flex flex-wrap space-x-4 space-y-4">
-              <h2 className="py-4 font-sans text-xl">
-                Course Access Expiration
-              </h2>
-              <ul className="grid max-w-2xl grid-cols-1 gap-4">
-                <li>
-                  <label htmlFor="course-expiration"></label>
-                  <input
-                    type="checkbox"
-                    id="course-expiration"
-                    name="course-expiration"
-                    className="mt-1"
-                  />
                 </li>
               </ul>
             </li>
@@ -226,20 +317,38 @@ export default function EditPostCourseSettings({
           <ul>
             <li className="flex flex-wrap space-x-4 space-y-4">
               <h2 className="py-4 font-sans text-xl">Course Progression</h2>
-              <ul className="grid max-w-2xl grid-cols-1 gap-4">
+              <ul
+                className="grid max-w-2xl grid-cols-1 gap-4"
+                onChange={(e) => onCourseNavigationChange(e as any)}
+              >
                 <li className="flex items-start space-x-2">
                   <input
                     type="radio"
                     id="linear"
-                    name="linear"
+                    name="courseProgression"
                     value="linear"
-                    className="mt-1"
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={navigationSettings === NavigationSettings.linear}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="linear" className="font-bold">
+                    <label
+                      htmlFor="linear"
+                      className={`font-bold ${
+                        navigationSettings !== NavigationSettings.linear
+                          ? 'opacity-50'
+                          : ''
+                      }`}
+                    >
                       Linear
                     </label>
-                    <p>
+                    <p
+                      className={`font-bold ${
+                        navigationSettings !== NavigationSettings.linear
+                          ? 'opacity-50'
+                          : ''
+                      }`}
+                    >
                       Requires the user to progress through the course in the
                       designated step sequence.
                     </p>
@@ -248,17 +357,31 @@ export default function EditPostCourseSettings({
                 <li className="flex items-start space-x-2">
                   <input
                     type="radio"
-                    id="free-form"
-                    name="free-form"
-                    value="free-form"
-                    className="mt-1"
-                    checked
+                    id="freeform"
+                    name="courseProgression"
+                    value="freeform"
+                    onChange={(e) => onAccessModeChange(e as any)}
+                    checked={navigationSettings === NavigationSettings.freeform}
+                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
                   <div className="grid grid-cols-1 gap-2">
-                    <label htmlFor="free-form" className="font-bold">
+                    <label
+                      htmlFor="freeform"
+                      className={`font-bold ${
+                        navigationSettings !== NavigationSettings.freeform
+                          ? 'opacity-50'
+                          : ''
+                      }`}
+                    >
                       Free Form
                     </label>
-                    <p>
+                    <p
+                      className={` ${
+                        navigationSettings !== NavigationSettings.freeform
+                          ? 'opacity-50'
+                          : ''
+                      }`}
+                    >
                       Allows the user to move freely through the course without
                       following the designated step sequence.
                     </p>
