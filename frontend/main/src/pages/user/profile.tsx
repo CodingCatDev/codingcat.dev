@@ -23,7 +23,7 @@ export default function Profile({ site }: { site: Site | null }): JSX.Element {
         <title>Profile | CodingCatDev</title>
       </Head>
       {user ? (
-        <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
+        <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
           <section>
             <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
               Settings

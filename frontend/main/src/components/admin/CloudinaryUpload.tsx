@@ -91,7 +91,10 @@ export default function CloudinaryUpload({
 
   return (
     <>
-      <button className="flex space-x-4 btn-primary" onClick={() => onUpload()}>
+      <button
+        className="flex items-center space-x-1 btn-primary"
+        onClick={() => onUpload()}
+      >
         <svg
           className="w-6"
           xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +109,7 @@ export default function CloudinaryUpload({
             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
           />
         </svg>{' '}
-        Upload Media
+        <span>Upload Media</span>
       </button>
     </>
   );

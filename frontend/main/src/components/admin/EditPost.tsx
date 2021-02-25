@@ -155,7 +155,7 @@ export default function EditPost({
   return (
     <>
       {history && Object.keys(history).length > 0 ? (
-        <div className="w-full max-w-8xl">
+        <div className="grid w-full h-full max-w-8xl grid-rows-auto-2">
           <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-500 dark:bg-secondary-600">
             <button
               className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${

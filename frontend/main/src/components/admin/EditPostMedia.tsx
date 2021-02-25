@@ -52,11 +52,11 @@ export default function EditPostMedia({
     return <></>;
   }
   return (
-    <section className="grid grid-cols-1 gap-4">
+    <section className="grid h-full grid-cols-1 gap-4 grid-rows-auto-2">
       <section className="grid grid-cols-2">
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Image</h3>
-          <div className="w-full">
+          <div className="w-1/2">
             {history.coverPhoto?.path ? (
               <Image
                 src={history.coverPhoto?.path}
@@ -73,7 +73,7 @@ export default function EditPostMedia({
         </div>
         <div className="grid gap-2 place-items-center text-primary-900">
           <h3 className="font-sans text-2xl bold">Default Video</h3>
-          <div className="w-full">
+          <div className="w-1/2">
             {history.coverVideo ? (
               <CloudinaryCover post={history} />
             ) : (
@@ -82,7 +82,7 @@ export default function EditPostMedia({
           </div>
         </div>
       </section>
-      <section>
+      <section className="grid h-full grid-rows-auto-2">
         <header className="flex justify-between space-x-4">
           <nav className="flex">
             <button
@@ -119,7 +119,7 @@ export default function EditPostMedia({
             />
           </div>
         </header>
-        <section className="grid w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit lg:max-h-96">
+        <section className="grid w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit">
           {media.map((m) => (
             <>
               {m.type == MediaType.photo &&

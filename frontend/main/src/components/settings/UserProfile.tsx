@@ -4,35 +4,35 @@ export default function UserProfile() {
       <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-50">
         <h2 className="font-sans text-2xl">User</h2>
         <form className="grid gap-4">
-          <label htmlFor="name">
-            Name
+          <div className="grid gap-1">
+            <label htmlFor="name">Name</label>
             <input id="name" type="text" placeholder="name of user" />
-          </label>
-          <label htmlFor="email">
-            Email
+          </div>
+          <div className="grid gap-1">
+            <label htmlFor="email">Email</label>
             <input id="email" type="email" placeholder="email of user" />
-          </label>
-          <label htmlFor="username">
-            Username
+          </div>
+          <div className="grid gap-1">
+            <label htmlFor="username">Username</label>
             <input id="username" type="text" placeholder="username" />
-          </label>
+          </div>
         </form>
       </section>
       <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-50">
         <h2 className="font-sans text-2xl">Basic Info</h2>
         <form className="grid gap-4">
-          <label htmlFor="location">
-            Location
+          <div className="grid gap-1">
+            <label htmlFor="location">Location</label>
             <input id="location" type="text" placeholder="location" />
-          </label>
-          <label htmlFor="about">
-            About You
+          </div>
+          <div className="grid gap-1">
+            <label htmlFor="about">About You</label>
             <input id="about" type="text" placeholder="about you" />
-          </label>
-          <label htmlFor="website">
-            Website
+          </div>
+          <div className="grid gap-1">
+            <label htmlFor="website">Website</label>
             <input id="website" type="text" placeholder="website" />
-          </label>
+          </div>
         </form>
       </section>
     </section>
