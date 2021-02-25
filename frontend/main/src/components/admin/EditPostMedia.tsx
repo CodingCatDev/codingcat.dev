@@ -86,7 +86,7 @@ export default function EditPostMedia({
         <header className="flex justify-between space-x-4">
           <nav className="flex">
             <button
-              className={`px-4 py-2 uppercase rounded-t-lg font-2xl bold 
+              className={`px-4 py-2 uppercase rounded-t-lg font-2xl bold focus:outline-none focus:ring-2 focus:ring-secondary-600
               ${
                 type === MediaType.photo
                   ? 'text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900'
@@ -97,7 +97,7 @@ export default function EditPostMedia({
               Images
             </button>
             <button
-              className={`px-4 py-2 uppercase rounded-t-lg font-2xl bold 
+              className={`px-4 py-2 uppercase rounded-t-lg font-2xl bold focus:outline-none focus:ring-2 focus:ring-secondary-600
               ${
                 type === MediaType.video
                   ? 'text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900'
@@ -119,7 +119,7 @@ export default function EditPostMedia({
             />
           </div>
         </header>
-        <section className="grid w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit">
+        <section className="grid content-start w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit">
           {media.map((m) => (
             <>
               {m.type == MediaType.photo &&
