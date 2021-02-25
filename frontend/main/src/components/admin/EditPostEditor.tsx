@@ -2,7 +2,7 @@ import SimpleMDE from 'react-simplemde-editor';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { postsSlugUnique } from '@/services/api';
 import { Post } from '@/models/post.model.ts';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import 'easymde/dist/easymde.min.css';
@@ -36,8 +36,11 @@ export default function EditPostEditor({
   }
 
   function validSlug(slugInput: string) {
+    if (!history || !history.postId) {
+      return of(false);
+    }
     const slug = toKebabCase(slugInput);
-    return postsSlugUnique(slug).pipe(take(1));
+    return postsSlugUnique(slug, history?.postId).pipe(take(1));
   }
 
   function onExcerpt(excerpt: string) {

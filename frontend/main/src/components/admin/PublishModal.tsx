@@ -10,6 +10,7 @@ import { take } from 'rxjs/operators';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 
 import { Calendar } from 'primereact/calendar';
+import { of } from 'rxjs';
 
 export default function PublishModal({
   history,
@@ -53,8 +54,11 @@ export default function PublishModal({
   };
 
   function validSlug(slugInput: string) {
+    if (!history || !history.postId) {
+      return of(false);
+    }
     const slug = toKebabCase(slugInput);
-    return postsSlugUnique(slug).pipe(take(1));
+    return postsSlugUnique(slug, history?.postId).pipe(take(1));
   }
 
   function onPublish() {
