@@ -32,28 +32,31 @@ const AdminLayout = ({
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
-      <div className="grid h-screen grid-cols-admin">
-        <AdminMenu
-          userMenu={userMenu}
-          setUserMenu={setUserMenu}
-          navOpen={navOpen}
-          setNavOpen={setNavOpen}
-        />
-        <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
-          <AdminHeader
-            site={site}
-            post={post}
+      <div className="lg:mx-auto lg:w-80 lg:max-w-8xl">
+        <div className="grid h-screen grid-cols-admin">
+          <AdminMenu
             userMenu={userMenu}
             setUserMenu={setUserMenu}
             navOpen={navOpen}
             setNavOpen={setNavOpen}
           />
-          <main className="h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
-            {children}
-          </main>
-          <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">
-            &copy; CodingCatDev {new Date().getFullYear()}
-          </footer>
+
+          <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
+            <AdminHeader
+              site={site}
+              post={post}
+              userMenu={userMenu}
+              setUserMenu={setUserMenu}
+              navOpen={navOpen}
+              setNavOpen={setNavOpen}
+            />
+            <main className="h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
+              {children}
+            </main>
+            <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">
+              &copy; CodingCatDev {new Date().getFullYear()}
+            </footer>
+          </div>
         </div>
       </div>
     </>
