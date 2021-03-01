@@ -226,7 +226,7 @@ export default function EditPostCourseSections({
           </button>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="grid gap-4 grid-cols-sidebar">
+          <div className="grid grid-cols-2 gap-4">
             <Droppable droppableId={`Sections`} type="Sections">
               {(provided, snapshot) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -337,7 +337,7 @@ export default function EditPostCourseSections({
               )}
             </Droppable>
             <div>
-              <div className="grid justify-center grid-flow-row pt-1 align-middle">
+              <div className="grid justify-start grid-flow-row pt-1 align-middle">
                 <input
                   type="text"
                   placeholder="Lesson Search"
@@ -347,7 +347,7 @@ export default function EditPostCourseSections({
                     onLessonSearch(e);
                   }}
                 />
-                <div className="grid grid-flow-col pt-1">
+                <div className="grid grid-cols-1 gap-4">
                   <Droppable
                     droppableId={'LesssonSearch'}
                     type="Lessons"
@@ -369,7 +369,7 @@ export default function EditPostCourseSections({
                               >
                                 {(provided, snapshot) => (
                                   <div
-                                    className="flex flex-wrap justify-between w-full px-2 mt-1 text-2xl bg-primary-900 rounded-xl"
+                                    className="flex justify-between w-full p-2 mt-2 overflow-x-hidden text-2xl rounded-full whitespace-nowrap bg-primary-900"
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     ref={provided.innerRef}
