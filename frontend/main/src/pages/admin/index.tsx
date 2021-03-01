@@ -5,6 +5,7 @@ import Head from 'next/head';
 import AdminLayout from '@/layout/admin/AdminLayout';
 import { getSite, validateAdminUser } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
+import SiteData from '@/components/admin/SiteData';
 
 export default function AdminDashboard({
   site,
@@ -18,8 +19,10 @@ export default function AdminDashboard({
         <meta name="robots" content="noindex" />
       </Head>
       <section className="p-4">
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-lg">Show some welcoming things here.</p>
+        <header className="grid gap-4 mb-4 justify-items-start">
+          <h1 className="font-sans text-4xl font-bold capitalize">Site</h1>
+          <SiteData />
+        </header>
       </section>
     </AdminLayout>
   );
