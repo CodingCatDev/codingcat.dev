@@ -26,22 +26,23 @@
     font-display: swap;
   }
 
-  :root {
+  * {
     scrollbar-width: thin;
     scrollbar-color: #bc2261 #5e1286;
   }
-  :root::-webkit-scrollbar {
+  *::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
   }
 
-  :root::-webkit-scrollbar-track {
+  *::-webkit-scrollbar-track {
     background: #5e1286;
   }
 
-  :root::-webkit-scrollbar-thumb {
+  *::-webkit-scrollbar-thumb {
     background-color: #bc2261;
   }
-  :root::-webkit-scrollbar-thumb:hover {
+  *::-webkit-scrollbar-thumb:hover {
     background-color: #fd2087;
   }
 

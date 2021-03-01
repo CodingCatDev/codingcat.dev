@@ -152,7 +152,7 @@ export default function EditPost({
     }
   }
 
-  const tabStyles = `block px-4 2xl:px-12 font-medium text-basics-50 dark:text-basics-50 hover:bg-secondary-500 dark:hover:bg-secondary-500 hover:border-b-2 hover:border-primary-50 dark:hover:border-primary-50 focus:outline-none`;
+  const tabStyles = `block px-4 2xl:px-12 font-medium text-basics-50 dark:text-basics-50 hover:bg-secondary-500 dark:hover:bg-secondary-500 hover:border-b-2 hover:border-primary-50 dark:hover:border-primary-50 focus:outline-none whitespace-nowrap`;
 
   return (
     <>
