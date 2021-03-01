@@ -294,10 +294,8 @@ export default function EditPostCourseSections({
                                             <Link
                                               href={`/admin/lessons/${lesson.id}`}
                                             >
-                                              <a>
-                                                <p className="text-2xl underline">
-                                                  {lesson.title}
-                                                </p>
+                                              <a className="text-2xl underline">
+                                                {lesson.title}
                                               </a>
                                             </Link>
                                             <button

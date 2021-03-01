@@ -19,17 +19,18 @@ export default function AdminMenu({
   const { user } = useUser();
 
   return (
-    <section className="relative z-40 grid h-full grid-cols-1 grid-rows-admin">
+    <section className="relative z-40 grid content-start h-full grid-cols-1 grid-rows-admin">
       <section className="flex items-center justify-between gap-4 pl-4 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
         <AJLogoLeft />
         {navOpen && (
           <h2 className="hidden mr-4 text-2xl lg:block">CodingCat.dev</h2>
         )}
       </section>
+
       <AdminNavItems navOpen={navOpen} setNavOpen={setNavOpen} />
-      <section className="p-4 bg-secondary-600 dark:bg-secondary-600">
+      {/* Profile dropdown --> */}
+      <section className={`${navOpen ? 'px-4' : 'p-4'}`}>
         <div className="flex items-center cursor-pointer links-secondary">
-          {/* Profile dropdown --> */}
           <OutsideClick toggle={setUserMenu} value={false}>
             <AvatarMenu
               userMenu={userMenu}

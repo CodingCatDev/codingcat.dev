@@ -50,12 +50,12 @@ const AdminLayout = ({
               navOpen={navOpen}
               setNavOpen={setNavOpen}
             />
-            <main className="h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
+            <main className="grid h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
               {children}
+              <footer className="flex items-start self-end justify-center p-4">
+                &copy; CodingCatDev {new Date().getFullYear()}
+              </footer>
             </main>
-            <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">
-              &copy; CodingCatDev {new Date().getFullYear()}
-            </footer>
           </div>
         </div>
       </div>
