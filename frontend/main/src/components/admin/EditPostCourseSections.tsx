@@ -204,147 +204,140 @@ export default function EditPostCourseSections({
 
   return (
     <>
-      <div className="grid grid-flow-row">
-        <div className="grid grid-flow-col px-2 py-4 rounded-b-lg bg-primary-100">
-          <div className="flex content-center justify-center px-1">
-            <div className="flex-grow">
-              <input
-                id="title"
-                type="title"
-                placeholder="New Section Title"
-                value={section?.title}
-                className="w-full"
-                onChange={(e) => {
-                  sectionInput(e);
-                }}
-              />
-            </div>
-            <button
-              className="ml-1 cursor-pointer btn-primary"
-              onClick={() => createSection()}
-            >
-              Add Section
-            </button>
+      <div className="grid gap-4">
+        <div className="flex items-center p-4 space-x-4 rounded-lg bg-primary-900 dark:bg-primary-900">
+          <div className="flex-grow">
+            <input
+              id="title"
+              type="text"
+              placeholder="New Section Title"
+              value={section?.title}
+              className="w-full"
+              onChange={(e) => {
+                sectionInput(e);
+              }}
+            />
           </div>
+          <button
+            className="ml-1 cursor-pointer btn-secondary"
+            onClick={() => createSection()}
+          >
+            Add Section
+          </button>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex content-start pt-2 justify-items-start">
-            <div style={{ width: '60%', marginRight: '1rem' }}>
-              <Droppable droppableId={`Sections`} type="Sections">
-                {(provided, snapshot) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {history &&
-                      history.sections &&
-                      history.sections?.map((section, si) => (
-                        <Draggable
-                          draggableId={`section${si}`}
-                          index={si}
-                          key={`section${si}`}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
-                              className="mt-2 bg-secondary-500 rounded-xl"
+          <div className="grid grid-cols-2 gap-4">
+            <Droppable droppableId={`Sections`} type="Sections">
+              {(provided, snapshot) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {history &&
+                    history.sections &&
+                    history.sections?.map((section, si) => (
+                      <Draggable
+                        draggableId={`section${si}`}
+                        index={si}
+                        key={`section${si}`}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            className="rounded-lg header bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
+                          >
+                            <Droppable
+                              droppableId={`${si}`}
+                              key={`${si}`}
+                              type="Lessons"
                             >
-                              <Droppable
-                                droppableId={`${si}`}
-                                key={`${si}`}
-                                type="Lessons"
-                              >
-                                {(provided, snapshot) => (
-                                  <div
-                                    className="grid grid-flow-row p-2"
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <div className="flex flex-wrap justify-between w-full p-4">
-                                      <p className="text-4xl text-white">
-                                        {section.title}
-                                      </p>
-                                      <button
-                                        onClick={() => onSectionDelete(si)}
+                              {(provided, snapshot) => (
+                                <div
+                                  className="grid grid-flow-row p-2"
+                                  {...provided.droppableProps}
+                                  ref={provided.innerRef}
+                                >
+                                  <div className="flex flex-wrap justify-between w-full p-4">
+                                    <h2 className="font-sans text-4xl">
+                                      {section.title}
+                                    </h2>
+                                    <button onClick={() => onSectionDelete(si)}>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        className="w-12"
                                       >
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          stroke="currentColor"
-                                          className="w-12"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                    {section &&
-                                      section.lessons?.map((lesson, li) => (
-                                        <Draggable
-                                          draggableId={`${si}${li}`}
-                                          index={li}
-                                          key={`${si}${li}`}
-                                        >
-                                          {(provided, snapshot) => (
-                                            <div
-                                              {...provided.draggableProps}
-                                              {...provided.dragHandleProps}
-                                              ref={provided.innerRef}
-                                              className="flex flex-row flex-wrap justify-between w-full p-3 mt-1 rounded-xl bg-primary-900"
-                                            >
-                                              <Link
-                                                href={`/admin/lessons/${lesson.id}`}
-                                              >
-                                                <a>
-                                                  <p className="text-4xl text-white underline">
-                                                    {lesson.title}
-                                                  </p>
-                                                </a>
-                                              </Link>
-                                              <button
-                                                onClick={() =>
-                                                  onLessonDelete(si, li)
-                                                }
-                                                className="text-white"
-                                              >
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  fill="none"
-                                                  viewBox="0 0 24 24"
-                                                  stroke="currentColor"
-                                                  className="w-8"
-                                                >
-                                                  <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                  />
-                                                </svg>
-                                              </button>
-                                            </div>
-                                          )}
-                                        </Draggable>
-                                      ))}
-                                    {provided.placeholder}
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                        />
+                                      </svg>
+                                    </button>
                                   </div>
-                                )}
-                              </Droppable>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                  </div>
-                )}
-              </Droppable>
-            </div>
-            <div style={{ width: '35%' }}>
-              <div className="grid justify-center grid-flow-row pt-1 align-middle">
-                {' '}
+                                  {section &&
+                                    section.lessons?.map((lesson, li) => (
+                                      <Draggable
+                                        draggableId={`${si}${li}`}
+                                        index={li}
+                                        key={`${si}${li}`}
+                                      >
+                                        {(provided, snapshot) => (
+                                          <div
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}
+                                            className="flex flex-row flex-wrap justify-between w-full p-3 mt-1 rounded-xl bg-primary-900"
+                                          >
+                                            <Link
+                                              href={`/admin/lessons/${lesson.id}`}
+                                            >
+                                              <a>
+                                                <p className="text-4xl text-white underline">
+                                                  {lesson.title}
+                                                </p>
+                                              </a>
+                                            </Link>
+                                            <button
+                                              onClick={() =>
+                                                onLessonDelete(si, li)
+                                              }
+                                              className="text-white"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                className="w-8"
+                                              >
+                                                <path
+                                                  strokeLinecap="round"
+                                                  strokeLinejoin="round"
+                                                  strokeWidth={2}
+                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                              </svg>
+                                            </button>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                </div>
+              )}
+            </Droppable>
+            <div>
+              <div className="grid justify-start grid-flow-row pt-1 align-middle">
                 <input
                   type="text"
                   placeholder="Lesson Search"
@@ -354,7 +347,7 @@ export default function EditPostCourseSections({
                     onLessonSearch(e);
                   }}
                 />
-                <div className="grid grid-flow-col pt-1">
+                <div className="grid grid-cols-1 gap-4">
                   <Droppable
                     droppableId={'LesssonSearch'}
                     type="Lessons"
@@ -376,7 +369,7 @@ export default function EditPostCourseSections({
                               >
                                 {(provided, snapshot) => (
                                   <div
-                                    className="flex flex-wrap justify-between w-full px-2 mt-1 text-2xl bg-primary-900 rounded-xl"
+                                    className="flex justify-between w-full p-2 mt-2 overflow-x-hidden text-2xl rounded-full whitespace-nowrap bg-primary-900"
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     ref={provided.innerRef}
@@ -397,6 +390,11 @@ export default function EditPostCourseSections({
           </div>
         </DragDropContext>
       </div>
+      <style jsx>{`
+        .header + .header {
+          margin-top: 1rem;
+        }
+      `}</style>
     </>
   );
 }

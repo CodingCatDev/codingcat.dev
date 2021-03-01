@@ -152,13 +152,15 @@ export default function EditPost({
     }
   }
 
+  const tabStyles = `block px-4 2xl:px-12 font-medium text-basics-50 dark:text-basics-50 hover:bg-secondary-500 dark:hover:bg-secondary-500 hover:border-b-2 hover:border-primary-50 dark:hover:border-primary-50 focus:outline-none`;
+
   return (
     <>
       {history && Object.keys(history).length > 0 ? (
         <div className="grid w-full h-full max-w-8xl grid-rows-auto-2">
-          <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-500 dark:bg-secondary-600">
+          <nav className="flex justify-between w-full h-12 overflow-x-auto bg-secondary-600 dark:bg-secondary-600">
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
+              className={`${tabStyles} ${
                 tab == TabType.edit
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -168,7 +170,7 @@ export default function EditPost({
               EDIT
             </button>
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none  ${
+              className={`${tabStyles}  ${
                 tab == TabType.media
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -178,7 +180,7 @@ export default function EditPost({
               MEDIA
             </button>
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`${tabStyles} ${
                 tab == TabType.preview
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -188,7 +190,7 @@ export default function EditPost({
               MDX PREVIEW
             </button>
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`${tabStyles} ${
                 tab == TabType.sections
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -198,7 +200,7 @@ export default function EditPost({
               SECTIONS
             </button>
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`${tabStyles} ${
                 tab == TabType.settings
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -208,7 +210,7 @@ export default function EditPost({
               SETTINGS
             </button>
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`${tabStyles} ${
                 tab == TabType.groups
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
@@ -218,7 +220,7 @@ export default function EditPost({
               GROUPS
             </button>
             <button
-              className={`block px-4 2xl:px-12 font-medium  hover:text-primary-900 text-basics-50 dark:text-basics-50 focus:outline-none ${
+              className={`${tabStyles} ${
                 tab == TabType.history
                   ? 'border-b-4 border-primary-900 dark:border-primary-900'
                   : 'border-b-4 border-secondary-500 dark:border-secondary-500'
