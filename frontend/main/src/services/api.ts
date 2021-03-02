@@ -21,6 +21,7 @@ import { v4 as uuid } from 'uuid';
 import { Cloudinary } from '@/models/cloudinary.model';
 import { Video } from '@/models/video.model';
 import { Media, MediaSource, MediaType } from '@/models/media.model';
+import { PageLink, Site, SocialLink } from '@/models/site.model';
 
 const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
@@ -34,7 +35,18 @@ const functions$ = from(initFirebase()).pipe(
   map((app) => app.functions() as firebase.functions.Functions)
 );
 
-// User
+/* SITE */
+export const siteDataObservable = () => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      collectionData<Site>(firestore.collection('site')).pipe(
+        map((s) => (s.length > 0 ? s[0] : null)) // Making assumption that we only want one site data
+      )
+    )
+  );
+};
+
+/* User */
 export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
@@ -159,6 +171,40 @@ export const getStripePortal = () => {
  *
  * ADMIN SECTION
  ********************/
+
+/* SITE */
+
+export const siteUpdate = (site: Site) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      firestore.doc(`site/${site.id}`).set(site, { merge: true })
+    )
+  );
+};
+
+export const addSitePageLink = (site: Site, pageLink: PageLink) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const ref = firestore.doc(`site/${site.id}`);
+      ref.update({
+        pageLinks: firebase.firestore.FieldValue.arrayUnion(pageLink),
+      });
+      return docData<Site>(ref);
+    })
+  );
+};
+
+export const addSiteSocialLink = (site: Site, socialLink: SocialLink) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const ref = firestore.doc(`site/${site.id}`);
+      ref.update({
+        socialLinks: firebase.firestore.FieldValue.arrayUnion(socialLink),
+      });
+      return docData<Site>(ref);
+    })
+  );
+};
 
 /* POST */
 export const postDataObservable = (path: string) => {

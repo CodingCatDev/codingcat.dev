@@ -79,7 +79,7 @@ export async function getSite(): Promise<Site | null> {
   const siteDocs = await admin.firestore().collection('site').get();
   let site: Site | null = null;
   for (const siteDoc of siteDocs.docs) {
-    site = siteDoc.data();
+    site = siteDoc.data() as Site;
   }
   return site;
 }

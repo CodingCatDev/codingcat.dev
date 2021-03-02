@@ -54,6 +54,13 @@ service cloud.firestore {
           }
         }
       }
+      //Admin Only for Site
+      match /site/{id} {
+        allow create: if hasAnyRole(['admin'])
+        allow read: if hasAnyRole(['admin'])
+        allow update: if hasAnyRole(['admin'])
+        allow delete: if hasAnyRole(['admin'])
+      }
 
       match /tags/{id} {
         allow read: if true;
