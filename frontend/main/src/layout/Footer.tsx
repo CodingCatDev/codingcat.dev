@@ -6,7 +6,7 @@ import LinkedIn from '@/components/global/icons/socials/LinkedIn';
 import Medium from '@/components/global/icons/socials/Medium';
 import Twitter from '@/components/global/icons/socials/Twitter';
 import YouTube from '@/components/global/icons/socials/YouTube';
-import { Site } from '@/models/site.model';
+import { Site, SocialLink, SocialType } from '@/models/site.model';
 
 const socialLinks = ``;
 
@@ -17,6 +17,25 @@ export default function Footer({
   site: Site | null;
   hideWave?: boolean;
 }): JSX.Element {
+  function socialLinkPicker(sl: SocialLink) {
+    switch (sl.type) {
+      case SocialType.facebook:
+        return <Facebook fill="#BC2261" />;
+      case SocialType.github:
+        return <GitHub fill="#BC2261" />;
+      case SocialType.linkedin:
+        return <LinkedIn fill="#BC2261" />;
+      case SocialType.mail:
+        return <Mail fill="#BC2261" />;
+      case SocialType.medium:
+        return <Medium fill="#BC2261" />;
+      case SocialType.twitter:
+        return <Twitter fill="#BC2261" />;
+      case SocialType.youtube:
+        return <YouTube fill="#BC2261" />;
+    }
+  }
+
   return (
     <>
       {!hideWave && (
@@ -56,27 +75,17 @@ export default function Footer({
           </div>
           {/* SOCIALS */}
           <section className="flex items-end justify-around w-full gap-8 mt-4 lg:justify-start">
-            <a href="" className={`${socialLinks} social-links`}>
-              <Mail fill="#BC2261" />
-            </a>
-            <a href="" className={`${socialLinks} social-links`}>
-              <Facebook fill="#BC2261" />
-            </a>
-            <a href="" className={`${socialLinks} social-links`}>
-              <GitHub fill="#BC2261" />
-            </a>
-            <a href="" className={`${socialLinks} social-links`}>
-              <LinkedIn fill="#BC2261" />
-            </a>
-            <a href="" className={`${socialLinks} social-links`}>
-              <Medium fill="#BC2261" />
-            </a>
-            <a href="" className={`${socialLinks} social-links`}>
-              <Twitter fill="#BC2261" />
-            </a>
-            <a href="" className={`${socialLinks} social-links`}>
-              <YouTube fill="#BC2261" />
-            </a>
+            {site?.socialLinks?.map((sl, i) => (
+              <a
+                key={i}
+                href={sl.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={`social-links`}
+              >
+                {socialLinkPicker(sl)}
+              </a>
+            ))}
           </section>
         </section>
         {/* HELPFUL LINKS */}
@@ -110,7 +119,6 @@ export default function Footer({
               <button className="btn-secondary">Subscribe</button>
             </div>
           </form>
-
           <p className="w-full text-right">
             Site designed by{' '}
             <a
@@ -120,6 +128,17 @@ export default function Footer({
               className="links-secondary"
             >
               Brittney Postma
+            </a>
+          </p>
+          <p className="w-full text-right">
+            and developed by{' '}
+            <a
+              href="https://alexpatterson.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="links-secondary"
+            >
+              Alex Patterson
             </a>
             .
           </p>
