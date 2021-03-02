@@ -92,7 +92,7 @@ module.exports = {
         settings: 'minmax(200px, 20%) 1fr',
       },
       gridTemplateRows: {
-        admin: '100px 1fr auto',
+        admin: '100px auto auto',
         'auto-2': 'auto 1fr',
         sidebar: '100px 1fr 100px',
         search: '38px 1fr 68px',

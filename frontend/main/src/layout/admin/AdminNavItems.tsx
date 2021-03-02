@@ -18,9 +18,9 @@ export default function AdminNavItems({
 }): JSX.Element {
   if (navOpen) {
     return (
-      <nav className="relative h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
+      <nav className="relative grid items-start content-start h-full grid-cols-1 gap-2 p-4 text-xl bg-primary-900 dark:bg-primary-900">
         <button
-          className="absolute bottom-0 right-0 inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
+          className="absolute top-0 right-0 p-2 text-xl rounded-full rounded-r-none bg-primary-600 text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
           aria-expanded="true"
           onClick={() => setNavOpen(false)}
         >
@@ -111,9 +111,9 @@ export default function AdminNavItems({
     );
   } else {
     return (
-      <nav className="relative h-full p-4 text-xl bg-primary-900 dark:bg-primary-900">
+      <nav className="grid grid-cols-1 gap-4 text-xl bg-primary-900 dark:bg-primary-900">
         <button
-          className="absolute bottom-0 right-0 inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
+          className="p-2 text-xl rounded-full rounded-r-none justify-self-end bg-primary-600 text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
           aria-expanded="false"
           onClick={() => setNavOpen(true)}
         >
@@ -133,57 +133,57 @@ export default function AdminNavItems({
             />
           </svg>
         </button>
-        <ul className="grid grid-cols-1 gap-4">
-          <li>
+        <ul className="grid content-center grid-cols-1 gap-4">
+          <li className="grid justify-center w-full">
             <Link href="/admin">
               <a className="flex items-center space-x-4 links-secondary">
                 <AJPrimary className="block w-8 h-8" />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/course">
               <a className="flex items-center space-x-4 links-secondary">
                 <Courses />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/lesson">
               <a className="flex items-center space-x-4 links-secondary">
                 <Lessons />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/tutorial">
               <a className="flex items-center space-x-4 links-secondary">
                 <Tutorials />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/post">
               <a className="flex items-center space-x-4 links-secondary">
                 <Blog />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/podcast">
               <a className="flex items-center space-x-4 links-secondary">
                 <Podcasts />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/community">
               <a className="flex items-center space-x-4 links-secondary">
                 <Community />
               </a>
             </Link>
           </li>
-          <li>
+          <li className="grid justify-center w-full">
             <Link href="/admin/page">
               <a className="flex items-center space-x-4 links-secondary">
                 <Pages />

@@ -226,7 +226,7 @@ export default function EditPostCourseSections({
           </button>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Droppable droppableId={`Sections`} type="Sections">
               {(provided, snapshot) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -289,22 +289,19 @@ export default function EditPostCourseSections({
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
                                             ref={provided.innerRef}
-                                            className="flex flex-row flex-wrap justify-between w-full p-3 mt-1 rounded-xl bg-primary-900"
+                                            className="flex items-center justify-between p-2 space-x-4 flex-nowrap rounded-xl bg-basics-50 text-basics-900 sections"
                                           >
                                             <Link
                                               href={`/admin/lessons/${lesson.id}`}
                                             >
-                                              <a>
-                                                <p className="text-4xl text-white underline">
-                                                  {lesson.title}
-                                                </p>
+                                              <a className="text-2xl underline">
+                                                {lesson.title}
                                               </a>
                                             </Link>
                                             <button
                                               onClick={() =>
                                                 onLessonDelete(si, li)
                                               }
-                                              className="text-white"
                                             >
                                               <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -336,62 +333,57 @@ export default function EditPostCourseSections({
                 </div>
               )}
             </Droppable>
-            <div>
-              <div className="grid justify-start grid-flow-row pt-1 align-middle">
-                <input
-                  type="text"
-                  placeholder="Lesson Search"
-                  className="w-full"
-                  value={lessonSearch}
-                  onChange={(e) => {
-                    onLessonSearch(e);
-                  }}
-                />
-                <div className="grid grid-cols-1 gap-4">
-                  <Droppable
-                    droppableId={'LesssonSearch'}
-                    type="Lessons"
-                    isDropDisabled={true}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        style={{ width: '100%', height: '100%' }}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
-                        {lessons?.map(
-                          (l, i) =>
-                            l.id && (
-                              <Draggable
-                                draggableId={l.id}
-                                index={i}
-                                key={l.id}
-                              >
-                                {(provided, snapshot) => (
-                                  <div
-                                    className="flex justify-between w-full p-2 mt-2 overflow-x-hidden text-2xl rounded-full whitespace-nowrap bg-primary-900"
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <p className="text-white">{l.title}</p>
-                                  </div>
-                                )}
-                              </Draggable>
-                            )
-                        )}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </div>
+            <div className="grid items-start content-start w-full grid-cols-1 row-start-1 gap-4 justify-items-start lg:col-start-2">
+              <input
+                type="text"
+                placeholder="Lesson Search"
+                className="w-full"
+                value={lessonSearch}
+                onChange={(e) => {
+                  onLessonSearch(e);
+                }}
+              />
+              <div className="grid grid-cols-1 gap-4">
+                <Droppable
+                  droppableId={'LesssonSearch'}
+                  type="Lessons"
+                  isDropDisabled={true}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      style={{ width: '100%', height: '100%' }}
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {lessons?.map(
+                        (l, i) =>
+                          l.id && (
+                            <Draggable draggableId={l.id} index={i} key={l.id}>
+                              {(provided, snapshot) => (
+                                <div
+                                  className="flex justify-between w-full px-4 py-2 mt-2 text-2xl truncate rounded-full bg-primary-900 text-basics-50 dark:bg-primary-900 dark:text-basics-50"
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  ref={provided.innerRef}
+                                >
+                                  <p>{l.title}</p>
+                                </div>
+                              )}
+                            </Draggable>
+                          )
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
               </div>
             </div>
           </div>
         </DragDropContext>
       </div>
       <style jsx>{`
-        .header + .header {
+        .header + .header,
+        .sections + .sections {
           margin-top: 1rem;
         }
       `}</style>
