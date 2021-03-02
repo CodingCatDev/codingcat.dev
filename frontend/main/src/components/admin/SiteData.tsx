@@ -4,6 +4,7 @@ import { Site } from '@/models/site.model';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import SiteDataPageLinks from '@/components/admin/SiteDataPageLinks';
+import SiteDataSocialLinks from './SiteDataSocialLinks';
 
 const siteInitial: Site = {
   id: '',
@@ -39,6 +40,10 @@ export default function SiteData(): JSX.Element {
     }
   };
 
+  if (!site) {
+    return <></>;
+  }
+
   return (
     <>
       <section className="flex flex-wrap space-y-2 lg:space-y-0">
@@ -56,8 +61,9 @@ export default function SiteData(): JSX.Element {
           </div>
         </div>
       </section>
-      <section>
-        <SiteDataPageLinks />
+      <section className="flex space-x-4">
+        <SiteDataPageLinks siteInput={site} />
+        <SiteDataSocialLinks siteInput={site} />
       </section>
     </>
   );

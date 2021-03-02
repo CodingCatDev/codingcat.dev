@@ -21,7 +21,7 @@ import { v4 as uuid } from 'uuid';
 import { Cloudinary } from '@/models/cloudinary.model';
 import { Video } from '@/models/video.model';
 import { Media, MediaSource, MediaType } from '@/models/media.model';
-import { PageLink, Site } from '@/models/site.model';
+import { PageLink, Site, SocialLink } from '@/models/site.model';
 
 const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
@@ -188,6 +188,18 @@ export const addSitePageLink = (site: Site, pageLink: PageLink) => {
       const ref = firestore.doc(`site/${site.id}`);
       ref.update({
         pageLinks: firebase.firestore.FieldValue.arrayUnion(pageLink),
+      });
+      return docData<Site>(ref);
+    })
+  );
+};
+
+export const addSiteSocialLink = (site: Site, socialLink: SocialLink) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const ref = firestore.doc(`site/${site.id}`);
+      ref.update({
+        socialLinks: firebase.firestore.FieldValue.arrayUnion(socialLink),
       });
       return docData<Site>(ref);
     })

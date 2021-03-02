@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addSitePageLink, siteUpdate } from '@/services/api';
+import { addSiteSocialLink, siteUpdate } from '@/services/api';
 import { take } from 'rxjs/operators';
 import {
   DragDropContext,
@@ -7,43 +7,46 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-import { PageLink, Site } from '@/models/site.model';
+import { SocialLink, Site, SocialType } from '@/models/site.model';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const arrayMove = require('array-move');
 
-export default function SiteDataPageLinks({
+export default function SiteDataSocialLinks({
   siteInput,
 }: {
   siteInput: Site;
 }): JSX.Element {
   const [site, setSite] = useState<Site>({ id: '', title: '' });
-  const [pageLink, setPageLink] = useState<PageLink>({ title: '', slug: '' });
+  const [socialLink, setSocialLink] = useState<SocialLink>({
+    type: SocialType.facebook,
+    href: '',
+  });
 
   useEffect(() => {
     setSite(siteInput);
   }, [siteInput]);
 
-  const createPageLink = async () => {
+  const createSocialLink = async () => {
     if (!site) {
       return;
     }
-    addSitePageLink(site, pageLink)
+    addSiteSocialLink(site, socialLink)
       .pipe(take(1))
       .subscribe((h) => {
         setSite(h);
-        setPageLink({ title: '', slug: '' });
+        setSocialLink({ type: SocialType.facebook, href: '' });
       });
   };
 
-  const onPageLinkDelete = (i: number) => {
-    if (site.pageLinks) {
-      const pageLinks = [...site.pageLinks];
-      pageLinks.splice(i, 1);
+  const onSocialLinkDelete = (i: number) => {
+    if (site.socialLinks) {
+      const socialLinks = [...site.socialLinks];
+      socialLinks.splice(i, 1);
 
       const update = { ...site };
 
-      if (site.pageLinks) {
-        update.pageLinks = pageLinks;
+      if (site.socialLinks) {
+        update.socialLinks = socialLinks;
       }
       setSite(update);
       siteUpdate(update).pipe(take(1)).subscribe();
@@ -55,9 +58,9 @@ export default function SiteDataPageLinks({
     if (!destination) {
       return;
     }
-    const sections = site.pageLinks;
+    const sections = site.socialLinks;
     const moved = arrayMove(sections, source.index, destination.index);
-    const update = { ...site, pageLinks: moved };
+    const update = { ...site, socialLinks: moved };
     setSite(update);
     siteUpdate(update).pipe(take(1)).subscribe();
   };
@@ -70,41 +73,44 @@ export default function SiteDataPageLinks({
             <input
               id="title"
               type="text"
-              placeholder="Page Title"
-              value={pageLink.title}
+              placeholder="Social Title"
+              value={socialLink.type}
               className="w-full"
               onChange={(e) => {
-                setPageLink({ ...pageLink, title: e.target.value });
+                setSocialLink({
+                  ...socialLink,
+                  type: e.target.value as SocialType,
+                });
               }}
             />
           </div>
           <div className="flex-grow">
             <input
               id="slug"
-              type="text"
-              placeholder="/example/slug"
-              value={pageLink.slug}
+              type="url"
+              placeholder="https://twitter.com/CodingCatDev"
+              value={socialLink.href}
               className="w-full"
               onChange={(e) => {
-                setPageLink({ ...pageLink, slug: e.target.value });
+                setSocialLink({ ...socialLink, href: e.target.value });
               }}
             />
           </div>
           <button
             className="ml-1 cursor-pointer btn-secondary"
-            onClick={() => createPageLink()}
+            onClick={() => createSocialLink()}
           >
-            Add Page Link
+            Add Social Link
           </button>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid">
-            <Droppable droppableId={`PageLinks`} type="PageLinks">
+            <Droppable droppableId={`SocialLinks`} type="SocialLinks">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {site &&
-                    site.pageLinks &&
-                    site.pageLinks?.map((pl, pli) => (
+                    site.socialLinks &&
+                    site.socialLinks?.map((pl, pli) => (
                       <Draggable
                         draggableId={`pl${pli}`}
                         index={pli}
@@ -120,11 +126,11 @@ export default function SiteDataPageLinks({
                             <div className="flex flex-wrap justify-between w-full p-4">
                               <div className="flex flex-col">
                                 <h2 className="font-sans text-4xl">
-                                  {pl.title}
+                                  {pl.type}
                                 </h2>
-                                <p className="font-sans text-xl">{pl.slug}</p>
+                                <p className="font-sans text-xl">{pl.href}</p>
                               </div>
-                              <button onClick={() => onPageLinkDelete(pli)}>
+                              <button onClick={() => onSocialLinkDelete(pli)}>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
