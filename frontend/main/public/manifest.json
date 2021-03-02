@@ -1,8 +1,8 @@
 {
   "name": "codingcat.dev",
   "short_name": "CodingCatDev",
-  "theme_color": "#5e1185",
-  "background_color": "#5e1185",
+  "theme_color": "#4B0A75",
+  "background_color": "#4B0A75",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
