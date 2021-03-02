@@ -2,14 +2,22 @@ import ActiveLink from '@/components/ActiveLink';
 import TitleLogo from '@/components/global/logos/TitleLogo';
 import OutsideClick from '@/components/OutsideClick';
 import { Dispatch, SetStateAction } from 'react';
+import AvatarMenu from '@/components/user/AvatarMenu';
+import { useUser } from '@/utils/auth/useUser';
 
 export default function AppMenu({
   setOverlayMenuActive,
   overlayMenuActive,
+  userMenu,
+  setUserMenu,
 }: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
   overlayMenuActive: boolean;
+  userMenu: boolean;
+  setUserMenu: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
+  const { user } = useUser();
+
   return (
     <div
       className={`${
@@ -93,25 +101,25 @@ export default function AppMenu({
               </ActiveLink>
             </nav>
             <section className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">
-              <a href="#" className="links-secondary">
-                <div className="flex items-center">
-                  <div>
-                    <img
-                      className="inline-block rounded-full h-9 w-9"
-                      src="/static/images/avatar.png"
-                      alt=""
-                    />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-basics-50 dark:text-basics-50">
-                      User Name
+              <div className="flex items-center cursor-pointer links-secondary">
+                <OutsideClick toggle={setUserMenu} value={false}>
+                  <AvatarMenu
+                    userMenu={userMenu}
+                    setUserMenu={setUserMenu}
+                    positionClass="left-0 bottom-0 mb-6"
+                  />
+                </OutsideClick>
+                <OutsideClick toggle={setUserMenu} value={false}>
+                  <button className="ml-2" onClick={() => setUserMenu(true)}>
+                    <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
+                      {user?.displayName}
                     </p>
-                    <p className="text-xs font-medium text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
-                      View profile
+                    <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
+                      {user?.email}
                     </p>
-                  </div>
-                </div>
-              </a>
+                  </button>
+                </OutsideClick>
+              </div>
             </section>
           </section>
         </section>

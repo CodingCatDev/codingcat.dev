@@ -18,16 +18,7 @@ const Layout = ({
   children: any;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
-
-  // let menuClick = false;
-
-  // const onSidebarClick = () => {
-  //   menuClick = true;
-  // };
-
-  // const onShowMenuButton = (event: any) => {
-  //   console.log(event);
-  // };
+  const [userMenu, setUserMenu] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,6 +45,8 @@ const Layout = ({
       <AppMenu
         setOverlayMenuActive={setOverlayMenuActive}
         overlayMenuActive={overlayMenuActive}
+        userMenu={userMenu}
+        setUserMenu={setUserMenu}
       />
     </>
   );
