@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Dispatch, SetStateAction } from 'react';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import AdminNavItems from '@/layout/admin/AdminNavItems';
@@ -20,13 +21,14 @@ export default function AdminMenu({
 
   return (
     <section className="relative z-40 grid content-start h-full grid-cols-1 grid-rows-admin">
-      <section className="flex items-center justify-between gap-4 pl-4 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
-        <AJLogoLeft />
-        {navOpen && (
-          <h2 className="hidden mr-4 text-2xl lg:block">CodingCat.dev</h2>
-        )}
-      </section>
-
+      <Link href="/">
+        <a className="flex items-center justify-between gap-4 pl-4 hover:text-white bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+          <AJLogoLeft />
+          {navOpen && (
+            <h2 className="hidden mr-4 text-2xl lg:block">CodingCat.dev</h2>
+          )}
+        </a>
+      </Link>
       <AdminNavItems navOpen={navOpen} setNavOpen={setNavOpen} />
       {/* Profile dropdown --> */}
       <section className={`${navOpen ? 'px-4' : 'p-4'}`}>
