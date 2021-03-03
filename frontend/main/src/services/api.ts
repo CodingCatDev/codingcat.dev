@@ -55,6 +55,14 @@ export const userProfileDataObservable = (uid: string) => {
   );
 };
 
+export const userProfileUpdate = (profile: UserInfoExtended) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      firestore.doc(`/profiles/${profile.uid}`).set(profile, { merge: true })
+    )
+  );
+};
+
 export const usersDataObservable = (limit: number) => {
   if (limit && limit > 0) {
     return firestore$.pipe(
