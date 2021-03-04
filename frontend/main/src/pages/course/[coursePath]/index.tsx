@@ -25,12 +25,6 @@ export default function Post({
   post: PostModel;
   source: Source | null;
 }): JSX.Element {
-  const content = source ? hydrate(source) : null;
-  const router = useRouter();
-  if (router.isFallback) {
-    return <h2>Loading ...</h2>;
-  }
-
   if (!post) {
     return (
       <Layout site={site}>
@@ -40,6 +34,12 @@ export default function Post({
         <DefaultErrorPage statusCode={404} />
       </Layout>
     );
+  }
+
+  const content = source ? hydrate(source) : null;
+  const router = useRouter();
+  if (router.isFallback) {
+    return <h2>Loading ...</h2>;
   }
 
   return (
@@ -141,13 +141,6 @@ export default function Post({
         }
       `}</style>
     </Layout>
-    // <PostLayout
-    //   site={site}
-    //   router={router}
-    //   post={post}
-    //   course={post}
-    //   source={source}
-    // />
   );
 }
 
