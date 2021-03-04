@@ -22,4 +22,11 @@ export enum SocialType {
   medium = 'medium',
   twitter = 'twitter',
   youtube = 'youtube',
+  mastodon = 'mastodon',
+  twitch = 'twitch',
+  instagram = 'instagram',
+  dribbble = 'dribbble',
+  stackoverflow = 'stackoverflow',
+  gitlab = 'gitlab',
+  behance = 'behance',
 }
