@@ -54,95 +54,97 @@ export default function Footer({
           />
         </svg>
       )}
-      <footer className="grid grid-cols-1 gap-10 px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 2xl:grid-cols-3 2xl:items-start 2xl:gap-4 text-basics-50 dark:text-basics-50">
-        {/* LOGO & COPYRIGHT */}
-        <section className="grid grid-cols-1 lg:justify-items-start">
-          <div className="flex">
-            <AJAlt className="-mt-6 w-36 h-36" />
-            <section className="grid">
-              <div className="grid ">
-                <h4 className="text-2xl leading-tight sm:text-4xl">
-                  CodingCat.Dev
-                </h4>
-                <p className="text-xl font-bold">Purrfect Web Tutorials</p>
-                <p className="mt-4 text-xs font-light leading-5">
-                  Copyright &#169; {new Date().getFullYear()} AJONP LLC.
-                  <br />
-                  All Rights Reserved
-                </p>
-              </div>
-            </section>
-          </div>
-          {/* SOCIALS */}
-          <section className="flex items-end justify-around w-full gap-8 mt-4 lg:justify-start">
-            {site?.socialLinks?.map((sl, i) => (
-              <a
-                key={i}
-                href={sl.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={`social-links`}
-              >
-                {socialLinkPicker(sl)}
-              </a>
-            ))}
-          </section>
-        </section>
-        {/* HELPFUL LINKS */}
-        <section className="grid grid-cols-1 gap-4 lg:justify-self-end 2xl:justify-self-center">
-          <h4 className="underline whitespace-nowrap">Helpful Links</h4>
-          <div className="grid w-64 grid-cols-2 gap-4">
-            {site?.pageLinks?.map((pageLinks) => (
-              <a
-                href={pageLinks.slug}
-                className="links-secondary"
-                key={pageLinks.slug}
-              >
-                {pageLinks.title}
-              </a>
-            ))}
-          </div>
-        </section>
-        {/* NEWSLETTER */}
-        <section className="grid grid-cols-1 gap-4 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
-          <h4 className="underline">Newsletter</h4>
-          <p>Subscribe for all the latest updates.</p>
-          <form className="grid grid-cols-1 gap-4">
-            <label htmlFor="subEmail">Email</label>
-            <div className="flex flex-wrap gap-4 lg:flex-nowrap">
-              <input
-                id="subEmail"
-                type="email"
-                placeholder="alex@codingcat.dev"
-              />
-
-              <button className="btn-secondary">Subscribe</button>
+      <footer className="px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 text-basics-50 dark:text-basics-50">
+        <div className="grid items-start grid-cols-1 gap-10 2xl:grid-cols-3 2xl:items-start 2xl:gap-4 ">
+          {/* LOGO & COPYRIGHT */}
+          <section className="grid grid-cols-1 lg:justify-items-start">
+            <div className="flex">
+              <AJAlt className="-mt-6 w-36 h-36" />
+              <section className="grid">
+                <div className="grid ">
+                  <h4 className="text-2xl leading-tight sm:text-4xl">
+                    CodingCat.Dev
+                  </h4>
+                  <p className="text-xl font-bold">Purrfect Web Tutorials</p>
+                  <p className="w-full mt-4 text-sm font-light leading-5">
+                    Site designed by{' '}
+                    <a
+                      href="https://brittneypostma.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="links-secondary"
+                    >
+                      Brittney Postma
+                    </a>
+                  </p>
+                  <p className="w-full text-sm font-light leading-5">
+                    and developed by{' '}
+                    <a
+                      href="https://alexpatterson.dev/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="links-secondary"
+                    >
+                      Alex Patterson
+                    </a>
+                    .
+                  </p>
+                </div>
+              </section>
             </div>
-          </form>
-          <p className="w-full text-right">
-            Site designed by{' '}
-            <a
-              href="https://brittneypostma.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="links-secondary"
-            >
-              Brittney Postma
-            </a>
-          </p>
-          <p className="w-full text-right">
-            and developed by{' '}
-            <a
-              href="https://alexpatterson.dev/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="links-secondary"
-            >
-              Alex Patterson
-            </a>
-            .
-          </p>
-        </section>
+            {/* SOCIALS */}
+            <section className="flex items-end justify-around w-full gap-8 mt-4 lg:justify-start">
+              {site?.socialLinks?.map((sl, i) => (
+                <a
+                  key={i}
+                  href={sl.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={`social-links`}
+                >
+                  {socialLinkPicker(sl)}
+                </a>
+              ))}
+            </section>
+          </section>
+          {/* HELPFUL LINKS */}
+          <section className="grid grid-cols-1 gap-4 lg:justify-self-end 2xl:justify-self-center">
+            <h4 className="underline whitespace-nowrap">Helpful Links</h4>
+            <div className="grid w-64 grid-cols-2 gap-4">
+              {site?.pageLinks?.map((pageLinks) => (
+                <a
+                  href={pageLinks.slug}
+                  className="links-secondary"
+                  key={pageLinks.slug}
+                >
+                  {pageLinks.title}
+                </a>
+              ))}
+            </div>
+          </section>
+          {/* NEWSLETTER */}
+          <section className="grid grid-cols-1 gap-4 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
+            <h4 className="underline">Newsletter</h4>
+            <p>Subscribe for all the latest updates.</p>
+            <form className="grid grid-cols-1 gap-4">
+              <label htmlFor="subEmail">Email</label>
+              <div className="flex flex-wrap gap-4 lg:flex-nowrap">
+                <input
+                  id="subEmail"
+                  type="email"
+                  placeholder="alex@codingcat.dev"
+                />
+
+                <button className="btn-secondary">Subscribe</button>
+              </div>
+            </form>
+          </section>
+        </div>
+        <p className="mt-10 text-sm font-light leading-5 text-center">
+          Copyright &#169; {new Date().getFullYear()} AJONP LLC.
+          <br />
+          All Rights Reserved
+        </p>
       </footer>
       <style jsx>{`
         .social-links:hover {
