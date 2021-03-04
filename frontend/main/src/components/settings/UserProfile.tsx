@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { userProfileDataObservable, userProfileUpdate } from '@/services/api';
 import { take } from 'rxjs/operators';
 import { useUser } from '@/utils/auth/useUser';
+import UserProfileCloudinaryUpload from '@/components/user/UserProfileCloudinaryUpload';
 
 export default function UserProfile(): JSX.Element {
   const { user } = useUser();
@@ -53,8 +54,12 @@ export default function UserProfile(): JSX.Element {
     userProfileUpdate(profileUpdate).pipe(take(1)).subscribe();
   }
 
-  if (!profile) {
-    return <></>;
+  if (!profile || !user) {
+    return (
+      <>
+        <h2>Fetching Profile...</h2>
+      </>
+    );
   }
 
   return (
@@ -62,6 +67,32 @@ export default function UserProfile(): JSX.Element {
       <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-50">
         <h2 className="font-sans text-2xl">User</h2>
         <form className="grid gap-4">
+          <div className="grid gap-1">
+            {profile.photoURL ? (
+              <img
+                className="w-24"
+                src={profile.photoURL}
+                alt={
+                  profile.displayName
+                    ? profile.displayName
+                    : 'A Good Description'
+                }
+              />
+            ) : (
+              <img
+                className="w-24"
+                src="/static/images/avatar.png"
+                alt="Avatar Image Placeholder"
+              />
+            )}
+            <div className="w-48 ">
+              <UserProfileCloudinaryUpload
+                profile={profile}
+                setProfile={setProfile}
+                user={user}
+              />
+            </div>
+          </div>
           <div className="grid gap-1">
             <label htmlFor="name">Name</label>
             <input
