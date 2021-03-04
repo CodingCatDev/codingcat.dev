@@ -46,7 +46,7 @@ export default function Post({
       <section className="grid grid-cols-1">
         <section className="relative grid items-start content-start grid-cols-1 gap-4">
           {post.type === PostType.course && (
-            <section className="z-10 grid max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 lg:p-4 bg-basics-50 lg:absolute lg:right-0 lg:top-20">
+            <section className="z-10 grid max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 xl:p-4 bg-basics-50 xl:absolute xl:right-10 xl:top-20">
               {post.coverPhoto?.path ? (
                 <>
                   <Image
@@ -78,7 +78,7 @@ export default function Post({
             <div className="grid grid-cols-1 gap-4 mx-auto">
               <h1 className="text-4xl lg:text-7xl">{post.title}</h1>
               {/* Course Description */}
-              <p className="max-w-sm">{post.content}</p>
+              <p className="max-w-sm">{post.excerpt}</p>
               {/* Instructor */}
               <div className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600">
                 <div className="flex gap-4 ">
@@ -106,19 +106,27 @@ export default function Post({
           </section>
         </section>
       </section>
-
-      {post.sections?.map((section) => {
-        <section>
-          <h3>{section.title}</h3>
-          <ul>
-            {section.lessons?.map((lesson) => {
-              <li>
-                <h4>{lesson.title}</h4>
-              </li>;
-            })}
-          </ul>
-        </section>;
-      })}
+      <section className="grid grid-cols-1 gap-10 mx-auto">
+        {post.sections &&
+          post.sections.map((section, i) => {
+            return (
+              <section key={i} className="grid grid-cols-1 gap-4">
+                <h3 className="font-sans text-4xl text-secondary-600 dark:text-secondary-600">
+                  {section.title}
+                </h3>
+                <ul className="grid grid-cols-1 gap-2">
+                  {section.lessons?.map((lesson, i) => {
+                    return (
+                      <li key={i}>
+                        <h4 className="font-sans text-3xl">{lesson.title}</h4>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            );
+          })}
+      </section>
 
       <style jsx>{`
         p {
