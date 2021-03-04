@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
@@ -10,11 +11,11 @@ import {
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import renderToString from 'next-mdx-remote/render-to-string';
-import { Source } from 'next-mdx-remote/hydrate';
-import PostLayout from '@/components/PostLayout';
+import hydrate, { Source } from 'next-mdx-remote/hydrate';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
+import PostMedia from '@/components/PostMedia';
 
 export default function Post({
   site,
@@ -25,11 +26,6 @@ export default function Post({
   post: PostModel;
   source: Source | null;
 }): JSX.Element {
-  const router = useRouter();
-  if (router.isFallback) {
-    return <h2>Loading ...</h2>;
-  }
-
   if (!post) {
     return (
       <Layout site={site}>
@@ -39,6 +35,12 @@ export default function Post({
         <DefaultErrorPage statusCode={404} />
       </Layout>
     );
+  }
+
+  const content = source ? hydrate(source) : null;
+  const router = useRouter();
+  if (router.isFallback) {
+    return <h2>Loading ...</h2>;
   }
 
   return (
@@ -106,6 +108,12 @@ export default function Post({
           </section>
         </section>
       </section>
+
+      {/* MEDIA */}
+      <section className="flex-1 mt-12 xl:w-3/4 xl:flex-auto">
+        <PostMedia post={post} />
+      </section>
+      {content}
       <section className="grid grid-cols-1 gap-10 mx-auto">
         {post.sections &&
           post.sections.map((section, i) => {
@@ -118,7 +126,16 @@ export default function Post({
                   {section.lessons?.map((lesson, i) => {
                     return (
                       <li key={i}>
-                        <h4 className="font-sans text-3xl">{lesson.title}</h4>
+                        <Link
+                          href={`/course/${post.slug}/lesson/${lesson.slug}`}
+                          key={lesson.id}
+                        >
+                          <a>
+                            <h4 className="font-sans text-3xl">
+                              {lesson.title}
+                            </h4>
+                          </a>
+                        </Link>
                       </li>
                     );
                   })}
@@ -134,13 +151,6 @@ export default function Post({
         }
       `}</style>
     </Layout>
-    // <PostLayout
-    //   site={site}
-    //   router={router}
-    //   post={post}
-    //   course={post}
-    //   source={source}
-    // />
   );
 }
 
