@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
@@ -125,7 +126,16 @@ export default function Post({
                   {section.lessons?.map((lesson, i) => {
                     return (
                       <li key={i}>
-                        <h4 className="font-sans text-3xl">{lesson.title}</h4>
+                        <Link
+                          href={`/course/${post.slug}/lesson/${lesson.slug}`}
+                          key={lesson.id}
+                        >
+                          <a>
+                            <h4 className="font-sans text-3xl">
+                              {lesson.title}
+                            </h4>
+                          </a>
+                        </Link>
                       </li>
                     );
                   })}
