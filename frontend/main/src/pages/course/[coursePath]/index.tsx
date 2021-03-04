@@ -10,11 +10,11 @@ import {
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import renderToString from 'next-mdx-remote/render-to-string';
-import { Source } from 'next-mdx-remote/hydrate';
-import PostLayout from '@/components/PostLayout';
+import hydrate, { Source } from 'next-mdx-remote/hydrate';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
+import PostMedia from '@/components/PostMedia';
 
 export default function Post({
   site,
@@ -25,6 +25,7 @@ export default function Post({
   post: PostModel;
   source: Source | null;
 }): JSX.Element {
+  const content = source ? hydrate(source) : null;
   const router = useRouter();
   if (router.isFallback) {
     return <h2>Loading ...</h2>;
@@ -106,6 +107,12 @@ export default function Post({
           </section>
         </section>
       </section>
+
+      {/* MEDIA */}
+      <section className="flex-1 mt-12 xl:w-3/4 xl:flex-auto">
+        <PostMedia post={post} />
+      </section>
+      {content}
       <section className="grid grid-cols-1 gap-10 mx-auto">
         {post.sections &&
           post.sections.map((section, i) => {
