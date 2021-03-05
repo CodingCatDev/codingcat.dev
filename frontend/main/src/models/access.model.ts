@@ -9,5 +9,5 @@ export enum AccessMode {
 export interface AccessSettings {
   accessMode: AccessMode;
   price?: number;
-  buttonUrl?: string;
+  productId?: string;
 }

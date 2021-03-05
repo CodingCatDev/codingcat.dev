@@ -5,6 +5,7 @@ import Head from 'next/head';
 import DefaultErrorPage from 'next/error';
 import {
   getSite,
+  getStripeProduct,
   postBySlugService,
   postsService,
 } from '@/services/serversideApi';
@@ -16,15 +17,21 @@ import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import PostMedia from '@/components/PostMedia';
+import { useState } from 'react';
+import CourseBuy from '@/components/CourseBuy';
+import { StripeProduct } from '@/models/stripe.model';
+import { AccessMode } from '@/models/access.model';
 
 export default function Post({
   site,
   post,
   source,
+  product,
 }: {
   site: Site | null;
   post: PostModel;
   source: Source | null;
+  product: StripeProduct | null;
 }): JSX.Element {
   if (!post) {
     return (
@@ -36,7 +43,6 @@ export default function Post({
       </Layout>
     );
   }
-
   const content = source ? hydrate(source) : null;
   const router = useRouter();
   if (router.isFallback) {
@@ -69,9 +75,18 @@ export default function Post({
               <p className="p-2 rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
                 Beginner
               </p>
+              {product && (
+                <p className="p-2 text-xl text-basics-900">
+                  ${post.accessSettings?.price}
+                </p>
+              )}
               <div className="flex items-center justify-center space-x-4 flex-nowrap">
-                <button className="btn-secondary">Buy Now</button>
-                <button className="btn-primary">Become a Member</button>
+                {product && <CourseBuy product={product} />}
+                {post.accessSettings?.accessMode === AccessMode.free ? (
+                  <button className="btn-primary">Become a Member</button>
+                ) : (
+                  <p className="text-2xl">Access Lessons Below</p>
+                )}
               </div>
             </section>
           )}
@@ -111,7 +126,7 @@ export default function Post({
 
       {/* MEDIA */}
       <section className="flex-1 mt-12 xl:w-3/4 xl:flex-auto">
-        <PostMedia post={post} />
+        <PostMedia post={post} noImage={true} />
       </section>
       {content}
       <section className="grid grid-cols-1 gap-10 mx-auto">
@@ -144,7 +159,6 @@ export default function Post({
             );
           })}
       </section>
-
       <style jsx>{`
         p {
           width: fit-content;
@@ -186,6 +200,7 @@ export async function getStaticProps({
         site: Site | null;
         post: PostModel | null;
         source: Source | null;
+        product: StripeProduct | null;
       };
       revalidate: number;
     }
@@ -205,6 +220,12 @@ export async function getStaticProps({
   const posts = await postBySlugService(PostType.course, coursePath);
   const post = posts.length > 0 ? posts[0] : null;
 
+  const productId = post?.accessSettings?.productId;
+  let product = null;
+  if (productId) {
+    product = await getStripeProduct(productId);
+  }
+
   const source: Source | null =
     post && post.content
       ? await renderToString(post.content, {
@@ -219,6 +240,7 @@ export async function getStaticProps({
       site,
       post,
       source,
+      product,
     },
     revalidate: 60,
   };

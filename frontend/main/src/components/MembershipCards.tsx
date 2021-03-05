@@ -18,7 +18,7 @@ export default function MembershipCards({
   function onSelectPlan(product: StripeProduct) {
     if (product.prices && user?.uid) {
       setStripe(true);
-      stripeCheckout(product.prices[0], user?.uid)
+      stripeCheckout(product, user?.uid)
         .pipe(take(1))
         .subscribe((sessionId) => {
           console.log(sessionId);
