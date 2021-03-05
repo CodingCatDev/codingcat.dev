@@ -20,6 +20,7 @@ import PostMedia from '@/components/PostMedia';
 import { useState } from 'react';
 import CourseBuy from '@/components/CourseBuy';
 import { StripeProduct } from '@/models/stripe.model';
+import { AccessMode } from '@/models/access.model';
 
 export default function Post({
   site,
@@ -74,12 +75,18 @@ export default function Post({
               <p className="p-2 rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
                 Beginner
               </p>
-              <p className="p-2 text-xl text-basics-900">
-                ${post.accessSettings?.price}
-              </p>
+              {product && (
+                <p className="p-2 text-xl text-basics-900">
+                  ${post.accessSettings?.price}
+                </p>
+              )}
               <div className="flex items-center justify-center space-x-4 flex-nowrap">
                 {product && <CourseBuy product={product} />}
-                <button className="btn-primary">Become a Member</button>
+                {post.accessSettings?.accessMode === AccessMode.free ? (
+                  <button className="btn-primary">Become a Member</button>
+                ) : (
+                  <p className="text-2xl">Access Lessons Below</p>
+                )}
               </div>
             </section>
           )}
