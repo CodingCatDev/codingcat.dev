@@ -1,18 +1,20 @@
+import Link from 'next/link';
 import { StripeProduct } from '@/models/stripe.model';
 import { stripeCheckout } from '@/services/api';
 import { useUser } from '@/utils/auth/useUser';
 import { take } from 'rxjs/operators';
 import AJPrimary from './global/icons/AJPrimary';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
 
 export default function CourseBuy({
   product,
+  setShowMustSignin,
 }: {
   product: StripeProduct;
+  setShowMustSignin: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
   const [stripe, setStripe] = useState(false);
-  const [showMustSignin, setShowMustSignin] = useState(false);
   const { user } = useUser();
 
   function onSelectPlan(e: any) {
@@ -34,25 +36,6 @@ export default function CourseBuy({
       <button className="btn-secondary" onClick={(e) => onSelectPlan(e)}>
         Buy Now
       </button>
-      <div
-        className={`${
-          showMustSignin ? 'block' : 'hidden'
-        } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
-      >
-        <section
-          className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
-          aria-labelledby="slide-over-heading"
-        >
-          <OutsideClick toggle={setShowMustSignin} value={false}>
-            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
-              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
-                <div>Please Sign in First.</div>
-                <div>Then make your Membership selection.</div>
-              </div>
-            </section>
-          </OutsideClick>
-        </section>
-      </div>
       <div
         className={`${
           stripe ? 'block' : 'hidden'

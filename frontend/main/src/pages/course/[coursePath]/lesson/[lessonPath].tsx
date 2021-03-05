@@ -14,6 +14,8 @@ import { Source } from 'next-mdx-remote/hydrate';
 
 import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
+import { AccessMode } from '@/models/access.model';
+import { AuthIssue } from '@/models/user.model';
 
 export default function Post({
   site,
@@ -62,36 +64,6 @@ export async function getServerSideProps({
 > {
   const { coursePath, lessonPath } = params;
 
-  const cookies = cookie.parse(req.headers.cookie || '');
-  const auth = cookies.auth;
-  // Check for user authentication from cookie
-  let validUser = true;
-  if (auth) {
-    const user = JSON.parse(auth) as {
-      uid: string;
-      email: string;
-      token: string;
-    };
-    validUser = await validateCourseUser(user.token);
-  } else {
-    validUser = false;
-  }
-
-  if (!validUser) {
-    if (coursePath) {
-      return {
-        redirect: {
-          destination: `/course/${coursePath}`,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        notFound: true,
-      };
-    }
-  }
-
   if (!coursePath || !lessonPath) {
     return {
       redirect: {
@@ -109,6 +81,50 @@ export async function getServerSideProps({
     coursePath as string
   );
   const course = courses.length > 0 ? courses[0] : null;
+
+  /* AUTH */
+
+  // This check allows any other access mode
+  if (
+    course &&
+    course.accessSettings &&
+    [AccessMode.closed, AccessMode.free].includes(
+      course?.accessSettings?.accessMode
+    )
+  ) {
+    const cookies = cookie.parse(req.headers.cookie || '');
+    const auth = cookies.auth;
+    // Check for user authentication from cookie
+    let validUser = true;
+    let failureType: AuthIssue = AuthIssue.mustsignin;
+    if (auth) {
+      const user = JSON.parse(auth) as {
+        uid: string;
+        email: string;
+        token: string;
+      };
+      validUser = await validateCourseUser(user.token);
+      failureType = AuthIssue.unauthorized;
+    } else {
+      validUser = false;
+      failureType = AuthIssue.mustsignin;
+    }
+
+    if (!validUser) {
+      if (coursePath) {
+        return {
+          redirect: {
+            destination: `/course/${coursePath}?error=${failureType}`,
+            permanent: false,
+          },
+        };
+      } else {
+        return {
+          notFound: true,
+        };
+      }
+    }
+  }
 
   const source: Source | null =
     post && post.content
