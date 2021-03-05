@@ -16,10 +16,11 @@ export const mapUserData = async (user: any) => {
   }
 
   const token = await user.getIdToken(true);
-  setUserCookie(token);
-  return ({
+  const cookie = ({
     uid,
     email,
     token,
   } as unknown) as firebase.User;
+  setUserCookie(cookie);
+  return cookie;
 };
