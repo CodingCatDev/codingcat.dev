@@ -1,5 +1,9 @@
 import { UserInfoExtended } from '@/models/user.model';
-import { StripePrice } from './../models/stripe.model';
+import {
+  StripeProduct,
+  StripePrice,
+  StripeLineItem,
+} from '@/models/stripe.model';
 import { httpsCallable } from 'rxfire/functions';
 import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
@@ -119,7 +123,16 @@ export const getCloudinaryCookieToken = () => {
 };
 
 /* Stripe */
-export const stripeCheckout = (price: StripePrice, uid: string) => {
+export const stripeCheckout = (product: StripeProduct, uid: string) => {
+  const line_items: StripeLineItem[] = [];
+
+  product.prices.forEach((price: StripePrice) =>
+    line_items.push({
+      price: price.id,
+      quantity: 1,
+    })
+  );
+
   return firestore$.pipe(
     switchMap(async (firestore) => {
       const docRef = await firestore
@@ -127,7 +140,7 @@ export const stripeCheckout = (price: StripePrice, uid: string) => {
         .doc(uid)
         .collection('checkout_sessions')
         .add({
-          price: price.id,
+          line_items,
           success_url: window.location.origin,
           cancel_url: window.location.href,
         });

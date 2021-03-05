@@ -204,3 +204,29 @@ export async function getActiveProducts(): Promise<StripeProduct[]> {
   }
   return products as StripeProduct[];
 }
+
+export async function getStripeProduct(id: string): Promise<StripeProduct> {
+  const productDoc = await admin
+    .firestore()
+    .collection('products')
+    .doc(id)
+    .get();
+
+  const priceDocs = await admin
+    .firestore()
+    .collection(`products/${productDoc.id}/prices`)
+    .where('active', '==', true)
+    .get();
+
+  const prices: StripePrice[] = [];
+  for (const priceDoc of priceDocs.docs) {
+    const price = priceDoc.data() as StripePrice;
+    price.id = priceDoc.id;
+    prices.push(price);
+  }
+  const product = productDoc.data() as StripeProduct;
+  product.id = productDoc.id;
+  product.prices = prices;
+
+  return product as StripeProduct;
+}

@@ -19,3 +19,8 @@ export interface StripePrice {
   type?: string;
   unit_amount?: number;
 }
+
+export interface StripeLineItem {
+  price: string;
+  quantity: number;
+}

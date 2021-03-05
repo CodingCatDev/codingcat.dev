@@ -11,7 +11,13 @@ import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 import Image from 'next/image';
 
-export default function PostMedia({ post }: { post: Post }) {
+export default function PostMedia({
+  post,
+  noImage,
+}: {
+  post: Post;
+  noImage?: boolean;
+}) {
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {
@@ -95,7 +101,7 @@ export default function PostMedia({ post }: { post: Post }) {
         </div>
       ) : (
         <>
-          {post.coverPhoto?.path ? (
+          {!noImage && post.coverPhoto?.path ? (
             <Image
               src={post.coverPhoto?.path}
               alt={post.title}
