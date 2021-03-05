@@ -4,8 +4,6 @@ import Link from 'next/link';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebaseApp from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
-import { setUserCookie } from '@/utils/auth/userCookies';
-import { mapUserData } from '@/utils/auth/mapUserData';
 import { useEffect } from 'react';
 
 const FirebaseAuth = ({ full = true }: { full?: boolean }) => {

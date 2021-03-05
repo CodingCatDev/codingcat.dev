@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import initFirebase from '@/utils/initFirebase';
-import {
-  removeUserCookie,
-  setUserCookie,
-  getUserFromCookie,
-} from './userCookies';
+import { removeUserCookie, getUserFromCookie } from './userCookies';
 import { mapUserData } from './mapUserData';
 import { userDataObservable } from '@/services/api';
 import { Observable } from 'rxjs';
@@ -57,7 +53,6 @@ const useUser = () => {
             .subscribe(async (u) => {
               const userData = await mapUserData(user);
               const utoken = { ...u, ...userData };
-              setUserCookie(utoken);
               setUser(utoken);
             });
         } else {
