@@ -120,9 +120,15 @@ export async function getServerSideProps({
 
     if (!validUser) {
       if (coursePath) {
+        // return {
+        //   redirect: {
+        //     destination: `/course/${coursePath}?error=${failureType}`,
+        //     permanent: false,
+        //   },
+        // };
         return {
           redirect: {
-            destination: `/course/${coursePath}?error=${failureType}`,
+            destination: `/membership`,
             permanent: false,
           },
         };

@@ -34,8 +34,6 @@ export default function Post({
   source: Source | null;
   product: StripeProduct | null;
 }): JSX.Element {
-  const [showMustSignin, setShowMustSignin] = useState(false);
-  const content = source ? hydrate(source) : null;
   const router = useRouter();
   if (router.isFallback) {
     return (
@@ -44,7 +42,8 @@ export default function Post({
       </Layout>
     );
   }
-
+  const [showMustSignin, setShowMustSignin] = useState(false);
+  const content = source ? hydrate(source) : null;
   return (
     <Layout site={site}>
       <div
@@ -109,14 +108,14 @@ export default function Post({
                     setShowMustSignin={setShowMustSignin}
                   />
                 )}
-                {post.accessSettings?.accessMode !== AccessMode.free ? (
+                {post.accessSettings?.accessMode !== AccessMode.open ? (
                   <Link href="/membership">
                     <a>
                       <button className="btn-primary">Become a Member</button>
                     </a>
                   </Link>
                 ) : (
-                  <p className="text-2xl">Access Lessons Below</p>
+                  <p className="text-2xl">No Membership Needed ❤️</p>
                 )}
               </div>
             </section>
