@@ -84,7 +84,8 @@ export async function getServerSideProps({
 
   /* AUTH */
 
-  // This check allows any other access mode
+  // This check allows any other access mode except closed and free
+  // As these modes need to be signed in.
   if (
     course &&
     course.accessSettings &&
@@ -103,8 +104,15 @@ export async function getServerSideProps({
         email: string;
         token: string;
       };
-      validUser = await validateCourseUser(user.token);
-      failureType = AuthIssue.unauthorized;
+      if (course && course.accessSettings && course.accessSettings.productId) {
+        validUser = await validateCourseUser(
+          user.token,
+          course.accessSettings.productId
+        );
+        if (!validUser) {
+          failureType = AuthIssue.unauthorized;
+        }
+      }
     } else {
       validUser = false;
       failureType = AuthIssue.mustsignin;
