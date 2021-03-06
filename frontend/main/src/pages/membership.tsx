@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Layout from '@/layout/Layout';
 import { useUser } from '@/utils/auth/useUser';
 import MembershipCards from '@/components/MembershipCards';
-import { getActiveProducts, getSite } from '@/services/serversideApi';
+import { getActiveMemberProducts, getSite } from '@/services/serversideApi';
 import { StripeProduct } from '@/models/stripe.model';
 import { useEffect, useState } from 'react';
 import { Site } from '@/models/site.model';
@@ -26,7 +26,6 @@ export default function Membership({
   const { user, signout } = useUser();
 
   useEffect(() => {
-    console.log(user);
     setMember(
       user?.memberships?.find((m) => m.membership === true) ? true : false
     );
@@ -288,7 +287,7 @@ export async function getStaticProps(): Promise<{
   revalidate: number;
 }> {
   const site = await getSite();
-  const products = await getActiveProducts();
+  const products = await getActiveMemberProducts();
   return {
     props: {
       site,
