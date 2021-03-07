@@ -120,6 +120,24 @@ export const isUserMember = (uid: string): Observable<boolean> => {
   );
 };
 
+export const isUserCourseSub = (
+  uid: string,
+  productId: string
+): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const productRef = firestore.collection('products').doc(productId);
+
+      return collectionData<StripeSubscription>(
+        firestore
+          .collection(`customers/${uid}/subscriptions/`)
+          .where('status', '==', 'active')
+          .where('product', '==', productRef)
+      ).pipe(map((s) => (s.length === 0 ? false : true)));
+    })
+  );
+};
+
 export const userDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
