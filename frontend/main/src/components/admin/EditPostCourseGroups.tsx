@@ -13,5 +13,9 @@ export default function EditPostCourseGroups({
     setHistory(historyInput);
   }, [historyInput]);
 
-  return <>Groups</>;
+  return (
+    <>
+      <h1 className="font-sans text-4xl">Course Groups</h1>
+    </>
+  );
 }
