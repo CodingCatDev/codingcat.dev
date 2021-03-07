@@ -32,7 +32,7 @@ export default function Membership({
     if (user && user.uid) {
       const isUserTeam$ = isUserTeam(user.uid);
       const isUserMember$ = isUserMember(user.uid);
-      combineLatest(isUserTeam$, isUserMember$)
+      combineLatest([isUserTeam$, isUserMember$])
         .pipe(take(1))
         .subscribe((c) => {
           setMember(c.includes(true));
