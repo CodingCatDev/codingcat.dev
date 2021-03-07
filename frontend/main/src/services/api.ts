@@ -194,7 +194,7 @@ export const stripeCheckout = (product: StripeProduct, uid: string) => {
         .collection('checkout_sessions')
         .add({
           line_items,
-          success_url: window.location.origin,
+          success_url: window.location.href,
           cancel_url: window.location.href,
         });
       docRef.onSnapshot(async (snap) => {
