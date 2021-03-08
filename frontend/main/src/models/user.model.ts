@@ -26,3 +26,8 @@ export interface BasicUserInfo {
 
   socialLinks?: SocialLink[];
 }
+
+export enum AuthIssue {
+  mustsignin = 'mustsignin',
+  unauthorized = 'unauthorized',
+}

@@ -7,7 +7,7 @@ const dirPath = path.join(__dirname, '../data/firestore-backup.json');
 initializeApp(serviceAccountKey);
 
 console.log('Fetching Collections');
-backups() // ['posts', 'profiles', 'users'] Array of collection's name is OPTIONAL
+backups(['customers', 'subscriptions']) // ['posts', 'profiles', 'users'] Array of collection's name is OPTIONAL
   .then((collections) => {
     fs.writeFileSync(dirPath, JSON.stringify(collections));
   });

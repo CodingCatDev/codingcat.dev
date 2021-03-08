@@ -86,67 +86,99 @@ export async function getSite(): Promise<Site | null> {
 
 /* USER Authentication */
 
-export async function validateCourseUser(idToken: string): Promise<boolean> {
+export async function validateAdminUser(idToken: string): Promise<boolean> {
+  const userRecord = await getCookieUser(idToken);
+
+  if (!userRecord || !userRecord.uid) {
+    return false;
+  }
+  if (!isUserTeam(userRecord.uid)) {
+    return false;
+  }
+  return true;
+}
+
+export async function validateCourseUser(
+  idToken: string,
+  productId: string
+): Promise<boolean> {
+  const userRecord = await getCookieUser(idToken);
+
+  if (!userRecord || !userRecord.uid) {
+    return false;
+  }
+  if (await isUserTeam(userRecord.uid)) {
+    return true;
+  }
+  if (!(await isUserMember(userRecord.uid))) {
+    if (!(await isUserCourseSub(userRecord.uid, productId))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export async function getCookieUser(
+  idToken: string
+): Promise<admin.auth.UserRecord | null> {
   //Verify Token
   const decodedToken = admin.auth().verifyIdToken(idToken);
 
   if (!decodedToken) {
-    return false;
+    return Promise.resolve(null);
   }
 
-  const userRecord = await admin.auth().getUser((await decodedToken).uid);
-  if (userRecord) {
-    // Verify user has the correct roles
-    const userRef = await admin
-      .firestore()
-      .doc(`users/${userRecord.uid}`)
-      .get();
+  return await admin.auth().getUser((await decodedToken).uid);
+}
 
-    const userData = userRef.data() as { uid: string; roles: string[] };
-    // TODO: Include Stripe Custom Claim for memberships
-    if (
-      userData &&
-      userData.roles &&
-      userData.roles.some((r) => ['admin', 'editor', 'author'].indexOf(r) >= 0)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+export async function isUserTeam(uid: string): Promise<boolean> {
+  if (!uid) {
+    return Promise.resolve(false);
+  }
+  const userRef = await admin.firestore().doc(`users/${uid}`).get();
+
+  const userData = userRef.data() as { uid: string; roles: string[] };
+  if (
+    userData &&
+    userData.roles &&
+    userData.roles.some((r) => ['admin', 'editor', 'author'].indexOf(r) >= 0)
+  ) {
+    return true;
   } else {
     return false;
   }
 }
 
-export async function validateAdminUser(idToken: string): Promise<boolean> {
-  //Verify Token
-  const decodedToken = admin.auth().verifyIdToken(idToken);
+export async function isUserMember(uid: string): Promise<boolean> {
+  if (!uid) {
+    return Promise.resolve(false);
+  }
+  const memberSub = await admin
+    .firestore()
+    .collection(`customers/${uid}/subscriptions/`)
+    .where('status', '==', 'active')
+    .where('role', 'in', ['monthly', 'yearly'])
+    .get();
+  return !memberSub.empty;
+}
 
-  if (!decodedToken) {
-    return false;
+export async function isUserCourseSub(
+  uid: string,
+  productId: string
+): Promise<boolean> {
+  if (!uid || !productId) {
+    return Promise.resolve(false);
   }
 
-  const userRecord = await admin.auth().getUser((await decodedToken).uid);
-  if (userRecord) {
-    // Verify user has the correct roles
-    const userRef = await admin
-      .firestore()
-      .doc(`users/${userRecord.uid}`)
-      .get();
-
-    const userData = userRef.data() as { uid: string; roles: string[] };
-    if (
-      userData &&
-      userData.roles &&
-      userData.roles.some((r) => ['admin', 'editor', 'author'].indexOf(r) >= 0)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
+  // Search if user has subscription to the product.
+  const productRef = admin.firestore().collection('products').doc(productId);
+  const courseSub = await admin
+    .firestore()
+    .collection(`customers/${uid}/subscriptions/`)
+    .where('status', '==', 'active')
+    .where('product', '==', productRef)
+    .get();
+  return !courseSub.empty;
 }
 
 /* Utilities */
@@ -181,6 +213,36 @@ export async function getActiveProducts(): Promise<StripeProduct[]> {
     .firestore()
     .collection('products')
     .where('active', '==', true)
+    .get();
+
+  const products: FirebaseFirestore.DocumentData[] = [];
+  for (const productDoc of productDocs.docs) {
+    const priceDocs = await admin
+      .firestore()
+      .collection(`products/${productDoc.id}/prices`)
+      .where('active', '==', true)
+      .get();
+
+    const prices: StripePrice[] = [];
+    for (const priceDoc of priceDocs.docs) {
+      const price = priceDoc.data() as StripePrice;
+      price.id = priceDoc.id;
+      prices.push(price);
+    }
+    const product = productDoc.data() as StripeProduct;
+    product.id = productDoc.id;
+    product.prices = prices;
+    products.push(product);
+  }
+  return products as StripeProduct[];
+}
+
+export async function getActiveMemberProducts(): Promise<StripeProduct[]> {
+  const productDocs = await admin
+    .firestore()
+    .collection('products')
+    .where('active', '==', true)
+    .where('role', 'in', ['monthly', 'yearly', 'supporter'])
     .get();
 
   const products: FirebaseFirestore.DocumentData[] = [];

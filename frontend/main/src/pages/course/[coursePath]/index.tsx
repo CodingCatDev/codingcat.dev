@@ -21,6 +21,12 @@ import { useState } from 'react';
 import CourseBuy from '@/components/CourseBuy';
 import { StripeProduct } from '@/models/stripe.model';
 import { AccessMode } from '@/models/access.model';
+import OutsideClick from '@/components/OutsideClick';
+import { useUser } from '@/utils/auth/useUser';
+import { useEffect } from 'react';
+import { isUserCourseSub, isUserMember, isUserTeam } from '@/services/api';
+import { combineLatest } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 export default function Post({
   site,
@@ -33,24 +39,61 @@ export default function Post({
   source: Source | null;
   product: StripeProduct | null;
 }): JSX.Element {
-  if (!post) {
+  const router = useRouter();
+  if (router.isFallback) {
     return (
       <Layout site={site}>
-        <Head>
-          <meta name="robots" content="noindex" />
-        </Head>
-        <DefaultErrorPage statusCode={404} />
+        <h2>Loading...</h2>
       </Layout>
     );
   }
+  const [showMustSignin, setShowMustSignin] = useState(false);
+  const [member, setMember] = useState(false);
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user && user.uid && product) {
+      const isUserTeam$ = isUserTeam(user.uid);
+      const isUserMember$ = isUserMember(user.uid);
+      const isUserCourseSub$ = isUserCourseSub(user.uid, product.id);
+      combineLatest([isUserTeam$, isUserMember$, isUserCourseSub$])
+        .pipe(take(1))
+        .subscribe((c) => {
+          setMember(c.includes(true));
+        });
+    }
+  }, [user]);
+
   const content = source ? hydrate(source) : null;
-  const router = useRouter();
-  if (router.isFallback) {
-    return <h2>Loading ...</h2>;
-  }
 
   return (
     <Layout site={site}>
+      <div
+        className={`${
+          showMustSignin ? 'block' : 'hidden'
+        } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
+      >
+        <section
+          className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
+          aria-labelledby="slide-over-heading"
+        >
+          <OutsideClick toggle={setShowMustSignin} value={false}>
+            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
+              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
+                <div>Please Sign in First.</div>
+                <Link href="/membership">
+                  <a>
+                    <button className="btn-secondary">Sign In</button>
+                  </a>
+                </Link>
+                <div>
+                  Then you can purchase courses directly, or become a member.
+                </div>
+              </div>
+            </section>
+          </OutsideClick>
+        </section>
+      </div>
       <section className="grid grid-cols-1">
         <section className="relative grid items-start content-start grid-cols-1 gap-4">
           {post.type === PostType.course && (
@@ -75,19 +118,36 @@ export default function Post({
               <p className="p-2 rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
                 Beginner
               </p>
-              {product && (
-                <p className="p-2 text-xl text-basics-900">
-                  ${post.accessSettings?.price}
-                </p>
+              {member ? (
+                <p className="text-2xl">Access Lessons Below</p>
+              ) : (
+                <>
+                  {product && (
+                    <p className="p-2 text-xl text-basics-900">
+                      ${post.accessSettings?.price}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-center space-x-4 flex-nowrap">
+                    {product && (
+                      <CourseBuy
+                        product={product}
+                        setShowMustSignin={setShowMustSignin}
+                      />
+                    )}
+                    {post.accessSettings?.accessMode !== AccessMode.open ? (
+                      <Link href="/membership">
+                        <a>
+                          <button className="btn-primary">
+                            Become a Member
+                          </button>
+                        </a>
+                      </Link>
+                    ) : (
+                      <p className="text-2xl">No Membership Needed ❤️</p>
+                    )}
+                  </div>
+                </>
               )}
-              <div className="flex items-center justify-center space-x-4 flex-nowrap">
-                {product && <CourseBuy product={product} />}
-                {post.accessSettings?.accessMode === AccessMode.free ? (
-                  <button className="btn-primary">Become a Member</button>
-                ) : (
-                  <p className="text-2xl">Access Lessons Below</p>
-                )}
-              </div>
             </section>
           )}
           <section className="grid content-center p-4 pt-6 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
@@ -219,6 +279,15 @@ export async function getStaticProps({
   const site = await getSite();
   const posts = await postBySlugService(PostType.course, coursePath);
   const post = posts.length > 0 ? posts[0] : null;
+
+  if (!post) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
   const productId = post?.accessSettings?.productId;
   let product = null;

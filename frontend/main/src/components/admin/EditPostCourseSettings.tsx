@@ -157,66 +157,6 @@ export default function EditPostCourseSettings({
                 <li className="flex items-start space-x-2">
                   <input
                     type="radio"
-                    id="buynow"
-                    name="accessmode"
-                    value="buynow"
-                    onChange={(e) => onAccessModeChange(e as any)}
-                    checked={accessMode === AccessMode.buynow}
-                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
-                  />
-                  <div className="grid grid-cols-1 gap-2">
-                    <label
-                      htmlFor="buynow"
-                      className={`font-bold ${
-                        accessMode !== AccessMode.buynow ? 'opacity-50' : ''
-                      }`}
-                    >
-                      Buy now
-                    </label>
-                    <p
-                      className={` ${
-                        accessMode !== AccessMode.buynow ? 'opacity-50' : ''
-                      }`}
-                    >
-                      The course is protected via the LearnDash built-in Stripe.
-                      Users need to purchase the course (one-time fee) in order
-                      to gain access.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <input
-                    type="radio"
-                    id="recurring"
-                    name="accessmode"
-                    value="recurring"
-                    onChange={(e) => onAccessModeChange(e as any)}
-                    checked={accessMode === AccessMode.recurring}
-                    className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
-                  />
-                  <div className="grid grid-cols-1 gap-2">
-                    <label
-                      htmlFor="recurring"
-                      className={`font-bold ${
-                        accessMode !== AccessMode.recurring ? 'opacity-50' : ''
-                      }`}
-                    >
-                      Recurring
-                    </label>
-                    <p
-                      className={` ${
-                        accessMode !== AccessMode.recurring ? 'opacity-50' : ''
-                      }`}
-                    >
-                      The course is protected via the LearnDash built-in Stripe.
-                      Users need to purchase the course (recurring fee) in order
-                      to gain access.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <input
-                    type="radio"
                     id="closed"
                     name="accessmode"
                     value="closed"

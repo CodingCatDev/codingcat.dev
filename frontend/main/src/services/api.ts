@@ -1,3 +1,4 @@
+import { StripeSubscription } from '@/models/stripe.model';
 import { UserInfoExtended } from '@/models/user.model';
 import {
   StripeProduct,
@@ -9,7 +10,7 @@ import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { collectionData, docData } from 'rxfire/firestore';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 import { loadStripe } from '@stripe/stripe-js';
 import { config } from '@/config/stripe';
@@ -85,6 +86,58 @@ export const usersDataObservable = (limit: number) => {
   }
 };
 
+export const isUserTeam = (uid: string): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap(async (firestore) => {
+      const userRef = await firestore.doc(`users/${uid}`).get();
+
+      const userData = userRef.data() as { uid: string; roles: string[] };
+      if (
+        userData &&
+        userData.roles &&
+        userData.roles.some(
+          (r) => ['admin', 'editor', 'author'].indexOf(r) >= 0
+        )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+  );
+};
+
+export const isUserMember = (uid: string): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      collectionData<StripeSubscription>(
+        firestore
+          .collection(`customers/${uid}/subscriptions/`)
+          .where('status', '==', 'active')
+          .where('role', 'in', ['monthly', 'yearly'])
+      ).pipe(map((s) => (s.length === 0 ? false : true)))
+    )
+  );
+};
+
+export const isUserCourseSub = (
+  uid: string,
+  productId: string
+): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const productRef = firestore.collection('products').doc(productId);
+
+      return collectionData<StripeSubscription>(
+        firestore
+          .collection(`customers/${uid}/subscriptions/`)
+          .where('status', '==', 'active')
+          .where('product', '==', productRef)
+      ).pipe(map((s) => (s.length === 0 ? false : true)));
+    })
+  );
+};
+
 export const userDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
@@ -141,7 +194,7 @@ export const stripeCheckout = (product: StripeProduct, uid: string) => {
         .collection('checkout_sessions')
         .add({
           line_items,
-          success_url: window.location.origin,
+          success_url: window.location.href,
           cancel_url: window.location.href,
         });
       docRef.onSnapshot(async (snap) => {

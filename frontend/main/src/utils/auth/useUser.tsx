@@ -11,7 +11,7 @@ import { UserInfoExtended } from '@/models/user.model';
 
 const useUser = () => {
   const [app, setApp] = useState<firebase.app.App>();
-  const [user, setUser] = useState<UserInfoExtended | null>();
+  const [user, setUser] = useState<UserInfoExtended | null>(null);
   const [userProfile] = useState<Observable<firebase.UserInfo> | null>(null);
   const router = useRouter();
 

@@ -5,10 +5,13 @@ import Link from 'next/link';
 import Layout from '@/layout/Layout';
 import { useUser } from '@/utils/auth/useUser';
 import MembershipCards from '@/components/MembershipCards';
-import { getActiveProducts, getSite } from '@/services/serversideApi';
+import { getActiveMemberProducts, getSite } from '@/services/serversideApi';
 import { StripeProduct } from '@/models/stripe.model';
 import { useEffect, useState } from 'react';
 import { Site } from '@/models/site.model';
+import { isUserTeam, isUserMember } from '@/services/api';
+import { take } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
@@ -26,10 +29,15 @@ export default function Membership({
   const { user, signout } = useUser();
 
   useEffect(() => {
-    console.log(user);
-    setMember(
-      user?.memberships?.find((m) => m.membership === true) ? true : false
-    );
+    if (user && user.uid) {
+      const isUserTeam$ = isUserTeam(user.uid);
+      const isUserMember$ = isUserMember(user.uid);
+      combineLatest([isUserTeam$, isUserMember$])
+        .pipe(take(1))
+        .subscribe((c) => {
+          setMember(c.includes(true));
+        });
+    }
   }, [user]);
 
   return (
@@ -288,7 +296,7 @@ export async function getStaticProps(): Promise<{
   revalidate: number;
 }> {
   const site = await getSite();
-  const products = await getActiveProducts();
+  const products = await getActiveMemberProducts();
   return {
     props: {
       site,
