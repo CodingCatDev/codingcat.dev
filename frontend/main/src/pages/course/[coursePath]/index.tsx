@@ -1,13 +1,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Head from 'next/head';
-import DefaultErrorPage from 'next/error';
 import {
   getSite,
   getStripeProduct,
   postBySlugService,
-  postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
@@ -260,10 +257,7 @@ export async function getServerSideProps({
 
   if (!post) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
