@@ -1,13 +1,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Head from 'next/head';
-import DefaultErrorPage from 'next/error';
 import {
   getSite,
   getStripeProduct,
   postBySlugService,
-  postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
@@ -228,29 +225,7 @@ export default function Post({
   );
 }
 
-export async function getStaticPaths(): Promise<{
-  paths: { params: { type: PostType; slug: string } }[];
-  fallback: boolean;
-}> {
-  const paths: { params: { type: PostType; slug: string } }[] = [];
-  [PostType.course].forEach(async (postType) => {
-    const docData = await postsService(postType);
-    for (const doc of docData) {
-      paths.push({
-        params: {
-          type: doc.type,
-          slug: doc.slug,
-        },
-      });
-    }
-  });
-  return {
-    paths,
-    fallback: true,
-  };
-}
-
-export async function getStaticProps({
+export async function getServerSideProps({
   params,
 }: {
   params: { coursePath: string };
@@ -262,9 +237,9 @@ export async function getStaticProps({
         source: Source | null;
         product: StripeProduct | null;
       };
-      revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
+  | { notFound: boolean }
 > {
   const { coursePath } = params;
 
@@ -282,10 +257,7 @@ export async function getStaticProps({
 
   if (!post) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
@@ -311,6 +283,5 @@ export async function getStaticProps({
       source,
       product,
     },
-    revalidate: 60,
   };
 }

@@ -36,18 +36,17 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                     </a>
                   </Link>
 
-                  <section className="p-4 space-y-2">
-                    <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
-                      <Link href={`/${post.type}/${post.slug}`}>
-                        <a>{post.title}</a>
-                      </Link>
-                    </h3>
-                    <p className="text-sm font-hairline text-basics-900">
-                      {post.excerpt}
-                    </p>
-                  </section>
-                </div>
-              </>
+                <section className="p-4 space-y-2" key={post.id}>
+                  <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
+                    <Link href={`/${post.type}/${post.slug}`}>
+                      <a>{post.title}</a>
+                    </Link>
+                  </h3>
+                  <p className="text-sm font-hairline text-basics-900">
+                    {post.excerpt}
+                  </p>
+                </section>
+              </div>
             );
           })}
         </section>

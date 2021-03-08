@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import AJPrimary from '@/components/global/icons/AJPrimary';
-import { Post, PostType } from '@/models/post.model';
-import { ComponentType } from 'react';
+import { Post } from '@/models/post.model';
 
-export function RecentPostsCards({ recentPosts }: { recentPosts: Post[] }) {
+export function RecentPostsCards({
+  recentPosts,
+}: {
+  recentPosts: Post[];
+}): JSX.Element {
   return (
     <>
       {recentPosts.map((post: Post) => (
@@ -28,6 +31,10 @@ export function RecentPostsCards({ recentPosts }: { recentPosts: Post[] }) {
               ) : (
                 <div className="flex items-center flex-auto h-3/4 rounded-t-md bg-primary-900 dark:bg-primary-900">
                   <AJPrimary className="max-w-full p-4 mx-auto max-h-32 2xl:max-h-64" />
+                <!--<div className="relative" style={{ paddingBottom: '56.25%' }}>
+                   <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
+                    <AJPrimary className="w-full h-full p-4" />
+                  </div> -->
                 </div>
               )}
 

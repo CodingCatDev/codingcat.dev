@@ -80,6 +80,7 @@ export async function getStaticProps({
       revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
+  | { notFound: boolean }
 > {
   const site = await getSite();
 
@@ -100,15 +101,19 @@ export async function getStaticProps({
   ];
   if (!type || !slug || !allowedTypes.includes(type)) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
   const posts = await postBySlugService(type, slug);
   const post = posts.length > 0 ? posts[0] : null;
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
   const recentPosts = await postsRecentService([
     PostType.course,
     PostType.post,

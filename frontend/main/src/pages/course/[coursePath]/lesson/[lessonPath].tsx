@@ -29,10 +29,6 @@ export default function Post({
   source: Source | null;
 }): JSX.Element {
   const router = useRouter();
-  if (router.isFallback) {
-    return <h2>Loading ...</h2>;
-  }
-
   return (
     <PostLayout
       site={site}
@@ -66,10 +62,7 @@ export async function getServerSideProps({
 
   if (!coursePath || !lessonPath) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      notFound: true,
     };
   }
   const site = await getSite();
@@ -81,6 +74,12 @@ export async function getServerSideProps({
     coursePath as string
   );
   const course = courses.length > 0 ? courses[0] : null;
+
+  if (!post || !course) {
+    return {
+      notFound: true,
+    };
+  }
 
   /* AUTH */
 
