@@ -25,8 +25,13 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                         />
                       </>
                     ) : (
-                      <div className="flex items-center flex-auto rounded-t-md bg-primary-900 dark:bg-primary-900">
-                        <AJPrimary className="max-w-full p-4 mx-auto max-h-32 2xl:max-h-64" />
+                      <div
+                        className="relative"
+                        style={{ paddingBottom: '56.25%' }}
+                      >
+                        <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
+                          <AJPrimary className="w-full h-full p-4" />
+                        </div>
                       </div>
                     )}
                   </a>
