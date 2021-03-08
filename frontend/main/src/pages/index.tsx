@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 import { getSite, postsRecentService } from '@/services/serversideApi';
-import { RecentPostsCards } from '@/components/RecentPostsCards';
+import PostsCards from '@/components/PostsCards';
 import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
@@ -68,9 +68,9 @@ export default function Home({
         <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
           Latest Courses
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts[PostType.course]} />
-        </div>
+        {/* <div className="grid gap-4 grid-cols-fit"> */}
+        <PostsCards posts={recentPosts[PostType.course]} />
+        {/* </div> */}
         <Link href="/courses">
           <a className="justify-self-center">
             <button className="btn-primary" type="button">
@@ -92,7 +92,7 @@ export default function Home({
           Latest Tutorials
         </h2>
         <div className="grid gap-4 grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts[PostType.tutorial]} />
+          <PostsCards posts={recentPosts[PostType.tutorial]} />
         </div>
         <Link href="/tutorials">
           <a className="justify-self-center">
@@ -115,9 +115,9 @@ export default function Home({
         <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
           Blog Posts
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts[PostType.post]} />
-        </div>
+        {/* <div className="grid gap-4 grid-cols-fit"> */}
+        <PostsCards posts={recentPosts[PostType.post]} />
+        {/* </div> */}
         <Link href="/blog">
           <a className="justify-self-center">
             <button className="btn-primary" type="button">
@@ -139,9 +139,9 @@ export default function Home({
         <h2 className="mt-4 text-4xl text-right text-primary-900 lg:text-5xl">
           Latest Podcasts
         </h2>
-        <div className="grid gap-4 grid-cols-fit">
-          <RecentPostsCards recentPosts={recentPosts[PostType.podcast]} />
-        </div>
+        {/* <div className="grid gap-4 grid-cols-fit"> */}
+        <PostsCards posts={recentPosts[PostType.podcast]} />
+        {/* </div> */}
         <Link href="/podcasts">
           <a className="justify-self-center">
             <button className="btn-primary" type="button">

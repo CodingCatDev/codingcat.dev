@@ -84,6 +84,9 @@ module.exports = {
       flex: {
         full: '0 0 auto',
       },
+      gridAutoRows: {
+        '1fr': '1fr',
+      },
       gridTemplateColumns: {
         admin: 'minmax(64px, auto) 1fr;',
         fit: 'repeat(auto-fit, minmax(250px, 1fr))',

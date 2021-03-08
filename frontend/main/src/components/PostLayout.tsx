@@ -11,6 +11,7 @@ import BreakBarLeft from '@/components/home/BreakBarLeft';
 import hydrate, { Source } from 'next-mdx-remote/hydrate';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
+import AJPrimary from '@/components/global/icons/AJPrimary';
 
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import { Site } from '@/models/site.model';
@@ -103,7 +104,23 @@ export default function PostLayout({
                   {/* Pricing */}
                   {post.type === PostType.course && (
                     <section className="p-2 xl:p-4 bg-basics-50">
-                      {post.coverPhoto?.path ? (
+                      {post.coverPhoto && post.coverPhoto.path ? (
+                        <>
+                          <Image
+                            src={post.coverPhoto?.path}
+                            alt={post.title}
+                            width="1920"
+                            height="1080"
+                            layout="responsive"
+                            className="cursor-pointer rounded-t-md"
+                          />
+                        </>
+                      ) : (
+                        <div className="flex items-center flex-auto h-3/4 rounded-t-md bg-primary-900 dark:bg-primary-900">
+                          <AJPrimary className="max-w-full p-4 mx-auto max-h-32 2xl:max-h-64" />
+                        </div>
+                      )}
+                      {/* {post.coverPhoto?.path ? (
                         <>
                           <Image
                             src={post.coverPhoto?.path}
@@ -116,7 +133,7 @@ export default function PostLayout({
                         </>
                       ) : (
                         <div>Image Placeholder</div>
-                      )}
+                      )} */}
                       <Link href="/">
                         <a className="grid px-4 pt-4 no-underline place-items-center">
                           <button className="btn-primary">Start Course</button>

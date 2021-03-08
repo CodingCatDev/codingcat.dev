@@ -26,7 +26,7 @@ export function RecentPostsCards({ recentPosts }: { recentPosts: Post[] }) {
                   />
                 </>
               ) : (
-                <div className="flex items-center flex-auto rounded-t-md bg-primary-900 dark:bg-primary-900">
+                <div className="flex items-center flex-auto h-3/4 rounded-t-md bg-primary-900 dark:bg-primary-900">
                   <AJPrimary className="max-w-full p-4 mx-auto max-h-32 2xl:max-h-64" />
                 </div>
               )}
