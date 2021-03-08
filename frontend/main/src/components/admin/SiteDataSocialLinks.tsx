@@ -68,7 +68,7 @@ export default function SiteDataSocialLinks({
   return (
     <>
       <div className="grid content-start gap-4">
-        <div className="flex items-center p-4 space-x-4 rounded-lg bg-primary-900 dark:bg-primary-900">
+        <div className="flex flex-wrap items-center gap-4 p-4 rounded-lg bg-primary-900 dark:bg-primary-900">
           <div className="flex-grow">
             <input
               id="title"

@@ -55,9 +55,9 @@ export default function Footer({
         </svg>
       )}
       <footer className="px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 text-basics-50 dark:text-basics-50">
-        <div className="grid items-start grid-cols-1 gap-10 2xl:grid-cols-3 2xl:items-start 2xl:gap-4 ">
+        <div className="grid items-start gap-10 grid-cols-auto">
           {/* LOGO & COPYRIGHT */}
-          <section className="grid grid-cols-1 lg:justify-items-start">
+          <section className="grid grid-cols-1 justify-items-start">
             <div className="flex">
               <AJAlt className="-mt-6 w-36 h-36" />
               <section className="grid">
@@ -93,7 +93,7 @@ export default function Footer({
               </section>
             </div>
             {/* SOCIALS */}
-            <section className="flex items-end justify-around w-full gap-8 mt-4 lg:justify-start">
+            <section className="flex flex-wrap items-end justify-center gap-8 mt-4">
               {site?.socialLinks?.map((sl, i) => (
                 <a
                   key={i}

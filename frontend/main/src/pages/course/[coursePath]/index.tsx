@@ -153,7 +153,7 @@ export default function Post({
           <section className="grid content-center p-4 pt-6 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
             {/* Title */}
             <div className="grid grid-cols-1 gap-4 mx-auto">
-              <h1 className="text-4xl lg:text-7xl">{post.title}</h1>
+              <h1 className="font-sans text-4xl lg:text-7xl">{post.title}</h1>
               {/* Course Description */}
               <p className="max-w-sm">{post.excerpt}</p>
               {/* Instructor */}
@@ -185,11 +185,11 @@ export default function Post({
       </section>
 
       {/* MEDIA */}
-      <section className="flex-1 mt-12 xl:w-3/4 xl:flex-auto">
+      <section className="flex-1 mx-auto mt-12 xl:w-3/4 xl:flex-auto">
         <PostMedia post={post} noImage={true} />
       </section>
-      {content}
-      <section className="grid grid-cols-1 gap-10 mx-auto">
+      <section className="grid grid-cols-1 gap-10 p-4 mx-auto lg:p-0">
+        {content}
         {post.sections &&
           post.sections.map((section, i) => {
             return (

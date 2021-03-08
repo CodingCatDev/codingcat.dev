@@ -61,7 +61,7 @@ export default function SiteData(): JSX.Element {
           </div>
         </div>
       </section>
-      <section className="flex space-x-4">
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SiteDataPageLinks siteInput={site} />
         <SiteDataSocialLinks siteInput={site} />
       </section>
