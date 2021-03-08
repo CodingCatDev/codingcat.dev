@@ -238,7 +238,7 @@ export default function PostLayout({
           </section>
         )}
         {/* Main Blog Area */}
-        <section className="w-full max-w-5xl px-4 pt-4 mx-auto xl:px-10">
+        <section className="w-full max-w-5xl p-4 px-4 pt-4 mx-auto xl:px-10">
           {/* BLOG POST */}
           {/* <h2 className="m-0 vertical-text-clip">{post.title}</h2> */}
           <article className="relative grid grid-cols-1 gap-4 leading-relaxed top-2 text-basics-900">

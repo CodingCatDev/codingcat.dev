@@ -19,7 +19,7 @@ export default function AdminDashboard({
         <meta name="robots" content="noindex" />
       </Head>
       <section className="p-4">
-        <header className="grid gap-4 mb-4 justify-items-start">
+        <header className="grid grid-cols-1 gap-4 mb-4 justify-items-start">
           <h1 className="font-sans text-4xl font-bold capitalize">Site</h1>
           <SiteData />
         </header>
