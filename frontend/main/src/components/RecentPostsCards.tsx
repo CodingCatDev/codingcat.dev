@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import AJPrimary from '@/components/global/icons/AJPrimary';
-import { Post, PostType } from '@/models/post.model';
-import { ComponentType } from 'react';
+import { Post } from '@/models/post.model';
 
-export function RecentPostsCards({ recentPosts }: { recentPosts: Post[] }) {
+export function RecentPostsCards({
+  recentPosts,
+}: {
+  recentPosts: Post[];
+}): JSX.Element {
   return (
     <>
       {recentPosts.map((post: Post) => (
