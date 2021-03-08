@@ -110,6 +110,9 @@ module.exports = {
       maxWidth: {
         '8xl': '2000px',
       },
+      scale: {
+        '-1': '-1',
+      },
       screens: {
         '3xl': '2000px',
       },
