@@ -52,6 +52,14 @@ export const siteDataObservable = () => {
 };
 
 /* User */
+export const getUserProfileRef = (
+  uid: string
+): Observable<
+  firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
+> => {
+  return firestore$.pipe(map((firestore) => firestore.doc(`/profiles/${uid}`)));
+};
+
 export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
@@ -146,6 +154,33 @@ export const userDataObservable = (uid: string) => {
   );
 };
 
+export const profileSearchByDisplayNameObservable = (
+  email: string,
+  limit = 20
+) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      let ref = firestore
+        .collection('profiles')
+        .orderBy('email')
+        .startAt(email)
+        .endAt(email + '\uf8ff');
+
+      if (limit && limit > 0) {
+        ref = ref.limit(limit);
+      }
+
+      return collectionData<UserInfoExtended>(ref, 'uid').pipe(
+        map((docs) =>
+          docs.map((d) => {
+            return cleanTimestamp(d) as UserInfoExtended;
+          })
+        )
+      );
+    })
+  );
+};
+
 /* Utilities may be used on front end */
 export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
   const docData = { ...data };
@@ -161,6 +196,17 @@ export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
     }
   });
   return docData;
+}
+
+export async function getAuthors(post: Post): Promise<UserInfoExtended[]> {
+  const authorPromises: Promise<
+    firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
+  >[] = [];
+  post?.authors?.forEach((ref) => authorPromises.push(ref.get()));
+  const authorDocs = await Promise.all(authorPromises);
+  const authors: UserInfoExtended[] = [];
+  authorDocs.forEach((a) => authors.push(a.data() as UserInfoExtended));
+  return authors;
 }
 
 /* Cloudinary */
