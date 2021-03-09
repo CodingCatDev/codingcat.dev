@@ -87,7 +87,7 @@ module.exports = {
       gridTemplateColumns: {
         admin: 'minmax(64px, auto) 1fr;',
         auto: 'auto',
-        fit: 'repeat(auto-fit, minmax(250px, 1fr))',
+        fit: 'repeat(auto-fit, minmax(300px, 1fr))',
         hero: '1.5fr 2fr',
         sidebar: '1fr minmax(200px, 25%)',
         settings: 'minmax(200px, 20%) 1fr',

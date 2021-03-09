@@ -7,7 +7,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
   return (
     <>
       {posts && posts.length > 0 ? (
-        <section className="grid grid-cols-1 gap-4 p-4 mx-auto sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 sm:gap-10 sm:p-10">
+        <section className="grid gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
           {posts.map((post) => {
             return (
               <div className="rounded-md shadow bg-basics-50" key={post.id}>
