@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import AJAlt from '@/components/global/icons/AJAlt';
 import Mail from '@/components/global/icons/socials/Mail';
 import Facebook from '@/components/global/icons/socials/Facebook';
@@ -35,7 +36,6 @@ export default function Footer({
         return <YouTube fill="#BC2261" />;
     }
   }
-
   return (
     <>
       {!hideWave && (
@@ -111,15 +111,20 @@ export default function Footer({
           <section className="grid grid-cols-1 gap-4 lg:justify-self-end 2xl:justify-self-center">
             <h4 className="underline whitespace-nowrap">Helpful Links</h4>
             <div className="grid w-64 grid-cols-2 gap-4">
-              {site?.pageLinks?.map((pageLinks) => (
-                <a
-                  href={pageLinks.slug}
-                  className="links-secondary"
-                  key={pageLinks.slug}
-                >
-                  {pageLinks.title}
-                </a>
-              ))}
+              {site?.pageLinks?.map((pageLink) =>
+                pageLink.title === 'Contact Us' ? (
+                  <a
+                    className="links-secondary"
+                    href="mailto:support@codingcat.dev"
+                  >
+                    {pageLink.title}
+                  </a>
+                ) : (
+                  <Link href={pageLink.slug} key={pageLink.slug}>
+                    <a className="links-secondary">{pageLink.title}</a>
+                  </Link>
+                )
+              )}
             </div>
           </section>
           {/* NEWSLETTER */}
