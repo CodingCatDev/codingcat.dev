@@ -154,20 +154,26 @@ export default function Post({
               {/* Course Description */}
               <p className="max-w-sm">{post.excerpt}</p>
               {/* Instructor */}
-              <div className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600">
-                <div className="flex gap-4 ">
-                  <img
-                    src="https://avatars0.githubusercontent.com/u/45889730?s=460&u=74587a01abf2a7f33ae964c69856f3fe71b175b6&v=4"
-                    alt="instructor"
-                    className="w-20 h-20 border-2 rounded-full border-primary-900"
-                  />
-
-                  <div className="flex flex-col justify-center">
-                    <h3 className="m-0 text-base font-light">Instructor</h3>
-                    <h4 className="m-0 text-xl">Instructor Name</h4>
+              {post.authors?.map((author, i) => (
+                <div
+                  className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600"
+                  key={i}
+                >
+                  <div className="flex gap-4 ">
+                    {author.photoURL && (
+                      <img
+                        src={author.photoURL}
+                        alt="instructor"
+                        className="w-20 h-20 border-2 rounded-full border-primary-900"
+                      />
+                    )}
+                    <div className="flex flex-col justify-center">
+                      <h3 className="m-0 text-base font-light">Instructor</h3>
+                      <h4 className="m-0 text-xl">{author.displayName}</h4>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
 
             {/* Add Instructor Page with List of Instructors and their Bios */}
