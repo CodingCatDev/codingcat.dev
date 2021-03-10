@@ -6,9 +6,8 @@ import { TabType } from '@/models/admin.model';
 import { Post, PostStatus } from '@/models/post.model';
 import { Subject } from 'rxjs';
 import {
-  getAuthors,
   profileSearchByDisplayNameObservable,
-  getUserProfileRef,
+  userProfileDataObservable,
 } from '@/services/api';
 import { take } from 'rxjs/operators';
 import { UserInfoExtended } from '@/models/user.model';
@@ -36,19 +35,12 @@ export default function EditPostSidebar({
 }): JSX.Element {
   const [email, setEmail] = useState('');
   const [tag, setTag] = useState('');
-  const [authors, setAuthors] = useState<UserInfoExtended[]>([]);
 
   // Listing selection for authors
   const [addAuthors, setAddAuthors] = useState<UserInfoExtended[]>([]);
   const [selectedAddAuthor, setSelectedAddAuthor] = useState<
     UserInfoExtended | undefined
   >(undefined);
-
-  useEffect(() => {
-    if (history) {
-      getAuthors(history).then((a) => setAuthors(a));
-    }
-  }, [history]);
 
   function onAuthor(e: ChangeEvent<HTMLInputElement>) {
     const email = e.target.value;
@@ -64,21 +56,22 @@ export default function EditPostSidebar({
 
   function addAuthor(author: UserInfoExtended | undefined) {
     if (author) {
-      getUserProfileRef(author.uid)
+      userProfileDataObservable(author.uid)
         .pipe(take(1))
-        .subscribe((authorRef) => {
-          if (!history || !authorRef) {
+        .subscribe((author) => {
+          if (!history || !author) {
             return;
           }
           if (history.authors) {
-            history.authors.push(authorRef);
+            history.authors.push(author);
           } else if (history && !history?.authors) {
-            history.authors = [authorRef];
+            history.authors = [author];
           }
           const update: Post = { ...history } as Post;
           setHistory(update);
           updateContent$.next({ ...update, historyId: history?.id });
           setSelectedAddAuthor(undefined);
+          setEmail('');
         });
     }
   }
@@ -256,30 +249,31 @@ export default function EditPostSidebar({
               ))}
             </ul>
           )}
-          {authors.map((author, i) => (
-            <div key={i} className="flex">
-              <button
-                className="text-lg rounded hover:bg-primary-900 hover:text-primary-50"
-                onClick={() => onDeleteAuthor(i)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-4"
+          {history.authors &&
+            history.authors.map((author, i) => (
+              <div key={i} className="flex">
+                <button
+                  className="text-lg rounded hover:bg-primary-900 hover:text-primary-50"
+                  onClick={() => onDeleteAuthor(i)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
-              <p className="text-lg">{author.email}</p>
-            </div>
-          ))}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+                <p className="text-lg">{author.email}</p>
+              </div>
+            ))}
         </div>
       </div>
       <div className="flex-col w-full">

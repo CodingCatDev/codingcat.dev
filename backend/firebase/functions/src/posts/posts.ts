@@ -13,12 +13,12 @@ export const onPostCreate = functions.firestore
       return;
     }
 
-    const authorRef = await getPostCreatorProfileRef(post);
+    const author = await getPostCreatorProfile(post);
 
     const authors = [];
 
-    if (authorRef) {
-      authors.push(authorRef);
+    if (author) {
+      authors.push(author);
     }
 
     // Rules should require that all posts have a status of
@@ -68,12 +68,12 @@ export const onHistoryWrite = functions.firestore
 
     //Update Missing Authors
     if (!post.authors || post.authors.length === 0) {
-      const authorRef = await getPostCreatorProfileRef(post);
+      const author = await getPostCreatorProfile(post);
 
       const authors = [];
 
-      if (authorRef) {
-        authors.push(authorRef);
+      if (author) {
+        authors.push(author);
       }
 
       return firestore
@@ -84,7 +84,7 @@ export const onHistoryWrite = functions.firestore
     }
   });
 
-async function getPostCreatorProfileRef(post: any) {
+async function getPostCreatorProfile(post: any) {
   if (post.createdBy) {
     // Get createdBy
     console.log('Getting Profile: ', post.createdBy);
@@ -92,7 +92,7 @@ async function getPostCreatorProfileRef(post: any) {
     const profile = profileDoc.data();
     if (profile && Object.keys(profile)) {
       console.log('Profile Found: ', JSON.stringify(profile));
-      return profileDoc.ref;
+      return profile;
     } else {
       console.log('Profile Not Found');
       return null;

@@ -52,14 +52,6 @@ export const siteDataObservable = () => {
 };
 
 /* User */
-export const getUserProfileRef = (
-  uid: string
-): Observable<
-  firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
-> => {
-  return firestore$.pipe(map((firestore) => firestore.doc(`/profiles/${uid}`)));
-};
-
 export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
@@ -196,17 +188,6 @@ export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
     }
   });
   return docData;
-}
-
-export async function getAuthors(post: Post): Promise<UserInfoExtended[]> {
-  const authorPromises: Promise<
-    firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
-  >[] = [];
-  post?.authors?.forEach((ref) => authorPromises.push(ref.get()));
-  const authorDocs = await Promise.all(authorPromises);
-  const authors: UserInfoExtended[] = [];
-  authorDocs.forEach((a) => authors.push(a.data() as UserInfoExtended));
-  return authors;
 }
 
 /* Cloudinary */

@@ -28,7 +28,7 @@ export interface Post {
   coverPhoto?: CoverMedia;
   coverVideo?: CoverMedia;
   sections?: Section[];
-  authors?: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>[];
+  authors?: UserInfoExtended[];
 
   // Payment Fields
   accessSettings?: AccessSettings;
