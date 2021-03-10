@@ -46,20 +46,20 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                           className="rounded-md rounded-b-none cursor-pointer"
                         />
                         {post.accessSettings?.accessMode === 'closed' ? (
-                          <div className="absolute grid gap-2 font-bold tracking-wider top-4 -right-8 place-items-center">
-                            <p className="px-4 py-2 rounded-full bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                              Paid
-                            </p>
+                          <div className="absolute grid gap-2 font-bold tracking-wider -bottom-12 -right-8 place-items-center">
                             <p className="px-4 py-2 font-bold tracking-wider transform -skew-y-12 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
                               ${post.accessSettings?.price}
                             </p>
+                            <p className="px-4 py-2 rounded-full bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                              Paid
+                            </p>
                           </div>
                         ) : post.accessSettings?.accessMode === 'free' ? (
-                          <p className="absolute px-4 py-2 font-bold tracking-wider rounded-full bg-secondary-600 dark:bg-secondary-600 top-4 -right-8 text-basics-50 dark:text-basics-50">
+                          <p className="absolute px-4 py-2 font-bold tracking-wider rounded-full bg-secondary-600 dark:bg-secondary-600 -bottom-12 -right-8 text-basics-50 dark:text-basics-50">
                             Free
                           </p>
                         ) : (
-                          <p className="absolute px-4 py-2 font-bold tracking-wider rounded-full bg-secondary-600 dark:bg-secondary-600 top-4 -right-8 text-basics-50 dark:text-basics-50">
+                          <p className="absolute px-4 py-2 font-bold tracking-wider rounded-full bg-secondary-600 dark:bg-secondary-600 -bottom-12 -right-8 text-basics-50 dark:text-basics-50">
                             Start now
                           </p>
                         )}
@@ -84,7 +84,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                           <AJPrimary className="w-full h-full p-4" />
                         </div>
                         {post.type === 'course' ? (
-                          <p className="absolute px-4 py-2 rounded-full bg-secondary-600 dark:bg-secondary-600 top-4 -right-8 text-basics-50 dark:text-basics-50">
+                          <p className="absolute px-4 py-2 rounded-full bg-secondary-600 dark:bg-secondary-600 -bottom-12 -right-8 text-basics-50 dark:text-basics-50">
                             Start now
                           </p>
                         ) : (
