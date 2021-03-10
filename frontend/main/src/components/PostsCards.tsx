@@ -10,7 +10,10 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
         <section className="grid gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
           {posts.map((post) => {
             return (
-              <div className="rounded-md shadow bg-basics-50" key={post.id}>
+              <div
+                className="transition-all transform rounded-md shadow-lg hover:shadow-2xl hover:scale-105 bg-basics-50"
+                key={post.id}
+              >
                 <Link href={`/${post.type}/${post.slug}`}>
                   <a>
                     {post.coverPhoto?.path ? (
