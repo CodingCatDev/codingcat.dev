@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import TimeAgo from 'react-timeago';
 
 import PublishModal from '@/components/admin/PublishModal';
 import { TabType } from '@/models/admin.model';
 import { Post, PostStatus } from '@/models/post.model';
 import { Subject } from 'rxjs';
+import {
+  profileSearchByDisplayNameObservable,
+  userProfileDataObservable,
+} from '@/services/api';
+import { take } from 'rxjs/operators';
+import { UserInfoExtended } from '@/models/user.model';
 
 export default function EditPostSidebar({
   updateContent$,
@@ -15,6 +21,7 @@ export default function EditPostSidebar({
   setSlugUnique,
   setSaving,
   postHistories,
+  selectTab,
 }: {
   updateContent$: Subject<Post>;
   tab: TabType;
@@ -24,8 +31,77 @@ export default function EditPostSidebar({
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   postHistories: Post[];
+  selectTab: any;
 }): JSX.Element {
+  const [email, setEmail] = useState('');
   const [tag, setTag] = useState('');
+
+  // Listing selection for authors
+  const [addAuthors, setAddAuthors] = useState<UserInfoExtended[]>([]);
+  const [selectedAddAuthor, setSelectedAddAuthor] = useState<
+    UserInfoExtended | undefined
+  >(undefined);
+
+  function onAuthor(e: ChangeEvent<HTMLInputElement>) {
+    const email = e.target.value;
+    setEmail(email);
+    if (email) {
+      profileSearchByDisplayNameObservable(email)
+        .pipe(take(1))
+        .subscribe((d) => setAddAuthors(d));
+    } else {
+      setAddAuthors([]);
+    }
+  }
+
+  function addAuthor(author: UserInfoExtended | undefined) {
+    if (author) {
+      userProfileDataObservable(author.uid)
+        .pipe(take(1))
+        .subscribe((author) => {
+          if (!history || !author) {
+            return;
+          }
+          if (history.authors) {
+            history.authors.push(author);
+          } else if (history && !history?.authors) {
+            history.authors = [author];
+          }
+          const update: Post = { ...history } as Post;
+          setHistory(update);
+          updateContent$.next({ ...update, historyId: history?.id });
+          setSelectedAddAuthor(undefined);
+          setEmail('');
+        });
+    }
+  }
+
+  function onDeleteAuthor(index: number) {
+    if (!history) {
+      return;
+    }
+    if (history.authors) {
+      const authors = [...history.authors];
+      authors.splice(index, 1);
+
+      const historyUpdate = {
+        ...history,
+      };
+      if (historyUpdate.authors) {
+        historyUpdate.authors = authors;
+      }
+      setHistory(historyUpdate);
+      updateContent$.next({ ...historyUpdate, historyId: history?.id });
+    }
+  }
+
+  function onSelectAddAuthor(author: UserInfoExtended) {
+    if (author && author.email) {
+      setEmail(author.email);
+      setSelectedAddAuthor(author);
+      setAddAuthors([]);
+    }
+  }
 
   function addTag(tag: string) {
     if (!tag) {
@@ -133,15 +209,71 @@ export default function EditPostSidebar({
         </div>
         <div className="p-2 bg-basics-50 dark:bg-basics-800">
           <img src="" alt="" className="" />
-          <button className="w-full btn-secondary">Add Media</button>
+          <button
+            className="w-full btn-secondary"
+            onClick={() => selectTab(TabType.media)}
+          >
+            Add Media
+          </button>
         </div>
       </div>
       <div className="flex-col w-full">
         <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
-          Author
+          Authors
         </div>
-        <div className="p-2 bg-basics-50 dark:bg-basics-800">
-          {history.createdBy}
+        <div className="relative p-2 bg-basics-50 dark:bg-basics-800">
+          <div className="flex flex-wrap pb-2">
+            <input
+              type="text"
+              className="w-3/4"
+              value={email}
+              onChange={(e) => onAuthor(e)}
+            />
+            <button
+              className="flex-grow ml-1 border-2 border-primary-900 rounded-xl hover:text-secondary-500 hover:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent"
+              onClick={() => addAuthor(selectedAddAuthor)}
+            >
+              Add
+            </button>
+          </div>
+          {addAuthors && addAuthors.length > 0 && (
+            <ul className="absolute z-20 w-full py-2 bg-white rounded-md shadow-xl">
+              {addAuthors.map((a, i) => (
+                <li
+                  key={i}
+                  className="flex block px-4 py-2 text-sm cursor-pointer text-primary-900 hover:bg-primary-900 hover:text-white"
+                  onClick={() => onSelectAddAuthor(a)}
+                >
+                  {a.email}
+                </li>
+              ))}
+            </ul>
+          )}
+          {history.authors &&
+            history.authors.map((author, i) => (
+              <div key={i} className="flex">
+                <button
+                  className="text-lg rounded hover:bg-primary-900 hover:text-primary-50"
+                  onClick={() => onDeleteAuthor(i)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+                <p className="text-lg">{author.email}</p>
+              </div>
+            ))}
         </div>
       </div>
       <div className="flex-col w-full">
@@ -172,7 +304,7 @@ export default function EditPostSidebar({
             />
             <button
               className="flex-grow ml-1 border-2 border-primary-900 rounded-xl hover:text-secondary-500 hover:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent"
-              onClick={(e) => addTag(tag)}
+              onClick={() => addTag(tag)}
             >
               Add
             </button>

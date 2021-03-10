@@ -35,3 +35,17 @@ export const newUserSetup = functions.auth
         );
       });
   });
+
+// export const onProfileWrite = functions.firestore
+//   .document('profiles/{profileId}')
+//   .onWrite(async (snap, context) => {
+//     const profile = snap.before.data();
+
+//     if (!profile) {
+//       console.log('profile missing data');
+//       return;
+//     }
+
+//     //Update All Authors in Posts
+//     return firestore.collection(`posts`).where;
+//   });

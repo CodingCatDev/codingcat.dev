@@ -146,6 +146,33 @@ export const userDataObservable = (uid: string) => {
   );
 };
 
+export const profileSearchByDisplayNameObservable = (
+  email: string,
+  limit = 20
+) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      let ref = firestore
+        .collection('profiles')
+        .orderBy('email')
+        .startAt(email)
+        .endAt(email + '\uf8ff');
+
+      if (limit && limit > 0) {
+        ref = ref.limit(limit);
+      }
+
+      return collectionData<UserInfoExtended>(ref, 'uid').pipe(
+        map((docs) =>
+          docs.map((d) => {
+            return cleanTimestamp(d) as UserInfoExtended;
+          })
+        )
+      );
+    })
+  );
+};
+
 /* Utilities may be used on front end */
 export function cleanTimestamp(data: FirebaseFirestore.DocumentData) {
   const docData = { ...data };
