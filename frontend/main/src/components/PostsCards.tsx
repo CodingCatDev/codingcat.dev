@@ -4,7 +4,6 @@ import { Post } from '@/models/post.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 
 export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
-  console.log(posts);
   return (
     <>
       {posts && posts.length > 0 ? (
