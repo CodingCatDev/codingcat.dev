@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AlgoliaInstantSearch from './algoliaInstantSearch';
 
-export default () => {
+export default function SearchModal(): JSX.Element {
   const [show, setShow] = useState(false);
 
   const showModal = () => {
@@ -21,26 +21,28 @@ export default () => {
 
   return (
     <>
-      <Modal show={show} handleClose={hideModal}>
-        <section
-          className="grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 bg-basics-50"
-          style={{
-            animation:
-              'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
-          }}
-        >
-          <section className="relative grid w-full h-full grid-cols-1 gap-4 p-4 grid-rows-search">
-            <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
-            <button
-              className="absolute top-0 right-0 p-5 text-2xl transition-colors rounded-full text-primary-900 hover:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-900"
-              onClick={hideModal}
-              aria-label="Close Search Modal"
-            >
-              X
-            </button>
+      {show && (
+        <Modal show={show} handleClose={hideModal}>
+          <section
+            className="grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 bg-basics-50"
+            style={{
+              animation:
+                'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
+            }}
+          >
+            <section className="relative grid w-full h-full grid-cols-1 gap-4 p-4 grid-rows-search">
+              <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
+              <button
+                className="absolute top-0 right-0 p-5 text-2xl transition-colors rounded-full text-primary-900 hover:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-900"
+                onClick={hideModal}
+                aria-label="Close Search Modal"
+              >
+                X
+              </button>
+            </section>
           </section>
-        </section>
-      </Modal>
+        </Modal>
+      )}
       <button
         className={
           show
@@ -63,4 +65,4 @@ export default () => {
       </button>
     </>
   );
-};
+}
