@@ -246,6 +246,7 @@ export default function EditPost({
                   setSlugUnique={setSlugUnique}
                   setSaving={setSaving}
                   postHistories={postHistories}
+                  selectTab={selectTab}
                 />
               </section>
             ) : (

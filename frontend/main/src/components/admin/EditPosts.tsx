@@ -69,8 +69,10 @@ function EditPosts({ type }: { type: PostType }) {
                 <li className="p-2 text-left td" role="cell">
                   {post.updatedAt}
                 </li>
-                <li className="p-2 text-left td" role="cell">
-                  {post.createdBy}
+                <li className="flex flex-col p-2 text-left td" role="cell">
+                  {post.authors?.map((author, i) => (
+                    <p key={i}>{author.email}</p>
+                  ))}
                 </li>
                 <li
                   className="p-2 text-left lg:justify-self-center"
