@@ -22,6 +22,11 @@ export const onPostWriteSearch = functions.firestore
       return;
     }
 
+    if (post.type === 'lesson') {
+      console.log('post type is lesson, skipping');
+      return;
+    }
+
     post.objectID = context.params.postId;
 
     // Write to the algolia index
