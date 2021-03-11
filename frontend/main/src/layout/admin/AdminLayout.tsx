@@ -32,7 +32,7 @@ const AdminLayout = ({
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
-      <div className="lg:mx-auto lg:w-80 lg:max-w-8xl">
+      <div className="lg:mx-auto lg:w-full lg:max-w-8xl">
         <div className="grid h-screen grid-cols-admin">
           <AdminMenu
             userMenu={userMenu}
