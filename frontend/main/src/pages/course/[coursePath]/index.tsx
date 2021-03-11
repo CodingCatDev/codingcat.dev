@@ -94,28 +94,31 @@ export default function Post({
       <section className="grid grid-cols-1">
         <section className="relative grid items-start content-start grid-cols-1 gap-4">
           {post.type === PostType.course && (
-            <section className="z-10 grid max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 xl:p-4 bg-basics-50 xl:absolute xl:right-10 xl:top-20">
+            <section className="z-10 grid max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 xl:p-4 bg-basics-50 xl:min-w-300 xl:absolute xl:right-10 xl:-bottom-20">
               {post.coverPhoto?.path ? (
                 <>
                   <Image
                     src={post.coverPhoto?.path}
                     alt={post.title}
-                    width="1920"
-                    height="1080"
+                    width="480"
+                    height="270"
                     layout="responsive"
-                    className=""
+                    className="rounded-md rounded-b-none cursor-pointer"
                   />
                 </>
               ) : (
-                <div className="flex items-center flex-auto rounded-t-md bg-primary-900 dark:bg-primary-900">
-                  <AJPrimary className="max-w-full p-4 mx-auto max-h-32 2xl:max-h-64" />
+                <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                  <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
+                    <AJPrimary className="w-full h-full p-4" />
+                  </div>
                 </div>
               )}
               {/* Beginner/Intermediate/Advanced descriptor */}
-              <p className="p-2 rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
+              <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
                 Beginner
               </p>
               {member ? (
+                // start course with link instead of telling user to go down on a page?
                 <p className="text-2xl">Access Lessons Below</p>
               ) : (
                 <>
@@ -197,27 +200,27 @@ export default function Post({
           post.sections.map((section, i) => {
             return (
               <section key={i} className="grid grid-cols-1 gap-4">
-                <h3 className="font-sans text-4xl text-secondary-600 dark:text-secondary-600">
+                <h3 className="font-sans text-4xl border-b-2 text-secondary-600 dark:text-secondary-600 border-primary-900 dark:border-primary-900">
                   {section.title}
                 </h3>
-                <ul className="grid grid-cols-1 gap-2">
+                <ol className="grid grid-cols-1 gap-4 li">
                   {section.lessons?.map((lesson, i) => {
                     return (
-                      <li key={i}>
+                      <li key={i} className="ml-10">
                         <Link
                           href={`/course/${post.slug}/lesson/${lesson.slug}`}
                           key={lesson.id}
                         >
                           <a>
                             <h4 className="font-sans text-3xl">
-                              {lesson.title}
+                              <span>{i + 1}.</span> {lesson.title}
                             </h4>
                           </a>
                         </Link>
                       </li>
                     );
                   })}
-                </ul>
+                </ol>
               </section>
             );
           })}

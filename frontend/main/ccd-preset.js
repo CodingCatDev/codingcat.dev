@@ -108,6 +108,9 @@ module.exports = {
         300: '300px',
         1080: '1080px',
       },
+      minWidth: {
+        300: '300px',
+      },
       maxWidth: {
         '8xl': '2000px',
       },
