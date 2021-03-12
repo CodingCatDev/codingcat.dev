@@ -170,7 +170,7 @@ export default function PostLayout({
                           {`Latest Courses`}
                         </h2>
 
-                        <ul className="mx-4 space-y-2">
+                        <ul className="grid grid-cols-1 gap-2 px-4 py-2">
                           <RecentPostsList
                             posts={recentPosts[PostType.course]}
                           />
@@ -180,7 +180,7 @@ export default function PostLayout({
                         <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Tutorials`}
                         </h2>
-                        <ul className="mx-4 space-y-2">
+                        <ul className="grid grid-cols-1 gap-2 px-4 py-2">
                           <RecentPostsList
                             posts={recentPosts[PostType.tutorial]}
                           />
@@ -190,7 +190,7 @@ export default function PostLayout({
                         <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Podcasts`}
                         </h2>
-                        <ul className="mx-4 space-y-2">
+                        <ul className="grid grid-cols-1 gap-2 px-4 py-2">
                           <RecentPostsList
                             posts={recentPosts[PostType.podcast]}
                           />
@@ -200,7 +200,7 @@ export default function PostLayout({
                         <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           {`Latest Blog`}
                         </h2>
-                        <ul className="mx-4 space-y-2">
+                        <ul className="grid grid-cols-1 gap-2 px-4 py-2">
                           <RecentPostsList posts={recentPosts[PostType.post]} />
                         </ul>
                       </div>
@@ -238,17 +238,26 @@ export default function PostLayout({
           </section>
         )}
         {/* Main Blog Area */}
-        <section className="w-full max-w-5xl p-4 px-4 pt-4 mx-auto xl:px-10">
+        <section className="w-full max-w-5xl p-4 mx-auto xl:px-10 bg-basics-50">
           {/* BLOG POST */}
-          {/* <h2 className="m-0 vertical-text-clip">{post.title}</h2> */}
           <article className="relative grid grid-cols-1 gap-4 leading-relaxed top-2 text-basics-900">
             {content}
           </article>
         </section>
       </div>
       <style global jsx>{`
+        article {
+          font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
+          margin: 0 auto;
+          max-width: 65ch;
+        }
+        blockquote {
+          padding: 1rem 2rem;
+          border-left: 5px solid #4b0a75;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
         main a {
-          text-decoration: underline;
+          border-bottom: 2px solid #bc2261;
         }
 
         main h1,
@@ -270,17 +279,25 @@ export default function PostLayout({
         main h5,
         main h6 {
           font-family: 'Nunito', sans-serif;
-          margin: 1rem 0;
+          margin: 4rem 0 2rem;
+          width: fit-content;
         }
-        main article p:first-child a img {
+        img {
           width: 100%;
         }
         main p {
-          margin: 1rem 0;
+          margin: 0 0 3rem;
         }
         main ul li {
           margin-left: 2rem;
           list-style-type: circle;
+        }
+        pre {
+          background: #333034;
+          color: #fbfbfb;
+          border-radius: 0.5rem;
+          padding: 0.5rem 1rem;
+          width: fit-content;
         }
       `}</style>
     </Layout>
