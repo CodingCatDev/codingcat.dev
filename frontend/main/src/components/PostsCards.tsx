@@ -7,7 +7,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
   return (
     <>
       {posts && posts.length > 0 ? (
-        <section className="grid gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
+        <section className="grid items-start content-start gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
           {posts.map((post) => {
             return (
               <div
@@ -98,19 +98,19 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   <div className="relative grid justify-start gap-2 font-bold tracking-wider">
                     {post.accessSettings?.accessMode === 'closed' ? (
                       <>
-                        <p className="px-4 py-2 rounded-full bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+                        <p className="px-4 py-2 text-sm rounded-full bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
                           Paid
                         </p>
-                        <p className="absolute px-4 py-2 font-bold tracking-wider transform -skew-y-12 -right-8 top-4 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <p className="absolute px-4 py-2 text-sm font-bold tracking-wider transform -skew-y-12 -right-8 top-4 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           ${post.accessSettings?.price}
                         </p>
                       </>
                     ) : post.accessSettings?.accessMode === 'free' ? (
-                      <p className="px-4 py-2 font-bold tracking-wider rounded-full bg-primary-50 dark:bg-primary-50 text-primary-900 dark:text-primary-900">
+                      <p className="px-4 py-2 text-sm font-bold tracking-wider rounded-full bg-primary-50 dark:bg-primary-50 text-primary-900 dark:text-primary-900">
                         Free
                       </p>
                     ) : (
-                      <p className="px-4 py-2 font-bold tracking-wider rounded-full bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                      <p className="px-4 py-2 text-sm font-bold tracking-wider rounded-full bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                         Start now
                       </p>
                     )}
