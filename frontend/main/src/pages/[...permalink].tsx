@@ -9,6 +9,7 @@ import {
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
+import rehypePrism from '@mapbox/rehype-prism';
 import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
@@ -128,6 +129,7 @@ export async function getStaticProps({
     source = await renderToString(content, {
       mdxOptions: {
         // remarkPlugins: [parse, mdx],
+        rehypePlugins: [rehypePrism],
       },
     });
   } else {
