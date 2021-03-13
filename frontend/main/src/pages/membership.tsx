@@ -68,30 +68,40 @@ export default function Membership({
             </div>
           </section>
         ) : (
-          <div>
-            <div className="flex flex-wrap content-center w-full">
-              <div className="max-w-6xl px-8 mx-auto my-12 antialiased rounded">
-                <div className="relative items-center block md:flex">
-                  <div className="relative w-full overflow-hidden rounded shadow-lg md:w-1/2 z-1 bg-primary-100">
-                    <div className="flex flex-wrap w-full">
-                      <div className="w-full py-4 text-center bg-primary-900 lg:px-4">
-                        <div
-                          className="flex items-center p-2 leading-none text-white text-indigo-100 lg:rounded-full lg:inline-flex"
-                          role="alert"
-                        >
-                          <span className="flex px-2 py-1 mr-3 text-xs font-bold uppercase rounded-full bg-secondary-400">
-                            Pro Features
-                          </span>
-                          <span className="flex-auto mr-2 font-semibold text-left">
-                            Coming Soon
-                          </span>
-                        </div>
-                      </div>
-                      <div className="w-full p-8 text-2xl font-bold tracking-wide text-center uppercase border-b text-primary-900 border-primary-900">
-                        Why Go Pro?
-                      </div>
-                    </div>
-                    <div className="flex justify-center m-3">
+          <>
+            <section className="grid grid-cols-1 gap-4 p-4 text-center">
+              <div className="max-w-2xl mx-auto">
+                <h1 className="font-sans text-4xl font-semibold lg:text-6xl">
+                  Become a{' '}
+                  <span className="text-primary-900 dark:text-primary-200">
+                    Purrfect Peep
+                  </span>{' '}
+                  and join Coding Cat Dev.
+                </h1>
+                <h2 className="mt-4 font-sans text-lg font-light leading-tight text-basics-700">
+                  Get access to all of the exclusive content and up your coding
+                  skills.
+                </h2>
+              </div>
+              <MembershipCards products={products} />
+            </section>
+            <div className="w-full py-4 text-center bg-primary-900 lg:px-4">
+              <div
+                className="flex items-center p-2 leading-none text-white text-indigo-100 lg:rounded-full lg:inline-flex"
+                role="alert"
+              >
+                <span className="flex px-2 py-1 mr-3 text-xs font-bold uppercase rounded-full bg-secondary-400">
+                  Pro Features
+                </span>
+                <span className="flex-auto mr-2 font-semibold text-left">
+                  Coming Soon
+                </span>
+              </div>
+            </div>
+            <div className="w-full p-8 text-2xl font-bold tracking-wide text-center uppercase border-b text-primary-900 border-primary-900">
+              Why Go Pro?
+            </div>
+            {/* <div className="flex justify-center m-3">
                       <ul>
                         <li className="flex items-center">
                           <div className="p-3 rounded-full fill-current bg-primary-200 text-primary-900">
@@ -197,15 +207,14 @@ export default function Membership({
                           </div>
                         </li>
                       </ul>
-                    </div>
-                    <div className="flex items-center justify-center p-6 mt-6 font-semibold text-white uppercase bg-primary-900 text-md">
+                    </div> */}
+            {/* <div className="flex items-center justify-center p-6 mt-6 font-semibold text-white uppercase bg-primary-900 text-md">
                       <span>Create account</span>
                       <span className="ml-2 font-medium text-white">➔</span>
-                    </div>
-                  </div>
+                    </div> */}
 
-                  {/* Valid User */}
-                  {user && user.uid ? (
+            {/* Valid User */}
+            {/* {user && user.uid ? (
                     <div
                       className={`${
                         user.memberships ? 'w-full' : 'md:w-1/2'
@@ -275,13 +284,8 @@ export default function Membership({
                         <FirebaseAuth />
                       </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <MembershipCards products={products} />
-          </div>
+                  )} */}
+          </>
         )}
       </Layout>
     </>
