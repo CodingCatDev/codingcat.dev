@@ -20,8 +20,6 @@ export default function Tutorials({
       </Head>
 
       <PostsCards posts={posts} />
-
-      <footer></footer>
     </Layout>
   );
 }

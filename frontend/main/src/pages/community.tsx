@@ -19,8 +19,7 @@ export default function Community({
         <title>Community | CodingCatDev</title>
       </Head>
       {/* <PostsCards posts={posts} /> */}
-      Coming Soon...
-      <footer></footer>
+      <h1>Coming Soon...</h1>
     </Layout>
   );
 }

@@ -20,8 +20,6 @@ export default function Blog({
       </Head>
 
       <PostsCards posts={posts} />
-
-      <footer></footer>
     </Layout>
   );
 }
