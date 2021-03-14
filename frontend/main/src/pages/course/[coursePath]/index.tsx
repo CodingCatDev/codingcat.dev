@@ -10,6 +10,7 @@ import {
 import { Post as PostModel, PostType } from '@/models/post.model';
 import renderToString from 'next-mdx-remote/render-to-string';
 import hydrate, { Source } from 'next-mdx-remote/hydrate';
+import rehypePrism from '@mapbox/rehype-prism';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
@@ -281,6 +282,7 @@ export async function getServerSideProps({
       ? await renderToString(post.content, {
           mdxOptions: {
             // remarkPlugins: [parse, mdx],
+            rehypePlugins: [rehypePrism],
           },
         })
       : null;
