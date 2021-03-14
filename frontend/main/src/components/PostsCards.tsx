@@ -7,11 +7,11 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
   return (
     <>
       {posts && posts.length > 0 ? (
-        <section className="grid items-start content-start gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
+        <section className="relative grid gap-4 p-4 grid-cols-fit sm:gap-10 sm:p-10">
           {posts.map((post) => {
             return (
               <div
-                className="transition-all transform rounded-md shadow-lg hover:shadow-2xl hover:scale-105 bg-basics-50"
+                className="grid transition-all transform rounded-md shadow-lg hover:shadow-2xl hover:scale-105 bg-basics-50"
                 key={post.id}
               >
                 <Link href={`/${post.type}/${post.slug}`}>
@@ -79,7 +79,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   </a>
                 </Link>
 
-                <section className="p-4 space-y-2" key={post.id}>
+                <section className="grid gap-2 p-4">
                   <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
                     <Link href={`/${post.type}/${post.slug}`}>
                       <a>{post.title}</a>
@@ -95,13 +95,13 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                       </h4>
                     ))}
                   </div>
-                  <div className="relative grid justify-start gap-2 font-bold tracking-wider">
+                  <div className="grid self-end justify-start gap-2 font-bold tracking-wider">
                     {post.accessSettings?.accessMode === 'closed' ? (
                       <>
                         <p className="px-4 py-2 text-sm rounded-full bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
                           Paid
                         </p>
-                        <p className="absolute px-4 py-2 text-sm font-bold tracking-wider transform -skew-y-12 -right-8 top-4 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        <p className="absolute bottom-0 px-4 py-2 text-sm font-bold tracking-wider transform -skew-y-12 -right-8 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                           ${post.accessSettings?.price}
                         </p>
                       </>
