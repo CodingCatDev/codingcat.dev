@@ -299,8 +299,8 @@ export default function PostLayout({
  *
  * Ported for PrismJS by Marc Backes [@themarcba]
  */
-        code[class*='language-'],
-        pre[class*='language-'] {
+        code,
+        pre {
           color: #f92aad;
           text-shadow: 0 0 2px #100c0f, 0 0 5px #dc078e33, 0 0 10px #fff3;
           background: none;
@@ -327,20 +327,20 @@ export default function PostLayout({
         }
 
         /* Code blocks */
-        pre[class*='language-'] {
+        pre {
           padding: 1em;
           margin: 0.5em 0;
           overflow: auto;
         }
 
-        :not(pre) > code[class*='language-'],
-        pre[class*='language-'] {
+        :not(pre) > code,
+        pre {
           background-color: transparent !important;
           background-image: linear-gradient(to bottom, #2a2139 75%, #34294f);
         }
 
         /* Inline code */
-        :not(pre) > code[class*='language-'] {
+        :not(pre) > code {
           padding: 0.1em;
           border-radius: 0.3em;
           white-space: normal;
