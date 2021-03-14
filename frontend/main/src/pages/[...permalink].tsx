@@ -128,8 +128,25 @@ export async function getStaticProps({
     };
   }
 
-  const posts = await postBySlugService(type, slug);
-  const post = posts.length > 0 ? posts[0] : null;
+  let posts = await postBySlugService(type, slug);
+  let post = posts.length > 0 ? posts[0] : null;
+
+  // Check if old blog link is trying to be used.
+  if (!post) {
+    if (type === PostType.page) {
+      posts = await postBySlugService(PostType.post, slug);
+      post = posts.length > 0 ? posts[0] : null;
+    }
+    // This means the page was found, but we want to redirect them.
+    if (post) {
+      return {
+        redirect: {
+          destination: `/${PostType.post}/${slug}`,
+          permanent: true,
+        },
+      };
+    }
+  }
 
   if (!post) {
     return {
