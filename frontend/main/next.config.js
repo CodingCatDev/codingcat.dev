@@ -21,4 +21,28 @@ module.exports = withBundleAnalyzer({
     }
     return config;
   },
+  async redirects() {
+    return [
+      {
+        source: '/courses/:permalink*',
+        destination: '/course/:permalink*',
+        permanent: true,
+      },
+      {
+        source: '/tutorials/:permalink*',
+        destination: '/tutorial/:permalink*',
+        permanent: true,
+      },
+      {
+        source: '/podcasts/:permalink*',
+        destination: '/podcast/:permalink*',
+        permanent: true,
+      },
+      // {
+      //   source: '/:permalink',
+      //   destination: '/post/:permalink',
+      //   permanent: true,
+      // },
+    ];
+  },
 });
