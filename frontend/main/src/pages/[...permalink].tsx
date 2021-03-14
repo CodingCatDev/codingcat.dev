@@ -88,6 +88,28 @@ export async function getStaticProps({
   let type = params.permalink[0] as PostType;
   let slug = params.permalink[1] as string;
 
+  // Redirect plural page types
+  if (['podcasts', 'tutorials', 'courses'].includes(type) && slug) {
+    let dest;
+    switch (type as string) {
+      case 'podcasts':
+        dest = 'podcast';
+        break;
+      case 'tutorials':
+        dest = 'tutorial';
+        break;
+      case 'courses':
+        dest = 'course';
+        break;
+    }
+    return {
+      redirect: {
+        destination: `/${dest}/${slug}`,
+        permanent: true,
+      },
+    };
+  }
+
   // Make assumption that this should be a base page.
   if (type && !slug) {
     slug = type;
@@ -106,8 +128,25 @@ export async function getStaticProps({
     };
   }
 
-  const posts = await postBySlugService(type, slug);
-  const post = posts.length > 0 ? posts[0] : null;
+  let posts = await postBySlugService(type, slug);
+  let post = posts.length > 0 ? posts[0] : null;
+
+  // Check if old blog link is trying to be used.
+  if (!post) {
+    if (type === PostType.page) {
+      posts = await postBySlugService(PostType.post, slug);
+      post = posts.length > 0 ? posts[0] : null;
+    }
+    // This means the page was found, but we want to redirect them.
+    if (post) {
+      return {
+        redirect: {
+          destination: `/${PostType.post}/${slug}`,
+          permanent: true,
+        },
+      };
+    }
+  }
 
   if (!post) {
     return {
