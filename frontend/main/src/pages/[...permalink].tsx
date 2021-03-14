@@ -88,6 +88,28 @@ export async function getStaticProps({
   let type = params.permalink[0] as PostType;
   let slug = params.permalink[1] as string;
 
+  // Redirect plural page types
+  if (['podcasts', 'tutorials', 'courses'].includes(type) && slug) {
+    let dest;
+    switch (type as string) {
+      case 'podcasts':
+        dest = 'podcast';
+        break;
+      case 'tutorials':
+        dest = 'tutorial';
+        break;
+      case 'courses':
+        dest = 'course';
+        break;
+    }
+    return {
+      redirect: {
+        destination: `/${dest}/${slug}`,
+        permanent: true,
+      },
+    };
+  }
+
   // Make assumption that this should be a base page.
   if (type && !slug) {
     slug = type;
