@@ -67,14 +67,52 @@ export default function MembershipCards({
           </OutsideClick>
         </section>
       </div>
-      <section className="flex flex-wrap justify-center gap-4 text-center">
+      <section className="flex flex-wrap justify-center gap-10 text-center">
         {/* <div className="grid items-stretch justify-center gap-1 lg:grid-flow-col justify-items-stretch"> */}
         {products.map((product) => (
           <div
-            className="relative max-w-sm m-6 overflow-hidden rounded-lg shadow-lg cursor-pointer bg-primary-800 dark:bg-primary-800"
+            className="relative flex flex-col justify-between max-w-sm px-4 pt-10 pb-4 space-y-4 overflow-hidden rounded-lg shadow-lg cursor-pointer bg-primary-800 dark:bg-primary-800 text-basics-50 dark:text-basics-50"
             key={product.role}
             onClick={() => onSelectPlan(product)}
           >
+            {/* <div
+                  className={
+                    'radialGradiant block absolute w-48 h-48 bottom-0 left-0 mb-24 ml-3'
+                  }
+                ></div> */}
+            {product.images ? (
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                width="480"
+                height="270"
+              />
+            ) : (
+              <AJPrimary className="w-full h-full" />
+            )}
+            <span className="block text-basics-200 dark:text-basics-200">
+              {product?.description}
+            </span>
+
+            <div className="flex justify-between">
+              <span className="block text-xl font-semibold">
+                {product.name}
+              </span>
+              <span className="flex items-center px-3 py-2 font-bold leading-none bg-white rounded-full bg-secondary-400 text-md">
+                {product.prices ? (
+                  <div>
+                    <span>
+                      {product.prices[0].currency === 'usd' ? '$' : ''}
+                    </span>
+                    {product.prices[0].unit_amount
+                      ? product.prices[0].unit_amount / 100
+                      : 0}
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </span>
+            </div>
             <svg
               className={'svgTransform absolute bottom-0 left-0 mb-8'}
               viewBox="0 0 375 283"
@@ -98,51 +136,6 @@ export default function MembershipCards({
                 fill="white"
               />
             </svg>
-            <div className="grid w-full h-full">
-              <div className="relative flex flex-col items-center justify-center px-10 pt-10">
-                <div
-                  className={
-                    'radialGradiant block absolute w-48 h-48 bottom-0 left-0 mb-24 ml-3'
-                  }
-                ></div>
-                <div className="w-full h-full">
-                  {product.images ? (
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      width="480"
-                      height="270"
-                    />
-                  ) : (
-                    <AJPrimary className="w-64 h-64" />
-                  )}
-                </div>
-              </div>
-              <div className="relative self-end px-6 pb-2 mt-6 text-basics-50 dark:text-basics-50">
-                <span className="block pb-4 mb-1 opacity-75">
-                  {product?.description}
-                </span>
-                <div className="flex justify-between">
-                  <span className="block text-xl font-semibold">
-                    {product.name}
-                  </span>
-                  <span className="flex items-center px-3 py-2 font-bold leading-none bg-white rounded-full bg-secondary-400 text-md">
-                    {product.prices ? (
-                      <div>
-                        <span>
-                          {product.prices[0].currency === 'usd' ? '$' : ''}
-                        </span>
-                        {product.prices[0].unit_amount
-                          ? product.prices[0].unit_amount / 100
-                          : 0}
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         ))}
         {/* </div> */}
@@ -151,12 +144,6 @@ export default function MembershipCards({
         .svgTransform {
           transform: scale(1.5);
           opacity: 0.1;
-        }
-
-        .radialGradiant {
-          background: radial-gradient(black, transparent 60%);
-          transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1);
-          opacity: 0.2;
         }
       `}</style>
     </>
