@@ -20,8 +20,6 @@ export default function Courses({
       </Head>
 
       <PostsCards posts={posts} />
-
-      <footer></footer>
     </Layout>
   );
 }
