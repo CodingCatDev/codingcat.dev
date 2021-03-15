@@ -5,10 +5,12 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
 import AdminLayout from '@/layout/admin/AdminLayout';
+import SiteData from '@/components/admin/SiteData';
 
 import { PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { getSite, validateAdminUser } from '@/services/serversideApi';
+import { resetServerContext } from 'react-beautiful-dnd';
 const EditPosts = dynamic(() => import('@/components/admin/EditPosts'), {
   ssr: false,
   loading: () => <p>Loading EditPosts...</p>,
@@ -18,7 +20,7 @@ const CreatePost = dynamic(() => import('@/components/admin/CreatePost'), {
   ssr: false,
 });
 
-export default function AdminDashboard({
+export default function NavTypes({
   type,
   site,
 }: {
@@ -32,7 +34,12 @@ export default function AdminDashboard({
         <meta name="robots" content="noindex" />
       </Head>
 
-      {type && (
+      {type && (type as string) == 'site' && (
+        <div className="p-4">
+          <SiteData />
+        </div>
+      )}
+      {type && (type as string) !== 'site' && (
         <div className="p-4">
           <header className="grid gap-4 mb-4 justify-items-start">
             <h1 className="font-sans text-4xl font-bold capitalize">{type}</h1>
@@ -61,6 +68,9 @@ export async function getServerSideProps({
   | { redirect: { destination: string; permanent: boolean } }
   | { notFound: boolean }
 > {
+  // Reset for Beautiful DnD
+  resetServerContext();
+
   const cookies = cookie.parse(req.headers.cookie || '');
   const auth = cookies.auth;
   // Check for user authentication from cookie
