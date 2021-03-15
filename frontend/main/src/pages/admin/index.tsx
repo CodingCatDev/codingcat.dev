@@ -5,7 +5,6 @@ import Head from 'next/head';
 import AdminLayout from '@/layout/admin/AdminLayout';
 import { getSite, validateAdminUser } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
-import SiteData from '@/components/admin/SiteData';
 
 export default function AdminDashboard({
   site,
@@ -20,8 +19,7 @@ export default function AdminDashboard({
       </Head>
       <section className="p-4">
         <header className="grid grid-cols-1 gap-4 mb-4 justify-items-start">
-          <h1 className="font-sans text-4xl font-bold capitalize">Site</h1>
-          <SiteData />
+          This should show more current details for logged in user.
         </header>
       </section>
     </AdminLayout>

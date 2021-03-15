@@ -7,6 +7,7 @@ import Medium from '@/components/global/icons/socials/Medium';
 import Twitter from '@/components/global/icons/socials/Twitter';
 import YouTube from '@/components/global/icons/socials/YouTube';
 import { Site, SocialLink, SocialType } from '@/models/site.model';
+import Link from 'next/link';
 
 const socialLinks = ``;
 
@@ -111,14 +112,26 @@ export default function Footer({
           <section className="grid grid-cols-1 gap-4 lg:justify-self-end 2xl:justify-self-center">
             <h4 className="underline whitespace-nowrap">Helpful Links</h4>
             <div className="grid w-64 grid-cols-2 gap-4">
-              {site?.pageLinks?.map((pageLinks) => (
-                <a
-                  href={pageLinks.slug}
-                  className="links-secondary"
-                  key={pageLinks.slug}
-                >
-                  {pageLinks.title}
-                </a>
+              {site?.pageLinks?.map((pageLink, i) => (
+                <div key={`helpful-link-${i}`}>
+                  {pageLink.slug.includes('://') ||
+                  pageLink.slug.includes('mailto') ? (
+                    <a
+                      href={pageLink.slug}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="links-secondary"
+                    >
+                      {pageLink.title}
+                    </a>
+                  ) : (
+                    <Link href={pageLink.slug}>
+                      <a href={pageLink.slug} className="links-secondary">
+                        {pageLink.title}
+                      </a>
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           </section>

@@ -68,7 +68,7 @@ export default function SiteDataPageLinks({
         <div className="flex flex-wrap items-center gap-4 p-4 rounded-lg bg-primary-900 dark:bg-primary-900">
           <div className="flex-grow">
             <input
-              id="title"
+              id="page-title"
               type="text"
               placeholder="Page Title"
               value={pageLink.title}

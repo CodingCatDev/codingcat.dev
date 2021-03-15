@@ -8,6 +8,7 @@ import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Community from '@/components/global/icons/nav/Community';
 import Pages from '@/components/global/icons/nav/Pages';
 import AJPrimary from '@/components/global/icons/AJPrimary';
+import Site from '@/components/global/icons/nav/Site';
 
 export default function AdminNavItems({
   navOpen,
@@ -103,6 +104,14 @@ export default function AdminNavItems({
               <a className="flex items-center space-x-4 links-secondary">
                 <Pages />
                 <p className="ml-2">Pages</p>
+              </a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/site">
+              <a className="flex items-center space-x-4 links-secondary">
+                <Site />
+                <p className="ml-2">Site</p>
               </a>
             </Link>
           </li>

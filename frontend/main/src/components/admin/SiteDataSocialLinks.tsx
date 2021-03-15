@@ -71,7 +71,7 @@ export default function SiteDataSocialLinks({
         <div className="flex flex-wrap items-center gap-4 p-4 rounded-lg bg-primary-900 dark:bg-primary-900">
           <div className="flex-grow">
             <input
-              id="title"
+              id="social-title"
               type="text"
               placeholder="Social Title"
               value={socialLink.type}
