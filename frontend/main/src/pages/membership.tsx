@@ -69,7 +69,79 @@ export default function Membership({
           </section>
         ) : (
           <>
-            <section className="grid grid-cols-1 gap-10 px-4 py-10 text-center">
+            <section className="p-4">
+              {/* Valid User */}
+              {user && user.uid ? (
+                <div
+                  className={`${
+                    user.memberships ? 'w-full' : 'mx-auto'
+                  } "w-full relative z-0 px-8 md:px-0 md:py-16"`}
+                >
+                  <div
+                    className={`${
+                      user.memberships
+                        ? 'rounded'
+                        : 'rounded-b md:rounded-b-none md:rounded-r'
+                    } flex flex-wrap bg-white max-w-lg shadow-lg overflow-hidden mx-auto`}
+                  >
+                    {user.photoURL && (
+                      <img
+                        src={user.photoURL}
+                        alt={`${user.displayName} Photo`}
+                        className="w-32 h-32 m-4"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex flex-wrap justify-end w-full pt-2 pr-2">
+                        <button
+                          type="button"
+                          onClick={() => signout()}
+                          className="items-center justify-center px-4 py-2 text-white rounded bg-secondary-500 hover:opacity-75"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                    {user && !user.memberships && (
+                      <div className="p-8 text-xl text-primary-800">
+                        <p className="p-2">
+                          Welcome {user.displayName}! You are now signed in.
+                        </p>
+                        <p className="p-2">
+                          In order to use{' '}
+                          <span className="font-black">ALL</span> the{' '}
+                          <span className="font-bold text-secondary-500">
+                            Membership
+                          </span>{' '}
+                          features you must select an option for membership
+                          below.
+                        </p>
+                      </div>
+                    )}
+                    {user && user.memberships && (
+                      <p className="p-8 text-xl text-primary-800">
+                        Welcome Back{' '}
+                        <span className="font-bold">{user.displayName}</span>!
+                        You can see all of your information in the selections
+                        below, just click the button and a detailed table data
+                        will appear.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="relative z-0 w-full mx-auto lg:w-1/2">
+                  <div className="overflow-hidden rounded-b shadow-lg text-basics-50 dark:text-basics-50 bg-primary-800 dark:bg-primary-800 md:rounded-b-none md:rounded-r">
+                    <div className="p-4 text-xl tracking-wide text-center uppercase border-b border-primary-100 dark:border-primary-100">
+                      Create account by signing in with one below.
+                    </div>
+
+                    <FirebaseAuth />
+                  </div>
+                </div>
+              )}
+            </section>
+            <section className="grid grid-cols-1 gap-10 text-center">
               <div className="max-w-xl mx-auto">
                 <h1 className="font-sans text-4xl font-semibold lg:text-5xl ">
                   Become a{' '}
@@ -204,80 +276,6 @@ export default function Membership({
                   </li>
                 </ul>
               </div>
-              <div className="flex items-center justify-center p-6 mt-6 font-semibold text-white uppercase bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 text-md">
-                <span>Create account</span>
-              </div>
-
-              {/* Valid User */}
-              {user && user.uid ? (
-                <div
-                  className={`${
-                    user.memberships ? 'w-full' : 'md:w-1/2'
-                  } "w-full relative z-0 px-8 md:px-0 md:py-16"`}
-                >
-                  <div
-                    className={`${
-                      user.memberships
-                        ? 'rounded'
-                        : 'rounded-b md:rounded-b-none md:rounded-r'
-                    } flex flex-wrap bg-white max-w-lg shadow-lg overflow-hidden mx-auto`}
-                  >
-                    {user.photoURL && (
-                      <img
-                        src={user.photoURL}
-                        alt={`${user.displayName} Photo`}
-                        className="w-32 h-32 m-4"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <div className="flex flex-wrap justify-end w-full pt-2 pr-2">
-                        <button
-                          type="button"
-                          onClick={() => signout()}
-                          className="items-center justify-center px-4 py-2 text-white rounded bg-secondary-500 hover:opacity-75"
-                        >
-                          Sign Out
-                        </button>
-                      </div>
-                    </div>
-                    {user && !user.memberships && (
-                      <div className="p-8 text-xl text-primary-800">
-                        <p className="p-2">
-                          Welcome {user.displayName}! You are now signed in.
-                        </p>
-                        <p className="p-2">
-                          In order to use{' '}
-                          <span className="font-black">ALL</span> the{' '}
-                          <span className="font-bold text-secondary-500">
-                            Membership
-                          </span>{' '}
-                          features you must select an option for membership
-                          below.
-                        </p>
-                      </div>
-                    )}
-                    {user && user.memberships && (
-                      <p className="p-8 text-xl text-primary-800">
-                        Welcome Back{' '}
-                        <span className="font-bold">{user.displayName}</span>!
-                        You can see all of your information in the selections
-                        below, just click the button and a detailed table data
-                        will appear.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="relative z-0 w-full px-8 mx-auto md:w-1/2 md:px-0 md:py-16">
-                  <div className="overflow-hidden rounded-b shadow-lg text-basics-50 dark:text-basics-50 bg-primary-800 dark:bg-primary-800 md:rounded-b-none md:rounded-r">
-                    <div className="p-4 text-xl tracking-wide text-center uppercase border-b border-primary-100 dark:border-primary-100">
-                      Create account by signing in with one below.
-                    </div>
-
-                    <FirebaseAuth />
-                  </div>
-                </div>
-              )}
             </section>
           </>
         )}
