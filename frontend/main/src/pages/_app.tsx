@@ -1,6 +1,7 @@
 import '@/styles/globals.css';
 import App, { Container } from 'next/app';
 import { DefaultSeo } from 'next-seo';
+import { config } from '@/config/facebook';
 
 function MyApp({ Component, pageProps }: { Component: any; pageProps: any }) {
   return (
@@ -9,6 +10,9 @@ function MyApp({ Component, pageProps }: { Component: any; pageProps: any }) {
         title="CodingCatDev | Purrfect Web Tutorials"
         description="Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!"
         canonical="https://codingcat.dev/"
+        facebook={{
+          appId: config.appId || '',
+        }}
         openGraph={{
           type: 'website',
           locale: 'en_US',
