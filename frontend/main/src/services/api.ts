@@ -1,27 +1,32 @@
+import { StripeSubscription } from '@/models/stripe.model';
 import { UserInfoExtended } from '@/models/user.model';
-import { StripePrice } from './../models/stripe.model';
+import {
+  StripeProduct,
+  StripePrice,
+  StripeLineItem,
+} from '@/models/stripe.model';
 import { httpsCallable } from 'rxfire/functions';
 import firebase from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { collectionData, docData } from 'rxfire/firestore';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 import { loadStripe } from '@stripe/stripe-js';
 import { config } from '@/config/stripe';
 import {
   Post,
-  MediaType,
   PostType,
   PostStatus,
   PostVisibility,
   CoverMedia,
-  MediaSource,
+  Section,
 } from '@/models/post.model';
 import { v4 as uuid } from 'uuid';
-import { Course, Section } from '@/models/course.model.ts';
 import { Cloudinary } from '@/models/cloudinary.model';
 import { Video } from '@/models/video.model';
+import { Media, MediaSource, MediaType } from '@/models/media.model';
+import { PageLink, Site, SocialLink } from '@/models/site.model';
 
 const firestore$ = from(initFirebase()).pipe(
   filter((app) => app !== undefined),
@@ -35,7 +40,18 @@ const functions$ = from(initFirebase()).pipe(
   map((app) => app.functions() as firebase.functions.Functions)
 );
 
-// User
+/* SITE */
+export const siteDataObservable = () => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      collectionData<Site>(firestore.collection('site')).pipe(
+        map((s) => (s.length > 0 ? s[0] : null)) // Making assumption that we only want one site data
+      )
+    )
+  );
+};
+
+/* User */
 export const userProfileDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
@@ -44,11 +60,116 @@ export const userProfileDataObservable = (uid: string) => {
   );
 };
 
+export const userProfileUpdate = (profile: UserInfoExtended) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      firestore.doc(`/profiles/${profile.uid}`).set(profile, { merge: true })
+    )
+  );
+};
+
+export const usersDataObservable = (limit: number) => {
+  if (limit && limit > 0) {
+    return firestore$.pipe(
+      switchMap((firestore) =>
+        collectionData(
+          firestore.collection('/users').limit(limit).orderBy('email', 'asc')
+        )
+      )
+    );
+  } else {
+    return firestore$.pipe(
+      switchMap((firestore) =>
+        collectionData(firestore.collection('/users').orderBy('email', 'asc'))
+      )
+    );
+  }
+};
+
+export const isUserTeam = (uid: string): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap(async (firestore) => {
+      const userRef = await firestore.doc(`users/${uid}`).get();
+
+      const userData = userRef.data() as { uid: string; roles: string[] };
+      if (
+        userData &&
+        userData.roles &&
+        userData.roles.some(
+          (r) => ['admin', 'editor', 'author'].indexOf(r) >= 0
+        )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+  );
+};
+
+export const isUserMember = (uid: string): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      collectionData<StripeSubscription>(
+        firestore
+          .collection(`customers/${uid}/subscriptions/`)
+          .where('status', '==', 'active')
+          .where('role', 'in', ['monthly', 'yearly'])
+      ).pipe(map((s) => (s.length === 0 ? false : true)))
+    )
+  );
+};
+
+export const isUserCourseSub = (
+  uid: string,
+  productId: string
+): Observable<boolean> => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const productRef = firestore.collection('products').doc(productId);
+
+      return collectionData<StripeSubscription>(
+        firestore
+          .collection(`customers/${uid}/subscriptions/`)
+          .where('status', '==', 'active')
+          .where('product', '==', productRef)
+      ).pipe(map((s) => (s.length === 0 ? false : true)));
+    })
+  );
+};
+
 export const userDataObservable = (uid: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
       docData<UserInfoExtended>(firestore.doc(`/users/${uid}`), uid)
     )
+  );
+};
+
+export const profileSearchByDisplayNameObservable = (
+  email: string,
+  limit = 20
+) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      let ref = firestore
+        .collection('profiles')
+        .orderBy('email')
+        .startAt(email)
+        .endAt(email + '\uf8ff');
+
+      if (limit && limit > 0) {
+        ref = ref.limit(limit);
+      }
+
+      return collectionData<UserInfoExtended>(ref, 'uid').pipe(
+        map((docs) =>
+          docs.map((d) => {
+            return cleanTimestamp(d) as UserInfoExtended;
+          })
+        )
+      );
+    })
   );
 };
 
@@ -82,7 +203,16 @@ export const getCloudinaryCookieToken = () => {
 };
 
 /* Stripe */
-export const stripeCheckout = (price: StripePrice, uid: string) => {
+export const stripeCheckout = (product: StripeProduct, uid: string) => {
+  const line_items: StripeLineItem[] = [];
+
+  product.prices.forEach((price: StripePrice) =>
+    line_items.push({
+      price: price.id,
+      quantity: 1,
+    })
+  );
+
   return firestore$.pipe(
     switchMap(async (firestore) => {
       const docRef = await firestore
@@ -90,8 +220,8 @@ export const stripeCheckout = (price: StripePrice, uid: string) => {
         .doc(uid)
         .collection('checkout_sessions')
         .add({
-          price: price.id,
-          success_url: window.location.origin,
+          line_items,
+          success_url: window.location.href,
           cancel_url: window.location.href,
         });
       docRef.onSnapshot(async (snap) => {
@@ -143,6 +273,40 @@ export const getStripePortal = () => {
  * ADMIN SECTION
  ********************/
 
+/* SITE */
+
+export const siteUpdate = (site: Site) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      firestore.doc(`site/${site.id}`).set(site, { merge: true })
+    )
+  );
+};
+
+export const addSitePageLink = (site: Site, pageLink: PageLink) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const ref = firestore.doc(`site/${site.id}`);
+      ref.update({
+        pageLinks: firebase.firestore.FieldValue.arrayUnion(pageLink),
+      });
+      return docData<Site>(ref);
+    })
+  );
+};
+
+export const addSiteSocialLink = (site: Site, socialLink: SocialLink) => {
+  return firestore$.pipe(
+    switchMap((firestore) => {
+      const ref = firestore.doc(`site/${site.id}`);
+      ref.update({
+        socialLinks: firebase.firestore.FieldValue.arrayUnion(socialLink),
+      });
+      return docData<Site>(ref);
+    })
+  );
+};
+
 /* POST */
 export const postDataObservable = (path: string) => {
   return firestore$.pipe(
@@ -188,7 +352,7 @@ export const postCreate = (type: PostType, title: string, slug: string) => {
     titleSearch: title.toLowerCase(),
     status: PostStatus.draft,
     visibility: PostVisibility.private,
-    slug,
+    slug: slug ? slug : id,
   };
 
   return firestore$.pipe(
@@ -286,11 +450,14 @@ export const postsSearchByTitleObservable = (
   );
 };
 
-export const postsSlugUnique = (slug: string) => {
+export const postsSlugUnique = (slug: string, postId: string) => {
   return firestore$.pipe(
     switchMap((firestore) =>
       collectionData<Post>(
-        firestore.collection('posts').where('slug', '==', slug)
+        firestore
+          .collection('posts')
+          .where('slug', '==', slug)
+          .where('id', '!=', postId)
       ).pipe(map((posts) => (posts.length > 0 ? false : true)))
     )
   );
@@ -426,6 +593,7 @@ export const postHistoryMediaCreate = (
         type,
         cloudinary: cloudinary || null,
         video: video || null,
+        createdAt: firebase.firestore.Timestamp.now(),
       });
 
       const historyRef = firestore.doc(
@@ -444,6 +612,18 @@ export const postHistoryMediaCreate = (
   );
 };
 
+export const historyMediaDataObservable = (history: Post) => {
+  return firestore$.pipe(
+    switchMap((firestore) =>
+      collectionData<Media>(
+        firestore
+          .collection(`posts/${history.postId}/history/${history.id}/media/`)
+          .orderBy('createdAt', 'desc')
+      )
+    )
+  );
+};
+
 /* Cloudinary */
 export const getCloudinarySignature = (params: any) => {
   return functions$.pipe(
@@ -456,7 +636,7 @@ export const getCloudinarySignature = (params: any) => {
 /* Course 
    Course is a type of post, but it also has sections, with lessons
 */
-export const addCourseSection = (history: Course, section: Section) => {
+export const addCourseSection = (history: Post, section: Section) => {
   return firestore$.pipe(
     switchMap((firestore) => {
       const historyRef = firestore.doc(
@@ -465,7 +645,7 @@ export const addCourseSection = (history: Course, section: Section) => {
       historyRef.update({
         sections: firebase.firestore.FieldValue.arrayUnion(section),
       });
-      return docData<Course>(historyRef);
+      return docData<Post>(historyRef);
     })
   );
 };

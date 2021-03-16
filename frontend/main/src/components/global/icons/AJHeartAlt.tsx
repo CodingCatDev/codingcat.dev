@@ -1,4 +1,8 @@
-export default function AJHeartsLeft({ className = 'block w-12 h-12' }) {
+export default function AJHeartsLeft({
+  className = 'block w-12 h-12',
+}: {
+  className?: string;
+}) {
   return (
     <svg className={className} viewBox="0 0 100 100" fill="none">
       <path

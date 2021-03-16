@@ -1,13 +1,12 @@
-import Head from 'next/head';
-import dynamic from 'next/dynamic';
-import { withRouter } from 'next/router';
+import http from 'http';
+import cookie from 'cookie';
 
+import { NextSeo } from 'next-seo';
 import AdminLayout from '@/layout/admin/AdminLayout';
 
 import { Post, PostType } from '@/models/post.model';
-import { useState, useEffect } from 'react';
 import { Site } from '@/models/site.model';
-import { getSite, postById } from '@/services/serversideApi';
+import { getSite, postById, validateAdminUser } from '@/services/serversideApi';
 import EditPost from '@/components/admin/EditPost';
 
 export default function Edit({
@@ -23,10 +22,7 @@ export default function Edit({
 }): JSX.Element {
   return (
     <AdminLayout site={site} post={post}>
-      <Head>
-        <title>{`${type} | CodingCatDev`}</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
 
       {type && id ? (
         <EditPost type={type} id={id} />
@@ -39,17 +35,46 @@ export default function Edit({
 
 export async function getServerSideProps({
   params,
+  req,
 }: {
   params: { type: PostType; id: string };
-}): Promise<{
-  props?: {
-    type: PostType | null;
-    id: string | null;
-    site: Site | null;
-    post: Post;
-  };
-  notFound?: boolean;
-}> {
+  req: http.IncomingMessage;
+}): Promise<
+  | {
+      props?: {
+        type: PostType | null;
+        id: string | null;
+        site: Site | null;
+        post: Post;
+      };
+    }
+  | { redirect: { destination: string; permanent: boolean } }
+  | { notFound: boolean }
+> {
+  const cookies = cookie.parse(req.headers.cookie || '');
+  const auth = cookies.auth;
+  // Check for user authentication from cookie
+  let validUser = true;
+  if (auth) {
+    const user = JSON.parse(auth) as {
+      uid: string;
+      email: string;
+      token: string;
+    };
+    validUser = await validateAdminUser(user.token);
+  } else {
+    validUser = false;
+  }
+
+  if (!validUser) {
+    return {
+      redirect: {
+        destination: `/user/profile`,
+        permanent: false,
+      },
+    };
+  }
+
   const site = await getSite();
   const { type, id } = params;
 

@@ -1,22 +1,33 @@
 import { useEffect, useState } from 'react';
 import { Post, PostStatus } from '@/models/post.model';
-import { postDataObservable, postHistoryPublish } from '@/services/api';
+import {
+  postDataObservable,
+  postHistoryPublish,
+  postsSlugUnique,
+} from '@/services/api';
 import firebase from 'firebase/app';
 import { take } from 'rxjs/operators';
+import { toKebabCase } from '@/utils/basics/stringManipulation';
 
 import { Calendar } from 'primereact/calendar';
+import { of } from 'rxjs';
 
 export default function PublishModal({
   history,
   setSaving,
+  setSlugUnique,
 }: {
-  history: Post;
+  history: Post | undefined;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+  setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
+}): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
 
   useEffect(() => {
+    if (!history) {
+      return;
+    }
     postDataObservable(`/posts/${history.postId}`)
       .pipe(take(1))
       .subscribe((p) => {
@@ -42,26 +53,42 @@ export default function PublishModal({
     if (date) setSelectedDate(date);
   };
 
+  function validSlug(slugInput: string) {
+    if (!history || !history.postId) {
+      return of(false);
+    }
+    const slug = toKebabCase(slugInput);
+    return postsSlugUnique(slug, history?.postId).pipe(take(1));
+  }
+
   function onPublish() {
+    setOpen(false);
     if (history && selectedDate) {
-      setSaving(true);
+      validSlug(history.slug).subscribe((unique) => {
+        setSlugUnique(unique);
+        if (unique) {
+          setSaving(true);
 
-      history.publishedAt = firebase.firestore.Timestamp.fromDate(selectedDate);
-      history.status = PostStatus.published;
+          history.publishedAt = firebase.firestore.Timestamp.fromDate(
+            selectedDate
+          );
+          history.status = PostStatus.published;
 
-      postHistoryPublish(history)
-        .pipe(take(1))
-        .subscribe(() => {
-          setSaving(false);
-          setOpen(false);
-        });
+          postHistoryPublish(history)
+            .pipe(take(1))
+            .subscribe(() => {
+              setSaving(false);
+              setOpen(false);
+            });
+        }
+      });
     }
   }
 
   return (
-    <div>
+    <div className="mb-4">
       <button
-        className="flex justify-center w-full btn-primary"
+        className="flex items-center justify-center w-full h-16 uppercase btn-primary"
         onClick={handleClickOpen}
       >
         <p>Publish</p>

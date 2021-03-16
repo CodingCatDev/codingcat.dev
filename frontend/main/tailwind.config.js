@@ -9,10 +9,5 @@ module.exports = {
     },
   },
 
-  plugins: [
-    require('@tailwindcss/typography'),
-    // require('@tailwindcss/forms'),
-    require('@tailwindcss/custom-forms'),
-    require('nightwind'),
-  ],
+  plugins: [require('@tailwindcss/forms'), require('nightwind')],
 };

@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { NextSeo } from 'next-seo';
 
 import {
   getSite,
@@ -9,6 +10,7 @@ import {
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
+import rehypePrism from '@mapbox/rehype-prism';
 import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
@@ -31,13 +33,46 @@ export default function Post({
   }
 
   return (
-    <PostLayout
-      router={router}
-      site={site}
-      post={post}
-      source={source}
-      recentPosts={recentPosts}
-    />
+    <>
+      <NextSeo
+        title={post.title}
+        description={post.excerpt}
+        canonical={`https://codingcat.dev${router.asPath}`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: `https://codingcat.dev${router.asPath}`,
+          title: post.title,
+          description: post.excerpt,
+          site_name: 'CodingCatDev',
+          images: [
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_800,h_600/${post.coverPhoto?.public_id}`,
+              width: 800,
+              height: 600,
+              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_900,h_800/${post.coverPhoto?.public_id}`,
+              width: 900,
+              height: 800,
+              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,
+            },
+          ],
+        }}
+      ></NextSeo>
+
+      <PostLayout
+        router={router}
+        site={site}
+        post={post}
+        source={source}
+        recentPosts={recentPosts}
+      />
+    </>
   );
 }
 
@@ -80,11 +115,34 @@ export async function getStaticProps({
       revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
+  | { notFound: boolean }
 > {
   const site = await getSite();
 
   let type = params.permalink[0] as PostType;
   let slug = params.permalink[1] as string;
+
+  // Redirect plural page types
+  if (['podcasts', 'tutorials', 'courses'].includes(type) && slug) {
+    let dest;
+    switch (type as string) {
+      case 'podcasts':
+        dest = 'podcast';
+        break;
+      case 'tutorials':
+        dest = 'tutorial';
+        break;
+      case 'courses':
+        dest = 'course';
+        break;
+    }
+    return {
+      redirect: {
+        destination: `/${dest}/${slug}`,
+        permanent: true,
+      },
+    };
+  }
 
   // Make assumption that this should be a base page.
   if (type && !slug) {
@@ -100,15 +158,36 @@ export async function getStaticProps({
   ];
   if (!type || !slug || !allowedTypes.includes(type)) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
-  const posts = await postBySlugService(type, slug);
-  const post = posts.length > 0 ? posts[0] : null;
+  let posts = await postBySlugService(type, slug);
+  let post = posts.length > 0 ? posts[0] : null;
+
+  // Check if old blog link is trying to be used.
+  if (!post) {
+    if (type === PostType.page) {
+      posts = await postBySlugService(PostType.post, slug);
+      post = posts.length > 0 ? posts[0] : null;
+    }
+    // This means the page was found, but we want to redirect them.
+    if (post) {
+      return {
+        redirect: {
+          destination: `/${PostType.post}/${slug}`,
+          permanent: true,
+        },
+      };
+    }
+  }
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
   const recentPosts = await postsRecentService([
     PostType.course,
     PostType.post,
@@ -123,6 +202,7 @@ export async function getStaticProps({
     source = await renderToString(content, {
       mdxOptions: {
         // remarkPlugins: [parse, mdx],
+        rehypePlugins: [rehypePrism],
       },
     });
   } else {

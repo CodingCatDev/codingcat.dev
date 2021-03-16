@@ -18,6 +18,8 @@ const AdminLayout = ({
   children: any;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
+  const [userMenu, setUserMenu] = useState(false);
+  const [navOpen, setNavOpen] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,22 +32,33 @@ const AdminLayout = ({
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
-      <div className="grid h-screen grid-cols-admin">
-        <AdminMenu />
-        <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
-          <AdminHeader site={site} post={post} />
-          <main className="h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
-            {children}
-          </main>
-          <footer className="flex items-center justify-center h-full text-basics-50 dark:text-basics-50">
-            &copy; CodingCatDev {new Date().getFullYear()}
-          </footer>
+      <div className="lg:mx-auto lg:w-full lg:max-w-8xl">
+        <div className="grid h-screen grid-cols-admin">
+          <AdminMenu
+            userMenu={userMenu}
+            setUserMenu={setUserMenu}
+            navOpen={navOpen}
+            setNavOpen={setNavOpen}
+          />
+
+          <div className="grid items-start h-full grid-cols-1 grid-rows-admin">
+            <AdminHeader
+              site={site}
+              post={post}
+              userMenu={userMenu}
+              setUserMenu={setUserMenu}
+              navOpen={navOpen}
+              setNavOpen={setNavOpen}
+            />
+            <main className="grid h-full text-primary-900 bg-primary-50 dark:bg-basics-900">
+              {children}
+              <footer className="flex items-start self-end justify-center p-4">
+                &copy; CodingCatDev {new Date().getFullYear()}
+              </footer>
+            </main>
+          </div>
         </div>
       </div>
-      {/* <AdminMenu
-        setOverlayMenuActive={setOverlayMenuActive}
-        overlayMenuActive={overlayMenuActive}
-      /> */}
     </>
   );
 };

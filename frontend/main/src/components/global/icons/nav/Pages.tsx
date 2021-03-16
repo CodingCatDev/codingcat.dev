@@ -1,9 +1,12 @@
-export default function Pages({ className = 'block w-8 h-8' }) {
+export default function Pages({
+  className = 'block w-8 h-8',
+}: {
+  className?: string;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      stroke="currentColor"
       className={className}
       fill="#BC2261"
     >

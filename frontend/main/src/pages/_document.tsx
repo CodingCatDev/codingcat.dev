@@ -42,7 +42,6 @@ class MyDocument extends Document {
             crossOrigin="anonymous"
           />
 
-          <link rel="canonical" href="https://codingcat.dev/" />
           <link rel="shortlink" href="https://codingcat.dev/" />
           <meta name="application-name" content="CodingCatDev" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -56,6 +55,7 @@ class MyDocument extends Document {
           <meta name="mobile-web-app-capable" content="yes" />
 
           <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#4B0A75" />
 
           {/* Icons */}
           <link
@@ -128,34 +128,6 @@ class MyDocument extends Document {
             href="/static/icons/favicon-16x16.png"
           />
           <link rel="icon" href="/favicon.ico" />
-
-          {/* Socials */}
-          <meta name="twitter:card" content="summary" />
-          <meta name="twitter:url" content="https://codingcat.dev" />
-          <meta
-            name="twitter:title"
-            content="CodingCatDev | Purrfect Web Tutorials"
-          />
-          <meta
-            name="twitter:description"
-            content="codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!"
-          />
-          <meta
-            name="twitter:image"
-            content="https://yourdomain.com/static/icons/android-chrome-192x192.png"
-          />
-          <meta name="twitter:creator" content="@CodingCatDev" />
-          <meta property="og:type" content="website" />
-          <meta
-            property="og:title"
-            content="CodingCatDev | Purrfect Web Tutorials"
-          />
-          <meta
-            property="og:description"
-            content="codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!"
-          />
-          <meta property="og:site_name" content="CodingCatDev" />
-          <meta property="og:url" content="https://codingcat.dev" />
         </Head>
         <body>
           <Main />

@@ -45,7 +45,21 @@ service cloud.firestore {
             allow update: if hasAnyRole(['author', 'editor', 'admin'])
             allow delete: if hasAnyRole(['author', 'editor', 'admin'])
           }
+
+          match /customers/{id} {
+            allow create: if hasAnyRole(['admin'])
+            allow read: if hasAnyRole(['admin'])
+            allow update: if hasAnyRole(['admin'])
+            allow delete: if hasAnyRole(['admin'])
+          }
         }
+      }
+      //Admin Only for Site
+      match /site/{id} {
+        allow create: if hasAnyRole(['admin'])
+        allow read: if hasAnyRole(['admin'])
+        allow update: if hasAnyRole(['admin'])
+        allow delete: if hasAnyRole(['admin'])
       }
 
       match /tags/{id} {
@@ -122,8 +136,8 @@ service cloud.firestore {
         'id', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy',
         'type', 'title', 'status', 'visibility']);
       let statusNotPublished = post.status == 'draft' && !post.keys().hasAny(['publishedAt']);
-      let isUnique = !exists(/databases/$(database)/documents/postSlugs/$(post.slug));
-      return isOwner && hasRequiredFields && statusNotPublished && isUnique;
+      // let isUnique = !exists(/databases/$(database)/documents/postSlugs/$(post.slug));
+      return isOwner && hasRequiredFields && statusNotPublished;
     }
     function postsIsValidUpdate() {
       let notDeniedFields = !request.resource.data.diff(resource.data).changedKeys().hasAny([

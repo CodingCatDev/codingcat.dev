@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
 
@@ -15,12 +15,12 @@ export default function Community({
 }): JSX.Element {
   return (
     <Layout site={site}>
-      <Head>
-        <title>Community | CodingCatDev</title>
-      </Head>
+      <NextSeo
+        title="Community | CodingCatDev"
+        canonical={`https://codingcat.dev/community/`}
+      ></NextSeo>
       {/* <PostsCards posts={posts} /> */}
-      Coming Soon...
-      <footer></footer>
+      <h1>Coming Soon...</h1>
     </Layout>
   );
 }
