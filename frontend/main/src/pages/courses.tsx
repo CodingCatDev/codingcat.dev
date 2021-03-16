@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
 
@@ -15,9 +15,10 @@ export default function Courses({
 }): JSX.Element {
   return (
     <Layout site={site}>
-      <Head>
-        <title>Courses | CodingCatDev</title>
-      </Head>
+      <NextSeo
+        title="Blog | CodingCatDev"
+        canonical={`https://codingcat.dev/courses/`}
+      ></NextSeo>
 
       <PostsCards posts={posts} />
     </Layout>

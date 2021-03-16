@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 
 import { getSite, postsRecentService } from '@/services/serversideApi';
@@ -27,9 +27,11 @@ export default function Home({
 }): JSX.Element {
   return (
     <Layout site={site}>
-      <Head>
-        <title>CodingCatDev</title>
-      </Head>
+      <NextSeo
+        title="CodingCatDev"
+        canonical={`https://codingcat.dev/`}
+      ></NextSeo>
+
       {/* Hero */}
       <section className="grid justify-center grid-cols-1 p-8 mx-auto 2xl:gap-10 lg:grid-cols-2 lg:px-10 2xl:min-h-768 max-w-7xl">
         <section className="grid items-center content-center grid-cols-1 gap-4 mx-auto 2xl:mx-0 2xl:justify-self-end">

@@ -1,5 +1,3 @@
-import { NextSeo } from 'next-seo';
-
 import DefaultErrorPage from 'next/error';
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
@@ -34,7 +32,6 @@ export default function PostLayout({
   if (!post) {
     return (
       <Layout site={site}>
-        <NextSeo noindex={true}></NextSeo>
         <DefaultErrorPage statusCode={404} />
       </Layout>
     );

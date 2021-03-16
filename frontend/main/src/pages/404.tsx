@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import Error from 'next/error';
 import Link from 'next/link';
 import AJ404 from '@/components/global/icons/AJ404';
@@ -19,9 +19,7 @@ export default function Custom404({
 }): JSX.Element {
   return (
     <Layout site={site}>
-      <Head>
-        <title>404 | CodingCatDev</title>
-      </Head>
+      <NextSeo title="404 | Not Found"></NextSeo>
       <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
         <AJ404 />
         <h1 className="text-5xl lg:text-6xl">

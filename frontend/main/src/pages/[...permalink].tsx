@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { NextSeo } from 'next-seo';
 
 import {
   getSite,
@@ -32,13 +33,46 @@ export default function Post({
   }
 
   return (
-    <PostLayout
-      router={router}
-      site={site}
-      post={post}
-      source={source}
-      recentPosts={recentPosts}
-    />
+    <>
+      <NextSeo
+        title={post.title}
+        description={post.excerpt}
+        canonical={`https://codingcat.dev${router.asPath}`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: `https://codingcat.dev${router.asPath}`,
+          title: post.title,
+          description: post.excerpt,
+          site_name: 'CodingCatDev',
+          images: [
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_800,h_600/${post.coverPhoto?.public_id}`,
+              width: 800,
+              height: 600,
+              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_900,h_800/${post.coverPhoto?.public_id}`,
+              width: 900,
+              height: 800,
+              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,
+            },
+          ],
+        }}
+      ></NextSeo>
+
+      <PostLayout
+        router={router}
+        site={site}
+        post={post}
+        source={source}
+        recentPosts={recentPosts}
+      />
+    </>
   );
 }
 

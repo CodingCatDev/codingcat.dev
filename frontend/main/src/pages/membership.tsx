@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -42,9 +42,11 @@ export default function Membership({
 
   return (
     <>
-      <Head>
-        <title>Membership | CodingCatDev</title>
-      </Head>
+      <NextSeo
+        title="Membership | CodingCatDev"
+        canonical={`https://codingcat.dev/membership/`}
+      ></NextSeo>
+
       <Layout site={site}>
         {member ? (
           <section>
