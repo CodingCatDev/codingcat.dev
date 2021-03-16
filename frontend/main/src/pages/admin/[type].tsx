@@ -1,7 +1,7 @@
 import http from 'http';
 import cookie from 'cookie';
 
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import dynamic from 'next/dynamic';
 
 import AdminLayout from '@/layout/admin/AdminLayout';
@@ -29,10 +29,7 @@ export default function NavTypes({
 }): JSX.Element {
   return (
     <AdminLayout site={site}>
-      <Head>
-        <title>{`${type} | CodingCatDev`}</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
 
       {type && (type as string) == 'site' && (
         <div className="p-4">

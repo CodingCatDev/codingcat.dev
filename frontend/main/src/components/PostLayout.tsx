@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
+
 import DefaultErrorPage from 'next/error';
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
@@ -33,9 +34,7 @@ export default function PostLayout({
   if (!post) {
     return (
       <Layout site={site}>
-        <Head>
-          <meta name="robots" content="noindex" />
-        </Head>
+        <NextSeo noindex={true}></NextSeo>
         <DefaultErrorPage statusCode={404} />
       </Layout>
     );
