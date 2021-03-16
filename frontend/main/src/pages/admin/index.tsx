@@ -1,7 +1,7 @@
 import http from 'http';
 import cookie from 'cookie';
 
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import AdminLayout from '@/layout/admin/AdminLayout';
 import { getSite, validateAdminUser } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
@@ -13,10 +13,8 @@ export default function AdminDashboard({
 }): JSX.Element {
   return (
     <AdminLayout site={site}>
-      <Head>
-        <title>Admin Dashboard | CodingCatDev</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      <NextSeo title="Admin Dashboard | CodingCatDev" noindex={true}></NextSeo>
+
       <section className="p-4">
         <header className="grid grid-cols-1 gap-4 mb-4 justify-items-start">
           This should show more current details for logged in user.

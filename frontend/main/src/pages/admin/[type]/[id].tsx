@@ -1,7 +1,7 @@
 import http from 'http';
 import cookie from 'cookie';
 
-import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import AdminLayout from '@/layout/admin/AdminLayout';
 
 import { Post, PostType } from '@/models/post.model';
@@ -22,10 +22,7 @@ export default function Edit({
 }): JSX.Element {
   return (
     <AdminLayout site={site} post={post}>
-      <Head>
-        <title>{`${type} | CodingCatDev`}</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
 
       {type && id ? (
         <EditPost type={type} id={id} />
