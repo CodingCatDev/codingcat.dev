@@ -78,8 +78,6 @@ export default function PostLayout({
     <Layout site={site}>
       {/* DIV TO AVOID GRID GAP */}
       <div className="relative">
-        {/* TOP BAR */}
-
         {/* MAIN CONTENT */}
         {post.type !== PostType.page && (
           <section className="max-w-5xl p-10 mx-auto">
@@ -198,8 +196,6 @@ export default function PostLayout({
               </div>
             </section>
           )}
-
-          {/* Main Blog Area */}
           {/* BLOG POST */}
           <article className="grid max-w-3xl grid-cols-1 gap-4 m-0 leading-relaxed top-2 text-basics-900">
             {content}
