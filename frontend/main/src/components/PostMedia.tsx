@@ -108,7 +108,7 @@ export default function PostMedia({
               width="480"
               height="270"
               layout="responsive"
-              className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md"
+              className="rounded-md"
             />
           ) : (
             <></>

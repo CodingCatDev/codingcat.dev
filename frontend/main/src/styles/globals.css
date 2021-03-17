@@ -50,9 +50,13 @@
     @apply transition-colors text-primary-900 hover:text-secondary-600 dark:hover:text-secondary-200;
   }
 
-  blockquote p {
-    @apply text-basics-900;
+  blockquote {
+    @apply px-8 py-4 border-l-4 bg-primary-900 dark:bg-primary-900 border-secondary-600 dark:border-secondary-600 text-basics-50 dark:text-basics-50;
   }
+
+  /* blockquote p {
+    @apply text-basics-900;
+  } */
 
   body {
     @apply box-border text-primary-900 bg-primary-900 dark:bg-primary-900;
