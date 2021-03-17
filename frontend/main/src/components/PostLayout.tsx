@@ -158,48 +158,10 @@ export default function PostLayout({
               ))}
             </div>
           </BreakBarLeft>
-
-          {recentPosts && (
-            <section className="content-start hidden grid-cols-1 2xl:max-w-sm 2xl:grid 2xl:justify-self-end">
-              <div className="bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Courses`}
-                </h2>
-
-                <ul className="grid grid-cols-1 gap-2 p-4 bg-basics-50 dark:bg-primary-900">
-                  <RecentPostsList posts={recentPosts[PostType.course]} />
-                </ul>
-              </div>
-              <div className=" bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Tutorials`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 bg-basics-50 dark:bg-primary-900">
-                  <RecentPostsList posts={recentPosts[PostType.tutorial]} />
-                </ul>
-              </div>
-              <div className=" bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Podcasts`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 bg-basics-50 dark:bg-primary-900">
-                  <RecentPostsList posts={recentPosts[PostType.podcast]} />
-                </ul>
-              </div>
-              <div className=" bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Blog`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 bg-basics-50 dark:bg-primary-900">
-                  <RecentPostsList posts={recentPosts[PostType.post]} />
-                </ul>
-              </div>
-            </section>
-          )}
         </section>
-        <section className="grid grid-cols-1 gap-4 p-4 xl:pl-10 2xl:-mt-775">
+        <section className="grid grid-cols-1 gap-4 p-4 2xl:grid-cols-sidebar xl:pl-10">
           {/* RECENTS */}
-          {/* {recentPosts && (
+          {recentPosts && (
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
               <div className="rounded-md rounded-t-md bg-basics-50 dark:bg-primary-900">
                 <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
@@ -235,7 +197,7 @@ export default function PostLayout({
                 </ul>
               </div>
             </section>
-          )} */}
+          )}
 
           {/* Main Blog Area */}
           {/* BLOG POST */}
@@ -249,6 +211,13 @@ export default function PostLayout({
           font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
           margin: 0 auto;
           max-width: 65ch;
+        }
+        article > p {
+          margin: 0 0 3rem;
+        }
+
+        article > p + blockquote {
+          margin: 1rem 0;
         }
         main a {
           border-bottom: 2px solid #bc2261;
@@ -278,9 +247,6 @@ export default function PostLayout({
         }
         img {
           width: 100%;
-        }
-        main p {
-          margin: 0 0 3rem;
         }
         main ul li {
           margin-left: 2rem;
