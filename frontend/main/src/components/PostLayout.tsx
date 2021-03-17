@@ -159,28 +159,6 @@ export default function PostLayout({
               </ul>
             </section>
           ))}
-        {/* Author Content */}
-        {post.authors?.map((author, i) => (
-          <section className="p-4 bg-basics-50 rounded-t-md xl:p-10" key={i}>
-            <div className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600">
-              <header className="flex gap-4 ">
-                {author.photoURL && (
-                  <img
-                    src={author.photoURL}
-                    alt="instructor"
-                    className="w-20 h-20 border-2 rounded-full border-primary-900"
-                  />
-                )}
-
-                <div className="flex flex-col justify-center">
-                  <h3 className="m-0 text-base font-light">Instructor</h3>
-                  <h4 className="m-0 text-xl">{author.displayName}</h4>
-                </div>
-              </header>
-            </div>
-            <p className="p-2 xl:p-4">{author.basicInfo?.about}</p>
-          </section>
-        ))}
         <section className="grid grid-cols-1 gap-4 p-4 xl:p-10 2xl:grid-cols-sidebar">
           {/* RECENTS */}
           {recentPosts && (
@@ -224,6 +202,31 @@ export default function PostLayout({
           {/* Main Blog Area */}
           {/* BLOG POST */}
           <article className="grid max-w-5xl grid-cols-1 gap-4 m-0 leading-relaxed top-2 text-basics-900">
+            {/* Author Content */}
+            {post.authors?.map((author, i) => (
+              <section
+                className="p-4 bg-basics-50 rounded-t-md xl:p-10"
+                key={i}
+              >
+                <div className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600">
+                  <header className="flex gap-4 ">
+                    {author.photoURL && (
+                      <img
+                        src={author.photoURL}
+                        alt="instructor"
+                        className="w-20 h-20 border-2 rounded-full border-primary-900"
+                      />
+                    )}
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="m-0 text-base font-light">Instructor</h3>
+                      <h4 className="m-0 text-xl">{author.displayName}</h4>
+                    </div>
+                  </header>
+                </div>
+                <p className="p-2 xl:p-4">{author.basicInfo?.about}</p>
+              </section>
+            ))}
             {content}
           </article>
         </section>
