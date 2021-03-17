@@ -190,7 +190,7 @@ export default function PostLayout({
                   {`Latest Courses`}
                 </h2>
 
-                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-primary-50">
+                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-basics-50 dark:bg-primary-900">
                   <RecentPostsList posts={recentPosts[PostType.course]} />
                 </ul>
               </div>
@@ -198,7 +198,7 @@ export default function PostLayout({
                 <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Tutorials`}
                 </h2>
-                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-primary-50">
+                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-basics-50 dark:bg-primary-900">
                   <RecentPostsList posts={recentPosts[PostType.tutorial]} />
                 </ul>
               </div>
@@ -206,7 +206,7 @@ export default function PostLayout({
                 <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Podcasts`}
                 </h2>
-                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-primary-50">
+                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-basics-50 dark:bg-primary-900">
                   <RecentPostsList posts={recentPosts[PostType.podcast]} />
                 </ul>
               </div>
@@ -214,7 +214,7 @@ export default function PostLayout({
                 <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Blog`}
                 </h2>
-                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-primary-50">
+                <ul className="grid grid-cols-1 gap-2 px-4 py-2 shadow-lg bg-basics-50 dark:bg-primary-900">
                   <RecentPostsList posts={recentPosts[PostType.post]} />
                 </ul>
               </div>
