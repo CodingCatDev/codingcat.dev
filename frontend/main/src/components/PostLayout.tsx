@@ -191,7 +191,7 @@ export default function PostLayout({
             </section>
           )}
           {/* BLOG POST */}
-          <article className="grid max-w-3xl grid-cols-1 gap-4 m-0 leading-relaxed top-2 text-basics-900">
+          <article className="leading-relaxed top-2 text-basics-900">
             {content}
           </article>
         </section>
