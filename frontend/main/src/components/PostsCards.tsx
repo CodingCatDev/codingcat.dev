@@ -75,23 +75,27 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                     ))}
                   </div>
                   <div className="grid self-end justify-start grid-cols-2 gap-2 font-bold tracking-wider">
-                    {post.accessSettings?.accessMode === 'closed' ? (
+                    {post.type === 'course' && (
                       <>
-                        <p className="px-4 py-2 text-sm rounded-full justify-self-start bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
-                          Paid
-                        </p>
-                        <p className="px-4 py-2 text-sm font-bold tracking-wider transform -skew-y-12 justify-self-end bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                          ${post.accessSettings?.price}
-                        </p>
+                        {post.accessSettings?.accessMode === 'closed' ? (
+                          <>
+                            <p className="px-4 py-2 text-sm rounded-full justify-self-start bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+                              Paid
+                            </p>
+                            <p className="px-4 py-2 text-sm font-bold tracking-wider transform -skew-y-12 justify-self-end bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                              ${post.accessSettings?.price}
+                            </p>
+                          </>
+                        ) : post.accessSettings?.accessMode === 'free' ? (
+                          <p className="px-4 py-2 text-sm font-bold tracking-wider rounded-full justify-self-start bg-primary-50 dark:bg-primary-50 text-primary-900 dark:text-primary-900">
+                            Free
+                          </p>
+                        ) : (
+                          <p className="px-4 py-2 text-sm font-bold tracking-wider rounded-full justify-self-start bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                            Start now
+                          </p>
+                        )}
                       </>
-                    ) : post.accessSettings?.accessMode === 'free' ? (
-                      <p className="px-4 py-2 text-sm font-bold tracking-wider rounded-full justify-self-start bg-primary-50 dark:bg-primary-50 text-primary-900 dark:text-primary-900">
-                        Free
-                      </p>
-                    ) : (
-                      <p className="px-4 py-2 text-sm font-bold tracking-wider rounded-full justify-self-start bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                        Start now
-                      </p>
                     )}
                   </div>
                 </section>
