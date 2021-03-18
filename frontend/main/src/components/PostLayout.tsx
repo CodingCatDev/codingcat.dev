@@ -3,7 +3,7 @@ import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
@@ -12,7 +12,9 @@ import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
 
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
+import { millisecondToDate, millisecondToUSFormat } from '@/utils/basics/date';
 import { Site } from '@/models/site.model';
+import SocialShare from '@/components/common/SocialShare';
 
 export default function PostLayout({
   site,
@@ -36,6 +38,10 @@ export default function PostLayout({
       </Layout>
     );
   }
+  const [href, setHref] = useState('');
+  useEffect(() => {
+    setHref(location.href);
+  }, []);
 
   function isActiveLink(course: Post, lesson: SectionLesson) {
     if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
@@ -70,10 +76,6 @@ export default function PostLayout({
   }
 
   const content = source ? hydrate(source) : null;
-  // const createdDate = new Date(post.createdAt * 1000);
-  // const updatedDate = new Date(post.updatedAt * 1000);
-  // const createdDateYear = new Date(post.createdAt);
-  // const updatedDateYear = new Date(post.updatedAt);
   return (
     <Layout site={site}>
       {/* DIV TO AVOID GRID GAP */}
@@ -112,15 +114,15 @@ export default function PostLayout({
                     )}
 
                     <div className="grid content-start">
-                      <h3 className="m-0 text-base font-light">Instructor</h3>
+                      <h3 className="m-0 text-base font-light">Author</h3>
                       <h4 className="m-0 text-xl">{author.displayName}</h4>
                     </div>
                   </section>
 
-                  <section>Breadcrumbs &gt; on &gt; and on &gt;</section>
+                  {/* <section>Breadcrumbs &gt; on &gt; and on &gt;</section> */}
                   <section className="flex flex-wrap items-start justify-between w-full gap-4">
                     <section className="flex content-start space-x-4">
-                      {/* <p className="flex items-center m-0 space-x-2 text-base font-light">
+                      <p className="flex items-center m-0 space-x-2 text-base font-light">
                         <svg
                           className="w-6"
                           xmlns="http://www.w3.org/2000/svg"
@@ -133,23 +135,15 @@ export default function PostLayout({
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span>
-                          {createdDate.getMonth() + 1}/{createdDate.getDate()}/
-                          {createdDateYear.getFullYear() + 1}
-                        </span>
+                        <span>{millisecondToUSFormat(post.createdAt)}</span>
                       </p>
                       <p className="flex items-center m-0 space-x-2 text-base font-light">
                         Last Updated:{' '}
-                        <span>
-                          {updatedDate.getMonth() + 1}/{updatedDate.getDate()}/
-                          {updatedDateYear.getFullYear() + 1}
-                        </span>
-                      </p> */}
+                        <span>{millisecondToUSFormat(post.updatedAt)}</span>
+                      </p>
                     </section>
                     <section className="flex space-x-4 2xl:-mt-8 flex-nowrap">
-                      <button className="btn-secondary">Facebook</button>
-                      <button className="btn-secondary">Twitter</button>
-                      <button className="btn-secondary">LinkedIn</button>
+                      <SocialShare href={href} post={post} />
                     </section>
                   </section>
                 </header>
