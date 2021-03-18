@@ -11,32 +11,11 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
           {posts.map((post) => {
             return (
               <div
-                className="grid transition-all transform rounded-md shadow-lg hover:shadow-2xl hover:scale-105 bg-basics-50"
+                className="grid transition-all transform rounded-md shadow-lg grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
                 key={post.id}
               >
                 <Link href={`/${post.type}/${post.slug}`}>
-                  <a>
-                    {/* {post.type === 'course' ? (
-                      <>
-                        <Image
-                          src={post.coverPhoto?.path}
-                          alt={post.title}
-                          width="480"
-                          height="270"
-                          layout="responsive"
-                          className="rounded-md rounded-b-none cursor-pointer"
-                        />
-                      </>
-                    ) : (
-                      <div
-                        className="relative"
-                        style={{ paddingBottom: '56.25%' }}
-                      >
-                        <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
-                          <AJPrimary className="w-full h-full p-4" />
-                        </div>
-                      </div>
-                    )}  */}
+                  <a className="self-start">
                     {post.coverPhoto?.path && post.type === 'course' ? (
                       <>
                         <Image
@@ -79,7 +58,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   </a>
                 </Link>
 
-                <section className="grid gap-2 p-4">
+                <section className="grid h-full gap-2 p-4">
                   <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
                     <Link href={`/${post.type}/${post.slug}`}>
                       <a>{post.title}</a>
