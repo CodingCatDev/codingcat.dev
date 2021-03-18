@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import nightwind from 'nightwind/helper';
 
 export default function Toggle() {
