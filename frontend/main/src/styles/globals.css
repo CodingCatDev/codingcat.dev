@@ -66,6 +66,10 @@
     @apply box-border text-primary-900 bg-primary-900 dark:bg-primary-900;
   }
 
+  html {
+    @apply overflow-x-hidden;
+  }
+
   h1 {
     @apply leading-snug tracking-wide text-7xl font-heading;
   }
