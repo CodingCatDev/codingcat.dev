@@ -254,6 +254,7 @@ export async function getServerSideProps({
   const { coursePath } = params;
 
   if (!coursePath) {
+    console.log('No Course Path Found.');
     return {
       redirect: {
         destination: '/',
@@ -266,6 +267,8 @@ export async function getServerSideProps({
   const post = posts.length > 0 ? posts[0] : null;
 
   if (!post) {
+    console.log('No Post Found.');
+
     return {
       notFound: true,
     };
@@ -275,6 +278,9 @@ export async function getServerSideProps({
   let product = null;
   if (productId) {
     product = await getStripeProduct(productId);
+    if (product) {
+      console.log('Product Found and passed.');
+    }
   }
 
   const source: Source | null =
