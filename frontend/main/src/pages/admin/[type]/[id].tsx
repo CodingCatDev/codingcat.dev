@@ -67,6 +67,7 @@ export async function getServerSideProps({
   }
 
   if (!validUser) {
+    console.log('User is not valid, or unauthenticated');
     return {
       redirect: {
         destination: `/user/profile`,
@@ -79,6 +80,10 @@ export async function getServerSideProps({
   const { type, id } = params;
 
   if (!type || !id || !site) {
+    if (!type) console.log('Missing Type');
+    if (!id) console.log('Missing ID');
+    if (!site) console.log('Missing Site');
+    console.log('Sending 404');
     return {
       notFound: true,
     };
@@ -87,6 +92,7 @@ export async function getServerSideProps({
   const post = await postById(id);
 
   if (!post) {
+    console.log('Post not found for id:', id);
     return {
       notFound: true,
     };

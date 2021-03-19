@@ -77,6 +77,7 @@ export async function getServerSideProps({
   const course = courses.length > 0 ? courses[0] : null;
 
   if (!post || !course) {
+    console.log('Course or Post slug not found.');
     return {
       notFound: true,
     };
@@ -120,12 +121,7 @@ export async function getServerSideProps({
 
     if (!validUser) {
       if (coursePath) {
-        // return {
-        //   redirect: {
-        //     destination: `/course/${coursePath}?error=${failureType}`,
-        //     permanent: false,
-        //   },
-        // };
+        console.log('Not a member, no product');
         return {
           redirect: {
             destination: `/membership`,
@@ -133,6 +129,7 @@ export async function getServerSideProps({
           },
         };
       } else {
+        console.log('Invalid User', failureType);
         return {
           notFound: true,
         };
