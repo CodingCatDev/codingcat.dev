@@ -91,16 +91,16 @@ export default function PostLayout({
         <section className="top-0 z-10 grid 2xl:sticky">
           <BreakBarLeft>
             <div className="grid w-full gap-4">
-              <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap">
-                <div className="flex flex-col">
+              <section className="flex flex-wrap items-end justify-between w-full gap-4 lg:flex-nowrap">
+                <div className="grid grid-cols-1 gap-2">
                   <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
                     {post.title}
                   </h1>
-                  <section className="flex flex-wrap gap-4 mt-4">
+                  <section className="flex flex-wrap gap-4">
                     <SocialShare href={href} post={post} />
                   </section>
                 </div>
-                {backButton()}
+                <div className="flex-shrink-0">{backButton()}</div>
               </section>
             </div>
           </BreakBarLeft>
