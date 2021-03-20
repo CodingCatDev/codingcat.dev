@@ -29,7 +29,7 @@ export default function Post({
 }): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
-    return <h2>Loading ...</h2>;
+    return <h2 className="grid h-screen place-items-center">Loading ...</h2>;
   }
 
   return (
