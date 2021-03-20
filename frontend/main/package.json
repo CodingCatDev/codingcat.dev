@@ -45,6 +45,7 @@
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^17.0.1",
     "react-firebaseui": "^4.1.0",
+    "react-icons": "^4.2.0",
     "react-instantsearch-dom": "^6.8.2",
     "react-player": "^2.7.2",
     "react-simplemde-editor": "^4.1.3",
