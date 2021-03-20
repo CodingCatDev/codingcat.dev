@@ -84,6 +84,8 @@ export async function getServerSideProps({
   }
 
   if (!validUser) {
+    console.log('User is not valid, or unauthenticated');
+
     return {
       redirect: {
         destination: `/user/profile`,

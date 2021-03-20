@@ -1,5 +1,13 @@
 # CodingCatDev First Release
 
+## 0.0.2 (2021-03-20)
+
+### Release Highlights
+
+- Post Layout Adjustments
+- Sharing Buttons
+- Better SSR error messaging
+
 ## 0.0.1 (2021-03-16)
 
 ### Release Highlights
