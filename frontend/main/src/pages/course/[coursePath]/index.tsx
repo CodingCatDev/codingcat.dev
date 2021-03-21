@@ -173,7 +173,9 @@ export default function Post({
                     )}
                     <div className="flex flex-col justify-center">
                       <h3 className="m-0 text-base font-light">Instructor</h3>
-                      <h4 className="m-0 text-xl">{author.displayName}</h4>
+                      <h4 className="m-0 font-sans text-xl">
+                        {author.displayName}
+                      </h4>
                     </div>
                   </div>
                 </div>

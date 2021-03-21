@@ -63,7 +63,7 @@ export default function PostMedia({
                   controls={true}
                   fluid="true"
                   style={{ height: '100%', width: '100%' }}
-                  className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md"
+                  className="rounded-md"
                 />
               ) : (
                 <div className="grid border-2 border-secondary-600 dark:border-secondary-600 place-items-center min-h-300 xl:h-610">
@@ -76,7 +76,7 @@ export default function PostMedia({
               {post.coverVideo?.url.includes('youtu.be') ||
               post.coverVideo?.url.includes('youtube') ? (
                 <ReactPlayer
-                  className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md react-player"
+                  className="rounded-md react-player"
                   url={post.coverVideo?.url}
                   controls={true}
                   height="0"
@@ -89,7 +89,7 @@ export default function PostMedia({
                 />
               ) : (
                 <ReactPlayer
-                  className="rounded-t-md xl:rounded-tr-none xl:rounded-bl-md react-player"
+                  className="rounded-md"
                   url={post.coverVideo?.url}
                   controls={true}
                   height="100%"
