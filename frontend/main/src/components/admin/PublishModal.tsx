@@ -111,7 +111,7 @@ export default function PublishModal({
           />
         </svg>
       </button>
-      <section className={`${open ? 'block' : 'hidden'}`}>
+      <section className={`${open ? 'grid grid-cols-1 gap-2' : 'hidden'}`}>
         <p>Select Post Date/Time</p>
         <div style={{ height: '100%', width: '100%' }}>
           {selectedDate ? (
@@ -125,7 +125,7 @@ export default function PublishModal({
             <p>Checking Post for publishedAt...</p>
           )}
         </div>
-        <div>
+        <div className="flex space-x-4">
           <button onClick={() => setOpen(false)} color="secondary">
             Cancel
           </button>
