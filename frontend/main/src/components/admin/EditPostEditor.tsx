@@ -56,7 +56,7 @@ export default function EditPostEditor({
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-1 max-w-7xl">
       {/* Top Inputs */}
       <section className="flex flex-wrap mb-4 space-y-4 lg:space-y-0">
         <div className="flex flex-col pr-2">

@@ -235,7 +235,7 @@ export default function EditPost({
             {/* <div className="grid grid-cols-1 gap-4 lg:grid-cols-sidebar"> className="grid grid-cols-1 gap-2"*/}
             {/* Main Input */}
             {tab == TabType.edit ? (
-              <section className="grid grid-cols-1 gap-4 lg:grid-cols-sidebar">
+              <section className="grid grid-cols-1 gap-4 justify-items-stretch 2xl:grid-cols-sidebar">
                 {onTab()}
                 <EditPostSidebar
                   updateContent$={updateContent$}
