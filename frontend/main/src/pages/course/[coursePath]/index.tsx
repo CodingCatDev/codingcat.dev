@@ -190,7 +190,7 @@ export default function Post({
       </section>
 
       {/* MEDIA */}
-      <section className="flex-1 mx-auto mt-12 xl:w-3/4 xl:flex-auto">
+      <section className="flex-1 w-3/4 max-w-5xl mx-auto mt-12 xl:flex-auto">
         <PostMedia post={post} noImage={true} />
       </section>
       <section className="grid grid-cols-1 gap-10 p-4 mx-auto lg:p-0">
