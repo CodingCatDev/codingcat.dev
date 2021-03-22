@@ -92,109 +92,105 @@ export default function Post({
           </OutsideClick>
         </section>
       </div>
-      <section className="grid grid-cols-1">
-        <section className="relative grid items-start content-start grid-cols-1 gap-4">
-          {post.type === PostType.course && (
-            <section className="z-10 grid max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 xl:p-4 bg-basics-50 xl:min-w-300 xl:absolute xl:right-10 xl:-bottom-20">
-              {post.coverPhoto?.path ? (
-                <>
-                  <Image
-                    src={post.coverPhoto?.path}
-                    alt={post.title}
-                    width="480"
-                    height="270"
-                    layout="responsive"
-                    className="rounded-md rounded-b-none cursor-pointer"
-                  />
-                </>
-              ) : (
-                <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                  <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
-                    <AJPrimary className="w-full h-full p-4" />
-                  </div>
+      <section className="relative grid items-start content-start grid-cols-1 gap-4">
+        {post.type === PostType.course && (
+          <section className="z-10 grid w-full max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 xl:w-auto xl:p-4 bg-basics-50 xl:min-w-300 xl:absolute xl:right-10 xl:-bottom-20">
+            {post.coverPhoto?.path ? (
+              <>
+                <Image
+                  src={post.coverPhoto?.path}
+                  alt={post.title}
+                  width="480"
+                  height="270"
+                  layout="responsive"
+                  className="rounded-md rounded-b-none cursor-pointer"
+                />
+              </>
+            ) : (
+              <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
+                  <AJPrimary className="w-full h-full p-4" />
                 </div>
-              )}
-              {/* Beginner/Intermediate/Advanced descriptor */}
-              <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
-                Beginner
-              </p>
-              {member ? (
-                // start course with link instead of telling user to go down on a page?
-                <p className="text-2xl">Access Lessons Below</p>
-              ) : (
-                <>
+              </div>
+            )}
+            {/* Beginner/Intermediate/Advanced descriptor */}
+            <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
+              Beginner
+            </p>
+            {member ? (
+              // start course with link instead of telling user to go down on a page?
+              <p className="text-2xl">Access Lessons Below</p>
+            ) : (
+              <>
+                {product && (
+                  <p className="p-2 text-xl text-basics-900">
+                    ${post.accessSettings?.price}
+                  </p>
+                )}
+                <div className="flex items-center justify-center space-x-4 flex-nowrap">
                   {product && (
-                    <p className="p-2 text-xl text-basics-900">
-                      ${post.accessSettings?.price}
-                    </p>
+                    <CourseBuy
+                      product={product}
+                      setShowMustSignin={setShowMustSignin}
+                    />
                   )}
-                  <div className="flex items-center justify-center space-x-4 flex-nowrap">
-                    {product && (
-                      <CourseBuy
-                        product={product}
-                        setShowMustSignin={setShowMustSignin}
-                      />
-                    )}
-                    {post.accessSettings?.accessMode !== AccessMode.open ? (
-                      <Link href="/membership">
-                        <a>
-                          <button className="btn-primary">
-                            Become a Member
-                          </button>
-                        </a>
-                      </Link>
-                    ) : (
-                      <p className="text-2xl">No Membership Needed ❤️</p>
-                    )}
-                  </div>
-                </>
-              )}
-            </section>
-          )}
-          <section className="grid content-center p-4 pt-6 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-            {/* Title */}
-            <div className="grid grid-cols-1 gap-4 mx-auto">
-              <h1 className="font-sans text-4xl lg:text-7xl">{post.title}</h1>
-              {/* Course Description */}
-              <p className="max-w-sm">{post.excerpt}</p>
-              {/* Instructor */}
-              {post.authors?.map((author, i) => (
-                <div
-                  className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600"
-                  key={i}
-                >
-                  <div className="flex gap-4 ">
-                    {author.photoURL && (
-                      <img
-                        src={author.photoURL}
-                        alt="instructor"
-                        className="w-20 h-20 border-2 rounded-full border-primary-900"
-                      />
-                    )}
-                    <div className="flex flex-col justify-center">
-                      <h3 className="m-0 text-base font-light">Instructor</h3>
-                      <h4 className="m-0 font-sans text-xl">
-                        {author.displayName}
-                      </h4>
-                    </div>
+                  {post.accessSettings?.accessMode !== AccessMode.open ? (
+                    <Link href="/membership">
+                      <a>
+                        <button className="btn-primary">Become a Member</button>
+                      </a>
+                    </Link>
+                  ) : (
+                    <p className="text-2xl">No Membership Needed ❤️</p>
+                  )}
+                </div>
+              </>
+            )}
+          </section>
+        )}
+        <section className="grid content-center p-4 pt-6 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+          {/* Title */}
+          <div className="grid grid-cols-1 gap-4 mx-auto">
+            <h1 className="font-sans text-4xl xl:text-7xl">{post.title}</h1>
+            {/* Course Description */}
+            <p className="max-w-sm">{post.excerpt}</p>
+            {/* Instructor */}
+            {post.authors?.map((author, i) => (
+              <div
+                className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600"
+                key={i}
+              >
+                <div className="flex gap-4 ">
+                  {author.photoURL && (
+                    <img
+                      src={author.photoURL}
+                      alt="instructor"
+                      className="w-20 h-20 border-2 rounded-full border-primary-900"
+                    />
+                  )}
+                  <div className="flex flex-col justify-center">
+                    <h3 className="m-0 text-base font-light">Instructor</h3>
+                    <h4 className="m-0 font-sans text-xl">
+                      {author.displayName}
+                    </h4>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
 
-            {/* Add Instructor Page with List of Instructors and their Bios */}
-            {/* <p className="p-2 xl:p-4">
+          {/* Add Instructor Page with List of Instructors and their Bios */}
+          {/* <p className="p-2 xl:p-4">
           Instructor description: Lorem ipsum dolor sit amet consectetur
           adipisicing elit. Sint ad iusto nobis excepturi deserunt
           exercitationem ex aspernatur sit culpa fugit porro, facere eaque.
           Harum consequuntur corrupti odio blanditiis, culpa officia!
         </p> */}
-          </section>
         </section>
       </section>
 
       {/* MEDIA */}
-      <section className="flex-1 mx-auto mt-12 xl:w-3/4 xl:flex-auto">
+      <section className="flex-1 w-3/4 max-w-5xl mx-auto mt-12 xl:flex-auto">
         <PostMedia post={post} noImage={true} />
       </section>
       <section className="grid grid-cols-1 gap-10 p-4 mx-auto lg:p-0">
