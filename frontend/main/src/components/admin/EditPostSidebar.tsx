@@ -134,14 +134,18 @@ export default function EditPostSidebar({
   }
 
   return (
-    <aside className={`pt-2 ${tab === TabType.edit ? 'block' : 'hidden'}`}>
+    <aside
+      className={`pt-2 ${
+        tab === TabType.edit ? 'grid gap-4 grid-cols-1' : 'hidden'
+      }`}
+    >
       <PublishModal
         history={history}
         setSaving={setSaving}
         setSlugUnique={setSlugUnique}
       />
-      <div className="flex flex-wrap content-center">
-        <div className="flex content-center">
+      <div className="flex flex-wrap">
+        <div className="flex items-center space-x-2">
           <p className="flex">saved: </p>
           <TimeAgo date={history?.updatedAt?.toDate() as Date} />
         </div>

@@ -21,14 +21,16 @@ export default function AdminMenu({
 
   return (
     <section className="relative z-40 grid content-start h-full grid-cols-1 grid-rows-admin">
-      <Link href="/">
-        <a className="flex items-center justify-between gap-4 pl-4 hover:text-white bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
-          <AJLogoLeft />
-          {navOpen && (
-            <h2 className="hidden mr-4 text-2xl lg:block">CodingCat.dev</h2>
-          )}
-        </a>
-      </Link>
+      <div className="grid h-full pl-4 bg-primary-900 dark:bg-primary-900 place-items-center">
+        <Link href="/">
+          <a className="flex items-center justify-between p-2 rounded-lg text-basics-50 dark:text-basics-50 hover:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800">
+            <AJLogoLeft />
+            {navOpen && (
+              <h2 className="hidden mr-4 text-2xl lg:block">CodingCat.dev</h2>
+            )}
+          </a>
+        </Link>
+      </div>
       <AdminNavItems navOpen={navOpen} setNavOpen={setNavOpen} />
       {/* Profile dropdown --> */}
       <section className={`${navOpen ? 'px-4' : 'p-4'}`}>
