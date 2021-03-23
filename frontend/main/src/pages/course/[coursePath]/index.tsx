@@ -113,7 +113,7 @@ export default function Post({
                 </Link>
               </div>
             </section>
-            <section className="grid items-end justify-between gap-4 lg:flex">
+            <section className="grid items-end justify-between gap-4 lg:flex text-basics-50 dark:text-basics-50">
               {post.authors ? (
                 <>
                   {post.authors?.map((author, i) => (
