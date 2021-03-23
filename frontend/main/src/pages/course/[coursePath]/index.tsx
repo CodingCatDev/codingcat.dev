@@ -99,7 +99,7 @@ export default function Post({
         <BreakBarLeft>
           <div className="grid w-full gap-4 ">
             <section className="grid items-center justify-between gap-2 lg:flex">
-              <h1 className="font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
+              <h1 className="font-sans text-5xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
                 {post.title}
               </h1>
               <div className="flex-shrink-0">
