@@ -88,7 +88,7 @@ export default function PostLayout({
           </section>
         )}
 
-        <section className="top-0 z-10 grid 2xl:sticky">
+        <section className="top-0 z-10 grid lg:sticky">
           <BreakBarLeft>
             <div className="grid w-full gap-4">
               {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}
@@ -99,52 +99,65 @@ export default function PostLayout({
                 <div className="flex-shrink-0">{backButton()}</div>
               </section>
               <section className="grid items-end justify-between gap-4 lg:flex">
-                {post.authors?.map((author, i) => (
-                  <header
-                    className="flex flex-wrap gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
-                    key={i}
-                  >
-                    <section className="flex items-center flex-shrink-0 space-x-4">
-                      {author.photoURL && (
-                        <img
-                          src={author.photoURL}
-                          alt="instructor"
-                          className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
-                        />
-                      )}
-
-                      <div className="grid content-start">
-                        <h3 className="m-0 text-base font-light">Author</h3>
-                        <h4 className="m-0 text-xl">{author.displayName}</h4>
-                      </div>
-                    </section>
-
-                    {/* <section>Breadcrumbs &gt; on &gt; and on &gt;</section> */}
-                    <section className="flex flex-wrap items-end justify-between w-full gap-4">
-                      <section className="flex content-start space-x-4">
-                        <p className="flex items-center m-0 space-x-2 text-base font-light">
-                          <svg
-                            className="w-6"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                              clipRule="evenodd"
+                {post.authors ? (
+                  <>
+                    {post.authors?.map((author, i) => (
+                      <header
+                        className="flex flex-wrap gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
+                        key={i}
+                      >
+                        <section className="flex items-center flex-shrink-0 space-x-4">
+                          {author.photoURL && (
+                            <img
+                              src={author.photoURL}
+                              alt="instructor"
+                              className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
                             />
-                          </svg>
-                          <span>{millisecondToUSFormat(post.createdAt)}</span>
-                        </p>
-                        <p className="flex items-center m-0 space-x-2 text-base font-light">
-                          Last Updated:{' '}
-                          <span>{millisecondToUSFormat(post.updatedAt)}</span>
-                        </p>
-                      </section>
-                    </section>
-                  </header>
-                ))}
+                          )}
+
+                          <div className="grid content-start">
+                            <h3 className="m-0 text-base font-light">Author</h3>
+                            <h4 className="m-0 text-xl">
+                              {author.displayName}
+                            </h4>
+                          </div>
+                        </section>
+
+                        {/* <section>Breadcrumbs &gt; on &gt; and on &gt;</section> */}
+                        <section className="flex flex-wrap items-end justify-between w-full gap-4">
+                          <section className="flex content-start space-x-4">
+                            <p className="flex items-center m-0 space-x-2 text-base font-light">
+                              <svg
+                                className="w-6"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <span>
+                                {millisecondToUSFormat(post.createdAt)}
+                              </span>
+                            </p>
+                            <p className="flex items-center m-0 space-x-2 text-base font-light">
+                              Last Updated:{' '}
+                              <span>
+                                {millisecondToUSFormat(post.updatedAt)}
+                              </span>
+                            </p>
+                          </section>
+                        </section>
+                      </header>
+                    ))}
+                  </>
+                ) : (
+                  <div></div>
+                )}
+
                 <div className="flex flex-wrap gap-4 md:flex-nowrap">
                   <SocialShare href={href} post={post} />
                 </div>
@@ -154,6 +167,46 @@ export default function PostLayout({
         </section>
 
         <section className="grid grid-cols-1 gap-4 p-10 2xl:grid-cols-sidebar 2xl:pl-10">
+          {/* LESSONS */}
+          {course && course.sections && (
+            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+              {course.sections.map((section) => (
+                <section
+                  key={section.id}
+                  className="flex flex-col bg-basics-50 rounded-t-md"
+                >
+                  <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                    {section.title}
+                  </h2>
+                  <ul className="flex flex-col flex-grow justify-items-stretch">
+                    {section.lessons &&
+                      section.lessons.map((lesson) => (
+                        <li key={lesson.id} className="ml-0 list-none">
+                          <Link
+                            href={`/course/${course.slug}/lesson/${lesson.slug}`}
+                            key={lesson.id}
+                          >
+                            <div
+                              className={`p-2  cursor-pointer
+                              ${
+                                isActiveLink(course, lesson)
+                                  ? 'bg-primary-200'
+                                  : 'bg-transparent'
+                              }
+                              `}
+                            >
+                              <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
+                                {lesson.title}
+                              </a>
+                            </div>
+                          </Link>
+                        </li>
+                      ))}
+                  </ul>
+                </section>
+              ))}
+            </section>
+          )}
           {/* RECENTS */}
           {recentPosts && (
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">

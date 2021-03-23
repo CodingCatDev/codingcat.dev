@@ -11,6 +11,7 @@ import { Post as PostModel, PostType } from '@/models/post.model';
 import renderToString from 'next-mdx-remote/render-to-string';
 import hydrate, { Source } from 'next-mdx-remote/hydrate';
 import rehypePrism from '@mapbox/rehype-prism';
+import { millisecondToDate, millisecondToUSFormat } from '@/utils/basics/date';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
@@ -25,6 +26,7 @@ import { useEffect } from 'react';
 import { isUserCourseSub, isUserMember, isUserTeam } from '@/services/api';
 import { combineLatest } from 'rxjs';
 import { take } from 'rxjs/operators';
+import BreakBarLeft from '@/components/home/BreakBarLeft';
 
 export default function Post({
   site,
@@ -63,10 +65,11 @@ export default function Post({
   }, [user]);
 
   const content = source ? hydrate(source) : null;
-
+  console.log(post);
   return (
     <Layout site={site}>
-      <div
+      {/* Could not see where this was used. */}
+      {/* <div
         className={`${
           showMustSignin ? 'block' : 'hidden'
         } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
@@ -91,11 +94,87 @@ export default function Post({
             </section>
           </OutsideClick>
         </section>
-      </div>
-      <section className="grid grid-cols-1">
-        <section className="relative grid items-start content-start grid-cols-1 gap-4">
+      </div> */}
+      <section className="top-0 z-10 grid 2xl:sticky">
+        <BreakBarLeft>
+          <div className="grid w-full gap-4 ">
+            <section className="grid items-center justify-between gap-2 lg:flex">
+              <h1 className="font-sans text-5xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
+                {post.title}
+              </h1>
+              <div className="flex-shrink-0">
+                <Link href={`/${post.type}`}>
+                  <a role="link" className="no-underline btn-secondary">
+                    {/* capitalize Courses */}
+                    {`back to ${
+                      post.type.charAt(0).toUpperCase() + post.type.slice(1)
+                    }s`}
+                  </a>
+                </Link>
+              </div>
+            </section>
+            <section className="grid items-end justify-between gap-4 lg:flex text-basics-50 dark:text-basics-50">
+              {post.authors ? (
+                <>
+                  {post.authors?.map((author, i) => (
+                    <>
+                      <section
+                        className="flex items-center flex-shrink-0 space-x-4"
+                        key={i}
+                      >
+                        {author.photoURL && (
+                          <img
+                            src={author.photoURL}
+                            alt="instructor"
+                            className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
+                          />
+                        )}
+
+                        <div className="grid content-start">
+                          <h3 className="m-0 text-base font-light">Author</h3>
+                          <h4 className="m-0 text-xl">{author.displayName}</h4>
+                        </div>
+                      </section>
+
+                      <section className="flex content-start space-x-4">
+                        <p className="flex items-center m-0 space-x-2 text-base font-light">
+                          <svg
+                            className="w-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span>{millisecondToUSFormat(post.createdAt)}</span>
+                        </p>
+                        <p className="flex items-center m-0 space-x-2 text-base font-light">
+                          Last Updated:{' '}
+                          <span>{millisecondToUSFormat(post.updatedAt)}</span>
+                        </p>
+                      </section>
+                    </>
+                  ))}
+                </>
+              ) : (
+                <div></div>
+              )}
+            </section>
+          </div>
+        </BreakBarLeft>
+      </section>
+      <div className="grid grid-cols-1 gap-4 px-4 pb-4 lg:px-10 lg:pb-10 lg:grid-cols-sidebar">
+        <section>
+          <PostMedia post={post} noImage={true} />
+          {content}
+        </section>
+        <section className="grid grid-cols-1 gap-10">
           {post.type === PostType.course && (
-            <section className="z-10 grid max-w-md grid-cols-1 gap-2 p-2 mx-auto mt-4 xl:p-4 bg-basics-50 xl:min-w-300 xl:absolute xl:right-10 xl:-bottom-20">
+            <div className="bg-basics-50">
               {post.coverPhoto?.path ? (
                 <>
                   <Image
@@ -114,121 +193,105 @@ export default function Post({
                   </div>
                 </div>
               )}
+              <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
+                {member ? (
+                  // start course with link instead of telling user to go down on a page?
+                  <>
+                    {post.sections && (
+                      // not sure if this will get the correct slug, I think going to the first lesson here is better UX.
+                      <>
+                        {/*  <Link
+                         href={`/course/${post.sections[0].lessons[0].slug}/lesson/1`}
+                       >
+                         <a>
+                           <button className="btn-primary">Start Course</button>
+                         </a>
+                       </Link> */}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {product && (
+                      <p className="p-2 text-xl text-basics-900">
+                        ${post.accessSettings?.price}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-center space-x-4 flex-nowrap">
+                      {product && (
+                        <CourseBuy
+                          product={product}
+                          setShowMustSignin={setShowMustSignin}
+                        />
+                      )}
+                      {post.accessSettings?.accessMode !== AccessMode.open ? (
+                        <Link href="/membership">
+                          <a>
+                            <button className="btn-primary">
+                              Become a Member
+                            </button>
+                          </a>
+                        </Link>
+                      ) : (
+                        <p className="text-2xl">No Membership Needed ❤️</p>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+          <section>
+            <div className="flex items-center justify-between p-4 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 rounded-t-md">
+              <h2 className="text-xl">Course Content</h2>
               {/* Beginner/Intermediate/Advanced descriptor */}
               <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
                 Beginner
               </p>
-              {member ? (
-                // start course with link instead of telling user to go down on a page?
-                <p className="text-2xl">Access Lessons Below</p>
-              ) : (
-                <>
-                  {product && (
-                    <p className="p-2 text-xl text-basics-900">
-                      ${post.accessSettings?.price}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-center space-x-4 flex-nowrap">
-                    {product && (
-                      <CourseBuy
-                        product={product}
-                        setShowMustSignin={setShowMustSignin}
-                      />
-                    )}
-                    {post.accessSettings?.accessMode !== AccessMode.open ? (
-                      <Link href="/membership">
-                        <a>
-                          <button className="btn-primary">
-                            Become a Member
-                          </button>
-                        </a>
-                      </Link>
-                    ) : (
-                      <p className="text-2xl">No Membership Needed ❤️</p>
-                    )}
-                  </div>
-                </>
-              )}
-            </section>
-          )}
-          <section className="grid content-center p-4 pt-6 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-            {/* Title */}
-            <div className="grid grid-cols-1 gap-4 mx-auto">
-              <h1 className="font-sans text-4xl lg:text-7xl">{post.title}</h1>
-              {/* Course Description */}
-              <p className="max-w-sm">{post.excerpt}</p>
-              {/* Instructor */}
-              {post.authors?.map((author, i) => (
-                <div
-                  className="p-2 xl:p-4 bg-secondary-600 rounded-t-md dark:bg-secondary-600"
-                  key={i}
-                >
-                  <div className="flex gap-4 ">
-                    {author.photoURL && (
-                      <img
-                        src={author.photoURL}
-                        alt="instructor"
-                        className="w-20 h-20 border-2 rounded-full border-primary-900"
-                      />
-                    )}
-                    <div className="flex flex-col justify-center">
-                      <h3 className="m-0 text-base font-light">Instructor</h3>
-                      <h4 className="m-0 text-xl">{author.displayName}</h4>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
-
-            {/* Add Instructor Page with List of Instructors and their Bios */}
-            {/* <p className="p-2 xl:p-4">
-          Instructor description: Lorem ipsum dolor sit amet consectetur
-          adipisicing elit. Sint ad iusto nobis excepturi deserunt
-          exercitationem ex aspernatur sit culpa fugit porro, facere eaque.
-          Harum consequuntur corrupti odio blanditiis, culpa officia!
-        </p> */}
+            {post.sections &&
+              post.sections.map((section, i) => {
+                return (
+                  <section
+                    key={i}
+                    className="grid grid-cols-1 gap-4 p-2 bg-basics-50"
+                  >
+                    <h3 className="font-sans text-lg border-b-2 text-secondary-600 dark:text-secondary-600 border-primary-900 dark:border-primary-900">
+                      {section.title}
+                    </h3>
+                    <ol className="grid grid-cols-1 gap-4">
+                      {section.lessons?.map((lesson, i) => {
+                        return (
+                          <li key={i}>
+                            <Link
+                              href={`/course/${post.slug}/lesson/${lesson.slug}`}
+                              key={lesson.id}
+                            >
+                              <a>
+                                <h4 className="font-sans text-base">
+                                  <span className="">{i + 1}.</span>{' '}
+                                  {lesson.title}
+                                </h4>
+                              </a>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </section>
+                );
+              })}
           </section>
         </section>
-      </section>
-
-      {/* MEDIA */}
-      <section className="flex-1 mx-auto mt-12 xl:w-3/4 xl:flex-auto">
-        <PostMedia post={post} noImage={true} />
-      </section>
-      <section className="grid grid-cols-1 gap-10 p-4 mx-auto lg:p-0">
-        {content}
-        {post.sections &&
-          post.sections.map((section, i) => {
-            return (
-              <section key={i} className="grid grid-cols-1 gap-4">
-                <h3 className="font-sans text-4xl border-b-2 text-secondary-600 dark:text-secondary-600 border-primary-900 dark:border-primary-900">
-                  {section.title}
-                </h3>
-                <ol className="grid grid-cols-1 gap-4 li">
-                  {section.lessons?.map((lesson, i) => {
-                    return (
-                      <li key={i} className="ml-10">
-                        <Link
-                          href={`/course/${post.slug}/lesson/${lesson.slug}`}
-                          key={lesson.id}
-                        >
-                          <a>
-                            <h4 className="font-sans text-3xl">
-                              <span>{i + 1}.</span> {lesson.title}
-                            </h4>
-                          </a>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </section>
-            );
-          })}
-      </section>
-      <style jsx>{`
-        p {
-          width: fit-content;
+      </div>
+      <style global jsx>{`
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: 'Nunito', sans-serif;
+          margin: 0;
         }
       `}</style>
     </Layout>

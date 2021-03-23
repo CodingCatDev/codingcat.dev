@@ -1,5 +1,11 @@
 # CodingCatDev First Release
 
+## 0.0.3 (2021-03-23)
+
+### Release Highlights
+
+- Course Page restructuring
+
 ## 0.0.2 (2021-03-20)
 
 ### Release Highlights
