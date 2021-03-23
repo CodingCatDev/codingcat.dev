@@ -88,7 +88,7 @@ export default function PostLayout({
           </section>
         )}
 
-        <section className="top-0 z-10 grid 2xl:sticky">
+        <section className="top-0 z-10 grid lg:sticky">
           <BreakBarLeft>
             <div className="grid w-full gap-4">
               {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}

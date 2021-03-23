@@ -145,56 +145,56 @@ export default function AdminNavItems({
         <ul className="grid content-center grid-cols-1 gap-4">
           <li className="grid justify-center w-full">
             <Link href="/admin">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <AJPrimary className="block w-8 h-8" />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/course">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <Courses />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/lesson">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <Lessons />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/tutorial">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <Tutorials />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/post">
-              <a className="flex items-center space-x-4 links-secondary">
-                <Blog />
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
+                <Blog className="h-8" />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/podcast">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <Podcasts />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/community">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <Community />
               </a>
             </Link>
           </li>
           <li className="grid justify-center w-full">
             <Link href="/admin/page">
-              <a className="flex items-center space-x-4 links-secondary">
+              <a className="p-1 space-x-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 links-secondary">
                 <Pages />
               </a>
             </Link>
