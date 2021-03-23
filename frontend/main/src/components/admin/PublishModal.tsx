@@ -23,6 +23,7 @@ export default function PublishModal({
 }): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [largeButton, setLargeButton] = useState(true);
 
   useEffect(() => {
     if (!history) {
@@ -44,6 +45,7 @@ export default function PublishModal({
 
   const handleClickOpen = () => {
     setOpen(true);
+    setLargeButton(false);
   };
   const handleClose = () => {
     setOpen(false);
@@ -63,6 +65,7 @@ export default function PublishModal({
 
   function onPublish() {
     setOpen(false);
+    setLargeButton(true);
     if (history && selectedDate) {
       validSlug(history.slug).subscribe((unique) => {
         setSlugUnique(unique);
@@ -86,31 +89,34 @@ export default function PublishModal({
   }
 
   return (
-    <div className="mb-4">
-      <button
-        className="flex items-center justify-center w-full h-16 uppercase btn-primary"
-        onClick={handleClickOpen}
-      >
-        <p>Publish</p>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          style={{
-            height: '1.5rem',
-            width: '1.5rem',
-            marginLeft: '1rem',
-          }}
+    <div>
+      {largeButton && (
+        <button
+          className="flex items-center justify-center w-full h-16 uppercase btn-primary"
+          onClick={handleClickOpen}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-          />
-        </svg>
-      </button>
+          <p>Publish</p>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            style={{
+              height: '1.5rem',
+              width: '1.5rem',
+              marginLeft: '1rem',
+            }}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+            />
+          </svg>
+        </button>
+      )}
+
       <section className={`${open ? 'grid grid-cols-1 gap-2' : 'hidden'}`}>
         <p>Select Post Date/Time</p>
         <div style={{ height: '100%', width: '100%' }}>
