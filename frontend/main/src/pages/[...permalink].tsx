@@ -15,6 +15,8 @@ import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
+import AJLoading from '@/components/global/icons/AJLoading';
+import Layout from '@/layout/Layout';
 
 export default function Post({
   site,
@@ -29,9 +31,15 @@ export default function Post({
 }): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
-    return <h2 className="grid h-screen place-items-center">Loading ...</h2>;
+    return (
+      <Layout site={site}>
+        <section className="max-w-md p-10 mx-auto">
+          <h1>Loading...</h1>
+          <AJLoading className="w-full h-auto" />
+        </section>
+      </Layout>
+    );
   }
-
   return (
     <>
       <NextSeo
