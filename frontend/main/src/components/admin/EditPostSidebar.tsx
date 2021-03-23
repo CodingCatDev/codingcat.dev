@@ -136,7 +136,9 @@ export default function EditPostSidebar({
   return (
     <aside
       className={`pt-2 ${
-        tab === TabType.edit ? 'grid gap-4 grid-cols-1' : 'hidden'
+        tab === TabType.edit
+          ? 'row-start-1 min-w-lg 2xl:col-start-2 max-w-5xl grid gap-4 grid-cols-1 content-start'
+          : 'hidden'
       }`}
     >
       <PublishModal
