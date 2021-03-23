@@ -58,21 +58,25 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   </a>
                 </Link>
 
-                <section className="grid h-full gap-2 p-4">
-                  <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
-                    <Link href={`/${post.type}/${post.slug}`}>
-                      <a>{post.title}</a>
-                    </Link>
-                  </h3>
-                  <p className="text-sm font-hairline text-basics-900">
-                    {post.excerpt}
-                  </p>
-                  <div>
-                    {post.authors?.map((author, i) => (
-                      <h4 key={i} className="font-sans text-lg">
-                        {author.displayName}
-                      </h4>
-                    ))}
+                <section className="grid h-full grid-cols-1 gap-2 p-4">
+                  <div className="space-y-2">
+                    <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
+                      <Link href={`/${post.type}/${post.slug}`}>
+                        <a>{post.title}</a>
+                      </Link>
+                    </h3>
+                    {post.excerpt && (
+                      <p className="text-sm font-hairline text-basics-900">
+                        {post.excerpt}
+                      </p>
+                    )}
+                    <div>
+                      {post.authors?.map((author, i) => (
+                        <h4 key={i} className="font-sans text-lg">
+                          {author.displayName}
+                        </h4>
+                      ))}
+                    </div>
                   </div>
                   <div className="grid self-end justify-start grid-cols-2 gap-2 font-bold tracking-wider">
                     {post.type === 'course' && (
