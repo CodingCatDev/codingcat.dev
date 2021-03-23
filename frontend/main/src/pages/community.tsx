@@ -19,7 +19,8 @@ export default function Community({
         title="Community | CodingCatDev"
         canonical={`https://codingcat.dev/community/`}
       ></NextSeo>
-      <section className="grid grid-cols-1 gap-10 p-4 place-items-center">
+      <section className="grid grid-cols-1 gap-10 p-4 sm:p-10 place-items-center">
+        <h1 className="text-5xl lg:text-7xl">Community</h1>
         <a
           href="https://discord.gg/kGYAaAKZQf"
           className="flex px-4 py-2 space-x-2 transform rounded-md shadow-lg bg-basics-600 dark:bg-basics-600 hover:text-basics-50 dark:hover:text-basics-50 text-basics-50 dark:text-basics-50 hover:shadow-md hover:opacity-90"
@@ -42,14 +43,14 @@ export default function Community({
           </svg>
           <span className="css-1y6ic72">Join Discord</span>
         </a>
-        <section className="max-w-2xl text-3xl text-center">
-          <h1 className="font-sans text-3xl ">
+        <section className="max-w-2xl text-center">
+          <h2 className="font-sans text-3xl ">
             CodingCat.Dev Discord Community
-          </h1>
-          <h2 className="font-sans text-2xl">
+          </h2>
+          <h3 className="font-sans text-2xl">
             A safe place for anyone to drop in, hang out, ask questions, and
             chat about topics surrounding development.
-          </h2>
+          </h3>
         </section>
         <iframe
           className="max-w-sm"
