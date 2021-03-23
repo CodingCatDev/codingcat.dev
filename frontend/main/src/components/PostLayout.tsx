@@ -167,6 +167,46 @@ export default function PostLayout({
         </section>
 
         <section className="grid grid-cols-1 gap-4 p-10 2xl:grid-cols-sidebar 2xl:pl-10">
+          {/* LESSONS */}
+          {course && course.sections && (
+            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+              {course.sections.map((section) => (
+                <section
+                  key={section.id}
+                  className="flex flex-col bg-basics-50 rounded-t-md"
+                >
+                  <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                    {section.title}
+                  </h2>
+                  <ul className="flex flex-col flex-grow justify-items-stretch">
+                    {section.lessons &&
+                      section.lessons.map((lesson) => (
+                        <li key={lesson.id} className="ml-0 list-none">
+                          <Link
+                            href={`/course/${course.slug}/lesson/${lesson.slug}`}
+                            key={lesson.id}
+                          >
+                            <div
+                              className={`p-2  cursor-pointer
+                              ${
+                                isActiveLink(course, lesson)
+                                  ? 'bg-primary-200'
+                                  : 'bg-transparent'
+                              }
+                              `}
+                            >
+                              <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
+                                {lesson.title}
+                              </a>
+                            </div>
+                          </Link>
+                        </li>
+                      ))}
+                  </ul>
+                </section>
+              ))}
+            </section>
+          )}
           {/* RECENTS */}
           {recentPosts && (
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
