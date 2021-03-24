@@ -20,7 +20,12 @@ export default function Tutorials({
         canonical={`https://codingcat.dev/tutorials/`}
       ></NextSeo>
 
-      <PostsCards posts={posts} />
+      <div className="p-4 sm:p-10">
+        <h1 className="mb-4 text-5xl text-center lg:text-7xl">
+          {posts[0].type.charAt(0).toUpperCase() + posts[0].type.slice(1)}s
+        </h1>
+        <PostsCards posts={posts} />
+      </div>
     </Layout>
   );
 }
