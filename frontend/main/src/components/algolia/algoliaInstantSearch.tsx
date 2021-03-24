@@ -87,7 +87,7 @@ const HitList = (show: any) => {
             <hr className="mt-2 opacity-20 text-primary-900" />
           </header>
           {searchIndices.map(({ name, title, hitComp }) => (
-            <main className="pr-2 overflow-y-auto max-h-80" key={name}>
+            <main className="pr-2 overflow-y-auto" key={name}>
               <Index indexName={name}>
                 <Results>
                   <Hits
@@ -106,6 +106,9 @@ const HitList = (show: any) => {
         </InstantSearch>
       )}
       <style global jsx>{`
+        .ais-Hits {
+          max-height: 50%;
+        }
         .ais-Hits-list {
           display: grid;
           gap: 0.5rem;
