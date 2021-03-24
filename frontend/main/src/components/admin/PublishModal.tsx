@@ -63,6 +63,11 @@ export default function PublishModal({
     return postsSlugUnique(slug, history?.postId).pipe(take(1));
   }
 
+  function onCancel() {
+    setOpen(false);
+    setLargeButton(true);
+  }
+
   function onPublish() {
     setOpen(false);
     setLargeButton(true);
@@ -132,7 +137,7 @@ export default function PublishModal({
           )}
         </div>
         <div className="flex space-x-4">
-          <button onClick={() => setOpen(false)} color="secondary">
+          <button onClick={() => onCancel()} className="btn-secondary">
             Cancel
           </button>
           <button onClick={() => onPublish()} className="btn-primary">
