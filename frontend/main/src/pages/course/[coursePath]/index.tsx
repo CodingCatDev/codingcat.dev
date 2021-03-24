@@ -65,7 +65,6 @@ export default function Post({
   }, [user]);
 
   const content = source ? hydrate(source) : null;
-  console.log(post);
   return (
     <Layout site={site}>
       {/* Could not see where this was used. */}
