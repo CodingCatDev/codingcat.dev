@@ -82,12 +82,12 @@ const HitList = (show: any) => {
           indexName={searchIndices[0].name}
           searchClient={searchClient}
         >
-          <header className="grid grid-cols-1 gap-4">
+          <header>
             <CustomSearchBox />
-            <hr className="opacity-20 text-primary-900" />
+            <hr className="mt-2 opacity-20 text-primary-900" />
           </header>
           {searchIndices.map(({ name, title, hitComp }) => (
-            <main className="w-full my-4" key={name}>
+            <main className="pr-2 overflow-y-auto max-h-80" key={name}>
               <Index indexName={name}>
                 <Results>
                   <Hits
@@ -97,14 +97,21 @@ const HitList = (show: any) => {
               </Index>
             </main>
           ))}
-          <footer className="grid w-full grid-cols-1 row-start-3 gap-4">
-            <hr className="opacity-20 text-primary-900" />
+          <footer>
+            <hr className="mb-2 opacity-20 text-primary-900" />
             <div className="justify-self-end">
               <PoweredBy />
             </div>
           </footer>
         </InstantSearch>
       )}
+      <style global jsx>{`
+        .ais-Hits-list {
+          display: grid;
+          gap: 0.5rem;
+          width: fit-content;
+        }
+      `}</style>
     </>
   );
 };

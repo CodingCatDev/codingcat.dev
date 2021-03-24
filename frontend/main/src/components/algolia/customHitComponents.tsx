@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { PostType } from '@/models/post.model';
 import Courses from '@/components/global/icons/nav/Courses';
 import Blog from '@/components/global/icons/nav/Blog';
+import Pages from '@/components/global/icons/nav/Pages';
 import Community from '@/components/global/icons/nav/Community';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
@@ -13,6 +14,8 @@ export const BlogPostHit = (
 ) => ({ hit }: any) => {
   function typeIcon(type: string) {
     switch (type) {
+      case PostType.page:
+        return <Pages />;
       case PostType.post:
         return <Blog />;
       case PostType.course:
@@ -27,37 +30,36 @@ export const BlogPostHit = (
   }
 
   return (
-    <Link href={`/${hit.type}/${hit.slug}`}>
-      <a>
-        <div className="rounded hover:bg-purple-900 hover:text-white focus:bg-purple-900 focus:text-white">
-          <div className="grid grid-cols-12 gap-2">
-            <span className="grid grid-cols-2 col-span-3">
-              <div className="col-span-1">{typeIcon(hit.type)}</div>
-              <div className="hidden col-span-1 sm:block ">
-                <p className="p-1 text-xs text-center text-white bg-red-700 rounded-lg">
-                  {hit.type}
-                </p>
-              </div>
-            </span>
-            <div className="col-span-9">
-              <p>
-                <Highlight
-                  attribute="title"
-                  hit={hit}
-                  tagName="mark"
-                  className="font-sans font-semibold leading-tight text-current text-md"
-                />
-              </p>
-              <Highlight
-                attribute="excerpt"
-                hit={hit}
-                tagName="mark"
-                className="text-sm text-current"
-              />
-            </div>
+    <>
+      <Link href={`/${hit.type}/${hit.slug}`}>
+        <a className="grid items-center gap-2 p-2 transition-colors rounded-md grid-cols-search text-basics-900 bg-primary-50 hover:bg-primary-100 hover:text-basics-900">
+          <div className="grid place-items-center">
+            {typeIcon(hit.type)}
+            <p className="text-xs text-center">{hit.type}</p>
           </div>
-        </div>
-      </a>
-    </Link>
+          <p>
+            <Highlight
+              attribute="title"
+              hit={hit}
+              tagName="mark"
+              className="font-sans leading-tight text-current justify-self-end text-md"
+            />
+          </p>
+          {/* <Highlight
+          attribute="excerpt"
+          hit={hit}
+          tagName="mark"
+          className="text-sm text-current"
+        /> */}
+        </a>
+      </Link>
+
+      <style jsx>{`
+        a {
+          transition-duration: 0s;
+          transition: none;
+        }
+      `}</style>
+    </>
   );
 };
