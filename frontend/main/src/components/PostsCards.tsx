@@ -8,9 +8,6 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
     <>
       {posts && posts.length > 0 ? (
         <div className="p-4 sm:p-10">
-          <h1 className="mb-4 text-5xl text-center lg:text-7xl">
-            {posts[0].type.charAt(0).toUpperCase() + posts[0].type.slice(1)}s
-          </h1>
           <section className="relative grid gap-4 grid-cols-fit sm:gap-10">
             {posts.map((post) => {
               return (
@@ -50,6 +47,13 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                           <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
                             <AJPrimary className="w-full h-full p-4" />
                           </div>
+                          {post.type === 'course' ? (
+                            <p className="absolute px-4 py-2 rounded-full bg-secondary-600 dark:bg-secondary-600 -bottom-12 -right-8 text-basics-50 dark:text-basics-50">
+                              Start now
+                            </p>
+                          ) : (
+                            <></>
+                          )}
                         </div>
                       )}
                     </a>
