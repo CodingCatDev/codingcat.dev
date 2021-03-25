@@ -59,6 +59,7 @@ export default function Post({
       combineLatest([isUserTeam$, isUserMember$, isUserCourseSub$])
         .pipe(take(1))
         .subscribe((c) => {
+          console.log(c);
           setMember(c.includes(true));
         });
     }
@@ -67,33 +68,6 @@ export default function Post({
   const content = source ? hydrate(source) : null;
   return (
     <Layout site={site}>
-      {/* Could not see where this was used. */}
-      {/* <div
-        className={`${
-          showMustSignin ? 'block' : 'hidden'
-        } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
-      >
-        <section
-          className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
-          aria-labelledby="slide-over-heading"
-        >
-          <OutsideClick toggle={setShowMustSignin} value={false}>
-            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
-              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
-                <div>Please Sign in First.</div>
-                <Link href="/membership">
-                  <a>
-                    <button className="btn-secondary">Sign In</button>
-                  </a>
-                </Link>
-                <div>
-                  Then you can purchase courses directly, or become a member.
-                </div>
-              </div>
-            </section>
-          </OutsideClick>
-        </section>
-      </div> */}
       <section className="top-0 z-10 grid 2xl:sticky">
         <BreakBarLeft>
           <div className="grid w-full gap-4 ">
@@ -198,20 +172,25 @@ export default function Post({
               )}
               <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
                 {member ? (
-                  // start course with link instead of telling user to go down on a page?
                   <>
-                    {post.sections && (
-                      // not sure if this will get the correct slug, I think going to the first lesson here is better UX.
-                      <>
-                        {/*  <Link
-                         href={`/course/${post.sections[0].lessons[0].slug}/lesson/1`}
-                       >
-                         <a>
-                           <button className="btn-primary">Start Course</button>
-                         </a>
-                       </Link> */}
-                      </>
-                    )}
+                    {post.sections &&
+                      post.sections.map((section, i) => {
+                        return (
+                          <>
+                            {section.lessons && (
+                              <Link
+                                href={`/course/${post.slug}/lesson/${section.lessons[0].slug}`}
+                              >
+                                <a>
+                                  <button className="btn-primary">
+                                    Start Course
+                                  </button>
+                                </a>
+                              </Link>
+                            )}
+                          </>
+                        );
+                      })}
                   </>
                 ) : (
                   <>
