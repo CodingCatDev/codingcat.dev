@@ -14,7 +14,7 @@ export default function SearchModal(): JSX.Element {
 
   const Modal = ({ handleClose, show, children }: any) => {
     const showHideclassNameName = show
-      ? 'w-screen h-screen fixed inset-0 z-50 bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 p-24'
+      ? 'fixed inset-0 z-50 bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 grid place-items-center h-screen'
       : 'hidden';
     return <section className={showHideclassNameName}>{children}</section>;
   };
@@ -24,13 +24,13 @@ export default function SearchModal(): JSX.Element {
       {show && (
         <Modal show={show} handleClose={hideModal}>
           <section
-            className="grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 bg-basics-50"
+            className="relative grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 max-h-1/2 bg-basics-50 text-basics-900"
             style={{
               animation:
                 'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
             }}
           >
-            <section className="relative grid w-full h-full grid-cols-1 gap-4 p-4 grid-rows-search">
+            <section className="absolute grid w-full h-full gap-4 p-4 grid-rows-search">
               <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
               <button
                 className="absolute top-0 right-0 p-5 text-2xl transition-colors rounded-full text-primary-900 hover:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-900"
