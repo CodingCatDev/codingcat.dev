@@ -1,5 +1,12 @@
 # CodingCatDev First Release
 
+## 0.0.4 (2021-03-25)
+
+### Release Highlights
+
+- Added Google Tag Manager
+- Fixed Bug in Membership on Course Page
+
 ## 0.0.3 (2021-03-23)
 
 ### Release Highlights
