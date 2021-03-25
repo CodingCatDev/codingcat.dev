@@ -76,12 +76,12 @@ export default function Membership({
               {user && user.uid ? (
                 <div
                   className={`${
-                    user.memberships ? 'w-full' : 'mx-auto'
+                    member ? 'w-full' : 'mx-auto'
                   } "w-full relative z-0 px-8 md:px-0 md:py-16"`}
                 >
                   <div
                     className={`${
-                      user.memberships
+                      member
                         ? 'rounded'
                         : 'rounded-b md:rounded-b-none md:rounded-r'
                     } flex flex-wrap bg-white max-w-lg shadow-lg overflow-hidden mx-auto`}
@@ -104,7 +104,7 @@ export default function Membership({
                         </button>
                       </div>
                     </div>
-                    {user && !user.memberships && (
+                    {user && !member && (
                       <div className="p-8 text-xl text-primary-800">
                         <p className="p-2">
                           Welcome {user.displayName}! You are now signed in.
@@ -119,15 +119,6 @@ export default function Membership({
                           below.
                         </p>
                       </div>
-                    )}
-                    {user && user.memberships && (
-                      <p className="p-8 text-xl text-primary-800">
-                        Welcome Back{' '}
-                        <span className="font-bold">{user.displayName}</span>!
-                        You can see all of your information in the selections
-                        below, just click the button and a detailed table data
-                        will appear.
-                      </p>
                     )}
                   </div>
                 </div>
