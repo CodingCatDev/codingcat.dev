@@ -2,16 +2,17 @@ import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import PostsCards from '@/components/PostsCards';
 
-import { getSite, postsService } from '@/services/serversideApi';
-import { Post, PostType } from '@/models/post.model';
+import { getAuthorProfiles, getSite } from '@/services/serversideApi';
+import { Post } from '@/models/post.model';
 import { Site } from '@/models/site.model';
+import { UserInfoExtended } from '@/models/user.model';
 
 export default function Community({
   site,
-  posts,
+  authors,
 }: {
   site: Site | null;
-  posts: Post[];
+  authors: UserInfoExtended[];
 }): JSX.Element {
   return (
     <Layout site={site}>
@@ -60,6 +61,11 @@ export default function Community({
           sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
         ></iframe>
       </section>
+      <section className="grid">
+        {authors.map((author, i) => (
+          <>{author.displayName}</>
+        ))}
+      </section>
     </Layout>
   );
 }
@@ -67,16 +73,22 @@ export default function Community({
 export async function getStaticProps(): Promise<{
   props: {
     site: Site | null;
-    posts: Post[];
+    authors: UserInfoExtended[];
   };
   revalidate: number;
 }> {
   const site = await getSite();
-  const posts = await postsService(PostType.group);
+  const allAuthors = await getAuthorProfiles();
+
+  // Return only authors with Profile Data
+  const authors = allAuthors.filter((a) =>
+    Object.keys(a).includes('basicInfo')
+  );
+
   return {
     props: {
       site,
-      posts,
+      authors,
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in
