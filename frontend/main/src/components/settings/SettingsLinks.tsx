@@ -16,7 +16,7 @@ export default function UserProfile() {
             <a className={links}>Membership</a>
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link href="/user/notifications">
             <a className={links}>Notifications</a>
           </Link>
@@ -25,7 +25,7 @@ export default function UserProfile() {
           <Link href="/user/support">
             <a className={links}>Contact Support</a>
           </Link>
-        </li>
+        </li> */}
       </ul>
     </nav>
   );
