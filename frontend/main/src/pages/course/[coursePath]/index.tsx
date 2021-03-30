@@ -24,7 +24,7 @@ import OutsideClick from '@/components/OutsideClick';
 import { useUser } from '@/utils/auth/useUser';
 import { useEffect } from 'react';
 import { isUserCourseSub, isUserMember, isUserTeam } from '@/services/api';
-import { combineLatest } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 
@@ -52,14 +52,15 @@ export default function Post({
   const { user } = useUser();
 
   useEffect(() => {
-    if (user && user.uid && product) {
+    if (user && user.uid) {
       const isUserTeam$ = isUserTeam(user.uid);
       const isUserMember$ = isUserMember(user.uid);
-      const isUserCourseSub$ = isUserCourseSub(user.uid, product.id);
+      const isUserCourseSub$ = product
+        ? isUserCourseSub(user.uid, product.id)
+        : of(false);
       combineLatest([isUserTeam$, isUserMember$, isUserCourseSub$])
         .pipe(take(1))
         .subscribe((c) => {
-          console.log(c);
           setMember(c.includes(true));
         });
     }
@@ -76,7 +77,7 @@ export default function Post({
                 {post.title}
               </h1>
               <div className="flex-shrink-0">
-                <Link href={`/${post.type}`}>
+                <Link href={`/courses`}>
                   <a role="link" className="no-underline btn-secondary">
                     {/* capitalize Courses */}
                     {`back to ${
@@ -91,27 +92,23 @@ export default function Post({
                 <>
                   <section className="flex items-center gap-2">
                     {post.authors?.map((author, i) => (
-                      <>
-                        <section
-                          className="flex items-center flex-shrink-0 space-x-4"
-                          key={i}
-                        >
-                          {author.photoURL && (
-                            <img
-                              src={author.photoURL}
-                              alt="instructor"
-                              className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
-                            />
-                          )}
+                      <section
+                        className="flex items-center flex-shrink-0 space-x-4"
+                        key={i}
+                      >
+                        {author.photoURL && (
+                          <img
+                            src={author.photoURL}
+                            alt="instructor"
+                            className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
+                          />
+                        )}
 
-                          <div className="grid content-start">
-                            <h3 className="m-0 text-base font-light">Author</h3>
-                            <h4 className="m-0 text-xl">
-                              {author.displayName}
-                            </h4>
-                          </div>
-                        </section>
-                      </>
+                        <div className="grid content-start">
+                          <h3 className="m-0 text-base font-light">Author</h3>
+                          <h4 className="m-0 text-xl">{author.displayName}</h4>
+                        </div>
+                      </section>
                     ))}
                   </section>
 
@@ -171,53 +168,66 @@ export default function Post({
                 </div>
               )}
               <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
-                {member ? (
+                {post.accessSettings?.accessMode !== AccessMode.open ? (
                   <>
-                    {post.sections &&
-                      post.sections.map((section, i) => {
-                        return (
-                          <>
-                            {section.lessons && (
-                              <Link
-                                href={`/course/${post.slug}/lesson/${section.lessons[0].slug}`}
-                              >
-                                <a>
-                                  <button className="btn-primary">
-                                    Start Course
-                                  </button>
-                                </a>
-                              </Link>
-                            )}
-                          </>
-                        );
-                      })}
+                    {member ? (
+                      <>
+                        {post.sections &&
+                          post.sections[0] &&
+                          post.sections[0].lessons &&
+                          post.sections[0].lessons[0] && (
+                            <Link
+                              href={`/course/${post.slug}/lesson/${post.sections[0].lessons[0].slug}`}
+                            >
+                              <a>
+                                <button className="btn-primary">
+                                  Start Course
+                                </button>
+                              </a>
+                            </Link>
+                          )}
+                      </>
+                    ) : (
+                      <>
+                        {product && (
+                          <p className="p-2 text-xl text-basics-900">
+                            ${post.accessSettings?.price}
+                          </p>
+                        )}
+                        <div className="flex items-center justify-center space-x-4 flex-nowrap">
+                          {product && (
+                            <CourseBuy
+                              product={product}
+                              setShowMustSignin={setShowMustSignin}
+                            />
+                          )}
+                          <Link href="/membership">
+                            <a>
+                              <button className="btn-primary">
+                                Become a Member
+                              </button>
+                            </a>
+                          </Link>
+                        </div>
+                      </>
+                    )}
                   </>
                 ) : (
                   <>
-                    {product && (
-                      <p className="p-2 text-xl text-basics-900">
-                        ${post.accessSettings?.price}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-center space-x-4 flex-nowrap">
-                      {product && (
-                        <CourseBuy
-                          product={product}
-                          setShowMustSignin={setShowMustSignin}
-                        />
-                      )}
-                      {post.accessSettings?.accessMode !== AccessMode.open ? (
-                        <Link href="/membership">
+                    {post.sections &&
+                      post.sections[0] &&
+                      post.sections[0].lessons &&
+                      post.sections[0].lessons[0] && (
+                        <Link
+                          href={`/course/${post.slug}/lesson/${post.sections[0].lessons[0].slug}`}
+                        >
                           <a>
                             <button className="btn-primary">
-                              Become a Member
+                              Start Course
                             </button>
                           </a>
                         </Link>
-                      ) : (
-                        <p className="text-2xl">No Membership Needed ❤️</p>
                       )}
-                    </div>
                   </>
                 )}
               </div>
@@ -235,7 +245,7 @@ export default function Post({
               post.sections.map((section, i) => {
                 return (
                   <section
-                    key={i}
+                    key={`section-${i}`}
                     className="grid grid-cols-1 gap-4 p-2 bg-basics-50"
                   >
                     <h3 className="font-sans text-lg border-b-2 text-secondary-600 dark:text-secondary-600 border-primary-900 dark:border-primary-900">
@@ -244,7 +254,7 @@ export default function Post({
                     <ol className="grid grid-cols-1 gap-4">
                       {section.lessons?.map((lesson, i) => {
                         return (
-                          <li key={i}>
+                          <li key={`lesson-${i}`}>
                             <Link
                               href={`/course/${post.slug}/lesson/${lesson.slug}`}
                               key={lesson.id}

@@ -64,10 +64,10 @@ export default function UserProfile(): JSX.Element {
 
   return (
     <section className="grid gap-4">
-      <section className="grid gap-4 p-4 rounded-md bg-primary-900 text-basics-50">
+      <section className="grid gap-2 p-4 rounded-md bg-primary-900 text-basics-50">
         <h2 className="font-sans text-2xl">User</h2>
         <form className="grid gap-4">
-          <div className="grid gap-1">
+          <div className="grid gap-4">
             {profile.photoURL ? (
               <img
                 className="w-24"
@@ -85,13 +85,11 @@ export default function UserProfile(): JSX.Element {
                 alt="Avatar Image Placeholder"
               />
             )}
-            <div className="w-48 ">
-              <UserProfileCloudinaryUpload
-                profile={profile}
-                setProfile={setProfile}
-                user={user}
-              />
-            </div>
+            <UserProfileCloudinaryUpload
+              profile={profile}
+              setProfile={setProfile}
+              user={user}
+            />
           </div>
           <div className="grid gap-1">
             <label htmlFor="name">Name</label>

@@ -22,11 +22,17 @@ export const onPostCreate = functions.firestore
     }
 
     // Rules should require that all posts have a status of
-    // history on initial create
+    // history on initial create, that the course is closed.
     const id = uuid();
-    await firestore
-      .doc(`posts/${context.params.postId}/history/${id}`)
-      .set({ ...post, id, postId: context.params.postId, authors });
+    await firestore.doc(`posts/${context.params.postId}/history/${id}`).set({
+      ...post,
+      id,
+      postId: context.params.postId,
+      authors,
+      accessSettings: {
+        accessMode: 'closed',
+      },
+    });
 
     // Set current post to history
     return firestore
@@ -60,6 +66,7 @@ export const onHistoryWrite = functions.firestore
   .document('posts/{postId}/history/{id}')
   .onWrite(async (snap, context) => {
     const post = snap.before.data();
+    const postUpdate = snap.after.data();
 
     if (!post) {
       console.log('post missing data');
@@ -75,13 +82,32 @@ export const onHistoryWrite = functions.firestore
       if (author) {
         authors.push(author);
       }
-
-      return firestore
+      console.log('Adding missing author.');
+      await firestore
         .doc(`posts/${context.params.postId}/history/${context.params.id}`)
         .set({ authors }, { merge: true });
-    } else {
-      return;
     }
+
+    // Update Missing post settings
+    if (!post.accessSettings && postUpdate && !postUpdate.accessSettings) {
+      console.log(
+        'History had accessSettings of: ',
+        JSON.stringify(post.accessSettings)
+      );
+      console.log('Updating those to be closed.');
+
+      await firestore
+        .doc(`posts/${context.params.postId}/history/${context.params.id}`)
+        .set(
+          {
+            accessSettings: {
+              accessMode: 'closed',
+            },
+          },
+          { merge: true }
+        );
+    }
+    return false;
   });
 
 async function getPostCreatorProfile(post: any) {
