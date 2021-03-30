@@ -63,7 +63,10 @@ export default function Community({
       </section>
       <section className="grid">
         {authors.map((author, i) => (
-          <>{author.displayName}</>
+          <div key={i} className="flex flex-col">
+            <p>{author.displayName}</p>
+            <p>{author.basicInfo?.about}</p>
+          </div>
         ))}
       </section>
     </Layout>
