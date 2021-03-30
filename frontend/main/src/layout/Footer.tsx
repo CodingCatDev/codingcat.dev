@@ -139,16 +139,31 @@ export default function Footer({
           <section className="grid grid-cols-1 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
             <h4 className="underline">Newsletter</h4>
             <p className="text-xl">Subscribe for all the latest updates.</p>
-            <form className="grid grid-cols-1">
+            <form
+              className="grid grid-cols-1"
+              action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
+              method="post"
+              target="popupwindow"
+              onSubmit={() =>
+                window.open(
+                  'https://buttondown.email/codingcatdev',
+                  'popupwindow'
+                )
+              }
+            >
               <label htmlFor="subEmail">Email</label>
               <div className="flex flex-wrap gap-4 lg:flex-nowrap">
                 <input
-                  id="subEmail"
+                  name="email"
+                  id="bd-email"
                   type="email"
                   placeholder="alex@codingcat.dev"
                 />
+                <input type="hidden" value="1" name="embed" />
 
-                <button className="btn-secondary">Subscribe</button>
+                <button className="btn-secondary" type="submit">
+                  Subscribe
+                </button>
               </div>
             </form>
           </section>
