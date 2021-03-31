@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
-import Link from 'next/link';
 import Layout from '@/layout/Layout';
+import Authors from '@/components/authors/Authors';
 
 import { getAuthorProfiles, getSite } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
@@ -53,37 +53,7 @@ export default function Community({
             </a>
           </div>
         </section>
-        <section className="max-w-2xl text-center">
-          <h2 className="mb-2 text-4xl lg:text-5xl">Authors & Instructors</h2>
-          <h3 className="font-sans text-2xl">
-            Our wonderful team of humans who are here to help you become a{' '}
-            <span className="font-heading text-secondary-600 dark:text-secondary-600">
-              Purrfect
-            </span>{' '}
-            developer.
-          </h3>
-        </section>
-        <section className="grid">
-          {authors.map((author, i) => (
-            <Link href="/authors/author" key={i}>
-              <a>
-                <article className="grid items-center h-full grid-cols-1 shadow-lg lg:flex bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-md">
-                  {/* <img
-                    src={author.photoURL}
-                    alt={author.displayName}
-                    className="w-full h-full max-w-sm mx-auto"
-                  /> */}
-                  <div className="h-full max-h-full p-4 space-y-2 overflow-y-auto ">
-                    <h3 className="font-sans text-3xl lg:text-4xl">
-                      {author.displayName}
-                    </h3>
-                    <p className="">{author.basicInfo?.about}</p>
-                  </div>
-                </article>
-              </a>
-            </Link>
-          ))}
-        </section>
+        <Authors authors={authors} />
       </section>
     </Layout>
   );
