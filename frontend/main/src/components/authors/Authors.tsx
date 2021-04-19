@@ -9,7 +9,7 @@ export default function Authors({
   authors: UserInfoExtended[];
 }): JSX.Element {
   return (
-    <>
+    <section className="grid gap-4 justify-items-center">
       <section className="max-w-2xl text-center">
         <h2 className="mb-2 text-4xl lg:text-5xl">Authors & Instructors</h2>
         <h3 className="font-sans text-2xl">
@@ -20,21 +20,19 @@ export default function Authors({
           developer.
         </h3>
       </section>
-      <section className="grid items-start content-center w-full gap-4 grid-cols-fit">
+      <section className="flex flex-wrap items-start justify-center w-full gap-10">
         {authors.map((author, i) => (
           // <Link href="/authors/author" key={i}>
           //   <a>
           <article
             key={i}
-            className="grid items-start max-w-md grid-cols-1 shadow-lg justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-md"
+            className="grid items-start max-w-md grid-cols-1 gap-4 p-4 shadow-lg justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm"
           >
             {author?.displayName && author?.photoURL ? (
-              <Image
+              <img
+                className="w-1/2 rounded-full"
                 src={author.photoURL}
                 alt={author.displayName}
-                width="480"
-                height="270"
-                layout="responsive"
               />
             ) : (
               <div className="relative" style={{ paddingBottom: '56.25%' }}>
@@ -43,17 +41,17 @@ export default function Authors({
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1 gap-2 p-4">
+            <div className="grid grid-cols-1 gap-2">
               <h3 className="font-sans text-3xl lg:text-4xl">
                 {author.displayName}
               </h3>
-              <p className="">{author.basicInfo?.about}</p>
+              <p className="text-base lg:text-lg">{author.basicInfo?.about}</p>
             </div>
           </article>
           //   </a>
           // </Link>
         ))}
       </section>
-    </>
+    </section>
   );
 }
