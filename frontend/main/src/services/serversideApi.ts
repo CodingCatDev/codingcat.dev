@@ -212,6 +212,7 @@ export async function getAuthorUsers(): Promise<UserInfoExtended[]> {
     return [];
   }
   const authors = authorData.docs.map((authorRef) => authorRef.data());
+  authors.sort((a, b) => (a.displayName > b.displayName ? 1 : -1));
   return authors as UserInfoExtended[];
 }
 
