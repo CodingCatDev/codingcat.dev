@@ -1,3 +1,4 @@
+import { UserInfoExtended } from '@/models/user.model';
 import { StripePrice, StripeProduct } from './../models/stripe.model';
 import { PostType } from './../models/post.model';
 import { Post } from '@/models/post.model';
@@ -37,6 +38,26 @@ export async function postsService(postType: string): Promise<Post[]> {
     .collection('posts')
     .where('type', '==', postType)
     .where('publishedAt', '<', admin.firestore.Timestamp.now())
+    .orderBy('publishedAt', 'desc')
+    .get();
+
+  const posts: FirebaseFirestore.DocumentData[] = [];
+  for (const doc of postDocs.docs) {
+    posts.push(cleanTimestamp(smallPostPayload(doc)));
+  }
+  return posts as Post[];
+}
+
+export async function postsByUser(
+  postType: string,
+  uid: string
+): Promise<Post[]> {
+  const postDocs = await admin
+    .firestore()
+    .collection('posts')
+    .where('type', '==', postType)
+    .where('publishedAt', '<', admin.firestore.Timestamp.now())
+    .where('authorIds', 'array-contains', uid)
     .orderBy('publishedAt', 'desc')
     .get();
 
@@ -179,6 +200,40 @@ export async function isUserCourseSub(
     .where('product', '==', productRef)
     .get();
   return !courseSub.empty;
+}
+
+export async function getAuthorUsers(): Promise<UserInfoExtended[]> {
+  const authorData = await admin
+    .firestore()
+    .collection(`users`)
+    .where('roles', 'array-contains-any', ['admin', 'editor', 'author'])
+    .get();
+  if (authorData.empty) {
+    return [];
+  }
+  const authors = authorData.docs.map((authorRef) => authorRef.data());
+  authors.sort((a, b) => (a.displayName > b.displayName ? 1 : -1));
+  return authors as UserInfoExtended[];
+}
+
+export async function getAuthorProfile(
+  uid: string
+): Promise<FirebaseFirestore.DocumentData | undefined> {
+  const authorData = await admin.firestore().doc(`profiles/${uid}`).get();
+  return authorData.data();
+}
+
+export async function getAuthorProfiles(): Promise<UserInfoExtended[]> {
+  const users = await getAuthorUsers();
+  const profilesPromise: FirebaseFirestore.DocumentData[] = [];
+  users.map((user: UserInfoExtended) => {
+    const p = getAuthorProfile(user.uid);
+    if (p) {
+      profilesPromise.push(p);
+    }
+  });
+  const profiles = await Promise.all(profilesPromise);
+  return profiles.filter((x) => x !== undefined) as UserInfoExtended[];
 }
 
 /* Utilities */
