@@ -232,7 +232,7 @@ export async function getAuthorProfiles(): Promise<UserInfoExtended[]> {
     }
   });
   const profiles = await Promise.all(profilesPromise);
-  return profiles as UserInfoExtended[];
+  return profiles.filter((x) => x !== undefined) as UserInfoExtended[];
 }
 
 /* Utilities */
