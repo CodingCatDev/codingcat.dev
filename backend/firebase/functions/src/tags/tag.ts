@@ -49,7 +49,7 @@ export async function updateTags(): Promise<void> {
 
     // Update all tags
     const slug = slugify(tag, { lower: true });
-    await firestore.collection('tags').doc(tag).set(
+    await firestore.collection('tags').doc(slug).set(
       {
         posts,
         count: posts.length,
