@@ -30,7 +30,7 @@ export default function Authors({
           >
             {author?.displayName && author?.photoURL ? (
               <img
-                className="w-1/2 rounded-full"
+                className="rounded-full"
                 src={author.photoURL}
                 alt={author.displayName}
               />
@@ -41,12 +41,12 @@ export default function Authors({
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1 gap-2">
+            <>
               <h3 className="font-sans text-3xl lg:text-4xl">
                 {author.displayName}
               </h3>
               <p className="text-base lg:text-lg">{author.basicInfo?.about}</p>
-            </div>
+            </>
           </article>
           //   </a>
           // </Link>
