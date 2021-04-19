@@ -36,9 +36,9 @@ export default function Authors({
               />
             ) : (
               <img
-                className="w-8 h-8 rounded-full"
+                className="w-24 rounded-full"
                 src="/static/images/avatar.png"
-                alt=""
+                alt="Avatar Image Placeholder"
               />
             )}
             <>
