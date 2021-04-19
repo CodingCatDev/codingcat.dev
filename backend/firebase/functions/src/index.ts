@@ -13,3 +13,4 @@ export {
   onSubscriptionCreate,
   onSubscriptionCancel,
 } from './stripe/subscriptions';
+export { onPostWriteTags, scheduledTagsUpdate } from './tags/tag';

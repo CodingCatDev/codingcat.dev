@@ -4,6 +4,7 @@ import { PostType } from './../models/post.model';
 import { Post } from '@/models/post.model';
 import admin from '@/utils/firebaseAdmin';
 import { PageLink, Site } from '@/models/site.model';
+import { Tag } from '@/models/tag.model';
 
 // Firebase Admin, or any other services you need for Server Side
 export async function postsRecentService(
@@ -93,6 +94,52 @@ export async function postById(id: string): Promise<Post | null> {
   } else {
     return null;
   }
+}
+
+export async function getTags(): Promise<Tag[]> {
+  const tagDocs = await admin
+    .firestore()
+    .collection(`tags`)
+    .orderBy('slug')
+    .get();
+  if (tagDocs.empty) {
+    return [];
+  }
+  const tags = tagDocs.docs.map((tagRef) => cleanTimestamp(tagRef.data()));
+  return tags as Tag[];
+}
+
+export async function getTagBySlug(slug: string): Promise<Tag | null> {
+  const tagDocs = await admin
+    .firestore()
+    .collection(`tags`)
+    .where('slug', '==', slug)
+    .get();
+  if (tagDocs.empty) {
+    return null;
+  }
+  const tags = tagDocs.docs.map((tagRef) => cleanTimestamp(tagRef.data()));
+  return tags[0] as Tag;
+}
+
+export async function postsByTag(
+  postType: string,
+  tag: string
+): Promise<Post[]> {
+  const postDocs = await admin
+    .firestore()
+    .collection('posts')
+    .where('type', '==', postType)
+    .where('publishedAt', '<', admin.firestore.Timestamp.now())
+    .where('tag', 'array-contains', tag)
+    .orderBy('publishedAt', 'desc')
+    .get();
+
+  const posts: FirebaseFirestore.DocumentData[] = [];
+  for (const doc of postDocs.docs) {
+    posts.push(cleanTimestamp(smallPostPayload(doc)));
+  }
+  return posts as Post[];
 }
 
 /* Site Configuration */
