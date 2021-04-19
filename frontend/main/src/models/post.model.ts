@@ -29,6 +29,7 @@ export interface Post {
   coverVideo?: CoverMedia;
   sections?: Section[];
   authors?: UserInfoExtended[];
+  authorIds?: string[]; //uid list of authors
 
   // Payment Fields
   accessSettings?: AccessSettings;

@@ -1,21 +1,29 @@
 import http from 'http';
-import cookie from 'cookie';
-
-import { useRouter } from 'next/router';
-import { getSite, getAuthorProfile } from '@/services/serversideApi';
+import {
+  getSite,
+  getAuthorProfile,
+  postsByUser,
+} from '@/services/serversideApi';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { UserInfoExtended } from '@/models/user.model';
+import { Post, PostType } from '@/models/post.model';
+import PostsCards from '@/components/PostsCards';
 
-export default function Post({
+export default function AuthorPage({
   site,
   author,
+  courses,
+  tutorials,
+  posts,
 }: {
   site: Site | null;
   author: UserInfoExtended;
+  courses: Post[] | null;
+  tutorials: Post[] | null;
+  posts: Post[] | null;
 }): JSX.Element {
-  const router = useRouter();
   return (
     <Layout site={site}>
       <NextSeo
@@ -45,6 +53,24 @@ export default function Post({
           </>
         </article>
       </section>
+      <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+        <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">Courses</h2>
+        {courses && <PostsCards posts={courses} />}
+      </section>
+
+      <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+        <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+          Tutorials
+        </h2>
+        {tutorials && <PostsCards posts={tutorials} />}
+      </section>
+
+      <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+        <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+          Blog Posts
+        </h2>
+        {posts && <PostsCards posts={posts} />}
+      </section>
     </Layout>
   );
 }
@@ -60,6 +86,9 @@ export async function getServerSideProps({
       props: {
         site: Site | null;
         author: UserInfoExtended | null;
+        courses: Post[] | null;
+        tutorials: Post[] | null;
+        posts: Post[] | null;
       };
     }
   | { redirect: { destination: string; permanent: boolean } }
@@ -74,6 +103,9 @@ export async function getServerSideProps({
   }
   const site = await getSite();
   const author = (await getAuthorProfile(authorPath)) as UserInfoExtended;
+  const courses = await postsByUser(PostType.course, authorPath);
+  const tutorials = await postsByUser(PostType.tutorial, authorPath);
+  const posts = await postsByUser(PostType.post, authorPath);
 
   if (!author) {
     console.log('Author not found');
@@ -86,6 +118,9 @@ export async function getServerSideProps({
     props: {
       site,
       author,
+      courses,
+      tutorials,
+      posts,
     },
   };
 }

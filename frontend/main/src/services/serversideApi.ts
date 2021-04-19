@@ -48,6 +48,26 @@ export async function postsService(postType: string): Promise<Post[]> {
   return posts as Post[];
 }
 
+export async function postsByUser(
+  postType: string,
+  uid: string
+): Promise<Post[]> {
+  const postDocs = await admin
+    .firestore()
+    .collection('posts')
+    .where('type', '==', postType)
+    .where('publishedAt', '<', admin.firestore.Timestamp.now())
+    .where('authorIds', 'array-contains', uid)
+    .orderBy('publishedAt', 'desc')
+    .get();
+
+  const posts: FirebaseFirestore.DocumentData[] = [];
+  for (const doc of postDocs.docs) {
+    posts.push(cleanTimestamp(smallPostPayload(doc)));
+  }
+  return posts as Post[];
+}
+
 export async function postBySlugService(
   type: PostType,
   slug: string
