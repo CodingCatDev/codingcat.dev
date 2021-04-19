@@ -35,11 +35,11 @@ export default function Authors({
                 alt={author.displayName}
               />
             ) : (
-              <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
-                  <AJPrimary className="w-full h-full p-4" />
-                </div>
-              </div>
+              <img
+                className="w-8 h-8 rounded-full"
+                src="/static/images/avatar.png"
+                alt=""
+              />
             )}
             <>
               <h3 className="font-sans text-3xl lg:text-4xl">
