@@ -1,7 +1,5 @@
 import { UserInfoExtended } from '@/models/user.model';
-// import Link from 'next/link';
-import Image from 'next/image';
-import AJPrimary from '@/components/global/icons/AJPrimary';
+import Link from 'next/link';
 
 export default function Authors({
   authors,
@@ -22,34 +20,33 @@ export default function Authors({
       </section>
       <section className="flex flex-wrap items-start justify-center w-full gap-10">
         {authors.map((author, i) => (
-          // <Link href="/authors/author" key={i}>
-          //   <a>
-          <article
-            key={i}
-            className="grid items-start max-w-md grid-cols-1 gap-4 p-4 shadow-lg justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm"
-          >
-            {author?.displayName && author?.photoURL ? (
-              <img
-                className="rounded-full"
-                src={author.photoURL}
-                alt={author.displayName}
-              />
-            ) : (
-              <img
-                className="w-24 rounded-full"
-                src="/static/images/avatar.png"
-                alt="Avatar Image Placeholder"
-              />
-            )}
-            <>
-              <h3 className="font-sans text-3xl lg:text-4xl">
-                {author.displayName}
-              </h3>
-              <p className="text-base lg:text-lg">{author.basicInfo?.about}</p>
-            </>
-          </article>
-          //   </a>
-          // </Link>
+          <Link href={`/authors/${author.uid}`} key={i}>
+            <a>
+              <article className="grid items-start max-w-md grid-cols-1 gap-4 p-4 shadow-lg justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm">
+                {author?.displayName && author?.photoURL ? (
+                  <img
+                    className="rounded-full"
+                    src={author.photoURL}
+                    alt={author.displayName}
+                  />
+                ) : (
+                  <img
+                    className="w-24 rounded-full"
+                    src="/static/images/avatar.png"
+                    alt="Avatar Image Placeholder"
+                  />
+                )}
+                <>
+                  <h3 className="font-sans text-3xl lg:text-4xl">
+                    {author.displayName}
+                  </h3>
+                  <p className="text-base lg:text-lg">
+                    {author.basicInfo?.about}
+                  </p>
+                </>
+              </article>
+            </a>
+          </Link>
         ))}
       </section>
     </section>
