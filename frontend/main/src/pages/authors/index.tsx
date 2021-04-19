@@ -19,7 +19,7 @@ export default function AuthorsPage({
         title="Authors | CodingCatDev"
         canonical={`https://codingcat.dev/authors/`}
       ></NextSeo>
-      <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
+      <section className="grid grid-cols-1 gap-10 p-4 sm:p-10 place-items-center">
         <h1 className="text-5xl lg:text-7xl">Authors</h1>
         <Authors authors={authors} />
       </section>
