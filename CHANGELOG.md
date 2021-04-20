@@ -1,5 +1,13 @@
 # CodingCatDev First Release
 
+## 0.0.5 (2021-04-20)
+
+### Release Highlights
+
+- Added Authors pages
+- Added Tags Pages
+- Added Newsletter for Buttondown
+
 ## 0.0.4 (2021-03-25)
 
 ### Release Highlights
