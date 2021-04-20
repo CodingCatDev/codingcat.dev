@@ -7,25 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v5.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag_prefix: main
-          release_branches: main
-      - name: Create a GitHub release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
   deploy:
     needs: tag
     environment: stage
