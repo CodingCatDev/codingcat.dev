@@ -1,5 +1,10 @@
 # CodingCatDev First Release
 
+## 0.0.6 (2021-04-20)
+
+### Release Highlights
+
+- Removed Github actions for tagging
 ## 0.0.5 (2021-04-20)
 
 ### Release Highlights
