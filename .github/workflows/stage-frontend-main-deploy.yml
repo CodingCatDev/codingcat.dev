@@ -8,7 +8,6 @@ on:
 
 jobs:
   deploy:
-    needs: tag
     environment: stage
     runs-on: ubuntu-latest
     steps:
