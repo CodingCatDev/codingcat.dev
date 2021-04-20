@@ -1,35 +1,39 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
-import PostsCards from '@/components/PostsCards';
+import Authors from '@/components/authors/Authors';
 
-import { getSite, postsService } from '@/services/serversideApi';
-import { Post, PostType } from '@/models/post.model';
+import { getAuthorProfiles, getSite } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
+import { UserInfoExtended } from '@/models/user.model';
 
 export default function Community({
   site,
-  posts,
+  authors,
 }: {
   site: Site | null;
-  posts: Post[];
+  authors: UserInfoExtended[];
 }): JSX.Element {
-  console.log(posts);
   return (
     <Layout site={site}>
       <NextSeo
         title="Community | CodingCatDev"
         canonical={`https://codingcat.dev/community/`}
       ></NextSeo>
-      <section className="grid grid-cols-1 gap-10 p-4 place-items-center sm:p-10">
+      <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
         <h1 className="text-5xl lg:text-7xl">Community</h1>
-        <section className="grid max-w-2xl grid-cols-1 gap-4 text-center place-items-center">
-          <h2 className="text-4xl lg:text-5xl">CodingCat.dev Discord</h2>
-          <h3 className="font-sans text-2xl">
+
+        <section className="max-w-2xl text-center">
+          <h2 className="mb-2 text-4xl lg:text-5xl">CodingCat.Dev Discord</h2>
+          <h3 className="mb-4 font-sans text-2xl">
             A safe place for anyone to drop in, hang out, ask questions, and
             chat about topics surrounding development.
           </h3>
-          <a href="https://discord.gg/kGYAaAKZQf">
-            <button className="flex items-center px-8 py-4 space-x-2 transform rounded-md shadow-lg bg-basics-600 dark:bg-basics-600 hover:text-basics-50 dark:hover:text-basics-50 text-basics-50 dark:text-basics-50 hover:shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-secondary-600">
+          <div>
+            <a
+              role="button"
+              href="https://discord.gg/kGYAaAKZQf"
+              className="flex items-center justify-center px-8 py-4 mx-auto space-x-2 transform rounded-md shadow-lg w-min bg-basics-600 dark:bg-basics-600 hover:text-basics-50 dark:hover:text-basics-50 text-basics-50 dark:text-basics-50 hover:shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-secondary-600"
+            >
               <svg
                 className="w-8"
                 viewBox="0 0 23 23"
@@ -45,40 +49,11 @@ export default function Community({
                   fill="#7289DA"
                 ></path>
               </svg>
-              <span className="text-2xl">Join Discord</span>
-            </button>
-          </a>
+              <span className="text-xl whitespace-nowrap">Join Discord</span>
+            </a>
+          </div>
         </section>
-        {/* 
-        <iframe
-          className="max-w-sm"
-          src="https://discord.com/widget?id=543906775066345473&theme=dark"
-          width="100%"
-          height="500"
-          frameBorder="0"
-          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        ></iframe> */}
-        <section className="max-w-2xl text-center">
-          <h2 className="text-4xl lg:text-5xl">Authors & Instructors</h2>
-          <h3 className="font-sans text-2xl">
-            Our wonderful team of humans who are here to help you become a{' '}
-            <span className="font-heading text-secondary-600 dark:text-secondary-600">
-              Purrfect
-            </span>{' '}
-            developer.
-          </h3>
-          {/* posts is returning empty array */}
-          {/* {posts.map((post) => {
-            console.log(post);
-            return (
-              <>
-                {post?.authors.map((author, id) => {
-                  return <div key={id}>{author.displayName}</div>;
-                })}
-              </>
-            );
-          })} */}
-        </section>
+        <Authors authors={authors} />
       </section>
     </Layout>
   );
@@ -87,16 +62,22 @@ export default function Community({
 export async function getStaticProps(): Promise<{
   props: {
     site: Site | null;
-    posts: Post[];
+    authors: UserInfoExtended[];
   };
   revalidate: number;
 }> {
   const site = await getSite();
-  const posts = await postsService(PostType.group);
+  const allAuthors = await getAuthorProfiles();
+
+  // Return only authors with Profile Data
+  const authors = allAuthors.filter((a) =>
+    Object.keys(a).includes('basicInfo')
+  );
+
   return {
     props: {
       site,
-      posts,
+      authors,
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in

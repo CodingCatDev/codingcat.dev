@@ -1,7 +1,7 @@
 {
   "name": "codingcat.dev",
   "private": "true",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "Main codingcat.dev site",
   "main": "frontend/main/",
   "repository": {

@@ -3,7 +3,7 @@ export { newUserSetup } from './user/user';
 export { onPostWriteSearch, onPostDeleteSearch } from './search/algolia';
 export {
   onPostCreate,
-  onPostWrite,
+  onPostUpdateAuthors,
   onPostDelete,
   onHistoryWrite,
 } from './posts/posts';
@@ -13,3 +13,4 @@ export {
   onSubscriptionCreate,
   onSubscriptionCancel,
 } from './stripe/subscriptions';
+export { onPostWriteTags, scheduledTagsUpdate } from './tags/tag';

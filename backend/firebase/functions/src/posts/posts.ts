@@ -16,9 +16,10 @@ export const onPostCreate = functions.firestore
     const author = await getPostCreatorProfile(post);
 
     const authors = [];
-
+    const authorIds = [];
     if (author) {
       authors.push(author);
+      authorIds.push(author);
     }
 
     // Rules should require that all posts have a status of
@@ -29,6 +30,7 @@ export const onPostCreate = functions.firestore
       id,
       postId: context.params.postId,
       authors,
+      authorIds,
       accessSettings: {
         accessMode: 'closed',
       },
@@ -40,11 +42,46 @@ export const onPostCreate = functions.firestore
       .set({ historyId: id }, { merge: true });
   });
 
-export const onPostWrite = functions.firestore
+export const onPostUpdateAuthors = functions.firestore
   .document('posts/{postId}')
-  .onWrite(async (snap, context) => {
-    //Keep function
-    return true;
+  .onUpdate(async (change, context) => {
+    // Retrieve the current and previous value
+    const data = change.after.data();
+
+    // If there are no authors just return
+    if (data.authors.length === 0) {
+      return null;
+    }
+
+    const authorIds: string[] = [];
+    let noUpdate = true;
+
+    // Force Update if this doesn't exist.
+    if (!data.authorIds || data.authorIds.length === 0) {
+      noUpdate = false;
+    }
+
+    data.authors.forEach((author: any) => {
+      authorIds.push(author.uid);
+      if (noUpdate) {
+        noUpdate = data.authorIds.includes(author.uid);
+        console.log('Author ID not found needs updated', author.uid);
+      }
+    });
+
+    // Nothing needs update exit function
+    if (noUpdate) {
+      console.log('Nothing needed for update');
+      return null;
+    }
+
+    // Make update
+    return change.after.ref.set(
+      {
+        authorIds,
+      },
+      { merge: true }
+    );
   });
 
 export const onPostDelete = functions.firestore
