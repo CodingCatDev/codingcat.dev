@@ -211,15 +211,20 @@ export default function EditPostSidebar({
       </section>
       <div className="flex-col w-full">
         <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
-          Media
+          Preview
         </div>
         <div className="p-2 bg-basics-50 dark:bg-basics-800">
           <img src="" alt="" className="" />
           <button
             className="w-full btn-secondary"
-            onClick={() => selectTab(TabType.media)}
+            onClick={() =>
+              window.open(
+                `/api/preview?slug=${history.type}/${history.slug}`,
+                '_blank'
+              )
+            }
           >
-            Add Media
+            Open Preview
           </button>
         </div>
       </div>

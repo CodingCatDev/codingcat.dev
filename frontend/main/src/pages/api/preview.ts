@@ -1,6 +1,7 @@
 import { PostType } from '@/models/post.model';
-import { postBySlugService } from '@/services/serversideApi';
+import { postBySlugService, validateAdminUser } from '@/services/serversideApi';
 import { NextApiRequest, NextApiResponse } from 'next';
+import cookie from 'cookie';
 
 export default async (
   req: NextApiRequest,
@@ -8,10 +9,31 @@ export default async (
 ): Promise<void> => {
   const slugQuery = req.query.slug as string;
   const secret = req.query.secret as string;
-  // Check the secret and next parameters
-  // This secret should only be known to this API route and the CMS
-  if (secret !== process.env.NEXT_PREVIEW_TOKEN || !slugQuery) {
-    return res.status(401).json({ message: 'Invalid token' });
+
+  // Check for a slug
+  if (!slugQuery) {
+    return res.status(401).json({ message: 'Slug Missing' });
+  }
+
+  // Must be an Admin
+  // In an normal CMS you might want to check for a token instead.
+  const cookies = cookie.parse(req.headers.cookie || '');
+  const auth = cookies.auth;
+  // Check for user authentication from cookie
+  let validUser = true;
+  if (auth) {
+    const user = JSON.parse(auth) as {
+      uid: string;
+      email: string;
+      token: string;
+    };
+    validUser = await validateAdminUser(user.token);
+  } else {
+    validUser = false;
+  }
+
+  if (!validUser) {
+    return res.status(401).json({ message: 'Must be an admin user' });
   }
 
   const slugParts = slugQuery.split('/');
