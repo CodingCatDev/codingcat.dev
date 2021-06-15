@@ -3,6 +3,7 @@ import { NextSeo } from 'next-seo';
 
 import {
   getSite,
+  historyById,
   postBySlugService,
   postsRecentService,
   postsService,
@@ -110,8 +111,12 @@ export async function getStaticPaths(): Promise<{
 
 export async function getStaticProps({
   params,
+  preview,
+  previewData,
 }: {
   params: { permalink: string[] };
+  preview: boolean;
+  previewData: PostModel;
 }): Promise<
   | {
       props: {
@@ -170,8 +175,22 @@ export async function getStaticProps({
     };
   }
 
-  let posts = await postBySlugService(type, slug);
-  let post = posts.length > 0 ? posts[0] : null;
+  // Preview page
+  let post;
+  let posts;
+  if (preview) {
+    const { postId, id } = previewData;
+    if (!postId || !id) {
+      return {
+        notFound: true,
+      };
+    }
+
+    post = await historyById(postId, id);
+  } else {
+    posts = await postBySlugService(type, slug);
+    post = posts.length > 0 ? posts[0] : null;
+  }
 
   // Check if old blog link is trying to be used.
   if (!post) {

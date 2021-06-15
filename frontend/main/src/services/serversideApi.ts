@@ -96,6 +96,40 @@ export async function postById(id: string): Promise<Post | null> {
   }
 }
 
+export async function latestHistory(id: string): Promise<Post | null> {
+  const posts = await admin
+    .firestore()
+    .collection(`posts/${id}/history`)
+    .orderBy('updatedAt', 'desc')
+    .limit(1)
+    .get();
+  if (!posts.empty) {
+    const postDoc = posts.docs[0].data();
+    return cleanTimestamp(postDoc) as Post;
+  } else {
+    return null;
+  }
+}
+
+export async function historyById(
+  postId: string,
+  id: string
+): Promise<Post | null> {
+  const postDoc = await admin
+    .firestore()
+    .doc(`posts/${postId}/history/${id}`)
+    .get();
+  if (postDoc.exists) {
+    const data = postDoc.data();
+    if (!data) {
+      return null;
+    }
+    return cleanTimestamp(data) as Post;
+  } else {
+    return null;
+  }
+}
+
 export async function getTags(): Promise<Tag[]> {
   const tagDocs = await admin
     .firestore()

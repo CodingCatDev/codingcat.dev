@@ -1,5 +1,9 @@
 import { PostType } from '@/models/post.model';
-import { postBySlugService, validateAdminUser } from '@/services/serversideApi';
+import {
+  latestHistory,
+  postBySlugService,
+  validateAdminUser,
+} from '@/services/serversideApi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import cookie from 'cookie';
 
@@ -72,10 +76,14 @@ export default async (
   }
 
   // Enable Preview Mode by setting the cookies
-  res.setPreviewData({});
+  const post = posts[0];
+  const history = await latestHistory(post.id as string);
+  res.setPreviewData({
+    id: history?.id,
+    postId: history?.postId,
+  });
 
   // Redirect to the path from the fetched post
   // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-  const post = posts[0];
   res.redirect(`/${post.type}/${post.slug}`);
 };
