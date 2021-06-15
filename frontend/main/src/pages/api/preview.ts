@@ -81,6 +81,7 @@ export default async (
   res.setPreviewData({
     id: history?.id,
     postId: history?.postId,
+    slug: history?.slug,
   });
 
   // Redirect to the path from the fetched post

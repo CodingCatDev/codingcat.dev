@@ -6,5 +6,10 @@ export default function handler(
   // Clears the preview mode cookies.
   // This function accepts no arguments.
   res.clearPreviewData();
-  return res.status(200).json({ message: 'Cleared' });
+
+  if (req.query.slug) {
+    res.redirect(`${req.query.slug}`);
+  } else {
+    return res.status(200).json({ message: 'Cleared' });
+  }
 }

@@ -26,6 +26,7 @@ export default function PostLayout({
   course,
   source,
   recentPosts,
+  preview,
 }: {
   site: Site | null;
   post: Post;
@@ -33,6 +34,7 @@ export default function PostLayout({
   source: Source | null;
   course?: Post;
   recentPosts?: { [key: string]: Post[] };
+  preview?: boolean;
 }): JSX.Element {
   if (!post) {
     return (
@@ -118,6 +120,24 @@ export default function PostLayout({
         )}
 
         <section className="top-0 z-10 grid lg:sticky">
+          {preview && (
+            <>
+              <div className="flex justify-center py-4 text-3xl text-white dark:text-white bg-error-900 dark:bg-error-900">
+                <span>**Preview Mode**</span>
+                <button
+                  className="btn-primary"
+                  onClick={() =>
+                    window.open(
+                      `/api/endpreview?slug=/${post.type}/${post.slug}`,
+                      '_self'
+                    )
+                  }
+                >
+                  Turn Off
+                </button>
+              </div>
+            </>
+          )}
           <BreakBarLeft>
             <div className="grid w-full gap-4">
               {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}

@@ -24,11 +24,13 @@ export default function Post({
   post,
   source,
   recentPosts,
+  preview,
 }: {
   site: Site | null;
   post: PostModel;
   recentPosts: { [key: string]: PostModel[] };
   source: Source | null;
+  preview: boolean;
 }): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
@@ -80,6 +82,7 @@ export default function Post({
         post={post}
         source={source}
         recentPosts={recentPosts}
+        preview={preview}
       />
     </>
   );
@@ -124,6 +127,7 @@ export async function getStaticProps({
         post: PostModel | null;
         recentPosts: { [key: string]: PostModel[] };
         source: Source | null;
+        preview: boolean;
       };
       revalidate: number;
     }
@@ -178,7 +182,8 @@ export async function getStaticProps({
   // Preview page
   let post;
   let posts;
-  if (preview) {
+
+  if (preview && previewData && previewData.slug === slug) {
     const { postId, id } = previewData;
     if (!postId || !id) {
       return {
@@ -190,6 +195,7 @@ export async function getStaticProps({
   } else {
     posts = await postBySlugService(type, slug);
     post = posts.length > 0 ? posts[0] : null;
+    preview = false;
   }
 
   // Check if old blog link is trying to be used.
@@ -242,6 +248,7 @@ export async function getStaticProps({
       post,
       recentPosts,
       source,
+      preview,
     },
     revalidate: 60,
   };
