@@ -15,6 +15,9 @@ import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import { millisecondToDate, millisecondToUSFormat } from '@/utils/basics/date';
 import { Site } from '@/models/site.model';
 import SocialShare from '@/components/common/SocialShare';
+import { isUserTeam } from '@/services/api';
+import { useUser } from '@/utils/auth/useUser';
+import { take } from 'rxjs/operators';
 
 export default function PostLayout({
   site,
@@ -23,6 +26,7 @@ export default function PostLayout({
   course,
   source,
   recentPosts,
+  preview,
 }: {
   site: Site | null;
   post: Post;
@@ -30,6 +34,7 @@ export default function PostLayout({
   source: Source | null;
   course?: Post;
   recentPosts?: { [key: string]: Post[] };
+  preview?: boolean;
 }): JSX.Element {
   if (!post) {
     return (
@@ -39,9 +44,19 @@ export default function PostLayout({
     );
   }
   const [href, setHref] = useState('');
+
   useEffect(() => {
     setHref(location.href);
   }, []);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { user } = useUser();
+  useEffect(() => {
+    if (user && user.uid) {
+      isUserTeam(user.uid)
+        .pipe(take(1))
+        .subscribe((q) => setIsAdmin(q));
+    }
+  }, [user]);
 
   function isActiveLink(course: Post, lesson: SectionLesson) {
     if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
@@ -75,6 +90,22 @@ export default function PostLayout({
     }
   }
 
+  function adminLink() {
+    return (
+      <>
+        <a
+          href={`/admin/${post.type}/${post.postId}`}
+          target="_blank"
+          rel="noreferrer"
+          role="link"
+          className="no-underline btn-primary"
+        >
+          Admin
+        </a>
+      </>
+    );
+  }
+
   const content = source ? hydrate(source) : null;
   return (
     <Layout site={site}>
@@ -89,6 +120,24 @@ export default function PostLayout({
         )}
 
         <section className="top-0 z-10 grid lg:sticky">
+          {preview && (
+            <>
+              <div className="flex justify-center py-4 text-3xl text-white dark:text-white bg-error-900 dark:bg-error-900">
+                <span>**Preview Mode**</span>
+                <button
+                  className="btn-primary"
+                  onClick={() =>
+                    window.open(
+                      `/api/endpreview?slug=/${post.type}/${post.slug}`,
+                      '_self'
+                    )
+                  }
+                >
+                  Turn Off
+                </button>
+              </div>
+            </>
+          )}
           <BreakBarLeft>
             <div className="grid w-full gap-4">
               {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}
@@ -96,6 +145,7 @@ export default function PostLayout({
                 <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
                   {post.title}
                 </h1>
+                {isAdmin && <div className="flex-shrink-0">{adminLink()}</div>}
                 <div className="flex-shrink-0">{backButton()}</div>
               </section>
               <section className="grid items-end justify-between gap-4 lg:flex">
