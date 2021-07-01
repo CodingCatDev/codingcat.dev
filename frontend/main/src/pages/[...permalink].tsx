@@ -250,6 +250,6 @@ export async function getStaticProps({
       source,
       preview,
     },
-    revalidate: 60,
+    revalidate: 3600,
   };
 }
