@@ -67,6 +67,16 @@ export default function PostLayout({
 
   function backButton() {
     switch (post.type) {
+      case PostType.page:
+        return (
+          <>
+            <Link href="/">
+              <a role="link" className="no-underline btn-secondary">
+                back to Home
+              </a>
+            </Link>
+          </>
+        );
       case PostType.lesson:
         return (
           <>
