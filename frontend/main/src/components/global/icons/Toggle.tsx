@@ -18,7 +18,6 @@ export default function Toggle() {
       setTheme('light');
     }
   };
-  console.log('theme', theme);
   return (
     <button
       className="self-center p-1 m-2 rounded-full hover:bg-primary-800 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-basics-50 text-yellow-50 dark:text-yellow-50"

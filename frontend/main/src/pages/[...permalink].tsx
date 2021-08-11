@@ -61,13 +61,10 @@ export default function Post({
               url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${post.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
-              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
+              alt: post.title,
             },
             {
               url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,
-              width: 1200,
-              height: 630,
-              alt: post.title,
             },
           ],
         }}

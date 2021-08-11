@@ -37,16 +37,9 @@ function MyApp({
           images: [
             {
               url:
-                'https://media.codingcat.dev/image/upload/c_thumb,g_face,w_800,h_600/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
-              width: 800,
-              height: 600,
-              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
-            },
-            {
-              url:
-                'https://media.codingcat.dev/image/upload/c_thumb,g_face,w_900,h_800/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
-              width: 900,
-              height: 800,
+                'https://media.codingcat.dev/image/upload/c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
+              width: 1200,
+              height: 630,
               alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
             },
             {
