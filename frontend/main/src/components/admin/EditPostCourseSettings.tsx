@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { postHistoryUpdate } from '@/services/api';
-import { NavigationSettings, Post } from '@/models/post.model.ts';
+import { NavigationSettings, Post } from '@/models/post.model';
 import { take } from 'rxjs/operators';
 import { AccessMode } from '@/models/access.model';
 
