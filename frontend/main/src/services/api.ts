@@ -12,7 +12,7 @@ import { collectionData, docData } from 'rxfire/firestore';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { from, Observable } from 'rxjs';
 
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js/pure';
 import { config } from '@/config/stripe';
 import {
   Post,
