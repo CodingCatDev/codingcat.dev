@@ -1,24 +1,6 @@
-/* eslint @typescript-eslint/no-var-requires: "off" */
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-module.exports = withBundleAnalyzer({
+module.exports = {
   images: {
     loader: 'cloudinary',
     path: 'https://media.codingcat.dev/image/upload/',
   },
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    if (!isServer) {
-      config.node = {
-        dgram: 'empty',
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty',
-        child_process: 'empty',
-      };
-    }
-    return config;
-  },
-});
+};
