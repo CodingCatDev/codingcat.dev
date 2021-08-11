@@ -28,7 +28,7 @@ export default function AuthorPage({
     <Layout site={site}>
       <NextSeo
         title={`${tag.tag ? tag.tag : ''} | CodingCatDev`}
-        canonical={`https://codingcat.dev/tag/${tag.slug}`}
+        canonical={`https://codingcat.dev/tags/${tag.slug}`}
       ></NextSeo>
       <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
         <h1>{tag.tag}</h1>

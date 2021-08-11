@@ -1,7 +1,7 @@
 import SimpleMDE from 'react-simplemde-editor';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { postsSlugUnique } from '@/services/api';
-import { Post } from '@/models/post.model.ts';
+import { Post } from '@/models/post.model';
 import { of, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 

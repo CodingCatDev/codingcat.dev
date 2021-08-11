@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Post } from '@/models/post.model.ts';
+import { Post } from '@/models/post.model';
 
 export default function EditPostCourseGroups({
   historyInput,

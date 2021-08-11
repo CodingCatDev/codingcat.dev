@@ -58,16 +58,10 @@ export default function Post({
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_800,h_600/${post.coverPhoto?.public_id}`,
-              width: 800,
-              height: 600,
-              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
-            },
-            {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_900,h_800/${post.coverPhoto?.public_id}`,
-              width: 900,
-              height: 800,
-              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${post.coverPhoto?.public_id}`,
+              width: 1200,
+              height: 630,
+              alt: post.title,
             },
             {
               url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,

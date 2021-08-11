@@ -6,7 +6,7 @@ import {
   postsByUpdatedAtObservable,
   postsSearchByTitleObservable,
 } from '@/services/api';
-import { Post, Section } from '@/models/post.model.ts';
+import { Post, Section } from '@/models/post.model';
 import { take } from 'rxjs/operators';
 import {
   DragDropContext,
