@@ -3,6 +3,7 @@ import router from 'next/router';
 // import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import nightwind from 'nightwind/helper';
+import { ThemeProvider } from 'next-themes';
 
 import { AppTopbar } from '@/layout/AppTopbar';
 
@@ -31,23 +32,29 @@ const Layout = ({
       <Head>
         <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
       </Head>
-      <AppTopbar
-        setOverlayMenuActive={setOverlayMenuActive}
-        overlayMenuActive={overlayMenuActive}
-      />
-      <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
-        <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
-          {children}
-        </main>
+      <ThemeProvider
+        attribute="class"
+        storageKey="nightwind-mode"
+        defaultTheme="light"
+      >
+        <AppTopbar
+          setOverlayMenuActive={setOverlayMenuActive}
+          overlayMenuActive={overlayMenuActive}
+        />
+        <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
+          <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
+            {children}
+          </main>
 
-        <Footer site={site} />
-      </div>
-      <AppMenu
-        setOverlayMenuActive={setOverlayMenuActive}
-        overlayMenuActive={overlayMenuActive}
-        userMenu={userMenu}
-        setUserMenu={setUserMenu}
-      />
+          <Footer site={site} />
+        </div>
+        <AppMenu
+          setOverlayMenuActive={setOverlayMenuActive}
+          overlayMenuActive={overlayMenuActive}
+          userMenu={userMenu}
+          setUserMenu={setUserMenu}
+        />
+      </ThemeProvider>
     </>
   );
 };
