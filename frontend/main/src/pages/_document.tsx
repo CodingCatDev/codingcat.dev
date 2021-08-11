@@ -6,8 +6,6 @@ import Document, {
   DocumentContext,
 } from 'next/document';
 
-import nightwind from 'nightwind/helper';
-
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx);
@@ -132,7 +130,6 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
-          <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
         </body>
       </Html>
     );
