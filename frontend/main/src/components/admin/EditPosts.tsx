@@ -49,7 +49,6 @@ function EditPosts({ type }: { type: PostType }) {
               Id
             </li>
             <li className="p-2 text-left" role="columnheader">
-
               Slug
             </li>
             <li className="p-2 text-left" role="columnheader">
