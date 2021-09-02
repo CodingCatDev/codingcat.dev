@@ -37,7 +37,7 @@ function EditPosts({ type }: { type: PostType }) {
         <section role="rowgroup" key={post.id} className="flex tbody lg:block">
           <ul
             role="row"
-            className="grid justify-between text-center tr rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:grid-cols-5 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
+            className="grid justify-between text-center tr rounded-tl-md rounded-bl-md lg:rounded-tr-md lg:rounded-bl-none lg:grid-cols-6 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50"
           >
             <li
               className="p-2 text-left lg:justify-self-start"
@@ -49,7 +49,11 @@ function EditPosts({ type }: { type: PostType }) {
               Id
             </li>
             <li className="p-2 text-left" role="columnheader">
-              Published
+
+              Slug
+            </li>
+            <li className="p-2 text-left" role="columnheader">
+              Date Published
             </li>
             <li className="p-2 text-left" role="columnheader">
               Author
@@ -69,12 +73,15 @@ function EditPosts({ type }: { type: PostType }) {
             }`}
           >
             <Link href={`${type}/${post.id}`}>
-              <a className="grid items-center lg:grid-cols-5 hover:text-current dark:hover:text-current">
+              <a className="grid items-center lg:grid-cols-6 hover:text-current dark:hover:text-current">
                 <li className="p-2 text-left td" role="cell">
                   {post.title}
                 </li>
-                <li className="p-2 text-left td" role="cell">
+                <li className="p-2 text-sm text-left td" role="cell">
                   {post.id}
+                </li>
+                <li className="p-2 text-left td" role="cell">
+                  {post.slug}
                 </li>
                 <li className="p-2 text-left td" role="cell">
                   {post.publishedAt
@@ -83,7 +90,9 @@ function EditPosts({ type }: { type: PostType }) {
                 </li>
                 <li className="flex flex-col p-2 text-left td" role="cell">
                   {post.authors?.map((author, i) => (
-                    <p key={i}>{author.email}</p>
+                    <p key={i} className="text-sm">
+                      {author.email}
+                    </p>
                   ))}
                 </li>
                 <li
