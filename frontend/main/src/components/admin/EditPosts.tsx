@@ -5,7 +5,7 @@ import { Column } from 'primereact/column';
 import { useUser } from '@/utils/auth/useUser';
 import { postsByUpdatedAtObservable } from '@/services/api';
 import { Post, PostStatus, PostType } from '@/models/post.model';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 function EditPosts({ type }: { type: PostType }) {
   const { user, signout }: { user: any; signout: any } = useUser();
@@ -14,7 +14,17 @@ function EditPosts({ type }: { type: PostType }) {
 
   useEffect(() => {
     postsByUpdatedAtObservable(type)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        map((posts) => {
+          posts.sort(
+            (post1, post2) =>
+              new Date(post2.publishedAt as any).getTime() -
+              new Date(post1.publishedAt as any).getTime()
+          );
+          return posts;
+        })
+      )
       .subscribe((posts) => setPosts(posts));
   }, [type]);
 
@@ -39,10 +49,11 @@ function EditPosts({ type }: { type: PostType }) {
               Id
             </li>
             <li className="p-2 text-left" role="columnheader">
+
               Slug
             </li>
             <li className="p-2 text-left" role="columnheader">
-              Date
+              Date Published
             </li>
             <li className="p-2 text-left" role="columnheader">
               Author
@@ -73,7 +84,9 @@ function EditPosts({ type }: { type: PostType }) {
                   {post.slug}
                 </li>
                 <li className="p-2 text-left td" role="cell">
-                  {post.updatedAt}
+                  {post.publishedAt
+                    ? new Date(post.publishedAt as any).toLocaleString()
+                    : ''}
                 </li>
                 <li className="flex flex-col p-2 text-left td" role="cell">
                   {post.authors?.map((author, i) => (
