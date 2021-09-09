@@ -8,10 +8,10 @@ export default async function initFirebase() {
     const firebase = await import('firebase/app');
     await import('firebase/auth');
     await import('firebase/firestore');
-    await import('firebase/database');
+    // await import('firebase/database');
     await import('firebase/analytics');
-    await import('firebase/remote-config');
-    await import('firebase/messaging');
+    // await import('firebase/remote-config');
+    // await import('firebase/messaging');
     await import('firebase/functions');
     if (!firebase.default.apps.length) {
       firebase.default.initializeApp(config);
@@ -23,12 +23,12 @@ export default async function initFirebase() {
       } else {
         firebase.default.auth();
         firebase.default.firestore();
-        firebase.default.database();
+        // firebase.default.database();
         firebase.default.functions();
       }
       firebase.default.analytics();
-      firebase.default.remoteConfig();
-      firebase.default.messaging();
+      // firebase.default.remoteConfig();
+      // firebase.default.messaging();
     }
     return firebase.default.app();
   } catch (err) {
