@@ -60,7 +60,7 @@ export default function UserProfileCloudinaryUpload({
               if (!error && result && result.event === 'success') {
                 const profileUpdate = {
                   ...profile,
-                  photoURL: result.info.url,
+                  photoURL: result.info.secure_url,
                 };
                 setProfile(profileUpdate);
                 userProfileUpdate(profileUpdate).pipe(take(1)).subscribe();
