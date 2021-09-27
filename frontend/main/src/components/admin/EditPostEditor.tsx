@@ -55,6 +55,12 @@ export default function EditPostEditor({
     updateContent$.next({ ...update, historyId: history?.id });
   }
 
+  function onUrlContent(urlContent: string) {
+    const update: Post = { ...history, urlContent } as Post;
+    setHistory(update);
+    updateContent$.next({ ...update, historyId: history?.id });
+  }
+
   return (
     <div className="grid grid-cols-1 max-w-7xl">
       {/* Top Inputs */}
@@ -88,6 +94,17 @@ export default function EditPostEditor({
             }`}
           >
             Slug is not unique
+          </div>
+          <div className="flex mt-2">
+            <p className="flex items-center mr-2 font-bold uppercase text-primary-900 dark:text-basics-50">
+              URL:
+            </p>
+            <input
+              type="text"
+              placeholder="url (github)"
+              value={history?.urlContent}
+              onChange={(e) => onUrlContent(e.target.value)}
+            ></input>
           </div>
         </div>
         <div className="flex flex-grow">

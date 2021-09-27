@@ -12,6 +12,8 @@ import {
 import { Post as PostModel, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
 import rehypePrism from '@mapbox/rehype-prism';
+import parse from 'remark-parse';
+import remark2react from 'remark-react';
 import renderToString from 'next-mdx-remote/render-to-string';
 import { Source } from 'next-mdx-remote/hydrate';
 import PostLayout from '@/components/PostLayout';
@@ -223,12 +225,26 @@ export async function getStaticProps({
   ]);
 
   let source: Source | null;
+  let allContent = '';
+
+  if (post && post.urlContent) {
+    const c = await (await fetch(post.urlContent)).text();
+    const { content } = matter(c);
+
+    allContent = content.replaceAll(
+      '<a href="/docs',
+      '<a href="https://nextjs.org/docs'
+    );
+  }
 
   if (post && post.content) {
     const { content } = matter(post.content);
-    source = await renderToString(content, {
+    allContent = allContent + content;
+  }
+  if (allContent) {
+    source = await renderToString(allContent, {
       mdxOptions: {
-        // remarkPlugins: [parse, mdx],
+        remarkPlugins: [parse, remark2react],
         rehypePlugins: [rehypePrism],
       },
     });
