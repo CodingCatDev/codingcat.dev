@@ -294,9 +294,14 @@ export default function EditPostCourseSections({
                                             <Link
                                               href={`/admin/lessons/${lesson.id}`}
                                             >
-                                              <a className="text-2xl underline">
-                                                {lesson.title}
-                                              </a>
+                                              <div className="flex flex-col">
+                                                <a className="text-2xl underline cursor-pointer">
+                                                  {lesson.title}
+                                                </a>
+                                                <p className="text-xs">
+                                                  {lesson?.slug}
+                                                </p>
+                                              </div>
                                             </Link>
                                             <button
                                               onClick={() =>
@@ -366,7 +371,10 @@ export default function EditPostCourseSections({
                                   {...provided.dragHandleProps}
                                   ref={provided.innerRef}
                                 >
-                                  <p>{l.title}</p>
+                                  <div className="flex flex-col">
+                                    <p>{l.title}</p>
+                                    <p className="text-xs">{l?.slug}</p>
+                                  </div>
                                 </div>
                               )}
                             </Draggable>

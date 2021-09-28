@@ -31,6 +31,8 @@ export interface Post {
   authors?: UserInfoExtended[];
   authorIds?: string[]; //uid list of authors
 
+  urlContent?: string; //Used for remote data
+
   // Payment Fields
   accessSettings?: AccessSettings;
   // Navigation Experience

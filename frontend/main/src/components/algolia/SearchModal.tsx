@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AlgoliaInstantSearch from './algoliaInstantSearch';
 
 export default function SearchModal(): JSX.Element {
@@ -11,6 +11,29 @@ export default function SearchModal(): JSX.Element {
   const hideModal = () => {
     setShow(false);
   };
+
+  const escFunction = useCallback((e) => {
+    e.preventDefault();
+    if (e.keyCode === 27) {
+      setShow(false);
+    }
+  }, []);
+
+  const cmdKFunction = useCallback((e) => {
+    e.preventDefault();
+    if ((e.metaKey || e.ctrlKey) && e.code === 'KeyK') {
+      setShow(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', escFunction, false);
+    document.addEventListener('keydown', cmdKFunction, false);
+    return () => {
+      document.removeEventListener('keydown', escFunction, false);
+      document.removeEventListener('keydown', cmdKFunction, false);
+    };
+  }, []);
 
   const Modal = ({ handleClose, show, children }: any) => {
     const showHideclassNameName = show
