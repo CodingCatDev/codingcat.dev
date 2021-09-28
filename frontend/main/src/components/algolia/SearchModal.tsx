@@ -13,14 +13,12 @@ export default function SearchModal(): JSX.Element {
   };
 
   const escFunction = useCallback((e) => {
-    e.preventDefault();
     if (e.keyCode === 27) {
       setShow(false);
     }
   }, []);
 
   const cmdKFunction = useCallback((e) => {
-    e.preventDefault();
     if ((e.metaKey || e.ctrlKey) && e.code === 'KeyK') {
       setShow(true);
     }
