@@ -18,6 +18,7 @@ export default connectSearchBox(({ refine, ...rest }) => (
     <input
       type="search"
       name="search"
+      autoFocus={true}
       placeholder="Search for anything fun!"
       className="w-5/6 leading-tight border rounded shadow-none appearance-none text-basics-900 dark:text-basics-900 focus:outline-none focus:ring-purple-900"
       aria-label="Search"
