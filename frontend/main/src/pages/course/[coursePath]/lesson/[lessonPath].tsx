@@ -17,6 +17,9 @@ import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
 import { AccessMode } from '@/models/access.model';
 import { AuthIssue } from '@/models/user.model';
+import matter from 'gray-matter';
+import parse from 'remark-parse';
+import remark2react from 'remark-react';
 
 export default function Post({
   site,
@@ -137,16 +140,36 @@ export async function getServerSideProps({
     }
   }
 
-  const source: Source | null =
-    post && post.content
-      ? await renderToString(post.content, {
-          mdxOptions: {
-            // remarkPlugins: [parse, mdx],
-            rehypePlugins: [rehypePrism],
-          },
-        })
-      : null;
+  let source: Source | null;
+  let allContent = '';
 
+  if (post && post.urlContent) {
+    const c = await (await fetch(post.urlContent)).text();
+    const { content } = matter(c);
+
+    if (post.urlContent.includes('next.js')) {
+      allContent = content.replaceAll(
+        '<a href="/docs',
+        '<a href="https://nextjs.org/docs'
+      );
+      allContent = allContent.replaceAll('.md', '');
+    }
+  }
+
+  if (post && post.content) {
+    const { content } = matter(post.content);
+    allContent = allContent + content;
+  }
+  if (allContent) {
+    source = await renderToString(allContent, {
+      mdxOptions: {
+        remarkPlugins: [parse, remark2react],
+        rehypePlugins: [rehypePrism],
+      },
+    });
+  } else {
+    source = null;
+  }
   return {
     props: {
       site,
