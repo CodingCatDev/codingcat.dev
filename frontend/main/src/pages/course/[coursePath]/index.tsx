@@ -494,6 +494,8 @@ export async function getServerSideProps({
       const { content } = matter(c);
 
       if (post.urlContent.includes('next.js') && content) {
+        console.log('TYPE:', typeof content);
+        console.log(content);
         allContent = content.replaceAll(
           '<a href="/docs',
           '<a href="https://nextjs.org/docs'
