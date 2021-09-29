@@ -229,12 +229,23 @@ export async function getStaticProps({
 
   if (post && post.urlContent) {
     const c = await (await fetch(post.urlContent)).text();
-    const { content } = matter(c);
+    if (c) {
+      const { content } = matter(c);
 
-    allContent = content.replaceAll(
-      '<a href="/docs',
-      '<a href="https://nextjs.org/docs'
-    );
+      if (post.urlContent.includes('next.js') && content) {
+        allContent = content.replace(
+          new RegExp(/<a href\="\/docs/g),
+          '<a href="https://nextjs.org/docs'
+        );
+        allContent = allContent.replace(new RegExp(/.md/g), '');
+      } else {
+        if (!content) {
+          console.log('missing content after matter');
+        }
+      }
+    } else {
+      console.log('URL Content Failed');
+    }
   }
 
   if (post && post.content) {

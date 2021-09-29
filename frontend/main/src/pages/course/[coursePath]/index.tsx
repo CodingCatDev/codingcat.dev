@@ -5,6 +5,7 @@ import {
   getSite,
   getStripeProduct,
   postBySlugService,
+  postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
@@ -437,7 +438,17 @@ export default function Post({
   );
 }
 
-export async function getServerSideProps({
+export async function getStaticPaths(): Promise<{
+  paths: { params: { type: PostType; slug: string } }[];
+  fallback: boolean;
+}> {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({
   params,
 }: {
   params: { coursePath: string };
@@ -449,6 +460,7 @@ export async function getServerSideProps({
         source: Source | null;
         product: StripeProduct | null;
       };
+      revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
   | { notFound: boolean }
@@ -490,14 +502,22 @@ export async function getServerSideProps({
 
   if (post && post.urlContent) {
     const c = await (await fetch(post.urlContent)).text();
-    const { content } = matter(c);
+    if (c) {
+      const { content } = matter(c);
 
-    if (post.urlContent.includes('next.js')) {
-      allContent = content.replaceAll(
-        '<a href="/docs',
-        '<a href="https://nextjs.org/docs'
-      );
-      allContent = allContent.replaceAll('.md', '');
+      if (post.urlContent.includes('next.js') && content) {
+        allContent = content.replace(
+          new RegExp(/<a href\="\/docs/g),
+          '<a href="https://nextjs.org/docs'
+        );
+        allContent = allContent.replace(new RegExp(/.md/g), '');
+      } else {
+        if (!content) {
+          console.log('missing content after matter');
+        }
+      }
+    } else {
+      console.log('URL Content Failed');
     }
   }
 
@@ -515,6 +535,7 @@ export async function getServerSideProps({
   } else {
     source = null;
   }
+
   return {
     props: {
       site,
@@ -522,5 +543,6 @@ export async function getServerSideProps({
       source,
       product,
     },
+    revalidate: 3600,
   };
 }

@@ -145,14 +145,22 @@ export async function getServerSideProps({
 
   if (post && post.urlContent) {
     const c = await (await fetch(post.urlContent)).text();
-    const { content } = matter(c);
+    if (c) {
+      const { content } = matter(c);
 
-    if (post.urlContent.includes('next.js')) {
-      allContent = content.replaceAll(
-        '<a href="/docs',
-        '<a href="https://nextjs.org/docs'
-      );
-      allContent = allContent.replaceAll('.md', '');
+      if (post.urlContent.includes('next.js') && content) {
+        allContent = content.replace(
+          new RegExp(/<a href\="\/docs/g),
+          '<a href="https://nextjs.org/docs'
+        );
+        allContent = allContent.replace(new RegExp(/.md/g), '');
+      } else {
+        if (!content) {
+          console.log('missing content after matter');
+        }
+      }
+    } else {
+      console.log('URL Content Failed');
     }
   }
 
@@ -170,6 +178,7 @@ export async function getServerSideProps({
   } else {
     source = null;
   }
+
   return {
     props: {
       site,
