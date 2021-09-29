@@ -233,11 +233,11 @@ export async function getStaticProps({
       const { content } = matter(c);
 
       if (post.urlContent.includes('next.js') && content) {
-        allContent = content.replaceAll(
-          '<a href="/docs',
+        allContent = content.replace(
+          new RegExp(/<a href\="\/docs/g),
           '<a href="https://nextjs.org/docs'
         );
-        allContent = allContent.replaceAll('.md', '');
+        allContent = allContent.replace(new RegExp(/.md/g), '');
       } else {
         if (!content) {
           console.log('missing content after matter');
