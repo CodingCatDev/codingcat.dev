@@ -5,6 +5,7 @@ import {
   getSite,
   getStripeProduct,
   postBySlugService,
+  postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
@@ -437,7 +438,17 @@ export default function Post({
   );
 }
 
-export async function getServerSideProps({
+export async function getStaticPaths(): Promise<{
+  paths: { params: { type: PostType; slug: string } }[];
+  fallback: boolean;
+}> {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({
   params,
 }: {
   params: { coursePath: string };
@@ -449,6 +460,7 @@ export async function getServerSideProps({
         source: Source | null;
         product: StripeProduct | null;
       };
+      revalidate: number;
     }
   | { redirect: { destination: string; permanent: boolean } }
   | { notFound: boolean }
@@ -531,5 +543,6 @@ export async function getServerSideProps({
       source,
       product,
     },
+    revalidate: 3600,
   };
 }
