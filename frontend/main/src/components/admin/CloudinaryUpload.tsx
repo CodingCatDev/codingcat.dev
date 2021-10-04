@@ -37,6 +37,7 @@ export default function CloudinaryUpload({
   history: Post;
   type: MediaType;
 }): JSX.Element {
+  let widget: any = null;
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
@@ -53,38 +54,44 @@ export default function CloudinaryUpload({
     if (typeof window !== 'undefined') {
       const myWindow = window as any;
       if (myWindow.cloudinary) {
-        myWindow.cloudinary
-          .createUploadWidget(
-            {
-              cloudName: config.name,
-              uploadPreset:
-                type === MediaType.photo
-                  ? config.photoPreset
-                  : config.videoPreset,
-              prepareUploadParams: fetchCloudinarySignature,
-            },
-            (error: any, result: any) => {
-              if (!error && result && result.event === 'success') {
-                if (history.publishedAt) {
-                  postHistoryCreate(history)
-                    .pipe(take(1))
-                    .subscribe((h) =>
-                      postHistoryMediaCreate(h, type, result.info)
-                        .pipe(take(1))
-                        .subscribe((newHistory) => setHistory(newHistory))
-                    );
-                } else {
-                  postHistoryMediaCreate(history, type, result.info)
-                    .pipe(take(1))
-                    .subscribe((newHistory) => setHistory(newHistory));
-                }
+        if (widget && !widget.isDestroyed()) {
+          widget.destroy();
+        }
+        widget = myWindow.cloudinary.createUploadWidget(
+          {
+            cloudName: config.name,
+            uploadPreset:
+              type === MediaType.photo
+                ? config.photoPreset
+                : config.videoPreset,
+            prepareUploadParams: fetchCloudinarySignature,
+          },
+          (error: any, result: any) => {
+            if (!error && result && result.event === 'success') {
+              if (history.publishedAt) {
+                postHistoryCreate(history)
+                  .pipe(take(1))
+                  .subscribe((h) =>
+                    postHistoryMediaCreate(h, type, result.info)
+                      .pipe(take(1))
+                      .subscribe((newHistory) => setHistory(newHistory))
+                  );
+              } else {
+                postHistoryMediaCreate(history, type, result.info)
+                  .pipe(take(1))
+                  .subscribe((newHistory) => setHistory(newHistory));
               }
-              if (error) {
-                console.log(error);
-              }
+              widget.destroy();
             }
-          )
-          .open();
+            if (!error && result && result.event === 'close') {
+              widget.destroy();
+            }
+            if (error) {
+              console.log(error);
+            }
+          }
+        );
+        widget.open();
       }
     }
   }
