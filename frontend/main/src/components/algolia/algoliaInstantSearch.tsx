@@ -7,6 +7,7 @@ import {
   Index,
   connectStateResults,
   PoweredBy,
+  MenuSelect,
 } from 'react-instantsearch-dom';
 import CustomSearchBox from './customSearchBox';
 import * as hitComps from './customHitComponents';
@@ -99,8 +100,9 @@ const HitList = (show: any) => {
           ))}
           <footer>
             <hr className="mb-2 opacity-20 text-primary-900" />
-            <div className="justify-self-end">
+            <div className="flex justify-between">
               <PoweredBy />
+              <MenuSelect attribute="type" />
             </div>
           </footer>
         </InstantSearch>
