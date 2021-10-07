@@ -11,6 +11,9 @@ import AppMenu from '@/layout/AppMenu';
 import { Site } from '@/models/site.model';
 import Footer from '@/layout/Footer';
 
+import useIsNavigating from '@/hooks/useIsNavigating';
+import { Progress } from '@/components/global/loading/Progress';
+
 const Layout = ({
   site,
   children,
@@ -20,6 +23,7 @@ const Layout = ({
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
+  const isNavigating = useIsNavigating();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -37,6 +41,8 @@ const Layout = ({
         storageKey="nightwind-mode"
         defaultTheme="light"
       >
+        <Progress isAnimating={isNavigating} />
+
         <AppTopbar
           setOverlayMenuActive={setOverlayMenuActive}
           overlayMenuActive={overlayMenuActive}
