@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef } from 'react';
+import React, { useState } from 'react';
 
 import algoliasearch from 'algoliasearch/lite';
 import {
@@ -11,24 +11,6 @@ import {
 } from 'react-instantsearch-dom';
 import CustomSearchBox from './customSearchBox';
 import * as hitComps from './customHitComponents';
-
-const useClickOutside = (
-  ref: { current: { contains: (arg0: any) => any } },
-  handler: () => any,
-  events: string[]
-) => {
-  if (!events) events = [`mousedown`, `touchstart`];
-  const detectClickOutside = (event: { target: any }) =>
-    !ref.current.contains(event.target) && handler();
-  useEffect(() => {
-    for (const event of events)
-      document.addEventListener(event, detectClickOutside);
-    return () => {
-      for (const event of events)
-        document.removeEventListener(event, detectClickOutside);
-    };
-  });
-};
 
 const algoliaClient = algoliasearch(
   process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || '',
@@ -57,9 +39,8 @@ const Stats = connectStateResults(({ searchResults: res }: any) => {
   );
 });
 
-const HitList = (show: any) => {
-  const [query, setQuery] = useState(``);
-  const [focus, setFocus] = useState(false);
+const HitList = ({ show }: { show: boolean }): JSX.Element => {
+  const [, setFocus] = useState(false);
 
   const searchClient = {
     search(requests: any) {
