@@ -1,8 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import useOnClickOutside from '@/hooks/useOnClickOutside';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AlgoliaInstantSearch from './algoliaInstantSearch';
 
 export default function SearchModal(): JSX.Element {
   const [show, setShow] = useState(false);
+  const ref = useRef(null);
+  useOnClickOutside(ref, () => setShow(false));
 
   const showModal = () => {
     setShow(true);
@@ -51,7 +54,10 @@ export default function SearchModal(): JSX.Element {
                 'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
             }}
           >
-            <section className="absolute grid w-full h-full gap-4 p-4 grid-rows-search">
+            <section
+              className="absolute grid w-full h-full gap-4 p-4 grid-rows-search"
+              ref={ref}
+            >
               <AlgoliaInstantSearch show={show}></AlgoliaInstantSearch>
               <button
                 className="absolute top-0 right-0 p-5 text-2xl transition-colors rounded-full text-primary-900 hover:text-secondary-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-900"
