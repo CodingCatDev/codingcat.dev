@@ -9,6 +9,9 @@ import { Site } from '@/models/site.model';
 import { AdminHeader } from '@/layout/admin/AdminHeader';
 import { Post } from '@/models/post.model';
 
+import useIsNavigating from '@/hooks/useIsNavigating';
+import { Progress } from '@/components/global/loading/Progress';
+
 const AdminLayout = ({
   site,
   post,
@@ -21,6 +24,7 @@ const AdminLayout = ({
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const [navOpen, setNavOpen] = useState(true);
+  const isNavigating = useIsNavigating();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,6 +43,7 @@ const AdminLayout = ({
         defaultTheme="light"
       >
         <div className="lg:mx-auto lg:w-full lg:max-w-8xl">
+          <Progress isAnimating={isNavigating} />
           <div className="grid h-screen grid-cols-admin">
             <AdminMenu
               userMenu={userMenu}
