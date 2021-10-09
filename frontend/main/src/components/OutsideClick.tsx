@@ -1,16 +1,26 @@
-import React, { useRef, useEffect } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  RefObject,
+  SetStateAction,
+  Dispatch,
+} from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * Hook that alerts clicks outside of the passed ref
  */
-function useOutsideClick(ref: any, toggle: any, value: any) {
+function useOutsideClick(
+  ref: RefObject<HTMLElement>,
+  toggle: Dispatch<SetStateAction<boolean>>,
+  value: boolean
+) {
   useEffect(() => {
     /**
      * Alert if clicked on outside of element
      */
-    function handleClickOutside(event: any) {
-      if (ref.current && !ref.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
         toggle(value);
       }
     }
@@ -26,12 +36,19 @@ function useOutsideClick(ref: any, toggle: any, value: any) {
 /**
  * Component that alerts if you click outside of it
  */
-function OutsideClick(props: any) {
+function OutsideClick({
+  children,
+  toggle,
+  value,
+}: {
+  children: JSX.Element;
+  toggle: Dispatch<SetStateAction<boolean>>;
+  value: boolean;
+}): JSX.Element {
   const wrapperRef = useRef(null);
-  const { toggle, value } = props;
   useOutsideClick(wrapperRef, toggle, value);
 
-  return <div ref={wrapperRef}>{props.children}</div>;
+  return <div ref={wrapperRef}>{children}</div>;
 }
 
 OutsideClick.propTypes = {

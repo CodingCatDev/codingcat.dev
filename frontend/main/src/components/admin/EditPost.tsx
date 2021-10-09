@@ -5,7 +5,6 @@ import {
   postDataObservable,
   postHistoriesDataObservable,
   postHistoryCreate,
-  postHistoryPublish,
   postHistoryUpdate,
 } from '@/services/api';
 
@@ -15,7 +14,6 @@ import { TabType } from '@/models/admin.model';
 import { debounce, switchMap, take } from 'rxjs/operators';
 import { interval, Subject } from 'rxjs';
 import Link from 'next/link';
-import ShowMDX from '@/components/admin/ShowMDX';
 import PostHistories from '@/components/admin/PostHistories';
 import EditPostEditor from '@/components/admin/EditPostEditor';
 import EditPostSidebar from '@/components/admin/EditPostSidebar';
@@ -36,7 +34,7 @@ export default function EditPost({
   const [history, setHistory] = useState<Post>();
   const [, setPost] = useState<Post>();
   const [tab, setTab] = useState<TabType>(TabType.edit);
-  const [saving, setSaving] = useState<boolean>(false);
+  const [, setSaving] = useState<boolean>(false);
   const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
   // const [preview, setPreview] = useState<string>('');
   const [slugUnique, setSlugUnique] = useState(true);
@@ -129,16 +127,6 @@ export default function EditPost({
         );
       case TabType.media:
         return <EditPostMedia history={history} setHistory={setHistory} />;
-      case TabType.preview:
-        return (
-          <div
-            className={`block h-full w-full sm:text-sm rounded-md rounded-t-none overflow-y-auto`}
-          >
-            <article className="pt-8 prose prose-purple lg:prose-xl">
-              <ShowMDX markdown={history?.content || ''}></ShowMDX>
-            </article>
-          </div>
-        );
       case TabType.sections:
         return <EditPostCourseSections historyInput={history as Post} />;
       case TabType.settings:
@@ -178,16 +166,6 @@ export default function EditPost({
               onClick={() => selectTab(TabType.media)}
             >
               MEDIA
-            </button>
-            <button
-              className={`${tabStyles} ${
-                tab == TabType.preview
-                  ? 'border-b-4 border-primary-900 dark:border-primary-900'
-                  : 'border-b-4 border-secondary-500 dark:border-secondary-500'
-              }`}
-              onClick={() => selectTab(TabType.preview)}
-            >
-              MDX PREVIEW
             </button>
             <button
               className={`${tabStyles} ${
@@ -246,7 +224,6 @@ export default function EditPost({
                   setSlugUnique={setSlugUnique}
                   setSaving={setSaving}
                   postHistories={postHistories}
-                  selectTab={selectTab}
                 />
               </section>
             ) : (

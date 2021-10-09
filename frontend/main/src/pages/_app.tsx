@@ -1,14 +1,9 @@
 import '@/styles/globals.css';
 import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
+import type { AppProps } from 'next/app';
 
-function MyApp({
-  Component,
-  pageProps,
-}: {
-  Component: any;
-  pageProps: any;
-}): JSX.Element {
+function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <DefaultSeo

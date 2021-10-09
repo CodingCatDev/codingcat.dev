@@ -2,7 +2,7 @@ import { useTheme } from 'next-themes';
 import nightwind from 'nightwind/helper';
 import { useState, useEffect } from 'react';
 
-export default function Toggle() {
+export default function Toggle(): JSX.Element {
   const [loaded, setLoaded] = useState(false);
   const { theme, setTheme } = useTheme();
 

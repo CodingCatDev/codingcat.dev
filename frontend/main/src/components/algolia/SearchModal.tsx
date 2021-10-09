@@ -36,7 +36,13 @@ export default function SearchModal(): JSX.Element {
     };
   }, []);
 
-  const Modal = ({ handleClose, show, children }: any) => {
+  const Modal = ({
+    show,
+    children,
+  }: {
+    show: boolean;
+    children: JSX.Element;
+  }) => {
     const showHideclassNameName = show
       ? 'fixed inset-0 z-50 bg-basics-900 dark:bg-basics-900 dark:bg-opacity-50 bg-opacity-50 grid place-items-center h-screen'
       : 'hidden';
@@ -46,7 +52,7 @@ export default function SearchModal(): JSX.Element {
   return (
     <>
       {show && (
-        <Modal show={show} handleClose={hideModal}>
+        <Modal show={show}>
           <section
             className="relative grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 max-h-1/2 bg-basics-50 text-basics-900"
             style={{

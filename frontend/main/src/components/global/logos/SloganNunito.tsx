@@ -4,7 +4,7 @@ export default function TitleNunito({
 }: {
   className?: string;
   fill?: string;
-}) {
+}): JSX.Element {
   return (
     <svg className={className} viewBox="0 0 372 56" fill="none">
       <path

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connectSearchBox } from 'react-instantsearch-dom';
 
-export default connectSearchBox(({ refine, ...rest }) => (
+export default connectSearchBox(({ refine }) => (
   <form className="flex items-center w-full space-x-2">
     <label aria-label="search" htmlFor="search">
       <svg

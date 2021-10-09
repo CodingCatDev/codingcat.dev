@@ -1,4 +1,9 @@
-export default function BreakBarRight({ children }: { children: any }) {
+export default function BreakBarRight({
+  children,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  children: any;
+}): JSX.Element {
   return (
     <section className="relative flex items-center justify-between w-full p-4 vertical-clip">
       {children}

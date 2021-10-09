@@ -9,8 +9,6 @@ import {
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
-import renderToString from 'next-mdx-remote/render-to-string';
-import { Source } from 'next-mdx-remote/hydrate';
 import rehypePrism from '@mapbox/rehype-prism';
 
 import PostLayout from '@/components/PostLayout';
@@ -20,6 +18,8 @@ import { AuthIssue } from '@/models/user.model';
 import matter from 'gray-matter';
 import parse from 'remark-parse';
 import remark2react from 'remark-react';
+import { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 
 export default function Post({
   site,
@@ -30,7 +30,7 @@ export default function Post({
   site: Site | null;
   post: PostModel;
   course: PostModel;
-  source: Source | null;
+  source: MDXRemoteSerializeResult | null;
 }): JSX.Element {
   const router = useRouter();
   return (
@@ -56,7 +56,7 @@ export async function getServerSideProps({
         site: Site | null;
         post: PostModel | null;
         course: PostModel | null;
-        source: Source | null;
+        source: MDXRemoteSerializeResult | null;
       };
     }
   | { redirect: { destination: string; permanent: boolean } }
@@ -140,7 +140,7 @@ export async function getServerSideProps({
     }
   }
 
-  let source: Source | null;
+  let source: MDXRemoteSerializeResult | null;
   let allContent = '';
 
   if (post && post.urlContent) {
@@ -169,7 +169,7 @@ export async function getServerSideProps({
     allContent = allContent + content;
   }
   if (allContent) {
-    source = await renderToString(allContent, {
+    source = await serialize(allContent, {
       mdxOptions: {
         remarkPlugins: [parse, remark2react],
         rehypePlugins: [rehypePrism],

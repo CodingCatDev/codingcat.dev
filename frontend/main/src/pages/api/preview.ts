@@ -12,7 +12,7 @@ export default async (
   res: NextApiResponse
 ): Promise<void> => {
   const slugQuery = req.query.slug as string;
-  const secret = req.query.secret as string;
+  // const secret = req.query.secret as string;
 
   // Check for a slug
   if (!slugQuery) {

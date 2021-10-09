@@ -1,5 +1,4 @@
 import { NextSeo } from 'next-seo';
-import Error from 'next/error';
 import Link from 'next/link';
 import AJ404 from '@/components/global/icons/AJ404';
 

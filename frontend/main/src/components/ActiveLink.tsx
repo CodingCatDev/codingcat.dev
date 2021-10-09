@@ -2,6 +2,7 @@ import { withRouter } from 'next/router';
 import Link from 'next/link';
 import React, { Children } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ActiveLink({ router, children, ...props }: any) {
   const child = Children.only(children);
 

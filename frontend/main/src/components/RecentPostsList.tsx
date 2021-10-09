@@ -1,8 +1,5 @@
 import { Post, PostType } from '@/models/post.model';
-import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import Link from 'next/link';
-
-import PropTypes from 'prop-types';
 
 export default function RecentPostsList({
   posts,
@@ -10,8 +7,6 @@ export default function RecentPostsList({
   posts: Post[];
 }): JSX.Element {
   function link(post: Post) {
-    const pluralType = pluralize(post);
-
     switch (post.type) {
       case PostType.course:
         return (

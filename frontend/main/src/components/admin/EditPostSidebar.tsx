@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import TimeAgo from 'react-timeago';
 
 import PublishModal from '@/components/admin/PublishModal';
@@ -21,7 +21,6 @@ export default function EditPostSidebar({
   setSlugUnique,
   setSaving,
   postHistories,
-  selectTab,
 }: {
   updateContent$: Subject<Post>;
   tab: TabType;
@@ -31,7 +30,6 @@ export default function EditPostSidebar({
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   postHistories: Post[];
-  selectTab: any;
 }): JSX.Element {
   const [email, setEmail] = useState('');
   const [tag, setTag] = useState('');
@@ -252,7 +250,7 @@ export default function EditPostSidebar({
               {addAuthors.map((a, i) => (
                 <li
                   key={i}
-                  className="flex block px-4 py-2 text-sm cursor-pointer text-primary-900 hover:bg-primary-900 hover:text-white"
+                  className="flex px-4 py-2 text-sm cursor-pointer text-primary-900 hover:bg-primary-900 hover:text-white"
                   onClick={() => onSelectAddAuthor(a)}
                 >
                   {a.email}

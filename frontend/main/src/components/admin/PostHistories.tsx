@@ -4,35 +4,33 @@ import { Column } from 'primereact/column';
 import TimeAgo from 'react-timeago';
 
 import firebase from 'firebase/app';
-import { useUser } from '@/utils/auth/useUser';
-import {
-  cleanTimestamp,
-  postsByUpdatedAtObservable,
-  userProfileDataObservable,
-} from '@/services/api';
+import { userProfileDataObservable } from '@/services/api';
 import { Post, PostStatus } from '@/models/post.model';
 
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 import { take } from 'rxjs/operators';
-import { user } from 'rxfire/auth';
-import { BehaviorSubject } from 'rxjs';
-import RestoreHistory from '@/components/admin/RestoreHistory';
-import ShowMDX from '@/components/admin/ShowMDX';
 
-function PostHistories({ postHistories }: { postHistories: Post[] }) {
+function PostHistories({
+  postHistories,
+}: {
+  postHistories: Post[];
+}): JSX.Element {
   const [histories, setHistories] = useState<
-    { post: Post; user: firebase.UserInfo }[]
+    { post: Post; user?: firebase.UserInfo }[]
   >();
   const [count, setCount] = useState(0);
   const [expandedRows, setExpandedRows] = useState([]);
 
   useEffect(() => {
-    const postsUpdated = postHistories.map((h) => {
+    const postsUpdated: {
+      post: Post;
+      user?: firebase.UserInfo;
+    }[] = postHistories.map((h) => {
       return { post: h };
     });
-    setHistories(postsUpdated as any);
+    setHistories(postsUpdated);
     setCount(postHistories.length);
     return () => {
       false;
@@ -90,13 +88,17 @@ function PostHistories({ postHistories }: { postHistories: Post[] }) {
     rowData: {
       post: Post;
     },
-    rowInfo: any
+    rowInfo: {
+      rowIndex: number;
+    }
   ) {
     return (
       <>
         {rowInfo.rowIndex > 0 && rowData.post && rowData.post.id ? (
           <span>
-            <RestoreHistory postHistory={rowData.post} />
+            <button className="btn-primary" onClick={() => alert('TODO')}>
+              Restore
+            </button>
           </span>
         ) : (
           <></>
@@ -108,15 +110,7 @@ function PostHistories({ postHistories }: { postHistories: Post[] }) {
   function rowExpansionTemplate(rowData: {
     post: { content: string } | null | undefined;
   }) {
-    return (
-      <>
-        {rowData && rowData.post ? (
-          <ShowMDX markdown={rowData.post.content}></ShowMDX>
-        ) : (
-          <></>
-        )}
-      </>
-    );
+    return <>{rowData && rowData.post ? <>TODO</> : <>TODO</>}</>;
   }
 
   return (
@@ -127,6 +121,7 @@ function PostHistories({ postHistories }: { postHistories: Post[] }) {
         scrollHeight="800px"
         className="p-datatable-sm"
         expandedRows={expandedRows}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onRowToggle={(e) => setExpandedRows(e.data as any)}
         rowExpansionTemplate={rowExpansionTemplate}
       >

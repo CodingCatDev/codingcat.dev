@@ -6,7 +6,7 @@ import firebaseApp from 'firebase/app';
 import initFirebase from '@/utils/initFirebase';
 import { useEffect } from 'react';
 
-const FirebaseAuth = ({ full = true }: { full?: boolean }) => {
+const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
   const [app, setApp] = useState<firebaseApp.app.App>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,7 +52,7 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }) => {
     }
 
     // https://github.com/firebase/firebaseui-web#configure-oauth-providers
-    const config = {
+    const config: firebaseui.auth.Config = {
       signInFlow: 'popup',
       signInOptions,
       signInSuccessUrl: window.location.href,
@@ -63,7 +63,7 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }) => {
         window.open(`${window.location.origin}/privacy`);
       },
     };
-    setFirebaseAuthConfig(config as any);
+    setFirebaseAuthConfig(config);
   }, [app]);
 
   function signin(email: string, password: string) {
@@ -71,7 +71,7 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }) => {
       app
         .auth()
         .signInWithEmailAndPassword(email, password)
-        .then((user) => {
+        .then(() => {
           console.log('Successfully SignedIn');
         })
         .catch((error) => {
@@ -132,7 +132,7 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }) => {
           {app && firebaseAuthConfig ? (
             <div className="grid justify-center">
               <StyledFirebaseAuth
-                uiConfig={firebaseAuthConfig as any}
+                uiConfig={firebaseAuthConfig}
                 firebaseAuth={app.auth()}
               />
               {!full && (

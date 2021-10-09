@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export const HtmlLogo = (props: any) => (
   <svg viewBox="0 0 65 65" fill="none" {...props}>
     <path

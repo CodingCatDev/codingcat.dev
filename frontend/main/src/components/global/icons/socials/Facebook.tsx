@@ -4,7 +4,7 @@ export default function Facebook({
 }: {
   className?: string;
   fill: string;
-}) {
+}): JSX.Element {
   return (
     <svg
       className={className}

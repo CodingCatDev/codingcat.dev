@@ -5,14 +5,15 @@ import dynamic from 'next/dynamic';
 import { useUser } from '@/utils/auth/useUser';
 import AJLogo from '@/components/global/icons/AJPrimary';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
+import { UserInfoExtended } from '@/models/user.model';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
   loading: () => <p>Playing with yarn...</p>,
 });
 
-export default function UserSignin() {
-  const { user, signout }: { user: any; signout: any } = useUser();
+export default function UserSignin(): JSX.Element {
+  const { user }: { user: UserInfoExtended | null } = useUser();
   const [signin, setSignIn] = useState(false);
 
   return (

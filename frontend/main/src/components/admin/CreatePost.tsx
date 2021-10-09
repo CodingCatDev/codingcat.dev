@@ -19,7 +19,7 @@ const postInitial = {
   slug: '',
 };
 
-export default function CreatePost({ type }: { type: PostType }) {
+export default function CreatePost({ type }: { type: PostType }): JSX.Element {
   const [post, setPost] = useState<Post>(postInitial);
 
   useEffect(() => {

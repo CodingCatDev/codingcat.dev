@@ -1,18 +1,17 @@
 import DefaultErrorPage from 'next/error';
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
-import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
-import hydrate, { Source } from 'next-mdx-remote/hydrate';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
 
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
-import { millisecondToDate, millisecondToUSFormat } from '@/utils/basics/date';
+import { millisecondToUSFormat } from '@/utils/basics/date';
 import { Site } from '@/models/site.model';
 import SocialShare from '@/components/common/SocialShare';
 import { isUserTeam } from '@/services/api';
@@ -31,7 +30,7 @@ export default function PostLayout({
   site: Site | null;
   post: Post;
   router: NextRouter;
-  source: Source | null;
+  source: MDXRemoteSerializeResult | null;
   course?: Post;
   recentPosts?: { [key: string]: Post[] };
   preview?: boolean;
@@ -116,7 +115,6 @@ export default function PostLayout({
     );
   }
 
-  const content = source ? hydrate(source) : null;
   return (
     <Layout site={site}>
       {/* DIV TO AVOID GRID GAP */}
@@ -307,7 +305,7 @@ export default function PostLayout({
           )}
           {/* BLOG POST */}
           <article className="m-0 leading-relaxed top-2 text-basics-900">
-            {content}
+            {source && <MDXRemote {...source} />}
           </article>
         </section>
       </div>

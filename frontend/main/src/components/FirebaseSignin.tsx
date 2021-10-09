@@ -1,7 +1,7 @@
 import AJPrimary from './global/icons/AJPrimary';
 import FirebaseAuth from './FirebaseAuth';
 
-function FirebaseSignin() {
+function FirebaseSignin(): JSX.Element {
   return (
     <>
       <div className="flex flex-col justify-center min-h-screen py-12 sm:px-6 lg:px-8">

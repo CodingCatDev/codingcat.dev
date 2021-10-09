@@ -1,10 +1,8 @@
-import Link from 'next/link';
 import { StripeProduct } from '@/models/stripe.model';
 import { stripeCheckout } from '@/services/api';
 import { useUser } from '@/utils/auth/useUser';
 import { take } from 'rxjs/operators';
-import AJPrimary from './global/icons/AJPrimary';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useState, MouseEvent } from 'react';
 import OutsideClick from '@/components/OutsideClick';
 
 export default function CourseBuy({
@@ -17,7 +15,7 @@ export default function CourseBuy({
   const [stripe, setStripe] = useState(false);
   const { user } = useUser();
 
-  function onSelectPlan(e: any) {
+  function onSelectPlan(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     if (product && user?.uid) {
       setStripe(true);

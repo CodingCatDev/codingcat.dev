@@ -1,15 +1,21 @@
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 import { useUser } from '@/utils/auth/useUser';
+import { UserInfoExtended } from '@/models/user.model';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
   loading: () => <p>Playing with yarn...</p>,
 });
 
-export default function UserSignin() {
-  const { user, signout }: { user: any; signout: any } = useUser();
+export default function UserSignin(): JSX.Element {
+  const {
+    user,
+    signout,
+  }: {
+    user: UserInfoExtended | null;
+    signout: () => Promise<void>;
+  } = useUser();
 
   return (
     <>

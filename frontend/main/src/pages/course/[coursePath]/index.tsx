@@ -5,14 +5,11 @@ import {
   getSite,
   getStripeProduct,
   postBySlugService,
-  postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
-import renderToString from 'next-mdx-remote/render-to-string';
-import hydrate, { Source } from 'next-mdx-remote/hydrate';
 import rehypePrism from '@mapbox/rehype-prism';
-import { millisecondToDate, millisecondToUSFormat } from '@/utils/basics/date';
+import { millisecondToUSFormat } from '@/utils/basics/date';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
@@ -21,7 +18,6 @@ import { useState } from 'react';
 import CourseBuy from '@/components/CourseBuy';
 import { StripeProduct } from '@/models/stripe.model';
 import { AccessMode } from '@/models/access.model';
-import OutsideClick from '@/components/OutsideClick';
 import { useUser } from '@/utils/auth/useUser';
 import { useEffect } from 'react';
 import { isUserCourseSub, isUserMember, isUserTeam } from '@/services/api';
@@ -31,6 +27,8 @@ import BreakBarLeft from '@/components/home/BreakBarLeft';
 import matter from 'gray-matter';
 import parse from 'remark-parse';
 import remark2react from 'remark-react';
+import { MDXRemoteSerializeResult, MDXRemote } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 
 export default function Post({
   site,
@@ -40,7 +38,7 @@ export default function Post({
 }: {
   site: Site | null;
   post: PostModel;
-  source: Source | null;
+  source: MDXRemoteSerializeResult | null;
   product: StripeProduct | null;
 }): JSX.Element {
   const router = useRouter();
@@ -51,7 +49,7 @@ export default function Post({
       </Layout>
     );
   }
-  const [showMustSignin, setShowMustSignin] = useState(false);
+  const [, setShowMustSignin] = useState(false);
   const [member, setMember] = useState(false);
   const { user } = useUser();
 
@@ -70,7 +68,6 @@ export default function Post({
     }
   }, [user]);
 
-  const content = source ? hydrate(source) : null;
   return (
     <Layout site={site}>
       <section className="top-0 z-10 grid 2xl:sticky">
@@ -148,7 +145,7 @@ export default function Post({
       <div className="grid grid-cols-1 gap-4 px-4 pb-4 lg:px-10 lg:pb-10 lg:grid-cols-sidebar">
         <section>
           <PostMedia post={post} noImage={true} />
-          <div className="mt-2">{content}</div>
+          <div className="mt-2">{source && <MDXRemote {...source} />}</div>
         </section>
         <section className="flex flex-col mb-2">
           {post.type === PostType.course && (
@@ -457,7 +454,7 @@ export async function getStaticProps({
       props: {
         site: Site | null;
         post: PostModel | null;
-        source: Source | null;
+        source: MDXRemoteSerializeResult | null;
         product: StripeProduct | null;
       };
       revalidate: number;
@@ -497,7 +494,7 @@ export async function getStaticProps({
     }
   }
 
-  let source: Source | null;
+  let source: MDXRemoteSerializeResult | null;
   let allContent = '';
 
   if (post && post.urlContent) {
@@ -526,7 +523,7 @@ export async function getStaticProps({
     allContent = allContent + content;
   }
   if (allContent) {
-    source = await renderToString(allContent, {
+    source = await serialize(allContent, {
       mdxOptions: {
         remarkPlugins: [parse, remark2react],
         rehypePlugins: [rehypePrism],

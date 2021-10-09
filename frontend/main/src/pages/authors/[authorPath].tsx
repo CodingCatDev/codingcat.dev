@@ -64,7 +64,6 @@ export default function AuthorPage({
 
 export async function getServerSideProps({
   params,
-  req,
 }: {
   params: { authorPath: string };
   req: http.IncomingMessage;
