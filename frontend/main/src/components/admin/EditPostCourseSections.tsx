@@ -14,7 +14,6 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const arrayMove = require('array-move');
 
 export default function EditPostCourseSections({

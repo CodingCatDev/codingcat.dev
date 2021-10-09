@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';

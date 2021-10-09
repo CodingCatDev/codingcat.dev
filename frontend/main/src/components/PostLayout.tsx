@@ -36,13 +36,6 @@ export default function PostLayout({
   recentPosts?: { [key: string]: Post[] };
   preview?: boolean;
 }): JSX.Element {
-  if (!post) {
-    return (
-      <Layout site={site}>
-        <DefaultErrorPage statusCode={404} />
-      </Layout>
-    );
-  }
   const [href, setHref] = useState('');
 
   useEffect(() => {
@@ -57,6 +50,14 @@ export default function PostLayout({
         .subscribe((q) => setIsAdmin(q));
     }
   }, [user]);
+
+  if (!post) {
+    return (
+      <Layout site={site}>
+        <DefaultErrorPage statusCode={404} />
+      </Layout>
+    );
+  }
 
   function isActiveLink(course: Post, lesson: SectionLesson) {
     if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
@@ -170,6 +171,7 @@ export default function PostLayout({
                             <Image
                               src={author.photoURL}
                               loader={() => author.photoURL || ''}
+                              unoptimized={true}
                               layout="fixed"
                               height="50"
                               width="50"

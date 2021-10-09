@@ -55,7 +55,7 @@ function PostHistories({
         }
       });
     }
-  }, [count]);
+  }, [count, histories]);
 
   function statusBodyTemplate(rowData: {
     post: { status: string } | null | undefined;
@@ -121,7 +121,6 @@ function PostHistories({
         scrollHeight="800px"
         className="p-datatable-sm"
         expandedRows={expandedRows}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onRowToggle={(e) => setExpandedRows(e.data as any)}
         rowExpansionTemplate={rowExpansionTemplate}
       >

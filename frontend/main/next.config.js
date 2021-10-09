@@ -5,6 +5,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 module.exports = withBundleAnalyzer({
+  reactStrictMode: true,
   images: {
     loader: 'cloudinary',
     path: 'https://media.codingcat.dev/image/upload/',

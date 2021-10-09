@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
 import {
@@ -40,6 +40,24 @@ export default function EditPost({
   const [slugUnique, setSlugUnique] = useState(true);
 
   const router = useRouter();
+
+  const selectTab = useCallback(
+    (tab: TabType) => {
+      setTab(tab);
+      const { id, type } = router.query;
+      router.push(
+        {
+          pathname: `/admin/${type}/${id}`,
+          query: {
+            tab: tab,
+          },
+        },
+        undefined,
+        { shallow: true }
+      );
+    },
+    [router]
+  );
 
   // Sets initial state
   useEffect(() => {
@@ -88,57 +106,34 @@ export default function EditPost({
       postSubscribe.unsubscribe();
       contentSubscribe.unsubscribe();
     };
-  }, [type, id]);
+  }, [type, id, router.query, selectTab, updateContent$]);
 
-  // useEffect(() => {
-  //   if (tab === 'preview') {
-  //     setPreview(history?.content || '');
-  //   } else {
-  //     setPreview('');
-  //   }
-  // }, [tab]);
-
-  function selectTab(tab: TabType) {
-    setTab(tab);
-    const { id, type } = router.query;
-    router.push(
-      {
-        pathname: `/admin/${type}/${id}`,
-        query: {
-          tab: tab,
-        },
-      },
-      undefined,
-      { shallow: true }
-    );
-  }
-
-  function onTab() {
-    switch (tab) {
-      case TabType.edit:
-        return (
-          <EditPostEditor
-            updateContent$={updateContent$}
-            history={history}
-            setHistory={setHistory}
-            slugUnique={slugUnique}
-            setSlugUnique={setSlugUnique}
-          />
-        );
-      case TabType.media:
-        return <EditPostMedia history={history} setHistory={setHistory} />;
-      case TabType.sections:
-        return <EditPostCourseSections historyInput={history as Post} />;
-      case TabType.settings:
-        return <EditPostCourseSettings historyInput={history as Post} />;
-      case TabType.groups:
-        return <EditPostCourseGroups historyInput={history as Post} />;
-      case TabType.history:
-        return <PostHistories postHistories={postHistories} />;
-      default:
-        return <p>This tab is not defined yet.</p>;
-    }
-  }
+            function onTab() {
+              switch (tab) {
+                case TabType.edit:
+                  return (
+                    <EditPostEditor
+                      updateContent$={updateContent$}
+                      history={history}
+                      setHistory={setHistory}
+                      slugUnique={slugUnique}
+                      setSlugUnique={setSlugUnique}
+                    />
+                  );
+                case TabType.media:
+                  return <EditPostMedia history={history} setHistory={setHistory} />;
+                case TabType.sections:
+                  return <EditPostCourseSections historyInput={history as Post} />;
+                case TabType.settings:
+                  return <EditPostCourseSettings historyInput={history as Post} />;
+                case TabType.groups:
+                  return <EditPostCourseGroups historyInput={history as Post} />;
+                case TabType.history:
+                  return <PostHistories postHistories={postHistories} />;
+                default:
+                  return <p>This tab is not defined yet.</p>;
+              }
+            }
 
   const tabStyles = `block px-4 2xl:px-12 font-medium text-basics-50 dark:text-basics-50 hover:bg-secondary-500 dark:hover:bg-secondary-500 hover:border-b-2 hover:border-primary-50 dark:hover:border-primary-50 focus:outline-none whitespace-nowrap`;
 

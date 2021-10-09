@@ -63,7 +63,7 @@ export default function EditPostCourseSettings({
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   function onCourseNavigationChange(e: any): void {
     const navigationSettings: NavigationSettings = e.target
       .value as NavigationSettings;

@@ -44,6 +44,7 @@ export default function MembershipCards({
       <Image
         src={img}
         loader={() => img}
+        unoptimized={true}
         layout="fixed"
         width="335"
         height="270"

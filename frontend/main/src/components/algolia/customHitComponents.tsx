@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Highlight } from 'react-instantsearch-dom';
 import Link from 'next/link';
@@ -9,8 +8,7 @@ import Pages from '@/components/global/icons/nav/Pages';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const BlogPostHit = () => ({ hit }: any): JSX.Element => {
+export default function BlogPostHit({ hit }: any): JSX.Element {
   function typeIcon(type: string) {
     switch (type) {
       case PostType.page:
@@ -61,4 +59,4 @@ export const BlogPostHit = () => ({ hit }: any): JSX.Element => {
       `}</style>
     </>
   );
-};
+}

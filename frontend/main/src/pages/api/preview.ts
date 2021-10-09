@@ -7,7 +7,7 @@ import {
 import { NextApiRequest, NextApiResponse } from 'next';
 import cookie from 'cookie';
 
-export default async (
+const preview = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
@@ -88,3 +88,4 @@ export default async (
   // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
   res.redirect(`/${post.type}/${post.slug}`);
 };
+export default preview;

@@ -1,7 +1,6 @@
 export default function BreakBarRight({
   children,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children: any;
 }): JSX.Element {
   return (

@@ -34,7 +34,7 @@ export default function SearchModal(): JSX.Element {
       document.removeEventListener('keydown', escFunction, false);
       document.removeEventListener('keydown', cmdKFunction, false);
     };
-  }, []);
+  }, [cmdKFunction, escFunction]);
 
   const Modal = ({
     show,

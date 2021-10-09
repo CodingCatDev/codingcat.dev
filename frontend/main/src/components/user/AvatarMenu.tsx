@@ -23,8 +23,8 @@ export default function UserSignin({
 
   const [profile, setProfile] = useState<UserInfoExtended | null>(null);
 
-  let subscription: Subscription;
   useEffect(() => {
+    let subscription: Subscription;
     if (app) {
       subscription = authState(app.auth())
         .pipe(
@@ -60,6 +60,7 @@ export default function UserSignin({
               <Image
                 src={profile.photoURL}
                 loader={() => profile.photoURL || ''}
+                unoptimized={true}
                 layout="fixed"
                 width="40"
                 height="40"
@@ -74,6 +75,7 @@ export default function UserSignin({
               <Image
                 src="/static/images/avatar.png"
                 loader={() => '/static/images/avatar.png'}
+                unoptimized={true}
                 layout="fixed"
                 width="40"
                 height="40"

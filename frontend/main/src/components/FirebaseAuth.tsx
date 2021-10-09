@@ -64,7 +64,7 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
       },
     };
     setFirebaseAuthConfig(config);
-  }, [app]);
+  }, [app, full]);
 
   function signin(email: string, password: string) {
     if (app) {

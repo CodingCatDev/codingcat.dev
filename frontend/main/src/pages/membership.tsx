@@ -94,6 +94,7 @@ export default function Membership({
                         layout="fixed"
                         height="500"
                         width="500"
+                        unoptimized={true}
                         alt={`${user.displayName} Photo`}
                         className="w-32 h-32 m-4"
                       />

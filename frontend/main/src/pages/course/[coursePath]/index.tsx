@@ -42,13 +42,6 @@ export default function Post({
   product: StripeProduct | null;
 }): JSX.Element {
   const router = useRouter();
-  if (router.isFallback) {
-    return (
-      <Layout site={site}>
-        <h2>Loading...</h2>
-      </Layout>
-    );
-  }
   const [, setShowMustSignin] = useState(false);
   const [member, setMember] = useState(false);
   const { user } = useUser();
@@ -66,7 +59,15 @@ export default function Post({
           setMember(c.includes(true));
         });
     }
-  }, [user]);
+  }, [user, product]);
+
+  if (router.isFallback) {
+    return (
+      <Layout site={site}>
+        <h2>Loading...</h2>
+      </Layout>
+    );
+  }
 
   return (
     <Layout site={site}>
@@ -101,6 +102,7 @@ export default function Post({
                           <Image
                             src={author.photoURL}
                             loader={() => author.photoURL || ''}
+                            unoptimized={true}
                             layout="fixed"
                             height="50"
                             width="50"

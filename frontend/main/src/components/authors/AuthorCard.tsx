@@ -12,6 +12,7 @@ export default function AuthorCard({
         <Image
           src={author.photoURL}
           loader={() => author.photoURL || ''}
+          unoptimized={true}
           layout="fixed"
           width="96"
           height="96"
@@ -24,6 +25,7 @@ export default function AuthorCard({
           layout="fixed"
           width="96"
           height="96"
+          unoptimized={true}
           loader={() => '/static/images/avatar.png'}
           src="/static/images/avatar.png"
           alt="Avatar Image Placeholder"
