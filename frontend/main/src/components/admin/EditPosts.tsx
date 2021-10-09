@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { useUser } from '@/utils/auth/useUser';
 import { postsByUpdatedAtObservable } from '@/services/api';
 import { Post, PostStatus, PostType } from '@/models/post.model';
 import { map, take } from 'rxjs/operators';
 
-function EditPosts({ type }: { type: PostType }) {
-  const { user, signout }: { user: any; signout: any } = useUser();
-
+function EditPosts({ type }: { type: PostType }): JSX.Element {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -19,8 +14,8 @@ function EditPosts({ type }: { type: PostType }) {
         map((posts) => {
           posts.sort(
             (post1, post2) =>
-              new Date(post2.publishedAt as any).getTime() -
-              new Date(post1.publishedAt as any).getTime()
+              new Date((post2.publishedAt as unknown) as Date).getTime() -
+              new Date((post1.publishedAt as unknown) as Date).getTime()
           );
           return posts;
         })
@@ -84,7 +79,9 @@ function EditPosts({ type }: { type: PostType }) {
                 </li>
                 <li className="p-2 text-left td" role="cell">
                   {post.publishedAt
-                    ? new Date(post.publishedAt as any).toLocaleString()
+                    ? new Date(
+                        (post.publishedAt as unknown) as Date
+                      ).toLocaleString()
                     : ''}
                 </li>
                 <li className="flex flex-col p-2 text-left td" role="cell">

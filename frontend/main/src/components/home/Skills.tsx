@@ -8,7 +8,7 @@ import {
 } from '@/components/global/icons/VendorLogos';
 import Link from 'next/link';
 
-export default function Skills() {
+export default function Skills(): JSX.Element {
   return (
     <>
       {/* These 3 are bigger in size, so they are h-8/16 */}

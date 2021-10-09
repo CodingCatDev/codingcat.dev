@@ -14,12 +14,12 @@ import matter from 'gray-matter';
 import rehypePrism from '@mapbox/rehype-prism';
 import parse from 'remark-parse';
 import remark2react from 'remark-react';
-import renderToString from 'next-mdx-remote/render-to-string';
-import { Source } from 'next-mdx-remote/hydrate';
+import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
+import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 export default function Post({
   site,
@@ -31,7 +31,7 @@ export default function Post({
   site: Site | null;
   post: PostModel;
   recentPosts: { [key: string]: PostModel[] };
-  source: Source | null;
+  source: MDXRemoteSerializeResult | null;
   preview: boolean;
 }): JSX.Element {
   const router = useRouter();
@@ -122,7 +122,7 @@ export async function getStaticProps({
         site: Site | null;
         post: PostModel | null;
         recentPosts: { [key: string]: PostModel[] };
-        source: Source | null;
+        source: MDXRemoteSerializeResult | null;
         preview: boolean;
       };
       revalidate: number;
@@ -224,7 +224,7 @@ export async function getStaticProps({
     PostType.podcast,
   ]);
 
-  let source: Source | null;
+  let source: MDXRemoteSerializeResult | null;
   let allContent = '';
 
   if (post && post.urlContent) {
@@ -253,7 +253,7 @@ export async function getStaticProps({
     allContent = allContent + content;
   }
   if (allContent) {
-    source = await renderToString(allContent, {
+    source = await serialize(allContent, {
       mdxOptions: {
         remarkPlugins: [parse, remark2react],
         rehypePlugins: [rehypePrism],

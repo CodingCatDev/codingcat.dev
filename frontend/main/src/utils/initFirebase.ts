@@ -1,6 +1,8 @@
 import { config } from '@/config/firebase';
-
-export default async function initFirebase() {
+import firebase from 'firebase/app';
+export default async function initFirebase(): Promise<
+  firebase.app.App | undefined
+> {
   if (typeof window === 'undefined') {
     return;
   }
@@ -31,7 +33,7 @@ export default async function initFirebase() {
       // firebase.default.messaging();
     }
     return firebase.default.app();
-  } catch (err) {
+  } catch (err: any) {
     // we skip the "already exists" message which is
     // not an actual error when we're hot-reloading
     console.log(err);

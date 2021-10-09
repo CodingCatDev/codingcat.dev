@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Logo = () => (
+const ProCat = (): JSX.Element => (
   <svg className="w-full" viewBox="-50 0 388 449" fill="none">
     <path
       fill="url(#paint0_linear)"
@@ -143,4 +143,4 @@ const Logo = () => (
   </svg>
 );
 
-export default Logo;
+export default ProCat;

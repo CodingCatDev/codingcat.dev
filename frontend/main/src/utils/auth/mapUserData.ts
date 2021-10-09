@@ -1,7 +1,11 @@
 import firebase from 'firebase/app';
 import { getUserFromCookie, setUserCookie } from './userCookies';
 
-export const mapUserData = async (user: any) => {
+interface ZaUser extends firebase.User {
+  za?: string;
+}
+
+export const mapUserData = async (user: ZaUser): Promise<firebase.User> => {
   const { uid, email, za } = user;
 
   const userFromCookie = getUserFromCookie();

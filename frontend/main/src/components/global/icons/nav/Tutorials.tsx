@@ -2,7 +2,7 @@ export default function Tutorials({
   className = 'block w-8 h-8',
 }: {
   className?: string;
-}) {
+}): JSX.Element {
   return (
     <svg
       viewBox="0 0 35 35"

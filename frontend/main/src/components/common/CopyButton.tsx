@@ -4,11 +4,11 @@ export default function CopyButton({
   code,
   className = 'w-8 h-8',
 }: {
-  code: any;
+  code: string | number;
   className?: string;
-}) {
+}): JSX.Element {
   // isCopied is reset after 3 second timeout
-  const [isCopied, handleCopy]: any = useCopyToClipboard(3000);
+  const [isCopied, handleCopy] = useCopyToClipboard(3000);
 
   return (
     <>

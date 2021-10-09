@@ -4,7 +4,6 @@ import { MediaSource } from '@/models/media.model';
 import { config } from '@/config/cloudinary';
 
 import { getCloudinaryCookieToken } from '@/services/api';
-import firebase from 'firebase/app';
 import { take } from 'rxjs/operators';
 
 import { Video } from 'cloudinary-react';
@@ -17,7 +16,7 @@ export default function PostMedia({
 }: {
   post: Post;
   noImage?: boolean;
-}) {
+}): JSX.Element {
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {

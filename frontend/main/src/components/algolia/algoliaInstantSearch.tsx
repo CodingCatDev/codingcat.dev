@@ -9,8 +9,8 @@ import {
   PoweredBy,
   MenuSelect,
 } from 'react-instantsearch-dom';
-import CustomSearchBox from './customSearchBox';
-import * as hitComps from './customHitComponents';
+import CustomSearchBox from '@/components/algolia/connectSearchBox';
+import * as hitComps from '@/components/algolia/customHitComponents';
 
 const algoliaClient = algoliasearch(
   process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || '',
@@ -33,11 +33,11 @@ const Results = connectStateResults(
     return res && res.nbHits > 0 ? children : message;
   }
 );
-const Stats = connectStateResults(({ searchResults: res }: any) => {
-  return (
-    res && res.nbHits > 0 && `${res.nbHits} result${res.nbHits > 1 ? `s` : ``}`
-  );
-});
+// const Stats = connectStateResults(({ searchResults: res }: any) => {
+//   return (
+//     res && res.nbHits > 0 && `${res.nbHits} result${res.nbHits > 1 ? `s` : ``}`
+//   );
+// });
 
 const HitList = ({ show }: { show: boolean }): JSX.Element => {
   const [, setFocus] = useState(false);
@@ -68,7 +68,7 @@ const HitList = ({ show }: { show: boolean }): JSX.Element => {
             <CustomSearchBox />
             <hr className="mt-2 opacity-20 text-primary-900" />
           </header>
-          {searchIndices.map(({ name, title, hitComp }) => (
+          {searchIndices.map(({ name, hitComp }) => (
             <main className="pr-2 overflow-y-auto" key={name}>
               <Index indexName={name}>
                 <Results>

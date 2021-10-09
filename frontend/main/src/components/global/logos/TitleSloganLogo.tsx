@@ -17,7 +17,7 @@ export default function TitleSloganLogo({
   sloganFill?: string;
   ajClassName?: string;
   ajFaceStandard?: boolean;
-}) {
+}): JSX.Element {
   return (
     <div className="flex content-center">
       {!ajFaceStandard ? (

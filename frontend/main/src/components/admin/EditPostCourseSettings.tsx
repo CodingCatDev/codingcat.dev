@@ -63,9 +63,8 @@ export default function EditPostCourseSettings({
     }
   }
 
-  function onCourseNavigationChange(
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void {
+
+  function onCourseNavigationChange(e: any): void {
     const navigationSettings: NavigationSettings = e.target
       .value as NavigationSettings;
     const historyUpdate = {
@@ -102,7 +101,7 @@ export default function EditPostCourseSettings({
                     id="open"
                     name="accessmode"
                     value="open"
-                    onChange={(e) => onAccessModeChange(e as any)}
+                    onChange={(e) => onAccessModeChange(e)}
                     checked={accessMode === AccessMode.open}
                     className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
@@ -131,7 +130,7 @@ export default function EditPostCourseSettings({
                     id="free"
                     name="accessmode"
                     value="free"
-                    onChange={(e) => onAccessModeChange(e as any)}
+                    onChange={(e) => onAccessModeChange(e)}
                     checked={accessMode === AccessMode.free}
                     className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
@@ -160,7 +159,7 @@ export default function EditPostCourseSettings({
                     id="closed"
                     name="accessmode"
                     value="closed"
-                    onChange={(e) => onAccessModeChange(e as any)}
+                    onChange={(e) => onAccessModeChange(e)}
                     checked={accessMode === AccessMode.closed}
                     className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
@@ -209,7 +208,7 @@ export default function EditPostCourseSettings({
                             value={history?.accessSettings?.price}
                             placeholder="$9.99"
                             disabled={accessMode !== AccessMode.closed}
-                            onChange={(e) => onAccessModeChange(e as any)}
+                            onChange={(e) => onAccessModeChange(e)}
                             className="block w-full mt-1 border-gray-300 rounded-md shadow-sm disabled:opacity-50 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                           />
                         </li>
@@ -232,7 +231,7 @@ export default function EditPostCourseSettings({
                             pattern="price_"
                             value={history?.accessSettings?.productId}
                             disabled={accessMode !== AccessMode.closed}
-                            onChange={(e) => onAccessModeChange(e as any)}
+                            onChange={(e) => onAccessModeChange(e)}
                             className="block w-full mt-1 border-gray-300 rounded-md shadow-sm disabled:opacity-50 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                           />
                         </li>
@@ -259,7 +258,7 @@ export default function EditPostCourseSettings({
               <h2 className="py-4 font-sans text-xl">Course Progression</h2>
               <ul
                 className="grid max-w-2xl grid-cols-1 gap-4"
-                onChange={(e) => onCourseNavigationChange(e as any)}
+                onChange={(e) => onCourseNavigationChange(e)}
               >
                 <li className="flex items-start space-x-2">
                   <input
@@ -267,7 +266,7 @@ export default function EditPostCourseSettings({
                     id="linear"
                     name="courseProgression"
                     value="linear"
-                    onChange={(e) => onAccessModeChange(e as any)}
+                    onChange={(e) => onAccessModeChange(e)}
                     checked={navigationSettings === NavigationSettings.linear}
                     className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />
@@ -300,7 +299,7 @@ export default function EditPostCourseSettings({
                     id="freeform"
                     name="courseProgression"
                     value="freeform"
-                    onChange={(e) => onAccessModeChange(e as any)}
+                    onChange={(e) => onAccessModeChange(e)}
                     checked={navigationSettings === NavigationSettings.freeform}
                     className={`mt-1 border-gray-300 shadow-sm text-primary-900 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50`}
                   />

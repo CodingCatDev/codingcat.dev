@@ -69,6 +69,7 @@ export default function UserProfile(): JSX.Element {
         <form className="grid gap-4">
           <div className="grid gap-4">
             {profile.photoURL ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 className="w-24"
                 src={profile.photoURL}
@@ -79,6 +80,7 @@ export default function UserProfile(): JSX.Element {
                 }
               />
             ) : (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 className="w-24"
                 src="/static/images/avatar.png"

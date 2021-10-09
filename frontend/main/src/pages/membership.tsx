@@ -1,6 +1,7 @@
 import { NextSeo } from 'next-seo';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import Layout from '@/layout/Layout';
 import { useUser } from '@/utils/auth/useUser';
@@ -87,8 +88,13 @@ export default function Membership({
                     } flex flex-wrap bg-white max-w-lg shadow-lg overflow-hidden mx-auto`}
                   >
                     {user.photoURL && (
-                      <img
+                      <Image
                         src={user.photoURL}
+                        loader={() => user.photoURL || ''}
+                        layout="fixed"
+                        height="500"
+                        width="500"
+                        unoptimized={true}
                         alt={`${user.displayName} Photo`}
                         className="w-32 h-32 m-4"
                       />

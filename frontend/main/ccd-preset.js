@@ -1,6 +1,9 @@
 module.exports = {
   // or 'media' or 'class'
   theme: {
+    nightwind: {
+      transitionDuration: false, // default '300ms'
+    },
     fontFamily: {
       sans: ['nunito', 'ui-sans-serif'],
       serif: ['nunito', 'ui-serif'],

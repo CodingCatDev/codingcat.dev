@@ -47,9 +47,9 @@ export default function PublishModal({
     setOpen(true);
     setLargeButton(false);
   };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
   const handleDateChange = (date: Date | null) => {
     if (date) setSelectedDate(date);

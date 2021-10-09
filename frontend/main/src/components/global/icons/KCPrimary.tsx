@@ -2,7 +2,7 @@ export default function KCPrimary({
   className = 'block w-12 h-12',
 }: {
   className?: string;
-}) {
+}): JSX.Element {
   return (
     <svg viewBox="0 0 1000 1000" fill="none" className={className}>
       <path

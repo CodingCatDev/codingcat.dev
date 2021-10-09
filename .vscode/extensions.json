@@ -22,6 +22,5 @@
     "wix.vscode-import-cost",
     "bradlc.vscode-tailwindcss",
     "PeterMekhaeil.vscode-tailwindcss-explorer",
-    "ms-vscode.vscode-typescript-tslint-plugin"
   ]
 }

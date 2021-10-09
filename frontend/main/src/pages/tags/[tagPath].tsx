@@ -3,10 +3,8 @@ import { getSite, getTagBySlug, postsByTag } from '@/services/serversideApi';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
-import { UserInfoExtended } from '@/models/user.model';
 import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
-import AuthorCard from '@/components/authors/AuthorCard';
 import { Tag } from '@/models/tag.model';
 
 export default function AuthorPage({
@@ -71,7 +69,6 @@ export default function AuthorPage({
 
 export async function getServerSideProps({
   params,
-  req,
 }: {
   params: { tagPath: string };
   req: http.IncomingMessage;

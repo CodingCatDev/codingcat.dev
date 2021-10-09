@@ -357,7 +357,7 @@ export const postCreate = (type: PostType, title: string, slug: string) => {
 
   return firestore$.pipe(
     switchMap((firestore) => {
-      const docRef = firebase.firestore().collection('posts').doc(id);
+      const docRef = firestore.collection('posts').doc(id);
       docRef.set(post);
       return docData<Post>(docRef);
     })
@@ -550,7 +550,7 @@ export const postHistoryPublish = (history: Post) => {
         id: history.postId,
         historyId: history.id,
       });
-      return from(batch.commit()).pipe(switchMap((b) => docData(historyRef)));
+      return from(batch.commit()).pipe(switchMap(() => docData(historyRef)));
     })
   );
 };
@@ -606,7 +606,7 @@ export const postHistoryMediaCreate = (
         [type === MediaType.photo ? 'coverPhoto' : 'coverVideo']: coverMedia,
       });
       return from(batch.commit()).pipe(
-        switchMap((b) => docData<Post>(historyRef))
+        switchMap(() => docData<Post>(historyRef))
       );
     })
   );
