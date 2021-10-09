@@ -1,9 +1,6 @@
 import '@/styles/globals.css';
 import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
-import TagManager from 'react-gtm-module';
-import { useEffect } from 'react';
-import { config as gtmConfig } from '@/config/gtm';
 
 function MyApp({
   Component,
@@ -12,11 +9,6 @@ function MyApp({
   Component: any;
   pageProps: any;
 }): JSX.Element {
-  useEffect(() => {
-    if (gtmConfig && gtmConfig.id) {
-      TagManager.initialize({ gtmId: gtmConfig.id });
-    }
-  }, []);
   return (
     <>
       <DefaultSeo
