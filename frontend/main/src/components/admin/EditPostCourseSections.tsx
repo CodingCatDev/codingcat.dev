@@ -293,6 +293,7 @@ export default function EditPostCourseSections({
                                           >
                                             <Link
                                               href={`/admin/lessons/${lesson.id}`}
+                                              passHref
                                             >
                                               <div className="flex flex-col">
                                                 <a className="text-2xl underline cursor-pointer">

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { UserInfoExtended } from '@/models/user.model';
 
 export default function AuthorCard({
@@ -8,14 +9,22 @@ export default function AuthorCard({
   return (
     <article className="grid items-start max-w-md grid-cols-1 gap-4 p-4 shadow-lg justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm">
       {author?.displayName && author?.photoURL ? (
-        <img
-          className="rounded-full"
+        <Image
           src={author.photoURL}
+          loader={() => author.photoURL || ''}
+          layout="fixed"
+          width="96"
+          height="96"
           alt={author.displayName}
+          className="w-24 rounded-full"
         />
       ) : (
-        <img
+        <Image
           className="w-24 rounded-full"
+          layout="fixed"
+          width="96"
+          height="96"
+          loader={() => '/static/images/avatar.png'}
           src="/static/images/avatar.png"
           alt="Avatar Image Placeholder"
         />

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';
@@ -56,20 +57,28 @@ export default function UserSignin({
           >
             <span className="sr-only">Open user menu</span>
             {profile && profile.photoURL ? (
-              <img
-                className="w-8 h-8 rounded-full"
+              <Image
                 src={profile.photoURL}
+                loader={() => profile.photoURL || ''}
+                layout="fixed"
+                width="40"
+                height="40"
                 alt={
                   profile.displayName
                     ? profile.displayName
                     : 'A Good Description'
                 }
+                className="w-8 h-8 rounded-full"
               />
             ) : (
-              <img
-                className="w-8 h-8 rounded-full"
+              <Image
                 src="/static/images/avatar.png"
-                alt=""
+                loader={() => '/static/images/avatar.png'}
+                layout="fixed"
+                width="40"
+                height="40"
+                alt="Avatar for user Profile"
+                className="w-8 h-8 rounded-full"
               />
             )}
           </button>

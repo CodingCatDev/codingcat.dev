@@ -212,7 +212,6 @@ export default function EditPostSidebar({
           Preview
         </div>
         <div className="p-2 bg-basics-50 dark:bg-basics-800">
-          <img src="" alt="" className="" />
           <button
             className="w-full btn-secondary"
             onClick={() =>

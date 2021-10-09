@@ -1,6 +1,7 @@
 import DefaultErrorPage from 'next/error';
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
@@ -58,7 +59,7 @@ export default function PostLayout({
   }, [user]);
 
   function isActiveLink(course: Post, lesson: SectionLesson) {
-    if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
+    if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
       return true;
     return false;
   }
@@ -166,8 +167,12 @@ export default function PostLayout({
                       >
                         <section className="flex items-center flex-shrink-0 space-x-4">
                           {author.photoURL && (
-                            <img
+                            <Image
                               src={author.photoURL}
+                              loader={() => author.photoURL || ''}
+                              layout="fixed"
+                              height="50"
+                              width="50"
                               alt="instructor"
                               className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
                             />
@@ -243,9 +248,10 @@ export default function PostLayout({
                           <Link
                             href={`/course/${course.slug}/lesson/${lesson.slug}`}
                             key={lesson.id}
+                            passHref
                           >
                             <div
-                              className={`p-2  cursor-pointer
+                              className={`p-2  cursor-pointer hover:bg-primary-200
                               ${
                                 isActiveLink(course, lesson)
                                   ? 'bg-primary-200'
@@ -253,7 +259,7 @@ export default function PostLayout({
                               }
                               `}
                             >
-                              <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
+                              <a className="no-underline text-basics-900 hover:text-primary-900">
                                 {lesson.title}
                               </a>
                             </div>

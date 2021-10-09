@@ -98,8 +98,12 @@ export default function Post({
                         key={i}
                       >
                         {author.photoURL && (
-                          <img
+                          <Image
                             src={author.photoURL}
+                            loader={() => author.photoURL || ''}
+                            layout="fixed"
+                            height="50"
+                            width="50"
                             alt="instructor"
                             className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
                           />
