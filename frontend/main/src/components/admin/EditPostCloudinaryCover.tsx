@@ -4,19 +4,14 @@ import { MediaSource } from '@/models/media.model';
 
 import { config } from '@/config/cloudinary';
 
-import {
-  getCloudinaryCookieToken,
-  postHistoryCreate,
-  postHistoryUpdate,
-} from '@/services/api';
-import firebase from 'firebase/app';
+import { getCloudinaryCookieToken } from '@/services/api';
+
 import { take } from 'rxjs/operators';
 
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 
-export default function ImageModal({ post }: { post: Post }) {
-  const [open, setOpen] = useState(false);
+export default function ImageModal({ post }: { post: Post }): JSX.Element {
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {
@@ -45,31 +40,31 @@ export default function ImageModal({ post }: { post: Post }) {
       });
   }, [post]);
 
-  async function onVideoDelete(post: Post) {
-    setOpen(false);
-    setCookieToken('');
-    if (post) {
-      if (post.publishedAt) {
-        postHistoryCreate(post)
-          .pipe(take(1))
-          .subscribe((p) =>
-            postHistoryUpdate({
-              ...p,
-              coverVideo: firebase.firestore.FieldValue.delete() as any,
-            })
-              .pipe(take(1))
-              .subscribe()
-          );
-      } else {
-        postHistoryUpdate({
-          ...post,
-          coverVideo: firebase.firestore.FieldValue.delete() as any,
-        })
-          .pipe(take(1))
-          .subscribe();
-      }
-    }
-  }
+  // async function onVideoDelete(post: Post) {
+  //   setOpen(false);
+  //   setCookieToken('');
+  //   if (post) {
+  //     if (post.publishedAt) {
+  //       postHistoryCreate(post)
+  //         .pipe(take(1))
+  //         .subscribe((p) =>
+  //           postHistoryUpdate({
+  //             ...p,
+  //             coverVideo: firebase.firestore.FieldValue.delete() as any,
+  //           })
+  //             .pipe(take(1))
+  //             .subscribe()
+  //         );
+  //     } else {
+  //       postHistoryUpdate({
+  //         ...post,
+  //         coverVideo: firebase.firestore.FieldValue.delete() as any,
+  //       })
+  //         .pipe(take(1))
+  //         .subscribe();
+  //     }
+  //   }
+  // }
 
   return (
     <>

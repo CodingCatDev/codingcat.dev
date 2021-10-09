@@ -7,7 +7,7 @@ export default function EditPostCourseGroups({
 }: {
   historyInput: Post;
 }): JSX.Element {
-  const [history, setHistory] = useState<Post>();
+  const [, setHistory] = useState<Post>();
 
   useEffect(() => {
     setHistory(historyInput);

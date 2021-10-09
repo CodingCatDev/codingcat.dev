@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   addCourseSection,
@@ -14,7 +14,6 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const arrayMove = require('array-move');
 
 export default function EditPostCourseSections({
@@ -34,7 +33,7 @@ export default function EditPostCourseSections({
       .subscribe((p) => setLessons(p));
   }, [historyInput]);
 
-  const sectionInput = async (e: any) => {
+  const sectionInput = async (e: ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value;
     setSection({ ...(section as Section), title });
   };
@@ -51,7 +50,7 @@ export default function EditPostCourseSections({
       });
   };
 
-  const onLessonSearch = (e: any) => {
+  const onLessonSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value;
     postsSearchByTitleObservable('lesson', title)
       .pipe(take(1))
@@ -92,7 +91,7 @@ export default function EditPostCourseSections({
   };
 
   const onDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId } = result;
+    const { destination, source } = result;
     if (!destination) {
       return;
     }
@@ -228,7 +227,7 @@ export default function EditPostCourseSections({
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Droppable droppableId={`Sections`} type="Sections">
-              {(provided, snapshot) => (
+              {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {history &&
                     history.sections &&
@@ -238,7 +237,7 @@ export default function EditPostCourseSections({
                         index={si}
                         key={`section${si}`}
                       >
-                        {(provided, snapshot) => (
+                        {(provided) => (
                           <div
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
@@ -250,7 +249,7 @@ export default function EditPostCourseSections({
                               key={`${si}`}
                               type="Lessons"
                             >
-                              {(provided, snapshot) => (
+                              {(provided) => (
                                 <div
                                   className="grid grid-flow-row p-2"
                                   {...provided.droppableProps}
@@ -284,7 +283,7 @@ export default function EditPostCourseSections({
                                         index={li}
                                         key={`${si}${li}`}
                                       >
-                                        {(provided, snapshot) => (
+                                        {(provided) => (
                                           <div
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
@@ -293,6 +292,7 @@ export default function EditPostCourseSections({
                                           >
                                             <Link
                                               href={`/admin/lessons/${lesson.id}`}
+                                              passHref
                                             >
                                               <div className="flex flex-col">
                                                 <a className="text-2xl underline cursor-pointer">
@@ -354,7 +354,7 @@ export default function EditPostCourseSections({
                   type="Lessons"
                   isDropDisabled={true}
                 >
-                  {(provided, snapshot) => (
+                  {(provided) => (
                     <div
                       style={{ width: '100%', height: '100%' }}
                       {...provided.droppableProps}
@@ -364,7 +364,7 @@ export default function EditPostCourseSections({
                         (l, i) =>
                           l.id && (
                             <Draggable draggableId={l.id} index={i} key={l.id}>
-                              {(provided, snapshot) => (
+                              {(provided) => (
                                 <div
                                   className="flex justify-between w-full px-4 py-2 mt-2 text-2xl truncate rounded-full bg-primary-900 text-basics-50 dark:bg-primary-900 dark:text-basics-50"
                                   {...provided.draggableProps}

@@ -8,10 +8,8 @@ import { Video } from '@/models/video.model';
 
 export default function EditPostMediaVideoForm({
   history,
-  setHistory,
 }: {
   history: Post | undefined;
-  setHistory?: React.Dispatch<React.SetStateAction<Post | undefined>>;
 }): JSX.Element {
   const [video, setVideo] = useState<Video>({
     url: '',

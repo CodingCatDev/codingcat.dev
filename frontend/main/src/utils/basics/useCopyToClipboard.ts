@@ -1,10 +1,11 @@
 import copy from 'copy-to-clipboard';
 import { useEffect, useState } from 'react';
 
-export default function useCopyToClipboard(resetInterval = 1000) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function useCopyToClipboard(resetInterval = 1000): any {
   const [isCopied, setCopied] = useState(false);
 
-  function handleCopy(text: any) {
+  function handleCopy(text: string | number) {
     if (typeof text === 'string' || typeof text == 'number') {
       copy(text.toString());
       setCopied(true);

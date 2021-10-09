@@ -4,7 +4,7 @@ export default function Medium({
 }: {
   className?: string;
   fill: string;
-}) {
+}): JSX.Element {
   return (
     <svg
       className={className}

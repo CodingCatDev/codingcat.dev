@@ -25,7 +25,6 @@ export default function AdminDashboard({
 }
 
 export async function getServerSideProps({
-  params,
   req,
 }: {
   params: { coursePath: string; lessonPath: string };

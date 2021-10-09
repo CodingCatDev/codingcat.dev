@@ -14,17 +14,3 @@ declare module 'next-mdx-remote/hydrate' {
   let hydrate: (source: Source, options?: HydrateOptions) => JSX.Element;
   export default hydrate;
 }
-
-declare module 'next-mdx-remote/render-to-string' {
-  type RenderToStringOptions = {
-    components?: unknown;
-    mdxOptions?: unknown;
-    scope?: Scope;
-  };
-
-  let renderToString: (
-    source: string,
-    options?: RenderToStringOptions
-  ) => Promise<Source>;
-  export default renderToString;
-}

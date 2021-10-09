@@ -2,7 +2,7 @@ export default function Podcasts({
   className = 'block w-8 h-8',
 }: {
   className?: string;
-}) {
+}): JSX.Element {
   return (
     <svg
       className={className}

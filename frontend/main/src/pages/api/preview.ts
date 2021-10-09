@@ -7,12 +7,12 @@ import {
 import { NextApiRequest, NextApiResponse } from 'next';
 import cookie from 'cookie';
 
-export default async (
+const preview = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const slugQuery = req.query.slug as string;
-  const secret = req.query.secret as string;
+  // const secret = req.query.secret as string;
 
   // Check for a slug
   if (!slugQuery) {
@@ -88,3 +88,4 @@ export default async (
   // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
   res.redirect(`/${post.type}/${post.slug}`);
 };
+export default preview;

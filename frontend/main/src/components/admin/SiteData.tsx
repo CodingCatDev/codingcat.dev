@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { siteDataObservable, siteUpdate } from '@/services/api';
 import { Site } from '@/models/site.model';
 import { Observable } from 'rxjs';
@@ -25,7 +25,7 @@ export default function SiteData(): JSX.Element {
     if (site$) site$.subscribe((s) => setSite(s));
   }, [site$]);
 
-  const onTitle = (e: any) => {
+  const onTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const siteUpdate = {
       ...site,
       title: e.target.value,

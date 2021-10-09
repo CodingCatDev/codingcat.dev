@@ -1,6 +1,10 @@
 import React from 'react';
 
-const Logo = ({ className = 'block w-12 h-12' }: { className?: string }) => (
+const Logo = ({
+  className = 'block w-12 h-12',
+}: {
+  className?: string;
+}): JSX.Element => (
   <svg
     className={className}
     viewBox="20 -20 388 449"

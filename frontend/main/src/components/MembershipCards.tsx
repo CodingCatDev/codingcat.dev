@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { StripeProduct } from '@/models/stripe.model';
 import { stripeCheckout } from '@/services/api';
 import { useUser } from '@/utils/auth/useUser';
@@ -27,6 +28,30 @@ export default function MembershipCards({
       setShowMustSignin(true);
     }
   }
+
+  const getProductImage = (product: StripeProduct) => {
+    if (!product || !product.images) {
+      return <AJPrimary className="w-full h-full" />;
+    }
+
+    const img = product.images[0];
+
+    if (!img) {
+      return <AJPrimary className="w-full h-full" />;
+    }
+
+    return (
+      <Image
+        src={img}
+        loader={() => img}
+        unoptimized={true}
+        layout="fixed"
+        width="335"
+        height="270"
+        alt={`Product Photo for ${product.description}`}
+      />
+    );
+  };
 
   return (
     <>
@@ -81,12 +106,7 @@ export default function MembershipCards({
                   }
                 ></div> */}
             {product.images ? (
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                width="480"
-                height="270"
-              />
+              getProductImage(product)
             ) : (
               <AJPrimary className="w-full h-full" />
             )}

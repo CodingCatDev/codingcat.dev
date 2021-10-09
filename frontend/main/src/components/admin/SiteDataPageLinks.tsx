@@ -8,7 +8,6 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { PageLink, Site } from '@/models/site.model';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const arrayMove = require('array-move');
 
 export default function SiteDataPageLinks({

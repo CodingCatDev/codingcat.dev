@@ -1,6 +1,5 @@
 import AJLogo from '@/components/global/icons/AJPrimary';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
-import SloganNunito from './SloganNunito';
 import TitleNunito from './TitleNunito';
 
 export default function TitleSloganLogo({
@@ -13,7 +12,7 @@ export default function TitleSloganLogo({
   titleFill?: string;
   ajClassName?: string;
   ajFaceStandard?: boolean;
-}) {
+}): JSX.Element {
   return (
     <div className="flex content-center">
       {!ajFaceStandard ? (

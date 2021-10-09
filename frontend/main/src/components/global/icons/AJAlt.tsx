@@ -2,7 +2,7 @@ export default function AJHeartAlt({
   className = 'block w-12 h-12',
 }: {
   className?: string;
-}) {
+}): JSX.Element {
   return (
     <svg
       className={className}

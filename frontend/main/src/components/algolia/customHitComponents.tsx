@@ -1,17 +1,14 @@
-import React, { Fragment } from 'react';
-import { Highlight, Snippet } from 'react-instantsearch-dom';
+import React from 'react';
+import { Highlight } from 'react-instantsearch-dom';
 import Link from 'next/link';
 import { PostType } from '@/models/post.model';
 import Courses from '@/components/global/icons/nav/Courses';
 import Blog from '@/components/global/icons/nav/Blog';
 import Pages from '@/components/global/icons/nav/Pages';
-import Community from '@/components/global/icons/nav/Community';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
 
-export const BlogPostHit = (
-  clickHandler: ((event: any) => void) | undefined
-) => ({ hit }: any) => {
+export default function BlogPostHit({ hit }: any): JSX.Element {
   function typeIcon(type: string) {
     switch (type) {
       case PostType.page:
@@ -62,4 +59,4 @@ export const BlogPostHit = (
       `}</style>
     </>
   );
-};
+}

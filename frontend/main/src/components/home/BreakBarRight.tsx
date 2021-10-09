@@ -1,4 +1,8 @@
-export default function BreakBarRight({ children }: { children: any }) {
+export default function BreakBarRight({
+  children,
+}: {
+  children: any;
+}): JSX.Element {
   return (
     <section className="relative flex items-center justify-between w-full p-4 vertical-clip">
       {children}

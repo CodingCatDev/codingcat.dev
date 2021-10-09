@@ -7,12 +7,12 @@ import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
-import hydrate, { Source } from 'next-mdx-remote/hydrate';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
 
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
-import { millisecondToDate, millisecondToUSFormat } from '@/utils/basics/date';
+import { millisecondToUSFormat } from '@/utils/basics/date';
 import { Site } from '@/models/site.model';
 import SocialShare from '@/components/common/SocialShare';
 import { isUserTeam } from '@/services/api';
@@ -31,18 +31,11 @@ export default function PostLayout({
   site: Site | null;
   post: Post;
   router: NextRouter;
-  source: Source | null;
+  source: MDXRemoteSerializeResult | null;
   course?: Post;
   recentPosts?: { [key: string]: Post[] };
   preview?: boolean;
 }): JSX.Element {
-  if (!post) {
-    return (
-      <Layout site={site}>
-        <DefaultErrorPage statusCode={404} />
-      </Layout>
-    );
-  }
   const [href, setHref] = useState('');
 
   useEffect(() => {
@@ -58,8 +51,16 @@ export default function PostLayout({
     }
   }, [user]);
 
+  if (!post) {
+    return (
+      <Layout site={site}>
+        <DefaultErrorPage statusCode={404} />
+      </Layout>
+    );
+  }
+
   function isActiveLink(course: Post, lesson: SectionLesson) {
-    if (router.asPath === `/courses/${course.slug}/lessons/${lesson.slug}`)
+    if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
       return true;
     return false;
   }
@@ -116,7 +117,6 @@ export default function PostLayout({
     );
   }
 
-  const content = source ? hydrate(source) : null;
   return (
     <Layout site={site}>
       {/* DIV TO AVOID GRID GAP */}
@@ -168,8 +168,13 @@ export default function PostLayout({
                       >
                         <section className="flex items-center flex-shrink-0 space-x-4">
                           {author.photoURL && (
-                            <img
+                            <Image
                               src={author.photoURL}
+                              loader={() => author.photoURL || ''}
+                              unoptimized={true}
+                              layout="fixed"
+                              height="50"
+                              width="50"
                               alt="instructor"
                               className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
                             />
@@ -245,9 +250,10 @@ export default function PostLayout({
                           <Link
                             href={`/course/${course.slug}/lesson/${lesson.slug}`}
                             key={lesson.id}
+                            passHref
                           >
                             <div
-                              className={`p-2  cursor-pointer
+                              className={`p-2  cursor-pointer hover:bg-primary-200
                               ${
                                 isActiveLink(course, lesson)
                                   ? 'bg-primary-200'
@@ -255,7 +261,7 @@ export default function PostLayout({
                               }
                               `}
                             >
-                              <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
+                              <a className="no-underline text-basics-900 hover:text-primary-900">
                                 {lesson.title}
                               </a>
                             </div>
@@ -307,7 +313,7 @@ export default function PostLayout({
           )}
           {/* BLOG POST */}
           <article className="m-0 leading-relaxed top-2 text-basics-900">
-            {content}
+            {source && <MDXRemote {...source} />}
           </article>
         </section>
       </div>

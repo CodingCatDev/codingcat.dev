@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Logo = () => (
+const ProDog = (): JSX.Element => (
   <svg
     className="w-full"
     viewBox="0 0 388 449"
@@ -294,4 +294,4 @@ const Logo = () => (
   </svg>
 );
 
-export default Logo;
+export default ProDog;

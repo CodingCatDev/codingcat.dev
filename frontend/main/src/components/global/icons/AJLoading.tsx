@@ -2,7 +2,7 @@ export default function AJLoading({
   className = 'block w-full h-auto lg:w-1/2',
 }: {
   className?: string;
-}) {
+}): JSX.Element {
   return (
     <svg
       className={className}
