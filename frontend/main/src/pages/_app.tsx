@@ -3,6 +3,15 @@ import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 
+const LogRocket = require('logrocket');
+const setupLogRocketReact = require('logrocket-react');
+
+if (typeof window !== 'undefined') {
+  LogRocket.init('qlm7wr/codingcatdev');
+  // plugins should also only be initialized when in the browser
+  setupLogRocketReact(LogRocket);
+}
+
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
@@ -23,15 +32,13 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           site_name: 'CodingCatDev',
           images: [
             {
-              url:
-                'https://media.codingcat.dev/image/upload/c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
+              url: 'https://media.codingcat.dev/image/upload/c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
               width: 1200,
               height: 630,
               alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
             },
             {
-              url:
-                'https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
+              url: 'https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
             },
           ],
         }}
