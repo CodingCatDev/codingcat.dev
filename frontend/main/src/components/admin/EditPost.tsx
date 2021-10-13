@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import {
-  postDataObservable,
-  postHistoriesDataObservable,
-  postHistoryCreate,
-  postHistoryUpdate,
-} from '@/services/api';
+// import {
+//   postDataObservable,
+//   postHistoriesDataObservable,
+//   postHistoryCreate,
+//   postHistoryUpdate,
+// } from '@/services/api';
 
 import { Post, PostType } from '@/models/post.model';
 import { TabType } from '@/models/admin.model';
@@ -21,82 +21,54 @@ import EditPostMedia from '@/components/admin/EditPostMedia';
 import EditPostCourseSections from '@/components/admin/EditPostCourseSections';
 import EditPostCourseSettings from '@/components/admin/EditPostCourseSettings';
 import EditPostCourseGroups from '@/components/admin/EditPostCourseGroups';
+import {
+  collection,
+  CollectionReference,
+  doc,
+  getDoc,
+  getFirestore,
+  query,
+} from '@firebase/firestore';
+import { getApp } from '@firebase/app';
+import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
+import { UserInfoExtended } from '@/models/user.model';
 
 export default function EditPost({
   type,
   id,
+  user,
 }: {
   type: PostType;
   id: string;
+  user: UserInfoExtended;
 }): JSX.Element {
-  const [postFound, setPostFound] = useState(false);
-  const [postHistories, setPostHistories] = useState<Post[]>([]);
-  const [history, setHistory] = useState<Post>();
-  const [, setPost] = useState<Post>();
   const [tab, setTab] = useState<TabType>(TabType.edit);
   const [, setSaving] = useState<boolean>(false);
   const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
-  // const [preview, setPreview] = useState<string>('');
   const [slugUnique, setSlugUnique] = useState(true);
-
   const router = useRouter();
+  const app = getApp();
+  const firestore = getFirestore(app);
 
-  // Sets initial state
+  const postRef = doc(firestore, 'posts', id);
+  const { data: post } = useFirestoreDocData(postRef);
+
+  const [history, setHistory] = useState<Post | undefined>(undefined);
+  const historiesRef = collection(
+    firestore,
+    'posts',
+    id,
+    'history'
+  ) as CollectionReference<Post>;
+  const historiesQuery = query<Post>(historiesRef);
+  const { data: postHistories } =
+    useFirestoreCollectionData<Post>(historiesQuery);
+
   useEffect(() => {
-    // Set Tab after refresh
-    const { tab } = router.query;
-    selectTab(tab ? (tab as TabType) : TabType.edit);
-
-    const postSubscribe = postDataObservable(`posts/${id}`)
-      .pipe(
-        switchMap((post) => {
-          setPostFound(true);
-          setPost(post);
-          return postHistoriesDataObservable(post.id as string);
-        })
-      )
-      .subscribe((histories) => {
-        setPostHistories(histories);
-        if (histories.length > 0) {
-          const dbHistory = histories[0];
-          if (dbHistory) {
-            setHistory(dbHistory);
-          }
-        }
-      });
-
-    const contentSubscribe = updateContent$
-      .pipe(debounce(() => interval(800)))
-      .subscribe((h) => {
-        setSaving(true);
-
-        // We need a new version if the last history is published
-        if (h?.publishedAt) {
-          postHistoryCreate(h)
-            .pipe(take(1))
-            .subscribe(() => {
-              setSaving(false);
-            });
-        } else {
-          postHistoryUpdate(h)
-            .pipe(take(1))
-            .subscribe(() => setSaving(false));
-        }
-      });
-
-    return () => {
-      postSubscribe.unsubscribe();
-      contentSubscribe.unsubscribe();
-    };
-  }, [type, id]);
-
-  // useEffect(() => {
-  //   if (tab === 'preview') {
-  //     setPreview(history?.content || '');
-  //   } else {
-  //     setPreview('');
-  //   }
-  // }, [tab]);
+    if (postHistories && postHistories.length > 0) {
+      setHistory(postHistories[0]);
+    }
+  }, [postHistories]);
 
   function selectTab(tab: TabType) {
     setTab(tab);
@@ -114,6 +86,9 @@ export default function EditPost({
   }
 
   function onTab() {
+    if (!history) {
+      return <p>This tab is not defined yet.</p>;
+    }
     switch (tab) {
       case TabType.edit:
         return (
@@ -216,6 +191,7 @@ export default function EditPost({
               <section className="grid grid-cols-1 gap-4 justify-items-stretch 2xl:grid-cols-sidebar">
                 {onTab()}
                 <EditPostSidebar
+                  user={user}
                   updateContent$={updateContent$}
                   tab={tab}
                   setTab={setTab}
@@ -234,7 +210,7 @@ export default function EditPost({
       ) : (
         // </div>
         <div className="grid w-full h-full grid-cols-1 place-content-center place-items-center">
-          {postFound ? (
+          {post && postHistories ? (
             <div className="pb-8">
               Creating your first history of this post...
             </div>

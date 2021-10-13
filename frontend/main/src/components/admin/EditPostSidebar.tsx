@@ -5,32 +5,41 @@ import PublishModal from '@/components/admin/PublishModal';
 import { TabType } from '@/models/admin.model';
 import { Post, PostStatus } from '@/models/post.model';
 import { Subject } from 'rxjs';
-import {
-  profileSearchByDisplayNameObservable,
-  userProfileDataObservable,
-} from '@/services/api';
 import { take } from 'rxjs/operators';
 import { UserInfoExtended } from '@/models/user.model';
+import { getDocs, query, setDoc } from '@firebase/firestore';
+import {
+  collection,
+  doc,
+  endAt,
+  getFirestore,
+  orderBy,
+  startAt,
+} from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 export default function EditPostSidebar({
-  updateContent$,
   tab,
   setTab,
   history,
-  setHistory,
   setSlugUnique,
   setSaving,
   postHistories,
+  user,
 }: {
   updateContent$: Subject<Post>;
   tab: TabType;
   setTab: React.Dispatch<React.SetStateAction<TabType>>;
-  history: Post | undefined;
+  history: Post;
   setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   postHistories: Post[];
+  user: UserInfoExtended;
 }): JSX.Element {
+  const app = getApp();
+  const firestore = getFirestore(app);
+
   const [email, setEmail] = useState('');
   const [tag, setTag] = useState('');
 
@@ -40,41 +49,57 @@ export default function EditPostSidebar({
     UserInfoExtended | undefined
   >(undefined);
 
-  function onAuthor(e: ChangeEvent<HTMLInputElement>) {
+  const updateHistory = (update: Post) => {
+    if (!history?.postId || !history.id) {
+      return;
+    }
+    return setDoc(
+      doc(firestore, 'posts', history.postId, 'history', history.id),
+      update,
+      { merge: true }
+    );
+  };
+
+  async function onAuthor(e: ChangeEvent<HTMLInputElement>) {
     const email = e.target.value;
     setEmail(email);
     if (email) {
-      profileSearchByDisplayNameObservable(email)
-        .pipe(take(1))
-        .subscribe((d) => setAddAuthors(d));
+      const q = query(
+        collection(firestore, 'profiles'),
+        orderBy('email'),
+        startAt(email),
+        endAt(email + '\uf8ff')
+      );
+      const snap = await getDocs(q);
+      const authors = snap.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      }) as unknown as UserInfoExtended[];
+      console.log(authors);
+      setAddAuthors(authors);
     } else {
       setAddAuthors([]);
     }
   }
 
-  function addAuthor(author: UserInfoExtended | undefined) {
+  async function addAuthor(author: UserInfoExtended | undefined) {
     if (author) {
-      userProfileDataObservable(author.uid)
-        .pipe(take(1))
-        .subscribe((author) => {
-          if (!history || !author) {
-            return;
-          }
-          if (history.authors) {
-            history.authors.push(author);
-          } else if (history && !history?.authors) {
-            history.authors = [author];
-          }
-          const update: Post = { ...history } as Post;
-          setHistory(update);
-          updateContent$.next({ ...update, historyId: history?.id });
-          setSelectedAddAuthor(undefined);
-          setEmail('');
-        });
+      if (!history || !author) {
+        return;
+      }
+      if (history.authors) {
+        history.authors.push(author);
+      } else if (history && !history?.authors) {
+        history.authors = [author];
+      }
+      const update: Post = { ...history } as Post;
+
+      await updateHistory({ ...update, historyId: history?.id });
+      setSelectedAddAuthor(undefined);
+      setEmail('');
     }
   }
 
-  function onDeleteAuthor(index: number) {
+  async function onDeleteAuthor(index: number) {
     if (!history) {
       return;
     }
@@ -88,8 +113,7 @@ export default function EditPostSidebar({
       if (historyUpdate.authors) {
         historyUpdate.authors = authors;
       }
-      setHistory(historyUpdate);
-      updateContent$.next({ ...historyUpdate, historyId: history?.id });
+      await updateHistory({ ...historyUpdate, historyId: history?.id });
     }
   }
 
@@ -101,7 +125,7 @@ export default function EditPostSidebar({
     }
   }
 
-  function addTag(tag: string) {
+  async function addTag(tag: string) {
     if (!tag) {
       return;
     }
@@ -111,24 +135,18 @@ export default function EditPostSidebar({
       history.tag = [tag];
     }
     const update: Post = { ...history } as Post;
-    setHistory(update);
     setTag('');
-    updateContent$.next({ ...update, historyId: history?.id });
+    await updateHistory({ ...update, historyId: history?.id });
   }
 
-  function removeTag(index: number) {
+  async function removeTag(index: number) {
     if (history?.tag) {
       history.tag = history.tag
         .slice(0, index)
         .concat(history.tag.slice(index + 1, history.tag.length));
     }
     const update: Post = { ...history } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
-  }
-
-  if (!history) {
-    return <></>;
+    await updateHistory({ ...update, historyId: history?.id });
   }
 
   return (
@@ -143,6 +161,7 @@ export default function EditPostSidebar({
         history={history}
         setSaving={setSaving}
         setSlugUnique={setSlugUnique}
+        user={user}
       />
       <div className="flex flex-wrap">
         <div className="flex items-center space-x-2">

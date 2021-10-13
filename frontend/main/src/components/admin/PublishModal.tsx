@@ -1,46 +1,49 @@
 import { useEffect, useState } from 'react';
 import { Post, PostStatus } from '@/models/post.model';
-import {
-  postDataObservable,
-  postHistoryPublish,
-  postsSlugUnique,
-} from '@/services/api';
-import firebase from 'firebase/app';
+import firebase, { getApp } from 'firebase/app';
 import { take } from 'rxjs/operators';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 
 import { Calendar } from 'primereact/calendar';
 import { of } from 'rxjs';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  where,
+  query,
+  Timestamp,
+  writeBatch,
+  doc,
+} from 'firebase/firestore';
+import { UserInfoExtended } from '@/models/user.model';
 
 export default function PublishModal({
+  user,
   history,
   setSaving,
   setSlugUnique,
 }: {
-  history: Post | undefined;
+  user: UserInfoExtended;
+  history: Post;
   setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [largeButton, setLargeButton] = useState(true);
+  const app = getApp();
+  const firestore = getFirestore(app);
 
   useEffect(() => {
     if (!history) {
       return;
     }
-    postDataObservable(`/posts/${history.postId}`)
-      .pipe(take(1))
-      .subscribe((p) => {
-        if (p.publishedAt) {
-          setSelectedDate(p.publishedAt.toDate());
-        } else {
-          setSelectedDate(new Date());
-        }
-      });
-    return () => {
-      false;
-    };
+    if (history.publishedAt) {
+      setSelectedDate(history.publishedAt.toDate());
+    } else {
+      setSelectedDate(new Date());
+    }
   }, [history]);
 
   const handleClickOpen = () => {
@@ -55,12 +58,19 @@ export default function PublishModal({
     if (date) setSelectedDate(date);
   };
 
-  function validSlug(slugInput: string) {
-    if (!history || !history.postId) {
-      return of(false);
+  async function validSlug(slugInput: string, id: string | undefined) {
+    if (!id) {
+      return false;
     }
     const slug = toKebabCase(slugInput);
-    return postsSlugUnique(slug, history?.postId).pipe(take(1));
+    const docs = await getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('slug', '==', slug),
+        where('id', '!=', id)
+      )
+    );
+    return docs.empty;
   }
 
   function onCancel() {
@@ -68,29 +78,40 @@ export default function PublishModal({
     setLargeButton(true);
   }
 
-  function onPublish() {
+  async function onPublish() {
+    if (history && selectedDate) {
+      const unique = await validSlug(history.slug, history.id);
+      setSlugUnique(unique);
+      if (unique) {
+        setSaving(true);
+
+        history.publishedAt = Timestamp.fromDate(selectedDate);
+        history.status = PostStatus.published;
+
+        const batch = writeBatch(firestore);
+        const historyRef = doc(
+          firestore,
+          `posts/${history.postId}/history/${history.id}`
+        );
+        const postRef = doc(firestore, `posts/${history.postId}`);
+
+        const update = {
+          ...history,
+          updatedAt: Timestamp.now(),
+          updatedBy: user.uid,
+        };
+        batch.set(historyRef, update);
+        batch.set(postRef, {
+          ...update,
+          id: history.postId,
+          historyId: history.id,
+        });
+        await batch.commit();
+      }
+    }
+    setSaving(false);
     setOpen(false);
     setLargeButton(true);
-    if (history && selectedDate) {
-      validSlug(history.slug).subscribe((unique) => {
-        setSlugUnique(unique);
-        if (unique) {
-          setSaving(true);
-
-          history.publishedAt = firebase.firestore.Timestamp.fromDate(
-            selectedDate
-          );
-          history.status = PostStatus.published;
-
-          postHistoryPublish(history)
-            .pipe(take(1))
-            .subscribe(() => {
-              setSaving(false);
-              setOpen(false);
-            });
-        }
-      });
-    }
   }
 
   return (

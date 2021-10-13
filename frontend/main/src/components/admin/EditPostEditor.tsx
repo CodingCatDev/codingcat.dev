@@ -15,7 +15,7 @@ export default function EditPostEditor({
   setSlugUnique,
 }: {
   updateContent$: Subject<Post>;
-  history: Post | undefined;
+  history: Post;
   setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   slugUnique: boolean;
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
