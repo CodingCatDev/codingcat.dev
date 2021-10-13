@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Layout from '@/layout/Layout';
 import SettingsLinks from '@/components/settings/SettingsLinks';
 import UserProfile from '@/components/settings/UserProfile';
-
+import FirebaseSignin from '@/components/FirebaseSignin';
 import { Site } from '@/models/site.model';
 import { getSite } from '@/services/serversideApi';
 import { useSigninCheck } from 'reactfire';
@@ -28,7 +28,7 @@ export default function Profile({ site }: { site: Site | null }): JSX.Element {
           <UserProfile user={signInCheckResult.user} />
         </section>
       ) : (
-        <>TODO: New Auth</>
+        <FirebaseSignin />
       )}
     </Layout>
   );
