@@ -3,24 +3,27 @@ import dynamic from 'next/dynamic';
 
 import Layout from '@/layout/Layout';
 import SettingsLinks from '@/components/settings/SettingsLinks';
+import FirebaseSignin from '@/components/FirebaseSignin';
 
-import { useUser } from '@/utils/auth/useUser';
-import { getStripePortal } from '@/services/api';
 import { useState } from 'react';
 import { Site } from '@/models/site.model';
 import { getSite } from '@/services/serversideApi';
-
-const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
-  ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
-});
+import { useFunctions, useSigninCheck } from 'reactfire';
+import { httpsCallable } from 'firebase/functions';
 
 export default function Profile({ site }: { site: Site | null }): JSX.Element {
-  const { user } = useUser();
+  const { data: signInCheckResult } = useSigninCheck();
+  const functions = useFunctions();
+
   const [loading, setLoading] = useState(false);
   async function onStripePortal() {
     setLoading(true);
-    const { url } = await getStripePortal().toPromise();
+    const { url } = await (
+      await httpsCallable<unknown, { url: string }>(
+        functions,
+        'ext-firestore-stripe-subscriptions-createPortalLink'
+      ).call('params', { returnUrl: window.location.href })
+    )?.data;
     window.location.assign(url);
   }
 
@@ -29,7 +32,7 @@ export default function Profile({ site }: { site: Site | null }): JSX.Element {
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
-      {user ? (
+      {signInCheckResult?.signedIn === true ? (
         <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
           <section>
             <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
@@ -57,7 +60,7 @@ export default function Profile({ site }: { site: Site | null }): JSX.Element {
           </div>
         </section>
       ) : (
-        <FirebaseAuth />
+        <FirebaseSignin />
       )}
     </Layout>
   );

@@ -5,24 +5,19 @@ import Layout from '@/layout/Layout';
 import SettingsLinks from '@/components/settings/SettingsLinks';
 import UserProfile from '@/components/settings/UserProfile';
 
-import { useUser } from '@/utils/auth/useUser';
 import { Site } from '@/models/site.model';
 import { getSite } from '@/services/serversideApi';
-
-const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
-  ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
-});
+import { useSigninCheck } from 'reactfire';
 
 export default function Profile({ site }: { site: Site | null }): JSX.Element {
-  const { user } = useUser();
+  const { data: signInCheckResult } = useSigninCheck();
 
   return (
     <Layout site={site}>
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
-      {user ? (
+      {signInCheckResult?.signedIn === true && signInCheckResult.user ? (
         <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
           <section>
             <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
@@ -30,10 +25,10 @@ export default function Profile({ site }: { site: Site | null }): JSX.Element {
             </h2>
             <SettingsLinks />
           </section>
-          <UserProfile />
+          <UserProfile user={signInCheckResult.user} />
         </section>
       ) : (
-        <FirebaseAuth />
+        <>TODO: New Auth</>
       )}
     </Layout>
   );

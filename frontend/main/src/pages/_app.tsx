@@ -2,15 +2,56 @@ import '@/styles/globals.css';
 import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
 
-const LogRocket = require('logrocket');
-const setupLogRocketReact = require('logrocket-react');
+// const LogRocket = require('logrocket');
+// const setupLogRocketReact = require('logrocket-react');
 
-if (typeof window !== 'undefined') {
-  LogRocket.init('qlm7wr/codingcatdev');
-  // plugins should also only be initialized when in the browser
-  setupLogRocketReact(LogRocket);
-}
+// if (typeof window !== 'undefined') {
+//   LogRocket.init('qlm7wr/codingcatdev');
+//   // plugins should also only be initialized when in the browser
+//   setupLogRocketReact(LogRocket);
+// }
+
+const FirebaseProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const FirebaseAuthProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseAuthProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const FirebaseFirestoreProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseFirestoreProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const FirebaseFunctionsProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseFunctionsProvider
+    ),
+  {
+    ssr: false,
+  }
+);
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -48,7 +89,15 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           cardType: 'summary_large_image',
         }}
       />
-      <Component {...pageProps} />
+      <FirebaseProvider>
+        <FirebaseAuthProvider>
+          <FirebaseFirestoreProvider>
+            <FirebaseFunctionsProvider>
+              <Component {...pageProps} />
+            </FirebaseFunctionsProvider>
+          </FirebaseFirestoreProvider>
+        </FirebaseAuthProvider>
+      </FirebaseProvider>
     </>
   );
 }

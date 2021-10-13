@@ -1,43 +1,35 @@
-import { useEffect, useState } from 'react';
 import { UserInfoExtended } from '@/models/user.model';
-import { Observable } from 'rxjs';
-import { userProfileDataObservable, userProfileUpdate } from '@/services/api';
-import { take } from 'rxjs/operators';
-import { useUser } from '@/utils/auth/useUser';
 import UserProfileCloudinaryUpload from '@/components/user/UserProfileCloudinaryUpload';
+import { useFirestoreDocData } from 'reactfire';
+import { getApp } from 'firebase/app';
+import {
+  doc,
+  setDoc,
+  DocumentReference,
+  getFirestore,
+} from 'firebase/firestore';
 
-export default function UserProfile(): JSX.Element {
-  const { user } = useUser();
-  const [profile, setProfile] = useState<UserInfoExtended | undefined>();
-  const [profile$, setProfile$] = useState<
-    Observable<UserInfoExtended | undefined>
-  >();
-
-  useEffect(() => {
-    if (!user?.uid) {
-      return;
-    }
-    setProfile$(userProfileDataObservable(user.uid));
-  }, [user]);
-
-  useEffect(() => {
-    if (!profile$) {
-      return;
-    }
-    const profileSubscribe = profile$.subscribe((u) => setProfile(u));
-    return () => {
-      profileSubscribe.unsubscribe();
-    };
-  }, [profile$]);
+export default function UserProfile({
+  user,
+}: {
+  user: UserInfoExtended;
+}): JSX.Element {
+  const app = getApp();
+  const firestore = getFirestore(app);
+  const ref = doc(
+    firestore,
+    'profiles',
+    user.uid
+  ) as unknown as DocumentReference<UserInfoExtended | null>;
+  const { status, data: profile } =
+    useFirestoreDocData<UserInfoExtended | null>(ref);
 
   function onProfileChange(e: React.ChangeEvent<HTMLInputElement>): void {
     const profileUpdate = {
       ...profile,
       [e.target.id]: e.target.value,
     } as UserInfoExtended;
-
-    setProfile(profileUpdate);
-    userProfileUpdate(profileUpdate).pipe(take(1)).subscribe();
+    setDoc(ref, profileUpdate, { merge: true });
   }
 
   function onBasicInfoChange(
@@ -49,9 +41,7 @@ export default function UserProfile(): JSX.Element {
         [e.target.id]: e.target.value,
       },
     } as UserInfoExtended;
-
-    setProfile(profileUpdate);
-    userProfileUpdate(profileUpdate).pipe(take(1)).subscribe();
+    setDoc(ref, profileUpdate, { merge: true });
   }
 
   if (!profile || !user) {
@@ -87,11 +77,7 @@ export default function UserProfile(): JSX.Element {
                 alt="Avatar Image Placeholder"
               />
             )}
-            <UserProfileCloudinaryUpload
-              profile={profile}
-              setProfile={setProfile}
-              user={user}
-            />
+            <UserProfileCloudinaryUpload profile={profile} user={user} />
           </div>
           <div className="grid gap-1">
             <label htmlFor="name">Name</label>
