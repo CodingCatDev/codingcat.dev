@@ -6,19 +6,14 @@ import dynamic from 'next/dynamic';
 
 import AdminLayout from '@/layout/admin/AdminLayout';
 import SiteData from '@/components/admin/SiteData';
+import EditPosts from '@/components/admin/EditPosts';
+import CreatePost from '@/components/admin/CreatePost';
 
 import { PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { getSite, validateAdminUser } from '@/services/serversideApi';
 import { resetServerContext } from 'react-beautiful-dnd';
-const EditPosts = dynamic(() => import('@/components/admin/EditPosts'), {
-  ssr: false,
-  loading: () => <p>Loading EditPosts...</p>,
-});
-
-const CreatePost = dynamic(() => import('@/components/admin/CreatePost'), {
-  ssr: false,
-});
+import { useSigninCheck } from 'reactfire';
 
 export default function NavTypes({
   type,
@@ -27,6 +22,8 @@ export default function NavTypes({
   type: PostType | null;
   site: Site | null;
 }): JSX.Element {
+  const { status, data: signInCheckResult } = useSigninCheck();
+
   return (
     <AdminLayout site={site}>
       <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
@@ -37,13 +34,21 @@ export default function NavTypes({
         </div>
       )}
       {type && (type as string) !== 'site' && (
-        <div className="p-4">
-          <header className="grid gap-4 mb-4 justify-items-start">
-            <h1 className="font-sans text-4xl font-bold capitalize">{type}</h1>
-            <CreatePost type={type} />
-          </header>
-          <EditPosts type={type} />
-        </div>
+        <>
+          {signInCheckResult?.signedIn === true ? (
+            <div className="p-4">
+              <header className="grid gap-4 mb-4 justify-items-start">
+                <h1 className="font-sans text-4xl font-bold capitalize">
+                  {type}
+                </h1>
+                <CreatePost type={type} user={signInCheckResult.user} />
+              </header>
+              <EditPosts type={type} />
+            </div>
+          ) : (
+            <span>Checking Authentication...</span>
+          )}
+        </>
       )}
     </AdminLayout>
   );
