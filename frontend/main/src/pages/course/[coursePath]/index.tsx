@@ -151,13 +151,23 @@ export default function Post({
                   </div>
                 </div>
               )}
-              {signInCheckResult.user && (
+              {signInCheckResult.user ? (
                 <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
                   <CourseBuyButton
                     product={product}
                     user={signInCheckResult.user}
                     post={post}
                   />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
+                  <Link href="/membership">
+                    <a>
+                      <button className="btn-primary">
+                        Login or Become a Member
+                      </button>
+                    </a>
+                  </Link>
                 </div>
               )}
             </div>

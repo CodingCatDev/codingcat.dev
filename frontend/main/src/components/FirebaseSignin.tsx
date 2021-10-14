@@ -13,7 +13,7 @@ function FirebaseSignin(): JSX.Element {
   const provider = new GoogleAuthProvider();
   return (
     <>
-      <div className="flex flex-col justify-center min-h-screen py-12 sm:px-6 lg:px-8">
+      <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex flex-wrap justify-center">
             <AJPrimary />

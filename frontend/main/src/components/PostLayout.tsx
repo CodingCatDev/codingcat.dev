@@ -15,9 +15,8 @@ import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import { millisecondToUSFormat } from '@/utils/basics/date';
 import { Site } from '@/models/site.model';
 import SocialShare from '@/components/common/SocialShare';
-import { isUserTeam } from '@/services/api';
-import { useUser } from '@/utils/auth/useUser';
-import { take } from 'rxjs/operators';
+import PostAdminButton from '@/components/PostAdminButton';
+import { useUser } from 'reactfire';
 
 export default function PostLayout({
   site,
@@ -37,19 +36,11 @@ export default function PostLayout({
   preview?: boolean;
 }): JSX.Element {
   const [href, setHref] = useState('');
+  const { data: user } = useUser();
 
   useEffect(() => {
     setHref(location.href);
   }, []);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const { user } = useUser();
-  useEffect(() => {
-    if (user && user.uid) {
-      isUserTeam(user.uid)
-        .pipe(take(1))
-        .subscribe((q) => setIsAdmin(q));
-    }
-  }, [user]);
 
   if (!post) {
     return (
@@ -101,22 +92,6 @@ export default function PostLayout({
     }
   }
 
-  function adminLink() {
-    return (
-      <>
-        <a
-          href={`/admin/${post.type}/${post.postId}`}
-          target="_blank"
-          rel="noreferrer"
-          role="link"
-          className="no-underline btn-primary"
-        >
-          Admin
-        </a>
-      </>
-    );
-  }
-
   return (
     <Layout site={site}>
       {/* DIV TO AVOID GRID GAP */}
@@ -155,7 +130,9 @@ export default function PostLayout({
                 <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
                   {post.title}
                 </h1>
-                {isAdmin && <div className="flex-shrink-0">{adminLink()}</div>}
+                {user && user.uid && (
+                  <PostAdminButton user={user} post={post} />
+                )}
                 <div className="flex-shrink-0">{backButton()}</div>
               </section>
               <section className="grid items-end justify-between gap-4 lg:flex">

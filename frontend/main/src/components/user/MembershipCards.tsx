@@ -17,7 +17,7 @@ export default function MembershipCards({
   products,
   user,
 }: {
-  user: UserInfoExtended;
+  user?: UserInfoExtended;
   products: StripeProduct[];
 }): JSX.Element {
   const [stripe, setStripe] = useState(false);

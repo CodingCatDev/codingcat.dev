@@ -18,7 +18,6 @@ export default function CourseBuyButton({
   product: StripeProduct | null;
 }): JSX.Element {
   const { member, team } = useIsMember(user);
-  console.log(product);
   return (
     <>
       {post.accessSettings?.accessMode !== AccessMode.open ? (
