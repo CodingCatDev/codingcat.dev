@@ -194,7 +194,7 @@
 // export const getCloudinaryCookieToken = () => {
 //   return functions$.pipe(
 //     switchMap((functions) =>
-//       httpsCallable<unknown, string>(functions, 'cloudinaryCookieToken').call(
+//       userProfileDataObservable<unknown, string>(functions, 'cloudinaryCookieToken').call(
 //         'params',
 //         {}
 //       )
