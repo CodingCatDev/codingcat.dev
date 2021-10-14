@@ -66,6 +66,12 @@ export default function EditPost({
     useFirestoreCollectionData<Post>(historiesQuery);
 
   useEffect(() => {
+    // Set Tab after refresh
+    const { tab: t } = router.query;
+    selectTab(t ? (t as TabType) : TabType.edit);
+  }, []);
+
+  useEffect(() => {
     if (postHistories && postHistories.length > 0) {
       setHistory(postHistories[0]);
     }
@@ -239,7 +245,12 @@ export default function EditPost({
           />
         );
       case TabType.settings:
-        return <EditPostCourseSettings historyInput={history} />;
+        return (
+          <EditPostCourseSettings
+            history={history}
+            updateContent={updateContent}
+          />
+        );
       case TabType.groups:
         return <EditPostCourseGroups historyInput={history} />;
       case TabType.history:
