@@ -4,13 +4,13 @@ import router, { useRouter } from 'next/router';
 
 import ActiveLink from '@/components/ActiveLink';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useFirestoreDocData, useSigninCheck } from 'reactfire';
+import { useSigninCheck } from 'reactfire';
 import { signOut, getAuth } from '@firebase/auth';
 import { getApp } from '@firebase/app';
 import { UserInfoExtended } from '@/models/user.model';
 import AvatarProfile from '@/components/user/AvatarProfile';
 
-export default function UserSignin({
+export default function AvatarMenu({
   userMenu,
   setUserMenu,
   positionClass = 'right-0',
@@ -19,17 +19,10 @@ export default function UserSignin({
   setUserMenu: Dispatch<SetStateAction<boolean>>;
   positionClass?: string;
 }): JSX.Element {
-  const [profile, setProfile] = useState<UserInfoExtended | null>(null);
   const app = getApp();
   const auth = getAuth(app);
   const { data: signInCheckResult } = useSigninCheck();
   const router = useRouter();
-
-  useEffect(() => {
-    if (signInCheckResult && signInCheckResult.user) {
-      setProfile(signInCheckResult.user);
-    }
-  }, [signInCheckResult]);
 
   return (
     <>
@@ -42,9 +35,9 @@ export default function UserSignin({
             onClick={() => setUserMenu(!userMenu)}
           >
             <span className="sr-only">Open user menu</span>
-            {profile && profile.photoURL ? (
+            {signInCheckResult?.user && signInCheckResult?.user?.photoURL ? (
               <>
-                <AvatarProfile setProfile={setProfile} profile={profile} />
+                <AvatarProfile user={signInCheckResult.user} />
               </>
             ) : (
               <Image
