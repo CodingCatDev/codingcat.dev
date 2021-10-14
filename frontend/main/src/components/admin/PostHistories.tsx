@@ -11,8 +11,22 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
 import { take } from 'rxjs/operators';
 import { UserInfoExtended } from '@/models/user.model';
-import { doc, DocumentReference, getFirestore } from '@firebase/firestore';
-import { getDoc } from 'firebase/firestore';
+import {
+  doc,
+  DocumentReference,
+  getDocs,
+  getFirestore,
+} from '@firebase/firestore';
+import {
+  collection,
+  CollectionReference,
+  getDoc,
+  orderBy,
+  query,
+} from 'firebase/firestore';
+import { Media } from '@/models/media.model';
+import MediaGrid from './MediaGrid';
+import { useFirestoreCollectionData } from 'reactfire';
 
 interface PostWithUser extends Post {
   user?: UserInfoExtended | undefined;
@@ -122,6 +136,7 @@ function PostHistories({
   function rowExpansionTemplate(rowData: Post) {
     return (
       <>
+        <MediaWrapper history={rowData} />
         {rowData && rowData?.excerpt && <div>Excerpt: {rowData.excerpt}</div>}
         {rowData && rowData?.content && <div>Content: {rowData.content}</div>}
       </>
@@ -151,3 +166,16 @@ function PostHistories({
 }
 
 export default PostHistories;
+
+function MediaWrapper({ history }: { history: Post }): JSX.Element {
+  const app = getApp();
+  const firestore = getFirestore(app);
+  const mediaRef = collection(
+    firestore,
+    `posts/${history.postId}/history/${history.id}/media`
+  ) as CollectionReference<Media>;
+  const mediaQuery = query<Media>(mediaRef, orderBy('createdAt', 'desc'));
+  const { data: medias } = useFirestoreCollectionData<Media>(mediaQuery);
+
+  return <MediaGrid medias={medias} />;
+}
