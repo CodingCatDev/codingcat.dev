@@ -1,33 +1,31 @@
 import { useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';
-import { v4 as uuid } from 'uuid';
-import { CoverMedia, Post, PostStatus } from '@/models/post.model';
-import { Cloudinary, MediaType, MediaSource } from '@/models/media.model';
+import { Post } from '@/models/post.model';
+import { Cloudinary, MediaType } from '@/models/media.model';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import {
-  doc,
-  getDoc,
-  getFirestore,
-  setDoc,
-  Timestamp,
-  writeBatch,
-} from '@firebase/firestore';
+import { getFirestore } from '@firebase/firestore';
 import { getApp } from '@firebase/app';
 import { UserInfoExtended } from '@/models/user.model';
 import { Video } from '@/models/video.model';
-import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
 
 export default function CloudinaryUpload({
   history,
   type,
   user,
   updateContent,
+  postHistoryMediaCreate,
 }: {
   history: Post;
   type: MediaType;
   user: UserInfoExtended;
   updateContent: (h: Post) => Promise<Post>;
+  postHistoryMediaCreate: (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary | undefined,
+    video?: Video | undefined
+  ) => Promise<void>;
 }): JSX.Element {
   let widget: any = null;
   const functions = getFunctions();
@@ -67,59 +65,6 @@ export default function CloudinaryUpload({
       console.log('error fetching signature');
     }
   }
-
-  const postHistoryMediaCreate = (
-    history: Post,
-    type: MediaType,
-    cloudinary?: Cloudinary,
-    video?: Video
-  ) => {
-    const mediaId = uuid();
-    let coverMedia: CoverMedia = { type, source: MediaSource.cloudinary };
-    if (cloudinary) {
-      coverMedia = {
-        thumbnail_url: cloudinary.thumbnail_url,
-        path: cloudinary.path,
-        mediaId,
-        public_id: cloudinary.public_id,
-        url: cloudinary.url,
-        type,
-        source: MediaSource.cloudinary,
-      };
-    } else if (video) {
-      coverMedia = {
-        mediaId,
-        url: video.url,
-        type,
-        source: MediaSource.video,
-      };
-    }
-
-    const batch = writeBatch(firestore);
-    const mediaRef = doc(
-      firestore,
-      `posts/${history.postId}/history/${history.id}/media/${mediaId}`
-    );
-    batch.set(mediaRef, {
-      id: mediaId,
-      type,
-      cloudinary: cloudinary || null,
-      video: video || null,
-      createdAt: Timestamp.now(),
-    });
-
-    const historyRef = doc(
-      firestore,
-      `posts/${history.postId}/history/${history.id}`
-    );
-    batch.set(historyRef, {
-      ...history,
-      updatedAt: Timestamp.now(),
-      updatedBy: user.uid,
-      [type === MediaType.photo ? 'coverPhoto' : 'coverVideo']: coverMedia,
-    });
-    return batch.commit();
-  };
 
   function onUpload() {
     if (typeof window !== 'undefined') {

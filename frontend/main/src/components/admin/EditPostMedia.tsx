@@ -6,7 +6,7 @@ import EditPostMediaVideoForm from '@/components/admin/EditPostMediaVideoForm';
 import MediaGrid from '@/components/admin/MediaGrid';
 import CloudinaryCover from '@/components/admin/EditPostCloudinaryCover';
 import { Post } from '@/models/post.model';
-import { Media, MediaType } from '@/models/media.model';
+import { Cloudinary, Media, MediaType } from '@/models/media.model';
 import { getApp } from 'firebase/app';
 import {
   getFirestore,
@@ -19,15 +19,23 @@ import {
 } from 'firebase/firestore';
 import { useFirestoreCollectionData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
+import { Video } from '@/models/video.model';
 
 export default function EditPostMedia({
   history,
   user,
   updateContent,
+  postHistoryMediaCreate,
 }: {
   history: Post;
   user: UserInfoExtended;
   updateContent: (h: Post) => Promise<Post>;
+  postHistoryMediaCreate: (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary | undefined,
+    video?: Video | undefined
+  ) => Promise<void>;
 }): JSX.Element {
   const [type, setType] = useState<MediaType>(MediaType.photo);
   // const [media, setMedia] = useState<Media | null>(null);
@@ -104,13 +112,18 @@ export default function EditPostMedia({
           </nav>
           <div className="flex pb-1 space-x-2">
             {type === MediaType.video && (
-              <EditPostMediaVideoForm history={history} />
+              <EditPostMediaVideoForm
+                history={history}
+                updateContent={updateContent}
+                postHistoryMediaCreate={postHistoryMediaCreate}
+              />
             )}
             <CloudinaryUpload
               history={history}
               type={type}
               user={user}
               updateContent={updateContent}
+              postHistoryMediaCreate={postHistoryMediaCreate}
             />
           </div>
         </header>

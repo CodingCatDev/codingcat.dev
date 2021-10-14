@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import { Post, PostStatus, PostType } from '@/models/post.model';
+import { CoverMedia, Post, PostStatus, PostType } from '@/models/post.model';
 import { TabType } from '@/models/admin.model';
 import { v4 as uuid } from 'uuid';
 
@@ -31,6 +31,8 @@ import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { setDoc, writeBatch } from 'firebase/firestore';
+import { Cloudinary, MediaType, MediaSource } from '@/models/media.model';
+import { Video } from '@/models/video.model';
 
 export default function EditPost({
   type,
@@ -215,6 +217,59 @@ export default function EditPost({
     setSaving(false);
   };
 
+  const postHistoryMediaCreate = (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary,
+    video?: Video
+  ) => {
+    const mediaId = uuid();
+    let coverMedia: CoverMedia = { type, source: MediaSource.cloudinary };
+    if (cloudinary) {
+      coverMedia = {
+        thumbnail_url: cloudinary.thumbnail_url,
+        path: cloudinary.path,
+        mediaId,
+        public_id: cloudinary.public_id,
+        url: cloudinary.url,
+        type,
+        source: MediaSource.cloudinary,
+      };
+    } else if (video) {
+      coverMedia = {
+        mediaId,
+        url: video.url,
+        type,
+        source: MediaSource.video,
+      };
+    }
+
+    const batch = writeBatch(firestore);
+    const mediaRef = doc(
+      firestore,
+      `posts/${history.postId}/history/${history.id}/media/${mediaId}`
+    );
+    batch.set(mediaRef, {
+      id: mediaId,
+      type,
+      cloudinary: cloudinary || null,
+      video: video || null,
+      createdAt: Timestamp.now(),
+    });
+
+    const historyRef = doc(
+      firestore,
+      `posts/${history.postId}/history/${history.id}`
+    );
+    batch.set(historyRef, {
+      ...history,
+      updatedAt: Timestamp.now(),
+      updatedBy: user.uid,
+      [type === MediaType.photo ? 'coverPhoto' : 'coverVideo']: coverMedia,
+    });
+    return batch.commit();
+  };
+
   function onTab() {
     if (!history) {
       return <p>This tab is not defined yet.</p>;
@@ -235,6 +290,7 @@ export default function EditPost({
             history={history}
             user={user}
             updateContent={updateContent}
+            postHistoryMediaCreate={postHistoryMediaCreate}
           />
         );
       case TabType.sections:
