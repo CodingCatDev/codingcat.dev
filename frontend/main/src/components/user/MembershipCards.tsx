@@ -7,12 +7,11 @@ import {
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
-import { useSigninCheck } from 'reactfire';
 import { getApp } from '@firebase/app';
 import { getFirestore } from '@firebase/firestore';
 import { collection, addDoc } from 'firebase/firestore';
 import { UserInfoExtended } from '@/models/user.model';
-import StripeRedirect from './StripeRedirect';
+import StripeRedirect from '@/components/user/StripeRedirect';
 
 export default function MembershipCards({
   products,
@@ -22,10 +21,9 @@ export default function MembershipCards({
   products: StripeProduct[];
 }): JSX.Element {
   const [stripe, setStripe] = useState(false);
-  const [showMustSignin, setShowMustSignin] = useState(false);
-  const { data: signInCheckResult } = useSigninCheck();
   const app = getApp();
   const firestore = getFirestore(app);
+  const [showMustSignin, setShowMustSignin] = useState(false);
   const [checkoutSession, setCheckoutSession] = useState<string | null>(null);
 
   const stripeCheckout = async (product: StripeProduct, uid: string) => {

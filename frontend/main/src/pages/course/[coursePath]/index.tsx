@@ -14,21 +14,15 @@ import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import PostMedia from '@/components/PostMedia';
-import { useState } from 'react';
-import CourseBuy from '@/components/CourseBuy';
 import { StripeProduct } from '@/models/stripe.model';
-import { AccessMode } from '@/models/access.model';
-import { useUser } from '@/utils/auth/useUser';
-import { useEffect } from 'react';
-import { isUserCourseSub, isUserMember, isUserTeam } from '@/services/api';
-import { combineLatest, of } from 'rxjs';
-import { take } from 'rxjs/operators';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import matter from 'gray-matter';
 import parse from 'remark-parse';
 import remark2react from 'remark-react';
 import { MDXRemoteSerializeResult, MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
+import { useSigninCheck } from 'reactfire';
+import CourseBuyButton from '@/components/CourseBuyButton';
 
 export default function Post({
   site,
@@ -42,24 +36,7 @@ export default function Post({
   product: StripeProduct | null;
 }): JSX.Element {
   const router = useRouter();
-  const [, setShowMustSignin] = useState(false);
-  const [member, setMember] = useState(false);
-  const { user } = useUser();
-
-  useEffect(() => {
-    if (user && user.uid) {
-      const isUserTeam$ = isUserTeam(user.uid);
-      const isUserMember$ = isUserMember(user.uid);
-      const isUserCourseSub$ = product
-        ? isUserCourseSub(user.uid, product.id)
-        : of(false);
-      combineLatest([isUserTeam$, isUserMember$, isUserCourseSub$])
-        .pipe(take(1))
-        .subscribe((c) => {
-          setMember(c.includes(true));
-        });
-    }
-  }, [user, product]);
+  const { status, data: signInCheckResult } = useSigninCheck();
 
   if (router.isFallback) {
     return (
@@ -174,70 +151,15 @@ export default function Post({
                   </div>
                 </div>
               )}
-              <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
-                {post.accessSettings?.accessMode !== AccessMode.open ? (
-                  <>
-                    {member ? (
-                      <>
-                        {post.sections &&
-                          post.sections[0] &&
-                          post.sections[0].lessons &&
-                          post.sections[0].lessons[0] && (
-                            <Link
-                              href={`/course/${post.slug}/lesson/${post.sections[0].lessons[0].slug}`}
-                            >
-                              <a>
-                                <button className="btn-primary">
-                                  Start Course
-                                </button>
-                              </a>
-                            </Link>
-                          )}
-                      </>
-                    ) : (
-                      <>
-                        {product && (
-                          <p className="p-2 text-xl text-basics-900">
-                            ${post.accessSettings?.price}
-                          </p>
-                        )}
-                        <div className="flex items-center justify-center space-x-4 flex-nowrap">
-                          {product && (
-                            <CourseBuy
-                              product={product}
-                              setShowMustSignin={setShowMustSignin}
-                            />
-                          )}
-                          <Link href="/membership">
-                            <a>
-                              <button className="btn-primary">
-                                Become a Member
-                              </button>
-                            </a>
-                          </Link>
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {post.sections &&
-                      post.sections[0] &&
-                      post.sections[0].lessons &&
-                      post.sections[0].lessons[0] && (
-                        <Link
-                          href={`/course/${post.slug}/lesson/${post.sections[0].lessons[0].slug}`}
-                        >
-                          <a>
-                            <button className="btn-primary">
-                              Start Course
-                            </button>
-                          </a>
-                        </Link>
-                      )}
-                  </>
-                )}
-              </div>
+              {signInCheckResult.user && (
+                <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
+                  <CourseBuyButton
+                    product={product}
+                    user={signInCheckResult.user}
+                    post={post}
+                  />
+                </div>
+              )}
             </div>
           )}
           <section>

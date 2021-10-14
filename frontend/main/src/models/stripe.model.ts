@@ -22,8 +22,9 @@ export interface StripePrice {
 }
 
 export interface StripeLineItem {
+  mode?: string;
   price: string;
-  quantity: number;
+  quantity?: number;
 }
 
 export interface StripeSubscription {

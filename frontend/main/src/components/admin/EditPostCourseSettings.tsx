@@ -40,10 +40,7 @@ export default function EditPostCourseSettings({
           ...history,
           accessSettings: {
             accessMode,
-            price:
-              typeof e.target.value === 'number'
-                ? parseFloat(e.target.value)
-                : null,
+            price: e.target.value ? parseFloat(e.target.value) : null,
             productId: history?.accessSettings?.productId || null,
           },
         } as Post;
