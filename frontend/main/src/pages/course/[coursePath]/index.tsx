@@ -161,7 +161,7 @@ export default function Post({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
-                  <Link href="/membership">
+                  <Link href="/user/profile">
                     <a>
                       <button className="btn-primary">
                         Login or Become a Member

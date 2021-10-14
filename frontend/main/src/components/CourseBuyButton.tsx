@@ -46,7 +46,7 @@ export default function CourseBuyButton({
               )}
               <div className="flex items-stretch justify-center space-x-4 flex-nowrap">
                 {product && <CourseBuy product={product} user={user} />}
-                <Link href="/membership">
+                <Link href="/user/profile">
                   <a>
                     <button className="btn-primary">Become a Member</button>
                   </a>

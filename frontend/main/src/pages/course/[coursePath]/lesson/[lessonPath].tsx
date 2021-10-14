@@ -127,7 +127,7 @@ export async function getServerSideProps({
         console.log('Not a member, no product');
         return {
           redirect: {
-            destination: `/membership`,
+            destination: `/user/profile`,
             permanent: false,
           },
         };
