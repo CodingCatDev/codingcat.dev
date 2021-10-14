@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import router, { useRouter } from 'next/router';
 
 import ActiveLink from '@/components/ActiveLink';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ export default function UserSignin({
   const app = getApp();
   const auth = getAuth(app);
   const { data: signInCheckResult } = useSigninCheck();
+  const router = useRouter();
 
   useEffect(() => {
     if (signInCheckResult && signInCheckResult.user) {
@@ -143,7 +145,11 @@ export default function UserSignin({
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
             role="menuitem"
-            onClick={() => signOut(auth)}
+            onClick={() => {
+              signOut(auth);
+              setUserMenu(false);
+              router.replace('/');
+            }}
           >
             <svg
               className="w-8 transform -scale-1"

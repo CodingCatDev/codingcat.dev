@@ -9,6 +9,12 @@ import { useSigninCheck } from 'reactfire';
 import { StripeProduct } from '@/models/stripe.model';
 import UserMembership from '@/components/user/UserMembership';
 import MembershipCards from '@/components/user/MembershipCards';
+import dynamic from 'next/dynamic';
+
+const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
+  ssr: false,
+  loading: () => <p>Playing with yarn...</p>,
+});
 
 export default function Profile({
   site,
@@ -40,7 +46,8 @@ export default function Profile({
       ) : (
         <>
           <div className="relative z-0 w-full mx-auto lg:w-1/2">
-            <FirebaseSignin />
+            {/* <FirebaseSignin /> */}
+            <FirebaseAuth />
           </div>
           <section className="grid grid-cols-1 gap-10 text-center">
             <div className="max-w-xl mx-auto">
