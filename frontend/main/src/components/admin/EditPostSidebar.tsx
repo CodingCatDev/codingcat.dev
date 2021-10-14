@@ -22,20 +22,16 @@ export default function EditPostSidebar({
   tab,
   setTab,
   history,
-  setSlugUnique,
-  setSaving,
   postHistories,
   user,
+  onPublish,
 }: {
-  updateContent$: Subject<Post>;
   tab: TabType;
   setTab: React.Dispatch<React.SetStateAction<TabType>>;
   history: Post;
-  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
-  setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
-  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
   postHistories: Post[];
   user: UserInfoExtended;
+  onPublish: (selectedDate: Date) => Promise<void>;
 }): JSX.Element {
   const app = getApp();
   const firestore = getFirestore(app);
@@ -157,12 +153,7 @@ export default function EditPostSidebar({
           : 'hidden'
       }`}
     >
-      <PublishModal
-        history={history}
-        setSaving={setSaving}
-        setSlugUnique={setSlugUnique}
-        user={user}
-      />
+      <PublishModal history={history} onPublish={onPublish} />
       <div className="flex flex-wrap">
         <div className="flex items-center space-x-2">
           <p className="flex">saved: </p>

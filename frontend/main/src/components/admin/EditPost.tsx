@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-// import {
-//   postDataObservable,
-//   postHistoriesDataObservable,
-//   postHistoryCreate,
-//   postHistoryUpdate,
-// } from '@/services/api';
-
-import { Post, PostType } from '@/models/post.model';
+import { Post, PostStatus, PostType } from '@/models/post.model';
 import { TabType } from '@/models/admin.model';
+import { v4 as uuid } from 'uuid';
 
-import { debounce, switchMap, take } from 'rxjs/operators';
-import { interval, Subject } from 'rxjs';
 import Link from 'next/link';
 import PostHistories from '@/components/admin/PostHistories';
 import EditPostEditor from '@/components/admin/EditPostEditor';
@@ -25,15 +17,20 @@ import {
   collection,
   CollectionReference,
   doc,
+  DocumentReference,
   getDoc,
+  getDocs,
   getFirestore,
   orderBy,
   query,
+  Timestamp,
   where,
 } from '@firebase/firestore';
 import { getApp } from '@firebase/app';
 import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
+import { toKebabCase } from '@/utils/basics/stringManipulation';
+import { setDoc, writeBatch } from 'firebase/firestore';
 
 export default function EditPost({
   type,
@@ -46,7 +43,6 @@ export default function EditPost({
 }): JSX.Element {
   const [tab, setTab] = useState<TabType>(TabType.edit);
   const [, setSaving] = useState<boolean>(false);
-  const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
   const [slugUnique, setSlugUnique] = useState(true);
   const router = useRouter();
   const app = getApp();
@@ -90,6 +86,128 @@ export default function EditPost({
     );
   }
 
+  async function validSlug(slugInput: string, id: string | undefined) {
+    if (!id) {
+      return false;
+    }
+    const slug = toKebabCase(slugInput);
+    const docs = await getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('slug', '==', slug),
+        where('id', '!=', id)
+      )
+    );
+    return docs.empty;
+  }
+
+  const postHistoryCreate = (h: Post) => {
+    const id = uuid();
+
+    const docRef = doc(
+      firestore,
+      `posts/${h.postId}/history/${id}`
+    ) as DocumentReference<Post>;
+    const historyUpdate = { ...h };
+    if (historyUpdate.publishedAt) {
+      delete historyUpdate.publishedAt;
+    }
+    return setDoc(docRef, {
+      ...historyUpdate,
+      status: PostStatus.draft,
+      updatedAt: Timestamp.now(),
+      updatedBy: user.uid,
+      id: id,
+      historyId: id,
+    }).then(() =>
+      getDoc(docRef).then((d) => {
+        const n = d.data() as Post;
+        //Check to see if any medias exist
+        const mediasRef = collection(
+          firestore,
+          `posts/${h.postId}/history/${h.id}/media`
+        ) as CollectionReference<Post>;
+        getDocs(mediasRef).then((medias) =>
+          medias.forEach((m) =>
+            setDoc(
+              doc(firestore, `posts/${h.postId}/history/${n.id}/media/${m.id}`),
+              {
+                ...m.data(),
+              }
+            )
+          )
+        );
+        return n;
+      })
+    );
+  };
+
+  const postHistoryUpdate = (h: Post) => {
+    const docRef = doc(
+      firestore,
+      `posts/${h.postId}/history/${h.id}`
+    ) as DocumentReference<Post>;
+    return setDoc(
+      docRef,
+      {
+        ...h,
+        titleSearch: h.title ? h.title.toLowerCase() : '',
+        updatedAt: Timestamp.now(),
+        updatedBy: user.uid,
+      },
+      { merge: true }
+    ).then(() => getDoc(docRef).then((d) => d.data() as Post));
+  };
+
+  const updateContent = (h: Post) => {
+    setSaving(true);
+    if (h?.publishedAt) {
+      return postHistoryCreate(h).then((d) => {
+        setSaving(false);
+        return d;
+      });
+    } else {
+      return postHistoryUpdate(h).then((d) => {
+        setSaving(false);
+        return d;
+      });
+    }
+  };
+
+  const onPublish = async (selectedDate: Date) => {
+    if (history && selectedDate) {
+      const unique = await validSlug(history.slug, history.id);
+      setSlugUnique(unique);
+      if (unique) {
+        setSaving(true);
+
+        history.publishedAt = Timestamp.fromDate(selectedDate);
+        history.status = PostStatus.published;
+
+        const batch = writeBatch(firestore);
+        const historyRef = doc(
+          firestore,
+          `posts/${history.postId}/history/${history.id}`
+        );
+        const postRef = doc(firestore, `posts/${history.postId}`);
+
+        const update = {
+          ...history,
+          updatedAt: Timestamp.now(),
+          updatedBy: user.uid,
+        };
+        batch.set(historyRef, update);
+        batch.set(postRef, {
+          ...update,
+          id: history.postId,
+          historyId: history.id,
+        });
+        await batch.commit();
+      }
+    }
+    setSaving(false);
+  };
+
   function onTab() {
     if (!history) {
       return <p>This tab is not defined yet.</p>;
@@ -98,15 +216,19 @@ export default function EditPost({
       case TabType.edit:
         return (
           <EditPostEditor
-            updateContent$={updateContent$}
             history={history}
-            setHistory={setHistory}
             slugUnique={slugUnique}
             setSlugUnique={setSlugUnique}
           />
         );
       case TabType.media:
-        return <EditPostMedia history={history} user={user} />;
+        return (
+          <EditPostMedia
+            history={history}
+            user={user}
+            updateContent={updateContent}
+          />
+        );
       case TabType.sections:
         return <EditPostCourseSections historyInput={history as Post} />;
       case TabType.settings:
@@ -196,15 +318,12 @@ export default function EditPost({
               <section className="grid grid-cols-1 gap-4 justify-items-stretch 2xl:grid-cols-sidebar">
                 {onTab()}
                 <EditPostSidebar
-                  user={user}
-                  updateContent$={updateContent$}
                   tab={tab}
                   setTab={setTab}
                   history={history}
-                  setHistory={setHistory}
-                  setSlugUnique={setSlugUnique}
-                  setSaving={setSaving}
                   postHistories={postHistories}
+                  user={user}
+                  onPublish={onPublish}
                 />
               </section>
             ) : (

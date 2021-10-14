@@ -14,6 +14,8 @@ import {
   CollectionReference,
   query,
   orderBy,
+  DocumentData,
+  DocumentSnapshot,
 } from 'firebase/firestore';
 import { useFirestoreCollectionData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
@@ -21,9 +23,11 @@ import { UserInfoExtended } from '@/models/user.model';
 export default function EditPostMedia({
   history,
   user,
+  updateContent,
 }: {
   history: Post;
   user: UserInfoExtended;
+  updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
   const [type, setType] = useState<MediaType>(MediaType.photo);
   // const [media, setMedia] = useState<Media | null>(null);
@@ -102,7 +106,12 @@ export default function EditPostMedia({
             {type === MediaType.video && (
               <EditPostMediaVideoForm history={history} />
             )}
-            <CloudinaryUpload history={history} type={type} user={user} />
+            <CloudinaryUpload
+              history={history}
+              type={type}
+              user={user}
+              updateContent={updateContent}
+            />
           </div>
         </header>
         <section className="grid content-start w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit">

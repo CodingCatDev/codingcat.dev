@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';
-import { take } from 'rxjs/operators';
+import { v4 as uuid } from 'uuid';
 import { CoverMedia, Post, PostStatus } from '@/models/post.model';
 import { Cloudinary, MediaType, MediaSource } from '@/models/media.model';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -16,16 +16,18 @@ import {
 import { getApp } from '@firebase/app';
 import { UserInfoExtended } from '@/models/user.model';
 import { Video } from '@/models/video.model';
-import { v4 as uuid } from 'uuid';
+import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
 
 export default function CloudinaryUpload({
   history,
   type,
   user,
+  updateContent,
 }: {
   history: Post;
   type: MediaType;
   user: UserInfoExtended;
+  updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
   let widget: any = null;
   const functions = getFunctions();
@@ -65,23 +67,6 @@ export default function CloudinaryUpload({
       console.log('error fetching signature');
     }
   }
-
-  const postHistoryCreate = (history: Post) => {
-    const id = uuid();
-
-    const docRef = doc(firestore, `posts/${history.postId}/history/${id}`);
-    const historyUpdate = { ...history };
-    if (historyUpdate.publishedAt) {
-      delete historyUpdate.publishedAt;
-    }
-    return setDoc(docRef, {
-      ...historyUpdate,
-      status: PostStatus.draft,
-      updatedAt: Timestamp.now(),
-      updatedBy: user.uid,
-      id: id,
-    }).then(() => getDoc(docRef));
-  };
 
   const postHistoryMediaCreate = (
     history: Post,
@@ -154,14 +139,8 @@ export default function CloudinaryUpload({
           },
           async (error: any, result: any) => {
             if (!error && result && result.event === 'success') {
-              if (history.publishedAt) {
-                const newHistory = (await (
-                  await postHistoryCreate(history)
-                ).data()) as Post;
-                await postHistoryMediaCreate(newHistory, type, result.info);
-              } else {
-                await postHistoryMediaCreate(history, type, result.info);
-              }
+              const newHistory = await updateContent(history);
+              await postHistoryMediaCreate(newHistory, type, result.info);
               widget.destroy();
             }
             if (!error && result && result.event === 'close') {
