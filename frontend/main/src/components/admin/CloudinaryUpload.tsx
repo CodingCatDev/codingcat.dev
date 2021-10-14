@@ -1,43 +1,37 @@
 import { useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';
-import {
-  getCloudinarySignature,
-  postHistoryMediaCreate,
-  postHistoryCreate,
-} from '@/services/api';
 import { take } from 'rxjs/operators';
-import { Post } from '@/models/post.model';
-import { MediaType } from '@/models/media.model';
-
-async function fetchCloudinarySignature(cb: any, params: any) {
-  try {
-    const signature = await getCloudinarySignature(params).toPromise();
-
-    cb(
-      Object.assign(
-        {
-          signature,
-          api_key: config.apiKey,
-        },
-        params
-      )
-    );
-  } catch (err) {
-    console.log('error fetching signature');
-  }
-}
+import { CoverMedia, Post, PostStatus } from '@/models/post.model';
+import { Cloudinary, MediaType, MediaSource } from '@/models/media.model';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  Timestamp,
+  writeBatch,
+} from '@firebase/firestore';
+import { getApp } from '@firebase/app';
+import { UserInfoExtended } from '@/models/user.model';
+import { Video } from '@/models/video.model';
+import { v4 as uuid } from 'uuid';
 
 export default function CloudinaryUpload({
-  setHistory,
   history,
   type,
+  user,
 }: {
-  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   history: Post;
   type: MediaType;
+  user: UserInfoExtended;
 }): JSX.Element {
   let widget: any = null;
+  const functions = getFunctions();
+  const app = getApp();
+  const firestore = getFirestore(app);
+
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
@@ -49,6 +43,98 @@ export default function CloudinaryUpload({
       document.body.removeChild(script);
     };
   }, []);
+
+  async function fetchCloudinarySignature(cb: any, params: any) {
+    try {
+      const signature = await (
+        await httpsCallable(functions, 'cloudinarysignature').call(
+          'params',
+          params
+        )
+      ).data;
+      cb(
+        Object.assign(
+          {
+            signature,
+            api_key: config.apiKey,
+          },
+          params
+        )
+      );
+    } catch (err) {
+      console.log('error fetching signature');
+    }
+  }
+
+  const postHistoryCreate = (history: Post) => {
+    const id = uuid();
+
+    const docRef = doc(firestore, `posts/${history.postId}/history/${id}`);
+    const historyUpdate = { ...history };
+    if (historyUpdate.publishedAt) {
+      delete historyUpdate.publishedAt;
+    }
+    return setDoc(docRef, {
+      ...historyUpdate,
+      status: PostStatus.draft,
+      updatedAt: Timestamp.now(),
+      updatedBy: user.uid,
+      id: id,
+    }).then(() => getDoc(docRef));
+  };
+
+  const postHistoryMediaCreate = (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary,
+    video?: Video
+  ) => {
+    const mediaId = uuid();
+    let coverMedia: CoverMedia = { type, source: MediaSource.cloudinary };
+    if (cloudinary) {
+      coverMedia = {
+        thumbnail_url: cloudinary.thumbnail_url,
+        path: cloudinary.path,
+        mediaId,
+        public_id: cloudinary.public_id,
+        url: cloudinary.url,
+        type,
+        source: MediaSource.cloudinary,
+      };
+    } else if (video) {
+      coverMedia = {
+        mediaId,
+        url: video.url,
+        type,
+        source: MediaSource.video,
+      };
+    }
+
+    const batch = writeBatch(firestore);
+    const mediaRef = doc(
+      firestore,
+      `posts/${history.postId}/history/${history.id}/media/${mediaId}`
+    );
+    batch.set(mediaRef, {
+      id: mediaId,
+      type,
+      cloudinary: cloudinary || null,
+      video: video || null,
+      createdAt: Timestamp.now(),
+    });
+
+    const historyRef = doc(
+      firestore,
+      `posts/${history.postId}/history/${history.id}`
+    );
+    batch.set(historyRef, {
+      ...history,
+      updatedAt: Timestamp.now(),
+      updatedBy: user.uid,
+      [type === MediaType.photo ? 'coverPhoto' : 'coverVideo']: coverMedia,
+    });
+    return batch.commit();
+  };
 
   function onUpload() {
     if (typeof window !== 'undefined') {
@@ -66,20 +152,15 @@ export default function CloudinaryUpload({
                 : config.videoPreset,
             prepareUploadParams: fetchCloudinarySignature,
           },
-          (error: any, result: any) => {
+          async (error: any, result: any) => {
             if (!error && result && result.event === 'success') {
               if (history.publishedAt) {
-                postHistoryCreate(history)
-                  .pipe(take(1))
-                  .subscribe((h) =>
-                    postHistoryMediaCreate(h, type, result.info)
-                      .pipe(take(1))
-                      .subscribe((newHistory) => setHistory(newHistory))
-                  );
+                const newHistory = (await (
+                  await postHistoryCreate(history)
+                ).data()) as Post;
+                await postHistoryMediaCreate(newHistory, type, result.info);
               } else {
-                postHistoryMediaCreate(history, type, result.info)
-                  .pipe(take(1))
-                  .subscribe((newHistory) => setHistory(newHistory));
+                await postHistoryMediaCreate(history, type, result.info);
               }
               widget.destroy();
             }

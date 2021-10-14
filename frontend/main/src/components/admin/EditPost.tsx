@@ -27,7 +27,9 @@ import {
   doc,
   getDoc,
   getFirestore,
+  orderBy,
   query,
+  where,
 } from '@firebase/firestore';
 import { getApp } from '@firebase/app';
 import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
@@ -60,7 +62,10 @@ export default function EditPost({
     id,
     'history'
   ) as CollectionReference<Post>;
-  const historiesQuery = query<Post>(historiesRef);
+  const historiesQuery = query<Post>(
+    historiesRef,
+    orderBy('updatedAt', 'desc')
+  );
   const { data: postHistories } =
     useFirestoreCollectionData<Post>(historiesQuery);
 
@@ -101,7 +106,7 @@ export default function EditPost({
           />
         );
       case TabType.media:
-        return <EditPostMedia history={history} setHistory={setHistory} />;
+        return <EditPostMedia history={history} user={user} />;
       case TabType.sections:
         return <EditPostCourseSections historyInput={history as Post} />;
       case TabType.settings:

@@ -1,11 +1,19 @@
 import SimpleMDE from 'react-simplemde-editor';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
-import { postsSlugUnique } from '@/services/api';
 import { Post } from '@/models/post.model';
 import { of, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import 'easymde/dist/easymde.min.css';
+import { firestore } from 'firebase-admin';
+import {
+  getDocs,
+  query,
+  collection,
+  where,
+  getFirestore,
+} from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 export default function EditPostEditor({
   updateContent$,
@@ -20,27 +28,35 @@ export default function EditPostEditor({
   slugUnique: boolean;
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
+  const app = getApp();
+  const firestore = getFirestore(app);
+
   function onTitle(title: string) {
     const update: Post = { ...history, title } as Post;
     setHistory(update);
     updateContent$.next({ ...update, historyId: history?.id });
   }
 
-  function onSlug(slug: string) {
+  async function onSlug(slug: string) {
     const update: Post = { ...history, slug } as Post;
     setHistory(update);
-    validSlug(slug).subscribe((unique) => {
-      setSlugUnique(unique);
-      updateContent$.next({ ...update, historyId: history?.id });
-    });
+    setSlugUnique(await validSlug(slug, history.id));
+    updateContent$.next({ ...update, historyId: history?.id });
   }
 
-  function validSlug(slugInput: string) {
-    if (!history || !history.postId) {
-      return of(false);
+  async function validSlug(slugInput: string, id: string | undefined) {
+    if (!id) {
+      return false;
     }
     const slug = toKebabCase(slugInput);
-    return postsSlugUnique(slug, history?.postId).pipe(take(1));
+    const docs = await getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('slug', '==', slug),
+        where('id', '!=', id)
+      )
+    );
+    return docs.empty;
   }
 
   function onExcerpt(excerpt: string) {

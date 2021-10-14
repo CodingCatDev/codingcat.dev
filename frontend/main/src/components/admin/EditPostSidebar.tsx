@@ -186,7 +186,8 @@ export default function EditPostSidebar({
               {history.status}
             </div>
             {/* Date of History */}
-            <div>
+
+            {/* <div>
               {postHistories.find((h) => h.status === PostStatus.published) ? (
                 <div className="bg-basics-50">
                   {postHistories
@@ -197,7 +198,7 @@ export default function EditPostSidebar({
               ) : (
                 ''
               )}
-            </div>
+            </div> */}
           </div>
           {/* Any Post History showing Published */}
           {history.status != PostStatus.published &&
