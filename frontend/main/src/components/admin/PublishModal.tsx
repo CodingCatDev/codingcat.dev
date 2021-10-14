@@ -42,6 +42,12 @@ export default function PublishModal({
     setLargeButton(true);
   }
 
+  const onPublishModal = async () => {
+    await onPublish(selectedDate);
+    setLargeButton(true);
+    setOpen(false);
+  };
+
   return (
     <div>
       {largeButton && (
@@ -89,10 +95,7 @@ export default function PublishModal({
           <button onClick={() => onCancel()} className="btn-secondary">
             Cancel
           </button>
-          <button
-            onClick={() => onPublish(selectedDate)}
-            className="btn-primary"
-          >
+          <button onClick={() => onPublishModal()} className="btn-primary">
             Publish
           </button>
         </div>
