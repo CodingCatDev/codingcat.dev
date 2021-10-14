@@ -4,14 +4,16 @@ import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 
-// const LogRocket = require('logrocket');
-// const setupLogRocketReact = require('logrocket-react');
+if (process.env.NODE_ENV === 'production') {
+  const LogRocket = require('logrocket');
+  const setupLogRocketReact = require('logrocket-react');
 
-// if (typeof window !== 'undefined') {
-//   LogRocket.init('qlm7wr/codingcatdev');
-//   // plugins should also only be initialized when in the browser
-//   setupLogRocketReact(LogRocket);
-// }
+  if (typeof window !== 'undefined') {
+    LogRocket.init('qlm7wr/codingcatdev');
+    // plugins should also only be initialized when in the browser
+    setupLogRocketReact(LogRocket);
+  }
+}
 
 const FirebaseProvider = dynamic<any>(
   () =>

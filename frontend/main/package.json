@@ -28,7 +28,7 @@
     "firebase-admin": "^9.4.2",
     "gray-matter": "^4.0.2",
     "js-cookie": "^2.2.1",
-    "logrocket": "^2.0.0",
+    "logrocket": "^2.1.1",
     "logrocket-react": "^4.0.1",
     "next": "^11.1.2",
     "next-mdx-remote": "^3.0.5",
