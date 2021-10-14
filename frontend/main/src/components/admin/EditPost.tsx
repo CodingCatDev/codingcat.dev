@@ -177,7 +177,7 @@ export default function EditPost({
 
   const onPublish = async (selectedDate: Date) => {
     if (history && selectedDate) {
-      const unique = await validSlug(history.slug, history.id);
+      const unique = await validSlug(history.slug, history.postId);
       setSlugUnique(unique);
       if (unique) {
         setSaving(true);
@@ -232,11 +232,16 @@ export default function EditPost({
           />
         );
       case TabType.sections:
-        return <EditPostCourseSections historyInput={history as Post} />;
+        return (
+          <EditPostCourseSections
+            history={history}
+            updateContent={updateContent}
+          />
+        );
       case TabType.settings:
-        return <EditPostCourseSettings historyInput={history as Post} />;
+        return <EditPostCourseSettings historyInput={history} />;
       case TabType.groups:
-        return <EditPostCourseGroups historyInput={history as Post} />;
+        return <EditPostCourseGroups historyInput={history} />;
       case TabType.history:
         return <PostHistories postHistories={postHistories} />;
       default:
