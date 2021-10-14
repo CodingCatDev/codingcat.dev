@@ -1,11 +1,7 @@
 import SimpleMDE from 'react-simplemde-editor';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { Post } from '@/models/post.model';
-import { of, Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
-
 import 'easymde/dist/easymde.min.css';
-import { firestore } from 'firebase-admin';
 import {
   getDocs,
   query,
@@ -16,32 +12,26 @@ import {
 import { getApp } from 'firebase/app';
 
 export default function EditPostEditor({
-  updateContent$,
   history,
-  setHistory,
   slugUnique,
   setSlugUnique,
+  updateContent,
 }: {
-  updateContent$: Subject<Post>;
   history: Post;
-  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   slugUnique: boolean;
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
+  updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
   const app = getApp();
   const firestore = getFirestore(app);
 
   function onTitle(title: string) {
-    const update: Post = { ...history, title } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, title });
   }
 
   async function onSlug(slug: string) {
-    const update: Post = { ...history, slug } as Post;
-    setHistory(update);
+    updateContent({ ...history, slug });
     setSlugUnique(await validSlug(slug, history.id));
-    updateContent$.next({ ...update, historyId: history?.id });
   }
 
   async function validSlug(slugInput: string, id: string | undefined) {
@@ -60,21 +50,15 @@ export default function EditPostEditor({
   }
 
   function onExcerpt(excerpt: string) {
-    const update: Post = { ...history, excerpt } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, excerpt });
   }
 
   function onContent(content: string) {
-    const update: Post = { ...history, content } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, content });
   }
 
   function onUrlContent(urlContent: string) {
-    const update: Post = { ...history, urlContent } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, urlContent });
   }
 
   return (

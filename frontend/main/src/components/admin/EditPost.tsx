@@ -151,6 +151,7 @@ export default function EditPost({
       docRef,
       {
         ...h,
+        historyId: h.id,
         titleSearch: h.title ? h.title.toLowerCase() : '',
         updatedAt: Timestamp.now(),
         updatedBy: user.uid,
@@ -219,6 +220,7 @@ export default function EditPost({
             history={history}
             slugUnique={slugUnique}
             setSlugUnique={setSlugUnique}
+            updateContent={updateContent}
           />
         );
       case TabType.media:
