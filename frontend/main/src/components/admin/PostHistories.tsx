@@ -142,7 +142,7 @@ function PostHistories({
         <Column expander style={{ width: '3em' }} />
         <Column field="id" header="ID"></Column>
         <Column header="Status" body={statusBodyTemplate}></Column>
-        <Column header="Updated By" field={updatedByTemplate}></Column>
+        <Column header="Updated By" body={updatedByTemplate}></Column>
         <Column header="Updated" body={updatedAtTemplate}></Column>
         <Column header="Restore" body={restoreTemplate}></Column>
       </DataTable>
