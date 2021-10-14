@@ -15,7 +15,7 @@ import { doc, DocumentReference, getFirestore } from '@firebase/firestore';
 import { getDoc } from 'firebase/firestore';
 
 interface PostWithUser extends Post {
-  user: UserInfoExtended | undefined;
+  user?: UserInfoExtended | undefined;
 }
 
 function PostHistories({
