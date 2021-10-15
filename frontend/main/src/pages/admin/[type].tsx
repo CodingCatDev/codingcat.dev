@@ -49,9 +49,6 @@ export default function AdminPostTypes({
     setPostType(type);
   }, [type]);
 
-  console.log('postType:', postType);
-  console.log('type:', type);
-
   return (
     <AdminLayout site={site}>
       <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
