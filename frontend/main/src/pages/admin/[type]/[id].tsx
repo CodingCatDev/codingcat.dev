@@ -26,7 +26,7 @@ export default function Edit({
   return (
     <AdminLayout site={site} post={post}>
       <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
-      {signInCheckResult?.signedIn === true ? (
+      {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
         <>
           {type && id ? (
             <EditPost type={type} id={id} user={signInCheckResult.user} />

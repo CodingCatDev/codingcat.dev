@@ -101,27 +101,25 @@ export default function AppMenu({
               </ActiveLink>
             </nav>
             <section className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">
-              <div className="flex items-center cursor-pointer links-secondary">
-                <OutsideClick toggle={setUserMenu} value={false}>
+              <OutsideClick toggle={setUserMenu} value={false}>
+                <div className="flex items-center cursor-pointer links-secondary">
                   <AvatarMenu
                     userMenu={userMenu}
                     setUserMenu={setUserMenu}
                     positionClass="left-0 bottom-0 mb-6"
                   />
-                </OutsideClick>
-                {signInCheckResult && signInCheckResult.signedIn === true && (
-                  <OutsideClick toggle={setUserMenu} value={false}>
+                  {signInCheckResult && signInCheckResult?.signedIn === true && (
                     <button className="ml-2" onClick={() => setUserMenu(true)}>
                       <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
-                        {signInCheckResult.user?.displayName}
+                        {signInCheckResult?.user?.displayName}
                       </p>
                       <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
-                        {signInCheckResult.user?.email}
+                        {signInCheckResult?.user?.email}
                       </p>
                     </button>
-                  </OutsideClick>
-                )}
-              </div>
+                  )}
+                </div>
+              </OutsideClick>
             </section>
           </section>
         </section>

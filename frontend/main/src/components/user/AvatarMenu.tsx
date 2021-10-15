@@ -27,7 +27,7 @@ export default function AvatarMenu({
   return (
     <>
       <div className="relative">
-        {signInCheckResult && signInCheckResult.signedIn === true ? (
+        {signInCheckResult && signInCheckResult?.signedIn === true ? (
           <button
             className="flex p-1 text-sm rounded-full text-basics-50 dark:text-basics-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800"
             id="user-menu"
@@ -106,7 +106,7 @@ export default function AvatarMenu({
               <span className="ml-2">Your Profile</span>
             </a>
           </ActiveLink>
-          <a
+          {/* <a
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
             role="menuitem"
@@ -133,7 +133,7 @@ export default function AvatarMenu({
             </svg>
 
             <span className="ml-2">Settings</span>
-          </a>
+          </a> */}
           <a
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"

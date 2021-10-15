@@ -46,10 +46,10 @@ export default function AdminMenu({
             <OutsideClick toggle={setUserMenu} value={false}>
               <button className="ml-2" onClick={() => setUserMenu(true)}>
                 <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
-                  {signInCheckResult.user?.displayName}
+                  {signInCheckResult?.user?.displayName}
                 </p>
                 <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
-                  {signInCheckResult.user?.email}
+                  {signInCheckResult?.user?.email}
                 </p>
               </button>
             </OutsideClick>

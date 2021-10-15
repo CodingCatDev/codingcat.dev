@@ -35,7 +35,7 @@ export default function NavTypes({
       )}
       {type && (type as string) !== 'site' && (
         <>
-          {signInCheckResult?.signedIn === true ? (
+          {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
             <div className="p-4">
               <header className="grid gap-4 mb-4 justify-items-start">
                 <h1 className="font-sans text-4xl font-bold capitalize">
