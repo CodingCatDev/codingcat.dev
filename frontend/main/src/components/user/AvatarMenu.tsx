@@ -106,7 +106,7 @@ export default function AvatarMenu({
               <span className="ml-2">Your Profile</span>
             </a>
           </ActiveLink>
-          <a
+          {/* <a
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
             role="menuitem"
@@ -133,7 +133,7 @@ export default function AvatarMenu({
             </svg>
 
             <span className="ml-2">Settings</span>
-          </a>
+          </a> */}
           <a
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
