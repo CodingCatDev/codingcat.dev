@@ -16,7 +16,6 @@ import {
   doc,
   endAt,
   getDocs,
-  getFirestore,
   limit,
   orderBy,
   query,
@@ -25,6 +24,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { cleanTimestamp } from '@/utils/firebase/firestoreTools';
+import { useFirestore } from 'reactfire';
 const arrayMove = require('array-move');
 
 export default function EditPostCourseSections({
@@ -34,8 +34,7 @@ export default function EditPostCourseSections({
   history: Post;
   updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const [section, setSection] = useState<Section>();
   const [lessonSearch, setLessonSearch] = useState<string>('');
   const [lessons, setLessons] = useState<Post[]>();

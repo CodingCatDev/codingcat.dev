@@ -8,10 +8,10 @@ import AJPrimary from '@/components/global/icons/AJPrimary';
 import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
 import { getApp } from '@firebase/app';
-import { getFirestore } from '@firebase/firestore';
 import { collection, addDoc } from 'firebase/firestore';
 import { UserInfoExtended } from '@/models/user.model';
 import StripeRedirect from '@/components/user/StripeRedirect';
+import { useFirestore } from 'reactfire';
 
 export default function MembershipCards({
   products,
@@ -21,8 +21,7 @@ export default function MembershipCards({
   products: StripeProduct[];
 }): JSX.Element {
   const [stripe, setStripe] = useState(false);
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const [showMustSignin, setShowMustSignin] = useState(false);
   const [checkoutSession, setCheckoutSession] = useState<string | null>(null);
 

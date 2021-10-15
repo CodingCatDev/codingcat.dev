@@ -3,11 +3,11 @@ import Image from 'next/image';
 import MembershipCards from '@/components/user/MembershipCards';
 
 import { UserInfoExtended } from '@/models/user.model';
-import { getApp } from 'firebase/app';
 
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { StripeProduct } from '@/models/stripe.model';
 import useIsMember from '@/hooks/useIsMember';
+import { useAuth } from 'reactfire';
 
 export default function UserMembership({
   user,
@@ -16,8 +16,7 @@ export default function UserMembership({
   user: UserInfoExtended;
   products: StripeProduct[];
 }): JSX.Element {
-  const app = getApp();
-  const auth = getAuth(app);
+  const auth = useAuth();
 
   const { member, team } = useIsMember(user);
 

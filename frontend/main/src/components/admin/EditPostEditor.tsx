@@ -2,14 +2,8 @@ import SimpleMDE from 'react-simplemde-editor';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { Post } from '@/models/post.model';
 import 'easymde/dist/easymde.min.css';
-import {
-  getDocs,
-  query,
-  collection,
-  where,
-  getFirestore,
-} from 'firebase/firestore';
-import { getApp } from 'firebase/app';
+import { getDocs, query, collection, where } from 'firebase/firestore';
+import { useFirestore } from 'reactfire';
 
 export default function EditPostEditor({
   history,
@@ -22,8 +16,7 @@ export default function EditPostEditor({
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
   updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   function onTitle(title: string) {
     updateContent({ ...history, title });

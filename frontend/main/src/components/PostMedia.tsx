@@ -8,7 +8,8 @@ import { take } from 'rxjs/operators';
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 import Image from 'next/image';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { httpsCallable } from 'firebase/functions';
+import { useFunctions } from 'reactfire';
 
 export default function PostMedia({
   post,
@@ -17,7 +18,7 @@ export default function PostMedia({
   post: Post;
   noImage?: boolean;
 }): JSX.Element {
-  const functions = getFunctions();
+  const functions = useFunctions();
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {

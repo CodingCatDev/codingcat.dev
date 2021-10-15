@@ -1,21 +1,14 @@
 import { UserInfoExtended } from '@/models/user.model';
 import UserProfileCloudinaryUpload from '@/components/user/UserProfileCloudinaryUpload';
-import { useFirestoreDocData } from 'reactfire';
-import { getApp } from 'firebase/app';
-import {
-  doc,
-  setDoc,
-  DocumentReference,
-  getFirestore,
-} from 'firebase/firestore';
+import { useFirestore, useFirestoreDocData } from 'reactfire';
+import { doc, setDoc, DocumentReference } from 'firebase/firestore';
 
 export default function UserProfile({
   user,
 }: {
   user: UserInfoExtended;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const ref = doc(
     firestore,
     'profiles',

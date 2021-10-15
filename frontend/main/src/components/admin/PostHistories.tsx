@@ -3,20 +3,14 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import TimeAgo from 'react-timeago';
 
-import firebase, { getApp } from 'firebase/app';
+import { getApp } from 'firebase/app';
 import { Post, PostStatus } from '@/models/post.model';
 
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
-import { take } from 'rxjs/operators';
 import { UserInfoExtended } from '@/models/user.model';
-import {
-  doc,
-  DocumentReference,
-  getDocs,
-  getFirestore,
-} from '@firebase/firestore';
+import { doc, DocumentReference } from '@firebase/firestore';
 import {
   collection,
   CollectionReference,
@@ -26,7 +20,7 @@ import {
 } from 'firebase/firestore';
 import { Media } from '@/models/media.model';
 import MediaGrid from './MediaGrid';
-import { useFirestoreCollectionData } from 'reactfire';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 
 interface PostWithUser extends Post {
   user?: UserInfoExtended | undefined;
@@ -39,8 +33,7 @@ function PostHistories({
 }): JSX.Element {
   const [count, setCount] = useState(0);
   const [expandedRows, setExpandedRows] = useState([]);
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   useEffect(() => {
     const postsUpdated: {
@@ -168,8 +161,7 @@ function PostHistories({
 export default PostHistories;
 
 function MediaWrapper({ history }: { history: Post }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const mediaRef = collection(
     firestore,
     `posts/${history.postId}/history/${history.id}/media`

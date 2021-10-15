@@ -3,11 +3,10 @@ import { useEffect } from 'react';
 import { config } from '@/config/cloudinary';
 import { Post } from '@/models/post.model';
 import { Cloudinary, MediaType } from '@/models/media.model';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getFirestore } from '@firebase/firestore';
-import { getApp } from '@firebase/app';
+import { httpsCallable } from 'firebase/functions';
 import { UserInfoExtended } from '@/models/user.model';
 import { Video } from '@/models/video.model';
+import { useFunctions } from 'reactfire';
 
 export default function CloudinaryUpload({
   history,
@@ -28,9 +27,7 @@ export default function CloudinaryUpload({
   ) => Promise<void>;
 }): JSX.Element {
   let widget: any = null;
-  const functions = getFunctions();
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const functions = useFunctions();
 
   useEffect(() => {
     const script = document.createElement('script');

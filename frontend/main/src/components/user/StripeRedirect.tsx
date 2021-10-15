@@ -1,16 +1,8 @@
-import { StripeProduct } from '@/models/stripe.model';
-import OutsideClick from '@/components/OutsideClick';
 import { UserInfoExtended } from '@/models/user.model';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { config } from '@/config/cloudinary';
-import { getApp } from '@firebase/app';
-import {
-  collection,
-  doc,
-  DocumentReference,
-  getFirestore,
-} from '@firebase/firestore';
-import { useFirestoreDocData } from 'reactfire';
+import { doc, DocumentReference } from '@firebase/firestore';
+import { useFirestore, useFirestoreDocData } from 'reactfire';
 
 export default function StripeRedirect({
   checkoutSession,
@@ -19,8 +11,7 @@ export default function StripeRedirect({
   checkoutSession: string;
   user: UserInfoExtended;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   const sessionRef = doc(
     firestore,

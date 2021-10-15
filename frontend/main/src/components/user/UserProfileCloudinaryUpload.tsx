@@ -1,17 +1,10 @@
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';
 import { UserInfoExtended } from '@/models/user.model';
-import { take } from 'rxjs/operators';
 import { httpsCallable } from 'firebase/functions';
-import { useFirestoreDocData, useFunctions } from 'reactfire';
-import { getApp } from '@firebase/app';
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  DocumentReference,
-} from '@firebase/firestore';
+import { useFirestore, useFunctions } from 'reactfire';
+import { doc, setDoc, DocumentReference } from '@firebase/firestore';
 
 export default function UserProfileCloudinaryUpload({
   profile,
@@ -20,8 +13,7 @@ export default function UserProfileCloudinaryUpload({
   profile: UserInfoExtended;
   user: UserInfoExtended;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const ref = doc(
     firestore,
     'profiles',

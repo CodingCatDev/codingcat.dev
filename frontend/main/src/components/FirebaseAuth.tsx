@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useEffect } from 'react';
 
-import { getApp } from '@firebase/app';
 import {
   EmailAuthProvider,
   FacebookAuthProvider,
-  getAuth,
   GithubAuthProvider,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
@@ -14,6 +11,7 @@ import {
 } from '@firebase/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
+import { useAuth } from 'reactfire';
 
 let ui: firebaseui.auth.AuthUI;
 let uiConfig: firebaseui.auth.Config;
@@ -21,8 +19,7 @@ let uiConfig: firebaseui.auth.Config;
 const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const app = getApp();
-  const auth = getAuth(app);
+  const auth = useAuth();
 
   useEffect(() => {
     let signInOptions = [];
@@ -59,7 +56,7 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
       },
     };
     checkUi();
-  }, [app, auth, full]);
+  }, [auth, full]);
 
   const checkUi = async () => {
     if (ui) {
