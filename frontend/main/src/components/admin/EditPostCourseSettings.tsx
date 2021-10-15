@@ -1,26 +1,33 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { postHistoryUpdate } from '@/services/api';
 import { NavigationSettings, Post } from '@/models/post.model';
 import { take } from 'rxjs/operators';
 import { AccessMode } from '@/models/access.model';
 
 export default function EditPostCourseSettings({
-  historyInput,
+  history,
+  updateContent,
 }: {
-  historyInput: Post;
+  history: Post;
+  updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
-  const [history, setHistory] = useState<Post>();
   const [accessMode, setAccessMode] = useState<AccessMode | unknown>();
   const [navigationSettings, setNavigationSettings] = useState<
     NavigationSettings | unknown
   >();
+  const [productId, setProductId] = useState<string | undefined>();
+  const [price, setPrice] = useState<number | undefined>();
 
   useEffect(() => {
-    setHistory(historyInput);
-    setAccessMode(historyInput.accessSettings?.accessMode);
-    setNavigationSettings(historyInput.navigationSettings);
-  }, [historyInput]);
+    setAccessMode(history?.accessSettings?.accessMode);
+    setNavigationSettings(history?.navigationSettings);
+    setProductId(
+      history?.accessSettings?.productId
+        ? history?.accessSettings?.productId
+        : ''
+    );
+    setPrice(history?.accessSettings?.price);
+  }, [history]);
 
   function onAccessModeChange(e: React.ChangeEvent<HTMLInputElement>): void {
     let accessMode: AccessMode = e.target.value as AccessMode;
@@ -33,7 +40,7 @@ export default function EditPostCourseSettings({
           ...history,
           accessSettings: {
             accessMode,
-            price: parseFloat(e.target.value) as number,
+            price: e.target.value ? parseFloat(e.target.value) : null,
             productId: history?.accessSettings?.productId || null,
           },
         } as Post;
@@ -58,11 +65,9 @@ export default function EditPostCourseSettings({
     }
     if (historyUpdate) {
       setAccessMode(accessMode);
-      setHistory(historyUpdate);
-      postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+      updateContent(historyUpdate);
     }
   }
-
 
   function onCourseNavigationChange(e: any): void {
     const navigationSettings: NavigationSettings = e.target
@@ -73,8 +78,7 @@ export default function EditPostCourseSettings({
     } as Post;
 
     setNavigationSettings(navigationSettings);
-    setHistory(historyUpdate);
-    postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+    updateContent(historyUpdate);
   }
 
   if (!history) {
@@ -205,7 +209,7 @@ export default function EditPostCourseSettings({
                             type="number"
                             id="course-price"
                             name="course-price"
-                            value={history?.accessSettings?.price}
+                            value={price}
                             placeholder="$9.99"
                             disabled={accessMode !== AccessMode.closed}
                             onChange={(e) => onAccessModeChange(e)}
@@ -229,7 +233,7 @@ export default function EditPostCourseSettings({
                             name="productId"
                             placeholder="price_1234"
                             pattern="price_"
-                            value={history?.accessSettings?.productId}
+                            value={productId}
                             disabled={accessMode !== AccessMode.closed}
                             onChange={(e) => onAccessModeChange(e)}
                             className="block w-full mt-1 border-gray-300 rounded-md shadow-sm disabled:opacity-50 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"

@@ -13,5 +13,5 @@ export default function EditPostCourseGroups({
     setHistory(historyInput);
   }, [historyInput]);
 
-  return <>Groups</>;
+  return <>TODO: Create Groups</>;
 }

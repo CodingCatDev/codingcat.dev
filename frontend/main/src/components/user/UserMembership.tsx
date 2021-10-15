@@ -1,54 +1,108 @@
-import Head from 'next/head';
-import Layout from '@/layout/Layout';
-import SettingsLinks from '@/components/settings/SettingsLinks';
-import UserProfile from '@/components/settings/UserProfile';
-import FirebaseSignin from '@/components/FirebaseSignin';
-import { Site } from '@/models/site.model';
-import { getActiveMemberProducts, getSite } from '@/services/serversideApi';
-import { useSigninCheck } from 'reactfire';
-import { StripeProduct } from '@/models/stripe.model';
-import UserMembership from '@/components/user/UserMembership';
+import Link from 'next/link';
+import Image from 'next/image';
 import MembershipCards from '@/components/user/MembershipCards';
-import dynamic from 'next/dynamic';
 
-const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
-  ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
-});
+import { UserInfoExtended } from '@/models/user.model';
+import { getApp } from 'firebase/app';
 
-export default function Profile({
-  site,
+import { getAuth, signOut } from 'firebase/auth';
+import { StripeProduct } from '@/models/stripe.model';
+import useIsMember from '@/hooks/useIsMember';
+
+export default function UserMembership({
+  user,
   products,
 }: {
-  site: Site | null;
+  user: UserInfoExtended;
   products: StripeProduct[];
 }): JSX.Element {
-  const { data: signInCheckResult } = useSigninCheck();
+  const app = getApp();
+  const auth = getAuth(app);
+
+  const { member, team } = useIsMember(user);
 
   return (
-    <Layout site={site}>
-      <Head>
-        <title>Profile | CodingCatDev</title>
-      </Head>
-      {signInCheckResult?.signedIn === true && signInCheckResult.user ? (
-        <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
-          <section>
-            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
-              Settings
-            </h2>
-            <SettingsLinks />
-          </section>
-          <div className="flex flex-col">
-            <UserProfile user={signInCheckResult.user} />
-            <UserMembership user={signInCheckResult.user} products={products} />
+    <>
+      {member || team ? (
+        <section>
+          <div className="grid gap-3 m-2 justify-items-center place-items-center">
+            <div className="text-2xl">
+              You are already a member. Would you like to see your membership?
+              Or just start with courses?
+            </div>
+            <div className="grid grid-flow-col gap-3 justify-items-center">
+              <Link href="/user/membership">
+                <a>
+                  <div className=" btn-primary">See Membership</div>
+                </a>
+              </Link>
+              <Link href="/courses">
+                <a>
+                  <div className="btn-secondary">Start Courses</div>
+                </a>
+              </Link>
+            </div>
           </div>
         </section>
       ) : (
         <>
-          <div className="relative z-0 w-full mx-auto lg:w-1/2">
-            {/* <FirebaseSignin /> */}
-            <FirebaseAuth />
-          </div>
+          <section className="p-4">
+            {/* Valid User */}
+            {user && user.uid && (
+              <div
+                className={`${
+                  member ? 'w-full' : 'mx-auto'
+                } "w-full relative z-0 px-8 md:px-0 md:py-16"`}
+              >
+                <div
+                  className={`${
+                    member
+                      ? 'rounded'
+                      : 'rounded-b md:rounded-b-none md:rounded-r'
+                  } flex flex-wrap bg-white max-w-lg shadow-lg overflow-hidden mx-auto`}
+                >
+                  {user.photoURL && (
+                    <Image
+                      src={user.photoURL}
+                      loader={() => user.photoURL || ''}
+                      layout="fixed"
+                      height="500"
+                      width="500"
+                      unoptimized={true}
+                      alt={`${user.displayName} Photo`}
+                      className="w-32 h-32 m-4"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <div className="flex flex-wrap justify-end w-full pt-2 pr-2">
+                      <button
+                        type="button"
+                        onClick={() => signOut(auth)}
+                        className="items-center justify-center px-4 py-2 text-white rounded bg-secondary-500 hover:opacity-75"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                  {user && !member && (
+                    <div className="p-8 text-xl text-primary-800">
+                      <p className="p-2">
+                        Welcome {user.displayName}! You are now signed in.
+                      </p>
+                      <p className="p-2">
+                        In order to use <span className="font-black">ALL</span>{' '}
+                        the{' '}
+                        <span className="font-bold text-secondary-500">
+                          Membership
+                        </span>{' '}
+                        features you must select an option for membership below.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
           <section className="grid grid-cols-1 gap-10 text-center">
             <div className="max-w-xl mx-auto">
               <h1 className="font-sans text-4xl font-semibold lg:text-5xl ">
@@ -63,7 +117,7 @@ export default function Profile({
                 skills.
               </h2>
             </div>
-            {products && <MembershipCards products={products} />}
+            <MembershipCards products={products} user={user} />
           </section>
           <section>
             <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">
@@ -187,23 +241,6 @@ export default function Profile({
           </section>
         </>
       )}
-    </Layout>
+    </>
   );
-}
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-    products: StripeProduct[];
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-  const products = await getActiveMemberProducts();
-  return {
-    props: {
-      site,
-      products,
-    },
-    revalidate: 3600,
-  };
 }

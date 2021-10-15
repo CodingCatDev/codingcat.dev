@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import {
-  postDataObservable,
-  postHistoriesDataObservable,
-  postHistoryCreate,
-  postHistoryUpdate,
-} from '@/services/api';
-
-import { Post, PostType } from '@/models/post.model';
+import { CoverMedia, Post, PostStatus, PostType } from '@/models/post.model';
 import { TabType } from '@/models/admin.model';
+import { v4 as uuid } from 'uuid';
 
-import { debounce, switchMap, take } from 'rxjs/operators';
-import { interval, Subject } from 'rxjs';
 import Link from 'next/link';
 import PostHistories from '@/components/admin/PostHistories';
 import EditPostEditor from '@/components/admin/EditPostEditor';
@@ -21,82 +13,71 @@ import EditPostMedia from '@/components/admin/EditPostMedia';
 import EditPostCourseSections from '@/components/admin/EditPostCourseSections';
 import EditPostCourseSettings from '@/components/admin/EditPostCourseSettings';
 import EditPostCourseGroups from '@/components/admin/EditPostCourseGroups';
+import {
+  collection,
+  CollectionReference,
+  doc,
+  DocumentReference,
+  getDoc,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  Timestamp,
+  where,
+} from '@firebase/firestore';
+import { getApp } from '@firebase/app';
+import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
+import { UserInfoExtended } from '@/models/user.model';
+import { toKebabCase } from '@/utils/basics/stringManipulation';
+import { setDoc, writeBatch } from 'firebase/firestore';
+import { Cloudinary, MediaType, MediaSource } from '@/models/media.model';
+import { Video } from '@/models/video.model';
 
 export default function EditPost({
   type,
   id,
+  user,
 }: {
   type: PostType;
   id: string;
+  user: UserInfoExtended;
 }): JSX.Element {
-  const [postFound, setPostFound] = useState(false);
-  const [postHistories, setPostHistories] = useState<Post[]>([]);
-  const [history, setHistory] = useState<Post>();
-  const [, setPost] = useState<Post>();
   const [tab, setTab] = useState<TabType>(TabType.edit);
   const [, setSaving] = useState<boolean>(false);
-  const [updateContent$] = useState<Subject<Post>>(new Subject<Post>());
-  // const [preview, setPreview] = useState<string>('');
   const [slugUnique, setSlugUnique] = useState(true);
-
   const router = useRouter();
+  const app = getApp();
+  const firestore = getFirestore(app);
 
-  // Sets initial state
+  const postRef = doc(firestore, 'posts', id);
+  const { data: post } = useFirestoreDocData(postRef);
+
+  const [history, setHistory] = useState<Post | undefined>(undefined);
+  const historiesRef = collection(
+    firestore,
+    'posts',
+    id,
+    'history'
+  ) as CollectionReference<Post>;
+  const historiesQuery = query<Post>(
+    historiesRef,
+    orderBy('updatedAt', 'desc')
+  );
+  const { data: postHistories } =
+    useFirestoreCollectionData<Post>(historiesQuery);
+
   useEffect(() => {
     // Set Tab after refresh
-    const { tab } = router.query;
-    selectTab(tab ? (tab as TabType) : TabType.edit);
+    const { tab: t } = router.query;
+    selectTab(t ? (t as TabType) : TabType.edit);
+  }, []);
 
-    const postSubscribe = postDataObservable(`posts/${id}`)
-      .pipe(
-        switchMap((post) => {
-          setPostFound(true);
-          setPost(post);
-          return postHistoriesDataObservable(post.id as string);
-        })
-      )
-      .subscribe((histories) => {
-        setPostHistories(histories);
-        if (histories.length > 0) {
-          const dbHistory = histories[0];
-          if (dbHistory) {
-            setHistory(dbHistory);
-          }
-        }
-      });
-
-    const contentSubscribe = updateContent$
-      .pipe(debounce(() => interval(800)))
-      .subscribe((h) => {
-        setSaving(true);
-
-        // We need a new version if the last history is published
-        if (h?.publishedAt) {
-          postHistoryCreate(h)
-            .pipe(take(1))
-            .subscribe(() => {
-              setSaving(false);
-            });
-        } else {
-          postHistoryUpdate(h)
-            .pipe(take(1))
-            .subscribe(() => setSaving(false));
-        }
-      });
-
-    return () => {
-      postSubscribe.unsubscribe();
-      contentSubscribe.unsubscribe();
-    };
-  }, [type, id]);
-
-  // useEffect(() => {
-  //   if (tab === 'preview') {
-  //     setPreview(history?.content || '');
-  //   } else {
-  //     setPreview('');
-  //   }
-  // }, [tab]);
+  useEffect(() => {
+    if (postHistories && postHistories.length > 0) {
+      setHistory(postHistories[0]);
+    }
+  }, [postHistories]);
 
   function selectTab(tab: TabType) {
     setTab(tab);
@@ -113,26 +94,221 @@ export default function EditPost({
     );
   }
 
+  async function validSlug(slugInput: string, id: string | undefined) {
+    if (!id) {
+      return false;
+    }
+    const slug = toKebabCase(slugInput);
+    const docs = await getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('slug', '==', slug),
+        where('id', '!=', id)
+      )
+    );
+    return docs.empty;
+  }
+
+  const postHistoryCreate = (h: Post) => {
+    const id = uuid();
+
+    const docRef = doc(
+      firestore,
+      `posts/${h.postId}/history/${id}`
+    ) as DocumentReference<Post>;
+    const historyUpdate = { ...h };
+    if (historyUpdate.publishedAt) {
+      delete historyUpdate.publishedAt;
+    }
+    return setDoc(docRef, {
+      ...historyUpdate,
+      status: PostStatus.draft,
+      updatedAt: Timestamp.now(),
+      updatedBy: user.uid,
+      id: id,
+      historyId: id,
+    }).then(() =>
+      getDoc(docRef).then((d) => {
+        const n = d.data() as Post;
+        //Check to see if any medias exist
+        const mediasRef = collection(
+          firestore,
+          `posts/${h.postId}/history/${h.id}/media`
+        ) as CollectionReference<Post>;
+        getDocs(mediasRef).then((medias) =>
+          medias.forEach((m) =>
+            setDoc(
+              doc(firestore, `posts/${h.postId}/history/${n.id}/media/${m.id}`),
+              {
+                ...m.data(),
+              }
+            )
+          )
+        );
+        return n;
+      })
+    );
+  };
+
+  const postHistoryUpdate = (h: Post) => {
+    const docRef = doc(
+      firestore,
+      `posts/${h.postId}/history/${h.id}`
+    ) as DocumentReference<Post>;
+    return setDoc(
+      docRef,
+      {
+        ...h,
+        historyId: h.id,
+        titleSearch: h.title ? h.title.toLowerCase() : '',
+        updatedAt: Timestamp.now(),
+        updatedBy: user.uid,
+      },
+      { merge: true }
+    ).then(() => getDoc(docRef).then((d) => d.data() as Post));
+  };
+
+  const updateContent = (h: Post) => {
+    setSaving(true);
+    if (h?.publishedAt) {
+      return postHistoryCreate(h).then((d) => {
+        setSaving(false);
+        return d;
+      });
+    } else {
+      return postHistoryUpdate(h).then((d) => {
+        setSaving(false);
+        return d;
+      });
+    }
+  };
+
+  const onPublish = async (selectedDate: Date) => {
+    if (history && selectedDate) {
+      const unique = await validSlug(history.slug, history.postId);
+      setSlugUnique(unique);
+      if (unique) {
+        setSaving(true);
+
+        history.publishedAt = Timestamp.fromDate(selectedDate);
+        history.status = PostStatus.published;
+
+        const batch = writeBatch(firestore);
+        const historyRef = doc(
+          firestore,
+          `posts/${history.postId}/history/${history.id}`
+        );
+        const postRef = doc(firestore, `posts/${history.postId}`);
+
+        const update = {
+          ...history,
+          updatedAt: Timestamp.now(),
+          updatedBy: user.uid,
+        };
+        batch.set(historyRef, update);
+        batch.set(postRef, {
+          ...update,
+          id: history.postId,
+          historyId: history.id,
+        });
+        await batch.commit();
+      }
+    }
+    setSaving(false);
+  };
+
+  const postHistoryMediaCreate = (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary,
+    video?: Video
+  ) => {
+    const mediaId = uuid();
+    let coverMedia: CoverMedia = { type, source: MediaSource.cloudinary };
+    if (cloudinary) {
+      coverMedia = {
+        thumbnail_url: cloudinary.thumbnail_url,
+        path: cloudinary.path,
+        mediaId,
+        public_id: cloudinary.public_id,
+        url: cloudinary.url,
+        type,
+        source: MediaSource.cloudinary,
+      };
+    } else if (video) {
+      coverMedia = {
+        mediaId,
+        url: video.url,
+        type,
+        source: MediaSource.video,
+      };
+    }
+
+    const batch = writeBatch(firestore);
+    const mediaRef = doc(
+      firestore,
+      `posts/${history.postId}/history/${history.id}/media/${mediaId}`
+    );
+    batch.set(mediaRef, {
+      id: mediaId,
+      type,
+      cloudinary: cloudinary || null,
+      video: video || null,
+      createdAt: Timestamp.now(),
+    });
+
+    const historyRef = doc(
+      firestore,
+      `posts/${history.postId}/history/${history.id}`
+    );
+    batch.set(historyRef, {
+      ...history,
+      updatedAt: Timestamp.now(),
+      updatedBy: user.uid,
+      [type === MediaType.photo ? 'coverPhoto' : 'coverVideo']: coverMedia,
+    });
+    return batch.commit();
+  };
+
   function onTab() {
+    if (!history) {
+      return <p>This tab is not defined yet.</p>;
+    }
     switch (tab) {
       case TabType.edit:
         return (
           <EditPostEditor
-            updateContent$={updateContent$}
             history={history}
-            setHistory={setHistory}
             slugUnique={slugUnique}
             setSlugUnique={setSlugUnique}
+            updateContent={updateContent}
           />
         );
       case TabType.media:
-        return <EditPostMedia history={history} setHistory={setHistory} />;
+        return (
+          <EditPostMedia
+            history={history}
+            user={user}
+            updateContent={updateContent}
+            postHistoryMediaCreate={postHistoryMediaCreate}
+          />
+        );
       case TabType.sections:
-        return <EditPostCourseSections historyInput={history as Post} />;
+        return (
+          <EditPostCourseSections
+            history={history}
+            updateContent={updateContent}
+          />
+        );
       case TabType.settings:
-        return <EditPostCourseSettings historyInput={history as Post} />;
+        return (
+          <EditPostCourseSettings
+            history={history}
+            updateContent={updateContent}
+          />
+        );
       case TabType.groups:
-        return <EditPostCourseGroups historyInput={history as Post} />;
+        return <EditPostCourseGroups historyInput={history} />;
       case TabType.history:
         return <PostHistories postHistories={postHistories} />;
       default:
@@ -216,14 +392,12 @@ export default function EditPost({
               <section className="grid grid-cols-1 gap-4 justify-items-stretch 2xl:grid-cols-sidebar">
                 {onTab()}
                 <EditPostSidebar
-                  updateContent$={updateContent$}
                   tab={tab}
                   setTab={setTab}
                   history={history}
-                  setHistory={setHistory}
-                  setSlugUnique={setSlugUnique}
-                  setSaving={setSaving}
                   postHistories={postHistories}
+                  user={user}
+                  onPublish={onPublish}
                 />
               </section>
             ) : (
@@ -234,7 +408,7 @@ export default function EditPost({
       ) : (
         // </div>
         <div className="grid w-full h-full grid-cols-1 place-content-center place-items-center">
-          {postFound ? (
+          {post && postHistories ? (
             <div className="pb-8">
               Creating your first history of this post...
             </div>

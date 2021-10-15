@@ -3,15 +3,12 @@ import { Post } from '@/models/post.model';
 import { MediaSource } from '@/models/media.model';
 
 import { config } from '@/config/cloudinary';
-
-import { getCloudinaryCookieToken } from '@/services/api';
-
-import { take } from 'rxjs/operators';
-
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 
 export default function ImageModal({ post }: { post: Post }): JSX.Element {
+  const functions = getFunctions();
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {
@@ -22,23 +19,29 @@ export default function ImageModal({ post }: { post: Post }): JSX.Element {
   }, []);
 
   useEffect(() => {
-    getCloudinaryCookieToken()
-      .pipe(take(1))
-      .subscribe((ct) => {
-        //TODO : There is probably a better way to set cookies.
-        const now = new Date();
-        let time = now.getTime();
-        time += 3600 * 1000;
-        now.setTime(time);
-        const match = config?.cname
-          ? config?.cname.match(/([a-z0-9-]*?)\.[a-z]{2,}$/)
-          : null;
-        const baseDomain = match && match?.length > 0 ? match[0] : '';
-
-        document.cookie = `${ct}; domain=.${baseDomain}; expires=${now.toUTCString()}; path=/; SameSite=None; Secure`;
-        setCookieToken(ct);
-      });
+    getCloudinaryCookieToken();
   }, [post]);
+
+  const getCloudinaryCookieToken = async () => {
+    const ct = await (
+      await httpsCallable<unknown, string>(
+        functions,
+        'cloudinarysignature'
+      ).call('params', {})
+    ).data;
+    //TODO : There is probably a better way to set cookies.
+    const now = new Date();
+    let time = now.getTime();
+    time += 3600 * 1000;
+    now.setTime(time);
+    const match = config?.cname
+      ? config?.cname.match(/([a-z0-9-]*?)\.[a-z]{2,}$/)
+      : null;
+    const baseDomain = match && match?.length > 0 ? match[0] : '';
+
+    document.cookie = `${ct}; domain=.${baseDomain}; expires=${now.toUTCString()}; path=/; SameSite=None; Secure`;
+    setCookieToken(ct);
+  };
 
   // async function onVideoDelete(post: Post) {
   //   setOpen(false);
@@ -89,8 +92,8 @@ export default function ImageModal({ post }: { post: Post }): JSX.Element {
           </>
         ) : (
           <>
-            {post.coverVideo?.url.includes('youtu.be') ||
-            post.coverVideo?.url.includes('youtube') ? (
+            {post?.coverVideo?.url?.includes('youtu.be') ||
+            post?.coverVideo?.url?.includes('youtube') ? (
               <ReactPlayer
                 className="react-player"
                 url={post.coverVideo?.url}

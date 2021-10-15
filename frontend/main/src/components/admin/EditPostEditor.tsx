@@ -1,64 +1,64 @@
 import SimpleMDE from 'react-simplemde-editor';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
-import { postsSlugUnique } from '@/services/api';
 import { Post } from '@/models/post.model';
-import { of, Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
-
 import 'easymde/dist/easymde.min.css';
+import {
+  getDocs,
+  query,
+  collection,
+  where,
+  getFirestore,
+} from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 export default function EditPostEditor({
-  updateContent$,
   history,
-  setHistory,
   slugUnique,
   setSlugUnique,
+  updateContent,
 }: {
-  updateContent$: Subject<Post>;
-  history: Post | undefined;
-  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
+  history: Post;
   slugUnique: boolean;
   setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
+  updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
+  const app = getApp();
+  const firestore = getFirestore(app);
+
   function onTitle(title: string) {
-    const update: Post = { ...history, title } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, title });
   }
 
-  function onSlug(slug: string) {
-    const update: Post = { ...history, slug } as Post;
-    setHistory(update);
-    validSlug(slug).subscribe((unique) => {
-      setSlugUnique(unique);
-      updateContent$.next({ ...update, historyId: history?.id });
-    });
+  async function onSlug(slug: string) {
+    updateContent({ ...history, slug });
+    setSlugUnique(await validSlug(slug, history.id));
   }
 
-  function validSlug(slugInput: string) {
-    if (!history || !history.postId) {
-      return of(false);
+  async function validSlug(slugInput: string, id: string | undefined) {
+    if (!id) {
+      return false;
     }
     const slug = toKebabCase(slugInput);
-    return postsSlugUnique(slug, history?.postId).pipe(take(1));
+    const docs = await getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('slug', '==', slug),
+        where('id', '!=', id)
+      )
+    );
+    return docs.empty;
   }
 
   function onExcerpt(excerpt: string) {
-    const update: Post = { ...history, excerpt } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, excerpt });
   }
 
   function onContent(content: string) {
-    const update: Post = { ...history, content } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, content });
   }
 
   function onUrlContent(urlContent: string) {
-    const update: Post = { ...history, urlContent } as Post;
-    setHistory(update);
-    updateContent$.next({ ...update, historyId: history?.id });
+    updateContent({ ...history, urlContent });
   }
 
   return (

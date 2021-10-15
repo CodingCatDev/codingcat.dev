@@ -1,10 +1,11 @@
-import firebase from 'firebase/app';
+import { UserInfo } from 'firebase/auth';
 import { SocialLink } from './site.model';
 
-export interface UserInfoExtended extends firebase.UserInfo {
+export interface UserInfoExtended extends UserInfo {
   memberships?: UserMembership[];
   token?: string;
   basicInfo?: BasicUserInfo;
+  roles?: Roles[];
 }
 
 export interface UserMembership {
@@ -14,6 +15,12 @@ export interface UserMembership {
 }
 
 export enum MembershipType {
+  admin = 'admin',
+  editor = 'editor',
+  author = 'author',
+}
+
+export enum Roles {
   supporter = 'supporter',
   monthly = 'monthly',
   yearly = 'yearly',

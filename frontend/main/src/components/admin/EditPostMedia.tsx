@@ -1,52 +1,54 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { historyMediaDataObservable } from '@/services/api';
-
 import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 import EditPostMediaVideoForm from '@/components/admin/EditPostMediaVideoForm';
-
+import MediaGrid from '@/components/admin/MediaGrid';
 import CloudinaryCover from '@/components/admin/EditPostCloudinaryCover';
 import { Post } from '@/models/post.model';
-import { Media, MediaType } from '@/models/media.model';
-import { Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Cloudinary, Media, MediaType } from '@/models/media.model';
+import { getApp } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  CollectionReference,
+  query,
+  orderBy,
+  DocumentData,
+  DocumentSnapshot,
+} from 'firebase/firestore';
+import { useFirestoreCollectionData } from 'reactfire';
+import { UserInfoExtended } from '@/models/user.model';
+import { Video } from '@/models/video.model';
 
 export default function EditPostMedia({
   history,
-  setHistory,
+  user,
+  updateContent,
+  postHistoryMediaCreate,
 }: {
-  history: Post | undefined;
-  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
+  history: Post;
+  user: UserInfoExtended;
+  updateContent: (h: Post) => Promise<Post>;
+  postHistoryMediaCreate: (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary | undefined,
+    video?: Video | undefined
+  ) => Promise<void>;
 }): JSX.Element {
   const [type, setType] = useState<MediaType>(MediaType.photo);
-  const [media$, setMedia$] = useState<Observable<Media[]>>(
-    new Subject<Media[]>()
-  );
-  const [media, setMedia] = useState<Media[]>([]);
+  // const [media, setMedia] = useState<Media | null>(null);
+  const app = getApp();
+  const firestore = getFirestore(app);
+  const mediaRef = collection(
+    firestore,
+    `posts/${history.postId}/history/${history.id}/media`
+  ) as CollectionReference<Media>;
+  const mediaQuery = query<Media>(mediaRef, orderBy('createdAt', 'desc'));
+  const { data: medias } = useFirestoreCollectionData<Media>(mediaQuery);
 
-  useEffect(() => {
-    if (!history) {
-      return;
-    }
-    setMedia$(
-      historyMediaDataObservable(history).pipe(
-        map((media) => media.filter((m) => m.type === type))
-      )
-    );
-  }, [history, type]);
-
-  useEffect(() => {
-    if (!media$) {
-      return;
-    }
-    const mediaSub = media$.subscribe((m) => setMedia(m));
-    return () => {
-      if (mediaSub) {
-        mediaSub.unsubscribe();
-      }
-    };
-  }, [media$]);
+  useEffect(() => {}, [medias, type]);
 
   if (!history) {
     return <></>;
@@ -110,80 +112,22 @@ export default function EditPostMedia({
           </nav>
           <div className="flex pb-1 space-x-2">
             {type === MediaType.video && (
-              <EditPostMediaVideoForm history={history} />
+              <EditPostMediaVideoForm
+                history={history}
+                updateContent={updateContent}
+                postHistoryMediaCreate={postHistoryMediaCreate}
+              />
             )}
             <CloudinaryUpload
               history={history}
-              setHistory={setHistory}
               type={type}
+              user={user}
+              updateContent={updateContent}
+              postHistoryMediaCreate={postHistoryMediaCreate}
             />
           </div>
         </header>
-        <section className="grid content-start w-full h-full gap-4 p-4 overflow-y-auto bg-basics-50 dark:bg-basics-800 grid-cols-fit">
-          {media.map((m) => (
-            <>
-              {m.type == MediaType.photo &&
-                m.cloudinary &&
-                m.cloudinary.path &&
-                m.cloudinary.height &&
-                m.cloudinary.width && (
-                  <div key={m.id} className="w-full max-w-md">
-                    {
-                      <Image
-                        src={m.cloudinary?.path}
-                        alt={m.cloudinary?.original_filename}
-                        width={m.cloudinary?.width}
-                        height={m.cloudinary?.height}
-                        layout="responsive"
-                        className=""
-                      />
-                    }
-                  </div>
-                )}
-              {m.type == MediaType.video &&
-                m.cloudinary &&
-                m.cloudinary.thumbnail_url &&
-                m.cloudinary.height &&
-                m.cloudinary.width && (
-                  <div key={m.id} className="w-full max-w-md">
-                    {
-                      <Image
-                        loader={({ src }) =>
-                          src.replace('/c_limit,h_60,w_90', '')
-                        }
-                        src={m.cloudinary?.thumbnail_url}
-                        alt={m.cloudinary?.original_filename}
-                        width={m.cloudinary?.width}
-                        height={m.cloudinary?.height}
-                        layout="responsive"
-                        className=""
-                      />
-                    }
-                  </div>
-                )}
-              {m.type == MediaType.video && m.video && (
-                <div key={m.id} className="w-full max-w-md">
-                  {
-                    <Image
-                      loader={({ src }) =>
-                        `https://img.youtube.com/vi/${src.replace(
-                          'https://youtu.be/',
-                          ''
-                        )}/0.jpg`
-                      }
-                      src={m.video.url}
-                      alt={m.video.url}
-                      width="1920"
-                      height="1080"
-                      layout="responsive"
-                      className=""
-                    />
-                  }
-                </div>
-              )}
-            </>
-          ))}
-        </section>
+        <MediaGrid medias={medias} />
       </section>
     </section>
   );

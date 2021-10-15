@@ -3,12 +3,12 @@ import { Post } from '@/models/post.model';
 import { MediaSource } from '@/models/media.model';
 import { config } from '@/config/cloudinary';
 
-import { getCloudinaryCookieToken } from '@/services/api';
 import { take } from 'rxjs/operators';
 
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 import Image from 'next/image';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 export default function PostMedia({
   post,
@@ -17,6 +17,7 @@ export default function PostMedia({
   post: Post;
   noImage?: boolean;
 }): JSX.Element {
+  const functions = getFunctions();
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {
@@ -26,24 +27,39 @@ export default function PostMedia({
     };
   }, []);
 
-  useEffect(() => {
-    getCloudinaryCookieToken()
-      .pipe(take(1))
-      .subscribe((ct) => {
-        //TODO : There is probably a better way to set cookies.
-        const now = new Date();
-        let time = now.getTime();
-        time += 3600 * 1000;
-        now.setTime(time);
-        const match = config?.cname
-          ? config?.cname.match(/([a-z0-9-]*?)\.[a-z]{2,}$/)
-          : null;
-        const baseDomain = match && match?.length > 0 ? match[0] : '';
+  useEffect(() => {}, [post]);
 
-        document.cookie = `${ct}; domain=.${baseDomain}; expires=${now.toUTCString()}; path=/; SameSite=None; Secure`;
-        setCookieToken(ct);
-      });
-  }, [post]);
+  const getCloudinaryCookieToken = async () => {
+    const ct = await (
+      await httpsCallable<unknown, string>(
+        functions,
+        'cloudinarysignature'
+      ).call('params', {})
+    ).data;
+    //TODO : There is probably a better way to set cookies.
+    const now = new Date();
+    let time = now.getTime();
+    time += 3600 * 1000;
+    now.setTime(time);
+    const match = config?.cname
+      ? config?.cname.match(/([a-z0-9-]*?)\.[a-z]{2,}$/)
+      : null;
+    const baseDomain = match && match?.length > 0 ? match[0] : '';
+
+    document.cookie = `${ct}; domain=.${baseDomain}; expires=${now.toUTCString()}; path=/; SameSite=None; Secure`;
+    setCookieToken(ct);
+  };
+
+  const isYouTube = (): boolean => {
+    if (post && post.coverVideo && post.coverVideo.url) {
+      return post.coverVideo?.url.includes('youtu.be') ||
+        post.coverVideo?.url.includes('youtube')
+        ? true
+        : false;
+    } else {
+      return false;
+    }
+  };
 
   return (
     <>
@@ -72,8 +88,7 @@ export default function PostMedia({
             </>
           ) : (
             <>
-              {post.coverVideo?.url.includes('youtu.be') ||
-              post.coverVideo?.url.includes('youtube') ? (
+              {isYouTube() ? (
                 <ReactPlayer
                   className="rounded-md react-player"
                   url={post.coverVideo?.url}

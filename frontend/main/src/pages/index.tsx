@@ -51,7 +51,7 @@ export default function Home({
                 Start Now
               </a>
             </Link>
-            <Link href="/membership">
+            <Link href="/user/profile">
               <a className="btn-primary justify-self-start" role="button">
                 Join CodingCat.dev
               </a>

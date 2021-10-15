@@ -1,43 +1,37 @@
 import { useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';
-import {
-  getCloudinarySignature,
-  postHistoryMediaCreate,
-  postHistoryCreate,
-} from '@/services/api';
-import { take } from 'rxjs/operators';
 import { Post } from '@/models/post.model';
-import { MediaType } from '@/models/media.model';
-
-async function fetchCloudinarySignature(cb: any, params: any) {
-  try {
-    const signature = await getCloudinarySignature(params).toPromise();
-
-    cb(
-      Object.assign(
-        {
-          signature,
-          api_key: config.apiKey,
-        },
-        params
-      )
-    );
-  } catch (err) {
-    console.log('error fetching signature');
-  }
-}
+import { Cloudinary, MediaType } from '@/models/media.model';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFirestore } from '@firebase/firestore';
+import { getApp } from '@firebase/app';
+import { UserInfoExtended } from '@/models/user.model';
+import { Video } from '@/models/video.model';
 
 export default function CloudinaryUpload({
-  setHistory,
   history,
   type,
+  user,
+  updateContent,
+  postHistoryMediaCreate,
 }: {
-  setHistory: React.Dispatch<React.SetStateAction<Post | undefined>>;
   history: Post;
   type: MediaType;
+  user: UserInfoExtended;
+  updateContent: (h: Post) => Promise<Post>;
+  postHistoryMediaCreate: (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary | undefined,
+    video?: Video | undefined
+  ) => Promise<void>;
 }): JSX.Element {
   let widget: any = null;
+  const functions = getFunctions();
+  const app = getApp();
+  const firestore = getFirestore(app);
+
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
@@ -49,6 +43,28 @@ export default function CloudinaryUpload({
       document.body.removeChild(script);
     };
   }, []);
+
+  async function fetchCloudinarySignature(cb: any, params: any) {
+    try {
+      const signature = await (
+        await httpsCallable(functions, 'cloudinarysignature').call(
+          'params',
+          params
+        )
+      ).data;
+      cb(
+        Object.assign(
+          {
+            signature,
+            api_key: config.apiKey,
+          },
+          params
+        )
+      );
+    } catch (err) {
+      console.log('error fetching signature');
+    }
+  }
 
   function onUpload() {
     if (typeof window !== 'undefined') {
@@ -66,21 +82,10 @@ export default function CloudinaryUpload({
                 : config.videoPreset,
             prepareUploadParams: fetchCloudinarySignature,
           },
-          (error: any, result: any) => {
+          async (error: any, result: any) => {
             if (!error && result && result.event === 'success') {
-              if (history.publishedAt) {
-                postHistoryCreate(history)
-                  .pipe(take(1))
-                  .subscribe((h) =>
-                    postHistoryMediaCreate(h, type, result.info)
-                      .pipe(take(1))
-                      .subscribe((newHistory) => setHistory(newHistory))
-                  );
-              } else {
-                postHistoryMediaCreate(history, type, result.info)
-                  .pipe(take(1))
-                  .subscribe((newHistory) => setHistory(newHistory));
-              }
+              const newHistory = await updateContent(history);
+              await postHistoryMediaCreate(newHistory, type, result.info);
               widget.destroy();
             }
             if (!error && result && result.event === 'close') {
