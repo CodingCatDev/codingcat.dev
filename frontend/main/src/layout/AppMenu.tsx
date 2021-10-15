@@ -108,13 +108,13 @@ export default function AppMenu({
                     setUserMenu={setUserMenu}
                     positionClass="left-0 bottom-0 mb-6"
                   />
-                  {signInCheckResult && signInCheckResult.signedIn === true && (
+                  {signInCheckResult && signInCheckResult?.signedIn === true && (
                     <button className="ml-2" onClick={() => setUserMenu(true)}>
                       <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
-                        {signInCheckResult.user?.displayName}
+                        {signInCheckResult?.user?.displayName}
                       </p>
                       <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
-                        {signInCheckResult.user?.email}
+                        {signInCheckResult?.user?.email}
                       </p>
                     </button>
                   )}

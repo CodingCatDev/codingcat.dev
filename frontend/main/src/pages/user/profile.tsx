@@ -30,7 +30,7 @@ export default function Profile({
       <Head>
         <title>Profile | CodingCatDev</title>
       </Head>
-      {signInCheckResult?.signedIn === true && signInCheckResult.user ? (
+      {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
         <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
           <section>
             <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
