@@ -289,7 +289,7 @@ export default function PostLayout({
             </section>
           )}
           {/* BLOG POST */}
-          <article className="m-0 leading-relaxed top-2 text-basics-900">
+          <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
             {source && <MDXRemote {...source} />}
           </article>
         </section>
