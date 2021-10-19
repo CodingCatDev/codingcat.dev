@@ -58,6 +58,7 @@
     "rxjs": "^6.6.3",
     "sass": "^1.30.0",
     "unified": "^9.2.0",
+    "use-mailchimp-form": "^2.0.4",
     "video.js": "^7.11.4"
   },
   "devDependencies": {
