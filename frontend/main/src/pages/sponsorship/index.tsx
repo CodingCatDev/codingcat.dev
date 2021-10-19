@@ -113,7 +113,7 @@ export default function Sponsorship({
         </button>
       </div>
       <section className="grid grid-cols-1 gap-2 mx-2">
-        {Array.apply(0, Array(13)).map((x, i) => (
+        {Array.apply(0, Array(12)).map((x, i) => (
           <div className="w-full" key={i}>
             <Image
               src={`/main-codingcatdev-photo/2022_-_Sponsorship_${i + 1}.png`}
