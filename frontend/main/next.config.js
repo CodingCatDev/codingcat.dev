@@ -23,8 +23,13 @@ module.exports = withBundleAnalyzer({
         permanent: true,
       },
       {
-        source: '/blog/:path*',
+        source: '/blog/:path((?!/).*)',
         destination: '/post/:path*',
+        permanent: true,
+      },
+      {
+        source: '/posts',
+        destination: '/blog',
         permanent: true,
       },
     ];
