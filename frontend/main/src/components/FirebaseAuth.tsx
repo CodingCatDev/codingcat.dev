@@ -1,83 +1,85 @@
-import { useState } from 'react';
-import Link from 'next/link';
-
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import firebaseApp from 'firebase/app';
-import initFirebase from '@/utils/initFirebase';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 
+import {
+  EmailAuthProvider,
+  FacebookAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  TwitterAuthProvider,
+} from '@firebase/auth';
+import * as firebaseui from 'firebaseui';
+import 'firebaseui/dist/firebaseui.css';
+import { useAuth } from 'reactfire';
+
+let ui: firebaseui.auth.AuthUI;
+let uiConfig: firebaseui.auth.Config;
+
 const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
-  const [app, setApp] = useState<firebaseApp.app.App>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [
-    firebaseAuthConfig,
-    setFirebaseAuthConfig,
-  ] = useState<firebaseui.auth.Config>();
-
-  const setDynamicFirebase = async () => {
-    const app = await initFirebase();
-    if (app) {
-      setApp(app);
-    }
-  };
+  const auth = useAuth();
 
   useEffect(() => {
-    setDynamicFirebase();
-  }, []);
-
-  useEffect(() => {
-    if (!app) {
-      return;
-    }
     let signInOptions = [];
     if (full) {
       signInOptions = [
-        firebaseApp.auth.EmailAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.FacebookAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.TwitterAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.GithubAuthProvider.PROVIDER_ID,
+        EmailAuthProvider.PROVIDER_ID,
+        GoogleAuthProvider.PROVIDER_ID,
+        FacebookAuthProvider.PROVIDER_ID,
+        TwitterAuthProvider.PROVIDER_ID,
+        GithubAuthProvider.PROVIDER_ID,
         'apple.com',
         'microsoft.com',
         'yahoo.com',
       ];
     } else {
       signInOptions = [
-        firebaseApp.auth.EmailAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.TwitterAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.GithubAuthProvider.PROVIDER_ID,
+        EmailAuthProvider.PROVIDER_ID,
+        GoogleAuthProvider.PROVIDER_ID,
+        TwitterAuthProvider.PROVIDER_ID,
+        GithubAuthProvider.PROVIDER_ID,
       ];
     }
 
     // https://github.com/firebase/firebaseui-web#configure-oauth-providers
-    const config: firebaseui.auth.Config = {
+    uiConfig = {
       signInFlow: 'popup',
       signInOptions,
       signInSuccessUrl: window.location.href,
       credentialHelper: 'none',
-      tosUrl: `${window.location.origin}/terms`,
+      tosUrl: `${window.location.origin}/terms-of-use`,
       // Privacy policy url/callback.
       privacyPolicyUrl() {
-        window.open(`${window.location.origin}/privacy`);
+        window.open(`${window.location.origin}/privacy-policy`);
       },
     };
-    setFirebaseAuthConfig(config);
-  }, [app, full]);
+    checkUi();
+  }, [auth, full]);
+
+  const checkUi = async () => {
+    if (ui) {
+      await ui.delete();
+    }
+    ui = new firebaseui.auth.AuthUI(auth);
+  };
+
+  useEffect(() => {
+    if (!ui || !uiConfig) {
+      return;
+    }
+    ui.start('#firebaseui-auth-container', uiConfig);
+  }, [ui, uiConfig]);
 
   function signin(email: string, password: string) {
-    if (app) {
-      app
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-          console.log('Successfully SignedIn');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        console.log('Successfully SignedIn');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -129,13 +131,10 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
         </div>
       ) : (
         <>
-          {app && firebaseAuthConfig ? (
-            <div className="grid justify-center">
-              <StyledFirebaseAuth
-                uiConfig={firebaseAuthConfig}
-                firebaseAuth={app.auth()}
-              />
-              {!full && (
+          <div className="grid justify-center">
+            <div id="firebaseui-auth-container"></div>
+
+            {/* {!full && (
                 <Link href="/user/profile">
                   <a>
                     <div className="firebaseui-container firebaseui-page-provider-sign-in firebaseui-id-page-provider-sign-in firebaseui-use-spinner">
@@ -175,11 +174,8 @@ const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
                     </div>
                   </a>
                 </Link>
-              )}
-            </div>
-          ) : (
-            <></>
-          )}
+              )} */}
+          </div>
         </>
       )}
     </>

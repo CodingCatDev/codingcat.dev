@@ -1,4 +1,4 @@
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 export interface StripeProduct {
   id: string;
   active: boolean;
@@ -22,8 +22,9 @@ export interface StripePrice {
 }
 
 export interface StripeLineItem {
+  mode?: string;
   price: string;
-  quantity: number;
+  quantity?: number;
 }
 
 export interface StripeSubscription {
@@ -32,7 +33,7 @@ export interface StripeSubscription {
   prices?: string[];
   cancel_at?: null;
   cancel_at_period_end?: boolean;
-  created?: firebase.firestore.Timestamp;
+  created?: Timestamp;
   status?: string;
   ended_at?: null;
   quantity?: number;

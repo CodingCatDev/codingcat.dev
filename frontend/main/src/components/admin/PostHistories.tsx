@@ -3,34 +3,45 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import TimeAgo from 'react-timeago';
 
-import firebase from 'firebase/app';
-import { userProfileDataObservable } from '@/services/api';
+import { getApp } from 'firebase/app';
 import { Post, PostStatus } from '@/models/post.model';
 
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-purple/theme.css';
-import { take } from 'rxjs/operators';
+import { UserInfoExtended } from '@/models/user.model';
+import { doc, DocumentReference } from '@firebase/firestore';
+import {
+  collection,
+  CollectionReference,
+  getDoc,
+  orderBy,
+  query,
+} from 'firebase/firestore';
+import { Media } from '@/models/media.model';
+import MediaGrid from './MediaGrid';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+
+interface PostWithUser extends Post {
+  user?: UserInfoExtended | undefined;
+}
 
 function PostHistories({
   postHistories,
 }: {
-  postHistories: Post[];
+  postHistories: PostWithUser[];
 }): JSX.Element {
-  const [histories, setHistories] = useState<
-    { post: Post; user?: firebase.UserInfo }[]
-  >();
   const [count, setCount] = useState(0);
   const [expandedRows, setExpandedRows] = useState([]);
+  const firestore = useFirestore();
 
   useEffect(() => {
     const postsUpdated: {
       post: Post;
-      user?: firebase.UserInfo;
+      user?: UserInfoExtended;
     }[] = postHistories.map((h) => {
       return { post: h };
     });
-    setHistories(postsUpdated);
     setCount(postHistories.length);
     return () => {
       false;
@@ -41,60 +52,68 @@ function PostHistories({
     if (count == 0) {
       return;
     }
-    if (histories) {
-      const historyUpdate = [...histories];
-      histories.map((h, i) => {
-        if (h.post.updatedBy) {
-          userProfileDataObservable(h.post.updatedBy)
-            .pipe(take(1))
-            .subscribe((u) => {
-              historyUpdate[i].user = u;
-              setHistories(historyUpdate);
-              setCount(count - 1);
-            });
+    if (postHistories) {
+      const historyUpdate = [...postHistories];
+      postHistories.map((h, i) => {
+        if (h.updatedBy) {
+          getDoc(
+            doc(
+              firestore,
+              `/profiles/${h.updatedBy}`
+            ) as DocumentReference<UserInfoExtended>
+          ).then((u) => (historyUpdate[i].user = u.data()));
         }
       });
     }
-  }, [count, histories]);
+  }, [count, postHistories]);
 
-  function statusBodyTemplate(rowData: {
-    post: { status: string } | null | undefined;
-  }) {
+  function statusBodyTemplate(rowData: Post) {
     return (
       <span
         className={
-          rowData.post && rowData.post.status === PostStatus.draft
+          rowData && rowData?.status === PostStatus.draft
             ? `p-1 rounded-sm bg-gray-300 text-gray-800`
             : `p-1 rounded-sm bg-green-400 text-green-800`
         }
       >
-        {rowData.post && rowData.post.status}
+        {rowData && rowData?.status}
       </span>
     );
   }
 
-  function updatedAtTemplate(rowData: { post: Post | null | undefined }) {
+  function updatedAtTemplate(rowData: Post) {
     return (
       <span>
-        {rowData.post && rowData.post.updatedAt ? (
-          <TimeAgo date={rowData.post.updatedAt.toDate()} />
+        {rowData && rowData?.updatedAt ? (
+          <TimeAgo date={rowData?.updatedAt.toDate()} />
         ) : (
           <></>
         )}
       </span>
     );
   }
+  function updatedByTemplate(rowData: PostWithUser) {
+    const user = rowData?.user;
+    return (
+      <>
+        {user && (
+          <div className="flex flex-wrap">
+            <div>{user?.displayName ? <>{user.displayName}</> : <></>}</div>
+            <div>{user?.email ? <>{user.email}</> : <></>}</div>
+          </div>
+        )}
+      </>
+    );
+  }
   function restoreTemplate(
-    rowData: {
-      post: Post;
-    },
+    rowData: Post,
     rowInfo: {
       rowIndex: number;
     }
   ) {
     return (
       <>
-        {rowInfo.rowIndex > 0 && rowData.post && rowData.post.id ? (
+        {rowInfo.rowIndex > 0 && rowData && rowData?.id ? (
           <span>
             <button className="btn-primary" onClick={() => alert('TODO')}>
               Restore
@@ -107,16 +126,20 @@ function PostHistories({
     );
   }
 
-  function rowExpansionTemplate(rowData: {
-    post: { content: string } | null | undefined;
-  }) {
-    return <>{rowData && rowData.post ? <>TODO</> : <>TODO</>}</>;
+  function rowExpansionTemplate(rowData: Post) {
+    return (
+      <>
+        <MediaWrapper history={rowData} />
+        {rowData && rowData?.excerpt && <div>Excerpt: {rowData.excerpt}</div>}
+        {rowData && rowData?.content && <div>Content: {rowData.content}</div>}
+      </>
+    );
   }
 
   return (
     <>
       <DataTable
-        value={histories}
+        value={postHistories}
         scrollable
         scrollHeight="800px"
         className="p-datatable-sm"
@@ -125,9 +148,9 @@ function PostHistories({
         rowExpansionTemplate={rowExpansionTemplate}
       >
         <Column expander style={{ width: '3em' }} />
-        <Column field="post.id" header="ID"></Column>
+        <Column field="id" header="ID"></Column>
         <Column header="Status" body={statusBodyTemplate}></Column>
-        <Column header="Updated By" field="user.displayName"></Column>
+        <Column header="Updated By" body={updatedByTemplate}></Column>
         <Column header="Updated" body={updatedAtTemplate}></Column>
         <Column header="Restore" body={restoreTemplate}></Column>
       </DataTable>
@@ -136,3 +159,15 @@ function PostHistories({
 }
 
 export default PostHistories;
+
+function MediaWrapper({ history }: { history: Post }): JSX.Element {
+  const firestore = useFirestore();
+  const mediaRef = collection(
+    firestore,
+    `posts/${history.postId}/history/${history.id}/media`
+  ) as CollectionReference<Media>;
+  const mediaQuery = query<Media>(mediaRef, orderBy('createdAt', 'desc'));
+  const { data: medias } = useFirestoreCollectionData<Media>(mediaQuery);
+
+  return <MediaGrid medias={medias} />;
+}

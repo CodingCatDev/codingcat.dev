@@ -1,37 +1,27 @@
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { config } from '@/config/cloudinary';
-import { getCloudinarySignature, userProfileUpdate } from '@/services/api';
 import { UserInfoExtended } from '@/models/user.model';
-import { take } from 'rxjs/operators';
-
-async function fetchCloudinarySignature(cb: any, params: any) {
-  try {
-    const signature = await getCloudinarySignature(params).toPromise();
-
-    cb(
-      Object.assign(
-        {
-          signature,
-          api_key: config.apiKey,
-        },
-        params
-      )
-    );
-  } catch (err) {
-    console.log('error fetching signature');
-  }
-}
+import { httpsCallable } from 'firebase/functions';
+import { useFirestore, useFunctions } from 'reactfire';
+import { doc, setDoc, DocumentReference } from '@firebase/firestore';
 
 export default function UserProfileCloudinaryUpload({
   profile,
-  setProfile,
   user,
 }: {
   profile: UserInfoExtended;
-  setProfile: Dispatch<SetStateAction<UserInfoExtended | undefined>>;
   user: UserInfoExtended;
 }): JSX.Element {
+  const firestore = useFirestore();
+  const ref = doc(
+    firestore,
+    'profiles',
+    user.uid
+  ) as unknown as DocumentReference<UserInfoExtended | null>;
+  const functions = useFunctions();
+
+  let widget: any = null;
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
@@ -44,33 +34,60 @@ export default function UserProfileCloudinaryUpload({
     };
   }, []);
 
+  async function fetchCloudinarySignature(cb: any, params: any) {
+    try {
+      const signature = await (
+        await httpsCallable(functions, 'cloudinarysignature').call(
+          'params',
+          params
+        )
+      )?.data;
+      cb(
+        Object.assign(
+          {
+            signature,
+            api_key: config.apiKey,
+          },
+          params
+        )
+      );
+    } catch (err) {
+      console.log('error fetching signature');
+    }
+  }
+
   function onUpload(e: any) {
     e.preventDefault();
     if (typeof window !== 'undefined') {
       const myWindow = window as any;
       if (myWindow.cloudinary) {
-        myWindow.cloudinary
-          .createUploadWidget(
-            {
-              cloudName: config.name,
-              uploadPreset: config.photoPreset,
-              prepareUploadParams: fetchCloudinarySignature,
-            },
-            (error: any, result: any) => {
-              if (!error && result && result.event === 'success') {
-                const profileUpdate = {
-                  ...profile,
-                  photoURL: result.info.secure_url,
-                };
-                setProfile(profileUpdate);
-                userProfileUpdate(profileUpdate).pipe(take(1)).subscribe();
-              }
-              if (error) {
-                console.log(error);
-              }
+        if (widget && !widget.isDestroyed()) {
+          widget.destroy();
+        }
+        widget = myWindow.cloudinary.createUploadWidget(
+          {
+            cloudName: config.name,
+            uploadPreset: config.photoPreset,
+            prepareUploadParams: fetchCloudinarySignature,
+          },
+          (error: any, result: any) => {
+            if (!error && result && result.event === 'success') {
+              const profileUpdate = {
+                ...profile,
+                photoURL: result.info.secure_url,
+              };
+              setDoc(ref, profileUpdate, { merge: true });
+              widget.destroy();
             }
-          )
-          .open();
+            if (!error && result && result.event === 'close') {
+              widget.destroy();
+            }
+            if (error) {
+              console.log(error);
+            }
+          }
+        );
+        widget.open();
       }
     }
   }
@@ -81,8 +98,7 @@ export default function UserProfileCloudinaryUpload({
       ...profile,
       photoURL: user.photoURL,
     };
-    setProfile(profileUpdate);
-    userProfileUpdate(profileUpdate).pipe(take(1)).subscribe();
+    setDoc(ref, profileUpdate, { merge: true });
   }
 
   return (

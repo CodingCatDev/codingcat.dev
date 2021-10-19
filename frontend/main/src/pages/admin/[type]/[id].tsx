@@ -8,6 +8,7 @@ import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { getSite, postById, validateAdminUser } from '@/services/serversideApi';
 import EditPost from '@/components/admin/EditPost';
+import { useSigninCheck } from 'reactfire';
 
 export default function Edit({
   type,
@@ -20,14 +21,21 @@ export default function Edit({
   site: Site | null;
   post: Post;
 }): JSX.Element {
+  const { status, data: signInCheckResult } = useSigninCheck();
+
   return (
     <AdminLayout site={site} post={post}>
       <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
-
-      {type && id ? (
-        <EditPost type={type} id={id} />
+      {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
+        <>
+          {type && id ? (
+            <EditPost type={type} id={id} user={signInCheckResult.user} />
+          ) : (
+            <div>Post Not Found.</div>
+          )}
+        </>
       ) : (
-        <div>Post Not Found.</div>
+        <>Gathering Post Details...</>
       )}
     </AdminLayout>
   );

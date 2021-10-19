@@ -1,29 +1,55 @@
-import { StripeProduct } from '@/models/stripe.model';
-import { stripeCheckout } from '@/services/api';
-import { useUser } from '@/utils/auth/useUser';
-import { take } from 'rxjs/operators';
-import { Dispatch, SetStateAction, useState, MouseEvent } from 'react';
+import {
+  StripeLineItem,
+  StripePrice,
+  StripeProduct,
+} from '@/models/stripe.model';
+import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
+import { UserInfoExtended } from '@/models/user.model';
+import { collection, addDoc } from 'firebase/firestore';
+import StripeRedirect from '@/components/user/StripeRedirect';
+import { useFirestore } from 'reactfire';
 
 export default function CourseBuy({
+  user,
   product,
-  setShowMustSignin,
 }: {
+  user: UserInfoExtended;
   product: StripeProduct;
-  setShowMustSignin: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
-  const [stripe, setStripe] = useState(false);
-  const { user } = useUser();
+  const firestore = useFirestore();
 
-  function onSelectPlan(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    if (product && user?.uid) {
-      setStripe(true);
-      stripeCheckout(product, user?.uid)
-        .pipe(take(1))
-        .subscribe((sessionId) => {
-          console.log(sessionId);
+  const [stripe, setStripe] = useState(false);
+  const [showMustSignin, setShowMustSignin] = useState(false);
+  const [checkoutSession, setCheckoutSession] = useState<string | null>(null);
+
+  const stripeCheckout = async (product: StripeProduct, uid: string) => {
+    const customerRef = collection(
+      firestore,
+      'customers',
+      uid,
+      'checkout_sessions'
+    );
+    if (product && product.prices && product.prices.length > 0) {
+      const price = product.prices[0];
+      if (product) {
+        const docRef = await addDoc(customerRef, {
+          mode: 'payment',
+          price: price.id,
+          success_url: window.location.href,
+          cancel_url: window.location.href,
         });
+        setCheckoutSession(docRef.id);
+      } else {
+        console.error('Missing Stripe Pricing');
+      }
+    }
+  };
+
+  function onSelectPlan() {
+    if (product.prices && user?.uid) {
+      setStripe(true);
+      stripeCheckout(product, user?.uid);
     } else {
       setShowMustSignin(true);
     }
@@ -31,7 +57,26 @@ export default function CourseBuy({
 
   return (
     <>
-      <button className="btn-secondary" onClick={(e) => onSelectPlan(e)}>
+      <div
+        className={`${
+          showMustSignin ? 'block' : 'hidden'
+        } fixed inset-0 z-50 overflow-hidden bg-primary-100 bg-opacity-80`}
+      >
+        <section
+          className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
+          aria-labelledby="slide-over-heading"
+        >
+          <OutsideClick toggle={setShowMustSignin} value={false}>
+            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
+              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
+                <div>Please Sign in First.</div>
+                <div>Then make your Membership selection.</div>
+              </div>
+            </section>
+          </OutsideClick>
+        </section>
+      </div>
+      <button className="btn-secondary" onClick={(e) => onSelectPlan()}>
         Buy Now
       </button>
       <div
@@ -43,13 +88,9 @@ export default function CourseBuy({
           className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
           aria-labelledby="slide-over-heading"
         >
-          <OutsideClick toggle={setStripe} value={false}>
-            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
-              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
-                Redirecting to Stripe...
-              </div>
-            </section>
-          </OutsideClick>
+          {user && stripe && checkoutSession && (
+            <StripeRedirect checkoutSession={checkoutSession} user={user} />
+          )}
         </section>
       </div>
       <style jsx>{`

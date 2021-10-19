@@ -1,29 +1,58 @@
 import Image from 'next/image';
-import { StripeProduct } from '@/models/stripe.model';
-import { stripeCheckout } from '@/services/api';
-import { useUser } from '@/utils/auth/useUser';
-import { take } from 'rxjs/operators';
-import AJPrimary from './global/icons/AJPrimary';
+import {
+  StripeLineItem,
+  StripePrice,
+  StripeProduct,
+} from '@/models/stripe.model';
+import AJPrimary from '@/components/global/icons/AJPrimary';
 import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
+import { getApp } from '@firebase/app';
+import { collection, addDoc } from 'firebase/firestore';
+import { UserInfoExtended } from '@/models/user.model';
+import StripeRedirect from '@/components/user/StripeRedirect';
+import { useFirestore } from 'reactfire';
 
 export default function MembershipCards({
   products,
+  user,
 }: {
+  user?: UserInfoExtended;
   products: StripeProduct[];
 }): JSX.Element {
   const [stripe, setStripe] = useState(false);
+  const firestore = useFirestore();
   const [showMustSignin, setShowMustSignin] = useState(false);
-  const { user } = useUser();
+  const [checkoutSession, setCheckoutSession] = useState<string | null>(null);
+
+  const stripeCheckout = async (product: StripeProduct, uid: string) => {
+    const line_items: StripeLineItem[] = [];
+
+    product.prices.forEach((price: StripePrice) =>
+      line_items.push({
+        price: price.id,
+        quantity: 1,
+      })
+    );
+
+    const customerRef = collection(
+      firestore,
+      'customers',
+      uid,
+      'checkout_sessions'
+    );
+    const docRef = await addDoc(customerRef, {
+      line_items,
+      success_url: window.location.href,
+      cancel_url: window.location.href,
+    });
+    setCheckoutSession(docRef.id);
+  };
 
   function onSelectPlan(product: StripeProduct) {
     if (product.prices && user?.uid) {
       setStripe(true);
-      stripeCheckout(product, user?.uid)
-        .pipe(take(1))
-        .subscribe((sessionId) => {
-          console.log(sessionId);
-        });
+      stripeCheckout(product, user?.uid);
     } else {
       setShowMustSignin(true);
     }
@@ -83,13 +112,9 @@ export default function MembershipCards({
           className="absolute inset-y-0 left-0 grid w-full h-full place-items-center justify-items-center"
           aria-labelledby="slide-over-heading"
         >
-          <OutsideClick toggle={setStripe} value={false}>
-            <section className="flex items-center p-8 m-auto space-x-20 space-between bg-primary-900 dark:bg-primary-50 rounded-xl">
-              <div className="grid gap-4 text-2xl text-primary-50 dark:text-primary-900">
-                Redirecting to Stripe...
-              </div>
-            </section>
-          </OutsideClick>
+          {user && stripe && checkoutSession && (
+            <StripeRedirect checkoutSession={checkoutSession} user={user} />
+          )}
         </section>
       </div>
       <section className="flex flex-wrap justify-center gap-10 text-center">

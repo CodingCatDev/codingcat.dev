@@ -1,10 +1,13 @@
 import AJPrimary from './global/icons/AJPrimary';
-import FirebaseAuth from './FirebaseAuth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useAuth } from 'reactfire';
 
 function FirebaseSignin(): JSX.Element {
+  const auth = useAuth();
+  const provider = new GoogleAuthProvider();
   return (
     <>
-      <div className="flex flex-col justify-center min-h-screen py-12 sm:px-6 lg:px-8">
+      <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex flex-wrap justify-center">
             <AJPrimary />
@@ -15,7 +18,13 @@ function FirebaseSignin(): JSX.Element {
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="px-4 py-8 shadow bg-basics-50 sm:rounded-lg sm:px-10">
-            <FirebaseAuth />
+            {/* <FirebaseAuth /> */}
+            <button
+              className="btn-primary"
+              onClick={() => signInWithPopup(auth, provider)}
+            >
+              Google Signin
+            </button>
           </div>
         </div>
       </div>

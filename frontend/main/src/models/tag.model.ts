@@ -1,9 +1,9 @@
-import firebase from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 
 export interface Tag {
   count: number;
   posts: string[];
   slug: string;
   tag: string;
-  updatedAt?: firebase.firestore.Timestamp;
+  updatedAt?: Timestamp;
 }

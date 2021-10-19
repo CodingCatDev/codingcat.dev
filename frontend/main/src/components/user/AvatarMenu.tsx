@@ -1,16 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
-import { useUser } from '@/utils/auth/useUser';
 import ActiveLink from '@/components/ActiveLink';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
-import { userProfileDataObservable } from '@/services/api';
-import { authState } from 'rxfire/auth';
-import { takeWhile, switchMap } from 'rxjs/operators';
-import { UserInfoExtended } from '@/models/user.model';
+import { Dispatch, SetStateAction } from 'react';
+import { useAuth, useSigninCheck } from 'reactfire';
+import { signOut } from '@firebase/auth';
+import AvatarProfile from '@/components/user/AvatarProfile';
 
-export default function UserSignin({
+export default function AvatarMenu({
   userMenu,
   setUserMenu,
   positionClass = 'right-0',
@@ -19,36 +17,14 @@ export default function UserSignin({
   setUserMenu: Dispatch<SetStateAction<boolean>>;
   positionClass?: string;
 }): JSX.Element {
-  const { user, signout, app } = useUser();
-
-  const [profile, setProfile] = useState<UserInfoExtended | null>(null);
-
-  useEffect(() => {
-    let subscription: Subscription;
-    if (app) {
-      subscription = authState(app.auth())
-        .pipe(
-          takeWhile((user) => {
-            if (!user && subscription) {
-              subscription.unsubscribe();
-            }
-            return user != null;
-          }),
-          switchMap((u: UserInfoExtended) => userProfileDataObservable(u.uid))
-        )
-        .subscribe((profile) => setProfile(profile));
-      return () => {
-        if (subscription) {
-          subscription.unsubscribe();
-        }
-      };
-    }
-  }, [app]);
+  const auth = useAuth();
+  const { data: signInCheckResult } = useSigninCheck();
+  const router = useRouter();
 
   return (
     <>
       <div className="relative">
-        {user ? (
+        {signInCheckResult && signInCheckResult?.signedIn === true ? (
           <button
             className="flex p-1 text-sm rounded-full text-basics-50 dark:text-basics-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800"
             id="user-menu"
@@ -56,21 +32,10 @@ export default function UserSignin({
             onClick={() => setUserMenu(!userMenu)}
           >
             <span className="sr-only">Open user menu</span>
-            {profile && profile.photoURL ? (
-              <Image
-                src={profile.photoURL}
-                loader={() => profile.photoURL || ''}
-                unoptimized={true}
-                layout="fixed"
-                width="40"
-                height="40"
-                alt={
-                  profile.displayName
-                    ? profile.displayName
-                    : 'A Good Description'
-                }
-                className="w-8 h-8 rounded-full"
-              />
+            {signInCheckResult?.user && signInCheckResult?.user?.photoURL ? (
+              <>
+                <AvatarProfile user={signInCheckResult.user} />
+              </>
             ) : (
               <Image
                 src="/static/images/avatar.png"
@@ -138,7 +103,7 @@ export default function UserSignin({
               <span className="ml-2">Your Profile</span>
             </a>
           </ActiveLink>
-          <a
+          {/* <a
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
             role="menuitem"
@@ -165,12 +130,16 @@ export default function UserSignin({
             </svg>
 
             <span className="ml-2">Settings</span>
-          </a>
+          </a> */}
           <a
             href="#"
             className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
             role="menuitem"
-            onClick={() => signout()}
+            onClick={() => {
+              signOut(auth);
+              setUserMenu(false);
+              router.replace('/');
+            }}
           >
             <svg
               className="w-8 transform -scale-1"

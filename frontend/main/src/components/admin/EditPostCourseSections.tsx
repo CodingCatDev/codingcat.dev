@@ -1,11 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  addCourseSection,
-  postHistoryUpdate,
-  postsByUpdatedAtObservable,
-  postsSearchByTitleObservable,
-} from '@/services/api';
+
 import { Post, Section } from '@/models/post.model';
 import { take } from 'rxjs/operators';
 import {
@@ -14,24 +9,47 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
+import { getApp } from 'firebase/app';
+import {
+  arrayUnion,
+  collection,
+  doc,
+  endAt,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAt,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { cleanTimestamp } from '@/utils/firebase/firestoreTools';
+import { useFirestore } from 'reactfire';
 const arrayMove = require('array-move');
 
 export default function EditPostCourseSections({
-  historyInput,
+  history,
+  updateContent,
 }: {
-  historyInput: Post;
+  history: Post;
+  updateContent: (h: Post) => Promise<Post>;
 }): JSX.Element {
-  const [history, setHistory] = useState<Post>();
+  const firestore = useFirestore();
   const [section, setSection] = useState<Section>();
   const [lessonSearch, setLessonSearch] = useState<string>('');
   const [lessons, setLessons] = useState<Post[]>();
 
   useEffect(() => {
-    setHistory(historyInput);
-    postsByUpdatedAtObservable('lesson')
-      .pipe(take(1))
-      .subscribe((p) => setLessons(p));
-  }, [historyInput]);
+    getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('type', '==', 'lesson'),
+        orderBy('updatedAt', 'desc')
+      )
+    ).then((snap) =>
+      setLessons(snap.docs.map((d) => cleanTimestamp(d.data) as Post))
+    );
+  }, [history]);
 
   const sectionInput = async (e: ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value;
@@ -42,19 +60,26 @@ export default function EditPostCourseSections({
     if (!history || !section) {
       return;
     }
-    addCourseSection(history, section)
-      .pipe(take(1))
-      .subscribe((h) => {
-        setHistory(h);
-        setSection({ title: '' } as Section);
-      });
+
+    updateDoc(doc(firestore, `posts/${history.postId}/history/${history.id}`), {
+      sections: arrayUnion(section),
+    }).then(() => setSection({ title: '' } as Section));
   };
 
   const onLessonSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value;
-    postsSearchByTitleObservable('lesson', title)
-      .pipe(take(1))
-      .subscribe((p) => setLessons(p));
+    getDocs(
+      query(
+        collection(firestore, 'posts'),
+        where('type', '==', 'lesson'),
+        orderBy('titleSearch'),
+        startAt(title),
+        endAt(title + '\uf8ff'),
+        limit(20)
+      )
+    ).then((snap) =>
+      setLessons(snap.docs.map((d) => cleanTimestamp(d.data()) as Post))
+    );
     setLessonSearch(title);
   };
 
@@ -69,8 +94,7 @@ export default function EditPostCourseSections({
       if (historyUpdate.sections) {
         historyUpdate.sections[sectionIndex] = section;
       }
-      setHistory(historyUpdate);
-      postHistoryUpdate(historyUpdate);
+      updateContent(historyUpdate);
     }
   };
 
@@ -85,8 +109,7 @@ export default function EditPostCourseSections({
       if (historyUpdate.sections) {
         historyUpdate.sections = sections;
       }
-      setHistory(historyUpdate);
-      postHistoryUpdate(historyUpdate);
+      updateContent(historyUpdate);
     }
   };
 
@@ -122,7 +145,7 @@ export default function EditPostCourseSections({
         history.sections = movedSections;
         const historyUpdate = { ...history };
         delete historyUpdate.createdAt; //TODO This was erroring
-        postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+        updateContent(historyUpdate);
       } else {
         const start = parseInt(source.droppableId);
         const finish = parseInt(destination.droppableId);
@@ -138,7 +161,7 @@ export default function EditPostCourseSections({
             history.sections[finish].lessons = movedLessons;
             const historyUpdate = { ...history };
             delete historyUpdate.createdAt; //TODO This was erroring
-            postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+            updateContent(historyUpdate);
           }
         } else {
           const startSection = { ...history.sections[start] };
@@ -194,8 +217,7 @@ export default function EditPostCourseSections({
             historyUpdate.sections[start] = startSection;
             historyUpdate.sections[finish] = finishSection;
           }
-          setHistory(historyUpdate);
-          postHistoryUpdate(historyUpdate).pipe(take(1)).subscribe();
+          updateContent(historyUpdate);
         }
       }
     }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { addSiteSocialLink, siteUpdate } from '@/services/api';
 import { take } from 'rxjs/operators';
 import {
   DragDropContext,
@@ -11,33 +10,29 @@ import { SocialLink, Site, SocialType } from '@/models/site.model';
 const arrayMove = require('array-move');
 
 export default function SiteDataSocialLinks({
-  siteInput,
+  site,
+  setSiteSocialLink,
+  siteUpdate,
 }: {
-  siteInput: Site;
+  site: Site;
+  setSiteSocialLink: (socialLink: {
+    type: SocialType;
+    href: string;
+  }) => Promise<void>;
+  siteUpdate: (siteUpdate: Site) => Promise<void>;
 }): JSX.Element {
-  const [site, setSite] = useState<Site>({ id: '', title: '' });
-  const [socialLink, setSocialLink] = useState<SocialLink>({
-    type: SocialType.facebook,
-    href: '',
-  });
-
-  useEffect(() => {
-    setSite(siteInput);
-  }, [siteInput]);
+  const empty = { type: SocialType.facebook, href: '' };
+  const [socialLink, setSocialLink] = useState<SocialLink>(empty);
 
   const createSocialLink = async () => {
     if (!site) {
       return;
     }
-    addSiteSocialLink(site, socialLink)
-      .pipe(take(1))
-      .subscribe((h) => {
-        setSite(h);
-        setSocialLink({ type: SocialType.facebook, href: '' });
-      });
+    await setSiteSocialLink(empty);
+    setSocialLink(empty);
   };
 
-  const onSocialLinkDelete = (i: number) => {
+  const onSocialLinkDelete = async (i: number) => {
     if (site.socialLinks) {
       const socialLinks = [...site.socialLinks];
       socialLinks.splice(i, 1);
@@ -47,8 +42,7 @@ export default function SiteDataSocialLinks({
       if (site.socialLinks) {
         update.socialLinks = socialLinks;
       }
-      setSite(update);
-      siteUpdate(update).pipe(take(1)).subscribe();
+      await siteUpdate(update);
     }
   };
 
@@ -60,8 +54,7 @@ export default function SiteDataSocialLinks({
     const sections = site.socialLinks;
     const moved = arrayMove(sections, source.index, destination.index);
     const update = { ...site, socialLinks: moved };
-    setSite(update);
-    siteUpdate(update).pipe(take(1)).subscribe();
+    siteUpdate(update);
   };
 
   return (
@@ -150,6 +143,7 @@ export default function SiteDataSocialLinks({
                         )}
                       </Draggable>
                     ))}
+                  {provided.placeholder}
                 </div>
               )}
             </Droppable>

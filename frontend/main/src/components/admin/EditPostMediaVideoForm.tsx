@@ -1,34 +1,30 @@
 import { useState } from 'react';
 import { Post } from '@/models/post.model';
-import { MediaType } from '@/models/media.model';
-
-import { postHistoryCreate, postHistoryMediaCreate } from '@/services/api';
-import { take } from 'rxjs/operators';
+import { Cloudinary, MediaType } from '@/models/media.model';
 import { Video } from '@/models/video.model';
 
 export default function EditPostMediaVideoForm({
   history,
+  updateContent,
+  postHistoryMediaCreate,
 }: {
   history: Post | undefined;
+  updateContent: (h: Post) => Promise<Post>;
+  postHistoryMediaCreate: (
+    history: Post,
+    type: MediaType,
+    cloudinary?: Cloudinary | undefined,
+    video?: Video | undefined
+  ) => Promise<void>;
 }): JSX.Element {
   const [video, setVideo] = useState<Video>({
     url: '',
   });
 
-  async function onUpload(history: Post) {
-    if (history.publishedAt) {
-      postHistoryCreate(history)
-        .pipe(take(1))
-        .subscribe((h) =>
-          postHistoryMediaCreate(h, MediaType.video, undefined, video)
-            .pipe(take(1))
-            .subscribe(() => setVideo({ url: '' }))
-        );
-    } else {
-      postHistoryMediaCreate(history, MediaType.video, undefined, video)
-        .pipe(take(1))
-        .subscribe(() => setVideo({ url: '' }));
-    }
+  async function onUpload(h: Post) {
+    await updateContent(h);
+    await postHistoryMediaCreate(h, MediaType.video, undefined, video);
+    setVideo({ url: '' });
   }
 
   const onUrlInput = (e: { target: { value: string } }) => {

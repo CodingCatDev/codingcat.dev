@@ -2,10 +2,9 @@ import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { useUser } from '@/utils/auth/useUser';
 import AJLogo from '@/components/global/icons/AJPrimary';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
-import { UserInfoExtended } from '@/models/user.model';
+import { useUser } from 'reactfire';
 
 const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
   ssr: false,
@@ -13,8 +12,8 @@ const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
 });
 
 export default function UserSignin(): JSX.Element {
-  const { user }: { user: UserInfoExtended | null } = useUser();
   const [signin, setSignIn] = useState(false);
+  const { data: user } = useUser();
 
   return (
     <>

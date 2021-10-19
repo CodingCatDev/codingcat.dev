@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { addSitePageLink, siteUpdate } from '@/services/api';
 import { take } from 'rxjs/operators';
 import {
   DragDropContext,
@@ -11,30 +10,26 @@ import { PageLink, Site } from '@/models/site.model';
 const arrayMove = require('array-move');
 
 export default function SiteDataPageLinks({
-  siteInput,
+  site,
+  setSitePageLink,
+  siteUpdate,
 }: {
-  siteInput: Site;
+  site: Site;
+  setSitePageLink: (pageLink: { title: string; slug: string }) => Promise<void>;
+  siteUpdate: (siteUpdate: Site) => Promise<void>;
 }): JSX.Element {
-  const [site, setSite] = useState<Site>({ id: '', title: '' });
-  const [pageLink, setPageLink] = useState<PageLink>({ title: '', slug: '' });
-
-  useEffect(() => {
-    setSite(siteInput);
-  }, [siteInput]);
+  const empty = { title: '', slug: '' };
+  const [pageLink, setPageLink] = useState<PageLink>(empty);
 
   const createPageLink = async () => {
     if (!site) {
       return;
     }
-    addSitePageLink(site, pageLink)
-      .pipe(take(1))
-      .subscribe((h) => {
-        setSite(h);
-        setPageLink({ title: '', slug: '' });
-      });
+    await setSitePageLink(pageLink);
+    setPageLink(empty);
   };
 
-  const onPageLinkDelete = (i: number) => {
+  const onPageLinkDelete = async (i: number) => {
     if (site.pageLinks) {
       const pageLinks = [...site.pageLinks];
       pageLinks.splice(i, 1);
@@ -44,8 +39,7 @@ export default function SiteDataPageLinks({
       if (site.pageLinks) {
         update.pageLinks = pageLinks;
       }
-      setSite(update);
-      siteUpdate(update).pipe(take(1)).subscribe();
+      await siteUpdate(update);
     }
   };
 
@@ -57,8 +51,7 @@ export default function SiteDataPageLinks({
     const sections = site.pageLinks;
     const moved = arrayMove(sections, source.index, destination.index);
     const update = { ...site, pageLinks: moved };
-    setSite(update);
-    siteUpdate(update).pipe(take(1)).subscribe();
+    siteUpdate(update);
   };
 
   return (
@@ -144,6 +137,7 @@ export default function SiteDataPageLinks({
                         )}
                       </Draggable>
                     ))}
+                  {provided.placeholder}
                 </div>
               )}
             </Droppable>

@@ -1,5 +1,5 @@
 import cookies from 'js-cookie';
-import firebase from 'firebase/app';
+import { UserInfoExtended } from '@/models/user.model';
 
 export const getUserFromCookie = () => {
   const cookie = cookies.get('auth');
@@ -9,7 +9,7 @@ export const getUserFromCookie = () => {
   return JSON.parse(cookie);
 };
 
-export const setUserCookie = (user: firebase.User) => {
+export const setUserCookie = (user: { token: string }) => {
   cookies.set('auth', user, {
     // firebase id tokens expire in one hour
     // set cookie expiry to match

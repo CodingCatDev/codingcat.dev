@@ -1,46 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Post, PostStatus } from '@/models/post.model';
-import {
-  postDataObservable,
-  postHistoryPublish,
-  postsSlugUnique,
-} from '@/services/api';
-import firebase from 'firebase/app';
-import { take } from 'rxjs/operators';
-import { toKebabCase } from '@/utils/basics/stringManipulation';
+import { Post } from '@/models/post.model';
 
 import { Calendar } from 'primereact/calendar';
-import { of } from 'rxjs';
 
 export default function PublishModal({
   history,
-  setSaving,
-  setSlugUnique,
+  onPublish,
 }: {
-  history: Post | undefined;
-  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
-  setSlugUnique: React.Dispatch<React.SetStateAction<boolean>>;
+  history: Post;
+  onPublish: (selectedDate: Date) => Promise<void>;
 }): JSX.Element {
   const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [largeButton, setLargeButton] = useState(true);
 
   useEffect(() => {
     if (!history) {
       return;
     }
-    postDataObservable(`/posts/${history.postId}`)
-      .pipe(take(1))
-      .subscribe((p) => {
-        if (p.publishedAt) {
-          setSelectedDate(p.publishedAt.toDate());
-        } else {
-          setSelectedDate(new Date());
-        }
-      });
-    return () => {
-      false;
-    };
+    if (history.publishedAt) {
+      setSelectedDate(history.publishedAt.toDate());
+    } else {
+      setSelectedDate(new Date());
+    }
   }, [history]);
 
   const handleClickOpen = () => {
@@ -55,43 +37,16 @@ export default function PublishModal({
     if (date) setSelectedDate(date);
   };
 
-  function validSlug(slugInput: string) {
-    if (!history || !history.postId) {
-      return of(false);
-    }
-    const slug = toKebabCase(slugInput);
-    return postsSlugUnique(slug, history?.postId).pipe(take(1));
-  }
-
   function onCancel() {
     setOpen(false);
     setLargeButton(true);
   }
 
-  function onPublish() {
-    setOpen(false);
+  const onPublishModal = async () => {
+    await onPublish(selectedDate);
     setLargeButton(true);
-    if (history && selectedDate) {
-      validSlug(history.slug).subscribe((unique) => {
-        setSlugUnique(unique);
-        if (unique) {
-          setSaving(true);
-
-          history.publishedAt = firebase.firestore.Timestamp.fromDate(
-            selectedDate
-          );
-          history.status = PostStatus.published;
-
-          postHistoryPublish(history)
-            .pipe(take(1))
-            .subscribe(() => {
-              setSaving(false);
-              setOpen(false);
-            });
-        }
-      });
-    }
-  }
+    setOpen(false);
+  };
 
   return (
     <div>
@@ -140,7 +95,7 @@ export default function PublishModal({
           <button onClick={() => onCancel()} className="btn-secondary">
             Cancel
           </button>
-          <button onClick={() => onPublish()} className="btn-primary">
+          <button onClick={() => onPublishModal()} className="btn-primary">
             Publish
           </button>
         </div>

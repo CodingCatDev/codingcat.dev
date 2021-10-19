@@ -4,7 +4,7 @@ import AJLogoLeft from '@/components/global/icons/AJAlt';
 import AdminNavItems from '@/layout/admin/AdminNavItems';
 import OutsideClick from '@/components/OutsideClick';
 import AvatarMenu from '@/components/user/AvatarMenu';
-import { useUser } from '@/utils/auth/useUser';
+import { useSigninCheck } from 'reactfire';
 
 export default function AdminMenu({
   navOpen,
@@ -17,7 +17,7 @@ export default function AdminMenu({
   userMenu: boolean;
   setUserMenu: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
-  const { user } = useUser();
+  const { data: signInCheckResult } = useSigninCheck();
 
   return (
     <section className="relative z-40 grid content-start h-full grid-cols-1 grid-rows-admin">
@@ -42,14 +42,14 @@ export default function AdminMenu({
               positionClass="left-0 bottom-0 mb-6"
             />
           </OutsideClick>
-          {navOpen && (
+          {navOpen && signInCheckResult && signInCheckResult.signedIn === true && (
             <OutsideClick toggle={setUserMenu} value={false}>
               <button className="ml-2" onClick={() => setUserMenu(true)}>
                 <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
-                  {user?.displayName}
+                  {signInCheckResult?.user?.displayName}
                 </p>
                 <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
-                  {user?.email}
+                  {signInCheckResult?.user?.email}
                 </p>
               </button>
             </OutsideClick>

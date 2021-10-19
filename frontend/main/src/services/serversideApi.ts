@@ -194,7 +194,7 @@ export async function validateAdminUser(idToken: string): Promise<boolean> {
   if (!userRecord || !userRecord.uid) {
     return false;
   }
-  if (!isUserTeam(userRecord.uid)) {
+  if (!(await isUserTeam(userRecord.uid))) {
     return false;
   }
   return true;
