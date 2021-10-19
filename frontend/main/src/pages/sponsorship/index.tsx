@@ -6,6 +6,7 @@ import { getSite } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
 import { HTMLAttributes, useEffect, useRef } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
+import { useScroll } from '@/hooks/useScroll';
 
 interface IframeHTMLAttributes<T> extends HTMLAttributes<T> {
   mozallowfullscreen?: boolean;
@@ -32,6 +33,8 @@ export default function Sponsorship({
   const form = useRef<HTMLDivElement>(null);
   const email = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const scroll = useScroll();
+  const scrollBtn = useRef<HTMLButtonElement>(null);
 
   const { loading, error, success, message, handleSubmit, reset } =
     useMailChimpForm(url);
@@ -42,12 +45,37 @@ export default function Sponsorship({
     if (email && email.current) email.current.focus();
   };
 
+  const isInViewport = (e: HTMLElement) => {
+    const rect = e.getBoundingClientRect();
+    console.log(rect);
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  };
+
   useEffect(() => {
     if (router.query && router.query.form) {
       scrollToForm();
       router.replace('/sponsorship', undefined, { shallow: true });
     }
   }, [router]);
+
+  useEffect(() => {
+    if (form) {
+      const formRect = form.current?.getBoundingClientRect();
+      if (formRect && scrollBtn && scrollBtn.current) {
+        if (formRect.top >= window.innerHeight) {
+          scrollBtn.current.hidden = false;
+        } else {
+          scrollBtn.current.hidden = true;
+        }
+      }
+    }
+  }, [scroll]);
 
   return (
     <Layout site={site}>
@@ -76,7 +104,11 @@ export default function Sponsorship({
         }}
       ></NextSeo>
       <div className="sticky top-0 right-0 z-50 flex m-2 jusify-end">
-        <button className="btn-secondary" onClick={() => scrollToForm()}>
+        <button
+          ref={scrollBtn}
+          className="btn-secondary"
+          onClick={() => scrollToForm()}
+        >
           Apply To Sponsor -{'>'}
         </button>
       </div>
