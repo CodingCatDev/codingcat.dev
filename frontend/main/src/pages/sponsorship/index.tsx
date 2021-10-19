@@ -1,9 +1,10 @@
 import { NextSeo } from 'next-seo';
 import Image from 'next/image';
+import router, { useRouter } from 'next/router';
 import Layout from '@/layout/Layout';
 import { getSite } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
-import { HTMLAttributes, useRef } from 'react';
+import { HTMLAttributes, useEffect, useRef } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
 
 interface IframeHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -30,6 +31,7 @@ export default function Sponsorship({
 
   const form = useRef<HTMLDivElement>(null);
   const email = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const { loading, error, success, message, handleSubmit, reset } =
     useMailChimpForm(url);
@@ -39,6 +41,14 @@ export default function Sponsorship({
     if (form && form.current) form.current.scrollIntoView();
     if (email && email.current) email.current.focus();
   };
+
+  useEffect(() => {
+    if (router.query && router.query.form) {
+      scrollToForm();
+      router.replace('/sponsorship', undefined, { shallow: true });
+    }
+  }, [router]);
+
   return (
     <Layout site={site}>
       <NextSeo
