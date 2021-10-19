@@ -20,14 +20,16 @@ import {
   DocumentReference,
   getDoc,
   getDocs,
-  getFirestore,
   orderBy,
   query,
   Timestamp,
   where,
 } from '@firebase/firestore';
-import { getApp } from '@firebase/app';
-import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
+import {
+  useFirestore,
+  useFirestoreCollectionData,
+  useFirestoreDocData,
+} from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
 import { toKebabCase } from '@/utils/basics/stringManipulation';
 import { setDoc, writeBatch } from 'firebase/firestore';
@@ -47,8 +49,7 @@ export default function EditPost({
   const [, setSaving] = useState<boolean>(false);
   const [slugUnique, setSlugUnique] = useState(true);
   const router = useRouter();
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   const postRef = doc(firestore, 'posts', id);
   const { data: post } = useFirestoreDocData(postRef);

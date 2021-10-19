@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 import ActiveLink from '@/components/ActiveLink';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useSigninCheck } from 'reactfire';
-import { signOut, getAuth } from '@firebase/auth';
-import { getApp } from '@firebase/app';
-import { UserInfoExtended } from '@/models/user.model';
+import { Dispatch, SetStateAction } from 'react';
+import { useAuth, useSigninCheck } from 'reactfire';
+import { signOut } from '@firebase/auth';
 import AvatarProfile from '@/components/user/AvatarProfile';
 
 export default function AvatarMenu({
@@ -19,8 +17,7 @@ export default function AvatarMenu({
   setUserMenu: Dispatch<SetStateAction<boolean>>;
   positionClass?: string;
 }): JSX.Element {
-  const app = getApp();
-  const auth = getAuth(app);
+  const auth = useAuth();
   const { data: signInCheckResult } = useSigninCheck();
   const router = useRouter();
 

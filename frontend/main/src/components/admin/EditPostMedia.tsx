@@ -7,17 +7,13 @@ import MediaGrid from '@/components/admin/MediaGrid';
 import CloudinaryCover from '@/components/admin/EditPostCloudinaryCover';
 import { Post } from '@/models/post.model';
 import { Cloudinary, Media, MediaType } from '@/models/media.model';
-import { getApp } from 'firebase/app';
 import {
-  getFirestore,
   collection,
   CollectionReference,
   query,
   orderBy,
-  DocumentData,
-  DocumentSnapshot,
 } from 'firebase/firestore';
-import { useFirestoreCollectionData } from 'reactfire';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
 import { Video } from '@/models/video.model';
 
@@ -38,9 +34,7 @@ export default function EditPostMedia({
   ) => Promise<void>;
 }): JSX.Element {
   const [type, setType] = useState<MediaType>(MediaType.photo);
-  // const [media, setMedia] = useState<Media | null>(null);
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const mediaRef = collection(
     firestore,
     `posts/${history.postId}/history/${history.id}/media`

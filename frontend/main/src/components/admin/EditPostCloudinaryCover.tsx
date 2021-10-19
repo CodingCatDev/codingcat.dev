@@ -3,12 +3,13 @@ import { Post } from '@/models/post.model';
 import { MediaSource } from '@/models/media.model';
 
 import { config } from '@/config/cloudinary';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { httpsCallable } from 'firebase/functions';
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
+import { useFunctions } from 'reactfire';
 
 export default function ImageModal({ post }: { post: Post }): JSX.Element {
-  const functions = getFunctions();
+  const functions = useFunctions();
   const [cookieToken, setCookieToken] = useState('');
 
   useEffect(() => {

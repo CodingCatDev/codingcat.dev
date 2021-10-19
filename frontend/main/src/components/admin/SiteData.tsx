@@ -2,15 +2,13 @@ import { ChangeEvent } from 'react';
 import { Site, SocialType } from '@/models/site.model';
 import SiteDataPageLinks from '@/components/admin/SiteDataPageLinks';
 import SiteDataSocialLinks from './SiteDataSocialLinks';
-import { getApp } from '@firebase/app';
 import {
   arrayUnion,
   doc,
   DocumentReference,
-  getFirestore,
   setDoc,
 } from '@firebase/firestore';
-import { useFirestoreDocData } from 'reactfire';
+import { useFirestore, useFirestoreDocData } from 'reactfire';
 
 const siteInitial: Site = {
   id: '',
@@ -20,8 +18,7 @@ const siteInitial: Site = {
 };
 
 export default function SiteData(): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const siteRef = doc(
     firestore,
     'site',

@@ -2,19 +2,22 @@ import { UserInfoExtended } from '@/models/user.model';
 import {
   doc,
   DocumentReference,
-  getFirestore,
   collection,
   query,
   where,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { useFirestoreCollectionData, useFirestoreDocData } from 'reactfire';
+import {
+  useFirestore,
+  useFirestoreCollectionData,
+  useFirestoreDocData,
+} from 'reactfire';
 
 export default function useIsMember(user: UserInfoExtended): {
   member: boolean;
   team: boolean;
 } {
-  const firestore = getFirestore();
+  const firestore = useFirestore();
 
   // Membership
   const [member, setMember] = useState(false);

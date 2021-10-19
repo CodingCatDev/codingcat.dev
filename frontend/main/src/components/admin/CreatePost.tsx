@@ -9,8 +9,8 @@ import {
 
 import router from 'next/router';
 import { UserInfoExtended } from '@/models/user.model';
-import { doc, getFirestore, setDoc, Timestamp } from 'firebase/firestore';
-import { getApp } from '@firebase/app';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { useFirestore } from 'reactfire';
 
 const postInitial = {
   type: PostType.post,
@@ -29,8 +29,7 @@ export default function CreatePost({
   user: UserInfoExtended;
 }): JSX.Element {
   const [post, setPost] = useState<Post>(postInitial);
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   useEffect(() => {
     setPost({

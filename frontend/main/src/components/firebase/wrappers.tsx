@@ -18,8 +18,7 @@ import {
   FunctionsProvider,
 } from 'reactfire';
 import { config, emulation } from '@/config/firebase';
-import { getFunctions } from '@firebase/functions';
-import { connectFunctionsEmulator } from 'firebase/functions';
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 import { useEffect } from 'react';
 import {
   getUserFromCookie,
@@ -99,8 +98,7 @@ export const FirebaseFunctionsProvider = ({
 }: {
   children: JSX.Element;
 }) => {
-  const app = useFirebaseApp();
-  const functions = getFunctions(app);
+  const functions = getFunctions();
   if (emulation.cloudFunctionsEmulatorHost) {
     const { urn, port } = hostSplitter(emulation.cloudFunctionsEmulatorHost);
     if (urn && port) {

@@ -6,9 +6,9 @@ import {
 import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
 import { UserInfoExtended } from '@/models/user.model';
-import { collection, addDoc, getFirestore } from 'firebase/firestore';
-import { getApp } from 'firebase/app';
+import { collection, addDoc } from 'firebase/firestore';
 import StripeRedirect from '@/components/user/StripeRedirect';
+import { useFirestore } from 'reactfire';
 
 export default function CourseBuy({
   user,
@@ -17,8 +17,7 @@ export default function CourseBuy({
   user: UserInfoExtended;
   product: StripeProduct;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   const [stripe, setStripe] = useState(false);
   const [showMustSignin, setShowMustSignin] = useState(false);

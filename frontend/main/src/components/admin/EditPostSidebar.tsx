@@ -8,15 +8,8 @@ import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { UserInfoExtended } from '@/models/user.model';
 import { getDocs, query, setDoc } from '@firebase/firestore';
-import {
-  collection,
-  doc,
-  endAt,
-  getFirestore,
-  orderBy,
-  startAt,
-} from 'firebase/firestore';
-import { getApp } from 'firebase/app';
+import { collection, doc, endAt, orderBy, startAt } from 'firebase/firestore';
+import { useFirestore } from 'reactfire';
 
 export default function EditPostSidebar({
   tab,
@@ -33,8 +26,7 @@ export default function EditPostSidebar({
   user: UserInfoExtended;
   onPublish: (selectedDate: Date) => Promise<void>;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
 
   const [email, setEmail] = useState('');
   const [tag, setTag] = useState('');

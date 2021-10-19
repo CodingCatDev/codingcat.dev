@@ -1,15 +1,9 @@
 import AJPrimary from './global/icons/AJPrimary';
-import {
-  getAuth,
-  signInWithPopup,
-  AuthProvider,
-  GoogleAuthProvider,
-} from 'firebase/auth';
-import { getApp } from '@firebase/app';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useAuth } from 'reactfire';
 
 function FirebaseSignin(): JSX.Element {
-  const app = getApp();
-  const auth = getAuth(app);
+  const auth = useAuth();
   const provider = new GoogleAuthProvider();
   return (
     <>

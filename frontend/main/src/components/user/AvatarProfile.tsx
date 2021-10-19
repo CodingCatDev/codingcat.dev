@@ -1,18 +1,15 @@
 import Image from 'next/image';
 
-import { useEffect } from 'react';
-import { useFirestoreDocData } from 'reactfire';
-import { getApp } from '@firebase/app';
+import { useFirestore, useFirestoreDocData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
-import { doc, DocumentReference, getFirestore } from '@firebase/firestore';
+import { doc, DocumentReference } from '@firebase/firestore';
 
 export default function AvatarProfile({
   user,
 }: {
   user: UserInfoExtended;
 }): JSX.Element {
-  const app = getApp();
-  const firestore = getFirestore(app);
+  const firestore = useFirestore();
   const ref = doc(
     firestore,
     'profiles',
