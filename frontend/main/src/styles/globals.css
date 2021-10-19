@@ -71,22 +71,22 @@
   }
 
   h1 {
-    @apply leading-snug tracking-wide text-7xl font-heading;
+    @apply text-4xl lg:text-7xl leading-snug tracking-wide font-heading;
   }
   h2 {
-    @apply text-6xl leading-snug tracking-wide font-heading;
+    @apply text-3xl lg:text-6xl leading-snug tracking-wide font-heading;
   }
   h3 {
-    @apply text-5xl leading-snug tracking-wide font-heading;
+    @apply text-2xl lg:text-5xl leading-snug tracking-wide font-heading;
   }
   h4 {
-    @apply text-4xl leading-snug tracking-wide font-heading;
+    @apply text-xl lg:text-4xl leading-snug tracking-wide font-heading;
   }
   h5 {
-    @apply text-3xl leading-snug tracking-wide font-heading;
+    @apply text-lg lg:text-3xl leading-snug tracking-wide font-heading;
   }
   h6 {
-    @apply text-2xl leading-snug tracking-wide font-heading;
+    @apply text-base lg:text-2xl leading-snug tracking-wide font-heading;
   }
 
   p { 
