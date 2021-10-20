@@ -20,6 +20,7 @@ import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import DefaultErrorPage from 'next/error';
 
 export default function Post({
   site,
@@ -42,6 +43,13 @@ export default function Post({
           <h1>Loading...</h1>
           <AJLoading className="w-full h-auto" />
         </section>
+      </Layout>
+    );
+  }
+  if (!post) {
+    return (
+      <Layout site={site}>
+        <DefaultErrorPage statusCode={404} />
       </Layout>
     );
   }
@@ -71,15 +79,15 @@ export default function Post({
           ],
         }}
       ></NextSeo>
-
-      <PostLayout
-        router={router}
-        site={site}
-        post={post}
-        source={source}
-        recentPosts={recentPosts}
-        preview={preview}
-      />
+      <Layout site={site}>
+        <PostLayout
+          router={router}
+          post={post}
+          source={source}
+          recentPosts={recentPosts}
+          preview={preview}
+        />
+      </Layout>
     </>
   );
 }

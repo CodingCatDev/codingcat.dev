@@ -13,6 +13,47 @@ import Footer from '@/layout/Footer';
 
 import useIsNavigating from '@/hooks/useIsNavigating';
 import { Progress } from '@/components/global/loading/Progress';
+import dynamic from 'next/dynamic';
+
+const FirebaseProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const FirebaseAuthProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseAuthProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const FirebaseFirestoreProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseFirestoreProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const FirebaseFunctionsProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseFunctionsProvider
+    ),
+  {
+    ssr: false,
+  }
+);
 
 const Layout = ({
   site,
@@ -33,34 +74,44 @@ const Layout = ({
 
   return (
     <>
-      <Head>
-        <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
-      </Head>
-      <ThemeProvider
-        attribute="class"
-        storageKey="nightwind-mode"
-        defaultTheme="light"
-      >
-        <Progress isAnimating={isNavigating} />
+      <FirebaseProvider>
+        <FirebaseAuthProvider>
+          <FirebaseFirestoreProvider>
+            <FirebaseFunctionsProvider>
+              <Head>
+                <script
+                  dangerouslySetInnerHTML={{ __html: nightwind.init() }}
+                />
+              </Head>
+              <ThemeProvider
+                attribute="class"
+                storageKey="nightwind-mode"
+                defaultTheme="light"
+              >
+                <Progress isAnimating={isNavigating} />
 
-        <AppTopbar
-          setOverlayMenuActive={setOverlayMenuActive}
-          overlayMenuActive={overlayMenuActive}
-        />
-        <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
-          <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
-            {children}
-          </main>
+                <AppTopbar
+                  setOverlayMenuActive={setOverlayMenuActive}
+                  overlayMenuActive={overlayMenuActive}
+                />
+                <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
+                  <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
+                    {children}
+                  </main>
 
-          <Footer site={site} />
-        </div>
-        <AppMenu
-          setOverlayMenuActive={setOverlayMenuActive}
-          overlayMenuActive={overlayMenuActive}
-          userMenu={userMenu}
-          setUserMenu={setUserMenu}
-        />
-      </ThemeProvider>
+                  <Footer site={site} />
+                </div>
+                <AppMenu
+                  setOverlayMenuActive={setOverlayMenuActive}
+                  overlayMenuActive={overlayMenuActive}
+                  userMenu={userMenu}
+                  setUserMenu={setUserMenu}
+                />
+              </ThemeProvider>
+            </FirebaseFunctionsProvider>
+          </FirebaseFirestoreProvider>
+        </FirebaseAuthProvider>
+      </FirebaseProvider>
     </>
   );
 };

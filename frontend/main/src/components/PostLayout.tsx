@@ -1,11 +1,9 @@
-import DefaultErrorPage from 'next/error';
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
-import Layout from '@/layout/Layout';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import PostMedia from '@/components/PostMedia';
@@ -13,13 +11,11 @@ import RecentPostsList from '@/components/RecentPostsList';
 
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import { millisecondToUSFormat } from '@/utils/basics/date';
-import { Site } from '@/models/site.model';
 import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 
 export default function PostLayout({
-  site,
   post,
   router,
   course,
@@ -27,7 +23,6 @@ export default function PostLayout({
   recentPosts,
   preview,
 }: {
-  site: Site | null;
   post: Post;
   router: NextRouter;
   source: MDXRemoteSerializeResult | null;
@@ -41,14 +36,6 @@ export default function PostLayout({
   useEffect(() => {
     setHref(location.href);
   }, []);
-
-  if (!post) {
-    return (
-      <Layout site={site}>
-        <DefaultErrorPage statusCode={404} />
-      </Layout>
-    );
-  }
 
   function isActiveLink(course: Post, lesson: SectionLesson) {
     if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
@@ -93,7 +80,7 @@ export default function PostLayout({
   }
 
   return (
-    <Layout site={site}>
+    <>
       {/* DIV TO AVOID GRID GAP */}
       <div className="relative">
         {/* MAIN CONTENT */}
@@ -491,6 +478,6 @@ export default function PostLayout({
           color: green;
         }
       `}</style>
-    </Layout>
+    </>
   );
 }
