@@ -23,47 +23,49 @@ export default function AuthorPage({
   podcasts: Post[] | null;
 }): JSX.Element {
   return (
-    <Layout site={site}>
+    <>
       <NextSeo
         title={`${tag.tag ? tag.tag : ''} | CodingCatDev`}
         canonical={`https://codingcat.dev/tags/${tag.slug}`}
       ></NextSeo>
-      <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
-        <h1>{tag.tag}</h1>
-      </section>
-      {courses && courses.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Courses
-          </h2>
-          {courses && <PostsCards posts={courses} />}
+      <Layout site={site}>
+        <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
+          <h1>{tag.tag}</h1>
         </section>
-      )}
-      {tutorials && tutorials.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Tutorials
-          </h2>
-          {tutorials && <PostsCards posts={tutorials} />}
-        </section>
-      )}
-      {posts && posts.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Blog Posts
-          </h2>
-          {posts && <PostsCards posts={posts} />}
-        </section>
-      )}
-      {podcasts && podcasts.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Podcasts
-          </h2>
-          {podcasts && <PostsCards posts={podcasts} />}
-        </section>
-      )}
-    </Layout>
+        {courses && courses.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Courses
+            </h2>
+            {courses && <PostsCards posts={courses} />}
+          </section>
+        )}
+        {tutorials && tutorials.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Tutorials
+            </h2>
+            {tutorials && <PostsCards posts={tutorials} />}
+          </section>
+        )}
+        {posts && posts.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Blog Posts
+            </h2>
+            {posts && <PostsCards posts={posts} />}
+          </section>
+        )}
+        {podcasts && podcasts.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Podcasts
+            </h2>
+            {podcasts && <PostsCards posts={podcasts} />}
+          </section>
+        )}
+      </Layout>
+    </>
   );
 }
 

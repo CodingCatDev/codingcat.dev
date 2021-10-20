@@ -17,22 +17,25 @@ export default function Custom404({
   };
 }): JSX.Element {
   return (
-    <Layout site={site}>
+    <>
       <NextSeo title="404 | Not Found"></NextSeo>
-      <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
-        <AJ404 />
-        <h1 className="text-5xl lg:text-6xl">
-          Uh oh, that page doesn&apos;t seem to exist.
-        </h1>
-        <h2 className="font-sans text-4xl lg:text-5xl">
-          Were you looking for{' '}
-          {/* add some logic here to say which route they clicked? */}
-          <Link href="/courses">
-            <a className="underline text-secondary-600">Courses</a>
-          </Link>
-        </h2>
-      </section>
-    </Layout>
+
+      <Layout site={site}>
+        <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
+          <AJ404 />
+          <h1 className="text-5xl lg:text-6xl">
+            Uh oh, that page doesn&apos;t seem to exist.
+          </h1>
+          <h2 className="font-sans text-4xl lg:text-5xl">
+            Were you looking for{' '}
+            {/* add some logic here to say which route they clicked? */}
+            <Link href="/courses">
+              <a className="underline text-secondary-600">Courses</a>
+            </Link>
+          </h2>
+        </section>
+      </Layout>
+    </>
   );
 }
 

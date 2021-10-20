@@ -78,7 +78,7 @@ export default function Sponsorship({
   }, [scroll]);
 
   return (
-    <Layout site={site}>
+    <>
       <NextSeo
         title="Purrfect Sponsorship"
         description="Sponsorship for Purrfect.dev"
@@ -102,211 +102,213 @@ export default function Sponsorship({
             },
           ],
         }}
-      ></NextSeo>
-      <div className="sticky top-0 right-0 z-50 flex m-2 jusify-end">
-        <button
-          ref={scrollBtn}
-          className="btn-secondary"
-          onClick={() => scrollToForm()}
-        >
-          Apply To Sponsor -{'>'}
-        </button>
-      </div>
-      <section className="grid grid-cols-1 gap-2 mx-2">
-        {Array.apply(0, Array(12)).map((x, i) => (
-          <div className="w-full" key={i}>
-            <Image
-              src={`/main-codingcatdev-photo/2022_-_Sponsorship_${i + 1}.png`}
-              alt="Purrfect.dev Sponsorship Image show logo."
-              layout="responsive"
-              width="1920"
-              height="1080"
-              className="rounded-md"
-            />
-          </div>
-        ))}
-
-        <div ref={form} className="bg-white rounded">
-          <>
-            {/* Begin Mailchimp Signup Form */}
-            <div id="mc_embed_signup">
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  handleSubmit(fields);
-                }}
-              >
-                <div
-                  id="mc_embed_signup_scroll"
-                  className="flex flex-wrap m-2 lg:m-8"
-                >
-                  <h2 className="w-full m-8">Subscribe</h2>
-                  <div className="w-full text-right indicates-required">
-                    <span className="asterisk">*</span> indicates required
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group">
-                    <label htmlFor="EMAIL">
-                      Email Address <span className="asterisk">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="EMAIL"
-                      ref={email}
-                      value={fields.EMAIL}
-                      onChange={handleFieldChange}
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group">
-                    <label htmlFor="FNAME">
-                      First Name <span className="asterisk">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="FNAME"
-                      value={fields.FNAME}
-                      onChange={handleFieldChange}
-                      id="FNAME"
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group">
-                    <label htmlFor="LNAME">
-                      Last Name <span className="asterisk">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={fields.LNAME}
-                      onChange={handleFieldChange}
-                      name="LNAME"
-                      id="LNAME"
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group size1of2">
-                    <label htmlFor="PHONE">Phone Number </label>
-                    <input
-                      type="text"
-                      name="PHONE"
-                      value={fields.PHONE}
-                      onChange={handleFieldChange}
-                      id="PHONE"
-                    />
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group">
-                    <label htmlFor="COMPANY">
-                      Company <span className="asterisk">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={fields.COMPANY}
-                      onChange={handleFieldChange}
-                      name="COMPANY"
-                      id="COMPANY"
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group">
-                    <label htmlFor="WEBSITE">
-                      Website URL <span className="asterisk">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={fields.WEBSITE}
-                      onChange={handleFieldChange}
-                      name="WEBSITE"
-                      id="WEBSITE"
-                    />
-                  </div>
-                  <div className="flex flex-col w-full mb-2 mc-field-group input-group">
-                    <strong>
-                      Sponsorship Options <span className="asterisk">*</span>
-                    </strong>
-                    <ul>
-                      <li>
-                        <input
-                          required
-                          type="radio"
-                          checked={'$150 - 1 Show' === fields.SPONSOR}
-                          id="SPONSOR"
-                          value="$150 - 1 Show"
-                          name="SPONSOR"
-                          onChange={handleFieldChange}
-                        />
-                        <label htmlFor="SPONSOR-0" className="ml-2">
-                          $150 - 1 Show
-                        </label>
-                      </li>
-                      <li>
-                        <input
-                          type="radio"
-                          checked={'$400 - 3 Shows' === fields.SPONSOR}
-                          id="SPONSOR"
-                          value="$400 - 3 Shows"
-                          onChange={handleFieldChange}
-                          name="SPONSOR"
-                        />
-                        <label htmlFor="SPONSOR-1" className="ml-2">
-                          $400 - 3 Shows
-                        </label>
-                      </li>
-                      <li>
-                        <input
-                          type="radio"
-                          checked={'$900 - 10 Shows' === fields.SPONSOR}
-                          id="SPONSOR"
-                          value="$900 - 10 Shows"
-                          onChange={handleFieldChange}
-                          name="SPONSOR"
-                        />
-                        <label htmlFor="SPONSOR-2" className="ml-2">
-                          $900 - 10 Shows
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-                  <div id="mce-responses" className="clear">
-                    <div
-                      className="response"
-                      id="mce-error-response"
-                      style={{ display: 'none' }}
-                    />
-                    <div
-                      className="response"
-                      id="mce-success-response"
-                      style={{ display: 'none' }}
-                    />
-                  </div>{' '}
-                  {/* real people should not fill this in and expect good things - do not remove this or risk form bot signups*/}
-                  <div
-                    style={{ position: 'absolute', left: '-5000px' }}
-                    aria-hidden="true"
-                  >
-                    <input
-                      type="text"
-                      name="b_d5670cc367744e51204ca56f8_c07a1fa483"
-                      tabIndex={-1}
-                      defaultValue=""
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="mb-2 clear">
-                      <input type="submit" className="btn-primary" />
-                    </div>
-                    {loading && 'submitting'}
-                    {error && (
-                      <div dangerouslySetInnerHTML={{ __html: message }} />
-                    )}
-                    {success && message}
-                  </div>
-                </div>
-              </form>
-            </div>
-            {/*End mc_embed_signup*/}
-          </>
+      />
+      <Layout site={site}>
+        <div className="sticky top-0 right-0 z-50 flex m-2 jusify-end">
+          <button
+            ref={scrollBtn}
+            className="btn-secondary"
+            onClick={() => scrollToForm()}
+          >
+            Apply To Sponsor -{'>'}
+          </button>
         </div>
-      </section>
-    </Layout>
+        <section className="grid grid-cols-1 gap-2 mx-2">
+          {Array.apply(0, Array(12)).map((x, i) => (
+            <div className="w-full" key={i}>
+              <Image
+                src={`/main-codingcatdev-photo/2022_-_Sponsorship_${i + 1}.png`}
+                alt="Purrfect.dev Sponsorship Image show logo."
+                layout="responsive"
+                width="1920"
+                height="1080"
+                className="rounded-md"
+              />
+            </div>
+          ))}
+
+          <div ref={form} className="bg-white rounded">
+            <>
+              {/* Begin Mailchimp Signup Form */}
+              <div id="mc_embed_signup">
+                <form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    handleSubmit(fields);
+                  }}
+                >
+                  <div
+                    id="mc_embed_signup_scroll"
+                    className="flex flex-wrap m-2 lg:m-8"
+                  >
+                    <h2 className="w-full m-8">Subscribe</h2>
+                    <div className="w-full text-right indicates-required">
+                      <span className="asterisk">*</span> indicates required
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group">
+                      <label htmlFor="EMAIL">
+                        Email Address <span className="asterisk">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="EMAIL"
+                        ref={email}
+                        value={fields.EMAIL}
+                        onChange={handleFieldChange}
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group">
+                      <label htmlFor="FNAME">
+                        First Name <span className="asterisk">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="FNAME"
+                        value={fields.FNAME}
+                        onChange={handleFieldChange}
+                        id="FNAME"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group">
+                      <label htmlFor="LNAME">
+                        Last Name <span className="asterisk">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={fields.LNAME}
+                        onChange={handleFieldChange}
+                        name="LNAME"
+                        id="LNAME"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group size1of2">
+                      <label htmlFor="PHONE">Phone Number </label>
+                      <input
+                        type="text"
+                        name="PHONE"
+                        value={fields.PHONE}
+                        onChange={handleFieldChange}
+                        id="PHONE"
+                      />
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group">
+                      <label htmlFor="COMPANY">
+                        Company <span className="asterisk">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={fields.COMPANY}
+                        onChange={handleFieldChange}
+                        name="COMPANY"
+                        id="COMPANY"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group">
+                      <label htmlFor="WEBSITE">
+                        Website URL <span className="asterisk">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={fields.WEBSITE}
+                        onChange={handleFieldChange}
+                        name="WEBSITE"
+                        id="WEBSITE"
+                      />
+                    </div>
+                    <div className="flex flex-col w-full mb-2 mc-field-group input-group">
+                      <strong>
+                        Sponsorship Options <span className="asterisk">*</span>
+                      </strong>
+                      <ul>
+                        <li>
+                          <input
+                            required
+                            type="radio"
+                            checked={'$150 - 1 Show' === fields.SPONSOR}
+                            id="SPONSOR"
+                            value="$150 - 1 Show"
+                            name="SPONSOR"
+                            onChange={handleFieldChange}
+                          />
+                          <label htmlFor="SPONSOR-0" className="ml-2">
+                            $150 - 1 Show
+                          </label>
+                        </li>
+                        <li>
+                          <input
+                            type="radio"
+                            checked={'$400 - 3 Shows' === fields.SPONSOR}
+                            id="SPONSOR"
+                            value="$400 - 3 Shows"
+                            onChange={handleFieldChange}
+                            name="SPONSOR"
+                          />
+                          <label htmlFor="SPONSOR-1" className="ml-2">
+                            $400 - 3 Shows
+                          </label>
+                        </li>
+                        <li>
+                          <input
+                            type="radio"
+                            checked={'$900 - 10 Shows' === fields.SPONSOR}
+                            id="SPONSOR"
+                            value="$900 - 10 Shows"
+                            onChange={handleFieldChange}
+                            name="SPONSOR"
+                          />
+                          <label htmlFor="SPONSOR-2" className="ml-2">
+                            $900 - 10 Shows
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
+                    <div id="mce-responses" className="clear">
+                      <div
+                        className="response"
+                        id="mce-error-response"
+                        style={{ display: 'none' }}
+                      />
+                      <div
+                        className="response"
+                        id="mce-success-response"
+                        style={{ display: 'none' }}
+                      />
+                    </div>{' '}
+                    {/* real people should not fill this in and expect good things - do not remove this or risk form bot signups*/}
+                    <div
+                      style={{ position: 'absolute', left: '-5000px' }}
+                      aria-hidden="true"
+                    >
+                      <input
+                        type="text"
+                        name="b_d5670cc367744e51204ca56f8_c07a1fa483"
+                        tabIndex={-1}
+                        defaultValue=""
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <div className="mb-2 clear">
+                        <input type="submit" className="btn-primary" />
+                      </div>
+                      {loading && 'submitting'}
+                      {error && (
+                        <div dangerouslySetInnerHTML={{ __html: message }} />
+                      )}
+                      {success && message}
+                    </div>
+                  </div>
+                </form>
+              </div>
+              {/*End mc_embed_signup*/}
+            </>
+          </div>
+        </section>
+      </Layout>
+    </>
   );
 }
 

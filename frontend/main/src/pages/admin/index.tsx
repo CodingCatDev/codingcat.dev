@@ -12,15 +12,17 @@ export default function AdminDashboard({
   site: Site | null;
 }): JSX.Element {
   return (
-    <AdminLayout site={site}>
+    <>
       <NextSeo title="Admin Dashboard | CodingCatDev" noindex={true}></NextSeo>
 
-      <section className="p-4">
-        <header className="grid grid-cols-1 gap-4 mb-4 justify-items-start">
-          This should show more current details for logged in user.
-        </header>
-      </section>
-    </AdminLayout>
+      <AdminLayout site={site}>
+        <section className="p-4">
+          <header className="grid grid-cols-1 gap-4 mb-4 justify-items-start">
+            This should show more current details for logged in user.
+          </header>
+        </section>
+      </AdminLayout>
+    </>
   );
 }
 

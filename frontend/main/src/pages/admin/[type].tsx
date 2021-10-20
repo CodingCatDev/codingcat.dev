@@ -2,82 +2,30 @@ import http from 'http';
 import cookie from 'cookie';
 
 import { NextSeo } from 'next-seo';
-import dynamic from 'next/dynamic';
 
 import AdminLayout from '@/layout/admin/AdminLayout';
-import SiteData from '@/components/admin/SiteData';
-import EditPosts from '@/components/admin/EditPosts';
-import CreatePost from '@/components/admin/CreatePost';
 
 import { PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { getSite, validateAdminUser } from '@/services/serversideApi';
 import { resetServerContext } from 'react-beautiful-dnd';
-import { useSigninCheck } from 'reactfire';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import AdminPostTypes from '@/components/admin/AdminPostTypes';
 
-export default function AdminPostTypes({
+export default function AdminPostTypesPage({
   type,
   site,
 }: {
   type: PostType | null;
   site: Site | null;
 }): JSX.Element {
-  const { status, data: signInCheckResult } = useSigninCheck();
-  const [postType, setPostType] = useState<string | null>(null);
-
-  // This is a mess, but I need EditPosts to fully rerender
-  const router = useRouter();
-  useEffect(() => {
-    const handleRouteChange = () => {
-      setPostType(null);
-    };
-    const handleRouteChangeComplete = () => {
-      setPostType(type);
-    };
-    router.events.on('routeChangeStart', handleRouteChange);
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-      router.events.on('routeChangeComplete', handleRouteChangeComplete);
-    };
-  }, []);
-
-  useEffect(() => {
-    setPostType(type);
-  }, [type]);
-
   return (
-    <AdminLayout site={site}>
+    <>
       <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
 
-      {type && (type as string) == 'site' && (
-        <div className="p-4">
-          <SiteData />
-        </div>
-      )}
-      {type && postType && (postType as string) !== 'site' && (
-        <>
-          {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
-            <div className="p-4">
-              <header className="flex justify-between mb-4 justify-items-center">
-                <div className="flex flex-wrap space-x-2">
-                  <h1 className="font-sans text-4xl font-bold capitalize">
-                    {type}
-                  </h1>
-                  <CreatePost type={type} user={signInCheckResult.user} />
-                </div>
-              </header>
-              <EditPosts type={type} />
-            </div>
-          ) : (
-            <span>Checking Authentication...</span>
-          )}
-        </>
-      )}
-    </AdminLayout>
+      <AdminLayout site={site}>
+        <AdminPostTypes type={type} />
+      </AdminLayout>
+    </>
   );
 }
 
