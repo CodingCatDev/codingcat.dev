@@ -20,6 +20,7 @@ import parse from 'remark-parse';
 import remark2react from 'remark-react';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
+import Layout from '@/layout/Layout';
 
 export default function Post({
   site,
@@ -34,13 +35,9 @@ export default function Post({
 }): JSX.Element {
   const router = useRouter();
   return (
-    <PostLayout
-      site={site}
-      router={router}
-      post={post}
-      course={course}
-      source={source}
-    />
+    <Layout site={site}>
+      <PostLayout router={router} post={post} course={course} source={source} />
+    </Layout>
   );
 }
 

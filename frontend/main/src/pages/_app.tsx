@@ -2,7 +2,6 @@ import '@/styles/globals.css';
 import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
-import dynamic from 'next/dynamic';
 
 if (process.env.NODE_ENV === 'production') {
   const LogRocket = require('logrocket');
@@ -14,46 +13,6 @@ if (process.env.NODE_ENV === 'production') {
     setupLogRocketReact(LogRocket);
   }
 }
-
-const FirebaseProvider = dynamic<any>(
-  () =>
-    import('@/components/firebase/wrappers').then(
-      (mod) => mod.FirebaseProvider
-    ),
-  {
-    ssr: false,
-  }
-);
-
-const FirebaseAuthProvider = dynamic<any>(
-  () =>
-    import('@/components/firebase/wrappers').then(
-      (mod) => mod.FirebaseAuthProvider
-    ),
-  {
-    ssr: false,
-  }
-);
-
-const FirebaseFirestoreProvider = dynamic<any>(
-  () =>
-    import('@/components/firebase/wrappers').then(
-      (mod) => mod.FirebaseFirestoreProvider
-    ),
-  {
-    ssr: false,
-  }
-);
-
-const FirebaseFunctionsProvider = dynamic<any>(
-  () =>
-    import('@/components/firebase/wrappers').then(
-      (mod) => mod.FirebaseFunctionsProvider
-    ),
-  {
-    ssr: false,
-  }
-);
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -91,15 +50,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           cardType: 'summary_large_image',
         }}
       />
-      <FirebaseProvider>
-        <FirebaseAuthProvider>
-          <FirebaseFirestoreProvider>
-            <FirebaseFunctionsProvider>
-              <Component {...pageProps} />
-            </FirebaseFunctionsProvider>
-          </FirebaseFirestoreProvider>
-        </FirebaseAuthProvider>
-      </FirebaseProvider>
+      <Component {...pageProps} />
     </>
   );
 }

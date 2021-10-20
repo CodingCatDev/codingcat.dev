@@ -14,16 +14,18 @@ export default function AuthorsPage({
   authors: UserInfoExtended[];
 }): JSX.Element {
   return (
-    <Layout site={site}>
+    <>
       <NextSeo
         title="Authors | CodingCatDev"
         canonical={`https://codingcat.dev/authors/`}
       ></NextSeo>
-      <section className="grid grid-cols-1 gap-10 p-4 sm:p-10 place-items-center">
-        <h1 className="text-5xl lg:text-7xl">Authors</h1>
-        <Authors authors={authors} />
-      </section>
-    </Layout>
+      <Layout site={site}>
+        <section className="grid grid-cols-1 gap-10 p-4 sm:p-10 place-items-center">
+          <h1 className="text-5xl lg:text-7xl">Authors</h1>
+          <Authors authors={authors} />
+        </section>
+      </Layout>
+    </>
   );
 }
 

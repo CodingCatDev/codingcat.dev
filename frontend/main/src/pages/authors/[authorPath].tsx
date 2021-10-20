@@ -26,39 +26,41 @@ export default function AuthorPage({
   posts: Post[] | null;
 }): JSX.Element {
   return (
-    <Layout site={site}>
+    <>
       <NextSeo
         title={`${author.displayName ? author.displayName : ''} | CodingCatDev`}
         canonical={`https://codingcat.dev/authors/`}
       ></NextSeo>
-      <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
-        <AuthorCard author={author} />
-      </section>
-      {courses && courses.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Courses
-          </h2>
-          {courses && <PostsCards posts={courses} />}
+      <Layout site={site}>
+        <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
+          <AuthorCard author={author} />
         </section>
-      )}
-      {tutorials && tutorials.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Tutorials
-          </h2>
-          {tutorials && <PostsCards posts={tutorials} />}
-        </section>
-      )}
-      {posts && posts.length > 0 && (
-        <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
-          <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
-            Blog Posts
-          </h2>
-          {posts && <PostsCards posts={posts} />}
-        </section>
-      )}
-    </Layout>
+        {courses && courses.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Courses
+            </h2>
+            {courses && <PostsCards posts={courses} />}
+          </section>
+        )}
+        {tutorials && tutorials.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Tutorials
+            </h2>
+            {tutorials && <PostsCards posts={tutorials} />}
+          </section>
+        )}
+        {posts && posts.length > 0 && (
+          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+            <h2 className="mt-4 text-4xl text-primary-900 lg:text-5xl">
+              Blog Posts
+            </h2>
+            {posts && <PostsCards posts={posts} />}
+          </section>
+        )}
+      </Layout>
+    </>
   );
 }
 

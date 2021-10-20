@@ -14,27 +14,29 @@ export default function AuthorsPage({
   tags: Tag[];
 }): JSX.Element {
   return (
-    <Layout site={site}>
+    <>
       <NextSeo
         title="Tags | CodingCatDev"
         canonical={`https://codingcat.dev/tags/`}
       ></NextSeo>
-      <section className="grid gap-10 p-4 sm:p-10 place-items-center">
-        <h1 className="text-5xl lg:text-7xl">Tags</h1>
-        <section className="grid grid-cols-12 gap-2">
-          {tags.map((tag, i) => (
-            <Link href={`/tags/${tag.slug}`} key={i}>
-              <a className="flex flex-col items-center p-2 bg-primary-900 text-primary-50 rounded-xl">
-                <p>{tag.tag}</p>
-                <p className="flex-initial p-2 rounded-full text-basics-900 bg-secondary-500">
-                  {tag.count}
-                </p>
-              </a>
-            </Link>
-          ))}
+      <Layout site={site}>
+        <section className="grid gap-10 p-4 sm:p-10 place-items-center">
+          <h1 className="text-5xl lg:text-7xl">Tags</h1>
+          <section className="grid grid-cols-12 gap-2">
+            {tags.map((tag, i) => (
+              <Link href={`/tags/${tag.slug}`} key={i}>
+                <a className="flex flex-col items-center p-2 bg-primary-900 text-primary-50 rounded-xl">
+                  <p>{tag.tag}</p>
+                  <p className="flex-initial p-2 rounded-full text-basics-900 bg-secondary-500">
+                    {tag.count}
+                  </p>
+                </a>
+              </Link>
+            ))}
+          </section>
         </section>
-      </section>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 

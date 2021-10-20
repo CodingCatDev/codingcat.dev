@@ -7,10 +7,9 @@ import AdminLayout from '@/layout/admin/AdminLayout';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { getSite, postById, validateAdminUser } from '@/services/serversideApi';
-import EditPost from '@/components/admin/EditPost';
-import { useSigninCheck } from 'reactfire';
+import Edit from '@/components/admin/Edit';
 
-export default function Edit({
+export default function EditPage({
   type,
   id,
   site,
@@ -21,23 +20,14 @@ export default function Edit({
   site: Site | null;
   post: Post;
 }): JSX.Element {
-  const { status, data: signInCheckResult } = useSigninCheck();
-
   return (
-    <AdminLayout site={site} post={post}>
+    <>
       <NextSeo title={`${type} | CodingCatDev`} noindex={true}></NextSeo>
-      {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
-        <>
-          {type && id ? (
-            <EditPost type={type} id={id} user={signInCheckResult.user} />
-          ) : (
-            <div>Post Not Found.</div>
-          )}
-        </>
-      ) : (
-        <>Gathering Post Details...</>
-      )}
-    </AdminLayout>
+
+      <AdminLayout site={site} post={post}>
+        <Edit type={type} id={id} />
+      </AdminLayout>
+    </>
   );
 }
 
