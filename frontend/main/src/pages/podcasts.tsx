@@ -14,7 +14,7 @@ export default function Blog({
   posts: Post[];
 }): JSX.Element {
   return (
-    <Layout site={site}>
+    <>
       <NextSeo
         title="Purrfect Podcasts"
         description="Purrfect Podcasts"
@@ -28,27 +28,26 @@ export default function Blog({
           site_name: 'Purrfect.dev',
           images: [
             {
-              url:
-                'https://media.codingcat.dev/image/upload/c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
+              url: 'https://media.codingcat.dev/image/upload/c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
               width: 1200,
               height: 630,
               alt: 'AJ Logo Black Cat Face with Purrfect.dev Domain',
             },
             {
-              url:
-                'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/purrfect.dev.png',
+              url: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/purrfect.dev.png',
             },
           ],
         }}
       ></NextSeo>
-
-      <div className="p-4 sm:p-10">
-        <h1 className="mb-4 text-5xl text-center lg:text-7xl">
-          {posts[0].type.charAt(0).toUpperCase() + posts[0].type.slice(1)}s
-        </h1>
-        <PostsCards posts={posts} />
-      </div>
-    </Layout>
+      <Layout site={site}>
+        <div className="p-4 sm:p-10">
+          <h1 className="mb-4 text-5xl text-center lg:text-7xl">
+            {posts[0].type.charAt(0).toUpperCase() + posts[0].type.slice(1)}s
+          </h1>
+          <PostsCards posts={posts} />
+        </div>
+      </Layout>
+    </>
   );
 }
 
