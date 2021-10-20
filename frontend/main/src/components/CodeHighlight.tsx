@@ -1,5 +1,5 @@
 import Highlight, { defaultProps } from 'prism-react-renderer';
-import dracula from 'prism-react-renderer/themes/palenight';
+import dracula from 'prism-react-renderer/themes/vsDark';
 
 const CodeHighlight = ({
   children,

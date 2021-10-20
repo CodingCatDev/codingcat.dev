@@ -34,6 +34,7 @@ export default function Post({
   source: MDXRemoteSerializeResult | null;
   preview: boolean;
 }): JSX.Element {
+  console.log(source);
   const router = useRouter();
   if (router.isFallback) {
     return (
@@ -255,8 +256,8 @@ export async function getStaticProps({
   if (allContent) {
     source = await serialize(allContent, {
       mdxOptions: {
-        remarkPlugins: [parse, remark2react],
-        rehypePlugins: [rehypePrism],
+        remarkPlugins: [],
+        rehypePlugins: [],
       },
     });
   } else {

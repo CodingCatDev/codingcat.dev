@@ -18,6 +18,7 @@ import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 import CodeHighlight from '@/components/CodeHighlight';
+import CodeWiggle from '@/components/CodeWiggle';
 
 export default function PostLayout({
   site,
@@ -43,10 +44,16 @@ export default function PostLayout({
       props: JSX.IntrinsicAttributes &
         ClassAttributes<HTMLDivElement> &
         HTMLAttributes<HTMLDivElement>
-    ) => <div {...props} className="overflow-auto bg-primary-50" />,
+    ) => <div {...props} className="overflow-auto" />,
     code: (
       props: JSX.IntrinsicAttributes & { children: string; className: string }
     ) => <CodeHighlight {...props} />,
+    CodeWiggle: (
+      props: JSX.IntrinsicAttributes & {
+        children: string;
+        className?: string | undefined;
+      }
+    ) => <CodeWiggle {...props} />,
   };
 
   useEffect(() => {
