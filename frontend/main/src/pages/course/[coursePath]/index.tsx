@@ -1,4 +1,6 @@
 import { useRouter } from 'next/router';
+import { NextSeo } from 'next-seo';
+
 import {
   getSite,
   getStripeProduct,
@@ -39,9 +41,35 @@ export default function CoursePage({
   }
 
   return (
-    <Layout site={site}>
-      <Course post={post} source={source} product={product} />
-    </Layout>
+    <>
+      <NextSeo
+        title={post.title}
+        description={post.excerpt}
+        canonical={`https://codingcat.dev${router.asPath}`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: `https://codingcat.dev${router.asPath}`,
+          title: post.title,
+          description: post.excerpt,
+          site_name: 'CodingCatDev',
+          images: [
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${post.coverPhoto?.public_id}`,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,
+            },
+          ],
+        }}
+      ></NextSeo>
+      <Layout site={site}>
+        <Course post={post} source={source} product={product} />
+      </Layout>
+    </>
   );
 }
 

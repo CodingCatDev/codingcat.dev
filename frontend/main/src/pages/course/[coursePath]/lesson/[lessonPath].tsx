@@ -7,6 +7,7 @@ import {
   postBySlugService,
   getSite,
 } from '@/services/serversideApi';
+import { NextSeo } from 'next-seo';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import rehypePrism from '@mapbox/rehype-prism';
@@ -35,9 +36,40 @@ export default function Post({
 }): JSX.Element {
   const router = useRouter();
   return (
-    <Layout site={site}>
-      <PostLayout router={router} post={post} course={course} source={source} />
-    </Layout>
+    <>
+      <NextSeo
+        title={post.title}
+        description={post.excerpt}
+        canonical={`https://codingcat.dev${router.asPath}`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: `https://codingcat.dev${router.asPath}`,
+          title: post.title,
+          description: post.excerpt,
+          site_name: 'CodingCatDev',
+          images: [
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${post.coverPhoto?.public_id}`,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,
+            },
+          ],
+        }}
+      ></NextSeo>
+      <Layout site={site}>
+        <PostLayout
+          router={router}
+          post={post}
+          course={course}
+          source={source}
+        />
+      </Layout>
+    </>
   );
 }
 
