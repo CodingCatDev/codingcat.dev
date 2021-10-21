@@ -1,5 +1,5 @@
 import React, { ClassAttributes, HTMLAttributes } from 'react';
-import CodeWiggle from '@/components/code/CodeWiggle';
+import WordHighlight from '@/components/code/WordHighlight';
 import CodeHighlight from '@/components/code/CodeHighlight';
 
 export const components: Record<string, React.ReactNode> = {
@@ -37,10 +37,14 @@ export const components: Record<string, React.ReactNode> = {
       </div>
     </div>
   ),
-  CodeWiggle: (
+  WordHighlight: (
     props: JSX.IntrinsicAttributes & {
       children: string;
       className?: string | undefined;
     }
-  ) => <CodeWiggle {...props} />,
+  ) => (
+    <div className="flex">
+      <WordHighlight {...props} />
+    </div>
+  ),
 };
