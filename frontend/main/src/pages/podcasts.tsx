@@ -1,7 +1,8 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
+import PurrfectDevUpper from '@/components/PurrfectDevUpper';
 import PostsCards from '@/components/PostsCards';
-
+import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
 import { getSite, postsService } from '@/services/serversideApi';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
@@ -41,10 +42,12 @@ export default function Blog({
       ></NextSeo>
       <Layout site={site}>
         <div className="p-4 sm:p-10">
-          <h1 className="mb-4 text-5xl text-center lg:text-7xl">
+          <PurrfectDevUpper />
+          <h2 className="mb-4 text-5xl text-center lg:text-7xl">
             {posts[0].type.charAt(0).toUpperCase() + posts[0].type.slice(1)}s
-          </h1>
+          </h2>
           <PostsCards posts={posts} />
+          <PurrfectDevPodcatchers />
         </div>
       </Layout>
     </>
