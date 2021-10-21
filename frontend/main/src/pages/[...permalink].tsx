@@ -11,9 +11,6 @@ import {
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
-import rehypePrism from '@mapbox/rehype-prism';
-import parse from 'remark-parse';
-import remark2react from 'remark-react';
 import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
@@ -265,8 +262,8 @@ export async function getStaticProps({
   if (allContent) {
     source = await serialize(allContent, {
       mdxOptions: {
-        remarkPlugins: [parse, remark2react],
-        rehypePlugins: [rehypePrism],
+        remarkPlugins: [],
+        rehypePlugins: [],
       },
     });
   } else {

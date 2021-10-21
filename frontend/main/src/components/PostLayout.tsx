@@ -2,7 +2,7 @@ import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { useEffect, useState } from 'react';
+import { ClassAttributes, HTMLAttributes, useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
@@ -14,7 +14,7 @@ import { millisecondToUSFormat } from '@/utils/basics/date';
 import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
-
+import { components } from '@/components/code/MDXComponents';
 export default function PostLayout({
   post,
   router,
@@ -195,7 +195,7 @@ export default function PostLayout({
           </BreakBarLeft>
         </section>
 
-        <section className="grid grid-cols-1 gap-4 p-10 2xl:grid-cols-sidebar 2xl:pl-10">
+        <section className="grid grid-cols-1 gap-4 p-1 lg:p-10 2xl:grid-cols-sidebar 2xl:pl-10">
           {/* LESSONS */}
           {course && course.sections && (
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
@@ -277,7 +277,7 @@ export default function PostLayout({
           )}
           {/* BLOG POST */}
           <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-            {source && <MDXRemote {...source} />}
+            {source && <MDXRemote {...source} components={components} />}
           </article>
         </section>
       </div>
@@ -309,14 +309,6 @@ export default function PostLayout({
           margin: 0;
         }
 
-        main h2 {
-          font-size: 3rem;
-        }
-
-        main h3 {
-          font-size: 2.25rem;
-        }
-
         main h3,
         main h4,
         main h5,
@@ -331,151 +323,6 @@ export default function PostLayout({
         main ul li {
           margin-left: 2rem;
           list-style-type: circle;
-        }
-
-        /*
- * Synthwave '84 Theme originally by Robb Owen [@Robb0wen] for Visual Studio Code
- * Demo: https://marc.dev/demo/prism-synthwave84
- *
- * Ported for PrismJS by Marc Backes [@themarcba]
- */
-        code,
-        pre {
-          color: #f92aad;
-          text-shadow: 0 0 2px #100c0f, 0 0 5px #dc078e33, 0 0 10px #fff3;
-          background: none;
-          font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-          font-size: 1em;
-          text-align: left;
-          white-space: pre;
-          word-spacing: normal;
-          word-break: normal;
-          word-wrap: normal;
-          line-height: 1.5;
-          border-radius: 0.5rem;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-          -moz-tab-size: 4;
-          -o-tab-size: 4;
-          tab-size: 4;
-
-          -webkit-hyphens: none;
-          -moz-hyphens: none;
-          -ms-hyphens: none;
-          hyphens: none;
-        }
-
-        /* Code blocks */
-        pre {
-          padding: 1em;
-          margin: 0.5em 0;
-          overflow: auto;
-        }
-
-        :not(pre) > code,
-        pre {
-          background-color: transparent !important;
-          background-image: linear-gradient(to bottom, #2a2139 75%, #34294f);
-        }
-
-        /* Inline code */
-        :not(pre) > code {
-          padding: 0.1em;
-          border-radius: 0.3em;
-          white-space: normal;
-        }
-
-        .token.comment,
-        .token.block-comment,
-        .token.prolog,
-        .token.doctype,
-        .token.cdata {
-          color: #8e8e8e;
-        }
-
-        .token.punctuation {
-          color: #ccc;
-        }
-
-        .token.tag,
-        .token.attr-name,
-        .token.namespace,
-        .token.number,
-        .token.unit,
-        .token.hexcode,
-        .token.deleted {
-          color: #e2777a;
-        }
-
-        .token.property,
-        .token.selector {
-          color: #72f1b8;
-          text-shadow: 0 0 2px #100c0f, 0 0 10px #257c5575, 0 0 35px #21272475;
-        }
-
-        .token.function-name {
-          color: #6196cc;
-        }
-
-        .token.boolean,
-        .token.selector .token.id,
-        .token.function {
-          color: #fdfdfd;
-          text-shadow: 0 0 2px #001716, 0 0 3px #03edf975, 0 0 5px #03edf975,
-            0 0 8px #03edf975;
-        }
-
-        .token.class-name {
-          color: #fff5f6;
-          text-shadow: 0 0 2px #000, 0 0 10px #fc1f2c75, 0 0 5px #fc1f2c75,
-            0 0 25px #fc1f2c75;
-        }
-
-        .token.constant,
-        .token.symbol {
-          color: #f92aad;
-          text-shadow: 0 0 2px #100c0f, 0 0 5px #dc078e33, 0 0 10px #fff3;
-        }
-
-        .token.important,
-        .token.atrule,
-        .token.keyword,
-        .token.selector .token.class,
-        .token.builtin {
-          color: #f4eee4;
-          text-shadow: 0 0 2px #393a33, 0 0 8px #f39f0575, 0 0 2px #f39f0575;
-        }
-
-        .token.string,
-        .token.char,
-        .token.attr-value,
-        .token.regex,
-        .token.variable {
-          color: #f87c32;
-        }
-
-        .token.operator,
-        .token.entity,
-        .token.url {
-          color: #67cdcc;
-        }
-
-        .token.important,
-        .token.bold {
-          font-weight: bold;
-        }
-
-        .token.italic {
-          font-style: italic;
-        }
-
-        .token.entity {
-          cursor: help;
-        }
-
-        .token.inserted {
-          color: green;
         }
       `}</style>
     </>

@@ -40,6 +40,7 @@
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primereact": "^5.0.2",
+    "prism-react-renderer": "^1.2.1",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^17.0.2",

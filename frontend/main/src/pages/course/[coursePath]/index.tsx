@@ -9,13 +9,10 @@ import {
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
-import rehypePrism from '@mapbox/rehype-prism';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { StripeProduct } from '@/models/stripe.model';
 import matter from 'gray-matter';
-import parse from 'remark-parse';
-import remark2react from 'remark-react';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import Course from '@/components/Course';
@@ -175,8 +172,8 @@ export async function getStaticProps({
   if (allContent) {
     source = await serialize(allContent, {
       mdxOptions: {
-        remarkPlugins: [parse, remark2react],
-        rehypePlugins: [rehypePrism],
+        remarkPlugins: [],
+        rehypePlugins: [],
       },
     });
   } else {
