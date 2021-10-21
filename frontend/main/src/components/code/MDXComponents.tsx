@@ -22,6 +22,7 @@ export const components: Record<string, React.ReactNode> = {
       className: string;
       dir: string;
       lang: string;
+      highlight?: string[];
     }
   ) => (
     <div className="flex flex-col mt-1">
@@ -33,7 +34,11 @@ export const components: Record<string, React.ReactNode> = {
         </div>
       )}
       <div className="overflow-auto border-8 border-primary-900">
-        <CodeHighlight {...props} lang={props.lang} />
+        <CodeHighlight
+          {...props}
+          lang={props.lang}
+          highlight={props.highlight}
+        />
       </div>
     </div>
   ),

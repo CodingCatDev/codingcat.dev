@@ -6,9 +6,9 @@ const WordHighlight = ({
   className?: string;
 }) => {
   return (
-    <p className="p-1 transition duration-500 ease-in-out transform rounded cursor-pointer text-basics-900 dark:text-basics-900 bg-yellow-50 hover:scale-150 hover dark:bg-yellow-50">
+    <span className="p-1 rounded cursor-pointer text-basics-900 dark:text-basics-900 bg-yellow-50 hover:text-5xl hover:bg-secondary-300 dark:bg-yellow-50">
       {children}
-    </p>
+    </span>
   );
 };
 export default WordHighlight;
