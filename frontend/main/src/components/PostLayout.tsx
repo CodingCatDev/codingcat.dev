@@ -14,9 +14,7 @@ import { millisecondToUSFormat } from '@/utils/basics/date';
 import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
-import CodeHighlight from '@/components/CodeHighlight';
-import CodeWiggle from '@/components/CodeWiggle';
-
+import { components } from '@/components/code/MDXComponents';
 export default function PostLayout({
   post,
   router,
@@ -34,22 +32,6 @@ export default function PostLayout({
 }): JSX.Element {
   const [href, setHref] = useState('');
   const { data: user } = useUser();
-  const components: Record<string, React.ReactNode> = {
-    pre: (
-      props: JSX.IntrinsicAttributes &
-        ClassAttributes<HTMLDivElement> &
-        HTMLAttributes<HTMLDivElement>
-    ) => <div {...props} className="overflow-auto" />,
-    code: (
-      props: JSX.IntrinsicAttributes & { children: string; className: string }
-    ) => <CodeHighlight {...props} />,
-    CodeWiggle: (
-      props: JSX.IntrinsicAttributes & {
-        children: string;
-        className?: string | undefined;
-      }
-    ) => <CodeWiggle {...props} />,
-  };
 
   useEffect(() => {
     setHref(location.href);

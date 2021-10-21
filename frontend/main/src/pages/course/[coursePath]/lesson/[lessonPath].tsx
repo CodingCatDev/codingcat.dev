@@ -10,15 +10,12 @@ import {
 import { NextSeo } from 'next-seo';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
-import rehypePrism from '@mapbox/rehype-prism';
 
 import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
 import { AccessMode } from '@/models/access.model';
 import { AuthIssue } from '@/models/user.model';
 import matter from 'gray-matter';
-import parse from 'remark-parse';
-import remark2react from 'remark-react';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import Layout from '@/layout/Layout';
@@ -200,8 +197,8 @@ export async function getServerSideProps({
   if (allContent) {
     source = await serialize(allContent, {
       mdxOptions: {
-        remarkPlugins: [parse, remark2react],
-        rehypePlugins: [rehypePrism],
+        remarkPlugins: [],
+        rehypePlugins: [],
       },
     });
   } else {

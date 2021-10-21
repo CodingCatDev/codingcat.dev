@@ -11,9 +11,6 @@ import {
 
 import { Post as PostModel, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
-import rehypePrism from '@mapbox/rehype-prism';
-import parse from 'remark-parse';
-import remark2react from 'remark-react';
 import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/components/PostLayout';
 import { Site } from '@/models/site.model';
@@ -35,7 +32,6 @@ export default function Post({
   source: MDXRemoteSerializeResult | null;
   preview: boolean;
 }): JSX.Element {
-  console.log(source);
   const router = useRouter();
   if (router.isFallback) {
     return (

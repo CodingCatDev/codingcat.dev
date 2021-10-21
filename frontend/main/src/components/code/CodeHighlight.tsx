@@ -1,14 +1,17 @@
-import Highlight, { defaultProps } from 'prism-react-renderer';
+import Highlight, { defaultProps, Language } from 'prism-react-renderer';
 import dracula from 'prism-react-renderer/themes/vsDark';
 
 const CodeHighlight = ({
   children,
   className,
+  lang,
 }: {
   children: string;
   className: string;
+  lang?: string;
 }) => {
-  const language = className?.replace(/language-/, '') || ('bash' as any);
+  const language =
+    lang || className?.replace(/language-/, '') || ('bash' as any);
 
   return (
     <Highlight
