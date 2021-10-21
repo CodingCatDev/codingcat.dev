@@ -5,6 +5,7 @@ import {
   getSite,
   getStripeProduct,
   postBySlugService,
+  postsService,
 } from '@/services/serversideApi';
 
 import { Post as PostModel, PostType } from '@/models/post.model';
@@ -74,11 +75,22 @@ export default function CoursePage({
 }
 
 export async function getStaticPaths(): Promise<{
-  paths: { params: { type: PostType; slug: string } }[];
+  paths: { params: { coursePath: string } }[];
   fallback: boolean;
 }> {
+  const paths: { params: { coursePath: string } }[] = [];
+  for (const postType of [PostType.course]) {
+    const docData = await postsService(postType);
+    for (const doc of docData) {
+      paths.push({
+        params: {
+          coursePath: doc.slug,
+        },
+      });
+    }
+  }
   return {
-    paths: [],
+    paths,
     fallback: true,
   };
 }
@@ -128,7 +140,7 @@ export async function getStaticProps({
   if (productId) {
     product = await getStripeProduct(productId);
     if (product) {
-      console.log('Product Found and passed.');
+      console.log(`${coursePath} has product: `, product.id);
     }
   }
 

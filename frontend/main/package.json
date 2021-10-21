@@ -10,6 +10,7 @@
     "emulate:firebase": "npm run --prefix ./../../backend/firebase/ emulated",
     "emulate:next": "cross-env NODE_OPTIONS='--inspect=9230' FIRESTORE_EMULATOR_HOST='localhost:8080' NEXT_PUBLIC_FB_AUTH_HOST='http://localhost:9099' NEXT_PUBLIC_FB_DB_HOST='localhost:9000' NEXT_PUBLIC_FB_FS_HOST='localhost:8080' NEXT_PUBLIC_CS_HOST='localhost:9199' NEXT_PUBLIC_FB_FN_HOST='localhost:5001' next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start -p 3000",
     "lint": "next lint"
   },
@@ -79,6 +80,7 @@
     "autoprefixer": "^10.0.2",
     "eslint-config-next": "11.1.2",
     "eslint-config-prettier": "^8.3.0",
+    "next-sitemap": "^1.6.192",
     "postcss": "^8.2.1",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.2.1",

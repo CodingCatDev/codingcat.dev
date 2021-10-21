@@ -93,23 +93,25 @@ export default function Post({
 }
 
 export async function getStaticPaths(): Promise<{
-  paths: { params: { type: PostType; slug: string } }[];
+  paths: { params: { permalink: string[] } }[];
   fallback: boolean;
 }> {
-  const paths: { params: { type: PostType; slug: string } }[] = [];
-  [PostType.post, PostType.tutorial, PostType.podcast, PostType.page].forEach(
-    async (postType) => {
-      const docData = await postsService(postType);
-      for (const doc of docData) {
-        paths.push({
-          params: {
-            type: doc.type,
-            slug: doc.slug,
-          },
-        });
-      }
+  const paths: { params: { permalink: string[] } }[] = [];
+  for (const postType of [
+    PostType.post,
+    PostType.tutorial,
+    PostType.podcast,
+    PostType.page,
+  ]) {
+    const docData = await postsService(postType);
+    for (const doc of docData) {
+      paths.push({
+        params: {
+          permalink: [doc.type, doc.slug],
+        },
+      });
     }
-  );
+  }
   return {
     paths,
     fallback: true,
