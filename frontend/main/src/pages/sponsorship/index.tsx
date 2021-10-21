@@ -141,7 +141,7 @@ export default function Sponsorship({
                     id="mc_embed_signup_scroll"
                     className="flex flex-wrap m-2 lg:m-8"
                   >
-                    <h2 className="w-full m-8">Subscribe</h2>
+                    <h2 className="w-full m-8">Sponsor</h2>
                     <div className="w-full text-right indicates-required">
                       <span className="asterisk">*</span> indicates required
                     </div>
