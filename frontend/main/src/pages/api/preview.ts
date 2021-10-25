@@ -41,6 +41,7 @@ const preview = async (
   }
 
   const slugParts = slugQuery.split('/');
+  console.log(slugParts);
 
   if (slugParts.length < 2) {
     return res
@@ -70,24 +71,47 @@ const preview = async (
 
   // Fetch the headless CMS to check if the provided `slug` exists
   // getPostBySlug would implement the required fetching logic to the headless CMS
-  const posts = await postBySlugService(type, slug);
 
-  // If the slug doesn't exist prevent preview mode from being enabled
-  if (posts.length == 0) {
-    return res.status(401).json({ message: 'Invalid slug' });
+  if (slugParts.length === 4 && slugParts[2] === PostType.lesson) {
+    const posts = await postBySlugService(PostType.lesson, slugParts[3]);
+    // If the slug doesn't exist prevent preview mode from being enabled
+    if (posts.length == 0) {
+      return res.status(401).json({ message: 'Invalid Lesson slug' });
+    }
+
+    // Enable Preview Mode by setting the cookies
+    const post = posts[0];
+    const history = await latestHistory(post.id as string);
+    res.setPreviewData({
+      id: history?.id,
+      postId: history?.postId,
+      slug: history?.slug,
+    });
+
+    // Redirect to the path from the fetched post
+    // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
+    res.redirect(
+      `/${slugParts[0]}/${slugParts[1]}/${slugParts[2]}/${slugParts[3]}`
+    );
+  } else {
+    const posts = await postBySlugService(type, slug);
+    // If the slug doesn't exist prevent preview mode from being enabled
+    if (posts.length == 0) {
+      return res.status(401).json({ message: 'Invalid slug' });
+    }
+
+    // Enable Preview Mode by setting the cookies
+    const post = posts[0];
+    const history = await latestHistory(post.id as string);
+    res.setPreviewData({
+      id: history?.id,
+      postId: history?.postId,
+      slug: history?.slug,
+    });
+
+    // Redirect to the path from the fetched post
+    // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
+    res.redirect(`/${post.type}/${post.slug}`);
   }
-
-  // Enable Preview Mode by setting the cookies
-  const post = posts[0];
-  const history = await latestHistory(post.id as string);
-  res.setPreviewData({
-    id: history?.id,
-    postId: history?.postId,
-    slug: history?.slug,
-  });
-
-  // Redirect to the path from the fetched post
-  // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-  res.redirect(`/${post.type}/${post.slug}`);
 };
 export default preview;

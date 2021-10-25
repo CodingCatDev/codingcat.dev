@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 
-import { Post, Section } from '@/models/post.model';
+import { Post, PostType, Section } from '@/models/post.model';
 import { take } from 'rxjs/operators';
 import {
   DragDropContext,
@@ -95,6 +95,21 @@ export default function EditPostCourseSections({
         historyUpdate.sections[sectionIndex] = section;
       }
       updateContent(historyUpdate);
+    }
+  };
+
+  const onLessonPreview = (sectionIndex: number, lessonIndex: number) => {
+    if (history?.sections) {
+      if (history?.sections) {
+        const section = { ...history.sections[sectionIndex] };
+        if (section && section.lessons) {
+          const lesson = section.lessons[lessonIndex];
+          window.open(
+            `/api/preview?slug=${history.type}/${history.slug}/${PostType.lesson}/${lesson.slug}`,
+            '_blank'
+          );
+        }
+      }
     }
   };
 
@@ -325,26 +340,48 @@ export default function EditPostCourseSections({
                                                 </p>
                                               </div>
                                             </Link>
-                                            <button
-                                              onClick={() =>
-                                                onLessonDelete(si, li)
-                                              }
-                                            >
-                                              <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                className="w-8"
+                                            <div>
+                                              <button
+                                                onClick={() =>
+                                                  onLessonPreview(si, li)
+                                                }
                                               >
-                                                <path
-                                                  strokeLinecap="round"
-                                                  strokeLinejoin="round"
-                                                  strokeWidth={2}
-                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                />
-                                              </svg>
-                                            </button>
+                                                <svg
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  className="w-8 rounded hover:bg-primary-900 hover:text-white"
+                                                  fill="none"
+                                                  viewBox="0 0 24 24"
+                                                  stroke="currentColor"
+                                                >
+                                                  <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                                                  />
+                                                </svg>
+                                              </button>
+                                              <button
+                                                onClick={() =>
+                                                  onLessonDelete(si, li)
+                                                }
+                                              >
+                                                <svg
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  fill="none"
+                                                  viewBox="0 0 24 24"
+                                                  stroke="currentColor"
+                                                  className="w-8 rounded hover:bg-error-500 hover:text-white"
+                                                >
+                                                  <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                  />
+                                                </svg>
+                                              </button>
+                                            </div>
                                           </div>
                                         )}
                                       </Draggable>
