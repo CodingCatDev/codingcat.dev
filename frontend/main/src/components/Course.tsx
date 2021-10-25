@@ -141,10 +141,8 @@ export default function Course({
               ) : (
                 <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
                   <Link href="/user/profile">
-                    <a>
-                      <button className="btn-primary">
-                        Login or Become a Member
-                      </button>
+                    <a className="border-none">
+                      <button className="btn-primary">Membership Login</button>
                     </a>
                   </Link>
                 </div>
