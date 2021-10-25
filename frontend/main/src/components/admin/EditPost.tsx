@@ -81,6 +81,9 @@ export default function EditPost({
         setHistory(db);
         return;
       }
+      if (history.id != db.id) {
+        setHistory(db);
+      }
     }
   }, [postHistories]);
 
@@ -173,18 +176,23 @@ export default function EditPost({
     ).then(() => getDoc(docRef).then((d) => d.data() as Post));
   };
 
-  const updateContent = (h: Post) => {
+  const updateContent = async (h: Post) => {
     setSaving(true);
     if (h?.publishedAt) {
-      return postHistoryCreate(h).then((d) => {
-        setSaving(false);
-        return d;
+      setHistory((prevH) => {
+        delete prevH?.publishedAt;
+        return prevH;
       });
+      const d = await postHistoryCreate(h);
+      setSaving(false);
+      return d;
     } else {
-      return postHistoryUpdate(h).then((d) => {
-        setSaving(false);
-        return d;
+      setHistory((prevH) => {
+        return prevH;
       });
+      const d = await postHistoryUpdate(h);
+      setSaving(false);
+      return d;
     }
   };
 
