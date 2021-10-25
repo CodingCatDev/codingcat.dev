@@ -76,7 +76,11 @@ export default function EditPost({
 
   useEffect(() => {
     if (postHistories && postHistories.length > 0) {
-      setHistory(postHistories[0]);
+      const db = postHistories[0];
+      if (!history) {
+        setHistory(db);
+        return;
+      }
     }
   }, [postHistories]);
 
