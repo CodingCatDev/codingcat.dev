@@ -31,7 +31,7 @@ export default function CourseBuyButton({
                   <Link
                     href={`/course/${post.slug}/lesson/${post.sections[0].lessons[0].slug}`}
                   >
-                    <a>
+                    <a className="border-none">
                       <button className="btn-primary">Start Course</button>
                     </a>
                   </Link>
@@ -39,15 +39,15 @@ export default function CourseBuyButton({
             </>
           ) : (
             <>
-              {product && (
+              {/* {product && (
                 <p className="p-2 text-xl text-basics-900">
                   ${post.accessSettings?.price}
                 </p>
-              )}
+              )} */}
               <div className="flex items-stretch justify-center space-x-4 flex-nowrap">
-                {product && <CourseBuy product={product} user={user} />}
+                {/* {product && <CourseBuy product={product} user={user} />} */}
                 <Link href="/user/profile">
-                  <a>
+                  <a className="border-none">
                     <button className="btn-primary">Become a Member</button>
                   </a>
                 </Link>
