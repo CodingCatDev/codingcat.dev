@@ -3,7 +3,7 @@ import TimeAgo from 'react-timeago';
 
 import PublishModal from '@/components/admin/PublishModal';
 import { TabType } from '@/models/admin.model';
-import { Post, PostStatus } from '@/models/post.model';
+import { Post, PostStatus, PostType } from '@/models/post.model';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { UserInfoExtended } from '@/models/user.model';
@@ -210,24 +210,26 @@ export default function EditPostSidebar({
           )}
         </div>
       </section>
-      <div className="flex-col w-full">
-        <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
-          Preview
+      {history.type !== PostType.lesson && (
+        <div className="flex-col w-full">
+          <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
+            Preview
+          </div>
+          <div className="p-2 bg-basics-50 dark:bg-basics-800">
+            <button
+              className="w-full btn-secondary"
+              onClick={() =>
+                window.open(
+                  `/api/preview?slug=${history.type}/${history.slug}`,
+                  '_blank'
+                )
+              }
+            >
+              Open Preview
+            </button>
+          </div>
         </div>
-        <div className="p-2 bg-basics-50 dark:bg-basics-800">
-          <button
-            className="w-full btn-secondary"
-            onClick={() =>
-              window.open(
-                `/api/preview?slug=${history.type}/${history.slug}`,
-                '_blank'
-              )
-            }
-          >
-            Open Preview
-          </button>
-        </div>
-      </div>
+      )}
       <div className="flex-col w-full">
         <div className="p-2 text-2xl text-basics-50 dark:text-basics-50 bg-primary-900 dark:bg-primary-900">
           Authors

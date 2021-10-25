@@ -6,6 +6,7 @@ import {
   validateCourseUser,
   postBySlugService,
   getSite,
+  historyById,
 } from '@/services/serversideApi';
 import { NextSeo } from 'next-seo';
 
@@ -25,11 +26,13 @@ export default function Post({
   post,
   course,
   source,
+  preview,
 }: {
   site: Site | null;
   post: PostModel;
   course: PostModel;
   source: MDXRemoteSerializeResult | null;
+  preview: boolean;
 }): JSX.Element {
   const router = useRouter();
   return (
@@ -64,6 +67,7 @@ export default function Post({
           post={post}
           course={course}
           source={source}
+          preview={preview}
         />
       </Layout>
     </>
@@ -73,9 +77,13 @@ export default function Post({
 export async function getServerSideProps({
   params,
   req,
+  preview,
+  previewData,
 }: {
   params: { coursePath: string; lessonPath: string };
   req: http.IncomingMessage;
+  preview: boolean;
+  previewData: PostModel;
 }): Promise<
   | {
       props: {
@@ -83,6 +91,7 @@ export async function getServerSideProps({
         post: PostModel | null;
         course: PostModel | null;
         source: MDXRemoteSerializeResult | null;
+        preview: boolean;
       };
     }
   | { redirect: { destination: string; permanent: boolean } }
@@ -96,8 +105,25 @@ export async function getServerSideProps({
     };
   }
   const site = await getSite();
-  const posts = await postBySlugService(PostType.lesson, lessonPath);
-  const post = posts.length > 0 ? posts[0] : null;
+
+  // Preview page
+  let post;
+  let posts;
+
+  if (preview && previewData && previewData.slug === lessonPath) {
+    const { postId, id } = previewData;
+    if (!postId || !id) {
+      return {
+        notFound: true,
+      };
+    }
+
+    post = await historyById(postId, id);
+  } else {
+    posts = await postBySlugService(PostType.lesson, lessonPath);
+    post = posts.length > 0 ? posts[0] : null;
+    preview = false;
+  }
 
   const courses = await postBySlugService(
     PostType.course,
@@ -211,6 +237,7 @@ export async function getServerSideProps({
       post,
       course,
       source,
+      preview,
     },
   };
 }
