@@ -327,19 +327,19 @@ export default function EditPostCourseSections({
                                             ref={provided.innerRef}
                                             className="flex items-center justify-between p-2 space-x-4 flex-nowrap rounded-xl bg-basics-50 text-basics-900 sections"
                                           >
-                                            <Link
-                                              href={`/admin/lessons/${lesson.id}`}
-                                              passHref
-                                            >
-                                              <div className="flex flex-col">
-                                                <a className="text-2xl underline cursor-pointer">
-                                                  {lesson.title}
-                                                </a>
-                                                <p className="text-xs">
-                                                  {lesson?.slug}
-                                                </p>
-                                              </div>
-                                            </Link>
+                                            <div className="flex flex-col">
+                                              <a
+                                                className="text-2xl underline cursor-pointer"
+                                                href={`/admin/lessons/${lesson.id}`}
+                                                rel="noreferrer noopener"
+                                                target="_blank"
+                                              >
+                                                {lesson.title}
+                                              </a>
+                                              <p className="text-xs">
+                                                {lesson?.slug}
+                                              </p>
+                                            </div>
                                             <div>
                                               <button
                                                 onClick={() =>
