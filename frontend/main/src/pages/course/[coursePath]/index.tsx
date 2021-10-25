@@ -4,6 +4,7 @@ import { NextSeo } from 'next-seo';
 import {
   getSite,
   getStripeProduct,
+  historyById,
   postBySlugService,
   postsService,
 } from '@/services/serversideApi';
@@ -22,11 +23,13 @@ export default function CoursePage({
   post,
   source,
   product,
+  preview,
 }: {
   site: Site | null;
   post: PostModel;
   source: MDXRemoteSerializeResult | null;
   product: StripeProduct | null;
+  preview?: boolean;
 }): JSX.Element {
   const router = useRouter();
 
@@ -65,7 +68,12 @@ export default function CoursePage({
         }}
       ></NextSeo>
       <Layout site={site}>
-        <Course post={post} source={source} product={product} />
+        <Course
+          post={post}
+          source={source}
+          product={product}
+          preview={preview}
+        />
       </Layout>
     </>
   );
@@ -94,8 +102,12 @@ export async function getStaticPaths(): Promise<{
 
 export async function getStaticProps({
   params,
+  preview,
+  previewData,
 }: {
   params: { coursePath: string };
+  preview: boolean;
+  previewData: PostModel;
 }): Promise<
   | {
       props: {
@@ -103,6 +115,7 @@ export async function getStaticProps({
         post: PostModel | null;
         source: MDXRemoteSerializeResult | null;
         product: StripeProduct | null;
+        preview: boolean | null;
       };
       revalidate: number;
     }
@@ -121,8 +134,25 @@ export async function getStaticProps({
     };
   }
   const site = await getSite();
-  const posts = await postBySlugService(PostType.course, coursePath);
-  const post = posts.length > 0 ? posts[0] : null;
+
+  // Preview page
+  let post;
+  let posts;
+
+  if (preview && previewData && previewData.slug === coursePath) {
+    const { postId, id } = previewData;
+    if (!postId || !id) {
+      return {
+        notFound: true,
+      };
+    }
+
+    post = await historyById(postId, id);
+  } else {
+    posts = await postBySlugService(PostType.course, coursePath);
+    post = posts.length > 0 ? posts[0] : null;
+    preview = false;
+  }
 
   if (!post) {
     console.log('No Post Found.');
@@ -186,6 +216,7 @@ export async function getStaticProps({
       post,
       source,
       product,
+      preview,
     },
     revalidate: 3600,
   };
