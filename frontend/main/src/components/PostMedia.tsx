@@ -81,19 +81,30 @@ export default function PostMedia({
                   controls={true}
                   fluid="true"
                   style={{ height: '100%', width: '100%' }}
-                  className="rounded-md"
                 />
               ) : (
-                <div className="grid border-2 border-secondary-600 dark:border-secondary-600 place-items-center min-h-300 xl:h-610">
-                  Getting Cookie for Private View
-                </div>
+                <>
+                  {post.coverPhoto?.path ? (
+                    <Image
+                      src={post.coverPhoto?.path}
+                      alt={post.title}
+                      width="480"
+                      height="270"
+                      layout="responsive"
+                    />
+                  ) : (
+                    <div className="grid border-2 border-secondary-600 dark:border-secondary-600 place-items-center min-h-300 xl:h-610">
+                      Getting Cookie for Private View
+                    </div>
+                  )}
+                </>
               )}
             </>
           ) : (
             <>
               {isYouTube() ? (
                 <ReactPlayer
-                  className="rounded-md react-player"
+                  className="react-player"
                   url={post.coverVideo?.url}
                   controls={true}
                   height="0"
@@ -106,7 +117,6 @@ export default function PostMedia({
                 />
               ) : (
                 <ReactPlayer
-                  className="rounded-md"
                   url={post.coverVideo?.url}
                   controls={true}
                   height="100%"
@@ -125,7 +135,6 @@ export default function PostMedia({
               width="480"
               height="270"
               layout="responsive"
-              className="rounded-md"
             />
           ) : (
             <></>

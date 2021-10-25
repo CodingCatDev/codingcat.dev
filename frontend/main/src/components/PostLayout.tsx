@@ -85,7 +85,7 @@ export default function PostLayout({
       <div className="relative">
         {/* MAIN CONTENT */}
         {post.type !== PostType.page && (
-          <section className="max-w-5xl p-10 mx-auto">
+          <section className="">
             {/* MEDIA */}
             <PostMedia post={post} />
           </section>
