@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-
-import { Post as PostModel, PostType } from '@/models/post.model';
+import { useRouter } from 'next/router';
+import {
+  Post,
+  Post as PostModel,
+  PostType,
+  SectionLesson,
+} from '@/models/post.model';
 import { millisecondToUSFormat } from '@/utils/basics/date';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import PostMedia from '@/components/PostMedia';
@@ -22,6 +27,13 @@ export default function Course({
   product: StripeProduct | null;
 }): JSX.Element {
   const { status, data: signInCheckResult } = useSigninCheck();
+  const router = useRouter();
+
+  function isActiveLink(course: Post, lesson: SectionLesson) {
+    if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
+      return true;
+    return false;
+  }
 
   return (
     <>
@@ -150,45 +162,54 @@ export default function Course({
             </div>
           )}
           <section>
-            <div className="flex items-center justify-between p-4 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 rounded-t-md">
+            <div className="flex items-center justify-between p-4 mb-2 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 rounded-t-md">
               <h2 className="text-xl">Course Content</h2>
               {/* Beginner/Intermediate/Advanced descriptor */}
               <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
                 Beginner
               </p>
             </div>
-            {post.sections &&
-              post.sections.map((section, i) => {
-                return (
+            {/* LESSONS */}
+            {post && post.sections && (
+              <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+                {post.sections.map((section) => (
                   <section
-                    key={`section-${i}`}
-                    className="grid grid-cols-1 gap-4 p-2 bg-basics-50"
+                    key={section.id}
+                    className="flex flex-col bg-basics-50 rounded-t-md"
                   >
-                    <h3 className="font-sans text-lg border-b-2 text-secondary-600 dark:text-secondary-600 border-primary-900 dark:border-primary-900">
+                    <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                       {section.title}
-                    </h3>
-                    <ol className="grid grid-cols-1 gap-4">
-                      {section.lessons?.map((lesson, i) => {
-                        return (
-                          <li key={`lesson-${i}`}>
+                    </h2>
+                    <ul className="flex flex-col flex-grow justify-items-stretch">
+                      {section.lessons &&
+                        section.lessons.map((lesson) => (
+                          <li key={lesson.id} className="ml-0 list-none">
                             <Link
                               href={`/course/${post.slug}/lesson/${lesson.slug}`}
                               key={lesson.id}
+                              passHref
                             >
-                              <a>
-                                <h4 className="font-sans text-base">
-                                  <span className="">{i + 1}.</span>{' '}
+                              <div
+                                className={`p-2  cursor-pointer hover:bg-primary-200
+                              ${
+                                isActiveLink(post, lesson)
+                                  ? 'bg-primary-200'
+                                  : 'bg-transparent'
+                              }
+                              `}
+                              >
+                                <a className="no-underline text-basics-900 hover:text-primary-900">
                                   {lesson.title}
-                                </h4>
-                              </a>
+                                </a>
+                              </div>
                             </Link>
                           </li>
-                        );
-                      })}
-                    </ol>
+                        ))}
+                    </ul>
                   </section>
-                );
-              })}
+                ))}
+              </section>
+            )}
           </section>
         </section>
       </div>
