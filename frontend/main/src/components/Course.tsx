@@ -21,10 +21,12 @@ export default function Course({
   post,
   source,
   product,
+  preview,
 }: {
   post: PostModel;
   source: MDXRemoteSerializeResult | null;
   product: StripeProduct | null;
+  preview?: boolean;
 }): JSX.Element {
   const { status, data: signInCheckResult } = useSigninCheck();
   const router = useRouter();
@@ -38,6 +40,24 @@ export default function Course({
   return (
     <>
       <section className="top-0 z-10 grid 2xl:sticky">
+        {preview && (
+          <>
+            <div className="flex justify-center py-4 text-3xl text-white dark:text-white bg-error-900 dark:bg-error-900">
+              <span>**Preview Mode**</span>
+              <button
+                className="btn-primary"
+                onClick={() =>
+                  window.open(
+                    `/api/endpreview?slug=/${post.type}/${post.slug}`,
+                    '_self'
+                  )
+                }
+              >
+                Turn Off
+              </button>
+            </div>
+          </>
+        )}
         <BreakBarLeft>
           <div className="grid w-full gap-4 ">
             <section className="grid items-center justify-between gap-2 lg:flex">

@@ -53,6 +53,8 @@ const preview = async (
     PostType.podcast,
     PostType.tutorial,
     PostType.page,
+    PostType.course,
+    PostType.lesson,
   ];
 
   let type = slugParts[0] as PostType;
