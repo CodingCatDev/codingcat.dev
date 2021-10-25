@@ -28,7 +28,9 @@ export default function PostMedia({
     };
   }, []);
 
-  useEffect(() => {}, [post]);
+  useEffect(() => {
+    getCloudinaryCookieToken();
+  }, [post]);
 
   const getCloudinaryCookieToken = async () => {
     const ct = await (
