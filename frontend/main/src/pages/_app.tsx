@@ -3,17 +3,6 @@ import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 
-if (process.env.NODE_ENV === 'production') {
-  const LogRocket = require('logrocket');
-  const setupLogRocketReact = require('logrocket-react');
-
-  if (typeof window !== 'undefined') {
-    LogRocket.init('qlm7wr/codingcatdev');
-    // plugins should also only be initialized when in the browser
-    setupLogRocketReact(LogRocket);
-  }
-}
-
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>

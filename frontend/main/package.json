@@ -30,8 +30,6 @@
     "firebaseui": "^0.600.0",
     "gray-matter": "^4.0.2",
     "js-cookie": "^2.2.1",
-    "logrocket": "^2.1.1",
-    "logrocket-react": "^4.0.1",
     "next": "^11.1.2",
     "next-mdx-remote": "^3.0.5",
     "next-pwa": "^5.4.0",
