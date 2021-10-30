@@ -144,10 +144,10 @@ export default function Course({
         <section className="flex flex-col mb-2">
           {post.type === PostType.course && (
             <div className="">
-              {post.coverPhoto?.path ? (
+              {post.coverPhoto?.public_id ? (
                 <>
                   <Image
-                    src={post.coverPhoto?.path}
+                    src={post.coverPhoto?.public_id}
                     alt={post.title}
                     width="480"
                     height="270"

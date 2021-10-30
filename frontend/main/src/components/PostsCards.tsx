@@ -16,10 +16,10 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
               >
                 <Link href={`/${post.type}/${post.slug}`}>
                   <a className="self-start">
-                    {post.coverPhoto?.path && post.type === 'course' ? (
+                    {post.coverPhoto?.public_id && post.type === 'course' ? (
                       <>
                         <Image
-                          src={post.coverPhoto?.path}
+                          src={post.coverPhoto?.public_id}
                           alt={post.title}
                           width="480"
                           height="270"
@@ -27,10 +27,10 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                           className="rounded-md rounded-b-none cursor-pointer"
                         />
                       </>
-                    ) : post.coverPhoto?.path ? (
+                    ) : post.coverPhoto?.public_id ? (
                       <>
                         <Image
-                          src={post.coverPhoto?.path}
+                          src={post.coverPhoto?.public_id}
                           alt={post.title}
                           width="480"
                           height="270"
