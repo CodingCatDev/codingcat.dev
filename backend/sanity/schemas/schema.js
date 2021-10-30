@@ -5,7 +5,7 @@ import createSchema from 'part:@sanity/base/schema-creator'
 import schemaTypes from 'all:part:@sanity/base/schema-type'
 
 // We import object and document schemas
-import category from './category'
+import tag from './tag'
 import post from './post'
 import author from './author'
 
@@ -20,6 +20,6 @@ export default createSchema({
     // in the studio.
     post,
     author,
-    category,
+    tag,
   ]),
 })

@@ -9,6 +9,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'excerpt',
+      title: 'Excerpt',
+      type: 'string',
+    },
+    {
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -18,10 +23,10 @@ export default {
       },
     },
     {
-      name: 'author',
-      title: 'Author',
-      type: 'reference',
-      to: {type: 'author'},
+      name: 'authors',
+      title: 'Authors',
+      type: 'array',
+      of: [{type: 'reference', to: {type: 'author'}}],
     },
     {
       name: 'coverPhoto',
@@ -29,10 +34,15 @@ export default {
       type: 'cloudinary.asset',
     },
     {
-      name: 'categories',
-      title: 'Categories',
+      name: 'coverVideo',
+      title: 'Main Video',
+      type: 'cloudinary.asset',
+    },
+    {
+      name: 'tags',
+      title: 'Tags',
       type: 'array',
-      of: [{type: 'reference', to: {type: 'category'}}],
+      of: [{type: 'reference', to: {type: 'tag'}}],
     },
     {
       name: 'publishedAt',
