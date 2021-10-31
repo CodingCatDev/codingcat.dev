@@ -1,4 +1,3 @@
-import { Post } from './../../../frontend/main/src/models/post.model';
 const sanityClient = require('@sanity/client');
 import { SanityClient } from '@sanity/client';
 
@@ -7,10 +6,8 @@ import postJson from './firestore-backup_20211030.json';
 const client = sanityClient({
   projectId: 'hfh83o0w',
   dataset: 'dev',
-  apiVersion: '2021-03-25', // use current UTC date - see "specifying API version"!
-  token:
-    'sk0kapvYu39SSqUeuBdyqYJNi8u6usSg3hOzh4jrOUW7HAV5MXPRndzS1UTOwW5crvqQGFW4Wue6YVMad8YQik9ziPaEiuiuzzAx5dBhTdzL1r7JUddRBcjF6wlA01ixiqWivja9q1jLidQWhgTyrL8Gu6Fb4deKEweUi00Cwmoa9aae6E0s', // or leave blank for unauthenticated usage
-  useCdn: true,
+  apiVersion: '2021-03-25',
+  useCdn: false,
 }) as SanityClient;
 
 const deletePosts = async () => {
