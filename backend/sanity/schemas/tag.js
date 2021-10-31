@@ -1,6 +1,6 @@
 export default {
   name: 'tag',
-  title: 'Tag',
+  title: 'Tags',
   type: 'document',
   fields: [
     {
@@ -14,4 +14,4 @@ export default {
       type: 'text',
     },
   ],
-}
+};

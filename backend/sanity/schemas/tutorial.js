@@ -2,6 +2,6 @@ import postType from './postType';
 
 export default {
   name: 'tutorial',
-  title: 'Tutorial',
+  title: 'Tutorials',
   ...postType,
 };

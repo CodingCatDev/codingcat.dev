@@ -2,7 +2,7 @@ import postType from './postType';
 
 const course = {
   name: 'course',
-  title: 'Course',
+  title: 'Courses',
   ...postType,
 };
 
