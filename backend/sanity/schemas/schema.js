@@ -11,6 +11,7 @@ import lesson from './lesson';
 import page from './page';
 import podcast from './podcast';
 import post from './post';
+import site from './site';
 import tag from './tag';
 import tutorial from './tutorial';
 
@@ -29,6 +30,7 @@ export default createSchema({
     page,
     podcast,
     post,
+    site,
     tag,
     tutorial,
   ]),

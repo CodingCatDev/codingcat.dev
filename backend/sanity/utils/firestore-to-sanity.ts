@@ -10,12 +10,12 @@ const client = sanityClient({
   apiVersion: '2021-03-25', // use current UTC date - see "specifying API version"!
   token:
     'sk0kapvYu39SSqUeuBdyqYJNi8u6usSg3hOzh4jrOUW7HAV5MXPRndzS1UTOwW5crvqQGFW4Wue6YVMad8YQik9ziPaEiuiuzzAx5dBhTdzL1r7JUddRBcjF6wlA01ixiqWivja9q1jLidQWhgTyrL8Gu6Fb4deKEweUi00Cwmoa9aae6E0s', // or leave blank for unauthenticated usage
-  useCdn: false,
+  useCdn: true,
 }) as SanityClient;
 
 const deletePosts = async () => {
   const query =
-    '*[_type == "post" && _id != "3a4fa2b1-4ab6-4946-bb6c-065d4e8b93d9"] {_id}';
+    '*[_type == "course" || _type=="lesson" || _type=="page" || _type=="podcast" || _type=="post" || _type=="tutorial"] {_id}';
   const params = {};
   try {
     const posts = await client.fetch(query, params);
@@ -71,11 +71,19 @@ const count = async (type: string) => {
   const params = {};
   try {
     const c = await client.fetch(query, params);
-    console.log(c);
+    console.log(`Type: ${type}: `, c);
   } catch (error) {
     console.log(error);
   }
 };
-count('post');
-count('course');
-count('podcast');
+
+(async () => {
+  await deletePosts();
+  await firestoreToSanity();
+  await count('course');
+  await count('lesson');
+  await count('page');
+  await count('podcast');
+  await count('post');
+  await count('tutorial');
+})();
