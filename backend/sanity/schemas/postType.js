@@ -48,25 +48,6 @@ export default {
       of: [{ type: 'reference', to: { type: 'tag' } }],
     },
     {
-      name: 'type',
-      title: 'Type',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-      initialValue: 'post',
-      options: {
-        list: [
-          'post',
-          'tutorial',
-          'podcast',
-          'course',
-          'lesson',
-          'page',
-          'group',
-          'forum',
-        ],
-      },
-    },
-    {
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',

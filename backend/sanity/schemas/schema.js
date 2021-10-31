@@ -5,9 +5,14 @@ import createSchema from 'part:@sanity/base/schema-creator';
 import schemaTypes from 'all:part:@sanity/base/schema-type';
 
 // We import object and document schemas
-import tag from './tag';
 import author from './author';
+import course from './course';
+import lesson from './lesson';
+import page from './page';
+import podcast from './podcast';
 import post from './post';
+import tag from './tag';
+import tutorial from './tutorial';
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -19,7 +24,12 @@ export default createSchema({
     // The following are document types which will appear
     // in the studio.
     author,
-    tag,
+    course,
+    lesson,
+    page,
+    podcast,
     post,
+    tag,
+    tutorial,
   ]),
 });
