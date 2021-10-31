@@ -38,6 +38,26 @@ export default {
     },
     {
       name: 'coverVideo',
+      title: 'YouTube Video',
+      type: 'object',
+      fields: [
+        {
+          name: 'type',
+          title: 'Type',
+          type: 'string',
+          options: {
+            list: ['video'],
+          },
+        },
+        {
+          name: 'url',
+          title: 'Url',
+          type: 'string',
+        },
+      ],
+    },
+    {
+      name: 'cloudinaryVideo',
       title: 'Main Video',
       type: 'cloudinary.asset',
     },
@@ -51,7 +71,6 @@ export default {
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
-      validation: (Rule) => Rule.required(),
     },
     {
       name: 'content',
@@ -60,7 +79,13 @@ export default {
       validation: (Rule) => Rule.required(),
     },
   ],
-
+  orderings: [
+    {
+      title: 'Publish Date, Latest',
+      name: 'publishedAtDesc',
+      by: [{ field: 'publishedAt', direction: 'desc' }],
+    },
+  ],
   preview: {
     select: {
       title: 'title',

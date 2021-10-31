@@ -1,7 +1,5 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-
-import { getSite, postsRecentService } from '@/services/serversideApi';
 import PostsCards from '@/components/PostsCards';
 import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
@@ -15,16 +13,71 @@ import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { Site } from '@/models/site.model';
+import { GetStaticProps, GetStaticPropsResult, NextPage } from 'next';
+import { groq } from 'next-sanity';
+import { getClient } from '@/services/sanity.server';
 
-export default function Home({
-  site,
-  recentPosts,
-}: {
-  site: Site | null;
+const siteQuery = groq`
+  *[_type == "site"][0] {
+    title,
+    pageLinks[]->{
+      title,
+      "slug": '/'+slug.current
+    },
+    socialLinks
+  }
+`;
+
+const recentPostsQuery = groq`
+*[_type == $type && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc) [0...3] {
+    _id, 
+    title,
+    excerpt,
+    coverPhoto{
+      public_id
+    },
+  }
+`;
+
+interface StaticParams {
+  site: Site;
   recentPosts: {
     [key: string]: Post[];
   };
-}): JSX.Element {
+}
+
+export const getStaticProps: GetStaticProps = async ({
+  preview = false,
+}): Promise<GetStaticPropsResult<StaticParams>> => {
+  const site = await getClient(preview).fetch(siteQuery);
+  const course: Post[] = await getClient(preview).fetch(recentPostsQuery, {
+    type: PostType.course,
+  });
+  const post: Post[] = await getClient(preview).fetch(recentPostsQuery, {
+    type: PostType.post,
+  });
+  const tutorial: Post[] = await getClient(preview).fetch(recentPostsQuery, {
+    type: PostType.tutorial,
+  });
+  const podcast: Post[] = await getClient(preview).fetch(recentPostsQuery, {
+    type: PostType.podcast,
+  });
+
+  const recentPosts = { course, post, tutorial, podcast };
+  console.log(site);
+  return {
+    props: {
+      site,
+      recentPosts,
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every second
+    revalidate: 600, // In seconds
+  };
+};
+
+const Home: NextPage<StaticParams> = ({ site, recentPosts }) => {
   return (
     <>
       <NextSeo
@@ -147,33 +200,5 @@ export default function Home({
       </Layout>
     </>
   );
-}
-
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-    recentPosts: {
-      [key: string]: Post[];
-    };
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-
-  const recentPosts = await postsRecentService([
-    PostType.course,
-    PostType.post,
-    PostType.tutorial,
-    PostType.podcast,
-  ]);
-  return {
-    props: {
-      site,
-      recentPosts,
-    },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 600, // In seconds
-  };
-}
+};
+export default Home;
