@@ -4,7 +4,7 @@ import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { getSite } from '@/services/sanity.server';
 import UserMembershipDetail from '@/components/user/UserMembershipDetail';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
 interface StaticParams {
   site: Site;
@@ -23,9 +23,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 
 export default function Membership({
   site,
-}: {
-  site: Site | null;
-}): JSX.Element {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <Layout site={site}>
       <Head>

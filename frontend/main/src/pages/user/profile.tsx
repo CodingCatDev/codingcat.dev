@@ -3,7 +3,7 @@ import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { StripeProduct } from '@/models/stripe.model';
 import Profile from '@/components/user/Profile';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
 import { getActiveMemberProducts } from '@/services/firebase.server';
 import { getSite } from '@/services/sanity.server';
@@ -28,10 +28,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 export default function ProfilePage({
   site,
   products,
-}: {
-  site: Site | null;
-  products: StripeProduct[];
-}): JSX.Element {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <Head>

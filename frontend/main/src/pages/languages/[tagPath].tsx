@@ -1,11 +1,15 @@
-import http from 'http';
-import { getSite, getTagBySlug, postsByTag } from '@/services/serversideApi';
+import {
+  getPostsByTag,
+  getSite,
+  getTagBySlugService,
+} from '@/services/sanity.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
 import { Tag } from '@/models/tag.model';
+import { GetServerSideProps } from 'next';
 
 export default function AuthorPage({
   site,
@@ -25,12 +29,12 @@ export default function AuthorPage({
   return (
     <>
       <NextSeo
-        title={`${tag.tag ? tag.tag : ''} | CodingCatDev`}
+        title={`${tag.title ? tag.title : ''} | CodingCatDev`}
         canonical={`https://codingcat.dev/tags/${tag.slug}`}
       ></NextSeo>
       <Layout site={site}>
         <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
-          <h1>{tag.tag}</h1>
+          <h1>{tag.title}</h1>
         </section>
         {courses && courses.length > 0 && (
           <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
@@ -69,48 +73,57 @@ export default function AuthorPage({
   );
 }
 
-export async function getServerSideProps({
+interface StaticParams {
+  site: Site;
+  tag: Tag;
+}
+
+export const getServerSideProps: GetServerSideProps<StaticParams> = async ({
   params,
-}: {
-  params: { tagPath: string };
-  req: http.IncomingMessage;
-}): Promise<
-  | {
-      props: {
-        site: Site | null;
-        tag: Tag;
-        courses: Post[] | null;
-        tutorials: Post[] | null;
-        posts: Post[] | null;
-        podcasts: Post[] | null;
-      };
-    }
-  | { redirect: { destination: string; permanent: boolean } }
-  | { notFound: boolean }
-> {
-  const { tagPath } = params;
+  preview,
+}) => {
+  const { tagPath } = params as any;
 
   if (!tagPath) {
     return {
       notFound: true,
     };
   }
-  const site = await getSite();
-  const tag = await getTagBySlug(tagPath);
+  const tag = await getTagBySlugService({
+    tag: 'language',
+    preview,
+    slug: tagPath,
+  });
   if (!tag) {
     return {
       notFound: true,
     };
   }
 
-  const courses = await postsByTag(PostType.course, tag.tag);
-  const tutorials = await postsByTag(PostType.tutorial, tag.tag);
-  const posts = await postsByTag(PostType.post, tag.tag);
-  const podcasts = await postsByTag(PostType.podcast, tag.tag);
+  const courses = await getPostsByTag({
+    type: PostType.course,
+    _id: tag._id,
+    tag: 'languages',
+  });
+  const tutorials = await getPostsByTag({
+    type: PostType.tutorial,
+    _id: tag._id,
+    tag: 'languages',
+  });
+  const posts = await getPostsByTag({
+    type: PostType.post,
+    _id: tag._id,
+    tag: 'languages',
+  });
+  const podcasts = await getPostsByTag({
+    type: PostType.podcast,
+    _id: tag._id,
+    tag: 'languages',
+  });
 
   return {
     props: {
-      site,
+      site: await getSite({ preview }),
       tag,
       courses,
       tutorials,
@@ -118,4 +131,4 @@ export async function getServerSideProps({
       podcasts,
     },
   };
-}
+};

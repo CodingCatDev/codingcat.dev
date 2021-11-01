@@ -85,7 +85,7 @@ export default {
     },
     {
       title: 'Languages',
-      name: 'language',
+      name: 'languages',
       type: 'array',
       of: [
         {

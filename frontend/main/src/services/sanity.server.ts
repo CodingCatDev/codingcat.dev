@@ -4,6 +4,7 @@ import { createClient } from 'next-sanity';
 import { config } from '@/config/sanity';
 import { Site } from '@/models/site.model';
 import { Post, PostType } from '@/models/post.model';
+import { Tag } from '@/models/tag.model';
 
 // Set up the client for fetching data in the getProps page functions
 export const sanityClient = createClient(config);
@@ -134,4 +135,85 @@ export const getAuthors = async ({
   `;
 
   return await getClient(preview).fetch(recentPostsQuery);
+};
+
+export const getTags = async ({
+  preview = false,
+  tag,
+}: {
+  preview?: boolean;
+  tag: 'framework' | 'language';
+}) => {
+  const q = groq`
+    *[_type == '${tag}'] | order(title asc)
+    {
+      ...,
+      "slug": '/'+slug.current
+    }
+  `;
+
+  return await getClient(preview).fetch(q);
+};
+
+export const getPostsByTag = async ({
+  _id,
+  tag,
+  type,
+  preview = false,
+  limit,
+  params,
+}: {
+  _id: string;
+  tag: 'frameworks' | 'languages';
+  type: PostType;
+  preview?: boolean;
+  limit?: number;
+  params?: string;
+}) => {
+  console.log(_id, type, tag);
+  const recentPostsQuery = groq`
+  *[_type == $type && $_id in ${tag}[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
+    limit ? '[0...' + limit + ']' : ''
+  } {
+    ${
+      params
+        ? params
+        : `
+      _id,
+      _type,
+      title,
+      excerpt,
+      coverPhoto{
+        public_id
+      },
+      "slug": '/'+slug.current
+      `
+    }
+  }
+`;
+
+  return await getClient(preview).fetch<Post[]>(recentPostsQuery, {
+    _id,
+    type,
+    tag,
+  });
+};
+export const getTagBySlugService = async ({
+  tag,
+  preview = false,
+  slug,
+  params,
+}: {
+  tag: 'framework' | 'language';
+  preview?: boolean;
+  slug: string;
+  params?: string;
+}) => {
+  const recentPostsQuery = groq`
+  *[_type == $tag && slug.current == $slug] | order(title asc)[0]`;
+
+  return await getClient(preview).fetch<Tag>(recentPostsQuery, {
+    slug,
+    tag,
+  });
 };
