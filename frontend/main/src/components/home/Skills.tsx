@@ -12,33 +12,33 @@ export default function Skills(): JSX.Element {
   return (
     <>
       {/* These 3 are bigger in size, so they are h-8/16 */}
-      <Link href="/tags/reactjs">
+      <Link href="/frameworks/react">
         <a>
           <ReactLogo className="h-14 md:h-16 " />
         </a>
       </Link>
-      <Link href="/tags/angular">
+      <Link href="/frameworks/angular">
         <a>
           <AngularLogo className="h-14 md:h-16 " />
         </a>
       </Link>
-      <Link href="/tags/vue">
+      <Link href="/frameworks/vue">
         <a>
           <VueLogo className="h-14 md:h-16 " />
         </a>
       </Link>
       {/* These 3 are smaller in size, so they are h-10/20 */}
-      <Link href="/tags/svelte">
+      <Link href="/frameworks/svelte">
         <a>
           <SvelteLogo className="h-16 md:h-20 " />
         </a>
       </Link>
-      <Link href="/tags/css">
+      <Link href="/languages/css">
         <a>
           <CssLogo className="h-16 md:h-20 " />
         </a>
       </Link>
-      <Link href="/tags/html">
+      <Link href="/languages/html">
         <a>
           <HtmlLogo className="h-16 md:h-20 " />
         </a>
