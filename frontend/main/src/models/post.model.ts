@@ -81,13 +81,13 @@ export enum PostFormat {
 }
 
 export interface Section {
-  id: string;
+  _key: string;
   title: string;
   lessons?: SectionLesson[];
 }
 
 export interface SectionLesson {
-  id: string;
+  _id: string;
   slug: string;
   title: string;
 }

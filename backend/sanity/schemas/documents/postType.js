@@ -105,18 +105,12 @@ export default {
   preview: {
     select: {
       title: 'title',
-      author0: 'authors.0.displayName',
-      author1: 'authors.1.displayName',
-      author2: 'authors.2.displayName',
+      slug: 'slug.current',
     },
     prepare(selection) {
-      const { author0, author1, author2 } = selection;
+      const { slug } = selection;
       return Object.assign({}, selection, {
-        subtitle:
-          author0 &&
-          `by ${author0}${author1 ? ',' + author1 : ''}${
-            author2 ? ',' + author2 : ''
-          }`,
+        subtitle: slug,
       });
     },
   },

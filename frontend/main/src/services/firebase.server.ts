@@ -31,7 +31,9 @@ export async function getActiveMemberProducts(): Promise<StripeProduct[]> {
   return products as StripeProduct[];
 }
 
-export async function getStripeProduct(id: string): Promise<StripeProduct> {
+export async function getStripeProduct(
+  id: string
+): Promise<StripeProduct | undefined> {
   const productDoc = await admin
     .firestore()
     .collection('products')
@@ -45,14 +47,16 @@ export async function getStripeProduct(id: string): Promise<StripeProduct> {
     .get();
 
   const prices: StripePrice[] = [];
-  for (const priceDoc of priceDocs.docs) {
-    const price = priceDoc.data() as StripePrice;
-    price.id = priceDoc.id;
-    prices.push(price);
+  let product;
+  if (productDoc.exists && !priceDocs.empty) {
+    for (const priceDoc of priceDocs.docs) {
+      const price = priceDoc.data() as StripePrice;
+      price.id = priceDoc.id;
+      prices.push(price);
+    }
+    product = productDoc.data() as StripeProduct;
+    product.id = productDoc.id;
+    product.prices = prices;
   }
-  const product = productDoc.data() as StripeProduct;
-  product.id = productDoc.id;
-  product.prices = prices;
-
-  return product as StripeProduct;
+  return product as StripeProduct | undefined;
 }

@@ -25,6 +25,7 @@ import { StripeProduct } from '@/models/stripe.model';
 interface StaticPropsResult {
   site: Site;
   post: Post;
+  course?: Post;
   source: MDXRemoteSerializeResult<Record<string, unknown>> | null;
   preview: boolean | undefined;
   recentPosts?: {
@@ -66,6 +67,8 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 }) => {
   let type = (params?.permalink?.[0] as PostType) || '';
   let slug = (params?.permalink?.[1] as string) || '';
+  let lesson = (params?.permalink?.[2] as string) || '';
+  let lessonPath = (params?.permalink?.[3] as string) || '';
 
   // Redirect plural page types
   if (['podcasts', 'tutorials', 'courses'].includes(type) && slug) {
@@ -110,6 +113,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 
   // Preview page
   let post;
+  let course;
   if (preview) {
     const pData = previewData as Post;
     if (!pData || !pData._id) {
@@ -121,7 +125,21 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     const { _id } = pData;
     post = await getPostById({ preview, _id });
   } else {
-    post = await getPostBySlugService({ preview, type, slug });
+    //If Lesson we need to use different slug and get course
+    if (lesson === PostType.lesson && lessonPath) {
+      post = await getPostBySlugService({
+        preview,
+        type: PostType.lesson,
+        slug: lessonPath,
+      });
+      course = await getPostBySlugService({
+        preview,
+        type,
+        slug,
+      });
+    } else {
+      post = await getPostBySlugService({ preview, type, slug });
+    }
   }
 
   // Check if old blog link is trying to be used.
@@ -175,7 +193,8 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     source,
     preview: preview || false,
   };
-  if (type === PostType.course) {
+
+  if (type === PostType.course && !lessonPath) {
     const productId = post?.accessSettings?.productId;
     if (productId) {
       const product = await getStripeProduct(productId);
@@ -185,9 +204,15 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
       }
     }
   } else {
-    const recentPosts = await getRecentPostsService({ preview });
-    if (recentPosts) {
-      props.recentPosts = recentPosts;
+    if (lessonPath) {
+      if (course) {
+        props.course = course;
+      }
+    } else {
+      const recentPosts = await getRecentPostsService({ preview });
+      if (recentPosts) {
+        props.recentPosts = recentPosts;
+      }
     }
   }
 
@@ -200,6 +225,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 export default function PostPage({
   site,
   post,
+  course,
   source,
   recentPosts,
   preview,
@@ -262,6 +288,7 @@ export default function PostPage({
             <PostLayout
               router={router}
               post={post}
+              course={course}
               source={source}
               recentPosts={recentPosts}
               preview={preview}

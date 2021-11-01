@@ -22,7 +22,7 @@ export const getClient = (usePreview: boolean) =>
 
 export const getSite = async ({ preview = false }) => {
   const siteQuery = groq`
-  *[_type == "site"][0] {
+  *[!(_id in path('drafts.**')) && _type == "site"][0] {
     title,
     pageLinks[]->{
       title,
@@ -45,7 +45,7 @@ export const getPostsService = async ({
   params?: string;
 }) => {
   const recentPostsQuery = groq`
-  *[_type == $type && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc)${
+  *[!(_id in path('drafts.**')) && _type == $type && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc)${
     limit ? '[0...' + limit + ']' : ''
   } {
     ${
@@ -114,7 +114,16 @@ export const getPostBySlugService = async ({
   params?: string;
 }) => {
   const recentPostsQuery = groq`
-  *[_type == $type && slug.current == $slug && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc)[0]`;
+  *[!(_id in path('drafts.**')) && _type == $type && slug.current == $slug && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc)[0]
+  {
+    ...,
+    "slug": slug.current,
+    sections[]{
+      ...,
+      lessons[]->{_id, title,"slug": slug.current}
+    }
+  }
+  `;
 
   return await getClient(preview).fetch<Post>(recentPostsQuery, {
     slug,
@@ -132,7 +141,7 @@ export const getAuthorBySlugService = async ({
   params?: string;
 }) => {
   const recentPostsQuery = groq`
-  *[_type == 'author' && slug.current == $slug] | order(publishedAt desc)[0]`;
+  *[!(_id in path('drafts.**')) && _type == 'author' && slug.current == $slug] | order(publishedAt desc)[0]`;
 
   return await getClient(preview).fetch<Author>(recentPostsQuery, {
     slug,
@@ -145,7 +154,7 @@ export const getAuthors = async ({
   preview?: boolean;
 }) => {
   const recentPostsQuery = groq`
-    *[_type == 'author'] | order(name desc)
+    *[!(_id in path('drafts.**')) && _type == 'author'] | order(name desc)
     {
       ...,
       "slug": '/'+slug.current
@@ -189,7 +198,7 @@ export const getPostsByTag = async ({
   params?: string;
 }) => {
   const recentPostsQuery = groq`
-  *[_type == $type && $_id in ${tag}[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
+  *[!(_id in path('drafts.**')) && _type == $type && $_id in ${tag}[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
     limit ? '[0...' + limit + ']' : ''
   } {
     ${
@@ -227,7 +236,7 @@ export const getTagBySlugService = async ({
   params?: string;
 }) => {
   const recentPostsQuery = groq`
-  *[_type == $tag && slug.current == $slug] | order(title asc)[0]`;
+  *[!(_id in path('drafts.**')) && _type == $tag && slug.current == $slug] | order(title asc)[0]`;
 
   return await getClient(preview).fetch<Tag>(recentPostsQuery, {
     slug,
@@ -248,7 +257,7 @@ export const getPostsByUser = async ({
   params?: string;
 }) => {
   const recentPostsQuery = groq`
-  *[_type == $type && $_id in authors[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
+  *[!(_id in path('drafts.**')) && _type == $type && $_id in authors[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
     limit ? '[0...' + limit + ']' : ''
   } {
     ${
