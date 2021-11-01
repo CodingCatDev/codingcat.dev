@@ -1,5 +1,14 @@
 #!/bin/bash
 
+git diff --exit-code HEAD^ HEAD --quiet .
+
+if [$?]; then
+  echo "🛑 - Build other folder"
+  exit 0;
+else
+  echo "✅ - Build this folder"
+fi
+
 echo "VERCEL_GIT_COMMIT_REF: $VERCEL_GIT_COMMIT_REF"
 
 if [[ "$VERCEL_GIT_COMMIT_REF" == "stage"  ]] ; then
