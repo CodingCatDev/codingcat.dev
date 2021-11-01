@@ -5,6 +5,7 @@ import { config } from '@/config/sanity';
 import { Site } from '@/models/site.model';
 import { Post, PostType } from '@/models/post.model';
 import { Tag } from '@/models/tag.model';
+import { Author } from '@/models/user.model';
 
 // Set up the client for fetching data in the getProps page functions
 export const sanityClient = createClient(config);
@@ -121,6 +122,23 @@ export const getPostBySlugService = async ({
   });
 };
 
+export const getAuthorBySlugService = async ({
+  preview = false,
+  slug,
+  params,
+}: {
+  preview?: boolean;
+  slug: string;
+  params?: string;
+}) => {
+  const recentPostsQuery = groq`
+  *[_type == 'author' && slug.current == $slug] | order(publishedAt desc)[0]`;
+
+  return await getClient(preview).fetch<Author>(recentPostsQuery, {
+    slug,
+  });
+};
+
 export const getAuthors = async ({
   preview = false,
 }: {
@@ -170,7 +188,6 @@ export const getPostsByTag = async ({
   limit?: number;
   params?: string;
 }) => {
-  console.log(_id, type, tag);
   const recentPostsQuery = groq`
   *[_type == $type && $_id in ${tag}[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
     limit ? '[0...' + limit + ']' : ''
@@ -215,5 +232,44 @@ export const getTagBySlugService = async ({
   return await getClient(preview).fetch<Tag>(recentPostsQuery, {
     slug,
     tag,
+  });
+};
+export const getPostsByUser = async ({
+  _id,
+  type,
+  preview = false,
+  limit,
+  params,
+}: {
+  _id: string;
+  type: PostType;
+  preview?: boolean;
+  limit?: number;
+  params?: string;
+}) => {
+  const recentPostsQuery = groq`
+  *[_type == $type && $_id in authors[]._ref && publishedAt < "${new Date().toISOString()}"] | order(title asc)${
+    limit ? '[0...' + limit + ']' : ''
+  } {
+    ${
+      params
+        ? params
+        : `
+      _id,
+      _type,
+      title,
+      excerpt,
+      coverPhoto{
+        public_id
+      },
+      "slug": '/'+slug.current
+      `
+    }
+  }
+`;
+
+  return await getClient(preview).fetch<Post[]>(recentPostsQuery, {
+    _id,
+    type,
   });
 };

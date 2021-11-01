@@ -1,16 +1,69 @@
-import http from 'http';
 import {
   getSite,
-  getAuthorProfile,
-  postsByUser,
-} from '@/services/serversideApi';
+  getPostsByUser,
+  getAuthorBySlugService,
+} from '@/services/sanity.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
-import { UserInfoExtended } from '@/models/user.model';
+import { Author } from '@/models/user.model';
 import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
 import AuthorCard from '@/components/authors/AuthorCard';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+
+interface StaticParams {
+  site: Site;
+  author: Author;
+  courses: Post[];
+  tutorials: Post[];
+  posts: Post[];
+}
+
+export const getServerSideProps: GetServerSideProps<StaticParams> = async ({
+  params,
+  preview,
+}) => {
+  const { authorPath } = params as any;
+
+  if (!authorPath) {
+    return {
+      notFound: true,
+    };
+  }
+  const site = await getSite({ preview });
+  const author = await getAuthorBySlugService({
+    preview,
+    slug: authorPath,
+  });
+  console.log(author);
+  const courses = await getPostsByUser({
+    type: PostType.course,
+    _id: author._id,
+  });
+  const tutorials = await getPostsByUser({
+    type: PostType.tutorial,
+    _id: author._id,
+  });
+  const posts = await getPostsByUser({ type: PostType.post, _id: author._id });
+
+  if (!author) {
+    console.log('Author not found');
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      site,
+      author,
+      courses,
+      tutorials,
+      posts,
+    },
+  };
+};
 
 export default function AuthorPage({
   site,
@@ -18,13 +71,7 @@ export default function AuthorPage({
   courses,
   tutorials,
   posts,
-}: {
-  site: Site | null;
-  author: UserInfoExtended;
-  courses: Post[] | null;
-  tutorials: Post[] | null;
-  posts: Post[] | null;
-}): JSX.Element {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
       <NextSeo
@@ -62,53 +109,4 @@ export default function AuthorPage({
       </Layout>
     </>
   );
-}
-
-export async function getServerSideProps({
-  params,
-}: {
-  params: { authorPath: string };
-  req: http.IncomingMessage;
-}): Promise<
-  | {
-      props: {
-        site: Site | null;
-        author: UserInfoExtended | null;
-        courses: Post[] | null;
-        tutorials: Post[] | null;
-        posts: Post[] | null;
-      };
-    }
-  | { redirect: { destination: string; permanent: boolean } }
-  | { notFound: boolean }
-> {
-  const { authorPath } = params;
-
-  if (!authorPath) {
-    return {
-      notFound: true,
-    };
-  }
-  const site = await getSite();
-  const author = (await getAuthorProfile(authorPath)) as UserInfoExtended;
-  const courses = await postsByUser(PostType.course, authorPath);
-  const tutorials = await postsByUser(PostType.tutorial, authorPath);
-  const posts = await postsByUser(PostType.post, authorPath);
-
-  if (!author) {
-    console.log('Author not found');
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      site,
-      author,
-      courses,
-      tutorials,
-      posts,
-    },
-  };
 }
