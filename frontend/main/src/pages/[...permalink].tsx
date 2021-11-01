@@ -5,6 +5,7 @@ import { Post, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/components/PostLayout';
+import Course from '@/components/Course';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
@@ -18,15 +19,18 @@ import {
   getSite,
 } from '@/services/sanity.server';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
+import { getStripeProduct } from '@/services/firebase.server';
+import { StripeProduct } from '@/models/stripe.model';
 
 interface StaticPropsResult {
   site: Site;
   post: Post;
-  recentPosts: {
-    [key: string]: Post[];
-  };
   source: MDXRemoteSerializeResult<Record<string, unknown>> | null;
   preview: boolean | undefined;
+  recentPosts?: {
+    [key: string]: Post[];
+  };
+  product?: StripeProduct;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -36,6 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     PostType.tutorial,
     PostType.podcast,
     PostType.page,
+    PostType.course,
   ]) {
     const posts = await getPostsService({
       type: postType,
@@ -95,6 +100,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     PostType.podcast,
     PostType.tutorial,
     PostType.page,
+    PostType.course,
   ];
   if (!type || !slug || !allowedTypes.includes(type)) {
     return {
@@ -162,14 +168,31 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     source = null;
   }
 
+  // Courses have products not recentPosts
+  const props: StaticPropsResult = {
+    site: await getSite({ preview }),
+    post,
+    source,
+    preview: preview || false,
+  };
+  if (type === PostType.course) {
+    const productId = post?.accessSettings?.productId;
+    if (productId) {
+      const product = await getStripeProduct(productId);
+      if (product) {
+        props.product = product;
+        console.log(`${slug} has product: `, product.id);
+      }
+    }
+  } else {
+    const recentPosts = await getRecentPostsService({ preview });
+    if (recentPosts) {
+      props.recentPosts = recentPosts;
+    }
+  }
+
   return {
-    props: {
-      site: await getSite({ preview }),
-      recentPosts: await getRecentPostsService({ preview }),
-      post,
-      source,
-      preview: preview || false,
-    },
+    props,
     revalidate: 3600,
   };
 };
@@ -180,6 +203,7 @@ export default function PostPage({
   source,
   recentPosts,
   preview,
+  product,
 }: InferGetStaticPropsType<typeof getStaticProps>): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
@@ -226,13 +250,24 @@ export default function PostPage({
         }}
       ></NextSeo>
       <Layout site={site}>
-        <PostLayout
-          router={router}
-          post={post}
-          source={source}
-          recentPosts={recentPosts}
-          preview={preview}
-        />
+        <>
+          {post._type === PostType.course ? (
+            <Course
+              post={post}
+              source={source}
+              product={product}
+              preview={preview}
+            />
+          ) : (
+            <PostLayout
+              router={router}
+              post={post}
+              source={source}
+              recentPosts={recentPosts}
+              preview={preview}
+            />
+          )}
+        </>
       </Layout>
     </>
   );

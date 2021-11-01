@@ -15,7 +15,7 @@ export default function CourseBuyButton({
 }: {
   post: Post;
   user: UserInfoExtended;
-  product: StripeProduct | null;
+  product: StripeProduct | undefined;
 }): JSX.Element {
   const { member, team } = useIsMember(user);
   return (

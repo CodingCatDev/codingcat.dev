@@ -25,7 +25,7 @@ export default function Course({
 }: {
   post: PostModel;
   source: MDXRemoteSerializeResult | null;
-  product: StripeProduct | null;
+  product: StripeProduct | undefined;
   preview?: boolean;
 }): JSX.Element {
   const { status, data: signInCheckResult } = useSigninCheck();
@@ -48,7 +48,7 @@ export default function Course({
                 className="btn-primary"
                 onClick={() =>
                   window.open(
-                    `/api/endpreview?slug=/${post.type}/${post.slug}`,
+                    `/api/endpreview?slug=/${post._type}/${post.slug}`,
                     '_self'
                   )
                 }
@@ -69,7 +69,7 @@ export default function Course({
                   <a role="link" className="no-underline btn-secondary">
                     {/* capitalize Courses */}
                     {`back to ${
-                      post.type.charAt(0).toUpperCase() + post.type.slice(1)
+                      post._type.charAt(0).toUpperCase() + post._type.slice(1)
                     }s`}
                   </a>
                 </Link>
@@ -142,7 +142,7 @@ export default function Course({
           </div>
         </section>
         <section className="flex flex-col mb-2">
-          {post.type === PostType.course && (
+          {post._type === PostType.course && (
             <div className="">
               {post.coverPhoto?.public_id ? (
                 <>
