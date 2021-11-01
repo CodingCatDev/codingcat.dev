@@ -2,11 +2,11 @@ import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import AJ404 from '@/components/global/icons/AJ404';
 
-import { getSite } from '@/services/serversideApi';
 import { Post } from '@/models/post.model';
 import Layout from '@/layout/Layout';
-
 import { Site } from '@/models/site.model';
+import { GetStaticProps } from 'next';
+import { getSite } from '@/services/sanity.server';
 
 export default function Custom404({
   site,
@@ -39,18 +39,17 @@ export default function Custom404({
   );
 }
 
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
+interface StaticPropsResult {
+  site: Site;
+}
 
+export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
+  preview,
+}) => {
   return {
     props: {
-      site,
+      site: await getSite({ preview }),
     },
     revalidate: 3600,
   };
-}
+};

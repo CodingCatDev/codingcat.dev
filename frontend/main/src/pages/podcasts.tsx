@@ -3,23 +3,38 @@ import Layout from '@/layout/Layout';
 import PurrfectDevUpper from '@/components/PurrfectDevUpper';
 import PostsCards from '@/components/PostsCards';
 import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
-import { getSite, postsService } from '@/services/serversideApi';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
+import { getSite, getPostsService } from '@/services/sanity.server';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
-export default function Blog({
+interface StaticParams {
+  site: Site;
+  posts: Post[];
+}
+
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  preview = false,
+}) => {
+  return {
+    props: {
+      site: await getSite({ preview }),
+      posts: await getPostsService({ type: PostType.podcast, preview }),
+    },
+    revalidate: 3600,
+  };
+};
+
+const Podcasts = ({
   site,
   posts,
-}: {
-  site: Site | null;
-  posts: Post[];
-}): JSX.Element {
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NextSeo
         title="Purrfect Podcasts"
         description="Purrfect Podcasts"
-        canonical={`https://codingcat.dev/podcasts/`}
+        canonical={`https://codingcat.dev/podcasts`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
@@ -44,7 +59,9 @@ export default function Blog({
         <div className="p-4 sm:p-10">
           <PurrfectDevUpper />
           <h2 className="mb-4 text-5xl text-center lg:text-7xl">
-            {posts[0].type.charAt(0).toUpperCase() + posts[0].type.slice(1)}s
+            {PostType.podcast.charAt(0).toUpperCase() +
+              PostType.podcast.slice(1)}
+            s
           </h2>
           <PostsCards posts={posts} />
           <PurrfectDevPodcatchers />
@@ -52,25 +69,5 @@ export default function Blog({
       </Layout>
     </>
   );
-}
-
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-    posts: Post[];
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-  const posts = await postsService(PostType.podcast);
-  return {
-    props: {
-      site,
-      posts,
-    },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 3600, // In seconds
-  };
-}
+};
+export default Podcasts;

@@ -2,17 +2,32 @@ import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import Authors from '@/components/authors/Authors';
 
-import { getAuthorProfiles, getSite } from '@/services/serversideApi';
 import { Site } from '@/models/site.model';
-import { UserInfoExtended } from '@/models/user.model';
+import { Author } from '@/models/user.model';
+import { getAuthors, getSite } from '@/services/sanity.server';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
+
+interface StaticParams {
+  site: Site;
+  authors: Author[];
+}
+
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  preview = false,
+}) => {
+  return {
+    props: {
+      site: await getSite({ preview }),
+      authors: await getAuthors({ preview }),
+    },
+    revalidate: 3600,
+  };
+};
 
 export default function AuthorsPage({
   site,
   authors,
-}: {
-  site: Site | null;
-  authors: UserInfoExtended[];
-}): JSX.Element {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <NextSeo
@@ -27,31 +42,4 @@ export default function AuthorsPage({
       </Layout>
     </>
   );
-}
-
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-    authors: UserInfoExtended[];
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-  const allAuthors = await getAuthorProfiles();
-
-  // Return only authors with Profile Data
-  const authors = allAuthors.filter((a) =>
-    Object.keys(a).includes('basicInfo')
-  );
-
-  return {
-    props: {
-      site,
-      authors,
-    },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 3600, // In seconds
-  };
 }

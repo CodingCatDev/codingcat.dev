@@ -17,7 +17,7 @@ export const toKebabCase = (str: string) => {
 };
 
 export const pluralize = (post: Post) => {
-  return `${post.type === PostType.post ? 'blog' : post.type + 's'}`;
+  return `${post._type === PostType.post ? 'blog' : post._type + 's'}`;
 };
 
 export const toTitleCase = (str: string) => {

@@ -1,11 +1,11 @@
-import { UserInfoExtended } from '@/models/user.model';
+import { Author } from '@/models/user.model';
 import Link from 'next/link';
 import AuthorCard from './AuthorCard';
 
 export default function Authors({
   authors,
 }: {
-  authors: UserInfoExtended[];
+  authors: Author[];
 }): JSX.Element {
   return (
     <section className="grid gap-4 justify-items-center">
@@ -21,7 +21,7 @@ export default function Authors({
       </section>
       <section className="flex flex-wrap items-start justify-center w-full gap-10">
         {authors.map((author, i) => (
-          <Link href={`/authors/${author.uid}`} key={i}>
+          <Link href={`/authors/${author.slug}`} key={i}>
             <a>
               <AuthorCard author={author} />
             </a>
