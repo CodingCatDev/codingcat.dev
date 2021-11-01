@@ -2,21 +2,31 @@ import { NextSeo } from 'next-seo';
 import Image from 'next/image';
 import router, { useRouter } from 'next/router';
 import Layout from '@/layout/Layout';
-import { getSite } from '@/services/serversideApi';
+import { getSite } from '@/services/sanity.server';
 import { Site } from '@/models/site.model';
 import { HTMLAttributes, useEffect, useRef } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
 import { useScroll } from '@/hooks/useScroll';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
-interface IframeHTMLAttributes<T> extends HTMLAttributes<T> {
-  mozallowfullscreen?: boolean;
+interface StaticParams {
+  site: Site;
 }
+
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  preview = false,
+}) => {
+  return {
+    props: {
+      site: await getSite({ preview }),
+    },
+    revalidate: 3600,
+  };
+};
 
 export default function Sponsorship({
   site,
-}: {
-  site: Site | null;
-}): JSX.Element {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   const url =
     'https://dev.us5.list-manage.com/subscribe/post?u=d5670cc367744e51204ca56f8&id=c07a1fa483';
 
@@ -310,19 +320,4 @@ export default function Sponsorship({
       </Layout>
     </>
   );
-}
-
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-  return {
-    props: {
-      site,
-    },
-    revalidate: 3600, // In seconds
-  };
 }
