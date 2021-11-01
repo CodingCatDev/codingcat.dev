@@ -7,9 +7,9 @@ export const PostHeader = ({ post }: { post?: Post }): JSX.Element => {
         <>
           <div className="grid grid-flow-col gap-1 mr-8 place-items-center text-basics-50 dark:text-basics-50">
             <p className="text-xl font-bold">
-              {`${post.type} ID: `.toUpperCase()}
+              {`${post._type} ID: `.toUpperCase()}
             </p>
-            <p>{post.id}</p>
+            <p>{post._id}</p>
           </div>
         </>
       )}

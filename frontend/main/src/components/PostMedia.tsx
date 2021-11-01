@@ -37,7 +37,7 @@ export default function PostMedia({
                 secure={config.cname ? true : false}
                 secureDistribution={config.cname ? config.cname : ''}
                 sourceTypes={['hls', 'webm', 'ogv', 'mp4']}
-                poster={`https://${config.cname}/image/upload/${post.coverPhoto?.path}`}
+                poster={`https://${config.cname}/image/upload/${post.coverPhoto?.public_id}`}
                 controls={true}
                 fluid="true"
                 style={{ height: '100%', width: '100%' }}
@@ -71,9 +71,9 @@ export default function PostMedia({
         </div>
       ) : (
         <>
-          {!noImage && post.coverPhoto?.path ? (
+          {!noImage && post.coverPhoto?.public_id ? (
             <Image
-              src={post.coverPhoto?.path}
+              src={post.coverPhoto?.public_id}
               alt={post.title}
               width="480"
               height="270"

@@ -1,18 +1,16 @@
 import Image from 'next/image';
-import { UserInfoExtended } from '@/models/user.model';
+import { Author } from '@/models/user.model';
 
 export default function AuthorCard({
   author,
 }: {
-  author: UserInfoExtended;
+  author: Author;
 }): JSX.Element {
   return (
     <article className="grid items-start max-w-md grid-cols-1 gap-4 p-4 shadow-lg justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm">
       {author?.displayName && author?.photoURL ? (
         <Image
-          src={author.photoURL}
-          loader={() => author.photoURL || ''}
-          unoptimized={true}
+          src={author.photoURL.public_id}
           layout="fixed"
           width="96"
           height="96"
@@ -33,7 +31,7 @@ export default function AuthorCard({
       )}
       <>
         <h3 className="font-sans text-3xl lg:text-4xl">{author.displayName}</h3>
-        <p className="text-base lg:text-lg">{author.basicInfo?.about}</p>
+        <p className="text-base lg:text-lg">{author?.basicInfo?.about}</p>
       </>
     </article>
   );

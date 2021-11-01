@@ -1,0 +1,36 @@
+{
+  "name": "codingcatdev",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "package.json",
+  "author": "Alex Patterson <alex@codingcat.dev>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "sanity start",
+    "test": "sanity check",
+    "build": "sanity build public -y"
+  },
+  "keywords": [
+    "sanity"
+  ],
+  "dependencies": {
+    "@sanity/base": "^2.21.7",
+    "@sanity/client": "^2.21.7",
+    "@sanity/core": "^2.21.7",
+    "@sanity/default-layout": "^2.21.7",
+    "@sanity/default-login": "^2.21.7",
+    "@sanity/desk-tool": "^2.21.7",
+    "@sanity/vision": "^2.21.7",
+    "prop-types": "^15.7",
+    "react": "^17.0",
+    "react-dom": "^17.0",
+    "sanity-plugin-cloudinary": "^0.2.1",
+    "sanity-plugin-markdown": "^2.1.0",
+    "styled-components": "^5.2.0"
+  },
+  "devDependencies": {
+    "@sanity/cli": "^2.21.7",
+    "nanoid": "^3.1.30"
+  }
+}

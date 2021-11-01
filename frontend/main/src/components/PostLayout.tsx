@@ -45,7 +45,7 @@ export default function PostLayout({
   const pluralType = pluralize(post);
 
   function backButton() {
-    switch (post.type) {
+    switch (post._type) {
       case PostType.page:
         return (
           <>
@@ -84,7 +84,7 @@ export default function PostLayout({
       {/* DIV TO AVOID GRID GAP */}
       <div className="relative">
         {/* MAIN CONTENT */}
-        {post.type !== PostType.page && (
+        {post._type !== PostType.page && (
           <section className="">
             {/* MEDIA */}
             <PostMedia post={post} />
@@ -100,7 +100,7 @@ export default function PostLayout({
                   className="btn-primary"
                   onClick={() =>
                     window.open(
-                      `/api/endpreview?slug=/${post.type}/${post.slug}`,
+                      `/api/endpreview?slug=/${post._type}/${post.slug}`,
                       '_self'
                     )
                   }
@@ -201,7 +201,7 @@ export default function PostLayout({
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
               {course.sections.map((section) => (
                 <section
-                  key={section.id}
+                  key={section._key}
                   className="flex flex-col bg-basics-50 rounded-t-md"
                 >
                   <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
@@ -210,10 +210,10 @@ export default function PostLayout({
                   <ul className="flex flex-col flex-grow justify-items-stretch">
                     {section.lessons &&
                       section.lessons.map((lesson) => (
-                        <li key={lesson.id} className="ml-0 list-none">
+                        <li key={lesson._id} className="ml-0 list-none">
                           <Link
                             href={`/course/${course.slug}/lesson/${lesson.slug}`}
-                            key={lesson.id}
+                            key={lesson._id}
                             passHref
                           >
                             <div

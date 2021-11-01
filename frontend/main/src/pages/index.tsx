@@ -1,7 +1,5 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-
-import { getSite, postsRecentService } from '@/services/serversideApi';
 import PostsCards from '@/components/PostsCards';
 import { Post, PostType } from '@/models/post.model';
 import Layout from '@/layout/Layout';
@@ -15,16 +13,32 @@ import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { Site } from '@/models/site.model';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { getRecentPostsService, getSite } from '@/services/sanity.server';
 
-export default function Home({
-  site,
-  recentPosts,
-}: {
-  site: Site | null;
+interface StaticParams {
+  site: Site;
   recentPosts: {
     [key: string]: Post[];
   };
-}): JSX.Element {
+}
+
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  preview = false,
+}) => {
+  return {
+    props: {
+      site: await getSite({ preview }),
+      recentPosts: await getRecentPostsService({ preview }),
+    },
+    revalidate: 3600,
+  };
+};
+
+const Home = ({
+  site,
+  recentPosts,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NextSeo
@@ -147,33 +161,5 @@ export default function Home({
       </Layout>
     </>
   );
-}
-
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-    recentPosts: {
-      [key: string]: Post[];
-    };
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-
-  const recentPosts = await postsRecentService([
-    PostType.course,
-    PostType.post,
-    PostType.tutorial,
-    PostType.podcast,
-  ]);
-  return {
-    props: {
-      site,
-      recentPosts,
-    },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 600, // In seconds
-  };
-}
+};
+export default Home;

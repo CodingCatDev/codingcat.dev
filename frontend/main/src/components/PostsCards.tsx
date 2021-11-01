@@ -12,14 +12,14 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
             return (
               <div
                 className="grid transition-all transform rounded-md shadow-lg grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
-                key={post.id}
+                key={post._id}
               >
-                <Link href={`/${post.type}/${post.slug}`}>
+                <Link href={`/${post._type}/${post.slug}`}>
                   <a className="self-start">
-                    {post.coverPhoto?.path && post.type === 'course' ? (
+                    {post.coverPhoto?.public_id && post._type === 'course' ? (
                       <>
                         <Image
-                          src={post.coverPhoto?.path}
+                          src={post.coverPhoto?.public_id}
                           alt={post.title}
                           width="480"
                           height="270"
@@ -27,10 +27,10 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                           className="rounded-md rounded-b-none cursor-pointer"
                         />
                       </>
-                    ) : post.coverPhoto?.path ? (
+                    ) : post.coverPhoto?.public_id ? (
                       <>
                         <Image
-                          src={post.coverPhoto?.path}
+                          src={post.coverPhoto?.public_id}
                           alt={post.title}
                           width="480"
                           height="270"
@@ -54,7 +54,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                 <section className="grid h-full grid-cols-1 gap-2 p-4">
                   <div className="space-y-2">
                     <h3 className="font-sans text-lg tracking-wide text-basics-900 text-bold">
-                      <Link href={`/${post.type}/${post.slug}`}>
+                      <Link href={`/${post._type}/${post.slug}`}>
                         <a>{post.title}</a>
                       </Link>
                     </h3>
@@ -72,7 +72,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                     </div>
                   </div>
                   <div className="grid self-end justify-start grid-cols-2 gap-2 font-bold tracking-wider">
-                    {post.type === 'course' && (
+                    {post._type === 'course' && (
                       <>
                         {post.accessSettings?.accessMode === 'closed' ? (
                           <>

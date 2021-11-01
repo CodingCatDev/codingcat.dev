@@ -1,4 +1,5 @@
 import { UserInfo } from 'firebase/auth';
+import { Cloudinary } from './cloudinary.model';
 import { SocialLink } from './site.model';
 
 export interface UserInfoExtended extends UserInfo {
@@ -6,6 +7,14 @@ export interface UserInfoExtended extends UserInfo {
   token?: string;
   basicInfo?: BasicUserInfo;
   roles?: Roles[];
+}
+
+export interface Author {
+  _id: string;
+  basicInfo?: BasicUserInfo;
+  displayName: string;
+  photoURL?: Cloudinary;
+  slug: string;
 }
 
 export interface UserMembership {

@@ -7,7 +7,7 @@ export default function RecentPostsList({
   posts: Post[];
 }): JSX.Element {
   function link(post: Post) {
-    switch (post.type) {
+    switch (post._type) {
       case PostType.course:
         return (
           <>
@@ -20,7 +20,7 @@ export default function RecentPostsList({
         );
       default:
         return (
-          <Link href={`/${post.type}/${post.slug}`}>
+          <Link href={`/${post._type}/${post.slug}`}>
             <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
               {post.title}
             </a>
@@ -31,7 +31,7 @@ export default function RecentPostsList({
   return (
     <>
       {posts.map((post) => (
-        <li key={post.id} className="ml-0 list-none">
+        <li key={post._id} className="ml-0 list-none">
           {link(post)}
         </li>
       ))}

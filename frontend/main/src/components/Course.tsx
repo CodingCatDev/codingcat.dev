@@ -25,7 +25,7 @@ export default function Course({
 }: {
   post: PostModel;
   source: MDXRemoteSerializeResult | null;
-  product: StripeProduct | null;
+  product: StripeProduct | undefined;
   preview?: boolean;
 }): JSX.Element {
   const { status, data: signInCheckResult } = useSigninCheck();
@@ -48,7 +48,7 @@ export default function Course({
                 className="btn-primary"
                 onClick={() =>
                   window.open(
-                    `/api/endpreview?slug=/${post.type}/${post.slug}`,
+                    `/api/endpreview?slug=/${post._type}/${post.slug}`,
                     '_self'
                   )
                 }
@@ -69,7 +69,7 @@ export default function Course({
                   <a role="link" className="no-underline btn-secondary">
                     {/* capitalize Courses */}
                     {`back to ${
-                      post.type.charAt(0).toUpperCase() + post.type.slice(1)
+                      post._type.charAt(0).toUpperCase() + post._type.slice(1)
                     }s`}
                   </a>
                 </Link>
@@ -142,12 +142,12 @@ export default function Course({
           </div>
         </section>
         <section className="flex flex-col mb-2">
-          {post.type === PostType.course && (
+          {post._type === PostType.course && (
             <div className="">
-              {post.coverPhoto?.path ? (
+              {post.coverPhoto?.public_id ? (
                 <>
                   <Image
-                    src={post.coverPhoto?.path}
+                    src={post.coverPhoto?.public_id}
                     alt={post.title}
                     width="480"
                     height="270"
@@ -194,7 +194,7 @@ export default function Course({
               <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
                 {post.sections.map((section) => (
                   <section
-                    key={section.id}
+                    key={section._key}
                     className="flex flex-col bg-basics-50 rounded-t-md"
                   >
                     <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
@@ -203,10 +203,10 @@ export default function Course({
                     <ul className="flex flex-col flex-grow justify-items-stretch">
                       {section.lessons &&
                         section.lessons.map((lesson) => (
-                          <li key={lesson.id} className="ml-0 list-none">
+                          <li key={lesson._id} className="ml-0 list-none">
                             <Link
                               href={`/course/${post.slug}/lesson/${lesson.slug}`}
-                              key={lesson.id}
+                              key={lesson._id}
                               passHref
                             >
                               <div

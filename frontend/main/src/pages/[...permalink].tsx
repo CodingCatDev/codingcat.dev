@@ -1,37 +1,236 @@
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 
-import {
-  getSite,
-  historyById,
-  postBySlugService,
-  postsRecentService,
-  postsService,
-} from '@/services/serversideApi';
-
-import { Post as PostModel, PostType } from '@/models/post.model';
+import { Post, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/components/PostLayout';
+import Course from '@/components/Course';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import DefaultErrorPage from 'next/error';
+import {
+  getPostById,
+  getPostBySlugService,
+  getPostsService,
+  getRecentPostsService,
+  getSite,
+} from '@/services/sanity.server';
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
+import { getStripeProduct } from '@/services/firebase.server';
+import { StripeProduct } from '@/models/stripe.model';
 
-export default function Post({
+interface StaticPropsResult {
+  site: Site;
+  post: Post;
+  course?: Post;
+  source: MDXRemoteSerializeResult<Record<string, unknown>> | null;
+  preview: boolean | undefined;
+  recentPosts?: {
+    [key: string]: Post[];
+  };
+  product?: StripeProduct;
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths: { params: { permalink: string[] } }[] = [];
+  for (const postType of [
+    PostType.post,
+    PostType.tutorial,
+    PostType.podcast,
+    PostType.page,
+    PostType.course,
+  ]) {
+    const posts = await getPostsService({
+      type: postType,
+    });
+    for (const post of posts) {
+      paths.push({
+        params: {
+          permalink: [post._type, post.slug],
+        },
+      });
+    }
+  }
+  return {
+    paths,
+    fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
+  params,
+  preview,
+  previewData,
+}) => {
+  let type = (params?.permalink?.[0] as PostType) || '';
+  let slug = (params?.permalink?.[1] as string) || '';
+  let lesson = (params?.permalink?.[2] as string) || '';
+  let lessonPath = (params?.permalink?.[3] as string) || '';
+
+  // Redirect plural page types
+  if (['podcasts', 'tutorials', 'courses'].includes(type) && slug) {
+    let dest;
+    switch (type as string) {
+      case 'podcasts':
+        dest = 'podcast';
+        break;
+      case 'tutorials':
+        dest = 'tutorial';
+        break;
+      case 'courses':
+        dest = 'course';
+        break;
+    }
+    return {
+      redirect: {
+        destination: `/${dest}/${slug}`,
+        permanent: true,
+      },
+    };
+  }
+
+  // Make assumption that this should be a base page.
+  if (type && !slug) {
+    slug = type;
+    type = PostType.page;
+  }
+
+  const allowedTypes = [
+    PostType.post,
+    PostType.podcast,
+    PostType.tutorial,
+    PostType.page,
+    PostType.course,
+  ];
+  if (!type || !slug || !allowedTypes.includes(type)) {
+    return {
+      notFound: true,
+    };
+  }
+
+  // Preview page
+  let post;
+  let course;
+  if (preview) {
+    const pData = previewData as Post;
+    if (!pData || !pData._id) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const { _id } = pData;
+    post = await getPostById({ preview, _id });
+  } else {
+    //If Lesson we need to use different slug and get course
+    if (lesson === PostType.lesson && lessonPath) {
+      post = await getPostBySlugService({
+        preview,
+        type: PostType.lesson,
+        slug: lessonPath,
+      });
+      course = await getPostBySlugService({
+        preview,
+        type,
+        slug,
+      });
+    } else {
+      post = await getPostBySlugService({ preview, type, slug });
+    }
+  }
+
+  // Check if old blog link is trying to be used.
+  if (!post) {
+    if (type === PostType.page) {
+      post = await getPostBySlugService({
+        preview,
+        type: PostType.post,
+        slug,
+      });
+    }
+    // This means the page was found, but we want to redirect them.
+    if (post) {
+      return {
+        redirect: {
+          destination: `/${PostType.post}/${slug}`,
+          permanent: true,
+        },
+      };
+    }
+  }
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
+  let source: MDXRemoteSerializeResult | null;
+  let allContent = '';
+
+  if (post && post.content) {
+    const { content } = matter(post.content);
+    allContent = allContent + content;
+  }
+  if (allContent) {
+    source = await serialize(allContent, {
+      mdxOptions: {
+        remarkPlugins: [],
+        rehypePlugins: [],
+      },
+    });
+  } else {
+    source = null;
+  }
+
+  // Courses have products not recentPosts
+  const props: StaticPropsResult = {
+    site: await getSite({ preview }),
+    post,
+    source,
+    preview: preview || false,
+  };
+
+  if (type === PostType.course && !lessonPath) {
+    const productId = post?.accessSettings?.productId;
+    if (productId) {
+      const product = await getStripeProduct(productId);
+      if (product) {
+        props.product = product;
+        console.log(`${slug} has product: `, product.id);
+      }
+    }
+  } else {
+    if (lessonPath) {
+      if (course) {
+        props.course = course;
+      }
+    } else {
+      const recentPosts = await getRecentPostsService({ preview });
+      if (recentPosts) {
+        props.recentPosts = recentPosts;
+      }
+    }
+  }
+
+  return {
+    props,
+    revalidate: 3600,
+  };
+};
+
+export default function PostPage({
   site,
   post,
+  course,
   source,
   recentPosts,
   preview,
-}: {
-  site: Site | null;
-  post: PostModel;
-  recentPosts: { [key: string]: PostModel[] };
-  source: MDXRemoteSerializeResult | null;
-  preview: boolean;
-}): JSX.Element {
+  product,
+}: InferGetStaticPropsType<typeof getStaticProps>): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
     return (
@@ -77,207 +276,26 @@ export default function Post({
         }}
       ></NextSeo>
       <Layout site={site}>
-        <PostLayout
-          router={router}
-          post={post}
-          source={source}
-          recentPosts={recentPosts}
-          preview={preview}
-        />
+        <>
+          {post._type === PostType.course ? (
+            <Course
+              post={post}
+              source={source}
+              product={product}
+              preview={preview}
+            />
+          ) : (
+            <PostLayout
+              router={router}
+              post={post}
+              course={course}
+              source={source}
+              recentPosts={recentPosts}
+              preview={preview}
+            />
+          )}
+        </>
       </Layout>
     </>
   );
-}
-
-export async function getStaticPaths(): Promise<{
-  paths: { params: { permalink: string[] } }[];
-  fallback: boolean;
-}> {
-  const paths: { params: { permalink: string[] } }[] = [];
-  for (const postType of [
-    PostType.post,
-    PostType.tutorial,
-    PostType.podcast,
-    PostType.page,
-  ]) {
-    const docData = await postsService(postType);
-    for (const doc of docData) {
-      paths.push({
-        params: {
-          permalink: [doc.type, doc.slug],
-        },
-      });
-    }
-  }
-  return {
-    paths,
-    fallback: true,
-  };
-}
-
-export async function getStaticProps({
-  params,
-  preview,
-  previewData,
-}: {
-  params: { permalink: string[] };
-  preview: boolean;
-  previewData: PostModel;
-}): Promise<
-  | {
-      props: {
-        site: Site | null;
-        post: PostModel | null;
-        recentPosts: { [key: string]: PostModel[] };
-        source: MDXRemoteSerializeResult | null;
-        preview: boolean;
-      };
-      revalidate: number;
-    }
-  | { redirect: { destination: string; permanent: boolean } }
-  | { notFound: boolean }
-> {
-  const site = await getSite();
-
-  let type = params.permalink[0] as PostType;
-  let slug = params.permalink[1] as string;
-
-  // Redirect plural page types
-  if (['podcasts', 'tutorials', 'courses'].includes(type) && slug) {
-    let dest;
-    switch (type as string) {
-      case 'podcasts':
-        dest = 'podcast';
-        break;
-      case 'tutorials':
-        dest = 'tutorial';
-        break;
-      case 'courses':
-        dest = 'course';
-        break;
-    }
-    return {
-      redirect: {
-        destination: `/${dest}/${slug}`,
-        permanent: true,
-      },
-    };
-  }
-
-  // Make assumption that this should be a base page.
-  if (type && !slug) {
-    slug = type;
-    type = PostType.page;
-  }
-
-  const allowedTypes = [
-    PostType.post,
-    PostType.podcast,
-    PostType.tutorial,
-    PostType.page,
-  ];
-  if (!type || !slug || !allowedTypes.includes(type)) {
-    return {
-      notFound: true,
-    };
-  }
-
-  // Preview page
-  let post;
-  let posts;
-
-  if (preview && previewData && previewData.slug === slug) {
-    const { postId, id } = previewData;
-    if (!postId || !id) {
-      return {
-        notFound: true,
-      };
-    }
-
-    post = await historyById(postId, id);
-  } else {
-    posts = await postBySlugService(type, slug);
-    post = posts.length > 0 ? posts[0] : null;
-    preview = false;
-  }
-
-  // Check if old blog link is trying to be used.
-  if (!post) {
-    if (type === PostType.page) {
-      posts = await postBySlugService(PostType.post, slug);
-      post = posts.length > 0 ? posts[0] : null;
-    }
-    // This means the page was found, but we want to redirect them.
-    if (post) {
-      return {
-        redirect: {
-          destination: `/${PostType.post}/${slug}`,
-          permanent: true,
-        },
-      };
-    }
-  }
-
-  if (!post) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const recentPosts = await postsRecentService([
-    PostType.course,
-    PostType.post,
-    PostType.tutorial,
-    PostType.podcast,
-  ]);
-
-  let source: MDXRemoteSerializeResult | null;
-  let allContent = '';
-
-  if (post && post.urlContent) {
-    const c = await (await fetch(post.urlContent)).text();
-    if (c) {
-      const { content } = matter(c);
-
-      if (post.urlContent.includes('next.js') && content) {
-        allContent = content.replace(
-          new RegExp(/<a href\="\/docs/g),
-          '<a href="https://nextjs.org/docs'
-        );
-        allContent = allContent.replace(new RegExp(/.md/g), '');
-      } else {
-        if (!content) {
-          console.log('missing content after matter');
-        }
-      }
-    } else {
-      console.log('URL Content Failed');
-    }
-  }
-
-  if (post && post.content) {
-    const { content } = matter(post.content);
-    allContent = allContent + content;
-  }
-  if (allContent) {
-    source = await serialize(allContent, {
-      mdxOptions: {
-        remarkPlugins: [],
-        rehypePlugins: [],
-      },
-    });
-  } else {
-    source = null;
-  }
-
-  return {
-    props: {
-      site,
-      post,
-      recentPosts,
-      source,
-      preview,
-    },
-    revalidate: 3600,
-  };
 }
