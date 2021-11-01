@@ -13,31 +13,8 @@ import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { Site } from '@/models/site.model';
-import { GetStaticProps, GetStaticPropsResult, NextPage } from 'next';
-import { groq } from 'next-sanity';
-import { getClient } from '@/services/sanity.server';
-
-const siteQuery = groq`
-  *[_type == "site"][0] {
-    title,
-    pageLinks[]->{
-      title,
-      "slug": '/'+slug.current
-    },
-    socialLinks
-  }
-`;
-
-const recentPostsQuery = groq`
-*[_type == $type && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc) [0...3] {
-    _id, 
-    title,
-    excerpt,
-    coverPhoto{
-      public_id
-    },
-  }
-`;
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { getRecentPostsService, getSite } from '@/services/sanity.server';
 
 interface StaticParams {
   site: Site;
@@ -46,38 +23,22 @@ interface StaticParams {
   };
 }
 
-export const getStaticProps: GetStaticProps = async ({
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
   preview = false,
-}): Promise<GetStaticPropsResult<StaticParams>> => {
-  const site = await getClient(preview).fetch(siteQuery);
-  const course: Post[] = await getClient(preview).fetch(recentPostsQuery, {
-    type: PostType.course,
-  });
-  const post: Post[] = await getClient(preview).fetch(recentPostsQuery, {
-    type: PostType.post,
-  });
-  const tutorial: Post[] = await getClient(preview).fetch(recentPostsQuery, {
-    type: PostType.tutorial,
-  });
-  const podcast: Post[] = await getClient(preview).fetch(recentPostsQuery, {
-    type: PostType.podcast,
-  });
-
-  const recentPosts = { course, post, tutorial, podcast };
-  console.log(site);
+}) => {
   return {
     props: {
-      site,
-      recentPosts,
+      site: await getSite({ preview }),
+      recentPosts: await getRecentPostsService({ preview }),
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 600, // In seconds
+    revalidate: 3600,
   };
 };
 
-const Home: NextPage<StaticParams> = ({ site, recentPosts }) => {
+const Home = ({
+  site,
+  recentPosts,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NextSeo
