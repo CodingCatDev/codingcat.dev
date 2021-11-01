@@ -15,7 +15,7 @@ export default function CourseBuyButton({
     return (
       <>
         <a
-          href={`/admin/${post.type}/${post.postId}`}
+          href={`/admin/${post._type}/${post.postId}`}
           target="_blank"
           rel="noreferrer"
           role="link"

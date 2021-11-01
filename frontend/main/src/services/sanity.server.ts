@@ -59,7 +59,7 @@ export const getPostsService = async ({
       coverPhoto{
         public_id
       },
-      "slug": '/'+slug.current
+      "slug": slug.current
       `
     }
   }
