@@ -1,9 +1,12 @@
 import Head from 'next/head';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
-import { getActiveMemberProducts, getSite } from '@/services/serversideApi';
 import { StripeProduct } from '@/models/stripe.model';
 import Profile from '@/components/user/Profile';
+import { GetStaticProps } from 'next';
+
+import { getActiveMemberProducts } from '@/services/firebase.server';
+import { getSite } from '@/services/sanity.server';
 
 interface StaticParams {
   site: Site;

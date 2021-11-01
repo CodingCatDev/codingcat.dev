@@ -2,8 +2,24 @@ import Head from 'next/head';
 import Layout from '@/layout/Layout';
 
 import { Site } from '@/models/site.model';
-import { getSite } from '@/services/serversideApi';
+import { getSite } from '@/services/sanity.server';
 import UserMembershipDetail from '@/components/user/UserMembershipDetail';
+import { GetStaticProps } from 'next';
+
+interface StaticParams {
+  site: Site;
+}
+
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  preview = false,
+}) => {
+  return {
+    props: {
+      site: await getSite({ preview }),
+    },
+    revalidate: 3600,
+  };
+};
 
 export default function Membership({
   site,
@@ -18,21 +34,4 @@ export default function Membership({
       <UserMembershipDetail />
     </Layout>
   );
-}
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-  return {
-    props: {
-      site,
-    },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every second
-    revalidate: 60, // In seconds
-  };
 }
