@@ -100,7 +100,7 @@ export const getPostById = async ({
   return (await getClient(preview).getDocument<Post>(_id)) as Post | undefined;
 };
 
-export const getPostsBySlugService = async ({
+export const getPostBySlugService = async ({
   type,
   preview = false,
   slug,
@@ -118,4 +118,20 @@ export const getPostsBySlugService = async ({
     slug,
     type,
   });
+};
+
+export const getAuthors = async ({
+  preview = false,
+}: {
+  preview?: boolean;
+}) => {
+  const recentPostsQuery = groq`
+    *[_type == 'author'] | order(name desc)
+    {
+      ...,
+      "slug": '/'+slug.current
+    }
+  `;
+
+  return await getClient(preview).fetch(recentPostsQuery);
 };

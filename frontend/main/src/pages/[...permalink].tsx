@@ -12,7 +12,7 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import DefaultErrorPage from 'next/error';
 import {
   getPostById,
-  getPostsBySlugService,
+  getPostBySlugService,
   getPostsService,
   getRecentPostsService,
   getSite,
@@ -115,13 +115,13 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     const { _id } = pData;
     post = await getPostById({ preview, _id });
   } else {
-    post = await getPostsBySlugService({ preview, type, slug });
+    post = await getPostBySlugService({ preview, type, slug });
   }
 
   // Check if old blog link is trying to be used.
   if (!post) {
     if (type === PostType.page) {
-      post = await getPostsBySlugService({
+      post = await getPostBySlugService({
         preview,
         type: PostType.post,
         slug,

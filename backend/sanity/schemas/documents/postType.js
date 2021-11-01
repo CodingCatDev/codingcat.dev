@@ -62,12 +62,6 @@ export default {
       type: 'cloudinary.asset',
     },
     {
-      name: 'tags',
-      title: 'Tags',
-      type: 'array',
-      of: [{ type: 'reference', to: { type: 'tag' } }],
-    },
-    {
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
@@ -77,6 +71,28 @@ export default {
       title: 'Content',
       type: 'markdown',
       validation: (Rule) => Rule.required(),
+    },
+    {
+      title: 'Frameworks',
+      name: 'frameworks',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'framework' }],
+        },
+      ],
+    },
+    {
+      title: 'Languages',
+      name: 'language',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'language' }],
+        },
+      ],
     },
   ],
   orderings: [
@@ -89,13 +105,18 @@ export default {
   preview: {
     select: {
       title: 'title',
-      author: 'author.name',
-      media: 'mainImage',
+      author0: 'authors.0.displayName',
+      author1: 'authors.1.displayName',
+      author2: 'authors.2.displayName',
     },
     prepare(selection) {
-      const { author } = selection;
+      const { author0, author1, author2 } = selection;
       return Object.assign({}, selection, {
-        subtitle: author && `by ${author}`,
+        subtitle:
+          author0 &&
+          `by ${author0}${author1 ? ',' + author1 : ''}${
+            author2 ? ',' + author2 : ''
+          }`,
       });
     },
   },

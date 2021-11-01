@@ -5,6 +5,23 @@ import { getActiveMemberProducts, getSite } from '@/services/serversideApi';
 import { StripeProduct } from '@/models/stripe.model';
 import Profile from '@/components/user/Profile';
 
+interface StaticParams {
+  site: Site;
+  products: StripeProduct[];
+}
+
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  preview = false,
+}) => {
+  return {
+    props: {
+      site: await getSite({ preview }),
+      products: await getActiveMemberProducts(),
+    },
+    revalidate: 3600,
+  };
+};
+
 export default function ProfilePage({
   site,
   products,
@@ -22,21 +39,4 @@ export default function ProfilePage({
       </Layout>
     </>
   );
-}
-export async function getStaticProps(): Promise<{
-  props: {
-    site: Site | null;
-    products: StripeProduct[];
-  };
-  revalidate: number;
-}> {
-  const site = await getSite();
-  const products = await getActiveMemberProducts();
-  return {
-    props: {
-      site,
-      products,
-    },
-    revalidate: 3600,
-  };
 }
