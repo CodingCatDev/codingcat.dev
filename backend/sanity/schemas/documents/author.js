@@ -1,3 +1,4 @@
+import React from 'react';
 export default {
   name: 'author',
   title: 'Authors',
@@ -48,7 +49,15 @@ export default {
   preview: {
     select: {
       title: 'displayName',
-      media: 'photoURL.thumbnail_url',
+      slug: 'slug.current',
+      src: 'photoURL.secure_url',
+    },
+    prepare(selection) {
+      const { slug, src, title } = selection;
+      return Object.assign({}, selection, {
+        subtitle: slug,
+        media: <img src={src} alt={`${title}`} />,
+      });
     },
   },
 };

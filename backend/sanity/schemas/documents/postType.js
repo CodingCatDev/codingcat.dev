@@ -1,3 +1,4 @@
+import React from 'react';
 export default {
   type: 'document',
   fields: [
@@ -32,7 +33,7 @@ export default {
     },
     {
       name: 'coverPhoto',
-      title: 'Main image',
+      title: 'Cover Photo',
       type: 'cloudinary.asset',
       validation: (Rule) => Rule.required(),
     },
@@ -58,7 +59,7 @@ export default {
     },
     {
       name: 'cloudinaryVideo',
-      title: 'Main Video',
+      title: 'Cloudinary Cover Video',
       type: 'cloudinary.asset',
     },
     {
@@ -106,11 +107,14 @@ export default {
     select: {
       title: 'title',
       slug: 'slug.current',
+      src: 'coverPhoto.thumbnail_url',
+      secureSrc: 'coverPhoto.secure_url',
     },
     prepare(selection) {
-      const { slug } = selection;
+      const { slug, src, title, secureSrc } = selection;
       return Object.assign({}, selection, {
         subtitle: slug,
+        media: <img src={src || secureSrc} alt={`${title}`} />,
       });
     },
   },
