@@ -24,11 +24,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
   console.log(req.body);
+
+  const publishedAt = req.body?.publishedAt;
+  let publish = false;
+  if (publishedAt) {
+    publish = publishedAt < new Date().toISOString();
+  }
+
   // Configure this to match an existing Algolia index name
   const algoliaIndex = algolia.initIndex(algoliaConfig.index);
   try {
-    const result = await algoliaIndex.saveObject(req.body);
-    console.log(result);
+    let result;
+    if (req.body?.deleted) {
+      // remove if doc removed
+      result = await algoliaIndex.deleteObject(req.body?.deleted);
+    } else if (req.body?.updated && !publish) {
+      // remove if not published after update
+      result = await algoliaIndex.deleteObject(req.body?.updated);
+    } else if (publish) {
+      // create when in publish state
+      result = await algoliaIndex.saveObject(req.body);
+    }
+    console.log(result ? result : 'Nothing Done.');
     res.status(200);
     return;
   } catch (error) {
