@@ -30,6 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (publishedAt) {
     publish = publishedAt < new Date().toISOString();
   }
+  console.log('Published: ', publish);
 
   // Configure this to match an existing Algolia index name
   const algoliaIndex = algolia.initIndex(algoliaConfig.index);
@@ -45,14 +46,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // create when in publish state
       result = await algoliaIndex.saveObject(req.body);
     }
-    console.log(result ? result : 'Nothing Done.');
-    res.status(200);
-    return;
+    console.log(result ? `Result: ${JSON.stringify(result)}` : 'Nothing Done.');
+    res.status(200).end();
   } catch (error) {
     console.log(error);
-    res.status(500);
     res.json({ message: 'Error check logs' });
-    return;
+    res.status(500).end();
   }
 };
 
