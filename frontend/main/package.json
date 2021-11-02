@@ -46,7 +46,6 @@
     "react-player": "^2.7.2",
     "react-timeago": "^5.2.0",
     "reactfire": "^4.2.0",
-    "sanity-algolia": "^1.0.2",
     "use-mailchimp-form": "^2.0.4",
     "video.js": "^7.11.4"
   },
