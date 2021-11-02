@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@mapbox/rehype-prism": "^0.8.0",
+    "@sanity/webhook": "^1.0.2",
     "@tailwindcss/forms": "^0.3.4",
     "@tailwindcss/typography": "^0.4.1",
     "@tanem/react-nprogress": "^3.0.80",
@@ -45,6 +46,7 @@
     "react-player": "^2.7.2",
     "react-timeago": "^5.2.0",
     "reactfire": "^4.2.0",
+    "sanity-algolia": "^1.0.2",
     "use-mailchimp-form": "^2.0.4",
     "video.js": "^7.11.4"
   },

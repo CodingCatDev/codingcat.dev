@@ -5,3 +5,7 @@ export const config = {
   useCdn: false,
   token: process.env.SANITY_API_TOKEN || '',
 };
+
+export const webhook = {
+  secret: process.env.SANITY_WEBHOOK_SECRET || '',
+};
