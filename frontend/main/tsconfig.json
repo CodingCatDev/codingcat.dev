@@ -25,7 +25,8 @@
       "@/utils/*": ["src/utils/*"],
       "@/models/*": ["src/models/*"],
       "@/styles/*": ["src/styles/*"]
-    }
+    },
+    "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

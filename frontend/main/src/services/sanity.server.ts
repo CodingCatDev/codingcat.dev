@@ -26,7 +26,7 @@ export const getSite = async ({ preview = false }) => {
     title,
     pageLinks[]->{
       title,
-      "slug": '/'+slug.current
+      "slug": slug.current
     },
     socialLinks
   }
@@ -157,7 +157,7 @@ export const getAuthors = async ({
     *[!(_id in path('drafts.**')) && _type == 'author'] | order(name desc)
     {
       ...,
-      "slug": '/'+slug.current
+      "slug": slug.current
     }
   `;
 
@@ -175,7 +175,7 @@ export const getTags = async ({
     *[_type == '${tag}'] | order(title asc)
     {
       ...,
-      "slug": '/'+slug.current
+      "slug": slug.current
     }
   `;
 
@@ -212,7 +212,7 @@ export const getPostsByTag = async ({
       coverPhoto{
         public_id
       },
-      "slug": '/'+slug.current
+      "slug": slug.current
       `
     }
   }
@@ -271,7 +271,7 @@ export const getPostsByUser = async ({
       coverPhoto{
         public_id
       },
-      "slug": '/'+slug.current
+      "slug": slug.current
       `
     }
   }

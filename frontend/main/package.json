@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@mapbox/rehype-prism": "^0.8.0",
+    "@sanity/webhook": "^1.0.2",
     "@tailwindcss/forms": "^0.3.4",
     "@tailwindcss/typography": "^0.4.1",
     "@tanem/react-nprogress": "^3.0.80",
@@ -30,7 +31,7 @@
     "firebaseui": "^0.600.0",
     "gray-matter": "^4.0.2",
     "js-cookie": "^2.2.1",
-    "next": "^11.1.2",
+    "next": "^12.0.2",
     "next-mdx-remote": "^3.0.5",
     "next-pwa": "^5.4.0",
     "next-sanity": "^0.4.0",
