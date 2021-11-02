@@ -24,7 +24,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
     res.json({ message: 'Bad request' });
     return;
   }
-
+  console.log(req.body);
   // Configure this to match an existing Algolia index name
   const algoliaIndex = algolia.initIndex(algoliaConfig.index);
 
