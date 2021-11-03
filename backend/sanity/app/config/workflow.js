@@ -1,4 +1,12 @@
-export const types = ['course', 'page', 'podcast', 'post', 'site', 'tutorial'];
+export const types = [
+  'course',
+  'page',
+  'podcast',
+  'post',
+  'site',
+  'tutorial',
+  'lesson',
+];
 
 export const states = [
   { id: 'draft', title: 'Draft' },
