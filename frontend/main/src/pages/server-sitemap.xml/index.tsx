@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const docData = await getPostsService({ type });
     for (const doc of docData) {
       fields.push({
-        loc: `${url}/${doc._type}${doc.slug}`,
+        loc: `${url}/${doc._type}/${doc.slug}`,
         changefreq: 'daily',
         priority: 0.7,
         lastmod: new Date().toISOString(),
