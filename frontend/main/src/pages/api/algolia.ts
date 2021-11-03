@@ -14,6 +14,8 @@ const sanity = sanityClient(sanityConfig);
  *  deletes records in the corresponding Algolia indices.
  */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  console.log(req.body);
+
   if (!isValidRequest(req, webhook.secret)) {
     res.status(401).json({ success: false, message: 'Invalid signature' });
     return;
@@ -23,8 +25,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.json({ message: 'Bad request' });
     return;
   }
-  console.log(req.body);
-
   const publishedAt = req.body?.publishedAt;
   let publish = false;
   if (publishedAt) {
