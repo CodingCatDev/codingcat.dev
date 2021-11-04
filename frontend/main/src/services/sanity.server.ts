@@ -92,16 +92,6 @@ export const getRecentPostsService = async ({ preview = false }) => {
   return { course, post, tutorial, podcast };
 };
 
-export const getPostById = async ({
-  preview = false,
-  _id,
-}: {
-  preview?: boolean;
-  _id: string;
-}) => {
-  return (await getClient(preview).getDocument<Post>(_id)) as Post | undefined;
-};
-
 export const getPostBySlugService = async ({
   type,
   preview = false,
@@ -128,6 +118,30 @@ export const getPostBySlugService = async ({
   return await getClient(preview).fetch<Post>(recentPostsQuery, {
     slug,
     type,
+  });
+};
+
+export const getPostById = async ({
+  preview = true,
+  _id,
+}: {
+  preview?: boolean;
+  _id: string;
+}) => {
+  const recentPostsQuery = groq`
+  *[_id == $_id][0]
+  {
+    ...,
+    "slug": slug.current,
+    sections[]{
+      ...,
+      lessons[]->{_id, title,"slug": slug.current}
+    }
+  }
+  `;
+
+  return await getClient(preview).fetch<Post>(recentPostsQuery, {
+    _id,
   });
 };
 
