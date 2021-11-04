@@ -1,97 +1,60 @@
 import { PostType } from '@/models/post.model';
+import { getPostById } from '@/services/sanity.server';
 import { NextApiRequest, NextApiResponse } from 'next';
-import cookie from 'cookie';
 
 const preview = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  // const slugQuery = req.query.slug as string;
-  // // const secret = req.query.secret as string;
-  // // Check for a slug
-  // if (!slugQuery) {
-  //   return res.status(401).json({ message: 'Slug Missing' });
-  // }
-  // // Must be an Admin
-  // // In an normal CMS you might want to check for a token instead.
-  // const cookies = cookie.parse(req.headers.cookie || '');
-  // const auth = cookies.auth;
-  // // Check for user authentication from cookie
-  // let validUser = true;
-  // if (auth) {
-  //   const user = JSON.parse(auth) as {
-  //     uid: string;
-  //     email: string;
-  //     token: string;
-  //   };
-  //   validUser = await validateAdminUser(user.token);
-  // } else {
-  //   validUser = false;
-  // }
+  const courseType = req.query?.courseType as string;
+  const courseSlug = req.query?.courseSlug as string;
+  const selectionType = req.query?.selectionType as string;
+  const selectionSlug = req.query?.selectionSlug as string;
+  const _id = req.query?._id as string;
+
+  console.log('Query: ', JSON.stringify(req.query));
+
+  if (!_id) {
+    return res.status(400).json({ message: 'Missing document ID.' });
+  }
+
+  // Check for a slug
+  if (!selectionType || !selectionSlug) {
+    return res.status(400).json({ message: 'Slug Missing.' });
+  }
+
+  // If Lesson check for course
+  if (selectionType === PostType.lesson && (!courseType || !courseSlug)) {
+    return res.status(400).json({ message: 'Slug Missing for Course.' });
+  }
+
+  // Must be an Admin
   // if (!validUser) {
   //   return res.status(401).json({ message: 'Must be an admin user' });
   // }
-  // const slugParts = slugQuery.split('/');
-  // console.log(slugParts);
-  // if (slugParts.length < 2) {
-  //   return res
-  //     .status(401)
-  //     .json({ message: 'Invalid slug parts, should contain type and slug' });
-  // }
-  // const allowedTypes = [
-  //   PostType.post,
-  //   PostType.podcast,
-  //   PostType.tutorial,
-  //   PostType.page,
-  //   PostType.course,
-  //   PostType.lesson,
-  // ];
-  // let type = slugParts[0] as PostType;
-  // if (!allowedTypes.includes(type)) {
-  //   type = slugParts[1] as PostType;
-  // }
-  // if (!allowedTypes.includes(type)) {
-  //   return res.status(401).json({ message: 'Invalid post type' });
-  // }
-  // const slug = slugParts[slugParts.length - 1];
-  // // Fetch the headless CMS to check if the provided `slug` exists
-  // // getPostBySlug would implement the required fetching logic to the headless CMS
-  // if (slugParts.length === 4 && slugParts[2] === PostType.lesson) {
-  //   const posts = await postBySlugService(PostType.lesson, slugParts[3]);
-  //   // If the slug doesn't exist prevent preview mode from being enabled
-  //   if (posts.length == 0) {
-  //     return res.status(401).json({ message: 'Invalid Lesson slug' });
-  //   }
-  //   // Enable Preview Mode by setting the cookies
-  //   const post = posts[0];
-  //   const history = await latestHistory(post.id as string);
-  //   res.setPreviewData({
-  //     id: history?.id,
-  //     postId: history?.postId,
-  //     slug: history?.slug,
-  //   });
-  //   // Redirect to the path from the fetched post
-  //   // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-  //   res.redirect(
-  //     `/${slugParts[0]}/${slugParts[1]}/${slugParts[2]}/${slugParts[3]}`
-  //   );
-  // } else {
-  //   const posts = await postBySlugService(type, slug);
-  //   // If the slug doesn't exist prevent preview mode from being enabled
-  //   if (posts.length == 0) {
-  //     return res.status(401).json({ message: 'Invalid slug' });
-  //   }
-  //   // Enable Preview Mode by setting the cookies
-  //   const post = posts[0];
-  //   const history = await latestHistory(post.id as string);
-  //   res.setPreviewData({
-  //     id: history?.id,
-  //     postId: history?.postId,
-  //     slug: history?.slug,
-  //   });
-  //   // Redirect to the path from the fetched post
-  //   // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
-  //   res.redirect(`/${post.type}/${post.slug}`);
-  // }
+
+  // Fetch the headless CMS to check if the provided `slug` exists
+  // getPostBySlug would implement the required fetching logic to the headless CMS
+  const post = await getPostById({ preview: true, _id });
+
+  // If the slug doesn't exist prevent preview mode from being enabled
+  if (!post) {
+    return res.status(400).json({ message: 'No Doc Found' });
+  }
+
+  // Enable Preview Mode by setting the cookies
+  res.setPreviewData({
+    courseType,
+    courseSlug,
+    _id,
+  });
+
+  // Redirect to the path from the fetched post
+  // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
+  if (post._type === 'lesson') {
+    res.redirect(`/${courseType}/${courseSlug}/${post._type}/${post.slug}`);
+  } else {
+    res.redirect(`/${post._type}/${post.slug}`);
+  }
 };
 export default preview;

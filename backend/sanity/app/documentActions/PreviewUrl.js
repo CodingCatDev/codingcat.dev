@@ -14,23 +14,36 @@ export function PreviewUrl({ id, type, published, draft }) {
 
   const url = () => {
     const location = window.location;
+    let front = '';
     switch (location.host) {
       case 'admin-dev.codingcat.dev':
-        return 'https//dev.codingcat.dev';
+        front = 'https://dev.codingcat.dev';
+        break;
       case 'admin.codingcat.dev':
-        return 'https//codingcat.dev';
+        front = 'https://codingcat.dev';
+        break;
       default:
-        return 'localhost:3000';
+        front = 'http://localhost:3000';
     }
+    return `${front}/api/preview`;
   };
-  const navigate = () => {
+  const navigate = (s) => {
     if (type === 'lesson') {
       const course = selection.courses.find((c) => c._id === selectedCourse);
       window.open(
-        `${url()}/${course.type}/${course.slug}/${selection.type}/${
-          selection.slug
-        }`,
+        `${url()}?courseType=${course.type}&courseSlug=${
+          course.slug
+        }&selectionType=${selection.type}&selectionSlug=${selection.slug}&_id=${
+          draft ? 'drafts.' : ''
+        }${id}`,
         '__blank'
+      );
+    } else {
+      window.open(
+        `${url()}?selectionType=${s.type}&selectionSlug=${s.slug}&_id=${
+          draft ? 'drafts.' : ''
+        }${id}`,
+        '_blank'
       );
     }
   };
@@ -56,7 +69,7 @@ export function PreviewUrl({ id, type, published, draft }) {
       const params = { id };
       client.fetch(query, params).then((s) => {
         if (type !== 'lesson') {
-          window.open(`${url()}/${s.type}/${s.slug}`, '_blank');
+          navigate(s);
         } else {
           setSelection(s);
           console.log(s);
