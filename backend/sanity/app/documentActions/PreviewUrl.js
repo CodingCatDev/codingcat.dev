@@ -27,11 +27,13 @@ export function PreviewUrl({ id, type, published, draft }) {
     }
     return `${front}/api/preview`;
   };
-  const navigate = (s) => {
+  const navigate = async (s) => {
+    const query = '*[_id == "sanity-preview-secret"][0]';
+    const kv = await client.fetch(query, {});
     if (type === 'lesson') {
       const course = selection.courses.find((c) => c._id === selectedCourse);
       window.open(
-        `${url()}?courseType=${course.type}&courseSlug=${
+        `${url()}?secret=${kv.value}&courseType=${course.type}&courseSlug=${
           course.slug
         }&selectionType=${selection.type}&selectionSlug=${selection.slug}&_id=${
           draft ? 'drafts.' : ''
@@ -40,9 +42,9 @@ export function PreviewUrl({ id, type, published, draft }) {
       );
     } else {
       window.open(
-        `${url()}?selectionType=${s.type}&selectionSlug=${s.slug}&_id=${
-          draft ? 'drafts.' : ''
-        }${id}`,
+        `${url()}?secret=${kv.value}&selectionType=${s.type}&selectionSlug=${
+          s.slug
+        }&_id=${draft ? 'drafts.' : ''}${id}`,
         '_blank'
       );
     }
@@ -72,7 +74,6 @@ export function PreviewUrl({ id, type, published, draft }) {
           navigate(s);
         } else {
           setSelection(s);
-          console.log(s);
           if (s?.courses && s?.courses.length > 0) {
             for (const [i, course] of s?.courses.entries()) {
               if (i === 0) {
@@ -105,7 +106,8 @@ export function PreviewUrl({ id, type, published, draft }) {
           </Select>
           <Button
             mode="default"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               navigate();
             }}
           >

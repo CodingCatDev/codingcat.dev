@@ -11,6 +11,18 @@ const preview = async (
   const selectionType = req.query?.selectionType as string;
   const selectionSlug = req.query?.selectionSlug as string;
   const _id = req.query?._id as string;
+  const secret = req.query?.secret as string;
+
+  // Must have secret
+  if (!process.env.SANITY_PREVIEW_SECRET) {
+    return res
+      .status(500)
+      .json({ message: 'Secret Missing please add SANITY_PREVIEW_SECRET' });
+  }
+  // Must have secret
+  if (!secret || secret != process.env.SANITY_PREVIEW_SECRET) {
+    return res.status(401).json({ message: 'Secret is Incorrect' });
+  }
 
   console.log('Query: ', JSON.stringify(req.query));
 
@@ -27,11 +39,6 @@ const preview = async (
   if (selectionType === PostType.lesson && (!courseType || !courseSlug)) {
     return res.status(400).json({ message: 'Slug Missing for Course.' });
   }
-
-  // Must be an Admin
-  // if (!validUser) {
-  //   return res.status(401).json({ message: 'Must be an admin user' });
-  // }
 
   // Fetch the headless CMS to check if the provided `slug` exists
   // getPostBySlug would implement the required fetching logic to the headless CMS
