@@ -11,6 +11,7 @@ export const components: Record<string, React.ReactNode> = {
     <div
       {...props}
       className="mt-1 overflow-auto border-8 rounded border-primary-900"
+      style={{ backgroundColor: `rgb(30, 30, 30)` }}
     />
   ),
   code: (
