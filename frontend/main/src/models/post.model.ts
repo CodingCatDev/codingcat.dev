@@ -1,4 +1,4 @@
-import { UserInfoExtended } from '@/models/user.model';
+import { Author, UserInfoExtended } from '@/models/user.model';
 import { MediaSource, MediaType } from './media.model';
 import firebase from 'firebase/app';
 import { AccessSettings } from './access.model';
@@ -29,7 +29,7 @@ export interface Post {
   coverPhoto?: CoverMedia;
   coverVideo?: CoverMedia;
   sections?: Section[];
-  authors?: UserInfoExtended[];
+  authors?: Author[];
   authorIds?: string[]; //uid list of authors
 
   urlContent?: string; //Used for remote data
