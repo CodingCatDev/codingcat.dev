@@ -53,6 +53,8 @@ const preview = async (
   res.setPreviewData({
     courseType,
     courseSlug,
+    selectionType,
+    selectionSlug,
     _id,
   });
 

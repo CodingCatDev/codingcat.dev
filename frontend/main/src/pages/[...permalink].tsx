@@ -114,8 +114,12 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   // Preview page
   let post;
   let course;
-  if (preview) {
-    const pData = previewData as Post;
+  const pData = previewData as any;
+  console.log(pData);
+  if (
+    preview &&
+    (pData?.selectionSlug == slug || pData?.selectionSlug == lessonPath)
+  ) {
     if (!pData || !pData._id) {
       return {
         notFound: true,
@@ -125,6 +129,9 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     const { _id } = pData;
     post = await getPostById({ preview, _id });
   } else {
+    //Not in Preview mode.
+    preview = false;
+
     //If Lesson we need to use different slug and get course
     if (lesson === PostType.lesson && lessonPath) {
       post = await getPostBySlugService({
