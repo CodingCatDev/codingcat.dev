@@ -131,11 +131,9 @@ export default function PostLayout({
                         key={i}
                       >
                         <section className="flex items-center flex-shrink-0 space-x-4">
-                          {author.photoURL && (
+                          {author?.photoURL && author.photoURL?.public_id && (
                             <Image
-                              src={author.photoURL}
-                              loader={() => author.photoURL || ''}
-                              unoptimized={true}
+                              src={author.photoURL.public_id}
                               layout="fixed"
                               height="50"
                               width="50"

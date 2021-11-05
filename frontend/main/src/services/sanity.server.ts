@@ -56,6 +56,10 @@ export const getPostsService = async ({
       _type,
       title,
       excerpt,
+      authors[]->{
+        ...,
+        "slug":slug.current,
+      },
       coverPhoto{
         public_id
       },
@@ -111,7 +115,11 @@ export const getPostBySlugService = async ({
     sections[]{
       ...,
       lessons[]->{_id, title,"slug": slug.current}
-    }
+    },
+    authors[]->{
+      ...,
+      "slug":slug.current,
+    },
   }
   `;
 
@@ -136,7 +144,11 @@ export const getPostById = async ({
     sections[]{
       ...,
       lessons[]->{_id, title,"slug": slug.current}
-    }
+    },
+    authors[]->{
+      ...,
+      "slug":slug.current,
+    },
   }
   `;
 
@@ -226,7 +238,11 @@ export const getPostsByTag = async ({
       coverPhoto{
         public_id
       },
-      "slug": slug.current
+      "slug": slug.current,
+      authors[]->{
+        ...,
+        "slug":slug.current,
+      },
       `
     }
   }
@@ -285,7 +301,11 @@ export const getPostsByUser = async ({
       coverPhoto{
         public_id
       },
-      "slug": slug.current
+      "slug": slug.current,
+      authors[]->{
+        ...,
+        "slug":slug.current,
+      },
       `
     }
   }
