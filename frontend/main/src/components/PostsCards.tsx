@@ -65,9 +65,13 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                     )}
                     <div>
                       {post.authors?.map((author, i) => (
-                        <h4 key={i} className="font-sans text-lg">
-                          {author.displayName}
-                        </h4>
+                        <Link href={`/authors/${author.slug}`} key={i}>
+                          <a>
+                            <h4 className="font-sans text-lg">
+                              {author.displayName}
+                            </h4>
+                          </a>
+                        </Link>
                       ))}
                     </div>
                   </div>

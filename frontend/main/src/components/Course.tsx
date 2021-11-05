@@ -28,6 +28,7 @@ export default function Course({
   product: StripeProduct | undefined;
   preview?: boolean;
 }): JSX.Element {
+  console.log(post);
   const { status, data: signInCheckResult } = useSigninCheck();
   const router = useRouter();
 
@@ -84,11 +85,9 @@ export default function Course({
                         className="flex items-center flex-shrink-0 space-x-4"
                         key={i}
                       >
-                        {author.photoURL && (
+                        {author?.photoURL && author.photoURL?.public_id && (
                           <Image
-                            src={author.photoURL}
-                            loader={() => author.photoURL || ''}
-                            unoptimized={true}
+                            src={author.photoURL.public_id}
                             layout="fixed"
                             height="50"
                             width="50"
