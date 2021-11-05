@@ -4,15 +4,11 @@ This is the main repo for https://codingcat.dev
 
 ## Status
 ### Dev
-![dev-frontend-main-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/dev-frontend-main-deploy/badge.svg)
-![dev-frontend-admin-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/dev-frontend-admin-deploy/badge.svg)
-
-### Stage
-![stage-frontend-main-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/stage-frontend-main-deploy/badge.svg)
-![stage-frontend-admin-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/stage-frontend-admin-deploy/badge.svg)
+- ![](https://img.shields.io/github/deployments/CodingCatDev/codingcat.dev/Production%20%E2%80%93%20admin-dev-codingcat-dev) admin-dev.codingcat.dev
+- ![](https://img.shields.io/github/deployments/CodingCatDev/codingcat.dev/Production%20%E2%80%93%20dev-codingcat-dev) dev.codingcat.dev
 ### Prod (Main)
-![main-frontend-main-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/main-frontend-main-deploy/badge.svg)
-![main-frontend-admin-deploy](https://github.com/CodingCatDev/codingcat.dev/workflows/main-frontend-admin-deploy/badge.svg)
+- ![](https://img.shields.io/github/deployments/CodingCatDev/codingcat.dev/Production%20%E2%80%93%20admin-codingcat-dev) admin.codingcat.dev
+- ![](https://img.shields.io/github/deployments/CodingCatDev/codingcat.dev/Production%20%E2%80%93%20codingcat-dev) codingcat.dev
 
 ## Setup
 
