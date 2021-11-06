@@ -20,6 +20,7 @@ import { PubSub } from '@google-cloud/pubsub';
 export const pubSubClient = new PubSub({ projectId });
 export const getCalendarEvent = () => {
   return calendar.events.list({
+    calendarId: 'alex@codingcat.dev',
     orderBy: 'updated',
     updatedMin: new Date(Date.now() - 60000).toISOString(),
   });
