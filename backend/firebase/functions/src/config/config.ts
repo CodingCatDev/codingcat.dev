@@ -18,3 +18,10 @@ export const cloudinaryApiKey = functions.config().cloudinary.api_key;
 export const cloudinaryApiSecret = functions.config().cloudinary.api_secret;
 export const cloudinaryTokenKey = functions.config().cloudinary.token_key;
 export const cloudinaryVideo = functions.config().cloudinary.video;
+
+// Google
+export const calendarChannelId = functions.config().calendar.channel_id;
+export const calendarRefreshToken = functions.config().calendar.refresh_token;
+export const clientId = functions.config().google.client_id;
+export const clientSecret = functions.config().google.client_secret;
+export const redirectUri = functions.config().google.redirect_uri;

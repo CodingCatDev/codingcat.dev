@@ -1,6 +1,6 @@
 export { scheduledFirestoreExport } from './backups/firestore';
 export { newUserSetup } from './user/user';
-export { onPostWriteSearch, onPostDeleteSearch } from './search/algolia';
+// export { onPostWriteSearch, onPostDeleteSearch } from './search/algolia';
 export {
   onPostCreate,
   onPostUpdateAuthors,
@@ -14,3 +14,5 @@ export {
   onSubscriptionCancel,
 } from './stripe/subscriptions';
 export { onPostWriteTags, scheduledTagsUpdate } from './tags/tag';
+export { calendarPush } from './google/calendar';
+export { getCode, getToken } from './google/auth';
