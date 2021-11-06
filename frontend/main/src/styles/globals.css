@@ -109,10 +109,13 @@
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-2 text-base font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 hover:bg-primary-700 dark:hover:bg-primary-700 hover:text-basics-50 dark:hover:text-basics-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent;
+    @apply px-6 py-2 text-base font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 hover:bg-basics-50 dark:hover:bg-basics-50 hover:text-primary-900 dark:hover:text-primary-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:border-transparent;
   }
   .btn-secondary {
     @apply px-6 py-2 text-base font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none text-primary-900 dark:text-primary-900 hover:text-primary-50 dark:hover:text-primary-50 bg-basics-50 dark:bg-basics-50 hover:bg-secondary-600 dark:hover:bg-secondary-600 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent;
+  }
+  .btn-secondary-reverse {
+    @apply px-6 py-2 text-base font-bold leading-loose transition duration-500 ease-in-out rounded-md shadow-md outline-none text-primary-50 dark:text-primary-50 hover:text-primary-900 dark:hover:text-primary-900 bg-secondary-600 dark:bg-secondary-600 hover:bg-basics-50 dark:hover:bg-basics-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent;
   }
 
   .calc-height-wrapper {
