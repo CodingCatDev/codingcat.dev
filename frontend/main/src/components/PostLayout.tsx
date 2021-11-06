@@ -274,7 +274,7 @@ export default function PostLayout({
             </section>
           )}
           {/* BLOG POST */}
-          <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+          <article className="grid gap-4 m-0 leading-relaxed break-words top-2 text-basics-900">
             {source && <MDXRemote {...source} components={components} />}
           </article>
         </section>
@@ -286,39 +286,40 @@ export default function PostLayout({
           max-width: 65ch;
         }
         article > p {
-          margin: 0 0 3rem;
+          margin-bottom: 1rem;
         }
 
         article > p + blockquote {
           margin: 1rem 0;
         }
-        main a {
+        article > a {
           word-wrap: break-word;
           border-bottom: 2px solid #bc2261;
         }
 
-        main iframe {
+        article > iframe {
           max-width: 100%;
         }
 
-        main h1,
-        main h2 {
+        article > h1,
+        article > h2,
+        article > h3,
+        article > h4,
+        article > h5,
+        article > h6 {
+          margin: 2rem 0 1rem;
           font-family: 'Nunito', sans-serif;
-          margin: 0;
-        }
-
-        main h3,
-        main h4,
-        main h5,
-        main h6 {
-          font-family: 'Nunito', sans-serif;
-          margin: 4rem 0 2rem;
           width: fit-content;
         }
-        img {
-          width: 100%;
+
+        article > article > img {
+          max-width: 100%;
         }
-        main ul li {
+
+        article > ul {
+          margin-bottom: 2rem;
+        }
+        article > ul li {
           margin-left: 2rem;
           list-style-type: circle;
         }
