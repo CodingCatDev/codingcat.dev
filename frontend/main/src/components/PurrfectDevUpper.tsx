@@ -12,11 +12,11 @@ export default function PurrfectDevUpper(): JSX.Element {
           </h1>
           <p className="font-sans 2xl:text-2xl" style={{ maxWidth: `40ch` }}>
             A weekly podcast about web design and development from{' '}
-            <Link href="/authors/HMCecxlYrmZv7nGqZQLwuER0dEt1">
+            <Link href="/authors/alex-patterson">
               <a className="underline">Alex Patterson</a>
             </Link>{' '}
             and{' '}
-            <Link href="/authors/58zC32FHcITm0ug72EUSr2dK5dC2">
+            <Link href="/authors/brittney-postma">
               <a className="underline">Brittney Postma</a>
             </Link>
             .
