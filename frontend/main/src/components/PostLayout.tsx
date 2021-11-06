@@ -144,7 +144,7 @@ export default function PostLayout({
 
                           <div className="grid content-start">
                             <h3 className="m-0 text-base font-light">Author</h3>
-                            <h4 className="m-0 text-xl">
+                            <h4 className="m-0 font-sans text-xl">
                               {author.displayName}
                             </h4>
                           </div>
@@ -303,12 +303,12 @@ export default function PostLayout({
           max-width: 100%;
         }
 
-        article > h1,
-        article > h2,
-        article > h3,
-        article > h4,
-        article > h5,
-        article > h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
           margin: 2rem 0 1rem;
           font-family: 'Nunito', sans-serif;
           width: fit-content;
