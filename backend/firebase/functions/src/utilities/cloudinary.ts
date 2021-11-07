@@ -11,7 +11,7 @@ const config = {
   api_key: cloudinaryApiKey,
   api_secret: cloudinaryApiSecret,
 };
-console.log('Cloudinary Config', JSON.stringify(cloudinary.config(config)));
+console.log('Cloudinary Config cloud_name', config.cloud_name);
 cloudinary.config(config);
 
 export default cloudinary;

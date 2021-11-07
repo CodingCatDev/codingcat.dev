@@ -25,3 +25,15 @@ export const calendarRefreshToken = functions.config().calendar.refresh_token;
 export const clientId = functions.config().google.client_id;
 export const clientSecret = functions.config().google.client_secret;
 export const redirectUri = functions.config().google.redirect_uri;
+
+// Twitter
+export const twitterBearerToken = functions.config().twitter.bearer_token;
+
+// Notion
+export const notionToken = functions.config().notion.token;
+export const notionPurrfectDatabaseId = functions.config().notion
+  .purrfect_database_id;
+export const notionPurrfectGuestDatabaseId = functions.config().notion
+  .purrfect_guest_database_id;
+export const notionPurrfectCompanyDatabaseId = functions.config().notion
+  .purrfect_company_database_id;

@@ -1,23 +1,25 @@
 import cloudinary from './cloudinary';
 import { wrapTitleWords } from './stringUtils';
 
-export const generateLearningQuickCoverURL = ({
+export const generateCodingCatCoverURL = ({
   title,
   guestName,
   guestTitle,
-  guestImageName,
-  time,
+  guestImagePublicId,
+  // time,
+  backgroundPath,
 }: {
   title: string;
   guestName: string;
   guestTitle: string;
-  guestImageName: string;
-  time: string;
+  guestImagePublicId: string;
+  // time: string;
+  backgroundPath: string;
 }) => {
   console.log(guestTitle);
   const [firstLine, secondLine] = wrapTitleWords(title, 16);
   console.log(firstLine, secondLine);
-  const url = cloudinary.url('learning_quick/lg-bg-3', {
+  const url = cloudinary.url(backgroundPath, {
     transformation: [
       {
         overlay: {
@@ -90,23 +92,23 @@ export const generateLearningQuickCoverURL = ({
         crop: 'limit',
         gravity: 'south_east',
       },
+      // {
+      //   overlay: {
+      //     font_family: 'Montserrat',
+      //     font_size: 60,
+      //     text: time,
+      //     fontWeight: 'bold',
+      //   },
+      //   color: '#ffffff',
+      //   effect: 'colorize',
+      //   y: '110',
+      //   x: '50',
+      //   width: '600',
+      //   crop: 'limit',
+      //   gravity: 'south_east',
+      // },
       {
-        overlay: {
-          font_family: 'Montserrat',
-          font_size: 60,
-          text: time,
-          fontWeight: 'bold',
-        },
-        color: '#ffffff',
-        effect: 'colorize',
-        y: '110',
-        x: '50',
-        width: '600',
-        crop: 'limit',
-        gravity: 'south_east',
-      },
-      {
-        overlay: 'learning_quick:me.png',
+        overlay: 'ajonp:me.png',
         height: '400',
         width: '400',
         y: '-50',
@@ -115,7 +117,7 @@ export const generateLearningQuickCoverURL = ({
         border: '6px_solid_rgb:c7d0d9',
       },
       {
-        overlay: `learning_quick:${guestImageName}`,
+        overlay: `ajonp:${guestImagePublicId}`,
         height: '400',
         width: '400',
         y: '150',
@@ -131,17 +133,17 @@ export const generateLearningQuickCoverURL = ({
 };
 
 export const uploadGuestProfilePicIfNotExists = async (
-  guestImageName: string,
+  guestImagePublicId: string,
   guestImageURL: string
 ) => {
-  console.log(`Uploading image for${guestImageName}`);
-  console.log(`Upload image from ${guestImageURL}`);
+  console.log(`Uploading image for: ${guestImagePublicId}`);
+  console.log(`Upload image from: ${guestImageURL}`);
   try {
     const res = await cloudinary.uploader.upload(guestImageURL, {
-      public_id: `learning_quick/${guestImageName}`,
+      public_id: guestImagePublicId,
     });
-    console.log(res);
-    return guestImageName;
+    console.log('cloudinary payload response: ', JSON.stringify(res));
+    return res.public_id;
   } catch (error) {
     console.error(error);
     throw error;
