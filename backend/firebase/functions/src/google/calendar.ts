@@ -4,13 +4,14 @@ import {
   queryPurrfectCompany,
   createPurrfectCompany,
   createPurrfectPage,
+  queryPurrfectPageByCalendarId,
+  patchPurrfectPage,
 } from './../utilities/notion';
 import * as functions from 'firebase-functions';
 
-import { calendarChannelId } from '../config/config';
+import { calendarChannelId, projectId } from '../config/config';
 import { getCalendarEvent, sendTopic } from '../utilities/googleapis';
 
-const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
 const topic = 'calendarEvent';
 const topicId = `projects/${projectId}/topics/${topic}`;
 
@@ -57,27 +58,50 @@ export const calendarToNotionPubSub = functions.pubsub
     let guest = '';
     let company = '';
     try {
-      const parsed = JSON.parse(JSON.stringify(message.json));
-      twitterHandle = parsed.description
+      const calendar = JSON.parse(JSON.stringify(message.json));
+      twitterHandle = calendar.description
         .split('Twitter Handle: ')
         .slice(-1)[0]
         .split('\n')
         .slice(0)[0];
-      guest = parsed.description
+      guest = calendar.description
         .split('Guest: ')
         .slice(-1)[0]
         .split('\n')
         .slice(0)[0];
-      company = parsed.description
+      company = calendar.description
         .split('Company: ')
         .slice(-1)[0]
         .split('\n')
         .slice(0)[0];
-      email = parsed.attendees.filter(
+      email = calendar.attendees.filter(
         (a: { email: string }) =>
           a.email !== 'alex@codingcat.dev' &&
           a.email !== 'brittney@codingcat.dev'
       )?.[0]?.email;
+
+      // Check if calendar event already created.
+      console.log('Searching for Pod with calendarid: ', calendar.id);
+      const purrfectPageRes = await queryPurrfectPageByCalendarId(calendar.id);
+      if (purrfectPageRes?.results.length > 0) {
+        console.log('Pod found', JSON.stringify(purrfectPageRes));
+        const purrfectPage = purrfectPageRes?.results?.[0];
+        console.log('Updating pod with time: ', calendar.start.dateTime);
+        const purrfectPagePatchRes = await patchPurrfectPage({
+          page_id: purrfectPage.id,
+          properties: {
+            'Recording Date': {
+              date: {
+                start: calendar.start.dateTime,
+                end: null,
+              },
+            },
+          },
+        });
+
+        console.log('Patched', JSON.stringify(purrfectPagePatchRes));
+        return purrfectPagePatchRes;
+      }
 
       // Check if Notion Company exists, if not create
       console.log('Searching for company: ', company);
@@ -118,51 +142,14 @@ export const calendarToNotionPubSub = functions.pubsub
       const newPodcast = {
         guestIds: [guestId],
         companyIds,
+        recordingDate: calendar.start.dateTime,
+        calendarid: calendar.id,
       };
       console.log('Creating Podcast with values: ', JSON.stringify(newPodcast));
       const podcastCreateRes = await createPurrfectPage(newPodcast);
       console.log('Created Podcast', JSON.stringify(podcastCreateRes));
+      return podcastCreateRes;
     } catch (e) {
-      functions.logger.error('Error', e);
+      return functions.logger.error('Error', e);
     }
   });
-
-// import {
-//   generateCodingCatCoverURL,
-//   uploadGuestProfilePicIfNotExists,
-// } from '../utilities/cloudinaryUtils';
-// import { getUserByUsername } from '../utilities/twitter';
-// const cloudinaryFolder =
-//   projectId === 'codingcat-dev'
-//     ? 'main-codingcatdev-photo/podcast-guest/'
-//     : `${projectId}/podcast-guest/`;
-
-// // Get Photo URL from Twitter
-// const twitterUsername = twitterHandle.replace('@','');
-
-// console.log('fetching twitter user', twitterUsername);
-
-// const twitterGuest = await getUserByUsername(twitterUsername);
-// // Create
-// if (!twitterGuest?.data?.profile_image_url) {
-//   return;
-// }
-
-// console.log('got twitter user', JSON.stringify(twitterGuest));
-
-// const guestImagePublicId = await uploadGuestProfilePicIfNotExists(
-//   `${cloudinaryFolder}${twitterUsername}`,
-//   twitterGuest.data.profile_image_url
-// );
-
-// const param = {
-//   title: 'test',
-//   guestName: twitterGuest.data.name,
-//   guestTitle: 'guest title',
-//   guestImagePublicId,
-//   backgroundPath: `${cloudinaryFolder}/purrfect.dev-template`,
-// };
-// console.log('generating cloudinary url with: ', JSON.stringify(param));
-
-// const coverUrl = generateCodingCatCoverURL(param);
-// console.log('coverurl: ', coverUrl);

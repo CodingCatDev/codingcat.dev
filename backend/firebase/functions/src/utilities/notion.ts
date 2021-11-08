@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client';
+import { UpdatePageParameters } from '@notionhq/client/build/src/api-endpoints';
 import {
   notionToken,
   notionPurrfectDatabaseId,
@@ -36,10 +37,44 @@ export const getCompanytRelations = (companyIds?: string[]) => {
   return companyRelation;
 };
 
+export const queryPurrfectPageByCalendarId = (calendarid: string) => {
+  return notionClient.databases.query({
+    database_id: notionPurrfectDatabaseId,
+    filter: {
+      property: 'calendarid',
+      text: {
+        equals: calendarid,
+      },
+    },
+  });
+};
+
+export const queryPurrfectPageScheduled = (status: string) => {
+  return notionClient.databases.query({
+    database_id: notionPurrfectDatabaseId,
+    filter: {
+      property: 'Status',
+      select: {
+        equals: status,
+      },
+    },
+  });
+};
+
+export const getPage = (page_id: string) => {
+  return notionClient.pages.retrieve({
+    page_id,
+  });
+};
+
 export const createPurrfectPage = ({
+  calendarid,
   guestIds,
+  recordingDate,
   companyIds,
 }: {
+  calendarid: string;
+  recordingDate: Date;
   guestIds?: string[];
   companyIds?: string[];
 }) => {
@@ -48,6 +83,19 @@ export const createPurrfectPage = ({
       database_id: notionPurrfectDatabaseId,
     },
     properties: {
+      calendarid: {
+        id: 'RZ<I',
+        type: 'rich_text',
+        rich_text: [
+          {
+            type: 'text',
+            text: {
+              content: calendarid,
+              link: null,
+            },
+          },
+        ],
+      },
       Guest: {
         id: '8Ym~',
         type: 'relation',
@@ -57,7 +105,7 @@ export const createPurrfectPage = ({
         id: 'br,*',
         type: 'date',
         date: {
-          start: '2021-11-07T20:44:18.966Z',
+          start: recordingDate,
           end: null,
         },
       },
@@ -90,6 +138,10 @@ export const createPurrfectPage = ({
       },
     },
   } as any);
+};
+
+export const patchPurrfectPage = (pageParams: UpdatePageParameters) => {
+  return notionClient.pages.update(pageParams);
 };
 
 export const queryPurrfectGuest = (email: string) => {
@@ -187,4 +239,741 @@ export const createPurrfectCompany = ({ name }: { name: string }) => {
   };
 
   return notionClient.pages.create(page);
+};
+
+export const blockAppendPurrfectPageWithTemplateData = ({
+  guestName,
+  coverUrl,
+}: {
+  guestName: string;
+  coverUrl: string;
+}) => {
+  return notionClient.blocks.children.append({
+    block_id: '',
+    children: [
+      {
+        object: 'block',
+        type: 'image',
+        image: {
+          caption: [],
+          type: 'external',
+          external: {
+            url: `${coverUrl}.png`,
+          },
+        },
+      },
+      {
+        object: 'block',
+        type: 'paragraph',
+        paragraph: {
+          text: [],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_2',
+        heading_2: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Join',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'GO Here on day of podcast -> ',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'heading_2',
+        heading_2: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: guestName,
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'yellow',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Links',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Profile',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'paragraph',
+        paragraph: {
+          text: [],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_2',
+        heading_2: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Questions',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'yellow',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'numbered_list_item',
+        numbered_list_item: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'First Question?',
+                link: null,
+              },
+              annotations: {
+                bold: true,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'numbered_list_item',
+        numbered_list_item: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Second Question?',
+                link: null,
+              },
+              annotations: {
+                bold: true,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'heading_2',
+        heading_2: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Purrfect Picks',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'pink',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content:
+                  'These are fun picks of the week. Maybe something you bought online, a great show you are currently watching, or that last book that you thought was amazing.',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: guestName,
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'yellow',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Brittney Postma',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Alex Patterson',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'divider',
+        divider: {},
+      },
+      {
+        object: 'block',
+
+        type: 'heading_2',
+        heading_2: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Details',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_2',
+        heading_2: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Sponsorship',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'pink',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content:
+                  'We are always looking for our next sponsor. If this is something that you are interested in please review our ',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+            {
+              type: 'text',
+              text: {
+                content: 'sponsorship packet.',
+                link: {
+                  url: 'https://codingcat.dev/sponsorship',
+                },
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'pink',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Code of Conduct',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content:
+                  'Please no swearing or drinking we think of our 10 year olds watching :D. Things will happen I slipped up the other day. I try to edit out anything that isn’t live.',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'How do I connect for the recording?',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Instructions: ',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+            {
+              type: 'text',
+              text: {
+                content:
+                  'https://streamyard.com/resources/docs/guest-instructions/index.html',
+                link: {
+                  url:
+                    'https://streamyard.com/resources/docs/guest-instructions/index.html',
+                },
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'heading_3',
+        heading_3: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'What we do with the recording',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content:
+                  'We record using a streaming service that pushes an unlisted live-stream to YouTube. We then download the video and separate the audio. We then publish to two places',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'YouTube: ',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+            {
+              type: 'text',
+              text: {
+                content: 'https://youtu.be/XWCOknS-d0s',
+                link: {
+                  url: 'https://youtu.be/XWCOknS-d0s',
+                },
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Podcast: ',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+            {
+              type: 'text',
+              text: {
+                content: 'https://codingcat.dev/podcasts/',
+                link: {
+                  url: 'https://codingcat.dev/podcasts/',
+                },
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+      {
+        object: 'block',
+
+        type: 'paragraph',
+        paragraph: {
+          text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Twitch: ',
+                link: null,
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+            {
+              type: 'text',
+              text: {
+                content: 'https://www.twitch.tv/codingcatdev',
+                link: {
+                  url: 'https://www.twitch.tv/codingcatdev',
+                },
+              },
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default',
+              },
+            },
+          ],
+        },
+      },
+    ],
+  });
 };

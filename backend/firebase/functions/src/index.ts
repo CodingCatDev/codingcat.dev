@@ -16,3 +16,7 @@ export {
 // export { onPostWriteTags, scheduledTagsUpdate } from './tags/tag';
 export { calendarPush, calendarToNotionPubSub } from './google/calendar';
 export { getCode, getToken } from './google/auth';
+export {
+  scheduledNotionToCloudinary,
+  cloudinaryToNotionPubSub,
+} from './cloudinary/scheduledNotionCheck';

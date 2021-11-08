@@ -6,6 +6,9 @@ export const firestore = admin.firestore();
 
 export const firestoreBackupBucket = functions.config().firestore_backup.bucket;
 
+//Project
+export const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT;
+
 // Algolia
 export const algoliaAppId = functions.config().algolia.app_id;
 export const algoliaApiKey = functions.config().algolia.api_key;
