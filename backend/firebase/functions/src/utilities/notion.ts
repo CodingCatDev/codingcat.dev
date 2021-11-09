@@ -244,12 +244,14 @@ export const createPurrfectCompany = ({ name }: { name: string }) => {
 export const blockAppendPurrfectPageWithTemplateData = ({
   guestName,
   coverUrl,
+  pageId,
 }: {
   guestName: string;
   coverUrl: string;
+  pageId: string;
 }) => {
   return notionClient.blocks.children.append({
-    block_id: '',
+    block_id: pageId,
     children: [
       {
         object: 'block',
