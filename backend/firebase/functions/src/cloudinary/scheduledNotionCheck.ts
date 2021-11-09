@@ -47,6 +47,11 @@ export const cloudinaryToNotionPubSub = functions.pubsub
     console.log('The unique ID for the event is', context.eventId);
     const page = JSON.parse(JSON.stringify(message.json));
 
+    if (page?.properties?.Name?.title?.[0]?.plain_text === 'NEW PODCAST') {
+      console.log('Page Title has not been updated, skipping.');
+      return false;
+    }
+
     // For each guest update the twitter profile.
     for (const guest of page?.properties?.Guest?.relation as { id: string }[]) {
       console.log('Getting Guest Details', guest.id);
@@ -70,7 +75,7 @@ export const cloudinaryToNotionPubSub = functions.pubsub
 
         const param = {
           title: page.properties.Name.title[0].plain_text,
-          guestName: twitterGuest.data.name,
+          guestName: (guestRes.properties.Name as any).title[0].plain_text,
           guestImagePublicId,
           backgroundPath: `${cloudinaryFolder}/Season2Background`,
         };
@@ -95,10 +100,12 @@ export const cloudinaryToNotionPubSub = functions.pubsub
         );
         console.log('Add template blocks');
         const templateUpdate = await blockAppendPurrfectPageWithTemplateData({
-          guestName: twitterGuest.data.name,
+          guestName: (guestRes.properties.Name as any).title[0].plain_text,
           coverUrl,
+          pageId: page.id,
         });
         console.log('Template Result:', templateUpdate);
       }
     }
+    return true;
   });
