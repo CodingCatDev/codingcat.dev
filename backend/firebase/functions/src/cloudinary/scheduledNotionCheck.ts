@@ -92,7 +92,7 @@ export const cloudinaryToNotionPubSub = functions.pubsub
             },
           },
         };
-        console.log('Updating page with: ', update);
+        console.log('Updating page with: ', JSON.stringify(update));
         const purrfectPagePatchRes = await patchPurrfectPage(update);
         console.log(
           'Page update result:',
