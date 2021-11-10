@@ -16,6 +16,8 @@ import {
   FirestoreProvider,
   FirebaseAppProvider,
   FunctionsProvider,
+  PerformanceProvider,
+  AnalyticsProvider,
 } from 'reactfire';
 import { config, emulation } from '@/config/firebase';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
@@ -26,6 +28,8 @@ import {
   setUserCookie,
 } from '@/utils/auth/userCookies';
 import { UserInfoExtended } from '@/models/user.model';
+import { getPerformance } from '@firebase/performance';
+import { getAnalytics } from '@firebase/analytics';
 interface FirestoreExt extends Firestore {
   _settings: FirestoreSettings;
 }
@@ -36,6 +40,26 @@ export const FirebaseProvider = ({ children }: { children: JSX.Element }) => {
       {children}
     </FirebaseAppProvider>
   );
+};
+
+export const FirebasePerformanceProvider = ({
+  children,
+}: {
+  children: JSX.Element;
+}) => {
+  const app = useFirebaseApp();
+  const perf = getPerformance(app);
+  return <PerformanceProvider sdk={perf}>{children}</PerformanceProvider>;
+};
+
+export const FirebaseAnalyticsProvider = ({
+  children,
+}: {
+  children: JSX.Element;
+}) => {
+  const app = useFirebaseApp();
+  const analytics = getAnalytics();
+  return <AnalyticsProvider sdk={analytics}>{children}</AnalyticsProvider>;
 };
 
 export const FirebaseAuthProvider = ({
