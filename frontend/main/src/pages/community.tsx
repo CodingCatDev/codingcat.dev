@@ -36,7 +36,7 @@ const Community = ({
       ></NextSeo>
       <Layout site={site}>
         <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
-          <h1 className="text-5xl lg:text-7xl">Community</h1>
+          <h1 className="mt-10 text-5xl lg:text-7xl">Community</h1>
 
           <section className="max-w-2xl text-center">
             <h2 className="mb-2 text-4xl lg:text-5xl">CodingCat.Dev Discord</h2>

@@ -111,7 +111,7 @@ export default function Footer({
           {/* HELPFUL LINKS */}
           <section className="grid grid-cols-1 lg:justify-self-end 2xl:justify-self-center">
             <h4 className="underline whitespace-nowrap">Helpful Links</h4>
-            <div className="grid w-64 grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-2 mt-4">
               {site?.pageLinks?.map((pageLink, i) => (
                 <div key={`helpful-link-${i}`}>
                   {pageLink.slug.includes('://') ||
@@ -136,7 +136,7 @@ export default function Footer({
             </div>
           </section>
           {/* NEWSLETTER */}
-          <section className="grid grid-cols-1 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
+          <section className="grid grid-cols-1 gap-2 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
             <h4 className="underline">Newsletter</h4>
             <p className="text-xl">Subscribe for all the latest updates.</p>
             <form
@@ -151,7 +151,9 @@ export default function Footer({
                 )
               }
             >
-              <label htmlFor="subEmail">Email</label>
+              <label htmlFor="subEmail" className="font-bold">
+                Email
+              </label>
               <div className="flex flex-wrap gap-4 lg:flex-nowrap">
                 <input
                   name="email"

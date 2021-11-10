@@ -239,7 +239,7 @@ export default function PostLayout({
           {recentPosts && (
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
               <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Courses`}
                 </h2>
 
@@ -248,7 +248,7 @@ export default function PostLayout({
                 </ul>
               </div>
               <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Tutorials`}
                 </h2>
                 <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -256,7 +256,7 @@ export default function PostLayout({
                 </ul>
               </div>
               <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Podcasts`}
                 </h2>
                 <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -264,7 +264,7 @@ export default function PostLayout({
                 </ul>
               </div>
               <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Blog`}
                 </h2>
                 <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
