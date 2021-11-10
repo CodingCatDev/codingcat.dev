@@ -144,7 +144,7 @@ export default function PostLayout({
 
                           <div className="grid content-start">
                             <h3 className="m-0 text-base font-light">Author</h3>
-                            <h4 className="m-0 text-xl">
+                            <h4 className="m-0 font-sans text-xl">
                               {author.displayName}
                             </h4>
                           </div>
@@ -285,40 +285,40 @@ export default function PostLayout({
           margin: 0 auto;
           max-width: 65ch;
         }
-        article > p {
-          margin: 0 0 3rem;
+        article > * {
+          margin-bottom: 2rem;
         }
 
         article > p + blockquote {
           margin: 1rem 0;
         }
-        main a {
+
+        article a {
+          word-break: break-all;
           word-wrap: break-word;
           border-bottom: 2px solid #bc2261;
         }
 
-        main iframe {
+        article > iframe {
           max-width: 100%;
         }
 
-        main h1,
-        main h2 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 2rem 0 1rem;
           font-family: 'Nunito', sans-serif;
-          margin: 0;
-        }
-
-        main h3,
-        main h4,
-        main h5,
-        main h6 {
-          font-family: 'Nunito', sans-serif;
-          margin: 4rem 0 2rem;
           width: fit-content;
         }
-        img {
-          width: 100%;
+
+        article > img {
+          max-width: 100%;
         }
-        main ul li {
+
+        article > ul li {
           margin-left: 2rem;
           list-style-type: circle;
         }
