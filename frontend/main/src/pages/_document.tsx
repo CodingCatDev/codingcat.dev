@@ -51,7 +51,6 @@ class MyDocument extends Document {
             content="default"
           />
           <meta name="apple-mobile-web-app-title" content="CodingCatDev" />
-          <meta name="description" content="Purrfect Web Tutorials" />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
 

@@ -7,7 +7,6 @@ import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { getSite, getPostsService } from '@/services/sanity.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-
 interface StaticParams {
   site: Site;
   posts: Post[];
