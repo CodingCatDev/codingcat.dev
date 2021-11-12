@@ -36,7 +36,7 @@ const Courses = ({
       ></NextSeo>
       <Layout site={site}>
         <div className="p-4 sm:p-10">
-          <h1 className="mb-4 text-5xl text-center lg:text-7xl">
+          <h1 className="mt-10 mb-16 text-5xl text-center lg:text-7xl">
             {PostType.course.charAt(0).toUpperCase() + PostType.course.slice(1)}
             s
           </h1>

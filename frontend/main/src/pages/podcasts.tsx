@@ -57,7 +57,7 @@ const Podcasts = ({
       <Layout site={site}>
         <div className="p-4 sm:p-10">
           <PurrfectDevUpper />
-          <h2 className="mb-4 text-5xl text-center lg:text-7xl">
+          <h2 className="mt-10 mb-16 text-5xl text-center lg:text-7xl">
             {PostType.podcast.charAt(0).toUpperCase() +
               PostType.podcast.slice(1)}
             s
