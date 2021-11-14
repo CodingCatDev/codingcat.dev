@@ -115,7 +115,6 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   let post;
   let course;
   const pData = previewData as any;
-  console.log(pData);
   if (
     preview &&
     (pData?.selectionSlug == slug || pData?.selectionSlug == lessonPath)
