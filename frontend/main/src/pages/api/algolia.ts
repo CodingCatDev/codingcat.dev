@@ -15,17 +15,17 @@ const algolia = algoliasearch(algoliaConfig.appId, algoliaConfig.apiKey);
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log('Body: ', JSON.stringify(req.body));
 
-  // if (!isValidRequest(req, webhook.secret)) {
-  //   console.warn('Unathorized');
-  //   res.status(401).json({ success: false, message: 'Invalid signature' });
-  //   return;
-  // }
-  // if (req.headers['content-type'] !== 'application/json') {
-  //   console.warn('Bad Request');
-  //   res.status(400);
-  //   res.json({ message: 'Bad request' });
-  //   return;
-  // }
+  if (!isValidRequest(req, webhook.secret)) {
+    console.warn('Unathorized');
+    res.status(401).json({ success: false, message: 'Invalid signature' });
+    return;
+  }
+  if (req.headers['content-type'] !== 'application/json') {
+    console.warn('Bad Request');
+    res.status(400);
+    res.json({ message: 'Bad request' });
+    return;
+  }
   const publishedAt = req.body?.publishedAt;
   let publish = false;
   if (publishedAt) {
@@ -49,7 +49,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // create when in publish state
       const type = req.body?.type;
       const slug = req.body?.slug;
-      const objectID = req.body?.objectID;
 
       if (!type || !slug) {
         console.log('Skipping, misssing type or slug', type, slug);
@@ -64,7 +63,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       console.log('post data:', JSON.stringify(post));
       if (post) {
-        result = await algoliaIndex.saveObject({ ...post, objectID });
+        result = await algoliaIndex.saveObject({
+          ...post,
+          objectID: post._id,
+          type: post._type,
+        });
       }
     }
     console.log(result ? `Result: ${JSON.stringify(result)}` : 'Nothing Done.');
