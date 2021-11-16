@@ -287,6 +287,7 @@ export default function PostLayout({
         }
         article > * {
           margin-bottom: 2rem;
+          list-style: auto;
         }
 
         article > p + blockquote {
