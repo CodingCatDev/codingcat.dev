@@ -28,7 +28,6 @@ export default function Course({
   product: StripeProduct | undefined;
   preview?: boolean;
 }): JSX.Element {
-  console.log(post);
   const { status, data: signInCheckResult } = useSigninCheck();
   const router = useRouter();
 
