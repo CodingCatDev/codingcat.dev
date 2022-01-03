@@ -1,7 +1,7 @@
 import ActiveLink from '@/components/ActiveLink';
 import TitleLogo from '@/components/global/logos/TitleLogo';
 import OutsideClick from '@/components/OutsideClick';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
 import AvatarMenu from '@/components/user/AvatarMenu';
 import { useSigninCheck } from 'reactfire';
 
@@ -17,6 +17,13 @@ export default function AppMenu({
   setUserMenu: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
   const { data: signInCheckResult } = useSigninCheck();
+  const focusme = useRef<null | HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (focusme && focusme.current && overlayMenuActive) {
+      focusme.current.focus();
+    }
+  }, [overlayMenuActive]);
 
   return (
     <div
@@ -85,7 +92,9 @@ export default function AppMenu({
               aria-label="Sidebar"
             >
               <ActiveLink activeClassName="" href="/courses">
-                <a className="links-secondary">Courses</a>
+                <a className="links-secondary" ref={focusme}>
+                  Courses
+                </a>
               </ActiveLink>
               <ActiveLink activeClassName="" href="/tutorials">
                 <a className="links-secondary">Tutorials</a>
