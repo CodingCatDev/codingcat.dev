@@ -107,14 +107,20 @@ export const getPostBySlugService = async ({
   slug: string;
   params?: string;
 }) => {
+  let select = '';
+  if (preview) {
+    select = `*[ _type == $type && slug.current == $slug] | order(publishedAt desc)[0]`;
+  } else {
+    select = `*[!(_id in path('drafts.**')) && _type == $type && slug.current == $slug && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc)[0]`;
+  }
   const recentPostsQuery = groq`
-  *[!(_id in path('drafts.**')) && _type == $type && slug.current == $slug && publishedAt < "${new Date().toISOString()}"] | order(publishedAt desc)[0]
+  ${select}
   {
     ...,
     "slug": slug.current,
     sections[]{
       ...,
-      lessons[]->{_id, title,"slug": slug.current}
+      lessons[]->{_id, title,"slug": slug.current, accessSettings}
     },
     authors[]->{
       ...,
@@ -143,7 +149,7 @@ export const getPostById = async ({
     "slug": slug.current,
     sections[]{
       ...,
-      lessons[]->{_id, title,"slug": slug.current}
+      lessons[]->{_id, title,"slug": slug.current,accessSettings}
     },
     authors[]->{
       ...,

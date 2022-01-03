@@ -127,6 +127,13 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 
     const { _id } = pData;
     post = await getPostById({ preview, _id });
+    console.log(preview, type, slug);
+    course = await getPostBySlugService({
+      preview,
+      type,
+      slug,
+    });
+    console.log(course);
   } else {
     //Not in Preview mode.
     preview = false;
