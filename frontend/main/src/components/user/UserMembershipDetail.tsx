@@ -45,7 +45,7 @@ export default function UserMembership(): JSX.Element {
                 {loading ? 'Redirecting...' : 'Access Stripe Portal'}
               </button>
               <p className="mt-1">
-                *Please note this will redirect you away from codingcat.dev.
+                *Please note this will redirect you away from CodingCat.dev
               </p>
             </div>
           </div>
