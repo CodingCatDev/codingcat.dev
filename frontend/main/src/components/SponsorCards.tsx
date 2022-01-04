@@ -13,7 +13,7 @@ export default function RecentPostsList({
           {`Sponsors`}
         </h2>
         {sponsors.map((s, i) => (
-          <div className="p-2 hover:scale-105" key={i}>
+          <div className="p-2" key={i}>
             <a href={s.url} rel="noreferrer noopener" target="_blank">
               <div className="max-w-md rounded-lg shadow-lg bg-primary-50 dark:bg-primary-500">
                 <div className="p-2">
