@@ -13,7 +13,7 @@ export const generateCodingCatCoverURL = ({
 }) => {
   const url = cloudinary.url(backgroundPath, {
     quality: 'auto',
-    fetch_format: 'auto',
+    fetch_format: 'jpg',
     transformation: [
       {
         width: 1600,
