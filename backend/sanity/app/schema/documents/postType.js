@@ -32,6 +32,13 @@ export default {
       of: [{ type: 'reference', to: { type: 'author' } }],
     },
     {
+      name: 'sponsors',
+      title: 'Sponsors',
+      type: 'array',
+      validation: (Rule) => Rule.required(),
+      of: [{ type: 'reference', to: { type: 'sponsor' } }],
+    },
+    {
       name: 'coverPhoto',
       title: 'Cover Photo',
       type: 'cloudinary.asset',

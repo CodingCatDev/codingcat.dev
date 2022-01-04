@@ -8,6 +8,7 @@ import BreakBarLeft from '@/components/home/BreakBarLeft';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
+import SponsorCards from '@/components/SponsorCards';
 
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import { millisecondToUSFormat } from '@/utils/basics/date';
@@ -284,6 +285,14 @@ export default function PostLayout({
           {/* RECENTS */}
           {recentPosts && (
             <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+              {post?.sponsors && (
+                <div className="rounded-md bg-basics-50 dark:bg-primary-800">
+                  <h2 className="p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+                    {`Sponsors`}
+                  </h2>
+                  <SponsorCards sponsors={post.sponsors} />
+                </div>
+              )}
               <div className="rounded-md bg-basics-50 dark:bg-primary-900">
                 <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {`Latest Courses`}
