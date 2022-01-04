@@ -35,7 +35,6 @@ export default {
       name: 'sponsors',
       title: 'Sponsors',
       type: 'array',
-      validation: (Rule) => Rule.required(),
       of: [{ type: 'reference', to: { type: 'sponsor' } }],
     },
     {

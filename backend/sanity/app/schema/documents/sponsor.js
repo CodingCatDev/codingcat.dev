@@ -1,7 +1,7 @@
 import React from 'react';
 export default {
-  name: 'author',
-  title: 'Authors',
+  name: 'sponsor',
+  title: 'Sponsors',
   type: 'document',
   fields: [
     {
@@ -16,7 +16,7 @@ export default {
       type: 'slug',
       validation: (Rule) => Rule.required(),
       options: {
-        source: 'name',
+        source: 'company',
         maxLength: 96,
       },
     },
