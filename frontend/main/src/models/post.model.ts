@@ -1,3 +1,4 @@
+import { Sponsor } from './sponsor.model';
 import { Author, UserInfoExtended } from '@/models/user.model';
 import { MediaSource, MediaType } from './media.model';
 import firebase from 'firebase/app';
@@ -33,6 +34,7 @@ export interface Post {
   authorIds?: string[]; //uid list of authors
 
   urlContent?: string; //Used for remote data
+  sponsors?: Sponsor[];
 
   // Payment Fields
   accessSettings?: AccessSettings;

@@ -1,7 +1,7 @@
 import S from '@sanity/desk-tool/structure-builder';
 import { CgWebsite } from 'react-icons/cg';
 import { FaPodcast, FaYoutube, FaReact } from 'react-icons/fa';
-import { FiFeather, FiUsers } from 'react-icons/fi';
+import { FiFeather, FiUsers, FiDollarSign } from 'react-icons/fi';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
 import { RiPencilRulerLine, RiPagesLine } from 'react-icons/ri';
 import { IoLogoHtml5 } from 'react-icons/io5';
@@ -18,6 +18,7 @@ const listItems = [
 ];
 const adminItems = [
   { schema: 'author', title: 'Authors', icon: FiUsers },
+  { schema: 'sponsor', title: 'Sponsors', icon: FiDollarSign },
   { schema: 'site', title: 'Sites', icon: CgWebsite },
   { schema: 'framework', title: 'Frameworks', icon: FaReact },
   { schema: 'language', title: 'Languages', icon: IoLogoHtml5 },

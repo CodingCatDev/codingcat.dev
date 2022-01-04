@@ -17,6 +17,7 @@ import page from './documents/page';
 import podcast from './documents/podcast';
 import post from './documents/post';
 import site from './documents/site';
+import sponsor from './documents/sponsor';
 import tutorial from './documents/tutorial';
 
 // We import object schemas
@@ -39,6 +40,7 @@ export default createSchema({
     podcast,
     post,
     site,
+    sponsor,
     tutorial,
     framework,
     language,

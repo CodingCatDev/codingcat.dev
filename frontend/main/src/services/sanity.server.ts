@@ -126,6 +126,10 @@ export const getPostBySlugService = async ({
       ...,
       "slug":slug.current,
     },
+    sponsors[]->{
+      ...,
+      "slug":slug.current,
+    },
   }
   `;
 
@@ -152,6 +156,10 @@ export const getPostById = async ({
       lessons[]->{_id, title,"slug": slug.current,accessSettings}
     },
     authors[]->{
+      ...,
+      "slug":slug.current,
+    },
+    sponsors[]->{
       ...,
       "slug":slug.current,
     },
