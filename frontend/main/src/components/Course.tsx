@@ -204,7 +204,7 @@ export default function Course({
                         section.lessons.map((lesson) => (
                           <li key={lesson._id} className="ml-0 list-none">
                             <Link
-                              href={`/post/${post.slug}/lesson/${lesson.slug}`}
+                              href={`/course/${post.slug}/lesson/${lesson.slug}`}
                               key={lesson._id}
                               passHref
                             >
