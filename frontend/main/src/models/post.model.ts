@@ -86,7 +86,7 @@ export interface Section {
   lessons?: SectionLesson[];
 }
 
-export interface SectionLesson {
+export interface SectionLesson extends Post {
   _id: string;
   slug: string;
   title: string;

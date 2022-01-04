@@ -102,14 +102,14 @@ export default function UserMembership({
               </div>
             )}
           </section>
-          <section className="grid grid-cols-1 gap-10 text-center">
+          <section className="grid grid-cols-1 gap-10 mb-8 text-center">
             <div className="max-w-xl mx-auto">
               <h1 className="font-sans text-4xl font-semibold lg:text-5xl ">
                 Become a{' '}
                 <span className="text-secondary-600 dark:text-secondary-600">
                   Purrfect Peep
                 </span>{' '}
-                and join Coding Cat Dev.
+                and join CodingCat.dev
               </h1>
               <h2 className="mt-4 font-sans text-lg lg:text-lg text-basics-600">
                 Get access to all of the exclusive content and up your coding
