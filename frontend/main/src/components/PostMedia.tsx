@@ -26,7 +26,7 @@ export default function PostMedia({
 
   return (
     <>
-      {post.coverVideo ? (
+      {post?.coverVideo && Object.keys(post.coverVideo).length ? (
         <div>
           {post.coverVideo?.source === MediaSource.cloudinary ? (
             <>

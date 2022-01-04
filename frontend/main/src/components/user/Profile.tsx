@@ -29,8 +29,8 @@ export default function Profile({
             <SettingsLinks />
           </section>
           <div className="flex flex-col">
-            <UserProfile user={signInCheckResult.user} />
             <UserMembership user={signInCheckResult.user} products={products} />
+            <UserProfile user={signInCheckResult.user} />
           </div>
         </section>
       ) : (
@@ -46,7 +46,7 @@ export default function Profile({
                 <span className="text-secondary-600 dark:text-secondary-600">
                   Purrfect Peep
                 </span>{' '}
-                and join Coding Cat Dev.
+                and join CodingCat.dev
               </h1>
               <h2 className="mt-4 font-sans text-lg lg:text-lg text-basics-600">
                 Get access to all of the exclusive content and up your coding

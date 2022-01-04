@@ -15,6 +15,11 @@ import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 import { components } from '@/components/code/MDXComponents';
+import { AccessMode } from '@/models/access.model';
+import MemberValidShow from './user/MemberValidShow';
+import MemberNotValidShow from './user/MemberNotValidShow';
+import PostMediaLocked from './PostMediaLocked';
+
 export default function PostLayout({
   post,
   router,
@@ -41,6 +46,16 @@ export default function PostLayout({
     if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
       return true;
     return false;
+  }
+
+  function isLockedLesson() {
+    if (!course) {
+      return false;
+    }
+    const lessons: Post[] = [];
+    course?.sections?.map((s) => s?.lessons?.map((l) => lessons.push(l)));
+    const currentLesson = lessons.find((l) => l.slug === post.slug);
+    return currentLesson?.accessSettings?.accessMode != AccessMode.free;
   }
   const pluralType = pluralize(post);
 
@@ -78,7 +93,6 @@ export default function PostLayout({
         );
     }
   }
-
   return (
     <>
       {/* DIV TO AVOID GRID GAP */}
@@ -87,7 +101,20 @@ export default function PostLayout({
         {post._type !== PostType.page && (
           <section className="">
             {/* MEDIA */}
-            <PostMedia post={post} />
+            {!isLockedLesson() ? (
+              <PostMedia post={post} />
+            ) : user && user?.uid ? (
+              <>
+                <MemberValidShow user={user}>
+                  <PostMedia post={post} />
+                </MemberValidShow>
+                <MemberNotValidShow user={user}>
+                  <PostMediaLocked />
+                </MemberNotValidShow>
+              </>
+            ) : (
+              <PostMediaLocked />
+            )}
           </section>
         )}
 
@@ -229,7 +256,7 @@ export default function PostLayout({
                               {lesson?.accessSettings?.accessMode && (
                                 <div className="no-underline text-basics-900 hover:text-primary-900">
                                   {lesson?.accessSettings?.accessMode !=
-                                    'free' && (
+                                    AccessMode.free && (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       className="w-5 h-5"
@@ -294,7 +321,24 @@ export default function PostLayout({
           )}
           {/* BLOG POST */}
           <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-            {source && <MDXRemote {...source} components={components} />}
+            {!isLockedLesson() ? (
+              source && <MDXRemote {...source} components={components} />
+            ) : user && user?.uid ? (
+              <>
+                <MemberValidShow user={user}>
+                  <>
+                    {source && (
+                      <MDXRemote {...source} components={components} />
+                    )}
+                  </>
+                </MemberValidShow>
+                <MemberNotValidShow user={user}>
+                  <PostMediaLocked />
+                </MemberNotValidShow>
+              </>
+            ) : (
+              <PostMediaLocked />
+            )}
           </article>
         </section>
       </div>
