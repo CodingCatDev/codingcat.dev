@@ -22,6 +22,8 @@ export default function Toggle(): JSX.Element {
     <button
       className="self-center p-1 m-2 rounded-full hover:bg-primary-800 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-basics-50 text-yellow-50 dark:text-yellow-50"
       aria-label="Toggle dark mode"
+      role="switch"
+      aria-checked={theme === 'light' ? false : true}
       onClick={toggle}
     >
       {loaded && (
