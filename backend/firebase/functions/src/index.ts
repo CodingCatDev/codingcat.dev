@@ -10,7 +10,7 @@ export {
 } from './stripe/subscriptions';
 
 // Should only run in main
-export { calendarPush, calendarToNotionPubSub } from './google/calendar';
+export { calendarPush } from './calendly/webhook';
 export { getCode, getToken } from './google/auth';
 export {
   scheduledNotionToCloudinary,

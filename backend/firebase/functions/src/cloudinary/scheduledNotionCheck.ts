@@ -30,7 +30,7 @@ export const scheduledNotionToCloudinary = functions.pubsub
 
     if (scheduledRes?.results) {
       const needCloudinaryPods = scheduledRes?.results.filter(
-        (p) => p.cover === null
+        (p: any) => p.cover === null
       );
       console.log('Pods to add to pub/sub', JSON.stringify(needCloudinaryPods));
 
@@ -55,7 +55,7 @@ export const cloudinaryToNotionPubSub = functions.pubsub
     // For each guest update the twitter profile.
     for (const guest of page?.properties?.Guest?.relation as { id: string }[]) {
       console.log('Getting Guest Details', guest.id);
-      const guestRes = await getPage(guest.id);
+      const guestRes: any = await getPage(guest.id);
       console.log('Guest Result: ', JSON.stringify(guestRes));
       const twitter = guestRes.properties.Twitter as { url: string };
       console.log('Guest twitter: ', twitter);
@@ -75,7 +75,7 @@ export const cloudinaryToNotionPubSub = functions.pubsub
 
         const param = {
           title: page.properties.Name.title[0].plain_text,
-          guestName: (guestRes.properties.Name as any).title[0].plain_text,
+          guestName: guestRes.properties.Name.title[0].plain_text,
           guestImagePublicId,
           backgroundPath: `${cloudinaryFolder}/Season2Background`,
         };
@@ -100,7 +100,7 @@ export const cloudinaryToNotionPubSub = functions.pubsub
         );
         console.log('Add template blocks');
         const templateUpdate = await blockAppendPurrfectPageWithTemplateData({
-          guestName: (guestRes.properties.Name as any).title[0].plain_text,
+          guestName: guestRes.properties.Name.title[0].plain_text,
           coverUrl,
           pageId: page.id,
         });
