@@ -29,6 +29,10 @@ export const cloudinaryApiSecret = checkMain('cloudinary', 'api_secret');
 export const cloudinaryTokenKey = checkMain('cloudinary', 'token_key');
 export const cloudinaryVideo = checkMain('cloudinary', 'video');
 
+// Calendly
+export const calendlyAccessToken = checkMain('calendly', 'pat');
+export const calendlySigningKey = checkMain('calendly', 'signing_key');
+
 // Google
 export const calendarChannelId = checkMain('calendar', 'channel_id');
 export const calendarRefreshToken = checkMain('calendar', 'refresh_token');
