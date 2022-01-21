@@ -19,7 +19,7 @@ export const AppTopbar = (props: {
   const [userMenu, setUserMenu] = useState(false);
 
   return (
-    <header className="flex justify-between w-full h-20 p-4 lg:px-0 lg:mx-auto lg:w-80 lg:max-w-8xl">
+    <header className="flex justify-between w-full h-20 p-4 lg:px-0 lg:mx-auto lg:max-w-8xl">
       <Link href="/">
         <a>
           <div className="flex items-center content-center flex-shrink-0 h-full">

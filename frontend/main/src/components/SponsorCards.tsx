@@ -12,11 +12,11 @@ export default function RecentPostsList({
         <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
           {`Sponsors`}
         </h2>
-        <div className="flex flex-col sm:flex-row">
+        <div className="flex flex-col sm:flex-row 2xl:flex-col">
           {sponsors.map((s, i) => (
             <div className="p-2" key={i}>
               <a href={s.url} rel="noreferrer noopener" target="_blank">
-                <div className="max-w-md rounded-lg shadow-lg bg-primary-50 dark:bg-primary-500">
+                <div className="max-w-2xl rounded-lg shadow-lg 2xl:max-w-full bg-primary-50 dark:bg-primary-500">
                   <div className="p-2">
                     <div
                       style={{
