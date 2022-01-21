@@ -55,6 +55,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      if (type === 'lesson') {
+        console.log(
+          `Skipping, we don't know what course lesson is for.`,
+          type,
+          slug
+        );
+        return;
+      }
+
       console.log(`Fetching full post with type: ${type} slug: ${slug}`);
       const post = await getPostBySlugService({
         preview: true,
