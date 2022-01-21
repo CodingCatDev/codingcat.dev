@@ -50,8 +50,13 @@ export default function PostLayout({
   }
 
   function isLockedLesson() {
-    if (!course) {
+    // Only lockdown lessons
+    if (post._type != PostType.lesson) {
       return false;
+    }
+    //If lesson, without assigned course (or course is not yet published)
+    if (post._type == PostType.lesson && !course) {
+      return true;
     }
     const lessons: Post[] = [];
     course?.sections?.map((s) => s?.lessons?.map((l) => lessons.push(l)));
