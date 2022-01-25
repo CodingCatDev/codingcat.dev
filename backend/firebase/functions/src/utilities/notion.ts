@@ -74,11 +74,11 @@ export const createPurrfectPage = ({
   companyIds,
 }: {
   calendarid: string;
-  recordingDate: Date;
+  recordingDate: string;
   guestIds?: string[];
   companyIds?: string[];
 }) => {
-  return notionClient.pages.create({
+  const notionCreatePayload = {
     parent: {
       database_id: notionPurrfectDatabaseId,
     },
@@ -105,9 +105,7 @@ export const createPurrfectPage = ({
         id: 'br,*',
         type: 'date',
         date: {
-          start: recordingDate.toLocaleString('en-US', {
-            timeZone: 'America/New_York',
-          }),
+          start: recordingDate,
           end: null,
           time_zone: 'America/New_York',
         },
@@ -140,7 +138,9 @@ export const createPurrfectPage = ({
         ],
       },
     },
-  } as any);
+  } as any;
+  console.log('notionCreatePayload', JSON.stringify(notionCreatePayload));
+  return notionClient.pages.create(notionCreatePayload);
 };
 
 export const patchPurrfectPage = (pageParams: UpdatePageParameters) => {
