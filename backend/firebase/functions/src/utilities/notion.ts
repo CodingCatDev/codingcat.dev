@@ -105,7 +105,9 @@ export const createPurrfectPage = ({
         id: 'br,*',
         type: 'date',
         date: {
-          start: recordingDate.toISOString(),
+          start: recordingDate.toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+          }),
           end: null,
           time_zone: 'America/New_York',
         },

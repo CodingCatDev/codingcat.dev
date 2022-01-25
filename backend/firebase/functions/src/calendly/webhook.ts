@@ -59,7 +59,9 @@ export const calendarPush = functions.https.onRequest(async (req, res) => {
         properties: {
           'Recording Date': {
             date: {
-              start: calendlyEvent.resource.start_time,
+              start: new Date(
+                calendlyEvent.resource.start_time
+              ).toLocaleString('en-US', { timeZone: 'America/New_York' }),
               end: null,
               time_zone: 'America/New_York',
             },
