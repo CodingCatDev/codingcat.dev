@@ -60,7 +60,8 @@ export const cloudinaryToNotionPubSub = functions.pubsub
       const twitter = guestRes.properties.Twitter as { url: string };
       console.log('Guest twitter: ', twitter);
       if (twitter) {
-        const twitterUsername = twitter.url.replace('https://twitter.com/', '');
+        let twitterUsername = twitter.url.replace('https://twitter.com/', '');
+        twitterUsername = twitterUsername.replace('@', '');
         console.log('fetching twitter user', twitterUsername);
         const twitterGuest = await getUserByUsername(twitterUsername);
         console.log('twitter user: ', JSON.stringify(twitterGuest));
