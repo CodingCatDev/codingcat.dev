@@ -1,6 +1,5 @@
 import { UserInfoExtended } from '@/models/user.model';
 import { useEffect } from 'react';
-import { config } from '@/config/cloudinary';
 import { doc, DocumentReference } from '@firebase/firestore';
 import { useFirestore, useFirestoreDocData } from 'reactfire';
 
@@ -31,10 +30,6 @@ export default function StripeRedirect({
   }, [session]);
 
   const redirect = async (session: { url: string | URL }) => {
-    if (!config.apiKey) {
-      alert('Missing Stripe API Key');
-      return;
-    }
     // We have a Stripe Checkout URL, let's redirect.
     window.location.assign(session.url);
   };
