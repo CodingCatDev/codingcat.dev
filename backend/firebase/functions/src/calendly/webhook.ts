@@ -6,10 +6,10 @@ import {
   createPurrfectCompany,
   createPurrfectPage,
   queryPurrfectPageByCalendarId,
-  patchPurrfectPage,
 } from './../utilities/notion';
 
 import { getEvent, listEventInvitees } from './../utilities/calendly';
+import { utcOffset } from '../utilities/date';
 
 export const calendarPush = functions.https.onRequest(async (req, res) => {
   console.log('Headers', JSON.stringify(req.headers));
@@ -37,38 +37,40 @@ export const calendarPush = functions.https.onRequest(async (req, res) => {
 
   try {
     const calendlyEvent = await getEvent(eventUuid);
+    console.log('calendlyEvent', JSON.stringify(calendlyEvent));
     const calendlyInvitees = await listEventInvitees(eventUuid);
+    console.log('calendlyInvitees', JSON.stringify(calendlyInvitees));
 
     // Check if calendar event already created.
     console.log(
       'Searching for Pod with calendarid: ',
-      webhookPayload.payload.event
+      JSON.stringify(webhookPayload.payload.event)
     );
     const purrfectPageRes = await queryPurrfectPageByCalendarId(
       webhookPayload.payload.event
     );
     if (purrfectPageRes?.results.length > 0) {
-      console.log('Pod found', JSON.stringify(purrfectPageRes));
-      const purrfectPage = purrfectPageRes?.results?.[0];
-      console.log(
-        'Updating pod with time: ',
-        calendlyEvent.resource.start_time
-      );
-      const purrfectPagePatchRes = await patchPurrfectPage({
-        page_id: purrfectPage.id,
-        properties: {
-          'Recording Date': {
-            date: {
-              start: calendlyEvent.resource.start_time,
-              end: null,
-              time_zone: 'America/New_York',
-            },
-          },
-        },
-      });
+      // console.log('Pod found', JSON.stringify(purrfectPageRes));
+      // const purrfectPage = purrfectPageRes?.results?.[0];
+      // console.log(
+      //   'Updating pod with time: ',
+      //   JSON.stringify(calendlyEvent.resource.start_time)
+      // );
+      // const purrfectPagePatchRes = await patchPurrfectPage({
+      //   page_id: purrfectPage.id,
+      //   properties: {
+      //     'Recording Date': {
+      //       date: {
+      //         start: utcOffset(calendlyEvent.resource.start_time),
+      //         end: null,
+      //         time_zone: 'America/New_York',
+      //       },
+      //     },
+      //   },
+      // });
 
-      console.log('Patched', JSON.stringify(purrfectPagePatchRes));
-      res.status(200).send('updated');
+      // console.log('Patched', JSON.stringify(purrfectPagePatchRes));
+      res.status(200).send('duplicate entry');
     }
 
     // Check if Notion Company exists, if not create
@@ -120,7 +122,7 @@ export const calendarPush = functions.https.onRequest(async (req, res) => {
     const newPodcast = {
       guestIds: [guestId],
       companyIds,
-      recordingDate: new Date(calendlyEvent.resource.start_time),
+      recordingDate: utcOffset(calendlyEvent.resource.start_time),
       calendarid: webhookPayload.payload.event,
     };
     console.log('Creating Podcast with values: ', JSON.stringify(newPodcast));
