@@ -3,7 +3,7 @@ import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useDarkMode } from 'usehooks-ts';
+import nightwind from 'nightwind/helper';
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -43,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       />
       {/* Tailwind Dark Mode */}
       <Head>
+        <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
         <script
           dangerouslySetInnerHTML={{
             __html: `
