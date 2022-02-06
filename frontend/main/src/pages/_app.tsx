@@ -45,10 +45,18 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         <script
           dangerouslySetInnerHTML={{
             __html: `
-            if(('darkMode' in localStorage && eval(localStorage.darkMode)) || window.matchMedia('(prefers-color-scheme: dark)').matches){
-              document.documentElement.classList.add('dark')
+            if ('darkMode' in localStorage) {
+              if (eval(localStorage.darkMode)) {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
             } else {
-            document.documentElement.classList.remove('dark')
+              if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
             }
         `,
           }}

@@ -86,7 +86,7 @@ export default function Toggle(): JSX.Element {
   const [selected, setSelected] = useState(theme[0]);
 
   useEffect(() => {
-    if (isDarkMode) {
+    if (isDarkMode && 'darkMode' in localStorage) {
       setTheme('dark');
     } else {
       if (!('darkMode' in localStorage)) {
@@ -107,7 +107,7 @@ export default function Toggle(): JSX.Element {
       setSelected(theme[1]);
       enable();
     }
-    if (e === 'system' && window && window.localStorage) {
+    if (e === 'system') {
       setSelected(theme[2]);
       window.localStorage.removeItem('darkMode');
     }
@@ -116,13 +116,18 @@ export default function Toggle(): JSX.Element {
 
   // Tailwind
   const setTailwind = () => {
-    if (
-      ('darkMode' in localStorage && eval(localStorage.darkMode)) ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-    ) {
-      document.documentElement.classList.add('dark');
+    if ('darkMode' in localStorage) {
+      if (eval(localStorage.darkMode)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     } else {
-      document.documentElement.classList.remove('dark');
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   };
 
