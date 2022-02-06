@@ -194,7 +194,7 @@ export default function Toggle(): JSX.Element {
                 className={`flex cursor-pointer bg-primary-50 dark:bg-primary-900 
                 ${
                   active
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-primary-500 text-white dark:text-white'
                     : 'bg-primary-50 text-primary-500 dark:text-primary-400'
                 }
                 `}
