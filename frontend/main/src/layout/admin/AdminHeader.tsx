@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import Toggle from '@/components/global/icons/Toggle';
+import DarkMode from '@/components/global/icons/DarkMode';
 import { PostHeader } from '@/layout/admin/PostHeader';
 import SearchModal from '@/components/algolia/SearchModal';
 import { Post } from '@/models/post.model';
@@ -47,7 +47,7 @@ export const AdminHeader = ({
               />
             </svg>
           </button>
-          <Toggle />
+          <DarkMode />
         </div>
       </div>
     </header>
