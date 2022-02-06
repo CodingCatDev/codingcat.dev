@@ -9,11 +9,11 @@ import { AppTopbar } from '@/layout/AppTopbar';
 
 import AppMenu from '@/layout/AppMenu';
 import { Site } from '@/models/site.model';
-import Footer from '@/layout/Footer';
 
 import useIsNavigating from '@/hooks/useIsNavigating';
 import { Progress } from '@/components/global/loading/Progress';
 import dynamic from 'next/dynamic';
+import { BuilderComponent } from '@builder.io/react';
 
 const FirebaseProvider = dynamic<any>(
   () =>
@@ -76,10 +76,12 @@ const FirebaseFunctionsProvider = dynamic<any>(
 );
 
 const Layout = ({
-  site,
+  header,
+  footer,
   children,
 }: {
-  site: Site | null;
+  header: any;
+  footer: any;
   children: any;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
@@ -111,17 +113,16 @@ const Layout = ({
                     defaultTheme="light"
                   >
                     <Progress isAnimating={isNavigating} />
-
                     <AppTopbar
                       setOverlayMenuActive={setOverlayMenuActive}
                       overlayMenuActive={overlayMenuActive}
+                      header={header}
                     />
                     <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
                       <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
                         {children}
                       </main>
-
-                      <Footer site={site} />
+                      <BuilderComponent model="footer" content={footer} />
                     </div>
                     <AppMenu
                       setOverlayMenuActive={setOverlayMenuActive}

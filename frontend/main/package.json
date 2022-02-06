@@ -15,6 +15,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@builder.io/react": "^1.1.47",
     "@mapbox/rehype-prism": "^0.8.0",
     "@sanity/webhook": "^1.0.2",
     "@tailwindcss/forms": "^0.3.4",
