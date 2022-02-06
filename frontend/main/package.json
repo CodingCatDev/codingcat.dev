@@ -15,10 +15,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.3",
     "@mapbox/rehype-prism": "^0.8.0",
     "@sanity/webhook": "^1.0.2",
-    "@tailwindcss/forms": "^0.3.4",
-    "@tailwindcss/typography": "^0.4.1",
     "@tanem/react-nprogress": "^3.0.82",
     "algoliasearch": "^4.8.3",
     "array-move": "^3.0.1",
@@ -36,8 +35,6 @@
     "next-pwa": "^5.4.0",
     "next-sanity": "^0.4.0",
     "next-seo": "^4.28.1",
-    "next-themes": "^0.0.15",
-    "nightwind": "^1.1.12",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.2",
     "react-calendly": "^2.2.2",
@@ -49,11 +46,14 @@
     "react-timeago": "^5.2.0",
     "reactfire": "^4.2.0",
     "use-mailchimp-form": "^2.0.4",
+    "usehooks-ts": "^2.3.0",
     "video.js": "^7.11.4"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.0.3",
     "@next/eslint-plugin-next": "^12.0.3",
+    "@tailwindcss/forms": "^0.4.0",
+    "@tailwindcss/typography": "^0.5.1",
     "@types/cookie": "^0.4.0",
     "@types/js-cookie": "^2.2.6",
     "@types/logrocket-react": "^3.0.0",
@@ -66,14 +66,14 @@
     "@types/react-transition-group": "^4.4.0",
     "@types/uuid": "^8.3.0",
     "@types/video.js": "^7.3.14",
-    "autoprefixer": "^10.0.2",
+    "autoprefixer": "^10.4.2",
     "eslint-config-next": "^12.0.3",
     "eslint-config-prettier": "^8.3.0",
     "next-sitemap": "^1.6.203",
-    "postcss": "^8.2.1",
+    "postcss": "^8.4.6",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.2.1",
-    "tailwindcss": "^2.2.16",
+    "tailwindcss": "^3.0.18",
     "typescript": "^4.3.5"
   }
 }

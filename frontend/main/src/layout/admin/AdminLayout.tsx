@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import router from 'next/router';
 import Head from 'next/head';
-import nightwind from 'nightwind/helper';
 import { ThemeProvider } from 'next-themes';
 
 import AdminMenu from '@/layout/admin/AdminMenu';
@@ -75,10 +74,6 @@ const AdminLayout = ({
 
   return (
     <>
-      <Head>
-        <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
-      </Head>
-
       <FirebaseProvider>
         <FirebaseAuthProvider>
           <FirebaseFirestoreProvider>

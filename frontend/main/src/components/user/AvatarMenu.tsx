@@ -142,7 +142,7 @@ export default function AvatarMenu({
             }}
           >
             <svg
-              className="w-8 transform -scale-1"
+              className="w-8 -scale-1"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

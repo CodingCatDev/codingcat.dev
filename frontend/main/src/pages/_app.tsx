@@ -2,6 +2,8 @@ import '@/styles/globals.css';
 import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
+import Head from 'next/head';
+import { useDarkMode } from 'usehooks-ts';
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -39,6 +41,20 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           cardType: 'summary_large_image',
         }}
       />
+      {/* Tailwind Dark Mode */}
+      <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            if(('darkMode' in localStorage && eval(localStorage.darkMode)) || window.matchMedia('(prefers-color-scheme: dark)').matches){
+              document.documentElement.classList.add('dark')
+            } else {
+            document.documentElement.classList.remove('dark')
+            }
+        `,
+          }}
+        />
+      </Head>
       <Component {...pageProps} />
     </>
   );

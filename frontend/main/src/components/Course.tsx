@@ -65,7 +65,7 @@ export default function Course({
               <h1 className="font-sans text-5xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
                 {post.title}
               </h1>
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Link href={`/courses`}>
                   <a role="link" className="no-underline btn-secondary">
                     {/* capitalize Courses */}
@@ -82,7 +82,7 @@ export default function Course({
                   <section className="flex items-center gap-2">
                     {post.authors?.map((author, i) => (
                       <section
-                        className="flex items-center flex-shrink-0 space-x-4"
+                        className="flex items-center shrink-0 space-x-4"
                         key={i}
                       >
                         {author?.photoURL && author.photoURL?.public_id && (
@@ -196,7 +196,7 @@ export default function Course({
                     key={section._key}
                     className="flex flex-col rounded-t-md"
                   >
-                    <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                    <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                       {section.title}
                     </div>
                     <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">

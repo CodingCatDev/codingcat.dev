@@ -54,7 +54,7 @@ export default function SearchModal(): JSX.Element {
       {show && (
         <Modal show={show}>
           <section
-            className="relative grid w-full max-w-lg grid-cols-1 mx-auto transition-all rounded-md shadow-md min-h-1/2 max-h-1/2 bg-basics-50 text-basics-900"
+            className="relative grid w-full max-w-lg grid-cols-1 mx-auto rounded-md shadow-md min-h-1/2 max-h-1/2 bg-basics-50 text-basics-900"
             style={{
               animation:
                 'scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
