@@ -136,5 +136,5 @@ module.exports = {
       },
     }),
   },
-  plugins: [require('@tailwindcss/forms'), require('nightwind')],
+  plugins: [require('@tailwindcss/forms')],
 };
