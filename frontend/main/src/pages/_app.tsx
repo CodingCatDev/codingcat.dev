@@ -404,6 +404,26 @@ Builder.registerComponent(PostsCards, {
 //   ],
 // });
 
+import SocialShare from '@/components/common/SocialShare';
+Builder.registerComponent(SocialShare, {
+  name: 'SocialShare',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'href',
+      type: 'text',
+    },
+    {
+      name: 'excerpt',
+      type: 'text',
+    },
+    {
+      name: 'title',
+      type: 'text',
+    },
+  ],
+});
 // Customized Vendor Components
 import Link from 'next/link';
 const ccdLink = ({ href, children }: { href: string; children: any }) => (

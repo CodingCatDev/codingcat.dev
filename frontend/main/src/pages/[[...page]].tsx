@@ -38,6 +38,7 @@ function getRecent(page: string[] | undefined, type: PostType) {
 export async function getStaticProps({
   params,
 }: GetStaticPropsContext<{ page: string[] }>) {
+  console.log(JSON.stringify(params));
   const [header, footer, page, course, post, tutorial, podcast] =
     await Promise.all([
       builder.get('header').promise(),
@@ -57,10 +58,15 @@ export async function getStaticProps({
 
   return {
     props: {
-      page,
-      header,
-      footer,
-      recentPosts: { course, post, tutorial, podcast },
+      page: page || null,
+      header: header || null,
+      footer: footer || null,
+      recentPosts: {
+        course: course || null,
+        post: post || null,
+        tutorial: tutorial || null,
+        podcast: podcast || null,
+      },
     },
     revalidate: 5,
   };
@@ -73,7 +79,7 @@ export async function getStaticPaths() {
   });
 
   return {
-    paths: pages.map((page) => `${page.data?.url}`),
+    paths: pages.map((page) => `${page?.data?.url}`),
     fallback: true,
   };
 }
@@ -109,25 +115,25 @@ export default function Page({
   return (
     <>
       <NextSeo
-        title={page.title}
-        description={page.excerpt}
+        title={page?.title}
+        description={page?.excerpt}
         canonical={`https://codingcat.dev${router.asPath}`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
           url: `https://codingcat.dev${router.asPath}`,
-          title: page.title,
-          description: page.excerpt,
+          title: page?.title,
+          description: page?.excerpt,
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${page.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${page?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
-              alt: page.title,
+              alt: page?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/${page.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/${page?.coverPhoto?.public_id}`,
             },
           ],
         }}

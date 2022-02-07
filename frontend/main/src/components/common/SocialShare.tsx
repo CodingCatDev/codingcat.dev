@@ -1,4 +1,3 @@
-import { Post } from '@/models/post.model';
 import {
   FaFacebookF,
   FaTwitter,
@@ -7,17 +6,19 @@ import {
   FaHackerNews,
 } from 'react-icons/fa/';
 
-export default function CopyButton({
+export default function SocialShare({
   href,
-  post,
+  excerpt,
+  title,
 }: {
   href: string;
-  post: Post;
+  excerpt: string;
+  title: string;
 }): JSX.Element {
   return (
     <>
       <a
-        href={`https://twitter.com/intent/tweet?url=${href}&via=CodingCatDev&hashtags=CodingCatDevShares&text=${post.excerpt}`}
+        href={`https://twitter.com/intent/tweet?url=${href}&via=CodingCatDev&hashtags=CodingCatDevShares&text=${excerpt}`}
         target="_blank"
         rel="noreferrer"
         aria-label="Share to Twitter"
@@ -50,7 +51,7 @@ export default function CopyButton({
         </button>
       </a>
       <a
-        href={`https://www.reddit.com/submit?url=${href}&title=${post.title}`}
+        href={`https://www.reddit.com/submit?url=${href}&title=${title}`}
         target="_blank"
         rel="noreferrer"
         aria-label="Share to Reddit"
@@ -61,7 +62,7 @@ export default function CopyButton({
         </button>
       </a>{' '}
       <a
-        href={`https://news.ycombinator.com/submitlink?u=${href}&t=${post.title}`}
+        href={`https://news.ycombinator.com/submitlink?u=${href}&t=${title}`}
         target="_blank"
         rel="noreferrer"
         aria-label="Share to Hackernews"
