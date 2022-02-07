@@ -93,10 +93,6 @@
     font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
   }
 
-  ul {
-    @apply list-disc
-  }
-
   input[type='number'],
   input[type='text'],
   input[type='url'],
