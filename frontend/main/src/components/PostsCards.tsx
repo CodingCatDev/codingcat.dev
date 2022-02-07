@@ -3,18 +3,19 @@ import Image from 'next/image';
 import { Post } from '@/models/post.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 
-export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
+export default function PostsCards({ posts }: { posts: any[] }): JSX.Element {
   return (
     <>
       {posts && posts.length > 0 ? (
         <section className="relative grid gap-4 grid-cols-fit sm:gap-10">
-          {posts.map((post) => {
+          {posts.map((p) => {
+            const post = { ...p, ...p?.data, ...p?.data?.page } as Post;
             return (
               <div
                 className="grid transition-all transform rounded-md shadow-lg grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
-                key={post._id}
+                key={post.id}
               >
-                <Link href={`/${post._type}/${post.slug}`}>
+                <Link href={post?.url}>
                   <a className="self-start">
                     {post.coverPhoto?.public_id && post._type === 'course' ? (
                       <>

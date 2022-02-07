@@ -12,23 +12,101 @@ import Layout from '@/layout/Layout';
 export async function getStaticProps({
   params,
 }: GetStaticPropsContext<{ page: string[] }>) {
-  const page =
-    (await builder
-      .get('page', {
-        userAttributes: {
-          urlPath: '/' + (params?.page?.join('/') || ''),
+  const [header, footer, page, course, post, tutorial, podcast] =
+    await Promise.all([
+      builder.get('header').promise(),
+      builder.get('footer').promise(),
+      builder
+        .get('page', {
+          userAttributes: {
+            urlPath: '/' + (params?.page?.join('/') || ''),
+          },
+        })
+        .toPromise(),
+      builder.getAll('course', {
+        omit: 'data.blocks',
+        includeRefs: true,
+        limit: 3,
+        options: {
+          noTargeting: true,
         },
-      })
-      .toPromise()) || null;
-
-  const header = await builder.get('header').promise();
-  const footer = await builder.get('footer').promise();
+        query: {
+          $and: [
+            { startDate: { $lte: Date.now() } },
+            {
+              $or: [
+                { endDate: { $exists: false } },
+                { endDate: { $gte: Date.now() } },
+              ],
+            },
+          ],
+        },
+      }),
+      builder.getAll('post', {
+        omit: 'data.blocks',
+        includeRefs: true,
+        limit: 3,
+        options: {
+          noTargeting: true,
+        },
+        query: {
+          $and: [
+            { startDate: { $lte: Date.now() } },
+            {
+              $or: [
+                { endDate: { $exists: false } },
+                { endDate: { $gte: Date.now() } },
+              ],
+            },
+          ],
+        },
+      }),
+      builder.getAll('tutorial', {
+        omit: 'data.blocks',
+        includeRefs: true,
+        limit: 3,
+        options: {
+          noTargeting: true,
+        },
+        query: {
+          $and: [
+            { startDate: { $lte: Date.now() } },
+            {
+              $or: [
+                { endDate: { $exists: false } },
+                { endDate: { $gte: Date.now() } },
+              ],
+            },
+          ],
+        },
+      }),
+      builder.getAll('podcast', {
+        omit: 'data.blocks',
+        includeRefs: true,
+        limit: 3,
+        options: {
+          noTargeting: true,
+        },
+        query: {
+          $and: [
+            { startDate: { $lte: Date.now() } },
+            {
+              $or: [
+                { endDate: { $exists: false } },
+                { endDate: { $gte: Date.now() } },
+              ],
+            },
+          ],
+        },
+      }),
+    ]);
 
   return {
     props: {
       page,
       header,
       footer,
+      recentPosts: { course, post, tutorial, podcast },
     },
     revalidate: 5,
   };
@@ -49,6 +127,7 @@ export default function Page({
   page,
   header,
   footer,
+  recentPosts,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const [isLive, setIsLive] = useState(false);
@@ -99,7 +178,11 @@ export default function Page({
         }}
       ></NextSeo>
       <Layout header={header} footer={footer}>
-        <BuilderComponent model="page" content={page} />
+        <BuilderComponent
+          model="page"
+          content={page}
+          context={{ recentPosts }}
+        />
       </Layout>
     </>
   );

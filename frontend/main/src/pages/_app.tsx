@@ -277,6 +277,19 @@ Builder.registerComponent(Footer, {
     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
 });
 
+import PostsCards from '@/components/PostsCards';
+Builder.registerComponent(PostsCards, {
+  name: 'PostsCards',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'posts',
+      type: 'object',
+    },
+  ],
+});
+
 // Customized Components
 import Link from 'next/link';
 const ccdLink = ({ href, children }: { href: string; children: any }) => (
