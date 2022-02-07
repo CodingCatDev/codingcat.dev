@@ -52,11 +52,159 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 export default MyApp;
 
 //Builder Drag and Drop Components
+
+import AJPrimary from '@/components/global/icons/AJPrimary';
+Builder.registerComponent(AJPrimary, {
+  name: 'AJPrimary',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
 import AJAlt from '@/components/global/icons/AJAlt';
 Builder.registerComponent(AJAlt, {
   name: 'AJAlt',
   image:
     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
+Builder.registerComponent(AJHeartAlt, {
+  name: 'AJHeartAlt',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+import AJHeadphones from '@/components/global/icons/AJHeadphones';
+Builder.registerComponent(AJHeadphones, {
+  name: 'AJHeadphones',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+import KCAlt from '@/components/global/icons/KCAlt';
+Builder.registerComponent(KCAlt, {
+  name: 'KCAlt',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+import BreakBarLeft from '@/components/home/BreakBarLeft';
+Builder.registerComponent(withChildren(BreakBarLeft), {
+  name: 'BreakBarLeft',
+  canHaveChildren: true,
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+});
+
+import {
+  ReactLogo,
+  AngularLogo,
+  VueLogo,
+  SvelteLogo,
+  CssLogo,
+  HtmlLogo,
+} from '@/components/global/icons/VendorLogos';
+
+Builder.registerComponent(ReactLogo, {
+  name: 'ReactLogo',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+Builder.registerComponent(AngularLogo, {
+  name: 'AngularLogo',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+Builder.registerComponent(VueLogo, {
+  name: 'VueLogo',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+Builder.registerComponent(SvelteLogo, {
+  name: 'SvelteLogo',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+Builder.registerComponent(CssLogo, {
+  name: 'CssLogo',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
+});
+
+Builder.registerComponent(HtmlLogo, {
+  name: 'HtmlLogo',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'className',
+      type: 'string',
+    },
+  ],
 });
 
 import Courses from '@/components/global/icons/nav/Courses';
