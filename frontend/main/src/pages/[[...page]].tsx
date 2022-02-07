@@ -10,28 +10,26 @@ import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { PostType } from '@/models/post.model';
 
-function getRecent(page: string[] | undefined, type: PostType) {
-  return page
-    ? []
-    : builder.getAll(type, {
-        omit: 'data.blocks',
-        includeRefs: true,
-        limit: 3,
-        options: {
-          noTargeting: true,
-        },
-        query: {
-          $and: [
-            { startDate: { $lte: Date.now() } },
-            {
-              $or: [
-                { endDate: { $exists: false } },
-                { endDate: { $gte: Date.now() } },
-              ],
-            },
+function getRecent(type: PostType) {
+  return builder.getAll(type, {
+    omit: 'data.blocks',
+    includeRefs: true,
+    limit: 3,
+    options: {
+      noTargeting: true,
+    },
+    query: {
+      $and: [
+        { startDate: { $lte: Date.now() } },
+        {
+          $or: [
+            { endDate: { $exists: false } },
+            { endDate: { $gte: Date.now() } },
           ],
         },
-      });
+      ],
+    },
+  });
 }
 
 export async function getStaticProps({
@@ -43,26 +41,27 @@ export async function getStaticProps({
   let lesson = (params?.page?.[2] as string) || '';
   let lessonPath = (params?.page?.[3] as string) || '';
 
-  const [header, footer, page, course, post, tutorial, podcast] =
+  const [header, footer, modelData, course, post, tutorial, podcast] =
     await Promise.all([
       builder.get('header').promise(),
       builder.get('footer').promise(),
       builder
         .get(slug ? type : 'page', {
+          includeRefs: true,
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
         })
         .toPromise(),
-      getRecent(params?.page, PostType.course),
-      getRecent(params?.page, PostType.post),
-      getRecent(params?.page, PostType.tutorial),
-      getRecent(params?.page, PostType.podcast),
+      getRecent(PostType.course),
+      getRecent(PostType.post),
+      getRecent(PostType.tutorial),
+      getRecent(PostType.podcast),
     ]);
-  console.log(JSON.stringify(page));
   return {
     props: {
-      page: page || null,
+      modelData: modelData || null,
+      type: slug ? type : 'page',
       header: header || null,
       footer: footer || null,
       recentPosts: {
@@ -89,7 +88,8 @@ export async function getStaticPaths() {
 }
 
 export default function Page({
-  page,
+  modelData,
+  type,
   header,
   footer,
   recentPosts,
@@ -104,41 +104,42 @@ export default function Page({
     return <h1>Loading...</h1>;
   }
 
-  if (!page && isLive) {
+  if (!modelData && isLive) {
     router.replace('/404');
   }
 
   return (
     <>
       <NextSeo
-        title={page?.title}
-        description={page?.excerpt}
+        title={modelData?.title}
+        description={modelData?.excerpt}
         canonical={`https://codingcat.dev${router.asPath}`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
           url: `https://codingcat.dev${router.asPath}`,
-          title: page?.title,
-          description: page?.excerpt,
+          title: modelData?.title,
+          description: modelData?.excerpt,
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${page?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
-              alt: page?.title,
+              alt: modelData?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/${page?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/${modelData?.coverPhoto?.public_id}`,
             },
           ],
         }}
       ></NextSeo>
       <Layout header={header} footer={footer}>
         <BuilderComponent
-          model="page"
-          content={page}
-          context={{ recentPosts }}
+          options={{ includeRefs: true }}
+          model={type}
+          content={modelData}
+          context={{ recentPosts, modelData }}
         />
       </Layout>
     </>

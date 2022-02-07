@@ -312,6 +312,23 @@ Builder.registerComponent(PostsCards, {
   ],
 });
 
+import RecentPostsList from '@/components/RecentPostsList';
+Builder.registerComponent(RecentPostsList, {
+  name: 'RecentPostsList',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'posts',
+      type: 'object',
+    },
+    {
+      name: 'title',
+      type: 'text',
+    },
+  ],
+});
+
 // import Facebook from '@/components/global/icons/socials/Facebook';
 // import GitHub from '@/components/global/icons/socials/GitHub';
 // import LinkedIn from '@/components/global/icons/socials/LinkedIn';
@@ -424,6 +441,41 @@ Builder.registerComponent(SocialShare, {
     },
   ],
 });
+
+import SponsorCards from '@/components/SponsorCards';
+Builder.registerComponent(SponsorCards, {
+  name: 'SponsorCards',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'sponsors',
+      type: 'list',
+      subFields: [
+        { name: 'company', type: 'string', defaultValue: 'Builder.io' },
+        {
+          name: 'description',
+          type: 'string',
+          defaultValue: 'Builder.io Rocks',
+        },
+        { name: 'url', type: 'string', defaultValue: 'https://builder.io' },
+        {
+          name: 'coverPhoto',
+          type: 'object',
+          subFields: [
+            {
+              name: 'public_id',
+              type: 'string',
+              defaultValue:
+                'main-codingcatdev-photo/sponsors/assets_YJIGb4i01jvw0SRdL5Bt_368e8511120948e4a69d274bc6d594ea',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
 // Customized Vendor Components
 import Link from 'next/link';
 const ccdLink = ({ href, children }: { href: string; children: any }) => (
@@ -442,6 +494,47 @@ Builder.registerComponent(withChildren(ccdLink), {
       type: 'string',
       required: true,
       defaultValue: '/',
+    },
+  ],
+});
+
+import Image from 'next/image';
+Builder.registerComponent(Image, {
+  name: 'NextImage',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'src',
+      type: 'text',
+      required: true,
+      defaultValue: 'ajonp-ajonp-com/authors/alex_headshot',
+    },
+    {
+      name: 'layout',
+      type: 'text',
+      defaultValue: 'fixed',
+    },
+    {
+      name: 'height',
+      type: 'number',
+      defaultValue: 50,
+    },
+    {
+      name: 'width',
+      type: 'number',
+      defaultValue: 50,
+    },
+    {
+      name: 'alt',
+      type: 'text',
+      defaultValue: 'An image description',
+    },
+    {
+      name: 'className',
+      type: 'text',
+      defaultValue:
+        'w-12 border-2 rounded-full border-primary-50 dark:border-primary-50',
     },
   ],
 });
