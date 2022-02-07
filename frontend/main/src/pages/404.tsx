@@ -5,22 +5,41 @@ import AJ404 from '@/components/global/icons/AJ404';
 import { Post } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
-import { GetStaticProps } from 'next';
+import {
+  GetStaticProps,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from 'next';
 import { getSite } from '@/services/sanity.server';
+import builder from '@builder.io/react';
+
+export async function getStaticProps({
+  params,
+}: GetStaticPropsContext<{ page: string[] }>) {
+  console.log(JSON.stringify(params));
+  const [header, footer] = await Promise.all([
+    builder.get('header').promise(),
+    builder.get('footer').promise(),
+  ]);
+
+  return {
+    props: {
+      header: header || null,
+      footer: footer || null,
+    },
+    revalidate: 5,
+  };
+}
 
 export default function Custom404({
-  site,
-}: {
-  site: Site | null;
-  recentPosts: {
-    [key: string]: Post[];
-  };
-}): JSX.Element {
+  header,
+  footer,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
-      <NextSeo title="404 | Not Found"></NextSeo>
+      <NextSeo title="404 | Not Found" noindex={true}></NextSeo>
 
-      <Layout site={site}>
+      <Layout header={header} footer={footer}>
         <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
           <AJ404 />
           <h1 className="text-5xl lg:text-6xl">
@@ -38,18 +57,3 @@ export default function Custom404({
     </>
   );
 }
-
-interface StaticPropsResult {
-  site: Site;
-}
-
-export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
-  preview,
-}) => {
-  return {
-    props: {
-      site: await getSite({ preview }),
-    },
-    revalidate: 3600,
-  };
-};

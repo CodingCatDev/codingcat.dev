@@ -9,7 +9,6 @@ import { NextSeo } from 'next-seo';
 // Custom
 import Layout from '@/layout/Layout';
 import { PostType } from '@/models/post.model';
-import { join } from 'path/posix';
 
 function getRecent(page: string[] | undefined, type: PostType) {
   return page
@@ -39,12 +38,17 @@ export async function getStaticProps({
   params,
 }: GetStaticPropsContext<{ page: string[] }>) {
   console.log(JSON.stringify(params));
+  let type = (params?.page?.[0] as PostType) || '';
+  let slug = (params?.page?.[1] as string) || '';
+  let lesson = (params?.page?.[2] as string) || '';
+  let lessonPath = (params?.page?.[3] as string) || '';
+
   const [header, footer, page, course, post, tutorial, podcast] =
     await Promise.all([
       builder.get('header').promise(),
       builder.get('footer').promise(),
       builder
-        .get('page', {
+        .get(slug ? type : 'page', {
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
@@ -55,7 +59,7 @@ export async function getStaticProps({
       getRecent(params?.page, PostType.tutorial),
       getRecent(params?.page, PostType.podcast),
     ]);
-
+  console.log(JSON.stringify(page));
   return {
     props: {
       page: page || null,
@@ -101,15 +105,7 @@ export default function Page({
   }
 
   if (!page && isLive) {
-    return (
-      <>
-        <Head>
-          <meta name="robots" content="noindex" />
-          <meta name="title"></meta>
-        </Head>
-        <DefaultErrorPage statusCode={404} />
-      </>
-    );
+    router.replace('/404');
   }
 
   return (
