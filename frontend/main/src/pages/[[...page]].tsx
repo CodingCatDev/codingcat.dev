@@ -8,6 +8,32 @@ import { NextSeo } from 'next-seo';
 
 // Custom
 import Layout from '@/layout/Layout';
+import { PostType } from '@/models/post.model';
+import { join } from 'path/posix';
+
+function getRecent(page: string[] | undefined, type: PostType) {
+  return page
+    ? []
+    : builder.getAll(type, {
+        omit: 'data.blocks',
+        includeRefs: true,
+        limit: 3,
+        options: {
+          noTargeting: true,
+        },
+        query: {
+          $and: [
+            { startDate: { $lte: Date.now() } },
+            {
+              $or: [
+                { endDate: { $exists: false } },
+                { endDate: { $gte: Date.now() } },
+              ],
+            },
+          ],
+        },
+      });
+}
 
 export async function getStaticProps({
   params,
@@ -23,82 +49,10 @@ export async function getStaticProps({
           },
         })
         .toPromise(),
-      builder.getAll('course', {
-        omit: 'data.blocks',
-        includeRefs: true,
-        limit: 3,
-        options: {
-          noTargeting: true,
-        },
-        query: {
-          $and: [
-            { startDate: { $lte: Date.now() } },
-            {
-              $or: [
-                { endDate: { $exists: false } },
-                { endDate: { $gte: Date.now() } },
-              ],
-            },
-          ],
-        },
-      }),
-      builder.getAll('post', {
-        omit: 'data.blocks',
-        includeRefs: true,
-        limit: 3,
-        options: {
-          noTargeting: true,
-        },
-        query: {
-          $and: [
-            { startDate: { $lte: Date.now() } },
-            {
-              $or: [
-                { endDate: { $exists: false } },
-                { endDate: { $gte: Date.now() } },
-              ],
-            },
-          ],
-        },
-      }),
-      builder.getAll('tutorial', {
-        omit: 'data.blocks',
-        includeRefs: true,
-        limit: 3,
-        options: {
-          noTargeting: true,
-        },
-        query: {
-          $and: [
-            { startDate: { $lte: Date.now() } },
-            {
-              $or: [
-                { endDate: { $exists: false } },
-                { endDate: { $gte: Date.now() } },
-              ],
-            },
-          ],
-        },
-      }),
-      builder.getAll('podcast', {
-        omit: 'data.blocks',
-        includeRefs: true,
-        limit: 3,
-        options: {
-          noTargeting: true,
-        },
-        query: {
-          $and: [
-            { startDate: { $lte: Date.now() } },
-            {
-              $or: [
-                { endDate: { $exists: false } },
-                { endDate: { $gte: Date.now() } },
-              ],
-            },
-          ],
-        },
-      }),
+      getRecent(params?.page, PostType.course),
+      getRecent(params?.page, PostType.post),
+      getRecent(params?.page, PostType.tutorial),
+      getRecent(params?.page, PostType.podcast),
     ]);
 
   return {
@@ -114,6 +68,7 @@ export async function getStaticProps({
 
 export async function getStaticPaths() {
   const pages = await builder.getAll('page', {
+    fields: `data.url`,
     options: { noTargeting: true },
   });
 

@@ -275,6 +275,28 @@ Builder.registerComponent(Footer, {
   name: 'Footer',
   image:
     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'pageLinks',
+      type: 'list',
+      subFields: [
+        { name: 'title', type: 'string', defaultValue: 'FTC Disclosure' },
+        { name: 'slug', type: 'string', defaultValue: 'ftc-disclosure' },
+      ],
+    },
+    {
+      name: 'socialLinks',
+      type: 'list',
+      subFields: [
+        { name: 'type', type: 'string', defaultValue: 'github' },
+        {
+          name: 'href',
+          type: 'string',
+          defaultValue: 'https://github.com/CodingCatDev',
+        },
+      ],
+    },
+  ],
 });
 
 import PostsCards from '@/components/PostsCards';
@@ -290,7 +312,99 @@ Builder.registerComponent(PostsCards, {
   ],
 });
 
-// Customized Components
+// import Facebook from '@/components/global/icons/socials/Facebook';
+// import GitHub from '@/components/global/icons/socials/GitHub';
+// import LinkedIn from '@/components/global/icons/socials/LinkedIn';
+// import Mail from '@/components/global/icons/socials/Mail';
+// import Medium from '@/components/global/icons/socials/Medium';
+// import Twitter from '@/components/global/icons/socials/Twitter';
+// import YouTube from '@/components/global/icons/socials/YouTube';
+
+// Builder.registerComponent(Facebook, {
+//   name: 'Facebook',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Builder.registerComponent(GitHub, {
+//   name: 'GitHub',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Builder.registerComponent(LinkedIn, {
+//   name: 'LinkedIn',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Builder.registerComponent(Mail, {
+//   name: 'Mail',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Builder.registerComponent(Medium, {
+//   name: 'Medium',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Builder.registerComponent(Twitter, {
+//   name: 'Twitter',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Builder.registerComponent(YouTube, {
+//   name: 'YouTube',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
+
+// Customized Vendor Components
 import Link from 'next/link';
 const ccdLink = ({ href, children }: { href: string; children: any }) => (
   <Link href={href}>

@@ -6,18 +6,24 @@ import LinkedIn from '@/components/global/icons/socials/LinkedIn';
 import Medium from '@/components/global/icons/socials/Medium';
 import Twitter from '@/components/global/icons/socials/Twitter';
 import YouTube from '@/components/global/icons/socials/YouTube';
-import { Site, SocialLink, SocialType } from '@/models/site.model';
+import { PageLink, Site, SocialLink, SocialType } from '@/models/site.model';
 import Link from 'next/link';
 
 const socialLinks = ``;
 
 export default function Footer({
-  site,
+  pageLinks,
+  socialLinks,
   hideWave,
 }: {
-  site: Site | null;
+  pageLinks?: PageLink[];
+  socialLinks?: SocialLink[];
   hideWave?: boolean;
 }): JSX.Element {
+  const site = {
+    pageLinks,
+    socialLinks,
+  };
   function socialLinkPicker(sl: SocialLink) {
     switch (sl.type) {
       case SocialType.facebook:
@@ -114,20 +120,20 @@ export default function Footer({
             <div className="grid grid-cols-1 gap-2 mt-4">
               {site?.pageLinks?.map((pageLink, i) => (
                 <div key={`helpful-link-${i}`}>
-                  {pageLink.slug.includes('://') ||
-                  pageLink.slug.includes('mailto') ? (
+                  {pageLink?.slug?.includes('://') ||
+                  pageLink?.slug?.includes('mailto') ? (
                     <a
-                      href={pageLink.slug}
+                      href={pageLink?.slug}
                       target="_blank"
                       rel="noreferrer noopener"
                       className="links-secondary"
                     >
-                      {pageLink.title}
+                      {pageLink?.title}
                     </a>
                   ) : (
-                    <Link href={pageLink.slug}>
-                      <a href={pageLink.slug} className="links-secondary">
-                        {pageLink.title}
+                    <Link href={pageLink?.slug}>
+                      <a href={pageLink?.slug} className="links-secondary">
+                        {pageLink?.title}
                       </a>
                     </Link>
                   )}
