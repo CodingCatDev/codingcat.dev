@@ -3,8 +3,6 @@ import { useRouter } from 'next/router';
 import { BuilderComponent, Builder, builder } from '@builder.io/react';
 import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
-
-// Custom
 import Layout from '@/layout/Layout';
 import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 
@@ -18,7 +16,12 @@ function getRecent(type: ModelType) {
     },
     query: {
       $and: [
-        { startDate: { $lte: Date.now() } },
+        {
+          $or: [
+            { startDate: { $exists: false } },
+            { startDate: { $lte: Date.now() } },
+          ],
+        },
         {
           $or: [
             { endDate: { $exists: false } },
@@ -37,7 +40,6 @@ export async function getStaticProps({
   let slug = (params?.page?.[1] as string) || '';
   let lesson = (params?.page?.[2] as string) || '';
   let lessonPath = (params?.page?.[3] as string) || '';
-
   const [header, footer, modelData, course, post, tutorial, podcast] =
     await Promise.all([
       builder.get('header').promise(),
@@ -53,7 +55,12 @@ export async function getStaticProps({
           },
           query: {
             $and: [
-              { startDate: { $lte: Date.now() } },
+              {
+                $or: [
+                  { startDate: { $exists: false } },
+                  { startDate: { $lte: Date.now() } },
+                ],
+              },
               {
                 $or: [
                   { endDate: { $exists: false } },
@@ -82,7 +89,7 @@ export async function getStaticProps({
         podcast: podcast || null,
       },
     },
-    revalidate: 5,
+    revalidate: 300,
   };
 }
 
@@ -98,6 +105,22 @@ export async function getStaticPaths() {
     const pages = await builder.getAll(postType, {
       fields: `data.url`,
       options: { noTargeting: true },
+      query: {
+        $and: [
+          {
+            $or: [
+              { startDate: { $exists: false } },
+              { startDate: { $lte: Date.now() } },
+            ],
+          },
+          {
+            $or: [
+              { endDate: { $exists: false } },
+              { endDate: { $gte: Date.now() } },
+            ],
+          },
+        ],
+      },
     });
     pages.map((page) => paths.push(`${page?.data?.url}`));
   }
