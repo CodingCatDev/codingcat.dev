@@ -1,7 +1,7 @@
 import React from 'react';
 import { Highlight } from 'react-instantsearch-dom';
 import Link from 'next/link';
-import { PostType } from '@/models/post.model';
+import { ModelType } from '@/models/builder.model';
 import Courses from '@/components/global/icons/nav/Courses';
 import Blog from '@/components/global/icons/nav/Blog';
 import Pages from '@/components/global/icons/nav/Pages';
@@ -14,15 +14,15 @@ export const BlogPostHit = (
   return function BlogPostHit({ hit }: any) {
     function typeIcon(type: string) {
       switch (type) {
-        case PostType.page:
+        case ModelType.page:
           return <Pages />;
-        case PostType.post:
+        case ModelType.post:
           return <Blog />;
-        case PostType.course:
+        case ModelType.course:
           return <Courses />;
-        case PostType.podcast:
+        case ModelType.podcast:
           return <Podcasts />;
-        case PostType.tutorial:
+        case ModelType.tutorial:
           return <Tutorials />;
         default:
           return <div></div>;
@@ -31,7 +31,7 @@ export const BlogPostHit = (
 
     return (
       <>
-        <Link href={`/${hit.type}/${hit.slug}`}>
+        <Link href={`/${hit.type}/${hit.url}`}>
           <a className="grid items-center gap-2 p-2 transition-colors rounded-md grid-cols-search text-basics-900 bg-primary-50 hover:bg-primary-100 hover:text-basics-900">
             <div className="grid place-items-center">
               {typeIcon(hit.type)}

@@ -2,15 +2,12 @@ import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import AJ404 from '@/components/global/icons/AJ404';
 
-import { Post } from '@/models/post.model';
 import Layout from '@/layout/Layout';
-import { Site } from '@/models/site.model';
 import {
   GetStaticProps,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from 'next';
-import { getSite } from '@/services/sanity.server';
 import builder from '@builder.io/react';
 
 export async function getStaticProps({

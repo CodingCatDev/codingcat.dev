@@ -1,11 +1,11 @@
-import { Post, PostType } from '@/models/post.model';
+import { CodingCatBuilderContent } from '@/models/builder.model';
 import Link from 'next/link';
 
 export default function RecentPostsList({
   posts,
   title,
 }: {
-  posts: any[];
+  posts: CodingCatBuilderContent[];
   title: string;
 }): JSX.Element {
   return (

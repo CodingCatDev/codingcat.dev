@@ -1,16 +1,14 @@
 import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import { BuilderComponent, Builder, builder } from '@builder.io/react';
-import DefaultErrorPage from 'next/error';
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
 
 // Custom
 import Layout from '@/layout/Layout';
-import { PostType } from '@/models/post.model';
+import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 
-function getRecent(type: PostType) {
+function getRecent(type: ModelType) {
   return builder.getAll(type, {
     omit: 'data.blocks',
     includeRefs: true,
@@ -29,14 +27,13 @@ function getRecent(type: PostType) {
         },
       ],
     },
-  });
+  }) as Promise<CodingCatBuilderContent[]>;
 }
 
 export async function getStaticProps({
   params,
 }: GetStaticPropsContext<{ page: string[] }>) {
-  console.log(JSON.stringify(params));
-  let type = (params?.page?.[0] as PostType) || '';
+  let type = (params?.page?.[0] as ModelType) || '';
   let slug = (params?.page?.[1] as string) || '';
   let lesson = (params?.page?.[2] as string) || '';
   let lessonPath = (params?.page?.[3] as string) || '';
@@ -47,16 +44,30 @@ export async function getStaticProps({
       builder.get('footer').promise(),
       builder
         .get(slug ? type : 'page', {
-          includeRefs: true,
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
+          includeRefs: true,
+          options: {
+            noTargeting: true,
+          },
+          query: {
+            $and: [
+              { startDate: { $lte: Date.now() } },
+              {
+                $or: [
+                  { endDate: { $exists: false } },
+                  { endDate: { $gte: Date.now() } },
+                ],
+              },
+            ],
+          },
         })
         .toPromise(),
-      getRecent(PostType.course),
-      getRecent(PostType.post),
-      getRecent(PostType.tutorial),
-      getRecent(PostType.podcast),
+      getRecent(ModelType.course),
+      getRecent(ModelType.post),
+      getRecent(ModelType.tutorial),
+      getRecent(ModelType.podcast),
     ]);
   return {
     props: {
@@ -76,13 +87,22 @@ export async function getStaticProps({
 }
 
 export async function getStaticPaths() {
-  const pages = await builder.getAll('page', {
-    fields: `data.url`,
-    options: { noTargeting: true },
-  });
-
+  const paths: string[] = [];
+  for (const postType of [
+    ModelType.page,
+    ModelType.post,
+    ModelType.tutorial,
+    ModelType.podcast,
+    ModelType.course,
+  ]) {
+    const pages = await builder.getAll(postType, {
+      fields: `data.url`,
+      options: { noTargeting: true },
+    });
+    pages.map((page) => paths.push(`${page?.data?.url}`));
+  }
   return {
-    paths: pages.map((page) => `${page?.data?.url}`),
+    paths,
     fallback: true,
   };
 }
