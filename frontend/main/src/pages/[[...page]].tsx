@@ -40,6 +40,10 @@ export async function getStaticProps({
   let slug = (params?.page?.[1] as string) || '';
   let lesson = (params?.page?.[2] as string) || '';
   let lessonPath = (params?.page?.[3] as string) || '';
+
+  console.log('fetching model', slug ? type : 'page');
+  console.log('url:', '/' + (params?.page?.join('/') || ''));
+
   const [header, footer, modelData, course, post, tutorial, podcast] =
     await Promise.all([
       builder.get('header').promise(),
@@ -49,26 +53,26 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
-          includeRefs: true,
-          options: {
-            noTargeting: true,
-          },
-          query: {
-            $and: [
-              {
-                $or: [
-                  { startDate: { $exists: false } },
-                  { startDate: { $lte: Date.now() } },
-                ],
-              },
-              {
-                $or: [
-                  { endDate: { $exists: false } },
-                  { endDate: { $gte: Date.now() } },
-                ],
-              },
-            ],
-          },
+          // includeRefs: true,
+          // options: {
+          //   noTargeting: true,
+          // },
+          // query: {
+          //   $and: [
+          //     {
+          //       $or: [
+          //         { startDate: { $exists: false } },
+          //         { startDate: { $lte: Date.now() } },
+          //       ],
+          //     },
+          //     {
+          //       $or: [
+          //         { endDate: { $exists: false } },
+          //         { endDate: { $gte: Date.now() } },
+          //       ],
+          //     },
+          //   ],
+          // },
         })
         .toPromise(),
       getRecent(ModelType.course),
@@ -76,6 +80,8 @@ export async function getStaticProps({
       getRecent(ModelType.tutorial),
       getRecent(ModelType.podcast),
     ]);
+  console.log(modelData?.data?.title);
+
   return {
     props: {
       modelData: modelData || null,
@@ -148,7 +154,7 @@ export default function Page({
   }
 
   if (!modelData && isLive) {
-    router.replace('/404');
+    router.push('/404');
   }
 
   return (
