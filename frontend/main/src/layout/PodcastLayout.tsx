@@ -1,7 +1,6 @@
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
-
 import { ClassAttributes, HTMLAttributes, useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
@@ -50,7 +49,7 @@ export default function PostLayout({
   }
 
   function isLockedLesson() {
-    // Only lockdown lessons 
+    // Only lockdown lessons
     if (post._type != PostType.lesson) {
       return false;
     }
@@ -144,7 +143,7 @@ export default function PostLayout({
             </>
           )}
           <BreakBarLeft>
-            <div className="grid w-full gap-4">
+            <header className="grid w-full gap-4">
               {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}
               <section className="grid items-center justify-between gap-2 lg:flex">
                 <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
@@ -156,75 +155,54 @@ export default function PostLayout({
                 <div className="flex-shrink-0">{backButton()}</div>
               </section>
               <section className="grid items-end justify-between gap-4 lg:flex">
-                {post.authors ? (
-                  <>
+                {post.authors && (
+                  <section className="flex flex-shrink-0 no-wrap gap-4 items-center">
                     {post.authors?.map((author, i) => (
-                      <header
-                        className="flex flex-wrap gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
+                      <article
+                        className="flex flex-wrap justify-start items-center gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
                         key={i}
                       >
-                        <section className="flex items-center flex-shrink-0 space-x-4">
-                          {author?.photoURL && author.photoURL?.public_id && (
-                            <Image
-                              src={author.photoURL.public_id}
-                              layout="fixed"
-                              height="50"
-                              width="50"
-                              alt="instructor"
-                              className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
-                            />
-                          )}
-
-                          <div className="grid content-start">
-                            <h3 className="m-0 text-base font-light">Author</h3>
-                            <h4 className="m-0 font-sans text-xl">
-                              {author.displayName}
-                            </h4>
-                          </div>
-                        </section>
-                        {post._createdAt && (
-                          <section className="flex flex-wrap items-end justify-between w-full gap-4">
-                            <section className="flex content-start space-x-4">
-                              <p className="flex items-center m-0 space-x-2 text-base font-light">
-                                <svg
-                                  className="w-6"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 20 20"
-                                  fill="currentColor"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                <span>
-                                  {millisecondToUSFormat(post._createdAt)}
-                                </span>
-                              </p>
-                              {post._updatedAt && (
-                                <p className="flex items-center m-0 space-x-2 text-base font-light">
-                                Last Updated:{' '}
-                                <span>
-                                  {millisecondToUSFormat(post._updatedAt)}
-                                </span>
-                              </p>
-                              )}
-                            </section>
-                          </section>
+                        {author?.photoURL && author.photoURL?.public_id && (
+                          <Image
+                            src={author.photoURL.public_id}
+                            layout="fixed"
+                            height="50"
+                            width="50"
+                            alt="instructor"
+                            className="w-12 border-2 rounded-full border-primary-50 dark:border-primary-50"
+                          />
                         )}
-                      </header>
+                        <span className="m-0 font-sans text-xl">
+                          {author.displayName}
+                        </span>
+                      </article>
                     ))}
-                  </>
-                ) : (
-                  <div></div>
+                  </section>
                 )}
-
+                {post.publishedAt && (
+                  <section className="flex flex-wrap items-center gap-2">
+                    <p className="flex items-center m-0 space-x-2 text-white font-light">
+                      <svg
+                        className="w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span>{millisecondToUSFormat(post.publishedAt)}</span>
+                    </p>
+                  </section>
+                )}
                 <div className="flex flex-wrap gap-4 md:flex-nowrap">
                   <SocialShare href={href} post={post} />
                 </div>
               </section>
-            </div>
+            </header>
           </BreakBarLeft>
         </section>
         {/* SPONSORS */}
