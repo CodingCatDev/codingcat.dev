@@ -17,9 +17,9 @@ import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 import { components } from '@/components/code/MDXComponents';
 import { AccessMode } from '@/models/access.model';
-import MemberValidShow from './user/MemberValidShow';
-import MemberNotValidShow from './user/MemberNotValidShow';
-import PostMediaLocked from './PostMediaLocked';
+import MemberValidShow from '../components/user/MemberValidShow';
+import MemberNotValidShow from '../components/user/MemberNotValidShow';
+import PostMediaLocked from '../components/PostMediaLocked';
 
 export default function PostLayout({
   post,
