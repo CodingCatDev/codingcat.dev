@@ -60,7 +60,7 @@ export default function Course({
           </>
         )}
         <BreakBarLeft>
-          <div className="grid w-full gap-4 ">
+          <div className="grid w-full gap-4">
             <section className="grid items-center justify-between gap-2 lg:flex">
               <h1 className="font-sans text-5xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
                 {post.title}
@@ -134,121 +134,115 @@ export default function Course({
         </BreakBarLeft>
       </section>
       <div className="grid grid-cols-1 gap-4 px-4 pb-4 lg:px-10 lg:pb-10 lg:grid-cols-sidebar">
-        <section>
+        <section className="max-w-2xl flex flex-col gap-4">
           <PostMedia post={post} noImage={true} />
-          <div className="mt-2">
+          <div className="mt-2 flex flex-col gap-2">
             {source && <MDXRemote {...source} components={components} />}
           </div>
-        </section>
-        <section className="flex flex-col mb-2">
           {post._type === PostType.course && (
-            <div className="">
-              {post.coverPhoto?.public_id ? (
-                <>
-                  <Image
-                    src={post.coverPhoto?.public_id}
-                    alt={post.title}
-                    width="480"
-                    height="270"
-                    layout="responsive"
-                    className="rounded-md rounded-b-none cursor-pointer"
-                  />
-                </>
-              ) : (
-                <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                  <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
-                    <AJPrimary className="w-full h-full p-4" />
-                  </div>
-                </div>
-              )}
+            <div>
               {signInCheckResult?.user ? (
-                <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
-                  <CourseBuyButton
-                    product={product}
-                    user={signInCheckResult.user}
-                    post={post}
-                  />
-                </div>
+                <CourseBuyButton
+                  product={product}
+                  user={signInCheckResult.user}
+                  post={post}
+                />
               ) : (
-                <div className="grid grid-cols-1 gap-2 p-4 justify-items-center">
-                  <Link href="/user/profile">
-                    <a className="border-none">
-                      <button className="btn-primary">Membership Login</button>
-                    </a>
-                  </Link>
-                </div>
+                <Link href="/user/profile">
+                  <a className="border-none">
+                    <button className="btn-primary">Membership Login</button>
+                  </a>
+                </Link>
               )}
             </div>
           )}
-          <section>
-            <div className="flex items-center justify-between p-4 mb-2 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 rounded-t-md">
-              <h2 className="text-xl">Course Content</h2>
-              {/* Beginner/Intermediate/Advanced descriptor */}
-              <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
-                Beginner
-              </p>
+        </section>
+        <section className="flex flex-col mb-2">
+          {post.coverPhoto?.public_id ? (
+            <>
+              <Image
+                src={post.coverPhoto?.public_id}
+                alt={post.title}
+                width="480"
+                height="270"
+                layout="responsive"
+                className="rounded-md rounded-b-none cursor-pointer"
+              />
+            </>
+          ) : (
+            <div className="relative" style={{ paddingBottom: '56.25%' }}>
+              <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
+                <AJPrimary className="w-full h-full p-4" />
+              </div>
             </div>
-            {/* LESSONS */}
-            {post && post.sections && (
-              <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
-                {post.sections.map((section) => (
-                  <section
-                    key={section._key}
-                    className="flex flex-col rounded-t-md"
-                  >
-                    <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                      {section.title}
-                    </div>
-                    <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
-                      {section.lessons &&
-                        section.lessons.map((lesson) => (
-                          <li key={lesson._id} className="ml-0 list-none">
-                            <Link
-                              href={`/course/${post.slug}/lesson/${lesson.slug}`}
-                              key={lesson._id}
-                              passHref
-                            >
-                              <div
-                                className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
+          )}
+          <div className="flex items-center justify-between p-4 mb-2 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 rounded-t-md">
+            <h2 className="text-xl">Course Content</h2>
+            {/* Beginner/Intermediate/Advanced descriptor */}
+            <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
+              Beginner
+            </p>
+          </div>
+          {/* LESSONS */}
+          {post && post.sections && (
+            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+              {post.sections.map((section) => (
+                <section
+                  key={section._key}
+                  className="flex flex-col rounded-t-md"
+                >
+                  <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                    {section.title}
+                  </div>
+                  <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
+                    {section.lessons &&
+                      section.lessons.map((lesson) => (
+                        <li key={lesson._id} className="ml-0 list-none">
+                          <Link
+                            href={`/course/${post.slug}/lesson/${lesson.slug}`}
+                            key={lesson._id}
+                            passHref
+                          >
+                            <div
+                              className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
                               ${
                                 isActiveLink(post, lesson)
                                   ? 'bg-primary-200'
                                   : 'bg-transparent'
                               }
                               `}
-                              >
-                                <a className="no-underline text-basics-900 hover:text-primary-900">
-                                  {lesson.title}
-                                </a>
-                                {lesson?.accessSettings?.accessMode && (
-                                  <div className="no-underline text-basics-900 hover:text-primary-900">
-                                    {lesson?.accessSettings?.accessMode !=
-                                      AccessMode.free && (
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-5 h-5"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                          clipRule="evenodd"
-                                        />
-                                      </svg>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            </Link>
-                          </li>
-                        ))}
-                    </ul>
-                  </section>
-                ))}
-              </section>
-            )}
-          </section>
+                            >
+                              <a className="no-underline text-basics-900 hover:text-primary-900">
+                                {lesson.title}
+                              </a>
+                              {lesson?.accessSettings?.accessMode && (
+                                <div className="no-underline text-basics-900 hover:text-primary-900">
+                                  {lesson?.accessSettings?.accessMode !=
+                                    AccessMode.free && (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="w-5 h-5"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                        </li>
+                      ))}
+                  </ul>
+                </section>
+              ))}
+            </section>
+          )}
         </section>
       </div>
       <style global jsx>{`
@@ -264,7 +258,7 @@ export default function Course({
         article > p + blockquote {
           margin: 1rem 0;
         }
-        main a {
+        main a > :not(button) {
           word-wrap: break-word;
           border-bottom: 2px solid #bc2261;
         }

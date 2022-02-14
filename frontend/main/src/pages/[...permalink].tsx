@@ -4,8 +4,8 @@ import { NextSeo } from 'next-seo';
 import { Post, PostType } from '@/models/post.model';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
-import PostLayout from '@/components/PostLayout';
-import Course from '@/components/Course';
+import PostLayout from '@/layout/PostLayout';
+import CourseLayout from '@/layout/CourseLayout';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
@@ -289,7 +289,7 @@ export default function PostPage({
       <Layout site={site}>
         <>
           {post._type === PostType.course ? (
-            <Course
+            <CourseLayout
               post={post}
               source={source}
               product={product}
