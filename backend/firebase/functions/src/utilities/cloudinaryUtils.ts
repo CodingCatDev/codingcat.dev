@@ -16,7 +16,7 @@ export const generateCodingCatCoverURL = ({
     fetch_format: 'jpg',
     transformation: [
       {
-        width: 1600,
+        width: 1200,
         color: '#FBFBFB',
         y: '60',
         x: '0',
