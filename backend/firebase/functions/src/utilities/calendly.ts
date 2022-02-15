@@ -17,7 +17,7 @@ export const call = async (path: string) => {
     throw response.status;
   }
   const json = await response.json();
-  console.log('RESPONSE:', json);
+  console.log('RESPONSE:', JSON.stringify(json));
   return json;
 };
 
