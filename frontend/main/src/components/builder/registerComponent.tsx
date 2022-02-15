@@ -1,6 +1,5 @@
 import { Builder, withChildren } from '@builder.io/react';
 
-import AJPrimary from '@/components/global/icons/AJPrimary';
 import AJAlt from '@/components/global/icons/AJAlt';
 import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
 import AJHeadphones from '@/components/global/icons/AJHeadphones';
@@ -39,12 +38,17 @@ import SocialShare from '@/components/common/SocialShare';
 import SponsorCards from '@/components/SponsorCards';
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 
-const BuilderRegisterComponent = () => {
-  /*
-   * Builder Drag and Drop Components
-   */
-  Builder.registerComponent(AJPrimary, {
+/*
+ * Builder Drag and Drop Components
+ */
+
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/AJPrimary').then((res) => res as any)
+  ),
+  {
     name: 'AJPrimary',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -54,9 +58,14 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(AJAlt, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/AJAlt').then((res) => res as any)
+  ),
+  {
     name: 'AJAlt',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -66,9 +75,14 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(AJHeartAlt, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/AJHeartAlt').then((res) => res as any)
+  ),
+  {
     name: 'AJHeartAlt',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -78,9 +92,14 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(AJHeadphones, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/AJHeadphones').then((res) => res as any)
+  ),
+  {
     name: 'AJHeadphones',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -90,9 +109,14 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(KCAlt, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/KCAlt').then((res) => res as any)
+  ),
+  {
     name: 'KCAlt',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -102,16 +126,30 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(withChildren(BreakBarLeft), {
+Builder.registerComponent(
+  withChildren(
+    dynamic(() =>
+      import('@/components/home/BreakBarLeft').then((res) => res as any)
+    )
+  ),
+  {
     name: 'BreakBarLeft',
     canHaveChildren: true,
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(ReactLogo, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/VendorLogos').then(
+      (res) => res.ReactLogo as any
+    )
+  ),
+  {
     name: 'ReactLogo',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -121,9 +159,16 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(AngularLogo, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/VendorLogos').then(
+      (res) => res.AngularLogo as any
+    )
+  ),
+  {
     name: 'AngularLogo',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -133,9 +178,16 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(VueLogo, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/VendorLogos').then(
+      (res) => res.VueLogo as any
+    )
+  ),
+  {
     name: 'VueLogo',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -145,9 +197,16 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(SvelteLogo, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/VendorLogos').then(
+      (res) => res.SvelteLogo as any
+    )
+  ),
+  {
     name: 'SvelteLogo',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -157,9 +216,16 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(CssLogo, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/VendorLogos').then(
+      (res) => res.CssLogo as any
+    )
+  ),
+  {
     name: 'CssLogo',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -169,9 +235,16 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(HtmlLogo, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/VendorLogos').then(
+      (res) => res.HtmlLogo as any
+    )
+  ),
+  {
     name: 'HtmlLogo',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -181,63 +254,109 @@ const BuilderRegisterComponent = () => {
         type: 'string',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(Courses, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/nav/Courses').then((res) => res as any)
+  ),
+  {
     name: 'Courses',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(Tutorials, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/nav/Tutorials').then((res) => res as any)
+  ),
+  {
     name: 'Tutorials',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(Podcasts, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/nav/Podcasts').then((res) => res as any)
+  ),
+  {
     name: 'Podcasts',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(Blog, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/nav/Blog').then((res) => res as any)
+  ),
+  {
     name: 'Blog',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(Community, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/nav/Community').then((res) => res as any)
+  ),
+  {
     name: 'Community',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(NavLinks, {
+Builder.registerComponent(
+  dynamic(() => import('@/layout/NavLinks').then((res) => res as any)),
+  {
     name: 'NavLinks',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(Toggle, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/global/icons/Toggle').then((res) => res as any)
+  ),
+  {
     name: 'Toggle',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(SearchModal, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/algolia/SearchModal').then((res) => res as any)
+  ),
+  {
     name: 'SearchModal',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(AvatarMenuWrapper, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/layout/AppTopbar').then((res) => res.AvatarMenuWrapper as any)
+  ),
+  {
     name: 'AvatarMenuWrapper',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  });
+  }
+);
 
-  Builder.registerComponent(Footer, {
+Builder.registerComponent(
+  dynamic(() => import('@/layout/Footer').then((res) => res as any)),
+  {
     name: 'Footer',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -263,9 +382,12 @@ const BuilderRegisterComponent = () => {
         ],
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(PostsCards, {
+Builder.registerComponent(
+  dynamic(() => import('@/components/PostsCards').then((res) => res as any)),
+  {
     name: 'PostsCards',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -275,9 +397,14 @@ const BuilderRegisterComponent = () => {
         type: 'object',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(RecentPostsList, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/RecentPostsList').then((res) => res as any)
+  ),
+  {
     name: 'RecentPostsList',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -291,93 +418,98 @@ const BuilderRegisterComponent = () => {
         type: 'text',
       },
     ],
-  });
+  }
+);
 
-  // Builder.registerComponent(Facebook, {
-  //   name: 'Facebook',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(Facebook, {
+//   name: 'Facebook',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  // Builder.registerComponent(GitHub, {
-  //   name: 'GitHub',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(GitHub, {
+//   name: 'GitHub',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  // Builder.registerComponent(LinkedIn, {
-  //   name: 'LinkedIn',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(LinkedIn, {
+//   name: 'LinkedIn',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  // Builder.registerComponent(Mail, {
-  //   name: 'Mail',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(Mail, {
+//   name: 'Mail',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  // Builder.registerComponent(Medium, {
-  //   name: 'Medium',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(Medium, {
+//   name: 'Medium',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  // Builder.registerComponent(Twitter, {
-  //   name: 'Twitter',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(Twitter, {
+//   name: 'Twitter',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  // Builder.registerComponent(YouTube, {
-  //   name: 'YouTube',
-  //   image:
-  //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
-  //   inputs: [
-  //     {
-  //       name: 'className',
-  //       type: 'string',
-  //     },
-  //   ],
-  // });
+// Builder.registerComponent(YouTube, {
+//   name: 'YouTube',
+//   image:
+//     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+//   inputs: [
+//     {
+//       name: 'className',
+//       type: 'string',
+//     },
+//   ],
+// });
 
-  Builder.registerComponent(SocialShare, {
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/common/SocialShare').then((res) => res as any)
+  ),
+  {
     name: 'SocialShare',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -395,9 +527,12 @@ const BuilderRegisterComponent = () => {
         type: 'text',
       },
     ],
-  });
+  }
+);
 
-  Builder.registerComponent(SponsorCards, {
+Builder.registerComponent(
+  dynamic(() => import('@/components/SponsorCards').then((res) => res as any)),
+  {
     name: 'SponsorCards',
     image:
       'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
@@ -428,69 +563,65 @@ const BuilderRegisterComponent = () => {
         ],
       },
     ],
-  });
+  }
+);
 
-  const ccdLink = ({ href, children }: { href: string; children: any }) => (
-    <Link href={href}>
-      <a>{children}</a>
-    </Link>
-  );
-  Builder.registerComponent(withChildren(ccdLink), {
-    name: 'NextLink',
-    canHaveChildren: true,
-    image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
-    inputs: [
-      {
-        name: 'href',
-        type: 'string',
-        required: true,
-        defaultValue: '/',
-      },
-    ],
-  });
+const ccdLink = ({ href, children }: { href: string; children: any }) => (
+  <Link href={href}>
+    <a>{children}</a>
+  </Link>
+);
+Builder.registerComponent(withChildren(ccdLink), {
+  name: 'NextLink',
+  canHaveChildren: true,
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'href',
+      type: 'string',
+      required: true,
+      defaultValue: '/',
+    },
+  ],
+});
 
-  Builder.registerComponent(Image, {
-    name: 'NextImage',
-    image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
-    inputs: [
-      {
-        name: 'src',
-        type: 'text',
-        required: true,
-        defaultValue: 'ajonp-ajonp-com/authors/alex_headshot',
-      },
-      {
-        name: 'layout',
-        type: 'text',
-        defaultValue: 'fixed',
-      },
-      {
-        name: 'height',
-        type: 'number',
-        defaultValue: 50,
-      },
-      {
-        name: 'width',
-        type: 'number',
-        defaultValue: 50,
-      },
-      {
-        name: 'alt',
-        type: 'text',
-        defaultValue: 'An image description',
-      },
-      {
-        name: 'className',
-        type: 'text',
-        defaultValue:
-          'w-12 border-2 rounded-full border-primary-50 dark:border-primary-50',
-      },
-    ],
-  });
-
-  return <></>;
-};
-
-export default BuilderRegisterComponent;
+Builder.registerComponent(Image, {
+  name: 'NextImage',
+  image:
+    'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
+  inputs: [
+    {
+      name: 'src',
+      type: 'text',
+      required: true,
+      defaultValue: 'ajonp-ajonp-com/authors/alex_headshot',
+    },
+    {
+      name: 'layout',
+      type: 'text',
+      defaultValue: 'fixed',
+    },
+    {
+      name: 'height',
+      type: 'number',
+      defaultValue: 50,
+    },
+    {
+      name: 'width',
+      type: 'number',
+      defaultValue: 50,
+    },
+    {
+      name: 'alt',
+      type: 'text',
+      defaultValue: 'An image description',
+    },
+    {
+      name: 'className',
+      type: 'text',
+      defaultValue:
+        'w-12 border-2 rounded-full border-primary-50 dark:border-primary-50',
+    },
+  ],
+});

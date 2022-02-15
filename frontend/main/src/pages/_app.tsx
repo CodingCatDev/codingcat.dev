@@ -5,18 +5,10 @@ import type { AppProps } from 'next/app';
 
 import { builder } from '@builder.io/react';
 import { config as builderConfig } from '@/config/builder';
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import '@/components/builder/registerComponent';
 
 builder.init(builderConfig.publicApiKey);
-
-/*
- * Import only when running on builder.io
- */
-
-const RegisterComponent = dynamic(
-  () => import('@/components/builder/registerComponent') as any
-);
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const [isBuilder, setIsBuilder] = useState(false);
@@ -29,7 +21,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
   return (
     <>
-      {isBuilder && <RegisterComponent />}
+      {/* {isBuilder && <RegisterComponent />} */}
       <DefaultSeo
         title="CodingCatDev | Purrfect Web Tutorials"
         description="Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!"
