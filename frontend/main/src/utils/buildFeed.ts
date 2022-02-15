@@ -3,7 +3,19 @@ import { getPostsService } from '@/services/sanity.server';
 import { Feed } from 'feed';
 import { Timestamp } from 'firebase/firestore';
 
+import { remark } from 'remark';
+import remarkHtml from 'remark-html';
+
+import rehypeParse from 'rehype-parse';
+import rehypeRemark from 'rehype-remark';
+import remarkStringify from 'remark-stringify';
+
 const site = 'https://codingcat.dev';
+
+export function markdownToHtml(markdownText: string) {
+  const file = remark().use(remarkHtml).processSync(markdownText);
+  return String(file);
+}
 
 export const buildFeed = ({
   posts,
@@ -37,6 +49,7 @@ export const buildFeed = ({
       title: post.title,
       link: `${site}/${type}/${post.slug}`,
       description: `${post.excerpt}`,
+      image: post.coverPhoto ? post.coverPhoto.secure_url : '',
       date: post.publishedAt
         ? Timestamp.fromMillis(post.publishedAt as unknown as number).toDate()
         : new Date(),
@@ -46,6 +59,7 @@ export const buildFeed = ({
           link: `${site}/authors/${author.slug}`,
         };
       }),
+      content: post.content ? markdownToHtml(post.content) : '',
     });
   }
   return feed;
@@ -64,6 +78,10 @@ export const build = async ({ type }: { type: PostType }) => {
             ...,
             "slug":slug.current,
         },
+        content,
+        coverPhoto{
+          ...
+        }
     `,
   });
   return buildFeed({ posts, type });
