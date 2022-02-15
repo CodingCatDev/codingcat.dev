@@ -49,6 +49,7 @@ export interface CoverMedia {
   url?: string;
   type: MediaType;
   source: MediaSource;
+  secure_url: string;
 }
 
 export enum PostStatus {
