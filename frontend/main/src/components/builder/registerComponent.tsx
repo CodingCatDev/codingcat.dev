@@ -1,31 +1,5 @@
 import { Builder, withChildren } from '@builder.io/react';
 
-import AJAlt from '@/components/global/icons/AJAlt';
-import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
-import AJHeadphones from '@/components/global/icons/AJHeadphones';
-import KCAlt from '@/components/global/icons/KCAlt';
-import BreakBarLeft from '@/components/home/BreakBarLeft';
-import {
-  ReactLogo,
-  AngularLogo,
-  VueLogo,
-  SvelteLogo,
-  CssLogo,
-  HtmlLogo,
-} from '@/components/global/icons/VendorLogos';
-import Courses from '@/components/global/icons/nav/Courses';
-import Tutorials from '@/components/global/icons/nav/Tutorials';
-import Podcasts from '@/components/global/icons/nav/Podcasts';
-import Blog from '@/components/global/icons/nav/Blog';
-import Community from '@/components/global/icons/nav/Community';
-import NavLinks from '@/layout/NavLinks';
-import Toggle from '@/components/global/icons/Toggle';
-import SearchModal from '@/components/algolia/SearchModal';
-import { AvatarMenuWrapper } from '@/layout/AppTopbar';
-import Footer from '@/layout/Footer';
-import PostsCards from '@/components/PostsCards';
-import RecentPostsList from '@/components/RecentPostsList';
-
 // import Facebook from '@/components/global/icons/socials/Facebook';
 // import GitHub from '@/components/global/icons/socials/GitHub';
 // import LinkedIn from '@/components/global/icons/socials/LinkedIn';
@@ -34,10 +8,8 @@ import RecentPostsList from '@/components/RecentPostsList';
 // import Twitter from '@/components/global/icons/socials/Twitter';
 // import YouTube from '@/components/global/icons/socials/YouTube';
 
-import SocialShare from '@/components/common/SocialShare';
-import SponsorCards from '@/components/SponsorCards';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image, { ImageProps } from 'next/image';
 import dynamic from 'next/dynamic';
 
 /*
@@ -586,7 +558,32 @@ Builder.registerComponent(withChildren(ccdLink), {
   ],
 });
 
-Builder.registerComponent(Image, {
+const ccdImage = ({
+  src,
+  layout,
+  height,
+  width,
+  alt,
+  className,
+}: ImageProps) => {
+  if (!layout) {
+    return <></>;
+  }
+  return ['fixed', 'responsive'].includes(layout) ? (
+    <Image
+      src={src}
+      alt={alt}
+      layout={layout}
+      className={className}
+      height={height}
+      width={width}
+    />
+  ) : (
+    <Image src={src} alt={alt} layout={layout} className={className} />
+  );
+};
+
+Builder.registerComponent(ccdImage, {
   name: 'NextImage',
   image:
     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
@@ -595,22 +592,22 @@ Builder.registerComponent(Image, {
       name: 'src',
       type: 'text',
       required: true,
-      defaultValue: 'ajonp-ajonp-com/authors/alex_headshot',
+      defaultValue: 'main-codingcatdev-photo/mswenj64oyjogshn13px',
     },
     {
       name: 'layout',
       type: 'text',
-      defaultValue: 'fixed',
-    },
-    {
-      name: 'height',
-      type: 'number',
-      defaultValue: 50,
+      defaultValue: 'responsive',
     },
     {
       name: 'width',
       type: 'number',
-      defaultValue: 50,
+      defaultValue: 1920,
+    },
+    {
+      name: 'height',
+      type: 'number',
+      defaultValue: 1080,
     },
     {
       name: 'alt',

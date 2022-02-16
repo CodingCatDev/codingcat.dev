@@ -33,6 +33,36 @@ function getRecent(type: ModelType) {
   }) as Promise<CodingCatBuilderContent[]>;
 }
 
+function getList(type: string) {
+  let singular = type === 'blog' ? 'post' : type.slice(0, -1);
+  console.log('getAll: ', singular);
+
+  return builder.getAll(singular, {
+    omit: 'data.blocks',
+    includeRefs: true,
+    limit: 100,
+    options: {
+      noTargeting: true,
+    },
+    // query: {
+    //   $and: [
+    //     {
+    //       $or: [
+    //         { startDate: { $exists: false } },
+    //         { startDate: { $lte: Date.now() } },
+    //       ],
+    //     },
+    //     {
+    //       $or: [
+    //         { endDate: { $exists: false } },
+    //         { endDate: { $gte: Date.now() } },
+    //       ],
+    //     },
+    //   ],
+    // },
+  }) as Promise<CodingCatBuilderContent[]>;
+}
+
 export async function getStaticProps({
   params,
 }: GetStaticPropsContext<{ page: string[] }>) {
@@ -41,10 +71,17 @@ export async function getStaticProps({
   let lesson = (params?.page?.[2] as string) || '';
   let lessonPath = (params?.page?.[3] as string) || '';
 
-  console.log('fetching model', slug ? type : 'page');
   console.log('url:', '/' + (params?.page?.join('/') || ''));
 
-  const [header, footer, modelData, course, post, tutorial, podcast] =
+  const isList = ['courses', 'pages', 'podcasts', 'blog', 'tutorials'].includes(
+    type
+  );
+
+  isList
+    ? console.log('fetching list', type)
+    : console.log('fetching model', slug ? type : 'page');
+
+  const [header, footer, modelData, course, post, tutorial, podcast, list] =
     await Promise.all([
       builder.get('header').promise(),
       builder.get('footer').promise(),
@@ -75,17 +112,19 @@ export async function getStaticProps({
           // },
         })
         .toPromise(),
-      getRecent(ModelType.course),
-      getRecent(ModelType.post),
-      getRecent(ModelType.tutorial),
-      getRecent(ModelType.podcast),
+      isList ? null : getRecent(ModelType.course),
+      isList ? null : getRecent(ModelType.post),
+      isList ? null : getRecent(ModelType.tutorial),
+      isList ? null : getRecent(ModelType.podcast),
+      isList ? getList(type) : null,
     ]);
   console.log(modelData?.data?.title);
 
   return {
     props: {
       modelData: modelData || null,
-      type: slug ? type : 'page',
+      model: slug ? type : 'page',
+      type: slug,
       header: header || null,
       footer: footer || null,
       recentPosts: {
@@ -94,6 +133,7 @@ export async function getStaticProps({
         tutorial: tutorial || null,
         podcast: podcast || null,
       },
+      list,
     },
     revalidate: 300,
   };
@@ -138,10 +178,11 @@ export async function getStaticPaths() {
 
 export default function Page({
   modelData,
-  type,
+  model,
   header,
   footer,
   recentPosts,
+  list,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const [isLive, setIsLive] = useState(false);
@@ -186,9 +227,9 @@ export default function Page({
       <Layout header={header} footer={footer}>
         <BuilderComponent
           options={{ includeRefs: true }}
-          model={type}
+          model={model}
           content={modelData}
-          context={{ recentPosts, modelData }}
+          context={{ recentPosts, modelData, list }}
         />
       </Layout>
     </>
