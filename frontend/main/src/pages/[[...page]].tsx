@@ -228,6 +228,7 @@ export default function Page({
         <BuilderComponent
           options={{ includeRefs: true }}
           model={model}
+          content={modelData}
           data={{ recentPosts, modelData, list }}
         />
       </Layout>
