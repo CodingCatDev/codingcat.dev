@@ -71,22 +71,22 @@
   }
 
   h1 {
-    @apply text-4xl lg:text-7xl leading-snug tracking-wide font-heading;
+    @apply text-4xl lg:text-7xl leading-snug tracking-wide font-sans;
   }
   h2 {
-    @apply text-3xl lg:text-6xl leading-snug tracking-wide font-heading;
+    @apply text-3xl lg:text-6xl leading-snug tracking-wide font-sans;
   }
   h3 {
-    @apply text-2xl lg:text-5xl leading-snug tracking-wide font-heading;
+    @apply text-2xl lg:text-5xl leading-snug tracking-wide font-sans;
   }
   h4 {
-    @apply text-xl lg:text-4xl leading-snug tracking-wide font-heading;
+    @apply text-xl lg:text-4xl leading-snug tracking-wide font-sans;
   }
   h5 {
-    @apply text-lg lg:text-3xl leading-snug tracking-wide font-heading;
+    @apply text-lg lg:text-3xl leading-snug tracking-wide font-sans;
   }
   h6 {
-    @apply text-base lg:text-2xl leading-snug tracking-wide font-heading;
+    @apply text-base lg:text-2xl leading-snug tracking-wide font-sans;
   }
 
   p { 
@@ -189,14 +189,13 @@
   max-width: 100%;
 }
 
-.article-content > h1,
-.article-content > h2,
-.article-content > h3,
-.article-content > h4,
-.article-content > h5,
-.article-content > h6 {
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
   margin: 2rem 0 1rem;
-  font-family: 'Nunito', sans-serif;
   width: fit-content;
 }
 
