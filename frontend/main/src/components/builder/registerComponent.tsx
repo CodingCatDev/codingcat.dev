@@ -538,6 +538,17 @@ Builder.registerComponent(
   }
 );
 
+Builder.registerComponent(
+  dynamic(() =>
+    import('@/components/PostMediaLocked').then((res) => res as any)
+  ),
+  {
+    name: 'PostMediaLocked',
+    image:
+      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+  }
+);
+
 const ccdLink = ({ href, children }: { href: string; children: any }) => (
   <Link href={href}>
     <a>{children}</a>

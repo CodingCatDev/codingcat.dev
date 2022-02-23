@@ -53,7 +53,7 @@ export default function Footer({
           width="100%"
           viewBox="0 0 90 20"
           preserveAspectRatio="none"
-          className="fill-current text-primary-50 dark:text-basics-700"
+          className="hidden fill-current text-primary-50 dark:text-basics-700 sm:block"
         >
           <path
             d="M0 5 H5 C25 5 25 20 45 20 S65 5 85 5 H90 V-5 H0z"

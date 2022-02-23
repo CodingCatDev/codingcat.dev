@@ -224,14 +224,14 @@ export default function Page({
           ],
         }}
       ></NextSeo>
-      <Layout header={header} footer={footer}>
-        <BuilderComponent
-          options={{ includeRefs: true }}
-          model={model}
-          content={modelData}
-          data={{ recentPosts, modelData, list }}
-        />
-      </Layout>
+      <Layout
+        header={header}
+        footer={footer}
+        modelData={modelData}
+        model={model as ModelType}
+        recentPosts={recentPosts}
+        list={list}
+      />
     </>
   );
 }

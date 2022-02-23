@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import router from 'next/router';
 // import dynamic from 'next/dynamic';
-import Head from 'next/head';
-import nightwind from 'nightwind/helper';
 import { ThemeProvider } from 'next-themes';
 
 import { AppTopbar } from '@/layout/AppTopbar';
 
 import AppMenu from '@/layout/AppMenu';
-import { Site } from '@/models/site.model';
-
 import useIsNavigating from '@/hooks/useIsNavigating';
 import { Progress } from '@/components/global/loading/Progress';
 import dynamic from 'next/dynamic';
 import { BuilderComponent } from '@builder.io/react';
+import { useAuth, useUser } from 'reactfire';
+import useIsMember from '@/hooks/useIsMember';
+import { UserInfoExtended } from '@/models/user.model';
+import { ModelType } from '@/models/builder.model';
+import PostMediaLocked from '@/components/PostMediaLocked';
 
 const FirebaseProvider = dynamic<any>(
   () =>
@@ -78,11 +79,17 @@ const FirebaseFunctionsProvider = dynamic<any>(
 const Layout = ({
   header,
   footer,
-  children,
+  modelData,
+  model,
+  recentPosts,
+  list,
 }: {
   header: any;
   footer: any;
-  children: any;
+  modelData: any;
+  model: ModelType;
+  recentPosts: any;
+  list: any;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
@@ -93,7 +100,6 @@ const Layout = ({
   }, [overlayMenuActive]);
 
   router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
-
   return (
     <>
       <FirebaseProvider>
@@ -102,11 +108,6 @@ const Layout = ({
             <FirebaseAuthProvider>
               <FirebaseFirestoreProvider>
                 <FirebaseFunctionsProvider>
-                  <Head>
-                    <script
-                      dangerouslySetInnerHTML={{ __html: nightwind.init() }}
-                    />
-                  </Head>
                   <ThemeProvider
                     attribute="class"
                     storageKey="nightwind-mode"
@@ -120,7 +121,21 @@ const Layout = ({
                     />
                     <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
                       <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
-                        {children}
+                        {model == ModelType.lesson ? (
+                          <UserWrapper
+                            modelData={modelData}
+                            model={model}
+                            recentPosts={recentPosts}
+                            list={list}
+                          />
+                        ) : (
+                          <BuilderComponent
+                            options={{ includeRefs: true }}
+                            model={model}
+                            content={modelData}
+                            data={{ recentPosts, modelData, list }}
+                          />
+                        )}
                       </main>
                       <BuilderComponent model="footer" content={footer} />
                     </div>
@@ -142,3 +157,57 @@ const Layout = ({
 };
 
 export default Layout;
+
+const UserWrapper = ({
+  modelData,
+  model,
+  recentPosts,
+  list,
+}: {
+  modelData: any;
+  model: string;
+  recentPosts: any;
+  list: any;
+}) => {
+  const { data: user } = useUser();
+  if (user)
+    return (
+      <MemberWrapper
+        user={user}
+        modelData={modelData}
+        model={model}
+        recentPosts={recentPosts}
+        list={list}
+      />
+    );
+  else return <PostMediaLocked />;
+};
+
+const MemberWrapper = ({
+  user,
+  modelData,
+  model,
+  recentPosts,
+  list,
+}: {
+  user: UserInfoExtended;
+  modelData: any;
+  model: string;
+  recentPosts: any;
+  list: any;
+}) => {
+  const { member, team } = useIsMember(user);
+
+  if (member || team) {
+    return (
+      <BuilderComponent
+        options={{ includeRefs: true }}
+        model={model}
+        content={modelData}
+        data={{ recentPosts, modelData, list, user, team, member }}
+      />
+    );
+  } else {
+    return <PostMediaLocked />;
+  }
+};
