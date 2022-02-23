@@ -5,135 +5,118 @@ import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
+import { getActiveMemberProducts } from '@/services/firebase.server';
+import { getAllBuilder } from '@/services/builder.server';
 
-function getRecent(type: ModelType) {
-  return builder.getAll(type, {
+function getRecent(type: ModelType, preview?: boolean) {
+  return getAllBuilder({
+    preview,
+    model: type,
     omit: 'data.blocks',
-    includeRefs: true,
     limit: 3,
-    options: {
-      noTargeting: true,
-    },
-    query: {
-      $and: [
-        {
-          $or: [
-            { startDate: { $exists: false } },
-            { startDate: { $lte: Date.now() } },
-          ],
-        },
-        {
-          $or: [
-            { endDate: { $exists: false } },
-            { endDate: { $gte: Date.now() } },
-          ],
-        },
-      ],
-    },
   }) as Promise<CodingCatBuilderContent[]>;
 }
 
-function getList(type: string) {
+function getList(type: string, preview?: boolean) {
   let singular = type === 'blog' ? 'post' : type.slice(0, -1);
   console.log('getAll: ', singular);
-
-  return builder.getAll(singular, {
+  return getAllBuilder({
+    preview,
+    model: type,
     omit: 'data.blocks',
-    includeRefs: true,
-    limit: 100,
-    options: {
-      noTargeting: true,
-    },
-    // query: {
-    //   $and: [
-    //     {
-    //       $or: [
-    //         { startDate: { $exists: false } },
-    //         { startDate: { $lte: Date.now() } },
-    //       ],
-    //     },
-    //     {
-    //       $or: [
-    //         { endDate: { $exists: false } },
-    //         { endDate: { $gte: Date.now() } },
-    //       ],
-    //     },
-    //   ],
-    // },
+    limit: 10000,
   }) as Promise<CodingCatBuilderContent[]>;
 }
 
 export async function getStaticProps({
   params,
+  preview,
 }: GetStaticPropsContext<{ page: string[] }>) {
   let type = (params?.page?.[0] as ModelType) || '';
   let slug = (params?.page?.[1] as string) || '';
   let lesson = (params?.page?.[2] as string) || '';
   let lessonPath = (params?.page?.[3] as string) || '';
 
-  console.log('url:', '/' + (params?.page?.join('/') || ''));
+  console.log('params:', '/' + (params?.page?.join('/') || ''));
 
   const isList = ['courses', 'pages', 'podcasts', 'blog', 'tutorials'].includes(
     type
   );
-
-  isList
-    ? console.log('fetching list', type)
-    : console.log('fetching model', slug ? type : 'page');
-
-  const [header, footer, modelData, course, post, tutorial, podcast, list] =
-    await Promise.all([
-      builder.get('header').promise(),
-      builder.get('footer').promise(),
-      builder
-        .get(slug ? type : 'page', {
+  console.log('course', type == ModelType.course);
+  const [
+    header,
+    footer,
+    modelData,
+    courseData,
+    course,
+    post,
+    tutorial,
+    podcast,
+    list,
+    products,
+  ] = await Promise.all([
+    getAllBuilder({
+      preview,
+      model: 'header',
+      limit: 1,
+    }),
+    getAllBuilder({
+      preview,
+      model: 'footer',
+      limit: 1,
+    }),
+    type == ModelType.course
+      ? getAllBuilder({
+          preview,
+          model: 'lesson',
+          limit: 1,
+          userAttributes: {
+            urlPath: `/${lesson}/${lessonPath}`,
+          },
+        })
+      : getAllBuilder({
+          preview,
+          model: slug ? type : 'page',
+          limit: 1,
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
-          // includeRefs: true,
-          // options: {
-          //   noTargeting: true,
-          // },
-          // query: {
-          //   $and: [
-          //     {
-          //       $or: [
-          //         { startDate: { $exists: false } },
-          //         { startDate: { $lte: Date.now() } },
-          //       ],
-          //     },
-          //     {
-          //       $or: [
-          //         { endDate: { $exists: false } },
-          //         { endDate: { $gte: Date.now() } },
-          //       ],
-          //     },
-          //   ],
-          // },
+        }),
+    type == 'course'
+      ? getAllBuilder({
+          preview,
+          model: 'course',
+          omit: 'data.blocks',
+          limit: 1,
+          userAttributes: {
+            urlPath: `/${type}/${slug}`,
+          },
         })
-        .toPromise(),
-      isList ? null : getRecent(ModelType.course),
-      isList ? null : getRecent(ModelType.post),
-      isList ? null : getRecent(ModelType.tutorial),
-      isList ? null : getRecent(ModelType.podcast),
-      isList ? getList(type) : null,
-    ]);
-  console.log(modelData?.data?.title);
+      : null,
+    isList ? null : getRecent(ModelType.course, preview),
+    isList ? null : getRecent(ModelType.post, preview),
+    isList ? null : getRecent(ModelType.tutorial, preview),
+    isList ? null : getRecent(ModelType.podcast, preview),
+    isList ? getList(type, preview) : null,
+    ['user'].includes(type) ? getActiveMemberProducts() : [],
+  ]);
 
   return {
     props: {
-      modelData: modelData || null,
+      modelData: modelData?.[0] ? modelData[0] : null,
       model: slug ? type : 'page',
       type: slug,
-      header: header || null,
-      footer: footer || null,
+      header: header?.[0] ? header[0] : null,
+      footer: footer?.[0] ? footer[0] : null,
       recentPosts: {
         course: course || null,
         post: post || null,
         tutorial: tutorial || null,
-        podcast: podcast || null,
+        podcast: podcast,
       },
       list,
+      products,
+      courseData: courseData?.[0] ? courseData?.[0] : null,
     },
     revalidate: 300,
   };
@@ -183,10 +166,14 @@ export default function Page({
   footer,
   recentPosts,
   list,
+  products,
+  courseData,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const [isLive, setIsLive] = useState(false);
   useEffect(() => {
+    console.log(courseData);
+    console.log(modelData);
     setIsLive(!Builder.isEditing && !Builder.isPreviewing);
   }, []);
 
@@ -197,7 +184,6 @@ export default function Page({
   if (!modelData && isLive) {
     router.push('/404');
   }
-
   return (
     <>
       <NextSeo
@@ -231,6 +217,7 @@ export default function Page({
         model={model as ModelType}
         recentPosts={recentPosts}
         list={list}
+        products={products}
       />
     </>
   );

@@ -9,12 +9,14 @@ import AppMenu from '@/layout/AppMenu';
 import useIsNavigating from '@/hooks/useIsNavigating';
 import { Progress } from '@/components/global/loading/Progress';
 import dynamic from 'next/dynamic';
-import { BuilderComponent } from '@builder.io/react';
+import { Builder, BuilderComponent } from '@builder.io/react';
 import { useAuth, useUser } from 'reactfire';
 import useIsMember from '@/hooks/useIsMember';
 import { UserInfoExtended } from '@/models/user.model';
 import { ModelType } from '@/models/builder.model';
 import PostMediaLocked from '@/components/PostMediaLocked';
+import { StripeProduct } from '@/models/stripe.model';
+import Profile from '@/components/user/Profile';
 
 const FirebaseProvider = dynamic<any>(
   () =>
@@ -83,6 +85,7 @@ const Layout = ({
   model,
   recentPosts,
   list,
+  products,
 }: {
   header: any;
   footer: any;
@@ -90,6 +93,7 @@ const Layout = ({
   model: ModelType;
   recentPosts: any;
   list: any;
+  products: StripeProduct[];
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
@@ -100,6 +104,31 @@ const Layout = ({
   }, [overlayMenuActive]);
 
   router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
+
+  const getLayout = () => {
+    if (['user'].includes(model)) {
+      return <Profile products={products} />;
+    }
+    if (model == ModelType.lesson && !Builder.isEditing) {
+      return (
+        <UserWrapper
+          modelData={modelData}
+          model={model}
+          recentPosts={recentPosts}
+          list={list}
+        />
+      );
+    }
+    return (
+      <BuilderComponent
+        options={{ includeRefs: true }}
+        model={model}
+        content={modelData}
+        data={{ recentPosts, modelData, list }}
+      />
+    );
+  };
+
   return (
     <>
       <FirebaseProvider>
@@ -121,21 +150,7 @@ const Layout = ({
                     />
                     <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
                       <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
-                        {model == ModelType.lesson ? (
-                          <UserWrapper
-                            modelData={modelData}
-                            model={model}
-                            recentPosts={recentPosts}
-                            list={list}
-                          />
-                        ) : (
-                          <BuilderComponent
-                            options={{ includeRefs: true }}
-                            model={model}
-                            content={modelData}
-                            data={{ recentPosts, modelData, list }}
-                          />
-                        )}
+                        {getLayout()}
                       </main>
                       <BuilderComponent model="footer" content={footer} />
                     </div>
