@@ -86,6 +86,7 @@ const Layout = ({
   recentPosts,
   list,
   products,
+  courseData,
 }: {
   header: any;
   footer: any;
@@ -94,6 +95,7 @@ const Layout = ({
   recentPosts: any;
   list: any;
   products: StripeProduct[];
+  courseData: any;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
@@ -105,26 +107,127 @@ const Layout = ({
 
   router.events.on('routeChangeComplete', () => setOverlayMenuActive(false));
 
+  const UserWrapper = ({
+    modelData,
+    model,
+    recentPosts,
+    list,
+    courseData,
+  }: {
+    modelData: any;
+    model: string;
+    recentPosts: any;
+    list: any;
+    courseData: any;
+  }) => {
+    const { data: user } = useUser();
+    if (user)
+      return (
+        <MemberWrapper
+          user={user}
+          modelData={modelData}
+          model={model}
+          recentPosts={recentPosts}
+          list={list}
+          courseData={courseData}
+        />
+      );
+    else return <PostMediaLocked />;
+  };
+
+  const MemberWrapper = ({
+    user,
+    modelData,
+    model,
+    recentPosts,
+    list,
+    courseData,
+  }: {
+    user: UserInfoExtended;
+    modelData: any;
+    model: string;
+    recentPosts: any;
+    list: any;
+    courseData: any;
+  }) => {
+    const { member, team } = useIsMember(user);
+
+    if (member || team) {
+      return (
+        <>
+          <BuilderComponent
+            options={{ includeRefs: true }}
+            model={model}
+            content={modelData}
+            data={{
+              recentPosts,
+              modelData,
+              list,
+              user,
+              team,
+              member,
+              courseData,
+            }}
+          />
+        </>
+      );
+    } else {
+      return <PostMediaLocked />;
+    }
+  };
+
+  const BuilderWrapper = ({
+    modelData,
+    model,
+    recentPosts,
+    list,
+    courseData,
+  }: {
+    modelData: any;
+    model: string;
+    recentPosts: any;
+    list: any;
+    courseData: any;
+  }) => {
+    return (
+      <>
+        <BuilderComponent
+          options={{ includeRefs: true }}
+          model={model}
+          content={modelData}
+          data={{
+            recentPosts,
+            modelData,
+            list,
+            courseData,
+          }}
+        />
+      </>
+    );
+  };
+
   const getLayout = () => {
     if (['user'].includes(model)) {
       return <Profile products={products} />;
     }
-    if (model == ModelType.lesson && !Builder.isEditing) {
+    if (model == ModelType.lesson) {
       return (
         <UserWrapper
           modelData={modelData}
           model={model}
           recentPosts={recentPosts}
           list={list}
+          courseData={courseData}
         />
       );
     }
     return (
-      <BuilderComponent
-        options={{ includeRefs: true }}
+      <BuilderWrapper
+        modelData={modelData}
         model={model}
-        content={modelData}
-        data={{ recentPosts, modelData, list }}
+        recentPosts={recentPosts}
+        list={list}
+        courseData={courseData}
       />
     );
   };
@@ -172,57 +275,3 @@ const Layout = ({
 };
 
 export default Layout;
-
-const UserWrapper = ({
-  modelData,
-  model,
-  recentPosts,
-  list,
-}: {
-  modelData: any;
-  model: string;
-  recentPosts: any;
-  list: any;
-}) => {
-  const { data: user } = useUser();
-  if (user)
-    return (
-      <MemberWrapper
-        user={user}
-        modelData={modelData}
-        model={model}
-        recentPosts={recentPosts}
-        list={list}
-      />
-    );
-  else return <PostMediaLocked />;
-};
-
-const MemberWrapper = ({
-  user,
-  modelData,
-  model,
-  recentPosts,
-  list,
-}: {
-  user: UserInfoExtended;
-  modelData: any;
-  model: string;
-  recentPosts: any;
-  list: any;
-}) => {
-  const { member, team } = useIsMember(user);
-
-  if (member || team) {
-    return (
-      <BuilderComponent
-        options={{ includeRefs: true }}
-        model={model}
-        content={modelData}
-        data={{ recentPosts, modelData, list, user, team, member }}
-      />
-    );
-  } else {
-    return <PostMediaLocked />;
-  }
-};

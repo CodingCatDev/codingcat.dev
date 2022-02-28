@@ -42,6 +42,7 @@ export async function getStaticProps({
   const isList = ['courses', 'pages', 'podcasts', 'blog', 'tutorials'].includes(
     type
   );
+  console.log('preview', preview);
   console.log('course', type == ModelType.course);
   const [
     header,
@@ -101,6 +102,22 @@ export async function getStaticProps({
     ['user'].includes(type) ? getActiveMemberProducts() : [],
   ]);
 
+  const cleanedCourseData = (c: any) => {
+    // if (c?.[0]?.data?.sections) {
+    //   const data = c[0].data.sections.map((section: any) =>
+    //     section?.lessons?.map((lesson: any) => {
+    //       console.log(lesson?.value?.data?.block);
+    //       return lesson;
+    //     })
+    //   );
+    //   return data[0];
+    // } else {
+    //   null;
+    // }
+    console.log(c?.[0]); //TODO - remove blocks
+    return c?.[0] ? c[0] : null;
+  };
+
   return {
     props: {
       modelData: modelData?.[0] ? modelData[0] : null,
@@ -116,7 +133,7 @@ export async function getStaticProps({
       },
       list,
       products,
-      courseData: courseData?.[0] ? courseData?.[0] : null,
+      courseData: cleanedCourseData(courseData),
     },
     revalidate: 300,
   };
@@ -218,6 +235,7 @@ export default function Page({
         recentPosts={recentPosts}
         list={list}
         products={products}
+        courseData={courseData}
       />
     </>
   );
