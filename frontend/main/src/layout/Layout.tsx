@@ -17,6 +17,8 @@ import { ModelType } from '@/models/builder.model';
 import PostMediaLocked from '@/components/PostMediaLocked';
 import { StripeProduct } from '@/models/stripe.model';
 import Profile from '@/components/user/Profile';
+import AJ404 from '@/components/global/icons/AJ404';
+import Link from 'next/link';
 
 const FirebaseProvider = dynamic<any>(
   () =>
@@ -87,6 +89,7 @@ const Layout = ({
   list,
   products,
   courseData,
+  isLive,
 }: {
   header: any;
   footer: any;
@@ -96,6 +99,7 @@ const Layout = ({
   list: any;
   products: StripeProduct[];
   courseData: any;
+  isLive: boolean;
 }): JSX.Element => {
   const [overlayMenuActive, setOverlayMenuActive] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
@@ -207,6 +211,26 @@ const Layout = ({
   };
 
   const getLayout = () => {
+    if (!modelData && isLive) {
+      return (
+        <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
+          <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
+            <AJ404 />
+            <h1 className="text-5xl lg:text-6xl">
+              Uh oh, that page doesn&apos;t seem to exist.
+            </h1>
+            <h2 className="font-sans text-4xl lg:text-5xl">
+              Were you looking for{' '}
+              {/* add some logic here to say which route they clicked? */}
+              <Link href="/courses">
+                <a className="underline text-secondary-600">Courses</a>
+              </Link>
+            </h2>
+          </section>
+        </main>
+      );
+    }
+
     if (['user'].includes(model)) {
       return <Profile products={products} />;
     }

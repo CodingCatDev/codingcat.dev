@@ -198,9 +198,6 @@ export default function Page({
     return <h1>Loading...</h1>;
   }
 
-  if (!modelData && isLive) {
-    router.push('/404');
-  }
   return (
     <>
       <NextSeo
@@ -236,6 +233,7 @@ export default function Page({
         list={list}
         products={products}
         courseData={courseData}
+        isLive={isLive}
       />
     </>
   );
