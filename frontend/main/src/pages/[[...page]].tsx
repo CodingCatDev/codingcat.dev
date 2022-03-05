@@ -112,12 +112,14 @@ export async function getStaticProps({
         sections: course?.data?.sections?.map((section: Section) => {
           return {
             ...section,
-            lessons: section?.lessons?.map((l: any) => {
-              return {
-                title: l?.lesson?.value?.data?.title || null,
-                url: l?.lesson?.value?.data?.url || null,
-              };
-            }),
+            lessons: section?.lessons
+              ?.filter((l: any) => l?.lesson?.value?.published === 'published')
+              .map((l: any) => {
+                return {
+                  title: l?.lesson?.value?.data?.title || null,
+                  url: l?.lesson?.value?.data?.url || null,
+                };
+              }),
           };
         }),
       },
