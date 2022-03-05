@@ -6,7 +6,7 @@ import AJPrimary from '@/components/global/icons/AJPrimary';
 export default function PostsCards({
   posts,
 }: {
-  posts: CodingCatBuilderContent[];
+  posts?: CodingCatBuilderContent[];
 }): JSX.Element {
   return (
     <>

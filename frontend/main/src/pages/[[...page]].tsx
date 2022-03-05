@@ -4,9 +4,19 @@ import { BuilderComponent, Builder, builder } from '@builder.io/react';
 import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
-import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
-import { getActiveMemberProducts } from '@/services/firebase.server';
+import {
+  CodingCatBuilderContent,
+  ModelType,
+  Section,
+  SectionLesson,
+} from '@/models/builder.model';
 import { getAllBuilder } from '@/services/builder.server';
+import { useUser } from 'reactfire';
+import useIsMember from '@/hooks/useIsMember';
+import { UserInfoExtended } from '@/models/user.model';
+import PostMediaLocked from '@/components/PostMediaLocked';
+import AJ404 from '@/components/global/icons/AJ404';
+import Link from 'next/link';
 
 function getRecent(type: ModelType, preview?: boolean) {
   return getAllBuilder({
@@ -14,17 +24,6 @@ function getRecent(type: ModelType, preview?: boolean) {
     model: type,
     omit: 'data.blocks',
     limit: 3,
-  }) as Promise<CodingCatBuilderContent[]>;
-}
-
-function getList(type: string, preview?: boolean) {
-  let singular = type === 'blog' ? 'post' : type.slice(0, -1);
-  console.log('getAll: ', singular);
-  return getAllBuilder({
-    preview,
-    model: type,
-    omit: 'data.blocks',
-    limit: 10000,
   }) as Promise<CodingCatBuilderContent[]>;
 }
 
@@ -38,12 +37,15 @@ export async function getStaticProps({
   let lessonPath = (params?.page?.[3] as string) || '';
 
   console.log('params:', '/' + (params?.page?.join('/') || ''));
-
-  const isList = ['courses', 'pages', 'podcasts', 'blog', 'tutorials'].includes(
-    type
-  );
   console.log('preview', preview);
-  console.log('course', type == ModelType.course);
+  console.log('type', type);
+  console.log('slug', slug);
+  console.log('lesson', lesson);
+  console.log('lessonPath', lessonPath);
+
+  const model = slug ? type : 'page';
+  console.log('model', model);
+
   const [
     header,
     footer,
@@ -53,8 +55,6 @@ export async function getStaticProps({
     post,
     tutorial,
     podcast,
-    list,
-    products,
   ] = await Promise.all([
     getAllBuilder({
       preview,
@@ -66,7 +66,7 @@ export async function getStaticProps({
       model: 'footer',
       limit: 1,
     }),
-    type == ModelType.course
+    type == ModelType.course && lesson
       ? getAllBuilder({
           preview,
           model: 'lesson',
@@ -83,7 +83,7 @@ export async function getStaticProps({
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
         }),
-    type == 'course'
+    type == ModelType.course
       ? getAllBuilder({
           preview,
           model: 'course',
@@ -94,34 +94,41 @@ export async function getStaticProps({
           },
         })
       : null,
-    isList ? null : getRecent(ModelType.course, preview),
-    isList ? null : getRecent(ModelType.post, preview),
-    isList ? null : getRecent(ModelType.tutorial, preview),
-    isList ? null : getRecent(ModelType.podcast, preview),
-    isList ? getList(type, preview) : null,
-    ['user'].includes(type) ? getActiveMemberProducts() : [],
+    getRecent(ModelType.course, preview),
+    getRecent(ModelType.post, preview),
+    getRecent(ModelType.tutorial, preview),
+    getRecent(ModelType.podcast, preview),
   ]);
 
   const cleanedCourseData = (c: any) => {
-    // if (c?.[0]?.data?.sections) {
-    //   const data = c[0].data.sections.map((section: any) =>
-    //     section?.lessons?.map((lesson: any) => {
-    //       console.log(lesson?.value?.data?.block);
-    //       return lesson;
-    //     })
-    //   );
-    //   return data[0];
-    // } else {
-    //   null;
-    // }
-    console.log(c?.[0]); //TODO - remove blocks
-    return c?.[0] ? c[0] : null;
+    const course = c?.[0] ? c[0] : null;
+    if (!course) {
+      return null;
+    }
+    return {
+      ...course,
+      data: {
+        ...course?.data,
+        sections: course?.data?.sections?.map((section: Section) => {
+          return {
+            ...section,
+            lessons: section?.lessons?.map((l: any) => {
+              return {
+                title: l?.lesson?.value?.data?.title || null,
+                url: l?.lesson?.value?.data?.url || null,
+              };
+            }),
+          };
+        }),
+      },
+    };
   };
 
   return {
     props: {
       modelData: modelData?.[0] ? modelData[0] : null,
-      model: slug ? type : 'page',
+      model,
+      lessonPath,
       type: slug,
       header: header?.[0] ? header[0] : null,
       footer: footer?.[0] ? footer[0] : null,
@@ -131,8 +138,6 @@ export async function getStaticProps({
         tutorial: tutorial || null,
         podcast: podcast,
       },
-      list,
-      products,
       courseData: cleanedCourseData(courseData),
     },
     revalidate: 300,
@@ -147,6 +152,7 @@ export async function getStaticPaths() {
     ModelType.tutorial,
     ModelType.podcast,
     ModelType.course,
+    ModelType.authors,
   ]) {
     const pages = await builder.getAll(postType, {
       fields: `data.url`,
@@ -168,7 +174,14 @@ export async function getStaticPaths() {
         ],
       },
     });
-    pages.map((page) => paths.push(`${page?.data?.url}`));
+    pages
+      .filter(
+        (page) =>
+          !['/blog', '/courses', '/podcasts', '/tutorials'].includes(
+            `${page?.data?.url}`
+          )
+      )
+      .map((page) => paths.push(`${page?.data?.url}`));
   }
   return {
     paths,
@@ -179,24 +192,161 @@ export async function getStaticPaths() {
 export default function Page({
   modelData,
   model,
+  lessonPath,
   header,
   footer,
   recentPosts,
-  list,
-  products,
   courseData,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const [isLive, setIsLive] = useState(false);
   useEffect(() => {
-    console.log(courseData);
-    console.log(modelData);
     setIsLive(!Builder.isEditing && !Builder.isPreviewing);
   }, []);
+
+  // console.log('courseData', courseData);
+  // console.log('modelData', modelData);
 
   if (router.isFallback) {
     return <h1>Loading...</h1>;
   }
+
+  const UserWrapper = ({
+    modelData,
+    model,
+    recentPosts,
+    courseData,
+  }: {
+    modelData: any;
+    model: string;
+    recentPosts: any;
+    courseData: any;
+  }) => {
+    const { data: user } = useUser();
+    if (user)
+      return (
+        <MemberWrapper
+          user={user}
+          modelData={modelData}
+          model={model}
+          recentPosts={recentPosts}
+          courseData={courseData}
+        />
+      );
+    else return <PostMediaLocked />;
+  };
+
+  const MemberWrapper = ({
+    user,
+    modelData,
+    model,
+    recentPosts,
+    courseData,
+  }: {
+    user: UserInfoExtended;
+    modelData: any;
+    model: string;
+    recentPosts: any;
+    courseData: any;
+  }) => {
+    const { member, team } = useIsMember(user);
+
+    if (member || team) {
+      return (
+        <>
+          <BuilderComponent
+            options={{ includeRefs: true }}
+            model={model}
+            content={modelData}
+            data={{
+              recentPosts,
+              modelData,
+              user,
+              team,
+              member,
+              courseData,
+            }}
+          />
+        </>
+      );
+    } else {
+      return <PostMediaLocked />;
+    }
+  };
+
+  const BuilderWrapper = ({
+    modelData,
+    model,
+    recentPosts,
+    courseData,
+  }: {
+    modelData: any;
+    model: string;
+    recentPosts: any;
+    courseData: any;
+  }) => {
+    return (
+      <>
+        <BuilderComponent
+          options={{ includeRefs: true }}
+          model={model}
+          content={modelData}
+          data={{
+            recentPosts,
+            modelData,
+            courseData,
+          }}
+        />
+      </>
+    );
+  };
+
+  const getLayout = () => {
+    // 404
+    if (!modelData && isLive) {
+      return (
+        <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
+          <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
+            <AJ404 />
+            <h1 className="text-5xl lg:text-6xl">
+              Uh oh, that page doesn&apos;t seem to exist.
+            </h1>
+            <h2 className="font-sans text-4xl lg:text-5xl">
+              Were you looking for{' '}
+              {/* add some logic here to say which route they clicked? */}
+              <Link href="/courses">
+                <a className="underline text-secondary-600">Courses</a>
+              </Link>
+            </h2>
+          </section>
+        </main>
+      );
+    }
+    // // User Profile
+    // if (['user'].includes(model)) {
+    //   return <Profile products={products} />;
+    // }
+    //Lesson
+    if (lessonPath && isLive) {
+      return (
+        <UserWrapper
+          modelData={modelData}
+          model={model}
+          recentPosts={recentPosts}
+          courseData={courseData}
+        />
+      );
+    }
+    //Any Page (including lesson preview)
+    return (
+      <BuilderWrapper
+        modelData={modelData}
+        model={model}
+        recentPosts={recentPosts}
+        courseData={courseData}
+      />
+    );
+  };
 
   return (
     <>
@@ -224,17 +374,9 @@ export default function Page({
           ],
         }}
       ></NextSeo>
-      <Layout
-        header={header}
-        footer={footer}
-        modelData={modelData}
-        model={model as ModelType}
-        recentPosts={recentPosts}
-        list={list}
-        products={products}
-        courseData={courseData}
-        isLive={isLive}
-      />
+      <Layout header={header} footer={footer}>
+        {getLayout()}
+      </Layout>
     </>
   );
 }

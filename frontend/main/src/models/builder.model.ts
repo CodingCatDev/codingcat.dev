@@ -56,6 +56,7 @@ export enum ModelType {
   page = 'page',
   group = 'group',
   forum = 'forum',
+  authors = 'authors',
 }
 export interface Section {
   title: string;
@@ -63,15 +64,6 @@ export interface Section {
 }
 
 export interface SectionLesson {
-  _id: string;
-  slug: string;
+  url: string;
   title: string;
-  lessons: LessonRef[];
-}
-
-export interface LessonRef {
-  _key: string;
-  _ref: string;
-  _type: string;
-  lesson: Page;
 }

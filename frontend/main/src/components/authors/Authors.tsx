@@ -9,6 +9,7 @@ export default function Authors({
 }): JSX.Element {
   return (
     <section className="grid gap-4 justify-items-center">
+      {/* {JSON.stringify(authors)} */}
       <section className="max-w-2xl text-center">
         <h2 className="mb-2 text-4xl lg:text-5xl">Authors & Instructors</h2>
         <h3 className="font-sans text-2xl">
@@ -20,7 +21,7 @@ export default function Authors({
         </h3>
       </section>
       <section className="flex flex-wrap items-start justify-center w-full gap-10">
-        {authors.map((author, i) => (
+        {authors?.map((author, i) => (
           <Link href={`/authors/${author.slug}`} key={i}>
             <a>
               <AuthorCard author={author} />
