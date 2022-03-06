@@ -1,28 +1,16 @@
-import { Post, PostType } from '@/models/post.model';
-import { getPostsService } from '@/services/sanity.server';
+import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 import { Feed } from 'feed';
 import { Timestamp } from 'firebase/firestore';
-
-import { remark } from 'remark';
-import remarkHtml from 'remark-html';
-
-import rehypeParse from 'rehype-parse';
-import rehypeRemark from 'rehype-remark';
-import remarkStringify from 'remark-stringify';
+import { builder } from '@builder.io/react';
 
 const site = 'https://codingcat.dev';
-
-export function markdownToHtml(markdownText: string) {
-  const file = remark().use(remarkHtml).processSync(markdownText);
-  return String(file);
-}
 
 export const buildFeed = ({
   posts,
   type,
 }: {
-  posts: Post[];
-  type: PostType;
+  posts: CodingCatBuilderContent[];
+  type: ModelType;
 }) => {
   const feed = new Feed({
     title: `${site} - ${type} feed`,
@@ -46,43 +34,40 @@ export const buildFeed = ({
 
   for (const post of posts) {
     feed.addItem({
-      title: post.title,
-      link: `${site}/${type}/${post.slug}`,
-      description: `${post.excerpt}`,
-      image: post.coverPhoto ? post.coverPhoto.secure_url : '',
-      date: post.publishedAt
-        ? Timestamp.fromMillis(post.publishedAt as unknown as number).toDate()
-        : new Date(),
-      author: post.authors?.map((author) => {
+      title: post.data.title,
+      link: `${site}${post.data.url}`,
+      description: `${post.data.page.excerpt}`,
+      date: post.startDate ? new Date(post.startDate) : new Date(),
+      author: post.data.page?.authors?.map((author) => {
         return {
-          name: author.displayName,
-          link: `${site}/authors/${author.slug}`,
+          name: author.author.value.data.displayName,
+          link: `${site}/authors/${author.author.value.data.slug}`,
         };
       }),
-      content: post.content ? markdownToHtml(post.content) : '',
     });
   }
   return feed;
 };
 
-export const build = async ({ type }: { type: PostType }) => {
-  const posts = await getPostsService({
-    type,
-    limit: 100,
-    params: `
-        title,
-        "slug":slug.current,
-        excerpt,
-        publishedAt,
-        authors[]->{
-            ...,
-            "slug":slug.current,
+export const build = async ({ type }: { type: ModelType }) => {
+  const posts = (await builder.getAll(type, {
+    omit: 'data.blocks',
+    includeRefs: true,
+    limit: 3,
+    options: {
+      noTargeting: true,
+    },
+    query: {
+      $and: [
+        { startDate: { $lte: Date.now() } },
+        {
+          $or: [
+            { endDate: { $exists: false } },
+            { endDate: { $gte: Date.now() } },
+          ],
         },
-        content,
-        coverPhoto{
-          ...
-        }
-    `,
-  });
+      ],
+    },
+  })) as CodingCatBuilderContent[];
   return buildFeed({ posts, type });
 };

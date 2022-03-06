@@ -1,51 +1,78 @@
-import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
+import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
+
+import { getAllBuilder } from '@/services/builder.server';
+import { NextSeo } from 'next-seo';
+import { CodingCatBuilderContent } from '@/models/builder.model';
 import PostsCards from '@/components/PostsCards';
+import { BuilderComponent } from '@builder.io/react';
 
-import { Post, PostType } from '@/models/post.model';
-import { Site } from '@/models/site.model';
-import { getSite, getPostsService } from '@/services/sanity.server';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
+export async function getStaticProps({
+  preview,
+}: GetStaticPropsContext<{ page: string[] }>) {
+  const [header, footer, modelData, list] = await Promise.all([
+    getAllBuilder({
+      preview,
+      model: 'header',
+      limit: 1,
+    }),
+    getAllBuilder({
+      preview,
+      model: 'footer',
+      limit: 1,
+    }),
+    getAllBuilder({
+      preview,
+      model: 'page',
+      limit: 1,
+      userAttributes: {
+        urlPath: '/tutorials',
+      },
+    }),
+    getAllBuilder({
+      preview,
+      model: 'tutorial',
+      omit: 'data.blocks',
+      limit: 10000,
+    }) as Promise<CodingCatBuilderContent[]>,
+  ]);
 
-interface StaticParams {
-  site: Site;
-  posts: Post[];
-}
-
-export const getStaticProps: GetStaticProps<StaticParams> = async ({
-  preview = false,
-}) => {
   return {
     props: {
-      site: await getSite({ preview }),
-      posts: await getPostsService({ type: PostType.tutorial, preview }),
+      modelData: modelData?.[0] ? modelData[0] : null,
+      model: 'page',
+      header: header?.[0] ? header[0] : null,
+      footer: footer?.[0] ? footer[0] : null,
+      list: list ? list : null,
     },
     revalidate: 3600,
   };
-};
+}
 
-const Tutorials = ({
-  site,
-  posts,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+export default function Blog({
+  modelData,
+  model,
+  header,
+  footer,
+  list,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <NextSeo
         title="Tutorials | CodingCatDev"
         canonical={`https://codingcat.dev/tutorials`}
       ></NextSeo>
-      <Layout site={site}>
-        <div className="p-4 sm:p-10">
-          <h1 className="mt-10 mb-16 text-5xl text-center lg:text-7xl">
-            {PostType.tutorial.charAt(0).toUpperCase() +
-              PostType.tutorial.slice(1)}
-            s
-          </h1>
-          <PostsCards posts={posts} />
-        </div>
+      <Layout header={header} footer={footer}>
+        <BuilderComponent
+          options={{ includeRefs: true }}
+          model={model}
+          content={modelData}
+          data={{
+            modelData,
+            list,
+          }}
+        />
       </Layout>
     </>
   );
-};
-
-export default Tutorials;
+}

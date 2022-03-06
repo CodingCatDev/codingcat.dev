@@ -1,33 +1,61 @@
-import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
-import PurrfectDevUpper from '@/components/PurrfectDevUpper';
-import PostsCards from '@/components/PostsCards';
-import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
-import { Post, PostType } from '@/models/post.model';
-import { Site } from '@/models/site.model';
-import { getSite, getPostsService } from '@/services/sanity.server';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
-interface StaticParams {
-  site: Site;
-  posts: Post[];
-}
+import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 
-export const getStaticProps: GetStaticProps<StaticParams> = async ({
-  preview = false,
-}) => {
+import { getAllBuilder } from '@/services/builder.server';
+import { NextSeo } from 'next-seo';
+import { CodingCatBuilderContent } from '@/models/builder.model';
+import PostsCards from '@/components/PostsCards';
+import { BuilderComponent } from '@builder.io/react';
+
+export async function getStaticProps({
+  preview,
+}: GetStaticPropsContext<{ page: string[] }>) {
+  const [header, footer, modelData, list] = await Promise.all([
+    getAllBuilder({
+      preview,
+      model: 'header',
+      limit: 1,
+    }),
+    getAllBuilder({
+      preview,
+      model: 'footer',
+      limit: 1,
+    }),
+    getAllBuilder({
+      preview,
+      model: 'page',
+      limit: 1,
+      userAttributes: {
+        urlPath: '/podcasts',
+      },
+    }),
+    getAllBuilder({
+      preview,
+      model: 'podcast',
+      omit: 'data.blocks',
+      limit: 10000,
+    }) as Promise<CodingCatBuilderContent[]>,
+  ]);
+
   return {
     props: {
-      site: await getSite({ preview }),
-      posts: await getPostsService({ type: PostType.podcast, preview }),
+      modelData: modelData?.[0] ? modelData[0] : null,
+      model: 'page',
+      header: header?.[0] ? header[0] : null,
+      footer: footer?.[0] ? footer[0] : null,
+      list: list ? list : null,
     },
     revalidate: 3600,
   };
-};
+}
 
-const Podcasts = ({
-  site,
-  posts,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+export default function Blog({
+  modelData,
+  model,
+  header,
+  footer,
+  list,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <NextSeo
@@ -54,19 +82,17 @@ const Podcasts = ({
           ],
         }}
       ></NextSeo>
-      <Layout site={site}>
-        <div className="p-4 sm:p-10">
-          <PurrfectDevUpper />
-          <h2 className="mt-10 mb-16 text-5xl text-center lg:text-7xl">
-            {PostType.podcast.charAt(0).toUpperCase() +
-              PostType.podcast.slice(1)}
-            s
-          </h2>
-          <PostsCards posts={posts} />
-          <PurrfectDevPodcatchers />
-        </div>
+      <Layout header={header} footer={footer}>
+        <BuilderComponent
+          options={{ includeRefs: true }}
+          model={model}
+          content={modelData}
+          data={{
+            modelData,
+            list,
+          }}
+        />
       </Layout>
     </>
   );
-};
-export default Podcasts;
+}

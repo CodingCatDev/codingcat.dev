@@ -3,9 +3,25 @@ import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 
+import { builder } from '@builder.io/react';
+import { config as builderConfig } from '@/config/builder';
+import { useEffect, useState } from 'react';
+import '@/components/builder/registerComponent';
+
+builder.init(builderConfig.publicApiKey);
+
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
+  const [isBuilder, setIsBuilder] = useState(false);
+  useEffect(() => {
+    if (builder.editingModel) {
+      console.log('Adding Builder.io components');
+      setIsBuilder(true);
+    }
+  }, []);
+
   return (
     <>
+      {/* {isBuilder && <RegisterComponent />} */}
       <DefaultSeo
         title="CodingCatDev | Purrfect Web Tutorials"
         description="Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!"

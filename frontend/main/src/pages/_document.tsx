@@ -6,6 +6,7 @@ import Document, {
   DocumentContext,
   DocumentInitialProps,
 } from 'next/document';
+import nightwind from 'nightwind/helper';
 
 class MyDocument extends Document {
   static async getInitialProps(
@@ -128,6 +129,8 @@ class MyDocument extends Document {
             href="/static/icons/favicon-16x16.png"
           />
           <link rel="icon" href="/favicon.ico" />
+
+          <script dangerouslySetInnerHTML={{ __html: nightwind.init() }} />
         </Head>
         <body>
           <Main />
