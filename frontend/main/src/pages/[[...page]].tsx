@@ -50,7 +50,7 @@ export async function getStaticProps({
   const [
     header,
     footer,
-    modelData,
+    modelDataList,
     courseData,
     course,
     post,
@@ -127,9 +127,10 @@ export async function getStaticProps({
     };
   };
 
+  const modelData = modelDataList?.[0] ? modelDataList[0] : null;
   return {
     props: {
-      modelData: modelData?.[0] ? modelData[0] : null,
+      modelData,
       model,
       lessonPath,
       type: slug,
@@ -144,7 +145,7 @@ export async function getStaticProps({
       courseData: cleanedCourseData(courseData),
     },
     revalidate: 300,
-    notFound: modelData ? true : false,
+    notFound: modelData ? false : true,
   };
 }
 
