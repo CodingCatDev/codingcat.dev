@@ -43,16 +43,8 @@
     "react-firebaseui": "^6.0.0",
     "react-icons": "^4.2.0",
     "react-instantsearch-dom": "^6.8.2",
-    "react-player": "^2.7.2",
-    "react-timeago": "^5.2.0",
-    "reactfire": "^4.2.0",
-    "rehype-parse": "^8.0.4",
-    "rehype-remark": "^9.1.2",
-    "remark": "^14.0.2",
-    "remark-html": "^15.0.1",
-    "remark-stringify": "^10.0.2",
-    "use-mailchimp-form": "^2.0.4",
-    "video.js": "^7.11.4"
+    "react-syntax-highlighter": "^15.4.5",
+    "reactfire": "^4.2.0"
   },
   "devDependencies": {
     "@emotion/serialize": "^1.0.2",
