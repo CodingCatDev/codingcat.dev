@@ -59,7 +59,7 @@ export default function PostsCards({
                     <div>
                       {post?.data?.page?.authors?.map((author, i) => (
                         <Link
-                          href={`/authors/${author?.author?.value?.data?.slug}`}
+                          href={`/authors${author?.author?.value?.data?.slug}`}
                           key={i}
                         >
                           <a className="font-sans text-lg">
