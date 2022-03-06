@@ -210,7 +210,7 @@ export default function Page({
   // console.log('modelData', modelData);
 
   if (router.isFallback) {
-    return <h1>Loading...</h1>;
+    return <h1>Fetching Purrfect Page...</h1>;
   }
 
   const UserWrapper = ({
@@ -329,7 +329,11 @@ export default function Page({
     //   return <Profile products={products} />;
     // }
     //Lesson
-    if (lessonPath && isLive) {
+    if (
+      lessonPath &&
+      isLive &&
+      courseData?.data?.accessSettings?.accessMode != 'free'
+    ) {
       return (
         <UserWrapper
           modelData={modelData}
