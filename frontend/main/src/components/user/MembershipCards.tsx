@@ -74,9 +74,8 @@ export default function MembershipCards({
         src={img}
         loader={() => img}
         unoptimized={true}
-        layout="fixed"
-        width="335"
-        height="270"
+        layout="fill"
+        className="z-10"
         alt={`Product Photo for ${product.description}`}
       />
     );
@@ -125,20 +124,18 @@ export default function MembershipCards({
             key={product.role}
             onClick={() => onSelectPlan(product)}
           >
-            {/* <div
-                  className={
-                    'radialGradiant block absolute w-48 h-48 bottom-0 left-0 mb-24 ml-3'
-                  }
-                ></div> */}
-            {product.images ? (
-              getProductImage(product)
-            ) : (
-              <AJPrimary className="w-full h-full" />
-            )}
-            <span className="block text-basics-200 dark:text-basics-200">
-              {product?.description}
-            </span>
-
+            <div className="relative">
+              <div className="w-48 h-48">
+                {product.images ? (
+                  getProductImage(product)
+                ) : (
+                  <AJPrimary className="w-full h-full" />
+                )}
+                <span className="block text-basics-200 dark:text-basics-200">
+                  {product?.description}
+                </span>
+              </div>
+            </div>
             <div className="flex justify-between">
               <span className="block text-xl font-semibold">
                 {product.name}
