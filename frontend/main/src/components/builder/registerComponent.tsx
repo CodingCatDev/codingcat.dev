@@ -17,13 +17,48 @@ import dynamic from 'next/dynamic';
  */
 
 Builder.registerComponent(
+  dynamic(
+    () =>
+      import('@/components/code-block').then(
+        (res) => res.CodeBlockComponent as any
+      ),
+    { ssr: false }
+  ),
+  {
+    name: 'Code Block',
+    defaultStyles: {
+      paddingLeft: '20px',
+      borderRadius: '5px',
+      overflow: 'clip',
+    },
+    inputs: [
+      {
+        name: 'code',
+        type: 'longText',
+        defaultValue: 'const incr = num => num + 1',
+      },
+      {
+        name: 'language',
+        type: 'string',
+        defaultValue: 'javascript',
+      },
+      {
+        name: 'dark',
+        type: 'boolean',
+        defaultValue: false,
+      },
+    ],
+  }
+);
+
+Builder.registerComponent(
   dynamic(() =>
     import('@/components/global/icons/AJPrimary').then((res) => res as any)
   ),
   {
     name: 'AJPrimary',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/AJ_Primary.png',
     inputs: [
       {
         name: 'className',
@@ -40,7 +75,7 @@ Builder.registerComponent(
   {
     name: 'AJAlt',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/AJ_Primary.png',
     inputs: [
       {
         name: 'className',
@@ -57,7 +92,7 @@ Builder.registerComponent(
   {
     name: 'AJHeartAlt',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/AJ_Heart_Alt.png',
     inputs: [
       {
         name: 'className',
@@ -74,7 +109,7 @@ Builder.registerComponent(
   {
     name: 'AJHeadphones',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/AJHeadphones_Primary.png',
     inputs: [
       {
         name: 'className',
@@ -91,7 +126,7 @@ Builder.registerComponent(
   {
     name: 'KCAlt',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/KC_Alt.png',
     inputs: [
       {
         name: 'className',
@@ -111,7 +146,7 @@ Builder.registerComponent(
     name: 'BreakBarLeft',
     canHaveChildren: true,
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/breaker_bar_left.png',
   }
 );
 
@@ -124,7 +159,7 @@ Builder.registerComponent(
   {
     name: 'ReactLogo',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/reactjs.png',
     inputs: [
       {
         name: 'className',
@@ -143,7 +178,7 @@ Builder.registerComponent(
   {
     name: 'AngularLogo',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/angular.png',
     inputs: [
       {
         name: 'className',
@@ -162,7 +197,7 @@ Builder.registerComponent(
   {
     name: 'VueLogo',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/vuejs.png',
     inputs: [
       {
         name: 'className',
@@ -181,7 +216,7 @@ Builder.registerComponent(
   {
     name: 'SvelteLogo',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/svelte.png',
     inputs: [
       {
         name: 'className',
@@ -200,7 +235,7 @@ Builder.registerComponent(
   {
     name: 'CssLogo',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/CSS-Logo.png',
     inputs: [
       {
         name: 'className',
@@ -219,7 +254,7 @@ Builder.registerComponent(
   {
     name: 'HtmlLogo',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/HTML_Logo.png',
     inputs: [
       {
         name: 'className',
@@ -236,7 +271,7 @@ Builder.registerComponent(
   {
     name: 'Courses',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/courses.png',
   }
 );
 
@@ -247,7 +282,7 @@ Builder.registerComponent(
   {
     name: 'Tutorials',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/tutorials.png',
   }
 );
 
@@ -258,7 +293,7 @@ Builder.registerComponent(
   {
     name: 'Podcasts',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/podcasts.png',
   }
 );
 
@@ -269,7 +304,7 @@ Builder.registerComponent(
   {
     name: 'Blog',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/blog.png',
   }
 );
 
@@ -280,7 +315,7 @@ Builder.registerComponent(
   {
     name: 'Community',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/community.png',
   }
 );
 
@@ -289,7 +324,7 @@ Builder.registerComponent(
   {
     name: 'NavLinks',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/NavLinks.png',
   }
 );
 
@@ -300,7 +335,7 @@ Builder.registerComponent(
   {
     name: 'Toggle',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/toggle.png',
   }
 );
 
@@ -311,7 +346,7 @@ Builder.registerComponent(
   {
     name: 'SearchModal',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/search.png',
   }
 );
 
@@ -322,7 +357,7 @@ Builder.registerComponent(
   {
     name: 'AvatarMenuWrapper',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/avatar.png',
   }
 );
 
@@ -331,7 +366,7 @@ Builder.registerComponent(
   {
     name: 'Footer',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/Footer.png',
     inputs: [
       {
         name: 'pageLinks',
@@ -362,7 +397,7 @@ Builder.registerComponent(
   {
     name: 'PostsCards',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/business-card.png',
     inputs: [
       {
         name: 'posts',
@@ -379,7 +414,7 @@ Builder.registerComponent(
   {
     name: 'RecentPostsList',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/list.png',
     inputs: [
       {
         name: 'posts',
@@ -484,7 +519,7 @@ Builder.registerComponent(
   {
     name: 'SocialShare',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/social_share.png',
     inputs: [
       {
         name: 'href',
@@ -507,7 +542,7 @@ Builder.registerComponent(
   {
     name: 'SponsorCards',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/Sponsor_Cards.png',
     inputs: [
       {
         name: 'sponsors',
@@ -545,7 +580,7 @@ Builder.registerComponent(
   {
     name: 'Authors',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/Authors.png',
     inputs: [
       {
         name: 'authors',
@@ -562,7 +597,7 @@ Builder.registerComponent(
   {
     name: 'CourseSections',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/Course_Sections.png',
     inputs: [
       {
         name: 'courseData',
@@ -579,7 +614,7 @@ Builder.registerComponent(
   {
     name: 'PostMediaLocked',
     image:
-      'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fd8328e4e1409459fbad3b0cdd1ae950b?quality=60&width=200&height=200',
+      'https://media.codingcat.dev/image/upload/f_auto,q_auto,w_200/main-codingcatdev-photo/builder_io_icons/Locked_Page.png',
   }
 );
 
