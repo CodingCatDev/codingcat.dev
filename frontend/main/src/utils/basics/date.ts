@@ -1,18 +1,12 @@
-import { Timestamp } from 'firebase/firestore';
-
 export const millisecondToDate = (
-  mill: Timestamp | number | undefined
-): Date => {
-  if (typeof mill === 'number') {
-    return new Date(mill);
-  } else {
-    return new Date();
-  }
+  mill: string | number | Date 
+): string => {
+  const date = new Date(mill)
+  return new Intl.DateTimeFormat('en-GB', {dateStyle:'full'}).format(date);
 };
 
 export const millisecondToUSFormat = (
-  mill: Timestamp | number | undefined
+  mill: string | number | Date
 ): string => {
-  const date = millisecondToDate(mill);
-  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  return millisecondToDate(mill);
 };
