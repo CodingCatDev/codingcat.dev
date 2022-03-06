@@ -17,6 +17,7 @@ import { UserInfoExtended } from '@/models/user.model';
 import PostMediaLocked from '@/components/PostMediaLocked';
 import AJ404 from '@/components/global/icons/AJ404';
 import Link from 'next/link';
+import Error from 'next/error';
 
 function getRecent(type: ModelType, preview?: boolean) {
   return getAllBuilder({
@@ -143,6 +144,7 @@ export async function getStaticProps({
       courseData: cleanedCourseData(courseData),
     },
     revalidate: 300,
+    notFound: modelData ? true : false,
   };
 }
 
