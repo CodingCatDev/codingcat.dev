@@ -213,7 +213,11 @@ export default function Page({
   // console.log('modelData', modelData);
 
   if (router.isFallback) {
-    return <h1>Fetching Purrfect Page...</h1>;
+    return (
+      <main className="flex items-center justify-center w-screen h-screen dark:bg-basics-700">
+        <h1 className="m-2 text-basics-50">Fetching Purrfect Page...</h1>;
+      </main>
+    );
   }
 
   const UserWrapper = ({
