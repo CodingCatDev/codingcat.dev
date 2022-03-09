@@ -117,7 +117,7 @@ export async function getStaticProps({
               ?.filter((l: any) => l?.lesson?.value?.published === 'published')
               .map((l: any) => {
                 return {
-                  title: l?.lesson?.value?.data?.title || null,
+                  title: l?.lesson?.value?.data?.page?.title || null,
                   url: l?.lesson?.value?.data?.url || null,
                 };
               }),
