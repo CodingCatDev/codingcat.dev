@@ -45,7 +45,7 @@ export async function getStaticProps({
       footer: footer?.[0] ? footer[0] : null,
       list: list ? list : null,
     },
-    revalidate: 3600,
+    revalidate: 300,
   };
 }
 
