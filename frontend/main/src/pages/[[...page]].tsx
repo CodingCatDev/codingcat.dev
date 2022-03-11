@@ -146,6 +146,7 @@ export async function getStaticProps({
         podcast: podcast,
       },
       courseData: cleanedCourseData(courseData),
+      preview,
     },
     revalidate: 300,
     notFound: modelData ? false : true,
@@ -205,6 +206,7 @@ export default function Page({
   footer,
   recentPosts,
   courseData,
+  preview,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const [isLive, setIsLive] = useState(false);
@@ -390,6 +392,19 @@ export default function Page({
           ],
         }}
       ></NextSeo>
+      <div
+        style={{
+          color: 'white',
+          background: 'red',
+          width: '100vw',
+          textAlign: 'center',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+      >
+        Preview Mode is on!
+      </div>
       <Layout header={header} footer={footer}>
         {getLayout()}
       </Layout>
