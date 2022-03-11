@@ -146,7 +146,7 @@ export async function getStaticProps({
         podcast: podcast,
       },
       courseData: cleanedCourseData(courseData),
-      preview,
+      preview: preview ? preview : null,
     },
     revalidate: 300,
     notFound: modelData ? false : true,
