@@ -76,6 +76,9 @@ export async function getStaticProps({
             urlPath: `/${lesson}/${lessonPath}`,
           },
         })
+      : // Lesson needs to remain locked so make sure to 404
+      type == ModelType.lesson && !preview
+      ? null
       : getAllBuilder({
           preview,
           model: slug ? type : 'page',
