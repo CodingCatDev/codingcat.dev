@@ -392,19 +392,21 @@ export default function Page({
           ],
         }}
       ></NextSeo>
-      <div
-        style={{
-          color: 'white',
-          background: 'red',
-          width: '100vw',
-          textAlign: 'center',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-        }}
-      >
-        Preview Mode is on!
-      </div>
+      {preview && (
+        <div
+          style={{
+            color: 'white',
+            background: 'red',
+            width: '100vw',
+            textAlign: 'center',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        >
+          Preview Mode is on!
+        </div>
+      )}
       <Layout header={header} footer={footer}>
         {getLayout()}
       </Layout>

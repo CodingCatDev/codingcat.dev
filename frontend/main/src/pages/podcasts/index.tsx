@@ -1,52 +1,19 @@
 import Layout from '@/layout/Layout';
 import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 
-import { getAllBuilder } from '@/services/builder.server';
 import { NextSeo } from 'next-seo';
-import { CodingCatBuilderContent } from '@/models/builder.model';
-import PostsCards from '@/components/PostsCards';
+import { ModelType } from '@/models/builder.model';
 import { BuilderComponent } from '@builder.io/react';
+import { getPaginated, Pagination } from '@/components/Pagination';
 
 export async function getStaticProps({
   preview,
-}: GetStaticPropsContext<{ page: string[] }>) {
-  const [header, footer, modelData, list] = await Promise.all([
-    getAllBuilder({
-      preview,
-      model: 'header',
-      limit: 1,
-    }),
-    getAllBuilder({
-      preview,
-      model: 'footer',
-      limit: 1,
-    }),
-    getAllBuilder({
-      preview,
-      model: 'page',
-      limit: 1,
-      userAttributes: {
-        urlPath: '/podcasts',
-      },
-    }),
-    getAllBuilder({
-      preview,
-      model: 'podcast',
-      omit: 'data.blocks',
-      limit: 10000,
-    }) as Promise<CodingCatBuilderContent[]>,
-  ]);
-
-  return {
-    props: {
-      modelData: modelData?.[0] ? modelData[0] : null,
-      model: 'page',
-      header: header?.[0] ? header[0] : null,
-      footer: footer?.[0] ? footer[0] : null,
-      list: list ? list : null,
-    },
-    revalidate: 300,
-  };
+}: GetStaticPropsContext<{ pageNumber: string }>) {
+  return getPaginated({
+    preview,
+    baseUrl: '/podcasts',
+    model: ModelType.podcast,
+  });
 }
 
 export default function Blog({
@@ -55,6 +22,9 @@ export default function Blog({
   header,
   footer,
   list,
+  baseUrl,
+  pageNumber,
+  showNext,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
@@ -91,6 +61,12 @@ export default function Blog({
             modelData,
             list,
           }}
+        />
+        <Pagination
+          list={list}
+          baseUrl={baseUrl}
+          pageNumber={pageNumber as number}
+          showNext={showNext}
         />
       </Layout>
     </>

@@ -11,7 +11,7 @@ export default function PostsCards({
   return (
     <>
       {posts && posts.length > 0 ? (
-        <section className="relative grid gap-4 sm:grid-cols-fit sm:gap-10">
+        <section className="relative grid gap-4 my-4 sm:grid-cols-fit sm:gap-10">
           {posts.map((post) => {
             return (
               <div
