@@ -9,10 +9,14 @@ import { ModelType } from '@/models/builder.model';
 export async function getStaticProps({
   preview,
 }: GetStaticPropsContext<{ pageNumber: string }>) {
-  return getPaginated({ preview, baseUrl: '/blog', model: ModelType.post });
+  return getPaginated({
+    preview,
+    baseUrl: '/courses',
+    model: ModelType.course,
+  });
 }
 
-export default function Blog({
+export default function Courses({
   modelData,
   model,
   header,
@@ -25,8 +29,8 @@ export default function Blog({
   return (
     <>
       <NextSeo
-        title="Blog | CodingCatDev"
-        canonical={`https://codingcat.dev/blog`}
+        title="Courses | CodingCatDev"
+        canonical={`https://codingcat.dev/courses`}
       ></NextSeo>
       <Layout header={header} footer={footer}>
         <BuilderComponent

@@ -11,12 +11,12 @@ export async function getStaticProps({
 }: GetStaticPropsContext<{ pageNumber: string }>) {
   return getPaginated({
     preview,
-    baseUrl: '/blog',
+    baseUrl: '/podcasts',
     params,
-    model: ModelType.post,
+    model: ModelType.podcast,
   });
 }
 
 export async function getStaticPaths() {
-  return getPaginatedPaths({ model: ModelType.post });
+  return getPaginatedPaths({ model: ModelType.podcast });
 }

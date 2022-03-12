@@ -22,18 +22,14 @@ export const Pagination = ({
       {list && (pageNumber > 1 || showNext) && (
         <div className="flex items-center justify-center w-full my-4 space-x-2">
           {pageNumber > 1 && (
-            <Link
-              href={`/${baseUrl}${
-                pageNumber < 3 ? '' : `/page/${pageNumber - 1}`
-              }`}
-            >
-              <a className="btn-secondary">‹ Previous page</a>
+            <Link href={`/${baseUrl}/page/${pageNumber - 1}`}>
+              <a className="btn-secondary">‹ Previous</a>
             </Link>
           )}
 
           {showNext && (
             <Link href={`/${baseUrl}/page/${pageNumber + 1}`}>
-              <a className="btn-primary">Next page ›</a>
+              <a className="btn-primary">Next ›</a>
             </Link>
           )}
         </div>
@@ -44,16 +40,17 @@ export const Pagination = ({
 
 interface GetPaginated extends GetStaticPropsContext<{ pageNumber: string }> {
   baseUrl: string;
+  model: ModelType;
 }
 
 export const getPaginated = async ({
   preview,
   baseUrl,
+  model,
   params,
 }: GetPaginated) => {
-  console.log(params);
-  const pageNumber = (params?.pageNumber ? params?.pageNumber : 1) as number;
-  console.log('pageNumber', pageNumber);
+  const pageNumber = params?.pageNumber ? parseInt(params?.pageNumber) : 1;
+  console.log(pageNumber);
   const [header, footer, modelData, list] = await Promise.all([
     getAllBuilder({
       preview,
@@ -75,7 +72,7 @@ export const getPaginated = async ({
     }),
     getAllBuilder({
       preview,
-      model: 'post',
+      model: model,
       omit: 'data.blocks',
       limit: PER_PAGE + 1,
       offset: (pageNumber - 1) * PER_PAGE,

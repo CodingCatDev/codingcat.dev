@@ -1,9 +1,9 @@
 import { GetStaticPropsContext } from 'next';
 import { getPaginated, getPaginatedPaths } from '@/components/Pagination';
-import Blog from '../index';
+import Courses from '../index';
 import { ModelType } from '@/models/builder.model';
 
-export default Blog;
+export default Courses;
 
 export async function getStaticProps({
   preview,
@@ -11,12 +11,12 @@ export async function getStaticProps({
 }: GetStaticPropsContext<{ pageNumber: string }>) {
   return getPaginated({
     preview,
-    baseUrl: '/blog',
+    baseUrl: '/courses',
     params,
-    model: ModelType.post,
+    model: ModelType.course,
   });
 }
 
 export async function getStaticPaths() {
-  return getPaginatedPaths({ model: ModelType.post });
+  return getPaginatedPaths({ model: ModelType.course });
 }

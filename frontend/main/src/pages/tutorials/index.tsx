@@ -2,14 +2,18 @@ import Layout from '@/layout/Layout';
 import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 
 import { NextSeo } from 'next-seo';
+import { ModelType } from '@/models/builder.model';
 import { BuilderComponent } from '@builder.io/react';
 import { getPaginated, Pagination } from '@/components/Pagination';
-import { ModelType } from '@/models/builder.model';
 
 export async function getStaticProps({
   preview,
 }: GetStaticPropsContext<{ pageNumber: string }>) {
-  return getPaginated({ preview, baseUrl: '/blog', model: ModelType.post });
+  return getPaginated({
+    preview,
+    baseUrl: '/tutorials',
+    model: ModelType.tutorial,
+  });
 }
 
 export default function Blog({
@@ -25,8 +29,8 @@ export default function Blog({
   return (
     <>
       <NextSeo
-        title="Blog | CodingCatDev"
-        canonical={`https://codingcat.dev/blog`}
+        title="Tutorials | CodingCatDev"
+        canonical={`https://codingcat.dev/tutorials`}
       ></NextSeo>
       <Layout header={header} footer={footer}>
         <BuilderComponent
