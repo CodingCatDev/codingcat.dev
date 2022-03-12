@@ -4,7 +4,7 @@ import builder from '@builder.io/react';
 import { GetStaticPropsContext } from 'next';
 import Link from 'next/link';
 
-export const PER_PAGE = 4;
+export const PER_PAGE = 20;
 
 export const Pagination = ({
   pageNumber,
@@ -42,7 +42,7 @@ export const Pagination = ({
   );
 };
 
-interface GetPaginated extends GetStaticPropsContext<{ pageNumber: string[] }> {
+interface GetPaginated extends GetStaticPropsContext<{ pageNumber: string }> {
   baseUrl: string;
 }
 
@@ -51,8 +51,9 @@ export const getPaginated = async ({
   baseUrl,
   params,
 }: GetPaginated) => {
+  console.log(params);
   const pageNumber = (params?.pageNumber ? params?.pageNumber : 1) as number;
-
+  console.log('pageNumber', pageNumber);
   const [header, footer, modelData, list] = await Promise.all([
     getAllBuilder({
       preview,
@@ -103,6 +104,7 @@ export const getPaginatedPaths = async ({ model }: { model: ModelType }) => {
   const paths = sliceIntoChunks(pages, PER_PAGE).map((_chunk, index) => ({
     params: { pageNumber: `${index + 1}` },
   }));
+  console.log('paths', paths);
   return {
     paths,
     fallback: 'blocking',

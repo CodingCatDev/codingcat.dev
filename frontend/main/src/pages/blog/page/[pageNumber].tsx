@@ -7,8 +7,9 @@ export default Blog;
 
 export async function getStaticProps({
   preview,
+  params,
 }: GetStaticPropsContext<{ pageNumber: string }>) {
-  return getPaginated({ preview, baseUrl: '/blog' });
+  return getPaginated({ preview, baseUrl: '/blog', params });
 }
 
 export async function getStaticPaths() {
