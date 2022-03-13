@@ -11,6 +11,7 @@ import { Builder, withChildren } from '@builder.io/react';
 import Link from 'next/link';
 import Image, { ImageProps } from 'next/image';
 import dynamic from 'next/dynamic';
+import { Cloudinary } from '@/models/media.model';
 
 /*
  * Builder Drag and Drop Components
@@ -638,20 +639,31 @@ Builder.registerComponent(withChildren(ccdLink), {
   ],
 });
 
+interface CCDImage extends ImageProps {
+  cloudinaryImage: Cloudinary;
+}
+
 const ccdImage = ({
   src,
+  cloudinaryImage,
   layout,
   height,
   width,
   alt,
   className,
-}: ImageProps) => {
+}: CCDImage) => {
   if (!layout) {
     return <></>;
   }
   return ['fixed', 'responsive'].includes(layout) ? (
     <Image
-      src={src}
+      src={
+        src
+          ? src
+          : cloudinaryImage?.public_id
+          ? cloudinaryImage.public_id
+          : `main-codingcatdev-photo/builder_io_icons/AJ_Primary`
+      }
       alt={alt}
       layout={layout}
       className={className}
@@ -659,7 +671,18 @@ const ccdImage = ({
       width={width}
     />
   ) : (
-    <Image src={src} alt={alt} layout={layout} className={className} />
+    <Image
+      src={
+        src
+          ? src
+          : cloudinaryImage?.public_id
+          ? cloudinaryImage.public_id
+          : `main-codingcatdev-photo/builder_io_icons/AJ_Primary`
+      }
+      alt={alt}
+      layout={layout}
+      className={className}
+    />
   );
 };
 
@@ -669,10 +692,9 @@ Builder.registerComponent(ccdImage, {
     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2Fc3c7040ad97b4ffeb0dbe3c85938e531?quality=60&width=200&height=200',
   inputs: [
     {
-      name: 'src',
-      type: 'text',
+      name: 'cloudinaryImage',
+      type: 'cloudinaryImageEditor',
       required: true,
-      defaultValue: 'main-codingcatdev-photo/mswenj64oyjogshn13px',
     },
     {
       name: 'layout',
@@ -697,8 +719,7 @@ Builder.registerComponent(ccdImage, {
     {
       name: 'className',
       type: 'text',
-      defaultValue:
-        'w-12 border-2 rounded-full border-primary-50 dark:border-primary-50',
+      defaultValue: 'w-12',
     },
   ],
 });
