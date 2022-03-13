@@ -719,7 +719,7 @@ Builder.registerComponent(ccdImage, {
     {
       name: 'className',
       type: 'text',
-      defaultValue: 'w-12',
+      defaultValue: 'rounded-xl',
     },
   ],
 });
