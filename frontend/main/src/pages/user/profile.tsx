@@ -28,7 +28,7 @@ export async function getStaticProps({
       model: 'page',
       limit: 1,
       userAttributes: {
-        urlPath: '/blog',
+        urlPath: '/user/profile',
       },
     }),
     getActiveMemberProducts(),
@@ -46,7 +46,7 @@ export async function getStaticProps({
   };
 }
 
-export default function Blog({
+export default function UserProfile({
   modelData,
   model,
   header,
@@ -56,8 +56,28 @@ export default function Blog({
   return (
     <>
       <NextSeo
-        title="Profile | CodingCatDev"
+        title={modelData?.title}
+        description={modelData?.excerpt}
         canonical={`https://codingcat.dev/user/profile`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: 'https://codingcat.dev/user/profile',
+          title: 'User Profile',
+          description: 'User Profile',
+          site_name: 'CodingCat.dev User Profile',
+          images: [
+            {
+              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
+              width: 1200,
+              height: 630,
+              alt: modelData?.title,
+            },
+            {
+              url: `https://media.codingcat.dev/image/upload/${modelData?.coverPhoto?.public_id}`,
+            },
+          ],
+        }}
       ></NextSeo>
       <Layout header={header} footer={footer}>
         {products ? (

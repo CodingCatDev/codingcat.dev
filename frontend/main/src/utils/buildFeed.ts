@@ -2,6 +2,7 @@ import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 import { Feed } from 'feed';
 import { Timestamp } from 'firebase/firestore';
 import { builder } from '@builder.io/react';
+import { getAllBuilder } from '@/services/builder.server';
 
 const site = 'https://codingcat.dev';
 
@@ -50,24 +51,10 @@ export const buildFeed = ({
 };
 
 export const build = async ({ type }: { type: ModelType }) => {
-  const posts = (await builder.getAll(type, {
+  const posts = (await getAllBuilder({
     omit: 'data.blocks',
-    includeRefs: true,
-    limit: 3,
-    options: {
-      noTargeting: true,
-    },
-    query: {
-      $and: [
-        { startDate: { $lte: Date.now() } },
-        {
-          $or: [
-            { endDate: { $exists: false } },
-            { endDate: { $gte: Date.now() } },
-          ],
-        },
-      ],
-    },
+    model: type,
   })) as CodingCatBuilderContent[];
+
   return buildFeed({ posts, type });
 };
