@@ -16,7 +16,7 @@ export async function getStaticProps({
   });
 }
 
-export default function Blog({
+export default function Podcasts({
   modelData,
   model,
   header,
