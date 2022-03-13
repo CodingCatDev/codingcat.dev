@@ -46,7 +46,7 @@ Builder.registerComponent(
       {
         name: 'dark',
         type: 'boolean',
-        defaultValue: false,
+        defaultValue: true,
       },
     ],
   }
