@@ -53,8 +53,10 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/AJPrimary').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/AJPrimary').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'AJPrimary',
@@ -70,8 +72,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/AJAlt').then((res) => res as any)
+  dynamic(
+    () => import('@/components/global/icons/AJAlt').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'AJAlt',
@@ -87,8 +90,10 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/AJHeartAlt').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/AJHeartAlt').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'AJHeartAlt',
@@ -104,8 +109,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/AJHeadphones').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/AJHeadphones').then(
+        (res) => res as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'AJHeadphones',
@@ -121,8 +130,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/KCAlt').then((res) => res as any)
+  dynamic(
+    () => import('@/components/global/icons/KCAlt').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'KCAlt',
@@ -139,8 +149,9 @@ Builder.registerComponent(
 
 Builder.registerComponent(
   withChildren(
-    dynamic(() =>
-      import('@/components/home/BreakBarLeft').then((res) => res as any)
+    dynamic(
+      () => import('@/components/home/BreakBarLeft').then((res) => res as any),
+      { ssr: false }
     )
   ),
   {
@@ -152,10 +163,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/VendorLogos').then(
-      (res) => res.ReactLogo as any
-    )
+  dynamic(
+    () =>
+      import('@/components/global/icons/VendorLogos').then(
+        (res) => res.ReactLogo as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'ReactLogo',
@@ -171,10 +184,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/VendorLogos').then(
-      (res) => res.AngularLogo as any
-    )
+  dynamic(
+    () =>
+      import('@/components/global/icons/VendorLogos').then(
+        (res) => res.AngularLogo as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'AngularLogo',
@@ -190,10 +205,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/VendorLogos').then(
-      (res) => res.VueLogo as any
-    )
+  dynamic(
+    () =>
+      import('@/components/global/icons/VendorLogos').then(
+        (res) => res.VueLogo as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'VueLogo',
@@ -209,10 +226,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/VendorLogos').then(
-      (res) => res.SvelteLogo as any
-    )
+  dynamic(
+    () =>
+      import('@/components/global/icons/VendorLogos').then(
+        (res) => res.SvelteLogo as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'SvelteLogo',
@@ -228,10 +247,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/VendorLogos').then(
-      (res) => res.CssLogo as any
-    )
+  dynamic(
+    () =>
+      import('@/components/global/icons/VendorLogos').then(
+        (res) => res.CssLogo as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'CssLogo',
@@ -247,10 +268,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/VendorLogos').then(
-      (res) => res.HtmlLogo as any
-    )
+  dynamic(
+    () =>
+      import('@/components/global/icons/VendorLogos').then(
+        (res) => res.HtmlLogo as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'HtmlLogo',
@@ -266,8 +289,10 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/nav/Courses').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/nav/Courses').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'Courses',
@@ -277,8 +302,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/nav/Tutorials').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/nav/Tutorials').then(
+        (res) => res as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'Tutorials',
@@ -288,8 +317,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/nav/Podcasts').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/nav/Podcasts').then(
+        (res) => res as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'Podcasts',
@@ -299,8 +332,10 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/nav/Blog').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/nav/Blog').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'Blog',
@@ -310,8 +345,12 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/nav/Community').then((res) => res as any)
+  dynamic(
+    () =>
+      import('@/components/global/icons/nav/Community').then(
+        (res) => res as any
+      ),
+    { ssr: false }
   ),
   {
     name: 'Community',
@@ -321,7 +360,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() => import('@/layout/NavLinks').then((res) => res as any)),
+  dynamic(() => import('@/layout/NavLinks').then((res) => res as any), {
+    ssr: false,
+  }),
   {
     name: 'NavLinks',
     image:
@@ -330,8 +371,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/global/icons/Toggle').then((res) => res as any)
+  dynamic(
+    () => import('@/components/global/icons/Toggle').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'Toggle',
@@ -341,8 +383,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/algolia/SearchModal').then((res) => res as any)
+  dynamic(
+    () => import('@/components/algolia/SearchModal').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'SearchModal',
@@ -352,8 +395,10 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/layout/AppTopbar').then((res) => res.AvatarMenuWrapper as any)
+  dynamic(
+    () =>
+      import('@/layout/AppTopbar').then((res) => res.AvatarMenuWrapper as any),
+    { ssr: false }
   ),
   {
     name: 'AvatarMenuWrapper',
@@ -363,7 +408,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() => import('@/layout/Footer').then((res) => res as any)),
+  dynamic(() => import('@/layout/Footer').then((res) => res as any), {
+    ssr: false,
+  }),
   {
     name: 'Footer',
     image:
@@ -394,7 +441,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() => import('@/components/PostsCards').then((res) => res as any)),
+  dynamic(() => import('@/components/PostsCards').then((res) => res as any), {
+    ssr: false,
+  }),
   {
     name: 'PostsCards',
     image:
@@ -409,8 +458,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/RecentPostsList').then((res) => res as any)
+  dynamic(
+    () => import('@/components/RecentPostsList').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'RecentPostsList',
@@ -514,8 +564,9 @@ Builder.registerComponent(
 // });
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/common/SocialShare').then((res) => res as any)
+  dynamic(
+    () => import('@/components/common/SocialShare').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'SocialShare',
@@ -539,7 +590,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() => import('@/components/SponsorCards').then((res) => res as any)),
+  dynamic(() => import('@/components/SponsorCards').then((res) => res as any), {
+    ssr: false,
+  }),
   {
     name: 'SponsorCards',
     image:
@@ -575,8 +628,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/authors/Authors').then((res) => res as any)
+  dynamic(
+    () => import('@/components/authors/Authors').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'Authors',
@@ -592,8 +646,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/CourseSections').then((res) => res as any)
+  dynamic(
+    () => import('@/components/CourseSections').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'CourseSections',
@@ -609,8 +664,9 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
-  dynamic(() =>
-    import('@/components/PostMediaLocked').then((res) => res as any)
+  dynamic(
+    () => import('@/components/PostMediaLocked').then((res) => res as any),
+    { ssr: false }
   ),
   {
     name: 'PostMediaLocked',

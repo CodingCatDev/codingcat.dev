@@ -1,6 +1,5 @@
 import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 import { getAllBuilder } from '@/services/builder.server';
-import builder from '@builder.io/react';
 import { GetStaticPropsContext } from 'next';
 import Link from 'next/link';
 

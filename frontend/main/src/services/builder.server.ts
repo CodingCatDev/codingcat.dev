@@ -24,10 +24,12 @@ export const getAllBuilder = async ({
 }) => {
   const response = await fetch(
     `https://builder.io/api/v2/content/${model}?apiKey=${process.env.NEXT_PUBLIC_BUILDER_PUBLIC_API_KEY}` +
-      `&noCache=true&cachebust=true&limit=${limit}` +
+      `&limit=${limit}` +
       `&query.$and=%5B%7B%27%24or%27%3A%5B%7B%27startDate%27%3A%7B%27%24eq%27%3A%27null%27%7D%7D%2C%7B%27startDate%27%3A%7B%27%24lte%27%3A${Date.now()}` +
       `%7D%7D%5D%7D%2C%7B%27%24or%27%3A%5B%7B%27endDate%27%3A%7B%27%24eq%27%3A%27null%27%7D%7D%2C%7B%27endDate%27%3A%7B%27%24gte%27%3A${Date.now()}` +
       `%7D%7D%5D%7D%5D` +
+      // `&noCache=true&cachebust=true` +
+      `&limit=${limit}` +
       (offset ? `&offset=${offset}` : '') +
       (preview ? `&includeUnpublished=${preview}` : '') +
       (published ? `&query.published=${published}` : '') +

@@ -163,26 +163,10 @@ export async function getStaticPaths() {
     ModelType.course,
     ModelType.authors,
   ]) {
-    const pages = await builder.getAll(postType, {
+    const pages = (await getAllBuilder({
+      model: postType,
       fields: `data.url`,
-      options: { noTargeting: true },
-      query: {
-        $and: [
-          {
-            $or: [
-              { startDate: { $exists: false } },
-              { startDate: { $lte: Date.now() } },
-            ],
-          },
-          {
-            $or: [
-              { endDate: { $exists: false } },
-              { endDate: { $gte: Date.now() } },
-            ],
-          },
-        ],
-      },
-    });
+    })) as CodingCatBuilderContent[];
     pages
       .filter(
         (page) =>

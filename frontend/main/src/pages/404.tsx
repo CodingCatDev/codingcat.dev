@@ -3,16 +3,26 @@ import Link from 'next/link';
 import AJ404 from '@/components/global/icons/AJ404';
 
 import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
-import builder from '@builder.io/react';
 import Layout from '@/layout/Layout';
+import { getAllBuilder } from '@/services/builder.server';
 
 export async function getStaticProps({
   params,
+  preview,
 }: GetStaticPropsContext<{ page: string[] }>) {
   console.log(JSON.stringify(params));
+
   const [header, footer] = await Promise.all([
-    builder.get('header').promise(),
-    builder.get('footer').promise(),
+    getAllBuilder({
+      preview,
+      model: 'header',
+      limit: 1,
+    }),
+    getAllBuilder({
+      preview,
+      model: 'footer',
+      limit: 1,
+    }),
   ]);
 
   return {
