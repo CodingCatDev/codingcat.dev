@@ -4,24 +4,22 @@ import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 
 import { builder } from '@builder.io/react';
-import { config as builderConfig } from '@/config/builder';
-import { useEffect, useState } from 'react';
-import '@/components/builder/registerComponent';
-
-builder.init(builderConfig.publicApiKey);
+import { ComponentType, useEffect, useState } from 'react';
+import registerComponent from '@/components/builder/registerComponent';
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const [isBuilder, setIsBuilder] = useState(false);
+  const [res, setRes] = useState<ComponentType<{}> | undefined>(undefined);
   useEffect(() => {
     if (builder.editingModel) {
       console.log('Adding Builder.io components');
       setIsBuilder(true);
     }
+    setRes(registerComponent());
   }, []);
 
   return (
     <>
-      {/* {isBuilder && <RegisterComponent />} */}
       <DefaultSeo
         title="CodingCatDev | Purrfect Web Tutorials"
         description="Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!"
@@ -55,6 +53,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           cardType: 'summary_large_image',
         }}
       />
+
       <Component {...pageProps} />
     </>
   );
