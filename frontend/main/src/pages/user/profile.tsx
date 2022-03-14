@@ -30,6 +30,7 @@ export async function getStaticProps({
       userAttributes: {
         urlPath: '/user/profile',
       },
+      startEnd: true,
     }),
     getActiveMemberProducts(),
   ]);

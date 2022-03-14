@@ -25,6 +25,7 @@ function getRecent(type: ModelType, preview?: boolean) {
     model: type,
     omit: 'data.blocks',
     limit: 3,
+    startEnd: true,
   }) as Promise<CodingCatBuilderContent[]>;
 }
 
@@ -75,6 +76,7 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: `/${lesson}/${lessonPath}`,
           },
+          startEnd: true,
         })
       : // Lesson needs to remain locked so make sure to 404
       type == ModelType.lesson && !preview
@@ -86,6 +88,7 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
+          startEnd: true,
         }),
     type == ModelType.course
       ? getAllBuilder({
@@ -96,6 +99,7 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: `/${type}/${slug}`,
           },
+          startEnd: true,
         })
       : null,
     getRecent(ModelType.course, preview),
@@ -166,6 +170,7 @@ export async function getStaticPaths() {
     const pages = (await getAllBuilder({
       model: postType,
       fields: `data.url`,
+      startEnd: true,
     })) as CodingCatBuilderContent[];
     pages
       .filter(

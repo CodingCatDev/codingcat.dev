@@ -54,6 +54,7 @@ export const build = async ({ type }: { type: ModelType }) => {
   const posts = (await getAllBuilder({
     omit: 'data.blocks',
     model: type,
+    startEnd: true,
   })) as CodingCatBuilderContent[];
 
   return buildFeed({ posts, type });

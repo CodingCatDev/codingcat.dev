@@ -68,6 +68,7 @@ export const getPaginated = async ({
       userAttributes: {
         urlPath: baseUrl,
       },
+      startEnd: true,
     }),
     getAllBuilder({
       preview,
@@ -75,6 +76,7 @@ export const getPaginated = async ({
       omit: 'data.blocks',
       limit: PER_PAGE + 1,
       offset: (pageNumber - 1) * PER_PAGE,
+      startEnd: true,
     }) as Promise<CodingCatBuilderContent[]>,
   ]);
   return {
@@ -96,6 +98,7 @@ export const getPaginatedPaths = async ({ model }: { model: ModelType }) => {
     model,
     fields: 'data.url',
     limit: 10000,
+    startEnd: true,
   })) as CodingCatBuilderContent[];
   const paths = sliceIntoChunks(pages, PER_PAGE).map((_chunk, index) => ({
     params: { pageNumber: `${index + 1}` },
