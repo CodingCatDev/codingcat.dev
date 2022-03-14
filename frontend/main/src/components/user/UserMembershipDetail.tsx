@@ -1,5 +1,4 @@
 import SettingsLinks from '@/components/settings/SettingsLinks';
-import FirebaseSignin from '@/components/FirebaseSignin';
 
 import { useFunctions, useSigninCheck } from 'reactfire';
 import { useState } from 'react';
@@ -23,14 +22,9 @@ export default function UserMembership(): JSX.Element {
 
   return (
     <>
-      {signInCheckResult?.signedIn === true && signInCheckResult.user ? (
-        <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
-          <section>
-            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
-              Settings
-            </h2>
-            <SettingsLinks />
-          </section>
+      {signInCheckResult?.signedIn === true && signInCheckResult.user && (
+        <section className="grid self-start justify-center gap-10 lg:grid-cols-settings">
+          <section></section>
           <div className="grid">
             <div>
               <p className="text-4xl">CodingCat.dev uses the Stripe Portal.</p>
@@ -50,8 +44,6 @@ export default function UserMembership(): JSX.Element {
             </div>
           </div>
         </section>
-      ) : (
-        <FirebaseSignin />
       )}
     </>
   );
