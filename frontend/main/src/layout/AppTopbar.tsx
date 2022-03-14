@@ -1,13 +1,12 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
-import Toggle from '@/components/global/icons/Toggle';
-
 import OutsideClick from '@/components/OutsideClick';
-import SearchModal from '@/components/algolia/SearchModal';
 import AvatarMenu from '@/components/user/AvatarMenu';
-import { BuilderComponent } from '@builder.io/react';
+import dynamic from 'next/dynamic';
+const CodingCatBuilder = dynamic(
+  () =>
+    import('@/components/builder/CodingCatBuilder').then((res) => res as any),
+  { ssr: false }
+) as any;
 
 export const AppTopbar = (props: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
@@ -18,7 +17,7 @@ export const AppTopbar = (props: {
 
   return (
     <>
-      <BuilderComponent
+      <CodingCatBuilder
         model="header"
         content={header}
         context={{

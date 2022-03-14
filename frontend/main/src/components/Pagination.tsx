@@ -21,13 +21,13 @@ export const Pagination = ({
       {list && (pageNumber > 1 || showNext) && (
         <div className="flex items-center justify-center w-full my-4 space-x-2">
           {pageNumber > 1 && (
-            <Link href={`/${baseUrl}/page/${pageNumber - 1}`}>
+            <Link href={`${baseUrl}/page/${pageNumber - 1}`}>
               <a className="btn-secondary">‹ Previous</a>
             </Link>
           )}
 
           {showNext && (
-            <Link href={`/${baseUrl}/page/${pageNumber + 1}`}>
+            <Link href={`${baseUrl}/page/${pageNumber + 1}`}>
               <a className="btn-primary">Next ›</a>
             </Link>
           )}

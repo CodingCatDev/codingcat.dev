@@ -3,21 +3,7 @@ import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';
 
-import { builder } from '@builder.io/react';
-import { ComponentType, useEffect, useState } from 'react';
-import registerComponent from '@/components/builder/registerComponent';
-
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
-  const [isBuilder, setIsBuilder] = useState(false);
-  const [res, setRes] = useState<ComponentType<{}> | undefined>(undefined);
-  useEffect(() => {
-    if (builder.editingModel) {
-      console.log('Adding Builder.io components');
-      setIsBuilder(true);
-    }
-    setRes(registerComponent());
-  }, []);
-
   return (
     <>
       <DefaultSeo

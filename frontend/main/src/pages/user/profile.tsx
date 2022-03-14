@@ -3,9 +3,6 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 
 import { getAllBuilder } from '@/services/builder.server';
 import { NextSeo } from 'next-seo';
-import { CodingCatBuilderContent } from '@/models/builder.model';
-import PostsCards from '@/components/PostsCards';
-import { BuilderComponent } from '@builder.io/react';
 import { getActiveMemberProducts } from '@/services/firebase.server';
 import Profile from '@/components/user/Profile';
 

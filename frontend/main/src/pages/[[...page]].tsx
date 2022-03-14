@@ -1,6 +1,6 @@
 import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
-import { BuilderComponent, Builder, builder } from '@builder.io/react';
+import { Builder } from '@builder.io/react';
 import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
@@ -17,7 +17,13 @@ import { UserInfoExtended } from '@/models/user.model';
 import PostMediaLocked from '@/components/PostMediaLocked';
 import AJ404 from '@/components/global/icons/AJ404';
 import Link from 'next/link';
-import Error from 'next/error';
+
+import dynamic from 'next/dynamic';
+const CodingCatBuilder = dynamic(
+  () =>
+    import('@/components/builder/CodingCatBuilder').then((res) => res as any),
+  { ssr: false }
+) as any;
 
 function getRecent(type: ModelType, preview?: boolean) {
   return getAllBuilder({
@@ -257,7 +263,7 @@ export default function Page({
     if (member || team) {
       return (
         <>
-          <BuilderComponent
+          <CodingCatBuilder
             options={{ includeRefs: true }}
             model={model}
             content={modelData}
@@ -290,7 +296,7 @@ export default function Page({
   }) => {
     return (
       <>
-        <BuilderComponent
+        <CodingCatBuilder
           options={{ includeRefs: true }}
           model={model}
           content={modelData}
