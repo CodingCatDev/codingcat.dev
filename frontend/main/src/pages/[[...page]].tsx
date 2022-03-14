@@ -1,6 +1,5 @@
 import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
-import { Builder } from '@builder.io/react';
 import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
@@ -204,14 +203,6 @@ export default function Page({
   preview,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
-  const [isLive, setIsLive] = useState(false);
-  useEffect(() => {
-    setIsLive(!Builder.isEditing && !Builder.isPreviewing);
-  }, []);
-
-  // console.log('courseData', courseData);
-  // console.log('modelData', modelData);
-
   if (router.isFallback) {
     return (
       <main className="flex items-center justify-center w-screen h-screen dark:bg-basics-700">
@@ -312,7 +303,7 @@ export default function Page({
 
   const getLayout = () => {
     // 404
-    if (!modelData && isLive) {
+    if (!modelData) {
       return (
         <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
           <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
@@ -336,11 +327,7 @@ export default function Page({
     //   return <Profile products={products} />;
     // }
     //Lesson
-    if (
-      lessonPath &&
-      isLive &&
-      courseData?.data?.accessSettings?.accessMode != 'free'
-    ) {
+    if (lessonPath && courseData?.data?.accessSettings?.accessMode != 'free') {
       return (
         <UserWrapper
           modelData={modelData}

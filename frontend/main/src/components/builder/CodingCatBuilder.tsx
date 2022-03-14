@@ -1,14 +1,6 @@
-import builder, {
-  Builder,
-  BuilderComponent,
-  withChildren,
-} from '@builder.io/react';
 import { config } from '@/config/builder';
 
-import {
-  BuilderComponentProps,
-  BuilderComponentState,
-} from '@builder.io/react/dist/types/src/components/builder-component.component';
+import { BuilderComponentProps } from '@builder.io/react/dist/types/src/components/builder-component.component';
 
 // import Facebook from '@/components/global/icons/socials/Facebook';
 // import GitHub from '@/components/global/icons/socials/GitHub';
@@ -23,6 +15,12 @@ import Link from 'next/link';
 import Image, { ImageProps } from 'next/image';
 import dynamic from 'next/dynamic';
 import { Cloudinary } from '@/models/media.model';
+
+import builder, {
+  Builder,
+  BuilderComponent,
+  withChildren,
+} from '@builder.io/react';
 
 const CodingCatBuilder = (props: BuilderComponentProps) => {
   builder.init(config.publicApiKey);

@@ -1,7 +1,5 @@
 import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 import { Feed } from 'feed';
-import { Timestamp } from 'firebase/firestore';
-import { builder } from '@builder.io/react';
 import { getAllBuilder } from '@/services/builder.server';
 
 const site = 'https://codingcat.dev';
@@ -28,7 +26,7 @@ export const buildFeed = ({
     },
     author: {
       name: 'Alex Patterson',
-      email: 'alex@builder.io',
+      email: 'alex@codingcat.dev',
       link: `${site}`,
     },
   });
