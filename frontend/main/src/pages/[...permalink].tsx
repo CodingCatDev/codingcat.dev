@@ -282,7 +282,7 @@ export default function PostPage({
               alt: post.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/${post.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png/${post.coverPhoto?.public_id}`,
             },
           ],
         }}
