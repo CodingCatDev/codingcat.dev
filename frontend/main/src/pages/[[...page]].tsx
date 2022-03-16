@@ -363,13 +363,13 @@ export default function Page({
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
               alt: modelData?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png/${modelData?.coverPhoto?.public_id}`,
             },
           ],
         }}
