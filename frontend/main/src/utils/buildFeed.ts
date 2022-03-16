@@ -30,7 +30,7 @@ export const buildFeed = ({
     id: `${site}`,
     link: `${site}`,
     language: 'en', // optional, used only in RSS 2.0, possible values: http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    image: `https://media.codingcat.dev/image/upload/c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png`,
+    image: `https://media.codingcat.dev/image/upload/f_png,c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png`,
     favicon: `${site}/favicon.ico`,
     copyright: `All rights reserved 2021, ${site}`,
     updated: new Date(),
