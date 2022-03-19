@@ -9,8 +9,11 @@ import AppMenu from '@/layout/AppMenu';
 import useIsNavigating from '@/hooks/useIsNavigating';
 import { Progress } from '@/components/global/loading/Progress';
 import dynamic from 'next/dynamic';
-import { BuilderComponent } from '@builder.io/react';
-
+const CodingCatBuilder = dynamic(
+  () =>
+    import('@/components/builder/CodingCatBuilder').then((res) => res as any),
+  { ssr: false }
+) as any;
 const FirebaseProvider = dynamic<any>(
   () =>
     import('@/components/firebase/wrappers').then(
@@ -113,7 +116,7 @@ const Layout = ({
                       <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
                         <>{children}</>
                       </main>
-                      <BuilderComponent model="footer" content={footer} />
+                      <CodingCatBuilder model="footer" content={footer} />
                     </div>
                     <AppMenu
                       setOverlayMenuActive={setOverlayMenuActive}

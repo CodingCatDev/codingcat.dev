@@ -1,7 +1,5 @@
 import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 import { Feed } from 'feed';
-import { Timestamp } from 'firebase/firestore';
-import { builder } from '@builder.io/react';
 import { getAllBuilder } from '@/services/builder.server';
 
 const site = 'https://codingcat.dev';
@@ -19,7 +17,7 @@ export const buildFeed = ({
     id: `${site}`,
     link: `${site}`,
     language: 'en', // optional, used only in RSS 2.0, possible values: http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-    image: `https://media.codingcat.dev/image/upload/c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png`,
+    image: `https://media.codingcat.dev/image/upload/f_png,c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png`,
     favicon: `${site}/favicon.ico`,
     copyright: `All rights reserved 2021, ${site}`,
     updated: new Date(),
@@ -28,7 +26,7 @@ export const buildFeed = ({
     },
     author: {
       name: 'Alex Patterson',
-      email: 'alex@builder.io',
+      email: 'alex@codingcat.dev',
       link: `${site}`,
     },
   });
@@ -54,6 +52,7 @@ export const build = async ({ type }: { type: ModelType }) => {
   const posts = (await getAllBuilder({
     omit: 'data.blocks',
     model: type,
+    startEnd: true,
   })) as CodingCatBuilderContent[];
 
   return buildFeed({ posts, type });

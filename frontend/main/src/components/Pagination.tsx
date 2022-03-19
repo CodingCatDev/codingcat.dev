@@ -1,6 +1,5 @@
 import { CodingCatBuilderContent, ModelType } from '@/models/builder.model';
 import { getAllBuilder } from '@/services/builder.server';
-import builder from '@builder.io/react';
 import { GetStaticPropsContext } from 'next';
 import Link from 'next/link';
 
@@ -22,13 +21,13 @@ export const Pagination = ({
       {list && (pageNumber > 1 || showNext) && (
         <div className="flex items-center justify-center w-full my-4 space-x-2">
           {pageNumber > 1 && (
-            <Link href={`/${baseUrl}/page/${pageNumber - 1}`}>
+            <Link href={`${baseUrl}/page/${pageNumber - 1}`}>
               <a className="btn-secondary">‹ Previous</a>
             </Link>
           )}
 
           {showNext && (
-            <Link href={`/${baseUrl}/page/${pageNumber + 1}`}>
+            <Link href={`${baseUrl}/page/${pageNumber + 1}`}>
               <a className="btn-primary">Next ›</a>
             </Link>
           )}
@@ -69,6 +68,7 @@ export const getPaginated = async ({
       userAttributes: {
         urlPath: baseUrl,
       },
+      startEnd: true,
     }),
     getAllBuilder({
       preview,
@@ -76,6 +76,7 @@ export const getPaginated = async ({
       omit: 'data.blocks',
       limit: PER_PAGE + 1,
       offset: (pageNumber - 1) * PER_PAGE,
+      startEnd: true,
     }) as Promise<CodingCatBuilderContent[]>,
   ]);
   return {
@@ -97,6 +98,7 @@ export const getPaginatedPaths = async ({ model }: { model: ModelType }) => {
     model,
     fields: 'data.url',
     limit: 10000,
+    startEnd: true,
   })) as CodingCatBuilderContent[];
   const paths = sliceIntoChunks(pages, PER_PAGE).map((_chunk, index) => ({
     params: { pageNumber: `${index + 1}` },

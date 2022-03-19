@@ -3,8 +3,13 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 
 import { NextSeo } from 'next-seo';
 import { ModelType } from '@/models/builder.model';
-import { BuilderComponent } from '@builder.io/react';
 import { getPaginated, Pagination } from '@/components/Pagination';
+import dynamic from 'next/dynamic';
+const CodingCatBuilder = dynamic(
+  () =>
+    import('@/components/builder/CodingCatBuilder').then((res) => res as any),
+  { ssr: false }
+) as any;
 
 export async function getStaticProps({
   preview,
@@ -41,19 +46,19 @@ export default function Podcasts({
           site_name: 'Purrfect.dev',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
+              url: 'https://media.codingcat.dev/image/upload/f_png,c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
               width: 1200,
               height: 630,
               alt: 'AJ Logo Black Cat Face with Purrfect.dev Domain',
             },
             {
-              url: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/purrfect.dev.png',
+              url: 'https://media.codingcat.dev/image/upload/f_png/main-codingcatdev-photo/purrfect.dev.png',
             },
           ],
         }}
       ></NextSeo>
       <Layout header={header} footer={footer}>
-        <BuilderComponent
+        <CodingCatBuilder
           options={{ includeRefs: true }}
           model={model}
           content={modelData}

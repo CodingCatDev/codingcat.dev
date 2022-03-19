@@ -1,7 +1,4 @@
 import useCopyToClipboard from '@/utils/basics/useCopyToClipboard';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import React, { useState } from 'react';
 import javascript from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import bash from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
@@ -10,9 +7,6 @@ import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/light-async';
 // import oneDark from 'react-syntax-highlighter/dist/esm/styles/hljs/atom-one-dark';
 // import githubGist from 'react-syntax-highlighter/dist/esm/styles/hljs/github-gist';
 import a11yDark from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark';
-import a11yLight from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-light';
-
-import { CodeDocsTooltip } from './code-docs-tooltip';
 
 SyntaxHighlighter.registerLanguage('html', html);
 SyntaxHighlighter.registerLanguage('xml', html);
@@ -79,48 +73,51 @@ export function CodeBlockComponent(
         position: 'relative',
         '&:hover .copy-to-clipboard': {
           display: 'block !important',
+          padding: '0.5rem',
         },
       }}
     >
-      <Tooltip title={copyButtonTooltipText}>
-        <IconButton
-          css={{
-            position: 'absolute !important' as any,
-            top: 0,
-            right: 0,
-            display: 'none !important' as any,
-            zIndex: 10,
-          }}
-          className="copy-to-clipboard"
-          onMouseLeave={() => {
-            setCopyButtonTooltipText(defaultCopyButtonTooltipText);
-          }}
-          onClick={() => {
-            copy(code);
-            setCopyButtonTooltipText('Copied!');
-          }}
+      <button
+        style={{
+          position: 'absolute' as any,
+          top: 0,
+          right: 0,
+          display: 'none' as any,
+          zIndex: 10,
+          width: '4rem',
+        }}
+        className="copy-to-clipboard"
+        onMouseLeave={() => {
+          setCopyButtonTooltipText(defaultCopyButtonTooltipText);
+        }}
+        onClick={() => {
+          copy(code);
+          setCopyButtonTooltipText('Copied!');
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          xmlSpace="preserve"
+          style={{ fill: 'white', opacity: 0.7 }}
         >
-          <AssignmentIcon
-            css={{
-              color: dark ? 'white' : 'black',
-              opacity: 0.7,
-            }}
+          <path
+            xmlns="http://www.w3.org/2000/svg"
+            d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
           />
-        </IconButton>
-      </Tooltip>
-      <CodeDocsTooltip code={code || ''}>
-        <SyntaxHighlighter
-          customStyle={{
-            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-            lineHeight: '1em',
-            padding: '.5em .2em',
-          }}
-          style={dark ? a11yDark : a11yLight}
-          language={language}
-        >
-          {code}
-        </SyntaxHighlighter>
-      </CodeDocsTooltip>
+        </svg>
+      </button>
+      <SyntaxHighlighter
+        customStyle={{
+          fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+          lineHeight: '1em',
+          padding: '1rem',
+        }}
+        style={a11yDark}
+        language={language}
+      >
+        {code}
+      </SyntaxHighlighter>
     </div>
   );
 }

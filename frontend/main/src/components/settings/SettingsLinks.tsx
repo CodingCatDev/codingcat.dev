@@ -11,21 +11,6 @@ export default function UserProfile(): JSX.Element {
             <a className={links}>Profile</a>
           </Link>
         </li>
-        <li>
-          <Link href="/user/membership">
-            <a className={links}>Membership</a>
-          </Link>
-        </li>
-        {/* <li>
-          <Link href="/user/notifications">
-            <a className={links}>Notifications</a>
-          </Link>
-        </li>
-        <li>
-          <Link href="/user/support">
-            <a className={links}>Contact Support</a>
-          </Link>
-        </li> */}
       </ul>
     </nav>
   );

@@ -1,6 +1,5 @@
 import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
-import { BuilderComponent, Builder, builder } from '@builder.io/react';
 import { useEffect, useState } from 'react';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
@@ -17,7 +16,13 @@ import { UserInfoExtended } from '@/models/user.model';
 import PostMediaLocked from '@/components/PostMediaLocked';
 import AJ404 from '@/components/global/icons/AJ404';
 import Link from 'next/link';
-import Error from 'next/error';
+
+import dynamic from 'next/dynamic';
+const CodingCatBuilder = dynamic(
+  () =>
+    import('@/components/builder/CodingCatBuilder').then((res) => res as any),
+  { ssr: false }
+) as any;
 
 function getRecent(type: ModelType, preview?: boolean) {
   return getAllBuilder({
@@ -25,6 +30,7 @@ function getRecent(type: ModelType, preview?: boolean) {
     model: type,
     omit: 'data.blocks',
     limit: 3,
+    startEnd: true,
   }) as Promise<CodingCatBuilderContent[]>;
 }
 
@@ -75,6 +81,7 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: `/${lesson}/${lessonPath}`,
           },
+          startEnd: true,
         })
       : // Lesson needs to remain locked so make sure to 404
       type == ModelType.lesson && !preview
@@ -86,6 +93,7 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: '/' + (params?.page?.join('/') || ''),
           },
+          startEnd: true,
         }),
     type == ModelType.course
       ? getAllBuilder({
@@ -96,6 +104,7 @@ export async function getStaticProps({
           userAttributes: {
             urlPath: `/${type}/${slug}`,
           },
+          startEnd: true,
         })
       : null,
     getRecent(ModelType.course, preview),
@@ -163,26 +172,11 @@ export async function getStaticPaths() {
     ModelType.course,
     ModelType.authors,
   ]) {
-    const pages = await builder.getAll(postType, {
+    const pages = (await getAllBuilder({
+      model: postType,
       fields: `data.url`,
-      options: { noTargeting: true },
-      query: {
-        $and: [
-          {
-            $or: [
-              { startDate: { $exists: false } },
-              { startDate: { $lte: Date.now() } },
-            ],
-          },
-          {
-            $or: [
-              { endDate: { $exists: false } },
-              { endDate: { $gte: Date.now() } },
-            ],
-          },
-        ],
-      },
-    });
+      startEnd: true,
+    })) as CodingCatBuilderContent[];
     pages
       .filter(
         (page) =>
@@ -209,14 +203,6 @@ export default function Page({
   preview,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
-  const [isLive, setIsLive] = useState(false);
-  useEffect(() => {
-    setIsLive(!Builder.isEditing && !Builder.isPreviewing);
-  }, []);
-
-  // console.log('courseData', courseData);
-  // console.log('modelData', modelData);
-
   if (router.isFallback) {
     return (
       <main className="flex items-center justify-center w-screen h-screen dark:bg-basics-700">
@@ -268,7 +254,7 @@ export default function Page({
     if (member || team) {
       return (
         <>
-          <BuilderComponent
+          <CodingCatBuilder
             options={{ includeRefs: true }}
             model={model}
             content={modelData}
@@ -301,7 +287,7 @@ export default function Page({
   }) => {
     return (
       <>
-        <BuilderComponent
+        <CodingCatBuilder
           options={{ includeRefs: true }}
           model={model}
           content={modelData}
@@ -317,7 +303,7 @@ export default function Page({
 
   const getLayout = () => {
     // 404
-    if (!modelData && isLive) {
+    if (!modelData) {
       return (
         <main className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700">
           <section className="grid content-start grid-cols-1 gap-10 p-4 text-center justify-items-center">
@@ -341,11 +327,7 @@ export default function Page({
     //   return <Profile products={products} />;
     // }
     //Lesson
-    if (
-      lessonPath &&
-      isLive &&
-      courseData?.data?.accessSettings?.accessMode != 'free'
-    ) {
+    if (lessonPath && courseData?.data?.accessSettings?.accessMode != 'free') {
       return (
         <UserWrapper
           modelData={modelData}
@@ -381,13 +363,13 @@ export default function Page({
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
               alt: modelData?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png/${modelData?.coverPhoto?.public_id}`,
             },
           ],
         }}

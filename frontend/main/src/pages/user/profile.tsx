@@ -3,11 +3,9 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 
 import { getAllBuilder } from '@/services/builder.server';
 import { NextSeo } from 'next-seo';
-import { CodingCatBuilderContent } from '@/models/builder.model';
-import PostsCards from '@/components/PostsCards';
-import { BuilderComponent } from '@builder.io/react';
 import { getActiveMemberProducts } from '@/services/firebase.server';
 import Profile from '@/components/user/Profile';
+import UserMembership from '@/components/user/UserMembershipDetail';
 
 export async function getStaticProps({
   preview,
@@ -30,6 +28,7 @@ export async function getStaticProps({
       userAttributes: {
         urlPath: '/user/profile',
       },
+      startEnd: true,
     }),
     getActiveMemberProducts(),
   ]);
@@ -68,20 +67,27 @@ export default function UserProfile({
           site_name: 'CodingCat.dev User Profile',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
               alt: modelData?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png/${modelData?.coverPhoto?.public_id}`,
             },
           ],
         }}
       ></NextSeo>
       <Layout header={header} footer={footer}>
         {products ? (
-          <Profile products={products} />
+          <div className="flex flex-col p-10">
+            <div className="pb-2">
+              <Profile products={products} />
+            </div>
+            <div className="pt-2">
+              <UserMembership />
+            </div>
+          </div>
         ) : (
           <>Ask Alex to load the Stripe products please :D</>
         )}

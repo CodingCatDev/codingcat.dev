@@ -21,7 +21,7 @@ export default function Profile({
   return (
     <>
       {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
-        <section className="grid self-start w-full max-w-full min-w-0 gap-10 p-10 lg:grid-cols-settings">
+        <section className="grid self-start w-full max-w-full min-w-0 gap-10 lg:grid-cols-settings">
           <section>
             <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
               Settings
