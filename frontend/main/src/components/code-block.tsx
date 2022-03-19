@@ -7,7 +7,6 @@ import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/light-async';
 // import oneDark from 'react-syntax-highlighter/dist/esm/styles/hljs/atom-one-dark';
 // import githubGist from 'react-syntax-highlighter/dist/esm/styles/hljs/github-gist';
 import a11yDark from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark';
-import a11yLight from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-light';
 
 SyntaxHighlighter.registerLanguage('html', html);
 SyntaxHighlighter.registerLanguage('xml', html);
@@ -74,16 +73,18 @@ export function CodeBlockComponent(
         position: 'relative',
         '&:hover .copy-to-clipboard': {
           display: 'block !important',
+          padding: '0.5rem',
         },
       }}
     >
       <button
         style={{
-          position: 'absolute !important' as any,
+          position: 'absolute' as any,
           top: 0,
           right: 0,
-          display: 'none !important' as any,
+          display: 'none' as any,
           zIndex: 10,
+          width: '4rem',
         }}
         className="copy-to-clipboard"
         onMouseLeave={() => {
@@ -98,7 +99,7 @@ export function CodeBlockComponent(
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           xmlSpace="preserve"
-          style={{ color: dark ? 'white' : 'black' }}
+          style={{ fill: 'white', opacity: 0.7 }}
         >
           <path
             xmlns="http://www.w3.org/2000/svg"
@@ -110,9 +111,9 @@ export function CodeBlockComponent(
         customStyle={{
           fontFamily: 'Menlo, Monaco, "Courier New", monospace',
           lineHeight: '1em',
-          padding: '.5em .2em',
+          padding: '1rem',
         }}
-        style={dark ? a11yDark : a11yLight}
+        style={a11yDark}
         language={language}
       >
         {code}

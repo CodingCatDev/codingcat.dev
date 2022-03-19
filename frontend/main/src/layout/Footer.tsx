@@ -84,7 +84,7 @@ export default function Footer({
               </section>
             </div>
             {/* SOCIALS */}
-            <section className="flex flex-wrap items-end justify-center gap-8 mt-4">
+            <section className="w-full flex flex-wrap items-end gap-4 mt-4 justify-between">
               {site?.socialLinks?.map((sl, i) => (
                 <a
                   key={i}
