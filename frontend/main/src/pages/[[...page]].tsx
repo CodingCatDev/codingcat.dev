@@ -347,28 +347,33 @@ export default function Page({
       />
     );
   };
+
+  const pageData = modelData?.data?.page
+    ? modelData?.data?.page
+    : modelData?.data;
+
   return (
     <>
       <NextSeo
-        title={modelData?.data?.page?.title}
-        description={modelData?.data?.page?.excerpt}
+        title={pageData?.title}
+        description={pageData?.excerpt}
         canonical={`https://codingcat.dev${router.asPath}`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
           url: `https://codingcat.dev${router.asPath}`,
-          title: modelData?.data?.page?.title,
-          description: modelData?.data?.page?.excerpt,
+          title: pageData?.title,
+          description: pageData?.excerpt,
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${modelData?.data?.page?.data?.page?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${pageData?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
-              alt: modelData?.data?.page?.title,
+              alt: pageData?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/f_png/${modelData?.data?.page?.data?.page?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png/${pageData?.coverPhoto?.public_id}`,
             },
           ],
         }}
