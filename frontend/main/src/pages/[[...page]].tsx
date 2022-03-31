@@ -351,7 +351,7 @@ export default function Page({
   const pageData = modelData?.data?.page
     ? modelData?.data?.page
     : modelData?.data;
-  console.log(pageData);
+
   return (
     <>
       <NextSeo
@@ -366,12 +366,12 @@ export default function Page({
           description: pageData?.excerpt,
           site_name: 'CodingCatDev',
           images: [
-            // {
-            //   url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${pageData?.coverPhoto?.public_id}`,
-            //   width: 1200,
-            //   height: 630,
-            //   alt: pageData?.title,
-            // },
+            {
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${pageData?.coverPhoto?.public_id}`,
+              width: 1200,
+              height: 630,
+              alt: pageData?.title,
+            },
             {
               url: `https://media.codingcat.dev/image/upload/f_png/${pageData?.coverPhoto?.public_id}`,
             },

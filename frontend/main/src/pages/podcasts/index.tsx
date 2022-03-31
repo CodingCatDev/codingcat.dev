@@ -45,12 +45,12 @@ export default function Podcasts({
           description: 'Purrfect Podcasts about development.',
           site_name: 'Purrfect.dev',
           images: [
-            // {
-            //   url: 'https://media.codingcat.dev/image/upload/f_png,c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
-            //   width: 1200,
-            //   height: 630,
-            //   alt: 'AJ Logo Black Cat Face with Purrfect.dev Domain',
-            // },
+            {
+              url: 'https://media.codingcat.dev/image/upload/f_png,c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
+              width: 1200,
+              height: 630,
+              alt: 'AJ Logo Black Cat Face with Purrfect.dev Domain',
+            },
             {
               url: 'https://media.codingcat.dev/image/upload/f_png/main-codingcatdev-photo/purrfect.dev.png',
             },
