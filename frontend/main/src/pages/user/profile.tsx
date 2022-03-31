@@ -55,8 +55,8 @@ export default function UserProfile({
   return (
     <>
       <NextSeo
-        title={modelData?.title}
-        description={modelData?.excerpt}
+        title={modelData?.data?.page?.title}
+        description={modelData?.data?.page?.excerpt}
         canonical={`https://codingcat.dev/user/profile`}
         openGraph={{
           type: 'website',
@@ -67,13 +67,13 @@ export default function UserProfile({
           site_name: 'CodingCat.dev User Profile',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630/${modelData?.data?.page?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
-              alt: modelData?.title,
+              alt: modelData?.data?.page?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/f_png/${modelData?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png/${modelData?.data?.page?.coverPhoto?.public_id}`,
             },
           ],
         }}
