@@ -13,6 +13,7 @@ export const BlogPostHit = (
 ) => {
   return function BlogPostHit({ hit }: any) {
     function typeIcon(type: string) {
+      console.log(type);
       switch (type) {
         case ModelType.page:
           return <Pages />;
@@ -31,15 +32,15 @@ export const BlogPostHit = (
 
     return (
       <>
-        <Link href={`/${hit.type}/${hit.url}`}>
+        <Link href={`${hit?.query[0]?.value}`}>
           <a className="grid items-center gap-2 p-2 transition-colors rounded-md grid-cols-search text-basics-900 bg-primary-50 hover:bg-primary-100 hover:text-basics-900">
             <div className="grid place-items-center">
-              {typeIcon(hit.type)}
+              {typeIcon((hit?.query[0]?.value).split('/')[1])}
               <p className="text-xs text-center">{hit.type}</p>
             </div>
             <p>
               <Highlight
-                attribute="title"
+                attribute="data.page.title"
                 hit={hit}
                 tagName="mark"
                 className="font-sans leading-tight text-current justify-self-end text-md"

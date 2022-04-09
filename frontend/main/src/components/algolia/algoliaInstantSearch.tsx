@@ -8,6 +8,7 @@ import {
   connectStateResults,
   PoweredBy,
   MenuSelect,
+  Configure,
 } from 'react-instantsearch-dom';
 import CustomSearchBox from '@/components/algolia/connectSearchBox';
 import * as hitComps from '@/components/algolia/customHitComponents';
@@ -19,7 +20,22 @@ const algoliaClient = algoliasearch(
 
 const searchIndices = [
   {
-    name: `${process.env.NEXT_PUBLIC_ALGOLIA_INDEX || ''}`,
+    name: `builder-course`,
+    title: `Courses`,
+    hitComp: `BlogPostHit`,
+  },
+  {
+    name: `builder-tutorial`,
+    title: `Tutorials`,
+    hitComp: `BlogPostHit`,
+  },
+  {
+    name: `builder-post`,
+    title: `Courses`,
+    hitComp: `BlogPostHit`,
+  },
+  {
+    name: `builder-podcast`,
     title: `Courses`,
     hitComp: `BlogPostHit`,
   },
@@ -28,7 +44,10 @@ const searchIndices = [
 const Results = connectStateResults(
   ({ searchState: state, searchResults: res, children }: any) => {
     const message = state.query
-      ? `No results for '${state.query}'`
+      ? `No results for '${state.query}' in ${res?.index?.replace(
+          'builder-',
+          ''
+        )}`
       : 'Please search above';
     return res && res.nbHits > 0 ? children : message;
   }
@@ -68,17 +87,20 @@ const HitList = ({ show }: { show: boolean }): JSX.Element => {
             <CustomSearchBox />
             <hr className="mt-2 opacity-20 text-primary-900" />
           </header>
-          {searchIndices.map(({ name, hitComp }) => (
-            <main className="pr-2 overflow-y-auto" key={name}>
-              <Index indexName={name}>
-                <Results>
-                  <Hits
-                    hitComponent={ahitComps[hitComp](() => setFocus(false))}
-                  />
-                </Results>
-              </Index>
-            </main>
-          ))}
+          <main className="overflow-y-auto">
+            {searchIndices.map(({ name, hitComp }) => (
+              <div className="pr-2 mb-2 overflow-y-auto" key={name}>
+                <Index indexName={name}>
+                  <Configure filters="published:published" />
+                  <Results>
+                    <Hits
+                      hitComponent={ahitComps[hitComp](() => setFocus(false))}
+                    />
+                  </Results>
+                </Index>
+              </div>
+            ))}
+          </main>
           <footer>
             <hr className="mb-2 opacity-20 text-primary-900" />
             <div className="flex justify-between">
