@@ -23,13 +23,13 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           site_name: 'CodingCatDev',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/f_png,c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg,c_thumb,g_face,w_1200,h_630/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
               width: 1200,
               height: 630,
               alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
             },
             {
-              url: 'https://media.codingcat.dev/image/upload/f_png/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
             },
           ],
         }}
