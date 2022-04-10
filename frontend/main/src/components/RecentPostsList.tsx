@@ -19,7 +19,7 @@ export default function RecentPostsList({
             <li key={post.id} className="ml-0 list-none">
               <Link href={post?.data?.url}>
                 <a className="no-underline text-basics-900 hover:text-primary-900 hover:underline">
-                  {post?.data?.title}
+                  {post?.data?.page?.title}
                 </a>
               </Link>
             </li>
