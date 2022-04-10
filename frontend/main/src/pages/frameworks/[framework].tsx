@@ -147,9 +147,8 @@ export default function Page({
         </main>
       );
     }
-
     //Any Page (including lesson preview)
-    return <CodingCatBuilder modelData={modelData} model="page" data={data} />;
+    return <CodingCatBuilder content={modelData} model="page" data={data} />;
   };
 
   const pageData = modelData?.data?.page
