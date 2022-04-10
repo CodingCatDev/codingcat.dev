@@ -62,3 +62,41 @@ export const getAllBuilder = async ({
     console.error(JSON.stringify(error));
   }
 };
+
+export const getAllQuery = async ({
+  model,
+  query,
+  fields,
+  omit,
+}: {
+  model: string;
+  query: string;
+  fields?: string;
+  omit?: string;
+}) => {
+  try {
+    const fetchInput =
+      `https://builder.io/api/v2/content/${model}?apiKey=${process.env.NEXT_PUBLIC_BUILDER_PUBLIC_API_KEY}` +
+      `&limit=10000` +
+      `&${query}` +
+      (fields ? `&fields=${fields}` : '') +
+      (omit ? `&omit=${omit}` : '');
+    console.log('fetchInput', JSON.stringify(fetchInput));
+    const response = await fetch(fetchInput, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
+      },
+    });
+
+    const contentType = response.headers.get('content-type');
+    if (contentType == 'application/json') {
+    }
+    // console.log(JSON.stringify(response.body));
+    const json = await response.json();
+    return json?.results;
+  } catch (error) {
+    console.error(JSON.stringify(error));
+  }
+};
