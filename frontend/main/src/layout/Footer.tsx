@@ -6,18 +6,24 @@ import LinkedIn from '@/components/global/icons/socials/LinkedIn';
 import Medium from '@/components/global/icons/socials/Medium';
 import Twitter from '@/components/global/icons/socials/Twitter';
 import YouTube from '@/components/global/icons/socials/YouTube';
-import { Site, SocialLink, SocialType } from '@/models/site.model';
+import { PageLink, Site, SocialLink, SocialType } from '@/models/site.model';
 import Link from 'next/link';
 
 const socialLinks = ``;
 
 export default function Footer({
-  site,
+  pageLinks,
+  socialLinks,
   hideWave,
 }: {
-  site: Site | null;
+  pageLinks?: PageLink[];
+  socialLinks?: SocialLink[];
   hideWave?: boolean;
 }): JSX.Element {
+  const site = {
+    pageLinks,
+    socialLinks,
+  };
   function socialLinkPicker(sl: SocialLink) {
     switch (sl.type) {
       case SocialType.facebook:
@@ -39,27 +45,11 @@ export default function Footer({
 
   return (
     <>
-      {!hideWave && (
-        <svg
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          height="100"
-          width="100%"
-          viewBox="0 0 90 20"
-          preserveAspectRatio="none"
-          className="fill-current text-primary-50 dark:text-basics-700"
-        >
-          <path
-            d="M0 5 H5 C25 5 25 20 45 20 S65 5 85 5 H90 V-5 H0z"
-            stroke="transparent"
-          />
-        </svg>
-      )}
       <footer className="px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 text-basics-50 dark:text-basics-50">
         <div className="grid items-start gap-10 grid-cols-auto">
           {/* LOGO & COPYRIGHT */}
           <section className="grid grid-cols-1 justify-items-start">
-            <div className="flex">
+            <div className="flex flex-wrap">
               <AJAlt className="-mt-6 w-36 h-36" />
               <section className="grid">
                 <div className="grid ">
@@ -94,7 +84,7 @@ export default function Footer({
               </section>
             </div>
             {/* SOCIALS */}
-            <section className="flex flex-wrap items-end justify-center gap-8 mt-4">
+            <section className="w-full flex flex-wrap items-end gap-4 mt-4 justify-between">
               {site?.socialLinks?.map((sl, i) => (
                 <a
                   key={i}
@@ -114,20 +104,20 @@ export default function Footer({
             <div className="grid grid-cols-1 gap-2 mt-4">
               {site?.pageLinks?.map((pageLink, i) => (
                 <div key={`helpful-link-${i}`}>
-                  {pageLink.slug.includes('://') ||
-                  pageLink.slug.includes('mailto') ? (
+                  {pageLink?.slug?.includes('://') ||
+                  pageLink?.slug?.includes('mailto') ? (
                     <a
-                      href={pageLink.slug}
+                      href={pageLink?.slug}
                       target="_blank"
                       rel="noreferrer noopener"
                       className="links-secondary"
                     >
-                      {pageLink.title}
+                      {pageLink?.title}
                     </a>
                   ) : (
-                    <Link href={pageLink.slug}>
-                      <a href={pageLink.slug} className="links-secondary">
-                        {pageLink.title}
+                    <Link href={pageLink?.slug}>
+                      <a href={pageLink?.slug} className="links-secondary">
+                        {pageLink?.title}
                       </a>
                     </Link>
                   )}

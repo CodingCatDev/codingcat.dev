@@ -66,7 +66,7 @@ export default function AvatarMenu({
                   fill="#FBFBFB"
                 />
               </svg>
-              <span className="ml-2 space-nowrap">Sign In</span>
+              <span className="hidden ml-2 space-nowrap xl:block">Sign In</span>
             </a>
           </Link>
         )}

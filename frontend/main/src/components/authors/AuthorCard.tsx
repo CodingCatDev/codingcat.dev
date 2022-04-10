@@ -8,6 +8,8 @@ export default function AuthorCard({
 }): JSX.Element {
   return (
     <article className="grid items-start max-w-md grid-cols-1 gap-4 p-4 shadow-lg justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm">
+      {console.log(author)}
+
       {author?.displayName && author?.photoURL ? (
         <Image
           src={author.photoURL.public_id}

@@ -21,7 +21,7 @@ export default function Profile({
   return (
     <>
       {signInCheckResult?.signedIn === true && signInCheckResult?.user ? (
-        <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
+        <section className="grid self-start w-full max-w-full min-w-0 gap-10 lg:grid-cols-settings">
           <section>
             <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
               Settings
@@ -29,7 +29,7 @@ export default function Profile({
             <SettingsLinks />
           </section>
           <div className="flex flex-col">
-            <UserMembership user={signInCheckResult.user} products={products} />
+            {/* <UserMembership user={signInCheckResult.user} products={products} /> */}
             <UserProfile user={signInCheckResult.user} />
           </div>
         </section>
@@ -55,7 +55,9 @@ export default function Profile({
             </div>
             {products && <MembershipCards products={products} />}
           </section>
-          <section>
+
+          {/* Feels Misleading, removing for now */}
+          {/* <section>
             <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">
               <div
                 className="flex items-center p-2 leading-none lg:rounded-full lg:inline-flex"
@@ -174,7 +176,7 @@ export default function Profile({
                 </li>
               </ul>
             </div>
-          </section>
+          </section> */}
         </>
       )}
     </>

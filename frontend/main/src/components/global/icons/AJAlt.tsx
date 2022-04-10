@@ -1,4 +1,4 @@
-export default function AJHeartAlt({
+export default function AJAlt({
   className = 'block w-12 h-12',
 }: {
   className?: string;

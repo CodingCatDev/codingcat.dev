@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+//  import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import {
   EmailAuthProvider,
@@ -10,6 +10,12 @@ import {
   TwitterAuthProvider,
 } from '@firebase/auth';
 import { useAuth } from 'reactfire';
+import dynamic from 'next/dynamic';
+
+const StyledFirebaseAuth = dynamic(
+  () => import('react-firebaseui/StyledFirebaseAuth').then((res) => res as any),
+  { ssr: false }
+) as any;
 
 const FirebaseAuth = ({ full = true }: { full?: boolean }): JSX.Element => {
   const [email, setEmail] = useState('');
