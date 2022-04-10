@@ -15,6 +15,12 @@ export interface CodingCatBuilderContent extends BuilderContent {
   };
 }
 
+export interface CodingCatBuilderFramework extends BuilderContent {
+  data: {
+    slug: string;
+  };
+}
+
 export interface Page {
   authors?: AuthorRef[];
   coverPhoto: Cloudinary;
