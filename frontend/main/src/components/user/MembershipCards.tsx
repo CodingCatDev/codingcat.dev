@@ -125,16 +125,39 @@ export default function MembershipCards({
             onClick={() => onSelectPlan(product)}
           >
             <div className="relative">
+              <svg
+                className={'svgTransform absolute top-0 left-0 mb-8'}
+                viewBox="0 0 375 283"
+                fill="none"
+              >
+                <rect
+                  x="159.52"
+                  y="175"
+                  width="152"
+                  height="152"
+                  rx="8"
+                  transform="rotate(-45 159.52 175)"
+                  fill="white"
+                />
+                <rect
+                  y="107.48"
+                  width="152"
+                  height="152"
+                  rx="8"
+                  transform="rotate(-45 0 107.48)"
+                  fill="white"
+                />
+              </svg>
               <div className="w-48 h-48">
                 {product.images ? (
                   getProductImage(product)
                 ) : (
                   <AJPrimary className="w-full h-full" />
                 )}
-                <span className="block text-basics-200 dark:text-basics-200">
-                  {product?.description}
-                </span>
               </div>
+            </div>
+            <div className="block w-48 text-basics-200 dark:text-basics-200">
+              {product?.description}
             </div>
             <div className="flex justify-between">
               <span className="block text-xl font-semibold">
@@ -155,29 +178,6 @@ export default function MembershipCards({
                 )}
               </span>
             </div>
-            <svg
-              className={'svgTransform absolute bottom-0 left-0 mb-8'}
-              viewBox="0 0 375 283"
-              fill="none"
-            >
-              <rect
-                x="159.52"
-                y="175"
-                width="152"
-                height="152"
-                rx="8"
-                transform="rotate(-45 159.52 175)"
-                fill="white"
-              />
-              <rect
-                y="107.48"
-                width="152"
-                height="152"
-                rx="8"
-                transform="rotate(-45 0 107.48)"
-                fill="white"
-              />
-            </svg>
           </div>
         ))}
         {/* </div> */}
