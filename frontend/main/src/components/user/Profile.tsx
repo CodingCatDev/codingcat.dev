@@ -55,7 +55,9 @@ export default function Profile({
             </div>
             {products && <MembershipCards products={products} />}
           </section>
-          <section>
+
+          {/* Feels Misleading, removing for now */}
+          {/* <section>
             <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">
               <div
                 className="flex items-center p-2 leading-none lg:rounded-full lg:inline-flex"
@@ -174,7 +176,7 @@ export default function Profile({
                 </li>
               </ul>
             </div>
-          </section>
+          </section> */}
         </>
       )}
     </>
