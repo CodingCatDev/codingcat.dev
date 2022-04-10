@@ -2,7 +2,6 @@ export const getAllBuilder = async ({
   preview = false,
   model,
   limit = 1000,
-  // published,
   omit,
   fields,
   includeRefs = true,
@@ -14,7 +13,6 @@ export const getAllBuilder = async ({
   model: string;
   includeUnpublished?: boolean;
   limit?: number;
-  // published?: 'published' | 'archived' | 'draft';
   omit?: string;
   fields?: string;
   includeRefs?: boolean;
@@ -28,7 +26,7 @@ export const getAllBuilder = async ({
     const fetchInput =
       `https://builder.io/api/v2/content/${model}?apiKey=${process.env.NEXT_PUBLIC_BUILDER_PUBLIC_API_KEY}` +
       `&limit=${limit}` +
-      `&query.published.$ne="archived"` +
+      (preview ? `&query.published.$ne="archived"` : ``) +
       (!startEnd
         ? ``
         : `&query.$and=%5B%7B%27%24or%27%3A%5B%7B%27startDate%27%3A%7B%27%24eq%27%3A%27null%27%7D%7D%2C%7B%27startDate%27%3A%7B%27%24lte%27%3A${Date.now()}` +
