@@ -4,7 +4,7 @@ import { useFunctions, useSigninCheck } from 'reactfire';
 import { useState } from 'react';
 import { httpsCallable } from '@firebase/functions';
 
-export default function UserMembership(): JSX.Element {
+export default function UserMembershipDetail(): JSX.Element {
   const { data: signInCheckResult } = useSigninCheck();
   const functions = useFunctions();
 
@@ -23,8 +23,7 @@ export default function UserMembership(): JSX.Element {
   return (
     <>
       {signInCheckResult?.signedIn === true && signInCheckResult.user && (
-        <section className="grid self-start justify-center gap-10 lg:grid-cols-settings">
-          <section></section>
+        <section className="">
           <div className="grid">
             <div>
               <p className="text-4xl">CodingCat.dev uses the Stripe Portal.</p>

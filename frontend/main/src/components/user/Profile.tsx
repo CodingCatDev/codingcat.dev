@@ -29,7 +29,7 @@ export default function Profile({
             <SettingsLinks />
           </section>
           <div className="flex flex-col">
-            {/* <UserMembership user={signInCheckResult.user} products={products} /> */}
+            <UserMembership user={signInCheckResult.user} products={products} />
             <UserProfile user={signInCheckResult.user} />
           </div>
         </section>
