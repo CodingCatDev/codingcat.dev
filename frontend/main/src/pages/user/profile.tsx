@@ -5,7 +5,6 @@ import { getAllBuilder } from '@/services/builder.server';
 import { NextSeo } from 'next-seo';
 import { getActiveMemberProducts } from '@/services/firebase.server';
 import Profile from '@/components/user/Profile';
-import UserMembership from '@/components/user/UserMembershipDetail';
 
 export async function getStaticProps({
   preview,
@@ -86,9 +85,6 @@ export default function UserProfile({
           <div className="flex flex-col p-10">
             <div className="pb-2">
               <Profile products={products} />
-            </div>
-            <div className="pt-2">
-              <UserMembership />
             </div>
           </div>
         ) : (

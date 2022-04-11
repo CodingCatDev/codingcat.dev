@@ -8,6 +8,7 @@ import { signOut } from 'firebase/auth';
 import { StripeProduct } from '@/models/stripe.model';
 import useIsMember from '@/hooks/useIsMember';
 import { useAuth } from 'reactfire';
+import UserMembershipDetail from './UserMembershipDetail';
 
 export default function UserMembership({
   user,
@@ -30,17 +31,15 @@ export default function UserMembership({
               Or just start with courses?
             </div>
             <div className="grid grid-flow-col gap-3 justify-items-center">
-              <Link href="/user/membership">
-                <a>
-                  <div className=" btn-primary">See Membership</div>
-                </a>
-              </Link>
               <Link href="/courses">
                 <a>
                   <div className="btn-secondary">Start Courses</div>
                 </a>
               </Link>
             </div>
+          </div>
+          <div className="pt-2">
+            <UserMembershipDetail />
           </div>
         </section>
       ) : (
@@ -118,7 +117,7 @@ export default function UserMembership({
             </div>
             <MembershipCards products={products} user={user} />
           </section>
-          <section>
+          {/* <section>
             <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">
               <div
                 className="flex items-center p-2 leading-none lg:rounded-full lg:inline-flex"
@@ -237,7 +236,7 @@ export default function UserMembership({
                 </li>
               </ul>
             </div>
-          </section>
+          </section> */}
         </>
       )}
     </>
