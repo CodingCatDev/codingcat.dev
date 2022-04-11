@@ -43,6 +43,7 @@ export default function MembershipCards({
     );
     const docRef = await addDoc(customerRef, {
       line_items,
+      allow_promotion_codes: true,
       success_url: window.location.href,
       cancel_url: window.location.href,
     });
