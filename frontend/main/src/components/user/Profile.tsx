@@ -48,31 +48,16 @@ export default function Profile({
                 </span>{' '}
                 and join CodingCat.dev
               </h1>
-              <h2 className="mt-4 font-sans text-lg lg:text-lg text-basics-600">
-                Get access to all of the exclusive content and up your coding
-                skills.
-              </h2>
             </div>
             {products && <MembershipCards products={products} />}
           </section>
 
-          {/* Feels Misleading, removing for now */}
-          {/* <section>
-            <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">
-              <div
-                className="flex items-center p-2 leading-none lg:rounded-full lg:inline-flex"
-                role="alert"
-              >
-                <span className="flex-auto mr-2 font-semibold text-left">
-                  Pro Features
-                </span>
-              </div>
-            </div>
-            <div className="w-full p-8 text-2xl font-bold tracking-wide text-center uppercase border-b text-primary-900 border-primary-900">
-              Why Go Pro?
-            </div>
+          <section className="mt-2 md:mt-8">
             <div className="flex justify-center m-3">
               <ul>
+                <div className="w-full p-8 mb-2 text-2xl font-bold tracking-wide text-center uppercase border-b text-primary-900 border-primary-900">
+                  Why Go Pro?
+                </div>
                 <li className="flex items-center">
                   <div className="p-3 rounded-full fill-current bg-primary-100 text-primary-900">
                     <svg
@@ -115,6 +100,9 @@ export default function Profile({
                     </span>
                   </div>
                 </li>
+                <div className="w-full p-8 mb-2 text-2xl font-bold tracking-wide text-center uppercase border-b text-primary-900 border-primary-900">
+                  Future Features
+                </div>
                 <li className="flex items-center mt-3">
                   <div className="p-3 rounded-full fill-current bg-primary-100 text-primary-900">
                     <svg
@@ -176,7 +164,7 @@ export default function Profile({
                 </li>
               </ul>
             </div>
-          </section> */}
+          </section>
         </>
       )}
     </>
