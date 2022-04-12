@@ -27,8 +27,8 @@ export async function getStaticProps({
 
   return {
     props: {
-      header: header || null,
-      footer: footer || null,
+      header: header?.[0] ? header[0] : null,
+      footer: footer?.[0] ? footer[0] : null,
     },
     revalidate: 5,
   };
