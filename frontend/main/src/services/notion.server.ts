@@ -3,6 +3,14 @@ import { config } from '@/config/notion';
 import { Post } from '@/models/post.model';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 
+const slugify = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
 // Initializing a client
 const notionClient = new Client({
   auth: config.token,
@@ -63,6 +71,14 @@ export const queryPurrfectStreamByReleased = async (
             ? q?.cover?.external?.url.split('upload/').at(1)
             : null,
         },
+        _type: 'podcast',
+        slug: slugify(
+          `${q.properties.Season.number}.${
+            q.properties.Episode.number
+          } - ${q?.properties?.Name?.title
+            .map((t: any) => t.plain_text)
+            .join('')}`
+        ),
       };
     }),
   } as unknown as NotionPosts;
