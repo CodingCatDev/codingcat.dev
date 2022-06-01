@@ -5,7 +5,6 @@ import { StripeProduct } from '@/models/stripe.model';
 import Profile from '@/components/user/Profile';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
-import { getActiveMemberProducts } from '@/services/firebase.server';
 import { getSite } from '@/services/sanity.server';
 
 interface StaticParams {
@@ -19,7 +18,8 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
   return {
     props: {
       site: await getSite({ preview }),
-      products: await getActiveMemberProducts(),
+      // products: await getActiveMemberProducts(),
+      products: [],
     },
     revalidate: 3600,
   };

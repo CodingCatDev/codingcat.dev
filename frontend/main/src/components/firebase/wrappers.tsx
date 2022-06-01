@@ -21,12 +21,7 @@ import {
 } from 'reactfire';
 import { config, emulation } from '@/config/firebase';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
-import { useEffect } from 'react';
-import {
-  getUserFromCookie,
-  removeUserCookie,
-  setUserCookie,
-} from '@/utils/auth/userCookies';
+
 import { UserInfoExtended } from '@/models/user.model';
 import { getPerformance } from '@firebase/performance';
 import { getAnalytics } from '@firebase/analytics';
@@ -72,28 +67,6 @@ export const FirebaseAuthProvider = ({
   if (emulation.authEmulatorHost && !auth.emulatorConfig) {
     connectAuthEmulator(auth, emulation.authEmulatorHost);
   }
-
-  interface ZaUser extends UserInfoExtended {
-    za?: string;
-  }
-
-  useEffect(() => {
-    const cancelAuthListener = onIdTokenChanged(auth, async (user) => {
-      if (user) {
-        const userFromCookie = getUserFromCookie();
-        const token = await getIdToken(user);
-        if (!userFromCookie || token !== userFromCookie.token) {
-          setUserCookie({ token });
-        }
-      } else {
-        removeUserCookie();
-      }
-    });
-
-    return () => {
-      cancelAuthListener();
-    };
-  }, [auth]);
 
   return <AuthProvider sdk={auth}>{children}</AuthProvider>;
 };

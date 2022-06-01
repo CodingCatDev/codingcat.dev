@@ -20,7 +20,6 @@ import {
   getSite,
 } from '@/services/sanity.server';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
-import { getStripeProduct } from '@/services/firebase.server';
 import { StripeProduct } from '@/models/stripe.model';
 
 interface StaticPropsResult {
@@ -205,27 +204,27 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     preview: preview || false,
   };
 
-  if (type === PostType.course && !lessonPath) {
-    const productId = post?.accessSettings?.productId;
-    if (productId) {
-      const product = await getStripeProduct(productId);
-      if (product) {
-        props.product = product;
-        console.log(`${slug} has product: `, product.id);
-      }
-    }
-  } else {
-    if (lessonPath) {
-      if (course) {
-        props.course = course;
-      }
-    } else {
-      const recentPosts = await getRecentPostsService({ preview });
-      if (recentPosts) {
-        props.recentPosts = recentPosts;
-      }
-    }
-  }
+  // if (type === PostType.course && !lessonPath) {
+  //   const productId = post?.accessSettings?.productId;
+  //   if (productId) {
+  //     const product = await getStripeProduct(productId);
+  //     if (product) {
+  //       props.product = product;
+  //       console.log(`${slug} has product: `, product.id);
+  //     }
+  //   }
+  // } else {
+  //   if (lessonPath) {
+  //     if (course) {
+  //       props.course = course;
+  //     }
+  //   } else {
+  //     const recentPosts = await getRecentPostsService({ preview });
+  //     if (recentPosts) {
+  //       props.recentPosts = recentPosts;
+  //     }
+  //   }
+  // }
 
   return {
     props,
