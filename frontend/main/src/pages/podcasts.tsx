@@ -5,6 +5,7 @@ import PostsCards from '@/components/PostsCards';
 import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
+import { queryPurrfectStreamByReleased } from '@/services/notion.server';
 import { getSite, getPostsService } from '@/services/sanity.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 interface StaticParams {
@@ -18,7 +19,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
   return {
     props: {
       site: await getSite({ preview }),
-      posts: await getPostsService({ type: PostType.podcast, preview }),
+      posts: (await queryPurrfectStreamByReleased()) as unknown as Post[],
     },
     revalidate: 3600,
   };
