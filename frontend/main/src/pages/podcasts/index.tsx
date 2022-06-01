@@ -8,18 +8,22 @@ import { Site } from '@/models/site.model';
 import { queryPurrfectStreamByReleased } from '@/services/notion.server';
 import { getSite, getPostsService } from '@/services/sanity.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { Pagination } from '@/components/NotionPagination';
 interface StaticParams {
   site: Site;
   posts: Post[];
+  showNext: boolean;
 }
 
 export const getStaticProps: GetStaticProps<StaticParams> = async ({
   preview = false,
 }) => {
+  let notionPosts = await queryPurrfectStreamByReleased(20);
   return {
     props: {
       site: await getSite({ preview }),
-      posts: (await queryPurrfectStreamByReleased()) as unknown as Post[],
+      posts: notionPosts.results,
+      showNext: notionPosts.has_more,
     },
     revalidate: 3600,
   };
@@ -28,6 +32,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 const Podcasts = ({
   site,
   posts,
+  showNext,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
@@ -64,7 +69,12 @@ const Podcasts = ({
             s
           </h2>
           <PostsCards posts={posts} />
-          <PurrfectDevPodcatchers />
+          <Pagination
+            posts={posts}
+            baseUrl="podcasts"
+            pageNumber={1}
+            showNext={showNext}
+          />
         </div>
       </Layout>
     </>
