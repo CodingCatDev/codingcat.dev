@@ -21,6 +21,12 @@ import {
 } from '@/services/sanity.server';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { StripeProduct } from '@/models/stripe.model';
+import {
+  getPurrfectStreamBlocksBySlug,
+  getPurrfectStreamPageMarkdown,
+  queryPurrfectStreamByReleased,
+  queryPurrfectStreamBySlug,
+} from '@/services/notion.server';
 
 interface StaticPropsResult {
   site: Site;
@@ -39,7 +45,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   for (const postType of [
     PostType.post,
     PostType.tutorial,
-    PostType.podcast,
     PostType.page,
     PostType.course,
   ]) {
@@ -54,6 +59,19 @@ export const getStaticPaths: GetStaticPaths = async () => {
       });
     }
   }
+
+  // Moved podcasts to notion
+  let notionPosts = await queryPurrfectStreamByReleased(10000);
+  for (const post of notionPosts.results) {
+    if (post.slug) {
+      paths.push({
+        params: {
+          permalink: ['podcast', post.slug],
+        },
+      });
+    }
+  }
+
   return {
     paths,
     fallback: true,
@@ -148,7 +166,12 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
         slug,
       });
     } else {
-      post = await getPostBySlugService({ preview, type, slug });
+      // Moved to Notion June 2022
+      if (type == PostType.podcast) {
+        post = await getPurrfectStreamPageMarkdown(slug);
+      } else {
+        post = await getPostBySlugService({ preview, type, slug });
+      }
     }
   }
 

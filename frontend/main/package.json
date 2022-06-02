@@ -39,6 +39,7 @@
     "next-seo": "^4.28.1",
     "next-themes": "^0.0.15",
     "nightwind": "^1.1.12",
+    "notion-to-md": "^2.3.3",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.2",
     "react-calendly": "^2.2.2",
