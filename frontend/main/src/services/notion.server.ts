@@ -131,6 +131,9 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
         } - ${q?.properties?.Name?.title
           .map((t: any) => t.plain_text)
           .join('')}`,
+        coverVideo: q?.properties?.YouTube?.url
+          ? { url: q.properties.YouTube.url }
+          : undefined,
         coverPhoto: {
           public_id: q?.cover?.external?.url
             ? q?.cover?.external?.url.split('upload/').at(1)
@@ -185,28 +188,6 @@ export const getPurrfectStreamPageMarkdown = async (slug: string) => {
       queryPurrfectPicksByStreamId(id),
       queryPurrfectGuestsByStreamId(id),
     ]);
-
-  //Map to correct fields
-  raw.results.map((q: any) => {
-    return {
-      ...q,
-      title: `${q.properties.Season.number}.${
-        q.properties.Episode.number
-      } - ${q?.properties?.Name?.title.map((t: any) => t.plain_text).join('')}`,
-      coverPhoto: {
-        public_id: q?.cover?.external?.url
-          ? q?.cover?.external?.url.split('upload/').at(1)
-          : null,
-      },
-      _type: 'podcast',
-      slug: q?.properties?.slug?.rich_text
-        .map((t: any) => t.plain_text)
-        .join(''),
-      excerpt: q?.properties?.excerpt?.rich_text
-        .map((t: any) => t.plain_text)
-        .join(''),
-    };
-  });
 
   let content = '';
   // Build the markdown for page
