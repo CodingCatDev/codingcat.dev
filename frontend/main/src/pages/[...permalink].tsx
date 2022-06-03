@@ -282,7 +282,7 @@ export default function PostPage({
       </Layout>
     );
   }
-
+  console.log(post);
   return (
     <>
       <NextSeo
