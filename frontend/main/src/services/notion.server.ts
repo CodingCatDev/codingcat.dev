@@ -63,6 +63,8 @@ export const queryByPublished = async (
   return {
     ...raw,
     results: raw.results.map((q: any) => {
+      console.log(q.properties);
+
       return {
         ...q,
         title: `${q?.properties?.title?.title
@@ -74,9 +76,7 @@ export const queryByPublished = async (
             : null,
         },
         _type,
-        slug: {
-          public_id: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
-        },
+        slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
         excerpt: q?.properties?.excerpt?.rich_text
           .map((t: any) => t.plain_text)
           .join(''),
@@ -120,9 +120,7 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
             : null,
         },
         _type,
-        slug: {
-          public_id: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
-        },
+        slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
         excerpt: q?.properties?.excerpt?.rich_text
           .map((t: any) => t.plain_text)
           .join(''),
