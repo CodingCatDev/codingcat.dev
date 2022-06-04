@@ -16,16 +16,15 @@ import {
   getPostById,
   getPostBySlugService,
   getPostsService,
-  getRecentPostsService,
   getSite,
 } from '@/services/sanity.server';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { StripeProduct } from '@/models/stripe.model';
 import {
-  getPurrfectStreamBlocksBySlug,
+  getNotionPageMarkdown,
   getPurrfectStreamPageMarkdown,
+  queryByPublished,
   queryPurrfectStreamByReleased,
-  queryPurrfectStreamBySlug,
 } from '@/services/notion.server';
 
 interface StaticPropsResult {
@@ -60,13 +59,59 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }
   }
 
-  // Moved podcasts to notion
-  let notionPosts = await queryPurrfectStreamByReleased(10000);
-  for (const post of notionPosts.results) {
-    if (post.slug) {
+  const [posts, tutorials, courses, pages, podcasts] = await Promise.all([
+    queryByPublished(PostType.post, 10000),
+    queryByPublished(PostType.tutorial, 10000),
+    queryByPublished(PostType.post, 10000),
+    queryByPublished(PostType.page, 10000),
+    queryPurrfectStreamByReleased(10000),
+  ]);
+
+  for (const p of posts.results) {
+    if (p.slug) {
       paths.push({
         params: {
-          permalink: ['podcast', post.slug],
+          permalink: [PostType.post, `${p.slug}`],
+        },
+      });
+    }
+  }
+
+  for (const p of tutorials.results) {
+    if (p.slug) {
+      paths.push({
+        params: {
+          permalink: [PostType.tutorial, `${p.slug}`],
+        },
+      });
+    }
+  }
+
+  for (const p of courses.results) {
+    if (p.slug) {
+      paths.push({
+        params: {
+          permalink: [PostType.course, `${p.slug}`],
+        },
+      });
+    }
+  }
+
+  for (const p of pages.results) {
+    if (p.slug) {
+      paths.push({
+        params: {
+          permalink: [PostType.page, `${p.slug}`],
+        },
+      });
+    }
+  }
+
+  for (const p of podcasts.results) {
+    if (p.slug) {
+      paths.push({
+        params: {
+          permalink: [PostType.podcast, `${p.slug}`],
         },
       });
     }
@@ -155,43 +200,15 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 
     //If Lesson we need to use different slug and get course
     if (lesson === PostType.lesson && lessonPath) {
-      post = await getPostBySlugService({
-        preview,
-        type: PostType.lesson,
-        slug: lessonPath,
-      });
-      course = await getPostBySlugService({
-        preview,
-        type,
-        slug,
-      });
+      post = await getNotionPageMarkdown(PostType.lesson, lessonPath);
+      course = await getNotionPageMarkdown(type, slug);
     } else {
       // Moved to Notion June 2022
       if (type == PostType.podcast) {
         post = await getPurrfectStreamPageMarkdown(slug);
       } else {
-        post = await getPostBySlugService({ preview, type, slug });
+        post = await getNotionPageMarkdown(type, slug);
       }
-    }
-  }
-
-  // Check if old blog link is trying to be used.
-  if (!post) {
-    if (type === PostType.page) {
-      post = await getPostBySlugService({
-        preview,
-        type: PostType.post,
-        slug,
-      });
-    }
-    // This means the page was found, but we want to redirect them.
-    if (post) {
-      return {
-        redirect: {
-          destination: `/${PostType.post}/${slug}`,
-          permanent: true,
-        },
-      };
     }
   }
 

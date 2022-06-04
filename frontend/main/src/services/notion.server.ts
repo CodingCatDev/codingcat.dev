@@ -1,17 +1,9 @@
 import { Client } from '@notionhq/client';
 import { config } from '@/config/notion';
-import { Post } from '@/models/post.model';
+import { Post, PostType } from '@/models/post.model';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { NotionToMarkdown } from 'notion-to-md';
-
-const slugify = (str: string) =>
-  str
-    .toLowerCase()
-    .trim()
-    .replace('.', '-')
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { config as notionConfig } from '@/config/notion';
 
 // Initializing a client
 const notionClient = new Client({
@@ -22,6 +14,147 @@ const n2m = new NotionToMarkdown({ notionClient });
 interface NotionPosts extends Omit<QueryDatabaseResponse, 'results'> {
   results: Post[];
 }
+
+export const getNotionDbByType = (_type: string) => {
+  switch (_type) {
+    case PostType.post:
+      return notionConfig.postsDb;
+    case PostType.tutorial:
+      return notionConfig.tutorialsDb;
+    case PostType.course:
+      return notionConfig.coursesDb;
+    case PostType.podcast:
+      return notionConfig.purrfectStreamsDb;
+    case PostType.lesson:
+      return notionConfig.lessonsDb;
+    default:
+      return notionConfig.pagesDb;
+  }
+};
+
+// CodingCat.dev
+
+export const queryByPublished = async (
+  _type: string,
+  page_size?: number,
+  start_cursor?: string | null
+) => {
+  let raw = await notionClient.databases.query({
+    database_id: getNotionDbByType(_type),
+    start_cursor: start_cursor ? start_cursor : undefined,
+    page_size,
+    filter: {
+      and: [
+        {
+          property: 'published',
+          select: {
+            equals: 'published',
+          },
+        },
+      ],
+    },
+    sorts: [
+      {
+        property: 'start',
+        direction: 'descending',
+      },
+    ],
+  });
+  return {
+    ...raw,
+    results: raw.results.map((q: any) => {
+      return {
+        ...q,
+        title: `${q?.properties?.title?.title
+          .map((t: any) => t.plain_text)
+          .join('')}`,
+        coverPhoto: {
+          public_id: q?.properties?.cover?.url
+            ? q?.properties?.cover.url.split('upload/').at(1)
+            : null,
+        },
+        _type,
+        slug: {
+          public_id: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
+        },
+        excerpt: q?.properties?.excerpt?.rich_text
+          .map((t: any) => t.plain_text)
+          .join(''),
+      };
+    }),
+  } as unknown as NotionPosts;
+};
+
+export const queryNotionDbBySlug = async (_type: string, slug: string) => {
+  let raw = await notionClient.databases.query({
+    database_id: getNotionDbByType(_type),
+    filter: {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            contains: slug,
+          },
+        },
+        {
+          property: 'published',
+          select: {
+            equals: 'published',
+          },
+        },
+      ],
+    },
+  });
+  return {
+    ...raw,
+    results: raw.results.map((q: any) => {
+      console.log(q.properties);
+      return {
+        ...q,
+        title: `${q?.properties?.title?.title
+          .map((t: any) => t.plain_text)
+          .join('')}`,
+        coverPhoto: {
+          public_id: q?.properties?.cover?.url
+            ? q?.properties?.cover.url.split('upload/').at(1)
+            : null,
+        },
+        _type,
+        slug: {
+          public_id: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
+        },
+        excerpt: q?.properties?.excerpt?.rich_text
+          .map((t: any) => t.plain_text)
+          .join(''),
+      };
+    }),
+  } as unknown as NotionPosts;
+};
+
+export const getNotionPageMarkdown = async (_type: PostType, slug: string) => {
+  let raw = await queryNotionDbBySlug(_type, slug);
+  if (!raw.results.length) {
+    return null;
+  }
+
+  //Get purrfect picks
+  const page = raw.results.at(0) as Post;
+  const id = page.id;
+
+  let content = '';
+
+  for (const page of raw.results) {
+    const blocks = await n2m.pageToMarkdown(page.id);
+    content += n2m.toMarkdownString(blocks);
+  }
+
+  return {
+    ...raw.results[0],
+    content,
+  };
+};
+
+// Purrfect.dev
 
 export const queryPurrfectStreamByReleased = async (
   page_size?: number,
@@ -149,29 +282,6 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
       };
     }),
   };
-};
-
-export const getPurrfectStreamPageById = async (page_id: string) => {
-  let raw = await notionClient.pages.retrieve({
-    page_id,
-  });
-  return {
-    ...raw,
-  } as unknown as Post;
-};
-
-export const getPurrfectStreamBlocksBySlug = async (slug: string) => {
-  const dbObject = await queryPurrfectStreamBySlug(slug);
-  if (!dbObject.results.length) {
-    return null;
-  }
-  let raw = await notionClient.blocks.children.list({
-    block_id: dbObject.results[0].id,
-  });
-  console.log(raw);
-  return {
-    ...raw,
-  } as unknown as Post;
 };
 
 export const getPurrfectStreamPageMarkdown = async (slug: string) => {

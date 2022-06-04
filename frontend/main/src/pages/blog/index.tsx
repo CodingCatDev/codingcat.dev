@@ -1,32 +1,41 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
+import PurrfectDevUpper from '@/components/PurrfectDevUpper';
 import PostsCards from '@/components/PostsCards';
-
+import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import {
+  queryByPublished,
+  queryPurrfectStreamByReleased,
+} from '@/services/notion.server';
 import { getSite, getPostsService } from '@/services/sanity.server';
-
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { Pagination } from '@/components/NotionPagination';
 interface StaticParams {
   site: Site;
   posts: Post[];
+  showNext: boolean;
 }
 
 export const getStaticProps: GetStaticProps<StaticParams> = async ({
   preview = false,
 }) => {
+  let notionPosts = await queryByPublished(PostType.post, 20);
   return {
     props: {
       site: await getSite({ preview }),
-      posts: await getPostsService({ type: PostType.post, preview }),
+      posts: notionPosts.results,
+      showNext: notionPosts.has_more,
     },
     revalidate: 3600,
   };
 };
 
-const Blog = ({
+const Podcasts = ({
   site,
   posts,
+  showNext,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
@@ -40,9 +49,15 @@ const Blog = ({
             {PostType.post.charAt(0).toUpperCase() + PostType.post.slice(1)}s
           </h1>
           <PostsCards posts={posts} />
+          <Pagination
+            posts={posts}
+            baseUrl="blog"
+            pageNumber={1}
+            showNext={showNext}
+          />
         </div>
       </Layout>
     </>
   );
 };
-export default Blog;
+export default Podcasts;
