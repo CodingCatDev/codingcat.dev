@@ -133,7 +133,7 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
           .join('')}`,
         coverVideo: q?.properties?.YouTube?.url
           ? { url: q.properties.YouTube.url }
-          : undefined,
+          : null,
         coverPhoto: {
           public_id: q?.cover?.external?.url
             ? q?.cover?.external?.url.split('upload/').at(1)
