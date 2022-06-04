@@ -3,7 +3,7 @@
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap';
 import { GetServerSideProps } from 'next';
 import { PostType } from '@/models/post.model';
-import { getPostsService } from '@/services/sanity.server';
+import { getPostsService } from '@/services/notion.server';
 
 const url = `${process.env.SITE_URL || 'https://codingcat.dev'}`;
 

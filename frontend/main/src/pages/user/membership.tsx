@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Layout from '@/layout/Layout';
 
 import { Site } from '@/models/site.model';
-import { getSite } from '@/services/sanity.server';
+import { getSite } from '@/services/notion.server';
 import UserMembershipDetail from '@/components/user/UserMembershipDetail';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
@@ -15,7 +15,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
     },
     revalidate: 3600,
   };

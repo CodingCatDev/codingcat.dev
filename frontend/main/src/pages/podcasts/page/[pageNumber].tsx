@@ -4,7 +4,7 @@ import PostsCards from '@/components/PostsCards';
 import PurrfectDevUpper from '@/components/PurrfectDevUpper';
 import Layout from '@/layout/Layout';
 import { PostType } from '@/models/post.model';
-import { getSite } from '@/services/sanity.server';
+import { getSite } from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import { Pagination } from '@/components/NotionPagination';
 
@@ -42,7 +42,7 @@ export async function getStaticProps({
   }
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
       posts: notionPosts?.results ? notionPosts?.results : [],
       showNext: notionPosts?.has_more ?? false,
       pageNumber,

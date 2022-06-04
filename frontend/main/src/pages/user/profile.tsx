@@ -5,7 +5,7 @@ import { StripeProduct } from '@/models/stripe.model';
 import Profile from '@/components/user/Profile';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
-import { getSite } from '@/services/sanity.server';
+import { getSite } from '@/services/notion.server';
 
 interface StaticParams {
   site: Site;
@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
       // products: await getActiveMemberProducts(),
       products: [],
     },

@@ -1,15 +1,10 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
-import PurrfectDevUpper from '@/components/PurrfectDevUpper';
 import PostsCards from '@/components/PostsCards';
-import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
-import {
-  queryByPublished,
-  queryPurrfectStreamByReleased,
-} from '@/services/notion.server';
-import { getSite, getPostsService } from '@/services/sanity.server';
+import { queryByPublished } from '@/services/notion.server';
+import { getSite } from '@/services/notion.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Pagination } from '@/components/NotionPagination';
 interface StaticParams {
@@ -24,7 +19,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
   let notionPosts = await queryByPublished(PostType.post, 20);
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
       posts: notionPosts.results,
       showNext: notionPosts.has_more,
     },

@@ -2,7 +2,7 @@ import {
   getSite,
   getPostsByUser,
   getAuthorBySlugService,
-} from '@/services/sanity.server';
+} from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<StaticParams> = async ({
       notFound: true,
     };
   }
-  const site = await getSite({ preview });
+  const site = getSite();
   const author = await getAuthorBySlugService({
     preview,
     slug: authorPath,

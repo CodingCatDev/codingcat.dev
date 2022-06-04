@@ -2,7 +2,7 @@ import { NextSeo } from 'next-seo';
 import Image from 'next/image';
 import router, { useRouter } from 'next/router';
 import Layout from '@/layout/Layout';
-import { getSite } from '@/services/sanity.server';
+import { getSite } from '@/services/notion.server';
 import { Site } from '@/models/site.model';
 import { HTMLAttributes, useEffect, useRef } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
@@ -18,7 +18,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
     },
     revalidate: 3600,
   };

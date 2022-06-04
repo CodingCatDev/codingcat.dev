@@ -1,5 +1,5 @@
 import { Post, PostType } from '@/models/post.model';
-import { getPostsService } from '@/services/sanity.server';
+import { getPostsService } from '@/services/notion.server';
 import { Feed } from 'feed';
 import { Timestamp } from 'firebase/firestore';
 

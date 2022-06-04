@@ -2,7 +2,7 @@ import {
   getPostsByTag,
   getSite,
   getTagBySlugService,
-} from '@/services/sanity.server';
+} from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
@@ -123,7 +123,7 @@ export const getServerSideProps: GetServerSideProps<StaticParams> = async ({
 
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
       tag,
       courses,
       tutorials,

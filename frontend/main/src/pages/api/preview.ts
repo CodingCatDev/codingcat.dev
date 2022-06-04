@@ -1,5 +1,5 @@
 import { PostType } from '@/models/post.model';
-import { getPostById } from '@/services/sanity.server';
+import { getPostById } from '@/services/notion.server';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const preview = async (

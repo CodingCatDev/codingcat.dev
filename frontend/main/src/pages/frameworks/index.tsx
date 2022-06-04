@@ -1,7 +1,7 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 
-import { getTags, getSite } from '@/services/sanity.server';
+import { getTags, getSite } from '@/services/notion.server';
 import { Site } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
       tags: await getTags({ preview, tag: 'framework' }),
     },
     revalidate: 360,

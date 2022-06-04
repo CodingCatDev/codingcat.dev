@@ -4,7 +4,7 @@ import Authors from '@/components/authors/Authors';
 
 import { Site } from '@/models/site.model';
 import { Author } from '@/models/user.model';
-import { getAuthors, getSite } from '@/services/sanity.server';
+import { getAuthors, getSite } from '@/services/notion.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
 interface StaticParams {
@@ -17,8 +17,8 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
-      authors: await getAuthors({ preview }),
+      site: getSite(),
+      authors: await getAuthors(),
     },
     revalidate: 3600,
   };

@@ -1,10 +1,14 @@
+import { PostType } from './../../models/post.model';
 import algoliasearch from 'algoliasearch';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { isValidRequest } from '@sanity/webhook';
 
 import { webhook } from '@/config/sanity';
 import { config as algoliaConfig } from '@/config/algolia';
-import { getPostBySlugService } from '@/services/sanity.server';
+import {
+  queryNotionDbBySlug,
+  queryPurrfectStreamBySlug,
+} from '@/services/notion.server';
 
 const algolia = algoliasearch(algoliaConfig.appId, algoliaConfig.apiKey);
 
@@ -65,11 +69,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       console.log(`Fetching full post with type: ${type} slug: ${slug}`);
-      const post = await getPostBySlugService({
-        preview: true,
-        type: type,
-        slug: slug,
-      });
+      let post;
+      if (type == PostType.podcast) {
+        post = await (await queryPurrfectStreamBySlug(slug)).results.at(0);
+      } else {
+        post = await (await queryNotionDbBySlug(type, slug)).results.at(0);
+      }
+
       console.log('post data:', JSON.stringify(post));
       if (post) {
         result = await algoliaIndex.saveObject({

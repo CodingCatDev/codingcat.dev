@@ -14,7 +14,8 @@ import Podcasts from '@/components/global/icons/nav/Podcasts';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { Site } from '@/models/site.model';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { getRecentPostsService, getSite } from '@/services/sanity.server';
+import { getSite } from '@/services/notion.server';
+import { getRecent } from '@/services/notion.server';
 
 interface StaticParams {
   site: Site;
@@ -28,8 +29,8 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
-      recentPosts: await getRecentPostsService({ preview }),
+      site: getSite(),
+      recentPosts: await getRecent({ preview }),
     },
     revalidate: 3600,
   };

@@ -4,6 +4,7 @@ import { Post, PostType } from '@/models/post.model';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { NotionToMarkdown } from 'notion-to-md';
 import { config as notionConfig } from '@/config/notion';
+import { Site } from '@/models/site.model';
 
 // Initializing a client
 const notionClient = new Client({
@@ -63,8 +64,6 @@ export const queryByPublished = async (
   return {
     ...raw,
     results: raw.results.map((q: any) => {
-      console.log(q.properties);
-
       return {
         ...q,
         title: `${q?.properties?.title?.title
@@ -403,3 +402,58 @@ export const queryPurrfectGuestsByStreamId = async (streamId: string) => {
   });
   return raw;
 };
+
+export const getRecent = async ({ preview = false }) => {
+  const [course, post, tutorial, podcast] = await Promise.all([
+    queryByPublished(PostType.course, 3),
+    queryByPublished(PostType.post, 3),
+    queryByPublished(PostType.tutorial, 3),
+    queryPurrfectStreamByReleased(3),
+  ]);
+  return {
+    course: course.results,
+    post: post.results,
+    tutorial: tutorial.results,
+    podcast: podcast.results,
+  };
+};
+
+export const getSite = () => {
+  return {
+    pageLinks: [
+      { slug: 'ftc-disclosure', title: 'FTC Disclosure' },
+      { slug: 'privacy-policy', title: 'Privacy Policy' },
+      { slug: 'terms-of-use', title: 'Terms of Use' },
+    ],
+    socialLinks: [
+      {
+        href: 'https://www.facebook.com/groups/codingcatdev',
+        type: 'facebook',
+      },
+      {
+        href: 'https://github.com/CodingCatDev',
+        type: 'github',
+      },
+      {
+        href: 'https://www.linkedin.com/company/codingcatdev/',
+        type: 'linkedin',
+      },
+      {
+        href: 'https://medium.com/codingcatdev',
+        type: 'medium',
+      },
+      {
+        href: 'https://twitter.com/CodingCatDev',
+        type: 'twitter',
+      },
+      {
+        href: 'http://youtube.com/c/codingcatdev',
+        type: 'youtube',
+      },
+    ],
+    id: 'none',
+    title: 'CodingCatDev',
+  } as Site;
+};
+
+export const getAuthors = () => [];

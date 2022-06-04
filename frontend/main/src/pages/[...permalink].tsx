@@ -12,18 +12,15 @@ import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import DefaultErrorPage from 'next/error';
-import {
-  getPostById,
-  getPostBySlugService,
-  getPostsService,
-  getSite,
-} from '@/services/sanity.server';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { StripeProduct } from '@/models/stripe.model';
 import {
   getNotionPageMarkdown,
   getPurrfectStreamPageMarkdown,
+  getRecent,
+  getSite,
   queryByPublished,
+  queryNotionDbBySlug,
   queryPurrfectStreamByReleased,
 } from '@/services/notion.server';
 
@@ -41,23 +38,6 @@ interface StaticPropsResult {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths: { params: { permalink: string[] } }[] = [];
-  for (const postType of [
-    PostType.post,
-    PostType.tutorial,
-    PostType.page,
-    PostType.course,
-  ]) {
-    const posts = await getPostsService({
-      type: postType,
-    });
-    for (const post of posts) {
-      paths.push({
-        params: {
-          permalink: [post._type, post.slug],
-        },
-      });
-    }
-  }
 
   const [posts, tutorials, courses, pages, podcasts] = await Promise.all([
     queryByPublished(PostType.post, 10000),
@@ -188,12 +168,8 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     }
 
     const { _id } = pData;
-    post = await getPostById({ preview, _id });
-    course = await getPostBySlugService({
-      preview,
-      type,
-      slug,
-    });
+    // post = await getPostById({ preview, _id }); TODO
+    // course = await queryNotionDbBySlug(type, slug);
   } else {
     //Not in Preview mode.
     preview = false;
@@ -238,7 +214,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 
   // Courses have products not recentPosts
   const props: StaticPropsResult = {
-    site: await getSite({ preview }),
+    site: await getSite(),
     post,
     source,
     preview: preview || false,
@@ -254,16 +230,16 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   //     }
   //   }
   // } else {
-  //   if (lessonPath) {
-  //     if (course) {
-  //       props.course = course;
-  //     }
-  //   } else {
-  //     const recentPosts = await getRecentPostsService({ preview });
-  //     if (recentPosts) {
-  //       props.recentPosts = recentPosts;
-  //     }
-  //   }
+  if (lessonPath) {
+    if (course) {
+      props.course = course;
+    }
+  } else {
+    const recentPosts = await getRecent({ preview });
+    if (recentPosts) {
+      props.recentPosts = recentPosts;
+    }
+  }
   // }
 
   return {

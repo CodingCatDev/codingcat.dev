@@ -6,7 +6,7 @@ import { Post } from '@/models/post.model';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { GetStaticProps } from 'next';
-import { getSite } from '@/services/sanity.server';
+import { getSite } from '@/services/notion.server';
 
 export default function Custom404({
   site,
@@ -48,7 +48,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
 }) => {
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
     },
     revalidate: 3600,
   };

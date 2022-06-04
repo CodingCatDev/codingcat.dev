@@ -6,7 +6,7 @@ import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
 import { queryPurrfectStreamByReleased } from '@/services/notion.server';
-import { getSite, getPostsService } from '@/services/sanity.server';
+import { getSite, getPostsService } from '@/services/notion.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Pagination } from '@/components/NotionPagination';
 interface StaticParams {
@@ -21,7 +21,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
   let notionPosts = await queryPurrfectStreamByReleased(20);
   return {
     props: {
-      site: await getSite({ preview }),
+      site: getSite(),
       posts: notionPosts.results,
       showNext: notionPosts.has_more,
     },
