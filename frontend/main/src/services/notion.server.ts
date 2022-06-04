@@ -1,3 +1,4 @@
+import { Author } from '@/models/user.model';
 import { Client } from '@notionhq/client';
 import { config } from '@/config/notion';
 import { Post, PostType } from '@/models/post.model';
@@ -5,6 +6,7 @@ import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
 import { NotionToMarkdown } from 'notion-to-md';
 import { config as notionConfig } from '@/config/notion';
 import { Site } from '@/models/site.model';
+import { Tag } from '@/models/tag.model';
 
 // Initializing a client
 const notionClient = new Client({
@@ -34,6 +36,70 @@ export const getNotionDbByType = (_type: string) => {
 };
 
 // CodingCat.dev
+
+//TODO: Finish theses
+export const getPostById = ({
+  preview,
+  _id,
+}: {
+  preview: true;
+  _id: string;
+}) => {
+  return {} as Post;
+};
+
+export const getPostsByUser = ({
+  type,
+  _id,
+}: {
+  type: PostType;
+  _id: string;
+}) => {
+  return {} as Post[];
+};
+
+export const getAuthorBySlugService = ({
+  preview,
+  slug,
+}: {
+  preview?: boolean;
+  slug: string;
+}) => {
+  return {} as Author;
+};
+
+export const getTagBySlugService = ({
+  tag,
+  preview,
+  slug,
+}: {
+  tag: string;
+  preview?: boolean;
+  slug: string;
+}) => {
+  return { _id: 'yep' } as Tag;
+};
+export const getPostsByTag = ({
+  type,
+  _id,
+  tag,
+}: {
+  type: PostType;
+  _id: string;
+  tag: string;
+}) => {
+  return { _id: 'yep' };
+};
+
+export const getTags = ({
+  preview,
+  tag,
+}: {
+  preview?: boolean;
+  tag: string;
+}) => {
+  return [{ _id: 'yep' }] as Tag[];
+};
 
 export const queryByPublished = async (
   _type: string,

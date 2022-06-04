@@ -1,14 +1,13 @@
 import { Post, PostType } from '@/models/post.model';
-import { getPostsService } from '@/services/notion.server';
+import {
+  queryByPublished,
+  queryPurrfectStreamByReleased,
+} from '@/services/notion.server';
 import { Feed } from 'feed';
 import { Timestamp } from 'firebase/firestore';
 
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
-
-import rehypeParse from 'rehype-parse';
-import rehypeRemark from 'rehype-remark';
-import remarkStringify from 'remark-stringify';
 
 const site = 'https://codingcat.dev';
 
@@ -66,23 +65,12 @@ export const buildFeed = ({
 };
 
 export const build = async ({ type }: { type: PostType }) => {
-  const posts = await getPostsService({
-    type,
-    limit: 100,
-    params: `
-        title,
-        "slug":slug.current,
-        excerpt,
-        publishedAt,
-        authors[]->{
-            ...,
-            "slug":slug.current,
-        },
-        content,
-        coverPhoto{
-          ...
-        }
-    `,
-  });
+  let posts;
+  if (type == PostType.podcast) {
+    posts = await (await queryByPublished(type, 10000)).results;
+  } else {
+    posts = await (await queryPurrfectStreamByReleased(10000)).results;
+  }
+
   return buildFeed({ posts, type });
 };

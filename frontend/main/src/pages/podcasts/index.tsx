@@ -5,8 +5,10 @@ import PostsCards from '@/components/PostsCards';
 import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
 import { Post, PostType } from '@/models/post.model';
 import { Site } from '@/models/site.model';
-import { queryPurrfectStreamByReleased } from '@/services/notion.server';
-import { getSite, getPostsService } from '@/services/notion.server';
+import {
+  queryPurrfectStreamByReleased,
+  getSite,
+} from '@/services/notion.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Pagination } from '@/components/NotionPagination';
 interface StaticParams {

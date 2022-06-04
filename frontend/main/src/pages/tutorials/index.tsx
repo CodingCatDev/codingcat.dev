@@ -9,7 +9,7 @@ import {
   queryByPublished,
   queryPurrfectStreamByReleased,
 } from '@/services/notion.server';
-import { getSite, getPostsService } from '@/services/notion.server';
+import { getSite } from '@/services/notion.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Pagination } from '@/components/NotionPagination';
 interface StaticParams {

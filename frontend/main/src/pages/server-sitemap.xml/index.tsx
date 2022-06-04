@@ -3,7 +3,10 @@
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap';
 import { GetServerSideProps } from 'next';
 import { PostType } from '@/models/post.model';
-import { getPostsService } from '@/services/notion.server';
+import {
+  queryByPublished,
+  queryPurrfectStreamByReleased,
+} from '@/services/notion.server';
 
 const url = `${process.env.SITE_URL || 'https://codingcat.dev'}`;
 
@@ -16,7 +19,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     PostType.page,
     PostType.course,
   ]) {
-    const docData = await getPostsService({ type });
+    let docData;
+    if (type == PostType.podcast) {
+      docData = await (await queryByPublished(type, 10000)).results;
+    } else {
+      docData = await (await queryPurrfectStreamByReleased(10000)).results;
+    }
     for (const doc of docData) {
       fields.push({
         loc: `${url}/${doc._type}/${doc.slug}`,
