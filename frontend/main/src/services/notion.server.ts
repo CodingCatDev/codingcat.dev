@@ -105,6 +105,32 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
   let post = {
     ...raw,
     results: raw.results.map((q: any) => {
+      //Flat authors
+      const authors = [];
+
+      if (q?.properties?.author_title?.rollup?.array) {
+        for (const [
+          i,
+          a,
+        ] of q?.properties?.author_title?.rollup?.array?.entries()) {
+          const cover = q?.properties?.author_cover?.rollup?.array?.at(i)?.url;
+
+          let photoURL = null;
+          if (cover) {
+            photoURL = {
+              public_id: cover.split('upload/')?.at(1)
+                ? cover.split('upload/').at(1)
+                : cover,
+            };
+          }
+
+          const author = {
+            displayName: `${a?.title.map((t: any) => t.plain_text).join('')}`,
+            photoURL,
+          };
+          authors.push(author);
+        }
+      }
       return {
         ...q,
         title: `${q?.properties?.title?.title
@@ -112,7 +138,8 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
           .join('')}`,
         coverPhoto: {
           public_id: q?.properties?.cover?.url
-            ? q?.properties?.cover.url.split('upload/').at(1)
+            ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+              q?.properties?.cover?.url
             : null,
         },
         coverVideo: q?.properties?.youtube?.url
@@ -123,6 +150,9 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
         excerpt: q?.properties?.excerpt?.rich_text
           .map((t: any) => t.plain_text)
           .join(''),
+        _createdAt: q?.properties?.start?.date?.start || q?.created_time,
+        _updatedAt: q?.last_edited_time,
+        authors,
       };
     }),
   } as unknown as NotionPosts;
