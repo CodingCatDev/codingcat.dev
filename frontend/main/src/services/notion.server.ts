@@ -140,6 +140,9 @@ export const queryByPublished = async (
             ? q?.properties?.cover.url.split('upload/').at(1)
             : null,
         },
+        coverVideo: q?.properties?.youtube?.url
+          ? { url: q.properties.youtube.url }
+          : null,
         _type,
         slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
         excerpt: q?.properties?.excerpt?.rich_text
@@ -173,7 +176,6 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
   return {
     ...raw,
     results: raw.results.map((q: any) => {
-      console.log(q.properties);
       return {
         ...q,
         title: `${q?.properties?.title?.title
@@ -184,6 +186,9 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
             ? q?.properties?.cover.url.split('upload/').at(1)
             : null,
         },
+        coverVideo: q?.properties?.youtube?.url
+          ? { url: q.properties.youtube.url }
+          : null,
         _type,
         slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
         excerpt: q?.properties?.excerpt?.rich_text
@@ -269,6 +274,9 @@ export const queryPurrfectStreamByReleased = async (
             ? q?.cover?.external?.url.split('upload/').at(1)
             : null,
         },
+        coverVideo: q?.properties?.youtube?.url
+          ? { url: q.properties.youtube.url }
+          : null,
         _type: 'podcast',
         slug: q?.properties?.slug?.rich_text
           .map((t: any) => t.plain_text)
@@ -327,8 +335,8 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
         } - ${q?.properties?.Name?.title
           .map((t: any) => t.plain_text)
           .join('')}`,
-        coverVideo: q?.properties?.YouTube?.url
-          ? { url: q.properties.YouTube.url }
+        coverVideo: q?.properties?.youtube?.url
+          ? { url: q.properties.youtube.url }
           : null,
         coverPhoto: {
           public_id: q?.cover?.external?.url
