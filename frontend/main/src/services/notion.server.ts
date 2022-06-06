@@ -101,6 +101,105 @@ export const getTags = ({
   return [{ _id: 'yep' }] as Tag[];
 };
 
+const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
+  let post = {
+    ...raw,
+    results: raw.results.map((q: any) => {
+      return {
+        ...q,
+        title: `${q?.properties?.title?.title
+          .map((t: any) => t.plain_text)
+          .join('')}`,
+        coverPhoto: {
+          public_id: q?.properties?.cover?.url
+            ? q?.properties?.cover.url.split('upload/').at(1)
+            : null,
+        },
+        coverVideo: q?.properties?.youtube?.url
+          ? { url: q.properties.youtube.url }
+          : null,
+        _type,
+        slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
+        excerpt: q?.properties?.excerpt?.rich_text
+          .map((t: any) => t.plain_text)
+          .join(''),
+      };
+    }),
+  } as unknown as NotionPosts;
+
+  // Get sections and lessons for course
+  if (_type == PostType.course) {
+    const results = await Promise.all(
+      post.results.map(async (q) => {
+        const sectionsRaw = await querySectionsWithOrder(q.id);
+        let sections: any = [];
+        for (const s of sectionsRaw.results as any) {
+          // const lessonsRaw = await queryRelationById(
+          //   s.id,
+          //   'sections',
+          //   config.lessonsDb
+          // );
+          // const lessons = [];
+          // for (const l of lessonsRaw.results as any) {
+          //   lessons.push({
+          //     ...l,
+          //     title: `${l?.properties?.title?.title
+          //       .map((t: any) => t.plain_text)
+          //       .join('')}`,
+          //     _id: l.id,
+          //     slug: l?.properties?.slug?.url ? l?.properties?.slug.url : null,
+          //     accessSettings: l?.accessSettings ? l.accessSettings : null,
+          //   });
+          // }
+          const lesson = {
+            title: `${s?.properties?.lesson_title?.rollup?.array
+              ?.at(0)
+              ?.title.map((t: any) => t.plain_text)
+              .join('')}`,
+            _id: s.id,
+            slug: s?.properties?.lesson_slug?.rollup?.array?.at(0)?.url
+              ? s?.properties?.lesson_slug.rollup?.array?.at(0)?.url
+              : null,
+            accessSettings: s?.lesson_accessSettings?.rollup?.array?.at(0)
+              ?.accessSettings
+              ? s?.lesson_accessSettings?.rollup?.array?.at(0)?.accessSettings
+              : null,
+          };
+          const exists = sections.find(
+            (e: any) =>
+              e.title ==
+              `${s?.properties?.title?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`
+          );
+
+          if (exists) {
+            exists.lessons.push(lesson);
+          } else {
+            sections.push({
+              ...s,
+              title: `${s?.properties?.title?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`,
+              _key: s.id,
+              lessons: [lesson],
+            });
+          }
+        }
+        return {
+          ...q,
+          sections,
+        };
+      })
+    );
+    post = {
+      ...post,
+      results,
+    };
+  }
+  return post;
+};
+
 export const queryByPublished = async (
   _type: string,
   page_size?: number,
@@ -127,30 +226,7 @@ export const queryByPublished = async (
       },
     ],
   });
-  return {
-    ...raw,
-    results: raw.results.map((q: any) => {
-      return {
-        ...q,
-        title: `${q?.properties?.title?.title
-          .map((t: any) => t.plain_text)
-          .join('')}`,
-        coverPhoto: {
-          public_id: q?.properties?.cover?.url
-            ? q?.properties?.cover.url.split('upload/').at(1)
-            : null,
-        },
-        coverVideo: q?.properties?.youtube?.url
-          ? { url: q.properties.youtube.url }
-          : null,
-        _type,
-        slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
-        excerpt: q?.properties?.excerpt?.rich_text
-          .map((t: any) => t.plain_text)
-          .join(''),
-      };
-    }),
-  } as unknown as NotionPosts;
+  return await formatPost(raw, _type);
 };
 
 export const queryNotionDbBySlug = async (_type: string, slug: string) => {
@@ -173,30 +249,7 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
       ],
     },
   });
-  return {
-    ...raw,
-    results: raw.results.map((q: any) => {
-      return {
-        ...q,
-        title: `${q?.properties?.title?.title
-          .map((t: any) => t.plain_text)
-          .join('')}`,
-        coverPhoto: {
-          public_id: q?.properties?.cover?.url
-            ? q?.properties?.cover.url.split('upload/').at(1)
-            : null,
-        },
-        coverVideo: q?.properties?.youtube?.url
-          ? { url: q.properties.youtube.url }
-          : null,
-        _type,
-        slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
-        excerpt: q?.properties?.excerpt?.rich_text
-          .map((t: any) => t.plain_text)
-          .join(''),
-      };
-    }),
-  } as unknown as NotionPosts;
+  return await formatPost(raw, _type);
 };
 
 export const getNotionPageMarkdown = async (_type: PostType, slug: string) => {
@@ -206,9 +259,10 @@ export const getNotionPageMarkdown = async (_type: PostType, slug: string) => {
   }
 
   //Get purrfect picks
-  const page = raw.results.at(0) as Post;
-  const id = page.id;
-
+  const page = raw.results.at(0);
+  if (!page) {
+    return null;
+  }
   let content = '';
 
   for (const page of raw.results) {
@@ -220,6 +274,46 @@ export const getNotionPageMarkdown = async (_type: PostType, slug: string) => {
     ...raw.results[0],
     content,
   };
+};
+
+export const querySectionsWithOrder = async (id: string) => {
+  let raw = await notionClient.databases.query({
+    database_id: config.sectionsDb,
+    filter: {
+      property: 'courses',
+      relation: {
+        contains: id,
+      },
+    },
+    sorts: [
+      {
+        property: 'section_order',
+        direction: 'ascending',
+      },
+      {
+        property: 'lesson_order',
+        direction: 'ascending',
+      },
+    ],
+  });
+  return raw;
+};
+
+export const queryRelationById = async (
+  id: string,
+  relation: string,
+  database_id: string
+) => {
+  let raw = await notionClient.databases.query({
+    database_id,
+    filter: {
+      property: relation,
+      relation: {
+        contains: id,
+      },
+    },
+  });
+  return raw;
 };
 
 // Purrfect.dev
@@ -259,34 +353,7 @@ export const queryPurrfectStreamByReleased = async (
       },
     ],
   });
-  return {
-    ...raw,
-    results: raw.results.map((q: any) => {
-      return {
-        ...q,
-        title: `${q.properties.Season.number}.${
-          q.properties.Episode.number
-        } - ${q?.properties?.Name?.title
-          .map((t: any) => t.plain_text)
-          .join('')}`,
-        coverPhoto: {
-          public_id: q?.cover?.external?.url
-            ? q?.cover?.external?.url.split('upload/').at(1)
-            : null,
-        },
-        coverVideo: q?.properties?.youtube?.url
-          ? { url: q.properties.youtube.url }
-          : null,
-        _type: 'podcast',
-        slug: q?.properties?.slug?.rich_text
-          .map((t: any) => t.plain_text)
-          .join(''),
-        excerpt: q?.properties?.excerpt?.rich_text
-          .map((t: any) => t.plain_text)
-          .join(''),
-      };
-    }),
-  } as unknown as NotionPosts;
+  return await formatPost(raw, 'podcast');
 };
 
 export const queryPurrfectStreamBySlug = async (slug: string) => {
@@ -325,34 +392,7 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
       },
     ],
   });
-  return {
-    ...raw,
-    results: raw.results.map((q: any) => {
-      return {
-        ...q,
-        title: `${q.properties.Season.number}.${
-          q.properties.Episode.number
-        } - ${q?.properties?.Name?.title
-          .map((t: any) => t.plain_text)
-          .join('')}`,
-        coverVideo: q?.properties?.youtube?.url
-          ? { url: q.properties.youtube.url }
-          : null,
-        coverPhoto: {
-          public_id: q?.cover?.external?.url
-            ? q?.cover?.external?.url.split('upload/').at(1)
-            : null,
-        },
-        _type: 'podcast',
-        slug: q?.properties?.slug?.rich_text
-          .map((t: any) => t.plain_text)
-          .join(''),
-        excerpt: q?.properties?.excerpt?.rich_text
-          .map((t: any) => t.plain_text)
-          .join(''),
-      };
-    }),
-  };
+  return await formatPost(raw, 'podcast');
 };
 
 export const getPurrfectStreamPageMarkdown = async (slug: string) => {
@@ -363,6 +403,9 @@ export const getPurrfectStreamPageMarkdown = async (slug: string) => {
 
   //Get purrfect picks
   const page = raw.results.at(0);
+  if (!page) {
+    return null;
+  }
   const id = page.id;
   const [purrfectPicks, purrfectGuests] =
     await Promise.all<QueryDatabaseResponse>([

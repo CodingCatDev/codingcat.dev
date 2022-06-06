@@ -37,7 +37,7 @@ export default function Course({
       return true;
     return false;
   }
-
+  console.log(post);
   return (
     <>
       <section className="top-0 z-10 grid 2xl:sticky">
@@ -137,9 +137,9 @@ export default function Course({
         </BreakBarLeft>
       </section>
       <div className="grid grid-cols-1 gap-4 px-4 pb-4 lg:px-10 lg:pb-10 lg:grid-cols-sidebar">
-        <section className="max-w-2xl flex flex-col gap-4">
+        <section className="flex flex-col max-w-2xl gap-4">
           <PostMedia post={post} noImage={true} />
-          <div className="mt-2 flex flex-col gap-2">
+          <div className="flex flex-col gap-2 mt-2">
             {source && <MDXRemote {...source} components={components} />}
           </div>
           {post._type === PostType.course && (
