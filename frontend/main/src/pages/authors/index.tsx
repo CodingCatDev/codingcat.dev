@@ -1,33 +1,39 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
-import Authors from '@/components/authors/Authors';
-
+import { Post } from '@/models/post.model';
 import { Site } from '@/models/site.model';
-import { Author } from '@/models/user.model';
-import { getAuthors, getSite } from '@/services/notion.server';
+import { queryByPublished } from '@/services/notion.server';
+import { getSite } from '@/services/notion.server';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-
+import { Pagination } from '@/components/NotionPagination';
+import Authors from '@/components/authors/Authors';
+import { Author } from '@/models/user.model';
 interface StaticParams {
   site: Site;
-  authors: Author[];
+  posts: Post[];
+  showNext: boolean;
 }
 
 export const getStaticProps: GetStaticProps<StaticParams> = async ({
   preview = false,
 }) => {
+  const notionPosts = await queryByPublished('author', 20);
+
   return {
     props: {
       site: getSite(),
-      authors: await getAuthors(),
+      posts: notionPosts.results,
+      showNext: notionPosts.has_more,
     },
     revalidate: 3600,
   };
 };
 
-export default function AuthorsPage({
+const Podcasts = ({
   site,
-  authors,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
+  posts,
+  showNext,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NextSeo
@@ -37,9 +43,16 @@ export default function AuthorsPage({
       <Layout site={site}>
         <section className="grid grid-cols-1 gap-10 p-4 sm:p-10 place-items-center">
           <h1 className="text-5xl lg:text-7xl">Authors</h1>
-          <Authors authors={authors} />
+          <Authors authors={posts as unknown as Author[]} />
+          <Pagination
+            posts={posts}
+            baseUrl="blog"
+            pageNumber={1}
+            showNext={showNext}
+          />
         </section>
       </Layout>
     </>
   );
-}
+};
+export default Podcasts;

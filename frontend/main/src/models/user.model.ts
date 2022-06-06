@@ -11,6 +11,8 @@ export interface UserInfoExtended extends UserInfo {
 
 export interface Author {
   _id: string;
+  id: string;
+  content: string;
   basicInfo?: BasicUserInfo;
   displayName: string;
   photoURL?: Cloudinary;

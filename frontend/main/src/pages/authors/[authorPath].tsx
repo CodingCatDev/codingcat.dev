@@ -1,6 +1,5 @@
 import {
   getSite,
-  getPostsByUser,
   getAuthorPageMarkdown,
   queryByPublished,
   queryRelationById,
@@ -16,7 +15,6 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import matter from 'gray-matter';
-import { config } from '@/config/notion';
 
 interface StaticParams {
   site: Site;
@@ -30,17 +28,16 @@ interface StaticParams {
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths: { params: { authorPath: string } }[] = [];
   const authors = await queryByPublished('author', 10000);
-
-  for (const p of authors.results) {
-    if (p.slug) {
+  for (const p of authors.results as any) {
+    if (p?.properties?.slug?.url) {
       paths.push({
         params: {
-          authorPath: `${p.slug}`,
+          authorPath: `${p?.properties?.slug?.url}`,
         },
       });
     }
   }
-
+  console.log(paths);
   return {
     paths,
     fallback: true,
@@ -116,7 +113,9 @@ export default function AuthorPage({
   return (
     <>
       <NextSeo
-        title={`${author.displayName ? author.displayName : ''} | CodingCatDev`}
+        title={`${
+          author?.displayName ? author?.displayName : ''
+        } | CodingCatDev`}
         canonical={`https://codingcat.dev/authors/`}
       ></NextSeo>
       <Layout site={site}>

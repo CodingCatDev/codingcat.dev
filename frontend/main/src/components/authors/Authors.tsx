@@ -7,6 +7,7 @@ export default function Authors({
 }: {
   authors: Author[];
 }): JSX.Element {
+  console.log(authors);
   return (
     <section className="grid gap-4 justify-items-center">
       <section className="max-w-2xl text-center">

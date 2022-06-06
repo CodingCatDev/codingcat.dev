@@ -87,26 +87,7 @@ export const getAuthorBySlugService = async ({
     },
   });
 
-  let authors = {
-    ...raw,
-    results: raw.results.map((q: any) => {
-      return {
-        ...q,
-        _id: q?.id ? q.id : null,
-        displayName: `${q?.properties?.title?.title
-          .map((t: any) => t.plain_text)
-          .join('')}`,
-        photoURL: {
-          public_id: q?.properties?.cover?.url
-            ? q?.properties?.cover.url.split('upload/')?.at(1) ||
-              q?.properties?.cover?.url
-            : null,
-        },
-      };
-    }),
-  };
-
-  return authors;
+  return formatPost(raw, 'author');
 };
 
 export const getAuthorPageMarkdown = async (slug: string) => {
@@ -129,7 +110,7 @@ export const getAuthorPageMarkdown = async (slug: string) => {
   return {
     ...raw.results[0],
     content,
-  };
+  } as unknown as Author;
 };
 
 export const getTagBySlugService = ({
@@ -291,6 +272,28 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
       results,
     };
   }
+  if (_type == 'author') {
+    post = {
+      ...raw,
+      results: raw.results.map((q: any) => {
+        return {
+          ...q,
+          _id: q?.id ? q.id : null,
+          displayName: `${q?.properties?.title?.title
+            .map((t: any) => t.plain_text)
+            .join('')}`,
+          photoURL: {
+            public_id: q?.properties?.cover?.url
+              ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+                q?.properties?.cover?.url
+              : null,
+          },
+          slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
+        };
+      }),
+    };
+  }
+
   return post;
 };
 
@@ -299,6 +302,22 @@ export const queryByPublished = async (
   page_size?: number,
   start_cursor?: string | null
 ) => {
+  let sorts: any = [
+    {
+      property: 'start',
+      direction: 'descending',
+    },
+  ];
+
+  if (_type == 'author') {
+    sorts = [
+      {
+        property: 'title',
+        direction: 'ascending',
+      },
+    ];
+  }
+
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     start_cursor: start_cursor ? start_cursor : undefined,
@@ -313,12 +332,7 @@ export const queryByPublished = async (
         },
       ],
     },
-    sorts: [
-      {
-        property: 'start',
-        direction: 'descending',
-      },
-    ],
+    sorts,
   });
   return await formatPost(raw, _type);
 };

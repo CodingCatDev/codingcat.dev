@@ -8,7 +8,7 @@ export default function AuthorCard({
   source,
 }: {
   author: Author;
-  source: MDXRemoteSerializeResult | null;
+  source?: MDXRemoteSerializeResult | null;
 }): JSX.Element {
   return (
     <>
