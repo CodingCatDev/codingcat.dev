@@ -55,7 +55,7 @@ export async function getStaticProps({
 }
 
 export async function getStaticPaths() {
-  let raw = await queryPurrfectStreamByReleased(10000);
+  let raw = await queryByPublished(PostType.course, 20);
   const paths = sliceIntoChunks(raw.results, 20).map((_chunk, index) => ({
     params: { pageNumber: `${index + 1}` },
   }));
@@ -75,7 +75,7 @@ export const sliceIntoChunks = (arr: any[], chunkSize: number) => {
   return res;
 };
 
-const Podcasts = ({
+const Courses = ({
   site,
   posts,
   showNext,
@@ -105,4 +105,4 @@ const Podcasts = ({
     </>
   );
 };
-export default Podcasts;
+export default Courses;
