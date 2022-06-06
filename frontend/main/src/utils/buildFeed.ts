@@ -38,7 +38,7 @@ export const buildFeed = ({
     },
     author: {
       name: 'Alex Patterson',
-      email: 'alex@builder.io',
+      email: 'alex@codingcat.dev',
       link: `${site}`,
     },
   });
@@ -67,9 +67,9 @@ export const buildFeed = ({
 export const build = async ({ type }: { type: PostType }) => {
   let posts;
   if (type == PostType.podcast) {
-    posts = await (await queryByPublished(type, 10000)).results;
-  } else {
     posts = await (await queryPurrfectStreamByReleased(10000)).results;
+  } else {
+    posts = await (await queryByPublished(type, 10000)).results;
   }
 
   return buildFeed({ posts, type });
