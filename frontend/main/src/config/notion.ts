@@ -12,4 +12,5 @@ export const config = {
   lessonsDb: process.env.NOTION_LESSONS || '',
   frameworksDb: process.env.NOTION_FRAMEWORKS || '',
   languagesDb: process.env.NOTION_LANGUAGES || '',
+  authorsDb: process.env.NOTION_AUTHORS || '',
 };

@@ -30,8 +30,10 @@ export const getNotionDbByType = (_type: string) => {
       return notionConfig.purrfectStreamsDb;
     case PostType.lesson:
       return notionConfig.lessonsDb;
-    default:
+    case PostType.page:
       return notionConfig.pagesDb;
+    default:
+      return notionConfig.authorsDb;
   }
 };
 
@@ -55,17 +57,79 @@ export const getPostsByUser = ({
   type: PostType;
   _id: string;
 }) => {
-  return {} as Post[];
+  return [{}] as Post[];
 };
 
-export const getAuthorBySlugService = ({
+export const getAuthorBySlugService = async ({
   preview,
   slug,
 }: {
   preview?: boolean;
   slug: string;
 }) => {
-  return {} as Author;
+  let raw = await notionClient.databases.query({
+    database_id: config.authorsDb,
+    filter: {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            contains: slug,
+          },
+        },
+        {
+          property: 'published',
+          select: {
+            equals: 'published',
+          },
+        },
+      ],
+    },
+  });
+
+  let authors = {
+    ...raw,
+    results: raw.results.map((q: any) => {
+      return {
+        ...q,
+        _id: q?.id ? q.id : null,
+        displayName: `${q?.properties?.title?.title
+          .map((t: any) => t.plain_text)
+          .join('')}`,
+        photoURL: {
+          public_id: q?.properties?.cover?.url
+            ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+              q?.properties?.cover?.url
+            : null,
+        },
+      };
+    }),
+  };
+
+  return authors;
+};
+
+export const getAuthorPageMarkdown = async (slug: string) => {
+  let raw = await getAuthorBySlugService({ slug });
+  if (!raw.results.length) {
+    return null;
+  }
+
+  const page = raw.results.at(0);
+  if (!page) {
+    return null;
+  }
+  let content = '';
+
+  for (const page of raw.results) {
+    const blocks = await n2m.pageToMarkdown(page.id);
+    content += n2m.toMarkdownString(blocks);
+  }
+
+  return {
+    ...raw.results[0],
+    content,
+  };
 };
 
 export const getTagBySlugService = ({
@@ -181,23 +245,6 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
         const sectionsRaw = await querySectionsWithOrder(q.id);
         let sections: any = [];
         for (const s of sectionsRaw.results as any) {
-          // const lessonsRaw = await queryRelationById(
-          //   s.id,
-          //   'sections',
-          //   config.lessonsDb
-          // );
-          // const lessons = [];
-          // for (const l of lessonsRaw.results as any) {
-          //   lessons.push({
-          //     ...l,
-          //     title: `${l?.properties?.title?.title
-          //       .map((t: any) => t.plain_text)
-          //       .join('')}`,
-          //     _id: l.id,
-          //     slug: l?.properties?.slug?.url ? l?.properties?.slug.url : null,
-          //     accessSettings: l?.accessSettings ? l.accessSettings : null,
-          //   });
-          // }
           const lesson = {
             title: `${s?.properties?.lesson_title?.rollup?.array
               ?.at(0)
@@ -349,18 +396,24 @@ export const querySectionsWithOrder = async (id: string) => {
 export const queryRelationById = async (
   id: string,
   relation: string,
-  database_id: string
+  _type: string
 ) => {
   let raw = await notionClient.databases.query({
-    database_id,
+    database_id: getNotionDbByType(_type),
     filter: {
       property: relation,
       relation: {
         contains: id,
       },
     },
+    sorts: [
+      {
+        property: 'start',
+        direction: 'descending',
+      },
+    ],
   });
-  return raw;
+  return await formatPost(raw, _type);
 };
 
 // Purrfect.dev
