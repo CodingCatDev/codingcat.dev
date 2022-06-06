@@ -14,7 +14,6 @@ export const Pagination = ({
   baseUrl: string;
   showNext: boolean;
 }) => {
-  console.log(pageNumber);
   return (
     <>
       {posts && (pageNumber > 1 || showNext) && (

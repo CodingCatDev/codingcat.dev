@@ -123,25 +123,42 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
                 : cover,
             };
           }
+          const slug = q?.properties?.author_slug?.rollup?.array?.at(i)?.url;
 
           const author = {
             displayName: `${a?.title.map((t: any) => t.plain_text).join('')}`,
             photoURL,
+            slug,
           };
           authors.push(author);
         }
       }
       return {
         ...q,
-        title: `${q?.properties?.title?.title
-          .map((t: any) => t.plain_text)
-          .join('')}`,
-        coverPhoto: {
-          public_id: q?.properties?.cover?.url
-            ? q?.properties?.cover.url.split('upload/')?.at(1) ||
-              q?.properties?.cover?.url
-            : null,
-        },
+        _id: q?.id ? q.id : null,
+        title:
+          _type == PostType.podcast
+            ? `${q.properties.Season.number}.${
+                q.properties.Episode.number
+              } - ${q?.properties?.Name?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`
+            : `${q?.properties?.title?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`,
+        coverPhoto:
+          _type == PostType.podcast
+            ? {
+                public_id: q?.cover?.external?.url
+                  ? q?.cover?.external?.url.split('upload/').at(1)
+                  : null,
+              }
+            : {
+                public_id: q?.properties?.cover?.url
+                  ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+                    q?.properties?.cover?.url
+                  : null,
+              },
         coverVideo: q?.properties?.youtube?.url
           ? { url: q.properties.youtube.url }
           : null,

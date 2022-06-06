@@ -63,7 +63,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                         {post.excerpt}
                       </p>
                     )}
-                    <div>
+                    <div className="flex flex-col">
                       {post.authors?.map((author, i) => (
                         <Link href={`/authors/${author.slug}`} key={i}>
                           <a className="font-sans text-lg">
