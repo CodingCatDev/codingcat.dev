@@ -50,7 +50,7 @@ export default function PostLayout({
   }
 
   function isLockedLesson() {
-    // Only lockdown lessons 
+    // Only lockdown lessons
     if (post._type != PostType.lesson) {
       return false;
     }
@@ -61,7 +61,7 @@ export default function PostLayout({
     const lessons: Post[] = [];
     course?.sections?.map((s) => s?.lessons?.map((l) => lessons.push(l)));
     const currentLesson = lessons.find((l) => l.slug === post.slug);
-    return currentLesson?.accessSettings?.accessMode != AccessMode.free;
+    return currentLesson?.access_mode != AccessMode.free;
   }
   const pluralType = pluralize(post);
 
@@ -204,11 +204,11 @@ export default function PostLayout({
                               </p>
                               {post._updatedAt && (
                                 <p className="flex items-center m-0 space-x-2 text-base font-light">
-                                Last Updated:{' '}
-                                <span>
-                                  {millisecondToUSFormat(post._updatedAt)}
-                                </span>
-                              </p>
+                                  Last Updated:{' '}
+                                  <span>
+                                    {millisecondToUSFormat(post._updatedAt)}
+                                  </span>
+                                </p>
                               )}
                             </section>
                           </section>
@@ -227,17 +227,33 @@ export default function PostLayout({
             </div>
           </BreakBarLeft>
         </section>
-        {/* SPONSORS */}
-
-        {post?.sponsors && (
-          <section className="p-4 2xl:hidden">
-            <SponsorCards sponsors={post.sponsors} />
+        <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
+          <section className="flex flex-col w-full gap-4">
+            {/* BLOG POST */}
+            <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+              {!isLockedLesson() ? (
+                source && <MDXRemote {...source} components={components} />
+              ) : user && user?.uid ? (
+                <>
+                  <MemberValidShow user={user}>
+                    <>
+                      {source && (
+                        <MDXRemote {...source} components={components} />
+                      )}
+                    </>
+                  </MemberValidShow>
+                  <MemberNotValidShow user={user}>
+                    <PostMediaLocked />
+                  </MemberNotValidShow>
+                </>
+              ) : (
+                <PostMediaLocked />
+              )}
+            </article>
           </section>
-        )}
-        <section className="grid grid-cols-1 gap-4 p-1 lg:p-10 2xl:grid-cols-sidebar 2xl:pl-10">
           {/* LESSONS */}
           {course && course.sections && (
-            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+            <section className="flex flex-col w-full mb-2 xl:max-w-md">
               {course.sections.map((section) => (
                 <section
                   key={section._key}
@@ -267,10 +283,9 @@ export default function PostLayout({
                               <a className="no-underline text-basics-900 hover:text-primary-900">
                                 {lesson.title}
                               </a>
-                              {lesson?.accessSettings?.accessMode && (
+                              {lesson?.access_mode && (
                                 <div className="no-underline text-basics-900 hover:text-primary-900">
-                                  {lesson?.accessSettings?.accessMode !=
-                                    AccessMode.free && (
+                                  {lesson?.access_mode != AccessMode.free && (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       className="w-5 h-5"
@@ -297,7 +312,7 @@ export default function PostLayout({
           )}
           {/* RECENTS */}
           {recentPosts && (
-            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+            <section className="flex flex-col w-full mb-2 xl:max-w-md">
               {post?.sponsors && (
                 <section className="hidden 2xl:block">
                   <SponsorCards sponsors={post.sponsors} />
@@ -338,28 +353,7 @@ export default function PostLayout({
               </div>
             </section>
           )}
-          {/* BLOG POST */}
-          <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-            {!isLockedLesson() ? (
-              source && <MDXRemote {...source} components={components} />
-            ) : user && user?.uid ? (
-              <>
-                <MemberValidShow user={user}>
-                  <>
-                    {source && (
-                      <MDXRemote {...source} components={components} />
-                    )}
-                  </>
-                </MemberValidShow>
-                <MemberNotValidShow user={user}>
-                  <PostMediaLocked />
-                </MemberNotValidShow>
-              </>
-            ) : (
-              <PostMediaLocked />
-            )}
-          </article>
-        </section>
+        </div>
       </div>
       <style global jsx>{`
         article {

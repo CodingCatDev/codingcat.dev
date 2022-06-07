@@ -1,3 +1,4 @@
+import { AccessMode } from './../models/access.model';
 import { Author } from '@/models/user.model';
 import { Client } from '@notionhq/client';
 import { config } from '@/config/notion';
@@ -215,6 +216,9 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
         _createdAt: q?.properties?.start?.date?.start || q?.created_time,
         _updatedAt: q?.last_edited_time,
         authors,
+        access_mode: q?.properties?.access_mode?.select?.name
+          ? q?.properties?.access_mode?.select?.name
+          : AccessMode.closed,
       };
     }),
   } as unknown as NotionPosts;
@@ -235,10 +239,9 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
             slug: s?.properties?.lesson_slug?.rollup?.array?.at(0)?.url
               ? s?.properties?.lesson_slug.rollup?.array?.at(0)?.url
               : null,
-            accessSettings: s?.lesson_accessSettings?.rollup?.array?.at(0)
-              ?.accessSettings
-              ? s?.lesson_accessSettings?.rollup?.array?.at(0)?.accessSettings
-              : null,
+            access_mode: s?.properties?.access_mode?.select?.name
+              ? s?.properties?.access_mode?.select?.name
+              : q.access_mode,
           };
           const exists = sections.find(
             (e: any) =>
@@ -274,7 +277,7 @@ const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
   }
   if (_type == 'author') {
     post = {
-      ...raw,
+      ...post,
       results: raw.results.map((q: any) => {
         return {
           ...q,

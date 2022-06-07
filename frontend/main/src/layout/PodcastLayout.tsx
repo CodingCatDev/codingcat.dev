@@ -48,20 +48,6 @@ export default function PostLayout({
     return false;
   }
 
-  function isLockedLesson() {
-    // Only lockdown lessons
-    if (post._type != PostType.lesson) {
-      return false;
-    }
-    //If lesson, without assigned course (or course is not yet published)
-    if (post._type == PostType.lesson && !course) {
-      return true;
-    }
-    const lessons: Post[] = [];
-    course?.sections?.map((s) => s?.lessons?.map((l) => lessons.push(l)));
-    const currentLesson = lessons.find((l) => l.slug === post.slug);
-    return currentLesson?.accessSettings?.accessMode != AccessMode.free;
-  }
   const pluralType = pluralize(post);
 
   function backButton() {
@@ -105,21 +91,7 @@ export default function PostLayout({
         {/* MAIN CONTENT */}
         {post._type !== PostType.page && (
           <section className="">
-            {/* MEDIA */}
-            {!isLockedLesson() ? (
-              <PostMedia post={post} />
-            ) : user && user?.uid ? (
-              <>
-                <MemberValidShow user={user}>
-                  <PostMedia post={post} />
-                </MemberValidShow>
-                <MemberNotValidShow user={user}>
-                  <PostMediaLocked />
-                </MemberNotValidShow>
-              </>
-            ) : (
-              <PostMediaLocked />
-            )}
+            <PostMedia post={post} />
           </section>
         )}
 
@@ -156,10 +128,10 @@ export default function PostLayout({
               </section>
               <section className="grid items-end justify-between gap-4 lg:flex">
                 {post.authors && (
-                  <section className="flex flex-shrink-0 no-wrap gap-4 items-center">
+                  <section className="flex items-center flex-shrink-0 gap-4 no-wrap">
                     {post.authors?.map((author, i) => (
                       <article
-                        className="flex flex-wrap justify-start items-center gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
+                        className="flex flex-wrap items-center justify-start gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
                         key={i}
                       >
                         {author?.photoURL && author.photoURL?.public_id && (
@@ -181,7 +153,7 @@ export default function PostLayout({
                 )}
                 {post.publishedAt && (
                   <section className="flex flex-wrap items-center gap-2">
-                    <p className="flex items-center m-0 space-x-2 text-white font-light">
+                    <p className="flex items-center m-0 space-x-2 font-light text-white">
                       <svg
                         className="w-6"
                         xmlns="http://www.w3.org/2000/svg"
@@ -205,77 +177,16 @@ export default function PostLayout({
             </header>
           </BreakBarLeft>
         </section>
-        {/* SPONSORS */}
-
-        {post?.sponsors && (
-          <section className="p-4 2xl:hidden">
-            <SponsorCards sponsors={post.sponsors} />
+        <section className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
+          <section className="flex flex-col flex-grow gap-4">
+            {/* BLOG POST */}
+            <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+              {source && <MDXRemote {...source} components={components} />}
+            </article>
           </section>
-        )}
-        <section className="grid grid-cols-1 gap-4 p-1 lg:p-10 2xl:grid-cols-sidebar 2xl:pl-10">
-          {/* LESSONS */}
-          {course && course.sections && (
-            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
-              {course.sections.map((section) => (
-                <section
-                  key={section._key}
-                  className="flex flex-col rounded-t-md"
-                >
-                  <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                    {section.title}
-                  </div>
-                  <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
-                    {section.lessons &&
-                      section.lessons.map((lesson) => (
-                        <li key={lesson._id} className="ml-0 list-none">
-                          <Link
-                            href={`/course/${course.slug}/lesson/${lesson.slug}`}
-                            key={lesson._id}
-                            passHref
-                          >
-                            <div
-                              className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
-                              ${
-                                isActiveLink(course, lesson)
-                                  ? 'bg-primary-200'
-                                  : 'bg-transparent'
-                              }
-                              `}
-                            >
-                              <a className="no-underline text-basics-900 hover:text-primary-900">
-                                {lesson.title}
-                              </a>
-                              {lesson?.accessSettings?.accessMode && (
-                                <div className="no-underline text-basics-900 hover:text-primary-900">
-                                  {lesson?.accessSettings?.accessMode !=
-                                    AccessMode.free && (
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="w-5 h-5"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
-                </section>
-              ))}
-            </section>
-          )}
           {/* RECENTS */}
           {recentPosts && (
-            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+            <section className="flex flex-col w-full mb-2 xl:max-w-md">
               {post?.sponsors && (
                 <section className="hidden 2xl:block">
                   <SponsorCards sponsors={post.sponsors} />
@@ -316,27 +227,6 @@ export default function PostLayout({
               </div>
             </section>
           )}
-          {/* BLOG POST */}
-          <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-            {!isLockedLesson() ? (
-              source && <MDXRemote {...source} components={components} />
-            ) : user && user?.uid ? (
-              <>
-                <MemberValidShow user={user}>
-                  <>
-                    {source && (
-                      <MDXRemote {...source} components={components} />
-                    )}
-                  </>
-                </MemberValidShow>
-                <MemberNotValidShow user={user}>
-                  <PostMediaLocked />
-                </MemberNotValidShow>
-              </>
-            ) : (
-              <PostMediaLocked />
-            )}
-          </article>
         </section>
       </div>
       <style global jsx>{`

@@ -136,8 +136,8 @@ export default function Course({
           </div>
         </BreakBarLeft>
       </section>
-      <div className="grid grid-cols-1 gap-4 px-4 pb-4 lg:px-10 lg:pb-10 lg:grid-cols-sidebar">
-        <section className="flex flex-col max-w-2xl gap-4">
+      <div className="flex flex-wrap gap-4 px-4 pb-4 xl:flex-nowrap lg:px-10 lg:pb-10">
+        <section className="flex flex-col flex-grow gap-4">
           <PostMedia post={post} noImage={true} />
           <div className="flex flex-col gap-2 mt-2">
             {source && <MDXRemote {...source} components={components} />}
@@ -160,7 +160,7 @@ export default function Course({
             </div>
           )}
         </section>
-        <section className="flex flex-col mb-2">
+        <section className="flex flex-col w-full mb-2 xl:max-w-md">
           {post.coverPhoto?.public_id ? (
             <>
               <Image
@@ -188,7 +188,7 @@ export default function Course({
           </div>
           {/* LESSONS */}
           {post && post.sections && (
-            <section className="grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1">
+            <section className="grid content-start gap-4 ">
               {post.sections.map((section) => (
                 <section
                   key={section._key}
@@ -207,7 +207,7 @@ export default function Course({
                             passHref
                           >
                             <div
-                              className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
+                              className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex justify-between
                               ${
                                 isActiveLink(post, lesson)
                                   ? 'bg-primary-200'
@@ -218,10 +218,9 @@ export default function Course({
                               <a className="no-underline text-basics-900 hover:text-primary-900">
                                 {lesson.title}
                               </a>
-                              {lesson?.accessSettings?.accessMode && (
+                              {lesson?.access_mode && (
                                 <div className="no-underline text-basics-900 hover:text-primary-900">
-                                  {lesson?.accessSettings?.accessMode !=
-                                    AccessMode.free && (
+                                  {lesson?.access_mode != AccessMode.free && (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       className="w-5 h-5"
