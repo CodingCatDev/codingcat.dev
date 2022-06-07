@@ -20,7 +20,7 @@ export default function CourseBuyButton({
   const { member, team } = useIsMember(user);
   return (
     <>
-      {post.accessSettings?.accessMode !== AccessMode.open ? (
+      {post?.access_mode !== AccessMode.open ? (
         <>
           {member || team ? (
             <>
@@ -39,11 +39,6 @@ export default function CourseBuyButton({
             </>
           ) : (
             <>
-              {/* {product && (
-                <p className="p-2 text-xl text-basics-900">
-                  ${post.accessSettings?.price}
-                </p>
-              )} */}
               <div className="flex items-stretch justify-center space-x-4 flex-nowrap">
                 {/* {product && <CourseBuy product={product} user={user} />} */}
                 <Link href="/user/profile">
