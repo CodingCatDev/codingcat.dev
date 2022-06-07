@@ -24,7 +24,7 @@ export default function PostMediaLocked(): JSX.Element {
           paddingTop: '56.25%',
           position: 'relative',
           width: '100%',
-          height: 0,
+          height: '100%',
         }}
       >
         <div className="absolute inset-0 flex flex-col items-center justify-center bricks-pattern">

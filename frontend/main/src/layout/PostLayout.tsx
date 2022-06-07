@@ -230,26 +230,30 @@ export default function PostLayout({
         <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
           <section className="flex flex-col w-full gap-4">
             {/* BLOG POST */}
-            <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-              {!isLockedLesson() ? (
-                source && <MDXRemote {...source} components={components} />
-              ) : user && user?.uid ? (
-                <>
-                  <MemberValidShow user={user}>
-                    <>
-                      {source && (
+            {!isLockedLesson() ? (
+              source && (
+                <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+                  <MDXRemote {...source} components={components} />
+                </article>
+              )
+            ) : user && user?.uid ? (
+              <>
+                <MemberValidShow user={user}>
+                  <>
+                    {source && (
+                      <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
                         <MDXRemote {...source} components={components} />
-                      )}
-                    </>
-                  </MemberValidShow>
-                  <MemberNotValidShow user={user}>
-                    <PostMediaLocked />
-                  </MemberNotValidShow>
-                </>
-              ) : (
-                <PostMediaLocked />
-              )}
-            </article>
+                      </article>
+                    )}
+                  </>
+                </MemberValidShow>
+                <MemberNotValidShow user={user}>
+                  <PostMediaLocked />
+                </MemberNotValidShow>
+              </>
+            ) : (
+              <PostMediaLocked />
+            )}
           </section>
           {/* LESSONS */}
           {course && course.sections && (
