@@ -40,11 +40,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths: { params: { permalink: string[] } }[] = [];
 
   const [posts, tutorials, courses, pages, podcasts] = await Promise.all([
-    queryByPublished(PostType.post, 10000),
-    queryByPublished(PostType.tutorial, 10000),
-    queryByPublished(PostType.post, 10000),
-    queryByPublished(PostType.page, 10000),
-    queryPurrfectStreamByReleased(10000),
+    queryByPublished(PostType.post, 20),
+    queryByPublished(PostType.tutorial, 20),
+    queryByPublished(PostType.post, 20),
+    queryByPublished(PostType.page, 20),
+    queryPurrfectStreamByReleased(20),
   ]);
 
   for (const p of posts.results) {
