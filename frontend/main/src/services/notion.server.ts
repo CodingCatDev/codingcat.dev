@@ -3,7 +3,7 @@ import { Author } from '@/models/user.model';
 import { Client } from '@notionhq/client';
 import { config } from '@/config/notion';
 import { Post, PostType } from '@/models/post.model';
-import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import { GetPageResponse, QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { NotionToMarkdown } from 'notion-to-md';
 import { config as notionConfig } from '@/config/notion';
 import { Site } from '@/models/site.model';
@@ -88,7 +88,7 @@ export const getAuthorBySlugService = async ({
     },
   });
 
-  return formatPost(raw, 'author');
+  return formatPosts(raw, 'author');
 };
 
 export const getAuthorPageMarkdown = async (slug: string) => {
@@ -147,7 +147,158 @@ export const getTags = ({
   return [{ _id: 'yep' }] as Tag[];
 };
 
-const formatPost = async (raw: QueryDatabaseResponse, _type: string) => {
+const formatPost = async (q: GetPageResponse, _type: string) => {
+
+      //Flat authors
+      const authors = [];
+
+      if (q?.properties?.author_title?.rollup?.array) {
+        for (const [
+          i,
+          a,
+        ] of q?.properties?.author_title?.rollup?.array?.entries()) {
+          const cover = q?.properties?.author_cover?.rollup?.array?.at(i)?.url;
+
+          let photoURL = null;
+          if (cover) {
+            photoURL = {
+              public_id: cover.split('upload/')?.at(1)
+                ? cover.split('upload/').at(1)
+                : cover,
+            };
+          }
+          const slug = q?.properties?.author_slug?.rollup?.array?.at(i)?.url;
+
+          const author = {
+            displayName: `${a?.title.map((t: any) => t.plain_text).join('')}`,
+            photoURL,
+            slug,
+          };
+          authors.push(author);
+        }
+      }
+      return {
+        ...q,
+        _id: q?.id ? q.id : null,
+        title:
+          _type == PostType.podcast
+            ? `${q.properties.Season.number}.${
+                q.properties.Episode.number
+              } - ${q?.properties?.Name?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`
+            : `${q?.properties?.title?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`,
+        coverPhoto:
+          _type == PostType.podcast
+            ? {
+                public_id: q?.cover?.external?.url
+                  ? q?.cover?.external?.url.split('upload/').at(1)
+                  : null,
+              }
+            : {
+                public_id: q?.properties?.cover?.url
+                  ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+                    q?.properties?.cover?.url
+                  : null,
+              },
+        coverVideo: q?.properties?.youtube?.url
+          ? { url: q.properties.youtube.url }
+          : null,
+        _type,
+        slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
+        excerpt: q?.properties?.excerpt?.rich_text
+          .map((t: any) => t.plain_text)
+          .join(''),
+        _createdAt: q?.properties?.start?.date?.start || q?.created_time,
+        _updatedAt: q?.last_edited_time,
+        authors,
+        access_mode: q?.properties?.access_mode?.select?.name
+          ? q?.properties?.access_mode?.select?.name
+          : AccessMode.closed,
+      };
+    }),
+  } as unknown as NotionPosts;
+
+  // Get sections and lessons for course
+  if (_type == PostType.course) {
+    const results = await Promise.all(
+      post.results.map(async (q) => {
+        const sectionsRaw = await querySectionsWithOrder(q.id);
+        let sections: any = [];
+        for (const s of sectionsRaw.results as any) {
+          const lesson = {
+            title: `${s?.properties?.lesson_title?.rollup?.array
+              ?.at(0)
+              ?.title.map((t: any) => t.plain_text)
+              .join('')}`,
+            _id: s.id,
+            slug: s?.properties?.lesson_slug?.rollup?.array?.at(0)?.url
+              ? s?.properties?.lesson_slug.rollup?.array?.at(0)?.url
+              : null,
+            access_mode: s?.properties?.access_mode?.select?.name
+              ? s?.properties?.access_mode?.select?.name
+              : q.access_mode,
+          };
+          const exists = sections.find(
+            (e: any) =>
+              e.title ==
+              `${s?.properties?.title?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`
+          );
+
+          if (exists) {
+            exists.lessons.push(lesson);
+          } else {
+            sections.push({
+              ...s,
+              title: `${s?.properties?.title?.title
+                .map((t: any) => t.plain_text)
+                .join('')}`,
+              _key: s.id,
+              lessons: [lesson],
+            });
+          }
+        }
+        return {
+          ...q,
+          sections,
+        };
+      })
+    );
+    post = {
+      ...post,
+      results,
+    };
+  }
+  if (_type == 'author') {
+    post = {
+      ...post,
+      results: raw.results.map((q: any) => {
+        return {
+          ...q,
+          _id: q?.id ? q.id : null,
+          displayName: `${q?.properties?.title?.title
+            .map((t: any) => t.plain_text)
+            .join('')}`,
+          photoURL: {
+            public_id: q?.properties?.cover?.url
+              ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+                q?.properties?.cover?.url
+              : null,
+          },
+          slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
+        };
+      }),
+    };
+  }
+
+  return post;
+};
+
+const formatPosts = async (raw: QueryDatabaseResponse, _type: string) => {
   let post = {
     ...raw,
     results: raw.results.map((q: any) => {
@@ -337,7 +488,7 @@ export const queryByPublished = async (
     },
     sorts,
   });
-  return await formatPost(raw, _type);
+  return await formatPosts(raw, _type);
 };
 
 export const queryNotionDbBySlug = async (_type: string, slug: string) => {
@@ -360,29 +511,43 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
       ],
     },
   });
-  return await formatPost(raw, _type);
+  return await formatPosts(raw, _type);
 };
 
-export const getNotionPageMarkdown = async (_type: PostType, slug: string) => {
+export const getNotionPageMarkdown = async (_type: PostType, slug?: string, id?:string) => {
+
+  let pageId;
+  let page;
+  if(slug){
+
   let raw = await queryNotionDbBySlug(_type, slug);
   if (!raw.results.length) {
     return null;
   }
-
-  //Get purrfect picks
-  const page = raw.results.at(0);
+  page = raw.results.at(0);
   if (!page) {
     return null;
   }
+  pageId = page?.id;
+}
+  pageId = id;
   let content = '';
 
-  for (const page of raw.results) {
-    const blocks = await n2m.pageToMarkdown(page.id);
-    content += n2m.toMarkdownString(blocks);
+  if(!pageId){
+    return null;
   }
 
+  let raw = await notionClient.pages.retrieve({
+    page_id: pageId,
+  })
+  
+
+    const blocks = await n2m.pageToMarkdown(pageId);
+    content += n2m.toMarkdownString(blocks);
+  
+
   return {
-    ...raw.results[0],
+    ...page,
     content,
   };
 };
@@ -430,7 +595,7 @@ export const queryRelationById = async (
       },
     ],
   });
-  return await formatPost(raw, _type);
+  return await formatPosts(raw, _type);
 };
 
 // Purrfect.dev
@@ -470,7 +635,7 @@ export const queryPurrfectStreamByReleased = async (
       },
     ],
   });
-  return await formatPost(raw, 'podcast');
+  return await formatPosts(raw, 'podcast');
 };
 
 export const queryPurrfectStreamBySlug = async (slug: string) => {
@@ -509,7 +674,7 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
       },
     ],
   });
-  return await formatPost(raw, 'podcast');
+  return await formatPosts(raw, 'podcast');
 };
 
 export const getPurrfectStreamPageMarkdown = async (slug: string) => {
