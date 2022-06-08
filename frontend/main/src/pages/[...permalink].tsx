@@ -168,8 +168,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
     }
 
     const { _id } = pData;
-    // post = await getPostById({ preview, _id }); TODO
-    // course = await queryNotionDbBySlug(type, slug);
+    post = await getNotionPageMarkdown(pData.selectionType, undefined, _id);
   } else {
     //Not in Preview mode.
     preview = false;

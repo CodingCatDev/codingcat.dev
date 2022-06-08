@@ -44,14 +44,17 @@ export const getNotionDbByType = (_type: string) => {
 // CodingCat.dev
 
 //TODO: Finish theses
-export const getPostById = ({
-  preview,
+export const getPageById = async ({
   _id,
+  _type,
 }: {
-  preview: true;
   _id: string;
+  _type: string;
 }) => {
-  return {} as Post;
+  let raw = await notionClient.pages.retrieve({
+    page_id: _id,
+  });
+  return formatPost(raw, _type);
 };
 
 export const getPostsByUser = ({
@@ -367,35 +370,33 @@ export const getNotionPageMarkdown = async (
 ) => {
   let pageId;
   let page;
+
   if (slug) {
     let raw = await queryNotionDbBySlug(_type, slug);
     if (!raw.results.length) {
       return null;
     }
     page = raw.results.at(0);
-    if (!page) {
-      return null;
-    }
     pageId = page?.id;
   }
-  pageId = id;
-  let content = '';
-
+  if (id) {
+    pageId = id;
+    page = await getPageById({ _id: id, _type });
+  }
+  if (!page) {
+    return null;
+  }
   if (!pageId) {
     return null;
   }
-
-  let raw = await notionClient.pages.retrieve({
-    page_id: pageId,
-  });
-
+  let content = '';
   const blocks = await n2m.pageToMarkdown(pageId);
   content += n2m.toMarkdownString(blocks);
 
   return {
     ...page,
     content,
-  };
+  } as Post;
 };
 
 export const querySectionsWithOrder = async (id: string) => {

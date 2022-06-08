@@ -1,5 +1,5 @@
 import { PostType } from '@/models/post.model';
-import { getPostById } from '@/services/notion.server';
+import { getPageById } from '@/services/notion.server';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const preview = async (
@@ -40,11 +40,10 @@ const preview = async (
     return res.status(400).json({ message: 'Slug Missing for Course.' });
   }
 
-  // Fetch the headless CMS to check if the provided `slug` exists
-  // getPostBySlug would implement the required fetching logic to the headless CMS
-  const post = await getPostById({ preview: true, _id });
+  // Fetch Notion to see if page exists
+  const post = await getPageById({ _id, _type: selectionType });
 
-  // If the slug doesn't exist prevent preview mode from being enabled
+  // No Page exit.
   if (!post) {
     return res.status(400).json({ message: 'No Doc Found' });
   }
