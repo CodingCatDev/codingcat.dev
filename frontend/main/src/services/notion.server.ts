@@ -241,7 +241,7 @@ const formatPost = async (q: any, _type: string) => {
           : null,
         access_mode: s?.properties?.access_mode?.select?.name
           ? s?.properties?.access_mode?.select?.name
-          : q.access_mode || AccessMode.free,
+          : post.access_mode,
       };
       const exists = sections.find(
         (e: any) =>
