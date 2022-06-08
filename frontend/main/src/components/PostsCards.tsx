@@ -79,10 +79,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                         {post?.access_mode === 'closed' ? (
                           <>
                             <p className="px-4 py-2 text-sm rounded-full justify-self-start bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
-                              Paid
-                            </p>
-                            <p className="px-4 py-2 text-sm font-bold tracking-wider transform -skew-y-12 justify-self-end bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                              ${post?.access_mode}
+                              Member Only
                             </p>
                           </>
                         ) : post?.access_mode === 'free' ? (
