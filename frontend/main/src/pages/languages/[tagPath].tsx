@@ -1,7 +1,8 @@
 import {
-  getPostsByTag,
   getSite,
-  getTagBySlugService,
+  queryRelationById,
+  queryNotionDbBySlug,
+  queryByPublished,
 } from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
@@ -9,9 +10,77 @@ import { Site } from '@/models/site.model';
 import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
 import { Tag } from '@/models/tag.model';
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
-export default function AuthorPage({
+interface StaticParams {
+  site: Site;
+  tag: Tag;
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Don't build
+  // const tags = await queryByPublished('language', 10000);
+  // const paths: { params: { tagPath: string } }[] = [];
+
+  // for (const p of tags.results) {
+  //   if (p.slug) {
+  //     paths.push({
+  //       params: {
+  //         tagPath: `${p.slug}`,
+  //       },
+  //     });
+  //   }
+  // }
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
+};
+export const getStaticProps: GetStaticProps<StaticParams> = async ({
+  params,
+  preview,
+}) => {
+  const tagPath = params?.tagPath;
+
+  if (!tagPath || Array.isArray(tagPath)) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const raw = await queryNotionDbBySlug('language', tagPath);
+  const tag = raw?.results?.at(0) as unknown as Tag;
+
+  if (!tag) {
+    return {
+      notFound: true,
+    };
+  }
+  const courses = (
+    await queryRelationById(tag._id, 'languages', PostType.course)
+  ).results;
+  const tutorials = (
+    await queryRelationById(tag._id, 'languages', PostType.tutorial)
+  ).results;
+  const posts = (await queryRelationById(tag._id, 'languages', PostType.post))
+    .results;
+  const podcasts = (
+    await queryRelationById(tag._id, 'languages', PostType.podcast)
+  ).results;
+
+  return {
+    props: {
+      site: getSite(),
+      tag,
+      courses,
+      tutorials,
+      posts,
+      podcasts,
+    },
+  };
+};
+
+export default function LanguagePage({
   site,
   tag,
   courses,
@@ -72,63 +141,3 @@ export default function AuthorPage({
     </>
   );
 }
-
-interface StaticParams {
-  site: Site;
-  tag: Tag;
-}
-
-export const getServerSideProps: GetServerSideProps<StaticParams> = async ({
-  params,
-  preview,
-}) => {
-  const { tagPath } = params as any;
-
-  if (!tagPath) {
-    return {
-      notFound: true,
-    };
-  }
-  const tag = await getTagBySlugService({
-    tag: 'language',
-    preview,
-    slug: tagPath,
-  });
-  if (!tag) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const courses = await getPostsByTag({
-    type: PostType.course,
-    _id: tag._id,
-    tag: 'languages',
-  });
-  const tutorials = await getPostsByTag({
-    type: PostType.tutorial,
-    _id: tag._id,
-    tag: 'languages',
-  });
-  const posts = await getPostsByTag({
-    type: PostType.post,
-    _id: tag._id,
-    tag: 'languages',
-  });
-  const podcasts = await getPostsByTag({
-    type: PostType.podcast,
-    _id: tag._id,
-    tag: 'languages',
-  });
-
-  return {
-    props: {
-      site: getSite(),
-      tag,
-      courses,
-      tutorials,
-      posts,
-      podcasts,
-    },
-  };
-};

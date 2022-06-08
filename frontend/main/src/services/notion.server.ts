@@ -36,6 +36,10 @@ export const getNotionDbByType = (_type: string) => {
       return notionConfig.lessonsDb;
     case PostType.page:
       return notionConfig.pagesDb;
+    case 'framework':
+      return notionConfig.frameworksDb;
+    case 'language':
+      return notionConfig.languagesDb;
     default:
       return notionConfig.authorsDb;
   }
@@ -55,16 +59,6 @@ export const getPageById = async ({
     page_id: _id,
   });
   return formatPost(raw, _type);
-};
-
-export const getPostsByUser = ({
-  type,
-  _id,
-}: {
-  type: PostType;
-  _id: string;
-}) => {
-  return [{}] as Post[];
 };
 
 export const getAuthorBySlugService = async ({
@@ -121,6 +115,7 @@ export const getAuthorPageMarkdown = async (slug: string) => {
 };
 
 export const getTagBySlugService = ({
+  //DELETE
   tag,
   preview,
   slug,
@@ -225,6 +220,16 @@ const formatPost = async (q: any, _type: string) => {
       : AccessMode.closed,
   };
 
+  if (_type == 'framework' || _type == 'language') {
+    post = {
+      ...post,
+      courses_count: q?.properties?.courses_count?.rollup?.number || 0,
+      tutorials_count: q?.properties?.tutorials_count?.rollup?.number || 0,
+      podcasts_count: q?.properties?.podcasts_count?.rollup?.number || 0,
+      posts_count: q?.properties?.posts_count?.rollup?.number || 0,
+    };
+  }
+
   // Get sections and lessons for course
   if (_type == PostType.course) {
     const sectionsRaw = await querySectionsWithOrder(q.id);
@@ -311,8 +316,71 @@ export const queryByPublished = async (
       direction: 'descending',
     },
   ];
+  let filter: any = {
+    and: [
+      {
+        property: 'slug',
+        url: {
+          is_not_empty: true,
+        },
+      },
+      {
+        property: 'published',
+        select: {
+          equals: 'published',
+        },
+      },
+    ],
+  };
 
   if (_type == 'author') {
+    sorts = [
+      {
+        property: 'title',
+        direction: 'ascending',
+      },
+    ];
+  }
+
+  if (_type == 'framework' || _type == 'language') {
+    filter = {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            is_not_empty: true,
+          },
+        },
+        {
+          or: [
+            {
+              property: 'courses_count',
+              rollup: {
+                number: { greater_than: 0 },
+              },
+            },
+            {
+              property: 'tutorials_count',
+              rollup: {
+                number: { greater_than: 0 },
+              },
+            },
+            {
+              property: 'podcasts_count',
+              rollup: {
+                number: { greater_than: 0 },
+              },
+            },
+            {
+              property: 'posts_count',
+              rollup: {
+                number: { greater_than: 0 },
+              },
+            },
+          ],
+        },
+      ],
+    };
     sorts = [
       {
         property: 'title',
@@ -325,25 +393,33 @@ export const queryByPublished = async (
     database_id: getNotionDbByType(_type),
     start_cursor: start_cursor ? start_cursor : undefined,
     page_size,
-    filter: {
-      and: [
-        {
-          property: 'published',
-          select: {
-            equals: 'published',
-          },
-        },
-      ],
-    },
+    filter,
     sorts,
   });
   return await formatPosts(raw, _type);
 };
 
 export const queryNotionDbBySlug = async (_type: string, slug: string) => {
-  let raw = await notionClient.databases.query({
-    database_id: getNotionDbByType(_type),
-    filter: {
+  let filter;
+  let sorts: any;
+  filter = {
+    and: [
+      {
+        property: 'slug',
+        url: {
+          contains: slug,
+        },
+      },
+      {
+        property: 'published',
+        select: {
+          equals: 'published',
+        },
+      },
+    ],
+  };
+  if (_type == 'framework' || _type == 'language') {
+    filter = {
       and: [
         {
           property: 'slug',
@@ -351,14 +427,20 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
             contains: slug,
           },
         },
-        {
-          property: 'published',
-          select: {
-            equals: 'published',
-          },
-        },
       ],
-    },
+    };
+    sorts = [
+      {
+        property: 'title',
+        direction: 'ascending',
+      },
+    ];
+  }
+
+  let raw = await notionClient.databases.query({
+    database_id: getNotionDbByType(_type),
+    filter,
+    sorts,
   });
   return await formatPosts(raw, _type);
 };
@@ -427,6 +509,25 @@ export const queryRelationById = async (
   relation: string,
   _type: string
 ) => {
+  let sorts: any = [
+    {
+      property: 'start',
+      direction: 'descending',
+    },
+  ];
+
+  if (_type == PostType.podcast) {
+    sorts = [
+      {
+        property: 'Season',
+        direction: 'descending',
+      },
+      {
+        property: 'Episode',
+        direction: 'descending',
+      },
+    ];
+  }
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     filter: {
@@ -435,12 +536,7 @@ export const queryRelationById = async (
         contains: id,
       },
     },
-    sorts: [
-      {
-        property: 'start',
-        direction: 'descending',
-      },
-    ],
+    sorts,
   });
   return await formatPosts(raw, _type);
 };
@@ -457,6 +553,12 @@ export const queryPurrfectStreamByReleased = async (
     page_size,
     filter: {
       and: [
+        {
+          property: 'slug',
+          url: {
+            is_not_empty: true,
+          },
+        },
         {
           property: 'Status',
           select: {

@@ -1,7 +1,7 @@
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 
-import { getTags, getSite } from '@/services/notion.server';
+import { getTags, getSite, queryByPublished } from '@/services/notion.server';
 import { Site } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
 import Link from 'next/link';
@@ -18,13 +18,14 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
   return {
     props: {
       site: getSite(),
-      tags: await getTags({ preview, tag: 'framework' }),
+      tags: (await queryByPublished('framework', 10000))
+        .results as unknown as Tag[],
     },
     revalidate: 360,
   };
 };
 
-export default function AuthorsPage({
+export default function FrameworksPage({
   site,
   tags,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -36,14 +37,30 @@ export default function AuthorsPage({
       ></NextSeo>
       <Layout site={site}>
         <section className="grid gap-10 p-4 sm:p-10 place-items-center">
-          <h1 className="text-5xl lg:text-7xl">Tags</h1>
-          <section className="grid grid-cols-12 gap-2">
+          <h1 className="text-5xl lg:text-7xl">Frameworks</h1>
+          <section className="grid grid-cols-1 gap-2">
+            <a className="grid grid-cols-5 gap-2 p-2 border-solid border-primary-500">
+              <p>Framework</p>
+              <p>Courses</p>
+              <p>Tutorials</p>
+              <p>Podcasts</p>
+              <p>Blog</p>
+            </a>
             {tags.map((tag, i) => (
               <Link href={`/frameworks/${tag.slug}`} key={i}>
-                <a className="flex flex-col items-center p-2 bg-primary-900 text-primary-50 rounded-xl">
-                  <p>{tag.title}</p>
-                  <p className="flex-initial p-2 rounded-full text-basics-900 bg-secondary-500">
-                    {tag.count}
+                <a className="grid grid-cols-5 gap-2 p-2 bg-primary-900 text-primary-50 rounded-xl">
+                  <p className="">{tag.title}</p>
+                  <p className="flex-initial text-basics-50 ">
+                    {tag?.courses_count}
+                  </p>
+                  <p className="flex-initial text-basics-50 ">
+                    {tag?.tutorials_count}
+                  </p>
+                  <p className="flex-initial text-basics-50 ">
+                    {tag?.podcasts_count}
+                  </p>
+                  <p className="flex-initial text-basics-50 ">
+                    {tag?.posts_count}
                   </p>
                 </a>
               </Link>
