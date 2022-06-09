@@ -40,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const [posts, tutorials, courses, pages, podcasts] = await Promise.all([
     queryByPublished(PostType.post, 20),
     queryByPublished(PostType.tutorial, 20),
-    queryByPublished(PostType.post, 20),
+    queryByPublished(PostType.course, 20),
     queryByPublished(PostType.page, 20),
     queryPurrfectStreamByReleased(20),
   ]);
