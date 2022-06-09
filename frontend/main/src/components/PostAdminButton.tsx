@@ -12,22 +12,25 @@ export default function CourseBuyButton({
   const { member, team } = useIsMember(user);
 
   function adminLink() {
-    const getUrl = () => {
-      let u;
-      if (process.env.NODE_ENV === 'development') {
-        u = 'http://localhost:3333';
-      } else {
-        u =
-          config.dataset === 'main'
-            ? 'https://admin.codingcat.dev'
-            : `https://admin-${config.dataset}.codingcat.dev`;
-      }
-      return u;
-    };
+    // const getUrl = () => {
+    //   let u;
+    //   if (process.env.NODE_ENV === 'development') {
+    //     u = 'http://localhost:3333';
+    //   } else {
+    //     u =
+    //       config.dataset === 'main'
+    //         ? 'https://admin.codingcat.dev'
+    //         : `https://admin-${config.dataset}.codingcat.dev`;
+    //   }
+    //   return u;
+    // };
     return (
       <>
         <a
-          href={`${getUrl()}/desk/${post._type};${post._id}`}
+          href={`https://www.notion.so/codingcatdev/${post._id?.replaceAll(
+            '-',
+            ''
+          )}`}
           target="_blank"
           rel="noreferrer"
           role="link"

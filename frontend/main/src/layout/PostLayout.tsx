@@ -100,9 +100,9 @@ export default function PostLayout({
     }
   }
 
-  const getRecents = () => {
+  const recents = () => {
     return (
-      <div className="float-right">
+      <>
         {/* LESSONS */}
         {course && course.sections && (
           <section className="flex flex-col w-full mb-2 xl:max-w-md">
@@ -205,7 +205,7 @@ export default function PostLayout({
             </div>
           </section>
         )}
-      </div>
+      </>
     );
   };
 
@@ -243,7 +243,9 @@ export default function PostLayout({
                   className="btn-primary"
                   onClick={() =>
                     window.open(
-                      `/api/endpreview?slug=/${post._type}/${post.slug}`,
+                      `/api/endpreview?slug=/${
+                        course ? `${course._type}/${course.slug}/` : ``
+                      }${post._type}/${post.slug}`,
                       '_self'
                     )
                   }
@@ -343,7 +345,9 @@ export default function PostLayout({
             {!isLockedLesson() ? (
               source && (
                 <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                  {getRecents()}
+                  <div className="float-right hidden 2xl:inline-block">
+                    {recents()}
+                  </div>
                   <MDXRemote {...source} components={components} />
                 </article>
               )
@@ -353,7 +357,9 @@ export default function PostLayout({
                   <>
                     {source && (
                       <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                        {getRecents()}
+                        <div className="float-right hidden 2xl:inline-block">
+                          {recents()}
+                        </div>
                         <MDXRemote {...source} components={components} />
                       </article>
                     )}
@@ -366,14 +372,11 @@ export default function PostLayout({
             ) : (
               <PostMediaLocked />
             )}
+            <div className="w-full block 2xl:hidden">{recents()}</div>
           </section>
         </div>
       </div>
       <style global jsx>{`
-        article {
-          font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
-          margin: 0 auto;
-        }
         article > * {
           margin-bottom: 2rem;
           list-style: auto;

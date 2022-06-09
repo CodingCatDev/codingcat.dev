@@ -148,7 +148,12 @@ export const getTags = ({
   return [{ _id: 'yep' }] as Tag[];
 };
 
-const formatPost = async (q: any, _type: string) => {
+const formatPost = async (
+  q: any,
+  _type: string,
+  preview?: boolean,
+  list?: boolean
+) => {
   //Flat authors
   const authors = [];
   let post = q;
@@ -230,9 +235,43 @@ const formatPost = async (q: any, _type: string) => {
     };
   }
 
+  if (_type == PostType.podcast) {
+    let sponsors: any = [];
+    for (const [i, s] of q?.properties?.sponsors?.relation.entries()) {
+      sponsors.push({
+        url: q?.properties?.sponsors_url?.rollup?.array?.at(i)?.url || null,
+        coverPhoto: {
+          public_id: q?.properties?.sponsors_cover?.rollup?.array?.at(i)?.url
+            ? q?.properties?.sponsors_cover?.rollup?.array
+                ?.at(i)
+                ?.url?.split('upload/')
+                ?.at(1) ||
+              q?.properties?.sponsors_cover?.rollup?.array?.at(i)?.url
+            : null,
+        },
+        description:
+          q?.properties?.sponsors_description?.rollup?.array
+            ?.at(i)
+            ?.rich_text?.map((t: any) => t.plain_text)
+            .join('') || null,
+        company:
+          q?.properties?.sponsors_name?.rollup?.array
+            ?.at(i)
+            ?.title?.map((t: any) => t.plain_text)
+            .join('') || null,
+      });
+    }
+
+    post = {
+      ...post,
+      sponsors,
+    };
+  }
+
   // Get sections and lessons for course
-  if (_type == PostType.course) {
-    const sectionsRaw = await querySectionsWithOrder(q.id);
+  if (_type == PostType.course && !list) {
+    console.log('got list');
+    const sectionsRaw = await querySectionsByCourseId(q.id, preview);
     let sections: any = [];
     for (const s of sectionsRaw.results as any) {
       const lesson = {
@@ -293,9 +332,14 @@ const formatPost = async (q: any, _type: string) => {
   return post;
 };
 
-const formatPosts = async (raw: QueryDatabaseResponse, _type: string) => {
+const formatPosts = async (
+  raw: QueryDatabaseResponse,
+  _type: string,
+  preview?: boolean,
+  list?: boolean
+) => {
   const results = await Promise.all(
-    raw.results.map((q: any) => formatPost(q, _type))
+    raw.results.map((q: any) => formatPost(q, _type, preview, list))
   );
 
   let post = {
@@ -396,11 +440,15 @@ export const queryByPublished = async (
     filter,
     sorts,
   });
-  return await formatPosts(raw, _type);
+  return await formatPosts(raw, _type, false, true);
 };
 
-export const queryNotionDbBySlug = async (_type: string, slug: string) => {
-  let filter;
+export const queryNotionDbBySlug = async (
+  _type: string,
+  slug: string,
+  preview?: boolean
+) => {
+  let filter: any;
   let sorts: any;
   filter = {
     and: [
@@ -410,14 +458,26 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
           contains: slug,
         },
       },
-      {
-        property: 'published',
-        select: {
-          equals: 'published',
-        },
-      },
     ],
   };
+
+  if (!preview) {
+    filter = {
+      ...filter,
+      and: [
+        ...filter.and,
+        ...[
+          {
+            property: 'published',
+            select: {
+              equals: 'published',
+            },
+          },
+        ],
+      ],
+    };
+  }
+
   if (_type == 'framework' || _type == 'language') {
     filter = {
       and: [
@@ -442,28 +502,28 @@ export const queryNotionDbBySlug = async (_type: string, slug: string) => {
     filter,
     sorts,
   });
-  return await formatPosts(raw, _type);
+  return await formatPosts(raw, _type, preview);
 };
 
-export const getNotionPageMarkdown = async (
-  _type: PostType,
-  slug?: string,
-  id?: string
-) => {
+export const getNotionPageMarkdown = async ({
+  _type,
+  slug,
+  preview,
+}: {
+  _type: PostType;
+  slug?: string;
+  preview: boolean | undefined;
+}) => {
   let pageId;
   let page;
 
   if (slug) {
-    let raw = await queryNotionDbBySlug(_type, slug);
+    let raw = await queryNotionDbBySlug(_type, slug, preview);
     if (!raw.results.length) {
       return null;
     }
     page = raw.results.at(0);
     pageId = page?.id;
-  }
-  if (id) {
-    pageId = id;
-    page = await getPageById({ _id: id, _type });
   }
   if (!page) {
     return null;
@@ -481,15 +541,43 @@ export const getNotionPageMarkdown = async (
   } as Post;
 };
 
-export const querySectionsWithOrder = async (id: string) => {
+export const querySectionsByCourseId = async (
+  id: string,
+  preview: boolean | undefined
+) => {
+  let filter;
+  filter = {
+    property: 'courses',
+    relation: {
+      contains: id,
+    },
+  };
+  if (!preview) {
+    filter = {
+      and: [
+        {
+          property: 'courses',
+          relation: {
+            contains: id,
+          },
+        },
+        {
+          property: 'lesson_published',
+          rollup: {
+            every: {
+              select: {
+                equals: 'published',
+              },
+            },
+          },
+        },
+      ],
+    };
+  }
+
   let raw = await notionClient.databases.query({
     database_id: config.sectionsDb,
-    filter: {
-      property: 'courses',
-      relation: {
-        contains: id,
-      },
-    },
+    filter,
     sorts: [
       {
         property: 'section_order',

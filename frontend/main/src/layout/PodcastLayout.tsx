@@ -1,7 +1,7 @@
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ClassAttributes, HTMLAttributes, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
@@ -15,10 +15,6 @@ import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 import { components } from '@/components/code/MDXComponents';
-import { AccessMode } from '@/models/access.model';
-import MemberValidShow from '../components/user/MemberValidShow';
-import MemberNotValidShow from '../components/user/MemberNotValidShow';
-import PostMediaLocked from '../components/PostMediaLocked';
 
 export default function PostLayout({
   post,
@@ -41,12 +37,6 @@ export default function PostLayout({
   useEffect(() => {
     setHref(location.href);
   }, []);
-
-  function isActiveLink(course: Post, lesson: SectionLesson) {
-    if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
-      return true;
-    return false;
-  }
 
   const pluralType = pluralize(post);
 
@@ -84,6 +74,55 @@ export default function PostLayout({
         );
     }
   }
+  const recents = () => {
+    return (
+      <>
+        {/* RECENTS */}
+        {recentPosts && (
+          <section className="flex flex-col w-full mb-2 xl:max-w-md">
+            {post?.sponsors && (
+              <section>
+                <SponsorCards sponsors={post.sponsors} />
+              </section>
+            )}
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Courses`}
+              </h2>
+
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.course]} />
+              </ul>
+            </div>
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Tutorials`}
+              </h2>
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.tutorial]} />
+              </ul>
+            </div>
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Podcasts`}
+              </h2>
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.podcast]} />
+              </ul>
+            </div>
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Blog`}
+              </h2>
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.post]} />
+              </ul>
+            </div>
+          </section>
+        )}
+      </>
+    );
+  };
   return (
     <>
       {/* DIV TO AVOID GRID GAP */}
@@ -181,65 +220,16 @@ export default function PostLayout({
           <section className="flex flex-col flex-grow gap-4">
             {/* BLOG POST */}
             <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-              <div className="float-right">
-                {/* RECENTS */}
-                {recentPosts && (
-                  <section className="flex flex-col w-full mb-2 xl:max-w-md">
-                    {post?.sponsors && (
-                      <section className="hidden 2xl:block">
-                        <SponsorCards sponsors={post.sponsors} />
-                      </section>
-                    )}
-                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                      <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                        {`Latest Courses`}
-                      </h2>
-
-                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                        <RecentPostsList posts={recentPosts[PostType.course]} />
-                      </ul>
-                    </div>
-                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                      <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                        {`Latest Tutorials`}
-                      </h2>
-                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                        <RecentPostsList
-                          posts={recentPosts[PostType.tutorial]}
-                        />
-                      </ul>
-                    </div>
-                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                      <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                        {`Latest Podcasts`}
-                      </h2>
-                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                        <RecentPostsList
-                          posts={recentPosts[PostType.podcast]}
-                        />
-                      </ul>
-                    </div>
-                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                      <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                        {`Latest Blog`}
-                      </h2>
-                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                        <RecentPostsList posts={recentPosts[PostType.post]} />
-                      </ul>
-                    </div>
-                  </section>
-                )}
+              <div className="float-right hidden 2xl:inline-block">
+                {recents()}
               </div>
               {source && <MDXRemote {...source} components={components} />}
             </article>
+            <div className="w-full block 2xl:hidden">{recents()}</div>
           </section>
         </section>
       </div>
       <style global jsx>{`
-        article {
-          font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
-          margin: 0 auto;
-        }
         article > * {
           margin-bottom: 2rem;
           list-style: auto;

@@ -20,7 +20,6 @@ import {
   getRecent,
   getSite,
   queryByPublished,
-  queryNotionDbBySlug,
   queryPurrfectStreamByReleased,
 } from '@/services/notion.server';
 
@@ -166,24 +165,23 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
         notFound: true,
       };
     }
-
-    const { _id } = pData;
-    post = await getNotionPageMarkdown(pData.selectionType, undefined, _id);
   } else {
-    //Not in Preview mode.
     preview = false;
-
-    //If Lesson we need to use different slug and get course
-    if (lesson === PostType.lesson && lessonPath) {
-      post = await getNotionPageMarkdown(PostType.lesson, lessonPath);
-      course = await getNotionPageMarkdown(type, slug);
+  }
+  //If Lesson we need to use different slug and get course
+  if (lesson === PostType.lesson && lessonPath) {
+    post = await getNotionPageMarkdown({
+      preview,
+      _type: PostType.lesson,
+      slug: lessonPath,
+    });
+    course = await getNotionPageMarkdown({ preview, _type: type, slug });
+  } else {
+    // Moved to Notion June 2022
+    if (type == PostType.podcast) {
+      post = await getPurrfectStreamPageMarkdown(slug);
     } else {
-      // Moved to Notion June 2022
-      if (type == PostType.podcast) {
-        post = await getPurrfectStreamPageMarkdown(slug);
-      } else {
-        post = await getNotionPageMarkdown(type, slug);
-      }
+      post = await getNotionPageMarkdown({ preview, _type: type, slug });
     }
   }
 
@@ -234,9 +232,11 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
       props.course = course;
     }
   } else {
-    const recentPosts = await getRecent({ preview });
-    if (recentPosts) {
-      props.recentPosts = recentPosts;
+    if (type != PostType.page) {
+      const recentPosts = await getRecent({ preview });
+      if (recentPosts) {
+        props.recentPosts = recentPosts;
+      }
     }
   }
   // }
