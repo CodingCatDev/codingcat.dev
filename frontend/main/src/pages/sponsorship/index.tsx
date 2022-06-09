@@ -109,7 +109,7 @@ export default function Sponsorship({
           <div ref={form} className="bg-white rounded">
             <iframe
               className="border-none w-full"
-              height="680px"
+              height="720px"
               src="https://notionforms.io/forms/sponsor-submissions"
             ></iframe>
           </div>
