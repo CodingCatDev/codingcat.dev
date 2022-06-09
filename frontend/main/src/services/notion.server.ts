@@ -693,20 +693,23 @@ export const getPurrfectStreamPageMarkdown = async (slug: string) => {
       picks = [...picks, guest] as any;
     }
   }
-  let pickBlocks: any = [{ parent: '## Purrfect Picks', children: [] }];
+  let pickBlocks: any;
+  if (picks.length > 0) {
+    pickBlocks = [{ parent: '## Purrfect Picks', children: [] }];
 
-  picks.map((p) => {
-    pickBlocks.push({
-      parent: `### ${p.name}`,
-      children: [],
-    });
-    p.picks.map((pick) => {
+    picks.map((p) => {
       pickBlocks.push({
-        parent: `- [${pick.name}](${pick.url})`,
+        parent: `### ${p.name}`,
         children: [],
       });
+      p.picks.map((pick) => {
+        pickBlocks.push({
+          parent: `- [${pick.name}](${pick.url})`,
+          children: [],
+        });
+      });
     });
-  });
+  }
 
   content += n2m.toMarkdownString(pickBlocks);
 

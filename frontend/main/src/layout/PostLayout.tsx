@@ -99,6 +99,116 @@ export default function PostLayout({
         );
     }
   }
+
+  const getRecents = () => {
+    return (
+      <div className="float-right">
+        {/* LESSONS */}
+        {course && course.sections && (
+          <section className="flex flex-col w-full mb-2 xl:max-w-md">
+            {course.sections.map((section) => (
+              <section
+                key={section._key}
+                className="flex flex-col rounded-t-md"
+              >
+                <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                  {section.title}
+                </div>
+                <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
+                  {section.lessons &&
+                    section.lessons.map((lesson) => (
+                      <li key={lesson._id} className="ml-0 list-none">
+                        <Link
+                          href={`/course/${course.slug}/lesson/${lesson.slug}`}
+                          key={lesson._id}
+                          passHref
+                        >
+                          <div
+                            className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
+                ${
+                  isActiveLink(course, lesson)
+                    ? 'bg-primary-200'
+                    : 'bg-transparent'
+                }
+                `}
+                          >
+                            <a className="no-underline text-basics-900 hover:text-primary-900">
+                              {lesson.title}
+                            </a>
+                            {lesson?.access_mode && (
+                              <div className="no-underline text-basics-900 hover:text-primary-900">
+                                {lesson?.access_mode != AccessMode.free && (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-5 h-5"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </section>
+            ))}
+          </section>
+        )}
+        {/* RECENTS */}
+        {recentPosts && (
+          <section className="flex flex-col w-full mb-2 xl:max-w-md">
+            {post?.sponsors && (
+              <section className="hidden 2xl:block">
+                <SponsorCards sponsors={post.sponsors} />
+              </section>
+            )}
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Courses`}
+              </h2>
+
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.course]} />
+              </ul>
+            </div>
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Tutorials`}
+              </h2>
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.tutorial]} />
+              </ul>
+            </div>
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Podcasts`}
+              </h2>
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.podcast]} />
+              </ul>
+            </div>
+            <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                {`Latest Blog`}
+              </h2>
+              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                <RecentPostsList posts={recentPosts[PostType.post]} />
+              </ul>
+            </div>
+          </section>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       {/* DIV TO AVOID GRID GAP */}
@@ -233,6 +343,7 @@ export default function PostLayout({
             {!isLockedLesson() ? (
               source && (
                 <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+                  {getRecents()}
                   <MDXRemote {...source} components={components} />
                 </article>
               )
@@ -242,6 +353,7 @@ export default function PostLayout({
                   <>
                     {source && (
                       <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+                        {getRecents()}
                         <MDXRemote {...source} components={components} />
                       </article>
                     )}
@@ -255,115 +367,12 @@ export default function PostLayout({
               <PostMediaLocked />
             )}
           </section>
-          {/* LESSONS */}
-          {course && course.sections && (
-            <section className="flex flex-col w-full mb-2 xl:max-w-md">
-              {course.sections.map((section) => (
-                <section
-                  key={section._key}
-                  className="flex flex-col rounded-t-md"
-                >
-                  <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                    {section.title}
-                  </div>
-                  <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
-                    {section.lessons &&
-                      section.lessons.map((lesson) => (
-                        <li key={lesson._id} className="ml-0 list-none">
-                          <Link
-                            href={`/course/${course.slug}/lesson/${lesson.slug}`}
-                            key={lesson._id}
-                            passHref
-                          >
-                            <div
-                              className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
-                              ${
-                                isActiveLink(course, lesson)
-                                  ? 'bg-primary-200'
-                                  : 'bg-transparent'
-                              }
-                              `}
-                            >
-                              <a className="no-underline text-basics-900 hover:text-primary-900">
-                                {lesson.title}
-                              </a>
-                              {lesson?.access_mode && (
-                                <div className="no-underline text-basics-900 hover:text-primary-900">
-                                  {lesson?.access_mode != AccessMode.free && (
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="w-5 h-5"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
-                </section>
-              ))}
-            </section>
-          )}
-          {/* RECENTS */}
-          {recentPosts && (
-            <section className="flex flex-col w-full mb-2 xl:max-w-md">
-              {post?.sponsors && (
-                <section className="hidden 2xl:block">
-                  <SponsorCards sponsors={post.sponsors} />
-                </section>
-              )}
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Courses`}
-                </h2>
-
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.course]} />
-                </ul>
-              </div>
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Tutorials`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.tutorial]} />
-                </ul>
-              </div>
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Podcasts`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.podcast]} />
-                </ul>
-              </div>
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Blog`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.post]} />
-                </ul>
-              </div>
-            </section>
-          )}
         </div>
       </div>
       <style global jsx>{`
         article {
           font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
           margin: 0 auto;
-          max-width: 65ch;
         }
         article > * {
           margin-bottom: 2rem;

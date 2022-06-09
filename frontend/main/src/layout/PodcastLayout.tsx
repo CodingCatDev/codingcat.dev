@@ -181,59 +181,64 @@ export default function PostLayout({
           <section className="flex flex-col flex-grow gap-4">
             {/* BLOG POST */}
             <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+              <div className="float-right">
+                {/* RECENTS */}
+                {recentPosts && (
+                  <section className="flex flex-col w-full mb-2 xl:max-w-md">
+                    {post?.sponsors && (
+                      <section className="hidden 2xl:block">
+                        <SponsorCards sponsors={post.sponsors} />
+                      </section>
+                    )}
+                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+                      <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        {`Latest Courses`}
+                      </h2>
+
+                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                        <RecentPostsList posts={recentPosts[PostType.course]} />
+                      </ul>
+                    </div>
+                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+                      <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        {`Latest Tutorials`}
+                      </h2>
+                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                        <RecentPostsList
+                          posts={recentPosts[PostType.tutorial]}
+                        />
+                      </ul>
+                    </div>
+                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+                      <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        {`Latest Podcasts`}
+                      </h2>
+                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                        <RecentPostsList
+                          posts={recentPosts[PostType.podcast]}
+                        />
+                      </ul>
+                    </div>
+                    <div className="rounded-md bg-basics-50 dark:bg-primary-900">
+                      <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                        {`Latest Blog`}
+                      </h2>
+                      <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+                        <RecentPostsList posts={recentPosts[PostType.post]} />
+                      </ul>
+                    </div>
+                  </section>
+                )}
+              </div>
               {source && <MDXRemote {...source} components={components} />}
             </article>
           </section>
-          {/* RECENTS */}
-          {recentPosts && (
-            <section className="flex flex-col w-full mb-2 xl:max-w-md">
-              {post?.sponsors && (
-                <section className="hidden 2xl:block">
-                  <SponsorCards sponsors={post.sponsors} />
-                </section>
-              )}
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Courses`}
-                </h2>
-
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.course]} />
-                </ul>
-              </div>
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Tutorials`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.tutorial]} />
-                </ul>
-              </div>
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Podcasts`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.podcast]} />
-                </ul>
-              </div>
-              <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-                <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
-                  {`Latest Blog`}
-                </h2>
-                <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                  <RecentPostsList posts={recentPosts[PostType.post]} />
-                </ul>
-              </div>
-            </section>
-          )}
         </section>
       </div>
       <style global jsx>{`
         article {
           font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
           margin: 0 auto;
-          max-width: 65ch;
         }
         article > * {
           margin-bottom: 2rem;
