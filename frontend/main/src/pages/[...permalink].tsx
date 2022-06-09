@@ -234,9 +234,11 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
       props.course = course;
     }
   } else {
-    const recentPosts = await getRecent({ preview });
-    if (recentPosts) {
-      props.recentPosts = recentPosts;
+    if (type != PostType.page) {
+      const recentPosts = await getRecent({ preview });
+      if (recentPosts) {
+        props.recentPosts = recentPosts;
+      }
     }
   }
   // }

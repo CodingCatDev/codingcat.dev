@@ -363,7 +363,6 @@ export default function PostLayout({
         article {
           font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
           margin: 0 auto;
-          max-width: 65ch;
         }
         article > * {
           margin-bottom: 2rem;
