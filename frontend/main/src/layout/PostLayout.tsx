@@ -166,7 +166,7 @@ export default function PostLayout({
         {recentPosts && (
           <section className="flex flex-col w-full mb-2 xl:max-w-md">
             {post?.sponsors && (
-              <section className="hidden 2xl:block">
+              <section>
                 <SponsorCards sponsors={post.sponsors} />
               </section>
             )}

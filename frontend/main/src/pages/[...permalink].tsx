@@ -6,7 +6,6 @@ import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/layout/PostLayout';
 import CourseLayout from '@/layout/CourseLayout';
-import PodcastLayout from '@/layout/PodcastLayout';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
@@ -307,15 +306,6 @@ export default function PostPage({
               post={post}
               source={source}
               product={product}
-              preview={preview}
-            />
-          ) : post._type === PostType.podcast ? (
-            <PodcastLayout
-              post={post}
-              router={router}
-              course={course}
-              source={source}
-              recentPosts={recentPosts}
               preview={preview}
             />
           ) : (
