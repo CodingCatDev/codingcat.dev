@@ -230,6 +230,39 @@ const formatPost = async (q: any, _type: string) => {
     };
   }
 
+  if (_type == PostType.podcast) {
+    let sponsors: any = [];
+    for (const [i, s] of q?.properties?.sponsors?.relation.entries()) {
+      sponsors.push({
+        url: q?.properties?.sponsors_url?.rollup?.array?.at(i)?.url || null,
+        coverPhoto: {
+          public_id: q?.properties?.sponsors_cover?.rollup?.array?.at(i)?.url
+            ? q?.properties?.sponsors_cover?.rollup?.array
+                ?.at(i)
+                ?.url?.split('upload/')
+                ?.at(1) ||
+              q?.properties?.sponsors_cover?.rollup?.array?.at(i)?.url
+            : null,
+        },
+        description:
+          q?.properties?.sponsors_description?.rollup?.array
+            ?.at(i)
+            ?.rich_text?.map((t: any) => t.plain_text)
+            .join('') || null,
+        company:
+          q?.properties?.sponsors_name?.rollup?.array
+            ?.at(i)
+            ?.title?.map((t: any) => t.plain_text)
+            .join('') || null,
+      });
+    }
+
+    post = {
+      ...post,
+      sponsors,
+    };
+  }
+
   // Get sections and lessons for course
   if (_type == PostType.course) {
     const sectionsRaw = await querySectionsWithOrder(q.id);

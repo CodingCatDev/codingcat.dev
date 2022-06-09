@@ -1,7 +1,7 @@
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ClassAttributes, HTMLAttributes, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
@@ -15,10 +15,6 @@ import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 import { components } from '@/components/code/MDXComponents';
-import { AccessMode } from '@/models/access.model';
-import MemberValidShow from '../components/user/MemberValidShow';
-import MemberNotValidShow from '../components/user/MemberNotValidShow';
-import PostMediaLocked from '../components/PostMediaLocked';
 
 export default function PostLayout({
   post,
@@ -35,6 +31,7 @@ export default function PostLayout({
   recentPosts?: { [key: string]: Post[] };
   preview?: boolean;
 }): JSX.Element {
+  console.log(post);
   const [href, setHref] = useState('');
   const { data: user } = useUser();
 
@@ -188,7 +185,7 @@ export default function PostLayout({
           {recentPosts && (
             <section className="flex flex-col w-full mb-2 xl:max-w-md">
               {post?.sponsors && (
-                <section className="hidden 2xl:block">
+                <section className="">
                   <SponsorCards sponsors={post.sponsors} />
                 </section>
               )}
