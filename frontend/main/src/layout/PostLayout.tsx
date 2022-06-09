@@ -133,7 +133,9 @@ export default function PostLayout({
                   className="btn-primary"
                   onClick={() =>
                     window.open(
-                      `/api/endpreview?slug=/${post._type}/${post.slug}`,
+                      `/api/endpreview?slug=/${
+                        course ? `${course._type}/${course.slug}/` : ``
+                      }${post._type}/${post.slug}`,
                       '_self'
                     )
                   }
