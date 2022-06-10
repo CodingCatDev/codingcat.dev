@@ -345,7 +345,7 @@ export default function PostLayout({
             {!isLockedLesson() ? (
               source && (
                 <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                  <div className="hidden float-right 2xl:inline-block">
+                  <div className="hidden float-right ml-2 2xl:inline-block">
                     {recents()}
                   </div>
                   <MDXRemote {...source} components={components} />
@@ -357,7 +357,7 @@ export default function PostLayout({
                   <>
                     {source && (
                       <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                        <div className="hidden float-right 2xl:inline-block">
+                        <div className="hidden float-right ml-2 2xl:inline-block">
                           {recents()}
                         </div>
                         <MDXRemote {...source} components={components} />
@@ -372,7 +372,7 @@ export default function PostLayout({
             ) : (
               <PostMediaLocked />
             )}
-            <div className="block w-full 2xl:hidden">{recents()}</div>
+            <div className="block w-full ml-2 2xl:hidden">{recents()}</div>
           </section>
         </div>
       </div>
