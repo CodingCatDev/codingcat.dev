@@ -164,7 +164,7 @@ export default function PostLayout({
         )}
         {/* RECENTS */}
         {recentPosts && (
-          <section className="flex flex-col w-full mb-2 xl:max-w-md">
+          <section className="flex flex-col w-full mb-2 ml-2 xl:max-w-md">
             {post?.sponsors && (
               <section>
                 <SponsorCards sponsors={post.sponsors} />
@@ -345,7 +345,7 @@ export default function PostLayout({
             {!isLockedLesson() ? (
               source && (
                 <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                  <div className="float-right hidden 2xl:inline-block">
+                  <div className="hidden float-right 2xl:inline-block">
                     {recents()}
                   </div>
                   <MDXRemote {...source} components={components} />
@@ -357,7 +357,7 @@ export default function PostLayout({
                   <>
                     {source && (
                       <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                        <div className="float-right hidden 2xl:inline-block">
+                        <div className="hidden float-right 2xl:inline-block">
                           {recents()}
                         </div>
                         <MDXRemote {...source} components={components} />
@@ -372,7 +372,7 @@ export default function PostLayout({
             ) : (
               <PostMediaLocked />
             )}
-            <div className="w-full block 2xl:hidden">{recents()}</div>
+            <div className="block w-full 2xl:hidden">{recents()}</div>
           </section>
         </div>
       </div>
@@ -384,6 +384,11 @@ export default function PostLayout({
 
         article > p + blockquote {
           margin: 1rem 0;
+        }
+
+        article blockquote {
+          display: inline-block;
+          width: 100%;
         }
 
         article a {

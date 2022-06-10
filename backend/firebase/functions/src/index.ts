@@ -16,3 +16,6 @@ export {
   scheduledNotionToCloudinary,
   cloudinaryToNotionPubSub,
 } from './cloudinary/scheduledNotionCheck';
+
+// Algolia scheduled
+export { scheduledNotionToAlgolia } from './algolia/algolia';

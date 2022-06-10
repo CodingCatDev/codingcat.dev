@@ -31,7 +31,11 @@ export const BlogPostHit = (
 
     return (
       <>
-        <Link href={`/${hit.type}/${hit.slug}`}>
+        <Link
+          href={
+            hit.type === PostType.page ? hit?.slug : `/${hit.type}/${hit.slug}`
+          }
+        >
           <a className="grid items-center gap-2 p-2 transition-colors rounded-md grid-cols-search text-basics-900 bg-primary-50 hover:bg-primary-100 hover:text-basics-900">
             <div className="grid place-items-center">
               {typeIcon(hit.type)}

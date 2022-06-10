@@ -57,3 +57,13 @@ export const notionPurrfectCompanyDatabaseId = checkMain(
   'notion',
   'purrfect_company_database_id'
 );
+export const notionPurrfectPicks = checkMain('notion', 'purrfect_picks');
+export const notionAuthors = checkMain('notion', 'authors');
+export const notionLessons = checkMain('notion', 'lessons');
+export const notionCourses = checkMain('notion', 'courses');
+export const notionFrameworks = checkMain('notion', 'frameworks');
+export const notionPosts = checkMain('notion', 'posts');
+export const notionTutorials = checkMain('notion', 'tutorials');
+export const notionPages = checkMain('notion', 'pages');
+export const notionSections = checkMain('notion', 'sections');
+export const notionLanguages = checkMain('notion', 'languages');
