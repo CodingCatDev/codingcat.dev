@@ -396,7 +396,6 @@ export default function PostLayout({
 
         article blockquote {
           display: inline-block;
-          width: 100%;
         }
 
         article a {
