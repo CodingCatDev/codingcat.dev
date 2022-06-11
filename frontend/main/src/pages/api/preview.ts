@@ -16,7 +16,7 @@ const preview = async (
   // Must have secret
   if (!process.env.SANITY_PREVIEW_SECRET) {
     return res
-      .status(500)
+      .status(401)
       .json({ message: 'Secret Missing please add SANITY_PREVIEW_SECRET' });
   }
   // Must have secret
