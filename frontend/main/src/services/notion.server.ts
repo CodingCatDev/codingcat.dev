@@ -89,7 +89,7 @@ export const getAuthorBySlugService = async ({
   return formatPosts(raw, 'author');
 };
 
-export const getAuthorPageMarkdown = async (slug: string) => {
+export const getAuthorPageBlocks = async (slug: string) => {
   let raw = await getAuthorBySlugService({ slug });
   if (!raw.results.length) {
     return null;
@@ -99,10 +99,10 @@ export const getAuthorPageMarkdown = async (slug: string) => {
   if (!page) {
     return null;
   }
-  let blocks;
+  let blocks: any[] = [];
 
   for (const page of raw.results) {
-    const blocks = await getBlocks(page?.id);
+    blocks = [...blocks, ...(await getChildBlocks(await getBlocks(page.id)))];
   }
 
   return {
@@ -528,25 +528,9 @@ export const getNotionPageBlocks = async ({
   if (!pageId) {
     return null;
   }
-  const blocks = await getBlocks(pageId);
-
-  // Retrieve block children for nested blocks (one level deep), for example toggle blocks
-  // https://developers.notion.com/docs/working-with-page-content#reading-nested-blocks
-
-  let blocksWithChildren: any[] = [];
-  for (const block of blocks as any) {
-    blocksWithChildren.push(block);
-    if (block.has_children) {
-      const childrenBlocks = await getBlocks(block.id);
-      for (const b of childrenBlocks as any) {
-        blocksWithChildren.push(b);
-      }
-    }
-  }
-
   return {
     ...page,
-    blocks: blocksWithChildren,
+    blocks: await getChildBlocks(await getBlocks(pageId)),
   } as Post;
 };
 
@@ -748,8 +732,7 @@ export const getPurrfectStreamPageBlocks = async (slug: string) => {
     blocks = [...blocks, ...b];
   }
   for (const page of raw.results) {
-    const b = await getBlocks(page.id);
-    blocks = [...blocks, ...b];
+    blocks = [...blocks, ...(await getChildBlocks(await getBlocks(page.id)))];
   }
 
   // // Create picks blocks
@@ -912,4 +895,21 @@ export const getBlocks = async (blockId: string) => {
   });
 
   return response.results as NotionBlock[];
+};
+
+export const getChildBlocks = async (blocks: NotionBlock[]) => {
+  // Retrieve block children for nested blocks (one level deep), for example toggle blocks
+  // https://developers.notion.com/docs/working-with-page-content#reading-nested-blocks
+
+  let blocksWithChildren: any[] = [];
+  for (const block of blocks as any) {
+    blocksWithChildren.push(block);
+    if (block.has_children) {
+      const childrenBlocks = await getBlocks(block.id);
+      for (const b of childrenBlocks as any) {
+        blocksWithChildren.push(b);
+      }
+    }
+  }
+  return blocksWithChildren;
 };

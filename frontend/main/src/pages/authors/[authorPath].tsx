@@ -1,8 +1,8 @@
 import {
   getSite,
-  getAuthorPageMarkdown,
   queryByPublished,
   queryRelationById,
+  getAuthorPageBlocks,
 } from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
@@ -53,7 +53,7 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
     };
   }
   const site = getSite();
-  const author = await getAuthorPageMarkdown(authorPath);
+  const author = await getAuthorPageBlocks(authorPath);
 
   if (!author) {
     console.log('Author not found');
