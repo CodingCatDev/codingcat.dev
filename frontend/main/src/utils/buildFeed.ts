@@ -5,16 +5,7 @@ import {
 } from '@/services/notion.server';
 import { Feed } from 'feed';
 import { Timestamp } from 'firebase/firestore';
-
-import { remark } from 'remark';
-import remarkHtml from 'remark-html';
-
 const site = 'https://codingcat.dev';
-
-export function markdownToHtml(markdownText: string) {
-  const file = remark().use(remarkHtml).processSync(markdownText);
-  return String(file);
-}
 
 export const buildFeed = ({
   posts,
@@ -58,7 +49,7 @@ export const buildFeed = ({
           link: `${site}/authors/${author.slug}`,
         };
       }),
-      content: post.content ? markdownToHtml(post.content) : '',
+      // content: post.content ? markdownToHtml(post.content) : '',
     });
   }
   return feed;

@@ -12,20 +12,17 @@ import AJPrimary from '@/components/global/icons/AJPrimary';
 import PostMedia from '@/components/PostMedia';
 import { StripeProduct } from '@/models/stripe.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
-import { MDXRemoteSerializeResult, MDXRemote } from 'next-mdx-remote';
 import { useSigninCheck } from 'reactfire';
 import CourseBuyButton from '@/components/CourseBuyButton';
-import { components } from '@/components/code/MDXComponents';
 import { AccessMode } from '@/models/access.model';
+import { NotionBlock, Render } from '@9gustin/react-notion-render';
 
 export default function Course({
   post,
-  source,
   product,
   preview,
 }: {
   post: PostModel;
-  source: MDXRemoteSerializeResult | null;
   product: StripeProduct | undefined;
   preview?: boolean;
 }): JSX.Element {
@@ -37,7 +34,9 @@ export default function Course({
       return true;
     return false;
   }
-  console.log(post);
+  const renderBlocks = (blocks: NotionBlock[]) => {
+    return <Render blocks={blocks} emptyBlocks />;
+  };
   return (
     <>
       <section className="top-0 z-10 grid 2xl:sticky">
@@ -140,7 +139,7 @@ export default function Course({
         <section className="flex flex-col flex-grow gap-4">
           <PostMedia post={post} noImage={true} />
           <div className="flex flex-col gap-2 mt-2">
-            {source && <MDXRemote {...source} components={components} />}
+            {post?.blocks && renderBlocks(post.blocks)}
           </div>
           {post._type === PostType.course && (
             <div>

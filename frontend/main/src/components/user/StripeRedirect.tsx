@@ -31,7 +31,7 @@ export default function StripeRedirect({
 
   const redirect = async (session: { url: string | URL }) => {
     // We have a Stripe Checkout URL, let's redirect.
-    window.location.assign(session.url);
+    window.location.assign(session.url as string);
   };
 
   if (checkoutSession) {

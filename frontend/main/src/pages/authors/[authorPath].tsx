@@ -12,14 +12,10 @@ import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
 import AuthorCard from '@/components/authors/AuthorCard';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
-import matter from 'gray-matter';
 
 interface StaticParams {
   site: Site;
   author: Author;
-  source: MDXRemoteSerializeResult | null;
   courses: Post[];
   tutorials: Post[];
   posts: Post[];
@@ -72,29 +68,10 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
     queryRelationById(author.id, 'authors', PostType.post),
   ]);
 
-  let source: MDXRemoteSerializeResult | null;
-  let allContent = '';
-
-  if (author && author.content) {
-    const { content } = matter(author.content);
-    allContent = allContent + content;
-  }
-  if (allContent) {
-    source = await serialize(allContent, {
-      mdxOptions: {
-        remarkPlugins: [],
-        rehypePlugins: [],
-      },
-    });
-  } else {
-    source = null;
-  }
-
   return {
     props: {
       site,
       author,
-      source,
       courses: courses.results,
       tutorials: tutorials.results,
       posts: posts.results,
@@ -105,7 +82,6 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
 export default function AuthorPage({
   site,
   author,
-  source,
   courses,
   tutorials,
   posts,
@@ -121,7 +97,7 @@ export default function AuthorPage({
       <Layout site={site}>
         <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
           <article className="grid items-start grid-cols-1 gap-4 p-4 shadow-lg rounded-xl justify-items-center justify-self-center bg-basics-50 text-basics-900 hover:text-basics-900 hover:shadow-sm">
-            <AuthorCard author={author} source={source} />
+            <AuthorCard author={author} />
           </article>
         </section>
         {courses && courses.length > 0 && (

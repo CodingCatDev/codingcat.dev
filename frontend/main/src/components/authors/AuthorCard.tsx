@@ -1,14 +1,11 @@
 import Image from 'next/image';
 import { Author } from '@/models/user.model';
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { components } from '@/components/code/MDXComponents';
+import { renderBlocks } from '@/components/RenderBlocks';
 
 export default function AuthorCard({
   author,
-  source,
 }: {
   author: Author;
-  source?: MDXRemoteSerializeResult | null;
 }): JSX.Element {
   return (
     <>
@@ -36,7 +33,7 @@ export default function AuthorCard({
       <>
         <h3 className="font-sans text-3xl lg:text-4xl">{author.displayName}</h3>
         <p className="text-base lg:text-lg">{author?.basicInfo?.about}</p>
-        {source && <MDXRemote {...source} components={components} />}
+        {author?.blocks && renderBlocks(author?.blocks)}
       </>
     </>
   );

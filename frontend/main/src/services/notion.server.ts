@@ -4,20 +4,18 @@ import { Client } from '@notionhq/client';
 import { config } from '@/config/notion';
 import { Post, PostType } from '@/models/post.model';
 import {
-  GetPageResponse,
+  ListBlockChildrenResponse,
   QueryDatabaseResponse,
 } from '@notionhq/client/build/src/api-endpoints';
-import { NotionToMarkdown } from 'notion-to-md';
 import { config as notionConfig } from '@/config/notion';
 import { Site } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
+import { NotionBlock } from '@9gustin/react-notion-render';
 
 // Initializing a client
 const notionClient = new Client({
   auth: config.token,
 });
-const n2m = new NotionToMarkdown({ notionClient });
-
 interface NotionPosts extends Omit<QueryDatabaseResponse, 'results'> {
   results: Post[];
 }
@@ -101,16 +99,15 @@ export const getAuthorPageMarkdown = async (slug: string) => {
   if (!page) {
     return null;
   }
-  let content = '';
+  let blocks;
 
   for (const page of raw.results) {
-    const blocks = await n2m.pageToMarkdown(page.id);
-    content += n2m.toMarkdownString(blocks);
+    const blocks = await getBlocks(page?.id);
   }
 
   return {
     ...raw.results[0],
-    content,
+    blocks,
   } as unknown as Author;
 };
 
@@ -505,7 +502,7 @@ export const queryNotionDbBySlug = async (
   return await formatPosts(raw, _type, preview);
 };
 
-export const getNotionPageMarkdown = async ({
+export const getNotionPageBlocks = async ({
   _type,
   slug,
   preview,
@@ -531,13 +528,25 @@ export const getNotionPageMarkdown = async ({
   if (!pageId) {
     return null;
   }
-  let content = '';
-  const blocks = await n2m.pageToMarkdown(pageId);
-  content += n2m.toMarkdownString(blocks);
+  const blocks = await getBlocks(pageId);
+
+  // Retrieve block children for nested blocks (one level deep), for example toggle blocks
+  // https://developers.notion.com/docs/working-with-page-content#reading-nested-blocks
+
+  let blocksWithChildren: any[] = [];
+  for (const block of blocks as any) {
+    blocksWithChildren.push(block);
+    if (block.has_children) {
+      const childrenBlocks = await getBlocks(block.id);
+      for (const b of childrenBlocks as any) {
+        blocksWithChildren.push(b);
+      }
+    }
+  }
 
   return {
     ...page,
-    content,
+    blocks: blocksWithChildren,
   } as Post;
 };
 
@@ -714,7 +723,7 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
   return await formatPosts(raw, 'podcast');
 };
 
-export const getPurrfectStreamPageMarkdown = async (slug: string) => {
+export const getPurrfectStreamPageBlocks = async (slug: string) => {
   let raw = await queryPurrfectStreamBySlug(slug);
   if (!raw.results.length) {
     return null;
@@ -732,78 +741,78 @@ export const getPurrfectStreamPageMarkdown = async (slug: string) => {
       queryPurrfectGuestsByStreamId(id),
     ]);
 
-  let content = '';
+  let blocks: NotionBlock[] = [];
   // Build the markdown for page
   for (const guest of purrfectGuests.results) {
-    const blocks = await n2m.pageToMarkdown(guest.id);
-    content += n2m.toMarkdownString(blocks);
+    const b = await getBlocks(guest.id);
+    blocks = [...blocks, ...b];
   }
   for (const page of raw.results) {
-    const blocks = await n2m.pageToMarkdown(page.id);
-    content += n2m.toMarkdownString(blocks);
+    const b = await getBlocks(page.id);
+    blocks = [...blocks, ...b];
   }
 
-  // Create picks blocks
-  let picks:
-    | [
-        {
-          name: string;
-          picks: [{ name: string; url: string }];
-        }
-      ]
-    | [] = [];
-  for (const pick of purrfectPicks.results as any) {
-    const guestId = pick.properties?.Guest?.relation?.at(0)?.id;
-    const guest = {
-      name: '',
-      picks: [] as [{ name: string; url: string }] | [],
-    };
-    // Find name
-    if (guestId) {
-      const g: any = purrfectGuests.results.find((g: any) => g.id == guestId);
-      guest.name = g?.properties?.Name?.title
-        .map((t: any) => t.plain_text)
-        .join('');
-    } else {
-      guest.name = pick.properties?.Us?.people?.at(0)?.name;
-    }
-    const link = {
-      name: pick?.properties?.Name?.title
-        .map((t: any) => t.plain_text)
-        .join('') as string,
-      url: pick?.properties?.Site?.url as string,
-    };
-    const alreadyUsed = picks.find((p: any) => p.name == guest.name);
-    if (alreadyUsed) {
-      alreadyUsed.picks = [...alreadyUsed.picks, link] as any;
-    } else {
-      guest.picks = [link];
-      picks = [...picks, guest] as any;
-    }
-  }
-  let pickBlocks: any;
-  if (picks.length > 0) {
-    pickBlocks = [{ parent: '## Purrfect Picks', children: [] }];
+  // // Create picks blocks
+  // let picks:
+  //   | [
+  //       {
+  //         name: string;
+  //         picks: [{ name: string; url: string }];
+  //       }
+  //     ]
+  //   | [] = [];
+  // for (const pick of purrfectPicks.results as any) {
+  //   const guestId = pick.properties?.Guest?.relation?.at(0)?.id;
+  //   const guest = {
+  //     name: '',
+  //     picks: [] as [{ name: string; url: string }] | [],
+  //   };
+  //   // Find name
+  //   if (guestId) {
+  //     const g: any = purrfectGuests.results.find((g: any) => g.id == guestId);
+  //     guest.name = g?.properties?.Name?.title
+  //       .map((t: any) => t.plain_text)
+  //       .join('');
+  //   } else {
+  //     guest.name = pick.properties?.Us?.people?.at(0)?.name;
+  //   }
+  //   const link = {
+  //     name: pick?.properties?.Name?.title
+  //       .map((t: any) => t.plain_text)
+  //       .join('') as string,
+  //     url: pick?.properties?.Site?.url as string,
+  //   };
+  //   const alreadyUsed = picks.find((p: any) => p.name == guest.name);
+  //   if (alreadyUsed) {
+  //     alreadyUsed.picks = [...alreadyUsed.picks, link] as any;
+  //   } else {
+  //     guest.picks = [link];
+  //     picks = [...picks, guest] as any;
+  //   }
+  // }
+  // let pickBlocks: any;
+  // if (picks.length > 0) {
+  //   pickBlocks = [{ parent: '## Purrfect Picks', children: [] }];
 
-    picks.map((p) => {
-      pickBlocks.push({
-        parent: `### ${p.name}`,
-        children: [],
-      });
-      p.picks.map((pick) => {
-        pickBlocks.push({
-          parent: `- [${pick.name}](${pick.url})`,
-          children: [],
-        });
-      });
-    });
-  }
+  //   picks.map((p) => {
+  //     pickBlocks.push({
+  //       parent: `### ${p.name}`,
+  //       children: [],
+  //     });
+  //     p.picks.map((pick) => {
+  //       pickBlocks.push({
+  //         parent: `- [${pick.name}](${pick.url})`,
+  //         children: [],
+  //       });
+  //     });
+  //   });
+  // }
 
-  content += n2m.toMarkdownString(pickBlocks);
+  // content += n2m.toMarkdownString(pickBlocks);
 
   return {
     ...raw.results[0],
-    content,
+    blocks,
   };
 };
 
@@ -896,3 +905,11 @@ export const getSite = () => {
 };
 
 export const getAuthors = () => [];
+
+export const getBlocks = async (blockId: string) => {
+  const response = await notionClient.blocks.children.list({
+    block_id: blockId,
+  });
+
+  return response.results as NotionBlock[];
+};

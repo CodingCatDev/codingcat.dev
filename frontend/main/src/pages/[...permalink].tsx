@@ -2,20 +2,17 @@ import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 
 import { Post, PostType } from '@/models/post.model';
-import matter from 'gray-matter';
-import { serialize } from 'next-mdx-remote/serialize';
 import PostLayout from '@/layout/PostLayout';
 import CourseLayout from '@/layout/CourseLayout';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import DefaultErrorPage from 'next/error';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { StripeProduct } from '@/models/stripe.model';
 import {
-  getNotionPageMarkdown,
-  getPurrfectStreamPageMarkdown,
+  getNotionPageBlocks,
+  getPurrfectStreamPageBlocks,
   getRecent,
   getSite,
   queryByPublished,
@@ -26,7 +23,6 @@ interface StaticPropsResult {
   site: Site;
   post: Post;
   course?: Post;
-  source: MDXRemoteSerializeResult<Record<string, unknown>> | null;
   preview: boolean | undefined;
   recentPosts?: {
     [key: string]: Post[];
@@ -169,18 +165,18 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   }
   //If Lesson we need to use different slug and get course
   if (lesson === PostType.lesson && lessonPath) {
-    post = await getNotionPageMarkdown({
+    post = await getNotionPageBlocks({
       preview,
       _type: PostType.lesson,
       slug: lessonPath,
     });
-    course = await getNotionPageMarkdown({ preview, _type: type, slug });
+    course = await getNotionPageBlocks({ preview, _type: type, slug });
   } else {
     // Moved to Notion June 2022
     if (type == PostType.podcast) {
-      post = await getPurrfectStreamPageMarkdown(slug);
+      post = await getPurrfectStreamPageBlocks(slug);
     } else {
-      post = await getNotionPageMarkdown({ preview, _type: type, slug });
+      post = await getNotionPageBlocks({ preview, _type: type, slug });
     }
   }
 
@@ -189,30 +185,10 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
       notFound: true,
     };
   }
-
-  let source: MDXRemoteSerializeResult | null;
-  let allContent = '';
-
-  if (post && post.content) {
-    const { content } = matter(post.content);
-    allContent = allContent + content;
-  }
-  if (allContent) {
-    source = await serialize(allContent, {
-      mdxOptions: {
-        remarkPlugins: [],
-        rehypePlugins: [],
-      },
-    });
-  } else {
-    source = null;
-  }
-
   // Courses have products not recentPosts
   const props: StaticPropsResult = {
     site: await getSite(),
     post,
-    source,
     preview: preview || false,
   };
 
@@ -250,7 +226,6 @@ export default function PostPage({
   site,
   post,
   course,
-  source,
   recentPosts,
   preview,
   product,
@@ -273,6 +248,7 @@ export default function PostPage({
       </Layout>
     );
   }
+  // console.log(post);
   return (
     <>
       <NextSeo
@@ -302,18 +278,12 @@ export default function PostPage({
       <Layout site={site}>
         <>
           {post._type === PostType.course ? (
-            <CourseLayout
-              post={post}
-              source={source}
-              product={product}
-              preview={preview}
-            />
+            <CourseLayout post={post} product={product} preview={preview} />
           ) : (
             <PostLayout
               router={router}
               post={post}
               course={course}
-              source={source}
               recentPosts={recentPosts}
               preview={preview}
             />

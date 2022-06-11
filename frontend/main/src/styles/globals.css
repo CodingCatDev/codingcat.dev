@@ -89,10 +89,6 @@
     @apply text-base lg:text-2xl leading-snug tracking-wide font-heading;
   }
 
-  p { 
-    font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
-  }
-
   input[type='number'],
   input[type='text'],
   input[type='url'],

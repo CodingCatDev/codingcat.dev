@@ -15,17 +15,20 @@ export default function SearchModal(): JSX.Element {
     setShow(false);
   };
 
-  const escFunction = useCallback((e) => {
+  const escFunction = useCallback((e: { keyCode: number }) => {
     if (e.keyCode === 27) {
       setShow(false);
     }
   }, []);
 
-  const cmdKFunction = useCallback((e) => {
-    if ((e.metaKey || e.ctrlKey) && e.code === 'KeyK') {
-      setShow(true);
-    }
-  }, []);
+  const cmdKFunction = useCallback(
+    (e: { metaKey: any; ctrlKey: any; code: string }) => {
+      if ((e.metaKey || e.ctrlKey) && e.code === 'KeyK') {
+        setShow(true);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     document.addEventListener('keydown', escFunction, false);

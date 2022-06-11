@@ -1,4 +1,9 @@
 import '@/styles/globals.css';
+// import '@9gustin/react-notion-render/dist/index.css';
+import 'prismjs/themes/prism-tomorrow.css';
+import 'prismjs/plugins/toolbar/prism-toolbar.min.css';
+import 'prismjs/plugins/diff-highlight/prism-diff-highlight.min.css';
+
 import { DefaultSeo } from 'next-seo';
 import { config } from '@/config/facebook';
 import type { AppProps } from 'next/app';

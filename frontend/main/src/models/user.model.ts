@@ -1,3 +1,4 @@
+import { NotionBlock } from '@9gustin/react-notion-render';
 import { UserInfo } from 'firebase/auth';
 import { Cloudinary } from './cloudinary.model';
 import { SocialLink } from './site.model';
@@ -12,7 +13,7 @@ export interface UserInfoExtended extends UserInfo {
 export interface Author {
   _id: string;
   id: string;
-  content: string;
+  blocks?: NotionBlock[];
   basicInfo?: BasicUserInfo;
   displayName: string;
   photoURL?: Cloudinary;

@@ -2,10 +2,9 @@ import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { ClassAttributes, HTMLAttributes, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Post, PostType, SectionLesson } from '@/models/post.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
 import SponsorCards from '@/components/SponsorCards';
@@ -15,23 +14,30 @@ import { millisecondToUSFormat } from '@/utils/basics/date';
 import SocialShare from '@/components/common/SocialShare';
 import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
-import { components } from '@/components/code/MDXComponents';
 import { AccessMode } from '@/models/access.model';
 import MemberValidShow from '../components/user/MemberValidShow';
 import MemberNotValidShow from '../components/user/MemberNotValidShow';
 import PostMediaLocked from '../components/PostMediaLocked';
+import { renderBlocks } from '@/components/RenderBlocks';
+
+import Prism from 'prismjs';
+
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/plugins/toolbar/prism-toolbar';
+import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
+import 'prismjs/plugins/diff-highlight/prism-diff-highlight';
 
 export default function PostLayout({
   post,
   router,
   course,
-  source,
   recentPosts,
   preview,
 }: {
   post: Post;
   router: NextRouter;
-  source: MDXRemoteSerializeResult | null;
   course?: Post;
   recentPosts?: { [key: string]: Post[] };
   preview?: boolean;
@@ -40,6 +46,7 @@ export default function PostLayout({
   const { data: user } = useUser();
 
   useEffect(() => {
+    Prism.highlightAll();
     setHref(location.href);
   }, []);
 
@@ -343,24 +350,24 @@ export default function PostLayout({
           <section className="flex flex-col w-full gap-4">
             {/* BLOG POST */}
             {!isLockedLesson() ? (
-              source && (
+              post?.blocks && (
                 <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                  <div className="hidden float-right ml-2 2xl:inline-block">
+                  <div className="hidden float-right ml-2 xl:inline-block">
                     {recents()}
                   </div>
-                  <MDXRemote {...source} components={components} />
+                  {renderBlocks(post.blocks)}
                 </article>
               )
             ) : user && user?.uid ? (
               <>
                 <MemberValidShow user={user}>
                   <>
-                    {source && (
+                    {post?.blocks && (
                       <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                        <div className="hidden float-right ml-2 2xl:inline-block">
+                        <div className="hidden float-right ml-2 xl:inline-block">
                           {recents()}
                         </div>
-                        <MDXRemote {...source} components={components} />
+                        {renderBlocks(post.blocks)}
                       </article>
                     )}
                   </>
@@ -372,13 +379,14 @@ export default function PostLayout({
             ) : (
               <PostMediaLocked />
             )}
-            <div className="block w-full ml-2 2xl:hidden">{recents()}</div>
+            <div className="inline-block w-full ml-2 xl:hidden">
+              {recents()}
+            </div>
           </section>
         </div>
       </div>
       <style global jsx>{`
         article > * {
-          margin-bottom: 2rem;
           list-style: auto;
         }
 
@@ -419,6 +427,10 @@ export default function PostLayout({
         article > ul li {
           margin-left: 2rem;
           list-style-type: circle;
+        }
+        iframe {
+          width: 100%;
+          aspect-ratio: 16 / 9;
         }
       `}</style>
     </>
