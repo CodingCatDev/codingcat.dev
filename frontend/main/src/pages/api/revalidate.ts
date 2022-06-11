@@ -7,8 +7,12 @@ const preview = async (
   // Must have secret
   if (!process.env.SANITY_PREVIEW_SECRET) {
     return res
-      .status(401)
+      .status(500)
       .json({ message: 'Secret Missing please add SANITY_PREVIEW_SECRET' });
+  }
+
+  if (req.query.secret !== process.env.SANITY_PREVIEW_SECRET) {
+    return res.status(401).json({ message: 'Invalid token' });
   }
 
   try {
