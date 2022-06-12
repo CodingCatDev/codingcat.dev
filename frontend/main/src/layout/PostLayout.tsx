@@ -107,12 +107,26 @@ export default function PostLayout({
     }
   }
 
+  const showPost = () => {
+    return (
+      <>
+        <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+          <div className="hidden float-right ml-2 xl:inline-block">
+            {recents()}
+          </div>
+          {post?.blocks && renderBlocks(post.blocks)}
+        </article>
+        <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
+      </>
+    );
+  };
+
   const recents = () => {
     return (
       <>
         {/* LESSONS */}
         {course && course.sections && (
-          <section className="flex flex-col w-full mb-2 xl:max-w-md">
+          <section className="flex flex-col w-full mb-2">
             {course.sections.map((section) => (
               <section
                 key={section._key}
@@ -171,7 +185,7 @@ export default function PostLayout({
         )}
         {/* RECENTS */}
         {recentPosts && (
-          <section className="flex flex-col w-full mb-2 ml-2 xl:max-w-md">
+          <section className="flex flex-col w-full mb-2 ml-2">
             {post?.sponsors && (
               <section>
                 <SponsorCards sponsors={post.sponsors} />
@@ -346,44 +360,28 @@ export default function PostLayout({
             </div>
           </BreakBarLeft>
         </section>
-        <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
-          <section className="flex flex-col w-full gap-4">
-            {/* BLOG POST */}
-            {!isLockedLesson() ? (
-              post?.blocks && (
-                <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                  <div className="hidden float-right ml-2 xl:inline-block">
-                    {recents()}
-                  </div>
-                  {renderBlocks(post.blocks)}
-                </article>
-              )
-            ) : user && user?.uid ? (
-              <>
-                <MemberValidShow user={user}>
-                  <>
-                    {post?.blocks && (
-                      <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
-                        <div className="hidden float-right ml-2 xl:inline-block">
-                          {recents()}
-                        </div>
-                        {renderBlocks(post.blocks)}
-                      </article>
-                    )}
-                  </>
-                </MemberValidShow>
-                <MemberNotValidShow user={user}>
-                  <PostMediaLocked />
-                </MemberNotValidShow>
-              </>
-            ) : (
-              <PostMediaLocked />
-            )}
-            <div className="inline-block w-full ml-2 xl:hidden">
-              {recents()}
-            </div>
-          </section>
-        </div>
+
+        {/* BLOG POST */}
+        {!isLockedLesson() ? (
+          <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
+            <section className="flex flex-col w-full gap-4">
+              <>{showPost()}</>
+            </section>
+          </div>
+        ) : user && user?.uid ? (
+          <>
+            <MemberValidShow user={user}>
+              <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
+                <section className="flex flex-col w-full gap-4">
+                  <>{showPost()}</>
+                </section>
+              </div>
+            </MemberValidShow>
+            <div className="inline-block w-full xl:max-w-md">{recents()}</div>
+          </>
+        ) : (
+          <div className="inline-block w-full">{recents()}</div>
+        )}
       </div>
       <style global jsx>{`
         article > * {
