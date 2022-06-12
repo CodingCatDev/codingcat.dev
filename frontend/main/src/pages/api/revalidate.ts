@@ -5,13 +5,13 @@ const preview = async (
   res: NextApiResponse
 ): Promise<void> => {
   // Must have secret
-  if (!process.env.SANITY_PREVIEW_SECRET) {
+  if (!process.env.NEXT_PREVIEW_SECRET) {
     return res
       .status(500)
-      .json({ message: 'Secret Missing please add SANITY_PREVIEW_SECRET' });
+      .json({ message: 'Secret Missing please add NEXT_PREVIEW_SECRET' });
   }
 
-  if (req.query.secret !== process.env.SANITY_PREVIEW_SECRET) {
+  if (req.query.secret !== process.env.NEXT_PREVIEW_SECRET) {
     return res.status(401).json({ message: 'Invalid token' });
   }
 

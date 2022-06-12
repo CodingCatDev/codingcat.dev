@@ -14,13 +14,13 @@ const preview = async (
   const secret = req.query?.secret as string;
 
   // Must have secret
-  if (!process.env.SANITY_PREVIEW_SECRET) {
+  if (!process.env.NEXT_PREVIEW_SECRET) {
     return res
       .status(401)
-      .json({ message: 'Secret Missing please add SANITY_PREVIEW_SECRET' });
+      .json({ message: 'Secret Missing please add NEXT_PREVIEW_SECRET' });
   }
   // Must have secret
-  if (!secret || secret != process.env.SANITY_PREVIEW_SECRET) {
+  if (!secret || secret != process.env.NEXT_PREVIEW_SECRET) {
     return res.status(401).json({ message: 'Secret is Incorrect' });
   }
 
