@@ -421,6 +421,11 @@ export default function PostLayout({
           max-width: 100%;
         }
 
+        article > ul,
+        ol {
+          margin-left: 2.5rem;
+          padding-left: 0;
+        }
         article > ul li {
           margin-left: 2rem;
           list-style-type: circle;
