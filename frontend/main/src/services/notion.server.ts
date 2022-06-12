@@ -3,10 +3,7 @@ import { Author } from '@/models/user.model';
 import { Client } from '@notionhq/client';
 import { config } from '@/config/notion';
 import { Post, PostType } from '@/models/post.model';
-import {
-  ListBlockChildrenResponse,
-  QueryDatabaseResponse,
-} from '@notionhq/client/build/src/api-endpoints';
+import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { config as notionConfig } from '@/config/notion';
 import { Site } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
@@ -735,67 +732,118 @@ export const getPurrfectStreamPageBlocks = async (slug: string) => {
     blocks = [...blocks, ...(await getChildBlocks(await getBlocks(page.id)))];
   }
 
-  // // Create picks blocks
-  // let picks:
-  //   | [
-  //       {
-  //         name: string;
-  //         picks: [{ name: string; url: string }];
-  //       }
-  //     ]
-  //   | [] = [];
-  // for (const pick of purrfectPicks.results as any) {
-  //   const guestId = pick.properties?.Guest?.relation?.at(0)?.id;
-  //   const guest = {
-  //     name: '',
-  //     picks: [] as [{ name: string; url: string }] | [],
-  //   };
-  //   // Find name
-  //   if (guestId) {
-  //     const g: any = purrfectGuests.results.find((g: any) => g.id == guestId);
-  //     guest.name = g?.properties?.Name?.title
-  //       .map((t: any) => t.plain_text)
-  //       .join('');
-  //   } else {
-  //     guest.name = pick.properties?.Us?.people?.at(0)?.name;
-  //   }
-  //   const link = {
-  //     name: pick?.properties?.Name?.title
-  //       .map((t: any) => t.plain_text)
-  //       .join('') as string,
-  //     url: pick?.properties?.Site?.url as string,
-  //   };
-  //   const alreadyUsed = picks.find((p: any) => p.name == guest.name);
-  //   if (alreadyUsed) {
-  //     alreadyUsed.picks = [...alreadyUsed.picks, link] as any;
-  //   } else {
-  //     guest.picks = [link];
-  //     picks = [...picks, guest] as any;
-  //   }
-  // }
-  // let pickBlocks: any;
-  // if (picks.length > 0) {
-  //   pickBlocks = [{ parent: '## Purrfect Picks', children: [] }];
-
-  //   picks.map((p) => {
-  //     pickBlocks.push({
-  //       parent: `### ${p.name}`,
-  //       children: [],
-  //     });
-  //     p.picks.map((pick) => {
-  //       pickBlocks.push({
-  //         parent: `- [${pick.name}](${pick.url})`,
-  //         children: [],
-  //       });
-  //     });
-  //   });
-  // }
-
-  // content += n2m.toMarkdownString(pickBlocks);
+  // Create picks blocks
+  let picks:
+    | [
+        {
+          name: string;
+          picks: [{ name: string; url: string }];
+        }
+      ]
+    | [] = [];
+  for (const pick of purrfectPicks.results as any) {
+    const guestId = pick.properties?.Guest?.relation?.at(0)?.id;
+    const guest = {
+      name: '',
+      picks: [] as [{ name: string; url: string }] | [],
+    };
+    // Find name
+    if (guestId) {
+      const g: any = purrfectGuests.results.find((g: any) => g.id == guestId);
+      guest.name = g?.properties?.Name?.title
+        .map((t: any) => t.plain_text)
+        .join('');
+    } else {
+      guest.name = pick.properties?.Us?.people?.at(0)?.name;
+    }
+    const link = {
+      name: pick?.properties?.Name?.title
+        .map((t: any) => t.plain_text)
+        .join('') as string,
+      url: pick?.properties?.Site?.url as string,
+    };
+    const alreadyUsed = picks.find((p: any) => p.name == guest.name);
+    if (alreadyUsed) {
+      alreadyUsed.picks = [...alreadyUsed.picks, link] as any;
+    } else {
+      guest.picks = [link];
+      picks = [...picks, guest] as any;
+    }
+  }
+  let pickBlocks: any[] = [];
+  if (picks.length > 0) {
+    pickBlocks = [
+      formatBlock({ type: 'heading_2', content: 'Purrfect Picks' }),
+    ];
+    picks.map((p) => {
+      pickBlocks = [
+        ...pickBlocks,
+        formatBlock({ type: 'heading_3', content: p?.name }),
+      ];
+      p.picks.map((pick) => {
+        pickBlocks = [
+          ...pickBlocks,
+          formatBlock({
+            type: 'paragraph',
+            content: pick?.name,
+            link: pick?.url,
+          }),
+        ];
+      });
+    });
+  }
+  blocks = [...blocks, ...pickBlocks];
 
   return {
     ...raw.results[0],
     blocks,
+  };
+};
+
+const formatBlock = ({
+  type,
+  content,
+  link,
+}: {
+  type: string;
+  content: string;
+  link?: string;
+}): NotionBlock => {
+  var id = Math.floor(Math.random() * 16777215).toString(16);
+
+  return {
+    object: 'block',
+    id,
+    created_time: '2022-02-14T12:44:00.000Z',
+    last_edited_time: '2022-02-14T12:44:00.000Z',
+    has_children: false,
+    type,
+    [type]: {
+      rich_text: [
+        {
+          type: 'text',
+          text: {
+            content,
+            link: link
+              ? {
+                  url: link,
+                }
+              : null,
+          },
+          annotations: {
+            bold: false,
+            italic: false,
+            strikethrough: false,
+            underline: false,
+            code: false,
+            color: false,
+          },
+          plain_text: content,
+          href: link || null,
+        },
+      ],
+      color: 'default',
+    },
   };
 };
 
