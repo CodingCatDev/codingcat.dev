@@ -193,11 +193,13 @@ const formatPost = async (
     coverPhoto:
       _type == PostType.podcast
         ? {
+            secure_url: q?.cover?.external?.url,
             public_id: q?.cover?.external?.url
               ? q?.cover?.external?.url.split('upload/').at(1)
               : null,
           }
         : {
+            secure_url: q?.properties?.cover?.url,
             public_id: q?.properties?.cover?.url
               ? q?.properties?.cover.url.split('upload/')?.at(1) ||
                 q?.properties?.cover?.url

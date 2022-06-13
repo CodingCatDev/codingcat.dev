@@ -50,6 +50,7 @@ export default function PostMedia({
                   className="react-player"
                   url={post.coverVideo?.url}
                   controls={true}
+                  light={post?.coverPhoto?.secure_url}
                   height="0"
                   width="100%"
                   style={{
@@ -61,6 +62,7 @@ export default function PostMedia({
               ) : (
                 <ReactPlayer
                   url={post.coverVideo?.url}
+                  light={post?.coverPhoto?.secure_url}
                   controls={true}
                   height="100%"
                   width="100%"
