@@ -393,7 +393,11 @@ export default function PostLayout({
         }
 
         article blockquote {
-          display: inline-block;
+          display: grid;
+        }
+
+        .code-toolbar {
+          display: grid;
         }
 
         article a {

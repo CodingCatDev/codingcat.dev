@@ -259,6 +259,15 @@ export default function Course({
         article > p + blockquote {
           margin: 1rem 0;
         }
+
+        article blockquote {
+          display: grid;
+        }
+
+        .code-toolbar {
+          display: grid;
+        }
+
         main a > :not(button) {
           word-wrap: break-word;
           border-bottom: 2px solid #bc2261;
