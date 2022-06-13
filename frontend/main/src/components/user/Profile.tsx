@@ -16,9 +16,7 @@ export default function Profile({
   const notSignedIn = () => {
     return (
       <>
-        <div className="relative z-0 w-full mx-auto lg:w-1/2">
-          <FirebaseAuth />
-        </div>
+        <FirebaseAuth />
         <section className="grid grid-cols-1 gap-10 text-center">
           <div className="max-w-xl mx-auto">
             <h1 className="font-sans text-4xl font-semibold lg:text-5xl ">
