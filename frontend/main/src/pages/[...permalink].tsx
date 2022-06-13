@@ -22,6 +22,7 @@ import {
 interface StaticPropsResult {
   site: Site;
   post: Post;
+  secret: string | null;
   course?: Post;
   preview: boolean | undefined;
   recentPosts?: {
@@ -189,6 +190,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   const props: StaticPropsResult = {
     site: await getSite(),
     post,
+    secret: process?.env?.NEXT_PREVIEW_SECRET || null,
     preview: preview || false,
   };
 
@@ -229,6 +231,7 @@ export default function PostPage({
   recentPosts,
   preview,
   product,
+  secret,
 }: InferGetStaticPropsType<typeof getStaticProps>): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
@@ -286,6 +289,7 @@ export default function PostPage({
               course={course}
               recentPosts={recentPosts}
               preview={preview}
+              secret={secret}
             />
           )}
         </>

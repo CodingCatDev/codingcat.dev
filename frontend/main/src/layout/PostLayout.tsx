@@ -35,12 +35,14 @@ export default function PostLayout({
   course,
   recentPosts,
   preview,
+  secret,
 }: {
   post: Post;
   router: NextRouter;
   course?: Post;
   recentPosts?: { [key: string]: Post[] };
   preview?: boolean;
+  secret: string | null;
 }): JSX.Element {
   const [href, setHref] = useState('');
   const { data: user } = useUser();
@@ -284,7 +286,7 @@ export default function PostLayout({
                   {post.title}
                 </h1>
                 {user && user.uid && (
-                  <PostAdminButton user={user} post={post} />
+                  <PostAdminButton user={user} post={post} secret={secret} />
                 )}
                 <div className="flex-shrink-0">{backButton()}</div>
               </section>
