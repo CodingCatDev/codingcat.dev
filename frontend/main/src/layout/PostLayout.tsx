@@ -25,8 +25,8 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-css';
 import 'prismjs/components/prism-jsx';
-import 'prismjs/plugins/toolbar/prism-toolbar';
-import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
+// import 'prismjs/plugins/toolbar/prism-toolbar';
+// import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
 import 'prismjs/plugins/diff-highlight/prism-diff-highlight';
 
 export default function PostLayout({
@@ -50,7 +50,7 @@ export default function PostLayout({
   useEffect(() => {
     Prism.highlightAll();
     setHref(location.href);
-  }, []);
+  }, [post]);
 
   function isActiveLink(course: Post, lesson: SectionLesson) {
     if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
