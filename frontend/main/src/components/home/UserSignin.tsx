@@ -6,10 +6,14 @@ import AJLogo from '@/components/global/icons/AJPrimary';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import { useUser } from 'reactfire';
 
-const FirebaseAuth = dynamic(() => import('@/components/FirebaseAuth'), {
-  ssr: false,
-  loading: () => <p>Playing with yarn...</p>,
-});
+const FirebaseAuth = dynamic(
+  () =>
+    import('@/components/FirebaseAuth').then((mod: any) => mod.FirebaseAuth),
+  {
+    ssr: false,
+    loading: () => <p>Playing with yarn...</p>,
+  }
+);
 
 export default function UserSignin(): JSX.Element {
   const [signin, setSignIn] = useState(false);
@@ -74,7 +78,7 @@ export default function UserSignin(): JSX.Element {
           >
             {/* SIGN UP */}
             <div className="grid justify-center">
-              <FirebaseAuth full={false} />
+              <FirebaseAuth />
             </div>
           </div>
         </section>
