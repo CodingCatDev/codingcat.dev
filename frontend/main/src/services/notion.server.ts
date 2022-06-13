@@ -959,9 +959,9 @@ export const getRecent = async ({ preview = false }) => {
 export const getSite = () => {
   return {
     pageLinks: [
-      { slug: 'ftc-disclosure', title: 'FTC Disclosure' },
-      { slug: 'privacy-policy', title: 'Privacy Policy' },
-      { slug: 'terms-of-use', title: 'Terms of Use' },
+      { slug: '/ftc-disclosure', title: 'FTC Disclosure' },
+      { slug: '/privacy-policy', title: 'Privacy Policy' },
+      { slug: '/terms-of-use', title: 'Terms of Use' },
     ],
     socialLinks: [
       {
