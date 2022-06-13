@@ -1,5 +1,5 @@
 import SettingsLinks from '@/components/settings/SettingsLinks';
-import FirebaseSignin from '@/components/FirebaseSignin';
+import { FirebaseAuth } from '@/components/FirebaseAuth';
 
 import { useFunctions, useSigninCheck } from 'reactfire';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ export default function UserMembership(): JSX.Element {
           </div>
         </section>
       ) : (
-        <FirebaseSignin />
+        <FirebaseAuth />
       )}
     </>
   );

@@ -13,6 +13,9 @@ import { NotionBlock } from '@9gustin/react-notion-render';
 const notionClient = new Client({
   auth: config.token,
 });
+
+const skipNotion = process?.env?.NOTION_SKIP;
+
 interface NotionPosts extends Omit<QueryDatabaseResponse, 'results'> {
   results: Post[];
 }
@@ -50,6 +53,9 @@ export const getPageById = async ({
   _id: string;
   _type: string;
 }) => {
+  if (skipNotion) {
+    return null;
+  }
   let raw = await notionClient.pages.retrieve({
     page_id: _id,
   });
@@ -63,6 +69,12 @@ export const getAuthorBySlugService = async ({
   preview?: boolean;
   slug: string;
 }) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as QueryDatabaseResponse;
+  }
   let raw = await notionClient.databases.query({
     database_id: config.authorsDb,
     filter: {
@@ -428,7 +440,12 @@ export const queryByPublished = async (
       },
     ];
   }
-
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as NotionPosts;
+  }
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     start_cursor: start_cursor ? start_cursor : undefined,
@@ -492,7 +509,12 @@ export const queryNotionDbBySlug = async (
       },
     ];
   }
-
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as QueryDatabaseResponse;
+  }
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     filter,
@@ -566,7 +588,12 @@ export const querySectionsByCourseId = async (
       ],
     };
   }
-
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as QueryDatabaseResponse;
+  }
   let raw = await notionClient.databases.query({
     database_id: config.sectionsDb,
     filter,
@@ -608,6 +635,12 @@ export const queryRelationById = async (
       },
     ];
   }
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as NotionPosts;
+  }
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     filter: {
@@ -627,6 +660,12 @@ export const queryPurrfectStreamByReleased = async (
   page_size?: number,
   start_cursor?: string | null
 ) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as NotionPosts;
+  }
   let raw = await notionClient.databases.query({
     database_id: config.purrfectStreamsDb,
     start_cursor: start_cursor ? start_cursor : undefined,
@@ -668,6 +707,12 @@ export const queryPurrfectStreamByReleased = async (
 };
 
 export const queryPurrfectStreamBySlug = async (slug: string) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as NotionPosts;
+  }
   let raw = await notionClient.databases.query({
     database_id: config.purrfectStreamsDb,
     filter: {
@@ -850,6 +895,12 @@ const formatBlock = ({
 };
 
 export const queryPurrfectPicksByStreamId = async (streamId: string) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as QueryDatabaseResponse;
+  }
   let raw = await notionClient.databases.query({
     database_id: config.purrfectPicksDb,
     filter: {
@@ -872,6 +923,12 @@ export const queryPurrfectPicksByStreamId = async (streamId: string) => {
   return raw;
 };
 export const queryPurrfectGuestsByStreamId = async (streamId: string) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as QueryDatabaseResponse;
+  }
   let raw = await notionClient.databases.query({
     database_id: config.purrfectGuestDb,
     filter: {
@@ -940,6 +997,9 @@ export const getSite = () => {
 export const getAuthors = () => [];
 
 export const getBlocks = async (blockId: string) => {
+  if (skipNotion) {
+    return [] as unknown as NotionBlock[];
+  }
   const response = await notionClient.blocks.children.list({
     block_id: blockId,
   });

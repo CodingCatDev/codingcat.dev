@@ -1,6 +1,13 @@
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import AlgoliaInstantSearch from './algoliaInstantSearch';
+import dynamic from 'next/dynamic';
+
+const AlgoliaInstantSearch = dynamic(
+  () => import('@/components/algolia/algoliaInstantSearch'),
+  {
+    ssr: false,
+  }
+);
 
 export default function SearchModal(): JSX.Element {
   const [show, setShow] = useState(false);

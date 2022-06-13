@@ -116,7 +116,7 @@ export default function UserMembership({
                 skills.
               </h2>
             </div>
-            <MembershipCards products={products} user={user} />
+            {/* <MembershipCards products={products} user={user} /> */}
           </section>
           <section>
             <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">
