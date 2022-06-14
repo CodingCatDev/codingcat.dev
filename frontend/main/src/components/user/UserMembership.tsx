@@ -59,16 +59,17 @@ export default function UserMembership({
                   } flex flex-wrap bg-white max-w-lg shadow-lg overflow-hidden mx-auto`}
                 >
                   {user.photoURL && (
-                    <Image
-                      src={user.photoURL}
-                      loader={() => user.photoURL || ''}
-                      layout="fixed"
-                      height="500"
-                      width="500"
-                      unoptimized={true}
-                      alt={`${user.displayName} Photo`}
-                      className="w-32 h-32 m-4"
-                    />
+                    <div className="w-32 h-32 m-4">
+                      <Image
+                        src={user.photoURL}
+                        loader={() => user.photoURL || ''}
+                        layout="responsive"
+                        height="500"
+                        width="500"
+                        unoptimized={true}
+                        alt={`${user.displayName} Photo`}
+                      />
+                    </div>
                   )}
                   <div className="flex-1">
                     <div className="flex flex-wrap justify-end w-full pt-2 pr-2">
