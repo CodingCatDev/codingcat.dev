@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import MembershipCards from '@/components/user/MembershipCards';
 
 import { UserInfoExtended } from '@/models/user.model';
-
-import { signOut } from 'firebase/auth';
 import { StripeProduct } from '@/models/stripe.model';
 import useIsMember from '@/hooks/useIsMember';
 import { useAuth } from 'reactfire';
+import { signOut } from '@/components/FirebaseAuth';
 
 export default function UserMembership({
   user,
@@ -116,7 +114,7 @@ export default function UserMembership({
                 skills.
               </h2>
             </div>
-            <MembershipCards products={products} user={user} />
+            {/* <MembershipCards products={products} user={user} /> */}
           </section>
           <section>
             <div className="w-full py-4 text-center bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 lg:px-4">

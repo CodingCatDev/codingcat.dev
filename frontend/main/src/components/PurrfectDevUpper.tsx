@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import AJHeadphones from '@/components/global/icons/AJHeadphones';
-import { PopupButton } from 'react-calendly';
 
 export default function PurrfectDevUpper(): JSX.Element {
   return (
@@ -22,11 +21,6 @@ export default function PurrfectDevUpper(): JSX.Element {
             .
           </p>
           <div className="flex flex-wrap gap-4">
-            <PopupButton
-              url="https://calendly.com/d/cfv-5hs-ftb/podcast-recording"
-              text="Join as Guest"
-              className="btn-primary"
-            />
             <Link href="/sponsorship">
               <a>
                 <button className="flex items-center btn-secondary-reverse">

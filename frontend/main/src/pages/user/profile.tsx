@@ -2,10 +2,12 @@ import Head from 'next/head';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { StripeProduct } from '@/models/stripe.model';
-import Profile from '@/components/user/Profile';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-
+const Profile = dynamic(() => import('@/components/user/Profile'), {
+  ssr: false,
+});
 import { getSite } from '@/services/notion.server';
+import dynamic from 'next/dynamic';
 
 interface StaticParams {
   site: Site;
