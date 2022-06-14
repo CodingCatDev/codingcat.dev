@@ -1,7 +1,7 @@
 import { Sponsor } from '@/models/sponsor.model';
 import Image from 'next/image';
 
-export default function RecentPostsList({
+export default function SponsorCards({
   sponsors,
 }: {
   sponsors: Sponsor[];

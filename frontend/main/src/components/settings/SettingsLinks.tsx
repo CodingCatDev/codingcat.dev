@@ -16,11 +16,12 @@ export default function SettingsLinks(): JSX.Element {
             <a className={links}>Membership</a>
           </Link>
         </li>
-        {/* <li>
-          <Link href="/user/notifications">
-            <a className={links}>Notifications</a>
+        <li>
+          <Link href="/user/settings">
+            <a className={links}>Settings</a>
           </Link>
         </li>
+        {/*
         <li>
           <Link href="/user/support">
             <a className={links}>Contact Support</a>

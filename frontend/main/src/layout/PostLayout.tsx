@@ -46,6 +46,7 @@ import 'prismjs/components/prism-jsx';
 // import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
 import 'prismjs/plugins/diff-highlight/prism-diff-highlight';
 import dynamic from 'next/dynamic';
+import { isActiveLesson } from '@/utils/basics/links';
 
 export default function PostLayout({
   post,
@@ -69,12 +70,6 @@ export default function PostLayout({
     Prism.highlightAll();
     setHref(location.href);
   }, [post]);
-
-  function isActiveLink(course: Post, lesson: SectionLesson) {
-    if (router.asPath === `/course/${course.slug}/lesson/${lesson.slug}`)
-      return true;
-    return false;
-  }
 
   function isLockedLesson() {
     // Only lockdown lessons
@@ -166,12 +161,12 @@ export default function PostLayout({
                         >
                           <div
                             className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
-                ${
-                  isActiveLink(course, lesson)
-                    ? 'bg-primary-200'
-                    : 'bg-transparent'
-                }
-                `}
+                            ${
+                              isActiveLesson(router, course, lesson)
+                                ? 'bg-primary-200'
+                                : 'bg-transparent'
+                            }
+                            `}
                           >
                             <a className="no-underline text-basics-900 hover:text-primary-900">
                               {lesson.title}
@@ -205,7 +200,7 @@ export default function PostLayout({
         )}
         {/* RECENTS */}
         {recentPosts && (
-          <section className="flex flex-col w-full mb-2 ml-2">
+          <section className="flex flex-col w-full mb-2 xl:ml-2">
             {post?.sponsors && (
               <section>
                 <SponsorCards sponsors={post.sponsors} />
@@ -217,7 +212,10 @@ export default function PostLayout({
               </h2>
 
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                <RecentPostsList posts={recentPosts[PostType.course]} />
+                <RecentPostsList
+                  router={router}
+                  posts={recentPosts[PostType.course]}
+                />
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
@@ -225,7 +223,10 @@ export default function PostLayout({
                 {`Latest Tutorials`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                <RecentPostsList posts={recentPosts[PostType.tutorial]} />
+                <RecentPostsList
+                  router={router}
+                  posts={recentPosts[PostType.tutorial]}
+                />
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
@@ -233,7 +234,10 @@ export default function PostLayout({
                 {`Latest Podcasts`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                <RecentPostsList posts={recentPosts[PostType.podcast]} />
+                <RecentPostsList
+                  router={router}
+                  posts={recentPosts[PostType.podcast]}
+                />
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
@@ -241,7 +245,10 @@ export default function PostLayout({
                 {`Latest Blog`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
-                <RecentPostsList posts={recentPosts[PostType.post]} />
+                <RecentPostsList
+                  router={router}
+                  posts={recentPosts[PostType.post]}
+                />
               </ul>
             </div>
           </section>

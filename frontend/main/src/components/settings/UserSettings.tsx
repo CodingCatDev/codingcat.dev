@@ -3,7 +3,7 @@ import UserProfileCloudinaryUpload from '@/components/user/UserProfileCloudinary
 import { useFirestore, useFirestoreDocData } from 'reactfire';
 import { doc, setDoc, DocumentReference } from 'firebase/firestore';
 
-export default function UserProfile({
+export default function UserSettings({
   user,
 }: {
   user: UserInfoExtended;

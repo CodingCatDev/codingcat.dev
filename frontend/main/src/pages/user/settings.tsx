@@ -3,7 +3,7 @@ import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
 import { StripeProduct } from '@/models/stripe.model';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-const Profile = dynamic(() => import('@/components/user/Profile'), {
+const Settings = dynamic(() => import('@/components/settings/Settings'), {
   ssr: false,
 });
 import { getSite } from '@/services/notion.server';
@@ -34,7 +34,7 @@ export default function ProfilePage({
         <title>Profile | CodingCatDev</title>
       </Head>
       <Layout site={site}>
-        <Profile />
+        <Settings />
       </Layout>
     </>
   );

@@ -137,9 +137,11 @@ export default function MembershipCards({
                   }
                 ></div> */}
             {product.images ? (
-              getProductImage(product)
+              <div className="z-10">{getProductImage(product)}</div>
             ) : (
-              <AJPrimary className="w-full h-full" />
+              <div className="z-10">
+                <AJPrimary className="w-full h-full" />
+              </div>
             )}
             <span className="block text-basics-200 dark:text-basics-200">
               {product?.description}
