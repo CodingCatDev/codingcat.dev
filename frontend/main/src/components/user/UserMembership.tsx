@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import MembershipCards from '@/components/user/MembershipCards';
 
 import { UserInfoExtended } from '@/models/user.model';
-
-import { signOut } from 'firebase/auth';
 import { StripeProduct } from '@/models/stripe.model';
 import useIsMember from '@/hooks/useIsMember';
 import { useAuth } from 'reactfire';
+import { signOut } from '@/components/FirebaseAuth';
 
 export default function UserMembership({
   user,

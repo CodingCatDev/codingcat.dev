@@ -12,13 +12,30 @@ import SponsorCards from '@/components/SponsorCards';
 import { pluralize, toTitleCase } from '@/utils/basics/stringManipulation';
 import { millisecondToUSFormat } from '@/utils/basics/date';
 import SocialShare from '@/components/common/SocialShare';
-import PostAdminButton from '@/components/PostAdminButton';
 import { useUser } from 'reactfire';
 import { AccessMode } from '@/models/access.model';
-import MemberValidShow from '../components/user/MemberValidShow';
-import MemberNotValidShow from '../components/user/MemberNotValidShow';
 import PostMediaLocked from '../components/PostMediaLocked';
 import { renderBlocks } from '@/components/RenderBlocks';
+
+const PostAdminButton = dynamic<any>(
+  () => import('@/components/PostAdminButton'),
+  {
+    ssr: false,
+  }
+);
+
+const MemberValidShow = dynamic<any>(
+  () => import('@/components/user/MemberValidShow'),
+  {
+    ssr: false,
+  }
+);
+const MemberNotValidShow = dynamic<any>(
+  () => import('@/components/user/MemberNotValidShow'),
+  {
+    ssr: false,
+  }
+);
 
 import Prism from 'prismjs';
 
@@ -28,6 +45,7 @@ import 'prismjs/components/prism-jsx';
 // import 'prismjs/plugins/toolbar/prism-toolbar';
 // import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
 import 'prismjs/plugins/diff-highlight/prism-diff-highlight';
+import dynamic from 'next/dynamic';
 
 export default function PostLayout({
   post,
