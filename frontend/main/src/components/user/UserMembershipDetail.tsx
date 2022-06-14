@@ -5,7 +5,7 @@ import { useFunctions, useSigninCheck } from 'reactfire';
 import { useState } from 'react';
 import { httpsCallable } from '@firebase/functions';
 
-export default function UserMembership(): JSX.Element {
+export default function UserMembershipDetail(): JSX.Element {
   const { data: signInCheckResult } = useSigninCheck();
   const functions = useFunctions();
 

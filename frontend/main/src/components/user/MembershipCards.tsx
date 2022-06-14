@@ -7,11 +7,17 @@ import {
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { useState } from 'react';
 import OutsideClick from '@/components/OutsideClick';
-import { getApp } from '@firebase/app';
 import { collection, addDoc } from 'firebase/firestore';
 import { UserInfoExtended } from '@/models/user.model';
-import StripeRedirect from '@/components/user/StripeRedirect';
 import { useFirestore } from 'reactfire';
+import dynamic from 'next/dynamic';
+
+const StripeRedirect = dynamic<any>(
+  () => import('@/components/user/StripeRedirect'),
+  {
+    ssr: false,
+  }
+);
 
 export default function MembershipCards({
   products,

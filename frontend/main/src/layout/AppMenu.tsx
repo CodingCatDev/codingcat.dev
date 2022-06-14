@@ -1,9 +1,13 @@
 import ActiveLink from '@/components/ActiveLink';
 import TitleLogo from '@/components/global/logos/TitleLogo';
 import OutsideClick from '@/components/OutsideClick';
+import dynamic from 'next/dynamic';
 import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
-import AvatarMenu from '@/components/user/AvatarMenu';
 import { useSigninCheck } from 'reactfire';
+
+const AvatarMenu = dynamic<any>(() => import('@/components/user/AvatarMenu'), {
+  ssr: false,
+});
 
 export default function AppMenu({
   setOverlayMenuActive,

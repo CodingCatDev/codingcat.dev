@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import MembershipCards from '@/components/user/MembershipCards';
 
 import { UserInfoExtended } from '@/models/user.model';
 

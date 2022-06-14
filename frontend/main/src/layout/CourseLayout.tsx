@@ -13,7 +13,6 @@ import PostMedia from '@/components/PostMedia';
 import { StripeProduct } from '@/models/stripe.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import { useSigninCheck } from 'reactfire';
-import CourseBuyButton from '@/components/CourseBuyButton';
 import { AccessMode } from '@/models/access.model';
 import { NotionBlock, Render } from '@9gustin/react-notion-render';
 
@@ -141,23 +140,6 @@ export default function Course({
           <div className="flex flex-col gap-2 mt-2">
             {post?.blocks && renderBlocks(post.blocks)}
           </div>
-          {post._type === PostType.course && (
-            <div>
-              {signInCheckResult?.user ? (
-                <CourseBuyButton
-                  product={product}
-                  user={signInCheckResult.user}
-                  post={post}
-                />
-              ) : (
-                <Link href="/user/profile">
-                  <a className="border-none">
-                    <button className="btn-primary">Membership Login</button>
-                  </a>
-                </Link>
-              )}
-            </div>
-          )}
         </section>
         <section className="flex flex-col w-full mb-2 xl:max-w-md">
           {post.coverPhoto?.public_id ? (

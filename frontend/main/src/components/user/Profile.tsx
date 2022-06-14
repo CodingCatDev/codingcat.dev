@@ -1,10 +1,38 @@
 import SettingsLinks from '@/components/settings/SettingsLinks';
-import UserProfile from '@/components/settings/UserProfile';
 import { useSigninCheck } from 'reactfire';
 import { StripeProduct } from '@/models/stripe.model';
-import UserMembership from '@/components/user/UserMembership';
-import MembershipCards from '@/components/user/MembershipCards';
 import { AuthWrapper, FirebaseAuth } from '@/components/FirebaseAuth';
+import dynamic from 'next/dynamic';
+
+const UserProfile = dynamic<any>(
+  () => import('@/components/settings/UserProfile'),
+  {
+    ssr: false,
+  }
+);
+const FirebaseFirestoreProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseFirestoreProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
+const MembershipCards = dynamic<any>(
+  () => import('@/components/user/MembershipCards'),
+  {
+    ssr: false,
+  }
+);
+
+const UserMembership = dynamic<any>(
+  () => import('@/components/user/UserMembership'),
+  {
+    ssr: false,
+  }
+);
 
 export default function Profile({
   products,
@@ -158,21 +186,26 @@ export default function Profile({
   };
 
   return (
-    <AuthWrapper fallback={notSignedIn()}>
-      <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
-        <section>
-          <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
-            Settings
-          </h2>
-          <SettingsLinks />
+    <FirebaseFirestoreProvider>
+      <AuthWrapper fallback={notSignedIn()}>
+        <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
+          <section>
+            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
+              Settings
+            </h2>
+            <SettingsLinks />
+          </section>
+          {signInCheckResult?.user && (
+            <div className="flex flex-col">
+              <UserMembership
+                user={signInCheckResult.user}
+                products={products}
+              />
+              <UserProfile user={signInCheckResult.user} />
+            </div>
+          )}
         </section>
-        {signInCheckResult?.user && (
-          <div className="flex flex-col">
-            <UserMembership user={signInCheckResult.user} products={products} />
-            <UserProfile user={signInCheckResult.user} />
-          </div>
-        )}
-      </section>
-    </AuthWrapper>
+      </AuthWrapper>
+    </FirebaseFirestoreProvider>
   );
 }

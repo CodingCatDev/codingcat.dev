@@ -144,7 +144,7 @@ export const FirebaseAuth = () => {
 
   const { signedIn, user } = signinResult;
 
-  if (signedIn === true) {
+  if (signedIn === true && user) {
     return <UserDetails user={user} />;
   } else {
     return <SignInForm />;
