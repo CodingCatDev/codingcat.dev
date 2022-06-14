@@ -55,6 +55,16 @@ const FirebaseAuthProvider = dynamic<any>(
   }
 );
 
+const FirebaseFirestoreProvider = dynamic<any>(
+  () =>
+    import('@/components/firebase/wrappers').then(
+      (mod) => mod.FirebaseFirestoreProvider
+    ),
+  {
+    ssr: false,
+  }
+);
+
 const FirebaseFunctionsProvider = dynamic<any>(
   () =>
     import('@/components/firebase/wrappers').then(
@@ -88,41 +98,43 @@ const Layout = ({
         <FirebasePerformanceProvider>
           <FirebaseAnalyticsProvider>
             <FirebaseAuthProvider>
-              <FirebaseFunctionsProvider>
-                <Head>
-                  <script
-                    dangerouslySetInnerHTML={{ __html: nightwind.init() }}
-                  />
-                </Head>
-                <ThemeProvider
-                  attribute="class"
-                  storageKey="nightwind-mode"
-                  defaultTheme="light"
-                >
-                  <Progress isAnimating={isNavigating} />
+              <FirebaseFirestoreProvider>
+                <FirebaseFunctionsProvider>
+                  <Head>
+                    <script
+                      dangerouslySetInnerHTML={{ __html: nightwind.init() }}
+                    />
+                  </Head>
+                  <ThemeProvider
+                    attribute="class"
+                    storageKey="nightwind-mode"
+                    defaultTheme="light"
+                  >
+                    <Progress isAnimating={isNavigating} />
 
-                  <AppTopbar
-                    setOverlayMenuActive={setOverlayMenuActive}
-                    overlayMenuActive={overlayMenuActive}
-                  />
-                  <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
-                    <main
-                      data-prismjs-copy-success="🎉 Copied!"
-                      className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700"
-                    >
-                      {children}
-                    </main>
+                    <AppTopbar
+                      setOverlayMenuActive={setOverlayMenuActive}
+                      overlayMenuActive={overlayMenuActive}
+                    />
+                    <div className="grid grid-cols-1 justify-items-center calc-height-wrapper lg:mx-auto lg:w-80 lg:max-w-8xl lg:justify-items-stretch">
+                      <main
+                        data-prismjs-copy-success="🎉 Copied!"
+                        className="grid justify-center w-full grid-cols-1 gap-10 bg-primary-50 dark:bg-basics-700"
+                      >
+                        {children}
+                      </main>
 
-                    <Footer site={site} />
-                  </div>
-                  <AppMenu
-                    setOverlayMenuActive={setOverlayMenuActive}
-                    overlayMenuActive={overlayMenuActive}
-                    userMenu={userMenu}
-                    setUserMenu={setUserMenu}
-                  />
-                </ThemeProvider>
-              </FirebaseFunctionsProvider>
+                      <Footer site={site} />
+                    </div>
+                    <AppMenu
+                      setOverlayMenuActive={setOverlayMenuActive}
+                      overlayMenuActive={overlayMenuActive}
+                      userMenu={userMenu}
+                      setUserMenu={setUserMenu}
+                    />
+                  </ThemeProvider>
+                </FirebaseFunctionsProvider>
+              </FirebaseFirestoreProvider>
             </FirebaseAuthProvider>
           </FirebaseAnalyticsProvider>
         </FirebasePerformanceProvider>
