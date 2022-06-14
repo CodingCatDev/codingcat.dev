@@ -4,6 +4,7 @@ import { FirebaseAuth } from '@/components/FirebaseAuth';
 import { useFunctions, useSigninCheck } from 'reactfire';
 import { useState } from 'react';
 import { httpsCallable } from '@firebase/functions';
+import Link from 'next/link';
 
 export default function UserMembershipDetail(): JSX.Element {
   const { data: signInCheckResult } = useSigninCheck();
@@ -51,7 +52,24 @@ export default function UserMembershipDetail(): JSX.Element {
           </div>
         </section>
       ) : (
-        <FirebaseAuth />
+        <section className="grid self-start justify-center gap-10 p-10 lg:grid-cols-settings">
+          <section>
+            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
+              Settings
+            </h2>
+            <SettingsLinks />
+          </section>
+          <div className="grid">
+            <div>
+              <p className="text-2xl">
+                Please sign in to check for your membership.
+              </p>
+              <Link href="/user/profile">
+                <a className="mt-4 btn-primary">Sign In </a>
+              </Link>
+            </div>
+          </div>
+        </section>
       )}
     </>
   );
