@@ -168,7 +168,7 @@ export default function PostLayout({
                             }
                             `}
                           >
-                            <a className="no-underline text-basics-900 hover:text-primary-900">
+                            <a className="no-underline border-none text-basics-900 hover:text-primary-900">
                               {lesson.title}
                             </a>
                             {lesson?.access_mode && (
