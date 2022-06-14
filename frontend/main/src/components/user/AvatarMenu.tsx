@@ -4,8 +4,8 @@ import Image from 'next/image';
 import ActiveLink from '@/components/ActiveLink';
 import { Dispatch, SetStateAction } from 'react';
 import { useAuth, useSigninCheck } from 'reactfire';
-import { signOut } from '@firebase/auth';
 import dynamic from 'next/dynamic';
+import { signOut } from '@/components/FirebaseAuth';
 
 const AuthWrapper = dynamic<any>(
   () => import('@/components/FirebaseAuth').then((mod) => mod.AuthWrapper),

@@ -2,36 +2,39 @@ import * as React from 'react';
 import { useAuth, useSigninCheck } from 'reactfire';
 import {
   GoogleAuthProvider,
-  signInWithRedirect,
+  signInWithPopup,
   Auth,
   User,
   FacebookAuthProvider,
   TwitterAuthProvider,
   GithubAuthProvider,
+  browserPopupRedirectResolver,
 } from 'firebase/auth';
 import Facebook from './global/icons/socials/Facebook';
 import Twitter from './global/icons/socials/Twitter';
 import GitHub from './global/icons/socials/GitHub';
 
-const signOut = (auth: Auth) =>
-  auth.signOut().then(() => console.log('signed out'));
+export const signOut = (auth: Auth) =>
+  auth.signOut().then(() => {
+    console.log('signed out');
+    window.location.href = '/';
+  });
 
 const signInGoogle = async (auth: Auth) => {
   const provider = new GoogleAuthProvider();
-  await signInWithRedirect(auth, provider);
+  await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 };
-
 const signInFacebook = async (auth: Auth) => {
   const provider = new FacebookAuthProvider();
-  await signInWithRedirect(auth, provider);
+  await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 };
 const signInTwitter = async (auth: Auth) => {
   const provider = new TwitterAuthProvider();
-  await signInWithRedirect(auth, provider);
+  await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 };
 const signInGitHub = async (auth: Auth) => {
   const provider = new GithubAuthProvider();
-  await signInWithRedirect(auth, provider);
+  await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 };
 
 export const AuthWrapper = ({
