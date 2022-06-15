@@ -99,7 +99,7 @@ const Layout = ({
             <FirebaseAuthProvider>
               <FirebaseFirestoreProvider>
                 <FirebaseFunctionsProvider>
-                  <ThemeProvider>
+                  <ThemeProvider attribute="class" defaultTheme="light">
                     <Progress isAnimating={isNavigating} />
 
                     <AppTopbar
