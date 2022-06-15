@@ -7,7 +7,6 @@ import { projectId } from '../config/config';
 
 import { sendTopic } from '../utilities/googleapis';
 import {
-  blockAppendPurrfectPageWithTemplateData,
   getPage,
   patchPurrfectPage,
   queryPurrfectPageScheduled,
@@ -99,13 +98,6 @@ export const cloudinaryToNotionPubSub = functions.pubsub
           'Page update result:',
           JSON.stringify(purrfectPagePatchRes)
         );
-        console.log('Add template blocks');
-        const templateUpdate = await blockAppendPurrfectPageWithTemplateData({
-          guestName: guestRes.properties.Name.title[0].plain_text,
-          coverUrl,
-          pageId: page.id,
-        });
-        console.log('Template Result:', templateUpdate);
       }
     }
     return true;

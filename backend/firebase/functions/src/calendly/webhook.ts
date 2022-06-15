@@ -2,8 +2,6 @@ import * as functions from 'firebase-functions';
 import {
   queryPurrfectGuest,
   createPurrfectGuest,
-  queryPurrfectCompany,
-  createPurrfectCompany,
   createPurrfectPage,
   queryPurrfectPageByCalendarId,
 } from './../utilities/notion';
@@ -73,24 +71,6 @@ export const calendarPush = functions.https.onRequest(async (req, res) => {
       res.status(200).send('duplicate entry');
     }
 
-    // Check if Notion Company exists, if not create
-    const company =
-      calendlyInvitees?.collection?.[0]?.questions_and_answers?.find(
-        (q) => q.question === 'Company'
-      )?.answer || '';
-    console.log('Searching for company: ', company);
-    const companyRes = await queryPurrfectCompany(company);
-    const companyIds: string[] = [];
-    if (companyRes?.results.length > 0) {
-      for (const c of companyRes?.results) {
-        companyIds.push(c.id);
-      }
-      console.log('Found Companies', JSON.stringify(companyIds));
-    } else {
-      console.log('Creating Company');
-      const companyCreateRes = await createPurrfectCompany({ name: company });
-      companyIds.push(companyCreateRes.id);
-    }
     const email = calendlyInvitees?.collection?.[0]?.email || '';
     const guest = calendlyInvitees?.collection?.[0]?.name || '';
     const twitterHandle =
@@ -109,7 +89,6 @@ export const calendarPush = functions.https.onRequest(async (req, res) => {
       const newGuest = {
         name: guest,
         email,
-        companyIds,
         twitterHandle,
       };
       console.log('Creating guest: ', JSON.stringify(newGuest));
@@ -121,7 +100,6 @@ export const calendarPush = functions.https.onRequest(async (req, res) => {
     // Create new Podcast Page
     const newPodcast = {
       guestIds: [guestId],
-      companyIds,
       recordingDate: utcOffset(calendlyEvent.resource.start_time),
       calendarid: webhookPayload.payload.event,
     };
