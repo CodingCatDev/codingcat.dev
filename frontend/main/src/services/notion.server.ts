@@ -205,13 +205,13 @@ const formatPost = async (
     coverPhoto:
       _type == PostType.podcast
         ? {
-            secure_url: q?.cover?.external?.url,
+            secure_url: q?.cover?.external?.url || null,
             public_id: q?.cover?.external?.url
               ? q?.cover?.external?.url.split('upload/').at(1)
               : null,
           }
         : {
-            secure_url: q?.properties?.cover?.url,
+            secure_url: q?.properties?.cover?.url || null,
             public_id: q?.properties?.cover?.url
               ? q?.properties?.cover.url.split('upload/')?.at(1) ||
                 q?.properties?.cover?.url
@@ -706,37 +706,55 @@ export const queryPurrfectStreamByReleased = async (
   return await formatPosts(raw, 'podcast');
 };
 
-export const queryPurrfectStreamBySlug = async (slug: string) => {
+export const queryPurrfectStreamBySlug = async (
+  _type: string,
+  slug: string,
+  preview?: boolean
+) => {
   if (skipNotion) {
     return {
       has_more: false,
       results: [],
     } as unknown as NotionPosts;
   }
+  let filter: any;
+  filter = {
+    and: [
+      {
+        property: 'slug',
+        url: {
+          contains: slug,
+        },
+      },
+    ],
+  };
+
+  if (!preview) {
+    filter = {
+      ...filter,
+      and: [
+        ...filter.and,
+        ...[
+          {
+            property: 'Status',
+            select: {
+              equals: 'Released',
+            },
+          },
+          {
+            property: 'Episode',
+            number: {
+              is_not_empty: true,
+            },
+          },
+        ],
+      ],
+    };
+  }
+
   let raw = await notionClient.databases.query({
     database_id: config.purrfectStreamsDb,
-    filter: {
-      and: [
-        {
-          property: 'slug',
-          rich_text: {
-            contains: slug,
-          },
-        },
-        {
-          property: 'Status',
-          select: {
-            equals: 'Released',
-          },
-        },
-        {
-          property: 'Episode',
-          number: {
-            is_not_empty: true,
-          },
-        },
-      ],
-    },
+    filter,
     sorts: [
       {
         property: 'Season',
@@ -751,8 +769,16 @@ export const queryPurrfectStreamBySlug = async (slug: string) => {
   return await formatPosts(raw, 'podcast');
 };
 
-export const getPurrfectStreamPageBlocks = async (slug: string) => {
-  let raw = await queryPurrfectStreamBySlug(slug);
+export const getPurrfectStreamPageBlocks = async ({
+  _type,
+  slug,
+  preview,
+}: {
+  _type: PostType;
+  slug: string;
+  preview: boolean | undefined;
+}) => {
+  let raw = await queryPurrfectStreamBySlug(_type, slug, preview);
   if (!raw.results.length) {
     return null;
   }

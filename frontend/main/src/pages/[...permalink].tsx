@@ -152,6 +152,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   let post;
   let course;
   const pData = previewData as any;
+
   if (
     preview &&
     (pData?.selectionSlug == slug || pData?.selectionSlug == lessonPath)
@@ -175,7 +176,7 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   } else {
     // Moved to Notion June 2022
     if (type == PostType.podcast) {
-      post = await getPurrfectStreamPageBlocks(slug);
+      post = await getPurrfectStreamPageBlocks({ preview, _type: type, slug });
     } else {
       post = await getNotionPageBlocks({ preview, _type: type, slug });
     }
