@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import router from 'next/router';
 // import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import nightwind from 'nightwind/helper';
 import { ThemeProvider } from 'next-themes';
 
 import { AppTopbar } from '@/layout/AppTopbar';
@@ -100,16 +99,7 @@ const Layout = ({
             <FirebaseAuthProvider>
               <FirebaseFirestoreProvider>
                 <FirebaseFunctionsProvider>
-                  <Head>
-                    <script
-                      dangerouslySetInnerHTML={{ __html: nightwind.init() }}
-                    />
-                  </Head>
-                  <ThemeProvider
-                    attribute="class"
-                    storageKey="nightwind-mode"
-                    defaultTheme="light"
-                  >
+                  <ThemeProvider>
                     <Progress isAnimating={isNavigating} />
 
                     <AppTopbar

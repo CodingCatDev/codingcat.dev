@@ -11,7 +11,7 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
           {posts.map((post) => {
             return (
               <div
-                className="grid transition-all transform rounded-md shadow-lg grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
+                className="grid transition-all rounded-md shadow-lg grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
                 key={post._id}
               >
                 <Link href={`/${post._type}/${post.slug}`}>

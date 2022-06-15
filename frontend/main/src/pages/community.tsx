@@ -49,7 +49,7 @@ const Community = ({
               href="https://discord.gg/xSRsCfvVEB"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center px-8 py-4 mx-auto space-x-2 transform rounded-md shadow-lg w-min bg-basics-600 dark:bg-basics-600 hover:text-basics-50 dark:hover:text-basics-50 text-basics-50 dark:text-basics-50 hover:shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-secondary-600"
+              className="flex items-center justify-center px-8 py-4 mx-auto space-x-2 rounded-md shadow-lg w-min bg-basics-600 dark:bg-basics-600 hover:text-basics-50 dark:hover:text-basics-50 text-basics-50 dark:text-basics-50 hover:shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-secondary-600"
             >
               <svg
                 className="w-8"

@@ -44,5 +44,5 @@ export default function PostAdminButton({
     );
   }
 
-  return <>{team && <div className="flex-shrink-0">{adminLink()}</div>}</>;
+  return <>{team && <div className="shrink-0">{adminLink()}</div>}</>;
 }

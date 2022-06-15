@@ -1,5 +1,4 @@
 import { useTheme } from 'next-themes';
-import nightwind from 'nightwind/helper';
 import { useState, useEffect } from 'react';
 
 export default function Toggle(): JSX.Element {
@@ -11,7 +10,6 @@ export default function Toggle(): JSX.Element {
   }, []);
 
   const toggle = () => {
-    nightwind.beforeTransition();
     if (theme !== 'dark') {
       setTheme('dark');
     } else {

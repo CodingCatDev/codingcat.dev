@@ -147,10 +147,10 @@ export default function PostLayout({
                 key={section._key}
                 className="flex flex-col rounded-t-md"
               >
-                <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                   {section.title}
                 </div>
-                <ul className="flex flex-col flex-grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
+                <ul className="flex flex-col grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
                   {section.lessons &&
                     section.lessons.map((lesson) => (
                       <li key={lesson._id} className="ml-0 list-none">
@@ -207,7 +207,7 @@ export default function PostLayout({
               </section>
             )}
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                 {`Latest Courses`}
               </h2>
 
@@ -219,7 +219,7 @@ export default function PostLayout({
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                 {`Latest Tutorials`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -230,7 +230,7 @@ export default function PostLayout({
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                 {`Latest Podcasts`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -241,7 +241,7 @@ export default function PostLayout({
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:flex-shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
                 {`Latest Blog`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -313,7 +313,7 @@ export default function PostLayout({
                 {user && user.uid && (
                   <PostAdminButton user={user} post={post} secret={secret} />
                 )}
-                <div className="flex-shrink-0">{backButton()}</div>
+                <div className="shrink-0">{backButton()}</div>
               </section>
               <section className="grid items-end justify-between gap-4 lg:flex">
                 {post.authors ? (
@@ -323,7 +323,7 @@ export default function PostLayout({
                         className="flex flex-wrap gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
                         key={i}
                       >
-                        <section className="flex items-center flex-shrink-0 space-x-4">
+                        <section className="flex items-center shrink-0 space-x-4">
                           {author?.photoURL && author.photoURL?.public_id && (
                             <Image
                               src={author.photoURL.public_id}
