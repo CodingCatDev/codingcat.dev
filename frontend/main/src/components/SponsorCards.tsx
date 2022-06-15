@@ -10,7 +10,7 @@ export default function SponsorCards({
   return (
     <div className="flex">
       <div className="rounded-md bg-basics-50 dark:bg-primary-800">
-        <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50">
+        <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:shrink-0 bg-primary-900 dark:bg-primary-900 text-basics-50">
           {`Sponsors`}
         </h2>
         <div className="flex flex-col">

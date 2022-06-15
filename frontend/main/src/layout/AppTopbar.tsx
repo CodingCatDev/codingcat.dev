@@ -27,7 +27,7 @@ export const AppTopbar = (props: {
         <a>
           <div className="flex items-center content-center shrink-0 h-full">
             <AJLogoLeft />
-            <h2 className="hidden text-2xl text-basics-50 dark:text-basics-50 lg:block">
+            <h2 className="hidden text-2xl text-basics-50 lg:block">
               CodingCat.dev
             </h2>
           </div>

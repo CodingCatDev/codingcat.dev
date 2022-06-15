@@ -127,7 +127,7 @@ export default function MembershipCards({
         {/* <div className="grid items-stretch justify-center gap-1 lg:grid-flow-col justify-items-stretch"> */}
         {products.map((product) => (
           <div
-            className="relative flex flex-col justify-between max-w-sm px-4 pt-10 pb-4 space-y-4 overflow-hidden rounded-lg shadow-lg cursor-pointer bg-primary-800 dark:bg-primary-800 text-basics-50 dark:text-basics-50"
+            className="relative flex flex-col justify-between max-w-sm px-4 pt-10 pb-4 space-y-4 overflow-hidden rounded-lg shadow-lg cursor-pointer bg-primary-800 dark:bg-primary-800 text-basics-50"
             key={product.role}
             onClick={() => onSelectPlan(product)}
           >

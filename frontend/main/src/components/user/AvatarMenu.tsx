@@ -48,7 +48,7 @@ export default function AvatarMenu({
           <AuthWrapper
             fallback={
               <Link href="/user/profile">
-                <a className="flex items-center justify-center p-2 rounded text-basics-50 dark:text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 focus:ring-2 focus:ring-basics-50">
+                <a className="flex items-center justify-center p-2 rounded text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 focus:ring-2 focus:ring-basics-50">
                   <svg
                     width="20"
                     height="20"
@@ -69,7 +69,7 @@ export default function AvatarMenu({
             }
           >
             <button
-              className="flex p-1 text-sm rounded-full text-basics-50 dark:text-basics-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800"
+              className="flex p-1 text-sm rounded-full text-basics-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-800 focus:ring-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800"
               id="user-menu"
               aria-haspopup="true"
               onClick={() => setUserMenu(!userMenu)}

@@ -55,7 +55,7 @@ export default function Footer({
           />
         </svg>
       )}
-      <footer className="px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 text-basics-50 dark:text-basics-50">
+      <footer className="px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 text-basics-50">
         <div className="grid items-start gap-10 grid-cols-auto">
           {/* LOGO & COPYRIGHT */}
           <section className="grid grid-cols-1 justify-items-start">

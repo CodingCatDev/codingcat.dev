@@ -90,7 +90,7 @@ export default function SearchModal(): JSX.Element {
         className={
           show
             ? 'hidden'
-            : 'flex items-center p-1 rounded-full hover:bg-primary-800 text-basics-50 dark:text-basics-50 dark:hover:bg-primary-700'
+            : 'flex items-center p-1 rounded-full hover:bg-primary-800 text-basics-50 dark:hover:bg-primary-700'
         }
         onClick={showModal}
         aria-label="Show Search Modal"

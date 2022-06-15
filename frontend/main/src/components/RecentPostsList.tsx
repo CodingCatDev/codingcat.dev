@@ -17,11 +17,11 @@ export default function RecentPostsList({
           <>
             <Link href={`/course/${post.slug}`}>
               <a
-                className={`no-underline border-none text-basics-900 hover:underline flex p-1 rounded-md
+                className={`no-underline border-none hover:underline flex p-1 rounded-md
                             ${
                               isActiveLink(router, `/course/${post.slug}`)
                                 ? 'bg-primary-200 text-basics-50'
-                                : 'bg-transparent text-basics-900'
+                                : 'bg-transparent '
                             }
                             `}
               >
@@ -41,7 +41,7 @@ export default function RecentPostsList({
                                 `/${post._type}/${post.slug}`
                               )
                                 ? 'bg-primary-200 text-basics-50'
-                                : 'bg-transparent text-basics-900'
+                                : 'bg-transparent '
                             }
                             `}
             >

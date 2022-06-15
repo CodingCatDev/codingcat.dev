@@ -125,7 +125,7 @@ export default function PostLayout({
   const showPost = () => {
     return (
       <>
-        <article className="m-0 leading-relaxed break-words top-2 text-basics-900">
+        <article className="m-0 leading-relaxed break-words top-2">
           <div className="hidden float-right ml-2 xl:inline-block">
             {recents()}
           </div>
@@ -147,10 +147,10 @@ export default function PostLayout({
                 key={section._key}
                 className="flex flex-col rounded-t-md"
               >
-                <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                   {section.title}
                 </div>
-                <ul className="flex flex-col grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
+                <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 dark:text-primary-50 justify-items-stretch">
                   {section.lessons &&
                     section.lessons.map((lesson) => (
                       <li key={lesson._id} className="ml-0 list-none">
@@ -168,11 +168,11 @@ export default function PostLayout({
                             }
                             `}
                           >
-                            <a className="no-underline border-none text-basics-900 hover:text-primary-900">
+                            <a className="no-underline border-none hover:text-primary-900">
                               {lesson.title}
                             </a>
                             {lesson?.access_mode && (
-                              <div className="no-underline text-basics-900 hover:text-primary-900">
+                              <div className="no-underline hover:text-primary-900">
                                 {lesson?.access_mode != AccessMode.free && (
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +207,7 @@ export default function PostLayout({
               </section>
             )}
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold 2xl:p-4 rounded-t-md 2xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Courses`}
               </h2>
 
@@ -219,7 +219,7 @@ export default function PostLayout({
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Tutorials`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -230,7 +230,7 @@ export default function PostLayout({
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Podcasts`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -241,7 +241,7 @@ export default function PostLayout({
               </ul>
             </div>
             <div className="rounded-md bg-basics-50 dark:bg-primary-900">
-              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+              <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Blog`}
               </h2>
               <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
@@ -282,7 +282,7 @@ export default function PostLayout({
           </section>
         )}
 
-        <section className="top-0 z-10 grid lg:sticky">
+        <section className="top-0 z-10 grid">
           {preview && (
             <>
               <div className="flex justify-center py-4 text-3xl text-white dark:text-white bg-error-900 dark:bg-error-900">
@@ -307,7 +307,7 @@ export default function PostLayout({
             <div className="grid w-full gap-4">
               {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}
               <section className="grid items-center justify-between gap-2 lg:flex">
-                <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
+                <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50">
                   {post.title}
                 </h1>
                 {user && user.uid && (
@@ -320,10 +320,10 @@ export default function PostLayout({
                   <>
                     {post.authors?.map((author, i) => (
                       <header
-                        className="flex flex-wrap gap-2 2xl:flex-nowrap text-basics-50 dark:text-basics-50"
+                        className="flex flex-wrap gap-2 2xl:flex-nowrap text-basics-50"
                         key={i}
                       >
-                        <section className="flex items-center shrink-0 space-x-4">
+                        <section className="flex items-center space-x-4 shrink-0">
                           {author?.photoURL && author.photoURL?.public_id && (
                             <Image
                               src={author.photoURL.public_id}

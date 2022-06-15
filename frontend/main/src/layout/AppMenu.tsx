@@ -51,7 +51,7 @@ export default function AppMenu({
               </ActiveLink>
 
               <button
-                className="inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
+                className="inline-flex items-center justify-center p-2 text-xl rounded-md text-basics-50 hover:text-basics-50 dark:hover:text-basics-50 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-basics-50"
                 aria-expanded="false"
                 onClick={() => setOverlayMenuActive(!overlayMenuActive)}
               >
@@ -123,7 +123,7 @@ export default function AppMenu({
                   />
                   {signInCheckResult && signInCheckResult?.signedIn === true && (
                     <button className="ml-2" onClick={() => setUserMenu(true)}>
-                      <p className="text-sm font-medium text-left text-basics-50 dark:text-basics-50">
+                      <p className="text-sm font-medium text-left text-basics-50">
                         {signInCheckResult?.user?.displayName}
                       </p>
                       <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">

@@ -60,7 +60,7 @@ export default function Course({
         <BreakBarLeft>
           <div className="grid w-full gap-4">
             <section className="grid items-center justify-between gap-2 lg:flex">
-              <h1 className="font-sans text-5xl lg:flex-1 sm:text-4xl text-basics-50 dark:text-basics-50">
+              <h1 className="font-sans text-5xl lg:flex-1 sm:text-4xl text-basics-50">
                 {post.title}
               </h1>
               <div className="shrink-0">
@@ -74,13 +74,13 @@ export default function Course({
                 </Link>
               </div>
             </section>
-            <section className="grid items-end justify-between gap-4 lg:flex text-basics-50 dark:text-basics-50">
+            <section className="grid items-end justify-between gap-4 lg:flex text-basics-50">
               {post.authors ? (
                 <>
                   <section className="flex items-center gap-2">
                     {post.authors?.map((author, i) => (
                       <section
-                        className="flex items-center shrink-0 space-x-4"
+                        className="flex items-center space-x-4 shrink-0"
                         key={i}
                       >
                         {author?.photoURL && author.photoURL?.public_id && (
@@ -135,7 +135,7 @@ export default function Course({
         </BreakBarLeft>
       </section>
       <div className="flex flex-wrap gap-4 px-4 pb-4 xl:flex-nowrap lg:px-10 lg:pb-10">
-        <section className="flex flex-col grow gap-4">
+        <section className="flex flex-col gap-4 grow">
           <PostMedia post={post} noImage={true} />
           <div className="flex flex-col gap-2 mt-2">
             {post?.blocks && renderBlocks(post.blocks)}
@@ -160,10 +160,10 @@ export default function Course({
               </div>
             </div>
           )}
-          <div className="flex items-center justify-between p-4 mb-2 bg-primary-900 dark:bg-primary-900 text-basics-50 dark:text-basics-50 rounded-t-md">
+          <div className="flex items-center justify-between p-4 mb-2 bg-primary-900 dark:bg-primary-900 text-basics-50 rounded-t-md">
             <h2 className="text-xl">Course Content</h2>
             {/* Beginner/Intermediate/Advanced descriptor */}
-            <p className="p-2 text-base rounded-full text-basics-50 dark:text-basics-50 bg-secondary-600 dark:bg-secondary-600">
+            <p className="p-2 text-base rounded-full text-basics-50 bg-secondary-600">
               Beginner
             </p>
           </div>
@@ -175,10 +175,10 @@ export default function Course({
                   key={section._key}
                   className="flex flex-col rounded-t-md"
                 >
-                  <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 dark:bg-secondary-600 text-basics-50 dark:text-basics-50">
+                  <div className="p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                     {section.title}
                   </div>
-                  <ul className="flex flex-col grow rounded-b rounded-tr bg-basics-50 justify-items-stretch">
+                  <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 justify-items-stretch">
                     {section.lessons &&
                       section.lessons.map((lesson) => (
                         <li key={lesson._id} className="ml-0 list-none">
@@ -196,11 +196,11 @@ export default function Course({
                               }
                               `}
                             >
-                              <a className="no-underline text-basics-900 hover:text-primary-900">
+                              <a className="no-underline hover:text-primary-900">
                                 {lesson.title}
                               </a>
                               {lesson?.access_mode && (
-                                <div className="no-underline text-basics-900 hover:text-primary-900">
+                                <div className="no-underline hover:text-primary-900">
                                   {lesson?.access_mode != AccessMode.free && (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
