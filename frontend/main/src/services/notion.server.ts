@@ -643,6 +643,7 @@ export const queryRelationById = async (
   }
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
+    page_size: 20, // Adding this so that Algolia is used more
     filter: {
       property: relation,
       relation: {
@@ -849,9 +850,10 @@ export const getPurrfectStreamPageBlocks = async ({
       formatBlock({ type: 'heading_2', content: 'Purrfect Picks' }),
     ];
     picks.map((p) => {
+      console.log('p', p);
       pickBlocks = [
         ...pickBlocks,
-        formatBlock({ type: 'heading_3', content: p?.name }),
+        formatBlock({ type: 'heading_3', content: p?.name || 'Guest' }),
       ];
       p.picks.map((pick) => {
         pickBlocks = [
