@@ -7,7 +7,6 @@ import { projectId } from '../config/config';
 
 import { sendTopic } from '../utilities/googleapis';
 import {
-  blockAppendPurrfectPageWithTemplateData,
   getPage,
   patchPurrfectPage,
   queryPurrfectPageScheduled,
@@ -17,6 +16,8 @@ const cloudinaryFolder =
   projectId === 'codingcat-dev'
     ? 'main-codingcatdev-photo'
     : `dev-codingcatdev-photo`;
+
+import slugify from 'slugify';
 
 const topicId = 'cloudinaryCreateFromNotion';
 
@@ -74,22 +75,32 @@ export const cloudinaryToNotionPubSub = functions.pubsub
           twitterGuest.data.profile_image_url.replace('_normal', '')
         );
 
+        const slug = slugify(page.properties.Name.title[0].plain_text, '-');
         const param = {
           title: page.properties.Name.title[0].plain_text,
+          slug: `${cloudinaryFolder}/${slug}`,
           guestName: guestRes.properties.Name.title[0].plain_text,
           guestImagePublicId,
           backgroundPath: `${cloudinaryFolder}/Season2Background`,
         };
         console.log('generating cloudinary url with: ', JSON.stringify(param));
-        const coverUrl = generateCodingCatCoverURL(param).replace(
+        const coverUrl = (await generateCodingCatCoverURL(param)).replace(
           'http://',
           'https://'
         );
+        console.log('coverURL', coverUrl);
         const update = {
           page_id: page.id,
           cover: {
             external: {
               url: coverUrl,
+            },
+          },
+          properties: {
+            slug: {
+              id: 'wDeB',
+              type: 'url',
+              url: slug,
             },
           },
         };
@@ -99,13 +110,6 @@ export const cloudinaryToNotionPubSub = functions.pubsub
           'Page update result:',
           JSON.stringify(purrfectPagePatchRes)
         );
-        console.log('Add template blocks');
-        const templateUpdate = await blockAppendPurrfectPageWithTemplateData({
-          guestName: guestRes.properties.Name.title[0].plain_text,
-          coverUrl,
-          pageId: page.id,
-        });
-        console.log('Template Result:', templateUpdate);
       }
     }
     return true;

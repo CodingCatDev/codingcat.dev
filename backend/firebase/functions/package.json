@@ -15,7 +15,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^4.8.0",
     "@google-cloud/pubsub": "^2.18.1",
-    "@notionhq/client": "^0.4.12",
+    "@notionhq/client": "^1.0.4",
     "@types/algoliasearch": "^3.34.11",
     "algoliasearch": "^4.8.3",
     "cloudinary": "^1.23.0",
@@ -23,15 +23,15 @@
     "firebase-functions": "^3.21.2",
     "googleapis": "^89.0.0",
     "node-fetch": "^2.6.7",
-    "notion-to-md": "^2.3.3",
+    "notion-to-md": "^2.3.4",
     "slugify": "^1.5.0",
     "twitter-api-v2": "^1.6.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.0",
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
-    "@typescript-eslint/parser": "^5.12.0",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
     "eslint": "^8.9.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
