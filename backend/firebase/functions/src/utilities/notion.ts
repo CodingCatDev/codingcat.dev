@@ -42,8 +42,8 @@ export const queryPurrfectPageByCalendarId = (calendarid: string) => {
     database_id: notionPurrfectDatabaseId,
     filter: {
       property: 'calendarid',
-      text: {
-        equals: calendarid,
+      rich_text: {
+        contains: calendarid,
       },
     },
   });
@@ -152,7 +152,7 @@ export const queryPurrfectGuest = (email: string) => {
     database_id: notionPurrfectGuestDatabaseId,
     filter: {
       property: 'email',
-      text: {
+      email: {
         equals: email,
       },
     },
@@ -197,7 +197,7 @@ export const createPurrfectGuest = ({
   if (twitterHandle) {
     page.properties.Twitter = {
       type: 'url',
-      url: `https://twitter.com/${twitterHandle}`,
+      url: `${twitterHandle}`,
     };
   }
 

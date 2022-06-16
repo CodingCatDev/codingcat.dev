@@ -9,8 +9,6 @@ export {
   onSubscriptionCancel,
 } from './stripe/subscriptions';
 
-// Should only run in main
-export { calendarPush } from './calendly/webhook';
 export { getCode, getToken } from './google/auth';
 export {
   scheduledNotionToCloudinary,
@@ -19,3 +17,7 @@ export {
 
 // Algolia scheduled
 export { scheduledNotionToAlgolia } from './algolia/algolia';
+
+// Calendly webhook pushes to pubsub
+export { calendlyWebook } from './calendly/webhook';
+export { calendlyCreateNotionCardPubSub } from './calendly/pubsub';
