@@ -15,7 +15,7 @@ import SocialShare from '@/components/common/SocialShare';
 import { useUser } from 'reactfire';
 import { AccessMode } from '@/models/access.model';
 import PostMediaLocked from '../components/PostMediaLocked';
-import { renderBlocks } from '@/components/RenderBlocks';
+import { renderBlocks } from '@/components/notion-custom-blocks/RenderBlocks';
 
 const PostAdminButton = dynamic<any>(
   () => import('@/components/PostAdminButton'),
