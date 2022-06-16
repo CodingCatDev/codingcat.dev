@@ -39,9 +39,9 @@ export const calendlyWebook = functions.https.onRequest(async (req, res) => {
 
   const calendarIds = await queryPurrfectPageByCalendarId(eventUuid);
   if (calendarIds?.results && calendarIds?.results?.length > 0) {
-    log(LogSeverity.WARNING, `Skipping, already found ${eventUuid}`);
+    good(res, `Skipping, already found ${eventUuid}`);
     return;
   }
-  log(LogSeverity.INFO, `Sending Topic: ${topicId}`);
   await sendTopic(topicId, webhookPayload);
+  good(res, `Sent Topic: ${topicId}`);
 });
