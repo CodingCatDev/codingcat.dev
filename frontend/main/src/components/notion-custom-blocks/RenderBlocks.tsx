@@ -24,14 +24,7 @@ const myMapper = {
   //     <></>
   //   );
   // }),
-  code: withContentValidation(
-    (props: {
-      plainText: string;
-      className?: string | undefined;
-      lang?: string | undefined;
-      highlight?: string[] | undefined;
-    }) => CodeHighlight(props)
-  ),
+  code: withContentValidation((props) => CodeHighlight(props)),
 };
 
 export const renderBlocks = (blocks: NotionBlock[]) => {
