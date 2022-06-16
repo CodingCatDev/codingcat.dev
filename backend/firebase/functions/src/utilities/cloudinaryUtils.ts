@@ -1,12 +1,14 @@
 import cloudinary from './cloudinary';
 
-export const generateCodingCatCoverURL = ({
+export const generateCodingCatCoverURL = async ({
   title,
+  slug,
   guestName,
   guestImagePublicId,
   backgroundPath,
 }: {
   title: string;
+  slug: string;
   guestName: string;
   guestImagePublicId: string;
   backgroundPath: string;
@@ -93,7 +95,12 @@ export const generateCodingCatCoverURL = ({
       },
     ],
   });
-  return url;
+
+  //Write real image with new name
+  const res = await cloudinary.uploader.upload(url, {
+    public_id: slug,
+  });
+  return res.secure_url;
 };
 
 export const uploadGuestProfilePicIfNotExists = async (
