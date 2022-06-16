@@ -125,12 +125,14 @@ export default function PostLayout({
   const showPost = () => {
     return (
       <>
-        <article className="m-0 leading-relaxed break-words top-2">
+        <div className="m-0 leading-relaxed break-words top-2">
           <div className="hidden float-right ml-2 xl:inline-block">
             {recents()}
           </div>
-          {post?.blocks && renderBlocks(post.blocks)}
-        </article>
+          <article className="inline-flex flex-col">
+            {post?.blocks && renderBlocks(post.blocks)}
+          </article>
+        </div>
         <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
       </>
     );
