@@ -31,7 +31,8 @@ export const calendlyWebook = functions.https.onRequest(async (req, res) => {
     good(res, 'Not Create Event');
     return;
   }
-  if (eventUuid !== ccd && eventUuid !== purrfect) {
+  const eventType = webhookPayload?.payload?.event_type?.uuid;
+  if (eventType !== ccd && eventType !== purrfect) {
     good(res, 'Not a Code with Coding Cat or Purrfect.dev Event');
     return;
   }
@@ -41,6 +42,6 @@ export const calendlyWebook = functions.https.onRequest(async (req, res) => {
     log(LogSeverity.WARNING, `Skipping, already found ${eventUuid}`);
     return;
   }
-
+  log(LogSeverity.INFO, `Sending Topic: ${topicId}`);
   await sendTopic(topicId, webhookPayload);
 });
