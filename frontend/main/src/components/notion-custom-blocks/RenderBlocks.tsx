@@ -25,8 +25,12 @@ const myMapper = {
   //   );
   // }),
   code: withContentValidation(
-    ({ plainText, className }: { plainText: string; className: string }) =>
-      CodeHighlight({ plainText, className })
+    (props: {
+      plainText: string;
+      className?: string | undefined;
+      lang?: string | undefined;
+      highlight?: string[] | undefined;
+    }) => CodeHighlight(props)
   ),
 };
 
