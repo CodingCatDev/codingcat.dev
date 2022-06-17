@@ -15,7 +15,7 @@ import SocialShare from '@/components/common/SocialShare';
 import { useUser } from 'reactfire';
 import { AccessMode } from '@/models/access.model';
 import PostMediaLocked from '../components/PostMediaLocked';
-import { renderBlocks } from '@/components/RenderBlocks';
+import { renderBlocks } from '@/components/notion-custom-blocks/RenderBlocks';
 
 const PostAdminButton = dynamic<any>(
   () => import('@/components/PostAdminButton'),
@@ -125,12 +125,14 @@ export default function PostLayout({
   const showPost = () => {
     return (
       <>
-        <article className="m-0 leading-relaxed break-words top-2">
-          <div className="hidden float-right ml-2 xl:inline-block">
-            {recents()}
-          </div>
-          {post?.blocks && renderBlocks(post.blocks)}
-        </article>
+        <div className="m-0 leading-relaxed break-words top-2">
+          <article>
+            <aside className="hidden float-right ml-2 xl:inline-block">
+              {recents()}
+            </aside>
+            <section>{post?.blocks && renderBlocks(post.blocks)}</section>
+          </article>
+        </div>
         <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
       </>
     );
@@ -420,10 +422,6 @@ export default function PostLayout({
         }
 
         article blockquote {
-          display: grid;
-        }
-
-        .code-toolbar {
           display: grid;
         }
 

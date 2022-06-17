@@ -80,6 +80,7 @@ export default function PostMedia({
               width="480"
               height="270"
               layout="responsive"
+              priority
             />
           ) : (
             <></>

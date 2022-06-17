@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Author } from '@/models/user.model';
-import { renderBlocks } from '@/components/RenderBlocks';
+import { renderBlocks } from '@/components/notion-custom-blocks/RenderBlocks';
 
 export default function AuthorCard({
   author,
