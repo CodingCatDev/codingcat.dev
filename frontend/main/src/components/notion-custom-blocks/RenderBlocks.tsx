@@ -17,16 +17,17 @@ const myMapper = {
           flexShrink: '0',
           boxSizing: 'border-box',
           marginTop: '20px',
-          width: '100%',
-          height: '100%',
+          width: 'auto',
+          height: 'auto',
           minHeight: '20px',
+          maxWidth: 'calc(100vw - 40px)',
           minWidth: '20px',
           overflow: 'hidden',
         }}
       >
         <Image
           loader={({ src }) => src}
-          className={className || ''}
+          className={`${className || ''} object-contain `}
           src={media.src}
           alt={media?.alt || media?.name || ''}
           layout="fill"

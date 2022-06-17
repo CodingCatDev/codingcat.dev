@@ -126,11 +126,11 @@ export default function PostLayout({
     return (
       <>
         <div className="m-0 leading-relaxed break-words top-2">
-          <div className="hidden float-right ml-2 xl:inline-block">
-            {recents()}
-          </div>
-          <article className="inline-flex flex-col">
-            {post?.blocks && renderBlocks(post.blocks)}
+          <article>
+            <aside className="hidden float-right ml-2 xl:inline-block">
+              {recents()}
+            </aside>
+            <section>{post?.blocks && renderBlocks(post.blocks)}</section>
           </article>
         </div>
         <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
@@ -422,10 +422,6 @@ export default function PostLayout({
         }
 
         article blockquote {
-          display: grid;
-        }
-
-        .code-toolbar {
           display: grid;
         }
 
