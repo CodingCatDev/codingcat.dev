@@ -1,9 +1,12 @@
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
+import useSound from 'use-sound';
 
-export default function Toggle(): JSX.Element {
+export default function ThemeToggle(): JSX.Element {
   const [loaded, setLoaded] = useState(false);
   const { theme, setTheme } = useTheme();
+  const [dark] = useSound('/static/sounds/switch-off.mp3');
+  const [light] = useSound('/static/sounds/switch-on.mp3');
 
   useEffect(() => {
     setLoaded(true);
@@ -11,8 +14,10 @@ export default function Toggle(): JSX.Element {
 
   const toggle = () => {
     if (theme !== 'dark') {
+      dark();
       setTheme('dark');
     } else {
+      light();
       setTheme('light');
     }
   };

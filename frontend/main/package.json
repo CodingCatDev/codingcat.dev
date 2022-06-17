@@ -36,6 +36,7 @@
     "react-instantsearch-dom": "^6.8.2",
     "react-player": "^2.7.2",
     "reactfire": "^4.2.0",
+    "use-sound": "^4.0.1",
     "video.js": "^7.11.4"
   },
   "devDependencies": {
