@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-import Toggle from '@/components/global/icons/Toggle';
-
 import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import NavLinks from '@/layout/NavLinks';
@@ -12,6 +10,13 @@ import SearchModal from '@/components/algolia/SearchModal';
 const AvatarMenu = dynamic<any>(() => import('@/components/user/AvatarMenu'), {
   ssr: false,
 });
+
+const ThemeToggle = dynamic<any>(
+  () => import('@/components/global/icons/ThemeToggle'),
+  {
+    ssr: false,
+  }
+);
 
 export const AppTopbar = (props: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
@@ -25,7 +30,7 @@ export const AppTopbar = (props: {
     <header className="flex justify-between w-full h-20 p-4 lg:px-0 lg:mx-auto lg:w-80 lg:max-w-8xl">
       <Link href="/">
         <a>
-          <div className="flex items-center content-center shrink-0 h-full">
+          <div className="flex items-center content-center h-full shrink-0">
             <AJLogoLeft />
             <h2 className="hidden text-2xl text-basics-50 lg:block">
               CodingCat.dev
@@ -36,7 +41,7 @@ export const AppTopbar = (props: {
       {/* <div className="flex justify-between h-16"> */}
       <NavLinks />
 
-      <Toggle />
+      <ThemeToggle />
       <div className="flex items-center justify-end">
         <div className="flex items-center w-full space-x-2">
           <SearchModal />
