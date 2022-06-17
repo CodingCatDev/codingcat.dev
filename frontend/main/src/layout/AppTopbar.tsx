@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-import ThemeToggle from '@/components/global/icons/ThemeToggle';
-
 import OutsideClick from '@/components/OutsideClick';
 import AJLogoLeft from '@/components/global/icons/AJAlt';
 import NavLinks from '@/layout/NavLinks';
@@ -12,6 +10,13 @@ import SearchModal from '@/components/algolia/SearchModal';
 const AvatarMenu = dynamic<any>(() => import('@/components/user/AvatarMenu'), {
   ssr: false,
 });
+
+const ThemeToggle = dynamic<any>(
+  () => import('@/components/global/icons/ThemeToggle'),
+  {
+    ssr: false,
+  }
+);
 
 export const AppTopbar = (props: {
   setOverlayMenuActive: Dispatch<SetStateAction<boolean>>;
