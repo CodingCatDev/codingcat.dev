@@ -426,7 +426,6 @@ export default function PostLayout({
         }
 
         article a {
-          word-break: break-all;
           word-wrap: break-word;
           border-bottom: 2px solid #bc2261;
         }
