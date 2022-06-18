@@ -4,7 +4,7 @@ import {
   createPurrfectGuest,
   createPurrfectPage,
   queryPurrfectPageByCalendarId,
-} from './../utilities/notion';
+} from './../utilities/notion.server';
 
 import { getEvent, listEventInvitees } from './../utilities/calendly';
 import { utcOffset } from '../utilities/date';

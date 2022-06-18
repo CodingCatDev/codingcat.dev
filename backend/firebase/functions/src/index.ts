@@ -13,6 +13,9 @@ export { getCode, getToken } from './google/auth';
 export {
   scheduledNotionToCloudinary,
   cloudinaryToNotionPubSub,
+  scheduledNotionCloudinaryConvert,
+  notionPageFindFileBlocksPublish,
+  cloudinaryConvertBlockPubSub,
 } from './cloudinary/scheduledNotionCheck';
 
 // Algolia scheduled

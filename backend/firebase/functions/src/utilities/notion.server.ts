@@ -1,5 +1,8 @@
 import { Client } from '@notionhq/client';
-import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import {
+  QueryDatabaseResponse,
+  UpdatePageParameters,
+} from '@notionhq/client/build/src/api-endpoints';
 import { NotionToMarkdown } from 'notion-to-md';
 import {
   notionToken,
@@ -15,6 +18,7 @@ import {
   notionPurrfectPicks,
   notionPurrfectGuestDatabaseId,
   notionSections,
+  notionPurrfectCompanyDatabaseId,
 } from '../config/config';
 
 const notionConfig = {
@@ -306,10 +310,10 @@ const formatPosts = async (
     raw.results.map((q: any) => formatPost(q, _type, preview, list))
   );
 
-  const post = ({
+  const post = {
     ...raw,
     results,
-  } as unknown) as NotionPosts;
+  } as unknown as NotionPosts;
   return post;
 };
 
@@ -715,13 +719,11 @@ export const getPurrfectStreamPageMarkdown = async (slug: string) => {
     return null;
   }
   const id = page.id;
-  const [
-    purrfectPicks,
-    purrfectGuests,
-  ] = await Promise.all<QueryDatabaseResponse>([
-    queryPurrfectPicksByStreamId(id),
-    queryPurrfectGuestsByStreamId(id),
-  ]);
+  const [purrfectPicks, purrfectGuests] =
+    await Promise.all<QueryDatabaseResponse>([
+      queryPurrfectPicksByStreamId(id),
+      queryPurrfectGuestsByStreamId(id),
+    ]);
 
   let content = '';
   // Build the markdown for page
@@ -831,4 +833,250 @@ export const queryPurrfectGuestsByStreamId = async (streamId: string) => {
     },
   });
   return raw;
+};
+
+export const queryNotionDbForCloudinaryConvert = async (_type: string) => {
+  return await notionClient.databases.query({
+    database_id: getNotionDbByType(_type),
+    filter: {
+      and: [
+        {
+          property: 'cloudinary_convert',
+          checkbox: {
+            equals: true,
+          },
+        },
+      ],
+    },
+  });
+};
+
+export const getGuestRelations = (guestIds?: string[]) => {
+  const guestRelation = [];
+  if (guestIds) {
+    for (const guestId of guestIds) {
+      guestRelation.push({
+        database_id: notionPurrfectGuestDatabaseId,
+        id: guestId,
+      });
+    }
+  }
+  return guestRelation;
+};
+export const getCompanytRelations = (companyIds?: string[]) => {
+  const companyRelation = [];
+  if (companyIds) {
+    for (const companyId of companyIds) {
+      companyRelation.push({
+        database_id: notionPurrfectCompanyDatabaseId,
+        id: companyId,
+      });
+    }
+  }
+  return companyRelation;
+};
+
+export const queryPurrfectPageByCalendarId = (calendarid: string) => {
+  return notionClient.databases.query({
+    database_id: notionPurrfectDatabaseId,
+    filter: {
+      property: 'calendarid',
+      rich_text: {
+        contains: calendarid,
+      },
+    },
+  });
+};
+
+export const queryPurrfectPageScheduled = (status: string) => {
+  return notionClient.databases.query({
+    database_id: notionPurrfectDatabaseId,
+    filter: {
+      property: 'Status',
+      select: {
+        equals: status,
+      },
+    },
+  });
+};
+
+export const getPage = (page_id: string) => {
+  return notionClient.pages.retrieve({
+    page_id,
+  });
+};
+
+export const createPurrfectPage = ({
+  calendarid,
+  guestIds,
+  recordingDate,
+  companyIds,
+}: {
+  calendarid: string;
+  recordingDate: string;
+  guestIds?: string[];
+  companyIds?: string[];
+}) => {
+  const notionCreatePayload = {
+    parent: {
+      database_id: notionPurrfectDatabaseId,
+    },
+    properties: {
+      calendarid: {
+        id: 'RZ<I',
+        type: 'rich_text',
+        rich_text: [
+          {
+            type: 'text',
+            text: {
+              content: calendarid,
+              link: null,
+            },
+          },
+        ],
+      },
+      Guest: {
+        id: '8Ym~',
+        type: 'relation',
+        relation: getGuestRelations(guestIds),
+      },
+      'Recording Date': {
+        id: 'br,*',
+        type: 'date',
+        date: {
+          start: recordingDate,
+          end: null,
+          time_zone: 'America/New_York',
+        },
+      },
+      Company: {
+        id: 'fUcG',
+        type: 'relation',
+        relation: getCompanytRelations(companyIds),
+      },
+      Status: {
+        id: 'js5S',
+        type: 'select',
+        select: {
+          id: 'b09f1d02-e20d-418b-95c2-7997d45b420e',
+          name: 'Scheduled',
+          color: 'blue',
+        },
+      },
+      Name: {
+        id: 'title',
+        type: 'title',
+        title: [
+          {
+            type: 'text',
+            text: {
+              content: 'NEW PODCAST',
+              link: null,
+            },
+          },
+        ],
+      },
+    },
+  } as any;
+  console.log('notionCreatePayload', JSON.stringify(notionCreatePayload));
+  return notionClient.pages.create(notionCreatePayload);
+};
+
+export const patchPurrfectPage = (pageParams: UpdatePageParameters) => {
+  return notionClient.pages.update(pageParams);
+};
+
+export const queryPurrfectGuest = (email: string) => {
+  return notionClient.databases.query({
+    database_id: notionPurrfectGuestDatabaseId,
+    filter: {
+      property: 'email',
+      email: {
+        equals: email,
+      },
+    },
+  });
+};
+
+export const createPurrfectGuest = ({
+  name,
+  email,
+  twitterHandle,
+  companyIds,
+}: {
+  name: string;
+  email: string;
+  twitterHandle?: string;
+  companyIds?: string[];
+}) => {
+  const page = {
+    parent: {
+      database_id: notionPurrfectGuestDatabaseId,
+    },
+    properties: {
+      email: {
+        type: 'email',
+        email: email,
+      },
+      Name: {
+        id: 'title',
+        type: 'title',
+        title: [
+          {
+            type: 'text',
+            text: {
+              content: name,
+            },
+          },
+        ],
+      },
+    },
+  } as any;
+
+  if (twitterHandle) {
+    page.properties.Twitter = {
+      type: 'url',
+      url: `${twitterHandle}`,
+    };
+  }
+
+  return notionClient.pages.create(page);
+};
+
+export const getBlocks = async (blockId: string) => {
+  const response = await notionClient.blocks.children.list({
+    block_id: blockId,
+  });
+
+  return response.results as any[];
+};
+
+export const getChildBlocks = async (blocks: any[]) => {
+  // Retrieve block children for nested blocks (one level deep), for example toggle blocks
+  // https://developers.notion.com/docs/working-with-page-content#reading-nested-blocks
+
+  const blocksWithChildren: any[] = [];
+  for (const block of blocks as any) {
+    blocksWithChildren.push(block);
+    if (block.has_children) {
+      const childrenBlocks = await getBlocks(block.id);
+      for (const b of childrenBlocks as any) {
+        blocksWithChildren.push(b);
+      }
+    }
+  }
+  return blocksWithChildren;
+};
+
+export const getNotionPageBlocks = async (id: string) => {
+  return await getChildBlocks(await getBlocks(id));
+};
+
+export const updateBlock = async (blockId: string, block: any) => {
+  const response = await notionClient.blocks.update({
+    block_id: blockId,
+    ...block,
+  });
+
+  return response;
 };

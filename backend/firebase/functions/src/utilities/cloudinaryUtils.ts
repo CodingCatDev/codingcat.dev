@@ -103,18 +103,18 @@ export const generateCodingCatCoverURL = async ({
   return res.secure_url;
 };
 
-export const uploadGuestProfilePicIfNotExists = async (
-  guestImagePublicId: string,
-  guestImageURL: string
+export const uploadCloudinaryFromUrl = async (
+  publicId: string,
+  url: string
 ) => {
-  console.log(`Uploading image for: ${guestImagePublicId}`);
-  console.log(`Upload image from: ${guestImageURL}`);
+  console.log(`Uploading image for: ${publicId}`);
+  console.log(`Upload image from: ${url}`);
   try {
-    const res = await cloudinary.uploader.upload(guestImageURL, {
-      public_id: guestImagePublicId,
+    const res = await cloudinary.uploader.upload(url, {
+      public_id: publicId,
     });
     console.log('cloudinary payload response: ', JSON.stringify(res));
-    return res.public_id;
+    return res;
   } catch (error) {
     console.error(error);
     throw error;

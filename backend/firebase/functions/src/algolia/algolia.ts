@@ -24,9 +24,10 @@ const paginate = async (
 ): Promise<any> => {
   // Call to get full content and add to algolia
   for (const p of raw.results) {
+    await sleep(1000);
     if (
       p?.properties?.published?.select?.name === 'published' ||
-      p?.properties?.status?.select?.name === 'Released'
+      p?.properties?.Status?.select?.name === 'Released'
     ) {
       console.log(`finding: ${p?.id}`);
       if (p?.properties?.slug?.url) {
@@ -45,11 +46,11 @@ const paginate = async (
           objectID: post._id,
           type: post._type,
         });
-        console.log(`Algolia add ${_type}:`, JSON.stringify(result));
+        console.log(`Algolia add ${_type}:${p?._id}`, JSON.stringify(result));
       }
     } else {
       const result = await ai.deleteObject(p?._id);
-      console.log(`Algolia delete ${_type}:`, JSON.stringify(result));
+      console.log(`Algolia delete ${_type}:${p?._id}`, JSON.stringify(result));
     }
   }
 

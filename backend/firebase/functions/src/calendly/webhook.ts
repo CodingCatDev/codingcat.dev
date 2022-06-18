@@ -2,7 +2,7 @@ import { good, log, LogSeverity } from './../utilities/logging';
 import * as functions from 'firebase-functions';
 import { WebhookPayload } from '../models/calendly';
 import { sendTopic } from '../utilities/googleapis';
-import { queryPurrfectPageByCalendarId } from '../utilities/notion';
+import { queryPurrfectPageByCalendarId } from '../utilities/notion.server';
 
 const ccd = `e3f45196-30ad-4597-9e7d-6b4ae147ca00`;
 const purrfect = `c4e6fdd3-768a-4157-846e-41b4ef5fae9d`;
