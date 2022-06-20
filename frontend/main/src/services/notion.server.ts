@@ -91,6 +91,12 @@ export const getAuthorBySlugService = async ({
             equals: 'published',
           },
         },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
+          },
+        },
       ],
     },
   });
@@ -382,6 +388,12 @@ export const queryByPublished = async (
           equals: 'published',
         },
       },
+      {
+        property: 'start',
+        date: {
+          on_or_before: new Date().toISOString(),
+        },
+      },
     ],
   };
 
@@ -486,6 +498,12 @@ export const queryNotionDbBySlug = async (
               equals: 'published',
             },
           },
+          {
+            property: 'start',
+            date: {
+              on_or_before: new Date().toISOString(),
+            },
+          },
         ],
       ],
     };
@@ -583,6 +601,12 @@ export const querySectionsByCourseId = async (
                 equals: 'published',
               },
             },
+          },
+        },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
           },
         },
       ],
