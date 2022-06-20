@@ -25,9 +25,12 @@ const paginate = async (
   // Call to get full content and add to algolia
   for (const p of raw.results) {
     await sleep(1000);
+    const now = new Date();
     if (
-      p?.properties?.published?.select?.name === 'published' ||
-      p?.properties?.Status?.select?.name === 'Released'
+      (p?.properties?.published?.select?.name === 'published' ||
+        p?.properties?.Status?.select?.name === 'Released') &&
+      new Date(p?.properties?.start?.date?.start) <= now &&
+      new Date(p?.properties?.end?.date?.start) >= now
     ) {
       console.log(`finding: ${p?.id}`);
       if (p?.properties?.slug?.url) {

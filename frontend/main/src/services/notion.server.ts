@@ -691,6 +691,12 @@ export const queryPurrfectStreamByReleased = async (
             is_not_empty: true,
           },
         },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
+          },
+        },
       ],
     },
     sorts: [
@@ -746,6 +752,12 @@ export const queryPurrfectStreamBySlug = async (
             property: 'Episode',
             number: {
               is_not_empty: true,
+            },
+          },
+          {
+            property: 'start',
+            date: {
+              on_or_before: new Date().toISOString(),
             },
           },
         ],
