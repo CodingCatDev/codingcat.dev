@@ -12,7 +12,6 @@ export const isActiveLesson = (
 };
 
 export const isActiveLink = (router: NextRouter, path: string) => {
-  console.log('checking link', router?.asPath, path);
   if (router?.asPath === path) return true;
   return false;
 };
