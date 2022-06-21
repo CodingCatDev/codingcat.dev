@@ -174,6 +174,36 @@ export const notionPageFindFileBlocksPublish = functions
 
     // If no blocks are found mark completed
     if (!convertBlocks || convertBlocks.length === 0) {
+      //If not cloudinary image upload it.
+      const newExternal = page?.cover?.external?.url?.includes(
+        'media.codingcat.dev'
+      );
+      const newFile = page?.cover?.file?.url;
+      if (!newExternal || newFile) {
+        const title =
+          page?.properties?.Name?.title?.[0]?.plain_text ||
+          page?.properties?.title?.title?.[0]?.plain_text;
+
+        try {
+          console.log('Uploading', newExternal ? newExternal : newFile);
+          const res = await uploadCloudinaryFromUrl(
+            `${cloudinaryFolder}/${title}`,
+            newExternal ? newExternal : newFile
+          );
+
+          await patchPurrfectPage({
+            page_id: page.id,
+            cover: {
+              external: {
+                url: res.secure_url,
+              },
+            },
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
       await patchPurrfectPage({
         page_id: page.id,
         properties: {
