@@ -5,6 +5,7 @@ import {
 } from '@9gustin/react-notion-render';
 import CodeHighlight from '@/components/notion-custom-blocks/CodeHighlight';
 import Image from 'next/image';
+import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
 
 const myMapper = {
   image: withContentValidation(({ className, media }) => {
@@ -25,15 +26,31 @@ const myMapper = {
           overflow: 'hidden',
         }}
       >
-        <Image
-          loader={({ src }) => src}
-          className={`${className || ''} object-contain `}
-          src={media.src}
-          alt={media?.alt || media?.name || ''}
-          layout="fill"
-          height="100%"
-          width="100%"
-        />
+        {media?.src &&
+        [
+          'main-codingcatdev-photo',
+          'ccd-cloudinary',
+          'dev-codingcatdev-photo',
+        ].includes(media?.src) ? (
+          <Image
+            className={`${className || ''} object-contain `}
+            src={getCloudinaryPublicId(media?.src?.split('/'))}
+            alt={media?.alt || media?.name || ''}
+            layout="fill"
+            height="100%"
+            width="100%"
+          />
+        ) : (
+          <Image
+            loader={({ src }) => src}
+            className={`${className || ''} object-contain `}
+            src={media.src}
+            alt={media?.alt || media?.name || ''}
+            layout="fill"
+            height="100%"
+            width="100%"
+          />
+        )}
         <div
           style={{
             width: '100%',

@@ -8,6 +8,7 @@ import { config as notionConfig } from '@/config/notion';
 import { Site } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
 import { NotionBlock } from '@9gustin/react-notion-render';
+import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
 
 // Initializing a client
 const notionClient = new Client({
@@ -195,23 +196,7 @@ const formatPost = async (
       authors.push(author);
     }
   }
-  const coverSegments = q?.cover?.external?.url.split('/');
-  let coverPublicId = '';
-
-  for (let i = coverSegments?.length; i--; i === 0) {
-    const segment = coverSegments.at(i);
-    if (
-      [
-        'main-codingcatdev-photo',
-        'ccd-cloudinary',
-        'dev-codingcatdev-photo',
-      ].includes(segment)
-    ) {
-      coverPublicId = `/${segment}/${coverPublicId}`;
-      break;
-    }
-    coverPublicId = `${segment}${coverPublicId ? '/' : ''}${coverPublicId}`;
-  }
+  let coverPublicId = getCloudinaryPublicId(q?.cover?.external?.url.split('/'));
   post = {
     ...post,
     _id: q?.id ? q.id : null,
