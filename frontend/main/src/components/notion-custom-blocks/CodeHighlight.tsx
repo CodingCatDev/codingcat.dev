@@ -71,7 +71,7 @@ const CodeHighlight = ({
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre
-          className={className}
+          className={`${className} inline-block`}
           style={{ ...style, padding: '2rem', position: 'relative' }}
         >
           <Button
