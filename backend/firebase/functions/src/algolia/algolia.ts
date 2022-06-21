@@ -30,7 +30,8 @@ const paginate = async (
       (p?.properties?.published?.select?.name === 'published' ||
         p?.properties?.Status?.select?.name === 'Released') &&
       new Date(p?.properties?.start?.date?.start) <= now &&
-      new Date(p?.properties?.end?.date?.start) >= now
+      (new Date(p?.properties?.end?.date?.start) >= now ||
+        !p?.properties?.end?.date?.start)
     ) {
       console.log(`finding: ${p?.id}`);
       if (p?.properties?.slug?.url) {

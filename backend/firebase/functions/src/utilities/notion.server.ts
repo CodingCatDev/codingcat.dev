@@ -570,12 +570,6 @@ export const querySectionsByCourseId = async (
             },
           },
         },
-        {
-          property: 'start',
-          date: {
-            on_or_before: new Date().toISOString(),
-          },
-        },
       ],
     };
   }
