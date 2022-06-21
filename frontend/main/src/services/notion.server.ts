@@ -195,6 +195,23 @@ const formatPost = async (
       authors.push(author);
     }
   }
+  const coverSegments = q?.cover?.external?.url.split('/');
+  let coverPublicId = '';
+
+  for (let i = coverSegments?.length; i--; i === 0) {
+    const segment = coverSegments.at(i);
+    if (
+      [
+        'main-codingcatdev-photo',
+        'ccd-cloudinary',
+        'dev-codingcatdev-photo',
+      ].includes(segment)
+    ) {
+      coverPublicId = `/${segment}/${coverPublicId}`;
+      break;
+    }
+    coverPublicId = `${segment}${coverPublicId ? '/' : ''}${coverPublicId}`;
+  }
   post = {
     ...post,
     _id: q?.id ? q.id : null,
@@ -208,21 +225,12 @@ const formatPost = async (
         : `${q?.properties?.title?.title
             .map((t: any) => t.plain_text)
             .join('')}`,
-    coverPhoto:
-      _type == PostType.podcast
-        ? {
-            secure_url: q?.cover?.external?.url || null,
-            public_id: q?.cover?.external?.url
-              ? q?.cover?.external?.url.split('upload/').at(1)
-              : null,
-          }
-        : {
-            secure_url: q?.properties?.cover?.url || null,
-            public_id: q?.properties?.cover?.url
-              ? q?.properties?.cover.url.split('upload/')?.at(1) ||
-                q?.properties?.cover?.url
-              : null,
-          },
+    coverPhoto: {
+      secure_url: coverPublicId
+        ? `https://media.codingcat.dev/image/upload${coverPublicId}`
+        : null,
+      public_id: coverPublicId ? `${coverPublicId}` : null,
+    },
     coverVideo: q?.properties?.youtube?.url
       ? { url: q.properties.youtube.url }
       : null,
@@ -284,7 +292,6 @@ const formatPost = async (
 
   // Get sections and lessons for course
   if (_type == PostType.course && !list) {
-    console.log('got list');
     const sectionsRaw = await querySectionsByCourseId(q.id, preview);
     let sections: any = [];
     for (const s of sectionsRaw.results as any) {
@@ -880,7 +887,6 @@ export const getPurrfectStreamPageBlocks = async ({
       formatBlock({ type: 'heading_2', content: 'Purrfect Picks' }),
     ];
     picks.map((p) => {
-      console.log('p', p);
       pickBlocks = [
         ...pickBlocks,
         formatBlock({ type: 'heading_3', content: p?.name || 'Guest' }),
