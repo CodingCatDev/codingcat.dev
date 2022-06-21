@@ -108,6 +108,11 @@ export const cloudinaryToNotionPubSub = functions.pubsub
               type: 'url',
               url: slug,
             },
+            cover: {
+              id: coverUrl,
+              type: 'url',
+              url: coverUrl,
+            },
           },
         };
         console.log('Updating page with: ', JSON.stringify(update));
