@@ -406,7 +406,7 @@ export default function PostLayout({
                 </section>
               </div>
             </MemberValidShow>
-            <div className="inline-block w-full xl:max-w-md">{recents()}</div>
+            <div className="inline-block w-full xl:hidden">{recents()}</div>
           </>
         ) : (
           <div className="inline-block w-full">{recents()}</div>
