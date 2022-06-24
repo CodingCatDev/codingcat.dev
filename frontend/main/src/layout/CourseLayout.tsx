@@ -135,13 +135,13 @@ export default function Course({
         </BreakBarLeft>
       </section>
       <div className="flex flex-wrap gap-4 px-4 pb-4 xl:flex-nowrap lg:px-10 lg:pb-10">
-        <section className="flex flex-col gap-4 grow">
+        <section className="flex flex-col grow">
           <PostMedia post={post} noImage={true} />
           <div className="flex flex-col gap-2 mt-2">
             {post?.blocks && renderBlocks(post.blocks)}
           </div>
         </section>
-        <section className="flex flex-col w-full mb-2 xl:max-w-md">
+        <section className="grid gap-4 w-full mb-2 xl:max-w-md">
           {post.coverPhoto?.public_id ? (
             <>
               <Image
@@ -229,13 +229,8 @@ export default function Course({
         </section>
       </div>
       <style global jsx>{`
-        article {
-          font-size: clamp(1rem, 1rem + 1vw, 1.5rem);
-          margin: 0 auto;
-          max-width: 65ch;
-        }
-        article > p {
-          margin: 0 0 3rem;
+        article > * {
+          list-style: auto;
         }
 
         article > p + blockquote {
@@ -246,39 +241,46 @@ export default function Course({
           display: grid;
         }
 
-        .code-toolbar {
-          display: grid;
-        }
-
-        main a > :not(button) {
+        article a {
           word-wrap: break-word;
           border-bottom: 2px solid #bc2261;
         }
 
-        main iframe {
+        article > iframe {
           max-width: 100%;
         }
 
-        main h1,
-        main h2 {
-          font-family: 'Nunito', sans-serif;
-          margin: 0;
+        .content > * {
+          margin-bottom: 1rem;
         }
 
-        main h3,
-        main h4,
-        main h5,
-        main h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 2rem 0 1rem;
           font-family: 'Nunito', sans-serif;
-          margin: 4rem 0 2rem;
           width: fit-content;
         }
-        img {
-          width: 100%;
+
+        article > img {
+          max-width: 100%;
         }
-        main ul li {
+
+        article > ul,
+        ol {
+          margin-left: 2.5rem;
+          padding-left: 0;
+        }
+        article > ul li {
           margin-left: 2rem;
           list-style-type: circle;
+        }
+        iframe {
+          width: 100%;
+          aspect-ratio: 16 / 9;
         }
       `}</style>
     </>
