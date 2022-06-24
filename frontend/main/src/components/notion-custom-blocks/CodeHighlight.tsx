@@ -71,7 +71,7 @@ const CodeHighlight = ({
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre
-          className={`${className} whitespace-pre-wrap`}
+          className={`${className} whitespace-pre-wrap grid`}
           style={{ ...style, padding: '2rem', position: 'relative' }}
         >
           <Button
