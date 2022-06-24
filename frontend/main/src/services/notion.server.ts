@@ -196,7 +196,7 @@ const formatPost = async (
       authors.push(author);
     }
   }
-  let coverPublicId = getCloudinaryPublicId(q?.cover?.external?.url.split('/'));
+  let coverPublicId = getCloudinaryPublicId(q?.cover?.external?.url);
   post = {
     ...post,
     _id: q?.id ? q.id : null,

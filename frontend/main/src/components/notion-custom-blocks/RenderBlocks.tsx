@@ -35,7 +35,7 @@ const myMapper = {
         ].includes(media?.src) ? (
           <Image
             className={`${className || ''} object-contain `}
-            src={getCloudinaryPublicId(media?.src?.split('/'))}
+            src={getCloudinaryPublicId(media?.src)}
             alt={media?.alt || media?.name || ''}
             layout="fill"
             height="100%"

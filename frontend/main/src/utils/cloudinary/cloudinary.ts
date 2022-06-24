@@ -1,5 +1,18 @@
-export const getCloudinaryPublicId = (coverSegments: string[]): string => {
+export const getCloudinaryPublicId = (cover: string): string => {
   let coverPublicId = '';
+
+  const domains = [
+    'main-codingcatdev-photo',
+    'ccd-cloudinary',
+    'dev-codingcatdev-photo',
+  ];
+
+  if (!domains.some((d) => cover?.includes(d))) {
+    return coverPublicId;
+  }
+
+  const coverSegments = cover?.split('/');
+
   for (let i = coverSegments?.length; i--; i === 0) {
     const segment = coverSegments.at(i);
     if (
