@@ -150,6 +150,17 @@ export default function PostMedia({
               layout="responsive"
               priority
             />
+          ) : !noImage &&
+            (post?.cover?.external?.url || post?.cover?.file?.url) ? (
+            <Image
+              loader={({ src }) => src}
+              src={post?.cover?.external?.url || post?.cover?.file?.url || ''}
+              alt={post.title}
+              width="480"
+              height="270"
+              layout="responsive"
+              priority
+            />
           ) : (
             <></>
           )}

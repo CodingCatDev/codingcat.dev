@@ -28,6 +28,14 @@ export interface Post {
   slug: string;
   historyId?: string;
   postId?: string;
+  cover?: {
+    external?: {
+      url: string;
+    };
+    file?: {
+      url: string;
+    };
+  };
   coverPhoto?: CoverMedia;
   coverVideo?: CoverMedia;
   sections?: Section[];

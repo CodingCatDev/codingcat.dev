@@ -198,6 +198,11 @@ export const notionPageFindFileBlocksPublish = functions
                 url: res.secure_url,
               },
             },
+            properties: {
+              cover: {
+                url: res.secure_url,
+              },
+            },
           });
         } catch (e) {
           console.error(e);

@@ -33,6 +33,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
             },
             {
               url: 'https://media.codingcat.dev/image/upload/f_png/dev-codingcatdev-photo/v60h88eohd7ufghkspgo.png',
+              alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain',
             },
           ],
         }}

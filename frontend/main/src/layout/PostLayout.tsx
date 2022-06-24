@@ -307,7 +307,6 @@ export default function PostLayout({
           )}
           <BreakBarLeft>
             <div className="grid w-full gap-4">
-              {/* <section className="flex flex-wrap items-center justify-between w-full gap-4 lg:flex-nowrap"> */}
               <section className="grid items-center justify-between gap-2 lg:flex">
                 <h1 className="self-center font-sans text-2xl lg:flex-1 sm:text-4xl text-basics-50">
                   {post.title}
@@ -406,7 +405,7 @@ export default function PostLayout({
                 </section>
               </div>
             </MemberValidShow>
-            <div className="inline-block w-full xl:max-w-md">{recents()}</div>
+            <div className="inline-block w-full xl:hidden">{recents()}</div>
           </>
         ) : (
           <div className="inline-block w-full">{recents()}</div>

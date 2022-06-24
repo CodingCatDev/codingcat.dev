@@ -268,13 +268,14 @@ export default function PostPage({
           site_name: 'CodingCatDev',
           images: [
             {
-              url: `https://media.codingcat.dev/image/upload/f_jpg,c_fit,w_1200,h_630/${post?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630${post?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
               alt: post?.title,
             },
             {
-              url: `https://media.codingcat.dev/image/upload/f_jpg/${post?.coverPhoto?.public_id}`,
+              url: `https://media.codingcat.dev/image/upload/f_png${post?.coverPhoto?.public_id}`,
+              alt: post?.title,
             },
           ],
         }}

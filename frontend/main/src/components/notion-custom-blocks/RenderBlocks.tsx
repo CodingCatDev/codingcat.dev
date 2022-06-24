@@ -6,6 +6,7 @@ import {
 import CodeHighlight from '@/components/notion-custom-blocks/CodeHighlight';
 import Image from 'next/image';
 import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
+import Embed from '@/components/notion-custom-blocks/Embed';
 
 const myMapper = {
   image: withContentValidation(({ className, media }) => {
@@ -34,7 +35,7 @@ const myMapper = {
         ].includes(media?.src) ? (
           <Image
             className={`${className || ''} object-contain `}
-            src={getCloudinaryPublicId(media?.src?.split('/'))}
+            src={getCloudinaryPublicId(media?.src)}
             alt={media?.alt || media?.name || ''}
             layout="fill"
             height="100%"
@@ -65,6 +66,8 @@ const myMapper = {
     );
   }),
   code: withContentValidation((props) => CodeHighlight(props)),
+  embed: withContentValidation((props) => Embed(props)),
+  video: withContentValidation((props) => Embed(props)),
 };
 
 export const renderBlocks = (blocks: NotionBlock[]) => {
