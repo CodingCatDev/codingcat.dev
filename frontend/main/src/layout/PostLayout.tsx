@@ -130,7 +130,9 @@ export default function PostLayout({
             <aside className="hidden float-right ml-2 xl:inline-block">
               {recents()}
             </aside>
-            <section>{post?.blocks && renderBlocks(post.blocks)}</section>
+            <section className="content">
+              {post?.blocks && renderBlocks(post.blocks)}
+            </section>
           </article>
         </div>
         <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
@@ -431,6 +433,10 @@ export default function PostLayout({
 
         article > iframe {
           max-width: 100%;
+        }
+
+        .content > * {
+          margin-bottom: 1rem;
         }
 
         h1,
