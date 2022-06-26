@@ -24,7 +24,9 @@ export interface Post {
   category?: string[] | null; //If null this will be auto assigned 'Unassigned'
   tag?: string[] | null;
   format?: PostFormat; //If null this will be auto assigned 'standard'
+  guestBlocks?: NotionBlock[];
   blocks?: NotionBlock[];
+  pickBlocks?: NotionBlock[];
   slug: string;
   historyId?: string;
   postId?: string;

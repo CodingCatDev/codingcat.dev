@@ -130,8 +130,14 @@ export default function PostLayout({
             <aside className="hidden float-right ml-2 xl:inline-block">
               {recents()}
             </aside>
+            <section className="guests">
+              {post?.guestBlocks && renderBlocks(post.guestBlocks)}
+            </section>
             <section className="content">
               {post?.blocks && renderBlocks(post.blocks)}
+            </section>
+            <section className="picks">
+              {post?.pickBlocks && renderBlocks(post.pickBlocks)}
             </section>
           </article>
         </div>
