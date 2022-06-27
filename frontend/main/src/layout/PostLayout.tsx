@@ -469,6 +469,50 @@ export default function PostLayout({
           margin-left: 2rem;
           list-style-type: circle;
         }
+
+        .picks {
+          background: #fbfbfb;
+          padding: 0.75rem 1rem 0.25rem;
+          border-radius: 0.25rem 0.25rem 0 0;
+        }
+
+        .picks a {
+          border: 2px solid transparent;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .picks a:hover {
+          border-bottom: 2px solid #bc2261;
+        }
+
+        .picks h2,
+        .picks h3,
+        .picks h4 {
+          margin: 0;
+        }
+
+        .picks h2 span {
+          font-family: 'Henny Penny', sans-serif;
+          line-height: 1.375;
+          background-image: linear-gradient(180deg, #bc2261 50%, #4b0a75);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .picks h3 {
+          margin-block: 0.5rem;
+        }
+
+        .picks p {
+          list-style: square;
+          margin-left: 1rem;
+          color: ;
+        }
+
+        .picks p:before {
+          content: '😻';
+        }
+
         iframe {
           width: 100%;
           aspect-ratio: 16 / 9;
