@@ -1,11 +1,7 @@
 import SettingsLinks from '@/components/settings/SettingsLinks';
-import { useFirestore, useSigninCheck } from 'reactfire';
-import { StripePrice, StripeProduct } from '@/models/stripe.model';
-import { AuthWrapper, FirebaseAuth } from '@/components/FirebaseAuth';
+import { useSigninCheck } from 'reactfire';
+import { AuthWrapper } from '@/components/FirebaseAuth';
 import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import ProfileProFeatures from '@/components/user/ProfileProFeatures';
 import Link from 'next/link';
 
 const UserSettings = dynamic(

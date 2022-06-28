@@ -818,11 +818,14 @@ export const getPurrfectStreamPageBlocks = async ({
       queryPurrfectGuestsByStreamId(id),
     ]);
 
+  let guestBlocks: NotionBlock[] = [];
   let blocks: NotionBlock[] = [];
+  let pickBlocks: NotionBlock[] = [];
+
   // Build the markdown for page
   for (const guest of purrfectGuests.results) {
     const b = await getBlocks(guest.id);
-    blocks = [...blocks, ...b];
+    guestBlocks = [...guestBlocks, ...b];
   }
   for (const page of raw.results) {
     blocks = [...blocks, ...(await getChildBlocks(await getBlocks(page.id)))];
@@ -866,7 +869,6 @@ export const getPurrfectStreamPageBlocks = async ({
       picks = [...picks, guest] as any;
     }
   }
-  let pickBlocks: any[] = [];
   if (picks.length > 0) {
     pickBlocks = [
       formatBlock({ type: 'heading_2', content: 'Purrfect Picks' }),
@@ -880,7 +882,7 @@ export const getPurrfectStreamPageBlocks = async ({
         pickBlocks = [
           ...pickBlocks,
           formatBlock({
-            type: 'paragraph',
+            type: 'bulleted_list_item',
             content: pick?.name,
             link: pick?.url,
           }),
@@ -888,11 +890,12 @@ export const getPurrfectStreamPageBlocks = async ({
       });
     });
   }
-  blocks = [...blocks, ...pickBlocks];
 
   return {
     ...raw.results[0],
+    guestBlocks,
     blocks,
+    pickBlocks,
   };
 };
 

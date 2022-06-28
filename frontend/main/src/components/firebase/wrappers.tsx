@@ -18,7 +18,6 @@ import {
   FunctionsProvider,
   PerformanceProvider,
   AnalyticsProvider,
-  useInitAuth,
 } from 'reactfire';
 import { config, emulation } from '@/config/firebase';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
@@ -26,11 +25,6 @@ import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 import { UserInfoExtended } from '@/models/user.model';
 import { getPerformance } from '@firebase/performance';
 import { getAnalytics } from '@firebase/analytics';
-import {
-  browserLocalPersistence,
-  indexedDBLocalPersistence,
-  initializeAuth,
-} from 'firebase/auth';
 interface FirestoreExt extends Firestore {
   _settings: FirestoreSettings;
 }
@@ -69,20 +63,11 @@ export const FirebaseAuthProvider = ({
   children: JSX.Element;
 }) => {
   const app = useFirebaseApp();
-
-  const { status, data: auth } = useInitAuth(async (authApp) => {
-    const auth = initializeAuth(authApp, {
-      persistence: [indexedDBLocalPersistence, browserLocalPersistence],
-    });
-    return auth;
-  });
-
+  const auth = getAuth(app);
   if (emulation.authEmulatorHost && !auth.emulatorConfig) {
     connectAuthEmulator(auth, emulation.authEmulatorHost);
   }
-  if (!auth) {
-    return <>{children}</>;
-  }
+
   return <AuthProvider sdk={auth}>{children}</AuthProvider>;
 };
 
