@@ -1,5 +1,4 @@
 import SettingsLinks from '@/components/settings/SettingsLinks';
-import { FirebaseAuth } from '@/components/FirebaseAuth';
 
 import { useFunctions, useSigninCheck } from 'reactfire';
 import { useState } from 'react';
