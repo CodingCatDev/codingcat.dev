@@ -882,7 +882,7 @@ export const getPurrfectStreamPageBlocks = async ({
         pickBlocks = [
           ...pickBlocks,
           formatBlock({
-            type: 'paragraph',
+            type: 'bulleted_list_item',
             content: pick?.name,
             link: pick?.url,
           }),
