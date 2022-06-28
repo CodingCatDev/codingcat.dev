@@ -30,11 +30,6 @@ interface FirestoreExt extends Firestore {
 }
 
 export const FirebaseProvider = ({ children }: { children: JSX.Element }) => {
-  const domainConfig = {
-    ...config,
-    authDomain: `auth.${window?.location?.host}`,
-  };
-
   return (
     <FirebaseAppProvider firebaseConfig={config}>
       {children}
