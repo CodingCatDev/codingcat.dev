@@ -130,9 +130,19 @@ export default function PostLayout({
             <aside className="hidden float-right ml-2 xl:inline-block">
               {recents()}
             </aside>
-            <section className="content">
-              {post?.blocks && renderBlocks(post.blocks)}
-            </section>
+            {post?.guestBlocks && (
+              <section className="flex flex-col guests">
+                {renderBlocks(post.guestBlocks)}
+              </section>
+            )}
+            {post?.blocks && (
+              <section className="content">{renderBlocks(post.blocks)}</section>
+            )}
+            {post?.pickBlocks && (
+              <section className="flex flex-col picks">
+                {post?.pickBlocks && renderBlocks(post.pickBlocks)}
+              </section>
+            )}
           </article>
         </div>
         <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
@@ -204,9 +214,9 @@ export default function PostLayout({
         )}
         {/* RECENTS */}
         {recentPosts && (
-          <section className="flex flex-col w-full mb-2 xl:ml-2">
+          <section className="flex flex-col w-full max-w-sm mb-2 xl:ml-2">
             {post?.sponsors && (
-              <section>
+              <section className="pb-2">
                 <SponsorCards sponsors={post.sponsors} />
               </section>
             )}
@@ -434,7 +444,25 @@ export default function PostLayout({
         article > iframe {
           max-width: 100%;
         }
-
+        .content ol {
+          list-style: none;
+          counter-reset: item;
+        }
+        .content li {
+          counter-increment: item;
+          margin-bottom: 5px;
+        }
+        .content li:before {
+          margin-right: 10px;
+          content: counter(item);
+          background: #5e1286;
+          border-radius: 100%;
+          color: white;
+          width: 26px;
+          height: 26px;
+          text-align: center;
+          display: inline-block;
+        }
         .content > * {
           margin-bottom: 1rem;
         }
@@ -450,19 +478,105 @@ export default function PostLayout({
           width: fit-content;
         }
 
+        article h3 {
+          font-size: 2rem;
+        }
+        article h4 {
+          font-size: 1.8rem;
+        }
+        article h5 {
+          font-size: 1.6rem;
+        }
+        article h6 {
+          font-size: 1.2rem;
+        }
+
         article > img {
           max-width: 100%;
         }
 
         article > ul,
-        ol {
-          margin-left: 2.5rem;
-          padding-left: 0;
-        }
         article > ul li {
           margin-left: 2rem;
           list-style-type: circle;
         }
+
+        .picks {
+          background: #fbfbfb;
+          padding: 0.75rem 1rem 0.25rem;
+          border-radius: 0.25rem;
+        }
+
+        .picks a {
+          border: 2px solid transparent;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .picks a:hover {
+          border-bottom: 2px solid #bc2261;
+        }
+
+        .picks h2,
+        .picks h3,
+        .picks h4 {
+          margin: 0;
+        }
+
+        .picks h2 span {
+          font-family: 'Henny Penny', sans-serif;
+          line-height: 1.375;
+          background-image: linear-gradient(180deg, #bc2261 50%, #4b0a75);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .picks h3 {
+          margin-block: 0.5rem;
+        }
+
+        .picks ul {
+          list-style: none;
+          margin-left: 1rem;
+          color: ;
+        }
+
+        .picks li:before {
+          content: '😻';
+        }
+
+        .guests {
+          background: #fbfbfb;
+          padding: 0.75rem 1rem 0.25rem;
+          border-radius: 0.25rem;
+        }
+
+        .guests a {
+          border: 2px solid transparent;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .guests a:hover {
+          border-bottom: 2px solid #bc2261;
+        }
+
+        .guests h2,
+        .guests h3,
+        .guests h4 {
+          margin: 0;
+        }
+
+        .guests h2 span {
+          font-family: 'Henny Penny', sans-serif;
+          line-height: 1.375;
+          background-image: linear-gradient(180deg, #bc2261 50%, #4b0a75);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .guests h3 {
+          margin-block: 0.5rem;
+        }
+
         iframe {
           width: 100%;
           aspect-ratio: 16 / 9;
