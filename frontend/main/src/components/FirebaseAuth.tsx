@@ -40,7 +40,6 @@ export const FirebaseAuth = ({
     ];
   }
   const uiConfig = {
-    signInFlow: 'popup',
     signInOptions,
     signInSuccessUrl: window.location.href,
     credentialHelper: 'none',
