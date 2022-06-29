@@ -23,13 +23,7 @@ export default function RecentPostsList({
         }
         `}
         >
-          <ActiveLink
-            href={
-              PostType.course
-                ? `/course/${post.slug}`
-                : `/${post._type}/${post.slug}`
-            }
-          >
+          <ActiveLink href={`/${post._type}/${post.slug}`}>
             <a className="no-underline border-none hover:text-basics-50 dark:hover:text-basics-50">
               {post.title}
             </a>
