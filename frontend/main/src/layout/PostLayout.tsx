@@ -188,11 +188,11 @@ export default function PostLayout({
                     section.lessons.map((lesson) => (
                       <li
                         key={lesson._id}
-                        className={`list-none p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-col justify-between
+                        className={`list-none cursor-pointer p-1 rounded m-1 flex flex-col justify-between
                       ${
                         isActiveLesson(router, course, lesson)
-                          ? 'bg-primary-200'
-                          : 'bg-transparent'
+                          ? 'bg-primary-900 text-basics-50'
+                          : 'bg-transparent hover:bg-primary-900 hover:text-basics-50'
                       }
                       `}
                       >
@@ -202,11 +202,11 @@ export default function PostLayout({
                           passHref
                         >
                           <div className="flex gap-2">
-                            <a className="no-underline border-none hover:text-primary-900">
+                            <a className="no-underline border-none hover:text-basics-50 dark:hover:text-basics-50">
                               {lesson.title}
                             </a>
                             {lesson?.access_mode && (
-                              <div className="no-underline hover:text-primary-900">
+                              <div className="no-underline ">
                                 {lesson?.access_mode != AccessMode.free && (
                                   <>
                                     {user && user.uid ? (
@@ -279,7 +279,7 @@ export default function PostLayout({
                 {`Latest Courses`}
               </h2>
 
-              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+              <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 dark:text-primary-50 justify-items-stretch">
                 <RecentPostsList
                   router={router}
                   posts={recentPosts[PostType.course]}
@@ -290,7 +290,7 @@ export default function PostLayout({
               <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Tutorials`}
               </h2>
-              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+              <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 dark:text-primary-50 justify-items-stretch">
                 <RecentPostsList
                   router={router}
                   posts={recentPosts[PostType.tutorial]}
@@ -301,7 +301,7 @@ export default function PostLayout({
               <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Podcasts`}
               </h2>
-              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+              <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 dark:text-primary-50 justify-items-stretch">
                 <RecentPostsList
                   router={router}
                   posts={recentPosts[PostType.podcast]}
@@ -312,7 +312,7 @@ export default function PostLayout({
               <h2 className="w-full p-2 m-0 text-2xl font-bold xl:p-4 rounded-t-md xl:shrink-0 bg-secondary-600 text-basics-50">
                 {`Latest Blog`}
               </h2>
-              <ul className="grid grid-cols-1 gap-2 p-4 shadow-lg">
+              <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 dark:text-primary-50 justify-items-stretch">
                 <RecentPostsList
                   router={router}
                   posts={recentPosts[PostType.post]}

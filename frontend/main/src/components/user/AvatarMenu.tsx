@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-import ActiveLink from '@/components/ActiveLink';
 import { Dispatch, SetStateAction } from 'react';
 import { useAuth, useSigninCheck } from 'reactfire';
 import dynamic from 'next/dynamic';
 import { signOut } from '@/components/FirebaseAuth';
+import ActiveLink from '@/components/ActiveLink';
 
 const AuthWrapper = dynamic<any>(
   () => import('@/components/FirebaseAuth').then((mod) => mod.AuthWrapper),
@@ -101,11 +101,11 @@ export default function AvatarMenu({
             aria-labelledby="user-menu"
           >
             <ActiveLink
-              activeClassName="rounded first-child:text-primary-900"
+              activeClassName="bg-primary-500 text-basics-50"
               href="/user/profile"
             >
               <a
-                className="flex items-center p-2 text-sm rounded-md text-basics-900 hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
+                className="flex items-center p-2 text-sm rounded-md hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
                 role="menuitem"
               >
                 <svg

@@ -1,7 +1,7 @@
 import { Post, PostType } from '@/models/post.model';
-import { isActiveLink } from '@/utils/basics/links';
-import Link from 'next/link';
 import { NextRouter } from 'next/router';
+import ActiveLink from '@/components/ActiveLink';
+import { isActiveLesson, isActiveLink } from '@/utils/basics/links';
 
 export default function RecentPostsList({
   posts,
@@ -10,52 +10,30 @@ export default function RecentPostsList({
   posts: Post[];
   router: NextRouter;
 }): JSX.Element {
-  function link(post: Post) {
-    switch (post._type) {
-      case PostType.course:
-        return (
-          <>
-            <Link href={`/course/${post.slug}`}>
-              <a
-                className={`no-underline border-none hover:underline flex p-1 rounded-md
-                            ${
-                              isActiveLink(router, `/course/${post.slug}`)
-                                ? 'bg-primary-200 text-basics-50'
-                                : 'bg-transparent '
-                            }
-                            `}
-              >
-                {post.title}
-              </a>
-            </Link>
-          </>
-        );
-      default:
-        return (
-          <Link href={`/${post._type}/${post.slug}`}>
-            <a
-              className={`no-underline border-none hover:text-primary-900 hover:underline flex p-1 rounded-md
-                            ${
-                              isActiveLink(
-                                router,
-                                `/${post._type}/${post.slug}`
-                              )
-                                ? 'bg-primary-200 text-basics-50'
-                                : 'bg-transparent '
-                            }
-                            `}
-            >
-              {post.title}
-            </a>
-          </Link>
-        );
-    }
-  }
   return (
     <>
       {posts.map((post) => (
-        <li key={post._id} className="ml-0 list-none">
-          {link(post)}
+        <li
+          key={post._id}
+          className={`list-none cursor-pointer p-1 rounded m-1 flex flex-col justify-between
+        ${
+          isActiveLink(router, `/${post._type}/${post.slug}`)
+            ? 'bg-primary-900 text-basics-50'
+            : 'bg-transparent hover:bg-primary-900 hover:text-basics-50'
+        }
+        `}
+        >
+          <ActiveLink
+            href={
+              PostType.course
+                ? `/course/${post.slug}`
+                : `/${post._type}/${post.slug}`
+            }
+          >
+            <a className="no-underline border-none hover:text-basics-50 dark:hover:text-basics-50">
+              {post.title}
+            </a>
+          </ActiveLink>
         </li>
       ))}
     </>

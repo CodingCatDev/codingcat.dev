@@ -95,22 +95,50 @@ export default function AppMenu({
               className="grid content-start h-full gap-4 p-4 bg-primary-900 dark:bg-primary-900"
               aria-label="Sidebar"
             >
-              <ActiveLink activeClassName="" href="/courses">
-                <a className="links-secondary" ref={focusme}>
+              <ActiveLink
+                activeClassName="bg-primary-500 rounded-sm"
+                href="/courses"
+                comparison="/course"
+              >
+                <a
+                  className="p-2 links-secondary hover:bg-primary-500"
+                  ref={focusme}
+                >
                   Courses
                 </a>
               </ActiveLink>
-              <ActiveLink activeClassName="" href="/tutorials">
-                <a className="links-secondary">Tutorials</a>
+              <ActiveLink
+                activeClassName="bg-primary-500 rounded-sm"
+                href="/tutorials"
+                comparison="/tutorial"
+              >
+                <a className="p-2 links-secondary hover:bg-primary-500">
+                  Tutorials
+                </a>
               </ActiveLink>
-              <ActiveLink activeClassName="" href="/blog">
-                <a className="links-secondary">Blog</a>
+              <ActiveLink
+                activeClassName="bg-primary-500 rounded-sm"
+                href="/blog"
+                comparison="/post"
+              >
+                <a className="p-2 links-secondary hover:bg-primary-500">Blog</a>
               </ActiveLink>
-              <ActiveLink activeClassName="" href="/podcasts">
-                <a className="links-secondary">Podcasts</a>
+              <ActiveLink
+                activeClassName="bg-primary-500 rounded-sm"
+                href="/podcasts"
+                comparison="/podcast"
+              >
+                <a className="p-2 links-secondary hover:bg-primary-500">
+                  Podcasts
+                </a>
               </ActiveLink>
-              <ActiveLink activeClassName="" href="/community">
-                <a className="links-secondary">Community</a>
+              <ActiveLink
+                activeClassName="bg-primary-500 rounded-sm"
+                href="/community"
+              >
+                <a className="p-2 links-secondary hover:bg-primary-500">
+                  Community
+                </a>
               </ActiveLink>
             </nav>
             <section className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">

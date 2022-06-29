@@ -4,9 +4,11 @@ import React, { Children } from 'react';
 
 function ActiveLink({ router, children, ...props }: any) {
   const child = Children.only(children);
-
   let className = child.props.className || '';
-  if (router.asPath === props.href && props.activeClassName) {
+  if (
+    router.asPath.includes(props.comparison || props.href) &&
+    props.activeClassName
+  ) {
     className = `${className} ${props.activeClassName}`.trim();
   }
 
