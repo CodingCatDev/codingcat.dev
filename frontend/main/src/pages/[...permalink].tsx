@@ -205,9 +205,14 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   //     }
   //   }
   // } else {
-  if (lessonPath) {
-    if (course) {
+  if (type === PostType.course || lessonPath) {
+    // If Lesson use the gathered lesson
+    if (lessonPath && course) {
       props.course = course;
+    }
+    // If course use the post as course
+    if (type === PostType.course && !lessonPath) {
+      props.course = post;
     }
   } else {
     if (type != PostType.page) {
@@ -281,20 +286,14 @@ export default function PostPage({
         }}
       ></NextSeo>
       <Layout site={site}>
-        <>
-          {post._type === PostType.course ? (
-            <CourseLayout post={post} product={product} preview={preview} />
-          ) : (
-            <PostLayout
-              router={router}
-              post={post}
-              course={course}
-              recentPosts={recentPosts}
-              preview={preview}
-              secret={secret}
-            />
-          )}
-        </>
+        <PostLayout
+          router={router}
+          post={post}
+          course={course}
+          recentPosts={recentPosts}
+          preview={preview}
+          secret={secret}
+        />
       </Layout>
     </>
   );
