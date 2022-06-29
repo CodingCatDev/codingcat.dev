@@ -285,7 +285,8 @@ const formatPost = async (
           ?.at(0)
           ?.title.map((t: any) => t.plain_text)
           .join('')}`,
-        _id: s.id,
+        id: s?.properties?.lesson_id?.rollup?.array?.at(0)?.formula?.string,
+        _id: s?.properties?.lesson_id?.rollup?.array?.at(0)?.formula?.string,
         slug: s?.properties?.lesson_slug?.rollup?.array?.at(0)?.url
           ? s?.properties?.lesson_slug.rollup?.array?.at(0)?.url
           : null,

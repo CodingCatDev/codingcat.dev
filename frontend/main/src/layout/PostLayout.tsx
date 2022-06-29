@@ -2,8 +2,8 @@ import { NextRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { useEffect, useState } from 'react';
-import { Post, PostType, SectionLesson } from '@/models/post.model';
+import { useEffect, useRef, useState } from 'react';
+import { Post, PostType } from '@/models/post.model';
 import BreakBarLeft from '@/components/home/BreakBarLeft';
 import PostMedia from '@/components/PostMedia';
 import RecentPostsList from '@/components/RecentPostsList';
@@ -16,6 +16,7 @@ import { useUser } from 'reactfire';
 import { AccessMode } from '@/models/access.model';
 import PostMediaLocked from '../components/PostMediaLocked';
 import { renderBlocks } from '@/components/notion-custom-blocks/RenderBlocks';
+import { CourseProgress } from '@/components/firebase/CourseProgress';
 
 const PostAdminButton = dynamic<any>(
   () => import('@/components/PostAdminButton'),
@@ -47,6 +48,7 @@ import 'prismjs/components/prism-jsx';
 import 'prismjs/plugins/diff-highlight/prism-diff-highlight';
 import dynamic from 'next/dynamic';
 import { isActiveLesson } from '@/utils/basics/links';
+import ReactPlayer from 'react-player/lazy';
 
 export default function PostLayout({
   post,
@@ -70,6 +72,23 @@ export default function PostLayout({
     Prism.highlightAll();
     setHref(location.href);
   }, [post]);
+
+  // Track Video Details and Pass to Progress
+  const [videoProgress, setVideoProgress] = useState(0);
+  const vidRef = useRef<ReactPlayer>(null);
+  const onStart = (progress?: any) => {
+    console.log('onStart', progress);
+    // const vid = vidRef.current;
+    // if (!vid) {
+    //   return;
+    // }
+    // //Seek to current user lesson position?
+    // vid.seekTo(0.25, 'fraction');
+  };
+  const onProgress = (progress?: { played: number }) => {
+    console.log('onProgress', progress);
+    progress && setVideoProgress(progress.played);
+  };
 
   function isLockedLesson() {
     // Only lockdown lessons
@@ -205,6 +224,18 @@ export default function PostLayout({
                             )}
                           </div>
                         </Link>
+                        {user && user.uid && (
+                          <div className="flex flex-wrap justify-between px-2 m-1">
+                            <CourseProgress
+                              user={user}
+                              courseId={course.id}
+                              sectionId={section._key}
+                              lessonId={lesson._id}
+                              videoProgress={videoProgress}
+                              currentLesson={post.id}
+                            />
+                          </div>
+                        )}
                       </li>
                     ))}
                 </ul>
@@ -280,11 +311,21 @@ export default function PostLayout({
           <section className="">
             {/* MEDIA */}
             {!isLockedLesson() ? (
-              <PostMedia post={post} />
+              <PostMedia
+                post={post}
+                vidRef={vidRef}
+                onStart={onStart}
+                onProgress={onProgress}
+              />
             ) : user && user?.uid ? (
               <>
                 <MemberValidShow user={user}>
-                  <PostMedia post={post} />
+                  <PostMedia
+                    post={post}
+                    vidRef={vidRef}
+                    onStart={onStart}
+                    onProgress={onProgress}
+                  />
                 </MemberValidShow>
                 <MemberNotValidShow user={user}>
                   <PostMediaLocked />

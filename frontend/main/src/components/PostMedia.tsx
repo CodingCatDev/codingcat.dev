@@ -5,16 +5,21 @@ import { config } from '@/config/cloudinary';
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { RefObject, useState } from 'react';
 
 export default function PostMedia({
   post,
   noImage,
+  vidRef,
+  onStart,
+  onProgress,
 }: {
   post: Post;
   noImage?: boolean;
+  vidRef: RefObject<ReactPlayer>;
+  onStart: (progress?: any) => void;
+  onProgress: (progress?: { played: number }) => void;
 }): JSX.Element {
-  const vidRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(true);
   const isYouTube = (): boolean => {
     if (post && post.coverVideo && post.coverVideo.url) {
@@ -25,57 +30,6 @@ export default function PostMedia({
     } else {
       return false;
     }
-  };
-
-  // const onProgress = (progress: {
-  //   played: number;
-  //   playedSeconds: number;
-  //   loaded: number;
-  //   loadedSeconds: number;
-  // }) => {
-  //   console.log(progress);
-  // };
-
-  const onReady = (progress?: any) => {
-    console.log('onReady', progress);
-  };
-  const onStart = (progress?: any) => {
-    console.log('onStart', progress);
-    const vid = vidRef.current;
-    if (!vid) {
-      return;
-    }
-    vid.seekTo(0.25, 'fraction');
-  };
-  const onProgress = (progress?: any) => {
-    console.log('onProgress', progress);
-  };
-  const onDuration = (progress?: any) => {
-    console.log('onDuration', progress);
-  };
-  const onPause = (progress?: any) => {
-    console.log('onPause', progress);
-  };
-  const onBuffer = (progress?: any) => {
-    console.log('onBuffer', progress);
-  };
-  const onBufferEnd = (progress?: any) => {
-    console.log('onBufferEnd', progress);
-  };
-  const onSeek = (progress?: any) => {
-    console.log('onSeek', progress);
-  };
-  const onPlaybackRateChange = (progress?: any) => {
-    console.log('onPlaybackRateChange', progress);
-  };
-  const onEnded = (progress?: any) => {
-    console.log('onEnded', progress);
-  };
-  const onError = (progress?: any) => {
-    console.log('onError', progress);
-  };
-  const onClickPreview = (progress?: any) => {
-    console.log('onClickPreview', progress);
   };
 
   return (
@@ -114,18 +68,8 @@ export default function PostMedia({
                     position: 'relative',
                   }}
                   playing={playing}
-                  onReady={onReady}
                   onStart={onStart}
                   onProgress={onProgress}
-                  onDuration={onDuration}
-                  onPause={onPause}
-                  onBuffer={onBuffer}
-                  onBufferEnd={onBufferEnd}
-                  onSeek={onSeek}
-                  onPlaybackRateChange={onPlaybackRateChange}
-                  onEnded={onEnded}
-                  onError={onError}
-                  onClickPreview={onClickPreview}
                 />
               ) : (
                 <ReactPlayer
