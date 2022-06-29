@@ -38,14 +38,6 @@ const MemberNotValidShow = dynamic<any>(
   }
 );
 
-import Prism from 'prismjs';
-
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-jsx';
-// import 'prismjs/plugins/toolbar/prism-toolbar';
-// import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
-import 'prismjs/plugins/diff-highlight/prism-diff-highlight';
 import dynamic from 'next/dynamic';
 import { isActiveLesson } from '@/utils/basics/links';
 import ReactPlayer from 'react-player/lazy';
@@ -68,27 +60,17 @@ export default function PostLayout({
   const [href, setHref] = useState('');
   const { data: user } = useUser();
 
-  useEffect(() => {
-    Prism.highlightAll();
-    setHref(location.href);
-  }, [post]);
-
   // Track Video Details and Pass to Progress
   const [videoProgress, setVideoProgress] = useState(0);
-  const vidRef = useRef<ReactPlayer>(null);
-  const onStart = (progress?: any) => {
-    console.log('onStart', progress);
-    // const vid = vidRef.current;
-    // if (!vid) {
-    //   return;
-    // }
-    // //Seek to current user lesson position?
-    // vid.seekTo(0.25, 'fraction');
-  };
-  const onProgress = (progress?: { played: number }) => {
-    console.log('onProgress', progress);
-    progress && setVideoProgress(progress.played);
-  };
+  const [playing, setPlaying] = useState(false);
+  const [currentLesson, setCurrentLesson] = useState<string | null>(null);
+  useEffect(() => {
+    setHref(location.href);
+    setPlaying(false);
+    setVideoProgress(0);
+    setCurrentLesson(post.id);
+    console.log('Reset');
+  }, [post]);
 
   function isLockedLesson() {
     // Only lockdown lessons
@@ -249,14 +231,17 @@ export default function PostLayout({
                         </Link>
                         {user && user.uid && (
                           <div className="flex flex-wrap justify-between px-2 m-1">
-                            <CourseProgress
-                              user={user}
-                              courseId={course.id}
-                              sectionId={section._key}
-                              lessonId={lesson._id}
-                              videoProgress={videoProgress}
-                              currentLesson={post.id}
-                            />
+                            {currentLesson && (
+                              <CourseProgress
+                                user={user}
+                                courseId={course.id}
+                                sectionId={section._key}
+                                lessonId={lesson._id}
+                                currentLesson={currentLesson}
+                                videoProgress={videoProgress}
+                                setVideoProgress={setVideoProgress}
+                              />
+                            )}
                           </div>
                         )}
                       </li>
@@ -336,18 +321,20 @@ export default function PostLayout({
             {!isLockedLesson() ? (
               <PostMedia
                 post={post}
-                vidRef={vidRef}
-                onStart={onStart}
-                onProgress={onProgress}
+                playing={playing}
+                setPlaying={setPlaying}
+                videoProgress={videoProgress}
+                setVideoProgress={setVideoProgress}
               />
             ) : user && user?.uid ? (
               <>
                 <MemberValidShow user={user}>
                   <PostMedia
                     post={post}
-                    vidRef={vidRef}
-                    onStart={onStart}
-                    onProgress={onProgress}
+                    playing={playing}
+                    setPlaying={setPlaying}
+                    videoProgress={videoProgress}
+                    setVideoProgress={setVideoProgress}
                   />
                 </MemberValidShow>
                 <MemberNotValidShow user={user}>

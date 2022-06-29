@@ -5,22 +5,23 @@ import { config } from '@/config/cloudinary';
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
 import Image from 'next/image';
-import { RefObject, useState } from 'react';
+import { SetStateAction } from 'react';
 
 export default function PostMedia({
   post,
   noImage,
-  vidRef,
-  onStart,
-  onProgress,
+  playing,
+  setPlaying,
+  videoProgress,
+  setVideoProgress,
 }: {
   post: Post;
   noImage?: boolean;
-  vidRef?: RefObject<ReactPlayer>;
-  onStart?: (progress?: any) => void;
-  onProgress?: (progress?: { played: number }) => void;
+  playing?: boolean;
+  setPlaying?: (value: SetStateAction<boolean>) => void;
+  videoProgress?: number;
+  setVideoProgress?: (value: SetStateAction<number>) => void;
 }): JSX.Element {
-  const [playing, setPlaying] = useState(true);
   const isYouTube = (): boolean => {
     if (post && post.coverVideo && post.coverVideo.url) {
       return post.coverVideo?.url.includes('youtu.be') ||
@@ -30,6 +31,17 @@ export default function PostMedia({
     } else {
       return false;
     }
+  };
+
+  const onReady = (player: ReactPlayer) => {
+    if (videoProgress && setPlaying) {
+      console.log('vid seek to', videoProgress);
+      player.seekTo(videoProgress, 'fraction');
+      setPlaying(true);
+    }
+  };
+  const onProgress = (progress?: { played: number }) => {
+    progress && setVideoProgress && setVideoProgress(progress.played);
   };
 
   return (
@@ -55,7 +67,6 @@ export default function PostMedia({
             <>
               {isYouTube() ? (
                 <ReactPlayer
-                  ref={vidRef}
                   className="react-player"
                   url={post.coverVideo?.url}
                   controls={true}
@@ -68,8 +79,8 @@ export default function PostMedia({
                     position: 'relative',
                   }}
                   playing={playing}
-                  onStart={onStart}
                   onProgress={onProgress}
+                  onReady={onReady}
                 />
               ) : (
                 <ReactPlayer

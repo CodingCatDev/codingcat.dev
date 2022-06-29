@@ -1,8 +1,6 @@
-import { config } from '@/config/firebase';
-import { UserInfoExtended } from '@/models/user.model';
 import { User } from 'firebase/auth';
 import { doc, DocumentReference, setDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { useFirestore, useFirestoreDocData } from 'reactfire';
 
 export const CourseProgress = ({
@@ -10,15 +8,17 @@ export const CourseProgress = ({
   courseId,
   sectionId,
   lessonId,
-  videoProgress,
   currentLesson,
+  videoProgress,
+  setVideoProgress,
 }: {
   user: User;
   courseId: string;
   sectionId: string;
   lessonId: string;
-  videoProgress: number;
   currentLesson: string;
+  videoProgress: number;
+  setVideoProgress: (value: SetStateAction<number>) => void;
 }) => {
   return (
     <>
@@ -30,6 +30,7 @@ export const CourseProgress = ({
           lessonId={lessonId}
           videoProgress={videoProgress}
           currentLesson={currentLesson}
+          setVideoProgress={setVideoProgress}
         />
       )}
     </>
@@ -43,13 +44,15 @@ const UserProgress = ({
   lessonId,
   videoProgress,
   currentLesson,
+  setVideoProgress,
 }: {
   user: User;
   courseId: string;
   sectionId: string;
   lessonId: string;
-  videoProgress: number;
   currentLesson: string;
+  videoProgress: number;
+  setVideoProgress: (value: SetStateAction<number>) => void;
 }) => {
   const firestore = useFirestore();
   const ref = doc(
@@ -76,10 +79,13 @@ const UserProgress = ({
   const [checked, setChecked] = useState(false);
 
   const handleManualChecked = () => {
+    setChecked(!checked);
+    console.log('setting manual checked', checked);
+
     setDoc(
       ref,
       {
-        manualComplete: !checked,
+        manualComplete: checked ? null : true,
       },
       { merge: true }
     );
@@ -87,30 +93,39 @@ const UserProgress = ({
 
   useEffect(() => {
     if (
+      userProgress?.videoProgress &&
+      currentLesson.replaceAll('-', '') === lessonId
+    ) {
+      setVideoProgress(videoProgress || userProgress?.videoProgress || 0);
+    }
+
+    if (
       ref &&
       videoProgress &&
       currentLesson.replaceAll('-', '') === lessonId
     ) {
+      console.log('setting doc', videoProgress);
       setDoc(
         ref,
         {
           videoProgress,
-          complete:
-            userProgress?.manualComplete ||
-            (userProgress && userProgress?.videoProgress
-              ? userProgress?.videoProgress > 0.98
-              : false),
         },
         { merge: true }
       );
+      if (userProgress?.manualComplete || videoProgress > 0.92) {
+        setChecked(true);
+        console.log('setting checked', true);
+
+        setDoc(
+          ref,
+          {
+            complete: true,
+          },
+          { merge: true }
+        );
+      }
     }
-    setChecked(
-      userProgress?.manualComplete ||
-        (userProgress && userProgress?.videoProgress
-          ? userProgress?.videoProgress > 0.98
-          : false)
-    );
-  }, [ref, videoProgress, userProgress]);
+  }, [videoProgress, currentLesson, lessonId]);
 
   return (
     <>
