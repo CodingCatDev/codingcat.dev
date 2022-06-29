@@ -186,21 +186,22 @@ export default function PostLayout({
                 <ul className="flex flex-col rounded-b rounded-tr grow bg-basics-50 dark:bg-basics-900 dark:text-primary-50 justify-items-stretch">
                   {section.lessons &&
                     section.lessons.map((lesson) => (
-                      <li key={lesson._id} className="ml-0 list-none">
+                      <li
+                        key={lesson._id}
+                        className={`list-none p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-col justify-between
+                      ${
+                        isActiveLesson(router, course, lesson)
+                          ? 'bg-primary-200'
+                          : 'bg-transparent'
+                      }
+                      `}
+                      >
                         <Link
                           href={`/course/${course.slug}/lesson/${lesson.slug}`}
                           key={lesson._id}
                           passHref
                         >
-                          <div
-                            className={`p-2 cursor-pointer hover:bg-primary-200 rounded m-1 flex flex-wrap justify-between
-                            ${
-                              isActiveLesson(router, course, lesson)
-                                ? 'bg-primary-200'
-                                : 'bg-transparent'
-                            }
-                            `}
-                          >
+                          <div>
                             <a className="no-underline border-none hover:text-primary-900">
                               {lesson.title}
                             </a>
