@@ -16,9 +16,9 @@ export default function PostMedia({
 }: {
   post: Post;
   noImage?: boolean;
-  vidRef: RefObject<ReactPlayer>;
-  onStart: (progress?: any) => void;
-  onProgress: (progress?: { played: number }) => void;
+  vidRef?: RefObject<ReactPlayer>;
+  onStart?: (progress?: any) => void;
+  onProgress?: (progress?: { played: number }) => void;
 }): JSX.Element {
   const [playing, setPlaying] = useState(true);
   const isYouTube = (): boolean => {
