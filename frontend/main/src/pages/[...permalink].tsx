@@ -3,7 +3,6 @@ import { NextSeo } from 'next-seo';
 
 import { Post, PostType } from '@/models/post.model';
 import PostLayout from '@/layout/PostLayout';
-import CourseLayout from '@/layout/CourseLayout';
 import { Site } from '@/models/site.model';
 import AJLoading from '@/components/global/icons/AJLoading';
 import Layout from '@/layout/Layout';
