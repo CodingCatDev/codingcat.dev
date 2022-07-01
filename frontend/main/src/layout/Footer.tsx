@@ -102,8 +102,8 @@ export default function Footer({
                   target="_blank"
                   rel="noreferrer noopener"
                   className={`social-links`}
-				  aria-label={sl.type}
                 >
+                  <span className="sr-only">{sl.type}</span>
                   {socialLinkPicker(sl)}
                 </a>
               ))}
