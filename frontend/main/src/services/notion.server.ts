@@ -1019,27 +1019,27 @@ export const getSite = () => {
     socialLinks: [
       {
         href: 'https://www.facebook.com/groups/codingcatdev',
-        type: 'facebook',
+        type: 'Facebook',
       },
       {
         href: 'https://github.com/CodingCatDev',
-        type: 'github',
+        type: 'GitHub',
       },
       {
         href: 'https://www.linkedin.com/company/codingcatdev/',
-        type: 'linkedin',
+        type: 'LinkedIn',
       },
       {
         href: 'https://medium.com/codingcatdev',
-        type: 'medium',
+        type: 'Medium',
       },
       {
         href: 'https://twitter.com/CodingCatDev',
-        type: 'twitter',
+        type: 'Twitter',
       },
       {
         href: 'http://youtube.com/c/codingcatdev',
-        type: 'youtube',
+        type: 'YouTube',
       },
     ],
     id: 'none',
