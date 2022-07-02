@@ -8,3 +8,5 @@
 	background-size: cover;
 	background-repeat: no-repeat;
 }
+
+.messages::-webkit-scrollbar { width: 0 !important }
