@@ -3,3 +3,5 @@
 node_modules
 lerna-debug.log
 *aws-exports.js
+# Local Netlify folder
+.netlify
