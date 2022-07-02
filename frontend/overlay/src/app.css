@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.overlay-top {
+	background-image: url(https://media.codingcat.dev/image/upload/v1656721305/main-codingcatdev-photo/overlay-top.png);
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
