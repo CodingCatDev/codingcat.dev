@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@socket-studio/preact": "1.0.0-canary.17",
+		"matter-js": "^0.18.0",
 		"next": "12.2.0",
 		"next-plugin-preact": "^3.0.7",
 		"preact": "^10.8.2",
@@ -22,6 +23,7 @@
 		"ws": "^8.8.0"
 	},
 	"devDependencies": {
+		"@types/matter-js": "^0.17.7",
 		"@types/node": "18.0.0",
 		"@types/react": "18.0.14",
 		"@types/react-dom": "18.0.5",

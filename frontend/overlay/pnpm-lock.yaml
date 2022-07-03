@@ -2,12 +2,14 @@ lockfileVersion: 5.4
 
 specifiers:
   '@socket-studio/preact': 1.0.0-canary.17
+  '@types/matter-js': ^0.17.7
   '@types/node': 18.0.0
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
   autoprefixer: ^10.4.7
   eslint: 8.19.0
   eslint-config-next: 12.2.0
+  matter-js: ^0.18.0
   next: 12.2.0
   next-plugin-preact: ^3.0.7
   postcss: ^8.4.14
@@ -24,6 +26,7 @@ specifiers:
 
 dependencies:
   '@socket-studio/preact': 1.0.0-canary.17_lbxb2cm3qxw2drexada4rys5ly
+  matter-js: 0.18.0
   next: 12.2.0_dmmjpkrptnkrz2kzqikv5vt4mi
   next-plugin-preact: 3.0.7_yvbaxxhasp347bbla5wkmpia4i
   preact: 10.8.2
@@ -36,6 +39,7 @@ dependencies:
   ws: 8.8.0
 
 devDependencies:
+  '@types/matter-js': 0.17.7
   '@types/node': 18.0.0
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
@@ -353,6 +357,10 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/matter-js/0.17.7:
+    resolution: {integrity: sha512-LHx3Kf1vY68wEgSAuQkMShfGxB9YVKtcFYqPTMAcmUCnHuvcPkfnlbveMkH8xG/s1EIYcbBVTnUNDV/CA5B2RA==}
     dev: true
 
   /@types/node/18.0.0:
@@ -1713,6 +1721,10 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /matter-js/0.18.0:
+    resolution: {integrity: sha512-/ZVem4WygUnbmo/iE4oHZpZS97btfBtYy5Iwn1396vUZU7YhgVEN8J4UWwfZwY1ZqoTYlPgjvSw9WXauuXL0mg==}
+    dev: false
 
   /merge2/1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}

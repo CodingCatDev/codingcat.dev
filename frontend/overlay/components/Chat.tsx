@@ -1,4 +1,3 @@
-import { h } from 'preact';
 import { useTwitchChat } from '@socket-studio/preact';
 import rehype from 'rehype';
 import sanitize from 'rehype-sanitize';
