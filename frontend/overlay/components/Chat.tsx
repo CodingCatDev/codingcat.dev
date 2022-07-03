@@ -21,7 +21,7 @@ function getUsernameColor(roles: string[]) {
 
 export function Chat() {
 	const { chat } = useTwitchChat('codingcatdev');
-
+	console.log(chat);
 	return (
 		<div className="text-purple-50 overflow-hidden relative">
 			<ul className="absolute bottom-0 left-0 list-none m-0 pt-0 pr-5 pb-2 pl-2">
