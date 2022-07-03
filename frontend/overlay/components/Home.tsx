@@ -87,7 +87,7 @@ export default function Home() {
 			<main className="grid grid-rows-[1fr_8px_144px] h-screen overflow-hidden">
 				<div className="overlay-top h-full w-full" />
 				<div className="w-full bg-purple-900 h-2" />
-				<div className="w-full bg-gradient-to-r to-purple-700 via-purple-500 from-pink-500 flex justify-end">
+				<div className="grid grid-cols-[400px_minmax(500px,_1fr)_140px] w-full bg-gradient-to-r to-purple-700 via-purple-500 from-pink-500">
 					<div className="flex flex-grow">
 						<div className="messages flex flex-col overflow-y-scroll max-w-xl p-1 relative">
 							{loading ? (
@@ -109,6 +109,7 @@ export default function Home() {
 							)}
 						</div>
 					</div>
+					<div></div>
 					<div className="w-36 h-36 p-2">
 						<AJPrimary className="block w-32 h-32" />
 					</div>
