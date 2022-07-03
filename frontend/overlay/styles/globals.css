@@ -9,4 +9,11 @@
 	background-repeat: no-repeat;
 }
 
-.messages::-webkit-scrollbar { width: 0 !important }
+  
+  .chat-message img {
+	display: inline-block;
+	line-height: 1;
+	vertical-align: middle;
+	width: 24px;
+  }
+  
