@@ -4,6 +4,7 @@ import { Chat } from '@/components/Chat';
 import { TagDrop } from '@/components/TagDrop';
 import LowerThird from './LowerThird';
 import Layout from './Layout';
+import CodingChat from './CodingChat';
 
 export default function Coding() {
 	const client = createSocketStudioClient('https://codingcat-twitch.onrender.com/graphql');
@@ -23,15 +24,7 @@ export default function Coding() {
 							</div>
 						</div>
 					</section>
-					<div className="grid grid-rows-[198px_1fr]">
-						<div />
-						<div className="relative overflow-hidden bg-purple-700 text-purple-50">
-							<ul className="absolute bottom-0 left-0 pt-0 pb-2 pl-2 pr-5 m-0 list-none">
-								{' '}
-								<Chat chatMessageClass="p-[1px] grid text-xs gap-1 grid-row-[1fr]" />
-							</ul>
-						</div>
-					</div>
+					<CodingChat />
 				</main>
 				<TagDrop />
 			</Layout>

@@ -1,7 +1,7 @@
 import { useTwitchChat } from '@socket-studio/preact';
 import rehype from 'rehype';
 import sanitize from 'rehype-sanitize';
-import AJHeadphonesAlt from './AJHeadphonesAlt';
+import AJHeadphones from './AJHeadphones';
 import AJHeartsLeft from './AJHeartAlt';
 import AJAlt from './AJAlt';
 
@@ -33,7 +33,7 @@ function getRoleTag(roles: string[]) {
 	if (roles.includes('MODERATOR')) {
 		return (
 			<div className="pr-1">
-				<AJHeadphonesAlt className="w-4 h-4" />
+				<AJHeadphones className="w-4 h-4" />
 			</div>
 		);
 	}

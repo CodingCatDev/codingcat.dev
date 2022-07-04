@@ -2,10 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base{
+@layer base {
 	a {
 		@apply underline;
-	  }
+	}
+}
+.code-author-1 {
+	grid-template-rows: 190px 1fr;
+}
+.code-author-2 {
+	grid-template-rows: 190px 190px 1fr;
+}
+.code-author-3 {
+	grid-template-rows: 190px 190px 1fr;
 }
 
 .overlay-top {
@@ -15,11 +24,9 @@
 	background-repeat: no-repeat;
 }
 
-  
-  .chat-message img {
+.chat-message img {
 	display: inline-block;
 	line-height: 1;
 	vertical-align: middle;
 	width: 24px;
-  }
-  
+}
