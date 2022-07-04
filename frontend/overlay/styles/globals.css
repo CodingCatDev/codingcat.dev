@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base{
+	a {
+		@apply underline;
+	  }
+}
+
 .overlay-top {
 	background-image: url(https://media.codingcat.dev/image/upload/v1656721305/main-codingcatdev-photo/overlay-top.png);
 	background-position: center;
