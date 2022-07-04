@@ -36,7 +36,7 @@ export function TagDrop() {
 			<canvas
 				ref={tagRef}
 				style={{
-					height: 562,
+					height: 568,
 					left: 0,
 					position: 'absolute',
 					top: 0,
