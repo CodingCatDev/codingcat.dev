@@ -1,12 +1,16 @@
 import { createSocketStudioClient, SocketStudioProvider } from '@socket-studio/preact';
 import AJPrimary from '@/components/AJPrimary';
 import { Chat } from '@/components/Chat';
-import { TagDrop } from '@/components/TagDrop';
-import LowerThird from './LowerThird';
-import Layout from './Layout';
+import LowerThird from '@/components/LowerThird';
+import Layout from '@/components/Layout';
+import Overlays from '@/components/Overlays';
 
 export default function Home() {
-	const client = createSocketStudioClient('https://codingcat-twitch.onrender.com/graphql');
+	const client = createSocketStudioClient(
+		process.env.NODE_ENV === 'development'
+			? 'http://localhost:9797/graphql'
+			: 'https://codingcat-twitch.onrender.com/graphql'
+	);
 	return (
 		<SocketStudioProvider client={client}>
 			<Layout>
@@ -27,7 +31,7 @@ export default function Home() {
 						</div>
 					</div>
 				</main>
-				<TagDrop />
+				<Overlays />
 			</Layout>
 		</SocketStudioProvider>
 	);

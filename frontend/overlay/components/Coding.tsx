@@ -6,6 +6,8 @@ import LowerThird from './LowerThird';
 import Layout from './Layout';
 import CodingChat from './CodingChat';
 
+console.log(process.env);
+
 export default function Coding() {
 	const client = createSocketStudioClient('https://codingcat-twitch.onrender.com/graphql');
 	return (
