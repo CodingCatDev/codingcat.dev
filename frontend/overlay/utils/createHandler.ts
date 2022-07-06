@@ -26,7 +26,7 @@ interface EffectDefinition {
 		args: string[];
 		author: Author;
 		extra: { channel: string };
-	}) => Effect;
+	}) => Effect | undefined;
 }
 
 export const createHandler = ({ req, res, name, description, handler }: EffectDefinition) => {
