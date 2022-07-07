@@ -23,7 +23,7 @@ function createTag(url: string) {
 
 	setTimeout(() => {
 		World.remove(engine.world, tag);
-	}, 30000);
+	}, 15000);
 
 	World.add(engine.world, [tag]);
 }
@@ -47,7 +47,6 @@ export function useTag() {
 		}
 
 		const render = Render.create({
-			element: document.createElement('div'),
 			canvas,
 			engine: engine,
 			options: {
@@ -65,7 +64,7 @@ export function useTag() {
 				strokeStyle: 'transparent'
 			}
 		};
-		const ground = Bodies.rectangle(width / 2, height, width + 20, 4, boundaries);
+		const ground = Bodies.rectangle(width / 2 - 180, height, width + 20, 4, boundaries);
 		const leftWall = Bodies.rectangle(0, height / 2, 4, height + 60, boundaries);
 		const rightWall = Bodies.rectangle(width, height / 2, 4, height + 60, boundaries);
 
