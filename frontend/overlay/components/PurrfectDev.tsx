@@ -3,11 +3,9 @@ import AJPrimary from '@/components/AJPrimary';
 import LowerThird from './LowerThird';
 import Layout from './Layout';
 import SideChat from './SideChat';
-
-console.log(process.env);
+import { client } from '@/utils/socketStudio';
 
 export default function Coding() {
-	const client = createSocketStudioClient('https://codingcat-twitch.onrender.com/graphql');
 	return (
 		<SocketStudioProvider client={client}>
 			<Layout>

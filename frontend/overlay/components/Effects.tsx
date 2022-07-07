@@ -3,7 +3,7 @@ import { useSoundEffect } from '@/hooks/useSoundEffect';
 import * as splitting from 'splitting';
 //TODO: remove all the any
 
-const customEffects = {};
+const customEffects: any = {};
 
 function DefaultEffectDisplay({
 	state,
@@ -54,9 +54,9 @@ export function Effects() {
 
 	const commandName: string = state.context.current.command.name;
 	let EffectDisplay = DefaultEffectDisplay;
-	// if (customEffects.hasOwnProperty(commandName)) {
-	// 	EffectDisplay = customEffects[commandName];
-	// }
+	if (customEffects.hasOwnProperty(commandName)) {
+		EffectDisplay = customEffects[commandName];
+	}
 
 	return <EffectDisplay state={state.value} effect={state.context.current} />;
 }

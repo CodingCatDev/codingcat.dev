@@ -23,7 +23,7 @@ const so = (req: NextApiRequest, res: NextApiResponse) => {
 			const twitchLink = `https://twitch.tv/${soTarget.replace('@', '')}`;
 
 			return {
-				message: `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ Please check out ${soTarget} at ${twitchLink} jlengsStreamBlitz jlengsHolyBucket jlengsBOOP ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`
+				message: `/announce Please check out ${soTarget} at ${twitchLink} coding41Ajheart`
 			};
 		}
 	});

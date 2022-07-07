@@ -1,16 +1,11 @@
-import { createSocketStudioClient, SocketStudioProvider } from '@socket-studio/preact';
+import { SocketStudioProvider } from '@socket-studio/preact';
 import AJPrimary from '@/components/AJPrimary';
 import { Chat } from '@/components/Chat';
 import LowerThird from '@/components/LowerThird';
 import Layout from '@/components/Layout';
-import Overlays from '@/components/Overlays';
+import { client } from '@/utils/socketStudio';
 
 export default function Home() {
-	const client = createSocketStudioClient(
-		process.env.NODE_ENV === 'development'
-			? 'http://localhost:9797/graphql'
-			: 'https://codingcat-twitch.onrender.com/graphql'
-	);
 	return (
 		<SocketStudioProvider client={client}>
 			<Layout>
