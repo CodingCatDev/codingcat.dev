@@ -633,6 +633,22 @@ export const queryRelationById = async (
       direction: 'descending',
     },
   ];
+  let filter: any = {
+    and: [
+      {
+        property: relation,
+        relation: {
+          contains: id,
+        },
+      },
+      {
+        property: 'published',
+        select: {
+          equals: 'published',
+        },
+      },
+    ],
+  };
 
   if (_type == PostType.podcast) {
     sorts = [
@@ -645,6 +661,34 @@ export const queryRelationById = async (
         direction: 'descending',
       },
     ];
+    filter = {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'Status',
+          select: {
+            equals: 'Released',
+          },
+        },
+        {
+          property: 'Episode',
+          number: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
+          },
+        },
+      ],
+    };
   }
   if (skipNotion) {
     return {
@@ -655,12 +699,7 @@ export const queryRelationById = async (
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     page_size: 20, // Adding this so that Algolia is used more
-    filter: {
-      property: relation,
-      relation: {
-        contains: id,
-      },
-    },
+    filter,
     sorts,
   });
   return await formatPosts(raw, _type);
