@@ -12,7 +12,7 @@ export default function Coding() {
 		<SocketStudioProvider client={client}>
 			<Layout>
 				<main className="grid grid-cols-[1fr_180px] w-full">
-					<section className="grid grid-rows-[1fr_8px_100px] h-screen overflow-hidden">
+					<section className="grid grid-rows-[1fr_8px_92px] h-screen overflow-hidden">
 						<div />
 						<div className="w-full h-2 bg-purple-900" />
 						<div className="grid grid-cols-[1fr_100px] w-full bg-gradient-to-r to-purple-700 via-purple-500 from-pink-500">
