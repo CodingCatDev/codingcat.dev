@@ -1,3 +1,4 @@
+import Overlays from './Overlays';
 import { FirebaseFirestoreProvider, FirebaseProvider } from './wrappers';
 
 const Layout = ({ children }: any) => {
@@ -5,7 +6,10 @@ const Layout = ({ children }: any) => {
 		<>
 			<FirebaseProvider>
 				<FirebaseFirestoreProvider>
-					<>{children}</>
+					<>
+						{children}
+						<Overlays />
+					</>
 				</FirebaseFirestoreProvider>
 			</FirebaseProvider>
 		</>

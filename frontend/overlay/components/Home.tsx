@@ -31,7 +31,6 @@ export default function Home() {
 						</div>
 					</div>
 				</main>
-				<Overlays />
 			</Layout>
 		</SocketStudioProvider>
 	);
