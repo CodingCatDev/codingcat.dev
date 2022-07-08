@@ -142,6 +142,76 @@
       #4b0a75 100%
     );
   }
+
+  .guests {
+    @apply bg-basics-50 rounded-md pt-6 pb-1 px-4 dark:bg-basics-900 drop-shadow-lg;
+  }
+
+  .guests a {
+    @apply border-0 border-transparent transition-all duration-200 ease-in-out;
+  }
+
+  .guests a:hover {
+    @apply border-0 border-b-2 border-solid border-secondary-600;
+  }
+
+  .guests h2,
+  .guests h3,
+  .guests h4 {
+    @apply m-0;
+  }
+
+  .guests h2 span {
+    font-family: 'Henny Penny', sans-serif;
+    line-height: 1.375;
+    background-image: linear-gradient(180deg, #bc2261 50%, #4b0a75);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .guests h3 {
+    margin-block: 0.5rem;
+  }
+
+  .picks {
+    @apply bg-basics-50 rounded-md pt-6 pb-1 px-4 dark:bg-basics-900 drop-shadow-lg;
+  }
+
+  .picks a {
+    @apply border-0 border-transparent transition-all duration-200 ease-in-out;
+  }
+
+  .picks a:hover {
+    @apply border-0 border-b-2 border-solid border-secondary-600;
+  }
+
+  .picks h2,
+  .picks h3,
+  .picks h4 {
+    @apply m-0;
+  }
+
+  .picks h2 span {
+    font-family: 'Henny Penny', sans-serif;
+    line-height: 1.375;
+    background-image: linear-gradient(180deg, #bc2261 50%, #4b0a75);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .picks h3 {
+    margin-block: 0.5rem;
+  }
+
+  .picks ul {
+    list-style: none;
+    margin-left: 1rem;
+    color: ;
+  }
+
+  .picks li:before {
+    content: '😻';
+  }
 }
 
 /* Needed for displaying correct aspect ratio */
