@@ -230,6 +230,7 @@ const formatPost = async (
     access_mode: q?.properties?.access_mode?.select?.name
       ? q?.properties?.access_mode?.select?.name
       : AccessMode.closed,
+    recordingDate: q?.properties?.['Recording Date']?.date?.start,
   };
 
   if (_type == 'framework' || _type == 'language') {
@@ -763,6 +764,41 @@ export const queryPurrfectStreamByReleased = async (
   return await formatPosts(raw, 'podcast');
 };
 
+export const queryPurrfectStreamByScheduled = async (
+  page_size?: number,
+  start_cursor?: string | null
+) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as NotionPosts;
+  }
+  let raw = await notionClient.databases.query({
+    database_id: config.purrfectStreamsDb,
+    start_cursor: start_cursor ? start_cursor : undefined,
+    page_size,
+    filter: {
+      and: [
+        {
+          property: 'Status',
+          select: {
+            equals: 'Scheduled',
+          },
+        },
+      ],
+    },
+    sorts: [
+      {
+        property: 'Recording Date',
+        direction: 'ascending',
+      },
+    ],
+  });
+
+  return await formatPosts(raw, 'podcast');
+};
+
 export const queryPurrfectStreamBySlug = async (
   _type: string,
   slug: string,
@@ -1065,7 +1101,7 @@ export const getSite = () => {
       //   type: 'facebook',
       // },
       {
-        href: 'https://github.com/CodingCatDev',
+        href: 'https://github.com/sponsors/CodingCatDev',
         type: 'github',
       },
       {
@@ -1081,7 +1117,11 @@ export const getSite = () => {
         type: 'twitter',
       },
       {
-        href: 'http://youtube.com/c/codingcatdev',
+        href: 'https://twitch.tv/codingcatdev',
+        type: 'twitch',
+      },
+      {
+        href: 'https://youtube.com/c/codingcatdev',
         type: 'youtube',
       },
     ],

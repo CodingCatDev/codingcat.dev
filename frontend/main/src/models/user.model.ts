@@ -50,3 +50,9 @@ export enum AuthIssue {
   mustsignin = 'mustsignin',
   unauthorized = 'unauthorized',
 }
+
+export interface Guest {
+  id: string;
+  name?: string;
+  twitter?: string;
+}

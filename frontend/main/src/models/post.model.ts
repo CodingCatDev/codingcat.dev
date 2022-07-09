@@ -1,5 +1,5 @@
 import { Sponsor } from './sponsor.model';
-import { Author } from '@/models/user.model';
+import { Author, Guest } from '@/models/user.model';
 import { MediaSource, MediaType } from './media.model';
 import { AccessMode } from './access.model';
 import { ListBlockChildrenResponse } from '@notionhq/client/build/src/api-endpoints';
@@ -13,6 +13,7 @@ export interface Post {
   _updatedAt?: string | number | Date;
   createdBy?: string;
   updatedBy?: string;
+  recordingDate?: string | number | Date;
 
   //Core Fields
   title: string;
@@ -42,6 +43,7 @@ export interface Post {
   coverVideo?: CoverMedia;
   sections?: Section[];
   authors?: Author[];
+  guests?: Guest[];
   authorIds?: string[]; //uid list of authors
 
   urlContent?: string; //Used for remote data

@@ -9,6 +9,7 @@ import YouTube from '@/components/global/icons/socials/YouTube';
 import { Site, SocialLink, SocialType } from '@/models/site.model';
 import Link from 'next/link';
 import Discord from '@/components/global/icons/socials/Discord';
+import Twitch from '@/components/global/icons/socials/Twitch';
 
 const socialLinks = ``;
 
@@ -37,6 +38,8 @@ export default function Footer({
         return <YouTube fill="#BC2261" />;
       case SocialType.discord:
         return <Discord fill="#BC2261" />;
+      case SocialType.twitch:
+        return <Twitch fill="#BC2261" stroke="black" strokeWidth="60" />;
     }
   }
 
