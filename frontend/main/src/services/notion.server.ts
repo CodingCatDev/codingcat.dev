@@ -230,7 +230,7 @@ const formatPost = async (
     access_mode: q?.properties?.access_mode?.select?.name
       ? q?.properties?.access_mode?.select?.name
       : AccessMode.closed,
-    recordingDate: q?.properties?.['Recording Date']?.date?.start,
+    recordingDate: q?.properties?.['Recording Date']?.date?.start || null,
   };
 
   if (_type == 'framework' || _type == 'language') {
