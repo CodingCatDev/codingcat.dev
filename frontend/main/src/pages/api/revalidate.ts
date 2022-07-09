@@ -18,7 +18,7 @@ const preview = async (
   try {
     const path = req.query?.path as string;
 
-    await res.unstable_revalidate(path);
+    await res.revalidate(path);
     return res.json({ revalidated: true });
   } catch (err) {
     // If there was an error, Next.js will continue
