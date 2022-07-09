@@ -1057,9 +1057,13 @@ export const getSite = () => {
     ],
     socialLinks: [
       {
-        href: 'https://www.facebook.com/groups/codingcatdev',
-        type: 'facebook',
+        href: 'https://discord.com/invite/vM2bagU',
+        type: 'discord',
       },
+      // {
+      //   href: 'https://www.facebook.com/groups/codingcatdev',
+      //   type: 'facebook',
+      // },
       {
         href: 'https://github.com/CodingCatDev',
         type: 'github',
@@ -1068,10 +1072,10 @@ export const getSite = () => {
         href: 'https://www.linkedin.com/company/codingcatdev/',
         type: 'linkedin',
       },
-      {
-        href: 'https://medium.com/codingcatdev',
-        type: 'medium',
-      },
+      // {
+      //   href: 'https://medium.com/codingcatdev',
+      //   type: 'medium',
+      // },
       {
         href: 'https://twitter.com/CodingCatDev',
         type: 'twitter',

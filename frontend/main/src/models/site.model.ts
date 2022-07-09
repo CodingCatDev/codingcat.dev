@@ -29,4 +29,5 @@ export enum SocialType {
   stackoverflow = 'stackoverflow',
   gitlab = 'gitlab',
   behance = 'behance',
+  discord = 'discord',
 }

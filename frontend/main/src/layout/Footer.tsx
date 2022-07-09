@@ -8,6 +8,7 @@ import Twitter from '@/components/global/icons/socials/Twitter';
 import YouTube from '@/components/global/icons/socials/YouTube';
 import { Site, SocialLink, SocialType } from '@/models/site.model';
 import Link from 'next/link';
+import Discord from '@/components/global/icons/socials/Discord';
 
 const socialLinks = ``;
 
@@ -34,6 +35,8 @@ export default function Footer({
         return <Twitter fill="#BC2261" />;
       case SocialType.youtube:
         return <YouTube fill="#BC2261" />;
+      case SocialType.discord:
+        return <Discord fill="#BC2261" />;
     }
   }
 
