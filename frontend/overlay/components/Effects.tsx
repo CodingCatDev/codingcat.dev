@@ -25,7 +25,7 @@ function DefaultEffectDisplay({
 			const htmlToSplit = `
         <div class="command-text" data-splitting>
           <span class="username">${author.username}</span>
-          <span class="text">redeemed</span>
+          <span class="text"> - </span>
           <span class="effect">${command.name}</span>
         </div>
       `;

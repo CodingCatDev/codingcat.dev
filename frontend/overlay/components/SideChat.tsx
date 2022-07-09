@@ -50,7 +50,7 @@ export default function SideChat() {
 									)}
 								</div>
 							))}
-							chat()
+							{chat()}
 						</div>
 					)}
 				</>

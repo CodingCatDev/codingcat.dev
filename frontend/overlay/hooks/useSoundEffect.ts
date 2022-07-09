@@ -184,7 +184,6 @@ const commandMachine = createMachine(
 						console.error(err);
 						reject(err);
 					};
-
 					img.src = image;
 				});
 

@@ -8,13 +8,13 @@ const behold = (req: NextApiRequest, res: NextApiResponse) => {
 	return createHandler({
 		req,
 		res,
-		name: 'yes',
-		description: 'Yes! Yes I did!',
+		name: 'omg',
+		description: 'OMG!',
 		handler: () => ({
-			audio: 'https://media.codingcat.dev/video/upload/f_mp3/main-codingcatdev-video/your-purrfect',
+			audio: 'https://media.codingcat.dev/video/upload/f_mp3/main-codingcatdev-video/omg.mp3',
 			image:
-				'https://media.codingcat.dev/video/upload/fl_lossy,q_10,c_crop,w_0.8,h_0.8,f_gif,e_loop/main-codingcatdev-video/your-purrfect.gif',
-			duration: 2
+				'https://media.codingcat.dev/video/upload/fl_lossy,q_10,c_crop,w_0.8,h_0.8,f_gif,e_loop/main-codingcatdev-video/omg.gif',
+			duration: 3
 		})
 	});
 };

@@ -87,7 +87,7 @@ export function Chat({ chatMessageClass }: { chatMessageClass: string }) {
 							{getRoleTag(message.author.roles)}
 							{message.author.username}:
 						</strong>
-						<span className="p-1 break-words" dangerouslySetInnerHTML={{ __html: text }} />
+						<span className="p-1 break-all" dangerouslySetInnerHTML={{ __html: text }} />
 					</li>
 				);
 			})}

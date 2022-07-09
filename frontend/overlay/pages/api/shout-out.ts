@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createHandler } from '@/utils/createHandler';
 const so = (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.method !== 'POST') {
+		res.status(405).send('Crazy Cat!');
+		return;
+	}
 	return createHandler({
 		req,
 		res,

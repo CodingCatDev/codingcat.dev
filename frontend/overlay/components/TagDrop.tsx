@@ -27,6 +27,13 @@ export function TagDrop() {
 					)
 				);
 			}
+			if (emote.name === 'coding41Ajheart') {
+				emote.locations.forEach(() =>
+					addTag(
+						`https://media.codingcat.dev/image/upload/q_auto,f_auto,w_90/main-codingcatdev-photo/builder_io_icons/AJ_Heart_Primary.png`
+					)
+				);
+			}
 		});
 	}, [chat.length]);
 
