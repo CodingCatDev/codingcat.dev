@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Post } from '@/models/post.model';
-import AJPrimary from '@/components/global/icons/AJPrimary';
 
 export default function ScheduleCards({
   posts,
@@ -14,16 +13,28 @@ export default function ScheduleCards({
   return (
     <>
       {posts && posts.length > 0 ? (
-        <section className="relative grid grid-cols-1 gap-4 lg:grid-cols-2 sm:gap-10">
+        <section className="relative grid grid-cols-1 gap-4 lg:grid-cols-2">
           {posts.map((post) => {
             return (
               <div
-                className="grid transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-600 grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
+                className="p-4 grid gap-2  transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-600 hover:shadow-2xl hover:scale-105 cursor-pointer bg-basics-50"
                 key={post._id}
               >
-                <Link href={`/${post._type}/${post.slug}`}>
-                  <div className="grid grid-cols-[200px_1fr] p-2">
-                    <div className="flex flex-wrap gap-1">
+                <Link href="https://twitch.tv/codingcatdev">
+                  <>
+                    <Image
+                      src={`${post?.coverPhoto?.public_id}`}
+                      alt={`Purrfect.dev hosted by Alex & Brittney with ${
+                        post?.guests && post?.guests?.length > 1
+                          ? 'guests'
+                          : 'guest'
+                      } ${post?.guests?.map((guest) => guest.name)}`}
+                      width="480"
+                      height="270"
+                      layout="responsive"
+                    />
+                    {/* Individual guest images */}
+                    {/* <div className="flex gap-2">
                       {post?.guests?.map((guest) => {
                         return (
                           <div className="w-20 h-20" key={guest.id}>
@@ -41,17 +52,26 @@ export default function ScheduleCards({
                           </div>
                         );
                       })}
-                    </div>
+                    </div> */}
                     <div className="flex flex-col gap-1">
-                      <p className="text-xl border-b-2 card-title border-b-primary-500">
+                      <time
+                        dateTime={
+                          post?.recordingDate
+                            ? new Date(post.recordingDate).toLocaleString()
+                            : ''
+                        }
+                        className="text-lg border-b-2 card-title border-b-primary-500"
+                      >
                         {post?.recordingDate
                           ? new Date(post.recordingDate).toLocaleString()
                           : ''}
-                      </p>
-                      <p className="text-2xl">{post?.title?.replace(re, '')}</p>
-                      <p className="text-lg">{post?.excerpt}</p>
+                      </time>
+                      <h2 className="bold font-sans lg:text-2xl">
+                        {post?.title?.replace(re, '')}
+                      </h2>
+                      <p className="text-lg font-thin">{post?.excerpt}</p>
                     </div>
-                  </div>
+                  </>
                 </Link>
               </div>
             );
