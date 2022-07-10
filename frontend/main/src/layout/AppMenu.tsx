@@ -134,10 +134,10 @@ export default function AppMenu({
               </ActiveLink>
               <ActiveLink
                 activeClassName="bg-primary-500 rounded-sm"
-                href="/community"
+                href="/schedule"
               >
                 <a className="p-2 links-secondary hover:bg-primary-500">
-                  Community
+                  Schedule
                 </a>
               </ActiveLink>
             </nav>
