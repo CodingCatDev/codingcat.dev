@@ -5,7 +5,7 @@ import { config } from '@/config/notion';
 import { Post, PostType } from '@/models/post.model';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { config as notionConfig } from '@/config/notion';
-import { Site } from '@/models/site.model';
+import { Site, SocialType } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
 import { NotionBlock } from '@9gustin/react-notion-render';
 import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
@@ -1094,7 +1094,7 @@ export const getSite = () => {
     socialLinks: [
       {
         href: 'https://discord.com/invite/vM2bagU',
-        type: 'discord',
+        type: SocialType.discord,
       },
       // {
       //   href: 'https://www.facebook.com/groups/codingcatdev',
@@ -1102,11 +1102,11 @@ export const getSite = () => {
       // },
       {
         href: 'https://github.com/sponsors/CodingCatDev',
-        type: 'github',
+        type: SocialType.github,
       },
       {
         href: 'https://www.linkedin.com/company/codingcatdev/',
-        type: 'LinkedIn',
+        type: SocialType.linkedin,
       },
       // {
       //   href: 'https://medium.com/codingcatdev',
@@ -1114,15 +1114,15 @@ export const getSite = () => {
       // },
       {
         href: 'https://twitter.com/CodingCatDev',
-        type: 'Twitter',
+        type: SocialType.twitter,
       },
       {
         href: 'https://twitch.tv/codingcatdev',
-        type: 'twitch',
+        type: SocialType.twitch,
       },
       {
         href: 'https://youtube.com/c/codingcatdev',
-        type: 'youtube',
+        type: SocialType.youtube,
       },
     ],
     id: 'none',
