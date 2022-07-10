@@ -13,11 +13,11 @@ export default function ScheduleCards({
   return (
     <>
       {posts && posts.length > 0 ? (
-        <section className="relative grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section className="relative grid grid-cols-1 gap-4 lg:grid-cols-2 sm:gap-10">
           {posts.map((post) => {
             return (
               <div
-                className="p-4 grid gap-2  transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-600 hover:shadow-2xl hover:scale-105 cursor-pointer bg-basics-50"
+                className="grid transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-600 grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
                 key={post._id}
               >
                 <Link href="https://twitch.tv/codingcatdev">
@@ -54,22 +54,13 @@ export default function ScheduleCards({
                       })}
                     </div> */}
                     <div className="flex flex-col gap-1">
-                      <time
-                        dateTime={
-                          post?.recordingDate
-                            ? new Date(post.recordingDate).toLocaleString()
-                            : ''
-                        }
-                        className="text-lg border-b-2 card-title border-b-primary-500"
-                      >
+                      <p className="text-xl border-b-2 card-title border-b-primary-500">
                         {post?.recordingDate
                           ? new Date(post.recordingDate).toLocaleString()
                           : ''}
-                      </time>
-                      <h2 className="bold font-sans lg:text-2xl">
-                        {post?.title?.replace(re, '')}
-                      </h2>
-                      <p className="text-lg font-thin">{post?.excerpt}</p>
+                      </p>
+                      <p className="text-2xl">{post?.title?.replace(re, '')}</p>
+                      <p className="text-lg">{post?.excerpt}</p>
                     </div>
                   </>
                 </Link>
