@@ -1,7 +1,6 @@
 import ActiveLink from '@/components/ActiveLink';
 import Blog from '@/components/global/icons/nav/Blog';
 import Courses from '@/components/global/icons/nav/Courses';
-import Community from '@/components/global/icons/nav/Community';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
 import Schedule from '@/components/global/icons/nav/Schedule';
