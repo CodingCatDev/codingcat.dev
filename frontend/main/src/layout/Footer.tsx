@@ -109,6 +109,7 @@ export default function Footer({
                   rel="noreferrer noopener"
                   className={`social-links`}
                 >
+                  <span className="sr-only">{sl.type}</span>
                   {socialLinkPicker(sl)}
                 </a>
               ))}
