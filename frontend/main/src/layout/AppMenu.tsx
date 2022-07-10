@@ -2,7 +2,7 @@ import ActiveLink from '@/components/ActiveLink';
 import TitleLogo from '@/components/global/logos/TitleLogo';
 import OutsideClick from '@/components/OutsideClick';
 import dynamic from 'next/dynamic';
-import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import { Dispatch, LegacyRef, SetStateAction, useEffect, useRef } from 'react';
 import { useSigninCheck } from 'reactfire';
 
 const AvatarMenu = dynamic<any>(() => import('@/components/user/AvatarMenu'), {
@@ -28,6 +28,31 @@ export default function AppMenu({
       focusme.current.focus();
     }
   }, [overlayMenuActive]);
+
+  const Link = ({
+    href,
+    comparison,
+    name,
+    ref,
+  }: {
+    href: string;
+    comparison: string;
+    name: string;
+    ref?: LegacyRef<HTMLAnchorElement> | undefined;
+  }) => {
+    return (
+      <ActiveLink
+        activeClassName="bg-primary-500 rounded-sm"
+        href={href}
+        comparison={comparison}
+      >
+        <a className="p-2 links-secondary hover:bg-primary-500" ref={focusme}>
+          <span className="sr-only">{`${name}`}</span>
+          {name}
+        </a>
+      </ActiveLink>
+    );
+  };
 
   return (
     <div
@@ -95,51 +120,16 @@ export default function AppMenu({
               className="grid content-start h-full gap-4 p-4 bg-primary-900 dark:bg-primary-900"
               aria-label="Sidebar"
             >
-              <ActiveLink
-                activeClassName="bg-primary-500 rounded-sm"
+              <Link
                 href="/courses"
                 comparison="/course"
-              >
-                <a
-                  className="p-2 links-secondary hover:bg-primary-500"
-                  ref={focusme}
-                >
-                  Courses
-                </a>
-              </ActiveLink>
-              <ActiveLink
-                activeClassName="bg-primary-500 rounded-sm"
-                href="/tutorials"
-                comparison="/tutorial"
-              >
-                <a className="p-2 links-secondary hover:bg-primary-500">
-                  Tutorials
-                </a>
-              </ActiveLink>
-              <ActiveLink
-                activeClassName="bg-primary-500 rounded-sm"
-                href="/blog"
-                comparison="/post"
-              >
-                <a className="p-2 links-secondary hover:bg-primary-500">Blog</a>
-              </ActiveLink>
-              <ActiveLink
-                activeClassName="bg-primary-500 rounded-sm"
-                href="/podcasts"
-                comparison="/podcast"
-              >
-                <a className="p-2 links-secondary hover:bg-primary-500">
-                  Podcasts
-                </a>
-              </ActiveLink>
-              <ActiveLink
-                activeClassName="bg-primary-500 rounded-sm"
-                href="/schedule"
-              >
-                <a className="p-2 links-secondary hover:bg-primary-500">
-                  Schedule
-                </a>
-              </ActiveLink>
+                name="Courses"
+                ref={focusme}
+              />
+              <Link href="/tutorials" comparison="/tutorial" name="Tutorials" />
+              <Link href="/blog" comparison="/post" name="Blog" />
+              <Link href="/podcasts" comparison="/podcast" name="Podcasts" />
+              <Link href="/schedule" comparison="/schedule" name="Schedule" />
             </nav>
             <section className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">
               <OutsideClick toggle={setUserMenu} value={false}>
