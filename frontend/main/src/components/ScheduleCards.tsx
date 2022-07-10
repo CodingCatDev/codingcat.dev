@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Post } from '@/models/post.model';
-import AJPrimary from '@/components/global/icons/AJPrimary';
 
 export default function ScheduleCards({
   posts,
@@ -23,7 +22,19 @@ export default function ScheduleCards({
               >
                 <Link href="https://twitch.tv/codingcatdev">
                   <>
-                    <div className="flex gap-2">
+                    <Image
+                      src={`${post?.coverPhoto?.public_id}`}
+                      alt={`Purrfect.dev hosted by Alex & Brittney with ${
+                        post?.guests && post?.guests?.length > 1
+                          ? 'guests'
+                          : 'guest'
+                      } ${post?.guests?.map((guest) => guest.name)}`}
+                      width="480"
+                      height="270"
+                      layout="responsive"
+                    />
+                    {/* Individual guest images */}
+                    {/* <div className="flex gap-2">
                       {post?.guests?.map((guest) => {
                         return (
                           <div className="w-20 h-20" key={guest.id}>
@@ -41,7 +52,7 @@ export default function ScheduleCards({
                           </div>
                         );
                       })}
-                    </div>
+                    </div> */}
                     <div className="flex flex-col gap-1">
                       <time
                         dateTime={
