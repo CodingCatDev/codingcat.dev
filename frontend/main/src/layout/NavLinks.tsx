@@ -4,6 +4,7 @@ import Courses from '@/components/global/icons/nav/Courses';
 import Community from '@/components/global/icons/nav/Community';
 import Podcasts from '@/components/global/icons/nav/Podcasts';
 import Tutorials from '@/components/global/icons/nav/Tutorials';
+import Schedule from '@/components/global/icons/nav/Schedule';
 
 const navLinks = `grid place-items-center links-secondary`;
 
@@ -29,17 +30,16 @@ const NavLinks = () => {
             Podcasts
           </a>
         </ActiveLink>
+        <ActiveLink activeClassName="" href="/schedule">
+          <a className={`${navLinks} nav-links`}>
+            <Schedule fill="#BC2261" />
+            Schedule
+          </a>
+        </ActiveLink>
         <ActiveLink activeClassName="" href="/blog">
           <a className={`${navLinks} nav-links`}>
             <Blog />
             Blog
-          </a>
-        </ActiveLink>
-
-        <ActiveLink activeClassName="" href="/community">
-          <a className={`${navLinks} nav-links`}>
-            <Community />
-            Community
           </a>
         </ActiveLink>
       </div>

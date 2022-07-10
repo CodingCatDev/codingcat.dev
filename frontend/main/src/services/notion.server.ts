@@ -230,6 +230,7 @@ const formatPost = async (
     access_mode: q?.properties?.access_mode?.select?.name
       ? q?.properties?.access_mode?.select?.name
       : AccessMode.closed,
+    recordingDate: q?.properties?.['Recording Date']?.date?.start || null,
   };
 
   if (_type == 'framework' || _type == 'language') {
@@ -633,6 +634,22 @@ export const queryRelationById = async (
       direction: 'descending',
     },
   ];
+  let filter: any = {
+    and: [
+      {
+        property: relation,
+        relation: {
+          contains: id,
+        },
+      },
+      {
+        property: 'published',
+        select: {
+          equals: 'published',
+        },
+      },
+    ],
+  };
 
   if (_type == PostType.podcast) {
     sorts = [
@@ -645,6 +662,34 @@ export const queryRelationById = async (
         direction: 'descending',
       },
     ];
+    filter = {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'Status',
+          select: {
+            equals: 'Released',
+          },
+        },
+        {
+          property: 'Episode',
+          number: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
+          },
+        },
+      ],
+    };
   }
   if (skipNotion) {
     return {
@@ -655,12 +700,7 @@ export const queryRelationById = async (
   let raw = await notionClient.databases.query({
     database_id: getNotionDbByType(_type),
     page_size: 20, // Adding this so that Algolia is used more
-    filter: {
-      property: relation,
-      relation: {
-        contains: id,
-      },
-    },
+    filter,
     sorts,
   });
   return await formatPosts(raw, _type);
@@ -721,6 +761,41 @@ export const queryPurrfectStreamByReleased = async (
       },
     ],
   });
+  return await formatPosts(raw, 'podcast');
+};
+
+export const queryPurrfectStreamByScheduled = async (
+  page_size?: number,
+  start_cursor?: string | null
+) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as NotionPosts;
+  }
+  let raw = await notionClient.databases.query({
+    database_id: config.purrfectStreamsDb,
+    start_cursor: start_cursor ? start_cursor : undefined,
+    page_size,
+    filter: {
+      and: [
+        {
+          property: 'Status',
+          select: {
+            equals: 'Scheduled',
+          },
+        },
+      ],
+    },
+    sorts: [
+      {
+        property: 'Recording Date',
+        direction: 'ascending',
+      },
+    ],
+  });
+
   return await formatPosts(raw, 'podcast');
 };
 
@@ -1018,28 +1093,36 @@ export const getSite = () => {
     ],
     socialLinks: [
       {
-        href: 'https://www.facebook.com/groups/codingcatdev',
-        type: 'Facebook',
+        href: 'https://discord.com/invite/vM2bagU',
+        type: 'discord',
       },
+      // {
+      //   href: 'https://www.facebook.com/groups/codingcatdev',
+      //   type: 'facebook',
+      // },
       {
-        href: 'https://github.com/CodingCatDev',
-        type: 'GitHub',
+        href: 'https://github.com/sponsors/CodingCatDev',
+        type: 'github',
       },
       {
         href: 'https://www.linkedin.com/company/codingcatdev/',
         type: 'LinkedIn',
       },
-      {
-        href: 'https://medium.com/codingcatdev',
-        type: 'Medium',
-      },
+      // {
+      //   href: 'https://medium.com/codingcatdev',
+      //   type: 'medium',
+      // },
       {
         href: 'https://twitter.com/CodingCatDev',
         type: 'Twitter',
       },
       {
-        href: 'http://youtube.com/c/codingcatdev',
-        type: 'YouTube',
+        href: 'https://twitch.tv/codingcatdev',
+        type: 'twitch',
+      },
+      {
+        href: 'https://youtube.com/c/codingcatdev',
+        type: 'youtube',
       },
     ],
     id: 'none',

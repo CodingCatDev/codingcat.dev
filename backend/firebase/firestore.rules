@@ -114,6 +114,10 @@ service cloud.firestore {
           allow read: if true;
         }
       }
+      //For Overlay Level
+      match /overlays/{userId} {
+        allow read: if true;
+      }
     }
 
     function isAlex(){

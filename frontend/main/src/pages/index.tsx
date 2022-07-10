@@ -85,7 +85,7 @@ const Home = ({
           <BreakBarLeft>
             <Skills />
           </BreakBarLeft>
-          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
             <h2 className="mt-4 text-4xl light:text-primary-900 lg:text-5xl">
               Latest Courses
             </h2>
@@ -106,7 +106,7 @@ const Home = ({
             </h3>
             <KCAlt className="w-14 sm:w-14 md:w-20" />
           </BreakBarRight>
-          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
             <h2 className="mt-4 text-4xl text-right light:text-primary-900 lg:text-5xl">
               Latest Tutorials
             </h2>
@@ -128,7 +128,7 @@ const Home = ({
               </h3>
             </div>
           </BreakBarLeft>
-          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
             <h2 className="mt-4 text-4xl light:text-primary-900 lg:text-5xl">
               Blog Posts
             </h2>
@@ -150,7 +150,7 @@ const Home = ({
               <Podcasts className="w-16 sm:w-16 md:w-20" />
             </div>
           </BreakBarRight>
-          <section className="grid w-full gap-10 px-4 mx-auto xl:px-10">
+          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
             <h2 className="mt-4 text-4xl text-right light:text-primary-900 lg:text-5xl">
               Latest Podcasts
             </h2>
