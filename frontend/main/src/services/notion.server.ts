@@ -796,7 +796,13 @@ export const queryPurrfectStreamByScheduled = async (
     ],
   });
 
-  return await formatPosts(raw, 'podcast');
+  // If scheduled and not missing cover
+  const ready = {
+    ...raw,
+    results: raw.results.filter((p: any) => p?.cover),
+  };
+
+  return await formatPosts(ready, 'podcast');
 };
 
 export const queryPurrfectStreamBySlug = async (

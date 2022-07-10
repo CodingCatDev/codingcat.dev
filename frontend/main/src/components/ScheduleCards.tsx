@@ -17,10 +17,14 @@ export default function ScheduleCards({
           {posts.map((post) => {
             return (
               <div
-                className="p-4 grid gap-2  transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-600 hover:shadow-2xl hover:scale-105 cursor-pointer bg-basics-50"
+                className="grid gap-2 p-4 transition-all rounded-md shadow-lg cursor-pointer dark:text-primary-50 dark:bg-basics-600 hover:shadow-2xl hover:scale-105 bg-basics-50"
                 key={post._id}
               >
-                <Link href="https://twitch.tv/codingcatdev">
+                <a
+                  href="https://twitch.tv/codingcatdev"
+                  target="blank"
+                  rel="noopener noreferrer"
+                >
                   <>
                     <Image
                       src={`${post?.coverPhoto?.public_id}`}
@@ -66,13 +70,13 @@ export default function ScheduleCards({
                           ? new Date(post.recordingDate).toLocaleString()
                           : ''}
                       </time>
-                      <h2 className="bold font-sans lg:text-2xl">
+                      <h2 className="font-sans bold lg:text-2xl">
                         {post?.title?.replace(re, '')}
                       </h2>
                       <p className="text-lg font-thin">{post?.excerpt}</p>
                     </div>
                   </>
-                </Link>
+                </a>
               </div>
             );
           })}
