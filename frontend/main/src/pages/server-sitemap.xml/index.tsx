@@ -13,14 +13,14 @@ const url = `${process.env.SITE_URL || 'https://codingcat.dev'}`;
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const fields: ISitemapField[] = [];
   for (const type of [
+    PostType.podcast,
+    PostType.course,
     PostType.post,
     PostType.tutorial,
-    PostType.podcast,
     PostType.page,
-    PostType.course,
   ]) {
     let docData;
-    if (type == PostType.podcast) {
+    if (type !== PostType.podcast) {
       docData = await (await queryByPublished(type, 10000)).results;
     } else {
       docData = await (await queryPurrfectStreamByReleased(10000)).results;
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         loc: `${url}/${doc._type}/${doc.slug}`,
         changefreq: 'daily',
         priority: 0.7,
-        lastmod: new Date().toISOString(),
+        lastmod: (doc?._updatedAt as string) || new Date().toISOString(),
       });
     }
   }
