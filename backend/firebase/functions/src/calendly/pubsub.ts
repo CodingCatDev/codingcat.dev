@@ -6,7 +6,7 @@ import {
   queryPurrfectPageByCalendarId,
 } from './../utilities/notion.server';
 
-import { getEvent, listEventInvitees } from './../utilities/calendly';
+import { getEvent, listEventInvitees, ccd } from './../utilities/calendly';
 import { utcOffset } from '../utilities/date';
 import { log, LogSeverity } from '../utilities/logging';
 import { WebhookPayload } from '../models/calendly';
@@ -23,6 +23,7 @@ export const calendlyCreateNotionCardPubSub = functions.pubsub
       JSON.stringify(message.json)
     );
     const eventUuid = webhookPayload?.payload?.event?.uuid;
+    const eventType = webhookPayload?.payload?.event_type?.uuid;
 
     try {
       const calendarIds = await queryPurrfectPageByCalendarId(eventUuid);
@@ -79,6 +80,16 @@ export const calendlyCreateNotionCardPubSub = functions.pubsub
         guestIds: [guestId],
         recordingDate: utcOffset(calendlyEvent.resource.start_time),
         calendarid: webhookPayload?.payload?.event?.uuid,
+        Stream: {
+          select: {
+            id:
+              eventType === ccd
+                ? 'd73f1782-28b1-4b49-9ff8-517e27dabd7a'
+                : '15d98593-82e7-48a7-85a0-a753918d92d5',
+            name: eventType === ccd ? 'CodingCat.dev' : 'Purrfect.dev',
+            color: eventType === ccd ? 'purple' : 'pink',
+          },
+        },
       };
       log(
         LogSeverity.DEBUG,

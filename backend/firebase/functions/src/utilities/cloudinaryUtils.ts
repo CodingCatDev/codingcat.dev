@@ -1,19 +1,87 @@
 import cloudinary from './cloudinary';
-
-export const generateCodingCatCoverURL = async ({
+export const generateCodeWithCodingCatCoverURL = async ({
   title,
   slug,
   guestName,
   guestImagePublicId,
-  backgroundPath,
+  folder,
 }: {
   title: string;
   slug: string;
   guestName: string;
   guestImagePublicId: string;
-  backgroundPath: string;
+  folder: string;
 }) => {
-  const url = cloudinary.url(backgroundPath, {
+  const url = cloudinary.url(`${folder}/Code_with_Coding_Cat_Empty_Title`, {
+    quality: 'auto',
+    fetch_format: 'jpg',
+    transformation: [
+      {
+        width: 990,
+        color: '#FBFBFB',
+        y: '550',
+        x: '75',
+        crop: 'fit',
+        gravity: 'north_west',
+        overlay: {
+          text: title,
+          font_family: 'Nunito',
+          font_size: 120,
+          font_weight: 'black',
+          line_spacing: '-10',
+        },
+      },
+      {
+        color: '#FBFBFB',
+        y: '10',
+        x: '0',
+        crop: 'fit',
+        gravity: 'north',
+        background: '#D11663',
+        radius: '8:50',
+        border: '30px_solid_rgb:D11663',
+        overlay: {
+          font_family: 'Nunito',
+          font_size: 65,
+          text: guestName,
+          font_weight: 'bold',
+          text_align: 'left',
+        },
+      },
+      {
+        overlay: guestImagePublicId.split('/').join(':'),
+        height: '250',
+        width: '250',
+        y: '180',
+        x: '0',
+        gravity: 'north',
+        crop: 'fill',
+        border: '5px_solid_rgb:FBFBFB',
+      },
+    ],
+  });
+
+  //Write real image with new name
+  const res = await cloudinary.uploader.upload(url, {
+    public_id: slug,
+  });
+  return res.secure_url;
+};
+
+export const generatePurrfectDevCoverURL = async ({
+  title,
+  slug,
+  guestName,
+  guestImagePublicId,
+  folder,
+}: {
+  title: string;
+  slug: string;
+  guestName: string;
+  guestImagePublicId: string;
+  folder: string;
+}) => {
+  const url = cloudinary.url(`${folder}/Season2Background`, {
     quality: 'auto',
     fetch_format: 'jpg',
     transformation: [
@@ -34,19 +102,6 @@ export const generateCodingCatCoverURL = async ({
           font_weight: 'black',
           line_spacing: '-10',
           text_align: 'center',
-        },
-      },
-      {
-        color: '#FBFBFB',
-        y: '577',
-        x: '45',
-        crop: 'limit',
-        gravity: 'south_west',
-        overlay: {
-          font_family: 'Nunito',
-          font_weight: 'bold',
-          font_size: 60,
-          text: 'With',
         },
       },
       {

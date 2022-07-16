@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import {
-  generateCodingCatCoverURL,
+  generateCodeWithCodingCatCoverURL,
+  generatePurrfectDevCoverURL,
   uploadCloudinaryFromUrl,
 } from '../utilities/cloudinaryUtils';
 import { projectId } from '../config/config';
@@ -87,13 +88,16 @@ export const cloudinaryToNotionPubSub = functions.pubsub
           slug: `${cloudinaryFolder}/${slug}`,
           guestName: guestRes.properties.Name.title[0].plain_text,
           guestImagePublicId: res.public_id,
-          backgroundPath: `${cloudinaryFolder}/Season2Background`,
+          folder: `${cloudinaryFolder}`,
         };
         console.log('generating cloudinary url with: ', JSON.stringify(param));
-        const coverUrl = (await generateCodingCatCoverURL(param)).replace(
-          'http://',
-          'https://'
-        );
+
+        const coverUrl = (
+          page?.properties?.Stream?.select?.id ===
+          'd73f1782-28b1-4b49-9ff8-517e27dabd7a'
+            ? await generateCodeWithCodingCatCoverURL(param)
+            : await generatePurrfectDevCoverURL(param)
+        ).replace('http://', 'https://');
         console.log('coverURL', coverUrl);
         const update = {
           page_id: page.id,

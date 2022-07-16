@@ -2,6 +2,10 @@ import fetch from 'node-fetch';
 import { calendlyAccessToken } from '../config/config';
 const calendlyApi = `https://api.calendly.com`;
 
+export const ccd = `e3f45196-30ad-4597-9e7d-6b4ae147ca00`;
+export const purrfect = `c4e6fdd3-768a-4157-846e-41b4ef5fae9d`;
+// const sirens = `1d4ddcce-8fac-4dfa-805b-88f3be093990`;
+
 export const call = async (path: string) => {
   const url = `${calendlyApi}${path}`;
   console.log('Calling', url);
