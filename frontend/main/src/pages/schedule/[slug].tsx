@@ -11,6 +11,8 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import ScheduleUpper from '@/components/ScheduleUpper';
 import ScheduleCard from '@/components/ScheduleCard';
 import DefaultErrorPage from 'next/error';
+import AJLoading from '@/components/global/icons/AJLoading';
+import { useRouter } from 'next/router';
 
 interface StaticParams {
   site: Site;
@@ -70,6 +72,17 @@ export default function SchedulePage({
   site,
   post,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const router = useRouter();
+  if (router.isFallback) {
+    return (
+      <Layout site={site}>
+        <section className="max-w-md p-10 mx-auto">
+          <h1>Loading...</h1>
+          <AJLoading className="w-full h-auto" />
+        </section>
+      </Layout>
+    );
+  }
   if (!post) {
     return (
       <Layout site={site}>
