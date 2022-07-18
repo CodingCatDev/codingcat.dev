@@ -78,18 +78,18 @@ export default function SchedulePage({
     );
   }
   let re = /(\w+).null - /;
-
+  const title = post?.title?.replace(re, '');
   return (
     <>
       <NextSeo
-        title={post?.title?.replace(re, '')}
+        title={title}
         description={post?.excerpt}
         canonical={`https://codingcat.dev/schedule/${post.slug}`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
           url: `https://codingcat.dev/schedule/${post.slug}`,
-          title: post?.title?.replace(re, ''),
+          title,
           description: post?.excerpt,
           site_name: 'CodingCatDev',
           images: [
@@ -97,11 +97,11 @@ export default function SchedulePage({
               url: `https://media.codingcat.dev/image/upload/f_png,c_fit,w_1200,h_630${post?.coverPhoto?.public_id}`,
               width: 1200,
               height: 630,
-              alt: post?.title,
+              alt: title || 'Call AJ',
             },
             {
               url: `https://media.codingcat.dev/image/upload/f_png${post?.coverPhoto?.public_id}`,
-              alt: post?.title,
+              alt: title || 'Call AJ',
             },
           ],
         }}
