@@ -775,32 +775,38 @@ export const queryPurrfectStreamByScheduled = async (
       results: [],
     } as unknown as NotionPosts;
   }
-  let filter: any = {
-    and: [
-      {
-        property: 'Status',
-        select: {
-          equals: 'Scheduled',
-        },
-      },
-      {
-        property: 'slug',
-        url: {
-          is_not_empty: true,
-        },
-      },
-    ],
-  };
+  let filter: any;
 
   if (slug) {
     filter = {
       and: [
-        ...filter.and,
-
+        {
+          property: 'Status',
+          select: {
+            equals: 'Scheduled',
+          },
+        },
         {
           property: 'slug',
           url: {
             contains: slug,
+          },
+        },
+      ],
+    };
+  } else {
+    filter = {
+      and: [
+        {
+          property: 'Status',
+          select: {
+            equals: 'Scheduled',
+          },
+        },
+        {
+          property: 'slug',
+          url: {
+            is_not_empty: true,
           },
         },
       ],
