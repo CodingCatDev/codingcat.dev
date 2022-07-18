@@ -10,6 +10,7 @@ import { Post, PostType } from '@/models/post.model';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import ScheduleUpper from '@/components/ScheduleUpper';
 import ScheduleCard from '@/components/ScheduleCard';
+import DefaultErrorPage from 'next/error';
 
 interface StaticParams {
   site: Site;
@@ -47,14 +48,10 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
     };
   }
   const site = getSite();
-  const scheduled = await queryPurrfectStreamByScheduled(
-    undefined,
-    undefined,
-    slug
-  );
-  const post = scheduled?.results?.at(0) || null;
+  const scheduled = await queryPurrfectStreamByScheduled(1, undefined, slug);
+  const post = scheduled?.results?.at(0);
 
-  if (!post) {
+  if (!post || !scheduled?.results?.length) {
     console.log('Schedule not found');
     return {
       notFound: true,
@@ -69,10 +66,17 @@ export const getStaticProps: GetStaticProps<StaticParams> = async ({
   };
 };
 
-export default function AuthorPage({
+export default function SchedulePage({
   site,
   post,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  if (!post) {
+    return (
+      <Layout site={site}>
+        <DefaultErrorPage statusCode={404} />
+      </Layout>
+    );
+  }
   return (
     <>
       <NextSeo

@@ -7,7 +7,6 @@ export default function ScheduleCards({
 }: {
   posts: Post[];
 }): JSX.Element {
-  console.log(posts);
   let re = /(\w+).null - /;
 
   return (

@@ -69,7 +69,6 @@ export default function PostLayout({
     setPlaying(false);
     setVideoProgress(0);
     setCurrentLesson(post.id);
-    console.log('Reset');
   }, [post]);
 
   function isLockedLesson() {

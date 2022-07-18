@@ -33,7 +33,6 @@ export async function getStaticProps({
       }
     }
   }
-  console.log('length', notionPosts?.results?.length);
   if (!notionPosts?.results?.length) {
     return {
       notFound: true,
@@ -55,7 +54,6 @@ export async function getStaticPaths() {
   const paths = sliceIntoChunks(raw.results, 20).map((_chunk, index) => ({
     params: { pageNumber: `${index + 1}` },
   }));
-  console.log('paths', paths);
   return {
     paths,
     fallback: 'blocking',

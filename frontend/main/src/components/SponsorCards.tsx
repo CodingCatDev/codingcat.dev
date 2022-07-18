@@ -6,7 +6,6 @@ export default function SponsorCards({
 }: {
   sponsors: Sponsor[];
 }): JSX.Element {
-  console.log('sponsors', sponsors);
   return (
     <div className="flex">
       <div className="rounded-md bg-basics-50 dark:bg-primary-800">

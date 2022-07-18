@@ -34,7 +34,6 @@ export async function getStaticProps({
       }
     }
   }
-  console.log('length', notionPosts?.results?.length);
   if (!notionPosts?.results?.length) {
     return {
       notFound: true,

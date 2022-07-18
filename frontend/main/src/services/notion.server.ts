@@ -812,7 +812,6 @@ export const queryPurrfectStreamByScheduled = async (
       ],
     };
   }
-  console.log(filter);
   let raw = await notionClient.databases.query({
     database_id: config.purrfectStreamsDb,
     start_cursor: start_cursor ? start_cursor : undefined,
