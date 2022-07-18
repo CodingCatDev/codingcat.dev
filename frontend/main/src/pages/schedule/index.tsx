@@ -74,14 +74,7 @@ const Podcasts = ({
           site_name: 'CodingCat.dev',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/f_png,c_thumb,w_1200,h_630/main-codingcatdev-photo/Schedule.png',
-
-              width: 1200,
-              height: 630,
-              alt: 'AJ Logo Black Cat Face with Purrfect.dev Domain',
-            },
-            {
-              url: 'https://media.codingcat.dev/image/upload/f_png/main-codingcatdev-photo/Schedule.png',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/Schedule.png',
             },
           ],
         }}

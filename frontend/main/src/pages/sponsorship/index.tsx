@@ -71,13 +71,7 @@ export default function Sponsorship({
           site_name: 'Purrfect.dev',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/f_png,c_thumb,w_1200,h_630/main-codingcatdev-photo/purrfect.dev.png',
-              width: 1200,
-              height: 630,
-              alt: 'AJ Logo Black Cat Face with Purrfect.dev Domain',
-            },
-            {
-              url: 'https://media.codingcat.dev/image/upload/f_png/main-codingcatdev-photo/purrfect.dev.png',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/purrfect.dev',
             },
           ],
         }}
@@ -108,7 +102,7 @@ export default function Sponsorship({
 
           <div ref={form} className="bg-white rounded">
             <iframe
-              className="border-none w-full"
+              className="w-full border-none"
               height="720px"
               src="https://notionforms.io/forms/sponsor-submissions"
             ></iframe>
