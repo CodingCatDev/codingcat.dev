@@ -766,7 +766,8 @@ export const queryPurrfectStreamByReleased = async (
 
 export const queryPurrfectStreamByScheduled = async (
   page_size?: number,
-  start_cursor?: string | null
+  start_cursor?: string | null,
+  slug?: string
 ) => {
   if (skipNotion) {
     return {
@@ -774,20 +775,43 @@ export const queryPurrfectStreamByScheduled = async (
       results: [],
     } as unknown as NotionPosts;
   }
+  let filter: any = {
+    and: [
+      {
+        property: 'Status',
+        select: {
+          equals: 'Scheduled',
+        },
+      },
+      {
+        property: 'slug',
+        url: {
+          is_not_empty: true,
+        },
+      },
+    ],
+  };
+
+  if (slug) {
+    filter = {
+      and: [
+        ...filter.and,
+
+        {
+          property: 'slug',
+          url: {
+            contains: slug,
+          },
+        },
+      ],
+    };
+  }
+  console.log(filter);
   let raw = await notionClient.databases.query({
     database_id: config.purrfectStreamsDb,
     start_cursor: start_cursor ? start_cursor : undefined,
     page_size,
-    filter: {
-      and: [
-        {
-          property: 'Status',
-          select: {
-            equals: 'Scheduled',
-          },
-        },
-      ],
-    },
+    filter,
     sorts: [
       {
         property: 'Recording Date',
