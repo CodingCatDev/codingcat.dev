@@ -1,18 +1,14 @@
 import {
   getSite,
-  queryPurrfectStreamBySlug,
   queryPurrfectStreamByScheduled,
 } from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layout/Layout';
 import { Site } from '@/models/site.model';
-import { Post, PostType } from '@/models/post.model';
+import { Post } from '@/models/post.model';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import ScheduleUpper from '@/components/ScheduleUpper';
 import ScheduleCard from '@/components/ScheduleCard';
-import DefaultErrorPage from 'next/error';
-import AJLoading from '@/components/global/icons/AJLoading';
-import { useRouter } from 'next/router';
 
 interface StaticParams {
   site: Site;
@@ -33,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
   return {
     paths,
-    fallback: true,
+    fallback: 'blocking',
   };
 };
 
@@ -72,24 +68,6 @@ export default function SchedulePage({
   site,
   post,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const router = useRouter();
-  if (router.isFallback) {
-    return (
-      <Layout site={site}>
-        <section className="max-w-md p-10 mx-auto">
-          <h1>Loading...</h1>
-          <AJLoading className="w-full h-auto" />
-        </section>
-      </Layout>
-    );
-  }
-  if (!post) {
-    return (
-      <Layout site={site}>
-        <DefaultErrorPage statusCode={404} />
-      </Layout>
-    );
-  }
   let re = /(\w+).null - /;
   const title = post?.title?.replace(re, '');
   return (
