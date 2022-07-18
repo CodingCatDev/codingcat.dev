@@ -334,6 +334,7 @@ const formatPost = async (
             q?.properties?.cover?.url
           : null,
       },
+      email: null,
       slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
     };
   }
