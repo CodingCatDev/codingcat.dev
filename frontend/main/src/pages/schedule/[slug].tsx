@@ -77,18 +77,20 @@ export default function SchedulePage({
       </Layout>
     );
   }
+  let re = /(\w+).null - /;
+
   return (
     <>
       <NextSeo
-        title={post.title}
-        description={post.excerpt}
+        title={post?.title?.replace(re, '')}
+        description={post?.excerpt}
         canonical={`https://codingcat.dev/schedule/${post.slug}`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
           url: `https://codingcat.dev/schedule/${post.slug}`,
-          title: post.title,
-          description: post.excerpt,
+          title: post?.title?.replace(re, ''),
+          description: post?.excerpt,
           site_name: 'CodingCatDev',
           images: [
             {
