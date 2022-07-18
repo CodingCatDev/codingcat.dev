@@ -82,11 +82,11 @@ export default function SchedulePage({
       <NextSeo
         title={post.title}
         description={post.excerpt}
-        canonical={`https://codingcat.dev/${post._type}/${post.slug}`}
+        canonical={`https://codingcat.dev/schedule/${post.slug}`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
-          url: `https://codingcat.dev/${post._type}/${post.slug}`,
+          url: `https://codingcat.dev/schedule/${post.slug}`,
           title: post.title,
           description: post.excerpt,
           site_name: 'CodingCatDev',
