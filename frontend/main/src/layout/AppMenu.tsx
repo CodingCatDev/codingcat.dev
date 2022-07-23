@@ -46,7 +46,7 @@ export default function AppMenu({
         href={href}
         comparison={comparison}
       >
-        <a className="p-2 links-secondary hover:bg-primary-500" ref={focusme}>
+        <a className="p-2 links-secondary hover:bg-primary-500">
           <span className="sr-only">{`${name}`}</span>
           {name}
         </a>

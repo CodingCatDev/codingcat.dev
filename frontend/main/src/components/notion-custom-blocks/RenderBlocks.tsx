@@ -10,6 +10,7 @@ import Embed from '@/components/notion-custom-blocks/Embed';
 
 const myMapper = {
   image: withContentValidation(({ className, media }) => {
+    console.log(media);
     return media ? (
       <div
         style={{

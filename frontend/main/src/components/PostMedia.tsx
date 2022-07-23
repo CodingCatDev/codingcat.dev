@@ -22,6 +22,16 @@ export default function PostMedia({
   videoProgress?: number;
   setVideoProgress?: (value: SetStateAction<number>) => void;
 }): JSX.Element {
+  const isCloudinary = (): boolean => {
+    if (post && post?.coverVideo && post?.coverVideo?.url) {
+      return post.coverVideo?.url.includes('media.codingcat.dev/video') ||
+        post.coverVideo?.url.includes('res.cloudinary.com/video')
+        ? true
+        : false;
+    } else {
+      return false;
+    }
+  };
   const isYouTube = (): boolean => {
     if (post && post.coverVideo && post.coverVideo.url) {
       return post.coverVideo?.url.includes('youtu.be') ||
@@ -43,21 +53,28 @@ export default function PostMedia({
   const onProgress = (progress?: { played: number }) => {
     progress && setVideoProgress && setVideoProgress(progress.played);
   };
-
+  const cloudinaryPublicId = isCloudinary()
+    ? post?.coverVideo?.url?.split('/')
+    : null;
   return (
     <>
       {post?.coverVideo && Object.keys(post.coverVideo).length ? (
         <div>
-          {post.coverVideo?.source === MediaSource.cloudinary ? (
+          {isCloudinary() ? (
             <>
               <Video
                 cloudName={config.name}
-                publicId={post.coverVideo?.public_id}
+                publicId={
+                  cloudinaryPublicId
+                    ? `${cloudinaryPublicId.at(-2)}/${cloudinaryPublicId
+                        .at(-1)
+                        ?.replace('.mp4', '')}`
+                    : undefined
+                }
                 privateCdn={config.cname ? true : false}
                 secure={config.cname ? true : false}
                 secureDistribution={config.cname ? config.cname : ''}
                 sourceTypes={['hls', 'webm', 'ogv', 'mp4']}
-                poster={`https://${config.cname}/image/upload/${post.coverPhoto?.public_id}`}
                 controls={true}
                 fluid="true"
                 style={{ height: '100%', width: '100%' }}
