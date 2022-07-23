@@ -2,7 +2,14 @@ import ActiveLink from '@/components/ActiveLink';
 import TitleLogo from '@/components/global/logos/TitleLogo';
 import OutsideClick from '@/components/OutsideClick';
 import dynamic from 'next/dynamic';
-import { Dispatch, LegacyRef, SetStateAction, useEffect, useRef } from 'react';
+import {
+  Dispatch,
+  forwardRef,
+  LegacyRef,
+  SetStateAction,
+  useEffect,
+  useRef,
+} from 'react';
 import { useSigninCheck } from 'reactfire';
 
 const AvatarMenu = dynamic<any>(() => import('@/components/user/AvatarMenu'), {
@@ -29,30 +36,33 @@ export default function AppMenu({
     }
   }, [overlayMenuActive]);
 
-  const Link = ({
-    href,
-    comparison,
-    name,
-    ref,
-  }: {
-    href: string;
-    comparison: string;
-    name: string;
-    ref?: LegacyRef<HTMLAnchorElement> | undefined;
-  }) => {
+  const LinkItem = (
+    {
+      href,
+      comparison,
+      name,
+    }: {
+      href: string;
+      comparison: string;
+      name: string;
+    },
+    ref: LegacyRef<HTMLAnchorElement> | null
+  ) => {
     return (
       <ActiveLink
         activeClassName="bg-primary-500 rounded-sm"
         href={href}
         comparison={comparison}
       >
-        <a className="p-2 links-secondary hover:bg-primary-500">
+        <a className="p-2 links-secondary hover:bg-primary-500" ref={ref}>
           <span className="sr-only">{`${name}`}</span>
           {name}
         </a>
       </ActiveLink>
     );
   };
+
+  const Link = forwardRef(LinkItem);
 
   return (
     <div
