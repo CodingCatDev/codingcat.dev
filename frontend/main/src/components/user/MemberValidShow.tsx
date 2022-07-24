@@ -48,7 +48,6 @@ const CheckMember = ({
   notValidComponent: JSX.Element;
 }): JSX.Element => {
   const { member, team } = useIsMember(user);
-  console.log('check', member, team);
   if (member || team) {
     return <section>{children}</section>;
   }

@@ -303,7 +303,6 @@ export default function PostLayout({
       </>
     );
   };
-  console.log(sectionLesson);
   return (
     <>
       {/* DIV TO AVOID GRID GAP */}
