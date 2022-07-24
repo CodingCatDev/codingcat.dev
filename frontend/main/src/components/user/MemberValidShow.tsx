@@ -17,7 +17,6 @@ export default function MemberValidShow({
   notValidComponent: JSX.Element;
 }): JSX.Element {
   const auth = useAuth();
-  const { member, team } = useIsMember(user);
 
   if (!sectionLesson || sectionLesson?.access_mode === AccessMode.free) {
     return <section>{children}</section>;
@@ -28,9 +27,29 @@ export default function MemberValidShow({
     return <section>{children}</section>;
   } else if (
     sectionLesson?.access_mode === AccessMode.closed &&
-    (member || team)
+    auth?.currentUser?.uid
   ) {
-    return <section>{children}</section>;
+    <CheckMember user={user} notValidComponent={notValidComponent}>
+      {children}
+    </CheckMember>;
   }
   return <>{notValidComponent}</>;
 }
+
+const CheckMember = ({
+  user,
+  children,
+  notValidComponent,
+}: {
+  user: UserInfoExtended;
+  children: JSX.Element;
+  notValidComponent: JSX.Element;
+}): JSX.Element => {
+  const auth = useAuth();
+  const { member, team } = useIsMember(user);
+
+  if (auth?.currentUser?.uid && (member || team)) {
+    return <section>{children}</section>;
+  }
+  return <>{notValidComponent}</>;
+};
