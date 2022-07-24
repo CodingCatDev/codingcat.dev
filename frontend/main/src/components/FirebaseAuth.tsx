@@ -11,6 +11,7 @@ import {
 } from '@firebase/auth';
 import { useAuth, useSigninCheck } from 'reactfire';
 import { Auth, User } from 'firebase/auth';
+import { useRouter } from 'next/router';
 
 export const FirebaseAuth = ({
   full = true,
@@ -20,6 +21,8 @@ export const FirebaseAuth = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const auth = useAuth();
+  const router = useRouter();
+  const pathBack = router?.query?.path;
 
   let signInOptions = [];
   if (full) {
@@ -41,7 +44,7 @@ export const FirebaseAuth = ({
   }
   const uiConfig = {
     signInOptions,
-    signInSuccessUrl: window.location.href,
+    signInSuccessUrl: `${window.location.origin + (pathBack ? pathBack : '')}`,
     credentialHelper: 'none',
     tosUrl: `${window.location.origin}/terms-of-use`,
     // Privacy policy url/callback.
@@ -155,7 +158,6 @@ export const LoadingSpinner = () => {
           className="fill-basics-50 dark:fill-basics-500"
         />
       </svg>
-      Loading...
     </div>
   );
 };

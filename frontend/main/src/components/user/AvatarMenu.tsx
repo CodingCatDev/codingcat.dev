@@ -6,6 +6,7 @@ import { useAuth, useSigninCheck } from 'reactfire';
 import dynamic from 'next/dynamic';
 import { signOut } from '@/components/FirebaseAuth';
 import ActiveLink from '@/components/ActiveLink';
+import { useRouter } from 'next/router';
 
 const AuthWrapper = dynamic<any>(
   () => import('@/components/FirebaseAuth').then((mod) => mod.AuthWrapper),
@@ -40,14 +41,19 @@ export default function AvatarMenu({
 }): JSX.Element {
   const auth = useAuth();
   const { data: signInCheckResult } = useSigninCheck();
-
+  const router = useRouter();
   return (
     <FirebaseFirestoreProvider>
       <>
         <div className="relative">
           <AuthWrapper
             fallback={
-              <Link href="/user/profile">
+              <Link
+                href={
+                  `/user/profile` +
+                  (router.asPath === '/' ? '' : `?path=${router.asPath}`)
+                }
+              >
                 <a className="flex items-center justify-center p-2 rounded text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 focus:ring-2 focus:ring-basics-50">
                   <svg
                     width="20"
