@@ -46,7 +46,6 @@ export const getNotionDbByType = (_type: string) => {
 
 // CodingCat.dev
 
-//TODO: Finish theses
 export const getPageById = async ({
   _id,
   _type,
@@ -466,10 +465,38 @@ export const queryByPublished = async (
 export const queryNotionDbBySlug = async (
   _type: string,
   slug: string,
-  preview?: boolean
+  preview?: boolean,
+  course?: Post
 ) => {
   let filter: any;
   let sorts: any;
+
+  //TODO: If database query with rollup url worked we wouldn't need this
+  if (course) {
+    const rawSections = await querySectionsByCourseId(course?.id, preview);
+    const sectionFromSlug: any = rawSections.results
+      .filter(
+        (s: any) =>
+          `${s.properties?.lesson_slug?.rollup?.array?.at(0)?.url}` ===
+          `${slug}`
+      )
+      ?.at(0);
+    if (
+      sectionFromSlug?.properties?.lesson_id?.rollup?.array?.at(0)?.formula
+        ?.string
+    ) {
+      const page = await getPageById({
+        _id: sectionFromSlug?.properties?.lesson_id?.rollup?.array?.at(0)
+          ?.formula?.string,
+        _type: PostType.lesson,
+      });
+      console.log(page);
+      const raw = { results: [page] } as QueryDatabaseResponse;
+      return await formatPosts(raw, _type, preview);
+    }
+    return { results: [] };
+  }
+
   filter = {
     and: [
       {
@@ -533,6 +560,7 @@ export const queryNotionDbBySlug = async (
     filter,
     sorts,
   });
+
   return await formatPosts(raw, _type, preview);
 };
 
@@ -540,16 +568,18 @@ export const getNotionPageBlocks = async ({
   _type,
   slug,
   preview,
+  course,
 }: {
   _type: PostType;
   slug?: string;
   preview: boolean | undefined;
+  course?: Post;
 }) => {
   let pageId;
   let page;
 
   if (slug) {
-    let raw = await queryNotionDbBySlug(_type, slug, preview);
+    let raw = await queryNotionDbBySlug(_type, slug, preview, course);
     if (!raw.results.length) {
       return null;
     }

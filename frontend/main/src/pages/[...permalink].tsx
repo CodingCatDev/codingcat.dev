@@ -166,12 +166,13 @@ export const getStaticProps: GetStaticProps<StaticPropsResult> = async ({
   }
   //If Lesson we need to use different slug and get course
   if (lesson === PostType.lesson && lessonPath) {
+    course = await getNotionPageBlocks({ preview, _type: type, slug });
     post = await getNotionPageBlocks({
       preview,
       _type: PostType.lesson,
       slug: lessonPath,
+      course: course || undefined,
     });
-    course = await getNotionPageBlocks({ preview, _type: type, slug });
   } else {
     // Moved to Notion June 2022
     if (type == PostType.podcast) {

@@ -29,9 +29,11 @@ export default function MemberValidShow({
     sectionLesson?.access_mode === AccessMode.closed &&
     auth?.currentUser?.uid
   ) {
-    <CheckMember user={user} notValidComponent={notValidComponent}>
-      {children}
-    </CheckMember>;
+    return (
+      <CheckMember user={user} notValidComponent={notValidComponent}>
+        {children}
+      </CheckMember>
+    );
   }
   return <>{notValidComponent}</>;
 }
@@ -45,10 +47,9 @@ const CheckMember = ({
   children: JSX.Element;
   notValidComponent: JSX.Element;
 }): JSX.Element => {
-  const auth = useAuth();
   const { member, team } = useIsMember(user);
-
-  if (auth?.currentUser?.uid && (member || team)) {
+  console.log('check', member, team);
+  if (member || team) {
     return <section>{children}</section>;
   }
   return <>{notValidComponent}</>;
