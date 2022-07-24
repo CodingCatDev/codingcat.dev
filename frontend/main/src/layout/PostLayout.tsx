@@ -315,7 +315,9 @@ export default function PostLayout({
               <MemberValidShow
                 user={user}
                 sectionLesson={sectionLesson}
-                notValidComponent={<PostMediaLocked />}
+                notValidComponent={
+                  <PostMediaLocked sectionLesson={sectionLesson} />
+                }
               >
                 <PostMedia
                   post={post}
@@ -439,7 +441,9 @@ export default function PostLayout({
           <MemberValidShow
             user={user}
             sectionLesson={sectionLesson}
-            notValidComponent={<PostMediaLocked />}
+            notValidComponent={
+              <PostMediaLocked sectionLesson={sectionLesson} />
+            }
           >
             <>
               <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
