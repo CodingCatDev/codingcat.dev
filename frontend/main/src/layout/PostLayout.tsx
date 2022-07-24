@@ -31,12 +31,6 @@ const MemberValidShow = dynamic<any>(
     ssr: false,
   }
 );
-const MemberNotValidShow = dynamic<any>(
-  () => import('@/components/user/MemberNotValidShow'),
-  {
-    ssr: false,
-  }
-);
 
 import dynamic from 'next/dynamic';
 import { isActiveLesson } from '@/utils/basics/links';
@@ -64,27 +58,28 @@ export default function PostLayout({
   const [videoProgress, setVideoProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
+  const [sectionLesson, setSectionLesson] = useState<Post | undefined>(
+    undefined
+  );
   useEffect(() => {
     setHref(location.href);
     setPlaying(false);
     setVideoProgress(0);
     setCurrentLesson(post.id);
-  }, [post]);
 
-  function isLockedLesson() {
     // Only lockdown lessons
     if (post._type != PostType.lesson) {
-      return false;
+      setSectionLesson(undefined);
     }
     //If lesson, without assigned course (or course is not yet published)
     if (post._type == PostType.lesson && !course) {
-      return true;
+      setSectionLesson(undefined);
     }
     const lessons: Post[] = [];
     course?.sections?.map((s) => s?.lessons?.map((l) => lessons.push(l)));
-    const currentLesson = lessons.find((l) => l.slug === post.slug);
-    return currentLesson?.access_mode != AccessMode.free;
-  }
+    setSectionLesson(lessons.find((l) => l.slug === post.slug));
+  }, [post, course]);
+
   const pluralType = pluralize(post);
 
   function backButton() {
@@ -308,7 +303,7 @@ export default function PostLayout({
       </>
     );
   };
-
+  console.log(sectionLesson);
   return (
     <>
       {/* DIV TO AVOID GRID GAP */}
@@ -317,32 +312,21 @@ export default function PostLayout({
         {post._type !== PostType.page && (
           <section className="">
             {/* MEDIA */}
-            {!isLockedLesson() ? (
-              <PostMedia
-                post={post}
-                playing={playing}
-                setPlaying={setPlaying}
-                videoProgress={videoProgress}
-                setVideoProgress={setVideoProgress}
-              />
-            ) : user && user?.uid ? (
-              <>
-                <MemberValidShow user={user}>
-                  <PostMedia
-                    post={post}
-                    playing={playing}
-                    setPlaying={setPlaying}
-                    videoProgress={videoProgress}
-                    setVideoProgress={setVideoProgress}
-                  />
-                </MemberValidShow>
-                <MemberNotValidShow user={user}>
-                  <PostMediaLocked />
-                </MemberNotValidShow>
-              </>
-            ) : (
-              <PostMediaLocked />
-            )}
+            <>
+              <MemberValidShow
+                user={user}
+                sectionLesson={sectionLesson}
+                notValidComponent={<PostMediaLocked />}
+              >
+                <PostMedia
+                  post={post}
+                  playing={playing}
+                  setPlaying={setPlaying}
+                  videoProgress={videoProgress}
+                  setVideoProgress={setVideoProgress}
+                />
+              </MemberValidShow>
+            </>
           </section>
         )}
 
@@ -452,26 +436,30 @@ export default function PostLayout({
         </section>
 
         {/* BLOG POST */}
-        {!isLockedLesson() ? (
-          <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
-            <section className="flex flex-col w-full gap-4">
-              <>{showPost()}</>
-            </section>
-          </div>
-        ) : user && user?.uid ? (
-          <>
-            <MemberValidShow user={user}>
+        <>
+          <MemberValidShow
+            user={user}
+            sectionLesson={sectionLesson}
+            notValidComponent={<PostMediaLocked />}
+          >
+            <>
               <div className="flex flex-wrap gap-4 px-4 pb-4 mt-2 xl:flex-nowrap lg:px-10 lg:pb-10">
                 <section className="flex flex-col w-full gap-4">
                   <>{showPost()}</>
                 </section>
               </div>
-            </MemberValidShow>
-            <div className="inline-block w-full xl:hidden">{recents()}</div>
-          </>
-        ) : (
-          <div className="inline-block w-full">{recents()}</div>
-        )}
+              <>
+                {user && user?.uid ? (
+                  <div className="inline-block w-full xl:hidden">
+                    {recents()}
+                  </div>
+                ) : (
+                  <div className="inline-block w-full">{recents()}</div>
+                )}
+              </>
+            </>
+          </MemberValidShow>
+        </>
       </div>
       <style global jsx>{`
         article > * {
