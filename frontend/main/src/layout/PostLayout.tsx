@@ -140,7 +140,6 @@ export default function PostLayout({
             )}
           </article>
         </div>
-        <div className="inline-block w-full xl:ml-2 xl:hidden">{recents()}</div>
       </>
     );
   };
@@ -442,7 +441,10 @@ export default function PostLayout({
             user={user}
             sectionLesson={sectionLesson}
             notValidComponent={
-              <PostMediaLocked sectionLesson={sectionLesson} />
+              <div className="grid">
+                <PostMediaLocked sectionLesson={sectionLesson} />
+                <div className="w-full p-4">{recents()}</div>
+              </div>
             }
           >
             <>
@@ -452,13 +454,9 @@ export default function PostLayout({
                 </section>
               </div>
               <>
-                {user && user?.uid ? (
-                  <div className="inline-block w-full xl:hidden">
-                    {recents()}
-                  </div>
-                ) : (
-                  <div className="inline-block w-full">{recents()}</div>
-                )}
+                <div className="inline-block w-full m-4 xl:m-0 xl:hidden">
+                  {recents()}
+                </div>
               </>
             </>
           </MemberValidShow>
