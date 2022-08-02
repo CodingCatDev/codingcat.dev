@@ -86,7 +86,7 @@ export default function Sponsorship({
           site_name: 'Purrfect.dev',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/purrfect.dev',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/Sponsorship',
             },
           ],
         }}

@@ -41,7 +41,21 @@ const Sponsors = ({
     <>
       <NextSeo
         title="Sponsors | CodingCatDev"
-        canonical={`https://codingcat.dev/sponsors/`}
+        description="Sponsors | CodingCatDev"
+        canonical={`https://codingcat.dev/sponsors`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: 'https://codingcat.dev/sponsors',
+          title: 'Sponsors | CodingCatDev',
+          description: 'Sponsors for Purrfect.dev',
+          site_name: 'Purrfect.dev',
+          images: [
+            {
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/Sponsors.png',
+            },
+          ],
+        }}
       ></NextSeo>
       <Layout site={site}>
         <section className="flex justify-center p-4">
