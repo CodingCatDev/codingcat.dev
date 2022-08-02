@@ -168,7 +168,7 @@ export const getSponsorBySlugService = async ({
     },
   });
 
-  return formatPosts(raw, 'author');
+  return formatPosts(raw, 'sponsor');
 };
 
 export const getSponsorPageBlocks = async (slug: string) => {
@@ -273,9 +273,13 @@ const formatPost = async (
           } - ${q?.properties?.Name?.title
             .map((t: any) => t.plain_text)
             .join('')}`
-        : `${q?.properties?.title?.title
+        : q?.properties?.title?.title
+        ? `${q?.properties?.title?.title
             .map((t: any) => t.plain_text)
-            .join('')}`,
+            .join('')}`
+        : `${q?.properties?.Name?.title
+            .map((t: any) => t.plain_text)
+            .join('')}` || null,
     coverPhoto: {
       secure_url: coverPublicId
         ? `https://media.codingcat.dev/image/upload${coverPublicId}`

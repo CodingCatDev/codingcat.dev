@@ -89,7 +89,7 @@ export default function SponsorPage({
   return (
     <>
       <NextSeo
-        title={`${sponsor?.company || ''} | CodingCatDev`}
+        title={`${sponsor?.title || ''} | CodingCatDev`}
         canonical={`https://codingcat.dev/sponsors/`}
       ></NextSeo>
       <Layout site={site}>

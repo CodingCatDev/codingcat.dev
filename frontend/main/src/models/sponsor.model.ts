@@ -12,6 +12,7 @@ export interface Sponsor {
   //Core Fields
   company: string;
   slug: string;
+  title: string;
   coverPhoto?: CoverMedia;
   coverVideo?: CoverMedia;
   description?: string;
