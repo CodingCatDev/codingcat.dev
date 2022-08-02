@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import AJHeadphones from '@/components/global/icons/AJHeadphones';
+import AJHeartsLeft from './global/icons/AJHeart';
 
 export default function PurrfectDevUpper(): JSX.Element {
   return (
@@ -45,6 +46,11 @@ export default function PurrfectDevUpper(): JSX.Element {
                 <button className="flex items-center btn-secondary-reverse">
                   Ad Sponsorship
                 </button>
+              </a>
+            </Link>
+            <Link href="/sponsors">
+              <a className="flex items-center justify-center text-2xl underline">
+                See Our Sponsors <AJHeartsLeft />
               </a>
             </Link>
           </div>

@@ -9,7 +9,7 @@ import { useScroll } from '@/hooks/useScroll';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import AJHeadphones from '@/components/global/icons/AJHeadphones';
 import PurrfectDevPodcatchers from '@/components/PurrfectDevPodcatchers';
-
+import Link from 'next/link';
 interface StaticParams {
   site: Site;
 }
@@ -444,13 +444,20 @@ export default function Sponsorship({
                   4
                 </span>
                 <p className="text-3xl dark:text-secondary-400 text-secondary-300">
-                  An evergreen listing on the Purrfect.dev sponsors page.
+                  An evergreen listing on the Purrfect.dev{' '}
+                  <Link href="/sponsors">
+                    <a className="underline">sponsors page.</a>
+                  </Link>
                 </p>
               </div>
               <p className="text-2xl">
-                This is a useful resource for listeners wanting to quickly
-                reference a sponsor&lsquo;s offering, but are unable to recall
-                which episode, coupon code, or link was used during the ad read.
+                The{' '}
+                <Link href="/sponsors">
+                  <a className="underline">sponsors page</a>
+                </Link>{' '}
+                is a useful resource for listeners wanting to quickly reference
+                a sponsor&lsquo;s offering, but are unable to recall which
+                episode, coupon code, or link was used during the ad read.
               </p>
             </div>
             <div className="flex flex-col w-full gap-4">

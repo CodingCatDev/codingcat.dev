@@ -9,6 +9,7 @@ import { Site, SocialType } from '@/models/site.model';
 import { Tag } from '@/models/tag.model';
 import { NotionBlock } from '@9gustin/react-notion-render';
 import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
+import { Sponsor } from '@/models/sponsor.model';
 
 // Initializing a client
 const notionClient = new Client({
@@ -39,6 +40,8 @@ export const getNotionDbByType = (_type: string) => {
       return notionConfig.frameworksDb;
     case 'language':
       return notionConfig.languagesDb;
+    case 'sponsor':
+      return notionConfig.purrfectSponsorsDb;
     default:
       return notionConfig.authorsDb;
   }
@@ -124,6 +127,70 @@ export const getAuthorPageBlocks = async (slug: string) => {
     ...raw.results[0],
     blocks,
   } as unknown as Author;
+};
+
+export const getSponsorBySlugService = async ({
+  preview,
+  slug,
+}: {
+  preview?: boolean;
+  slug: string;
+}) => {
+  if (skipNotion) {
+    return {
+      has_more: false,
+      results: [],
+    } as unknown as QueryDatabaseResponse;
+  }
+  let raw = await notionClient.databases.query({
+    database_id: config.purrfectSponsorsDb,
+    filter: {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            contains: slug,
+          },
+        },
+        {
+          property: 'published',
+          select: {
+            equals: 'published',
+          },
+        },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
+          },
+        },
+      ],
+    },
+  });
+
+  return formatPosts(raw, 'author');
+};
+
+export const getSponsorPageBlocks = async (slug: string) => {
+  let raw = await getSponsorBySlugService({ slug });
+  if (!raw.results.length) {
+    return null;
+  }
+
+  const page = raw.results.at(0);
+  if (!page) {
+    return null;
+  }
+  let blocks: any[] = [];
+
+  for (const page of raw.results) {
+    blocks = [...blocks, ...(await getChildBlocks(await getBlocks(page.id)))];
+  }
+
+  return {
+    ...raw.results[0],
+    blocks,
+  } as unknown as Sponsor;
 };
 
 export const getTagBySlugService = ({
@@ -220,9 +287,15 @@ const formatPost = async (
       : null,
     _type,
     slug: q?.properties?.slug?.url ? q?.properties?.slug.url : null,
-    excerpt: q?.properties?.excerpt?.rich_text
-      .map((t: any) => t.plain_text)
-      .join(''),
+    excerpt:
+      q?.properties?.excerpt?.rich_text
+        ?.map((t: any) => t.plain_text)
+        ?.join('') || null,
+    description:
+      q?.properties?.description?.rich_text
+        ?.map((t: any) => t.plain_text)
+        ?.join('') || null,
+    url: q?.properties?.url?.url ? q?.properties?.url.url : null,
     _createdAt: q?.properties?.start?.date?.start || q?.created_time,
     _updatedAt: q?.last_edited_time,
     authors,
@@ -695,6 +768,12 @@ export const queryRelationById = async (
     ];
     filter = {
       and: [
+        {
+          property: relation,
+          relation: {
+            contains: id,
+          },
+        },
         {
           property: 'slug',
           url: {

@@ -4,6 +4,7 @@ export const config = {
   purrfectGuestDb: process.env.NOTION_PURRFECT_GUEST || '',
   purrfectCompanyDb: process.env.NOTION_PURRFECT_COMPANY || '',
   purrfectPicksDb: process.env.NOTION_PURRFECT_PICKS || '',
+  purrfectSponsorsDb: process.env.NOTION_PURRFECT_SPONSORS || '',
   postsDb: process.env.NOTION_POSTS || '',
   tutorialsDb: process.env.NOTION_TUTORIALS || '',
   pagesDb: process.env.NOTION_PAGES || '',

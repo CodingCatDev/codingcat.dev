@@ -46,7 +46,7 @@ const Podcasts = ({
           <Authors authors={posts as unknown as Author[]} />
           <Pagination
             posts={posts}
-            baseUrl="blog"
+            baseUrl="author"
             pageNumber={1}
             showNext={showNext}
           />
