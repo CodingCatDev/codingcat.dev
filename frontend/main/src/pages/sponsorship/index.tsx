@@ -211,11 +211,57 @@ export default function Sponsorship({
               <PurrfectDevPodcatchers />
             </div>
           </div>
-          <div className="flex flex-wrap justify-center py-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+          <div className="flex flex-col justify-center gap-8 p-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
             <p className="flex justify-center w-full text-6xl font-bold">
+              Audience Breakdown
+            </p>
+            <div className="flex flex-col w-full gap-8 text-2xl">
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-4xl font-bold dark:text-secondary-400 text-secondary-300">
+                  Age Range
+                </div>
+                <div className="font-bold text-8xl dark:text-primary-600 text-primary-300">
+                  25-34
+                </div>
+                <div>Most listeners fall within this range.</div>
+              </div>
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-4xl font-bold dark:text-secondary-400 text-secondary-300">
+                  Spotify
+                </div>
+                <div className="w-full max-w-xl">
+                  <Image
+                    src={`/main-codingcatdev-photo/spotify-analytics.png`}
+                    alt="Spotify Analytics"
+                    layout="responsive"
+                    width="2220"
+                    height="556"
+                    className="rounded-md"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-4xl font-bold dark:text-secondary-400 text-secondary-300">
+                  YouTube
+                </div>
+                <div className="w-full max-w-xl">
+                  <Image
+                    src={`/main-codingcatdev-photo/youtube-analytics.png`}
+                    alt="Spotify Analytics"
+                    layout="responsive"
+                    width="1614"
+                    height="934"
+                    className="rounded-md"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-center p-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+            <p className="flex justify-center w-full text-4xl font-bold md:text-6xl">
               Sponsoring is Purrfect for:
             </p>
-            <div className="flex flex-col max-w-xl gap-4 p-8 font-extrabold">
+            <div className="flex flex-col max-w-xl gap-4 p-2 font-extrabold md:p-8">
               <div className="grid grid-cols-[3rem_1fr] items-center text-2xl">
                 <div className="w-12">{arrow()}</div>
                 <div>
@@ -236,22 +282,196 @@ export default function Sponsorship({
               </div>
             </div>
           </div>
-          {[6, 7, 8, 9, 10, 11].map((x, i) => (
-            <div className="w-full" key={x}>
+          <div className="flex flex-wrap justify-center p-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+            <p className="flex justify-start w-full text-4xl font-bold md:text-6xl">
+              Audience Interests:
+            </p>
+            <div className="flex flex-wrap md:flex-nowrap">
+              <div className="flex flex-col max-w-xl gap-4 p-2 font-extrabold md:p-8">
+                <p className="flex justify-start w-full text-3xl font-bold md:text-4xl">
+                  Hard Skills
+                </p>
+                <div className="grid grid-cols-[3rem_1fr] gap-2 items-center text-2xl">
+                  <div className="w-12">{arrow()}</div>
+                  <div>
+                    JavaScript frameworks (e.g. React, Angular, Vue, and Svelte)
+                  </div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>CSS and CSS libraries like TailwindCSS</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>Backend Frameworks (e.g. NodeJs, Rust)</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>Cloud Solutions (e.g. AWS, GCP, Azure)</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>Lifestyle Products (e.g. keyboards, VSCode themes)</div>
+                </div>
+              </div>
+              <div className="flex flex-col max-w-xl gap-4 p-2 font-extrabold md:p-8">
+                <p className="flex justify-start w-full text-3xl font-bold md:text-4xl">
+                  Soft Skills
+                </p>
+                <div className="grid grid-cols-[3rem_1fr] gap-2 items-center text-2xl">
+                  <div className="w-12">{arrow()}</div>
+                  <div>How to get a job in tech</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>How to run a freelance business</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>How to start a podcast</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>How to change careers</div>
+
+                  <div className="w-12">{arrow()}</div>
+                  <div>Mental health and awareness</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-start gap-4 p-8 md:gap-8 md:px-24 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+            <div className="flex flex-col justify-start w-full gap-4 font-extrabold ">
+              <p className="text-8xl dark:text-secondary-400 text-secondary-300">
+                Pricing
+              </p>
+            </div>
+            <div className="grid grid-cols-[1fr] gap-2 text-xl md:text-2xl p-2 md:p-8">
+              <div>
+                <span className="text-2xl font-bold md:text-4xl dark:text-secondary-400 text-secondary-300">
+                  Single Show
+                </span>{' '}
+                - $300 USD
+              </div>
+              <div>
+                <span className="text-2xl font-bold md:text-4xl dark:text-secondary-400 text-secondary-300">
+                  3+ Shows
+                </span>{' '}
+                - $250 USD
+              </div>
+              <div>
+                <span className="text-2xl font-bold md:text-4xl dark:text-secondary-400 text-secondary-300">
+                  10+ Shows
+                </span>{' '}
+                - $200 USD
+              </div>
+              <p className="text-sm">
+                * per show pricing, contact us to arrange for annual terms.
+              </p>
+            </div>
+            <p className="text-md md:text-2xl">
+              We have found that we get the best results for our advertisers
+              when they sponsor at least three shows, Alex and Brittney are able
+              to test out the product, and your marketing team approves both
+              pre-roll and mid-roll videos.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+            <div className="flex flex-col w-full gap-4">
+              <p className="w-full text-4xl font-bold">
+                As part of the sponsorship package, you&lsquo;ll receive:
+              </p>
+              <div className="flex gap-2 py-8 text-2xl">
+                <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
+                  1
+                </span>
+                <p className="text-3xl dark:text-secondary-400 text-secondary-300">
+                  A sponsorship section within the episode show notes, on our
+                  website.
+                </p>
+              </div>
+              <p className="text-2xl">
+                These notes will be listed on Purrfect.dev permanently and
+                within the user&lsquo;s podcatcher of choice (Apple,
+                Spotify...). This is a great opportunity to include unique
+                targeted links and promo codes!
+              </p>
+            </div>
+            <div className="w-full">
               <Image
-                src={`/main-codingcatdev-photo/2022_-_Sponsorship_${x + 1}.png`}
+                src={`/main-codingcatdev-photo/Screen_Shot_2022-08-02_at_12.55.38_PM.png`}
                 alt="Purrfect.dev Sponsorship Image show logo."
                 layout="responsive"
-                width="1920"
-                height="1080"
+                width="2078"
+                height="2390"
                 className="rounded-md"
               />
             </div>
-          ))}
+          </div>
+          <div className="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+            <div className="flex flex-col w-full gap-4">
+              <div className="flex gap-2 py-8 text-2xl">
+                <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
+                  2
+                </span>
+                <p className="text-3xl dark:text-secondary-400 text-secondary-300">
+                  A call-out in the pre-roll of the show.
+                </p>
+              </div>
+              <p className="text-2xl">
+                The call-out will include the name of the company and slogan.
+                Because we are a video podcast, there will also be an
+                opportunity for your own branding to be included in the video.
+                We highly suggest your marketing team creates the video with a
+                voice-over from Brittney and Alex.
+              </p>
+            </div>
+            <div className="flex flex-col w-full gap-4">
+              <div className="flex gap-2 py-8 text-2xl">
+                <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
+                  3
+                </span>
+                <p className="text-3xl dark:text-secondary-400 text-secondary-300">
+                  A 60-90 second sponsor spot mid-roll during the show.
+                </p>
+              </div>
+              <p className="text-2xl">
+                We can provide a standard ad read provided by your marketing
+                department. We have found that because we are a video podcast,
+                this is a good time to showcase your product. We can also
+                provide a personal experience aad that allows Alex and Brittney
+                to demonstrate their own experience with your product.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+            <div className="flex flex-col w-full gap-4">
+              <div className="flex gap-2 py-8 text-2xl">
+                <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
+                  4
+                </span>
+                <p className="text-3xl dark:text-secondary-400 text-secondary-300">
+                  An evergreen listing on the Purrfect.dev sponsors page.
+                </p>
+              </div>
+              <p className="text-2xl">
+                This is a useful resource for listeners wanting to quickly
+                reference a sponsor&lsquo;s offering, but are unable to recall
+                which episode, coupon code, or link was used during the ad read.
+              </p>
+            </div>
+            <div className="flex flex-col w-full gap-4">
+              <div className="flex gap-2 py-8 text-2xl">
+                <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
+                  5
+                </span>
+                <p className="text-3xl dark:text-secondary-400 text-secondary-300">
+                  Access to a password protected dashboard.
+                </p>
+              </div>
+              <p className="text-2xl">
+                This will include easy access to all documents, including
+                invoices and contracts.
+              </p>
+            </div>
+          </div>
 
           <div
             ref={form}
-            className="flex flex-wrap justify-center py-8 bg-white text-primary-50 rounded-xl"
+            className="flex flex-wrap justify-center p-8 bg-basics-900 text-primary-50 rounded-xl"
           >
             <iframe
               className="w-full border-none rounded-xl"
