@@ -47,7 +47,7 @@
   }
 
   a {
-    @apply transition-colors  hover:text-secondary-600 dark:hover:text-secondary-200;
+    @apply transition-colors cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-200;
   }
 
   blockquote {

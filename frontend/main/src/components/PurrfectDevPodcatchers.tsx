@@ -7,9 +7,6 @@ export default function PurrfectDevPodcatchers(): JSX.Element {
     <>
       <section className="my-20 text-center">
         <div className="flex flex-col">
-          <p className="mb-8 text-3xl leading-snug tracking-wide lg:text-6xl">
-            Subscribe on your podcatcher of choice.
-          </p>
           <div className="flex flex-wrap justify-center mb-8">
             <a
               href="https://podcasts.apple.com/us/podcast/purrfect-dev/id1491655542"
