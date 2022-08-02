@@ -220,7 +220,7 @@ export default function Sponsorship({
                 <div className="text-4xl font-bold dark:text-secondary-400 text-secondary-300">
                   Age Range
                 </div>
-                <div className="font-bold text-8xl dark:text-primary-600 text-primary-300">
+                <div className="font-bold text-8xl dark:text-primary-600 text-secondary-400">
                   25-34
                 </div>
                 <div>Most listeners fall within this range.</div>
@@ -262,7 +262,7 @@ export default function Sponsorship({
               Sponsoring is Purrfect for:
             </p>
             <div className="flex flex-col max-w-xl gap-4 p-2 font-extrabold md:p-8">
-              <div className="grid grid-cols-[3rem_1fr] items-center text-2xl">
+              <div className="grid grid-cols-[3rem_1fr] items-center text-xl md:text-2xl">
                 <div className="w-12">{arrow()}</div>
                 <div>
                   Web design and development tools, software and services
@@ -291,7 +291,7 @@ export default function Sponsorship({
                 <p className="flex justify-start w-full text-3xl font-bold md:text-4xl">
                   Hard Skills
                 </p>
-                <div className="grid grid-cols-[3rem_1fr] gap-2 items-center text-2xl">
+                <div className="grid grid-cols-[3rem_1fr] gap-2 items-center text-xl md:text-2xl">
                   <div className="w-12">{arrow()}</div>
                   <div>
                     JavaScript frameworks (e.g. React, Angular, Vue, and Svelte)
@@ -314,7 +314,7 @@ export default function Sponsorship({
                 <p className="flex justify-start w-full text-3xl font-bold md:text-4xl">
                   Soft Skills
                 </p>
-                <div className="grid grid-cols-[3rem_1fr] gap-2 items-center text-2xl">
+                <div className="grid grid-cols-[3rem_1fr] gap-2 items-center text-xl md:text-2xl">
                   <div className="w-12">{arrow()}</div>
                   <div>How to get a job in tech</div>
 
@@ -369,9 +369,9 @@ export default function Sponsorship({
               pre-roll and mid-roll videos.
             </p>
           </div>
-          <div className="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+          <div className="flex flex-col gap-4 p-4 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
             <div className="flex flex-col w-full gap-4">
-              <p className="w-full text-4xl font-bold">
+              <p className="w-full text-2xl font-bold md:text-4xl">
                 As part of the sponsorship package, you&lsquo;ll receive:
               </p>
               <div className="flex gap-2 py-8 text-2xl">
@@ -383,7 +383,7 @@ export default function Sponsorship({
                   website.
                 </p>
               </div>
-              <p className="text-2xl">
+              <p className="text-xl md:text-2xl">
                 These notes will be listed on Purrfect.dev permanently and
                 within the user&lsquo;s podcatcher of choice (Apple,
                 Spotify...). This is a great opportunity to include unique
@@ -401,7 +401,7 @@ export default function Sponsorship({
               />
             </div>
           </div>
-          <div className="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+          <div className="flex flex-col gap-4 p-4 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
             <div className="flex flex-col w-full gap-4">
               <div className="flex gap-2 py-8 text-2xl">
                 <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
@@ -437,7 +437,7 @@ export default function Sponsorship({
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
+          <div className="flex flex-col gap-4 p-4 md:py-8 md:flex-row md:px-8 dark:bg-basics-600 bg-primary-500 text-primary-50 rounded-xl">
             <div className="flex flex-col w-full gap-4">
               <div className="flex gap-2 py-8 text-2xl">
                 <span className="text-6xl font-bold dark:text-secondary-400 text-secondary-300">
