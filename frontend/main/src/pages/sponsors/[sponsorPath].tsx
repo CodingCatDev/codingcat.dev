@@ -12,6 +12,7 @@ import PostsCards from '@/components/PostsCards';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Sponsor } from '@/models/sponsor.model';
 import Image from 'next/image';
+import DefaultErrorPage from 'next/error';
 
 interface StaticParams {
   site: Site;
@@ -78,6 +79,13 @@ export default function SponsorPage({
   sponsor,
   podcasts,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  if (!sponsor) {
+    return (
+      <Layout site={site}>
+        <DefaultErrorPage statusCode={404} />
+      </Layout>
+    );
+  }
   return (
     <>
       <NextSeo
@@ -86,7 +94,7 @@ export default function SponsorPage({
       ></NextSeo>
       <Layout site={site}>
         <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
-          <a href={sponsor.url} rel="noreferrer noopener" target="_blank">
+          <a href={sponsor?.url} rel="noreferrer noopener" target="_blank">
             <article className="grid items-start grid-cols-1 gap-4 shadow-lg rounded-xl justify-items-center justify-self-center hover:shadow-sm">
               <div className="w-full rounded-lg shadow-lg bg-primary-100 dark:bg-primary-500">
                 <div className="p-2">
@@ -102,7 +110,7 @@ export default function SponsorPage({
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
                       {sponsor?.coverPhoto?.public_id && (
                         <Image
-                          src={sponsor.coverPhoto.public_id}
+                          src={sponsor?.coverPhoto.public_id}
                           alt={`Sponsorship Image for ${sponsor.company}`}
                           layout="fill"
                         />
