@@ -90,14 +90,30 @@ export default function SponsorPage({
     <>
       <NextSeo
         title={`${sponsor?.title || ''} | CodingCatDev`}
-        canonical={`https://codingcat.dev/sponsors/`}
+        canonical={`https://codingcat.dev/sponsors/${sponsor?.slug}`}
+        description={`${sponsor?.description}`}
+        openGraph={{
+          type: 'website',
+          locale: 'en_US',
+          url: `https://codingcat.dev/sponsors/${sponsor?.slug}`,
+          title: `${sponsor?.title || ''} | CodingCatDev`,
+          description: `${sponsor?.description}`,
+          site_name: 'Purrfect.dev',
+          images: sponsor?.coverPhoto?.public_id
+            ? [
+                {
+                  url: `https://media.codingcat.dev/image/upload/f_jpg${sponsor.coverPhoto.public_id}`,
+                },
+              ]
+            : [],
+        }}
       ></NextSeo>
       <Layout site={site}>
         <section className="grid grid-cols-1 gap-20 p-4 sm:p-10 place-items-center">
           <a href={sponsor?.url} rel="noreferrer noopener" target="_blank">
             <article className="grid items-start grid-cols-1 gap-4 shadow-lg rounded-xl justify-items-center justify-self-center hover:shadow-sm">
               <div className="w-full rounded-lg shadow-lg bg-primary-100 dark:bg-primary-500">
-                <div className="p-2">
+                <div className="flex flex-col gap-2 p-2">
                   <div
                     style={{
                       overflow: 'hidden',
@@ -111,16 +127,16 @@ export default function SponsorPage({
                       {sponsor?.coverPhoto?.public_id && (
                         <Image
                           src={sponsor?.coverPhoto.public_id}
-                          alt={`Sponsorship Image for ${sponsor.company}`}
+                          alt={`Sponsorship Image for ${sponsor?.title}`}
                           layout="fill"
                         />
                       )}
                     </div>
                   </div>
                   <h2 className="flex flex-wrap content-center pl-1 text-2xl font-semibold">
-                    {sponsor.company}
+                    {sponsor?.title}
                   </h2>
-                  <p className="m-2 text-lg">{sponsor.description}</p>
+                  <p className="m-2 text-lg">{sponsor?.description}</p>
                 </div>
                 <div className="flex w-full mt-2 rounded-b-lg bg-primary-900">
                   <p className="px-4 py-2 text-sm text-white uppercase border-none cursor-pointer">
