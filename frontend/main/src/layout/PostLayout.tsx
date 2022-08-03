@@ -454,7 +454,7 @@ export default function PostLayout({
                 </section>
               </div>
               <>
-                <div className="inline-block w-full m-4 xl:m-0 xl:hidden">
+                <div className="inline-block w-full xl:m-0 xl:hidden">
                   {recents()}
                 </div>
               </>

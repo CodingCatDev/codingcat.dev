@@ -29,34 +29,24 @@ const Embed = ({ config }: { config: WithContentValidationProps }) => {
     );
   }
   if (url.includes('codepen')) {
+    console.log(url);
     return (
       <>
-        <Script src="https://cpwebassets.codepen.io/assets/embed/ei.js"></Script>
-        <p
-          className="codepen"
-          data-height="600px"
-          data-default-tab="css,result"
-          data-slug-hash={url.split('/').at(-1)}
-          data-preview="true"
-          data-user="codercatdev"
+        <iframe
           style={{
-            height: 600,
-            boxSizing: 'border-box',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px solid',
-            margin: '1em 0',
-            padding: '1em',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'transparent',
           }}
+          scrolling="no"
+          title="Codepen"
+          src={url.replace('/pen/', '/full/')}
+          frameBorder="no"
+          loading="lazy"
+          allowFullScreen={true}
         >
-          <span>
-            See the Pen <a href={url}>Material Checkbox without Material</a> by
-            Alex Patterson (
-            <a href="https://codepen.io/codercatdev">@codercatdev</a>) on{' '}
-            <a href="https://codepen.io">CodePen</a>.
-          </span>
-        </p>
+          <a href={url.replace('/pen/', '/full/')}>See the Pen</a>
+        </iframe>
       </>
     );
   }
