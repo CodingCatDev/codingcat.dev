@@ -1236,6 +1236,10 @@ export const getRecent = async ({ preview = false }) => {
 export const getSite = () => {
   return {
     pageLinks: [
+      {
+        slug: 'https://www.bonfire.com/store/codingcatdev-swag/',
+        title: 'Swag Store',
+      },
       { slug: '/ftc-disclosure', title: 'FTC Disclosure' },
       { slug: '/privacy-policy', title: 'Privacy Policy' },
       { slug: '/terms-of-use', title: 'Terms of Use' },

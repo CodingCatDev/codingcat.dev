@@ -62,7 +62,7 @@ export default function Footer({
         </svg>
       )}
       <footer className="px-4 pt-20 pb-4 bg-purple-900 lg:grid-cols-2 lg:px-10 text-basics-50">
-        <div className="grid items-start gap-10 grid-cols-auto">
+        <div className="grid items-start justify-center gap-10 xl:justify-around grid-cols-auto">
           {/* LOGO & COPYRIGHT */}
           <section className="grid grid-cols-1 justify-items-start">
             <div className="flex">
@@ -123,14 +123,30 @@ export default function Footer({
                 <div key={`helpful-link-${i}`}>
                   {pageLink.slug.includes('://') ||
                   pageLink.slug.includes('mailto') ? (
-                    <a
-                      href={pageLink.slug}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="links-secondary"
-                    >
-                      {pageLink.title}
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={pageLink.slug}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="links-secondary"
+                      >
+                        {pageLink.title}
+                      </a>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </div>
                   ) : (
                     <Link href={pageLink.slug}>
                       <a href={pageLink.slug} className="links-secondary">

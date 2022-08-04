@@ -140,6 +140,30 @@ export default function AppMenu({
               <Link href="/blog" comparison="/post" name="Blog" />
               <Link href="/podcasts" comparison="/podcast" name="Podcasts" />
               <Link href="/schedule" comparison="/schedule" name="Schedule" />
+              <div className="flex items-center gap-2 pl-2">
+                <a
+                  href="https://www.bonfire.com/store/codingcatdev-swag/"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="links-secondary"
+                >
+                  Swag Store
+                </a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="white"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </div>
             </nav>
             <section className="flex self-end p-4 bg-primary-700 dark:bg-primary-700">
               <OutsideClick toggle={setUserMenu} value={false}>
