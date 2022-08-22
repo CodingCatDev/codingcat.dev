@@ -17,12 +17,12 @@ export const generateCodeWithCodingCatCoverURL = async ({
     fetch_format: 'jpg',
     transformation: [
       {
-        width: 990,
+        width: 1090,
         color: '#FBFBFB',
-        y: '550',
-        x: '75',
+        y: '0',
+        x: '100',
         crop: 'fit',
-        gravity: 'north_west',
+        gravity: 'west',
         overlay: {
           text: title,
           font_family: 'Nunito',
@@ -30,33 +30,6 @@ export const generateCodeWithCodingCatCoverURL = async ({
           font_weight: 'black',
           line_spacing: '-10',
         },
-      },
-      {
-        color: '#FBFBFB',
-        y: '10',
-        x: '0',
-        crop: 'fit',
-        gravity: 'north',
-        background: '#D11663',
-        radius: '8:50',
-        border: '30px_solid_rgb:D11663',
-        overlay: {
-          font_family: 'Nunito',
-          font_size: 65,
-          text: guestName,
-          font_weight: 'bold',
-          text_align: 'left',
-        },
-      },
-      {
-        overlay: guestImagePublicId.split('/').join(':'),
-        height: '250',
-        width: '250',
-        y: '180',
-        x: '0',
-        gravity: 'north',
-        crop: 'fill',
-        border: '5px_solid_rgb:FBFBFB',
       },
     ],
   });
@@ -81,27 +54,24 @@ export const generatePurrfectDevCoverURL = async ({
   guestImagePublicId: string;
   folder: string;
 }) => {
-  const url = cloudinary.url(`${folder}/Season2Background`, {
+  const url = cloudinary.url(`${folder}/codingcatdev-podcast-season2`, {
     quality: 'auto',
     fetch_format: 'jpg',
     transformation: [
       {
         width: 1200,
         color: '#FBFBFB',
-        y: '60',
-        x: '0',
+        y: '59',
+        x: '87',
         crop: 'fit',
-        gravity: 'north',
-        background: '#4B0A75',
-        radius: '8:50',
-        border: '5px_solid_rgb:4B0A75',
+        gravity: 'north_west',
         overlay: {
           text: title,
           font_family: 'Nunito',
-          font_size: 100,
+          font_size: 96,
           font_weight: 'black',
           line_spacing: '-10',
-          text_align: 'center',
+          text_align: 'left',
         },
       },
       {
