@@ -760,6 +760,74 @@ export const queryPurrfectStreamDevTo = async (
   return await formatPosts(raw, 'podcast');
 };
 
+export const queryPurrfectStreamHashnode = async (
+  page_size?: number,
+  start_cursor?: string | null
+) => {
+  const raw = await notionClient.databases.query({
+    database_id: notionConfig.purrfectStreamsDb,
+    start_cursor: start_cursor ? start_cursor : undefined,
+    page_size,
+    filter: {
+      and: [
+        {
+          property: 'slug',
+          url: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'Status',
+          select: {
+            equals: 'Released',
+          },
+        },
+        {
+          property: 'Episode',
+          number: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'start',
+          date: {
+            on_or_before: new Date().toISOString(),
+          },
+        },
+        {
+          property: 'hashnode',
+          url: {
+            is_empty: true,
+          },
+        },
+        {
+          property: 'youtube',
+          url: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: 'spotify',
+          url: {
+            is_not_empty: true,
+          },
+        },
+      ],
+    },
+    sorts: [
+      {
+        property: 'Season',
+        direction: 'ascending',
+      },
+      {
+        property: 'Episode',
+        direction: 'ascending',
+      },
+    ],
+  });
+  return await formatPosts(raw, 'podcast');
+};
+
 export const queryPurrfectStreamBySlug = async (slug: string) => {
   const raw = await notionClient.databases.query({
     database_id: notionConfig.purrfectStreamsDb,

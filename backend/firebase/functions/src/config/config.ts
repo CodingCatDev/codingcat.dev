@@ -70,3 +70,7 @@ export const notionLanguages = checkMain('notion', 'languages');
 
 // Dev.to
 export const devto = checkMain('devto', 'key');
+
+// Hashnode
+export const hashnodeKey = checkMain('hashnode', 'key');
+export const hashnodePublicationId = checkMain('hashnode', 'publication_id');
