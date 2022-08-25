@@ -27,3 +27,9 @@ export { calendlyCreateNotionCardPubSub } from './calendly/pubsub';
 
 // Notion to Firestore
 export { scheduledNotionToFirestore } from './firebase/notion';
+
+// Notion to Devto
+export {
+  scheduledNotionToDevto,
+  devtoToNotionPubSub,
+} from './devto/scheduledNotionToDevto';

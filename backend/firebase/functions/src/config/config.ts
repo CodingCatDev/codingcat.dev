@@ -67,3 +67,6 @@ export const notionTutorials = checkMain('notion', 'tutorials');
 export const notionPages = checkMain('notion', 'pages');
 export const notionSections = checkMain('notion', 'sections');
 export const notionLanguages = checkMain('notion', 'languages');
+
+// Dev.to
+export const devto = checkMain('devto', 'key');
