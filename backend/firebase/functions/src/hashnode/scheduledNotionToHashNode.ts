@@ -44,9 +44,9 @@ export const hashnodeToNotionPubSub = functions.pubsub
           slug: `${page._type}-${page.slug}`,
           contentMarkdown: `Original: https://codingcat.dev/${page._type}/${page.slug}
 
-          %[${page.properties.youtube.url}]
+%[${page.properties.youtube.url}]
           
-          %[${page.properties.spotify.url}]
+%[${page.properties.spotify.url}]
           `,
           coverImageURL: `https://media.codingcat.dev/image/upload/f_auto,c_limit,w_1920,q_auto/${page?.coverPhoto?.public_id}`,
           isRepublished: {
