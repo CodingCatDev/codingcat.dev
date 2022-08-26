@@ -98,7 +98,7 @@ export const hashnodeToNotionPubSub = functions.pubsub
       const update = {
         page_id: page.id,
         properties: {
-          devto: {
+          hashnode: {
             id: 'remote',
             type: 'url',
             url: `https://hashnode.codingcat.dev/${hashnodeSlug}`,
