@@ -145,8 +145,8 @@ export const devtoToNotionPubSub = functions.pubsub
       }
     } else {
       console.error('No Data matched for article');
-      return;
     }
+    return;
   });
 
 // Used for testing don't forget to remove for production

@@ -35,8 +35,9 @@ export {
   httpNotionToDevto,
 } from './devto/scheduledNotionToDevto';
 
-// Notion to Devto
+// Notion to Hasnode
 export {
   scheduledNotionToHashnode,
   hashnodeToNotionPubSub,
+  httpNotionToHashnode,
 } from './hashnode/scheduledNotionToHashNode';
