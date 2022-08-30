@@ -32,6 +32,7 @@ export { scheduledNotionToFirestore } from './firebase/notion';
 export {
   scheduledNotionToDevto,
   devtoToNotionPubSub,
+  httpNotionToDevto,
 } from './devto/scheduledNotionToDevto';
 
 // Notion to Devto

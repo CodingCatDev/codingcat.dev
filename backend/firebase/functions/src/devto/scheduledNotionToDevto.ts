@@ -3,6 +3,8 @@ import { sendTopic } from '../utilities/googleapis';
 import {
   queryPurrfectStreamDevTo,
   patchPurrfectPage,
+  queryByDevto,
+  getNotionPageMarkdown,
 } from '../utilities/notion.server';
 import { addArticle } from '../utilities/devto';
 
@@ -24,6 +26,20 @@ export const scheduledNotionToDevto = functions.pubsub
         await sendTopic(topicId, pod);
       }
     }
+
+    console.log('Checking for devto missing');
+    const posts = await queryByDevto('post', 1);
+    console.log('Posts:', JSON.stringify(posts));
+
+    if (posts?.results) {
+      const needposts = posts?.results;
+      console.log('Posts to add to pub/sub', JSON.stringify(needposts));
+
+      for (const p of needposts) {
+        await sendTopic(topicId, p);
+      }
+    }
+
     return true;
   });
 
@@ -37,6 +53,30 @@ export const devtoToNotionPubSub = functions.pubsub
 
     let data;
     switch (page._type) {
+      case 'post':
+        const post = await getNotionPageMarkdown({
+          _type: page._type,
+          slug: page?.properties?.slug?.url,
+          preview: false,
+        });
+
+        if (!post || !post.content) {
+          break;
+        }
+
+        data = {
+          article: {
+            title: page.title,
+            published: true,
+            tags: ['podcast', 'webdev', 'javascript', 'beginners'],
+            main_image: `https://media.codingcat.dev/image/upload/b_rgb:5e1186,c_pad,w_1000,h_420/${page?.coverPhoto?.public_id}`,
+            canonical_url: `https://codingcat.dev/${page._type}/${page.slug}`,
+            description: page.excerpt,
+            organization_id: '1009',
+            body_markdown: post.content,
+          },
+        };
+        break;
       case 'podcast':
         data = {
           article: {
@@ -93,7 +133,7 @@ export const devtoToNotionPubSub = functions.pubsub
 
       return purrfectPagePatchRes;
     } else {
-      console.log('No Data matched for article');
+      console.error('No Data matched for article');
       return;
     }
   });
@@ -111,6 +151,19 @@ export const httpNotionToDevto = functions.https.onRequest(async (req, res) => {
 
     for (const pod of needCloudinaryPods) {
       await sendTopic(topicId, pod);
+    }
+  }
+
+  console.log('Checking for devto missing');
+  const posts = await queryByDevto('post', 1);
+  console.log('Posts:', JSON.stringify(posts));
+
+  if (posts?.results) {
+    const needposts = posts?.results;
+    console.log('Posts to add to pub/sub', JSON.stringify(needposts));
+
+    for (const p of needposts) {
+      await sendTopic(topicId, p);
     }
   }
   res.send({ msg: 'started' });

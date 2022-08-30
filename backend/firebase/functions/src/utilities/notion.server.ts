@@ -423,6 +423,56 @@ export const queryByPublished = async (
   return await formatPosts(raw, _type, false, true);
 };
 
+export const queryByDevto = async (
+  _type: string,
+  page_size?: number,
+  start_cursor?: string | null
+) => {
+  const sorts: any = [
+    {
+      property: 'start',
+      direction: 'ascending',
+    },
+  ];
+  const filter: any = {
+    and: [
+      {
+        property: 'slug',
+        url: {
+          is_not_empty: true,
+        },
+      },
+      {
+        property: 'published',
+        select: {
+          equals: 'published',
+        },
+      },
+      {
+        property: 'devto',
+        url: {
+          is_empty: true,
+        },
+      },
+      {
+        property: 'start',
+        date: {
+          is_not_empty: true,
+        },
+      },
+    ],
+  };
+
+  const raw = await notionClient.databases.query({
+    database_id: getNotionDbByType(_type),
+    start_cursor: start_cursor ? start_cursor : undefined,
+    page_size,
+    filter,
+    sorts,
+  });
+  return await formatPosts(raw, _type, false, true);
+};
+
 export const queryAll = async (
   _type: string,
   page_size?: number,
