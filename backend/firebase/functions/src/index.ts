@@ -32,12 +32,10 @@ export { scheduledNotionToFirestore } from './firebase/notion';
 export {
   scheduledNotionToDevto,
   devtoToNotionPubSub,
-  httpNotionToDevto,
 } from './devto/scheduledNotionToDevto';
 
-// Notion to Hasnode
+// Notion to Hashnode
 export {
   scheduledNotionToHashnode,
   hashnodeToNotionPubSub,
-  httpNotionToHashnode,
 } from './hashnode/scheduledNotionToHashNode';
