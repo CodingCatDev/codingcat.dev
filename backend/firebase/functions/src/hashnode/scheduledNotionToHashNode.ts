@@ -10,24 +10,25 @@ import { createPublicationStory } from '../utilities/hashnode';
 
 const topicId = 'hashnodeCreateFromNotion';
 
-const scheduleCheck = async () => {
-  // Check to see if ther are scheduled pods
-  console.log('Checking for scheduled pods');
-  const scheduledRes = await queryPurrfectStreamHashnode(1);
-  console.log('Scheduled Result:', JSON.stringify(scheduledRes));
+export const scheduledNotionToHashnode = functions.pubsub
+  .schedule('every 5 minutes')
+  .onRun(async () => {
+    // Check to see if ther are scheduled pods
+    console.log('Checking for scheduled pods');
+    const scheduledRes = await queryPurrfectStreamHashnode(1);
+    console.log('Scheduled Result:', JSON.stringify(scheduledRes));
 
-  if (scheduledRes?.results) {
-    const needCloudinaryPods = scheduledRes?.results;
-    console.log('Pods to add to pub/sub', JSON.stringify(needCloudinaryPods));
+    if (scheduledRes?.results) {
+      const needCloudinaryPods = scheduledRes?.results;
+      console.log('Pods to add to pub/sub', JSON.stringify(needCloudinaryPods));
 
-    for (const pod of needCloudinaryPods) {
-      await sendTopic(topicId, pod);
+      for (const pod of needCloudinaryPods) {
+        await sendTopic(topicId, pod);
+      }
     }
-  }
 
-  for (const _type of ['post', 'tutorial']) {
     console.log('Checking for hashnode missing');
-    const posts = await queryByHashnode(_type, 1);
+    const posts = await queryByHashnode('post', 1);
     console.log('Posts:', JSON.stringify(posts));
 
     if (posts?.results) {
@@ -38,13 +39,7 @@ const scheduleCheck = async () => {
         await sendTopic(topicId, p);
       }
     }
-  }
-};
 
-export const scheduledNotionToHashnode = functions.pubsub
-  .schedule('every 5 minutes')
-  .onRun(async () => {
-    await scheduleCheck();
     return true;
   });
 
@@ -57,78 +52,57 @@ export const hashnodeToNotionPubSub = functions.pubsub
     console.log('page', page);
 
     let input;
-    if (page._type === 'podcast') {
-      input = {
-        title: page.title,
-        subtitle: page.excerpt,
-        slug: `${page._type}-${page.slug}`,
-        contentMarkdown: `Original: https://codingcat.dev/${page._type}/${page.slug}
+    switch (page._type) {
+      case 'post':
+        const post = await getNotionPageMarkdown({
+          _type: page._type,
+          slug: page?.properties?.slug?.url,
+          preview: false,
+        });
 
-%[${page.properties.youtube.url}]
-          
-%[${page.properties.spotify.url}]
-          `,
-        coverImageURL: `https://media.codingcat.dev/image/upload/f_auto,c_limit,w_1920,q_auto/${page?.coverPhoto?.public_id}`,
-        isRepublished: {
-          originalArticleURL: `https://codingcat.dev/${page._type}/${page.slug}`,
-        },
-        tags: [
-          {
-            _id: '56744722958ef13879b950d3',
-            name: 'podcast',
-            slug: 'podcast',
-          },
-          {
-            _id: '56744721958ef13879b94cad',
-            name: 'JavaScript',
-            slug: 'javascript',
-          },
-          {
-            _id: '56744722958ef13879b94f1b',
-            name: 'Web Development',
-            slug: 'web-development',
-          },
-          {
-            _id: '56744723958ef13879b955a9',
-            name: 'Beginner Developers',
-            slug: 'beginners',
-          },
-        ],
-      };
-    } else {
-      console.log(
-        `Getting ${page._type}: ${page.id} markdown, with slug ${page?.properties?.slug?.url}`
-      );
-      const post = await getNotionPageMarkdown({
-        _type: page._type,
-        slug: page?.properties?.slug?.url,
-        preview: false,
-      });
-
-      console.log('Block Result', post);
-      if (post && post?.content) {
-        if (page?.properties?.spotify?.url) {
-          post.content = `
-%[${page.properties.spotify.url}]
-
-${post.content}`;
+        if (!post || !post.content) {
+          break;
         }
-        if (page?.properties?.youtube?.url) {
-          post.content = `
-%[${page.properties.youtube.url}]
 
-${post.content}`;
-        }
-        post.content = `
-Original: https://codingcat.dev/${page._type}/${page.slug}
-
-${post.content}
-        `;
         input = {
           title: page.title,
           subtitle: page.excerpt,
           slug: `${page._type}-${page.slug}`,
           contentMarkdown: post.content,
+          coverImageURL: `https://media.codingcat.dev/image/upload/f_auto,c_limit,w_1920,q_auto/${page?.coverPhoto?.public_id}`,
+          isRepublished: {
+            originalArticleURL: `https://codingcat.dev/${page._type}/${page.slug}`,
+          },
+          tags: [
+            {
+              _id: '56744721958ef13879b94cad',
+              name: 'JavaScript',
+              slug: 'javascript',
+            },
+            {
+              _id: '56744722958ef13879b94f1b',
+              name: 'Web Development',
+              slug: 'web-development',
+            },
+            {
+              _id: '56744723958ef13879b955a9',
+              name: 'Beginner Developers',
+              slug: 'beginners',
+            },
+          ],
+        };
+        break;
+      case 'podcast':
+        input = {
+          title: page.title,
+          subtitle: page.excerpt,
+          slug: `${page._type}-${page.slug}`,
+          contentMarkdown: `Original: https://codingcat.dev/${page._type}/${page.slug}
+
+%[${page.properties.youtube.url}]
+          
+%[${page.properties.spotify.url}]
+          `,
           coverImageURL: `https://media.codingcat.dev/image/upload/f_auto,c_limit,w_1920,q_auto/${page?.coverPhoto?.public_id}`,
           isRepublished: {
             originalArticleURL: `https://codingcat.dev/${page._type}/${page.slug}`,
@@ -156,7 +130,9 @@ ${post.content}
             },
           ],
         };
-      }
+        break;
+      default:
+        break;
     }
 
     if (input) {
@@ -191,15 +167,26 @@ ${post.content}
       return purrfectPagePatchRes;
     } else {
       console.log('No Data matched for article');
+      return;
     }
-    return;
   });
 
 // Used for testing don't forget to remove for production
 export const httpNotionToHashnode = functions.https.onRequest(
   async (req, res) => {
-    await scheduleCheck();
+    // Check to see if ther are scheduled pods
+    console.log('Checking for scheduled pods');
+    const scheduledRes = await queryPurrfectStreamHashnode(1);
+    console.log('Scheduled Result:', JSON.stringify(scheduledRes));
 
+    if (scheduledRes?.results) {
+      const needCloudinaryPods = scheduledRes?.results;
+      console.log('Pods to add to pub/sub', JSON.stringify(needCloudinaryPods));
+
+      for (const pod of needCloudinaryPods) {
+        await sendTopic(topicId, pod);
+      }
+    }
     res.send({ msg: 'started' });
   }
 );
