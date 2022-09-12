@@ -135,11 +135,6 @@ ${post.content}
           },
           tags: [
             {
-              _id: '56744722958ef13879b950d3',
-              name: 'podcast',
-              slug: 'podcast',
-            },
-            {
               _id: '56744721958ef13879b94cad',
               name: 'JavaScript',
               slug: 'javascript',
