@@ -3,6 +3,8 @@ import { sendTopic } from '../utilities/googleapis';
 import {
   queryPurrfectStreamHashnode,
   patchPurrfectPage,
+  queryByHashnode,
+  getNotionPageMarkdown,
 } from '../utilities/notion.server';
 import { createPublicationStory } from '../utilities/hashnode';
 
@@ -24,6 +26,20 @@ export const scheduledNotionToHashnode = functions.pubsub
         await sendTopic(topicId, pod);
       }
     }
+
+    console.log('Checking for hashnode missing');
+    const posts = await queryByHashnode('post', 1);
+    console.log('Posts:', JSON.stringify(posts));
+
+    if (posts?.results) {
+      const needposts = posts?.results;
+      console.log('Posts to add to pub/sub', JSON.stringify(needposts));
+
+      for (const p of needposts) {
+        await sendTopic(topicId, p);
+      }
+    }
+
     return true;
   });
 
@@ -37,6 +53,45 @@ export const hashnodeToNotionPubSub = functions.pubsub
 
     let input;
     switch (page._type) {
+      case 'post':
+        const post = await getNotionPageMarkdown({
+          _type: page._type,
+          slug: page?.properties?.slug?.url,
+          preview: false,
+        });
+
+        if (!post || !post.content) {
+          break;
+        }
+
+        input = {
+          title: page.title,
+          subtitle: page.excerpt,
+          slug: `${page._type}-${page.slug}`,
+          contentMarkdown: post.content,
+          coverImageURL: `https://media.codingcat.dev/image/upload/f_auto,c_limit,w_1920,q_auto/${page?.coverPhoto?.public_id}`,
+          isRepublished: {
+            originalArticleURL: `https://codingcat.dev/${page._type}/${page.slug}`,
+          },
+          tags: [
+            {
+              _id: '56744721958ef13879b94cad',
+              name: 'JavaScript',
+              slug: 'javascript',
+            },
+            {
+              _id: '56744722958ef13879b94f1b',
+              name: 'Web Development',
+              slug: 'web-development',
+            },
+            {
+              _id: '56744723958ef13879b955a9',
+              name: 'Beginner Developers',
+              slug: 'beginners',
+            },
+          ],
+        };
+        break;
       case 'podcast':
         input = {
           title: page.title,
