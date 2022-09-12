@@ -106,8 +106,24 @@ export const hashnodeToNotionPubSub = functions.pubsub
       });
 
       console.log('Block Result', post);
-
       if (post && post?.content) {
+        if (page?.properties?.spotify?.url) {
+          post.content = `
+%[${page.properties.spotify.url}]
+
+${post.content}`;
+        }
+        if (page?.properties?.youtube?.url) {
+          post.content = `
+%[${page.properties.youtube.url}]
+
+${post.content}`;
+        }
+        post.content = `
+Original: https://codingcat.dev/${page._type}/${page.slug}
+
+${post.content}
+        `;
         input = {
           title: page.title,
           subtitle: page.excerpt,
