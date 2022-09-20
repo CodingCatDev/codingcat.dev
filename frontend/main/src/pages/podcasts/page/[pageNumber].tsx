@@ -91,7 +91,7 @@ const Podcasts = ({
           site_name: 'CodingCat.dev Podcast',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/CodingCat.dev Podcast',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/codingcatpodcast.jpg',
             },
           ],
         }}
