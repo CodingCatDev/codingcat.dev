@@ -48,10 +48,10 @@ const Podcasts = ({
           url: 'https://codingcat.dev/podcasts',
           title: 'Purrfect Podcasts',
           description: 'Purrfect Podcasts about development.',
-          site_name: 'Purrfect.dev',
+          site_name: 'CodingCat.dev Podcast',
           images: [
             {
-              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/purrfect.dev',
+              url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/CodingCat.dev Podcast',
             },
           ],
         }}

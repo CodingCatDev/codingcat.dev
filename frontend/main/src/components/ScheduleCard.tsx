@@ -20,7 +20,7 @@ export default function ScheduleCard({ post }: { post: Post }): JSX.Element {
             <>
               <Image
                 src={`${post?.coverPhoto?.public_id}`}
-                alt={`Purrfect.dev hosted by Alex & Brittney with ${
+                alt={`CodingCat.dev Podcast hosted by Alex & Brittney with ${
                   post?.guests && post?.guests?.length > 1 ? 'guests' : 'guest'
                 } ${post?.guests?.map((guest) => guest.name)}`}
                 width="480"

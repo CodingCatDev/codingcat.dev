@@ -8,7 +8,7 @@ export default function PurrfectDevUpper(): JSX.Element {
       <section className="grid justify-center grid-cols-1 p-8 mx-auto 2xl:gap-10 lg:grid-cols-2 lg:px-10 2xl:min-h-768 max-w-7xl">
         <section className="grid items-center content-center grid-cols-1 gap-4 mx-auto 2xl:mx-0 2xl:justify-self-end">
           <h1 className="pt-4 -mb-4 text-5xl leading-snug tracking-tight vertical-text-clip xl:tracking-wide xl:text-6xl xl:leading-snug 2xl:text-7xl 2xl:leading-snug">
-            Purrfect.dev
+            CodingCat.dev Podcast
           </h1>
           <p className="font-sans 2xl:text-2xl" style={{ maxWidth: `40ch` }}>
             A weekly podcast about web design and development from{' '}

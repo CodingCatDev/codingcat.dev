@@ -820,7 +820,7 @@ export const queryRelationById = async (
   return await formatPosts(raw, _type);
 };
 
-// Purrfect.dev
+// CodingCat.dev Podcast
 
 export const queryPurrfectStreamByReleased = async (
   page_size?: number,

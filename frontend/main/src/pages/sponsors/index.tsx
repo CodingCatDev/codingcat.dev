@@ -48,8 +48,8 @@ const Sponsors = ({
           locale: 'en_US',
           url: 'https://codingcat.dev/sponsors',
           title: 'Sponsors | CodingCatDev',
-          description: 'Sponsors for Purrfect.dev',
-          site_name: 'Purrfect.dev',
+          description: 'Sponsors for CodingCat.dev Podcast',
+          site_name: 'CodingCat.dev Podcast',
           images: [
             {
               url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/Sponsors.png',

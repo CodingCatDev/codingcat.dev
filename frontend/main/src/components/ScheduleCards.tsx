@@ -23,7 +23,7 @@ export default function ScheduleCards({
                   <a>
                     <Image
                       src={`${post?.coverPhoto?.public_id}`}
-                      alt={`Purrfect.dev hosted by Alex & Brittney with ${
+                      alt={`CodingCat.dev Podcast hosted by Alex & Brittney with ${
                         post?.guests && post?.guests?.length > 1
                           ? 'guests'
                           : 'guest'

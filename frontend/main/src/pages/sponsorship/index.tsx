@@ -75,15 +75,15 @@ export default function Sponsorship({
     <>
       <NextSeo
         title="Purrfect Sponsorship"
-        description="Sponsorship for Purrfect.dev"
+        description="Sponsorship for CodingCat.dev Podcast"
         canonical={`https://codingcat.dev/sponsorship/`}
         openGraph={{
           type: 'website',
           locale: 'en_US',
           url: 'https://codingcat.dev/sponsorship',
           title: 'Purrfect Podcasts',
-          description: 'Sponsorship for Purrfect.dev.',
-          site_name: 'Purrfect.dev',
+          description: 'Sponsorship for CodingCat.dev Podcast.',
+          site_name: 'CodingCat.dev Podcast',
           images: [
             {
               url: 'https://media.codingcat.dev/image/upload/f_jpg/main-codingcatdev-photo/Sponsorship',
@@ -109,7 +109,7 @@ export default function Sponsorship({
             <div className="flex flex-col items-center justify-center">
               <p className="text-4xl">Sponsorship for</p>
               <p className="text-6xl font-extrabold md:text-8xl">
-                Purrfect.dev
+                CodingCat.dev Podcast
               </p>
               <p className="text-2xl">a CodingCat.dev Production</p>
             </div>
@@ -127,7 +127,7 @@ export default function Sponsorship({
                 We&lsquo;d love to help!
               </p>
               <p className="text-2xl">
-                Purrfect.dev is a weekly podcast that focuses on
+                CodingCat.dev Podcast is a weekly podcast that focuses on
                 developer&lsquo;s backgrounds, tools and tiips.
               </p>
               <p className="text-2xl">
@@ -151,7 +151,7 @@ export default function Sponsorship({
                 Alex and Brittney both have a passion for teaching and the
                 <span className="dark:text-secondary-400 text-secondary-300">
                   {' '}
-                  Purrfect.dev{' '}
+                  CodingCat.dev Podcast{' '}
                 </span>
                 podcast is an extension of that passion!
               </p>
@@ -173,7 +173,7 @@ export default function Sponsorship({
                     Brittney{' '}
                   </span>
                   joined Alex to complete the design of CodingCat.dev and then
-                  joined Purrfect.dev to give a designer turned
+                  joined CodingCat.dev Podcast to give a designer turned
                   developer&lsquo;s perspective to the discussion.
                 </p>
               </div>
@@ -384,8 +384,8 @@ export default function Sponsorship({
                 </p>
               </div>
               <p className="text-xl md:text-2xl">
-                These notes will be listed on Purrfect.dev permanently and
-                within the user&lsquo;s podcatcher of choice (Apple,
+                These notes will be listed on CodingCat.dev Podcast permanently
+                and within the user&lsquo;s podcatcher of choice (Apple,
                 Spotify...). This is a great opportunity to include unique
                 targeted links and promo codes!
               </p>
@@ -393,7 +393,7 @@ export default function Sponsorship({
             <div className="w-full">
               <Image
                 src={`/main-codingcatdev-photo/Screen_Shot_2022-08-02_at_12.55.38_PM.png`}
-                alt="Purrfect.dev Sponsorship Image show logo."
+                alt="CodingCat.dev Podcast Sponsorship Image show logo."
                 layout="responsive"
                 width="2078"
                 height="2390"
@@ -444,7 +444,7 @@ export default function Sponsorship({
                   4
                 </span>
                 <p className="text-3xl dark:text-secondary-400 text-secondary-300">
-                  An evergreen listing on the Purrfect.dev{' '}
+                  An evergreen listing on the CodingCat.dev Podcast{' '}
                   <Link href="/sponsors">
                     <a className="underline">sponsors page.</a>
                   </Link>

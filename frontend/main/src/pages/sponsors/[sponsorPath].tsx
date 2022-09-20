@@ -98,7 +98,7 @@ export default function SponsorPage({
           url: `https://codingcat.dev/sponsors/${sponsor?.slug}`,
           title: `${sponsor?.title || ''} | CodingCatDev`,
           description: `${sponsor?.description}`,
-          site_name: 'Purrfect.dev',
+          site_name: 'CodingCat.dev Podcast',
           images: sponsor?.coverPhoto?.public_id
             ? [
                 {
