@@ -161,36 +161,58 @@ export default function Footer({
           {/* NEWSLETTER */}
           <section className="grid grid-cols-1 gap-2 lg:col-start-1 lg:col-end-3 lg:justify-self-center 2xl:justify-self-end 2xl:col-start-3 2xl:col-end-4">
             <h4 className="underline">Newsletter</h4>
-            <p className="text-xl">Subscribe for all the latest updates.</p>
-            <form
-              className="grid grid-cols-1"
-              action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
-              method="post"
-              target="popupwindow"
-              onSubmit={() =>
-                window.open(
-                  'https://buttondown.email/codingcatdev',
-                  'popupwindow'
-                )
-              }
-            >
-              <label htmlFor="subEmail" className="font-bold">
-                Email
-              </label>
-              <div className="flex flex-wrap gap-4 lg:flex-nowrap">
-                <input
-                  name="email"
-                  id="bd-email"
-                  type="email"
-                  placeholder="alex@codingcat.dev"
-                />
-                <input type="hidden" value="1" name="embed" />
 
-                <button className="btn-secondary" type="submit">
-                  Subscribe
-                </button>
-              </div>
-            </form>
+            <div id="revue-embed">
+              <form
+                className="grid grid-cols-1"
+                action="http://codingtreats.com/add_subscriber"
+                method="post"
+                id="revue-form"
+                name="revue-form"
+                target="_blank"
+              >
+                <div className="flex flex-wrap gap-4 revue-form-group lg:flex-nowrap">
+                  <div className="flex flex-col">
+                    <label htmlFor="member_email">Email address</label>
+                    <div className="flex gap-2">
+                      <input
+                        className="revue-form-field"
+                        placeholder="Your email address..."
+                        type="email"
+                        name="member[email]"
+                        id="member_email"
+                      />
+                      <input
+                        className="btn-secondary justify-self-end"
+                        type="submit"
+                        value="Subscribe"
+                        name="member[subscribe]"
+                        id="member_submit"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="max-w-xs mt-2 revue-form-footer">
+                  By subscribing, you agree with Revue’s{' '}
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://www.getrevue.co/terms"
+                  >
+                    Terms of Service
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://www.getrevue.co/privacy"
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </div>
+              </form>
+            </div>
           </section>
         </div>
         <p className="mt-10 text-sm font-light leading-5 text-center">
