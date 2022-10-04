@@ -10,6 +10,7 @@ import { getSite } from '@/services/notion.server';
 import { getRecent } from '@/services/notion.server';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import HomeDetail from '@/components/HomeDetails';
 
 const Profile = dynamic(() => import('@/components/user/Profile'), {
   ssr: false,
@@ -81,6 +82,9 @@ const Home = ({
             </div>
 
             <Profile main={true} />
+          </section>
+          <section className="pt-2 sm:pt-8">
+            <HomeDetail site={site} recentPosts={recentPosts} />
           </section>
         </div>
       </Layout>
