@@ -1,21 +1,20 @@
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
-import PostsCards from '@/components/PostsCards';
-import { Post, PostType } from '@/models/post.model';
+import { Post } from '@/models/post.model';
 import Layout from '@/layout/Layout';
-import BreakBarLeft from '@/components/home/BreakBarLeft';
-import BreakBarRight from '@/components/home/BreakBarRight';
 
-import Skills from '@/components/home/Skills';
-import AJLogoLeft from '@/components/global/icons/AJAlt';
-import KCAlt from '@/components/global/icons/KCAlt';
-import AJHeartAlt from '@/components/global/icons/AJHeartAlt';
-import Podcasts from '@/components/global/icons/nav/Podcasts';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 import { Site } from '@/models/site.model';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { getSite } from '@/services/notion.server';
 import { getRecent } from '@/services/notion.server';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import HomeDetail from '@/components/HomeDetails';
+
+const Profile = dynamic(() => import('@/components/user/Profile'), {
+  ssr: false,
+});
 
 interface StaticParams {
   site: Site;
@@ -56,112 +55,36 @@ const Home = ({
                 <br />
                 Web Tutorials
               </h1>
-              <p
-                className="font-sans 2xl:text-2xl"
-                style={{ maxWidth: `40ch` }}
-              >
+              <p className="font-sans text-2xl" style={{ maxWidth: `40ch` }}>
                 Get the skills you need to become a better web developer today.
-                High quality courses with custom certificates and projects to
-                show off your new skills.
+                High quality courses with projects to show off your new skills.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/courses">
-                  <a className="btn-secondary justify-self-end" role="button">
-                    Start Now
-                  </a>
-                </Link>
-                <Link href="/user/profile">
-                  <a className="btn-primary justify-self-start" role="button">
-                    Join CodingCat.dev
-                  </a>
-                </Link>
-              </div>
             </section>
             <section className="grid grid-cols-1 row-start-1 -ml-10 lg:col-start-2 place-items-center 3xl:justify-items-start 3xl:ml-0">
               <AJPrimary className="w-1/2 max-w-xs lg:w-3/4 lg:max-w-md" />
             </section>
           </section>
-          {/* COURSES */}
-          <BreakBarLeft>
-            <Skills />
-          </BreakBarLeft>
-          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
-            <h2 className="mt-4 text-4xl light:text-primary-900 lg:text-5xl">
-              Latest Courses
-            </h2>
-            <PostsCards posts={recentPosts[PostType.course]} />
-            <Link href="/courses">
-              <a className="justify-self-center">
-                <button className="btn-primary" type="button">
-                  View All Courses
-                </button>
-              </a>
-            </Link>
-          </section>
-          {/* TUTORIALS */}
-          <BreakBarRight>
-            <AJLogoLeft className="w-16 sm:w-16 md:w-20" />
-            <h3 className="absolute w-1/2 text-2xl text-center sm:left-0 sm:w-full left-1/4 text-basics-50 sm:text-4xl lg:text-4xl">
-              Learn with AJ and KC
-            </h3>
-            <KCAlt className="w-14 sm:w-14 md:w-20" />
-          </BreakBarRight>
-          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
-            <h2 className="mt-4 text-4xl text-right light:text-primary-900 lg:text-5xl">
-              Latest Tutorials
-            </h2>
-            <PostsCards posts={recentPosts[PostType.tutorial]} />
-            <Link href="/tutorials">
-              <a className="justify-self-center">
-                <button className="btn-primary" type="button">
-                  View All Tutorials
-                </button>
-              </a>
-            </Link>
-          </section>
-          {/* BLOG */}
-          <BreakBarLeft>
-            <div className="relative flex items-center w-full">
-              <AJHeartAlt className="w-16 sm:w-16 md:w-20" />
-              <h3 className="absolute w-3/4 ml-4 text-2xl text-center sm:left-0 sm:w-full left-16 text-basics-50 sm:text-4xl md:text-2xl lg:text-4xl">
-                Read what&#39;s going on in web dev
-              </h3>
+          <Image
+            src="main-codingcatdev-photo/Hacktober_2022_Laptop_Giveaway.jpg"
+            alt="Hacktoberfest free laptop giveaway to 100th sub"
+            height={1080}
+            width={1920}
+          ></Image>
+          <section className="grid justify-center grid-cols-1 p-4 mx-auto 2xl:gap-10 lg:px-10 2xl:min-h-768 max-w-7xl">
+            <div className="relative z-10 flex flex-col items-center justify-center pb-8">
+              <p className="text-2xl font-bold text-center lg:text-4xl sm:text-3xl leading-tighter sm:max-w-[22ch] tracking-tight">
+                Full Stack Courses for Busy Web Developers
+              </p>
+              <p className="pt-3 text-sm leading-tight text-center text-blue-500 dark:text-amber-400 lg:text-lg sm:text-base">
+                High-quality video tutorials made by expert developers in their
+                field.
+              </p>
             </div>
-          </BreakBarLeft>
-          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
-            <h2 className="mt-4 text-4xl light:text-primary-900 lg:text-5xl">
-              Blog Posts
-            </h2>
-            <PostsCards posts={recentPosts[PostType.post]} />
-            <Link href="/blog">
-              <a className="justify-self-center">
-                <button className="btn-primary" type="button">
-                  View All Posts
-                </button>
-              </a>
-            </Link>
+
+            <Profile main={true} />
           </section>
-          {/* PODCASTS */}
-          <BreakBarRight>
-            <div className="relative flex items-center justify-end w-full">
-              <h3 className="absolute left-0 w-3/4 ml-4 text-2xl text-center sm:w-full text-basics-50 sm:text-3xl md:text-3xl lg:text-4xl">
-                Listen to the latest tech news
-              </h3>
-              <Podcasts className="w-16 sm:w-16 md:w-20" />
-            </div>
-          </BreakBarRight>
-          <section className="grid w-full gap-10 px-4 mx-auto mb-4 xl:px-10">
-            <h2 className="mt-4 text-4xl text-right light:text-primary-900 lg:text-5xl">
-              Latest Podcasts
-            </h2>
-            <PostsCards posts={recentPosts[PostType.podcast]} />
-            <Link href="/podcasts">
-              <a className="justify-self-center">
-                <button className="btn-primary" type="button">
-                  View All Podcasts
-                </button>
-              </a>
-            </Link>
+          <section className="pt-2 sm:pt-8">
+            <HomeDetail site={site} recentPosts={recentPosts} />
           </section>
         </div>
       </Layout>

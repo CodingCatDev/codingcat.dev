@@ -25,16 +25,13 @@ export default function UserMembership({
       {member || team ? (
         <section>
           <div className="grid gap-3 m-2 justify-items-center place-items-center">
-            <div className="text-2xl">
-              You are already a member. Would you like to see your membership?
-              Or just start with courses?
-            </div>
+            <div className="text-2xl">You are already a member.</div>
             <div className="grid grid-flow-col gap-3 justify-items-center">
-              <Link href="/user/membership">
+              {/* <Link href="/user/membership">
                 <a>
                   <div className=" btn-primary">See Membership</div>
                 </a>
-              </Link>
+              </Link> */}
               <Link href="/courses">
                 <a>
                   <div className="btn-secondary">Start Courses</div>
