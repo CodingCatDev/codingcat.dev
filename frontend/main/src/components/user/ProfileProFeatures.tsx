@@ -1,8 +1,8 @@
 export default function ProfileProFeatures(): JSX.Element {
   return (
     <section>
-      <div className="w-full p-8 text-2xl font-bold tracking-wide text-center uppercase border-b text-primary-900 border-primary-900">
-        Why Go Pro?
+      <div className="w-full p-8 text-2xl font-bold tracking-wide text-center uppercase border-b ">
+        Why Join CodingCat.dev?
       </div>
       <div className="flex justify-center m-3">
         <ul>
@@ -17,13 +17,13 @@ export default function ProfileProFeatures(): JSX.Element {
               </svg>
             </div>
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3 text-xl font-bold text-primary-900">
+              <span className="ml-3 text-xl font-bold ">
                 Ad Free Experience
               </span>
-              <span className="max-w-sm ml-3 text-primary-900 text-md">
+              <span className="max-w-sm ml-3 text-md">
                 Enjoy CodingCat.dev Tutorial website 100% without ads.
               </span>
-              <span className="max-w-sm ml-3 text-primary-900 text-md">
+              <span className="max-w-sm ml-3 text-md">
                 No referral links and no advertisements.
               </span>
             </div>
@@ -39,10 +39,8 @@ export default function ProfileProFeatures(): JSX.Element {
               </svg>
             </div>
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3 text-xl font-bold text-primary-900">
-                Full Access
-              </span>
-              <span className="max-w-sm ml-3 text-primary-900 text-md">
+              <span className="ml-3 text-xl font-bold ">Full Access</span>
+              <span className="max-w-sm ml-3 text-md">
                 Access the full CodingCat.dev Tutorial catalog and enjoy new
                 premium tutorial series every single month.
               </span>
@@ -59,10 +57,10 @@ export default function ProfileProFeatures(): JSX.Element {
               </svg>
             </div>
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3 text-xl font-bold text-primary-900">
+              <span className="ml-3 text-xl font-bold ">
                 Free Series Video Download
               </span>
-              <span className="max-w-sm ml-3 text-primary-900 text-md">
+              <span className="max-w-sm ml-3 text-md">
                 Full zip file of entire pro series.
               </span>
             </div>
@@ -78,10 +76,8 @@ export default function ProfileProFeatures(): JSX.Element {
               </svg>
             </div>
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3 text-xl font-bold text-primary-900">
-                Like and Bookmark
-              </span>
-              <span className="max-w-sm ml-3 text-primary-900 text-md">
+              <span className="ml-3 text-xl font-bold ">Like and Bookmark</span>
+              <span className="max-w-sm ml-3 text-md">
                 Allows for better feedback, and you can see what courses work
                 better for you!
               </span>
@@ -98,10 +94,8 @@ export default function ProfileProFeatures(): JSX.Element {
               </svg>
             </div>
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3 text-xl font-bold text-primary-900">
-                Track Progress
-              </span>
-              <span className="max-w-sm ml-3 text-primary-900 text-md">
+              <span className="ml-3 text-xl font-bold ">Track Progress</span>
+              <span className="max-w-sm ml-3 text-md">
                 Some of the courses are very detailed, tracking allows you to
                 remember where you left off.
               </span>

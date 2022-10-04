@@ -31,7 +31,7 @@ const UserMembership = dynamic<any>(
   }
 );
 
-export default function Profile(): JSX.Element {
+export default function Profile({ main = false }): JSX.Element {
   const { data: signInCheckResult } = useSigninCheck();
   const firestore = useFirestore();
 
@@ -95,22 +95,31 @@ export default function Profile(): JSX.Element {
   return (
     <FirebaseFirestoreProvider>
       <AuthWrapper fallback={notSignedIn()}>
-        <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
-          <section>
-            <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
-              Settings
-            </h2>
-            <SettingsLinks />
+        {main ? (
+          <>
+            <UserMembership
+              user={signInCheckResult?.user}
+              products={products}
+            />
+          </>
+        ) : (
+          <section className="grid self-start w-full gap-10 p-10 lg:grid-cols-settings">
+            <section>
+              <h2 className="mb-4 font-sans text-4xl vertical-text-clip">
+                Settings
+              </h2>
+              <SettingsLinks />
+            </section>
+            {signInCheckResult?.user && (
+              <div className="flex flex-col">
+                <UserMembership
+                  user={signInCheckResult.user}
+                  products={products}
+                />
+              </div>
+            )}
           </section>
-          {signInCheckResult?.user && (
-            <div className="flex flex-col">
-              <UserMembership
-                user={signInCheckResult.user}
-                products={products}
-              />
-            </div>
-          )}
-        </section>
+        )}
       </AuthWrapper>
     </FirebaseFirestoreProvider>
   );
