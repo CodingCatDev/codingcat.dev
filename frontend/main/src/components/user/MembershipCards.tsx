@@ -83,7 +83,7 @@ export default function MembershipCards({
         unoptimized={true}
         layout="fixed"
         width="335"
-        height="270"
+        height="335"
         alt={`Product Photo for ${product.description}`}
       />
     );
