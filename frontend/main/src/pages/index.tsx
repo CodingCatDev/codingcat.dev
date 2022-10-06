@@ -46,6 +46,37 @@ const Home = ({
         canonical={`https://codingcat.dev/`}
       ></NextSeo>
       <Layout site={site}>
+        <article className="relative grid justify-center gap-4 p-8 text-center bg-[chocolate] place-items-center bg-primary-900 text-basics-50 dark:text-basics-50">
+          <h2 className="font-sans font-black">Win a Samsung Pro Chromebook</h2>
+          <figure className="grid justify-center gap-4 place-items-center">
+            <Image
+              loader={() => `./static/images/chromebook.png`}
+              src="./static/images/chromebook.png"
+              layout="fixed"
+              width={325}
+              height={245}
+              alt="Chromebook Hacktoberfest free laptop giveaway to 100th sub"
+            />
+            <figcaption className="max-w-md text-sm">
+              * Join CodingCat.dev during October for only <strong>$1</strong>{' '}
+              using coupon code <strong>HACKTOBER2022</strong>. <br />
+              The 100th person to subscribe during the month of October will win
+              this laptop. The laptop will only be given away if 100 people
+              subscribe, so tell all of your friends!
+            </figcaption>
+          </figure>
+          <div className="pb-20 md:pb-8">
+            <Link href="/user/profile">
+              <a
+                className="btn-primary bg-blue justify-self-start"
+                role="button"
+              >
+                Join CodingCat.dev for $1
+              </a>
+            </Link>
+          </div>
+          <AJPrimary className="absolute right-4 bottom-4 max-w-[100px]" />
+        </article>
         <div>
           {/* Hero */}
           <section className="grid justify-center grid-cols-1 p-8 mx-auto 2xl:gap-10 lg:grid-cols-2 lg:px-10 2xl:min-h-768 max-w-7xl">
@@ -64,26 +95,25 @@ const Home = ({
               <AJPrimary className="w-1/2 max-w-xs lg:w-3/4 lg:max-w-md" />
             </section>
           </section>
-          <Image
-            src="main-codingcatdev-photo/Hacktober_2022_Laptop_Giveaway.jpg"
-            alt="Hacktoberfest free laptop giveaway to 100th sub"
-            height={1080}
-            width={1920}
-          ></Image>
-          <section className="grid justify-center grid-cols-1 p-4 mx-auto 2xl:gap-10 lg:px-10 2xl:min-h-768 max-w-7xl">
-            <div className="relative z-10 flex flex-col items-center justify-center pb-8">
+
+          {/* <section className="grid justify-center grid-cols-1 p-4 mx-auto 2xl:gap-10 lg:px-10 2xl:min-h-768 max-w-7xl">
+            <div className="relative z-10 flex flex-col items-center justify-center">
               <p className="text-2xl font-bold text-center lg:text-4xl sm:text-3xl leading-tighter sm:max-w-[22ch] tracking-tight">
                 Full Stack Courses for Busy Web Developers
               </p>
-              <p className="pt-3 text-sm leading-tight text-center text-blue-500 dark:text-amber-400 lg:text-lg sm:text-base">
+              <p className="pt-3 text-sm leading-tight text-center lg:text-lg sm:text-base">
                 High-quality video tutorials made by expert developers in their
                 field.
               </p>
             </div>
 
-            <Profile main={true} />
-          </section>
-          <section className="pt-2 sm:pt-8">
+            <Link href="/user/profile">
+              <a className="btn-primary justify-self-start" role="button">
+                Join CodingCat.dev
+              </a>
+            </Link>
+          </section> */}
+          <section>
             <HomeDetail site={site} recentPosts={recentPosts} />
           </section>
         </div>
