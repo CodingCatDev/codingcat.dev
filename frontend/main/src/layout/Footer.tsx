@@ -165,7 +165,7 @@ export default function Footer({
             <div id="revue-embed">
               <form
                 className="grid grid-cols-1"
-                action="http://codingtreats.com/add_subscriber"
+                action="https://codingtreats.com/add_subscriber"
                 method="post"
                 id="revue-form"
                 name="revue-form"
