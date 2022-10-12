@@ -60,9 +60,7 @@ const Home = ({
             <figcaption className="max-w-md text-sm">
               * Join CodingCat.dev during October for only <strong>$1</strong>{' '}
               using coupon code <strong>HACKTOBER2022</strong>. <br />
-              The 100th person to subscribe during the month of October will win
-              this laptop. The laptop will only be given away if 100 people
-              subscribe, so tell all of your friends!
+              You will be entered to win this laptop!
             </figcaption>
           </figure>
           <div className="pb-20 md:pb-8">
