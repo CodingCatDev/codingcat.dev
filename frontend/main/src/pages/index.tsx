@@ -46,35 +46,6 @@ const Home = ({
         canonical={`https://codingcat.dev/`}
       ></NextSeo>
       <Layout site={site}>
-        <article className="relative grid justify-center gap-4 p-8 text-center bg-[chocolate] place-items-center bg-primary-900 text-basics-50 dark:text-basics-50">
-          <h2 className="font-sans font-black">Win a Samsung Pro Chromebook</h2>
-          <figure className="grid justify-center gap-4 place-items-center">
-            <Image
-              loader={() => `./static/images/chromebook.png`}
-              src="./static/images/chromebook.png"
-              layout="fixed"
-              width={325}
-              height={245}
-              alt="Chromebook Hacktoberfest free laptop giveaway to 100th sub"
-            />
-            <figcaption className="max-w-md text-sm">
-              * Join CodingCat.dev during October for only <strong>$1</strong>{' '}
-              using coupon code <strong>HACKTOBER2022</strong>. <br />
-              You will be entered to win this laptop!
-            </figcaption>
-          </figure>
-          <div className="pb-20 md:pb-8">
-            <Link href="/user/profile">
-              <a
-                className="btn-primary bg-blue justify-self-start"
-                role="button"
-              >
-                Join CodingCat.dev for $1
-              </a>
-            </Link>
-          </div>
-          <AJPrimary className="absolute right-4 bottom-4 max-w-[100px]" />
-        </article>
         <div>
           {/* Hero */}
           <section className="grid justify-center grid-cols-1 p-8 mx-auto 2xl:gap-10 lg:grid-cols-2 lg:px-10 2xl:min-h-768 max-w-7xl">
