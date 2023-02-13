@@ -1,37 +1,25 @@
 {
   "name": "codingcat.dev",
-  "private": "true",
-  "version": "0.0.6",
+  "private": "false",
+  "version": "2.0.0",
   "description": "Main codingcat.dev site",
-  "main": "frontend/main/",
+  "main": "apps/main/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CodingCatDev/codingcat.dev"
   },
   "author": "Alex Patterson",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "SEE LICENSE ORG",
   "bugs": {
     "url": "https://github.com/CodingCatDev/codingcat.dev/issues"
   },
   "homepage": "https://github.com/CodingCatDev/codingcat.dev#readme",
-  "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "dev": "lerna run --parallel dev",
-    "build": "lerna run --parallel build",
-    "start": "lerna run --parallel start ",
-    "lint": "lerna run --parallel lint"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  },
   "devDependencies": {
-    "husky": "^4.3.6",
-    "lerna": "^3.22.1"
+    "turbo": "^1.6.3"
   },
-  "resolutions": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "serve": "turbo run serve"
   }
 }

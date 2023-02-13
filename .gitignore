@@ -1,7 +1,5 @@
-./package-lock.json
 .DS_Store
 node_modules
-lerna-debug.log
-*aws-exports.js
-# Local Netlify folder
-.netlify
+.env
+.env.*
+!.env.example

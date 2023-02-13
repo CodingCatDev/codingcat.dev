@@ -1,0 +1,13 @@
+{
+    "pipeline": {
+      "build": {
+        "outputs": ["dist/**", ".svelte-kit/**"]
+      },
+      "dev": {
+        "cache": false
+      },
+      "serve": {
+        "cache": false
+      }
+    }
+  }
