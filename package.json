@@ -6,12 +6,6 @@
   "devDependencies": {
     "turbo": "^1.6.3"
   },
-  "resolutions": {
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "@types/react": "17.0.2",
-    "@types/react-dom": "17.0.2"
-  },
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
