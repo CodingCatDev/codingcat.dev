@@ -4,7 +4,7 @@ import {
   withContentValidation,
 } from '@9gustin/react-notion-render';
 import CodeHighlight from '@/components/notion-custom-blocks/CodeHighlight';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
 import Embed from '@/components/notion-custom-blocks/Embed';
 

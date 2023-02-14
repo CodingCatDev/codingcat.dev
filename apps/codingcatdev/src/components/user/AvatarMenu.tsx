@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 import { Dispatch, SetStateAction } from 'react';
 import { useAuth, useSigninCheck } from 'reactfire';

@@ -1,5 +1,5 @@
 import { Sponsor } from '@/models/sponsor.model';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 export default function SponsorCards({
   sponsors,

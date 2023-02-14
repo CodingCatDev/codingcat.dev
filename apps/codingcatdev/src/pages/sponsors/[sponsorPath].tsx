@@ -11,7 +11,7 @@ import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Sponsor } from '@/models/sponsor.model';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import DefaultErrorPage from 'next/error';
 
 interface StaticParams {

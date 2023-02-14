@@ -8,7 +8,7 @@ import { Pagination } from '@/components/NotionPagination';
 import SponsorCards from '@/components/SponsorCards';
 import { Sponsor } from '@/models/sponsor.model';
 import { Post } from '@/models/post.model';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 
 interface StaticParams {

@@ -1,6 +1,6 @@
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 import { useEffect, useRef, useState } from 'react';
 import { Post, PostType } from '@/models/post.model';

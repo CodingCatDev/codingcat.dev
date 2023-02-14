@@ -5,7 +5,7 @@ import { getSite } from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import { Pagination } from '@/components/NotionPagination';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Sponsor } from '@/models/sponsor.model';
 import { Site } from '@/models/site.model';
 import { Post } from '@/models/post.model';

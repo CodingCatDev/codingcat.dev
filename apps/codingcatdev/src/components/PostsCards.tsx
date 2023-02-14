@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Post } from '@/models/post.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 

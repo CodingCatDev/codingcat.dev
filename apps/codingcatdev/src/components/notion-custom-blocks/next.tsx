@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import isEqual from 'react-fast-compare';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 export const wrapNextImage = ({
   src,
@@ -44,17 +44,19 @@ export const wrapNextImage = ({
 };
 
 export const wrapNextLink = (NextLink: any): React.FC<any> =>
-  function ReactNotionXNextLink({
-    href,
-    as,
-    passHref,
-    prefetch,
-    replace,
-    scroll,
-    shallow,
-    locale,
-    ...linkProps
-  }) {
+  (function ReactNotionXNextLink(
+    {
+      href,
+      as,
+      passHref,
+      prefetch,
+      replace,
+      scroll,
+      shallow,
+      locale,
+      ...linkProps
+    }
+  ) {
     return (
       <NextLink
         href={href}
@@ -69,4 +71,4 @@ export const wrapNextLink = (NextLink: any): React.FC<any> =>
         <a {...linkProps} />
       </NextLink>
     );
-  };
+  });

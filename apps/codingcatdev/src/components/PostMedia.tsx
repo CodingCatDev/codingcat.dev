@@ -4,7 +4,7 @@ import { config } from '@/config/cloudinary';
 
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { SetStateAction } from 'react';
 
 export default function PostMedia({
