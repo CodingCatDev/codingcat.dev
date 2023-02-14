@@ -1,0 +1,25 @@
+
+> @codingcatdev/codingcat.dev@2.0.0 build /Users/ccd/web/codingcatdev/codingcat.dev/apps/codingcat.dev
+> next build
+
+info  - Loaded env from /Users/ccd/web/codingcatdev/codingcat.dev/apps/codingcat.dev/.env.production
+info  - Loaded env from /Users/ccd/web/codingcatdev/codingcat.dev/apps/codingcat.dev/.env
+info  - Linting and checking validity of types...
+
+./src/components/firebase/CourseProgress.tsx
+128:6  Warning: React Hook useEffect has missing dependencies: 'ref', 'setVideoProgress', 'userProgress?.manualComplete', and 'userProgress?.videoProgress'. Either include them or remove the dependency array. If 'setVideoProgress' changes too often, find the parent component that defines it and wrap that definition in useCallback.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+Failed to compile.
+
+./src/services/notion.server.ts:3:24
+Type error: Cannot find module '@notionhq/client' or its corresponding type declarations.
+
+[0m [90m 1 | [39m[36mimport[39m { [33mAccessMode[39m } [36mfrom[39m [32m'./../models/access.model'[39m[33m;[39m[0m
+[0m [90m 2 | [39m[36mimport[39m { [33mAuthor[39m } [36mfrom[39m [32m'@/models/user.model'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 | [39m[36mimport[39m { [33mClient[39m } [36mfrom[39m [32m'@notionhq/client'[39m[33m;[39m[0m
+[0m [90m   | [39m                       [31m[1m^[22m[39m[0m
+[0m [90m 4 | [39m[36mimport[39m { config } [36mfrom[39m [32m'@/config/notion'[39m[33m;[39m[0m
+[0m [90m 5 | [39m[36mimport[39m { [33mPost[39m[33m,[39m [33mPostType[39m } [36mfrom[39m [32m'@/models/post.model'[39m[33m;[39m[0m
+[0m [90m 6 | [39m[36mimport[39m { [33mQueryDatabaseResponse[39m } [36mfrom[39m [32m'@notionhq/client/build/src/api-endpoints'[39m[33m;[39m[0m
+ ELIFECYCLE  Command failed with exit code 1.

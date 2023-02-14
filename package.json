@@ -1,21 +1,16 @@
 {
-  "name": "codingcat.dev",
-  "private": "false",
+  "name": "@codingcatdev/monorepo",
   "version": "2.0.0",
-  "description": "Main codingcat.dev site",
-  "main": "apps/main/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodingCatDev/codingcat.dev"
-  },
+  "description": "Repo for all things codingcat.dev",
   "author": "Alex Patterson",
-  "license": "SEE LICENSE ORG",
-  "bugs": {
-    "url": "https://github.com/CodingCatDev/codingcat.dev/issues"
-  },
-  "homepage": "https://github.com/CodingCatDev/codingcat.dev#readme",
   "devDependencies": {
     "turbo": "^1.6.3"
+  },
+  "resolutions": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2"
   },
   "scripts": {
     "dev": "turbo run dev",
