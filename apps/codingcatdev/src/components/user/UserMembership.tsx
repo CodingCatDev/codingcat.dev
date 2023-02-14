@@ -28,14 +28,12 @@ export default function UserMembership({
             <div className="text-2xl">You are already a member.</div>
             <div className="grid grid-flow-col gap-3 justify-items-center">
               {/* <Link href="/user/membership">
-                <a>
-                  <div className=" btn-primary">See Membership</div>
-                </a>
-              </Link> */}
+              <a>
+                <div className=" btn-primary">See Membership</div>
+              </a>
+            </Link> */}
               <Link href="/courses">
-                <a>
-                  <div className="btn-secondary">Start Courses</div>
-                </a>
+                <div className="btn-secondary">Start Courses</div>
               </Link>
             </div>
           </div>

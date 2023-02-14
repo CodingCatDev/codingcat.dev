@@ -445,15 +445,15 @@ export default function Sponsorship({
                 </span>
                 <p className="text-3xl dark:text-secondary-400 text-secondary-300">
                   An evergreen listing on the CodingCat.dev Podcast{' '}
-                  <Link href="/sponsors">
-                    <a className="underline">sponsors page.</a>
+                  <Link href="/sponsors" className="underline">
+                    sponsors page.
                   </Link>
                 </p>
               </div>
               <p className="text-2xl">
                 The{' '}
-                <Link href="/sponsors">
-                  <a className="underline">sponsors page</a>
+                <Link href="/sponsors" className="underline">
+                  sponsors page
                 </Link>{' '}
                 is a useful resource for listeners wanting to quickly reference
                 a sponsor&lsquo;s offering, but are unable to recall which

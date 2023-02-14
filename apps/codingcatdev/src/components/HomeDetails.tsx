@@ -34,12 +34,10 @@ const HomeDetail = ({ site, recentPosts }: StaticParams) => {
             Latest Courses
           </h2>
           <PostsCards posts={recentPosts[PostType.course]} />
-          <Link href="/courses">
-            <a className="justify-self-center">
-              <button className="btn-primary" type="button">
-                View All Courses
-              </button>
-            </a>
+          <Link href="/courses" className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Courses
+            </button>
           </Link>
         </section>
         {/* TUTORIALS */}
@@ -55,12 +53,10 @@ const HomeDetail = ({ site, recentPosts }: StaticParams) => {
             Latest Tutorials
           </h2>
           <PostsCards posts={recentPosts[PostType.tutorial]} />
-          <Link href="/tutorials">
-            <a className="justify-self-center">
-              <button className="btn-primary" type="button">
-                View All Tutorials
-              </button>
-            </a>
+          <Link href="/tutorials" className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Tutorials
+            </button>
           </Link>
         </section>
         {/* BLOG */}
@@ -77,12 +73,10 @@ const HomeDetail = ({ site, recentPosts }: StaticParams) => {
             Blog Posts
           </h2>
           <PostsCards posts={recentPosts[PostType.post]} />
-          <Link href="/blog">
-            <a className="justify-self-center">
-              <button className="btn-primary" type="button">
-                View All Posts
-              </button>
-            </a>
+          <Link href="/blog" className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Posts
+            </button>
           </Link>
         </section>
         {/* PODCASTS */}
@@ -99,12 +93,10 @@ const HomeDetail = ({ site, recentPosts }: StaticParams) => {
             Latest Podcasts
           </h2>
           <PostsCards posts={recentPosts[PostType.podcast]} />
-          <Link href="/podcasts">
-            <a className="justify-self-center">
-              <button className="btn-primary" type="button">
-                View All Podcasts
-              </button>
-            </a>
+          <Link href="/podcasts" className="justify-self-center">
+            <button className="btn-primary" type="button">
+              View All Podcasts
+            </button>
           </Link>
         </section>
       </div>

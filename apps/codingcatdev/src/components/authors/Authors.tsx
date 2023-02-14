@@ -22,9 +22,7 @@ export default function Authors({
       <section className="flex flex-wrap items-start justify-center w-full gap-10">
         {authors.map((author, i) => (
           <Link href={`/authors/${author.slug}`} key={i}>
-            <a>
-              <AuthorCard author={author} />
-            </a>
+            <AuthorCard author={author} />
           </Link>
         ))}
       </section>

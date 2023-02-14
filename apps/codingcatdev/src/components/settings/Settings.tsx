@@ -25,8 +25,8 @@ export default function Profile(): JSX.Element {
         <div className="grid">
           <div>
             <p className="text-2xl">Please sign in to change your settings.</p>
-            <Link href="/user/profile">
-              <a className="mt-4 btn-primary">Sign In </a>
+            <Link href="/user/profile" className="mt-4 btn-primary">
+              Sign In
             </Link>
           </div>
         </div>

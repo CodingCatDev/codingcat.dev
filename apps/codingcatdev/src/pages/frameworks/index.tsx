@@ -47,22 +47,24 @@ export default function FrameworksPage({
               <p>Blog</p>
             </a>
             {tags.map((tag, i) => (
-              <Link href={`/frameworks/${tag.slug}`} key={i}>
-                <a className="grid grid-cols-5 gap-2 p-2 bg-primary-900 text-primary-50 rounded-xl">
-                  <p className="">{tag.title}</p>
-                  <p className="flex-initial text-basics-50 ">
-                    {tag?.courses_count}
-                  </p>
-                  <p className="flex-initial text-basics-50 ">
-                    {tag?.tutorials_count}
-                  </p>
-                  <p className="flex-initial text-basics-50 ">
-                    {tag?.podcasts_count}
-                  </p>
-                  <p className="flex-initial text-basics-50 ">
-                    {tag?.posts_count}
-                  </p>
-                </a>
+              <Link
+                href={`/frameworks/${tag.slug}`}
+                key={i}
+                className="grid grid-cols-5 gap-2 p-2 bg-primary-900 text-primary-50 rounded-xl"
+              >
+                <p className="">{tag.title}</p>
+                <p className="flex-initial text-basics-50 ">
+                  {tag?.courses_count}
+                </p>
+                <p className="flex-initial text-basics-50 ">
+                  {tag?.tutorials_count}
+                </p>
+                <p className="flex-initial text-basics-50 ">
+                  {tag?.podcasts_count}
+                </p>
+                <p className="flex-initial text-basics-50 ">
+                  {tag?.posts_count}
+                </p>
               </Link>
             ))}
           </section>

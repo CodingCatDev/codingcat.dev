@@ -18,11 +18,11 @@ const Link = ({
 }) => {
   return (
     <ActiveLink activeClassName="" href={`${href}`}>
-      <a className={`${navLinks} nav-links`}>
+      <div className={`${navLinks} nav-links`}>
         <span className="sr-only">{`${name}`}</span>
         {component}
         {`${name}`}
-      </a>
+      </div>
     </ActiveLink>
   );
 };

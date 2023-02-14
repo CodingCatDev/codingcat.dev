@@ -12,12 +12,12 @@ export default function PurrfectDevUpper(): JSX.Element {
           </h1>
           <p className="font-sans 2xl:text-2xl" style={{ maxWidth: `40ch` }}>
             A weekly podcast about web design and development from{' '}
-            <Link href="/authors/alex-patterson">
-              <a className="underline">Alex Patterson</a>
+            <Link href="/authors/alex-patterson" className="underline">
+              Alex Patterson
             </Link>{' '}
             and{' '}
-            <Link href="/authors/brittney-postma">
-              <a className="underline">Brittney Postma</a>
+            <Link href="/authors/brittney-postma" className="underline">
+              Brittney Postma
             </Link>
             .
           </p>
@@ -42,16 +42,16 @@ export default function PurrfectDevUpper(): JSX.Element {
               </button>
             </a>
             <Link href="/sponsorship">
-              <a>
-                <button className="flex items-center btn-secondary-reverse">
-                  Ad Sponsorship
-                </button>
-              </a>
+              <button className="flex items-center btn-secondary-reverse">
+                Ad Sponsorship
+              </button>
             </Link>
-            <Link href="/sponsors">
-              <a className="flex items-center justify-center text-2xl underline">
-                See Our Sponsors <AJHeartsLeft />
-              </a>
+            <Link
+              href="/sponsors"
+              className="flex items-center justify-center text-2xl underline"
+            >
+              See Our Sponsors
+              <AJHeartsLeft />
             </Link>
           </div>
         </section>

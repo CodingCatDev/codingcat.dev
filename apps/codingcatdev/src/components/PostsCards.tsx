@@ -14,48 +14,49 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                 className="grid transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-900 grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-basics-50"
                 key={post._id}
               >
-                <Link href={`/${post._type}/${post.slug}`}>
-                  <a className="self-start">
-                    {post.coverPhoto?.public_id && post._type === 'course' ? (
-                      <>
-                        <Image
-                          src={post.coverPhoto?.public_id}
-                          alt={post.title}
-                          width="480"
-                          height="270"
-                          layout="responsive"
-                          className="rounded-md rounded-b-none cursor-pointer"
-                        />
-                      </>
-                    ) : post.coverPhoto?.public_id ? (
-                      <>
-                        <Image
-                          src={post.coverPhoto?.public_id}
-                          alt={post.title}
-                          width="480"
-                          height="270"
-                          layout="responsive"
-                          className="rounded-md rounded-b-none cursor-pointer"
-                        />
-                      </>
-                    ) : (
-                      <div
-                        className="relative"
-                        style={{ paddingBottom: '56.25%' }}
-                      >
-                        <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
-                          <AJPrimary className="w-full h-full p-4" />
-                        </div>
+                <Link
+                  href={`/${post._type}/${post.slug}`}
+                  className="self-start"
+                >
+                  {post.coverPhoto?.public_id && post._type === 'course' ? (
+                    <>
+                      <Image
+                        src={post.coverPhoto?.public_id}
+                        alt={post.title}
+                        width="480"
+                        height="270"
+                        layout="responsive"
+                        className="rounded-md rounded-b-none cursor-pointer"
+                      />
+                    </>
+                  ) : post.coverPhoto?.public_id ? (
+                    <>
+                      <Image
+                        src={post.coverPhoto?.public_id}
+                        alt={post.title}
+                        width="480"
+                        height="270"
+                        layout="responsive"
+                        className="rounded-md rounded-b-none cursor-pointer"
+                      />
+                    </>
+                  ) : (
+                    <div
+                      className="relative"
+                      style={{ paddingBottom: '56.25%' }}
+                    >
+                      <div className="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900">
+                        <AJPrimary className="w-full h-full p-4" />
                       </div>
-                    )}
-                  </a>
+                    </div>
+                  )}
                 </Link>
 
                 <section className="grid h-full grid-cols-1 gap-2 p-4">
                   <div className="space-y-2">
                     <h3 className="font-sans text-lg tracking-wide text-bold">
                       <Link href={`/${post._type}/${post.slug}`}>
-                        <a>{post.title}</a>
+                        {post.title}
                       </Link>
                     </h3>
                     {post.excerpt && (
@@ -63,10 +64,12 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                     )}
                     <div className="flex flex-col">
                       {post.authors?.map((author, i) => (
-                        <Link href={`/authors/${author.slug}`} key={i}>
-                          <a className="font-sans text-lg">
-                            {author.displayName}
-                          </a>
+                        <Link
+                          href={`/authors/${author.slug}`}
+                          key={i}
+                          className="font-sans text-lg"
+                        >
+                          {author.displayName}
                         </Link>
                       ))}
                     </div>

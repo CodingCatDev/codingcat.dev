@@ -148,10 +148,8 @@ export default function Footer({
                       </svg>
                     </div>
                   ) : (
-                    <Link href={pageLink.slug}>
-                      <a href={pageLink.slug} className="links-secondary">
-                        {pageLink.title}
-                      </a>
+                    <Link href={pageLink.slug} className="links-secondary">
+                      {pageLink.title}={' '}
                     </Link>
                   )}
                 </div>

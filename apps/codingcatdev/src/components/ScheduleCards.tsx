@@ -20,37 +20,35 @@ export default function ScheduleCards({
                 key={post._id}
               >
                 <Link href={`/schedule/${post.slug}`}>
-                  <a>
-                    <Image
-                      src={`${post?.coverPhoto?.public_id}`}
-                      alt={`CodingCat.dev Podcast hosted by Alex & Brittney with ${
-                        post?.guests && post?.guests?.length > 1
-                          ? 'guests'
-                          : 'guest'
-                      } ${post?.guests?.map((guest) => guest.name)}`}
-                      width="480"
-                      height="270"
-                      layout="responsive"
-                    />
-                    <div className="flex flex-col gap-1">
-                      <time
-                        dateTime={
-                          post?.recordingDate
-                            ? new Date(post.recordingDate).toLocaleString()
-                            : ''
-                        }
-                        className="text-lg border-b-2 card-title border-b-primary-500"
-                      >
-                        {post?.recordingDate
+                  <Image
+                    src={`${post?.coverPhoto?.public_id}`}
+                    alt={`CodingCat.dev Podcast hosted by Alex & Brittney with ${
+                      post?.guests && post?.guests?.length > 1
+                        ? 'guests'
+                        : 'guest'
+                    } ${post?.guests?.map((guest) => guest.name)}`}
+                    width="480"
+                    height="270"
+                    layout="responsive"
+                  />
+                  <div className="flex flex-col gap-1">
+                    <time
+                      dateTime={
+                        post?.recordingDate
                           ? new Date(post.recordingDate).toLocaleString()
-                          : ''}
-                      </time>
-                      <h2 className="font-sans bold lg:text-2xl">
-                        {post?.title?.replace(re, '')}
-                      </h2>
-                      <p className="text-lg font-thin">{post?.excerpt}</p>
-                    </div>
-                  </a>
+                          : ''
+                      }
+                      className="text-lg border-b-2 card-title border-b-primary-500"
+                    >
+                      {post?.recordingDate
+                        ? new Date(post.recordingDate).toLocaleString()
+                        : ''}
+                    </time>
+                    <h2 className="font-sans bold lg:text-2xl">
+                      {post?.title?.replace(re, '')}
+                    </h2>
+                    <p className="text-lg font-thin">{post?.excerpt}</p>
+                  </div>
                 </Link>
               </div>
             );

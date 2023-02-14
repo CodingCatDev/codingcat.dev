@@ -35,6 +35,7 @@ export const BlogPostHit = (
           href={
             hit.type === PostType.page ? hit?.slug : `/${hit.type}/${hit.slug}`
           }
+          legacyBehavior
         >
           <a className="grid items-center gap-2 p-2 transition-colors rounded-md grid-cols-search text-basics-900 bg-primary-50 hover:bg-primary-100 hover:text-basics-900">
             <div className="grid place-items-center">
@@ -50,11 +51,11 @@ export const BlogPostHit = (
               />
             </p>
             {/* <Highlight
-          attribute="excerpt"
-          hit={hit}
-          tagName="mark"
-          className="text-sm text-current"
-        /> */}
+        attribute="excerpt"
+        hit={hit}
+        tagName="mark"
+        className="text-sm text-current"
+      /> */}
           </a>
         </Link>
 

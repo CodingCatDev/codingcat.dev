@@ -63,8 +63,8 @@ export default function UserMembershipDetail(): JSX.Element {
               <p className="text-2xl">
                 Please sign in to check for your membership.
               </p>
-              <Link href="/user/profile">
-                <a className="mt-4 btn-primary">Sign In </a>
+              <Link href="/user/profile" className="mt-4 btn-primary">
+                Sign In
               </Link>
             </div>
           </div>

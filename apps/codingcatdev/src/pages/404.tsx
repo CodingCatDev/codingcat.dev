@@ -29,8 +29,8 @@ export default function Custom404({
           <h2 className="font-sans text-4xl lg:text-5xl">
             Were you looking for{' '}
             {/* add some logic here to say which route they clicked? */}
-            <Link href="/courses">
-              <a className="underline text-secondary-600">Courses</a>
+            <Link href="/courses" className="underline text-secondary-600">
+              Courses
             </Link>
           </h2>
         </section>

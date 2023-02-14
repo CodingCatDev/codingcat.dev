@@ -23,10 +23,11 @@ export default function PostMediaLocked({
                   You have found a
                 </p>
                 <p className="flex justify-center">
-                  <NextLink href="/user/profile">
-                    <a className="p-4 m-4 text-6xl font-bold rounded-2xl text-primary-50 bg-secondary-500 btn-secondary">
-                      Free Course
-                    </a>
+                  <NextLink
+                    href="/user/profile"
+                    className="p-4 m-4 text-6xl font-bold rounded-2xl text-primary-50 bg-secondary-500 btn-secondary"
+                  >
+                    Free Course
                   </NextLink>
                 </p>
                 <p>Once you login, you have access.</p>
@@ -36,26 +37,27 @@ export default function PostMediaLocked({
                   courses.
                 </p>
               </div>
-              <NextLink href="/user/profile">
-                <a className="btn-primary">Login / Become Member</a>
+              <NextLink href="/user/profile" className="btn-primary">
+                Login / Become Member
               </NextLink>
               <div className="flex justify-center">
-                <NextLink href="/user/profile">
-                  <a className="flex items-center py-1 text-xs transition-all duration-200 ease-in-out group opacity-80 hover:opacity-100">
-                    Pay yearly or monthly{' '}
-                    <svg
+                <NextLink
+                  href="/user/profile"
+                  className="flex items-center py-1 text-xs transition-all duration-200 ease-in-out group opacity-80 hover:opacity-100"
+                >
+                  Pay yearly or monthly{' '}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    data-name="Layer 1"
+                    viewBox="0 0 24 24"
+                    xmlSpace="preserve"
+                    className="w-6 fill-current"
+                  >
+                    <path
                       xmlns="http://www.w3.org/2000/svg"
-                      data-name="Layer 1"
-                      viewBox="0 0 24 24"
-                      xmlSpace="preserve"
-                      className="w-6 fill-current"
-                    >
-                      <path
-                        xmlns="http://www.w3.org/2000/svg"
-                        d="M17.92 11.62a1 1 0 0 0-.21-.33l-5-5a1 1 0 0 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76z"
-                      />
-                    </svg>
-                  </a>
+                      d="M17.92 11.62a1 1 0 0 0-.21-.33l-5-5a1 1 0 0 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76z"
+                    />
+                  </svg>
                 </NextLink>
               </div>
             </section>
@@ -109,26 +111,27 @@ export default function PostMediaLocked({
                 <span className="pl-1 sm:text-lg">/ month</span>
               </div>
             </div>
-            <NextLink href="/user/profile">
-              <a className="btn-primary">Login / Become Member</a>
+            <NextLink href="/user/profile" className="btn-primary">
+              Login / Become Member
             </NextLink>
             <div className="flex justify-center">
-              <NextLink href="/user/profile">
-                <a className="flex items-center py-1 mt-4 text-xs transition-all duration-200 ease-in-out group opacity-80 hover:opacity-100">
-                  Pay yearly or monthly{' '}
-                  <svg
+              <NextLink
+                href="/user/profile"
+                className="flex items-center py-1 mt-4 text-xs transition-all duration-200 ease-in-out group opacity-80 hover:opacity-100"
+              >
+                Pay yearly or monthly{' '}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  data-name="Layer 1"
+                  viewBox="0 0 24 24"
+                  xmlSpace="preserve"
+                  className="w-6 fill-current"
+                >
+                  <path
                     xmlns="http://www.w3.org/2000/svg"
-                    data-name="Layer 1"
-                    viewBox="0 0 24 24"
-                    xmlSpace="preserve"
-                    className="w-6 fill-current"
-                  >
-                    <path
-                      xmlns="http://www.w3.org/2000/svg"
-                      d="M17.92 11.62a1 1 0 0 0-.21-.33l-5-5a1 1 0 0 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76z"
-                    />
-                  </svg>
-                </a>
+                    d="M17.92 11.62a1 1 0 0 0-.21-.33l-5-5a1 1 0 0 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76z"
+                  />
+                </svg>
               </NextLink>
             </div>
           </section>

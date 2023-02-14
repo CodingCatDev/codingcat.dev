@@ -7,18 +7,18 @@ export default function SettingsLinks(): JSX.Element {
     <nav>
       <ul className="grid gap-4">
         <li>
-          <Link href="/user/profile">
-            <a className={links}>Profile</a>
+          <Link href="/user/profile" className={links}>
+            Profile
           </Link>
         </li>
         <li>
-          <Link href="/user/membership">
-            <a className={links}>Membership</a>
+          <Link href="/user/membership" className={links}>
+            Membership
           </Link>
         </li>
         <li>
-          <Link href="/user/settings">
-            <a className={links}>Settings</a>
+          <Link href="/user/settings" className={links}>
+            Settings
           </Link>
         </li>
         {/*

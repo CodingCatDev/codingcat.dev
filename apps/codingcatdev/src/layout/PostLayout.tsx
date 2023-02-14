@@ -87,7 +87,7 @@ export default function PostLayout({
       case PostType.page:
         return (
           <>
-            <Link href="/">
+            <Link href="/" legacyBehavior>
               <a role="link" className="no-underline btn-secondary">
                 back to Home
               </a>
@@ -98,7 +98,7 @@ export default function PostLayout({
         return (
           <>
             {course && (
-              <Link href={`/course/${course.slug}`}>
+              <Link href={`/course/${course.slug}`} legacyBehavior>
                 <a role="link" className="no-underline btn-secondary">
                   back to Course
                 </a>
@@ -108,7 +108,7 @@ export default function PostLayout({
         );
       default:
         return (
-          <Link href={`/${pluralType}`}>
+          <Link href={`/${pluralType}`} legacyBehavior>
             <a role="link" className="no-underline btn-secondary">
               {`back to ${toTitleCase(pluralType)}`}
             </a>
@@ -164,17 +164,18 @@ export default function PostLayout({
                       <li
                         key={lesson._id}
                         className={`list-none cursor-pointer p-1 rounded m-1 flex flex-col justify-between
-                      ${
-                        isActiveLesson(router, course, lesson)
-                          ? 'bg-primary-900 text-basics-50'
-                          : 'bg-transparent hover:bg-primary-900 hover:text-basics-50'
-                      }
-                      `}
+                    ${
+                      isActiveLesson(router, course, lesson)
+                        ? 'bg-primary-900 text-basics-50'
+                        : 'bg-transparent hover:bg-primary-900 hover:text-basics-50'
+                    }
+                    `}
                       >
                         <Link
                           href={`/course/${course.slug}/lesson/${lesson.slug}`}
                           key={lesson._id}
                           passHref
+                          legacyBehavior
                         >
                           <div className="flex gap-2">
                             <a className="no-underline border-none hover:text-basics-50 dark:hover:text-basics-50">

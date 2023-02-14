@@ -23,10 +23,11 @@ export default function RecentPostsList({
         }
         `}
         >
-          <ActiveLink href={`/${post._type}/${post.slug}`}>
-            <a className="no-underline border-none hover:text-basics-50 dark:hover:text-basics-50">
-              {post.title}
-            </a>
+          <ActiveLink
+            href={`/${post._type}/${post.slug}`}
+            className="no-underline border-none hover:text-basics-50 dark:hover:text-basics-50"
+          >
+            {post.title}
           </ActiveLink>
         </li>
       ))}

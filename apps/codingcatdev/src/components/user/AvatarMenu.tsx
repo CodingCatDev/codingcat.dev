@@ -53,24 +53,23 @@ export default function AvatarMenu({
                   `/user/profile` +
                   (router.asPath === '/' ? '' : `?path=${router.asPath}`)
                 }
+                className="flex items-center justify-center p-2 rounded text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 focus:ring-2 focus:ring-basics-50"
               >
-                <a className="flex items-center justify-center p-2 rounded text-basics-50 hover:bg-primary-800 dark:hover:bg-primary-800 focus:ring-2 focus:ring-basics-50">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M24 3.88235C24 1.73819 22.287 0 20.1739 0H10.087V2.11765H20.1739C21.1344 2.11765 21.913 2.90773 21.913 3.88235V20.1176C21.913 21.0923 21.1344 21.8824 20.1739 21.8824H10.087V24H20.1739C22.287 24 24 22.2618 24 20.1176V3.88235ZM10.087 18.1131L20.5217 12L10.087 5.88688V10.9412H-4.47035e-07V13.0588H10.087V18.1131Z"
-                      fill="#FBFBFB"
-                    />
-                  </svg>
-                  <span className="ml-2 space-nowrap">Sign In</span>
-                </a>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M24 3.88235C24 1.73819 22.287 0 20.1739 0H10.087V2.11765H20.1739C21.1344 2.11765 21.913 2.90773 21.913 3.88235V20.1176C21.913 21.0923 21.1344 21.8824 20.1739 21.8824H10.087V24H20.1739C22.287 24 24 22.2618 24 20.1176V3.88235ZM10.087 18.1131L20.5217 12L10.087 5.88688V10.9412H-4.47035e-07V13.0588H10.087V18.1131Z"
+                    fill="#FBFBFB"
+                  />
+                </svg>
+                <span className="ml-2 space-nowrap">Sign In</span>
               </Link>
             }
           >
@@ -110,7 +109,7 @@ export default function AvatarMenu({
               activeClassName="bg-primary-500 text-basics-50"
               href="/user/profile"
             >
-              <a
+              <div
                 className="flex items-center p-2 text-sm rounded-md hover:bg-primary-50 dark:hover:bg-primary-900 dark:hover:text-basics-50"
                 role="menuitem"
               >
@@ -129,7 +128,7 @@ export default function AvatarMenu({
                   />
                 </svg>
                 <span className="ml-2">Your Profile</span>
-              </a>
+              </div>
             </ActiveLink>
 
             <a

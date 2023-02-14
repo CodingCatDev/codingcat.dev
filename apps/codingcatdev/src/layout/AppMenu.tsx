@@ -28,7 +28,7 @@ export default function AppMenu({
   setUserMenu: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
   const { data: signInCheckResult } = useSigninCheck();
-  const focusme = useRef<null | HTMLAnchorElement>(null);
+  const focusme = useRef<null | any>(null);
 
   useEffect(() => {
     if (focusme && focusme.current && overlayMenuActive) {
@@ -46,7 +46,7 @@ export default function AppMenu({
       comparison: string;
       name: string;
     },
-    ref: LegacyRef<HTMLAnchorElement> | null
+    ref: LegacyRef<HTMLDivElement> | null
   ) => {
     return (
       <ActiveLink
@@ -54,10 +54,10 @@ export default function AppMenu({
         href={href}
         comparison={comparison}
       >
-        <a className="p-2 links-secondary hover:bg-primary-500" ref={ref}>
+        <div className="p-2 links-secondary hover:bg-primary-500" ref={ref}>
           <span className="sr-only">{`${name}`}</span>
           {name}
-        </a>
+        </div>
       </ActiveLink>
     );
   };
@@ -80,9 +80,7 @@ export default function AppMenu({
           <section className="grid h-full grid-cols-1 shadow-xl grid-rows-sidebar bg-primary-900 dark:bg-primary-900">
             <section className="flex items-center gap-4 p-4 space-between bg-primary-800 dark:bg-primary-800">
               <ActiveLink href="/">
-                <a>
-                  <TitleLogo ajFaceStandard={false} />
-                </a>
+                <TitleLogo ajFaceStandard={false} />
               </ActiveLink>
 
               <button
@@ -173,16 +171,20 @@ export default function AppMenu({
                     setUserMenu={setUserMenu}
                     positionClass="left-0 bottom-0 mb-6"
                   />
-                  {signInCheckResult && signInCheckResult?.signedIn === true && (
-                    <button className="ml-2" onClick={() => setUserMenu(true)}>
-                      <p className="text-sm font-medium text-left text-basics-50">
-                        {signInCheckResult?.user?.displayName}
-                      </p>
-                      <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
-                        {signInCheckResult?.user?.email}
-                      </p>
-                    </button>
-                  )}
+                  {signInCheckResult &&
+                    signInCheckResult?.signedIn === true && (
+                      <button
+                        className="ml-2"
+                        onClick={() => setUserMenu(true)}
+                      >
+                        <p className="text-sm font-medium text-left text-basics-50">
+                          {signInCheckResult?.user?.displayName}
+                        </p>
+                        <p className="text-xs font-medium text-left text-basics-200 dark:text-basics-200 group-hover:text-basics-200">
+                          {signInCheckResult?.user?.email}
+                        </p>
+                      </button>
+                    )}
                 </div>
               </OutsideClick>
             </section>
