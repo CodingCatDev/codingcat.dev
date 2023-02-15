@@ -1,6 +1,6 @@
 import { NextRouter } from 'next/router';
 import Link from 'next/link';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 
 import { useEffect, useRef, useState } from 'react';
 import { Post, PostType } from '@/models/post.model';
@@ -372,10 +372,9 @@ export default function PostLayout({
                         key={i}
                       >
                         <section className="flex items-center space-x-4 shrink-0">
-                          {author?.photoURL && author.photoURL?.public_id && (
+                          {author?.photoURL && author.photoURL?.secure_url && (
                             <Image
-                              src={author.photoURL.public_id}
-                              layout="fixed"
+                              src={author.photoURL.secure_url}
                               height="50"
                               width="50"
                               alt="instructor"

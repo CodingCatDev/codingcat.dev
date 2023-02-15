@@ -4,7 +4,7 @@ import {
   withContentValidation,
 } from '@9gustin/react-notion-render';
 import CodeHighlight from '@/components/notion-custom-blocks/CodeHighlight';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { getCloudinaryPublicId } from '@/utils/cloudinary/cloudinary';
 import Embed from '@/components/notion-custom-blocks/Embed';
 
@@ -38,9 +38,8 @@ const myMapper = {
             className={`${className || ''} object-contain `}
             src={getCloudinaryPublicId(media?.src)}
             alt={media?.alt || media?.name || ''}
-            layout="fill"
-            height="100%"
-            width="100%"
+            fill
+            sizes="100vw"
           />
         ) : (
           <Image
@@ -48,9 +47,8 @@ const myMapper = {
             className={`${className || ''} object-contain `}
             src={media.src}
             alt={media?.alt || media?.name || ''}
-            layout="fill"
-            height="100%"
-            width="100%"
+            fill
+            sizes="100vw"
           />
         )}
         <div

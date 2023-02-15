@@ -9,7 +9,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { getSite } from '@/services/notion.server';
 import { getRecent } from '@/services/notion.server';
 import dynamic from 'next/dynamic';
-import Image from "next/legacy/image";
+import Image from "next/image";
 import HomeDetail from '@/components/HomeDetails';
 
 const Profile = dynamic(() => import('@/components/user/Profile'), {

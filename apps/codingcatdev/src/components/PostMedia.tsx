@@ -4,7 +4,7 @@ import { config } from '@/config/cloudinary';
 
 import { Video } from 'cloudinary-react';
 import ReactPlayer from 'react-player/lazy';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { SetStateAction } from 'react';
 
 export default function PostMedia({
@@ -113,14 +113,18 @@ export default function PostMedia({
         </div>
       ) : (
         <>
-          {!noImage && post.coverPhoto?.public_id ? (
+          {!noImage && post.coverPhoto?.secure_url ? (
             <Image
-              src={post.coverPhoto?.public_id}
+              src={post.coverPhoto?.secure_url}
               alt={post.title}
               width="480"
               height="270"
-              layout="responsive"
               priority
+              sizes="100vw"
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}
             />
           ) : !noImage &&
             (post?.cover?.external?.url || post?.cover?.file?.url) ? (
@@ -130,8 +134,12 @@ export default function PostMedia({
               alt={post.title}
               width="480"
               height="270"
-              layout="responsive"
               priority
+              sizes="100vw"
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}
             />
           ) : (
             <></>

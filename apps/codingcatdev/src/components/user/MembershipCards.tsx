@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import {
   StripeLineItem,
   StripePrice,
@@ -79,9 +79,7 @@ export default function MembershipCards({
     return (
       <Image
         src={img}
-        loader={() => img}
         unoptimized={true}
-        layout="fixed"
         width="335"
         height="335"
         alt={`Product Photo for ${product.description}`}

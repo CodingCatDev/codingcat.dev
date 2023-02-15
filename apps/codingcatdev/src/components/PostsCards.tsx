@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { Post } from '@/models/post.model';
 import AJPrimary from '@/components/global/icons/AJPrimary';
 
@@ -18,26 +18,34 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   href={`/${post._type}/${post.slug}`}
                   className="self-start"
                 >
-                  {post.coverPhoto?.public_id && post._type === 'course' ? (
+                  {post.coverPhoto?.secure_url && post._type === 'course' ? (
                     <>
                       <Image
-                        src={post.coverPhoto?.public_id}
+                        src={post.coverPhoto?.secure_url}
                         alt={post.title}
                         width="480"
                         height="270"
-                        layout="responsive"
                         className="rounded-md rounded-b-none cursor-pointer"
+                        sizes="100vw"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                        }}
                       />
                     </>
-                  ) : post.coverPhoto?.public_id ? (
+                  ) : post.coverPhoto?.secure_url ? (
                     <>
                       <Image
-                        src={post.coverPhoto?.public_id}
+                        src={post.coverPhoto?.secure_url}
                         alt={post.title}
                         width="480"
                         height="270"
-                        layout="responsive"
                         className="rounded-md rounded-b-none cursor-pointer"
+                        sizes="100vw"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                        }}
                       />
                     </>
                   ) : (

@@ -1,5 +1,5 @@
 import { Sponsor } from '@/models/sponsor.model';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 
 export default function SponsorCards({
   sponsors,
@@ -28,11 +28,12 @@ export default function SponsorCards({
                       }}
                     >
                       <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                        {s?.coverPhoto?.public_id && (
+                        {s?.coverPhoto?.secure_url && (
                           <Image
-                            src={s.coverPhoto.public_id}
+                            src={s.coverPhoto.secure_url}
                             alt={`Sponsorship Image for ${s.company}`}
-                            layout="fill"
+                            fill
+                            sizes="100vw"
                           />
                         )}
                       </div>

@@ -11,7 +11,7 @@ import { Post, PostType } from '@/models/post.model';
 import PostsCards from '@/components/PostsCards';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { Sponsor } from '@/models/sponsor.model';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import DefaultErrorPage from 'next/error';
 
 interface StaticParams {
@@ -99,7 +99,7 @@ export default function SponsorPage({
           title: `${sponsor?.title || ''} | CodingCatDev`,
           description: `${sponsor?.description}`,
           site_name: 'CodingCat.dev Podcast',
-          images: sponsor?.coverPhoto?.public_id
+          images: sponsor?.coverPhoto?.secure_url
             ? [
                 {
                   url: `https://media.codingcat.dev/image/upload/f_jpg${sponsor.coverPhoto.public_id}`,
@@ -124,11 +124,12 @@ export default function SponsorPage({
                     }}
                   >
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                      {sponsor?.coverPhoto?.public_id && (
+                      {sponsor?.coverPhoto?.secure_url && (
                         <Image
-                          src={sponsor?.coverPhoto.public_id}
+                          src={sponsor?.coverPhoto.secure_url}
                           alt={`Sponsorship Image for ${sponsor?.title}`}
-                          layout="fill"
+                          fill
+                          sizes="100vw"
                         />
                       )}
                     </div>

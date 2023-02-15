@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 
 import { Dispatch, SetStateAction } from 'react';
 import { useAuth, useSigninCheck } from 'reactfire';
@@ -85,9 +85,6 @@ export default function AvatarMenu({
               ) : (
                 <Image
                   src="/static/images/avatar.png"
-                  loader={() => '/static/images/avatar.png'}
-                  unoptimized={true}
-                  layout="fixed"
                   width="40"
                   height="40"
                   alt="Avatar for user Profile"

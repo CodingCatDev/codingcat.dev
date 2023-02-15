@@ -8,7 +8,7 @@ import { Pagination } from '@/components/NotionPagination';
 import SponsorCards from '@/components/SponsorCards';
 import { Sponsor } from '@/models/sponsor.model';
 import { Post } from '@/models/post.model';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface StaticParams {
@@ -77,11 +77,12 @@ const Sponsors = ({
                       }}
                     >
                       <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                        {s?.coverPhoto?.public_id && (
+                        {s?.coverPhoto?.secure_url && (
                           <Image
-                            src={s.coverPhoto.public_id}
+                            src={s.coverPhoto.secure_url}
                             alt={`Sponsorship Image for ${s.company}`}
-                            layout="fill"
+                            fill
+                            sizes="100vw"
                           />
                         )}
                       </div>

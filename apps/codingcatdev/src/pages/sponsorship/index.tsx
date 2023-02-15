@@ -1,5 +1,5 @@
 import { NextSeo } from 'next-seo';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Layout from '@/layout/Layout';
 import { getSite } from '@/services/notion.server';
@@ -231,12 +231,16 @@ export default function Sponsorship({
                 </div>
                 <div className="w-full max-w-xl">
                   <Image
-                    src={`/main-codingcatdev-photo/spotify-analytics.png`}
+                    src={`https://media.codingcat.dev/main-codingcatdev-photo/spotify-analytics.png`}
                     alt="Spotify Analytics"
-                    layout="responsive"
                     width="2220"
                     height="556"
                     className="rounded-md"
+                    sizes="100vw"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                    }}
                   />
                 </div>
               </div>
@@ -246,12 +250,16 @@ export default function Sponsorship({
                 </div>
                 <div className="w-full max-w-xl">
                   <Image
-                    src={`/main-codingcatdev-photo/youtube-analytics.png`}
+                    src={`https://media.codingcat.dev/main-codingcatdev-photo/youtube-analytics.png`}
                     alt="Spotify Analytics"
-                    layout="responsive"
                     width="1614"
                     height="934"
                     className="rounded-md"
+                    sizes="100vw"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                    }}
                   />
                 </div>
               </div>
@@ -392,12 +400,16 @@ export default function Sponsorship({
             </div>
             <div className="w-full">
               <Image
-                src={`/main-codingcatdev-photo/Screen_Shot_2022-08-02_at_12.55.38_PM.png`}
+                src={`https://media.codingcat.dev/main-codingcatdev-photo/Screen_Shot_2022-08-02_at_12.55.38_PM.png`}
                 alt="CodingCat.dev Podcast Sponsorship Image show logo."
-                layout="responsive"
                 width="2078"
                 height="2390"
                 className="rounded-md"
+                sizes="100vw"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                }}
               />
             </div>
           </div>

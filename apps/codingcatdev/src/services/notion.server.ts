@@ -397,6 +397,12 @@ const formatPost = async (
     };
   }
   if (_type == 'author') {
+    const authCover = q?.properties?.cover?.url
+      ? q?.properties?.cover.url.split('upload/')?.at(1) ||
+        q?.properties?.cover?.url
+      : null;
+
+    console.log('cover');
     post = {
       ...post,
       _id: q?.id ? q.id : null,
@@ -407,6 +413,9 @@ const formatPost = async (
         public_id: q?.properties?.cover?.url
           ? q?.properties?.cover.url.split('upload/')?.at(1) ||
             q?.properties?.cover?.url
+          : null,
+        secure_url: authCover
+          ? `https://media.codingcat.dev/image/upload/${authCover}`
           : null,
       },
       email: null,

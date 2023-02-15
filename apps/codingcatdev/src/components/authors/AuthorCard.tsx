@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { Author } from '@/models/user.model';
 import { renderBlocks } from '@/components/notion-custom-blocks/RenderBlocks';
 
@@ -7,12 +7,12 @@ export default function AuthorCard({
 }: {
   author: Author;
 }): JSX.Element {
+  console.log(author);
   return (
     <>
       {author?.displayName && author?.photoURL ? (
         <Image
-          src={author.photoURL.public_id}
-          layout="fixed"
+          src={author.photoURL.secure_url}
           width="96"
           height="96"
           alt={author.displayName}
@@ -21,11 +21,8 @@ export default function AuthorCard({
       ) : (
         <Image
           className="w-24 rounded-full"
-          layout="fixed"
           width="96"
           height="96"
-          unoptimized={true}
-          loader={() => '/static/images/avatar.png'}
           src="/static/images/avatar.png"
           alt="Avatar Image Placeholder"
         />

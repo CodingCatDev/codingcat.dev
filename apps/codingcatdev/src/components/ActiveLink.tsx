@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React, { Children } from 'react';
 
 function ActiveLink({ router, children, ...props }: any) {
-  const child = Children.only(children);
+  const child = Children.only(<>{children}</>);
   let className = child.props.className || '';
   if (
     router.asPath.includes(props.comparison || props.href) &&
@@ -16,7 +16,7 @@ function ActiveLink({ router, children, ...props }: any) {
 
   return (
     <Link href={props.href} {...props}>
-      {React.cloneElement(child, { className })}
+      <>{React.cloneElement(child, { className })}</>
     </Link>
   );
 }

@@ -5,7 +5,7 @@ import { getSite } from '@/services/notion.server';
 import { NextSeo } from 'next-seo';
 import { Pagination } from '@/components/NotionPagination';
 import Link from 'next/link';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { Sponsor } from '@/models/sponsor.model';
 import { Site } from '@/models/site.model';
 import { Post } from '@/models/post.model';
@@ -127,11 +127,12 @@ const SponsorsPage = ({
                       }}
                     >
                       <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                        {s?.coverPhoto?.public_id && (
+                        {s?.coverPhoto?.secure_url && (
                           <Image
-                            src={s.coverPhoto.public_id}
+                            src={s.coverPhoto.secure_url}
                             alt={`Sponsorship Image for ${s.company}`}
-                            layout="fill"
+                            fill
+                            sizes="100vw"
                           />
                         )}
                       </div>

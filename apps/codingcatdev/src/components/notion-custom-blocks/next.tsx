@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import isEqual from 'react-fast-compare';
-import Image from "next/legacy/image";
+import Image from "next/image";
 
 export const wrapNextImage = ({
   src,
@@ -37,7 +37,10 @@ export const wrapNextImage = ({
         objectPosition={style?.objectPosition}
         layout={layout}
         {...rest}
-      />
+        style={{
+          maxWidth: "100%",
+          height: "auto"
+        }} />
     );
   },
   isEqual);

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 
 import { UserInfoExtended } from '@/models/user.model';
 import { StripeProduct } from '@/models/stripe.model';
@@ -28,10 +28,10 @@ export default function UserMembership({
             <div className="text-2xl">You are already a member.</div>
             <div className="grid grid-flow-col gap-3 justify-items-center">
               {/* <Link href="/user/membership">
-              <a>
-                <div className=" btn-primary">See Membership</div>
-              </a>
-            </Link> */}
+            <a>
+              <div className=" btn-primary">See Membership</div>
+            </a>
+          </Link> */}
               <Link href="/courses">
                 <div className="btn-secondary">Start Courses</div>
               </Link>
@@ -59,12 +59,14 @@ export default function UserMembership({
                     <div className="w-32 h-32 m-4">
                       <Image
                         src={user.photoURL}
-                        loader={() => user.photoURL || ''}
-                        layout="responsive"
                         height="500"
                         width="500"
-                        unoptimized={true}
                         alt={`${user.displayName} Photo`}
+                        sizes="100vw"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                        }}
                       />
                     </div>
                   )}

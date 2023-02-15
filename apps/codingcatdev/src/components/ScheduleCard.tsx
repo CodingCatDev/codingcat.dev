@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from "next/legacy/image";
+import Image from 'next/image';
 import { Post } from '@/models/post.model';
 
 export default function ScheduleCard({ post }: { post: Post }): JSX.Element {
@@ -19,13 +19,17 @@ export default function ScheduleCard({ post }: { post: Post }): JSX.Element {
           >
             <>
               <Image
-                src={`${post?.coverPhoto?.public_id}`}
+                src={`${post?.coverPhoto?.secure_url}`}
                 alt={`CodingCat.dev Podcast hosted by Alex & Brittney with ${
                   post?.guests && post?.guests?.length > 1 ? 'guests' : 'guest'
                 } ${post?.guests?.map((guest) => guest.name)}`}
                 width="480"
                 height="270"
-                layout="responsive"
+                sizes="100vw"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                }}
               />
               <div className="flex flex-col gap-1">
                 <time

@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from 'next/image';
 
 import { useFirestore, useFirestoreDocData } from 'reactfire';
 import { UserInfoExtended } from '@/models/user.model';
@@ -22,9 +22,6 @@ export default function AvatarProfile({
       {dbProfile && dbProfile?.photoURL ? (
         <Image
           src={dbProfile.photoURL}
-          loader={() => dbProfile.photoURL || ''}
-          unoptimized={true}
-          layout="fixed"
           width="40"
           height="40"
           alt={
@@ -35,9 +32,6 @@ export default function AvatarProfile({
       ) : (
         <Image
           src={user.photoURL || ''}
-          loader={() => user.photoURL || ''}
-          unoptimized={true}
-          layout="fixed"
           width="40"
           height="40"
           alt={user.displayName ? user.displayName : 'A Good Description'}
