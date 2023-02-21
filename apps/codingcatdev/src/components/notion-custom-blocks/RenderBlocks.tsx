@@ -38,8 +38,6 @@ const myMapper = {
             className={`${className || ''} object-contain `}
             src={getCloudinaryPublicId(media?.src)}
             alt={media?.alt || media?.name || ''}
-            height="100%"
-            width="100%"
             fill
             sizes="100vw"
           />
@@ -49,8 +47,6 @@ const myMapper = {
             className={`${className || ''} object-contain `}
             src={media.src}
             alt={media?.alt || media?.name || ''}
-            height="100%"
-            width="100%"
             fill
             sizes="100vw"
           />
