@@ -7,12 +7,11 @@ export default function AuthorCard({
 }: {
   author: Author;
 }): JSX.Element {
-  console.log(author);
   return (
     <>
       {author?.displayName && author?.photoURL ? (
         <Image
-          src={author.photoURL.secure_url}
+          src={author.photoURL.public_id}
           width="96"
           height="96"
           alt={author.displayName}
@@ -23,6 +22,8 @@ export default function AuthorCard({
           className="w-24 rounded-full"
           width="96"
           height="96"
+          unoptimized={true}
+          loader={() => '/static/images/avatar.png'}
           src="/static/images/avatar.png"
           alt="Avatar Image Placeholder"
         />

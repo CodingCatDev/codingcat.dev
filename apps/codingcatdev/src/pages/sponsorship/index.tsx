@@ -231,7 +231,7 @@ export default function Sponsorship({
                 </div>
                 <div className="w-full max-w-xl">
                   <Image
-                    src={`https://media.codingcat.dev/main-codingcatdev-photo/spotify-analytics.png`}
+                    src={`/main-codingcatdev-photo/spotify-analytics.png`}
                     alt="Spotify Analytics"
                     width="2220"
                     height="556"
@@ -250,7 +250,7 @@ export default function Sponsorship({
                 </div>
                 <div className="w-full max-w-xl">
                   <Image
-                    src={`https://media.codingcat.dev/main-codingcatdev-photo/youtube-analytics.png`}
+                    src={`/main-codingcatdev-photo/youtube-analytics.png`}
                     alt="Spotify Analytics"
                     width="1614"
                     height="934"
@@ -400,7 +400,7 @@ export default function Sponsorship({
             </div>
             <div className="w-full">
               <Image
-                src={`https://media.codingcat.dev/main-codingcatdev-photo/Screen_Shot_2022-08-02_at_12.55.38_PM.png`}
+                src={`/main-codingcatdev-photo/Screen_Shot_2022-08-02_at_12.55.38_PM.png`}
                 alt="CodingCat.dev Podcast Sponsorship Image show logo."
                 width="2078"
                 height="2390"

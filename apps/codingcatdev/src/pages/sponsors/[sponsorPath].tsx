@@ -99,7 +99,7 @@ export default function SponsorPage({
           title: `${sponsor?.title || ''} | CodingCatDev`,
           description: `${sponsor?.description}`,
           site_name: 'CodingCat.dev Podcast',
-          images: sponsor?.coverPhoto?.secure_url
+          images: sponsor?.coverPhoto?.public_id
             ? [
                 {
                   url: `https://media.codingcat.dev/image/upload/f_jpg${sponsor.coverPhoto.public_id}`,
@@ -124,9 +124,9 @@ export default function SponsorPage({
                     }}
                   >
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                      {sponsor?.coverPhoto?.secure_url && (
+                      {sponsor?.coverPhoto?.public_id && (
                         <Image
-                          src={sponsor?.coverPhoto.secure_url}
+                          src={sponsor?.coverPhoto.public_id}
                           alt={`Sponsorship Image for ${sponsor?.title}`}
                           fill
                           sizes="100vw"

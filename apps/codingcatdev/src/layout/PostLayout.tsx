@@ -372,9 +372,9 @@ export default function PostLayout({
                         key={i}
                       >
                         <section className="flex items-center space-x-4 shrink-0">
-                          {author?.photoURL && author.photoURL?.secure_url && (
+                          {author?.photoURL && author.photoURL?.public_id && (
                             <Image
-                              src={author.photoURL.secure_url}
+                              src={author.photoURL.public_id}
                               height="50"
                               width="50"
                               alt="instructor"

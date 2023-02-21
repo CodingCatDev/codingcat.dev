@@ -21,7 +21,7 @@ export default function ScheduleCards({
               >
                 <Link href={`/schedule/${post.slug}`}>
                   <Image
-                    src={`${post?.coverPhoto?.secure_url}`}
+                    src={`${post?.coverPhoto?.public_id}`}
                     alt={`CodingCat.dev Podcast hosted by Alex & Brittney with ${
                       post?.guests && post?.guests?.length > 1
                         ? 'guests'

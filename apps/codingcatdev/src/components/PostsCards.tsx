@@ -18,10 +18,10 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                   href={`/${post._type}/${post.slug}`}
                   className="self-start"
                 >
-                  {post.coverPhoto?.secure_url && post._type === 'course' ? (
+                  {post.coverPhoto?.public_id && post._type === 'course' ? (
                     <>
                       <Image
-                        src={post.coverPhoto?.secure_url}
+                        src={post.coverPhoto?.public_id}
                         alt={post.title}
                         width="480"
                         height="270"
@@ -33,10 +33,10 @@ export default function PostsCards({ posts }: { posts: Post[] }): JSX.Element {
                         }}
                       />
                     </>
-                  ) : post.coverPhoto?.secure_url ? (
+                  ) : post.coverPhoto?.public_id ? (
                     <>
                       <Image
-                        src={post.coverPhoto?.secure_url}
+                        src={post.coverPhoto?.public_id}
                         alt={post.title}
                         width="480"
                         height="270"

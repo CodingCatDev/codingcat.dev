@@ -127,9 +127,9 @@ const SponsorsPage = ({
                       }}
                     >
                       <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                        {s?.coverPhoto?.secure_url && (
+                        {s?.coverPhoto?.public_id && (
                           <Image
-                            src={s.coverPhoto.secure_url}
+                            src={s.coverPhoto.public_id}
                             alt={`Sponsorship Image for ${s.company}`}
                             fill
                             sizes="100vw"

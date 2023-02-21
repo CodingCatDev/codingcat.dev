@@ -59,8 +59,10 @@ export default function UserMembership({
                     <div className="w-32 h-32 m-4">
                       <Image
                         src={user.photoURL}
+                        loader={() => user.photoURL || ''}
                         height="500"
                         width="500"
+                        unoptimized={true}
                         alt={`${user.displayName} Photo`}
                         sizes="100vw"
                         style={{

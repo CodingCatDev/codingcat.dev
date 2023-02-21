@@ -113,9 +113,9 @@ export default function PostMedia({
         </div>
       ) : (
         <>
-          {!noImage && post.coverPhoto?.secure_url ? (
+          {!noImage && post.coverPhoto?.public_id ? (
             <Image
-              src={post.coverPhoto?.secure_url}
+              src={post.coverPhoto?.public_id}
               alt={post.title}
               width="480"
               height="270"

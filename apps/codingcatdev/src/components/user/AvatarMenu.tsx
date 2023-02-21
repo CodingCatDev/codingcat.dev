@@ -85,6 +85,8 @@ export default function AvatarMenu({
               ) : (
                 <Image
                   src="/static/images/avatar.png"
+                  loader={() => '/static/images/avatar.png'}
+                  unoptimized={true}
                   width="40"
                   height="40"
                   alt="Avatar for user Profile"

@@ -22,6 +22,8 @@ export default function AvatarProfile({
       {dbProfile && dbProfile?.photoURL ? (
         <Image
           src={dbProfile.photoURL}
+          loader={() => dbProfile.photoURL || ''}
+          unoptimized={true}
           width="40"
           height="40"
           alt={
@@ -32,6 +34,8 @@ export default function AvatarProfile({
       ) : (
         <Image
           src={user.photoURL || ''}
+          loader={() => user.photoURL || ''}
+          unoptimized={true}
           width="40"
           height="40"
           alt={user.displayName ? user.displayName : 'A Good Description'}
