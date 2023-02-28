@@ -1,34 +1,31 @@
-<script>
-	import Page from 'src/routes/+page.svelte';
+<script lang="ts">
 	import { onMount } from 'svelte/types/runtime/internal/lifecycle';
 
+	enum themeType {
+		dark = 'dark',
+		light = 'light'
+	}
+
 	export let loaded = false;
-	/**
-	 * Updates loaded
-	 * @param {boolean} l
-	 */
-	export const setLoaded = (l) => {
+	export const setLoaded = (l: boolean) => {
 		loaded = l;
 	};
-
-	/** @typedef {'dark'|'light'} themeType */
-	/** @type {themeType} */
-	export let theme = 'dark';
+	export let theme: themeType = themeType.dark;
 
 	/**
 	 * Sets Theme
 	 * @param {themeType} t
 	 */
-	export const setTheme = (t) => {
+	export const setTheme = (t: themeType) => {
 		theme = t;
 	};
 	const toggle = () => {
-		if (theme !== 'dark') {
+		if (theme !== themeType.dark) {
 			// dark(); // TODO: Replace sound click
-			setTheme('dark');
+			setTheme(themeType.dark);
 		} else {
 			// light(); // TODO: Replace sound click
-			setTheme('light');
+			setTheme(themeType.light);
 		}
 	};
 

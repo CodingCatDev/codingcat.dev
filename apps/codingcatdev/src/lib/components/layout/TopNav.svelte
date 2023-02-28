@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import AJAlt from '$lib/components/global/icons/AJAlt.svelte';
 	import NavLinks from '$lib/components/layout/NavLinks.svelte';
 	import ThemeToggle from '$lib/components/layout/ThemeToggle.svelte';

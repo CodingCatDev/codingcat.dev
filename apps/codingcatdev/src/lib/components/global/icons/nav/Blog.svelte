@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	export let cls = 'block w-8 h-8';
 </script>
 

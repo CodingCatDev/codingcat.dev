@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	const navLinks = `grid place-items-center links-secondary gap-1`;
 	import Courses from '$lib/components/global/icons/nav/Courses.svelte';
 	export let href = '/courses';

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import NavLink from '$lib/components/layout/NavLink.svelte';
 	import Courses from '$lib/components/global/icons/nav/Courses.svelte';
 	import Tutorials from '$lib/components/global/icons/nav/Tutorials.svelte';

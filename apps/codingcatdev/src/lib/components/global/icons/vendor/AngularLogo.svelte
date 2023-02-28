@@ -1,6 +1,5 @@
-<script>
-	/** @type {object} */
-	export let props;
+<script lang="ts">
+	export let props: object;
 </script>
 
 <svg viewBox="0 0 51 54" fill="none" {...props}>

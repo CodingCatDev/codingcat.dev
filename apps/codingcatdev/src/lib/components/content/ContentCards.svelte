@@ -1,14 +1,10 @@
-<script>
+<script lang="ts">
 	import AJPrimary from '$lib/components/global/icons/AJPrimary.svelte';
 	import Image from '$lib/components/content/Image.svelte';
+	import type { Content, ContentType } from '$lib/types';
 
-	/** @type {import('$lib/types/index').ContentType} */
-	export let type;
-
-	/** @typedef {import('$lib/types/index').Content} Content */
-
-	/** @type {{content: Content[], next?: any}} */
-	export let data;
+	export let type: ContentType;
+	export let data: { content: Content[]; next?: any };
 
 	let next = data.next;
 	const more = async () => {

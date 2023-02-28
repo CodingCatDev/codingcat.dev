@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '../../../../node_modules/video.js/dist/video-js.min.css';
 	import videojs from 'video.js';
 	// import 'videojs-youtube';
@@ -7,15 +7,15 @@
 
 	/**
 	 * See https://videojs.com/guides/options/#sources
-	 * @type {[{
-	 * src: string
-	 * type: string
-	 * }]}*/
-	export let sources;
+	 * @type */
+	export let sources: [
+		{
+			src: string;
+			type: string;
+		}
+	];
 
-	/** TODO: fix Player definition
-	 * @type any */
-	let player;
+	let player: any;
 
 	const setPlayer = () => {
 		player = videojs(

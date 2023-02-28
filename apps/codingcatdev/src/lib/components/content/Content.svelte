@@ -1,14 +1,22 @@
-<script>
+<script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import RecentPostsList from '$lib/components/content/RecentPostsList.svelte';
 	import LessonList from '$lib/components/content/LessonList.svelte';
-	import { ContentType } from '$lib/types/index';
+	import {
+		ContentType,
+		type Content,
+		type Course,
+		type Lesson,
+		type Podcast
+	} from '$lib/types/index';
 	import Video from '$lib/components/content/Video.svelte';
-	/** @typedef {import('$lib/types/index').Content} Content */
-	/** @typedef {import('$lib/types/index').ContentList} ContentList */
-
-	/**@type {{contentType: string, content: Content | null, course: ContentList, tutorial: ContentList, podcast: ContentList, post: ContentList}}*/
-	export let data;
+	export let data: {
+		content: Lesson;
+		course: Course[];
+		tutorial: Content[];
+		podcast: Podcast[];
+		post: Content[];
+	};
 </script>
 
 {#if data?.content}

@@ -1,18 +1,10 @@
-<script>
+<script lang="ts">
 	//TODO: Dynamic import?
 	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
-
-	/** @type {function=} */
-	export let loader = undefined;
-
-	/** @type {string} */
-	export let src;
-
-	/** @type {string} */
-	export let alt;
-
-	/** @type {string=} */
-	export let classes;
+	export let loader: undefined | (() => {}) = undefined;
+	export let src: string;
+	export let alt: string;
+	export let classes: string;
 </script>
 
 {#if loader}

@@ -1,9 +1,8 @@
-<script>
-	/** @type {import('$lib/types/index').Content[]} */
-	export let lesson;
+<script lang="ts">
+	import type { Content } from '$lib/types';
 
-	/** @type {string} */
-	export let courseSlug;
+	export let lesson: Content[];
+	export let courseSlug: string;
 </script>
 
 <div class="pt-2">

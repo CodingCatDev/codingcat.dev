@@ -1,12 +1,7 @@
-<script>
-	/** @type {string} */
-	export let src;
-
-	/** @type {string} */
-	export let alt;
-
-	/** @type {string=} */
-	export let classes;
+<script lang="ts">
+	export let src: string;
+	export let alt: string;
+	export let classes: string;
 
 	import { lazyload, HtmlImageLayer } from '@cloudinary/html';
 	import { CloudinaryImage } from '@cloudinary/url-gen';
@@ -14,8 +9,7 @@
 	import { auto } from '@cloudinary/url-gen/qualifiers/format';
 	import { onMount } from 'svelte';
 
-	/** @type {HTMLImageElement| null}*/
-	let bindImage = null;
+	let bindImage: HTMLImageElement | null = null;
 	onMount(() => {
 		const newImage = new CloudinaryImage(
 			src.match(/upload\/(?:v\d+\/)?(.+?)\.[^\.]+$/)?.at(1),

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import AJLogoLeft from '$lib/components/global/icons/AJAlt.svelte';
 	import KCAlt from '$lib/components/global/icons/KCAlt.svelte';
 	import AJHeartAlt from '$lib/components/global/icons/AJHeartAlt.svelte';
@@ -7,17 +7,14 @@
 	import BreakBarRight from '$lib/components/home/BreakBarRight.svelte';
 	import Skills from '$lib/components/home/Skills.svelte';
 	import ContentCards from '$lib/components/content/ContentCards.svelte';
-	import { ContentType } from '$lib/types/index';
+	import { ContentType, type Content, type Podcast } from '$lib/types/index';
 
-	/** @typedef {import('$lib/types/index').Content} Content */
-	/** @typedef {import('$lib/types/index').Podcast} Podcast */
-	/** @type {{
-        course: Content[] | Podcast[];
-        tutorial: Content[] | Podcast[];
-        podcast: Content[] | Podcast[];
-        post: Content[] | Podcast[];
-    }}*/
-	export let data;
+	export let data: {
+		course: Content[] | Podcast[];
+		tutorial: Content[] | Podcast[];
+		podcast: Content[] | Podcast[];
+		post: Content[] | Podcast[];
+	};
 </script>
 
 <div>

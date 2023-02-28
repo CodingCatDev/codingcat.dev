@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	export let overlayMenuActive = false;
 	export let setOverlayMenuActive = (menuActive = false) => {
 		overlayMenuActive = menuActive;

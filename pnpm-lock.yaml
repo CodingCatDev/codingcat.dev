@@ -21,6 +21,7 @@ importers:
       '@tailwindcss/typography': ^0.5.9
       '@types/marked': ^4.0.8
       '@types/prismjs': ^1.26.0
+      '@types/video.js': ^7.3.51
       autoprefixer: ^10.4.13
       daisyui: ^2.51.2
       eslint: ^8.35.0
@@ -69,6 +70,7 @@ importers:
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.7
       '@types/marked': 4.0.8
       '@types/prismjs': 1.26.0
+      '@types/video.js': 7.3.51
       autoprefixer: 10.4.13_postcss@8.4.21
       daisyui: 2.51.2_gbtt6ss3tbiz4yjtvdr6fbrj44
       eslint: 8.35.0
@@ -2128,6 +2130,10 @@ packages:
 
   /@types/uuid/8.3.4:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
+    dev: true
+
+  /@types/video.js/7.3.51:
+    resolution: {integrity: sha512-xLlt/ZfCuWYBvG2MRn018RvaEplcK6dI63aOiVUeeAWFyjx3Br1hL749ndFgbrvNdY4m9FoHG1FQ/PB6IpfSAQ==}
     dev: true
 
   /@types/yargs-parser/21.0.0:

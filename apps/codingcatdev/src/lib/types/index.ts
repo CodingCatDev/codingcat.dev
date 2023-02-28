@@ -14,13 +14,20 @@ export interface Content {
 	type: ContentType;
 	title?: string;
 	weight?: number;
-	youtube?: number;
+	youtube?: string;
 }
 
+export interface Course extends Content {
+	lesson?: Lesson[];
+}
 export interface Lesson extends Content {
 	courseSlug?: string;
-	lesson?: string;
+	lesson?: Lesson[];
 	section?: string;
+}
+export interface Podcast extends Content {
+	season?: number;
+	episode?: number;
 }
 
 export interface Author {
