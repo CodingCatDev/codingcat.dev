@@ -1,0 +1,6 @@
+
+> codingcatdev@2.0.0 lint /Users/ccd/web/codingcatdev/v2-codingcat.dev/apps/codingcatdev
+> prettier --plugin-search-dir . --check . && eslint .
+
+Checking formatting...
+ ELIFECYCLE  Command failed.
