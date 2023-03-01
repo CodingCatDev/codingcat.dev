@@ -15,7 +15,7 @@ spotify: https://open.spotify.com/episode/7nlWjCmTBh3ph9gE1enrIv?si=Ia4K1KnYQkKm
 start: March 17, 2021
 title: Agility CMS
 youtube: https://www.youtube.com/watch?v=oOr-11AO9ms
-
+---
 ## Joel Varty
 
 ### Links

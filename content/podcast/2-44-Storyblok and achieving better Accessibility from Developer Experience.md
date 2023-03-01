@@ -21,7 +21,7 @@ spotify: https://open.spotify.com/episode/7HghjPmPWz34g48L6quVkX?si=RisJUtzYTl-z
 start: October 19, 2022 12:00 PM
 title: Storyblok and achieving better Accessibility from Developer Experience
 youtube: https://youtu.be/QBCUuaD2d7g
-
+---
 ## Questions
 
 1. Can you tell us more about yourself?

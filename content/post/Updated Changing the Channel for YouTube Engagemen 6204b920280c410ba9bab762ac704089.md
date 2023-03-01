@@ -8,8 +8,9 @@ preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selection
 published: published
 slug: changing-the-channel-for-youtube-engagement
 start: March 20, 2022
-title: Updated: Changing the Channel for YouTube Engagement was a bad idea
+title: -Updated- Changing the Channel for YouTube Engagement was a bad idea
 ---
+
 ## UPDATE: Moving channel was a bad idea
 
 I thought it was such a great move moving channels as it increased our CTR for educational videos. In reality what happened was it confused our user base. What I found out the hard way was that we needed to keep all of our content in one place and actually update [Purrfect.dev](http://Purrfect.dev) to become [CodingCat.dev Podcast](https://codingcat.dev/podcasts) as well. Now our branding is all surrounding the CodingCat brand going forward, on a single channel.

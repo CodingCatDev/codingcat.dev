@@ -178,7 +178,10 @@ importers:
       typescript: 4.9.5
 
   content:
-    specifiers: {}
+    specifiers:
+      gray-matter: ^4.0.3
+    dependencies:
+      gray-matter: 4.0.3
 
 packages:
 

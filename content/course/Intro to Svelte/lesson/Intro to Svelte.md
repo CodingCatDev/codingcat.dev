@@ -6,7 +6,6 @@ published: published
 section: Intro
 slug: intro-to-svelte
 start: June 1, 2022
-section: Intro
 title: Intro to Svelte
 weight: 1
 youtube: https://youtu.be/76QeCZVTS4Y

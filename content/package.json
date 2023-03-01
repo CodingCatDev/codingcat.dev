@@ -1,5 +1,8 @@
 {
   "name": "codingcatdev-content",
   "version": "2.0.0",
-  "description": "Content for CodingCat.dev"
+  "description": "Content for CodingCat.dev",
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  }
 }

@@ -12,8 +12,7 @@ preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selection
 title: Clerk.dev
 slug: live-0-9-clerk-with-appwrite
 youtube: https://youtu.be/4P_ax04-T4c
-
+---
 ## Questions
 
 1. Can you tell us more about yourself?
-2.

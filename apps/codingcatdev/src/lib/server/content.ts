@@ -1,3 +1,5 @@
+import { dev } from '$app/environment';
+
 import { PUBLIC_FB_PROJECT_ID } from '$env/static/public';
 import { PRIVATE_FB_PRIVATE_KEY, PRIVATE_FB_CLIENT_EMAIL } from '$env/static/private';
 
@@ -17,21 +19,23 @@ import { ContentType } from '$lib/types';
 
 const LIMIT = 20;
 
-if (!PUBLIC_FB_PROJECT_ID || !PRIVATE_FB_CLIENT_EMAIL || !PRIVATE_FB_PRIVATE_KEY) {
-	throw new Error('Missing Firebase Admin Environment Varialbles');
-}
-let app = getApps().at(0);
-if (!app) {
-	app = initializeApp({
-		credential: cert({
-			projectId: PUBLIC_FB_PROJECT_ID,
-			clientEmail: PRIVATE_FB_CLIENT_EMAIL,
-			privateKey: PRIVATE_FB_PRIVATE_KEY
-		})
-	});
-}
+const myFirstore = () => {
+	if (!PUBLIC_FB_PROJECT_ID || !PRIVATE_FB_CLIENT_EMAIL || !PRIVATE_FB_PRIVATE_KEY) {
+		throw new Error('Missing Firebase Admin Environment Varialbles');
+	}
+	let app = getApps().at(0);
+	if (!app) {
+		app = initializeApp({
+			credential: cert({
+				projectId: PUBLIC_FB_PROJECT_ID,
+				clientEmail: PRIVATE_FB_CLIENT_EMAIL,
+				privateKey: PRIVATE_FB_PRIVATE_KEY
+			})
+		});
+	}
 
-const firestore = getFirestore(app);
+	return getFirestore(app);
+};
 
 /**
  * List all content from specified content type
@@ -51,11 +55,34 @@ export const listContent = async ({
 	};
 	limit?: number;
 }) => {
+	// In Dev Mode read directly from content directory
+	if (dev) {
+		let contentFiles;
+		switch (contentType) {
+			case ContentType.post:
+				contentFiles = import.meta.glob('../../../../../content/post/*.md');
+				break;
+			case ContentType.tutorial:
+				contentFiles = import.meta.glob('../../../../../content/podcast/*.md');
+				break;
+		}
+		if (!contentFiles) return [];
+
+		for (const path in contentFiles) {
+			console.log(path);
+			contentFiles[path]().then((mod) => {
+				console.log(path, mod);
+			});
+		}
+
+		return contentFiles;
+	}
+
 	const theLimit = limit || LIMIT;
 	console.log(`List for type: ${contentType}, limit of ${theLimit}`);
 
 	// All query need a start date
-	let query = firestore
+	let query = myFirstore()
 		.collection(contentType)
 		.where('start', '<=', Timestamp.fromDate(new Date()))
 		.orderBy('start', 'desc');
@@ -107,7 +134,7 @@ export const listContent = async ({
 export const getContentBySlug = async (contentType: ContentType, slug: string) => {
 	console.debug(`Searching for content type: ${contentType} slug: ${slug}`);
 
-	let query = firestore
+	let query = myFirstore()
 		.collection(contentType)
 		.where('slug', '==', slug)
 		.where('start', '<=', Timestamp.fromDate(new Date()))
@@ -116,7 +143,7 @@ export const getContentBySlug = async (contentType: ContentType, slug: string) =
 		.limit(1);
 
 	if (contentType === ContentType.podcast) {
-		query = firestore
+		query = myFirstore()
 			.collection(contentType)
 			.where('slug', '==', slug)
 			.where('start', '<=', Timestamp.fromDate(new Date()))
@@ -162,7 +189,7 @@ export const getContentBySlug = async (contentType: ContentType, slug: string) =
 export const getLessonFromCourseSlug = async (courseSlug: string, slug: string) => {
 	console.debug(`Searching for course: ${courseSlug} lesson slug: ${slug}`);
 
-	const courseQuery = firestore
+	const courseQuery = myFirstore()
 		.collection(ContentType.course)
 		.where('slug', '==', courseSlug)
 		.where('start', '<=', Timestamp.fromDate(new Date()))
@@ -178,7 +205,7 @@ export const getLessonFromCourseSlug = async (courseSlug: string, slug: string) 
 		return null;
 	}
 
-	const query = firestore
+	const query = myFirstore()
 		.collection(ContentType.course)
 		.doc(course.id)
 		.collection(ContentType.lesson)
@@ -195,7 +222,7 @@ export const getLessonFromCourseSlug = async (courseSlug: string, slug: string) 
 		return null;
 	}
 
-	const lessonQuery = firestore
+	const lessonQuery = myFirstore()
 		.collection(ContentType.course)
 		.doc(course.id)
 		.collection(ContentType.lesson)

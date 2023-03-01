@@ -17,7 +17,7 @@ spotify: https://open.spotify.com/episode/25WaQEHbRXAfo2ueiVf3xP?si=BhNeQHVnQQqQ
 start: January 19, 2022
 title: Supabase an Open Source Alternative
 youtube: https://www.youtube.com/watch?v=OCxifrifiU0
-
+---
 ## Questions
 
 1. What was the inspiration behind creating Supabase?
