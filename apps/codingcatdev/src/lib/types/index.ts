@@ -2,7 +2,7 @@ export interface Content {
 	id: string;
 	authors?: Author[];
 	cloudinary_conver?: boolean;
-	content?: string;
+	html?: string;
 	cover?: string;
 	devto?: string;
 	excerpt?: string;

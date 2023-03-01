@@ -34,7 +34,7 @@
 					/>
 				{/if}
 				<section class="flex-grow w-full prose lg:prose-xl xl:prose-2xl">
-					{@html data.content.content}
+					{@html data.content.html}
 				</section>
 			</div>
 			{#if data?.content?.lesson && data?.content?.lesson.length > 0 && data?.content?.slug}

@@ -1,19 +1,36 @@
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-auto';
-
-console.log('environment: ', process.env.NODE_ENV);
+import { mdsvex } from 'mdsvex';
 
 /** @type {import('@sveltejs/kit').Config} */
-const config = {
-	kit: {
-		adapter: adapter()
-	},
+let config;
 
-	preprocess: [
-		preprocess({
-			postcss: true
-		})
-	]
-};
+if (process.env.NODE_ENV === 'development') {
+	console.log(`Using ${process.env.NODE_ENV} config`);
+	config = {
+		kit: {
+			adapter: adapter()
+		},
+		extensions: ['.svelte', '.svx', '.md'],
+		preprocess: [
+			mdsvex({ extensions: ['.svx', '.md'] }),
+			preprocess({
+				postcss: true
+			})
+		]
+	};
+} else {
+	config = {
+		kit: {
+			adapter: adapter()
+		},
+
+		preprocess: [
+			preprocess({
+				postcss: true
+			})
+		]
+	};
+}
 
 export default config;
