@@ -16,8 +16,8 @@ importers:
       '@firebase/app-types': ~0.9.0
       '@playwright/test': ^1.31.1
       '@sveltejs/adapter-auto': ^2.0.0
-      '@sveltejs/adapter-vercel': ^2.1.1
-      '@sveltejs/kit': ^1.8.7
+      '@sveltejs/adapter-vercel': ^2.2.1
+      '@sveltejs/kit': ^1.9.3
       '@tailwindcss/typography': ^0.5.9
       '@types/marked': ^4.0.8
       '@types/prismjs': ^1.26.0
@@ -64,9 +64,9 @@ importers:
     devDependencies:
       '@firebase/app-types': 0.9.0
       '@playwright/test': 1.31.1
-      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.8.7
-      '@sveltejs/adapter-vercel': 2.1.1_@sveltejs+kit@1.8.7
-      '@sveltejs/kit': 1.8.7_svelte@3.55.1+vite@4.1.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.9.3
+      '@sveltejs/adapter-vercel': 2.2.1_@sveltejs+kit@1.9.3
+      '@sveltejs/kit': 1.9.3_svelte@3.55.1+vite@4.1.4
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.7
       '@types/marked': 4.0.8
       '@types/prismjs': 1.26.0
@@ -1287,8 +1287,8 @@ packages:
       - supports-color
     optional: true
 
-  /@google-cloud/storage/6.9.3:
-    resolution: {integrity: sha512-ucbHoDvjXlcR/DrJNQlCFnQSaO7pXHTPGs3Gt2TQtPQ+b7Y6DR0ztIt/CEeH+O03I41g9e+T2N1SOOVq5UyaKQ==}
+  /@google-cloud/storage/6.9.4:
+    resolution: {integrity: sha512-5Li+0xRJ8wgc+vlf7Tgew8COKEJgRzRmC5ozdSYaBj7BK+X39aPPBP6ROsDTiCZ0MpAg7dxIc+HhKiCvQDplXQ==}
     engines: {node: '>=12'}
     requiresBuild: true
     dependencies:
@@ -1809,21 +1809,21 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@sveltejs/adapter-auto/2.0.0_@sveltejs+kit@1.8.7:
+  /@sveltejs/adapter-auto/2.0.0_@sveltejs+kit@1.9.3:
     resolution: {integrity: sha512-b+gkHFZgD771kgV3aO4avHFd7y1zhmMYy9i6xOK7m/rwmwaRO8gnF5zBc0Rgca80B2PMU1bKNxyBTHA14OzUAQ==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
     dependencies:
-      '@sveltejs/kit': 1.8.7_svelte@3.55.1+vite@4.1.4
+      '@sveltejs/kit': 1.9.3_svelte@3.55.1+vite@4.1.4
       import-meta-resolve: 2.2.1
     dev: true
 
-  /@sveltejs/adapter-vercel/2.1.1_@sveltejs+kit@1.8.7:
-    resolution: {integrity: sha512-itrsBExc3J208+X1cTFJUlkOJaMl6ZfDVZRMeka2unWMZ7DNXXLg4mq1REC/nvhl5g2he7HSZvqGh6n7z/kuQQ==}
+  /@sveltejs/adapter-vercel/2.2.1_@sveltejs+kit@1.9.3:
+    resolution: {integrity: sha512-W8+qytNSvFTr56CC4RLC/PeSuzB8m/LnnZlZD3v23qlgRrHHcYyN5mZJHaZmQvQeqsue7rby+LKfqqZiElstlg==}
     peerDependencies:
       '@sveltejs/kit': ^1.5.0
     dependencies:
-      '@sveltejs/kit': 1.8.7_svelte@3.55.1+vite@4.1.4
+      '@sveltejs/kit': 1.9.3_svelte@3.55.1+vite@4.1.4
       '@vercel/nft': 0.22.6
       esbuild: 0.16.17
     transitivePeerDependencies:
@@ -1831,8 +1831,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit/1.8.7_svelte@3.55.1+vite@4.1.4:
-    resolution: {integrity: sha512-DQ2JpuL4iFdA4wQw4f0W6yAxWov4xN9JOxbmt0VOHNcWeqIiEzw4GY8g4Ve5gF4f4cwjSlcxvUmS+mEGCLduLA==}
+  /@sveltejs/kit/1.9.3_svelte@3.55.1+vite@4.1.4:
+    resolution: {integrity: sha512-rh9FbGfS8w328JZSZmG/ahabBbE50TisHvfz4sVNU3IM3AOhgUAv3EhAJ2dij9R8uARbDHRTY8jOQbIPjcKBZQ==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -3855,7 +3855,7 @@ packages:
       uuid: 9.0.0
     optionalDependencies:
       '@google-cloud/firestore': 6.4.3
-      '@google-cloud/storage': 6.9.3
+      '@google-cloud/storage': 6.9.4
     transitivePeerDependencies:
       - encoding
       - supports-color
