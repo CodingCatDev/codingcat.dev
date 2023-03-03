@@ -76,7 +76,7 @@
 					</div>
 				{/each}
 			</section>
-			{#if next && Object.keys(next).length}
+			{#if next}
 				<div class="flex justify-center m-8">
 					<button class="text-2xl btn btn-lg btn-primary" on:click={() => more()}> More </button>
 				</div>

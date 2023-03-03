@@ -1,14 +1,13 @@
 ---
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1654934533/main-codingcatdev-photo/courses/ForA10YearOld/ForA10YearOldCSS.png
-excerpt: Learn HTML from the very beginning with live coding examples.
-published: published
+excerpt: Learn CSS from the very beginning with live coding examples. Then transfer into fun advanced examples.
+published: draft
 slug: css-for-a-10-year-old
-start: March 1, 2022
-title: HTML for a 10 Year Old
+start: June 11, 2022
+title: CSS for a 10 Year Old
 updated: July 12, 2022 10:36 AM
 ---
 
-## CSS for a 10 Year Old Overview
 
-This course is meant to be ever evolving. We will continue to find easy examples to share with individuals just getting started in their career of HTML development.
+Learn CSS from the very beginning with live coding examples. Then transfer into fun advanced examples.

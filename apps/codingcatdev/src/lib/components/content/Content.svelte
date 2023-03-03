@@ -17,6 +17,7 @@
 		podcast: Podcast[];
 		post: Content[];
 	};
+	console.log(data?.content);
 </script>
 
 {#if data?.content}
