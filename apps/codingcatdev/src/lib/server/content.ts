@@ -1,5 +1,5 @@
 import { ContentType, ContentPublished } from '$lib/types';
-import type { Content, Course, Lesson, Podcast } from '$lib/types';
+import type { Content, Course, Podcast } from '$lib/types';
 
 const LIMIT = 20;
 
@@ -115,11 +115,13 @@ for (const path in lessonModules) {
 export const listContent = async ({
 	contentType,
 	after,
-	limit
+	limit,
+	contentFilter = (c) => c.published === ContentPublished.published
 }: {
 	contentType: ContentType;
 	after?: number;
 	limit?: number;
+	contentFilter?: (c: Content) => boolean;
 }) => {
 	const theLimit = limit || LIMIT;
 	const theAfter = after || 0;
@@ -127,7 +129,7 @@ export const listContent = async ({
 	console.log(`List for type: ${contentType}, limit of ${theLimit}`);
 
 	const fullContent = markdownFiles[contentType as keyof typeof markdownFiles]
-		.filter((c) => c.published === ContentPublished.published)
+		.filter(contentFilter)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf());
 
 	const content = fullContent.slice(0 + theAfter, theLimit + theAfter);

@@ -1,8 +1,9 @@
-<script lang="ts">
+<script>
 	import ContentCards from '$lib/components/content/ContentCards.svelte';
 	import { ContentType } from '$lib/types/index';
-	import type { PageData } from './$types';
-	export let data: PageData;
+
+	/** @type {import('./$types').PageData} */
+	export let data;
 </script>
 
 <ContentCards type={ContentType.post} {data} />
