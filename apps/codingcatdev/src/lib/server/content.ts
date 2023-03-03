@@ -154,14 +154,14 @@ export const getContentBySlug = async (contentType: ContentType, slug: string) =
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
 		.slice(0, 1)
 		.map((c: Course) => {
-			if (c?.lesson) {
-				c.lesson
-					.filter(
-						(d) => new Date(d.start) <= new Date() && d.published === ContentPublished.published
+			return {
+				...c,
+				lesson: c?.lesson
+					?.filter(
+						(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
 					)
-					.sort((a, b) => b.weight || 99 - (a.weight || 1));
-			}
-			return c;
+					.sort((a, b) => b.weight || 99 - (a.weight || 1))
+			};
 		})
 		.at(0);
 	if (!doc) {
@@ -225,7 +225,7 @@ export const getLessonFromCourseSlug = async (courseSlug: string, slug: string) 
 		...doc,
 		// Reduce html shipped for links
 		lesson: course?.lesson?.map((l) => {
-			delete l.html;
+			// delete l.html;
 			return l;
 		}),
 		courseSlug: course.slug
