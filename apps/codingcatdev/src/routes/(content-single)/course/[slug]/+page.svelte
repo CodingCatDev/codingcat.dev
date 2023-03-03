@@ -1,7 +1,7 @@
 <script>
-	import Content from '$lib/components/content/Content.svelte';
+	import Course from '$lib/components/content/Course.svelte';
 	/** @type {import('./$types').PageData} */
 	export let data;
 </script>
 
-<Content {data} />
+<Course {data} />

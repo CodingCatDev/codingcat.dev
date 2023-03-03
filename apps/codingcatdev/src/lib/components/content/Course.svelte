@@ -1,21 +1,10 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
-	import RecentPostsList from '$lib/components/content/RecentPostsList.svelte';
 	import LessonList from '$lib/components/content/LessonList.svelte';
-	import {
-		ContentType,
-		type Content,
-		type Course,
-		type Lesson,
-		type Podcast
-	} from '$lib/types/index';
 	import Video from '$lib/components/content/Video.svelte';
+	import type { Lesson } from '$lib/types';
 	export let data: {
 		content: Lesson;
-		course: Course[];
-		tutorial: Content[];
-		podcast: Podcast[];
-		post: Content[];
 	};
 	console.log(data?.content);
 </script>
@@ -34,17 +23,19 @@
 						]}
 					/>
 				{/if}
+
 				<section class="flex-grow w-full prose lg:prose-xl xl:prose-2xl">
 					{@html data.content.html}
 				</section>
 			</div>
-
-			<div class="hidden xl:block">
-				<RecentPostsList contentType={ContentType.course} list={data.course} />
-				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
-				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
-				<RecentPostsList contentType={ContentType.post} list={data.post} />
-			</div>
+			{#if data?.content?.lesson && data?.content?.lesson.length > 0 && data?.content?.slug}
+				<div class="hidden xl:block">
+					<LessonList
+						courseSlug={data?.content?.courseSlug || data?.content?.slug}
+						lesson={data.content.lesson}
+					/>
+				</div>
+			{/if}
 		</section>
 	</div>
 {:else}

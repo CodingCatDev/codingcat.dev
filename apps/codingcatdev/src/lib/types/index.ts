@@ -85,17 +85,18 @@ export const getContentTypePlural = (contentType: ContentType) => {
 	return getContentTypePlurals().get(contentType);
 };
 
-// /**
-//  * @typedef {Object} BasePodcast
-//  * @property {boolean} chapters_done
-//  * @property {number=} episode
-//  * @property {string=} recording_date
-//  * @property {('idea' | 'scheduled' | 'recorded' | 'failed')} status
-//  * @property {('CodingCat.dev')} podcast
-//  * @property {number=} season
-//  * @property {string=} spotify
-//  */
+export interface FileStub {
+	type: 'file';
+	name: string;
+	basename: string;
+	contents: string;
+	text: boolean;
+}
 
-// /**
-//  * @typedef {Content & BasePodcast} Podcast
-//  */
+export interface DirectoryStub {
+	type: 'directory';
+	name: string;
+	basename: string;
+}
+
+export type Stub = FileStub | DirectoryStub;

@@ -1,7 +1,8 @@
-<script>
-	import Content from '$lib/components/content/Content.svelte';
-	/** @type {import('./$types').PageData} */
-	export let data;
+<script lang="ts">
+	import Lesson from '$lib/components/content/Lesson.svelte';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 </script>
 
-<Content {data} />
+<Lesson {data} />

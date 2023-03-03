@@ -31,6 +31,7 @@ importers:
       firebase-admin: ^11.5.0
       marked: ^4.2.12
       mdsvex: ^0.10.6
+      monaco-editor: ^0.36.1
       postcss: ^8.4.21
       postcss-load-config: ^4.0.1
       prettier: ^2.8.4
@@ -56,6 +57,7 @@ importers:
       firebase: 9.17.1
       firebase-admin: 11.5.0
       mdsvex: 0.10.6_svelte@3.55.1
+      monaco-editor: 0.36.1
       prism-svelte: 0.5.0
       prism-themes: 1.9.0
       theme-change: 2.3.0
@@ -5384,6 +5386,10 @@ packages:
       pkg-types: 1.0.2
       ufo: 1.1.1
     dev: true
+
+  /monaco-editor/0.36.1:
+    resolution: {integrity: sha512-/CaclMHKQ3A6rnzBzOADfwdSJ25BFoFT0Emxsc4zYVyav5SkK9iA6lEtIeuN/oRYbwPgviJT+t3l+sjFa28jYg==}
+    dev: false
 
   /mpd-parser/0.22.1:
     resolution: {integrity: sha512-fwBebvpyPUU8bOzvhX0VQZgSohncbgYwUyJJoTSNpmy7ccD2ryiCvM7oRkn/xQH5cv73/xU7rJSNCLjdGFor0Q==}
