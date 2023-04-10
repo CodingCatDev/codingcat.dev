@@ -2,7 +2,6 @@
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import LessonList from '$lib/components/content/LessonList.svelte';
 	import Video from '$lib/components/content/Video.svelte';
-	import Editor from '$lib/components/content/Editor.svelte';
 	import type { Lesson } from '$lib/types';
 	export let data: {
 		content: Lesson;
@@ -32,7 +31,7 @@
 		<section class="grid grid-rows-[1fr_1fr] w-full h-screen md:h-full order-first md:order-none">
 			<div class="container ">
 				<section class="editor-container h-full w-full">
-					<Editor />
+					<!-- <Editor /> -->
 				</section>
 			</div>
 			<div>Other</div>

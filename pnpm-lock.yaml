@@ -28,9 +28,6 @@ importers:
       mdsvex:
         specifier: ^0.10.6
         version: 0.10.6(svelte@3.55.1)
-      monaco-editor:
-        specifier: ^0.36.1
-        version: 0.36.1
       prism-svelte:
         specifier: ^0.5.0
         version: 0.5.0
@@ -7329,10 +7326,6 @@ packages:
       pkg-types: 1.0.2
       ufo: 1.1.1
     dev: true
-
-  /monaco-editor@0.36.1:
-    resolution: {integrity: sha512-/CaclMHKQ3A6rnzBzOADfwdSJ25BFoFT0Emxsc4zYVyav5SkK9iA6lEtIeuN/oRYbwPgviJT+t3l+sjFa28jYg==}
-    dev: false
 
   /mpd-parser@0.22.1:
     resolution: {integrity: sha512-fwBebvpyPUU8bOzvhX0VQZgSohncbgYwUyJJoTSNpmy7ccD2ryiCvM7oRkn/xQH5cv73/xU7rJSNCLjdGFor0Q==}
