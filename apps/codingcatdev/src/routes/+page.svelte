@@ -1,5 +1,5 @@
 <script>
-	import HomeHero from '$lib/components/home/HomeHero.svelte';
+	import HomeHero from './(home-partials)/HomeHero.svelte';
 	import HomeDetail from '$lib/components/home/HomeDetail.svelte';
 
 	/** @type {import('./$types').PageData} */
