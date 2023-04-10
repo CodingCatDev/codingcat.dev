@@ -33,9 +33,7 @@
 		<div class="p-4 sm:p-10">
 			<section class="relative grid gap-4 grid-cols-fit sm:gap-10">
 				{#each data?.content as content}
-					<div
-						class="grid transition-all rounded-md shadow-lg dark:text-primary-50 dark:bg-basics-900 grid-rows-auto-2 hover:shadow-2xl hover:scale-105 bg-base-100"
-					>
+					<div class="ccd-grid-card">
 						<a class="self-start" href={`/${type}/${content.slug}`}>
 							{#if content?.cover}
 								<Image
@@ -56,7 +54,7 @@
 							<section class="grid h-full grid-cols-1 gap-2 p-4">
 								<div class="space-y-2">
 									<h3 class="font-sans text-lg tracking-wide text-bold">
-										<a href={`/${type}/${content.slug}`}>{content.title}</a>
+										{content.title}
 									</h3>
 									{#if content.excerpt}
 										<p class="text-sm font-hairline ">{content.excerpt}</p>
@@ -64,9 +62,9 @@
 									{#if content.authors}
 										<div class="flex flex-col">
 											{#each content.authors as author}
-												<a href={`/authors/${author.slug}`} class="font-sans text-lg">
+												<div class="font-sans text-lg">
 													{author.displayName}
-												</a>
+												</div>
 											{/each}
 										</div>
 									{/if}

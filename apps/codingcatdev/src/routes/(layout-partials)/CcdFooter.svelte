@@ -8,9 +8,7 @@
 		class="flex flex-col md:flex-row justify-between items-center md:items-start gap-8 md:space-y-0"
 	>
 		<p class="text-xs">
-			<a class="bcu-button variant-soft" href="https://codingcat.dev"
-				>Made with 💜 by CodingCat.dev</a
-			>
+			<a class="bcu-button variant-soft" href="https://alexpatterson.dev">Made by Alex Patterson</a>
 		</p>
 		<div class="flex gap-2">
 			<a
