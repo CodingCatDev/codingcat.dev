@@ -7,4 +7,4 @@
 </script>
 
 <HomeHero />
-<HomeDetail {data} />
+<!-- <HomeDetail {data} /> -->

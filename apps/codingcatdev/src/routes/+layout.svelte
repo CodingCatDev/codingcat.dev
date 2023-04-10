@@ -1,100 +1,121 @@
-<script>
-	import { ContentType, getContentTypePlural } from '$lib/types/index';
-	import { MetaTags } from 'svelte-meta-tags';
-	import { PUBLIC_FACEBOOK_APP_ID } from '$env/static/public';
+<script lang="ts">
+	// Core
 	import { page } from '$app/stores';
+	import { afterNavigate } from '$app/navigation';
+	import { storeCurrentUrl } from './(layout-partials)/stores';
 
+	//Style
 	import '../app.postcss';
-	import TopNav from '$lib/components/layout/TopNav.svelte';
-	import Footer from '$lib/components/layout/Footer.svelte';
-	import DrawerNav from '$lib/components/layout/DrawerNav.svelte';
 
-	// TODO: https://github.com/sveltejs/kit/issues/2733
-	import { afterNavigate, beforeNavigate } from '$app/navigation';
+	// BlackCatUI Components
+	import { AppShell } from '@codingcatdev/blackcatui';
 
-	/** @type {HTMLElement} */
-	let contentElem;
-	afterNavigate(() => {
-		setTimeout(() => {
-			contentElem.scrollTo(0, 0);
-		}, 0);
+	// CodingCat.Dev Components
+	import MyAppBar from './(layout-partials)/CcdAppBar.svelte';
+	import MyDrawer from './(layout-partials)/CcdDrawer.svelte';
+	import MyFooter from './(layout-partials)/CcdFooter.svelte';
+
+	// Scroll heading into view
+	function scrollHeadingIntoView(): void {
+		if (!window.location.hash) return;
+		const elemTarget: HTMLElement | null = document.querySelector(window.location.hash);
+		if (elemTarget) elemTarget.scrollIntoView({ behavior: 'smooth' });
+	}
+
+	// Lifecycle
+	afterNavigate((params: any) => {
+		// Store current page route URL
+		storeCurrentUrl.set($page.url.pathname);
+		// Scroll to top
+		const isNewPage: boolean =
+			params.from && params.to && params.from.route.id !== params.to.route.id;
+		const elemPage = document.querySelector('#bcu-app-shell-page');
+		if (isNewPage && elemPage !== null) {
+			elemPage.scrollTop = 0;
+		}
+		// Scroll heading into view
+		scrollHeadingIntoView();
 	});
 
-	/** @type {import('$lib/types/index').Content} */
-	const content = $page?.data?.content;
-	/** @type {import('$lib/types/index').ContentType} */
-	const contentType = $page?.data?.contentType;
-	const contentTypePlural = getContentTypePlural(contentType);
-	const title =
-		content?.title ||
-		(contentTypePlural
-			? `${contentTypePlural.charAt(0)?.toUpperCase() + contentTypePlural.slice(1)} | `
-			: '') + `CodingCat.dev`;
-	const description =
-		content?.excerpt ||
-		'Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!';
-	const url = `https://codingcat.dev/${
-		content?.slug ? `${contentType}/${content.slug}` : getContentTypePlural(contentType) || ''
-	}`;
-	const images = content?.cover
-		? [
-				{
-					url: content?.cover?.replace(
-						'https://media.codingcat.dev/image/upload/',
-						'https://media.codingcat.dev/image/upload/f_jpg/'
-					),
-					alt: content?.title || 'Cover Image'
-				}
-		  ]
-		: [
-				{
-					url: 'https://media.codingcat.dev/image/upload/f_jpg/dev-codingcatdev-photo/v60h88eohd7ufghkspgo',
-					alt: 'AJ Logo Black Cat Face with CodingCat.dev Domain'
-				}
-		  ];
+	// SEO Metatags
+	const metaDefaults = {
+		title: 'CodingCat.dev',
+		description:
+			'Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!',
+		image:
+			'https://media.codingcat.dev/image/upload/f_jpg/dev-codingcatdev-photo/v60h88eohd7ufghkspgo'
+	};
+	const meta = {
+		title: metaDefaults.title,
+		description: metaDefaults.description,
+		image: metaDefaults.image,
+		// Article
+		article: { publishTime: '', modifiedTime: '', author: '' },
+		// Twitter
+		twitter: {
+			title: metaDefaults.title,
+			description: metaDefaults.description,
+			image: metaDefaults.image
+		}
+	};
+	page.subscribe((page) => {
+		// Restore Page Defaults
+		meta.title = metaDefaults.title;
+		meta.description = metaDefaults.description;
+		meta.image = metaDefaults.image;
+		// Restore Twitter Defaults
+		meta.twitter.title = metaDefaults.title;
+		meta.twitter.description = metaDefaults.description;
+		meta.twitter.image = metaDefaults.image;
+	});
 </script>
 
-<MetaTags
-	{title}
-	{description}
-	canonical={url}
-	facebook={{
-		appId: PUBLIC_FACEBOOK_APP_ID || ''
-	}}
-	openGraph={{
-		type: 'website',
-		url,
-		title,
-		description,
-		images
-	}}
-	twitter={{
-		handle: '@CodingCatDev',
-		site: '@CodingCatDev',
-		cardType: 'summary_large_image'
-	}}
-/>
-<div class="drawer drawer-end">
-	<input
-		id="ccd-drawer"
-		name="ccd-drawer"
-		type="checkbox"
-		class="drawer-toggle"
-		aria-label="Click to Open Drawer"
-	/>
-	<div
-		bind:this={contentElem}
-		class="flex flex-col drawer-content"
-		style="scroll-behavior: smooth; scroll-padding-top: 5rem;"
-	>
-		<TopNav />
-		<main class="flex-1">
-			<slot />
-		</main>
-		<Footer />
-	</div>
-	<div class="drawer-side">
-		<label for="ccd-drawer" class="drawer-overlay" />
-		<DrawerNav />
-	</div>
-</div>
+<svelte:head>
+	<title>{meta.title}</title>
+	<!-- Meta Tags -->
+	<meta name="title" content={meta.title} />
+	<meta name="description" content={meta.description} />
+	<meta name="keywords" content="codingcatdev, webdev, webdevelopment, learning, beginner" />
+	<meta name="theme-color" content="#6366f1" />
+	<meta name="author" content="CodingCatDev, LLC" />
+	<!-- Open Graph - https://ogp.me/ -->
+	<meta property="og:site_name" content="CodingCat.dev" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://codingcat.dev{$page.url.pathname}" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:title" content={meta.title} />
+	<meta property="og:description" content={meta.description} />
+	<meta property="og:image" content={meta.image} />
+	<meta property="og:image:secure_url" content={meta.image} />
+	<meta property="og:image:type" content="image/jpg" />
+	<meta property="og:image:width" content="1920" />
+	<meta property="og:image:height" content="1080" />
+
+	<!-- Open Graph: Twitter -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@CodingCatDev" />
+	<meta name="twitter:creator" content="@CodingCatDev" />
+	<meta name="twitter:title" content={meta.twitter.title} />
+	<meta name="twitter:description" content={meta.twitter.description} />
+	<meta name="twitter:image" content={meta.twitter.image} />
+</svelte:head>
+
+<!-- Overlays -->
+<MyDrawer />
+
+<!-- App Shell -->
+<AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token" }>
+	<!-- Header -->
+	<svelte:fragment slot="bcu-app-shell-header"><MyAppBar /></svelte:fragment>
+
+	<!-- Sidebar (Left) -->
+	<!-- <svelte:fragment slot="bcu-app-shell-sidebar-left">
+		<MySideNav class="hidden overflow-hidden lg:grid w-72" />
+	</svelte:fragment> -->
+
+	<!-- Page Content -->
+	<slot />
+
+	<!-- Page Footer -->
+	<svelte:fragment slot="bcu-app-shell-page-footer"><MyFooter /></svelte:fragment>
+</AppShell>

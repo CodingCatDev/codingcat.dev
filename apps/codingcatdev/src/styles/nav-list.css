@@ -1,0 +1,48 @@
+@layer components {
+	/* === Lists (Parents) === */
+
+	.nav-list,
+	.nav-list-dl,
+	.nav-list-nav ul {
+		/* List Style */
+		@apply list-none;
+		/* Spacing */
+		@apply space-y-1;
+	}
+
+	/* === List Items (Children) === */
+
+	.nav-list li {
+		@apply flex items-center space-x-4 whitespace-nowrap;
+		/* Padding */
+		@apply p-2;
+		/* Theme: Rounded */
+		@apply rounded-token;
+	}
+
+	.nav-list-dl div {
+		@apply flex items-center space-x-4 whitespace-nowrap;
+		/* Padding */
+		@apply p-2;
+		/* Theme: Rounded */
+		@apply rounded-token;
+	}
+
+	.nav-list-nav a,
+	.nav-list-nav button,
+	.nav-list-option {
+		@apply flex items-center space-x-4 whitespace-nowrap;
+		/* Padding */
+		@apply px-4 py-2;
+		/* Hover */
+		@apply bg-primary-hover-token;
+		/* Focus */
+		@apply outline-none focus:ring-outline-token;
+		/* Cursor */
+		@apply cursor-pointer;
+		/* Theme: Rounded */
+		@apply rounded-token;
+		/* Override typograpy */
+		@apply !no-underline !text-base-token dark:!text-dark-token;
+	}
+}

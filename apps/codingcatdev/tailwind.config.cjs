@@ -1,11 +1,15 @@
-const config = {
-	content: ['./src/**/*.{html,js,svelte,ts}'],
-
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+	darkMode: 'class',
+	content: [
+		'./src/**/*.{html,js,svelte,ts}',
+		require('path').join(require.resolve('@codingcatdev/blackcatui'), '../**/*.{html,js,svelte,ts}')
+	],
 	theme: {
 		extend: {}
 	},
-
-	plugins: [require('daisyui'), require('@tailwindcss/typography')]
+	plugins: [
+		// 3. Append the Skeleton plugin to the end of this list
+		...require('@codingcatdev/blackcatui/dist/tailwind/blackcatui.cjs')()
+	]
 };
-
-module.exports = config;
