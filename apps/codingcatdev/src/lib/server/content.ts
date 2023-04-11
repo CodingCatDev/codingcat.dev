@@ -25,7 +25,7 @@ const markdownFiles: {
 console.log('Building top metadata level');
 const modules = import.meta.glob(['../../content/course/*/*.md', '../../content/*/*.md']);
 for (const path in modules) {
-	modules[path]().then((mod) => {
+	await modules[path]().then((mod) => {
 		const splitPath = path.replace('../../content/', '').split('/');
 		const type = splitPath.at(0);
 		const slug = splitPath.at(1);

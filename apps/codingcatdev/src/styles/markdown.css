@@ -1,7 +1,4 @@
 @layer components {
-	.markdown code {
-		@apply !overflow-auto;
-	}
 	.markdown p {
 		@apply !text-lg md:!text-2xl;
 	}

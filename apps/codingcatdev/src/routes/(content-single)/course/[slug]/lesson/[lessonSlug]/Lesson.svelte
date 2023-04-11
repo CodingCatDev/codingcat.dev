@@ -1,6 +1,6 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
-	import LessonList from '$lib/components/content/LessonList.svelte';
+	import LessonList from '../../../LessonList.svelte';
 	import Video from '$lib/components/content/Video.svelte';
 	import type { Lesson } from '$lib/types';
 	export let data: {
