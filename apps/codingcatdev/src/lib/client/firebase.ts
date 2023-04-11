@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider } from 'firebase/auth';
+import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, GoogleAuthProvider } from 'firebase/auth';
 
 import {
 	PUBLIC_FB_API_KEY,
@@ -30,13 +30,21 @@ export const auth = getAuth(app);
 setPersistence(auth, browserSessionPersistence);
 
 /* AUTH */
+const setCookie = (idToken: string) => {
+	document.cookie = '__ccdlogin=' + idToken + ';max-age=3600';
+}
 
 export const ccdSignInWithEmailAndPassword = async ({ email, password }: { email: string, password: string }) => {
 	const userResponse = await signInWithEmailAndPassword(auth, email, password);
 	const idToken = await userResponse.user.getIdToken();
-	document.cookie = '__ccdlogin=' + idToken + ';max-age=3600';
+	setCookie(idToken);
 }
 
 export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
-	signInWithPopup(auth, provider)
+	const result = await signInWithPopup(auth, provider)
+	const idToken = await result.user.getIdToken()
+
+	if (!idToken)
+		throw 'Missing id Token'
+	setCookie(idToken);
 }

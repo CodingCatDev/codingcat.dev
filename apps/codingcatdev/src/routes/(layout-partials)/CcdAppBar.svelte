@@ -90,7 +90,7 @@
 				use:popup={{ event: 'click', target: 'theme' }}
 			>
 				{#if $storeUser?.picture}
-					<Avatar class="bcu-avatar-xs w-8 h-4" src={$storeUser.picture} alt="User Photo" />
+					<Avatar class="bcu-avatar-xs w-8 h-8" src={$storeUser.picture} alt="User Photo" />
 				{:else}
 					<Avatar class="bcu-avatar-xs w-8 h-8">
 						<svelte:fragment slot="bcu-avatar-message">
