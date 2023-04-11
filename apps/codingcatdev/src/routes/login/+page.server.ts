@@ -1,9 +1,9 @@
-import { ccdCreateSessionCookie } from '$lib/server/firebase';
-import type { Actions } from './$types';
+import { ccdCreateSessionCookie, ccdValidateSessionCookie } from '$lib/server/firebase';
+import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit'
 
 export const actions = {
-    default: async ({ cookies, url }) => {
+    login: async ({ cookies, url }) => {
         const ccdLoginIdToken = cookies.get('__ccdlogin');
 
         if (!ccdLoginIdToken) {
@@ -15,10 +15,21 @@ export const actions = {
             return fail(400, { incorrect: true });
         }
         cookies.set(sessionCookie.name, sessionCookie.sessionCookie, sessionCookie.options);
+        cookies.set('__ccdlogin', '', { expires: new Date(Date.now() - 3600) });
 
         if (url.searchParams.has('redirectTo')) {
             throw redirect(303, url.searchParams.get('redirectTo') || '/');
         }
         throw redirect(303, '/');
+    },
+    logout: async ({ cookies }) => {
+        console.debug('logging out')
+        cookies.set('session', '', { expires: new Date(Date.now() - 3600) });
+        throw redirect(303, '/');
     }
 } satisfies Actions;
+
+export const load = (async ({ parent }) => {
+    const { user } = await parent();
+    if (user) throw redirect(303, '/account');
+}) satisfies PageServerLoad;

@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider } from 'firebase/auth';
 
 import {
 	PUBLIC_FB_API_KEY,
@@ -35,4 +35,8 @@ export const ccdSignInWithEmailAndPassword = async ({ email, password }: { email
 	const userResponse = await signInWithEmailAndPassword(auth, email, password);
 	const idToken = await userResponse.user.getIdToken();
 	document.cookie = '__ccdlogin=' + idToken + ';max-age=3600';
+}
+
+export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
+	signInWithPopup(auth, provider)
 }

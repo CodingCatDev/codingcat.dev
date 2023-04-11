@@ -8,6 +8,8 @@
 
 	import { toastStore } from '@codingcatdev/blackcatui';
 
+	import GoogleAuth from './GoogleAuth.svelte';
+
 	export let form: ActionData;
 </script>
 
@@ -15,6 +17,7 @@
 	<form
 		class="flex justify-center w-full"
 		method="POST"
+		action="?/login"
 		use:enhance={async ({ action, cancel, controller, data, form }) => {
 			// `form` is the `<form>` element
 			// `data` is its `FormData` object
@@ -60,6 +63,7 @@
 				<input class="input" name="password" type="password" placeholder="****" />
 			</label>
 			<button class="bcu-button variant-filled-primary" type="submit">Login</button>
+			<GoogleAuth />
 		</div>
 	</form>
 </LayoutWrapper>
