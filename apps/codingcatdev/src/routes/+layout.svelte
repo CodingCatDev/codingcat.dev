@@ -5,13 +5,17 @@
 	// Core
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
-	import { storeCurrentUrl } from './(layout-partials)/stores';
+	import { storeCurrentUrl, storeUser } from './(layout-partials)/stores';
 
 	//Style
 	import '../app.postcss';
 
 	// BlackCatUI Components
-	import { AppShell, Modal, Toast } from '@codingcatdev/blackcatui';
+	import { AppShell, Modal, Toast, storePopup } from '@codingcatdev/blackcatui';
+
+	// Depedency: Floating UI
+	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
+	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	// CodingCat.Dev Components
 	import CcdAppBar from './(layout-partials)/CcdAppBar.svelte';
@@ -27,6 +31,12 @@
 
 	// Lifecycle
 	afterNavigate((params: any) => {
+		storeUser.set({
+			email: data.user?.email,
+			picture: data.user?.picture,
+			uid: data.user?.uid
+		});
+
 		// Store current page route URL
 		storeCurrentUrl.set($page.url.pathname);
 		// Scroll to top

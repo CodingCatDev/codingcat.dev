@@ -54,6 +54,7 @@
 		"@cloudinary/html": "^1.11.0",
 		"@cloudinary/url-gen": "^1.9.1",
 		"@codingcatdev/videojs-codingcatdev-youtube": "^0.0.2",
+		"@floating-ui/dom": "^1.2.6",
 		"firebase": "^9.19.1",
 		"mdsvex": "^0.10.6",
 		"prism-svelte": "^0.5.0",

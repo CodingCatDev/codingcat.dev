@@ -3,7 +3,14 @@
 	import { Bars3 } from '@steeze-ui/heroicons';
 
 	// BlackCatUI
-	import { AppBar, LightSwitch, drawerStore, type DrawerSettings } from '@codingcatdev/blackcatui';
+	import {
+		AppBar,
+		drawerStore,
+		type DrawerSettings,
+		Avatar,
+		popup,
+		LightSwitch
+	} from '@codingcatdev/blackcatui';
 	import AJAlt from '$lib/components/global/icons/AJAlt.svelte';
 
 	// Drawer Handler
@@ -12,7 +19,8 @@
 		drawerStore.open(s);
 	}
 
-	import { storeCurrentUrl } from '../(layout-partials)/stores';
+	import { storeCurrentUrl, storeUser } from '../(layout-partials)/stores';
+	import LogoutButton from '../login/LogoutButton.svelte';
 
 	$: classesActive = (href: string) =>
 		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token' : '';
@@ -20,7 +28,6 @@
 
 <!-- NOTE: using stopPropagation to override Chrome for Windows search shortcut -->
 <!-- <svelte:window on:keydown|stopPropagation={onWindowKeydown} /> -->
-
 <AppBar shadow="shadow-xl">
 	<svelte:fragment slot="bcu-app-bar-lead">
 		<div class="flex items-center gap-2">
@@ -76,17 +83,37 @@
 				blog
 			</a>
 		</div>
-		<!-- Theme -->
-		<div>
-			<LightSwitch />
-		</div>
-
-		<!-- Social -->
-		<!-- prettier-ignore -->
-		<!-- <section class="hidden sm:inline-flex sm:gap-2">
-			<a class="bcu-button-icon hover:variant-soft-primary" href="https://gdggr.org" target="_blank" rel="noreferrer">
-				<Icon src={GlobeAmericas} theme="solid" />
-			</a>
-		</section> -->
+		{#if $storeUser?.uid}
+			<button
+				class="bcu-button hover:variant-soft-primary"
+				aria-label="Popup Showing Theme Options"
+				use:popup={{ event: 'click', target: 'theme' }}
+			>
+				{#if $storeUser?.picture}
+					<Avatar class="bcu-avatar-xs w-8 h-4" src={$storeUser.picture} alt="User Photo" />
+				{:else}
+					<Avatar class="bcu-avatar-xs w-8 h-8">
+						<svelte:fragment slot="bcu-avatar-message">
+							<div class="text-sm">AJ</div>
+						</svelte:fragment>
+					</Avatar>
+				{/if}
+			</button>
+			<!-- popup -->
+			<div class="bcu-card p-4 w-60 shadow-xl" data-popup="theme">
+				<div class="space-y-4">
+					<section class="flex justify-between items-center">
+						<h6>Mode</h6>
+						<LightSwitch />
+					</section>
+				</div>
+				<div class="flex flex-col gap-2">
+					<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
+					<LogoutButton />
+				</div>
+			</div>
+		{:else}
+			<a class="bcu-button variant-filled-primary" href="/login">Login</a>
+		{/if}
 	</svelte:fragment>
 </AppBar>

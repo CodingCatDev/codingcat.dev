@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { LightSwitch } from '@codingcatdev/blackcatui';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { Github, Twitter, Youtube } from '@steeze-ui/simple-icons';
 </script>
@@ -9,6 +10,9 @@
 	>
 		<p class="text-xs">
 			<a class="bcu-button variant-soft" href="https://alexpatterson.dev">Made by Alex Patterson</a>
+		</p>
+		<p class="text-xs flex gap-2">
+			Mode <LightSwitch />
 		</p>
 		<div class="flex gap-2">
 			<a
