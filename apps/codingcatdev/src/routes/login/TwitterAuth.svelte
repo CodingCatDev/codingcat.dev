@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { Google } from '@steeze-ui/simple-icons';
+	import { Twitter } from '@steeze-ui/simple-icons';
 
 	//Firebase
 	import { ccdSignInWithPopUp } from '$lib/client/firebase';
-	import { GoogleAuthProvider } from 'firebase/auth';
-	const provider = new GoogleAuthProvider();
+	import { TwitterAuthProvider } from 'firebase/auth';
+	const provider = new TwitterAuthProvider();
 
 	// Display
 	import { enhance } from '$app/forms';
@@ -17,7 +17,6 @@
 	action="?/login"
 	use:enhance={async ({ action, cancel, controller, data, form }) => {
 		await ccdSignInWithPopUp(provider);
-
 		return async ({ result, update }) => {
 			// `result` is an `ActionResult` object
 			// `update` is a function which triggers the logic that would be triggered if this callback wasn't set
@@ -27,7 +26,7 @@
 	}}
 >
 	<button class="bcu-button flex gap-2 variant-ringed-primary w-full" type="submit">
-		<Icon src={Google} class="w-4" />
-		<div class="text-lg">Google</div>
+		<Icon src={Twitter} class="w-4" />
+		<div class="text-lg">Twitter</div>
 	</button>
 </form>

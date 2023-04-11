@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { Google } from '@steeze-ui/simple-icons';
+	import { Github } from '@steeze-ui/simple-icons';
 
 	//Firebase
 	import { ccdSignInWithPopUp } from '$lib/client/firebase';
-	import { GoogleAuthProvider } from 'firebase/auth';
-	const provider = new GoogleAuthProvider();
+	import { GithubAuthProvider } from 'firebase/auth';
+	const provider = new GithubAuthProvider();
 
 	// Display
 	import { enhance } from '$app/forms';
@@ -27,7 +27,7 @@
 	}}
 >
 	<button class="bcu-button flex gap-2 variant-ringed-primary w-full" type="submit">
-		<Icon src={Google} class="w-4" />
-		<div class="text-lg">Google</div>
+		<Icon src={Github} class="w-4" />
+		<div class="text-lg">GitHub</div>
 	</button>
 </form>

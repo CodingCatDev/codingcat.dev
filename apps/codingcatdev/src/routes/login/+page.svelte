@@ -9,6 +9,8 @@
 	import { toastStore } from '@codingcatdev/blackcatui';
 
 	import GoogleAuth from './GoogleAuth.svelte';
+	import TwitterAuth from './TwitterAuth.svelte';
+	import GitHubAuth from './GitHubAuth.svelte';
 
 	export let form: ActionData;
 </script>
@@ -70,5 +72,7 @@
 		<hr />
 
 		<GoogleAuth />
+		<TwitterAuth />
+		<GitHubAuth />
 	</section>
 </LayoutWrapper>

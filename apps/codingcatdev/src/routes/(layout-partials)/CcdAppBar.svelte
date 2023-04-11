@@ -100,16 +100,20 @@
 				{/if}
 			</button>
 			<!-- popup -->
-			<div class="bcu-card p-4 w-60 shadow-xl" data-popup="theme">
-				<div class="space-y-4">
+			<div class="bcu-card flex flex-col gap-4 p-4 w-60 shadow-xl" data-popup="theme">
+				<div class="space-y-4 mb-2">
 					<section class="flex justify-between items-center">
 						<h6>Mode</h6>
 						<LightSwitch />
 					</section>
 				</div>
-				<div class="flex flex-col gap-2">
+				<hr />
+				<div class="flex flex-col gap-2 mt-2">
 					<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
-					<LogoutButton />
+					<div class="flex gap-2">
+						<a class="bcu-button variant-ringed-primary" href="/account">Account</a>
+						<LogoutButton />
+					</div>
 				</div>
 			</div>
 		{:else}

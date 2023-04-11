@@ -1,4 +1,7 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { toastStore } from '@codingcatdev/blackcatui';
+
+
+import { initializeApp, getApps, FirebaseError } from 'firebase/app';
 import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, GoogleAuthProvider } from 'firebase/auth';
 
 import {
@@ -41,10 +44,26 @@ export const ccdSignInWithEmailAndPassword = async ({ email, password }: { email
 }
 
 export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
-	const result = await signInWithPopup(auth, provider)
-	const idToken = await result.user.getIdToken()
+	try {
+		const result = await signInWithPopup(auth, provider)
+		const idToken = await result.user.getIdToken()
 
-	if (!idToken)
-		throw 'Missing id Token'
-	setCookie(idToken);
+		if (!idToken)
+			throw 'Missing id Token'
+		setCookie(idToken);
+	} catch (err) {
+		if (err instanceof FirebaseError) {
+			if (err.code === 'auth/account-exists-with-different-credential') {
+				toastStore.trigger({
+					message: 'Account Exists with Different Login Method. Please first login and then link within your Account page.',
+					background: 'variant-filled-warning',
+				})
+			} else {
+				toastStore.trigger({
+					message: err.message,
+					background: 'variant-filled-error'
+				})
+			}
+		}
+	}
 }
