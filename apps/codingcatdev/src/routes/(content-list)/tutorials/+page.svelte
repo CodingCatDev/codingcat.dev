@@ -1,5 +1,5 @@
 <script>
-	import ContentCards from '$lib/components/content/ContentCards.svelte';
+	import ContentCards from '../ContentCards.svelte';
 	import { ContentType } from '$lib/types/index';
 
 	/** @type {import('./$types').PageData} */

@@ -5,8 +5,10 @@
 	export let courseSlug: string;
 </script>
 
-<div class="pt-2">
-	<ul class="card w-96 p-2 bg-base-content shadow-xl">
+<div class="bcu-card">
+	<header class="bcu-card-header capitalize pb-2 text-xl font-bold">Lessons</header>
+	<hr />
+	<ul class="w-96 p-2 bg-base-content shadow-xl">
 		{#each lesson as l}
 			<li class={`list-none cursor-pointer p-1 rounded m-1 flex flex-col justify-between`}>
 				<a href={`/course/${courseSlug}/lesson/${l.slug}`} class="link-primary">

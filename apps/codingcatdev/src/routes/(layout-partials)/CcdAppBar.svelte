@@ -23,7 +23,7 @@
 	import LogoutButton from '../login/LogoutButton.svelte';
 
 	$: classesActive = (href: string) =>
-		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token' : '';
+		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token hover:text-token' : '';
 </script>
 
 <!-- NOTE: using stopPropagation to override Chrome for Windows search shortcut -->

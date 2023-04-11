@@ -1,7 +1,6 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
-	import RecentPostsList from '$lib/components/content/RecentPostsList.svelte';
-	import LessonList from '$lib/components/content/LessonList.svelte';
+	import RecentPostsList from './RecentPostsList.svelte';
 	import {
 		ContentType,
 		type Content,
@@ -22,8 +21,8 @@
 
 {#if data?.content}
 	<div class="flex justify-center">
-		<section class="justify-center p-1 content-single xl:p-8 sm:flex">
-			<div class="p-1">
+		<section class="flex gap-8 justify-center p-1 xl:p-8">
+			<div class="">
 				{#if data?.content?.youtube}
 					<Video
 						sources={[
@@ -34,12 +33,12 @@
 						]}
 					/>
 				{/if}
-				<section class="flex-grow w-full prose lg:prose-xl xl:prose-2xl">
+				<section class="flex-grow w-full markdown">
 					{@html data.content.html}
 				</section>
 			</div>
 
-			<div class="hidden xl:block">
+			<div class="hidden xl:flex flex-col gap-6">
 				<RecentPostsList contentType={ContentType.course} list={data.course} />
 				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
 				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />

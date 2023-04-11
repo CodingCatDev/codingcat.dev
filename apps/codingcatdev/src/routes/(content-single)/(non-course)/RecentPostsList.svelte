@@ -1,12 +1,16 @@
 <script lang="ts">
 	import type { Content, ContentType } from '$lib/types';
+	import { pluralize } from '$lib/utils';
 
 	export let list: Content[];
 	export let contentType: ContentType;
+	$: title = pluralize({ type: contentType } as Content);
 </script>
 
-<div class="pt-2">
-	<ul class="card w-96 p-2 bg-base-content shadow-xl">
+<div class="bcu-card">
+	<header class="bcu-card-header capitalize pb-2 text-xl font-bold">{title}</header>
+	<hr />
+	<ul class="w-96 p-2 bg-base-content shadow-xl">
 		{#each list as content}
 			<li class={`list-none cursor-pointer p-1 rounded m-1 flex flex-col justify-between`}>
 				<a href={`/${contentType}/${content.slug}`} class="link-primary">

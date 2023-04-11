@@ -1,6 +1,6 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
-	import LessonList from '$lib/components/content/LessonList.svelte';
+	import LessonList from './LessonList.svelte';
 	import Video from '$lib/components/content/Video.svelte';
 	import type { Lesson } from '$lib/types';
 	export let data: {
@@ -10,7 +10,7 @@
 </script>
 
 {#if data?.content}
-	<div class="flex justify-center">
+	<div class="flex justify-center !text-token">
 		<section class="justify-center p-1 content-single xl:p-8 sm:flex">
 			<div class="p-1">
 				{#if data?.content?.youtube}

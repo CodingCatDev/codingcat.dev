@@ -1,5 +1,5 @@
 <script>
-	import Course from '$lib/components/content/Course.svelte';
+	import Course from '../Course.svelte';
 	/** @type {import('./$types').PageData} */
 	export let data;
 </script>
