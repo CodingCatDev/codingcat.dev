@@ -3,9 +3,9 @@
 	import KCAlt from '$lib/components/global/icons/KCAlt.svelte';
 	import AJHeartAlt from '$lib/components/global/icons/AJHeartAlt.svelte';
 	import Podcasts from '$lib/components/global/icons/nav/Podcasts.svelte';
-	import BreakBarLeft from '$lib/components/home/BreakBarLeft.svelte';
-	import BreakBarRight from '$lib/components/home/BreakBarRight.svelte';
-	import Skills from '$lib/components/home/Skills.svelte';
+	import BreakBarLeft from './BreakBarLeft.svelte';
+	import BreakBarRight from './BreakBarRight.svelte';
+	import Skills from './Skills.svelte';
 	import ContentCards from '$lib/components/content/ContentCards.svelte';
 	import { ContentType, type Content, type Podcast } from '$lib/types/index';
 

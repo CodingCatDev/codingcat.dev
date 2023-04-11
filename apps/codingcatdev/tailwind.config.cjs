@@ -9,7 +9,8 @@ module.exports = {
 		extend: {}
 	},
 	plugins: [
-		// 3. Append the Skeleton plugin to the end of this list
+		require('@tailwindcss/typography'),
+		require('@tailwindcss/forms'),
 		...require('@codingcatdev/blackcatui/dist/tailwind/blackcatui.cjs')()
 	]
 };

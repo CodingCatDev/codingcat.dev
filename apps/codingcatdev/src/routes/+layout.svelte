@@ -1,4 +1,9 @@
 <script lang="ts">
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
+
+	console.log(data);
+
 	// Core
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
@@ -8,12 +13,12 @@
 	import '../app.postcss';
 
 	// BlackCatUI Components
-	import { AppShell } from '@codingcatdev/blackcatui';
+	import { AppShell, Modal, Toast } from '@codingcatdev/blackcatui';
 
 	// CodingCat.Dev Components
-	import MyAppBar from './(layout-partials)/CcdAppBar.svelte';
-	import MyDrawer from './(layout-partials)/CcdDrawer.svelte';
-	import MyFooter from './(layout-partials)/CcdFooter.svelte';
+	import CcdAppBar from './(layout-partials)/CcdAppBar.svelte';
+	import CcdDrawer from './(layout-partials)/CcdDrawer.svelte';
+	import CcdFooter from './(layout-partials)/CcdFooter.svelte';
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
@@ -101,12 +106,14 @@
 </svelte:head>
 
 <!-- Overlays -->
-<MyDrawer />
+<CcdDrawer />
+<Modal />
+<Toast />
 
 <!-- App Shell -->
 <AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token" }>
 	<!-- Header -->
-	<svelte:fragment slot="bcu-app-shell-header"><MyAppBar /></svelte:fragment>
+	<svelte:fragment slot="bcu-app-shell-header"><CcdAppBar /></svelte:fragment>
 
 	<!-- Sidebar (Left) -->
 	<!-- <svelte:fragment slot="bcu-app-shell-sidebar-left">
@@ -117,5 +124,5 @@
 	<slot />
 
 	<!-- Page Footer -->
-	<svelte:fragment slot="bcu-app-shell-page-footer"><MyFooter /></svelte:fragment>
+	<svelte:fragment slot="bcu-app-shell-page-footer"><CcdFooter /></svelte:fragment>
 </AppShell>
