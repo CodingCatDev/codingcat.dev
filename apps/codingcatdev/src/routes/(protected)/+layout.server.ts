@@ -2,7 +2,7 @@ import { ccdValidateSessionCookie } from '$lib/server/firebase';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ cookies, route, params, url }) => {
+export const load = (async ({ cookies, url }) => {
     const ccdsession = cookies.get('session');
 
     if (!ccdsession) {
