@@ -12,7 +12,12 @@
 	import TwitterAuth from './TwitterAuth.svelte';
 	import GitHubAuth from './GitHubAuth.svelte';
 
-	export let form: ActionData;
+	// TODO: More actions
+	// export let form: ActionData;
+
+	import type { PageData } from './$types';
+	export let data: PageData;
+	$: action = `?/login${data.redirectTo && '&redirectTo=' + data.redirectTo}`;
 </script>
 
 <LayoutWrapper>
@@ -20,7 +25,7 @@
 		<form
 			class="flex justify-center w-full"
 			method="POST"
-			action="?/login"
+			{action}
 			use:enhance={async ({ action, cancel, controller, data, form }) => {
 				// `form` is the `<form>` element
 				// `data` is its `FormData` object
@@ -71,7 +76,7 @@
 
 		<hr />
 
-		<GoogleAuth />
+		<GoogleAuth {action} />
 		<TwitterAuth />
 		<GitHubAuth />
 	</section>

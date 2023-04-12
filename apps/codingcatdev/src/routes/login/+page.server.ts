@@ -4,6 +4,7 @@ import { fail, redirect } from '@sveltejs/kit'
 
 export const actions = {
     login: async ({ cookies, url }) => {
+        console.log(url)
         const ccdLoginIdToken = cookies.get('__ccdlogin');
 
         if (!ccdLoginIdToken) {
@@ -29,7 +30,11 @@ export const actions = {
     }
 } satisfies Actions;
 
-export const load = (async ({ parent }) => {
+export const load = (async ({ parent, url }) => {
     const { user } = await parent();
     if (user) throw redirect(303, '/account');
+
+    return {
+        redirectTo: url.searchParams.get('redirectTo') || ''
+    }
 }) satisfies PageServerLoad;
