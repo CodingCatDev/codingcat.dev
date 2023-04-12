@@ -2,4 +2,11 @@
 	.markdown p {
 		@apply !text-lg md:!text-2xl;
 	}
+	/* .markdown p img {
+		@apply max-h-96;
+	} */
+	.markdown pre code {
+		@apply whitespace-pre-wrap overflow-x-auto break-all;
+		@apply text-sm sm:text-lg md:text-xl;
+	}
 }

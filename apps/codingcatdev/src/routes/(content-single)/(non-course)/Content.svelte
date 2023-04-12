@@ -21,8 +21,8 @@
 
 {#if data?.content}
 	<div class="flex justify-center">
-		<section class="flex gap-8 justify-center p-1 xl:p-8">
-			<div class="">
+		<section class="flex flex-col xl:flex-row gap-8 justify-center p-1 xl:p-8">
+			<div class="flex flex-col gap-2 md:gap-8 max-w-7xl">
 				{#if data?.content?.youtube}
 					<Video
 						sources={[
@@ -33,12 +33,12 @@
 						]}
 					/>
 				{/if}
-				<section class="flex-grow w-full markdown">
+				<section class="flex-grow w-full markdown flex flex-col gap-2 md:gap-8">
 					{@html data.content.html}
 				</section>
 			</div>
 
-			<div class="hidden xl:flex flex-col gap-6">
+			<div class="flex flex-col gap-6">
 				<RecentPostsList contentType={ContentType.course} list={data.course} />
 				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
 				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
