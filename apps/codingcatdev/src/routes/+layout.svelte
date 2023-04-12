@@ -5,7 +5,7 @@
 	// Core
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
-	import { storeCurrentUrl, storeUser } from './(layout-partials)/stores';
+	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
 
 	//Style
 	import '../app.postcss';
@@ -122,11 +122,6 @@
 <AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token" }>
 	<!-- Header -->
 	<svelte:fragment slot="bcu-app-shell-header"><CcdAppBar /></svelte:fragment>
-
-	<!-- Sidebar (Left) -->
-	<!-- <svelte:fragment slot="bcu-app-shell-sidebar-left">
-		<MySideNav class="hidden overflow-hidden lg:grid w-72" />
-	</svelte:fragment> -->
 
 	<!-- Page Content -->
 	<slot />

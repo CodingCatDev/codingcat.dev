@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Stores
-	import { storeCurrentUrl } from './stores';
+	import { storeCurrentUrl } from '$lib/stores/stores';
 	import { drawerStore } from '@codingcatdev/blackcatui';
 
 	// Props

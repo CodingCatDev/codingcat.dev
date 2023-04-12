@@ -19,7 +19,7 @@
 		drawerStore.open(s);
 	}
 
-	import { storeCurrentUrl, storeUser } from '../(layout-partials)/stores';
+	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
 	import LogoutButton from '../login/LogoutButton.svelte';
 
 	$: classesActive = (href: string) =>
