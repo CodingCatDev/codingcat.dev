@@ -64,7 +64,7 @@ for (const path in modules) {
 console.log('Add Lessons to courses');
 const lessonModules = import.meta.glob('../../content/course/*/lesson/*.md');
 for (const path in lessonModules) {
-	lessonModules[path]().then((mod) => {
+	await lessonModules[path]().then((mod) => {
 		const splitPath = path.replace('../../content/', '').split('/');
 		const type = splitPath.at(0);
 		const slug = splitPath.at(1);
