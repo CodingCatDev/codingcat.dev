@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let src: string;
-	export let alt: string;
-	export let classes: string;
+	export let alt: string = 'Missing Alt';
+	export let classes: string = '';
 
 	import { lazyload, HtmlImageLayer } from '@cloudinary/html';
 	import { CloudinaryImage } from '@cloudinary/url-gen';

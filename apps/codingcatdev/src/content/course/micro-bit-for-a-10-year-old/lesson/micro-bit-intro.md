@@ -2,10 +2,10 @@
 cloudinary_convert: false
 cover: htts://media.codingcat.dev/image/upload/v1620241182/main-codingcatdev-photo/gmjigd84bzqxklcbiljt.png
 excerpt: micro:bit Introduction
-framework: 
-    - makecode
+framework:
+  - makecode
 language:
-    - javascript
+  - javascript
 published: published
 slug: micro-bit-intro
 start: June 1, 2022
@@ -13,7 +13,7 @@ title: micro:bit Intro
 weight: 1
 ---
 
-## **What is a micro:bit**
+## What is a micro:bit
 
 It is a pocket-sized computer 70 times smaller and 18 times faster than the original BBC Micro computers used in schools.
 
