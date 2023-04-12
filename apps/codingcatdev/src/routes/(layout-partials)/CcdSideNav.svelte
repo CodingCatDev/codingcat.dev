@@ -20,11 +20,13 @@
 
 <!-- Nav Links -->
 <section class={classesBase}>
+	<div class="text-3xl font-bold">Menu</div>
+	<hr />
 	<nav class="nav-list-nav">
 		<ul>
 			<li on:click={onListItemClick} on:keypress>
 				<a href={`/courses`} class={classesActive('courses')} data-sveltekit-preload-data="hover">
-					<span class="flex-auto text-3xl font-bold capitalize" />
+					<span class="flex-auto text-3xl font-bold capitalize">courses</span>
 				</a>
 			</li>
 			<li on:click={onListItemClick} on:keypress>
