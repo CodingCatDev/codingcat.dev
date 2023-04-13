@@ -1,4 +1,4 @@
-import { ccdCreateSessionCookie, ccdValidateSessionCookie } from '$lib/server/firebase';
+import { ccdCreateSessionCookie } from '$lib/server/firebase';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit'
 
