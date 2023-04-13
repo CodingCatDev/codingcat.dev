@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import {
-		ArrowRightCircle,
-		ArrowTopRightOnSquare,
-		CheckCircle,
-		RocketLaunch
-	} from '@steeze-ui/heroicons';
+	import { ArrowTopRightOnSquare, CheckCircle, RocketLaunch } from '@steeze-ui/heroicons';
 
 	import KcPrimary from '$lib/components/global/icons/KCPrimary.svelte';
 	import AjPrimary from '$lib/components/global/icons/AJPrimary.svelte';
@@ -19,7 +14,7 @@
 	import { toastStore } from '@codingcatdev/blackcatui';
 
 	let redirecting = false;
-	const onSubscribe = async (products: { role: string; price: string }[]) => {
+	const onSubscribe = async (products: { role: string; price: string }[], uid: string) => {
 		const price = products
 			.filter((p) => (monthly ? p.role === 'monthly' : p.role === 'yearly'))
 			.at(0)?.price;
@@ -30,7 +25,7 @@
 			});
 		} else {
 			redirecting = true;
-			addSubscription(price);
+			addSubscription(price, uid);
 		}
 	};
 
@@ -119,7 +114,7 @@
 	{:else}
 		<button
 			class="bcu-button variant-filled-surface flex self-end gap-2"
-			on:click|once={() => onSubscribe($modalStore[0].meta?.products)}
+			on:click|once={() => onSubscribe($modalStore[0].meta?.products, $modalStore[0].meta?.uid)}
 		>
 			Continue
 			<Icon src={ArrowTopRightOnSquare} theme="mini" class="w-8" />

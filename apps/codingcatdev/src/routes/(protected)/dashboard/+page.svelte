@@ -16,7 +16,9 @@
 					<div class="bcu-card variant-filled">Welcome Message</div>
 					<div class="bcu-card variant-filled">Join Discord for LBT</div>
 				</div>
-				<ProButton products={data.products} />
+				{#if !data?.user?.stripeRole}
+					<ProButton products={data.products} uid={data.user?.uid} />
+				{/if}
 			</div>
 		</section>
 	</div>

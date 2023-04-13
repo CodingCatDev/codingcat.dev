@@ -73,8 +73,8 @@ export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
 export const db = getFirestore(app);
 
 /* STRIPE */
-export const addSubscription = async (price: string) => {
-	const userDoc = doc(collection(db, 'stripe-customers'), auth.currentUser?.uid)
+export const addSubscription = async (price: string, uid: string) => {
+	const userDoc = doc(collection(db, 'stripe-customers'), uid)
 	const docRef = await addDoc(collection(userDoc, 'checkout_sessions'), {
 		price,
 		success_url: window.location.href,

@@ -50,6 +50,6 @@
 			{/if}
 		</div>
 	{:else}
-		<ProButton products={data.products} />
+		<ProButton products={data.products} uid={data.user?.uid} />
 	{/if}
 </LayoutWrapper>

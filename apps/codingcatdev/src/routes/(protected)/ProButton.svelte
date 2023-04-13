@@ -4,6 +4,8 @@
 		id: string;
 	}[];
 
+	export let uid: string | undefined;
+
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { RocketLaunch } from '@steeze-ui/heroicons';
 
@@ -18,7 +20,8 @@
 				ref: ProModal
 			},
 			meta: {
-				products: products
+				products: products,
+				uid
 			}
 		};
 		modalStore.trigger(d);
