@@ -5,6 +5,7 @@
 	import type { Content, ContentType } from '$lib/types';
 	import { pluralize } from '$lib/utils';
 	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
+	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	export let data: {
 		content: Content;
 		contentType: ContentType;
@@ -14,10 +15,10 @@
 
 {#if data?.content}
 	<div class="flex justify-center">
-		<section class="flex flex-col xl:flex-row gap-8 justify-center p-1 xl:p-8 w-full">
-			<div class="flex flex-col gap-2 md:gap-8 max-w-7xl w-full">
+		<section class="flex flex-col justify-center w-full gap-8 p-1 xl:flex-row xl:p-8">
+			<div class="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
 				<ol class="bcu-breadcrumb">
-					<li class="bcu-crumb capitalize"><a href={`/${title}`}>{title}</a></li>
+					<li class="capitalize bcu-crumb"><a href={`/${title}`}>{title}</a></li>
 					<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
 					<li>{data.content.title}</li>
 				</ol>
@@ -34,8 +35,10 @@
 					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
 				{/if}
 
-				<section class="flex-grow w-full markdown flex flex-col gap-2 md:gap-8">
-					{@html data.content.html}
+				<section class="flex flex-col flex-grow w-full gap-2 markdown md:gap-8">
+					<CopyCodeInjector>
+						{@html data.content.html}
+					</CopyCodeInjector>
 				</section>
 			</div>
 		</section>
