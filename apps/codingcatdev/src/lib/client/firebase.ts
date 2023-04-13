@@ -2,6 +2,7 @@ import { toastStore } from '@codingcatdev/blackcatui';
 import { initializeApp, getApps, FirebaseError } from 'firebase/app';
 import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore, collection, doc, addDoc, onSnapshot } from 'firebase/firestore';
+import { httpsCallable, getFunctions } from 'firebase/functions';
 
 import {
 	PUBLIC_FB_API_KEY,
@@ -71,6 +72,7 @@ export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
 /* DB */
 export const db = getFirestore(app);
 
+/* STRIPE */
 export const addSubscription = async (price: string) => {
 	const userDoc = doc(collection(db, 'stripe-customers'), auth.currentUser?.uid)
 	const docRef = await addDoc(collection(userDoc, 'checkout_sessions'), {
@@ -92,3 +94,14 @@ export const addSubscription = async (price: string) => {
 		}
 	});
 };
+
+/* FUNCTIONS */
+export const functions = getFunctions(app);
+
+export const openStripePortal = async () => {
+	const functionRef = httpsCallable(functions, 'ext-firestore-stripe-payments-createPortalLink');
+	const { data } = await functionRef({
+		returnUrl: window.location.href,
+	}) as { data: { url: string } };
+	window.location.assign(data.url);
+}

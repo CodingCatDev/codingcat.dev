@@ -1,4 +1,4 @@
-import { ccdValidateSessionCookie } from '$lib/server/firebase';
+import { ccdValidateSessionCookie, validateStripeRole } from '$lib/server/firebase';
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
@@ -8,10 +8,15 @@ export const load = (async ({ cookies }) => {
 		if (!ccdsession) {
 			return {};
 		}
-		const decodedClaims = await ccdValidateSessionCookie(ccdsession);
+		const user = await ccdValidateSessionCookie(ccdsession);
 
+		// Revalidate needed after stripe subsciption
+		const stripeRole = await validateStripeRole(user.uid);
 		return {
-			user: decodedClaims
+			user: {
+				...user,
+				stripeRole
+			}
 		};
 	} catch (error) {
 		cookies.set('session', "", { expires: new Date(0) });

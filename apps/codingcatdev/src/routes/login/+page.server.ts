@@ -4,7 +4,6 @@ import { fail, redirect } from '@sveltejs/kit'
 
 export const actions = {
     login: async ({ cookies, url }) => {
-        console.log(url)
         const ccdLoginIdToken = cookies.get('__ccdlogin');
 
         if (!ccdLoginIdToken) {

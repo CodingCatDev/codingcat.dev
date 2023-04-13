@@ -43,3 +43,8 @@ export const ccdCreateSessionCookie = async (idToken: string) => {
 export const ccdValidateSessionCookie = async (session: string) => {
     return await auth.verifySessionCookie(session, true);
 }
+
+export const validateStripeRole = async (uid: string) => {
+    const user = await auth.getUser(uid);
+    return user.customClaims?.['stripeRole']
+}

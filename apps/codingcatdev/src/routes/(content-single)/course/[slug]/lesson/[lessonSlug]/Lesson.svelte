@@ -6,7 +6,6 @@
 		course: Course;
 		content: Lesson;
 	};
-	console.log(data?.content);
 </script>
 
 {#if data?.content}

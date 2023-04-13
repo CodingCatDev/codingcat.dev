@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { ArrowRightCircle, CheckCircle, RocketLaunch } from '@steeze-ui/heroicons';
+	import {
+		ArrowRightCircle,
+		ArrowTopRightOnSquare,
+		CheckCircle,
+		RocketLaunch
+	} from '@steeze-ui/heroicons';
 
 	import KcPrimary from '$lib/components/global/icons/KCPrimary.svelte';
 	import AjPrimary from '$lib/components/global/icons/AJPrimary.svelte';
@@ -102,10 +107,7 @@
 	</div>
 
 	{#if redirecting}
-		<button
-			class="bcu-button variant-filled-surface flex self-end gap-2"
-			on:click|once={() => onSubscribe($modalStore[0].meta?.products)}
-		>
+		<button class="bcu-button variant-filled-surface flex self-end gap-2">
 			Redirecting
 			<ProgressCircle
 				stroke={100}
@@ -120,7 +122,7 @@
 			on:click|once={() => onSubscribe($modalStore[0].meta?.products)}
 		>
 			Continue
-			<Icon src={ArrowRightCircle} theme="solid" class="w-8" />
+			<Icon src={ArrowTopRightOnSquare} theme="mini" class="w-8" />
 		</button>
 	{/if}
 </div>
