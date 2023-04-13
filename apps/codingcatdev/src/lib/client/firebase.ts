@@ -1,8 +1,7 @@
 import { toastStore } from '@codingcatdev/blackcatui';
-
-
 import { initializeApp, getApps, FirebaseError } from 'firebase/app';
 import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore, collection, doc, addDoc, onSnapshot } from 'firebase/firestore';
 
 import {
 	PUBLIC_FB_API_KEY,
@@ -28,11 +27,12 @@ export let app = getApps().at(0);
 if (!app) {
 	app = initializeApp(firebaseConfig);
 }
+
+/* AUTH */
 export const auth = getAuth(app);
 // As httpOnly cookies are to be used, do not persist any state client side.
 setPersistence(auth, browserSessionPersistence);
 
-/* AUTH */
 const setCookie = (idToken: string) => {
 	document.cookie = '__ccdlogin=' + idToken + ';max-age=3600';
 }
@@ -67,3 +67,28 @@ export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
 		}
 	}
 }
+
+/* DB */
+export const db = getFirestore(app);
+
+export const addSubscription = async (price: string) => {
+	const userDoc = doc(collection(db, 'stripe-customers'), auth.currentUser?.uid)
+	const docRef = await addDoc(collection(userDoc, 'checkout_sessions'), {
+		price,
+		success_url: window.location.href,
+		cancel_url: window.location.href,
+	})
+	onSnapshot(docRef, (snap) => {
+		const { error, url } = snap.data() as { error: Error, url: string };
+		if (error) {
+			toastStore.trigger({
+				message: error.message,
+				background: 'variant-filled-error'
+			})
+		}
+		if (url) {
+			// We have a Stripe Checkout URL, let's redirect.
+			window.location.assign(url);
+		}
+	});
+};

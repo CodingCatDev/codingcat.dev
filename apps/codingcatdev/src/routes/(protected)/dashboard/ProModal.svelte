@@ -6,10 +6,29 @@
 	import AjPrimary from '$lib/components/global/icons/AJPrimary.svelte';
 
 	let monthly = true;
-
-	const onSelect = () => {
-		monthly = !monthly;
+	const onSelect = (setMonth: boolean) => {
+		monthly = setMonth;
 	};
+	import { modalStore, ProgressCircle } from '@codingcatdev/blackcatui';
+	import { addSubscription } from '$lib/client/firebase';
+	import { toastStore } from '@codingcatdev/blackcatui';
+
+	let redirecting = false;
+	const onSubscribe = async (products: { role: string; price: string }[]) => {
+		const price = products
+			.filter((p) => (monthly ? p.role === 'monthly' : p.role === 'yearly'))
+			.at(0)?.price;
+		if (!price) {
+			toastStore.trigger({
+				message: 'Missing price data, contact Alex!',
+				background: 'variant-filled-error'
+			});
+		} else {
+			redirecting = true;
+			addSubscription(price);
+		}
+	};
+
 	const base = 'bcu-card p-2 md:p-8 flex flex-col items-center relative w-full hover:bg-opacity-90';
 </script>
 
@@ -17,7 +36,7 @@
 	<div class="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-8">
 		<button
 			class={`${base} ${monthly ? 'variant-filled-primary' : 'variant-soft-primary'}`}
-			on:click={onSelect}
+			on:click={() => onSelect(true)}
 		>
 			{#if monthly}
 				<div class="absolute top-0 right-0 mr-2 mt-2 ">
@@ -38,7 +57,7 @@
 		</button>
 		<button
 			class={`${base} ${!monthly ? 'variant-filled-primary' : 'variant-soft-primary'}`}
-			on:click={onSelect}
+			on:click={() => onSelect(false)}
 		>
 			{#if !monthly}
 				<div class="absolute top-0 right-0 mr-2 mt-2 ">
@@ -82,8 +101,26 @@
 		</div>
 	</div>
 
-	<button class="bcu-button variant-filled-surface flex self-end gap-2">
-		Continue
-		<Icon src={ArrowRightCircle} theme="solid" class="w-8" />
-	</button>
+	{#if redirecting}
+		<button
+			class="bcu-button variant-filled-surface flex self-end gap-2"
+			on:click|once={() => onSubscribe($modalStore[0].meta?.products)}
+		>
+			Redirecting
+			<ProgressCircle
+				stroke={100}
+				meter="stroke-primary-50"
+				track="stroke-primary-500/30"
+				class="w-8"
+			/>
+		</button>
+	{:else}
+		<button
+			class="bcu-button variant-filled-surface flex self-end gap-2"
+			on:click|once={() => onSubscribe($modalStore[0].meta?.products)}
+		>
+			Continue
+			<Icon src={ArrowRightCircle} theme="solid" class="w-8" />
+		</button>
+	{/if}
 </div>

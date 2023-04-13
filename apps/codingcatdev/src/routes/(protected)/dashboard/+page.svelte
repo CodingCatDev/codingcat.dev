@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { PageData } from './$types';
+	export let data: PageData;
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { RocketLaunch } from '@steeze-ui/heroicons';
 
@@ -11,6 +13,9 @@
 			type: 'component',
 			component: {
 				ref: ProModal
+			},
+			meta: {
+				products: data.products
 			}
 		};
 		modalStore.trigger(d);
