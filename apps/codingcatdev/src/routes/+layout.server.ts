@@ -1,5 +1,4 @@
 import { ccdValidateSessionCookie, validateStripeRole } from '$lib/server/firebase';
-import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
 	try {
@@ -25,4 +24,4 @@ export const load = (async ({ cookies }) => {
 		return {
 		};
 	}
-}) satisfies LayoutServerLoad;
+});

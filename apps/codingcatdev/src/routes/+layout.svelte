@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
-	export let data: LayoutData;
+	export let data;
 
 	// Core
 	import { page } from '$app/stores';

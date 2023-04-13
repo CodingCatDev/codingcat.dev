@@ -36,4 +36,4 @@ export const load = (async ({ parent, url }) => {
     return {
         redirectTo: url.searchParams.get('redirectTo') || ''
     }
-}) satisfies PageServerLoad;
+});

@@ -1,6 +1,5 @@
 import { db } from '$lib/server/firebase';
 import { redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ url, parent }) => {
     const data = await parent();
@@ -26,4 +25,4 @@ export const load = (async ({ url, parent }) => {
         products
     };
 
-}) satisfies LayoutServerLoad;
+});

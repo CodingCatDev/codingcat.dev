@@ -1,7 +1,6 @@
 import { getContentBySlug } from '$lib/server/content';
 import { ContentType } from '$lib/types';
 import { error } from '@sveltejs/kit';
-import type { LayoutServerLoad } from './$types';
 
 const contentType = ContentType.course;
 
@@ -16,4 +15,4 @@ export const load = (async ({ params }) => {
         contentType,
         course
     };
-}) satisfies LayoutServerLoad;
+});
