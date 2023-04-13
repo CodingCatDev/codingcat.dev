@@ -40,13 +40,13 @@
 				<AjAlt />
 			</a> -->
 			<!-- Title -->
-			<a href="/">
+			<a href={$storeUser?.uid ? '/dashboard' : '/'} class="flex items-center">
 				<div class="w-12">
 					<AJAlt />
 				</div>
-			</a>
-			<a class="hidden hover:brightness-110 xl:flex xl:gap-1 sm:text-xl md:text-3xl" href="/">
-				CodingCat.dev
+				<span class="hidden hover:brightness-110 xl:flex xl:gap-1 sm:text-xl md:text-3xl">
+					CodingCat.dev
+				</span>
 			</a>
 		</div>
 	</svelte:fragment>
@@ -111,7 +111,7 @@
 				<div class="flex flex-col gap-2 mt-2">
 					<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
 					<div class="flex gap-2">
-						<a class="bcu-button variant-ringed-primary" href="/account">Account</a>
+						<a class="bcu-button variant-ringed-primary" href="/dashboard">Dashboard</a>
 						<LogoutButton />
 					</div>
 				</div>

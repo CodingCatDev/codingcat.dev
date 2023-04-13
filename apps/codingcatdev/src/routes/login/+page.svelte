@@ -17,7 +17,7 @@
 
 	import type { PageData } from './$types';
 	export let data: PageData;
-	$: action = `?/login${data.redirectTo && '&redirectTo=' + data.redirectTo}`;
+	$: action = `?/login&redirectTo=${data.redirectTo ? data.redirectTo : '/dashboard'}`;
 </script>
 
 <LayoutWrapper>

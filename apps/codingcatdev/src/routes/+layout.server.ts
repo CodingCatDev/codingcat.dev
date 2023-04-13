@@ -9,6 +9,7 @@ export const load = (async ({ cookies }) => {
 			return {};
 		}
 		const decodedClaims = await ccdValidateSessionCookie(ccdsession);
+
 		return {
 			user: decodedClaims
 		};

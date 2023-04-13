@@ -1,6 +1,6 @@
 @layer components {
 	.ccd-grid-card {
-		@apply bcu-card grid transition-all rounded-md shadow-lg hover:shadow-2xl hover:scale-105;
+		@apply bcu-card grid transition-all rounded-md shadow-lg hover:shadow-2xl hover:scale-105 ease-in-out duration-150;
 	}
 	.ccd-grid-card a {
 		/* Override typograpy */
