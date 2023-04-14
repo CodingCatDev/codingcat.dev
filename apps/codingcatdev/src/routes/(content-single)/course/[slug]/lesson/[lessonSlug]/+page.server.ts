@@ -5,8 +5,10 @@ import { error } from '@sveltejs/kit';
 
 const contentType = ContentType.lesson;
 
-export const load = (async ({ params }) => {
-	const content = await getLessonFromCourseSlug(params.slug, params.lessonSlug);
+export const load = (async ({ params, parent }) => {
+	// Get parsed courses with lessons from layout
+	const { courseItems } = await parent();
+	const content = await getLessonFromCourseSlug({ courseSlug: params.slug, slug: params.lessonSlug, courseItems });
 	if (!content) {
 		throw error(404, {
 			message: 'Not found'

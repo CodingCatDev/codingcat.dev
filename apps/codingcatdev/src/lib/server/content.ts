@@ -1,124 +1,111 @@
 import { ContentType, ContentPublished } from '$lib/types';
-import type { Content, Course, Podcast } from '$lib/types';
+import type { Content, Course } from '$lib/types';
 
 const LIMIT = 20;
 
-// In Dev Mode read directly from content directory
-const markdownFiles: {
-	course: Course[];
-	framework: Content[];
-	language: Content[];
-	page: Content[];
-	podcast: Podcast[];
-	post: Content[];
-	tutorial: Content[];
-} = {
-	course: [],
-	framework: [],
-	language: [],
-	page: [],
-	podcast: [],
-	post: [],
-	tutorial: []
-};
+export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
+	const contentList: Content[] = [];
+	for (const path in modules) {
+		await modules[path]().then((mod) => {
+			const splitPath = path.split('/');
+			const type = splitPath.at(-2);
+			const slug = splitPath.at(-1);
 
-console.log('Building top metadata level');
-const modules = import.meta.glob(['../../content/course/*/*.md', '../../content/*/*.md']);
-for (const path in modules) {
-	await modules[path]().then((mod) => {
-		const splitPath = path.replace('../../content/', '').split('/');
-		const type = splitPath.at(0);
-		const slug = splitPath.at(1);
+			console.log(`Precompiling: ${type}/${slug}`);
 
-		console.log(splitPath);
+			if (!type || !slug) {
+				console.error('Missing name or type');
+				return;
+			}
 
-		if (!type || !slug) {
-			console.error('Missing name or type');
-			return;
-		}
-
-		const mdsvx = mod as {
-			default: {
-				render: () => { html: string };
+			const mdsvx = mod as {
+				default: {
+					render: () => { html: string };
+				};
+				metadata: Content;
 			};
-			metadata: Content;
-		};
-		const { html } = mdsvx.default.render();
-		/**
-		 * This needs to match the function that adds the
-		 * same data to Firestore
-		 */
-		const content = {
-			...mdsvx?.metadata,
-			cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
-			type: type as ContentType,
-			html,
-			weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-			published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
-			start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900')
-		};
-		markdownFiles[type as keyof typeof markdownFiles].push(content);
-	});
+			const { html } = mdsvx.default.render();
+			/**
+			 * This needs to match the function that adds the
+			 * same data to Firestore
+			 */
+			const content = {
+				...mdsvx?.metadata,
+				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
+				type: type as ContentType,
+				html,
+				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
+				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
+				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
+			};
+			contentList.push(content);
+		});
+	}
+	return contentList;
 }
 
 console.log('Add Lessons to courses');
-const lessonModules = import.meta.glob('../../content/course/*/lesson/*.md');
-for (const path in lessonModules) {
-	await lessonModules[path]().then((mod) => {
-		const splitPath = path.replace('../../content/', '').split('/');
-		const type = splitPath.at(0);
-		const slug = splitPath.at(1);
-		const lessonSlug = splitPath?.at(3)?.replace(/\.[^/.]+$/, '');
 
-		console.log(splitPath);
+export const parseLessonModules = async ({ lessonModules, courses }: { lessonModules: Record<string, () => Promise<unknown>>, courses: Course[] }) => {
+	for (const path in lessonModules) {
+		await lessonModules[path]().then((mod) => {
+			const splitPath = path.split('/');
+			const type = splitPath.at(-4);
+			const slug = splitPath.at(-3);
+			const lessonSlug = splitPath?.at(-1)?.replace(/\.[^/.]+$/, '');
 
-		if (!type || !slug || !lessonSlug) {
-			console.error('Lesson Param missing');
-			return;
-		}
+			console.log(`Precompiling Lesson: ${type}/${slug}`);
 
-		const mdsvx = mod as {
-			default: {
-				render: () => { html: string };
+			if (!type || !slug || !lessonSlug) {
+				console.error('Lesson Param missing');
+				return;
+			}
+
+			const mdsvx = mod as {
+				default: {
+					render: () => { html: string };
+				};
+				metadata: Content;
 			};
-			metadata: Content;
-		};
-		const { html } = mdsvx.default.render();
-		/**
-		 * This needs to match the function that adds the
-		 * same data to Firestore
-		 */
-		const content = {
-			...mdsvx?.metadata,
-			cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
-			type: ContentType.lesson,
-			slug: lessonSlug,
-			courseSlug: slug,
-			html,
-			weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-			published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
-			start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900')
-		};
+			const { html } = mdsvx.default.render();
+			/**
+			 * This needs to match the function that adds the
+			 * same data to Firestore
+			 */
+			const content = {
+				...mdsvx?.metadata,
+				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
+				type: ContentType.lesson,
+				slug: lessonSlug,
+				courseSlug: slug,
+				html,
+				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
+				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
+				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900')
+			};
 
-		markdownFiles.course
-			.filter((c) => c.slug === slug)
-			.map((c) => {
-				c?.lesson ? c.lesson.push(content) : (c['lesson'] = [content]);
-			});
-	});
+			courses
+				.filter((c) => c.slug === slug)
+				.map((c) => {
+					c?.lesson ? c.lesson.push(content) : (c['lesson'] = [content]);
+				});
+		});
+	}
+	return courses;
 }
+
 
 /**
  * List all content from specified content type
  * allows for optionally sending after object
  * */
 export const listContent = async ({
-	contentType,
+	contentItems,
 	after,
 	limit,
 	contentFilter = (c) => c.published === ContentPublished.published
 }: {
-	contentType: ContentType;
+	contentItems: Content[];
 	after?: number;
 	limit?: number;
 	contentFilter?: (c: Content) => boolean;
@@ -126,9 +113,9 @@ export const listContent = async ({
 	const theLimit = limit || LIMIT;
 	const theAfter = after || 0;
 
-	console.log(`List for type: ${contentType}, limit of ${theLimit}`);
+	console.log(`List limit of ${theLimit}`);
 
-	const fullContent = markdownFiles[contentType as keyof typeof markdownFiles]
+	const fullContent = contentItems
 		.filter(contentFilter)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf());
 
@@ -141,10 +128,16 @@ export const listContent = async ({
 	};
 };
 
-export const getContentBySlug = async (contentType: ContentType, slug: string) => {
-	console.debug(`Searching for content type: ${contentType} slug: ${slug}`);
+export const getContentBySlug = async ({
+	contentItems,
+	slug
+}: {
+	contentItems: Content[];
+	slug: string
+}) => {
+	console.debug(`Searching for slug: ${slug} in ${contentItems.length} items`);
 
-	const doc = markdownFiles[contentType as keyof typeof markdownFiles]
+	const doc = contentItems
 		.filter(
 			(c) =>
 				c.slug == slug &&
@@ -175,38 +168,22 @@ export const getContentBySlug = async (contentType: ContentType, slug: string) =
 /**
  * Get lesson by course and slug
  * */
-export const getLessonFromCourseSlug = async (courseSlug: string, slug: string) => {
+export const getLessonFromCourseSlug = async ({ courseSlug, slug, courseItems }:
+	{
+		courseSlug: string, slug: string,
+		courseItems: Content[];
+	}) => {
 	console.debug(`Searching for course: ${courseSlug}`);
 
-	const course = markdownFiles.course
-		.filter(
-			(c) =>
-				c.slug == courseSlug &&
-				new Date(c.start) <= new Date() &&
-				c.published === ContentPublished.published
-		)
-		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
-		.slice(0, 1)
-		.map((c: Course) => {
-			return {
-				...c,
-				lesson: c?.lesson
-					?.filter(
-						(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
-					)
-					.sort((a, b) => b.weight || 99 - (a.weight || 1))
-			};
-		})
-		.at(0);
+	const course = await getContentBySlug({ contentItems: courseItems, slug: courseSlug });
 	if (!course) {
 		console.debug(`course not found`);
 		return null;
 	}
 	console.debug(`Searching within ${course.slug} for lesson slug: ${slug}`);
 
-	const doc = markdownFiles.course
-		.filter((c) => c.slug === course.slug)
-		?.at(0)
+	// TODO: ADD Pro check?
+	const doc = course
 		?.lesson?.filter(
 			(l) =>
 				l.slug == slug &&
@@ -223,11 +200,6 @@ export const getLessonFromCourseSlug = async (courseSlug: string, slug: string) 
 
 	return {
 		...doc,
-		// Reduce html shipped for links
-		lesson: course?.lesson?.map((l) => {
-			// delete l.html;
-			return l;
-		}),
 		courseSlug: course.slug
 	};
 };

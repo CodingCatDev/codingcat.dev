@@ -10,7 +10,7 @@ weight: 6
 youtube: https://youtu.be/W_3YmcybZKc
 ---
 
-## **Performance**
+## Performance
 
 Welcome back, performance is one of the greatest benefits of SvelteKit. The hard jobs that make creating performant applications so difficult come for free with Sveltekit. It uses a tool called Vite, with a Svelte plugin, to provide instant server starts, lightning-fast development with hot module reloading, bundling, and the code-splitting that optimizes your code for production.
 

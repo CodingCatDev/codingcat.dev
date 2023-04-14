@@ -10,7 +10,8 @@ title: Fundamentals - What is Svelte
 weight: 3
 youtube: https://youtu.be/dZ1CI3u1MYA
 ---
-## **What is Svelte?**
+
+## What is Svelte?\*\*
 
 Svelte is a component framework that allows you to break up your application into reusable chunks and provides some sugary syntax, making your code base easy to understand and very graceful.
 
