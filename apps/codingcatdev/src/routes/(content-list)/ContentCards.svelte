@@ -76,7 +76,9 @@
 			</section>
 			{#if next}
 				<div class="flex justify-center m-8">
-					<button class="text-2xl btn btn-lg btn-primary" on:click={() => more()}> More </button>
+					<button class="text-2xl bcu-button variant-filled-primary" on:click={() => more()}>
+						Show More
+					</button>
 				</div>
 			{/if}
 		</div>
