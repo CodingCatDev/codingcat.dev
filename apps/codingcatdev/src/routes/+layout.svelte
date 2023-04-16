@@ -4,13 +4,13 @@
 	// Core
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
-	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
+	import { navigationIsDelayed, storeCurrentUrl, storeUser } from '$lib/stores/stores';
 
 	//Style
 	import '../app.postcss';
 
 	// BlackCatUI Components
-	import { AppShell, Modal, Toast, storePopup } from '@codingcatdev/blackcatui';
+	import { AppShell, Modal, ProgressCircle, Toast, storePopup } from '@codingcatdev/blackcatui';
 
 	// Depedency: Floating UI
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
@@ -123,7 +123,15 @@
 	<svelte:fragment slot="bcu-app-shell-header"><CcdAppBar /></svelte:fragment>
 
 	<!-- Page Content -->
-	<slot />
+	{#if $navigationIsDelayed}
+		<!-- LOOK HERE -->
+		<div class="flex flex-col m-2 md:m-8 items-center gap-2 md:gap-8">
+			<ProgressCircle stroke={60} value={undefined} width="w-20 md:w-36" />
+			<h1 class="ext-3xl text-center text-cText">Fetching...</h1>
+		</div>
+	{:else}
+		<slot />
+	{/if}
 
 	<!-- Page Footer -->
 	<svelte:fragment slot="bcu-app-shell-page-footer"><CcdFooter /></svelte:fragment>

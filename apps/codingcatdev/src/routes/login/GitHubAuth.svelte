@@ -9,12 +9,13 @@
 
 	// Display
 	import { enhance } from '$app/forms';
+	export let action: string;
 </script>
 
 <form
 	class="flex justify-center w-full"
 	method="POST"
-	action="?/login"
+	{action}
 	use:enhance={async ({ action, cancel, controller, data, form }) => {
 		await ccdSignInWithPopUp(provider);
 
