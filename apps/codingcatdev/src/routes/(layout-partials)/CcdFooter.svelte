@@ -42,7 +42,7 @@
 					rel="noreferrer"
 				>
 					<Icon src={Youtube} class="w-4" />
-					<span class="hidden md:inline-block ml-2">Twitter</span>
+					<span class="hidden md:inline-block ml-2">YouTube</span>
 				</a>
 			</div>
 		</section>
