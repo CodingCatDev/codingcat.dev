@@ -2,9 +2,9 @@
 	export let data;
 
 	// Core
-	import { page, navigating } from '$app/stores';
+	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
-	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
+	import { navigationIsDelayed, storeCurrentUrl, storeUser } from '$lib/stores/stores';
 
 	//Style
 	import '../app.postcss';
@@ -123,7 +123,7 @@
 	<svelte:fragment slot="bcu-app-shell-header"><CcdAppBar /></svelte:fragment>
 
 	<!-- Page Content -->
-	{#if $navigating}
+	{#if $navigationIsDelayed}
 		<!-- LOOK HERE -->
 		<div class="flex flex-col m-2 md:m-8 items-center gap-2 md:gap-8">
 			<ProgressCircle stroke={60} value={undefined} width="w-20 md:w-36" />
