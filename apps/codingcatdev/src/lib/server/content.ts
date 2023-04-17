@@ -5,7 +5,8 @@ import { env } from '$env/dynamic/private';
 const LIMIT = 20;
 
 // Force PREVIEW off by setting false in .env
-const preview = env.PREVIEW === "false" ? false : import.meta.env.DEV;
+// Will show for vercel previews unless forced to false
+const preview = env.PREVIEW === "false" ? false : env.VERCEL_ENV === "preview" || import.meta.env.DEV;
 
 export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
 	const contentList: Content[] = [];
