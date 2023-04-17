@@ -136,7 +136,7 @@
 	{/if}
 
 	<!-- Open Graph: Twitter -->
-	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@CodingCatDev" />
 	<meta name="twitter:creator" content="@CodingCatDev" />
 	<meta name="twitter:title" content={meta.twitter.title} />
