@@ -1,4 +1,4 @@
-import { ContentType, ContentPublished } from '$lib/types';
+import { ContentType, ContentPublished, type Lesson } from '$lib/types';
 import type { Content, Course } from '$lib/types';
 
 const LIMIT = 20;
@@ -65,7 +65,7 @@ export const parseLessonModules = async ({ lessonModules, courses }: { lessonMod
 				default: {
 					render: () => { html: string };
 				};
-				metadata: Content;
+				metadata: Lesson;
 			};
 			const { html } = mdsvx.default.render();
 			/**
@@ -81,7 +81,8 @@ export const parseLessonModules = async ({ lessonModules, courses }: { lessonMod
 				html,
 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
 				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
-				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900')
+				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
+				locked: mdsvx?.metadata?.locked || false,
 			};
 
 			courses
