@@ -11,8 +11,10 @@
 
 	let bindImage: HTMLImageElement | null = null;
 	onMount(() => {
+		const match = src.match(/upload\/(?:v\d+\/)?(.+?)\.[^\.]+$/)?.at(1);
+		const removeFront = src.replace('https://media.codingcat.dev/image/upload/', '');
 		const newImage = new CloudinaryImage(
-			src.match(/upload\/(?:v\d+\/)?(.+?)\.[^\.]+$/)?.at(1),
+			match || removeFront,
 			{ cloudName: 'none' },
 			{ secureDistribution: 'media.codingcat.dev', privateCdn: true, secure: true }
 		)

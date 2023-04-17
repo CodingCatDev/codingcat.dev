@@ -24,6 +24,7 @@ export interface Lesson extends Content {
 	courseSlug?: string;
 	lesson?: Lesson[];
 	section?: string;
+	locked: boolean;
 }
 export interface Podcast extends Content {
 	season?: number;
