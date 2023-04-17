@@ -1,6 +1,5 @@
 import { init, inited, search } from '$lib/search';
 
-/** @type {import('./$types').PageServerLoad} */
 export async function load({ url, fetch }) {
 	if (!inited) {
 		const res = await fetch('/api/content.json');
@@ -10,7 +9,7 @@ export async function load({ url, fetch }) {
 		init(blocks);
 	}
 
-	const query = url.searchParams.get('q');
+	const query = url.searchParams.get('q') || '';
 
 	const results = query ? search(query) : [];
 

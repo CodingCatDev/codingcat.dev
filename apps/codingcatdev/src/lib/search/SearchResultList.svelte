@@ -42,6 +42,7 @@
 	{#each results as result (result.href)}
 		<li>
 			<a
+				class="!no-underline !text-token"
 				data-sveltekit-preload-data
 				href={result.href}
 				on:click={() => dispatch('select', { href: result.href })}

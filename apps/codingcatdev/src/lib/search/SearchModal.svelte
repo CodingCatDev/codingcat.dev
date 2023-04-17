@@ -8,9 +8,9 @@ It appears when the user clicks on the `Search` component or presses the corresp
 
 	import { onMount } from 'svelte';
 	import { afterNavigate } from '$app/navigation';
-	import { query, recent } from './stores.js';
+	import { query, recent } from './stores';
 	import SearchResults from './SearchResults.svelte';
-	import SearchWorker from './search-worker.js?worker';
+	import SearchWorker from './search-worker?worker';
 	import { modalStore } from '@codingcatdev/blackcatui';
 
 	/** @type {HTMLElement} */

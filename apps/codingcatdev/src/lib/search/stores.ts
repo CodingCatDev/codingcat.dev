@@ -6,13 +6,13 @@ export const query = writable('');
  * @param {string} key
  * @param {any} fallback
  */
-function storable(key, fallback) {
+function storable(key: string, fallback: any[]) {
 	try {
 		let value = key in localStorage ? JSON.parse(localStorage[key]) : fallback;
 
 		const store = writable(value);
 
-		const set = (new_value) => {
+		const set = (new_value: any) => {
 			store.set((value = new_value));
 			localStorage[key] = JSON.stringify(value);
 		};
@@ -20,7 +20,7 @@ function storable(key, fallback) {
 		return {
 			subscribe: store.subscribe,
 			set,
-			update: (fn) => set(fn(value))
+			update: (fn: (arg0: any) => any) => set(fn(value))
 		};
 	} catch {
 		return writable(fallback);

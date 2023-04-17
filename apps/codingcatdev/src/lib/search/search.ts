@@ -1,13 +1,13 @@
 import flexsearch from 'flexsearch';
-
+import type { Block, Tree } from './types';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const Index = /** @type {import('flexsearch').Index} */ (flexsearch.Index) ?? flexsearch;
 
 /** If the search is already initialized */
 export let inited = false;
 
-/** @type {import('flexsearch').Index<any>[]} */
-let indexes;
+let indexes: import('flexsearch').Index<any>[];
 
 /** @type {Map<string, import('./types').Block>} */
 const map = new Map();
@@ -15,11 +15,8 @@ const map = new Map();
 /** @type {Map<string, string>} */
 const hrefs = new Map();
 
-/**
- * Initialize the search index
- * @param {import('./types').Block[]} blocks
- */
-export function init(blocks) {
+
+export function init(blocks: Block[]) {
 	if (inited) return;
 
 	// we have multiple indexes, so we can rank sections (migration guide comes last)
@@ -38,6 +35,9 @@ export function init(blocks) {
 		// We'd probably want to test both implementations across browsers if memory usage becomes an issue
 		// TODO: fix the type by updating flexsearch after
 		// https://github.com/nextapps-de/flexsearch/pull/364 is merged and released
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
 		indexes[block.rank ?? 0].add(block.href, `${title} ${block.content}`);
 
 		hrefs.set(block.breadcrumbs.join('::'), block.href);
@@ -51,17 +51,19 @@ export function init(blocks) {
  * @param {string} query
  * @returns {import('./types').Tree[]}
  */
-export function search(query) {
+export function search(query: string) {
 	const escaped = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 	const regex = new RegExp(`(^|\\b)${escaped}`, 'i');
 
 	const blocks = indexes
 		.flatMap((index) => index.search(query))
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
 		.map(lookup)
 		.map((block, rank) => ({ block: /** @type{import('./types').Block} */ (block), rank }))
 		.sort((a, b) => {
-			const a_title_matches = regex.test(/** @type {string} */ (a.block.breadcrumbs.at(-1)));
-			const b_title_matches = regex.test(/** @type {string} */ (b.block.breadcrumbs.at(-1)));
+			const a_title_matches = regex.test(/** @type {string} */(a.block.breadcrumbs.at(-1)));
+			const b_title_matches = regex.test(/** @type {string} */(b.block.breadcrumbs.at(-1)));
 
 			// massage the order a bit, so that title matches
 			// are given higher priority
@@ -82,16 +84,11 @@ export function search(query) {
  * Get a block with details by its href
  * @param {string} href
  */
-export function lookup(href) {
+export function lookup(href: string) {
 	return map.get(href);
 }
 
-/**
- * @param {string[]} breadcrumbs
- * @param {import('./types').Block[]} blocks
- * @returns {import('./types').Tree}
- */
-function tree(breadcrumbs, blocks) {
+function tree(breadcrumbs: string[], blocks: Block[]): Tree {
 	const depth = breadcrumbs.length;
 
 	const node = blocks.find((block) => {
@@ -109,6 +106,8 @@ function tree(breadcrumbs, blocks) {
 	return {
 		breadcrumbs,
 		href: /** @type {string} */ (hrefs.get(breadcrumbs.join('::'))),
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
 		node: /** @type {import('./types').Block} */ (node),
 		children: child_parts.map((part) => tree([...breadcrumbs, part], descendants))
 	};
