@@ -21,6 +21,8 @@
 
 	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
 	import LogoutButton from '../login/LogoutButton.svelte';
+	import { Search } from '$lib/search';
+	import { page } from '$app/stores';
 
 	$: classesActive = (href: string) =>
 		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token hover:text-token' : '';
@@ -50,6 +52,11 @@
 			</a>
 		</div>
 	</svelte:fragment>
+
+	{#if $page.url.pathname !== '/search'}
+		<div class="flex w-full justify-center"><Search /></div>
+	{/if}
+
 	<svelte:fragment slot="bcu-app-bar-trail">
 		<div class="hidden lg:block">
 			<a

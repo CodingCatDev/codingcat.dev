@@ -21,6 +21,8 @@
 	import CcdDrawer from './(layout-partials)/CcdDrawer.svelte';
 	import CcdFooter from './(layout-partials)/CcdFooter.svelte';
 	import type { Content } from '$lib/types';
+	import { browser } from '$app/environment';
+	import { SearchBox } from '$lib/search';
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
@@ -148,6 +150,10 @@
 <CcdDrawer />
 <Modal />
 <Toast />
+
+{#if browser}
+	<SearchBox />
+{/if}
 
 <!-- App Shell -->
 <AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token" }>
