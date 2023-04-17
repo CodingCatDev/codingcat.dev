@@ -13,6 +13,7 @@ export interface Content {
 	start: Date;
 	type: ContentType;
 	title?: string;
+	updated: Date;
 	weight?: number;
 	youtube?: string;
 }

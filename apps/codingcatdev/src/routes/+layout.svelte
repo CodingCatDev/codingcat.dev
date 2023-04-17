@@ -20,6 +20,7 @@
 	import CcdAppBar from './(layout-partials)/CcdAppBar.svelte';
 	import CcdDrawer from './(layout-partials)/CcdDrawer.svelte';
 	import CcdFooter from './(layout-partials)/CcdFooter.svelte';
+	import type { Content } from '$lib/types';
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
@@ -70,7 +71,10 @@
 			image: metaDefaults.image
 		}
 	};
+	let content: Content | undefined = undefined;
 	page.subscribe((page) => {
+		content = page?.data?.content;
+
 		// Restore Page Defaults
 		meta.title = metaDefaults.title;
 		meta.description = metaDefaults.description;
@@ -79,6 +83,27 @@
 		meta.twitter.title = metaDefaults.title;
 		meta.twitter.description = metaDefaults.description;
 		meta.twitter.image = metaDefaults.image;
+
+		if (content) {
+			// Post Data
+			meta.title = `${content.title}`;
+			meta.description = `${content.excerpt}`;
+			meta.image = `${content.cover}`;
+			// Article
+			meta.article.publishTime = content?.start
+				? content?.start.toISOString()
+				: new Date().toISOString();
+			meta.article.modifiedTime = content?.updated
+				? content?.updated.toISOString()
+				: content?.start
+				? content?.start.toISOString()
+				: new Date().toISOString();
+			meta.article.author = `${content?.authors?.[0]?.displayName || 'Alex Patterson'}`;
+			// Twitter
+			meta.twitter.title = `${content.title}`;
+			meta.twitter.description = `${content.excerpt}`;
+			meta.twitter.image = `${content.cover}`;
+		}
 	});
 </script>
 
@@ -103,8 +128,15 @@
 	<meta property="og:image:width" content="1920" />
 	<meta property="og:image:height" content="1080" />
 
+	<!-- OG: Article -->
+	{#if content}
+		<meta property="article:published_time" content={meta.article.publishTime} />
+		<meta property="article:modified_time" content={meta.article.modifiedTime} />
+		<meta property="article:author" content={meta.article.author} />
+	{/if}
+
 	<!-- Open Graph: Twitter -->
-	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@CodingCatDev" />
 	<meta name="twitter:creator" content="@CodingCatDev" />
 	<meta name="twitter:title" content={meta.twitter.title} />
