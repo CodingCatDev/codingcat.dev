@@ -53,10 +53,6 @@
 		</div>
 	</svelte:fragment>
 
-	{#if $page.url.pathname !== '/search'}
-		<div class="flex w-full justify-center"><Search /></div>
-	{/if}
-
 	<svelte:fragment slot="bcu-app-bar-trail">
 		<div class="hidden lg:block">
 			<a
@@ -90,6 +86,7 @@
 				blog
 			</a>
 		</div>
+		<div class="flex justify-center"><Search /></div>
 		{#if $storeUser?.uid}
 			<button
 				class="bcu-button hover:variant-soft-primary"
