@@ -170,7 +170,7 @@ export const getContentBySlug = async ({
 							:
 							(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
 					)
-					.sort((a, b) => b.weight || 99 - (a.weight || 1))
+					.sort((a, b) => a.weight && b.weight ? a.weight - b.weight : -1)
 			};
 		})
 		.at(0);
