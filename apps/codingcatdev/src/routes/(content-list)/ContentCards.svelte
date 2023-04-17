@@ -42,13 +42,11 @@
 									classes="rounded-md rounded-b-none cursor-pointer"
 								/>
 							{:else}
-								<div class="relative" style="paddingBottom: '56.25%'">
-									<div
-										class="absolute flex items-center flex-auto w-full h-full rounded-t-md bg-primary-900 dark:bg-primary-900"
-									>
-										<AJPrimary cls="w-full h-full p-4" />
-									</div>
-								</div>
+								<Image
+									src="https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo"
+									alt={content.title || 'Missing Alt Sorry'}
+									classes="rounded-md rounded-b-none cursor-pointer"
+								/>
 							{/if}
 
 							<section class="grid h-full grid-cols-1 gap-2 p-4">

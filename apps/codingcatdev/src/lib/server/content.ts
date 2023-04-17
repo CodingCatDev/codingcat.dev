@@ -1,17 +1,27 @@
 import { ContentType, ContentPublished, type Lesson } from '$lib/types';
 import type { Content, Course } from '$lib/types';
+import { env } from '$env/dynamic/private';
 
 const LIMIT = 20;
+
+// Force PREVIEW off by setting false in .env
+const preview = env.PREVIEW === "false" ? false : import.meta.env.DEV;
 
 export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
 	const contentList: Content[] = [];
 	for (const path in modules) {
 		await modules[path]().then((mod) => {
 			const splitPath = path.split('/');
-			const type = splitPath.at(-2);
+			const courseType = splitPath.at(-3);
+			const normalType = splitPath.at(-2);
 			const slug = splitPath.at(-1);
+			const type = courseType === 'content' ? normalType : courseType;
 
-			console.log(`Precompiling: ${type}/${slug}`);
+			if (courseType === 'content') {
+				console.log(`Precompiling: ${type}/${slug}`);
+			} else {
+				console.log(`Precompiling: ${type}/${normalType}`);
+			}
 
 			if (!type || !slug) {
 				console.error('Missing name or type');
@@ -44,8 +54,6 @@ export const parseModules = async (modules: Record<string, () => Promise<unknown
 	return contentList;
 }
 
-console.log('Add Lessons to courses');
-
 export const parseLessonModules = async ({ lessonModules, courses }: { lessonModules: Record<string, () => Promise<unknown>>, courses: Course[] }) => {
 	for (const path in lessonModules) {
 		await lessonModules[path]().then((mod) => {
@@ -54,7 +62,7 @@ export const parseLessonModules = async ({ lessonModules, courses }: { lessonMod
 			const slug = splitPath.at(-3);
 			const lessonSlug = splitPath?.at(-1)?.replace(/\.[^/.]+$/, '');
 
-			console.log(`Precompiling Lesson: ${type}/${slug}`);
+			console.log(`Precompiling Lesson: ${type}/${slug}/lesson/${lessonSlug}`);
 
 			if (!type || !slug || !lessonSlug) {
 				console.error('Lesson Param missing');
@@ -117,7 +125,7 @@ export const listContent = async ({
 	console.log(`List limit of ${theLimit}`);
 
 	const fullContent = contentItems
-		.filter(contentFilter)
+		.filter(preview ? () => true : contentFilter)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf());
 
 	const content = fullContent.slice(0 + theAfter, theLimit + theAfter);
@@ -140,10 +148,14 @@ export const getContentBySlug = async ({
 
 	const doc = contentItems
 		.filter(
-			(c) =>
-				c.slug == slug &&
-				new Date(c.start) <= new Date() &&
-				c.published === ContentPublished.published
+			preview ?
+				(c) =>
+					c.slug == slug
+				:
+				(c) =>
+					c.slug == slug &&
+					new Date(c.start) <= new Date() &&
+					c.published === ContentPublished.published
 		)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
 		.slice(0, 1)
@@ -152,7 +164,10 @@ export const getContentBySlug = async ({
 				...c,
 				lesson: c?.lesson
 					?.filter(
-						(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
+						preview ?
+							() => true
+							:
+							(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
 					)
 					.sort((a, b) => b.weight || 99 - (a.weight || 1))
 			};
@@ -186,10 +201,14 @@ export const getLessonFromCourseSlug = async ({ courseSlug, slug, courseItems }:
 	// TODO: ADD Pro check?
 	const doc = course
 		?.lesson?.filter(
-			(l) =>
-				l.slug == slug &&
-				new Date(l.start) <= new Date() &&
-				l.published === ContentPublished.published
+			preview ?
+				(l) =>
+					l.slug == slug
+				:
+				(l) =>
+					l.slug == slug &&
+					new Date(l.start) <= new Date() &&
+					l.published === ContentPublished.published
 		)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
 		.slice(0, 1)
