@@ -24,7 +24,6 @@
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
-		console.log(window.location);
 		if (!window.location.hash) return;
 		const elemTarget: HTMLElement | null = document.querySelector(window.location.hash);
 		if (elemTarget) elemTarget.scrollIntoView({ behavior: 'smooth' });
