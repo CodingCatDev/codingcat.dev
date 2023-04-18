@@ -85,7 +85,6 @@ export const parseLessonModules = async ({ lessonModules, courses }: { lessonMod
 				...mdsvx?.metadata,
 				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
 				type: ContentType.lesson,
-				slug: lessonSlug,
 				courseSlug: slug,
 				html,
 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,

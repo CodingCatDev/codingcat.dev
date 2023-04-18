@@ -24,6 +24,7 @@
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
+		console.log(window.location);
 		if (!window.location.hash) return;
 		const elemTarget: HTMLElement | null = document.querySelector(window.location.hash);
 		if (elemTarget) elemTarget.scrollIntoView({ behavior: 'smooth' });
@@ -41,7 +42,7 @@
 		storeCurrentUrl.set($page.url.pathname);
 		// Scroll to top
 		const isNewPage: boolean =
-			params.from && params.to && params.from.route.id !== params.to.route.id;
+			params.from && params.to && params.from.url.pathname !== params.to.url.pathname;
 		const elemPage = document.querySelector('#bcu-app-shell-page');
 		if (isNewPage && elemPage !== null) {
 			elemPage.scrollTop = 0;

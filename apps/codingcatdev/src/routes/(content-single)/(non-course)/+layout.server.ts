@@ -2,7 +2,7 @@ import { listContent, parseModules } from '$lib/server/content';
 
 export const load = (async () => {
 
-    const courseModules = import.meta.glob(['../../../content/course/*.md']);
+    const courseModules = import.meta.glob(['../../../content/course/*/*.md']);
     const tutorialModules = import.meta.glob(['../../../content/tutorial/*.md']);
     const podcastModules = import.meta.glob(['../../../content/podcast/*.md']);
     const postModules = import.meta.glob(['../../../content/post/*.md']);

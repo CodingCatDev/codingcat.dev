@@ -16,7 +16,7 @@ export const load = (async ({ params, parent, url }) => {
 		});
 	}
 
-	if (!user?.uid) {
+	if (content.locked && !user?.uid) {
 		throw redirect(307, `/login?redirectTo=${url.pathname}`);
 	}
 
