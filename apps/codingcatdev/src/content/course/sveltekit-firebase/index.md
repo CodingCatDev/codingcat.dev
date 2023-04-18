@@ -5,7 +5,7 @@ excerpt: 'Learn how to use Svelte Kit and Firebase to build high-performance, sc
 published: draft
 slug: sveltekit-firebase
 start: April 17, 2023
-title: 'Learn Svelte Kit and Firebase: The Complete Guide'
+title: 'Learn Svelte Kit and Firebase: The Ultimate Guide'
 youtube:
 ---
 
