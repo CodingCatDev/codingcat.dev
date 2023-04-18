@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover:
+cover: 'https://media.codingcat.dev/image/upload/v1681854110/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebase_01.png'
 excerpt:
 published: draft
 slug: intro
@@ -11,4 +11,4 @@ weight: 1
 youtube:
 ---
 
-Open Lesson
+Talk all about this course.
