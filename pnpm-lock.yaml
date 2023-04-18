@@ -16,9 +16,6 @@ importers:
       '@cloudinary/url-gen':
         specifier: ^1.9.1
         version: 1.9.1
-      '@codingcatdev/videojs-codingcatdev-youtube':
-        specifier: ^0.0.2
-        version: 0.0.2
       '@floating-ui/dom':
         specifier: ^1.2.6
         version: 1.2.6
@@ -40,9 +37,6 @@ importers:
       theme-change:
         specifier: ^2.3.0
         version: 2.3.0
-      video.js:
-        specifier: ^7.21.3
-        version: 7.21.3
       videojs-youtube:
         specifier: ^2.6.1
         version: 2.6.1(video.js@7.21.3)
@@ -813,14 +807,6 @@ packages:
     transitivePeerDependencies:
       - tailwindcss
     dev: true
-
-  /@codingcatdev/videojs-codingcatdev-youtube@0.0.2:
-    resolution: {integrity: sha512-u5c4/gFlpDaKrrt5LuTbeSoXo9ou2eypbEUzUSgZ7jno0J0kZ8y+1MRmU+ZCCY6NAXskVZaJChqJN4Oaf/wx5g==}
-    engines: {node: '>=14', npm: '>=6'}
-    dependencies:
-      global: 4.4.0
-      video.js: 7.21.3
-    dev: false
 
   /@esbuild/android-arm64@0.16.17:
     resolution: {integrity: sha512-MIGl6p5sc3RDTLLkYL1MyL8BMRN4tLMRCn+yRJJmEDvYZ2M7tmAf80hx1kbNEUX2KJ50RRtxZ4JHLvCfuB6kBg==}

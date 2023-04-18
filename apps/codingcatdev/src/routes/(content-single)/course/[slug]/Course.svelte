@@ -19,14 +19,7 @@
 			</ol>
 			<div class="flex flex-col gap-2 md:gap-8">
 				{#if data?.course?.youtube}
-					<Video
-						sources={[
-							{
-								src: data.course.youtube,
-								type: 'video/youtube'
-							}
-						]}
-					/>
+					<Video src={data.course.youtube} title={`${data.course.title}`} />
 				{:else if data?.course?.cover}
 					<CloudinaryImage src={data.course.cover} alt={data.course.title} />
 				{/if}
