@@ -17,40 +17,47 @@ export const load = (async ({ params, parent, url }) => {
 		});
 	}
 
-	if (content.locked && !user?.uid) {
-		throw redirect(307, `/login?redirectTo=${url.pathname}`);
-	}
-
-	let allowedPast = true;
-
-	if (env.VERCEL_ENV !== "production") {
-		const doc = await db.collection('admins').doc(user.uid).get();
-		allowedPast = doc.exists;
-	}
-
-	if (!user?.stripeRole && allowedPast) {
-		const snapshot = await db.collection('stripe-products').where('active', '==', true).get();
-		const products = [];
-
-		for (const doc of snapshot.docs) {
-			const priceSnapshot = await doc.ref.collection('prices').where('active', '==', true).get();
-
-			for (const price of priceSnapshot.docs) {
-				products.push({
-					id: doc.id,
-					...doc.data(),
-					price: price.id
-				})
-			}
+	if (content.locked) {
+		// Locked but needs to be logged in
+		if (!user?.uid) {
+			throw redirect(307, `/login?redirectTo=${url.pathname}`);
 		}
 
-		return {
-			products,
-			locked: content?.locked,
-			title: content?.title
-		};
+		// Check if user is admin
+		const doc = await db.collection('admins').doc(user.uid).get();
+		const isAdmin = doc.exists;
+
+		// User should have stripeRole or be admin
+		if (user?.stripeRole || isAdmin) {
+			return {
+				contentType,
+				content
+			};
+		} else {
+			const snapshot = await db.collection('stripe-products').where('active', '==', true).get();
+			const products = [];
+
+			for (const doc of snapshot.docs) {
+				const priceSnapshot = await doc.ref.collection('prices').where('active', '==', true).get();
+
+				for (const price of priceSnapshot.docs) {
+					products.push({
+						id: doc.id,
+						...doc.data(),
+						price: price.id
+					})
+				}
+			}
+
+			return {
+				products,
+				locked: content?.locked,
+				title: content?.title
+			};
+		}
 	}
 
+	//Not Locked we just send it back
 	return {
 		contentType,
 		content
