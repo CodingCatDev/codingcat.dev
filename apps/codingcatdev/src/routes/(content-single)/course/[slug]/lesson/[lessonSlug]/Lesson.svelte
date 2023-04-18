@@ -25,14 +25,7 @@
 					<li>{data.content.title}</li>
 				</ol>
 				{#if data?.content?.youtube}
-					<Video
-						sources={[
-							{
-								src: data.content.youtube,
-								type: 'video/youtube'
-							}
-						]}
-					/>
+					<Video src={data.content.youtube} title={`${data.content.title}`} />
 				{:else if data?.content?.cover}
 					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
 				{/if}

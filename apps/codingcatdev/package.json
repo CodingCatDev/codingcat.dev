@@ -53,7 +53,6 @@
 	"dependencies": {
 		"@cloudinary/html": "^1.11.0",
 		"@cloudinary/url-gen": "^1.9.1",
-		"@codingcatdev/videojs-codingcatdev-youtube": "^0.0.2",
 		"@floating-ui/dom": "^1.2.6",
 		"esm-env": "^1.0.0",
 		"firebase": "^9.19.1",
@@ -61,7 +60,6 @@
 		"prism-svelte": "^0.5.0",
 		"prism-themes": "^1.9.0",
 		"theme-change": "^2.3.0",
-		"video.js": "^7.21.3",
 		"videojs-youtube": "^2.6.1"
 	}
 }
