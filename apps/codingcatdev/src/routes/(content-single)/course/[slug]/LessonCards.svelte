@@ -3,6 +3,7 @@
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { LockClosed } from '@steeze-ui/heroicons';
 	import { LockOpen } from '@steeze-ui/heroicons';
+	import Image from '$lib/components/content/Image.svelte';
 
 	export let lesson: Lesson[];
 	export let courseSlug: string;
@@ -13,22 +14,37 @@
 >
 	{#each lesson as l}
 		<a href={`/course/${courseSlug}/lesson/${l.slug}`} class="!no-underline !text-token">
-			<div class="bcu-card h-full p-4">
-				<header class="bcu-card-header capitalize py-6 text-2xl font-bold relative">
-					<div class="w-6 absolute top-0 right-0">
-						{#if l?.locked}
-							<Icon src={LockClosed} theme="solid" />
-						{:else}
-							<Icon src={LockOpen} theme="solid" />
-						{/if}
-					</div>
-					<div>
-						{l.title}
-					</div>
-				</header>
-				<p class="p-4 !opacity-80">
-					{l?.excerpt || 'More info in course.'}
-				</p>
+			<div class="bcu-card h-full">
+				{#if l?.cover}
+					<Image
+						src={l.cover}
+						alt={l.title || 'Missing Alt Sorry'}
+						classes="rounded-md rounded-b-none cursor-pointer"
+					/>
+				{:else}
+					<Image
+						src="https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo"
+						alt={l.title || 'Missing Alt Sorry'}
+						classes="rounded-md rounded-b-none cursor-pointer"
+					/>
+				{/if}
+				<div class="p-4">
+					<header class="bcu-card-header capitalize py-6 text-2xl font-bold relative">
+						<div class="w-6 absolute top-0 right-0">
+							{#if l?.locked}
+								<Icon src={LockClosed} theme="solid" />
+							{:else}
+								<Icon src={LockOpen} theme="solid" />
+							{/if}
+						</div>
+						<div>
+							{l.title}
+						</div>
+					</header>
+					<p class="p-4 !opacity-80">
+						{l?.excerpt || 'More info in course.'}
+					</p>
+				</div>
 			</div>
 		</a>
 	{/each}

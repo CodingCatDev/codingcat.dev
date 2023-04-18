@@ -4,6 +4,7 @@
 	import type { Lesson, Course } from '$lib/types';
 	import { browser } from '$app/environment';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
+	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
 	export let data: {
 		course: Course;
 		content: Lesson;
@@ -32,6 +33,8 @@
 							}
 						]}
 					/>
+				{:else if data?.content?.cover}
+					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
 				{/if}
 				{#if data?.content?.title}
 					<h1>{data?.content?.title}</h1>

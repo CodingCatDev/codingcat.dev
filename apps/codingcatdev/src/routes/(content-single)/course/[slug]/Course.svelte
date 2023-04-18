@@ -10,7 +10,7 @@
 </script>
 
 {#if data?.course}
-	<div class="flex flex-col justify-center !text-token p-1 xl:p-8 w-full items-center">
+	<div class="flex flex-col justify-center !text-token p-2 md:p-4 xl:p-8 w-full items-center">
 		<section class="justify-center flex flex-col gap-2 md:gap-8 max-w-7xl">
 			<ol class="bcu-breadcrumb">
 				<li class="bcu-crumb"><a href="/courses">Courses</a></li>
