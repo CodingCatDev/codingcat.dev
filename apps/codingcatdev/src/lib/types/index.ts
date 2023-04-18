@@ -11,8 +11,10 @@ export interface Content {
 	published?: string;
 	slug: string;
 	start: Date;
+	stackblitz?: string;
 	type: ContentType;
 	title?: string;
+	updated: Date;
 	weight?: number;
 	youtube?: string;
 }

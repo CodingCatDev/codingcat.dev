@@ -6,7 +6,7 @@ const LIMIT = 20;
 
 // Force PREVIEW off by setting false in .env
 // Will show for vercel previews unless forced to false
-const preview = env.PREVIEW === "false" ? false : env.VERCEL_ENV === "preview" || import.meta.env.DEV;
+export const preview = env.PREVIEW === "false" ? false : env.VERCEL_ENV === "preview" || import.meta.env.DEV;
 
 export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
 	const contentList: Content[] = [];
@@ -85,7 +85,6 @@ export const parseLessonModules = async ({ lessonModules, courses }: { lessonMod
 				...mdsvx?.metadata,
 				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
 				type: ContentType.lesson,
-				slug: lessonSlug,
 				courseSlug: slug,
 				html,
 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,

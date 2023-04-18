@@ -1,8 +1,7 @@
 ---
 cloudinary_convert: false
-cover:
+cover: 'https://media.codingcat.dev/image/upload/v1681854110/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebase_02.png'
 excerpt:
-locked: true
 published: draft
 slug: intro-blackcat-tailwind
 start: April 17, 2023
@@ -11,4 +10,4 @@ weight: 2
 youtube:
 ---
 
-Closed Lesson
+This is how BlackCatUI will be used.

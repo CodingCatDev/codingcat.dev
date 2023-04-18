@@ -2,6 +2,9 @@
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
 	import type { Lesson, Course } from '$lib/types';
+	import { browser } from '$app/environment';
+	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
+	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
 	export let data: {
 		course: Course;
 		content: Lesson;
@@ -10,7 +13,7 @@
 
 {#if data?.content}
 	<div class="flex justify-center">
-		<section class="flex flex-col xl:flex-row gap-8 justify-center p-1 xl:p-8 w-full">
+		<section class="flex flex-col xl:flex-row gap-8 justify-center p-2 xl:p-8 w-full">
 			<div class="flex flex-col gap-2 md:gap-8 max-w-7xl w-full">
 				<ol class="bcu-breadcrumb">
 					<li class="bcu-crumb"><a href="/courses">Courses</a></li>
@@ -30,9 +33,27 @@
 							}
 						]}
 					/>
+				{:else if data?.content?.cover}
+					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
 				{/if}
-				<section class="flex-grow w-full markdown flex flex-col gap-2 md:gap-8">
-					{@html data.content.html}
+				{#if data?.content?.title}
+					<h1>{data?.content?.title}</h1>
+				{/if}
+				{#if browser && data?.content?.stackblitz}
+					<section class=" aspect-video">
+						<iframe
+							title={`repo for ${data?.content?.title}`}
+							src={data.content.stackblitz}
+							frameborder="0"
+							height="100%"
+							width="100%"
+						/>
+					</section>
+				{/if}
+				<section class="flex flex-col flex-grow w-full gap-2 markdown md:gap-8">
+					<CopyCodeInjector>
+						{@html data.content.html}
+					</CopyCodeInjector>
 				</section>
 			</div>
 		</section>
