@@ -13,6 +13,14 @@
 	class="grid grid-cols-[repeat(1,minmax(0,_1fr))] md:grid-cols-[repeat(2,minmax(0,_1fr))] lg:md:grid-cols-[repeat(3,minmax(0,_1fr))]  gap-2 md:gap-8"
 >
 	{#each lesson as l}
+		{#if l?.section}
+			<div class="pb-2 col-span-full">
+				<span class="flex py-2 mt-4 text-xl font-bold">
+					{l.section}
+				</span>
+				<hr />
+			</div>
+		{/if}
 		<a href={`/course/${courseSlug}/lesson/${l.slug}`} class="!no-underline !text-token">
 			<div class="bcu-card h-full">
 				{#if l?.cover}
