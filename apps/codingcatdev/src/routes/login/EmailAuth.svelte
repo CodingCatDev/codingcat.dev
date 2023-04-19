@@ -51,11 +51,11 @@
 	<div class="flex flex-col gap-4 text-token">
 		<label class="label">
 			<span>Email</span>
-			<input class="input" name="email" type="email" placeholder="codercatdev" />
+			<input class="input" name="email" type="email" placeholder="alex@codingcat.dev" />
 		</label>
 		<label class="label">
 			<span>Password</span>
-			<input class="input" name="password" type="password" placeholder="****" />
+			<input class="input" name="password" type="password" />
 		</label>
 		<button class="bcu-button variant-filled-primary" type="submit">Login</button>
 	</div>
