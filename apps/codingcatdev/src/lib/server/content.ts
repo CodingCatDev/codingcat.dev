@@ -8,6 +8,9 @@ const LIMIT = 20;
 // Will show for vercel previews unless forced to false
 export const preview = env.PREVIEW === "false" ? false : env.VERCEL_ENV === "preview" || import.meta.env.DEV;
 
+// While developing locally this allows you to see pages without setting up firebase.
+export const allowLocal = env.PREVIEW === "false" ? false : import.meta.env.DEV;
+
 export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
 	const contentList: Content[] = [];
 	for (const path in modules) {

@@ -1,29 +1,32 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+import { Auth, getAuth } from 'firebase-admin/auth';
+import { Firestore, getFirestore } from 'firebase-admin/firestore';
 
 import {
-    PUBLIC_FB_PROJECT_ID,
-} from '$env/static/public';
+    env as publicEnv,
+} from '$env/dynamic/public';
 
-import {
-    PRIVATE_FB_CLIENT_EMAIL,
-    PRIVATE_FB_PRIVATE_KEY
-} from '$env/static/private';
+import { env as privateEnv } from '$env/dynamic/private';
 
 export let app = getApps().at(0);
-if (!app) {
+
+let auth: Auth;
+let db: Firestore;
+
+if (!app && publicEnv.PUBLIC_FB_PROJECT_ID && privateEnv.PRIVATE_FB_CLIENT_EMAIL && privateEnv.PRIVATE_FB_PRIVATE_KEY) {
     app = initializeApp({
         credential: cert({
-            projectId: PUBLIC_FB_PROJECT_ID,
-            clientEmail: PRIVATE_FB_CLIENT_EMAIL,
-            privateKey: PRIVATE_FB_PRIVATE_KEY
+            projectId: publicEnv.PUBLIC_FB_PROJECT_ID,
+            clientEmail: privateEnv.PRIVATE_FB_CLIENT_EMAIL,
+            privateKey: privateEnv.PRIVATE_FB_PRIVATE_KEY
         })
     });
+
+    auth = getAuth(app);
+    db = getFirestore(app);
 }
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+/* AUTH */
 
 export const ccdCreateSessionCookie = async (idToken: string) => {
     // Set session expiration to 5 days.
@@ -47,4 +50,32 @@ export const ccdValidateSessionCookie = async (session: string) => {
 export const validateStripeRole = async (uid: string) => {
     const user = await auth.getUser(uid);
     return user.customClaims?.['stripeRole']
+}
+
+export const isAdmin = async (uid: string) => {
+    // Check if user is admin
+    const doc = await db.collection('admins').doc(uid).get();
+    return doc.exists;
+}
+
+/* DB */
+
+export const getStripeProducts = async () => {
+    const products: any = [];
+    if (!db) return products;
+
+    const snapshot = await db.collection('stripe-products').where('active', '==', true).get();
+
+    for (const doc of snapshot.docs) {
+        const priceSnapshot = await doc.ref.collection('prices').where('active', '==', true).get();
+
+        for (const price of priceSnapshot.docs) {
+            products.push({
+                id: doc.id,
+                ...doc.data(),
+                price: price.id
+            })
+        }
+    }
+    return products;
 }
