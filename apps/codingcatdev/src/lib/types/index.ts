@@ -11,7 +11,6 @@ export interface Content {
 	published?: string;
 	slug: string;
 	start: Date;
-	stackblitz?: string;
 	type: ContentType;
 	title?: string;
 	updated: Date;
@@ -23,10 +22,12 @@ export interface Course extends Content {
 	lesson?: Lesson[];
 }
 export interface Lesson extends Content {
+	codepen?: string;
 	courseSlug?: string;
 	lesson?: Lesson[];
 	section?: string;
 	locked: boolean;
+	stackblitz?: string;
 }
 export interface Podcast extends Content {
 	season?: number;

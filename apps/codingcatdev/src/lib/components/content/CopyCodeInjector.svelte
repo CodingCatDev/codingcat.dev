@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { afterUpdate } from 'svelte';
 
-	onMount(() => {
+	afterUpdate(() => {
 		// will add a children to any <pre> element with class language-*
 		let pres: HTMLCollection = document.getElementsByTagName('pre');
 		for (let _ of pres) {

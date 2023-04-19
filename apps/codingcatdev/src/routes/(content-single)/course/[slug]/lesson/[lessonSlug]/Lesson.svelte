@@ -32,14 +32,36 @@
 				{#if data?.content?.title}
 					<h1>{data?.content?.title}</h1>
 				{/if}
+				{#if browser && data?.content?.codepen}
+					<section class=" aspect-video">
+						<iframe
+							scrolling="no"
+							title={`codepen for ${data?.content?.title}`}
+							src={`https://codepen.io/${data.content.codepen.replace(
+								'pen',
+								'embed'
+							)}?default-tab=html%2Cresult`}
+							allowtransparency={true}
+							allowfullscreen={true}
+							frameborder="0"
+							height="100%"
+							width="100%"
+						>
+							See the Pen <a href={`https://codepen.io/${data.content.codepen}`}>
+								on <a href="https://codepen.io">CodePen</a>.
+							</a></iframe
+						>
+					</section>
+				{/if}
 				{#if browser && data?.content?.stackblitz}
 					<section class=" aspect-video">
 						<iframe
-							title={`repo for ${data?.content?.title}`}
+							title={`stackblitz for ${data?.content?.title}`}
 							src={data.content.stackblitz}
 							frameborder="0"
 							height="100%"
 							width="100%"
+							loading="lazy"
 						/>
 					</section>
 				{/if}

@@ -1,23 +1,24 @@
 ---
 cloudinary_convert: false
+codepen: 'codercatdev/pen/VwQgLBy'
+cover: 'https://media.codingcat.dev/image/upload/v1681907256/main-codingcatdev-photo/Round-Loading-Indicator.png'
 excerpt: In this video we review the opacity property.
 published: draft
 slug: round-loading-indicator
 start: June 11, 2022
+section: Feedback
 title: Round Loading Indicator
+weight: 1
 ---
 
 In this HTML snippet you can see that we are using a span that has a special `data-value` attribute. This allows us to store the current value on the HTML element depending on how much loading has occured. There is also a SVG element here that has a stroke yellow and what is more important though is the stroke width of 20, this will set how large the animated portion of the SVG will be displayed.
 
 ```html
 <div class="progress-circle">
-  <span class="number" data-value="100"></span>
-  <svg height="150" width="150" class="circle">
-    <circle cx="75" cy="75" r="65" 
-						stroke="var(--yellow)" 
-						stroke-width="20" 
-						fill="none" />
-  </svg>
+	<span class="number" data-value="100"></span>
+	<svg height="150" width="150" class="circle">
+		<circle cx="75" cy="75" r="65" stroke="var(--yellow)" stroke-width="20" fill="none" />
+	</svg>
 </div>
 ```
 
@@ -70,6 +71,6 @@ In this CSS the broder-radius
 </div>
 ```
 
-You will notice that in the below [Codepen](https://codepen.io/codercatdev/pen/vYdpGNW) there is some JavaScript, this is just for updating the text to say `true` or `false`. 
+You will notice that in the below [Codepen](https://codepen.io/codercatdev/pen/vYdpGNW) there is some JavaScript, this is just for updating the text to say `true` or `false`.
 
 [https://codepen.io/codercatdev/pen/VwQgLBy](https://codepen.io/codercatdev/pen/VwQgLBy)
