@@ -8,7 +8,7 @@ start: April 17, 2023
 section: Intro
 title: Introduction to SvelteKit and Firebase
 weight: 1
-youtube: 'https://youtu.be/-3h098ROy18'
+youtube:
 ---
 
 Talk all about this course.

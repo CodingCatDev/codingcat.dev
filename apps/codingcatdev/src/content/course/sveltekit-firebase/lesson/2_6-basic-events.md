@@ -1,13 +1,13 @@
 ---
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1681906158/main-codingcatdev-photo/courses/svelte/Svelte-3.png'
-excerpt:
+cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/basic-events.png'
+excerpt: 'Svelte DOM events allow you to listen for and respond to user interactions with the DOM.'
 published: draft
 slug: basic-events
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/06-basic-events?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
 title: Basic Events
-weight: 6
+weight: 2
 youtube:
 ---
 

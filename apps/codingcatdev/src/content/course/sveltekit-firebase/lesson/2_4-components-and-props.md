@@ -1,13 +1,13 @@
 ---
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1681906158/main-codingcatdev-photo/courses/svelte/Svelte-1.png'
-excerpt:
+cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/components-and-props.png'
+excerpt: 'Components are reusable pieces of code that can be used to build complex user interfaces, props pass data within those components'
 published: draft
 slug: components-and-props
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/04-components-and-props?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
 title: Components and Props
-weight: 4
+weight: 2
 youtube:
 ---
 

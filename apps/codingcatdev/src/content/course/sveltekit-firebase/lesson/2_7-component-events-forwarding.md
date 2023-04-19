@@ -1,13 +1,13 @@
 ---
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1681906158/main-codingcatdev-photo/courses/svelte/Svelte-4.png'
-excerpt:
+cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/component-events.png'
+excerpt: 'Event forwarding is a powerful tool that can be used to communicate between components in Svelte.'
 published: draft
 slug: component-events-forwarding
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/07-component-events-forwarding?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
 title: Component Events and Forwarding
-weight: 7
+weight: 2
 youtube:
 ---
 
