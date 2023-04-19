@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1681854110/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebase_06.png'
+cover: 'https://media.codingcat.dev/image/upload/v1681906158/main-codingcatdev-photo/courses/svelte/Svelte-3.png'
 excerpt:
 published: draft
 slug: basic-events
