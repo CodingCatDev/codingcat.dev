@@ -1,6 +1,6 @@
 import { toastStore } from '@codingcatdev/blackcatui';
 import { initializeApp, getApps, FirebaseError } from 'firebase/app';
-import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, type Auth } from 'firebase/auth';
+import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, type Auth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, collection, doc, addDoc, onSnapshot, Firestore } from 'firebase/firestore';
 import { httpsCallable, getFunctions, type Functions } from 'firebase/functions';
 
@@ -48,6 +48,12 @@ const setCookie = (idToken: string) => {
 export const ccdSignInWithEmailAndPassword = async ({ email, password }: { email: string, password: string }) => {
 	const userResponse = await signInWithEmailAndPassword(auth, email, password);
 	const idToken = await userResponse.user.getIdToken();
+	setCookie(idToken);
+}
+
+export const ccdSignUpWithEmailAndPassword = async ({ email, password }: { email: string, password: string }) => {
+	const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+	const idToken = await userCredential.user.getIdToken();
 	setCookie(idToken);
 }
 

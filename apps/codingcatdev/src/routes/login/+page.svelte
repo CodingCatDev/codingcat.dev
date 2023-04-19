@@ -16,6 +16,7 @@
 <LayoutWrapper>
 	<section class="bcu-card flex flex-col gap-4 p-4">
 		<EmailAuth {action} />
+		<a href={`/signup${action.replace('/login&', '')}`}>Sign Up</a>
 		<hr />
 
 		<GoogleAuth {action} />
