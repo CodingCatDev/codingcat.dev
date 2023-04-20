@@ -6,7 +6,7 @@ published: draft
 slug: intro-blackcat-tailwind
 start: April 17, 2023
 title: Intruduction of BlackCatUI and Tailwind CSS
-weight: 2
+weight: 1
 youtube:
 ---
 
