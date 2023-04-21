@@ -21,11 +21,11 @@ The creation phase is the first phase of the Svelte component lifecycle. It occu
 
 The following lifecycle hooks are available during the creation phase:
 
-### `oncreate()`
+`oncreate()`
 
 This hook is called once after the component is created and the DOM elements are added to the page. It is the ideal place to perform any initialization tasks that require access to the DOM, such as setting up third-party libraries or adding event listeners.
 
-### `beforeUpdate()`
+`beforeUpdate()`
 
 This hook is called before the component is updated with new data. It is an ideal place to perform any preparation work before the component's state changes.
 
@@ -35,11 +35,11 @@ The update phase is the second phase of the Svelte component lifecycle. It occur
 
 The following lifecycle hooks are available during the update phase:
 
-### `onupdate()`
+`onupdate()`
 
 This hook is called after the component's state changes, and the DOM is updated. It is an ideal place to perform any post-update tasks that require access to the DOM.
 
-### `afterUpdate()`
+`afterUpdate()`
 
 This hook is called after the `onupdate()` hook and is an ideal place to perform any post-update tasks that do not require access to the DOM.
 
@@ -49,7 +49,7 @@ The destruction phase is the final phase of the Svelte component lifecycle. It o
 
 The following lifecycle hook is available during the destruction phase:
 
-### `ondestroy()`
+`ondestroy()`
 
 This hook is called once, just before the component is destroyed. It is an ideal place to perform any cleanup tasks, such as removing event listeners, clearing timeouts or intervals, or disposing of any resources.
 
