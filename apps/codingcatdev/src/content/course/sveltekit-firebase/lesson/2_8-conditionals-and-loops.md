@@ -5,7 +5,7 @@ excerpt: 'Conditionals allow you to execute different code depending on the valu
 published: draft
 slug: conditionals-and-loops
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/08-conditionals-and-loops?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/08-conditionals-and-loops?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Conditionals and Loops
 weight: 2
 youtube:

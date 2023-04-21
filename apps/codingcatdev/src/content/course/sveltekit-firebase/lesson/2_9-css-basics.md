@@ -5,7 +5,7 @@ excerpt: 'Svelte CSS component scope allows you to style components without affe
 published: draft
 slug:
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/07-component-events-forwarding?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/07-component-events-forwarding?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Component Events and Forwarding
 weight: 2
 youtube:

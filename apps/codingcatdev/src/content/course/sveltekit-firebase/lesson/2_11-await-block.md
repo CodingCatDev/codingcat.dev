@@ -5,7 +5,7 @@ excerpt: 'Svelte makes dealing with promises easy by using an await block.'
 published: draft
 slug: await-block
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/11-await-block?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/11-await-block?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Await Block
 weight: 3
 youtube:

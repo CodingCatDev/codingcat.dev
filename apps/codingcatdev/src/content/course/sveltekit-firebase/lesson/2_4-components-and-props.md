@@ -5,7 +5,7 @@ excerpt: 'Components are reusable pieces of code that can be used to build compl
 published: draft
 slug: components-and-props
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/04-components-and-props?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/04-components-and-props?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Components and Props
 weight: 2
 youtube:

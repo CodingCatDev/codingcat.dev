@@ -5,7 +5,7 @@ excerpt: 'Make more appealing user interfaces by transitioning and animating DOM
 published: draft
 slug: transitions-and-animations
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/12-transitions-and-animations?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/12-transitions-and-animations?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Transitions and Animations
 weight: 3
 youtube:

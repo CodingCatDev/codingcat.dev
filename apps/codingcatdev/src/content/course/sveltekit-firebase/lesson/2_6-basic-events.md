@@ -5,7 +5,7 @@ excerpt: 'Svelte DOM events allow you to listen for and respond to user interact
 published: draft
 slug: basic-events
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/06-basic-events?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/06-basic-events?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Basic Events
 weight: 2
 youtube:

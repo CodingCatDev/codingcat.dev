@@ -5,7 +5,7 @@ excerpt: 'Svelte inputs and bindings allow you to create interactive UIs by conn
 published: draft
 slug: inputs-bindings-and-reactivity
 start: April 17, 2023
-stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/05-inputs-bindings-and-reactivity?embed=1&file=apps/svelte-site/src/routes/+page.svelte'
+stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-firebase-course/tree/05-inputs-bindings-and-reactivity?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: Inputs Bindings and Reactivity
 weight: 2
 youtube:
