@@ -11,56 +11,70 @@ weight: 3
 youtube:
 ---
 
-## Svelte Await Blocks
+Svelte is a modern and powerful front-end framework that allows developers to create dynamic and reactive user interfaces with ease. One of the key features of Svelte is its ability to create transitions and animations that enhance the user experience.
 
-Svelte await blocks are a powerful feature that allow you to write asynchronous code in a concise and easy-to-read way. They are similar to promises, but they have some key advantages.
+In this blog post, we will explore how to use Svelte transitions and animations with code examples.
 
-First, await blocks are much easier to read. They are written in a natural, declarative style, which makes it easy to understand what the code is doing.
+## Transitions in Svelte
 
-Second, await blocks are more efficient. They do not require the use of callbacks, which can make code more complex and less performant.
+Transitions in Svelte are used to create smooth animations when an element is added, removed, or updated. Svelte provides several built-in transition functions that can be used out of the box, such as `fade`, `slide`, `fly`, and `scale`.
 
-Third, await blocks are more flexible. They can be used with any asynchronous function, not just those that return promises.
-
-## How to Use Svelte Await Blocks
-
-To use Svelte await blocks, you first need to define an asynchronous function. An asynchronous function is a function that returns a promise.
-
-Once you have defined an asynchronous function, you can use it in an await block. To do this, simply surround the call to the asynchronous function with the `await` keyword.
-
-For example, the following code defines an asynchronous function that fetches a random number from a server:
+Let's take a look at an example of using the `fade` transition:
 
 ```svelte
-async function getRandomNumber() {
-  const res = await fetch(`/tutorial/random-number`);
-  const text = await res.text();
-  return text;
-}
+<script>
+	import { fade } from 'svelte/transition';
+
+	let show = true;
+
+	function toggle() {
+		show = !show;
+	}
+</script>
+
+<button on:click={toggle}>Toggle</button>
+
+{#if show}
+	<div transition:fade>Content that fades in and out</div>
+{/if}
 ```
 
-The following code uses the `getRandomNumber()` function in an await block:
+In the above code, we import the `fade` transition from the `svelte/transition` module. We also create a boolean variable `show` and a function `toggle` that toggles the value of `show` when the button is clicked.
+
+When `show` is true, the content inside the `if` block is rendered with the `fade` transition. When `show` is false, the content is removed with the `fade` transition.
+
+### Animations in Svelte
+
+Animations in Svelte are used to create more complex and dynamic animations. Svelte provides several built-in animation functions that can be used out of the box, such as `spring`, `tweened`, and `crossfade`.
+
+Let's take a look at an example of using the `spring` animation:
 
 ```svelte
-{#await getRandomNumber()}
-	<p>...waiting</p>
-{:then number}
-	<p>The number is {number}</p>
-{:catch error}
-	<p style="color: red">{error.message}</p>
-{/await}
+<script>
+	import { spring } from 'svelte/motion';
+
+	let x = 0;
+
+	function move() {
+		x = x === 0 ? 100 : 0;
+	}
+</script>
+
+<button on:click={move}>Move</button>
+
+<div style="position: absolute; left: {x}px;" animate:{{ left: spring(x) }}>
+	Content that moves left and right
+</div>
 ```
 
-This code will first fetch a random number from the server. If the request is successful, the number will be displayed on the screen. If the request fails, an error message will be displayed.
+In the above code, we import the `spring` animation from the `svelte/motion` module. We also create a variable `x` and a function `move` that toggles the value of `x` between `0` and `100` when the button is clicked.
 
-## Advantages of Svelte Await Blocks
+The `div` element has a `style` attribute that positions it absolutely and sets its `left` property to the current value of `x`.
 
-Svelte await blocks have several advantages over other ways of writing asynchronous code.
+The `animate` directive on the `div` element uses the `spring` animation to animate the `left` property of the `div` element to the new value of `x` when it changes.
 
-First, await blocks are much easier to read. They are written in a natural, declarative style, which makes it easy to understand what the code is doing.
+### Conclusion
 
-Second, await blocks are more efficient. They do not require the use of callbacks, which can make code more complex and less performant.
+Svelte transitions and animations provide powerful tools for creating dynamic and engaging user interfaces. With the built-in transition and animation functions, it's easy to add smooth and fluid animations to your Svelte components.
 
-Third, await blocks are more flexible. They can be used with any asynchronous function, not just those that return promises.
-
-## Conclusion
-
-Svelte await blocks are a powerful feature that allow you to write asynchronous code in a concise and easy-to-read way. They are a great way to improve the readability, efficiency, and flexibility of your code.
+In this blog post, we've seen some examples of how to use transitions and animations in Svelte. However, there are many more functions and options available in the Svelte documentation, so be sure to check it out to learn more.
