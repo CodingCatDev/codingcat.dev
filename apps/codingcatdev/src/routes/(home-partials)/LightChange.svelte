@@ -115,7 +115,7 @@
 
 <div class="relative">
 	<svg
-		class="toggle-scene"
+		class="toggle-scene h-96"
 		xmlns="http://www.w3.org/2000/svg"
 		preserveAspectRatio="xMinYMin"
 		viewBox="0 0 197.451 481.081"
@@ -300,7 +300,6 @@
 
 	.toggle-scene {
 		overflow: visible !important;
-		height: 50vmin;
 	}
 	.toggle-scene__cord {
 		stroke: var(--cord);
