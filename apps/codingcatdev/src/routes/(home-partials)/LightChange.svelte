@@ -112,7 +112,7 @@
 	});
 </script>
 
-<div class="relative">
+<div class="relative flex flex-col items-center">
 	<svg
 		class="toggle-scene h-96"
 		xmlns="http://www.w3.org/2000/svg"
@@ -285,6 +285,7 @@
 			/>
 		</g>
 	</svg>
+	<div class=" opacity-75">Pull my cord</div>
 </div>
 
 <style>
