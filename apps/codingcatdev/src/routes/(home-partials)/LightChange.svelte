@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { gsap } from 'gsap-trial/dist/gsap';
-	import { MorphSVGPlugin } from 'gsap-trial/dist/MorphSVGPlugin';
-	import { Draggable } from 'gsap-trial/dist/Draggable';
+	import { gsap } from 'gsap';
+	import { Draggable } from 'gsap/Draggable';
 	import { onMount } from 'svelte';
 
 	import { modeCurrent, setModeUserPrefers, setModeCurrent } from '@codingcatdev/blackcatui';
@@ -13,14 +12,15 @@
 	}
 
 	onMount(() => {
-		gsap.registerPlugin(MorphSVGPlugin);
+		gsap.registerPlugin(Draggable);
 
 		// Used to calculate distance of "tug"
 		let startX = 0;
 		let startY = 0;
 
 		const AUDIO = {
-			CLICK: new Audio('/sounds/click.mp3')
+			ON: new Audio('/sounds/switch-on.mp3'),
+			OFF: new Audio('/sounds/switch-off.mp3')
 		};
 		const STATE = {
 			ON: $modeCurrent
@@ -54,7 +54,7 @@
 
 				onToggleHandler();
 
-				AUDIO.CLICK.play();
+				STATE.ON ? AUDIO.ON.play() : AUDIO.OFF.play();
 			},
 			onComplete: () => {
 				gsap.set([DUMMY, HIT], { display: 'block' });
@@ -62,11 +62,10 @@
 				RESET();
 			}
 		});
-
+		console.log(CORDS);
 		for (let i = 1; i < CORDS.length; i++) {
 			CORD_TL.add(
 				gsap.to(CORDS[0], {
-					morphSVG: CORDS[i],
 					duration: CORD_DURATION,
 					repeat: 1,
 					yoyo: true
