@@ -29,29 +29,34 @@
 </script>
 
 <button
-	class="bcu-card variant-filled-primary w-full max-w-sm p-8 relative hover:shadow-2xl hover:scale-105 hover:cursor-pointer ease-in-out duration-300"
+	class="bcu-card variant-filled-primary w-full max-w-sm p-8 relative hover:shadow-2xl hover:scale-105 hover:cursor-pointer ease-in-out duration-300 flex flex-col justify-center items-center"
 	aria-label="open-pro-modal"
 	on:click={showPro}
 >
-	<div class="absolute top-0 right-0 mt-2 mr-2 md:mt-8 md:mr-8">
-		<div class="bcu-button variant-filled-surface capitalize">Go Pro</div>
+	<div
+		class="absolute bottom-4 -right-8 -rotate-45 px-8"
+		style="background-color: rgb(var(--color-surface-500));"
+	>
+		<div>Go Pro</div>
 	</div>
-	<h2>Pro</h2>
-	<ul class="text-left text-md md:text-lg">
+	<h2 class="py-4 font-bold leading-loose">Go Pro!</h2>
+	<ul
+		class="text-left w-7/8 justify-self-center font-semibold text-md md:text-lg flex flex-col gap-1 pb-4"
+	>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-8" />
+			<Icon src={RocketLaunch} theme="solid" class="w-6" />
 			Watch all PRO courses
 		</li>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-8" />
+			<Icon src={RocketLaunch} theme="solid" class="w-6" />
 			Join PRO office hours
 		</li>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-8" />
+			<Icon src={RocketLaunch} theme="solid" class="w-6" />
 			Read all PRO tutorials
 		</li>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-8" />
+			<Icon src={RocketLaunch} theme="solid" class="w-6" />
 			Get PRO source code from GitHub
 		</li>
 	</ul>
