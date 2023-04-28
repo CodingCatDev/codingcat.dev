@@ -8,7 +8,7 @@ export interface Content {
 	excerpt?: string;
 	hashnode?: string;
 	preview?: string;
-	published?: string;
+	published?: ContentPublished;
 	slug: string;
 	start: Date;
 	type: ContentType;
@@ -50,6 +50,7 @@ export enum ContentType {
 	page = 'page',
 	podcast = 'podcast',
 	post = 'post',
+	schedule = 'schedule',
 	tutorial = 'tutorial'
 }
 

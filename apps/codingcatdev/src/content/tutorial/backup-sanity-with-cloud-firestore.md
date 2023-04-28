@@ -11,8 +11,6 @@ title: Backup Sanity with Cloud Firestore
 youtube: https://youtu.be/ea1-Dv4z2nI
 ---
 
-[Backup Sanity with Cloud Firestore](Backup%20Sanity%20with%20Cloud%20Firestore%20d1b5361f867d43eda8943b56a8ba79c9/Backup%20Sanity%20with%20Cloud%20Firestore%202b062a0d9f9e40cdbb909ee6fe281d64.md)
-
 ## New Firebase Project
 
 In order to accept webhooks from Sanity you will need to have a firebase project setup, you can search this site for many examples. But most simply run `firebase init` on your command line and select Functions and Firestore, you can keep all other defaults.

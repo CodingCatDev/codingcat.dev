@@ -3,7 +3,6 @@ import { getStripeProducts, isAdmin } from '$lib/server/firebase';
 import { ContentType } from '$lib/types';
 import { error, redirect } from '@sveltejs/kit';
 
-
 const contentType = ContentType.lesson;
 
 export const load = (async ({ params, parent, url }) => {

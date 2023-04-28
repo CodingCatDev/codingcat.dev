@@ -49,7 +49,7 @@ export const parseModules = async (modules: Record<string, () => Promise<unknown
 				type: type as ContentType,
 				html,
 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
+				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
 				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
 			};
 			contentList.push(content);
@@ -91,7 +91,7 @@ export const parseLessonModules = async ({ lessonModules, courses }: { lessonMod
 				courseSlug: slug,
 				html,
 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : 'draft',
+				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
 				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
 				locked: mdsvx?.metadata?.locked || false,
 			};

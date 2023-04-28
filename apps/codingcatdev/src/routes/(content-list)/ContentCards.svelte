@@ -3,20 +3,20 @@
 	import Image from '$lib/components/content/Image.svelte';
 	import type { Content, ContentType } from '$lib/types';
 
-	export let type: ContentType;
-	export let data: { content: Content[]; next?: any };
+	export let data: { content: Content[]; next?: any; contentType: ContentType };
 
 	let next = data.next;
 	const more = async () => {
 		const response = await fetch('/api/more-content', {
 			method: 'POST',
-			body: JSON.stringify({ contentType: type, after: next }),
+			body: JSON.stringify({ contentType: data.contentType, after: next }),
 			headers: {
 				'content-type': 'application/json'
 			}
 		});
 		const d = await response.json();
 		data = {
+			contentType: data.contentType,
 			content: [...data.content, ...d.content],
 			next
 		};
@@ -34,7 +34,7 @@
 			<section class="relative grid gap-4 grid-cols-fit sm:gap-10">
 				{#each data?.content as content}
 					<div class="ccd-grid-card">
-						<a class="self-start" href={`/${type}/${content.slug}`}>
+						<a class="self-start" href={`/${data.contentType}/${content.slug}`}>
 							{#if content?.cover}
 								<Image
 									src={content.cover}

@@ -4,7 +4,7 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1668704646/main-codingcatdev-photo/Content-Creation-with-Richard-Bray.jpg
 episode: 1
 recording_date: December 22, 2022 2:30 PM
-published: draft
+published: published
 podcast: CodingCat.dev
 season: 3
 slug: Content-Creation-with-Richard-Bray

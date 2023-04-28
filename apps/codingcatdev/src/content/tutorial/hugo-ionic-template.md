@@ -271,8 +271,6 @@ You will notice a section later when we use Cloud Depoy that will require you to
 
 An important part to any project is setting up a solid CI/CD pipeline (Continuous Integration/Continuous Delivery). I still believe that Google Cloud offers the best pricing for any size development team! If you are a very small shop you will run builds for free, for a very long time.
 
-![Hugo%20Ionic%20Template%205a6904e2014d499eb99593602495a190/xwfyo6ysbxykebpf4wzo.png](Hugo%20Ionic%20Template%205a6904e2014d499eb99593602495a190/xwfyo6ysbxykebpf4wzo.png)
-
 ## Docker Images / Cloud Build
 
 > I found out recently from [Mike McDonald](https://twitter.com/asciimike), that there are a great set of [Google Cloud Platform Community Images](https://github.com/GoogleCloudPlatform/cloud-builders-community). They should work really well most of the time, but you might have to be careful on versioning. For instance Hugo is currently at .49 and I need something above .50 for my site. This is why I remain using my own Docker files.
