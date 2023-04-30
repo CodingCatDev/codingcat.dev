@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616547566/main-codingcatdev-photo/wsuyn79owuntcukcwtkg.jpg
+cover: https://media.codingcat.dev/image/upload/v1616547566/main-codingcatdev-photo/wsuyn79owuntcukcwtkg.jpg
 devto: https://dev.to/codingcatdev/npm-tips-and-tricks-2n18
 excerpt: Adding NPM Globally, setting default values for packages, and stopping the dreaded sudo calls.
 hashnode: https://hashnode.codingcat.dev/tutorial-npm-tips-and-tricks
@@ -8,9 +8,10 @@ preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selection
 published: published
 slug: npm-tips-and-tricks
 start: May 17, 2022
-title:  NPM Tips and Tricks
+title: NPM Tips and Tricks
 youtube: https://youtu.be/eWc0bg9KMQQ
 ---
+
 ## NPM Global install fail
 
 Ever get the dreaded EACCES error after running npm install -g? You're not alone!
@@ -44,13 +45,12 @@ Once you change the .npmrc file, you will begin to install packages to ~/.npm-pa
 If you start projects using npm often enough you will want to default some of the authoring items. The basic syntax is `npm config set init.*`
 
 > Don't stress out if you are updating using npm config set while in a different directory this will still update in ~/.npmrc
-> 
 
 ```bash
-npm config set init.author.name "Alex Patterson" 
-npm config set init.author.email "developer@ajonp.com" 
-npm config set init.author.url "https://ajonp.com/" 
-npm config set init.license "MIT" 
+npm config set init.author.name "Alex Patterson"
+npm config set init.author.email "developer@ajonp.com"
+npm config set init.author.url "https://ajonp.com/"
+npm config set init.license "MIT"
 npm config set init.version "0.0.1"
 ```
 
@@ -65,17 +65,16 @@ Executing npm init will produce the following just by hitting enter.
 
 ```json
 {
-    "name": "npm-sample",
-    "version": "0.0.1",
-    "description": "Sample NPM",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "Alex Patterson <developer@ajonp.com> (https://ajonp.com/)",
-    "license": "MIT"
+	"name": "npm-sample",
+	"version": "0.0.1",
+	"description": "Sample NPM",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Alex Patterson <developer@ajonp.com> (https://ajonp.com/)",
+	"license": "MIT"
 }
-
 ```
 
 # Setting NPM registry

@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1634645175/main-codingcatdev-photo/vnj9aqzpv5rxx3yvwzek.png
+cover: https://media.codingcat.dev/image/upload/v1634645175/main-codingcatdev-photo/vnj9aqzpv5rxx3yvwzek.png
 devto: https://dev.to/codingcatdev/cloud-function-github-update-1ln4
 excerpt: Changing git libraries
 hashnode: https://hashnode.codingcat.dev/post-cloud-function-github-update
@@ -10,10 +10,11 @@ slug: cloud-function-github-update
 start: December 26, 2018
 title: Cloud Function GitHub Update
 ---
+
 ## Authentication using Nodegit
 
 [nodegit](https://github.com/nodegit/nodegit)
- Authentication has become the biggest prolem with this entire process! I have added a comment to [Issue 1035](https://github.com/nodegit/nodegit/issues/1035) but I don't know if it will get much traction as it seems there have been several issues out there already.
+Authentication has become the biggest prolem with this entire process! I have added a comment to [Issue 1035](https://github.com/nodegit/nodegit/issues/1035) but I don't know if it will get much traction as it seems there have been several issues out there already.
 
 ### Failed Attempts
 
@@ -22,16 +23,19 @@ All of these attempts of course work for cloning, because I do not think it real
 - **sshKeyNew**
 
 ```jsx
-return NodeGit.Cred.sshKeyNew( "username", publicKeyContents, privateKeyContents, "").then(function(cred) { assert.ok(cred instanceof NodeGit.Cred); });
-
+return NodeGit.Cred.sshKeyNew('username', publicKeyContents, privateKeyContents, '').then(function (
+	cred
+) {
+	assert.ok(cred instanceof NodeGit.Cred);
+});
 ```
 
 - **userpassPlaintextNew** `sh` return NodeGit.Cred.userpassPlaintextNew(GITHUB_TOKEN, "x-oauth-basic");
 
-```jsx
+````jsx
 ### Successful Attempt - **sshKeyFromAgent** ```sh return nodegit.Cred.sshKeyFromAgent(userName);
 
-```
+````
 
 ## Cloud Funcitons
 

@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
+cover: https://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
 excerpt: All about the amazing sugar syntax and short methods.
 published: published
 slug: svelte-basics-sugar-syntax-markup
@@ -21,7 +21,9 @@ Now let’s look at how Svelte handles events. Any DOM event can be used with th
 Say you wanted to change a CSS class based on a variable like so:
 
 ```css
-so: class={active ? 'active' : ''}
+so: class= {
+	active? 'active' : '';
+}
 ```
 
 This says that if the active variable is true, then give the element the class of active. If it is false, leave the class empty. Svelte takes this a step further though and makes it even easier with
@@ -33,7 +35,7 @@ class:active={active}
 If the name and the value match, you are able to shorten it even further to `class:active`.
 
 ```css
-class:active
+class: active;
 ```
 
 We can do the same with an inline style
@@ -51,5 +53,5 @@ style:color={color}
 or the shorthand if they match
 
 ```css
-style:color
+style: color;
 ```

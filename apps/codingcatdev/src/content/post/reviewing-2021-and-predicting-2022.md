@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1643693991/main-codingcatdev-photo/2022_Updates_from_2021.png
+cover: https://media.codingcat.dev/image/upload/v1643693991/main-codingcatdev-photo/2022_Updates_from_2021.png
 devto: https://dev.to/codingcatdev/reviewing-2021-and-predicting-2022-2i9p
 excerpt: Wow there is a lot to comb through during the year after the year that didn't happen. I do my best to find some good frontend updates.
 hashnode: https://hashnode.codingcat.dev/post-reviewing-2021-and-predicting-2022
@@ -10,6 +10,7 @@ slug: reviewing-2021-and-predicting-2022
 start: January 1, 2022
 title: Reviewing 2021 and predicting 2022
 ---
+
 ## What technology we see coming for 2022
 
 - Svelte will grow by 10,000%, Brittney says SvelteKit 1.0 will come out 😉
@@ -38,24 +39,11 @@ I hope this [link](https://2021.stateofjs.com/en-US/) works eventually, for the 
 
 ## 2021 - Recap
 
-- 
-    
-    Adobe Flash was finally sent out to pasture, thank you internet for getting this right!
-    
-    ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/5615c52c-5749-4ed3-963f-84042b17d56f.png](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/5615c52c-5749-4ed3-963f-84042b17d56f.png)
-    
-- 
-    
-    Fireship (aka Jeff with 1 million followers) released 2021 Tech Trends and Predictions for developers - [https://youtu.be/oHtR5YSPLjo](https://youtu.be/oHtR5YSPLjo)
-    
-- 
-    
-    Wasmer, the first server-side WebAssembly 1.0 was released - [https://medium.com/wasmer/wasmer-1-0-3f86ca18c043](https://medium.com/wasmer/wasmer-1-0-3f86ca18c043)
-    
-- 
-    
-    Snowpack, a frontend build tool 3.0 is released - [https://www.snowpack.dev/posts/2021-01-13-snowpack-3-0](https://www.snowpack.dev/posts/2021-01-13-snowpack-3-0)
-    
+- Adobe Flash was finally sent out to pasture, thank you internet for getting this right!
+  ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/5615c52c-5749-4ed3-963f-84042b17d56f.png](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/5615c52c-5749-4ed3-963f-84042b17d56f.png)
+- Fireship (aka Jeff with 1 million followers) released 2021 Tech Trends and Predictions for developers - [https://youtu.be/oHtR5YSPLjo](https://youtu.be/oHtR5YSPLjo)
+- Wasmer, the first server-side WebAssembly 1.0 was released - [https://medium.com/wasmer/wasmer-1-0-3f86ca18c043](https://medium.com/wasmer/wasmer-1-0-3f86ca18c043)
+- Snowpack, a frontend build tool 3.0 is released - [https://www.snowpack.dev/posts/2021-01-13-snowpack-3-0](https://www.snowpack.dev/posts/2021-01-13-snowpack-3-0)
 - Vite the future of frontend tools (just an FYI, Evan You is behind this so it will be the next thing), released 2.0 - [https://vitejs.dev/blog/announcing-vite2.html](https://vitejs.dev/blog/announcing-vite2.html) On another side note we have a podcast coming in 2022 from the peeps behind the Vue.js documentary :D
 - Vuex a state management pattern + library for Vue.js release 4.0 - [https://github.com/vuejs/vuex/releases/tag/v4.0.0](https://github.com/vuejs/vuex/releases/tag/v4.0.0)
 - NPM 7 released and includes workspaces - [https://www.infoq.com/news/2021/02/npm-7-generally-available/](https://www.infoq.com/news/2021/02/npm-7-generally-available/)

@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1618944342/main-codingcatdev-photo/y7qzlepeu5tmeezlxef6.png
+cover: https://media.codingcat.dev/image/upload/v1618944342/main-codingcatdev-photo/y7qzlepeu5tmeezlxef6.png
 devto: https://dev.to/codingcatdev/aws-amplify-vs-aws-cdk-what-is-the-most-powerful-aws-iac-in-2020-1e1a
 excerpt: AWS Amplify vs. AWS CDK. So you are just getting started with your next project and can't figure out what IaC to start with, lets compare two of AWS's most popular.
 hashnode: https://hashnode.codingcat.dev/post-aws-amplify-vs-aws-cdk-2020
@@ -10,6 +10,7 @@ slug: aws-amplify-vs-aws-cdk-2020
 start: November 18, 2020
 title: AWS Amplify vs. AWS CDK What is the most powerful AWS IaC in 2020?
 ---
+
 ## What are AWS Amplify and AWS CDK?
 
 First things first acronyms are always a tough start to a post so lets clear up a few of them.
@@ -17,18 +18,14 @@ First things first acronyms are always a tough start to a post so lets clear up 
 AWS's description for the AWS CDK
 
 > The AWS Cloud Development Kit (AWS CDK) is an open source software development framework to define your cloud application resources using familiar programming languages.
-> 
-> 
+>
 > https://aws.amazon.com/cdk/
-> 
 
 AWS's description for AWS Amplify
 
 > AWS Amplify is a set of products and tools that enables mobile and front-end web developers to build and deploy secure, scalable full stack applications, powered by AWS. With Amplify, you can configure app backends in minutes, connect them to your app in just a few lines of code, and deploy static web apps in three steps. Get to market faster with AWS Amplify.
-> 
-> 
+>
 > https://aws.amazon.com/amplify/
-> 
 
 At first glance it would seems like these two products are not related at all. However both are tools that you can use to build cloud applications while maintaining the resource definitions in your code, what we call Infrastructure as Code (IaC). There are several tools that help with IaC across many cloud platforms, but especially with AWS and we will cover those in further details.
 
@@ -114,7 +111,7 @@ I know you read through all of the above and you did your best to already formul
 
 WHY NOT BOTH??
 
-Better yet if you are looking to start with AWS Amplify and then continue building on top of this base you absolutely can! Checkout Nader Dabit's *Mixing Amplify with CDK - Building an Authenticated GraphQL API with TypeScript on AWS*
+Better yet if you are looking to start with AWS Amplify and then continue building on top of this base you absolutely can! Checkout Nader Dabit's _Mixing Amplify with CDK - Building an Authenticated GraphQL API with TypeScript on AWS_
 
 https://youtu.be/rjiiNpJzOYk
 

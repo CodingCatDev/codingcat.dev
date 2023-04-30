@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1640973161/main-codingcatdev-photo/og-image.jpg
+cover: https://media.codingcat.dev/image/upload/v1640973161/main-codingcatdev-photo/og-image.jpg
 devto: https://dev.to/codingcatdev/reflections-from-2021-goals-for-2022-3af8
 excerpt: Everything I accomplished in 2021 and what I am planning and looking forward to in 2022.
 hashnode: https://hashnode.codingcat.dev/post-reflections-from-2021-and-goals-for-2022

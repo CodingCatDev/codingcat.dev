@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1618944778/main-codingcatdev-photo/qo6tuotjevkv0dpzzw39.png
+cover: https://media.codingcat.dev/image/upload/v1618944778/main-codingcatdev-photo/qo6tuotjevkv0dpzzw39.png
 devto: https://dev.to/codingcatdev/gatsby-cloud-with-sanity-cms-2b5e
 excerpt: Start building your static site with Gatsby cloud and get live previews when you utilize Sanity as your CMS!
 hashnode: https://hashnode.codingcat.dev/post-gatsby-cloud-with-sanity-cms
@@ -10,6 +10,7 @@ slug: gatsby-cloud-with-sanity-cms
 start: November 14, 2019
 title: Gatsby Cloud with Sanity CMS
 ---
+
 As a developer have you ever wanted to use a website builder like Squarespace, Wix or IM Creator because of their live previews? Then you realize I cannot add all the wonderful features of a ReactJS based environment! Gatsby Cloud just solved this for you!
 
 ## Useful Links

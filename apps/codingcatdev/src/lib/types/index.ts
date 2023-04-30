@@ -36,7 +36,7 @@ export interface Podcast extends Content {
 
 export interface Author {
 	id: string;
-	displayName?: string;
+	name?: string;
 	slug: string;
 }
 

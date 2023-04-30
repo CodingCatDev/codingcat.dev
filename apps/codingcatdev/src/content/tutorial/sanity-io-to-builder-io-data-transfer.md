@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1636731429/main-codingcatdev-photo/From_Sanity.io_to_Builder.io.png
+cover: https://media.codingcat.dev/image/upload/v1636731429/main-codingcatdev-photo/From_Sanity.io_to_Builder.io.png
 excerpt: In this example I will walk you through what data looks like in Sanity.io and how to get that data over to your Builder.io instance while creating models.
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=sanity-io-to-builder-io-data-transfer&_id=82a04c49910646a8b7e67ad755d24fcf
 published: archived

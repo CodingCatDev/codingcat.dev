@@ -84,7 +84,7 @@
 		meta.twitter.description = metaDefaults.description;
 		meta.twitter.image = metaDefaults.image;
 
-		if (content) {
+		if (content && !Array.isArray(content)) {
 			// Post Data
 			meta.title = `${content.title}`;
 			meta.description = `${content.excerpt}`;
@@ -98,7 +98,7 @@
 				: content?.start
 				? content?.start.toISOString()
 				: new Date().toISOString();
-			meta.article.author = `${content?.authors?.[0]?.displayName || 'Alex Patterson'}`;
+			meta.article.author = `${content?.authors?.[0]?.name || 'Alex Patterson'}`;
 			// Twitter
 			meta.twitter.title = `${content.title}`;
 			meta.twitter.description = `${content.excerpt}`;

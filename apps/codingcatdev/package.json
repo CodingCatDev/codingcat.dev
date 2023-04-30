@@ -33,6 +33,7 @@
 		"eslint": "^8.35.0",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"feed": "^4.2.2",
 		"firebase-admin": "^11.5.0",
 		"flexsearch": "^0.7.31",
 		"marked": "^4.2.12",
