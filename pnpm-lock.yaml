@@ -28,9 +28,6 @@ importers:
       gsap:
         specifier: ^3.11.5
         version: 3.11.5
-      gsap-trial:
-        specifier: ^3.11.5
-        version: 3.11.5
       mdsvex:
         specifier: ^0.10.6
         version: 0.10.6(svelte@3.58.0)
@@ -5764,10 +5761,6 @@ packages:
     resolution: {integrity: sha512-+xGQY0YyAWCnqy7Cd++hc2JqMYzlm0dG30Jd0beaA64sROr8C4nt8Yc9V5Ro3avlSUDTN0ulqP/VBKi1/lLygw==}
     dev: true
     optional: true
-
-  /gsap-trial@3.11.5:
-    resolution: {integrity: sha512-yh6+QR+OuzIlaJkMCS0PiVpQ0arNuV8FHjFaFJZ47qjSaYEo6vl3FOvtqDy7A9+D9tTPlxVfD6vk5f5lgFcbKw==}
-    dev: false
 
   /gsap@3.11.5:
     resolution: {integrity: sha512-Q89nKCLgoX5xUjznh9LcaIUkz54k1voNucT1Rpf9SJNFIQznBwFqt5qUUQbeVInFyN/n18OUJkpeI6CNEDt74w==}
