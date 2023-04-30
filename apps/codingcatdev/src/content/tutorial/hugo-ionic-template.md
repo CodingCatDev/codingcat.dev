@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616547399/main-codingcatdev-photo/kewwx7rull4s45bdidds.jpg
+cover: https://media.codingcat.dev/image/upload/v1616547399/main-codingcatdev-photo/kewwx7rull4s45bdidds.jpg
 devto: https://dev.to/codingcatdev/hugo-ionic-template-5e09
 excerpt: How to use AJonP's Hugo Ionic Template, while building Algolia Indexes and deploying to Firebase Hosting
 hashnode: https://hashnode.codingcat.dev/tutorial-hugo-ionic-template-1

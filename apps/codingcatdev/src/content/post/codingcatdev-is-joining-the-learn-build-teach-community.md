@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1648676439/main-codingcatdev-photo/CodingCat.dev_joins_Learn_Build_Teach.png
+cover: https://media.codingcat.dev/image/upload/v1648676439/main-codingcatdev-photo/CodingCat.dev_joins_Learn_Build_Teach.png
 devto: https://dev.to/codingcatdev/codingcatdev-is-joining-the-learn-build-teach-community-3l25
 excerpt: Maintaining a Discord community is hard work, so why not work with great people to host one together!
 hashnode: https://hashnode.codingcat.dev/post-codingcatdev-is-joining-the-learn-build-teach-community
@@ -10,6 +10,7 @@ slug: codingcatdev-is-joining-the-learn-build-teach-community
 start: April 10, 2022
 title: CodingCatDev is joining the Learn Build Teach Community
 ---
+
 ## A new home for CodingCat.dev's Discord
 
 After a long chat with Brittney about how hard it is to maintain our Discord and how I don't like breaking up communities, she agreed that we could make a move. I wanted to make sure we stick with our goal of creating great communities and developing in the open, the first thing that came to mind was [Learn Build Teach](https://discord.gg/xSRsCfvVEB) (LBT). Brittney agreed that if that community was up for letting us join it would make the most sense.

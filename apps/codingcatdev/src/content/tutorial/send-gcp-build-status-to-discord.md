@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616540053/main-codingcatdev-photo/krny5cr60ahjh7qo9sow.png
+cover: https://media.codingcat.dev/image/upload/v1616540053/main-codingcatdev-photo/krny5cr60ahjh7qo9sow.png
 excerpt: If you use Google Cloud Build and find yourself in Discord all day, it might be handy to receive a messge about your builds. Or just any webhook message in Discord.
 hashnode: https://hashnode.codingcat.dev/tutorial-send-gcp-build-status-to-discord
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=send-gcp-build-status-to-discord&_id=1d8af205c40e414fb80fe5017391bb77
@@ -23,7 +23,6 @@ code gcp-buil-discord
 ```
 
 > You will need NPM (which comes with Node), create-react-app, and firebase-tools installed globally for this project. You will also need to add billing (with Credit Card), although you should not be billed at all for the project. [https://nodejs.org/en/download/](https://nodejs.org/en/download/) [https://reactjs.org/docs/create-a-new-react-app.html](https://reactjs.org/docs/create-a-new-react-app.html) [https://firebase.google.com/docs/cli](https://firebase.google.com/docs/cli)
-> 
 
 ### How to run build locally
 
@@ -57,11 +56,7 @@ Name your new project something meaningful, for example gcp-build-discord.
 
 ## Setting Up a GitHub Repo
 
-> 
-> 
-> 
 > Making an assumption that you have created a GitHub account before. [https://github.com/join](https://github.com/join)
-> 
 
 You should see a "New" button inside of your home page like below.
 
@@ -131,13 +126,12 @@ This file will be located in the root of your project and called `cloudbuild.yam
 ```yaml
 # Simple React Build
 steps:
-- name: node:10.15.1
-  entrypoint: npm
-  args: ['alex']
-- name: node:10.15.1
-  entrypoint: npm
-  args: ['run', 'build']
-
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ['alex']
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ['run', 'build']
 ```
 
 Once you add this you can now run the below command to push our new commit.
@@ -163,7 +157,6 @@ Select Create Topic so we can create a new **`cloud-builds`** topic that Google 
 ## Initialize Firebase
 
 > If you haven't installed firebase-tools, please do that before run this section [https://firebase.google.com/docs/cli](https://firebase.google.com/docs/cli)
-> 
 
 Within the root of your project you can run the command `firebase init` to setup Firebase Cloud Functions. Select Functions by hitting the space bar, then hit enter to continue.
 
@@ -176,7 +169,7 @@ We will be using TypeScript in our example, but you could also choose JavaScript
 ## Creating Firebase Cloud Function for Pub/Sub
 
 In your root folder you will find a new directory called functions. Navigate to `functions/src/index.ts` file and uncomment the default `helloWorld` function and we will push this as well just to see the difference on functions.
- In the video I walk through how you can use Pub/Sub to walk through console logging and other options in your build before running the actual function. Here I will just add the final code code so that you can implement and try it directly.Within the `functions/src` directory add a new directory and file with the final path being`functions/src/DiscordBuildHooks/DiscordBuildHooks.ts`
+In the video I walk through how you can use Pub/Sub to walk through console logging and other options in your build before running the actual function. Here I will just add the final code code so that you can implement and try it directly.Within the `functions/src` directory add a new directory and file with the final path being`functions/src/DiscordBuildHooks/DiscordBuildHooks.ts`
 
 ```tsx
 import * as functions from 'firebase-functions';
@@ -279,11 +272,10 @@ In order for your function to be exposed we need to add this to your index.ts fi
 import * as functions from 'firebase-functions';
 
 export const helloWorld = functions.https.onRequest((request, response) => {
- response.send("Hello from Firebase!");
+	response.send('Hello from Firebase!');
 });
 
 export { gcpBuildTriggerDiscord } from './DiscordBuildHooks/DiscordBuildHooks';
-
 ```
 
 Final folder structure
@@ -295,7 +287,6 @@ Final folder structure
 ## Discord Webhook
 
 > You must register on Discord and have rights to manage web hooks for this part.
-> 
 
 Select a given channel that you want to create a hook in and go to settings, by clicking the gear icon.
 
@@ -310,7 +301,6 @@ You will then need to copy the web hook url so we can add it to our Firebase Clo
 ![https://res.cloudinary.com/ajonp/image/upload/f_auto,q_auto/ajonp-ajonp-com/uploads/kwsujtpicxhbfg4gkgq1.png](https://res.cloudinary.com/ajonp/image/upload/f_auto,q_auto/ajonp-ajonp-com/uploads/kwsujtpicxhbfg4gkgq1.png)
 
 > Make sure you keep all of your web hooks private!
-> 
 
 ## Firebase Cloud Function Config
 

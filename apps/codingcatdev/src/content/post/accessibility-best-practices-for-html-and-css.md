@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1629384711/main-codingcatdev-photo/n299y699xo7tjwlctlav.png
+cover: https://media.codingcat.dev/image/upload/v1629384711/main-codingcatdev-photo/n299y699xo7tjwlctlav.png
 devto: https://dev.to/brittneypostma/accessibility-best-practices-for-html-css-d51
 excerpt: Accessibility is an ongoing, ever-evolving process that is an extremely important aspect for inclusion and usability. These are some of the best practices you can follow in HTML and CSS to improve the user's experience on your site.
 hashnode: https://hashnode.codingcat.dev/post-accessibility-best-practices-for-html-and-css
@@ -10,6 +10,7 @@ slug: accessibility-best-practices-for-html-and-css
 start: August 19, 2021
 title: Accessibility Best Practices for HTML & CSS
 ---
+
 ## Accessibility Best Practices for HTML & CSS
 
 Great accessibility is not always an easy task and goes much more in depth than what is listed here. I still recommend having experienced screen readers and accessibility experts test your site and run your site through the [WebAIM Web Accessibility Evaluation Tool](https://wave.webaim.org/), WAVE. If you see anything that should be added, updated, or removed, please get in touch with me either in the comments or [@brittneypostma on Twitter](https://twitter.com/BrittneyPostma). This article is here to serve as a starting point to summarize and guide your way to better accessibility. Having better accessibility isn't only the right thing to do, it also increases your Search Engine Optimization, SEO, which can rank you higher in Google's algorithm. Here are some links to provide more information on web accessibility.
@@ -18,7 +19,7 @@ Great accessibility is not always an easy task and goes much more in depth than 
 
 ## Foundation
 
-Everything should start with a good foundation and with Hypertext Markup Language, HTML, that is the structure of your page. A huge part of web accessibility is just making sure the HTML elements are used correctly. A web page may be styled in many different ways to organize information visually, especially with different viewport sizes, but a blind user only hears the order defined in the HTML of a page. In my opinion, using [semantic HTML](https://codingcat.dev/post/accessibility-best-practices-for-html-and-css#semantic-html) along with [mobile-first design](https://codingcat.dev/post/accessibility-best-practices-for-html-and-css#mobile-first-design) allows you to see the layout of a page *linearized* into one column and the order of the markup to see if it makes sense.
+Everything should start with a good foundation and with Hypertext Markup Language, HTML, that is the structure of your page. A huge part of web accessibility is just making sure the HTML elements are used correctly. A web page may be styled in many different ways to organize information visually, especially with different viewport sizes, but a blind user only hears the order defined in the HTML of a page. In my opinion, using [semantic HTML](https://codingcat.dev/post/accessibility-best-practices-for-html-and-css#semantic-html) along with [mobile-first design](https://codingcat.dev/post/accessibility-best-practices-for-html-and-css#mobile-first-design) allows you to see the layout of a page _linearized_ into one column and the order of the markup to see if it makes sense.
 
 ## Semantic HTML
 
@@ -63,16 +64,13 @@ Styling, whether with CSS or JavaScript, can cause accessibility issues to occur
 - Users should be able to control any moving, flashing, or blinking content on a page. Examples include ads, videos, auto-updating visuals, moving backgrounds, and more. Basically, anything that is initiated by the page without the user interacting with it. A good practice is to use a **prefers-reduced-motion** media feature to turn off animations. If the animation is critical to understanding something, add it back in with a selector after turning down all animations. [https://css-tricks.com/revisiting-prefers-reduced-motion-the-reduced-motion-media-query/](https://css-tricks.com/revisiting-prefers-reduced-motion-the-reduced-motion-media-query/)
 
 ```css
-@media screen and
-  (prefers-reduced-motion: reduce),
-  (update: slow) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important; /* Hat tip Nick/cssremedy (https://css-tricks.com/revisiting-prefers-reduced-motion-the-reduced-motion-media-query/#comment-1700170) */
-    transition-duration: 0.001ms !important;
-  }
+@media screen and (prefers-reduced-motion: reduce), (update: slow) {
+	* {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important; /* Hat tip Nick/cssremedy (https://css-tricks.com/revisiting-prefers-reduced-motion-the-reduced-motion-media-query/#comment-1700170) */
+		transition-duration: 0.001ms !important;
+	}
 }
-
 ```
 
 - Make sure all animated content has pause, stop and hide capabilities and check the tab order to ensure it works correctly. [The Dark Side of the Grid](https://www.matuzo.at/blog/the-dark-side-of-the-grid-part-2/) is a good post on how changing visual order can mess with the order in the Document Object Model, DOM. The [Accessible Web Animation Explained](https://css-tricks.com/accessible-web-animation-the-wcag-on-animation-explained/) post from CSS Tricks has some good tips as well.

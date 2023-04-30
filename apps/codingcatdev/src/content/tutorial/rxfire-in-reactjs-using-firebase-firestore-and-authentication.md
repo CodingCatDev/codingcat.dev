@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616429614/main-codingcatdev-photo/q6a6amtmdfsobeguruak.png
+cover: https://media.codingcat.dev/image/upload/v1616429614/main-codingcatdev-photo/q6a6amtmdfsobeguruak.png
 devto: https://dev.to/codingcatdev/rxfire-in-reactjs-using-firebase-firestore-and-authentication-3ao
 excerpt: Introduction to Create React App, Firebase, and RxFire. RxFire provides a set of observable creation methods. You simply call a function with some parameters to receive an RxJS observable. With that observable in hand you can use any operators provided by RxJS to transform the stream as you like.
 hashnode: https://hashnode.codingcat.dev/tutorial-rxfire-in-reactjs-using-firebase-firestore-and-authentication
@@ -12,7 +12,7 @@ title: RxFire in ReactJS using Firebase Firestore and Authentication
 youtube: https://youtu.be/hTzcRCAm5e0
 ---
 
-[RxFire](https://github.com/firebase/firebase-js-sdk/tree/master/packages/rxfire) was created by [David East](https://twitter.com/_davideast), who is a Firebase Developer Advocate. Although [Firebase Blog](https://firebase.googleblog.com/2018/09/introducing-rxfire-easy-async-firebase.html) introduced RxFire in September, 2018 I thought it would be a good point of reference for beginners starting out with both [ReactJs](https://reactjs.org/) and [Firebase](https://www.firebase.com/).For those coming from an Angular background you might be familiar with [RxJS](https://github.com/ReactiveX/rxjs) and the [Angularfire2](https://github.com/angular/angularfire2) package. I know from my experience you *MUST* learn RxJS if you are going to use Angular on any size application. It can be one of the hardest parts to learn but there are several fantastic tutorials and sites dedicated to how RxJS works.Some of my favorites
+[RxFire](https://github.com/firebase/firebase-js-sdk/tree/master/packages/rxfire) was created by [David East](https://twitter.com/_davideast), who is a Firebase Developer Advocate. Although [Firebase Blog](https://firebase.googleblog.com/2018/09/introducing-rxfire-easy-async-firebase.html) introduced RxFire in September, 2018 I thought it would be a good point of reference for beginners starting out with both [ReactJs](https://reactjs.org/) and [Firebase](https://www.firebase.com/).For those coming from an Angular background you might be familiar with [RxJS](https://github.com/ReactiveX/rxjs) and the [Angularfire2](https://github.com/angular/angularfire2) package. I know from my experience you _MUST_ learn RxJS if you are going to use Angular on any size application. It can be one of the hardest parts to learn but there are several fantastic tutorials and sites dedicated to how RxJS works.Some of my favorites
 
 New to React, Please checkout
 
@@ -62,7 +62,6 @@ export default firebase;
 ```
 
 > You can skip the Instructions part of the lesson if you are already familiar with ReactJS.
-> 
 
 ## Simple Initial Component
 
@@ -71,36 +70,35 @@ export default firebase;
 Remove the core of App.js to start as we will be using the pattern of `extends React.Component`. We will now start simple by adding our first React Component Called Instructions.
 
 ```tsx
-import "./App.css";
-import React from "react";
-import Instructions from "./components/Instructions";
+import './App.css';
+import React from 'react';
+import Instructions from './components/Instructions';
 class App extends React.Component {
-  render() {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexFlow: "row wrap",
-        }}
-      >
-        {" "}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            flexFlow: "column",
-          }}
-        >
-          {" "}
-          <Instructions />{" "}
-        </div>{" "}
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					flexFlow: 'row wrap'
+				}}
+			>
+				{' '}
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						flexFlow: 'column'
+					}}
+				>
+					{' '}
+					<Instructions />{' '}
+				</div>{' '}
+			</div>
+		);
+	}
 }
 export default App;
-
 ```
 
 ### Create Instructions.js
@@ -108,90 +106,72 @@ export default App;
 This is a very simple React Component that takes no [props](https://reactjs.org/docs/components-and-props.html), it just returns straight `html.components/Instructions.js`
 
 ```tsx
-import React from "react";
+import React from 'react';
 class Instructions extends React.Component {
-  render() {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "start",
-          flexFlow: "row wrap",
-        }}
-      >
-        {" "}
-        <div style={{ maxWidth: "500px" }}>
-          {" "}
-          <img
-            src="https://res.cloudinary.com/ajonp/image/upload/q\_auto/ajonp-ajonp-com/17-rxfire-react-cats/RxFire\_3.webp"
-            alt="rxfire for cats"
-            width="100%"
-          />{" "}
-        </div>{" "}
-        <div>
-          {" "}
-          <p>
-            {" "}
-            In this example we will use RxFire to Observe the Cat Facts that we
-            add to our Firestore Database.{" "}
-          </p>{" "}
-          <a
-            href="https://github.com/AJONPLLC/rxfire-react-cats"
-            target="no\_index"
-          >
-            {" "}
-            https://github.com/AJONPLLC/rxfire-react-cats{" "}
-          </a>{" "}
-          <ol>
-            {" "}
-            <li>
-              {" "}
-              Sign In{" "}
-              <ul>
-                {" "}
-                <li>Uses Google Auth for Firebase</li> <li>Found in App.js</li>{" "}
-              </ul>{" "}
-            </li>{" "}
-            <li>
-              {" "}
-              Add Cat Fact{" "}
-              <ul>
-                {" "}
-                <li>
-                  {" "}
-                  This will use an API and Insert the facts into Firestore{" "}
-                </li>{" "}
-                <li>Found in components/AddCat.js</li>{" "}
-              </ul>{" "}
-            </li>{" "}
-            <li>
-              {" "}
-              Firestore collection{" "}
-              <ul>
-                {" "}
-                <li>
-                  {" "}
-                  Observing catfacts for changes, heart eyes are your facts{" "}
-                </li>{" "}
-                <li>Found in components/ListCatFacts.js</li>{" "}
-              </ul>{" "}
-            </li>{" "}
-            <li>
-              {" "}
-              Sign Out{" "}
-              <ul>
-                {" "}
-                <li>Observe that user is removed</li>{" "}
-              </ul>{" "}
-            </li>{" "}
-          </ol>{" "}
-        </div>{" "}
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'start',
+					flexFlow: 'row wrap'
+				}}
+			>
+				{' '}
+				<div style={{ maxWidth: '500px' }}>
+					{' '}
+					<img
+						src="https://res.cloudinary.com/ajonp/image/upload/q\_auto/ajonp-ajonp-com/17-rxfire-react-cats/RxFire\_3.webp"
+						alt="rxfire for cats"
+						width="100%"
+					/>{' '}
+				</div> <div>
+					{' '}
+					<p>
+						{' '}
+						In this example we will use RxFire to Observe the Cat Facts that we add to our Firestore
+						Database.{' '}
+					</p> <a href="https://github.com/AJONPLLC/rxfire-react-cats" target="no\_index">
+						{' '}
+						https://github.com/AJONPLLC/rxfire-react-cats{' '}
+					</a> <ol>
+						{' '}
+						<li>
+							{' '}
+							Sign In <ul>
+								{' '}
+								<li>Uses Google Auth for Firebase</li> <li>Found in App.js</li>{' '}
+							</ul>{' '}
+						</li> <li>
+							{' '}
+							Add Cat Fact <ul>
+								{' '}
+								<li> This will use an API and Insert the facts into Firestore </li> <li>
+									Found in components/AddCat.js
+								</li>{' '}
+							</ul>{' '}
+						</li> <li>
+							{' '}
+							Firestore collection <ul>
+								{' '}
+								<li> Observing catfacts for changes, heart eyes are your facts </li> <li>
+									Found in components/ListCatFacts.js
+								</li>{' '}
+							</ul>{' '}
+						</li> <li>
+							{' '}
+							Sign Out <ul>
+								{' '}
+								<li>Observe that user is removed</li>{' '}
+							</ul>{' '}
+						</li>{' '}
+					</ol>{' '}
+				</div>{' '}
+			</div>
+		);
+	}
 }
 export default Instructions;
-
 ```
 
 ## Update collection catfacts
@@ -206,7 +186,7 @@ The first button that we are going to add is simple enough it calls an API and p
 ... import AddCat from './components/AddCat'; ... <div style={{ maxWidth: '800px' }}> <AddCat /> </div> ...
 ```
 
-Now that it is in our App lets create the AddCat component. The only html that this passes back is `onClick={this.addCatFact}`. This is the JSX way of using onClick and passing a function. If you are new to ES6 arrow functions `addCatFact = () => {` is still just defining a function using a shortened syntax, it is becomming more standard these days.The `addCatFact` function calls an API that returns a single random cat fact from [https://cat-fact.herokuapp.com](https://cat-fact.herokuapp.com/). Because of CORS we have to pass it through a proxy, but you will see that we get a value back. We then use the javascript [destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) to create a new object by adding our `catFactDate` to the object. This allows us to later sort the facts in our list in descending 
+Now that it is in our App lets create the AddCat component. The only html that this passes back is `onClick={this.addCatFact}`. This is the JSX way of using onClick and passing a function. If you are new to ES6 arrow functions `addCatFact = () => {` is still just defining a function using a shortened syntax, it is becomming more standard these days.The `addCatFact` function calls an API that returns a single random cat fact from [https://cat-fact.herokuapp.com](https://cat-fact.herokuapp.com/). Because of CORS we have to pass it through a proxy, but you will see that we get a value back. We then use the javascript [destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) to create a new object by adding our `catFactDate` to the object. This allows us to later sort the facts in our list in descending
 
 `order.components/AddCat.js`
 
@@ -214,25 +194,34 @@ Now that it is in our App lets create the AddCat component. The only html that t
 import React from 'react';
 import { firestore } from '../Firebase';
 class AddCat extends React.Component {
-    addCatFact = () => {
-        /\* The dreaded CORS, had to pass through a proxy \*/
-        fetch(`https://cors-anywhere.herokuapp.com/https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount=1`)
-            .then(blob => blob.json())
-            .then(value => {
-                console.log('fetched', value);
-                firestore.collection('catfacts')
-                    .add({ ...value, catFactDate: new Date() })
-                    .then(() => { }, reason => {
-                        alert('Must Be Logged In To Add, See Console');
-                        console.log('Failed Adding Cat Fact', reason);
-                    });
-            });
-    };
-    render() {
-        return (
-            <button className="myButton" onClick={this.addCatFact}> 2. Add Cat Fact </button>
-        );
-    }
+	addCatFact = () => {
+		/\* The dreaded CORS, had to pass through a proxy \*/;
+		fetch(
+			`https://cors-anywhere.herokuapp.com/https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount=1`
+		)
+			.then((blob) => blob.json())
+			.then((value) => {
+				console.log('fetched', value);
+				firestore
+					.collection('catfacts')
+					.add({ ...value, catFactDate: new Date() })
+					.then(
+						() => {},
+						(reason) => {
+							alert('Must Be Logged In To Add, See Console');
+							console.log('Failed Adding Cat Fact', reason);
+						}
+					);
+			});
+	};
+	render() {
+		return (
+			<button className="myButton" onClick={this.addCatFact}>
+				{' '}
+				2. Add Cat Fact{' '}
+			</button>
+		);
+	}
 }
 export default AddCat;
 ```

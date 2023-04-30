@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1623783708/main-codingcatdev-photo/dhoffzsdzo9fld1xxpgj.jpg
+cover: https://media.codingcat.dev/image/upload/v1623783708/main-codingcatdev-photo/dhoffzsdzo9fld1xxpgj.jpg
 devto: https://dev.to/codingcatdev/firebase-multisite-hosting-37d
 excerpt: Creation of multiple sites within Hugo (main and amp), as well as multiple sites written in Angular (admin and app).
 hashnode: https://hashnode.codingcat.dev/tutorial-firebase-multisite-hosting
@@ -15,10 +15,8 @@ youtube: https://youtu.be/bLrZxoC0VlQ
 This tutorial will focus on a very easy solution to having multiple web projects hosted under the same domain.
 
 > Firebase limits a single domain for all of your projects. Once you have associated this domain you not be able to use it again for any other project. For example we would like to use lessons.ajonp.com but since we are using ajonp-ajonp-com for ajonp.com domain we are unable to use this.
-> 
 
 > We also wanted to mention that the video may not match exactly what is in the lesson7 repo, we are sorry about that, initially we were going to use two projects with a single domain. Please pull the repo directly and these steps should help you get to a finished setup quickly.
-> 
 
 ## Steps
 
@@ -36,11 +34,7 @@ If you have just created a new project you will need to upgrade in order to use 
 
 ![https://media.codingcat.dev/image/upload/v1657636586/main-codingcatdev-photo/b738f96f-8419-4c8a-be51-891fb6ef6a9a.png](https://media.codingcat.dev/image/upload/v1657636586/main-codingcatdev-photo/b738f96f-8419-4c8a-be51-891fb6ef6a9a.png)
 
-> 
-> 
-> 
 > Firebase [Pricing](https://firebase.google.com/pricing) is ever changing, so make sure to check on this.
-> 
 
 Hosting Free limit on the Blaze plan
 
@@ -48,7 +42,7 @@ Hosting Free limit on the Blaze plan
 
 # Create 4 Firebase Hosting Sites
 
-You can name these whatever fits your project, if you using ajonp* you will probably have issues as we am already using those.
+You can name these whatever fits your project, if you using ajonp\* you will probably have issues as we am already using those.
 
 Example for your site:
 
@@ -64,7 +58,6 @@ Example for your site:
 # Example Multiple Hugo Themes deploying to Firebase Multisite
 
 > You don't need to install anything if you just deploy to Google Cloud. In this lesson reference [Cloud Build](https://ajonp.com/lessons/7-firebase-multisite-hosting/#cloud-build) Also see [https://ajonp.com/lessons/google-cloud-repositories-ci-cd](https://ajonp.com/lessons/google-cloud-repositories-ci-cd) for more details on CI/CD.
-> 
 
 Once you clone [https://github.com/AJONPLLC/lesson-7-firebase-multisite-hosting](https://github.com/AJONPLLC/lesson-7-firebase-multisite-hosting.git) you can run it locally, but you must build out all of the sites before doing this.
 
@@ -136,41 +129,60 @@ cloudbuild.yaml
 
 ```yaml
 steps:
-# Pull in the required submodules for our themes and content
-- name: gcr.io/cloud-builders/git
-  args: ['submodule', 'init']
-- name: gcr.io/cloud-builders/git
-  args: ['submodule', 'update', '--recursive', '--remote']
-# Install all of our dependencies
-- name: 'gcr.io/cloud-builders/npm'
-  args: ['install']
-# Build the hugo image
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/hugo', './dockerfiles/hugo' ]
-# Build ajonp-hugo-ionic -> dist/ajonp
-- name: 'gcr.io/$PROJECT_ID/hugo'
-  args: [ 'hugo',"-d", "dist/ajonp", "-v", "-t", "ajonp-hugo-ionic", "--config", "config.toml,production-config.toml"]
-# Build ajonp-hugo-amp -> dist/ajonp-amp
-- name: 'gcr.io/$PROJECT_ID/hugo'
-  args: [ 'hugo',"-d", "dist/ajonp-amp", "-v", "-t", "ajonp-hugo-amp", "--config", "config.toml,production-config.toml"]
-# Build the hugo image
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/ng:latest', './dockerfiles/ng' ]
-# Build ajonp-admin -> dist/ajonp-admin
-- name: 'gcr.io/$PROJECT_ID/ng:latest'
-  args: ['build', '--prod', '--project', 'ajonp-admin']
-# Build ajonp-admin -> dist/ajonp-app
-- name: 'gcr.io/$PROJECT_ID/ng:latest'
-  args: ['build', '--prod', '--project', 'ajonp-app']
-# Build the firebase image
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/firebase', './dockerfiles/firebase' ]
-# Deploy to firebase
-- name: 'gcr.io/$PROJECT_ID/firebase'
-  args: ['deploy', '--token', '${_FIREBASE_TOKEN}']
+  # Pull in the required submodules for our themes and content
+  - name: gcr.io/cloud-builders/git
+    args: ['submodule', 'init']
+  - name: gcr.io/cloud-builders/git
+    args: ['submodule', 'update', '--recursive', '--remote']
+  # Install all of our dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+  # Build the hugo image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/hugo', './dockerfiles/hugo']
+  # Build ajonp-hugo-ionic -> dist/ajonp
+  - name: 'gcr.io/$PROJECT_ID/hugo'
+    args:
+      [
+        'hugo',
+        '-d',
+        'dist/ajonp',
+        '-v',
+        '-t',
+        'ajonp-hugo-ionic',
+        '--config',
+        'config.toml,production-config.toml'
+      ]
+  # Build ajonp-hugo-amp -> dist/ajonp-amp
+  - name: 'gcr.io/$PROJECT_ID/hugo'
+    args:
+      [
+        'hugo',
+        '-d',
+        'dist/ajonp-amp',
+        '-v',
+        '-t',
+        'ajonp-hugo-amp',
+        '--config',
+        'config.toml,production-config.toml'
+      ]
+  # Build the hugo image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/ng:latest', './dockerfiles/ng']
+  # Build ajonp-admin -> dist/ajonp-admin
+  - name: 'gcr.io/$PROJECT_ID/ng:latest'
+    args: ['build', '--prod', '--project', 'ajonp-admin']
+  # Build ajonp-admin -> dist/ajonp-app
+  - name: 'gcr.io/$PROJECT_ID/ng:latest'
+    args: ['build', '--prod', '--project', 'ajonp-app']
+  # Build the firebase image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/firebase', './dockerfiles/firebase']
+  # Deploy to firebase
+  - name: 'gcr.io/$PROJECT_ID/firebase'
+    args: ['deploy', '--token', '${_FIREBASE_TOKEN}']
 # Optionally you can keep the build images
 # images: ['gcr.io/$PROJECT_ID/hugo', 'gcr.io/$PROJECT_ID/firebase']
-
 ```
 
 ## Cloud Build locally

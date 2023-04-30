@@ -1,6 +1,6 @@
 ---
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1631468682/main-codingcatdev-photo/q8rrgfgfg5qguvm24xl7.png
+cover: https://media.codingcat.dev/image/upload/v1631468682/main-codingcatdev-photo/q8rrgfgfg5qguvm24xl7.png
 devto: https://dev.to/codingcatdev/the-7-strategies-i-used-to-defeat-imposter-syndrome-2h0l
 excerpt: How to beat Imposter syndrome in 7 steps
 hashnode: https://hashnode.codingcat.dev/post-the-7-strategies-i-used-to-defeat-imposter-syndrome
