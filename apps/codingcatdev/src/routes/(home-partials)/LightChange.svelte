@@ -62,7 +62,6 @@
 				RESET();
 			}
 		});
-		console.log(CORDS);
 		for (let i = 1; i < CORDS.length; i++) {
 			CORD_TL.add(
 				gsap.to(CORDS[0], {

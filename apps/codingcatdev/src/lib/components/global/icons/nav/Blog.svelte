@@ -69,10 +69,10 @@
 
 <style>
 	.main {
-		fill: hsl(var(--p));
+		fill: rgba(var(--color-primary-500) / 1);
 	}
 	.line {
-		stroke: hsl(var(--b3, var(--b2)) / var(--tw-bg-opacity));
-		fill: hsl(var(--b3, var(--b2)) / var(--tw-bg-opacity));
+		stroke: rgb(var(--on-primary));
+		fill: rgb(var(--on-primary));
 	}
 </style>
