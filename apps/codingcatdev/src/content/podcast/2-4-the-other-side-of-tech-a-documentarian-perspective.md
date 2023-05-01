@@ -1,7 +1,7 @@
 ---
 episode: 4
-guest:
-  - Stefan-Kingham
+guests:
+  - stefan-kingham
 recording_date: December 9, 2021 10:00 AM
 season: 2
 published: published
