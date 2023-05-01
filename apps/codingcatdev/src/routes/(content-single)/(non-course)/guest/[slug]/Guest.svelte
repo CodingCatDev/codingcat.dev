@@ -35,7 +35,7 @@
 			<div class="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
 				<ol class="bcu-breadcrumb">
 					<li class="capitalize bcu-crumb">
-						<a target="_blank" rel="noopener noreferrer" href={`/${title}`}>{title}</a>
+						<a href={`/${title}`}>{title}</a>
 					</li>
 					<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
 					<li>{data.content.name}</li>
