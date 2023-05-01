@@ -1,7 +1,7 @@
 ---
 episode: 2
-guest:
-  - Steve-Sewell
+guests:
+  - steve-sewell
 recording_date: January 4, 2022 1:00 PM
 season: 2
 published: published

@@ -82,6 +82,7 @@ export interface Socials {
 	mastodon?: string;
 	medium?: string;
 	stackoverflow?: string;
+	tiktok?: string;
 	twitch?: string;
 	twitter?: string;
 	youtube?: string;

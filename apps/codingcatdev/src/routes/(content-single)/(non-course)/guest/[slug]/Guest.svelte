@@ -15,6 +15,7 @@
 		Mastodon,
 		Medium,
 		Stackoverflow,
+		Tiktok,
 		Twitch,
 		Twitter,
 		Youtube
@@ -116,6 +117,16 @@
 								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
 							>
 								<Icon src={Stackoverflow} class="w-8" theme="solid" />
+							</a>
+						{/if}
+						{#if data.content?.socials?.tiktok}
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={data.content?.socials?.tiktok}
+								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+							>
+								<Icon src={Tiktok} class="w-8" theme="solid" />
 							</a>
 						{/if}
 						{#if data.content?.socials?.twitch}

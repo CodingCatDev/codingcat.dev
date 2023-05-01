@@ -1,7 +1,7 @@
 ---
 episode: 1
-guest:
-  - Steve-Sewell
+guests:
+  - steve-sewell
 season: 2
 published: published
 podcast: CodingCat.dev
