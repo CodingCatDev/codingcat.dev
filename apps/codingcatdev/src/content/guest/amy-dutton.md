@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/selfteachme'
+cover: 'https://media.codingcat.dev/image/upload/v1682981840/main-codingcatdev-photo/podcast-guest/selfteachme'
 name: Amy Dutton
 published: published
 slug: amy-dutton
