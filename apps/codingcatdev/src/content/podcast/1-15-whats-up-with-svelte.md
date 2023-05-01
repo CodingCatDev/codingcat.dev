@@ -1,7 +1,7 @@
 ---
 episode: 15
-guest:
-  - Shawn-Wang-swyx
+guests:
+  - swyx
 recording_date: March 9, 2021 2:00 PM
 season: 1
 published: published

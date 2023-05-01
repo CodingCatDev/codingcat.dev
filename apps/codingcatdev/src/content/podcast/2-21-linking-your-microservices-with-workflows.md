@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1655826357/main-codingcatdev-photo/Linking_your_Microservices_with_Workflow.jpg
 devto: https://dev.to/codingcatdev/221-linking-your-microservices-with-workflows-5d5
 excerpt: Swyx walks us through how to use http://temporal.io/ to link all of your microservice workflows.
+guests:
+  - swyx
 hashnode: https://hashnode.codingcat.dev/podcast-2-21-linking-your-microservices-with-workflows
 slug: 2-21-linking-your-microservices-with-workflows
 spotify: https://open.spotify.com/episode/4hjwQY4voY1244BUDcxiKB?si=dZzOyxudQ-ePLDjpz2mgnw
