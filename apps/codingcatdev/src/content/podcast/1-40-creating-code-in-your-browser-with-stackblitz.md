@@ -1,7 +1,7 @@
 ---
 episode: 40
-guest:
-  - Tomek-Sulkowski
+guests:
+  - tomek-sulkowski
 recording_date: September 2, 2021 9:00 AM
 season: 1
 published: published
