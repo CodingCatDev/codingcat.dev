@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/ASpittel'
+cover: 'https://media.codingcat.dev/image/upload/v1682979390/main-codingcatdev-photo/podcast-guest/ASpittel'
 name: Ali Spittel
 published: published
 slug: ali-spittel
@@ -11,8 +11,6 @@ websites:
   - https://www.madeinnigeria.dev/
 ---
 
-
 ## About
 
 Leads Developer Advocacy awsamplify
- 
