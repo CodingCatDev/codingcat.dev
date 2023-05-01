@@ -21,6 +21,18 @@
 				{/if}
 			</div>
 			<DashboardCTA />
+			<div>
+				<h3>✨ New and Featured</h3>
+				<div class="p-4">
+					<p>Coming soon.</p>
+				</div>
+			</div>
+			<div>
+				<h3>📅 Coming Soon</h3>
+				<div class="p-4">
+					<p>Coming soon.</p>
+				</div>
+			</div>
 		</section>
 	</div>
 </div>
