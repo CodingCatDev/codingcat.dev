@@ -1,7 +1,7 @@
 ---
 episode: 43
-guest:
-  - Tyler-McGinnis
+guests:
+  - tyler-mcginnis
 recording_date: September 23, 2021 4:30 PM
 season: 1
 published: published
