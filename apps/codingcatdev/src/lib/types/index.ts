@@ -32,18 +32,33 @@ export interface Lesson extends Content {
 export interface Podcast extends Content {
 	season?: number;
 	episode?: number;
+	recording_date?: Date;
+	podcast?: PodcastType;
+	guests?: Author[];
+
+	// Exports
+	devto?: string;
+	hashnode?: string;
+	spotify?: string;
 }
 
 export interface Author {
-	id: string;
+	cover?: string;
 	name?: string;
+	html?: string;
 	slug: string;
+	start: Date;
+	published?: ContentPublished;
+	socials: Socials;
+	websites?: string[];
 }
 
 export enum ContentType {
+	author = 'author',
 	course = 'course',
 	framework = 'framework',
 	forum = 'forum',
+	guest = 'guest',
 	group = 'group',
 	language = 'language',
 	lesson = 'lesson',
@@ -52,6 +67,24 @@ export enum ContentType {
 	post = 'post',
 	schedule = 'schedule',
 	tutorial = 'tutorial'
+}
+
+export enum PodcastType {
+	codingcatdev = 'codingcatdev',
+}
+
+export interface Socials {
+	discord?: string;
+	facebook?: string;
+	github?: string;
+	linkedin?: string;
+	email?: string;
+	mastodon?: string;
+	medium?: string;
+	stackoverflow?: string;
+	twitch?: string;
+	twitter?: string;
+	youtube?: string;
 }
 
 export enum ContentPublished {
