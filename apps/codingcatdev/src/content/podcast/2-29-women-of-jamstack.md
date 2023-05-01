@@ -1,6 +1,6 @@
 ---
 episode: 29
-guest:
+guests:
   - amanda-giannelli
   - anuradha-kumari
   - brittany-walker

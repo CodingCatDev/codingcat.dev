@@ -1,6 +1,6 @@
 ---
 episode: 30
-guest:
+guests:
   - amy-dutton
 recording_date: May 11, 2021 12:00 PM
 season: 1
