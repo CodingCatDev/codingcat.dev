@@ -3,10 +3,10 @@ import { ContentType, type Author } from '$lib/types';
 
 const contentType = ContentType.author;
 
-export const load = (async () => {
+export const load = async () => {
 	const modules = import.meta.glob(['../../../content/guest/*.md']);
 	const contentItems = await parseModules(modules);
-	const content = await listContent({ contentItems }) as unknown as {
+	const content = (await listContent({ contentItems, limit: 500 })) as unknown as {
 		total: number;
 		next: number | null;
 		content: Author[];
@@ -15,4 +15,4 @@ export const load = (async () => {
 		contentType,
 		...content
 	};
-});
+};

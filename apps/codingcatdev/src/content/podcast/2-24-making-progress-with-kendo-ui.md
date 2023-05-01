@@ -1,7 +1,7 @@
 ---
 episode: 24
-guest:
-  - Alyssa-Nicoll
+guests:
+  - alyssa-nicoll
 recording_date: March 25, 2022 1:30 PM
 season: 2
 published: published
