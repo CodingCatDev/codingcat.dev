@@ -1,7 +1,7 @@
 ---
 episode: 18
-guest:
-  - Una-Kravets
+guests:
+  - una-kravets
 recording_date: February 18, 2022 11:00 AM
 season: 2
 published: published
