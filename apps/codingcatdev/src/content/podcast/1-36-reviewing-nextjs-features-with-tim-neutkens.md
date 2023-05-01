@@ -1,7 +1,7 @@
 ---
 episode: 36
-guest:
-  - Tim-Neutkens
+guests:
+  - tim-neutkens
 recording_date: August 25, 2021 9:00 AM
 season: 1
 published: published
