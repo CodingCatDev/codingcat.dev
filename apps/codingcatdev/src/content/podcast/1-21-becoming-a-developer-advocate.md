@@ -1,7 +1,7 @@
 ---
 episode: 21
-guest:
-  - Tim-Benniks
+guests:
+  - tim-benniks
 recording_date: March 25, 2021 11:00 AM
 season: 1
 published: published
