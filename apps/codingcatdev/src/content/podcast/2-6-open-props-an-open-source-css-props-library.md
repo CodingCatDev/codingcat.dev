@@ -11,6 +11,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1644424839/main-codingcatdev-photo/OpenProps.png
 devto: https://dev.to/codercatdev/26-open-props-an-open-source-css-props-library-1nl9
 excerpt: We sit down to learn more about Adam Argyle and his new project Open Props.
+guests:
+  - adam-argyle
 hashnode: https://hashnode.codingcat.dev/podcast-2-6-open-props-an-open-source-css-props-library
 slug: 2-6-open-props-an-open-source-css-props-library
 spotify: https://open.spotify.com/episode/34dNMpOmT5jtHbecQQz2ND?si=qHjvm1ZwQYK_-0iSN7KTYA

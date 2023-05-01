@@ -1,11 +1,15 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
-	import type { Podcast } from '$lib/types';
+	import type { ContentType, Podcast } from '$lib/types';
 	export let podcasts: Podcast[];
+	export let contentType: ContentType;
 </script>
 
 {#each podcasts as p}
-	<a href={`/podcast/${p.slug}`} class="flex items-center gap-2 p-2 md:gap-8 bcu-card md:p-4">
+	<a
+		href={`/${contentType}/${p.slug}`}
+		class="flex items-center gap-2 p-2 md:gap-8 bcu-card md:p-4"
+	>
 		<div class="w-60 md:w-80">
 			{#if p?.cover}
 				<Image

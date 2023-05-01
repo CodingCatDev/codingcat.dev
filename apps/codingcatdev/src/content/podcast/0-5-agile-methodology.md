@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/usz9vlpgz573nvjgv5uh.png
 devto: https://dev.to/codingcatdev/0-5-agile-methodology-2f7e
 excerpt: Alex Feldman discusses Agile and how it can be used in Project Management.
+guests:
+  - alex-feldman
 hashnode: https://hashnode.codingcat.dev/podcast-0-5-agile-methodology
 slug: 0-5-agile-methodology
 spotify: https://open.spotify.com/episode/0RVqxa8KhhNzcQxP9WPsWn?si=4Ydbhl60QKC6NXoT4d22jA

@@ -2,7 +2,7 @@
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Content, ContentType, Podcast } from '$lib/types';
+	import { ContentType, type Author, type Content, type Podcast } from '$lib/types';
 	import { pluralize } from '$lib/utils';
 	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
@@ -25,6 +25,7 @@
 		content: Author;
 		contentType: ContentType;
 		guestPodcasts: Podcast[];
+		guestSchedules: Podcast[];
 	};
 	$: title = pluralize({ type: data.contentType } as Content);
 </script>
@@ -166,9 +167,13 @@
 						{@html data.content.html}
 					</CopyCodeInjector>
 				</section>
-
-				{#if data?.guestPodcasts}
-					<PodcastList podcasts={data.guestPodcasts} />
+				{#if data?.guestSchedules?.length}
+					<h2>Upcoming Schedule</h2>
+					<PodcastList podcasts={data.guestSchedules} contentType={ContentType.schedule} />
+				{/if}
+				{#if data?.guestPodcasts?.length}
+					<h2>Podcasts</h2>
+					<PodcastList podcasts={data.guestPodcasts} contentType={ContentType.podcast} />
 				{/if}
 			</div>
 		</section>

@@ -19,9 +19,14 @@ export const load = (async ({ params }) => {
 	const podcastItems = await parseModules(podcastModules);
 	const guestPodcasts = await getPodcastByGuest({ podcastItems: podcastItems, slug: params.slug });
 
+	const scheduleModules = import.meta.glob(['../../../../../content/schedule/*.md']);
+	const scheduleItems = await parseModules(scheduleModules);
+	const guestSchedules = await getPodcastByGuest({ podcastItems: scheduleItems, slug: params.slug });
+
 	return {
 		contentType,
 		content,
-		guestPodcasts
+		guestPodcasts,
+		guestSchedules
 	};
 });

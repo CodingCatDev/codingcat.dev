@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1655313684/main-codingcatdev-photo/nextjs-script-with-partytown.jpg
 devto: https://dev.to/codingcatdev/228-nextjs-script-with-partytown-web-workers-1ll6
 excerpt: Adam and Houssein talk with Alex all about how third party script are killing the web. How Partytown fixes the third party script problem. Then we show how Partytown Script is used in Next.js
+guests:
+  - adam-bradley
 hashnode: https://hashnode.codingcat.dev/podcast-nextjs-script-with-partytown-web-workers
 slug: nextjs-script-with-partytown-web-workers
 spotify: https://open.spotify.com/episode/1EhI4ZFjwmD1Tv5mGsX3TG?si=Cqg0kJdXTO-0CnKuGQokMA

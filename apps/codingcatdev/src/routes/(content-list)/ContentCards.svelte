@@ -33,7 +33,7 @@
 		<div class="p-4 sm:p-10">
 			<section class="relative grid gap-4 grid-cols-fit sm:gap-10">
 				{#each data?.content as content}
-					<div class="ccd-grid-card">
+					<div class="max-w-6xl ccd-grid-card">
 						<a class="self-start" href={`/${data.contentType}/${content.slug}`}>
 							{#if content?.cover}
 								<Image

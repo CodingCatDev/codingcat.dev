@@ -12,7 +12,6 @@ socials:
   twitter: 'https://twitter.com/Ace_KYD'
   twitch: 'https://www.twitch.tv/elpunish3rr/'
   youtube: 'https://www.youtube.com/acekyd'
-streams: https://www.notion.so/Building-in-CodeSandbox-with-Adewale-Ace-Abati-f53cbb972f6e42a29c428841a2fdfd71
 websites:
   - https://www.adewaleabati.com/
   - https://www.madeinnigeria.dev/
