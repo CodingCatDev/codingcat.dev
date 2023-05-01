@@ -1,7 +1,7 @@
 ---
 episode: 41
-guest:
-  - Wes-Bos
+guests:
+  - wes-bos
 recording_date: September 14, 2021 10:30 AM-11:30 AM
 season: 1
 published: published
