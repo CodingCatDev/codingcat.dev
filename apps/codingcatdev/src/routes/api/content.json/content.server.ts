@@ -2,8 +2,7 @@ import { parseModules, preview } from "$lib/server/content";
 import { ContentPublished } from "$lib/types";
 
 export const content = async () => {
-
-	const course = import.meta.glob(['../../../content/course/*.md']);
+	const course = import.meta.glob(['../../../content/course/*/*.md']);
 	const podcast = import.meta.glob(['../../../content/podcast/*.md']);
 	const post = import.meta.glob(['../../../content/post/*.md']);
 	const tutorial = import.meta.glob(['../../../content/tutorial/*.md']);
