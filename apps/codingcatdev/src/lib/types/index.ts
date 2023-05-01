@@ -34,7 +34,7 @@ export interface Podcast extends Content {
 	episode?: number;
 	recording_date?: Date;
 	podcast?: PodcastType;
-	guests?: Author[];
+	guests?: string[]; // Guest Slug
 
 	// Exports
 	devto?: string;

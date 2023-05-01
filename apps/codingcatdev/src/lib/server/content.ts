@@ -1,4 +1,4 @@
-import { ContentType, ContentPublished, type Lesson } from '$lib/types';
+import { ContentType, ContentPublished, type Lesson, type Podcast } from '$lib/types';
 import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
@@ -225,4 +225,32 @@ export const getLessonFromCourseSlug = async ({ courseSlug, slug, courseItems }:
 		...doc,
 		courseSlug: course.slug
 	};
+};
+
+
+/**
+ * Get podcast by guest slug
+ * */
+export const getPodcastByGuest = async ({ slug, podcastItems }:
+	{
+		slug: string,
+		podcastItems: Podcast[];
+	}) => {
+	console.debug(`Searching for podcasts from guest: ${slug}`);
+	const podcasts = podcastItems
+		.filter(
+			preview ?
+				(c) =>
+					c.guests?.filter((g) => g == slug)?.length
+				:
+				(c) =>
+					c.guests?.filter((g) => g == slug)?.length &&
+					new Date(c.start) <= new Date() &&
+					c.published === ContentPublished.published
+		)
+		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
+
+	return [
+		...podcasts,
+	];
 };

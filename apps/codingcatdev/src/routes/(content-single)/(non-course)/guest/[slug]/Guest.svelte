@@ -2,7 +2,7 @@
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Content, ContentType } from '$lib/types';
+	import type { Author, Content, ContentType, Podcast } from '$lib/types';
 	import { pluralize } from '$lib/utils';
 	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
@@ -11,7 +11,6 @@
 		Discord,
 		Facebook,
 		Github,
-		Gmail,
 		Linkedin,
 		Mastodon,
 		Medium,
@@ -21,9 +20,11 @@
 		Youtube
 	} from '@steeze-ui/simple-icons';
 	import { GlobeAmericas } from '@steeze-ui/heroicons';
+	import PodcastList from './PodcastList.svelte';
 	export let data: {
 		content: Author;
 		contentType: ContentType;
+		guestPodcasts: Podcast[];
 	};
 	$: title = pluralize({ type: data.contentType } as Content);
 </script>
@@ -165,6 +166,10 @@
 						{@html data.content.html}
 					</CopyCodeInjector>
 				</section>
+
+				{#if data?.guestPodcasts}
+					<PodcastList podcasts={data.guestPodcasts} />
+				{/if}
 			</div>
 		</section>
 	</div>
