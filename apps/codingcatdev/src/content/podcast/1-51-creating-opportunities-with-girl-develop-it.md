@@ -1,7 +1,7 @@
 ---
 episode: 51
-guest:
-  - Katie-Franco
+guests:
+  - katie-franco
 recording_date: December 17, 2021 10:30 AM
 season: 1
 published: published
