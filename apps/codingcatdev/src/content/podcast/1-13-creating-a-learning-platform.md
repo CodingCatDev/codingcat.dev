@@ -1,7 +1,7 @@
 ---
 episode: 13
-guest:
-  - Scott-Tolinski
+guests:
+  - scott-tolinski
 recording_date: March 3, 2021 4:00 PM
 season: 1
 published: published
