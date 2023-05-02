@@ -1,8 +1,8 @@
 ---
 anchor: https://anchor.fm/purrfect-dev/episodes/2-41---Nx-the-Smart--Fast-and-Extensible-Build-System-e1od4to
 episode: 41
-guest:
-  - Juri-Strumpflohner
+guests:
+  - juri-strumpflohner
 recording_date: September 22, 2022 2:15 PM
 season: 2
 published: published
