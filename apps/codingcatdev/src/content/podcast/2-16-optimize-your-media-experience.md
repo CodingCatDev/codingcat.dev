@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1655827697/main-codingcatdev-photo/Optimizing_your_Media_Experience.jpg
 devto: https://dev.to/codingcatdev/216-optimize-your-media-experience-41ib
 excerpt: Colby Fayock walks us through how to optimize your media experience with Cloudinary.
+guests:
+  - colby-fayock
 hashnode: https://hashnode.codingcat.dev/podcast-2-16-optimize-your-media-experience
 slug: 2-16-optimize-your-media-experience
 spotify: https://open.spotify.com/episode/5Ry9jd3GcpmQRCvzs7gwn1?si=D58PpolzQfexoPlIyCD9fA
