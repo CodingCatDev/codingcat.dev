@@ -1,6 +1,6 @@
 ---
 episode: 7
-guest:
+guests:
   - m4dz
 recording_date: December 16, 2021 9:00 AM
 season: 2
