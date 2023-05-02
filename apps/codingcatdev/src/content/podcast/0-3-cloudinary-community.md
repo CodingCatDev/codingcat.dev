@@ -12,6 +12,7 @@ devto: https://dev.to/codingcatdev/0-3-cloudinary-community-4jae
 excerpt: Talking about how to build communities to enrich web development.
 guests:
   - tim-benniks
+  - maya-shavin
 hashnode: https://hashnode.codingcat.dev/podcast-0-3-cloudinary-community
 slug: 0-3-cloudinary-community
 spotify: https://open.spotify.com/episode/3UDDNZkgjY7B2kIfA9PCpY?si=uMrXstzdTZyjIUT2F-fu8g
