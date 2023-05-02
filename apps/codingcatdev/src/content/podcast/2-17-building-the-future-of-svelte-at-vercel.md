@@ -1,6 +1,7 @@
 ---
 episode: 17
-guest: Rich-Harris
+guests:
+  - rich_harris
 recording_date: February 9, 2022 10:00 AM
 season: 2
 published: published
