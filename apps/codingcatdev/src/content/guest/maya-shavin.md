@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/MayaShavin'
+cover: 'https://media.codingcat.dev/image/upload/v1683045800/main-codingcatdev-photo/podcast-guest/MayaShavin'
 name: Maya Shavin
 published: published
 slug: maya-shavin
