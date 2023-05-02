@@ -140,6 +140,31 @@ export const listContent = async ({
 	};
 };
 
+/**
+ * List all content from specified content type by author
+ * */
+export const listContentByAuthor = async ({ authorSlug, contentItems }:
+	{
+		authorSlug: string,
+		contentItems: Content[];
+	}) => {
+	console.debug(`Searching for items from author: ${authorSlug}`);
+	const fullConent = await listContent({ contentItems, after: 0, limit: 10000 });
+	const content = fullConent.content.filter(
+		preview ?
+			(c) =>
+				c.authors?.filter((g) => g == authorSlug)?.length
+			:
+			(c) =>
+				c.authors?.filter((g) => g == authorSlug)?.length &&
+				new Date(c.start) <= new Date() &&
+				c.published === ContentPublished.published
+	)
+	return [
+		...content,
+	];
+};
+
 export const getContentBySlug = async ({
 	contentItems,
 	slug

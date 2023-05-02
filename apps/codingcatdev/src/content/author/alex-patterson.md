@@ -2,7 +2,7 @@
 cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/codercatdev'
 name: Alex Patterson
 published: published
-slug: codercatdev
+slug: alex-patterson
 start: January 1, 2000
 socials:
   github: 'https://github.com/codercatdev'

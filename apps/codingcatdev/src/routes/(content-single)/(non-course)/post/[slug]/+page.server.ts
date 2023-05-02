@@ -1,5 +1,5 @@
 import { getContentBySlug, parseModules } from '$lib/server/content';
-import { ContentType } from '$lib/types';
+import { ContentType, type Author } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
 
@@ -14,8 +14,22 @@ export const load = (async ({ params }) => {
 			message: 'Not found'
 		});
 	}
+
+	const authorModules = import.meta.glob(['../../../../../content/author/*.md']);
+	const guestItems = await parseModules(authorModules);
+
+	const authors: Author[] = [];
+	if (content?.authors?.length) {
+		for (const authorSlug of content.authors) {
+			const author = await getContentBySlug({ contentItems: guestItems, slug: authorSlug }) as unknown as Author;
+			if (author) {
+				authors.push(author);
+			}
+		}
+	}
 	return {
 		contentType,
-		content
+		content,
+		authors
 	};
 });

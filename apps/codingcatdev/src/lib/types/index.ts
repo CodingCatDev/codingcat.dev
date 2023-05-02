@@ -1,6 +1,6 @@
 export interface Content {
 	id: string;
-	authors?: Author[];
+	authors?: string[];
 	cloudinary_conver?: boolean;
 	html?: string;
 	cover?: string;
