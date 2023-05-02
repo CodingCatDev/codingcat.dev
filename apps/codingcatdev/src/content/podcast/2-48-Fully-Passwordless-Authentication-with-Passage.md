@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1664317685/main-codingcatdev-photo/Fully-Passwordless-Authentication-with-Passage.jpg
 devto: https://dev.to/codingcatdev/248-fully-passwordless-authentication-with-passage-23ce
 excerpt: Nick Hodges talk all about how you can go fully passwordless to reduce friction for your users and provide best-in-class security, including biometrics.
+guests:
+  - nick-hodges
 hashnode: https://hashnode.codingcat.dev/podcast-2-48-Fully-Passwordless-Authentication-with-Passage
 slug: 2-48-Fully-Passwordless-Authentication-with-Passage
 spotify: https://open.spotify.com/episode/1t91HmqCGo3BNiRcS83Zpp?si=2CLDaudHSMioFP8a2edfTQ
