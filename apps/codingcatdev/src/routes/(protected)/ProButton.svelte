@@ -29,7 +29,7 @@
 </script>
 
 <button
-	class="bcu-card variant-filled-primary w-full max-w-sm p-8 relative hover:shadow-2xl hover:scale-105 hover:cursor-pointer ease-in-out duration-300 flex flex-col justify-center items-center"
+	class="bcu-card variant-filled-primary w-full md:max-w-sm p-8 relative hover:shadow-2xl hover:scale-105 hover:cursor-pointer ease-in-out duration-300 flex flex-col justify-center items-center"
 	aria-label="open-pro-modal"
 	on:click={showPro}
 >
