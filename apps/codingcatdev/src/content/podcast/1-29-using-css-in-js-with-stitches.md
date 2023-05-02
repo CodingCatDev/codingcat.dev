@@ -1,7 +1,7 @@
 ---
 episode: 29
-guest:
-  - Pedro-Duarte
+guests:
+  - pedro-duarte
 recording_date: May 7, 2021 12:00 PM
 season: 1
 published: published
