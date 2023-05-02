@@ -1,7 +1,7 @@
 ---
 episode: 32
-guest:
-  - Mike-Hartington
+guests:
+  - mike-hartington
 recording_date: June 16, 2022 2:15 PM
 season: 2
 published: published
