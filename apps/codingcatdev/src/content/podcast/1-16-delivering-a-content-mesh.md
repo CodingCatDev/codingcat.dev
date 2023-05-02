@@ -1,7 +1,7 @@
 ---
 episode: 16
-guest:
-  - Sam-Bhagwat
+guests:
+  - sam-bhagwat
 recording_date: March 11, 2021 1:00 PM
 season: 1
 published: published
