@@ -1,23 +1,20 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/kulkarniankita'
+cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/kulkarniankita9'
 name: Ankita Kulkarni
 published: published
 slug: ankita-kulkarni
 start: January 1, 2000
 picks: https://www.notion.so/Trampoline-c88dc0c3418247abbfecf75279c26255, https://www.notion.so/Snapify-dd77dc1af12f4f6ba5b21fe6416e3e78, https://www.notion.so/Open-AI-8dcaa664adbb4b6ab60e0973508f584d
 socials:
-    linkedin: 'https://www.linkedin.com/in/kulkarniankita/'
-    twitter: 'https://twitter.com/kulkarniankita9'
+  linkedin: 'https://www.linkedin.com/in/kulkarniankita/'
+  twitter: 'https://twitter.com/kulkarniankita9'
+  youtube: 'https://www.youtube.com/channel/UCbklMsA4tFtq4DEf1dyViQw'
 websites:
+  - https://frontendsnacks.dev/
+  - https://engineeringleadership.kulkarniankita.com/
 ---
 
-# Ankita Kulkarni
-email: me@kulkarniankita.com
-streams: https://www.notion.so/Growing-your-Brand-with-Ankita-Kulkarni-900044f3ecd34216a63297ca02996880, https://www.notion.so/How-to-Become-a-Full-Time-Content-Creator-57b43d25b693457c8a39032355b8e687
-
-## Ankita Kulkarni
-
-### Profile
+## About
 
 I'm an Educator and create digital products such as my E-book on taking control of your first 90 days, best suited for newer leaders or her course on Next.js.
 
@@ -34,10 +31,3 @@ I have over 10 years of experience in the tech industry, starting with helping s
 Previously, I worked as a Senior Engineering Manager, Tech Lead, Solution Architect, and Lead developer at companies such as WealthSimple, Loblaw Digital, [Rangle.io](https://rangle.io) and IBM Canada. I have architected and scaled many web and mobile apps for clients using React, GraphQL, React Native and Next.js. Here are a few: Tim Hortons, Burger King, Popeyes, Borrowell, WealthSimple, Moleskine and more.
 
 I also enjoy teaching and public speaking, so I created a course on Next.js and love giving conference talks worldwide! You can check it out here: [https://bit.ly/3nRIsbi](https://bit.ly/3nRIsbi)
-
-I also have a Youtube channel: [https://www.youtube.com/channel/UCbklMsA4tFtq4DEf1dyViQw](https://www.youtube.com/channel/UCbklMsA4tFtq4DEf1dyViQw)
-
-I write two newsletters on frontend and leadership!
-
-- [https://frontendsnacks.dev/](https://frontendsnacks.dev/)
-- [https://engineeringleadership.kulkarniankita.com/](https://engineeringleadership.kulkarniankita.com/)
