@@ -1,7 +1,7 @@
 ---
 episode: 13
-guest:
-  - Anthony-Campolo
+guests:
+  - anthony-campolo
 recording_date: January 28, 2022 2:30 PM
 season: 2
 published: published

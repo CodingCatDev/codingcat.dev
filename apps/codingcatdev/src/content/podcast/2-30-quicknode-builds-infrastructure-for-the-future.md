@@ -1,7 +1,7 @@
 ---
 episode: 30
-guest:
-  - Anthony-Campolo
+guests:
+  - anthony-campolo
 recording_date: June 2, 2022 2:15 PM (EST)
 season: 2
 published: published

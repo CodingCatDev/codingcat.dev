@@ -1,7 +1,7 @@
 ---
 episode: 20
-guest:
-  - Ryan-Carniato
+guests:
+  - ryan-carniato
 recording_date: March 1, 2022 12:00 PM
 season: 2
 published: published
