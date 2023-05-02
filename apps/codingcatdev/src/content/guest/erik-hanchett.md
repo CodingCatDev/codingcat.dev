@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/ErikCH'
+cover: 'https://media.codingcat.dev/image/upload/v1683061811/main-codingcatdev-photo/podcast-guest/ErikCH'
 name: Erik Hanchett
 published: published
 slug: erik-hanchett
