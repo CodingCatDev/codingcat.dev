@@ -1,7 +1,7 @@
 ---
 episode: 11
-guest:
-  - Fred-Schott
+guests:
+  - fred-k-schott
 recording_date: January 19, 2022 1:30 PM
 season: 2
 published: published
