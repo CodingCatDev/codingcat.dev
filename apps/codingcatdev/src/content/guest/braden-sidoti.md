@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/bsinthewild'
 name: Braden Sidoti
 published: published
 slug: braden-sidoti
@@ -8,14 +8,9 @@ picks: https://www.notion.so/Dr-Death-888fcd21ff55463fac84b3ec880ff768
 socials:
   linkedin: 'https://www.linkedin.com/in/braden-sidoti-25676537/'
 websites:
+  - https://www.braden.dev/
 ---
 
-# Braden Sidoti
-
-streams: https://www.notion.so/Building-Better-Authentication-with-Clerk-4321b357c8384c96a91027108c3b68fb
-
-# Braden Sidoti
-
-### Details
+## About
 
 Co-founder and CTO of Clerk.

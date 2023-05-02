@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/v1682991494/main-codingcatdev-photo/podcast-guest/musicalwebdev'
 name: Brittany Walker
 published: published
 slug: brittany-walker
@@ -8,15 +8,9 @@ picks: https://www.notion.so/Lego-Nintendo-Entertainment-System-58825946f71f48d4
 socials:
   twitter: 'https://twitter.com/musicalwebdev'
 websites:
-    - 'https://musicalwebdev.com/'
+  - 'https://musicalwebdev.com/'
 ---
 
-# Brittany Walker
-
-streams: https://www.notion.so/Women-of-Jamstack-6c30e61bfbb345b0a426ab7315b3af0c
-
-## Brittany Walker
-
-### Profile
+## About
 
 Developer Advocate [Contentful](https://twitter.com/Contentful) & very big musical fan. Front End Lead for [WomenWhoCodeDC](https://twitter.com/WomenWhoCodeDC). Mentor & Instructor at [gcodehouse](https://twitter.com/gcodehouse).

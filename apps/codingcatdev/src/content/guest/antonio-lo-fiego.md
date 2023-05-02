@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/antonio_lofiego'
+cover: 'https://media.codingcat.dev/image/upload/v1682989611/main-codingcatdev-photo/podcast-guest/antonio_lofiego'
 name: Antonio Lo Fiego
 published: published
 slug: antonio-lo-fiego

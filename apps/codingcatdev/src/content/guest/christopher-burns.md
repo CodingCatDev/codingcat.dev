@@ -1,10 +1,10 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/v1682992072/main-codingcatdev-photo/podcast-guest/burnedchris'
 name: Christopher Burns
 published: published
 slug: christopher-burns
 start: January 1, 2000
-picks: 
+picks:
 socials:
   github: 'https://github.com/Burnsy'
   linkedin: 'https://www.linkedin.com/in/burnedchris/'
@@ -13,12 +13,6 @@ socials:
 websites:
 ---
 
-# Christopher Burns
-
-streams: https://www.notion.so/Podcasters-Unite-b202776c079347bc9b9b616859472cbe
-
-## Christopher Burns
-
-### Profile
+## About
 
 Co-founder working on increasing the GDP of Non-Profits [Everfund](https://everfund.io/). Also the one to bring the British humour and mannerisms to [FS Jam](https://fsjam.org/) Podcast.

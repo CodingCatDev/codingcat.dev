@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/v1682991972/main-codingcatdev-photo/podcast-guest/chrisbiscardi'
 name: Chris Biscardi
 published: published
 slug: chris-biscardi
@@ -9,14 +9,10 @@ socials:
   twitter: 'https://twitter.com/chrisbiscardi'
   youtube: 'http://youtube.com/c/chrisbiscardi'
 websites:
-    - 'http://discord.gg/partycorgi'
-    - 'http://cjb.dev/newsletter'
+  - 'http://discord.gg/partycorgi'
+  - 'http://cjb.dev/newsletter'
 ---
 
-# Chris Biscardi
-
-streams: https://www.notion.so/MDX-with-Chris-Biscard-707fa9684f4743d08a8bbf14d7feda23, https://www.notion.so/Learn-to-Build-Reliable-and-Efficient-Software-in-Rust-15ad2a2e43624f818766d8d0c39618d7
-
-## Chris Biscardi
+## About
 
 Chris teaches [Rust](https://www.christopherbiscardi.com/rust) and JavaScript, often focuses on Jamstack, Serverless, and Game development. Chris uses things like ESModules, [Toast](https://twitter.com/toastdotdev), and MDX.

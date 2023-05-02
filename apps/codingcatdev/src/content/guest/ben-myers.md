@@ -1,26 +1,20 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/BenDMyers'
 name: Ben Myers
 published: published
 slug: ben-myers
 start: January 1, 2000
-picks: 
+picks:
 socials:
   linkedin: 'https://www.linkedin.com/in/BenDMyers/'
   twitter: 'https://twitter.com/BenDMyers'
   twitch: 'https://www.twitch.tv/SomeAnticsDev'
   youtube: 'https://www.youtube.com/channel/UCoc1J1XEEtg4sNrt3V-tNRw'
 websites:
-    - 'https://benmyers.dev/'
+  - 'https://benmyers.dev/'
 ---
 
-# Ben Myers
-
-streams: https://www.notion.so/A11y-with-Ben-Myers-d3257a4fe819452499ba59e95271201f
-
-## Ben Myers
-
-### Profile
+## About
 
 Ben is a web developer from McKinney, Texas. His teammates know him for his commitment to web accessibility, intentional inclusiveness, and unforgivable puns.
 

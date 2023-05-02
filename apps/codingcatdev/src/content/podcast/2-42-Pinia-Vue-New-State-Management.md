@@ -10,7 +10,7 @@ cover: https://media.codingcat.dev/image/upload/v1661198707/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/242-pinia-vues-new-state-management-2a6g
 excerpt: We sat down with Eduardo San Martin Morote to chat all about how he helped to create Pinia, Vue’s New State Management system.
 guests:
-  - ben-hong
+  - eduardo-san-martin-morote
 hashnode: https://hashnode.codingcat.dev/podcast-2-42-Pinia-Vue's-New-State-Management
 slug: 2-42-Pinia-Vue-New-State-Management
 spotify: https://open.spotify.com/episode/3D3qGwlpKEXf8FDaz2lALw?si=Naubm7BYTV6i_umVJfJhnQ

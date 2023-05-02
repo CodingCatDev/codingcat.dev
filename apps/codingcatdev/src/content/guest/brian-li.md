@@ -1,14 +1,14 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/v1682991155/main-codingcatdev-photo/podcast-guest/bwhli'
 name: Biran Li
 published: published
 slug: brian-li
 start: January 1, 2000
-picks: 
 socials:
+  twitter: https://twitter.com/bwhli
 websites:
 ---
 
-# Brian Li
+## About
 
-streams: https://www.notion.so/Kinsta-36719b4a592244e1b85a46350cdc4778
+On the team at [Fly.io](https://fly.io/)

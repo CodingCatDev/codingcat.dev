@@ -42,6 +42,7 @@
 					<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
 					<li>{data.content.name}</li>
 				</ol>
+				<h1>{data?.content?.name}</h1>
 				{#if data?.content?.cover}
 					<div class="w-40 md:w-80">
 						<CloudinaryImage src={data.content.cover} alt={data.content.name} />

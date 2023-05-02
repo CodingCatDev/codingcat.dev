@@ -1,22 +1,20 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/remotesynth'
 name: Brian Rinaldi
 published: published
 slug: brian-rinaldi
 start: January 1, 2000
-picks: 
 socials:
   linkedin: 'https://www.linkedin.com/in/douwem/'
   twitter: 'https://twitter.com/DouweM'
 websites:
+  - https://remotesynthesis.com/
 ---
 
-# Brian Rinaldi
+Developer experience engineer [@LaunchDarkly](https://twitter.com/LaunchDarkly)
 
-streams: https://www.notion.so/Developer-Events-and-Community-on-CFE-dev-fecae7d26f4b4b5f92cd5d53927996be
+Runs [@cfe_dev](https://twitter.com/cfe_dev)
 
-## Guest
+Editor [@jamstacked](https://twitter.com/jamstacked) newsletter.
 
-### Profile
-
-Douwe is the Founder & CEO of Meltano, an open source DataOps OS.
+[@OrlandoDevs](https://twitter.com/OrlandoDevs) co-organizer. find me posting elsewhere.

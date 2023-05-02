@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/'
+cover: 'https://media.codingcat.dev/image/upload/v1682990153/main-codingcatdev-photo/podcast-guest/bradgarropy'
 name: Brad Garropy
 published: published
 slug: brad-garropy
@@ -11,10 +11,6 @@ websites:
   - 'https://bradgarropy.com/'
 ---
 
-# Brad Garropy
-
-streams: https://www.notion.so/Side-Project-Hustle-4057d939f0bd4dc996c4962b472848ac
-
-## Brad Garropy
+## About
 
 Lead frontend developer at Adobe, content creator on Twitch and YT, new co-host of the WebDev Weekly podcast, and a side project connoisseur.
