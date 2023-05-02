@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1663010452/main-codingcatdev-photo/Plasmic-with-Ekene-Eze-%28Kenny%29.jpg
 devto: https://dev.to/codingcatdev/239-plasmic-with-ekene-eze-kenny-2pn
 excerpt: Kenny tells us all about the amazing no-code tool Plasmic. Plasmic is the visual builder for your tech stack.
+guests:
+  - ekene-eze
 hashnode: https://hashnode.codingcat.dev/podcast-Plasmic-with-Ekene-Eze-Kenny
 slug: Plasmic-with-Ekene-Eze-Kenny
 spotify: https://open.spotify.com/episode/1kXO4pEgN0SMmAxU6Hkr92?si=ZMjGFjrtTZec5T6hzl3sCg
