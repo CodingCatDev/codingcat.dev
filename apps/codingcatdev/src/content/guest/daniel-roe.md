@@ -1,5 +1,5 @@
 ---
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/danielcroe'
+cover: 'https://media.codingcat.dev/image/upload/v1683061142/main-codingcatdev-photo/podcast-guest/danielroe'
 name: Daniel Roe
 published: published
 slug: daniel-roe
