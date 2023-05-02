@@ -16,12 +16,12 @@ export const load = (async ({ params }) => {
 	}
 
 	const authorModules = import.meta.glob(['../../../../../content/author/*.md']);
-	const guestItems = await parseModules(authorModules);
+	const authorItems = await parseModules(authorModules);
 
 	const authors: Author[] = [];
 	if (content?.authors?.length) {
 		for (const authorSlug of content.authors) {
-			const author = await getContentBySlug({ contentItems: guestItems, slug: authorSlug }) as unknown as Author;
+			const author = await getContentBySlug({ contentItems: authorItems, slug: authorSlug }) as unknown as Author;
 			if (author) {
 				authors.push(author);
 			}

@@ -1,13 +1,14 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Lesson, Course } from '$lib/types';
+	import type { Lesson, Course, Author } from '$lib/types';
 	import { browser } from '$app/environment';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
 	export let data: {
 		course: Course;
 		content: Lesson;
+		authors: Author[];
 	};
 </script>
 
@@ -28,6 +29,25 @@
 					<Video src={data.content.youtube} title={`${data.content.title}`} />
 				{:else if data?.content?.cover}
 					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
+				{/if}
+				{#if data?.authors}
+					<section class="flex">
+						{#each data?.authors as author (author.slug)}
+							<a
+								class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+								href={`/author/${author.slug}`}
+							>
+								{#if author?.cover}
+									<div class="w-8 md:w-12">
+										{#key author.slug}
+											<CloudinaryImage src={author.cover} alt={author?.name} />
+										{/key}
+									</div>
+								{/if}
+								<div>{author?.name}</div>
+							</a>
+						{/each}
+					</section>
 				{/if}
 				{#if data?.content?.title}
 					<h1>{data?.content?.title}</h1>
