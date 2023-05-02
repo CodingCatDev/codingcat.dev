@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/yyrquz4lvrvdcwgvgdte.png
 devto: https://dev.to/codingcatdev/0-2-purrfect-program-management-4281
 excerpt: Talking with Nicholas Rouech, Infotainment Software Program Manager at General Motors, about Program Management.
+guests:
+  - nick-rouech
 hashnode: https://hashnode.codingcat.dev/podcast-0-2-purrfect-program-management
 slug: 0-2-purrfect-program-management
 spotify: https://open.spotify.com/episode/2hxYOKLRhXFIMkMmrJyC07?si=60zBT8YuTLmvfxKAyRILJQ

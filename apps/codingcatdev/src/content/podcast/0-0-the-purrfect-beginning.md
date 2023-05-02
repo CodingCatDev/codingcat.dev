@@ -9,6 +9,8 @@ chapters_done: true
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/fvjgqo2gifcvdlpih6zk.png
 excerpt: We are on a mission to provide you with the latest tools and trends, that take you from a house cat to a fierce LION.
+guests:
+  - nick-rouech
 slug: 0-0-the-purrfect-beginning
 spotify: https://open.spotify.com/episode/7CNCzMYjhDOFlol9glttxP?si=WmoeWiyEQACDrHADiiwgkw
 start: December 14, 2019
