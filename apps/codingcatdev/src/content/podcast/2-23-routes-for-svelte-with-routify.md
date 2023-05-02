@@ -11,6 +11,7 @@ devto: https://dev.to/codingcatdev/223-routes-for-svelte-with-routify-4dcg
 excerpt: Jake Rosenberg and Willow join us to talk about Routes for Svelte with Routify.
 guests:
   - willow
+  - jake-rosenberg
 hashnode: https://hashnode.codingcat.dev/podcast-2-23-routes-for-svelte-with-routify
 slug: 2-23-routes-for-svelte-with-routify
 spotify: https://open.spotify.com/episode/5dBWRXsqsXJPlNwSRmAI1s?si=jHQuWoTVQpaJuh_7vD-nZg
