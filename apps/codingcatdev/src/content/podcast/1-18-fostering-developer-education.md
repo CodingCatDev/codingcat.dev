@@ -1,7 +1,7 @@
 ---
 episode: 18
-guest:
-  - Lauren-Lee
+guests:
+  - lauren-lee
 recording_date: March 18, 2021 2:00 PM
 season: 1
 published: published
