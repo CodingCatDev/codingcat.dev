@@ -1,7 +1,6 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 
-	import Video from '$lib/components/content/Video.svelte';
 	import { ContentType, type Author, type Content, type Podcast, type Course } from '$lib/types';
 	import { pluralize } from '$lib/utils';
 	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';

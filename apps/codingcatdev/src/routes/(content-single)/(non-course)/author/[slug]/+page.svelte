@@ -1,6 +1,6 @@
 <script>
-	import Guest from './Guest.svelte';
+	import Author from './Author.svelte';
 	export let data;
 </script>
 
-<Guest {data} />
+<Author {data} />

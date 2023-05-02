@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 const contentType = ContentType.author;
 
 export const load = (async ({ params }) => {
-	const modules = import.meta.glob(['../../../../../content/guest/*.md']);
+	const modules = import.meta.glob(['../../../../../content/author/*.md']);
 	const contentItems = await parseModules(modules);
 	const content = await getContentBySlug({ contentItems, slug: params.slug }) as unknown as Author;
 	if (!content) {
