@@ -48,7 +48,9 @@
 				<h1>{data?.content?.name}</h1>
 				{#if data?.content?.cover}
 					<div class="w-40 md:w-80">
-						<CloudinaryImage src={data.content.cover} alt={data.content.name} />
+						{#key data.content.cover}
+							<CloudinaryImage src={data.content.cover} alt={data.content.name} />
+						{/key}
 					</div>
 				{/if}
 				<section class="flex flex-wrap gap-8 m-2 md:gap-4 socials">
