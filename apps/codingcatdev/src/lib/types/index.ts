@@ -74,6 +74,7 @@ export enum PodcastType {
 }
 
 export interface Socials {
+	devto?: string;
 	discord?: string;
 	facebook?: string;
 	github?: string;
@@ -81,6 +82,7 @@ export interface Socials {
 	email?: string;
 	mastodon?: string;
 	medium?: string;
+	polywork?: string;
 	stackoverflow?: string;
 	tiktok?: string;
 	twitch?: string;

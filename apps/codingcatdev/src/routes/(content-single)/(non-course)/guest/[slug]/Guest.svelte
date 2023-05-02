@@ -8,12 +8,14 @@
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import {
+		Devdotto,
 		Discord,
 		Facebook,
 		Github,
 		Linkedin,
 		Mastodon,
 		Medium,
+		Polywork,
 		Stackoverflow,
 		Tiktok,
 		Twitch,
@@ -50,6 +52,16 @@
 				{/if}
 				<section class="flex flex-wrap gap-8 m-2 md:gap-4 socials">
 					{#if data?.content?.socials}
+						{#if data.content?.socials?.devto}
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={data.content?.socials?.devto}
+								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+							>
+								<Icon src={Devdotto} class="w-8" theme="solid" />
+							</a>
+						{/if}
 						{#if data.content?.socials?.discord}
 							<a
 								target="_blank"
@@ -108,6 +120,16 @@
 								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
 							>
 								<Icon src={Medium} class="w-8" theme="solid" />
+							</a>
+						{/if}
+						{#if data.content?.socials?.polywork}
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={data.content?.socials?.polywork}
+								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+							>
+								<Icon src={Polywork} class="w-8" theme="solid" />
 							</a>
 						{/if}
 						{#if data.content?.socials?.stackoverflow}
