@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/ygqhzxyhtfpfilzskglf.png
 devto: https://dev.to/codingcatdev/1-1-infrastructure-as-code-with-pulumi-7lh
 excerpt: Talking with Lee Briggs about Infrastructure as Code (IaC). Lee explains what IaC means and how Pulumi is working on a solution that allows you to stay in the same language as your code.
+guests:
+  - lee-briggs
 hashnode: https://hashnode.codingcat.dev/podcast-infrastructure-as-code-with-pulumi
 slug: infrastructure-as-code-with-pulumi
 spotify: https://open.spotify.com/episode/6KXIfXP8ZyUNqNj8pKSRqz?si=Ya6s7TBVT0aOvnmipIpBzw
