@@ -11,6 +11,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1661197930/main-codingcatdev-photo/Build-Healthy-OSS-Communities-with-OpenSauced.jpg
 devto: https://dev.to/codingcatdev/247-build-healthy-oss-communities-with-opensauced-5eh4
 excerpt: Brittney chats with Brian Douglas (bdougie) all about OpenSauced and how Open Source has impacted Brian’s career.
+guest: 
+   - brian-douglas
 hashnode: https://hashnode.codingcat.dev/podcast-2-47-Build-Healthy-OSS-Communities-with-OpenSauced
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=2-47-Build-Healthy-OSS-Communities-with-OpenSauced&_id=ad30a0046c2e48f3b9e2e4fd788bbe3f
 slug: 2-47-Build-Healthy-OSS-Communities-with-OpenSauced

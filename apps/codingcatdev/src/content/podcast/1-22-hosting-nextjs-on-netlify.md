@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/inhxfdhdrfjmnvcfzwyi.png
 devto: https://dev.to/codingcatdev/1-22-hosting-next-js-on-netlify-2clh
 excerpt: We sat down with Cassidy Williams to talk about her background as a developer. Then we talked about the cool new Next.js on Netlify hosting feature.
+guests:
+    - cassidy-williams
 hashnode: https://hashnode.codingcat.dev/podcast-1-22-hosting-nextjs-on-netlify
 slug: 1-22-hosting-nextjs-on-netlify
 spotify: https://open.spotify.com/episode/6B4r7ksTX2YM1Q6Y2qiY0v?si=z24Gzt1GQ6SA2IRuNpLY-w

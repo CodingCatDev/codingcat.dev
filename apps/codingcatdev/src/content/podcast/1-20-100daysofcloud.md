@@ -1,7 +1,7 @@
 ---
 episode: 20
-guest:
-  - Antonio-Lo-Fiego
+guests:
+  - antonio-lo-fiego
 recording_date: March 18, 2021 7:00 PM
 season: 1
 published: published

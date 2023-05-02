@@ -2,6 +2,7 @@
 episode: 35
 guests:
   - anthony-campolo
+  - christopher-burns
 recording_date: July 19, 2022 4:00 PM
 season: 2
 published: published
