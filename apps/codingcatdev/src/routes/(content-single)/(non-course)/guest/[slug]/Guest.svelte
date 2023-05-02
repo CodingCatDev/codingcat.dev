@@ -12,6 +12,7 @@
 		Discord,
 		Facebook,
 		Github,
+		Instagram,
 		Linkedin,
 		Mastodon,
 		Medium,
@@ -90,6 +91,16 @@
 								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
 							>
 								<Icon src={Github} class="w-8" theme="solid" />
+							</a>
+						{/if}
+						{#if data.content?.socials?.instagram}
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={data.content?.socials?.instagram}
+								class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+							>
+								<Icon src={Instagram} class="w-8" theme="solid" />
 							</a>
 						{/if}
 						{#if data.content?.socials?.linkedin}

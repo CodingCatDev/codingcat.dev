@@ -78,6 +78,7 @@ export interface Socials {
 	discord?: string;
 	facebook?: string;
 	github?: string;
+	instagram?: string;
 	linkedin?: string;
 	email?: string;
 	mastodon?: string;
