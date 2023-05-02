@@ -1,7 +1,7 @@
 ---
 episode: 38
-guest:
-  - Omed-Habib
+guests:
+  - omed-habib
 recording_date: September 7, 2021 7:00 PM
 season: 1
 published: published
