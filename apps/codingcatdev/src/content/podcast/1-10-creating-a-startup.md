@@ -12,6 +12,7 @@ excerpt: Creating a Startup is hard! Learn from the experts who have created gre
 guests:
   - aaron-frost
   - ali-spittel
+  - kelly-vaughn
   - tyler-mcginnis
 hashnode: https://hashnode.codingcat.dev/podcast-1-10-creating-a-startup
 slug: 1-10-creating-a-startup
