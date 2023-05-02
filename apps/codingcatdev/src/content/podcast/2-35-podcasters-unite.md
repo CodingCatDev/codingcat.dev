@@ -2,7 +2,11 @@
 episode: 35
 guests:
   - anthony-campolo
+  - cassidy-williams
   - christopher-burns
+  - jason-lengstorf
+  - james-q-quick
+  - justin-schwartzenberger
 recording_date: July 19, 2022 4:00 PM
 season: 2
 published: published
