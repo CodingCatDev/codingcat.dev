@@ -1,7 +1,7 @@
 ---
 episode: 31
-guest:
-  - Greg-Whitworth
+guests:
+  - greg-whitworth
 recording_date: June 9, 2022 2:15 PM
 season: 2
 published: published
