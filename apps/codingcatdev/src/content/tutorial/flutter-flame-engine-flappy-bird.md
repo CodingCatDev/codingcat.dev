@@ -1,7 +1,9 @@
 ---
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/FlutterFlameFlappy.png
-excerpt: Spydon teaches Alex and Brittney how to setup and use Flame to build a Flappy Bird clone. 
+excerpt: Spydon teaches Alex and Brittney how to setup and use Flame to build a Flappy Bird clone.
+authors:
+  - lukas-spydon
 hashnode: https://hashnode.codingcat.dev/tutorial-flutter-flame-engine-flappy-bird
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=flutter-flame-engine-flappy-bird&_id=795378033f7f4bc7810289bf6b61484a
 published: published
@@ -35,7 +37,7 @@ All of our code can be found in the `lib` directory. All of our sprites and othe
 
 ## Dependencies
 
-In Flutter all of your dependencies are stored in `pubspec.yaml`.  I would recommend changing from the git version to a published version.
+In Flutter all of your dependencies are stored in `pubspec.yaml`. I would recommend changing from the git version to a published version.
 
 ```diff
 -flame:
@@ -284,7 +286,6 @@ class BoxStack extends PositionComponent with HasGameRef<FlappyEmber> {
 
 ## Testing the Game
 
-Throughout this process you most likely will want to debug the game. Once again have the VSCode Flutter plugin this is made super simple. All you need to do is be in any of the the files in the source directory and use the run and debug screen like normal and this will build out your desktop or mobile version of the game. 
- 
+Throughout this process you most likely will want to debug the game. Once again have the VSCode Flutter plugin this is made super simple. All you need to do is be in any of the the files in the source directory and use the run and debug screen like normal and this will build out your desktop or mobile version of the game.
 
 ![Untitled](https://media.codingcat.dev/image/upload/v1669175626/main-codingcatdev-photo/ba6c7386-67ff-4488-ac4e-d19d0ed4853a.png)
