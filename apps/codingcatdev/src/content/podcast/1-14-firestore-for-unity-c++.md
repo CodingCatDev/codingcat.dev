@@ -1,7 +1,7 @@
 ---
 episode: 14
-guest:
-  - Patrick-Martin
+guests:
+  - patrick-martin
 recording_date: March 8, 2021 12:00 PM
 season: 1
 published: published
