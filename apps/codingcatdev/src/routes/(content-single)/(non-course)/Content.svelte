@@ -104,7 +104,7 @@
 										<section class="p-4 flex flex-wrap gap-2 md:gap-8">
 											{#each picks.filter((p) => p?.author === guest?.slug) as pick (pick.name)}
 												<a
-													class="bcu-button variant-filled-primary flex gap-2"
+													class="bcu-button variant-soft-primary flex gap-2"
 													href={pick.site}
 													target="_blank"
 													rel="noopener noreferrer"
@@ -138,7 +138,7 @@
 										<section class="p-4 flex flex-wrap gap-2 md:gap-8">
 											{#each picks.filter((p) => p?.author === author?.slug) as pick (pick.name)}
 												<a
-													class="bcu-button variant-filled-primary flex gap-2"
+													class="bcu-button variant-soft-primary flex gap-2"
 													href={pick.site}
 													target="_blank"
 													rel="noopener noreferrer"
