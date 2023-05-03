@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1658570793/main-codingcatdev-photo/CSS-Animations.png
 excerpt: How to use CSS Animations by example

@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1633601646/main-codingcatdev-photo/czh38omkhxq4qe2v766h.png
+cover: https://media.codingcat.dev/image/upload/v1633601646/main-codingcatdev-photo/czh38omkhxq4qe2v766h.png
 devto: https://dev.to/codingcatdev/adding-angular-components-to-your-static-site-1g6k
 excerpt: Utilizing Web Components within Hugo Static Site Generator (or any static site), to take Stripe/PayPal payments and more!
 hashnode: https://hashnode.codingcat.dev/post-adding-angular-components-to-your-static-site

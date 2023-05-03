@@ -1,7 +1,7 @@
 ---
 episode: 17
-guest:
-  - Dan-Ribbens
+guests:
+  - daniel-ribbens
 recording_date: March 5, 2021 3:00 PM
 season: 1
 published: published

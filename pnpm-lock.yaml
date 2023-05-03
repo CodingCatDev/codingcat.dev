@@ -9,97 +9,146 @@ importers:
       turbo: 1.9.3
 
   apps/codingcatdev:
-    specifiers:
-      '@auth/core': ^0.5.1
-      '@auth/sveltekit': ^0.3.0
-      '@cloudinary/html': ^1.11.0
-      '@cloudinary/url-gen': ^1.9.1
-      '@codingcatdev/blackcatui': ^0.0.5
-      '@firebase/app-types': ~0.9.0
-      '@floating-ui/dom': ^1.2.6
-      '@playwright/test': ^1.31.1
-      '@steeze-ui/heroicons': ^2.2.2
-      '@steeze-ui/simple-icons': ^1.4.0
-      '@steeze-ui/svelte-icon': ^1.3.2
-      '@sveltejs/adapter-auto': ^2.0.0
-      '@sveltejs/adapter-vercel': ^2.4.1
-      '@sveltejs/kit': ^1.15.4
-      '@tailwindcss/forms': ^0.5.3
-      '@types/marked': ^4.0.8
-      '@types/prismjs': ^1.26.0
-      '@types/video.js': ^7.3.51
-      autoprefixer: ^10.4.13
-      eslint: ^8.35.0
-      eslint-config-prettier: ^8.6.0
-      eslint-plugin-svelte3: ^4.0.0
-      esm-env: ^1.0.0
-      firebase: ^9.19.1
-      firebase-admin: ^11.5.0
-      flexsearch: ^0.7.31
-      marked: ^4.2.12
-      mdsvex: ^0.10.6
-      postcss: ^8.4.21
-      postcss-load-config: ^4.0.1
-      prettier: ^2.8.4
-      prettier-plugin-svelte: ^2.9.0
-      prism-svelte: ^0.5.0
-      prism-themes: ^1.9.0
-      prismjs: ^1.29.0
-      svelte: ^3.58.0
-      svelte-check: ^3.2.0
-      svelte-preprocess: ^5.0.3
-      tailwindcss: ^3.2.7
-      theme-change: ^2.3.0
-      typescript: ^4.9.5
-      videojs-youtube: ^2.6.1
-      vite: ^4.1.4
-      vitest: ^0.29.1
     dependencies:
-      '@cloudinary/html': 1.11.2
-      '@cloudinary/url-gen': 1.10.0
-      '@floating-ui/dom': 1.2.6
-      esm-env: 1.0.0
-      firebase: 9.20.0
-      mdsvex: 0.10.6_svelte@3.58.0
-      prism-svelte: 0.5.0
-      prism-themes: 1.9.0
-      theme-change: 2.5.0
-      videojs-youtube: 2.6.1
+      '@cloudinary/html':
+        specifier: ^1.11.0
+        version: 1.11.0
+      '@cloudinary/url-gen':
+        specifier: ^1.9.1
+        version: 1.9.1
+      '@floating-ui/dom':
+        specifier: ^1.2.6
+        version: 1.2.6
+      esm-env:
+        specifier: ^1.0.0
+        version: 1.0.0
+      firebase:
+        specifier: ^9.19.1
+        version: 9.19.1
+      gsap:
+        specifier: ^3.11.5
+        version: 3.11.5
+      mdsvex:
+        specifier: ^0.10.6
+        version: 0.10.6(svelte@3.58.0)
+      prism-svelte:
+        specifier: ^0.5.0
+        version: 0.5.0
+      prism-themes:
+        specifier: ^1.9.0
+        version: 1.9.0
+      theme-change:
+        specifier: ^2.3.0
+        version: 2.3.0
+      videojs-youtube:
+        specifier: ^2.6.1
+        version: 2.6.1(video.js@7.21.3)
     devDependencies:
-      '@auth/core': 0.5.1
-      '@auth/sveltekit': 0.3.1_c74wmdq77fz3r6czhrjottaazq
-      '@codingcatdev/blackcatui': 0.0.5_amscrwpznrn5ofpenft7wthn6a
-      '@firebase/app-types': 0.9.0
-      '@playwright/test': 1.32.3
-      '@steeze-ui/heroicons': 2.2.2
-      '@steeze-ui/simple-icons': 1.4.0
-      '@steeze-ui/svelte-icon': 1.3.2
-      '@sveltejs/adapter-auto': 2.0.1_@sveltejs+kit@1.15.8
-      '@sveltejs/adapter-vercel': 2.4.2_@sveltejs+kit@1.15.8
-      '@sveltejs/kit': 1.15.8_svelte@3.58.0+vite@4.3.2
-      '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.1
-      '@types/marked': 4.0.8
-      '@types/prismjs': 1.26.0
-      '@types/video.js': 7.3.51
-      autoprefixer: 10.4.14_postcss@8.4.23
-      eslint: 8.39.0
-      eslint-config-prettier: 8.8.0_eslint@8.39.0
-      eslint-plugin-svelte3: 4.0.0_e3tiew2b4q4prbk4th5mqlc2ou
-      firebase-admin: 11.7.0
-      flexsearch: 0.7.31
-      marked: 4.3.0
-      postcss: 8.4.23
-      postcss-load-config: 4.0.1_postcss@8.4.23
-      prettier: 2.8.8
-      prettier-plugin-svelte: 2.10.0_f6pmxuoopicxy7gb3t3nvoipzy
-      prismjs: 1.29.0
-      svelte: 3.58.0
-      svelte-check: 3.2.0_z4qdfiwkj4lltp3x24e5qnnebi
-      svelte-preprocess: 5.0.3_e5dquh5th5t45wgs76vknabg2a
-      tailwindcss: 3.3.1_postcss@8.4.23
-      typescript: 4.9.5
-      vite: 4.3.2
-      vitest: 0.29.8
+      '@auth/core':
+        specifier: ^0.5.1
+        version: 0.5.1
+      '@auth/sveltekit':
+        specifier: ^0.3.0
+        version: 0.3.0(@sveltejs/kit@1.15.4)(svelte@3.58.0)
+      '@codingcatdev/blackcatui':
+        specifier: ^0.0.5
+        version: 0.0.5(svelte@3.58.0)(tailwindcss@3.2.7)
+      '@firebase/app-types':
+        specifier: ~0.9.0
+        version: 0.9.0
+      '@playwright/test':
+        specifier: ^1.31.1
+        version: 1.31.1
+      '@steeze-ui/heroicons':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@steeze-ui/simple-icons':
+        specifier: ^1.4.0
+        version: 1.4.0
+      '@steeze-ui/svelte-icon':
+        specifier: ^1.3.2
+        version: 1.3.2
+      '@sveltejs/adapter-auto':
+        specifier: ^2.0.0
+        version: 2.0.0(@sveltejs/kit@1.15.4)
+      '@sveltejs/adapter-vercel':
+        specifier: ^2.4.1
+        version: 2.4.1(@sveltejs/kit@1.15.4)
+      '@sveltejs/kit':
+        specifier: ^1.15.4
+        version: 1.15.4(svelte@3.58.0)(vite@4.1.4)
+      '@tailwindcss/forms':
+        specifier: ^0.5.3
+        version: 0.5.3(tailwindcss@3.2.7)
+      '@types/marked':
+        specifier: ^4.0.8
+        version: 4.0.8
+      '@types/prismjs':
+        specifier: ^1.26.0
+        version: 1.26.0
+      '@types/video.js':
+        specifier: ^7.3.51
+        version: 7.3.51
+      autoprefixer:
+        specifier: ^10.4.13
+        version: 10.4.13(postcss@8.4.21)
+      eslint:
+        specifier: ^8.35.0
+        version: 8.35.0
+      eslint-config-prettier:
+        specifier: ^8.6.0
+        version: 8.6.0(eslint@8.35.0)
+      eslint-plugin-svelte3:
+        specifier: ^4.0.0
+        version: 4.0.0(eslint@8.35.0)(svelte@3.58.0)
+      feed:
+        specifier: ^4.2.2
+        version: 4.2.2
+      firebase-admin:
+        specifier: ^11.5.0
+        version: 11.5.0
+      flexsearch:
+        specifier: ^0.7.31
+        version: 0.7.31
+      marked:
+        specifier: ^4.2.12
+        version: 4.2.12
+      postcss:
+        specifier: ^8.4.21
+        version: 8.4.21
+      postcss-load-config:
+        specifier: ^4.0.1
+        version: 4.0.1(postcss@8.4.21)
+      prettier:
+        specifier: ^2.8.4
+        version: 2.8.4
+      prettier-plugin-svelte:
+        specifier: ^2.9.0
+        version: 2.9.0(prettier@2.8.4)(svelte@3.58.0)
+      prismjs:
+        specifier: ^1.29.0
+        version: 1.29.0
+      svelte:
+        specifier: ^3.58.0
+        version: 3.58.0
+      svelte-check:
+        specifier: ^3.2.0
+        version: 3.2.0(postcss-load-config@4.0.1)(postcss@8.4.21)(svelte@3.58.0)
+      svelte-preprocess:
+        specifier: ^5.0.3
+        version: 5.0.3(postcss-load-config@4.0.1)(postcss@8.4.21)(svelte@3.58.0)(typescript@4.9.5)
+      tailwindcss:
+        specifier: ^3.2.7
+        version: 3.2.7(postcss@8.4.21)
+      typescript:
+        specifier: ^4.9.5
+        version: 4.9.5
+      vite:
+        specifier: ^4.1.4
+        version: 4.1.4(@types/node@18.14.2)
+      vitest:
+        specifier: ^0.29.1
+        version: 0.29.1
 
   apps/firebase:
     specifiers:
@@ -3945,7 +3994,20 @@ packages:
     dependencies:
       websocket-driver: 0.7.4
 
-  /file-entry-cache/6.0.1:
+  /fb-watchman@2.0.2:
+    resolution: {integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==}
+    dependencies:
+      bser: 2.1.1
+    dev: true
+
+  /feed@4.2.2:
+    resolution: {integrity: sha512-u5/sxGfiMfZNtJ3OvQpXcvotFpYkL0n9u9mM2vkui2nGo8b4wvDkJ8gAkYqbA8QpGyFCv3RK0Z+Iv+9veCS9bQ==}
+    engines: {node: '>=0.4.0'}
+    dependencies:
+      xml-js: 1.6.11
+    dev: true
+
+  /file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
     dependencies:
@@ -4630,7 +4692,16 @@ packages:
       strip-bom-string: 1.0.0
     dev: false
 
-  /gtoken/5.3.2:
+  /growly@1.3.0:
+    resolution: {integrity: sha512-+xGQY0YyAWCnqy7Cd++hc2JqMYzlm0dG30Jd0beaA64sROr8C4nt8Yc9V5Ro3avlSUDTN0ulqP/VBKi1/lLygw==}
+    dev: true
+    optional: true
+
+  /gsap@3.11.5:
+    resolution: {integrity: sha512-Q89nKCLgoX5xUjznh9LcaIUkz54k1voNucT1Rpf9SJNFIQznBwFqt5qUUQbeVInFyN/n18OUJkpeI6CNEDt74w==}
+    dev: false
+
+  /gtoken@5.3.2:
     resolution: {integrity: sha512-gkvEKREW7dXWF8NV8pVrKfW7WqReAmjjkMBh6lNCCGOM4ucS0r0YyXXl0r/9Yj8wcW/32ISkfc8h5mPTDbtifQ==}
     engines: {node: '>=10'}
     dependencies:
@@ -6490,7 +6561,37 @@ packages:
       rimraf: 2.7.1
     dev: true
 
-  /section-matter/1.0.0:
+  /sane@4.1.0:
+    resolution: {integrity: sha512-hhbzAgTIX8O7SHfp2c8/kREfEn4qO/9q8C9beyY6+tvZ87EpoZ3i1RIEvp27YBswnNbY9mWd6paKVmKbAgLfZA==}
+    engines: {node: 6.* || 8.* || >= 10.*}
+    deprecated: some dependency vulnerabilities fixed, support for node < 10 dropped, and newer ECMAScript syntax/features added
+    hasBin: true
+    dependencies:
+      '@cnakazawa/watch': 1.0.4
+      anymatch: 2.0.0
+      capture-exit: 2.0.0
+      exec-sh: 0.3.6
+      execa: 1.0.0
+      fb-watchman: 2.0.2
+      micromatch: 3.1.10
+      minimist: 1.2.8
+      walker: 1.0.8
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /sax@1.2.4:
+    resolution: {integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==}
+    dev: true
+
+  /saxes@5.0.1:
+    resolution: {integrity: sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==}
+    engines: {node: '>=10'}
+    dependencies:
+      xmlchars: 2.2.0
+    dev: true
+
+  /section-matter@1.0.0:
     resolution: {integrity: sha512-vfD3pmTzGpufjScBh50YHKzEu2lxBWhVEHsNGoEXmCmn2hKGfeNLYMzCJpe8cD7gqX7TJluOVpBkAequ6dgMmA==}
     engines: {node: '>=4'}
     dependencies:
@@ -7729,7 +7830,22 @@ packages:
     engines: {node: '>=8'}
     optional: true
 
-  /xmlcreate/2.0.4:
+  /xml-js@1.6.11:
+    resolution: {integrity: sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==}
+    hasBin: true
+    dependencies:
+      sax: 1.2.4
+    dev: true
+
+  /xml-name-validator@3.0.0:
+    resolution: {integrity: sha512-A5CUptxDsvxKJEU3yO6DuWBSJz/qizqzJKOMIfUJHETbBw/sFaDxgd6fxm1ewUaM0jZ444Fc5vC5ROYurg/4Pw==}
+    dev: true
+
+  /xmlchars@2.2.0:
+    resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
+    dev: true
+
+  /xmlcreate@2.0.4:
     resolution: {integrity: sha512-nquOebG4sngPmGPICTS5EnxqhKbCmz5Ox5hsszI2T6U5qdrJizBc+0ilYSEjTSzU0yZcmvppztXe/5Al5fUwdg==}
     dev: true
     optional: true

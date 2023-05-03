@@ -1,8 +1,8 @@
 ---
 episode: 42
-guest:
-  - Knut-Melvaer
-  - Sarah-Kapehe
+guests:
+  - knut-melvaer
+  - sarah-kapehe
 recording_date: September 16, 2021 2:30 PM
 season: 1
 published: published

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600706370/ccd-cloudinary/3fe0647160d8eafb9d6075a91389b87dde1daa68-1920x1080-1.png
 devto: https://dev.to/codingcatdev/increasing-productivity-with-notion-12p5

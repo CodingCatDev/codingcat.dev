@@ -1,7 +1,7 @@
 ---
 episode: 39
-guest:
-  - Facundo-Giuliani
+guests:
+  - facundo-giuliani
 recording_date: August 30, 2021 12:00 PM
 season: 1
 published: published

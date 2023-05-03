@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/ilpfshoaxdhnwemlsfld.png
 devto: https://dev.to/codingcatdev/0-8-cloudinary-with-tessa-mero-1of7
 excerpt: Talking with Tessa Mero all about Cloudinary, the Media Developer Experts program, and comparing other SAAS platforms.
+guests:
+  - tessa-mero
 hashnode: https://hashnode.codingcat.dev/podcast-0-8-cloudinary-with-tessa-mero
 slug: 0-8-cloudinary-with-tessa-mero
 spotify: https://open.spotify.com/episode/364rarhChFVl7uclywx17S?si=3Xb1rrCVRg6RNk4heLaJTQ

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1658578351/main-codingcatdev-photo/hamburger-button.png
 codepen: 'codercatdev/pen/qBojyaP'

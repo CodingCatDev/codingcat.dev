@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1620241182/main-codingcatdev-photo/gmjigd84bzqxklcbiljt.png
+cover: https://media.codingcat.dev/image/upload/v1620241182/main-codingcatdev-photo/gmjigd84bzqxklcbiljt.png
 excerpt: micro:bit Introduction
 framework:
   - makecode

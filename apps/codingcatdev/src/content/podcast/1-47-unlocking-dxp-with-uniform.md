@@ -1,7 +1,7 @@
 ---
 episode: 47
-guest:
-  - Tim-Benniks
+guests:
+  - tim-benniks
 recording_date: October 18, 2021 10:00 AM
 season: 1
 published: published

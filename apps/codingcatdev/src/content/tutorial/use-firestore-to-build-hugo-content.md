@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616547727/main-codingcatdev-photo/jstxkremimdttdzmghhe.png
+cover: https://media.codingcat.dev/image/upload/v1616547727/main-codingcatdev-photo/jstxkremimdttdzmghhe.png
 devto: https://dev.to/codingcatdev/use-firestore-to-build-hugo-conten-1o99
 excerpt: Use a frontend app (Angular), to update a Firestore Backend, trigger Firebase Function, while maintaining git commits, and buld/deploy your Hugo site.
 hashnode: https://hashnode.codingcat.dev/tutorial-use-firestore-to-build-hugo-content
@@ -13,30 +15,9 @@ title: Use Firestore to Build Hugo Content
 
 This tutorial will explore some fairly complex triggers and Git practices.
 
-Demo: <br/> [Angular Admin Site](https://ajonp-lesson-8-admin.firebaseapp.com/)<br/> [Hugo Main Site](https://ajonp-lesson-8-hugo.firebaseapp.com/)
-
-## Steps
-
-1. Billing Limit Reminder
-2. Fork/Clone lesson-8-hugo
-3. Create Hugo firebase hosting site
-4. Create Hugo Content Google Cloud Build Trigger
-5. Test Cloud Build Trigger
-6. Fork/Clone lesson-8-firestore-functions
-7. Build Angular Project
-8. Deploy Firebase Hosting from CLI
-9. Update Firestore Trigger to match your GitHub repo
-10. Deploy Firebase Functions from CLI
-11. Add a book, watch it show in Hugo site
-
-Optional
-
-- Cloud Build for CI/CD
-
 # Billing Limit Reminder
 
 > Reminder to try and stay as free as possible. You should not run into problems, but just in case. In your [Billing](https://console.cloud.google.com/billing/) Dashboard create a new Budget for your project incase you try this more than say 50 times.
-> 
 
 If you want to put a hard cap on builds checkout [Capping API Usage](https://cloud.google.com/apis/docs/capping-api-usage).
 
@@ -85,7 +66,6 @@ You can also view all the books in a list format at http://localhost:1313/books/
 This will be based on whatever the latest content had in `AJONPLLC/lesson-8-hugo` if you don't want any of it feel free to clear all files in `content/books`.
 
 > Remember Hugo dynamically builds files, so if you delete all of the files in `content/books` you will get a 404 on `http://localhost:1313/books/`.
-> 
 
 # Create Hugo firebase hosting site
 
@@ -111,40 +91,34 @@ There are a couple firebase commands that you could use to manually add the corr
 
 ```json
 {
-  "projects": {
-    "default": "ajonp-lesson-8"
-  },
-  "targets": {
-    "ajonp-lesson-8": {
-      "hosting": {
-        "ajonp-lesson-8-hugo": [
-          "ajonp-lesson-8-hugo"
-        ]
-      }
-    }
-  }
+	"projects": {
+		"default": "ajonp-lesson-8"
+	},
+	"targets": {
+		"ajonp-lesson-8": {
+			"hosting": {
+				"ajonp-lesson-8-hugo": ["ajonp-lesson-8-hugo"]
+			}
+		}
+	}
 }
-
 ```
 
 Your update .firebaserc
 
 ```json
 {
-  "projects": {
-    "default": "your-project"
-  },
-  "targets": {
-    "your-project": {
-      "hosting": {
-        "your-hosting-name": [
-          "your-hosting-name"
-        ]
-      }
-    }
-  }
+	"projects": {
+		"default": "your-project"
+	},
+	"targets": {
+		"your-project": {
+			"hosting": {
+				"your-hosting-name": ["your-hosting-name"]
+			}
+		}
+	}
 }
-
 ```
 
 In the above example replace the default project to match your project. For targets this is mapping your project to your hosting names, we will define the hosting name in firebase.json as the target.
@@ -153,15 +127,11 @@ firebase.json
 
 ```json
 {
-  "hosting": {
-    "target": "ajonp-lesson-8-hugo",
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  }
+	"hosting": {
+		"target": "ajonp-lesson-8-hugo",
+		"public": "public",
+		"ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+	}
 }
 ```
 
@@ -169,15 +139,11 @@ Your update firebase.json
 
 ```json
 {
-  "hosting": {
-    "target": "your-hosting-name",
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  }
+	"hosting": {
+		"target": "your-hosting-name",
+		"public": "public",
+		"ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+	}
 }
 ```
 
@@ -190,7 +156,6 @@ firebase deploy
 You should see a result with around 53 files.
 
 > If you only see a few check that you ran the submodule update.
-> 
 
 ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/3c72283b-db9b-410f-9430-4a6572ce5788.jpg](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/3c72283b-db9b-410f-9430-4a6572ce5788.jpg)
 
@@ -219,10 +184,8 @@ If this is a new project you will need to enable the cloud build API.
 ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/4ab89b5d-e3f6-4ad1-94cd-5e6d5641561d.png](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/4ab89b5d-e3f6-4ad1-94cd-5e6d5641561d.png)
 
 > If you receive an error, please make sure that you have changed to a Blaze Plan in Firebase.
-> 
-> 
+>
 > ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/9e748293-ca82-476e-b4c5-a11a321cf72e.png](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/9e748293-ca82-476e-b4c5-a11a321cf72e.png)
-> 
 
 ### Google Cloud Trigger Create
 
@@ -241,10 +204,8 @@ Settings
 - Name: Hugo CI/CD
 - Branch: master
 - Build configuration: cloudbuild.yaml
-- Substitution variables: _FIREBASE_TOKEN = yourtoken.
-    
-    ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/124829ab-c442-4e4e-bdf4-a958e6f176f8.png](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/124829ab-c442-4e4e-bdf4-a958e6f176f8.png)
-    
+- Substitution variables: \_FIREBASE_TOKEN = yourtoken.
+  ![https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/124829ab-c442-4e4e-bdf4-a958e6f176f8.png](https://media.codingcat.dev/image/upload/v1657636767/main-codingcatdev-photo/124829ab-c442-4e4e-bdf4-a958e6f176f8.png)
 
 # Test Cloud Build Trigger
 
@@ -259,7 +220,6 @@ images = ["https://res.cloudinary.com/ajonp/image/upload/w_500,q_auto/v154528263
 +++
 
 This is a commit test creating a book.
-
 ```
 
 ## Local git push
@@ -309,7 +269,6 @@ Finished Step #5
 ```
 
 > Reminder if you don't see the new file it may be cached in the browser/service worker, you can force refresh the browser to see this.
-> 
 
 # Fork/Clone lesson-8-firestore-functions
 
@@ -329,19 +288,15 @@ At this time you are still pointing at the AJONPLLC project database so you will
 
 ## Update the firebase configuration
 
-> 
-> 
-> 
 > You only need one environment file, but I often have a dev and production setup with both.
-> 
 
 In your Firebase Project Overview there is a gear for Settings->Project settings.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/msoukza2h7qt3caep5op.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/msoukza2h7qt3caep5op.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/msoukza2h7qt3caep5op.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/msoukza2h7qt3caep5op.png)
 
 Then select the "Add Firebase to your web app" under the "Your apps" section.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/dt6rddue4ra5oezt4fmi.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/dt6rddue4ra5oezt4fmi.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/dt6rddue4ra5oezt4fmi.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/dt6rddue4ra5oezt4fmi.png)
 
 Copy the Javascript object that is assigned to config, in the next step we will paste this into our environment files.
 
@@ -359,7 +314,7 @@ Copy the Javascript object that is assigned to config, in the next step we will 
 
 ```
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/k4oljh0egz3ajrt9reo8.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/k4oljh0egz3ajrt9reo8.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/k4oljh0egz3ajrt9reo8.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/k4oljh0egz3ajrt9reo8.png)
 
 ## Authentication
 
@@ -371,14 +326,13 @@ You can update this in Authentication -> Sign-in method. Edit the Google Sign-in
 
 Back in your Firestore project select Database->Create Database
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/ni4xs9bhwfsexfdf6jho.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/ni4xs9bhwfsexfdf6jho.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/ni4xs9bhwfsexfdf6jho.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/ni4xs9bhwfsexfdf6jho.png)
 
 I recommend always starting in a lock mode, it helps you understand what security you will need throughout the app without forgetting something later. At times it even helps with you Data Model as some setups on security are just terrible.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/qcgjr0ld7j9n9vyqji1n.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/qcgjr0ld7j9n9vyqji1n.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/qcgjr0ld7j9n9vyqji1n.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/qcgjr0ld7j9n9vyqji1n.png)
 
 > Note at this point because your project is in lock mode you will not be able to successfully update the Firestore database and you will see failures, as every login we update a users record.
-> 
 
 ## Firebase Hosting Updates
 
@@ -388,27 +342,23 @@ You can do a full project find and replace looking for `ajonp-lesson-8-admin` an
 
 Example I changed mine from `ajonp-lesson-8-admin` to `ajonp-lesson-8-admin2`. If you use VSCode you can do it like below.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/fqslxxgc9jyelgl81xkq.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/fqslxxgc9jyelgl81xkq.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/fqslxxgc9jyelgl81xkq.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/fqslxxgc9jyelgl81xkq.png)
 
 src/styles/ajonp-lesson-8-admin -> your_name
 
 If you get an error that looks similar to this, it is because the styles file was changed and we just switched all the references in the line above.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/hpldbf8rxw9a4f4c2ztj.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/hpldbf8rxw9a4f4c2ztj.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/hpldbf8rxw9a4f4c2ztj.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/hpldbf8rxw9a4f4c2ztj.png)
 
 I changed mine from `ajonp-lesson-8-admin-app-theme.scss` to `ajonp-lesson-8-admin2-app-theme.scss`.
 
-> 
-> 
-> 
 > At this time you can test adding and deleting books from the database, but we still have plumbing to work on getting these to build the Hugo site.
-> 
 
 # Build Angular Project
 
 At this time I have not started using the Ivy rendering engine, but I hope it can complete builds faster in the future. Grab a quick coffee when you run this one.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/jzryeqykv2bhtzqvyvem.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/jzryeqykv2bhtzqvyvem.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/jzryeqykv2bhtzqvyvem.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/jzryeqykv2bhtzqvyvem.png)
 
 Now your entire site is ready for hosting, you can try it locally but running `firebase serve`.
 
@@ -420,7 +370,7 @@ Now that we have a production Angular build in `dist/ajonp-lesson-8-admin2` we c
 
 Hosting->Dashboard->Advanced select "Add another site"
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/bmvevp4ss4g85fnax9jc.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/bmvevp4ss4g85fnax9jc.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/bmvevp4ss4g85fnax9jc.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/bmvevp4ss4g85fnax9jc.png)
 
 ## Update Authorized Domains
 
@@ -430,7 +380,7 @@ This will be `your-project-admin`.firebaseapp.com
 
 You should now see three localhost, default (our Hugo site), your-project-admin site.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/tjwkte0y4bcml9whonre.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/tjwkte0y4bcml9whonre.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/tjwkte0y4bcml9whonre.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/tjwkte0y4bcml9whonre.png)
 
 # Update Firestore Trigger to match your GitHub repo
 
@@ -442,7 +392,7 @@ You will need to [Create Github Personal Token](https://github.com/settings/toke
 
 For this you can give the repo and read:user access, Name it something meaningful.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/suutevgobgp1hsgvja3k.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/suutevgobgp1hsgvja3k.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/suutevgobgp1hsgvja3k.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/suutevgobgp1hsgvja3k.png)
 
 ## Add GitHub Personal Token to Firebase Functions
 
@@ -456,16 +406,15 @@ Now Deploy your functions, this will transcode the typescript and put the js fil
 
 You should see a success message
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/mneaigflqyxmqoqp557b.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/mneaigflqyxmqoqp557b.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/mneaigflqyxmqoqp557b.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/mneaigflqyxmqoqp557b.png)
 
 # Add a book, watch it show in Hugo site
 
 > Warning you could have a race condition occur where your first trigger to build happens after your last. There are a few work arounds for this that I don't cover in this lesson. Remember everytime you save a build happens in Google Cloud Build to regenerate your entire Hugo site.
-> 
 
 In the bottom right corner you can click the + fab button, this will open the form for a New Book.
 
-![Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/xyn381bujrehp021yeju.png](Use%20Firestore%20to%20Build%20Hugo%20Conten%205510218aec734cb9aacf4f174266c57d/xyn381bujrehp021yeju.png)
+![https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/xyn381bujrehp021yeju.png](https://media.codingcat.dev/image/upload/v1545926029/ajonp-ajonp-com/8-lesson-firestore-functions/xyn381bujrehp021yeju.png)
 
 Once you click save this will trigger the Cloud Function `gitBookCreateHugoCommit`. Checkout the [logs](https://console.cloud.google.com/logs/viewer)
 

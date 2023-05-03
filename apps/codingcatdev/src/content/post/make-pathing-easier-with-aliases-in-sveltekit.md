@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1636202538/main-codingcatdev-photo/make_pathing_easier_with_aliases_in_sveltekit.png
+cover: https://media.codingcat.dev/image/upload/v1636202538/main-codingcatdev-photo/make_pathing_easier_with_aliases_in_sveltekit.png
 devto: https://dev.to/brittneypostma/make-pathing-easier-with-aliases-in-sveltekit-37l0
 excerpt: Pathing can be a pain, make it easier by using aliases!
 hashnode: https://hashnode.codingcat.dev/post-make-pathing-easier-with-aliases-in-sveltekit
@@ -10,6 +12,7 @@ slug: make-pathing-easier-with-aliases-in-sveltekit
 start: November 5, 2021
 title: Make Pathing Easier with Aliases in SvelteKit
 ---
+
 If you haven't heard about SvelteKit yet, go checkout the beautiful site over at [kit.svelte.dev](https://codingcat.dev/post/kit.svelte.dev). SvelteKit is a component framework similar to React and Vue with one key difference, there is no virtual DOM. Svelte is a compiler that builds itself away into a sleek and fast end user experience. If you haven't tried Svelte or SvelteKit before, you can check out my quick intro [tutorial](https://www.youtube.com/watch?v=fOD_3iSiwTQ) where we build a blog in 30 minutes 🤯
 
 Links:
@@ -18,25 +21,24 @@ TLDR: To setup an alias add the following lines to the `svelte.config.js`. For t
 
 ```jsx
 //svelte.config.js
-import path from 'path'
+import path from 'path';
 const config = {
 	kit: {
 		target: '#svelte',
-        // add from here, plus the import path from 'path'
+		// add from here, plus the import path from 'path'
 		vite: {
 			resolve: {
 				alias: {
-                    // these are the aliases and paths to them
+					// these are the aliases and paths to them
 					'@components': path.resolve('./src/lib/components'),
 					'@lib': path.resolve('./src/lib'),
 					'@utils': path.resolve('./src/lib/utils')
 				}
 			}
 		}
-	},
-}
-export default config
-
+	}
+};
+export default config;
 ```
 
 ```json
@@ -45,7 +47,7 @@ export default config
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-             // name and path to aliases
+			// name and path to aliases
 			"@components": ["src/lib/components"],
 			"@lib": ["src/lib"],
 			"@utils": ["src/lib/utils"]
@@ -53,7 +55,6 @@ export default config
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
 }
-
 ```
 
 ## Default Starter
@@ -67,55 +68,52 @@ To update the default `$lib` alias to `@lib`, we need to tell vite that we want 
 ```jsx
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  kit: {
-    // hydrate the <div id="svelte"> element in src/app.html
-    target: '#svelte',
-  },
-}
+	kit: {
+		// hydrate the <div id="svelte"> element in src/app.html
+		target: '#svelte'
+	}
+};
 
-export default config
-
+export default config;
 ```
 
 Inside of the kit property, we need to add a vite config for the aliases we are setting up. I prefer the `@` symbol and will show how to setup the `@lib`, `@components`, and `@utils` aliases. We need to import the included path module from node at the top and add the vite property under the kit property. The new `svelte.config.js` will look like this.
 
 ```jsx
 //svelte.config.js
-import path from 'path'
+import path from 'path';
 const config = {
 	kit: {
 		target: '#svelte',
-        // add from here, plus the import path from 'path'
+		// add from here, plus the import path from 'path'
 		vite: {
 			resolve: {
 				alias: {
-                    // these are the aliases and paths to them
+					// these are the aliases and paths to them
 					'@components': path.resolve('./src/lib/components'),
 					'@lib': path.resolve('./src/lib'),
 					'@utils': path.resolve('./src/lib/utils')
 				}
 			}
 		}
-	},
-}
-export default config
-
+	}
+};
+export default config;
 ```
 
 Next, we also need to set them up inside the `jsconfig.json` file. By default that looks like this.
 
 ```json
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-  // here is the default $lib setup by SvelteKit
-      "$lib/*": ["src/lib/*"]
-    }
-  },
-  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			// here is the default $lib setup by SvelteKit
+			"$lib/*": ["src/lib/*"]
+		}
+	},
+	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
 }
-
 ```
 
 As you can see, the default `$lib` is added to this config already. We need to update that and add the paths for our other two aliases. The updated file will look like this.
@@ -132,7 +130,6 @@ As you can see, the default `$lib` is added to this config already. We need to u
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
 }
-
 ```
 
 Under paths we have added the `@components`, updated the `$lib` to `@lib`, and added `@utils` with the corresponding paths.

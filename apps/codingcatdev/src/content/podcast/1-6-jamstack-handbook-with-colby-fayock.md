@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/ctlp32ingzwqf8fccao9.png
 devto: https://dev.to/codingcatdev/1-6-jamstack-handbook-with-colby-fayock-h18
 excerpt: Talking with Colby Fayock we dive into Jamstack security, Jamstack ecommerce, and much more!
+guests:
+  - colby-fayock
 hashnode: https://hashnode.codingcat.dev/podcast-1-6-jamstack-handbook-with-colby-fayock
 slug: 1-6-jamstack-handbook-with-colby-fayock
 spotify: https://open.spotify.com/episode/7kXBuAY3UZKzpKZacu2GsG?si=J4wTLTfBSNmtkjH5AdUBBQ

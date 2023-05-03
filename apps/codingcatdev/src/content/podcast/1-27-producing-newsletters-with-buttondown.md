@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/hyopbplzvjnobn4nxe3v.png
 devto: https://dev.to/codingcatdev/1-27-producing-newsletters-with-buttondown-554f
 excerpt: If you are looking for a simple yet powerful way to create a newsletter checkout Buttondown! We sit down with Justin Duke to talk about how he got started working on this project.
+guests:
+  - justin-duke
 hashnode: https://hashnode.codingcat.dev/podcast-1-27-producing-newsletters-with-buttondown
 slug: 1-27-producing-newsletters-with-buttondown
 spotify: https://open.spotify.com/episode/27SydrPSZEZW0HvYfqkp5Z?si=tZu0yJrERc2hcTBQUlSCJA

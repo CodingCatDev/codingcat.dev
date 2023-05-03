@@ -1,7 +1,7 @@
 ---
 episode: 10
-guest:
-  - Jhey-Tompkins
+guests:
+  - jhey-tompkins
 recording_date: January 12, 2022 1:00 PM
 season: 2
 published: published

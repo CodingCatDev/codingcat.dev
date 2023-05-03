@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616547399/main-codingcatdev-photo/kewwx7rull4s45bdidds.jpg
+cover: https://media.codingcat.dev/image/upload/v1616547399/main-codingcatdev-photo/kewwx7rull4s45bdidds.jpg
 devto: https://dev.to/codingcatdev/hugo-ionic-template-5e09
 excerpt: How to use AJonP's Hugo Ionic Template, while building Algolia Indexes and deploying to Firebase Hosting
 hashnode: https://hashnode.codingcat.dev/tutorial-hugo-ionic-template-1
@@ -270,8 +272,6 @@ You will notice a section later when we use Cloud Depoy that will require you to
 ## Configure Google Cloud Build
 
 An important part to any project is setting up a solid CI/CD pipeline (Continuous Integration/Continuous Delivery). I still believe that Google Cloud offers the best pricing for any size development team! If you are a very small shop you will run builds for free, for a very long time.
-
-![Hugo%20Ionic%20Template%205a6904e2014d499eb99593602495a190/xwfyo6ysbxykebpf4wzo.png](Hugo%20Ionic%20Template%205a6904e2014d499eb99593602495a190/xwfyo6ysbxykebpf4wzo.png)
 
 ## Docker Images / Cloud Build
 

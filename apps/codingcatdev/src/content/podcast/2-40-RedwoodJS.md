@@ -1,7 +1,7 @@
 ---
 episode: 40
-guest:
-  - Tom-Preston-Werner
+guests:
+  - tom-preston-werner
 recording_date: August 18, 2022 2:15 PM
 season: 2
 published: published

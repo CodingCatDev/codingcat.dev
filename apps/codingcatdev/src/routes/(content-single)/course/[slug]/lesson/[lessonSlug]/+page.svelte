@@ -1,9 +1,8 @@
 <script lang="ts">
 	import Lesson from './Lesson.svelte';
-	import type { PageData } from './$types';
 	import ProButton from '../../../../../(protected)/ProButton.svelte';
 
-	export let data: PageData;
+	export let data;
 </script>
 
 {#if data.locked && data.products}

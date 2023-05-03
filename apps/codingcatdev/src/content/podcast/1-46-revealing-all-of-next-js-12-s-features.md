@@ -1,7 +1,7 @@
 ---
 episode: 46
-guest:
-  - Lee-Robinson
+guests:
+  - lee-robinson
 recording_date: November 9, 2021 5:00 PM
 season: 1
 published: published

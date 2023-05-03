@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616545942/main-codingcatdev-photo/ivyj5svdql79xzaqx5ii.png
+cover: https://media.codingcat.dev/image/upload/v1616545942/main-codingcatdev-photo/ivyj5svdql79xzaqx5ii.png
 excerpt: How to utilize Sanity's Webhooks to trigger a Firebase Cloud Function that can backup your data in Cloud Firestore
 hashnode: https://hashnode.codingcat.dev/tutorial-backup-sanity-with-cloud-firestore
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=backup-sanity-with-cloud-firestore&_id=d1b5361f867d43eda8943b56a8ba79c9
@@ -10,8 +12,6 @@ start: May 29, 2022
 title: Backup Sanity with Cloud Firestore
 youtube: https://youtu.be/ea1-Dv4z2nI
 ---
-
-[Backup Sanity with Cloud Firestore](Backup%20Sanity%20with%20Cloud%20Firestore%20d1b5361f867d43eda8943b56a8ba79c9/Backup%20Sanity%20with%20Cloud%20Firestore%202b062a0d9f9e40cdbb909ee6fe281d64.md)
 
 ## New Firebase Project
 

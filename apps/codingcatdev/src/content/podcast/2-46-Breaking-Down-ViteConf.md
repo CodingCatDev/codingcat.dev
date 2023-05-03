@@ -1,7 +1,7 @@
 ---
 episode: 46
-guest:
-  - Matias-Capeletto
+guests:
+  - matias-capeletto
 recording_date: October 20, 2022 2:15 PM
 season: 2
 published: published

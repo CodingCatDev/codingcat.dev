@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/basic-events.png'
 excerpt: 'Svelte DOM events allow you to listen for and respond to user interactions with the DOM.'

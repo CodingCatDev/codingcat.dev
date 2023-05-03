@@ -1,6 +1,8 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
+cover: https://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
 excerpt: File Based Routing
 published: published
 slug: fundamentals-file-based-routing
@@ -8,7 +10,7 @@ start: June 1, 2022
 title: Fundamentals - File Based Routing
 weight: 7
 youtube: https://youtu.be/XdhthjV9R7o
---- 
+---
 
 Let’s dive into the next benefit of SvelteKit, file based routing. Any time you create a SvelteKit project, it automatically comes with a routes directory. Any new file created inside of the routes directory becomes a new url that you can visit. This means the structure of your project is defined and easily tracked inside the routes folder. At the base level, the index.svelte file goes to the home route or the ‘/’ slash that appears after your domain name. Any new file inside that folder, will automatically track to a url of the same name. The about file will be at /about.
 

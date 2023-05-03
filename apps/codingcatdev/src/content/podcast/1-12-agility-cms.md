@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/oogq3stsiqvbzsswaatr.png
 devto: https://dev.to/codingcatdev/agility-cms-3en8
 excerpt: Joel Varty talks all about Agility CMS. Where DXP fits into the Jamstack.
+guests:
+  - joel-varty
 hashnode: https://hashnode.codingcat.dev/podcast-1-12-agility-cms
 slug: 1-12-agility-cms
 spotify: https://open.spotify.com/episode/7nlWjCmTBh3ph9gE1enrIv?si=Ia4K1KnYQkKm7tQR5mnYqw

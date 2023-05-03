@@ -1,5 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import SearchLogo from './SearchLogo.svelte';
 
 	/** @type {import('./types').Tree[]} */
 	export let results;
@@ -36,11 +37,18 @@
 			escape(suffix)
 		);
 	}
+
+	/**
+	 * @param {string} title
+	 */
+	function removeType(title) {
+		return title.split('/').at(-1);
+	}
 </script>
 
 <ul>
 	{#each results as result (result.href)}
-		<li>
+		<li class="bcu-card variant-ghost px-2">
 			<a
 				class="!no-underline !text-token"
 				data-sveltekit-preload-data
@@ -48,11 +56,20 @@
 				on:click={() => dispatch('select', { href: result.href })}
 				data-has-node={result.node ? true : undefined}
 			>
-				<strong>{@html excerpt(result.breadcrumbs[result.breadcrumbs.length - 1], query)}</strong>
-
-				{#if result.node?.content}
-					<span>{@html excerpt(result.node.content, query)}</span>
-				{/if}
+				<div class="flex gap-2 md:gap-8">
+					<SearchLogo breadcrumb={result.breadcrumbs[result.breadcrumbs.length - 1]} />
+					<div>
+						<strong
+							>{@html excerpt(
+								removeType(result.breadcrumbs[result.breadcrumbs.length - 1]) || '',
+								query
+							)}
+						</strong>
+						{#if result.node?.content}
+							<span>{@html excerpt(result.node.content, query)}</span>
+						{/if}
+					</div>
+				</div>
 			</a>
 
 			{#if result.children.length > 0}
@@ -125,12 +142,12 @@
 	}
 
 	a :global(mark) {
-		--highlight-color: rgba(255, 255, 0, 0.2);
+		--highlight-color: rgba(var(--color-primary-500) / 1);
 	}
 
 	a span :global(mark) {
 		background: none;
-		color: var(--sk-text-1);
+		color: rgb(var(--on-primary));
 		background: var(--highlight-color);
 		outline: 2px solid var(--highlight-color);
 		border-top: 2px solid var(--highlight-color);

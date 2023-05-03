@@ -1,7 +1,7 @@
 ---
 episode: 28
-guest:
-  - James-Q-Quick
+guests:
+  - james-q-quick
 recording_date: April 28, 2021 2:00 PM
 season: 1
 published: published

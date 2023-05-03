@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/fosawiikzx30ajcilo2a.png
 devto: https://dev.to/codingcatdev/1-4-next-js-10-56k1
 excerpt: Talking with Guillermo Rauch about Next.js 10 and Vercel. Including plans for 2021.
+guests:
+  - guillermo-rauch
 hashnode: https://hashnode.codingcat.dev/podcast-1-4-next-js-10-with-guillermo-rauch
 slug: 1-4-next-js-10-with-guillermo-rauch
 spotify: https://open.spotify.com/episode/5mrXe0wPHc84li5d1ZvVYd?si=SnzQ51ErR8ysFEuCuYJvsg

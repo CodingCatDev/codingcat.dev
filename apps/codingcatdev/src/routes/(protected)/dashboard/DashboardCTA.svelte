@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Discord from '$lib/components/global/icons/socials/Discord.svelte';
-	import GitHub from '$lib/components/global/icons/socials/GitHub.svelte';
-	import Twitter from '$lib/components/global/icons/socials/Twitter.svelte';
-	import YouTube from '$lib/components/global/icons/socials/YouTube.svelte';
+	import { Icon } from '@steeze-ui/svelte-icon';
+
+	import { Discord, Github, Twitter, Youtube } from '@steeze-ui/simple-icons';
 
 	const anchorClasses = 'bcu-card bcu-card-hover p-8 min-h-96';
 	const sectionClasses = 'flex flex-col relative gap-4 justify-start items-start h-52 py-14';
@@ -16,7 +15,7 @@
 	<a class={anchorClasses} target="_blank" href="https://discord.com/invite/vM2bagU">
 		<div class={sectionClasses}>
 			<div class={logoClasses}>
-				<Discord />
+				<Icon src={Discord} class="w-8" theme="solid" />
 			</div>
 			<h5 class={titleClasses}>Join the Discord!</h5>
 			<p class={descriptionClasses}>
@@ -27,7 +26,7 @@
 	<a class={anchorClasses} target="_blank" href="https://twitter.com/CodingCatDev">
 		<div class={sectionClasses}>
 			<div class={logoClasses}>
-				<Twitter fill="#BC2261" />
+				<Icon src={Twitter} class="w-8" theme="solid" />
 			</div>
 			<h5 class={titleClasses}>Follow Us on Twitter!</h5>
 			<p class={descriptionClasses}>See the latest and start a conversation.</p>
@@ -38,7 +37,7 @@
 	<a class={anchorClasses} target="_blank" href="https://www.youtube.com/c/codingcatdev">
 		<div class={sectionClasses}>
 			<div class={logoClasses}>
-				<YouTube fill="#BC2261" />
+				<Icon src={Youtube} class="w-8" theme="solid" />
 			</div>
 			<h5 class={titleClasses}>Subscribe to our Youtube</h5>
 			<p class={descriptionClasses}>See the latest and start a conversation.</p>
@@ -52,7 +51,7 @@
 	>
 		<div class={sectionClasses}>
 			<div class={logoClasses}>
-				<GitHub fill="#BC2261" />
+				<Icon src={Github} class="w-8" theme="solid" />
 			</div>
 			<h5 class={titleClasses}>Sponsor our GitHub</h5>
 			<p class={descriptionClasses}>

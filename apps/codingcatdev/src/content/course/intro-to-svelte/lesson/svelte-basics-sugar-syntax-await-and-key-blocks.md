@@ -1,6 +1,8 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
+cover: https://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
 excerpt: The Await and Key blocks
 published: published
 slug: svelte-basics-sugar-syntax-await-and-key-blocks
@@ -9,6 +11,7 @@ title: Svelte Basics - Sugar Syntax Await and Key Blocks
 weight: 12
 youtube: https://youtu.be/ADqGFpSUp8o
 ---
+
 ## Await
 
 If we have asynchronous data coming in from an outside source that we need to wait on, we can “await” that data and do something with it using an await block. We can set a pending state or omit it completely and only show this markup once the data is received. We can also catch any errors that happen and display that to the user.

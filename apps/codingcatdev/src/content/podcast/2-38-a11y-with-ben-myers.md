@@ -1,7 +1,7 @@
 ---
 episode: 38
-guest:
-  - Ben-Myers
+guests:
+  - ben-myers
 recording_date: August 4, 2022 2:15 PM
 season: 2
 published: published

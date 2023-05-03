@@ -1,8 +1,7 @@
-import { allowLocal, getLessonFromCourseSlug } from '$lib/server/content';
+import { allowLocal, getContentBySlug, getLessonFromCourseSlug, parseModules } from '$lib/server/content';
 import { getStripeProducts, isAdmin } from '$lib/server/firebase';
-import { ContentType } from '$lib/types';
+import { ContentType, type Author } from '$lib/types';
 import { error, redirect } from '@sveltejs/kit';
-
 
 const contentType = ContentType.lesson;
 
@@ -16,6 +15,19 @@ export const load = (async ({ params, parent, url }) => {
 		});
 	}
 
+	const authorModules = import.meta.glob(['../../../../../../content/author/*.md']);
+	const authorItems = await parseModules(authorModules);
+
+	const authors: Author[] = [];
+	if (content?.authors?.length) {
+		for (const authorSlug of content.authors) {
+			const author = await getContentBySlug({ contentItems: authorItems, slug: authorSlug }) as unknown as Author;
+			if (author) {
+				authors.push(author);
+			}
+		}
+	}
+
 	if (!allowLocal && content.locked) {
 		// Locked but needs to be logged in
 		if (!user?.uid) {
@@ -26,7 +38,8 @@ export const load = (async ({ params, parent, url }) => {
 		if (user?.stripeRole || await isAdmin(user.uid)) {
 			return {
 				contentType,
-				content
+				content,
+				authors,
 			};
 		} else {
 			return {
@@ -40,6 +53,7 @@ export const load = (async ({ params, parent, url }) => {
 	//Not Locked we just send it back
 	return {
 		contentType,
-		content
+		content,
+		authors,
 	};
 });

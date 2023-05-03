@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1654934533/main-codingcatdev-photo/courses/ForA10YearOld/ForA10YearOldCSS.png
 excerpt: Learn CSS from the very beginning with live coding examples. Then transfer into fun advanced examples.

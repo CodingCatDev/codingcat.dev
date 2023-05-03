@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600872811/ccd-cloudinary/angular-cli-deploy.png
 excerpt: Demonstrating how to quickly deploy using Angular CLI to 6 places. Then how to setup CI/CD in Azure, AWS, and Google Cloud Platform.
@@ -9,6 +11,7 @@ slug: angular-cli-deploying
 start: May 27, 2022
 title: Angular CLI Deploying
 ---
+
 ## Deploying Fast
 
 So you have a conference or perhaps a JAMStackGR meeting that you created an Angular app for and need to show it to the world. How do you deploy this out to a CDN (Content Delivery Network) so that the world can access your new app? There are many ways that you can deploy your site, but one of note is the Angular CLI, it allows you to deploy to 6 different platforms.
@@ -32,7 +35,6 @@ We are going to make one simple change and use a different default image on our 
 Now that VSCode is open add your favorite image to the `src/assets/` so that we can access it within our app.
 
 > You can do this in your favorite terminal or within VSCode ctrl+~ will open the terminal within VSCode
-> 
 
 First try out the default application by running the below command.
 
@@ -73,10 +75,9 @@ When angular serves the asset folder you can find the above added picture in the
 
 ```html
 <div style="display: flex; justify-content: center; width: '100%';">
-  <img src="assets/JAMStackGR2.png" alt="JAMStackGR 2 Logo" style="width: 100%;" />
+	<img src="assets/JAMStackGR2.png" alt="JAMStackGR 2 Logo" style="width: 100%;" />
 </div>
 <router-outlet></router-outlet>
-
 ```
 
 ![https://res.cloudinary.com/ajonp/image/upload/f_auto,q_auto/ajonp-ajonp-com/blog/jamstackgr-2/Screen_Shot_2019-11-09_at_8.31.28_AM.png](https://res.cloudinary.com/ajonp/image/upload/f_auto,q_auto/ajonp-ajonp-com/blog/jamstackgr-2/Screen_Shot_2019-11-09_at_8.31.28_AM.png)
@@ -102,13 +103,10 @@ This might seem the same as using `ng serve`, but this is running the production
 ## Angular Deploy Platforms
 
 > The Angular CLI command `ng deploy` (introduced in version 8.3.0) executes the `deploy` [CLI builder](https://angular.io/guide/cli-builder) associated with your project. A number of third-party builders implement deployment capabilities to different platforms. You can add any of them to your project by running `ng add [package name]`. ~ Angular Guide
-> 
 
 > Please also note that I am in now way suggesting you should use the quick deploy methods with public repos (as there are keys all over) or that they are ready for true production use. This method is best used as demos.
-> 
 
 > If you see any 404 issues you need to update the base html element, similar to `<basehref="/JAMStackGR-Deploy-v-GIT/">`
-> 
 
 ### Firebase Hosting
 
@@ -164,7 +162,6 @@ This will build your project and deploy it to Firebase Hosting
 ![https://res.cloudinary.com/ajonp/image/upload/f_auto,q_auto/ajonp-ajonp-com/blog/jamstackgr-2/Screen_Shot_2019-11-10_at_5.15.18_PM.png](https://res.cloudinary.com/ajonp/image/upload/f_auto,q_auto/ajonp-ajonp-com/blog/jamstackgr-2/Screen_Shot_2019-11-10_at_5.15.18_PM.png)
 
 > You will need a free [Microsoft or GithHub login](https://azure.microsoft.com/en-us/services/devops/) and Azure Dev Ops account to use this deploy method.
-> 
 
 Run the below command
 
@@ -198,23 +195,22 @@ Something interesting that I found during this process is that Angular overwrite
 
 ```json
 {
-  "hosting": [
-    {
-      "app": {
-        "project": "JAMStackGR-Deploy-v-GIT",
-        "target": "build",
-        "configuration": "production",
-        "path": "dist/JAMStackGR-Deploy-v-GIT"
-      },
-      "azureHosting": {
-        "subscription": "ba9a05ba-1cfb-4049-aba4-441f44572434",
-        "resourceGroupName": "JAMStackGR-Deploy-v-GIT-static-deploy",
-        "account": "jamstackgrdeployvgstatic"
-      }
-    }
-  ]
+	"hosting": [
+		{
+			"app": {
+				"project": "JAMStackGR-Deploy-v-GIT",
+				"target": "build",
+				"configuration": "production",
+				"path": "dist/JAMStackGR-Deploy-v-GIT"
+			},
+			"azureHosting": {
+				"subscription": "ba9a05ba-1cfb-4049-aba4-441f44572434",
+				"resourceGroupName": "JAMStackGR-Deploy-v-GIT-static-deploy",
+				"account": "jamstackgrdeployvgstatic"
+			}
+		}
+	]
 }
-
 ```
 
 `angular.json`
@@ -264,7 +260,6 @@ Demo site: https://jamstackgrdeployvgstatic.z22.web.core.windows.net/
 ### Zeit Now Hosting
 
 > Zeit does not need an account created prior to deploying, you will need access to an email that you will provide to verify login.
-> 
 
 Run the below commands
 
@@ -299,9 +294,6 @@ npm i now-client@5.2.1 && ng deploy
 ```
 
 > I have raised an issue about this and it might be resolved later [https://github.com/zeit/ng-deploy-now/issues/7](https://github.com/zeit/ng-deploy-now/issues/7)
-> 
-
-![Angular%20CLI%20Deploying%2035b3e0aaaab04dbebc04b4306e13f381/Screen_Shot_2019-11-13_at_5.46.06_PM.png](Angular%20CLI%20Deploying%2035b3e0aaaab04dbebc04b4306e13f381/Screen_Shot_2019-11-13_at_5.46.06_PM.png)
 
 If you visit this base directory you will see your project listings just like in the dist folder, you can update your angular builders to update how you would like this handled (for instance just pushing your main project with index.html).
 
@@ -312,7 +304,6 @@ Below you will find the deploy activity to your account.
 ## Netlify
 
 > For Netlify you will need to setup an account ahead of running this command. They accept GitHub, GitLab, Bitbucket or Email. You will also need to create a site so that you can get an API key.
-> 
 
 Run the below command
 
@@ -390,7 +381,6 @@ If you need to ever look at your deploys they will all be listed under the Deplo
 ### GitHub Pages Hosting
 
 > In order to use GitHub pages you must have a GitHub account and setup the project with an origin.
-> 
 
 Run the below command
 
@@ -437,7 +427,6 @@ If you now refresh the page above you will not see commands on how to start sett
 Now that we have made a connection to GitHub we can run our deploy command below.
 
 > Please make sure to read [https://www.npmjs.com/package/angular-cli-ghpages#--base-href](https://www.npmjs.com/package/angular-cli-ghpages#--base-href) without this loaded files will not be found and show a 404.
-> 
 
 **`ng deploy --base-href=/JAMStackGR-Deploy-v-GIT-test/`**
 
@@ -462,7 +451,6 @@ Demo Site: [https://ajonp.github.io/JAMStackGR-Deploy-v-GIT-test/](https://ajonp
 ### NPM Package Publish
 
 > This is not really deploying a web app, but I wanted to cover all the current ng deploys for an example This example is on a seperate branch in the repo [https://github.com/ajonp/JAMStackGR-Deploy-v-GIT-test/tree/npm-deploy](https://github.com/ajonp/JAMStackGR-Deploy-v-GIT-test/tree/npm-deploy)
-> 
 
 ```bash
 ng generate library
@@ -490,187 +478,168 @@ Full `angular.json`
 
 ```json
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-    "JAMStackGR-Deploy-v-GIT": {
-      "projectType": "application",
-      "schematics": {},
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/JAMStackGR-Deploy-v-GIT",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
-            "aot": true,
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "JAMStackGR-Deploy-v-GIT:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "JAMStackGR-Deploy-v-GIT:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "JAMStackGR-Deploy-v-GIT:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
-            "scripts": []
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "JAMStackGR-Deploy-v-GIT:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "JAMStackGR-Deploy-v-GIT:serve:production"
-            }
-          }
-        },
-        "deploy": {
-          "builder": "angular-cli-ghpages:deploy",
-          "options": {}
-        },
-        "azureLogout": {
-          "builder": "@azure/ng-deploy:logout"
-        }
-      }
-    },
-    "jamstackgr2-library": {
-      "projectType": "library",
-      "root": "projects/jamstackgr2-library",
-      "sourceRoot": "projects/jamstackgr2-library/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/jamstackgr2-library/tsconfig.lib.json",
-            "project": "projects/jamstackgr2-library/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/jamstackgr2-library/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/jamstackgr2-library/src/test.ts",
-            "tsConfig": "projects/jamstackgr2-library/tsconfig.spec.json",
-            "karmaConfig": "projects/jamstackgr2-library/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/jamstackgr2-library/tsconfig.lib.json",
-              "projects/jamstackgr2-library/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
-        "deploy": {
-          "builder": "ngx-deploy-npm:deploy",
-          "options": {
-            "access": "public"
-          }
-        }
-      }
-    }
-  },
-  "defaultProject": "JAMStackGR-Deploy-v-GIT",
-  "cli": {
-    "analytics": "f6a38b3e-94be-42aa-8d50-a76c8ea31bc5"
-  }
+	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+	"version": 1,
+	"newProjectRoot": "projects",
+	"projects": {
+		"JAMStackGR-Deploy-v-GIT": {
+			"projectType": "application",
+			"schematics": {},
+			"root": "",
+			"sourceRoot": "src",
+			"prefix": "app",
+			"architect": {
+				"build": {
+					"builder": "@angular-devkit/build-angular:browser",
+					"options": {
+						"outputPath": "dist/JAMStackGR-Deploy-v-GIT",
+						"index": "src/index.html",
+						"main": "src/main.ts",
+						"polyfills": "src/polyfills.ts",
+						"tsConfig": "tsconfig.app.json",
+						"aot": true,
+						"assets": ["src/favicon.ico", "src/assets"],
+						"styles": ["src/styles.css"],
+						"scripts": []
+					},
+					"configurations": {
+						"production": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.prod.ts"
+								}
+							],
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "2mb",
+									"maximumError": "5mb"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "6kb",
+									"maximumError": "10kb"
+								}
+							]
+						}
+					}
+				},
+				"serve": {
+					"builder": "@angular-devkit/build-angular:dev-server",
+					"options": {
+						"browserTarget": "JAMStackGR-Deploy-v-GIT:build"
+					},
+					"configurations": {
+						"production": {
+							"browserTarget": "JAMStackGR-Deploy-v-GIT:build:production"
+						}
+					}
+				},
+				"extract-i18n": {
+					"builder": "@angular-devkit/build-angular:extract-i18n",
+					"options": {
+						"browserTarget": "JAMStackGR-Deploy-v-GIT:build"
+					}
+				},
+				"test": {
+					"builder": "@angular-devkit/build-angular:karma",
+					"options": {
+						"main": "src/test.ts",
+						"polyfills": "src/polyfills.ts",
+						"tsConfig": "tsconfig.spec.json",
+						"karmaConfig": "karma.conf.js",
+						"assets": ["src/favicon.ico", "src/assets"],
+						"styles": ["src/styles.css"],
+						"scripts": []
+					}
+				},
+				"lint": {
+					"builder": "@angular-devkit/build-angular:tslint",
+					"options": {
+						"tsConfig": ["tsconfig.app.json", "tsconfig.spec.json", "e2e/tsconfig.json"],
+						"exclude": ["**/node_modules/**"]
+					}
+				},
+				"e2e": {
+					"builder": "@angular-devkit/build-angular:protractor",
+					"options": {
+						"protractorConfig": "e2e/protractor.conf.js",
+						"devServerTarget": "JAMStackGR-Deploy-v-GIT:serve"
+					},
+					"configurations": {
+						"production": {
+							"devServerTarget": "JAMStackGR-Deploy-v-GIT:serve:production"
+						}
+					}
+				},
+				"deploy": {
+					"builder": "angular-cli-ghpages:deploy",
+					"options": {}
+				},
+				"azureLogout": {
+					"builder": "@azure/ng-deploy:logout"
+				}
+			}
+		},
+		"jamstackgr2-library": {
+			"projectType": "library",
+			"root": "projects/jamstackgr2-library",
+			"sourceRoot": "projects/jamstackgr2-library/src",
+			"prefix": "lib",
+			"architect": {
+				"build": {
+					"builder": "@angular-devkit/build-ng-packagr:build",
+					"options": {
+						"tsConfig": "projects/jamstackgr2-library/tsconfig.lib.json",
+						"project": "projects/jamstackgr2-library/ng-package.json"
+					},
+					"configurations": {
+						"production": {
+							"tsConfig": "projects/jamstackgr2-library/tsconfig.lib.prod.json"
+						}
+					}
+				},
+				"test": {
+					"builder": "@angular-devkit/build-angular:karma",
+					"options": {
+						"main": "projects/jamstackgr2-library/src/test.ts",
+						"tsConfig": "projects/jamstackgr2-library/tsconfig.spec.json",
+						"karmaConfig": "projects/jamstackgr2-library/karma.conf.js"
+					}
+				},
+				"lint": {
+					"builder": "@angular-devkit/build-angular:tslint",
+					"options": {
+						"tsConfig": [
+							"projects/jamstackgr2-library/tsconfig.lib.json",
+							"projects/jamstackgr2-library/tsconfig.spec.json"
+						],
+						"exclude": ["**/node_modules/**"]
+					}
+				},
+				"deploy": {
+					"builder": "ngx-deploy-npm:deploy",
+					"options": {
+						"access": "public"
+					}
+				}
+			}
+		}
+	},
+	"defaultProject": "JAMStackGR-Deploy-v-GIT",
+	"cli": {
+		"analytics": "f6a38b3e-94be-42aa-8d50-a76c8ea31bc5"
+	}
 }
-
 ```
 
 Deploy portion of `angular.json` for NPM

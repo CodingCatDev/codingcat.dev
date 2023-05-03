@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616546840/main-codingcatdev-photo/hmhr4khpcbyynnmisr5y.jpg
+cover: https://media.codingcat.dev/image/upload/v1616546840/main-codingcatdev-photo/hmhr4khpcbyynnmisr5y.jpg
 devto: https://dev.to/codingcatdev/angular-pwa-to-google-play-store-using-trusted-web-activity-5en4
 excerpt: Add your PWA to Google Play Store today!
 hashnode: https://hashnode.codingcat.dev/tutorial-angular-pwa-to-google-play-store-using-trusted-web-activity
@@ -13,4 +15,3 @@ youtube: https://youtu.be/db9Y5jyparA
 ---
 
 > PWA’s are still changing rapidly. This tutorial may not be as up to date, so I have removed the content and left the video for history
->

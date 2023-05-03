@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1609704595/main-codingcatdev-photo/courses/Angular%20Material/s0eh5vg6bud8mwzvkjfr.png
 excerpt: This is about the Angular Router and how to use it with Angular Material

@@ -1,7 +1,7 @@
 ---
 episode: 44
-guest:
-  - Debbie-O-Brien
+guests:
+  - debbie-o-brien
 recording_date: October 11, 2021 9:00 AM
 season: 1
 published: published

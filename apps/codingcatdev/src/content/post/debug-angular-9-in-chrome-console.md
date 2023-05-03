@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600704486/ccd-cloudinary/debug_angular_9.png
 devto: https://dev.to/codingcatdev/debug-angular-9-in-chrome-console-5c4b

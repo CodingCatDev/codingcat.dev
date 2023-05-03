@@ -1,7 +1,7 @@
 ---
 episode: 12
-guest:
-  - Alex-Trost
+guests:
+  - alex-trost
 recording_date: January 27, 2022 2:30 PM
 season: 2
 published: published

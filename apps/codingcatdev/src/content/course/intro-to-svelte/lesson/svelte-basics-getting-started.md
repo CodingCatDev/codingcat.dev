@@ -1,6 +1,8 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
+cover: https://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
 excerpt: The basics that you need to get started with Svelte.
 published: published
 section: Svelte Basics

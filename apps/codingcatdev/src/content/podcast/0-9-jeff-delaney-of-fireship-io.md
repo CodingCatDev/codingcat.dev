@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/s3aphcb0oolagf7lxwqs.png
 devto: https://dev.to/codingcatdev/09-fireshipio-1icm
 excerpt: A deep dive into the master behind fireship.io Jeff Delaney. Jeff explains how he makes such great tutorials.
+guests:
+  - jeff-delaney
 hashnode: https://hashnode.codingcat.dev/podcast-0-9-jeff-delaney-of-fireship-io
 slug: 0-9-jeff-delaney-of-fireship-io
 spotify: https://open.spotify.com/episode/6uTjmwNWG8iyKOI7HCKd6s?si=enjRh1GmTS-aS1UKfBjdYg

@@ -1,6 +1,6 @@
 export interface Content {
 	id: string;
-	authors?: Author[];
+	authors?: string[];
 	cloudinary_conver?: boolean;
 	html?: string;
 	cover?: string;
@@ -8,7 +8,7 @@ export interface Content {
 	excerpt?: string;
 	hashnode?: string;
 	preview?: string;
-	published?: string;
+	published?: ContentPublished;
 	slug: string;
 	start: Date;
 	type: ContentType;
@@ -32,25 +32,70 @@ export interface Lesson extends Content {
 export interface Podcast extends Content {
 	season?: number;
 	episode?: number;
+	recording_date?: Date;
+	podcast?: PodcastType;
+	guests?: string[]; // Guest Slug
+	picks?: Pick[];
+
+	// Exports
+	devto?: string;
+	hashnode?: string;
+	spotify?: string;
 }
 
 export interface Author {
-	id: string;
-	displayName?: string;
+	cover?: string;
+	name?: string;
+	html?: string;
 	slug: string;
+	start: Date;
+	published?: ContentPublished;
+	socials: Socials;
+	websites?: string[];
+}
+
+export interface Pick {
+	author?: string;
+	name?: string;
+	site?: string;
 }
 
 export enum ContentType {
+	author = 'author',
 	course = 'course',
 	framework = 'framework',
 	forum = 'forum',
+	guest = 'guest',
 	group = 'group',
 	language = 'language',
 	lesson = 'lesson',
 	page = 'page',
 	podcast = 'podcast',
 	post = 'post',
+	schedule = 'schedule',
 	tutorial = 'tutorial'
+}
+
+export enum PodcastType {
+	codingcatdev = 'codingcatdev',
+}
+
+export interface Socials {
+	devto?: string;
+	discord?: string;
+	facebook?: string;
+	github?: string;
+	instagram?: string;
+	linkedin?: string;
+	email?: string;
+	mastodon?: string;
+	medium?: string;
+	polywork?: string;
+	stackoverflow?: string;
+	tiktok?: string;
+	twitch?: string;
+	twitter?: string;
+	youtube?: string;
 }
 
 export enum ContentPublished {

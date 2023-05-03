@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1633601188/main-codingcatdev-photo/lxr4hrhmfxa3rb4bilsf.png
+cover: https://media.codingcat.dev/image/upload/v1633601188/main-codingcatdev-photo/lxr4hrhmfxa3rb4bilsf.png
 devto: https://dev.to/codingcatdev/anchor-links-from-sanity-in-gatsby-320n
 excerpt: Have you ever hunted around for days trying to find that simple package for adding anchor links to your Gatsby blog? It is easier than you might think, and you don't need a package!
 hashnode: https://hashnode.codingcat.dev/post-anchor-links-from-sanity-in-gatsby
@@ -12,7 +14,6 @@ title: Anchor Links From Sanity in Gatsby
 ---
 
 > TL;DR version is make sure you implement **`onRouteUpdate`** and **`shouldUpdateScroll`** in **`gatsby-browser.js`**.
-> 
 
 ## So what is an anchor link?
 
@@ -29,58 +30,54 @@ Anchor links are a way to navigate within the same page in HTML. The easiest way
 Sanity.io's Gatsby [blog example](https://www.sanity.io/guides/the-blog-template), is a great starting point for how to get up and running quickly. You can use that and then extend the functionality however you would like. In the example there is a file for posts which looks similar to below, what we really care about is the line `<div>{_rawBody && <PortableText blocks={_rawBody} />}</div>`.
 
 ```tsx
-import React from "react";
-import PortableText from "./portableText";
-import Card from "../Card";
+import React from 'react';
+import PortableText from './portableText';
+import Card from '../Card';
 
 export default (props) => {
-  const { _rawBody, authors, categories } = props;
-  return(
-  <article className="flex flex-col w-full max-w-xl md:max-w-1xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl m-2 md:max-m-8 md:max-m-8 lg:max-m-8 xl:m-8">
-    <div className="w-full">
-    <Card {...props} />
-    </div>
-    <section className="markdown bg-white w-full rounded mt-4 p-4">
-    <div>{_rawBody && <PortableText blocks={_rawBody} />}</div>
-    <div>
-      <aside>
-        {categories && (
-          <div>
-            <h3>Categories</h3>
-            <ul>
-              {categories.map(category => (
-                <li key={category._id}>{category.title}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </aside>
-    </div>
-    </section>
-  </article>
-  )}
-
+	const { _rawBody, authors, categories } = props;
+	return (
+		<article className="flex flex-col w-full max-w-xl md:max-w-1xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl m-2 md:max-m-8 md:max-m-8 lg:max-m-8 xl:m-8">
+			<div className="w-full">
+				<Card {...props} />
+			</div>
+			<section className="markdown bg-white w-full rounded mt-4 p-4">
+				<div>{_rawBody && <PortableText blocks={_rawBody} />}</div>
+				<div>
+					<aside>
+						{categories && (
+							<div>
+								<h3>Categories</h3>
+								<ul>
+									{categories.map((category) => (
+										<li key={category._id}>{category.title}</li>
+									))}
+								</ul>
+							</div>
+						)}
+					</aside>
+				</div>
+			</section>
+		</article>
+	);
+};
 ```
 
 This is a simple react component that uses [@sanity/block-content-to-react](https://github.com/sanity-io/block-content-to-react). The great part here is that they have allowed for serializers and you can add a great deal of customization to any of the block based PortableText that you will be receiving from the graphql from Sanity.io.
 
 ```tsx
-import React from "react";
-import clientConfig from "../../../client-config";
-import BasePortableText from "@sanity/block-content-to-react";
-import serializers from "../graphql/serializers";
+import React from 'react';
+import clientConfig from '../../../client-config';
+import BasePortableText from '@sanity/block-content-to-react';
+import serializers from '../graphql/serializers';
 
 const PortableText = ({ blocks }) => {
-  return(
-  <BasePortableText
-    blocks={blocks}
-    serializers={{...serializers}}
-    {...clientConfig.sanity} />
-  )
+	return (
+		<BasePortableText blocks={blocks} serializers={{ ...serializers }} {...clientConfig.sanity} />
+	);
 };
 
 export default PortableText;
-
 ```
 
 ### Sanity.io Serializers
@@ -88,36 +85,34 @@ export default PortableText;
 The great part about serializers is that you can provide any custom React component that you would like to handle any of the different types that are coming from Sanity.io.
 
 ```tsx
-import React from "react";
-import Figure from "./Figure";
-import Code from "./Code";
-import Img from "./Img";
-import Block from "./Block";
+import React from 'react';
+import Figure from './Figure';
+import Code from './Code';
+import Img from './Img';
+import Block from './Block';
 
 const serializers = {
-  types: {
-    authorReference: ({ node }) => <span>{node.author.name}</span>,
-    mainImage: Figure,
-    code: Code,
-    img: Img,
-    block: Block
-  },
+	types: {
+		authorReference: ({ node }) => <span>{node.author.name}</span>,
+		mainImage: Figure,
+		code: Code,
+		img: Img,
+		block: Block
+	}
 };
 
 export default serializers;
-
 ```
 
 A fun and simple example is `img` although I could add much of this inline, I plan to use [cloudinary's](http://cloudinary.com/) image manipulations to apply affects as I would like to my images. So I added a simple component called `Img` that takes in the node and outputs a simple img tag with corresponding alt text.
 
 ```tsx
-import React from "react";
+import React from 'react';
 
 export default ({ node }) => {
-  const { asset } = node;
-  return <img src={asset.src} alt={asset.alt} />;
+	const { asset } = node;
+	return <img src={asset.src} alt={asset.alt} />;
 };
-
 ```
 
 Now the same can hold true for all the `block` type items that appear with portableText. Because we are using Sanity.io's awesome `@sanity/block-content-to-react` we really wouldn't have to do much here, but since again I am a lazy developer I want to make all those headings magically have anchor tags associated, but our portableText looks something like below:So in order to make that happen we added the `block: Block` serializer above which Sanity.io has a great [example](https://github.com/sanity-io/block-content-to-react#customizing-default-serializer-for-block-type) how to setup. My Block looks very similar but it is setting Gatsby Link tags inside each of these headings (well h2 and h3 for now).

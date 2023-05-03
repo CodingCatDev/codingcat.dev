@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1665516793/main-codingcatdev-photo/Hacktober_2022_Laptop_Giveaway_1.jpg
 devto: https://dev.to/codingcatdev/hacktober-2022-laptop-giveaway-39ki

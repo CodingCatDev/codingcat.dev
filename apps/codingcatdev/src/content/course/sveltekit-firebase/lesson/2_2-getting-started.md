@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/getting-started.png'
 excerpt: 'Explanation of Svelte vs. SvelteKit and other metaframeworks'

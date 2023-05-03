@@ -1,7 +1,7 @@
 ---
 episode: 25
-guest:
-  - Michael-Chan
+guests:
+  - michael-chan
 recording_date: March 4, 2022 12:00 PM
 season: 2
 published: published

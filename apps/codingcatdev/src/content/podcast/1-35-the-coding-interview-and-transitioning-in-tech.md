@@ -1,7 +1,7 @@
 ---
 episode: 35
-guest:
-  - Laurie-Barth
+guests:
+  - laurie-barth
 recording_date: July 8, 2021 9:30 AM
 season: 1
 published: published

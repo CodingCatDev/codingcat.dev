@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600704486/ccd-cloudinary/cloudinary_webp.png
 devto: https://dev.to/codingcatdev/cloudinary-in-jamstack-using-webp-38p2

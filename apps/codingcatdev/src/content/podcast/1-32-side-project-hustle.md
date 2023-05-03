@@ -1,7 +1,7 @@
 ---
 episode: 32
-guest:
-  - Brad-Garropy
+guests:
+  - brad-garropy
 recording_date: June 4, 2021 2:00 PM
 season: 1
 published: published

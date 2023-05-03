@@ -22,6 +22,10 @@
 
 <style>
 	.main {
-		fill: hsl(var(--p));
+		fill: rgba(var(--color-primary-500) / 1);
+	}
+	.line {
+		stroke: rgb(var(--on-primary));
+		fill: rgb(var(--on-primary));
 	}
 </style>

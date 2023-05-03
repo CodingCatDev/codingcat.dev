@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1626716377/main-codingcatdev-photo/bcovugngp8i1oayazxai.png
+cover: https://media.codingcat.dev/image/upload/v1626716377/main-codingcatdev-photo/bcovugngp8i1oayazxai.png
 devto: https://dev.to/codingcatdev/finding-a-company-with-great-values-3927
 excerpt: When looking for your next company, make sure that their values align with you.
 hashnode: https://hashnode.codingcat.dev/post-finding-a-company-with-great-values
@@ -10,6 +12,7 @@ slug: finding-a-company-with-great-values
 start: July 19, 2021
 title: Finding a Company with Great Values
 ---
+
 ## Why Company Values Are Important
 
 There are many companies out there that have values, that often are just placed there by Human Resources because they felt they “should” have values. Then there are other companies that build their entire way of working around their values. For instance lets take a look at [Google’s Mission, Vision and Values](https://www.comparably.com/companies/google/mission).
@@ -66,11 +69,7 @@ The large FANG companies above are only an example that represent GIANT companie
 
 Many don’t know that my day job is at an amazing company called [OST](https://www.ostusa.com/) (Open Systems Technologies) in Grand Rapids Michigan. The reason that I decided to work at OST was their company culture and values. At OST we have a blue card that is given to every employee that lists our [values](https://www.ostusa.com/company/). Our slogan below is what we live by.
 
-> 
-> 
-> 
 > We honor our people and their families first, clients second and the rest will fall into place. ~OST
-> 
 
 ### OST’s Five Guiding Principles
 

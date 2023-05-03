@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1626309301/main-codingcatdev-photo/pmjyfh1yllkhhyb3emcg.png
+cover: https://media.codingcat.dev/image/upload/v1626309301/main-codingcatdev-photo/pmjyfh1yllkhhyb3emcg.png
 devto: https://dev.to/codingcatdev/nextjs-11-features-1e6f
 excerpt: Learning about all of the amazing Next.js 11 features.
 hashnode: https://hashnode.codingcat.dev/post-nextjs-11-features
@@ -10,8 +12,8 @@ slug: nextjs-11-features
 start: July 14, 2021
 title: Next.js 11 Features
 ---
+
 > Please take note the above video is not codingcat.dev's. I thought it was important to see the announcement in its full context.
-> 
 
 In research for my next (or should I say Next.js) series of courses I wanted to dive back into Next.js 11's new features. The items that really blew me away were best summarized by one of my favorite guest on our podcast Swyx in this [tweet](https://twitter.com/swyx/status/1404845602463043590).
 
@@ -28,7 +30,6 @@ This is an interesting one to call a Next.js feature, one could argue that it is
 ## Conformance
 
 > Conformance is a system that provides carefully crafted solutions and rules to support optimal loading and Core Web Vitals, with further additions coming to support other quality aspects like security and accessibility.
-> 
 
 Basically this is the thing every developer wants without having to work so hard to achieve it. Next.js 11 will support ESLint directly so it will find any framework-specific issues during development. I am excited about the Core Web Vitals but I can't wait to see what the team has in store for Security and A11y!
 
@@ -39,17 +40,16 @@ Make sure to checkout Google's plans for project [Aurora](https://web.dev/introd
 For those of you not using the already built in feature for Image Providers like I talk about on [Media Jams](https://mediajams.dev/post/Using-Cloud-Providers-with-nextimage), this feature is amazing! It will allow you to import your local images and it will automagically determine width and height.
 
 ```tsx
-import Image from 'next/image'
-import cat from '../public/cat.png'
+import Image from 'next/image';
+import cat from '../public/cat.png';
 
 export default function Home() {
-  return (
-    // When importing the image as the source, you
-    // don't need to define `width` and `height`.
-    <Image src={cat} alt="Picture of AJ the Cat" />
-  )
+	return (
+		// When importing the image as the source, you
+		// don't need to define `width` and `height`.
+		<Image src={cat} alt="Picture of AJ the Cat" />
+	);
 }
-
 ```
 
 Something to also note is the cool placeholders you can add now as well using `placeholder="blur"`. You can read more about Image Imports in [Next.js Docs](https://nextjs.org/docs/basic-features/image-optimization#image-imports)
@@ -74,16 +74,12 @@ Okay technically this one was added in [Next.js 10.2](https://nextjs.org/blog/ne
 
 ```html
 // Before
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter"
-  rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Inter" rel="stylesheet" />
 
 // After
 <style data-href="https://fonts.googleapis.com/css2?family=Inter">
-  @font-face{font-family:'Inter';font-style:normal.....
+	@font-face{font-family:'Inter';font-style:normal.....
 </style>
-
 ```
 
 The great part about this optimization especially in your static sites during build time Next.js optimizes and inlines font CSS at build time which will eliminate an extra round trip to fetch font declarations. This should also give you a better FCP and LCP. Checkout the [Next.js Docs](https://nextjs.org/docs/basic-features/font-optimization) for more information on Font Optimization.

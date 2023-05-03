@@ -1,7 +1,7 @@
 ---
 episode: 50
-guest:
-  - Zack-DeRose
+guests:
+  - zack-derose
 recording_date: November 5, 2021 10:00 AM
 season: 1
 published: published

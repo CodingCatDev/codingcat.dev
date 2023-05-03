@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1644851521/main-codingcatdev-photo/Divvy.jpg
+cover: https://media.codingcat.dev/image/upload/v1644851521/main-codingcatdev-photo/Divvy.jpg
 devto: https://dev.to/codingcatdev/how-to-achieve-169-resolution-while-using-divvy-on-a-mac-1iog
 excerpt: Perfecting screen capture for HD videos on a Mac, using Divvy. Download your own template.
 hashnode: https://hashnode.codingcat.dev/post-how-to-achieve-16-9-resolution-while-using-divvy-on-a-mac
@@ -27,69 +29,52 @@ What I wanted to do was create a simple tool that would calculate what to set Di
 
 I wanted to have a little fun with it and added a downloadable background for you computer that has the menubar set, the margins called out, and the amount of boxes you are using within Divvy add by using [Cloudinary's React SDK](https://cloudinary.com/documentation/react_integration) and overlays.
 
-> 
-> 
-> 
 > Dont care about the math? Cool I don't really either but I needed to understand it to write this purrfect [Divvy Calculator](https://divvy.codingcat.dev/). See something broken, PR's more than welcome. [GitHub Repo](https://github.com/CodingCatDev/divvy-screen-size)
-> 
 
 Quick example of the Cloudinary transformation code below.
 
 ```jsx
 // Apply the transformation.
-  myImage
-    // Crop the image.
-    .resize(thumbnail().width(reducedWidth).height(reducedHeight))
-    //Menu Bar
-    .overlay(
-      source(
-        image(`1`).transformation(
-          new Transformation()
-            .resize(
-              fill()
-                .width(Math.round(reducedWidth))
-                .height(Math.round(menuBarHeight))
-            )
-            .effect(new ColorizeEffectAction().color("#391").level("colorize"))
-        )
-      ).position(new Position().gravity(compass(northWest())))
-    )
-    //Margin left
-    .overlay(
-      source(
-        image(`1`).transformation(
-          new Transformation()
-            .resize(
-              fill()
-                .width(Math.round(reducedScreenMargin / 2))
-                .height(Math.round(reducedScreenHeight))
-            )
-            .effect(new ColorizeEffectAction().color("red").level("colorize"))
-        )
-      ).position(
-        new Position()
-          .gravity(compass(northWest()))
-          .offsetY(reducedMenuBarHeight)
-      )
-    )
-    .overlay(
-      source(
-        image(`1`).transformation(
-          new Transformation()
-            .resize(
-              fill()
-                .width(Math.round(reducedScreenMargin / 2))
-                .height(Math.round(reducedScreenHeight))
-            )
-            .effect(new ColorizeEffectAction().color("red").level("colorize"))
-        )
-      ).position(
-        new Position()
-          .gravity(compass(northEast()))
-          .offsetY(reducedMenuBarHeight)
-      )
-    );
-
+myImage
+	// Crop the image.
+	.resize(thumbnail().width(reducedWidth).height(reducedHeight))
+	//Menu Bar
+	.overlay(
+		source(
+			image(`1`).transformation(
+				new Transformation()
+					.resize(fill().width(Math.round(reducedWidth)).height(Math.round(menuBarHeight)))
+					.effect(new ColorizeEffectAction().color('#391').level('colorize'))
+			)
+		).position(new Position().gravity(compass(northWest())))
+	)
+	//Margin left
+	.overlay(
+		source(
+			image(`1`).transformation(
+				new Transformation()
+					.resize(
+						fill()
+							.width(Math.round(reducedScreenMargin / 2))
+							.height(Math.round(reducedScreenHeight))
+					)
+					.effect(new ColorizeEffectAction().color('red').level('colorize'))
+			)
+		).position(new Position().gravity(compass(northWest())).offsetY(reducedMenuBarHeight))
+	)
+	.overlay(
+		source(
+			image(`1`).transformation(
+				new Transformation()
+					.resize(
+						fill()
+							.width(Math.round(reducedScreenMargin / 2))
+							.height(Math.round(reducedScreenHeight))
+					)
+					.effect(new ColorizeEffectAction().color('red').level('colorize'))
+			)
+		).position(new Position().gravity(compass(northEast())).offsetY(reducedMenuBarHeight))
+	);
 ```
 
 ## MacOS and the menu bar

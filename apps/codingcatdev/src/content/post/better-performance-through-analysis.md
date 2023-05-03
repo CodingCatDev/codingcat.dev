@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1633601534/main-codingcatdev-photo/sknntx1srr4tpzvhwr6a.png
+cover: https://media.codingcat.dev/image/upload/v1633601534/main-codingcatdev-photo/sknntx1srr4tpzvhwr6a.png
 devto: https://dev.to/codingcatdev/better-performance-through-analysis-35b8
 excerpt: Example of how to use Web.dev to maintain a timeline of performance, while running firebase performance for constant monitoring.
 hashnode: https://hashnode.codingcat.dev/post-better-performance-through-analysis
@@ -10,8 +12,8 @@ slug: better-performance-through-analysis
 start: August 17, 2019
 title: Better Performance through analysis
 ---
+
 > Please note I wrote this on my phone driving 6 hours, so I hope to update in more detail. Fun fact I now know how to do git remote recursive from Android ????
-> 
 
 The current web standard for initial page load is 2.0 seconds. This is only part of the performance story. Let's dive in a little deeper and see how else we can improve performance. In terms of data reduction and user experience, sometimes these things are not as noticeable.
 

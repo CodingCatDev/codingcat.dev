@@ -1,7 +1,7 @@
 ---
 episode: 19
-guest:
-  - Prince-Wilson
+guests:
+  - prince-wilson
 recording_date: March 15, 2021 1:30 PM
 season: 1
 published: published

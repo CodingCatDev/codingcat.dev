@@ -1,6 +1,8 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1616547475/main-codingcatdev-photo/y4jh5dhqaopucs7dkohj.jpg
+cover: https://media.codingcat.dev/image/upload/v1616547475/main-codingcatdev-photo/y4jh5dhqaopucs7dkohj.jpg
 devto: https://dev.to/codingcatdev/ajonp-hugo-ionic-template-agg
 excerpt: How to use AJonP's Hugo Ionic Template
 hashnode: https://hashnode.codingcat.dev/tutorial-ajonp-hugo-ionic-template
@@ -13,7 +15,6 @@ youtube: https://youtu.be/CZmEZ62yMFA
 ---
 
 > Just a little donation reminder as Hugo says "Hugo stands on the shoulder of many great open source libraries", as does many of my tutorials. [Brew](https://github.com/Homebrew/brew#donations) [Hugo](https://github.com/gohugoio/hugo#dependencies)
-> 
 
 # Hugo Getting Started
 
@@ -58,7 +59,6 @@ At this point you will notice that the project remains pretty empty in a generic
 It only has two files config.toml and archetypes/default.md
 
 > If you run `hugo serve` right now, you will see a blank screen as there is no content to show.
-> 
 
 ## Index.html
 
@@ -71,14 +71,12 @@ You could make an entire site here if you wanted.
 ```
 
 > Again if you run `hugo serve` right now, you will see a blank screen as there is no content to show.
-> 
 
-## _index.md
+## \_index.md
 
 `content/_index.md`
 
 > I know this is getting a little frustrating! Again if you run `hugo serve` right now, you will see a blank screen as there is no content to show.
-> 
 
 ## Update Index.html
 

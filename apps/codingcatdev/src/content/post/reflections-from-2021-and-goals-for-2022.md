@@ -1,6 +1,8 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
-cover: htts://media.codingcat.dev/image/upload/v1640973161/main-codingcatdev-photo/og-image.jpg
+cover: https://media.codingcat.dev/image/upload/v1640973161/main-codingcatdev-photo/og-image.jpg
 devto: https://dev.to/codingcatdev/reflections-from-2021-goals-for-2022-3af8
 excerpt: Everything I accomplished in 2021 and what I am planning and looking forward to in 2022.
 hashnode: https://hashnode.codingcat.dev/post-reflections-from-2021-and-goals-for-2022
@@ -10,6 +12,7 @@ slug: reflections-from-2021-and-goals-for-2022
 start: December 31, 2021
 title: Reflections from 2021 & Goals for 2022
 ---
+
 The year of 2021 has been the biggest year of my career. It is sometimes difficult to talk about success when the entire world is struggling and you can really see your privilage showing. However, it is still important to talk about our wins and our losses and to be proud of what you have accomplished.
 
 I set some lofty goals after watching [Zero to Mastery's Future Proof Yourself Workshop](https://academy.zerotomastery.io/p/future-proof-yourself?affcode=441520_gjue7n-1) early in 2021. My big goals were to start a business of my own and to make more money than I had in any previous career, I didn't care how I did it (freelancing, courses, new job), just that I got it done. Well, I am happy to say, not only did I do it, I blew it away. I did some freelance work early in the year, filed for my LLC, bDesignedDev in July, and at the time got my dream job at Grainger, building design systems with Svelte. I also did things I didn't even think were possible this year. I started co-hosting [Purrfect.dev](https://purrfect.dev/) with Alex and got to talk to some incredible people and learned so much from this opportunity. It made me more comfortable speaking in public and helped me grow as a developer from the things I was learning about.
@@ -29,5 +32,3 @@ Of all the communities I am apart of, I feel like the [Svelte](https://svelte.de
 ## 2022 Expectations
 
 Of course I have to be optimistic and think that 2022 will be the best year for my career yet. I'm setting lots of goals already and really focusing on the shorter term goals this year as well as some bigger long term ones. I have the regular old ones like read more, lose weight, work on myself, be present, but hopefully by getting down to the details and setting really short term goals I will be able to achieve more than I ever have. For January, I am planning an Intro to Svelte couse on [CodingCat.dev](https://codingcat.dev/) and to start out my goal of livestreaming every 2 weeks for the [Svelte Sirens](https://sveltesirens.dev/). My big goals for this year are to put out some kind of content every month on Coding Cat, including some paid courses, and to really focus on the Svelte Sirens community and making it a place that everyone wants to come and be apart of! I hope you all have a happy new year and truly have your best year yet!
-
-[Reflections from 2021 & Goals for 2022](Reflections%20from%202021%20&%20Goals%20for%202022%20640c440f8659470a899f3e6362313877/Reflections%20from%202021%20&%20Goals%20for%202022%2004508073344d481ab2d562cfccc47f4c.md)
