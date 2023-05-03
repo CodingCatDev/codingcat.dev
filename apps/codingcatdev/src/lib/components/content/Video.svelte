@@ -3,11 +3,11 @@
 	export let title: string;
 
 	const youtubeParser = (url: string) => {
-		var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+		var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
 		var match = url.match(regExp);
-		return match && match[7].length == 11 ? match[7] : false;
+		return match && match[1].length == 11 ? match[1] : false;
 	};
-
+	console.log(src);
 	$: finalSrc = `https://www.youtube.com/embed/${youtubeParser(src)}`;
 </script>
 
