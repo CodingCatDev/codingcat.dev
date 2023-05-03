@@ -85,16 +85,14 @@
 						</section>
 					{/if}
 				</div>
-
+				<hr />
 				<!-- Sponsors -->
-				{#if data?.sponsors}
-					<hr />
-
+				{#if data?.sponsors?.length}
 					<h2>Sponsors</h2>
 					<section class="flex flex-col gap-2 md:flex-row md:gap-8">
 						{#each data?.sponsors as sponsor (sponsor.slug)}
 							<a
-								class="max-w-sm overflow-hidden bcu-card bg-initial card-hover"
+								class="overflow-hidden bcu-card bg-initial card-hover md:flex-1"
 								href={`${sponsor.url}`}
 								target="_blank"
 								rel="noopener noreferrer"
