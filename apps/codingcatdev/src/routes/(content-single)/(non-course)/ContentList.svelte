@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
-	import Image from '$lib/components/content/Image.svelte';
 	import type { ContentType, Content } from '$lib/types';
 	export let contentItems: Content[];
 	export let contentType: ContentType;

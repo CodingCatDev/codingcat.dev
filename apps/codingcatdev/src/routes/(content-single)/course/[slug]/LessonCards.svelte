@@ -4,7 +4,6 @@
 	import { LockClosed } from '@steeze-ui/heroicons';
 	import { LockOpen } from '@steeze-ui/heroicons';
 	import Image from '$lib/components/content/Image.svelte';
-	import Image from '$lib/components/content/Image.svelte';
 
 	export let lesson: Lesson[];
 	export let courseSlug: string;
