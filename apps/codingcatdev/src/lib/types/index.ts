@@ -14,8 +14,8 @@ export interface Content {
 	start: Date;
 	sponsors?: string[];
 	type: ContentType;
-	title?: string;
-	updated: Date;
+	title: string;
+	updated?: Date;
 	weight?: number;
 	youtube?: string;
 }
@@ -46,18 +46,18 @@ export interface Podcast extends Content {
 }
 
 export interface Sponsor extends Content {
-	description?: string;
-	name?: string;
+	description: string;
+	name: string;
 	url: string;
 }
 
 export interface Author {
-	cover?: string;
-	name?: string;
+	cover: string;
+	name: string;
 	html?: string;
 	slug: string;
 	start: Date;
-	published?: ContentPublished;
+	published: ContentPublished;
 	socials: Socials;
 	websites?: string[];
 }

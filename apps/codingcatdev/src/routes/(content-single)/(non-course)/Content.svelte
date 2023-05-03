@@ -48,7 +48,7 @@
 											{#key guest.slug}
 												<Image
 													src={guest.cover}
-													alt={guest?.name}
+													alt={guest.name}
 													classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square"
 												/>
 											{/key}
@@ -103,7 +103,7 @@
 									{#if sponsor?.cover}
 										<Image
 											src={sponsor.cover}
-											alt={sponsor?.name}
+											alt={sponsor.name}
 											classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video"
 										/>
 									{/if}

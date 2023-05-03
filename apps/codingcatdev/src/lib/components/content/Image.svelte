@@ -4,7 +4,7 @@
 	export let loader: undefined | (() => {}) = undefined;
 	export let src: string;
 	export let alt: string;
-	export let classes: string;
+	export let classes: string = 'object-cover w-full bg-cover rounded bg-black/50 aspect-video';
 </script>
 
 {#if loader}
