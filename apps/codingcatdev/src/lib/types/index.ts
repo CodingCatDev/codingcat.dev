@@ -5,12 +5,14 @@ export interface Content {
 	html?: string;
 	cover?: string;
 	devto?: string;
+	end?: Date;
 	excerpt?: string;
 	hashnode?: string;
 	preview?: string;
 	published?: ContentPublished;
 	slug: string;
 	start: Date;
+	sponsors?: string[];
 	type: ContentType;
 	title?: string;
 	updated: Date;
@@ -43,6 +45,12 @@ export interface Podcast extends Content {
 	spotify?: string;
 }
 
+export interface Sponsor extends Content {
+	description?: string;
+	name?: string;
+	url: string;
+}
+
 export interface Author {
 	cover?: string;
 	name?: string;
@@ -73,6 +81,7 @@ export enum ContentType {
 	podcast = 'podcast',
 	post = 'post',
 	schedule = 'schedule',
+	sponsor = 'sponsor',
 	tutorial = 'tutorial'
 }
 

@@ -3,7 +3,7 @@
 
 	import { ContentType, type Author, type Content, type Podcast, type Course } from '$lib/types';
 	import { pluralize } from '$lib/utils';
-	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
+	import Image from '$lib/components/content/Image.svelte';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import {
@@ -23,7 +23,7 @@
 		Youtube
 	} from '@steeze-ui/simple-icons';
 	import { GlobeAmericas } from '@steeze-ui/heroicons';
-	import ContentList from './ContentList.svelte';
+	import ContentList from '../../ContentList.svelte';
 	export let data: {
 		content: Author;
 		contentType: ContentType;
@@ -36,7 +36,7 @@
 
 {#if data?.content}
 	<div class="flex justify-center">
-		<section class="flex flex-col justify-center w-full gap-8 p-1 xl:flex-row xl:p-8">
+		<section class="flex flex-col justify-center w-full gap-8 p-2 xl:flex-row xl:p-8">
 			<div class="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
 				<ol class="bcu-breadcrumb">
 					<li class="capitalize bcu-crumb">
@@ -49,7 +49,11 @@
 				{#if data?.content?.cover}
 					<div class="w-40 md:w-80">
 						{#key data.content.cover}
-							<CloudinaryImage src={data.content.cover} alt={data.content.name} />
+							<Image
+								src={data.content.cover}
+								alt={data.content.name}
+								classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square"
+							/>
 						{/key}
 					</div>
 				{/if}

@@ -1,5 +1,5 @@
 import { getContentBySlug, parseLessonModules, parseModules } from '$lib/server/content';
-import { ContentType, type Author } from '$lib/types';
+import { ContentType, type Author, type Sponsor } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
 const contentType = ContentType.course;
@@ -29,10 +29,24 @@ export const load = (async ({ params }) => {
             }
         }
     }
+
+    const sponsorModules = import.meta.glob(['../../../../../content/sponsor/*.md']);
+    const sponsorItems = await parseModules(sponsorModules);
+
+    const sponsors: Sponsor[] = [];
+    if (course?.sponsors?.length) {
+        for (const sponsorSlug of course.sponsors) {
+            const sponsor = await getContentBySlug({ contentItems: sponsorItems, slug: sponsorSlug }) as unknown as Sponsor;
+            if (sponsor)
+                sponsors.push(sponsor);
+        }
+    }
+
     return {
         contentType,
         course,
         courseItems,
         authors,
+        sponsors,
     };
 });

@@ -13,6 +13,9 @@ devto: https://dev.to/codingcatdev/246-breaking-down-viteconf-3fnk
 excerpt: Matias talks to us all about ViteConf, the future of Vite and all of the great speakers at the conference.
 hashnode: https://hashnode.codingcat.dev/podcast-2-46-Breaking-Down-ViteConf
 slug: 2-46-Breaking-Down-ViteConf
+sponsors:
+  - jamstackconf
+  - storyblok
 spotify: https://open.spotify.com/episode/4UGL97d1NkhUN2wsd2Dzou?si=A-z03eZRS9yBtN4dEdE3lg
 start: November 9, 2022
 title: Breaking Down ViteConf

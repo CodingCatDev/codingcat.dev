@@ -38,6 +38,8 @@ picks:
     { author: 'nick-hodges', name: 'Framework Laptop', site: 'https://frame.work/' }
   ]
 slug: 2-48-Fully-Passwordless-Authentication-with-Passage
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/1t91HmqCGo3BNiRcS83Zpp?si=2CLDaudHSMioFP8a2edfTQ
 start: December 20, 2022 12:00 AM
 title: Fully Passwordless Authentication with Passage

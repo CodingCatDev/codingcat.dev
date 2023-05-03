@@ -13,6 +13,8 @@ guests:
   - kellen-mace
 hashnode: https://hashnode.codingcat.dev/podcast-2-34-WPEngine-and-FaustJS
 slug: 2-34-WPEngine-and-FaustJS
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/3kwDeEJJhiOoz7R1E1cJQ4?si=DXtY4kKgTYGdhrFb49QQyA
 start: August 3, 2022
 title: WPEngine and FaustJS

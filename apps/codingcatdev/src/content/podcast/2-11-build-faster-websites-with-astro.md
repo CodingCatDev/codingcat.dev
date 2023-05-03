@@ -14,6 +14,8 @@ excerpt: Fred Schott chats with us all about Astro and how you can build static 
 hashnode: https://hashnode.codingcat.dev/podcast-2-11-build-faster-websites-with-astro
 slug: 2-11-build-faster-websites-with-astro
 spotify: https://open.spotify.com/episode/5VxSkOY6uJkTuQ2yJticLU?si=AngcuGgaSX2wlHJVw7_iVA
+sponsors:
+  - builder-io
 start: March 16, 2022
 title: Build faster websites with Astro
 youtube: https://www.youtube.com/watch?v=vw-c0FSse5o

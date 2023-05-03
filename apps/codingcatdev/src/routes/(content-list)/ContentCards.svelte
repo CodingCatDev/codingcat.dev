@@ -1,5 +1,4 @@
 <script lang="ts">
-	import AJPrimary from '$lib/components/global/icons/AJPrimary.svelte';
 	import Image from '$lib/components/content/Image.svelte';
 	import type { Content, ContentType } from '$lib/types';
 
@@ -39,13 +38,13 @@
 								<Image
 									src={content.cover}
 									alt={content.title || 'Missing Alt Sorry'}
-									classes="rounded-md rounded-b-none cursor-pointer"
+									classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video rounded-md rounded-b-none cursor-pointer"
 								/>
 							{:else}
 								<Image
 									src="https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo"
 									alt={content.title || 'Missing Alt Sorry'}
-									classes="rounded-md rounded-b-none cursor-pointer"
+									classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video rounded-md rounded-b-none cursor-pointer"
 								/>
 							{/if}
 
@@ -54,17 +53,8 @@
 									<h3 class="font-sans text-lg tracking-wide text-bold">
 										{content.title}
 									</h3>
-									{#if content.excerpt}
+									{#if content?.excerpt}
 										<p class="text-sm font-hairline ">{content.excerpt}</p>
-									{/if}
-									{#if content.authors}
-										<div class="flex flex-col">
-											{#each content.authors as author}
-												<div class="font-sans text-lg">
-													{author.name}
-												</div>
-											{/each}
-										</div>
 									{/if}
 								</div>
 							</section>

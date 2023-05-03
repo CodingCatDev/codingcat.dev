@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/231-creating-a-standardized-design-system-for
 excerpt: Greg talks with us about running the OpenUI working group. We talk in detail and give demos on standardizing components across the major browser vendors.
 hashnode: https://hashnode.codingcat.dev/podcast-creating-a-standardized-design-system-for-the-web
 slug: creating-a-standardized-design-system-for-the-web
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/43WexCiAnnjZlcSyFvqzxW?si=5ux-aAWdQ_i85SRCbCIb6Q
 start: July 13, 2022
 title: Creating a Standardized Design System for the Web

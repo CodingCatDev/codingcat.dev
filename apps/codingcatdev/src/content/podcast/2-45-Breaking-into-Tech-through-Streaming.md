@@ -17,6 +17,9 @@ hashnode: https://hashnode.codingcat.dev/podcast-2-45-Breaking-into-Tech-through
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=2-45-Breaking-into-Tech-through-Streaming&_id=20eadcb91e984f5fa10fd5ef51af779a
 slug: 2-45-Breaking-into-Tech-through-Streaming
 spotify: https://open.spotify.com/episode/5sDONt6D5AZ7gifrZOcTJ4?si=eES0eYffSbG5aTMBMKwveg
+sponsors:
+  - jamstackconf
+  - storyblok
 start: October 26, 2022 12:00 PM
 title: Breaking into Tech through Streaming
 youtube: https://youtu.be/Tw9sqX4t1oA

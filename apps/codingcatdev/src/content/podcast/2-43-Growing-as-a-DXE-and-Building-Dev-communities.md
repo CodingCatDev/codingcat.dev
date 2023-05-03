@@ -13,6 +13,9 @@ guests:
   - domitrius-clark
 hashnode: https://hashnode.codingcat.dev/podcast-2-43-Growing-as-a-DXE-and-Building-Dev-communities
 slug: 2-43-Growing-as-a-DXE-and-Building-Dev-communities
+sponsors:
+  - jamstackconf
+  - storyblok
 spotify: https://open.spotify.com/episode/34XclyDLaOvKOeUjMFC2A6?si=1CJglsIcQye3d1-rlDuKQQ
 start: October 12, 2022 12:00 PM
 title: Growing as a DXE & Building Dev Communities

@@ -13,6 +13,8 @@ guests:
   - igor-zalutski
 hashnode: https://hashnode.codingcat.dev/podcast-2-27-automating-infrastructure-with-digger-dev
 slug: 2-27-automating-infrastructure-with-digger-dev
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/7F6vRJ0k2aPICNkkjUSbze?si=D-0ouo9CRaWYzAAlGG5YnQ
 start: June 15, 2022
 title: Automating Infrastructure with Digger.dev

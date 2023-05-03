@@ -10,9 +10,11 @@ cover: https://media.codingcat.dev/image/upload/v1655827847/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/214-building-up-better-communities-29m7
 excerpt: Bryan Robinson teaches us how Orbit helps us build up better communities. He talks about finding those who have great content and are not well known.
 guests:
-   - bryan-robinson
+  - bryan-robinson
 hashnode: https://hashnode.codingcat.dev/podcast-2-14-building-up-better-communities
 slug: 2-14-building-up-better-communities
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/4j617gDcXowRGLbpMxTzW0?si=hfJ79HnMTDakjY47lISnpQ
 start: April 6, 2022
 title: Building up Better Communities

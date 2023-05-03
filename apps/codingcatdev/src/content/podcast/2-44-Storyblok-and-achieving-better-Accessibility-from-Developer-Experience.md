@@ -17,6 +17,9 @@ guests:
 hashnode: https://hashnode.codingcat.dev/podcast-2-44-contentblok-accessibility
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=Storyblok-and-achieving-better-Accessibility-from-Developer-Experience&_id=bec19ab64cb84903b7798e21bbbc2989
 slug: Storyblok-and-achieving-better-Accessibility-from-Developer-Experience
+sponsors:
+  - jamstackconf
+  - storyblok
 spotify: https://open.spotify.com/episode/7HghjPmPWz34g48L6quVkX?si=RisJUtzYTl-zPMUpdosm9g
 start: October 19, 2022 12:00 PM
 title: Storyblok and achieving better Accessibility from Developer Experience

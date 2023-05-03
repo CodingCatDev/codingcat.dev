@@ -25,6 +25,8 @@ picks:
     { author: 'brian-douglas', name: 'Campsite Design', site: 'https://www.campsite.design/' }
   ]
 slug: 2-47-Build-Healthy-OSS-Communities-with-OpenSauced
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/7pAOLK1hYYeC7CroRNKbHi?si=yKrHIyYFR3aHgv1s0lVAJA
 start: December 14, 2022
 title: Build Healthy OSS Communities with OpenSauced

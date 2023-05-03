@@ -3,7 +3,7 @@
 	import Video from '$lib/components/content/Video.svelte';
 	import type { Author, Course } from '$lib/types';
 	import LessonCards from './LessonCards.svelte';
-	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
+	import Image from '$lib/components/content/Image.svelte';
 	export let data: {
 		course: Course;
 		authors: Author[];
@@ -22,7 +22,7 @@
 				{#if data?.course?.youtube}
 					<Video src={data.course.youtube} title={`${data.course.title}`} />
 				{:else if data?.course?.cover}
-					<CloudinaryImage src={data.course.cover} alt={data.course.title} />
+					<Image src={data.course.cover} alt={data.course.title} />
 				{/if}
 				{#if data?.authors}
 					<section class="flex">
@@ -34,7 +34,7 @@
 								{#if author?.cover}
 									<div class="w-8 md:w-12">
 										{#key author.slug}
-											<CloudinaryImage src={author.cover} alt={author?.name} />
+											<Image src={author.cover} alt={author?.name} />
 										{/key}
 									</div>
 								{/if}

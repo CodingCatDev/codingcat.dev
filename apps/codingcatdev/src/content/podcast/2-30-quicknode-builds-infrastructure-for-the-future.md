@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/230-quicknode-builds-infrastructure-for-the-f
 excerpt: We sit down with Anthony Campolo (ajcwebdev) to talk about Web3 and working with QuickNode.
 hashnode: https://hashnode.codingcat.dev/podcast-quicknode-builds-infrastructure-for-the-future
 slug: quicknode-builds-infrastructure-for-the-future
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/7MvbLLBvnclhtHzsE24fHW?si=NC4JHaluQhSnS9VJP4XIFg
 start: July 6, 2022
 title: QuickNode Builds Infrastructure for the Future

@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/232-ionic-6-2pe9
 excerpt: Mike tells us all about himself and starting at Ionic. Mike gives us a full demo of Ionic 6 and the new components.
 hashnode: https://hashnode.codingcat.dev/podcast-2-32-ionic-6
 slug: 2-32-ionic-6
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/7yFp386XGq03g3lbFFXq89?si=9Ag6cwkfRx233N_tG8d80A
 start: July 20, 2022
 title: Ionic 6

@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/215-stacks-on-stacks-on-stacks-with-codestack
 excerpt: We sit down with Jesse Hall of codeSTACKr to talk all about MongoDB, his YouTube channel, and how to make NFT cats.
 hashnode: https://hashnode.codingcat.dev/podcast-2-15-stacks-on-stacks-on-stacks-with-code-stac-kr
 slug: 2-15-stacks-on-stacks-on-stacks-with-code-stac-kr
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/1LOwZlDrtduyGGPlfgiYsr?si=VrMyd6rSQCKUGSxO6OZxNA
 start: April 13, 2022
 title: Stacks on Stacks on Stacks with codeSTACKr

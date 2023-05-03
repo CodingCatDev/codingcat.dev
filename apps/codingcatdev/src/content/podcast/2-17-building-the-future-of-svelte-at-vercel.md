@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/217-building-the-future-of-svelte-at-vercel-5
 excerpt: We caught up with Rich Harris to see how he was settling into his new role with Vercel and what is next for Svelte.
 hashnode: https://hashnode.codingcat.dev/podcast-2-17-building-the-future-of-svelte-at-vercel
 slug: 2-17-building-the-future-of-svelte-at-vercel
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/39D6IaSm092UAIq0YcQwVa?si=a0LWbNeuTVOh5_DL1BlNJQ
 start: April 27, 2022
 title: Building the Future of Svelte at Vercel

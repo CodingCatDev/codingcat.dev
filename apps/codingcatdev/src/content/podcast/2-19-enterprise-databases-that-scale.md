@@ -13,6 +13,8 @@ guests:
   - james-q-quick
 hashnode: https://hashnode.codingcat.dev/podcast-2-19-enterprise-databases-that-scale
 slug: 2-19-enterprise-databases-that-scale
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/1NxZ13uIoifkIKCNSPEKiN?si=IX11vRQ1Tx6u3FYZxxatCg
 start: May 11, 2022
 title: Enterprise Databases that Scale

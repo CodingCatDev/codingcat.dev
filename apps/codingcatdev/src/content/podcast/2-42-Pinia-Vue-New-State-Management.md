@@ -13,6 +13,8 @@ guests:
   - eduardo-san-martin-morote
 hashnode: https://hashnode.codingcat.dev/podcast-2-42-Pinia-Vue's-New-State-Management
 slug: 2-42-Pinia-Vue-New-State-Management
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/3D3qGwlpKEXf8FDaz2lALw?si=Naubm7BYTV6i_umVJfJhnQ
 start: October 5, 2022 12:00 PM
 title: Pinia Vue’s New State Management

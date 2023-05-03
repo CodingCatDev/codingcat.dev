@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/226-open-sourcing-your-database-with-appwrite
 excerpt: Brandon Roberts shows us all about Appwrite by showing off a cool codingcat.dev application!
 hashnode: https://hashnode.codingcat.dev/podcast-2-26-open-sourcing-your-database-with-appwrite
 slug: 2-26-open-sourcing-your-database-with-appwrite
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/4ahRiAIIamHRR0OAKzpYIx?si=JVQ_QU7RTnOk7dl5aZhA1g
 start: June 8, 2022
 title: Open Sourcing Your Database with Appwrite

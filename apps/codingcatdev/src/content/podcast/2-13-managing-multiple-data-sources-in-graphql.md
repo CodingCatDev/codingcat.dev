@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/213-managing-multiple-data-sources-in-graphql
 excerpt: We sit down with Anthony Campolo to talk about StepZen and combining multiple GraphQL data sources. We walk through an entire demo live!
 hashnode: https://hashnode.codingcat.dev/podcast-2-13-managing-multiple-data-sources-in-graphql
 slug: 2-13-managing-multiple-data-sources-in-graphql
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/0rOBiD8iu2YJJFiHF5MfQG?si=qx1OsuozTHGeBG6ttINb1g
 start: March 30, 2022
 title: Managing Multiple Data Sources in GraphQL

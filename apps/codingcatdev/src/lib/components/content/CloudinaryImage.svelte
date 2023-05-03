@@ -1,7 +1,9 @@
 <script lang="ts">
+	/* USE <Image> component directly NOT this component */
+
 	export let src: string;
 	export let alt: string = 'Missing Alt';
-	export let classes: string = '';
+	export let classes: string = 'object-cover w-full bg-cover rounded bg-black/50 aspect-video';
 
 	import { lazyload, HtmlImageLayer } from '@cloudinary/html';
 	import { CloudinaryImage } from '@cloudinary/url-gen';

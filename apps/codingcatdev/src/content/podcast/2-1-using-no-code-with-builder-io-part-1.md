@@ -12,6 +12,8 @@ devto: https://dev.to/codingcatdev/21-using-no-code-with-builderio-part-1-2fji
 excerpt: In this first part Alex sits down with Steve Sewell to understand how http://builder.io/ is different from other no-code solutions.
 hashnode: https://hashnode.codingcat.dev/podcast-using-no-code-with-builder-io-part-1
 slug: using-no-code-with-builder-io-part-1
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/2wn5dMCM3aKVBXM1ucsCQX?si=dDyjemmfSmKmrJtw-JfFbw
 start: January 5, 2022
 title: Using No-Code with Builder - Part 1

@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/28-powering-up-with-gatsby-4-and-gatsbyconf-l
 excerpt: Grayson Hicks joins us to talk all about Gatsby 4 and multiple methods of rendering.
 hashnode: https://hashnode.codingcat.dev/podcast-2-8-powering-up-with-gatsby-4-and-gatsbyconf
 slug: 2-8-powering-up-with-gatsby-4-and-gatsbyconf
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/13LS987IGxdrpgpxi7Ixks?si=viuQAxCzT1S4CUpHHQwZOQ
 start: February 23, 2022
 title: Powering up with Gatsby 4 and GatsbyConf

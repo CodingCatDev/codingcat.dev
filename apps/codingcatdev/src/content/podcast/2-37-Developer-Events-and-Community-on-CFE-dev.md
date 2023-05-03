@@ -9,10 +9,12 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1658178188/main-codingcatdev-photo/Developer-Events-and-Community-on-CFE.dev.jpg
 devto: https://dev.to/codingcatdev/237-developer-events-and-community-on-cfedev-4hp8
 excerpt: Brian Rinaldi talks with us all about how he runs http://CFE.dev and what it takes to build great communities.
-guests: 
-   - brian-rinaldi
+guests:
+  - brian-rinaldi
 hashnode: https://hashnode.codingcat.dev/podcast-2-37-Developer-Events-and-Community-on-CFE-dev
 slug: 2-37-Developer-Events-and-Community-on-CFE-dev
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/2g1vB7a8oY0PJHCnGSsYds?si=Aj8mxD2VQdqAURyEjMvmJg
 start: August 31, 2022 12:00 PM
 title: Developer Events and Community on CFE.dev

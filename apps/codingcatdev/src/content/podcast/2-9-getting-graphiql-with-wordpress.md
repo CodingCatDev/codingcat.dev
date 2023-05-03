@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/29-getting-graphiql-with-wordpress-41a9
 excerpt: Jason Bahl joins us to talk about an amazing product he created that lets WordPress become headless with a GraphQL
 hashnode: https://hashnode.codingcat.dev/podcast-2-9-getting-graphiql-with-wordpress
 slug: 2-9-getting-graphiql-with-wordpress
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/7rP95q1dYXIJSv24jlWZnL?si=-QD47HmpSLapVF1VMSBbhw
 start: March 2, 2022
 title: Getting GraphiQL with WordPress

@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/233-managing-dataops-with-meltano-2p48
 excerpt: You have heard of DevOps, but what about DataOps? Douwe explains what this is all about and how Meltano solves hard to create data solutions for your infrastructure.
 hashnode: https://hashnode.codingcat.dev/podcast-2-33-Managing-DataOps-with-Meltano
 slug: 2-33-Managing-DataOps-with-Meltano
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/1z2UFvnziNghBYy3WgBxDT?si=L_v4p9bFTNCLiq8UPIo9vA
 start: July 27, 2022
 title: Managing DataOps with Meltano

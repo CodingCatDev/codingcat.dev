@@ -16,6 +16,8 @@ devto: https://dev.to/codingcatdev/229-women-of-jamstack-foj
 excerpt: We had the opportunity to chat with four amazing Women of Jamstack. We talked about things from Redwoodjs to equal pay.
 hashnode: https://hashnode.codingcat.dev/podcast-2-29-women-of-jamstack
 slug: 2-29-women-of-jamstack
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/4vHU5WSvaasS09sw5efkZE?si=AXSgm6VCQmSXYDBg8XiFMg
 start: June 29, 2022
 title: Women of Jamstack

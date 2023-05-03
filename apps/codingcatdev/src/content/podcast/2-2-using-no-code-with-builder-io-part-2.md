@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/22-using-no-code-with-builderio-part-2-38ch
 excerpt: Alex and Brittney sit down with Steve Sewell, Co-Founder and CEO of http://builder.io/, to understand how http://builder.io/ is different from other no-code solutions.
 hashnode: https://hashnode.codingcat.dev/podcast-using-no-code-with-builder-io-part-2
 slug: using-no-code-with-builder-io-part-2
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/4Mf5Xbb4akKngafgwcNbe0?si=xr5ca4_sTLWbnS4qR51vSA
 start: January 12, 2022
 title: Using No-Code with Builder - Part 2

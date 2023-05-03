@@ -13,6 +13,8 @@ guests:
   - ace-kyd
 hashnode: https://hashnode.codingcat.dev/podcast-2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati
 slug: 2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/5cl1JKnso0s054qMl4aJQn?si=_5RnCPPIR8u8nwoA8lwCMQ
 start: August 24, 2022
 title: Building in CodeSandbox with Adewale "Ace" Abati

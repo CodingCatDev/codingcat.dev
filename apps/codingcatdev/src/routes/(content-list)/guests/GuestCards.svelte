@@ -39,13 +39,13 @@
 								<Image
 									src={guest.cover}
 									alt={guest.name || 'Missing Alt Sorry'}
-									classes="rounded-md rounded-b-none cursor-pointer aspect-square w-full"
+									classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square w-full rounded-md rounded-b-none cursor-pointer"
 								/>
 							{:else}
 								<Image
 									src="https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo"
 									alt={guest.name || 'Missing Alt Sorry'}
-									classes="rounded-md rounded-b-none cursor-pointer aspect-square w-full"
+									classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square w-full rounded-md rounded-b-none cursor-pointer"
 								/>
 							{/if}
 

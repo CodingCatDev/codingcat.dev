@@ -14,6 +14,8 @@ guests:
   - houssein-djirdeh
 hashnode: https://hashnode.codingcat.dev/podcast-nextjs-script-with-partytown-web-workers
 slug: nextjs-script-with-partytown-web-workers
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/1EhI4ZFjwmD1Tv5mGsX3TG?si=Cqg0kJdXTO-0CnKuGQokMA
 start: June 22, 2022
 title: Next.js Script with Partytown Web Workers

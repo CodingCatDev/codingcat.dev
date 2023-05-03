@@ -18,6 +18,8 @@ devto: https://dev.to/codingcatdev/235-podcasters-unite-3ad6
 excerpt: We got together the best in the podcast business to find out all their secrets to success.
 hashnode: https://hashnode.codingcat.dev/podcast-2-35-podcasters-unite
 slug: 2-35-podcasters-unite
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/1gJlWfJFegXNWvW7PAY89w?si=M5R7RoolT6qzZlbUhDuenA
 start: August 10, 2022
 title: Podcasters Unite

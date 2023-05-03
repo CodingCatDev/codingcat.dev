@@ -1,5 +1,5 @@
 import { getContentBySlug, parseModules } from '$lib/server/content';
-import { ContentType, type Author, type Podcast } from '$lib/types';
+import { ContentType, type Author, type Podcast, type Sponsor } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
 
@@ -26,9 +26,35 @@ export const load = (async ({ params }) => {
 				guests.push(guest);
 		}
 	}
+
+	const authorModules = import.meta.glob(['../../../../../content/author/*.md']);
+	const authorItems = await parseModules(authorModules);
+
+	const authors: Author[] = [];
+
+	for (const authorSlug of ['alex-patterson', 'brittney-postma']) {
+		const author = await getContentBySlug({ contentItems: authorItems, slug: authorSlug }) as unknown as Author;
+		if (author)
+			authors.push(author);
+	}
+
+	const sponsorModules = import.meta.glob(['../../../../../content/sponsor/*.md']);
+	const sponsorItems = await parseModules(sponsorModules);
+
+	const sponsors: Sponsor[] = [];
+	if (content?.sponsors?.length) {
+		for (const sponsorSlug of content.sponsors) {
+			const sponsor = await getContentBySlug({ contentItems: sponsorItems, slug: sponsorSlug }) as unknown as Sponsor;
+			if (sponsor)
+				sponsors.push(sponsor);
+		}
+	}
+
 	return {
 		contentType,
 		content,
-		guests
+		guests,
+		authors,
+		sponsors
 	};
 });

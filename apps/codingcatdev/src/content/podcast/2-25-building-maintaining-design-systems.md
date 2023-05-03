@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/225-building-maintaining-design-systems-2ckh
 excerpt: Michael Chan talks all about how to build and maintain Design Systems. Brittney and I have a few ideas of our own too.
 hashnode: https://hashnode.codingcat.dev/podcast-2-25-building-maintaining-design-systems
 slug: 2-25-building-maintaining-design-systems
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/2S3qZfcaZStAfdItj3z2uQ?si=JdG64eFrRMGWul-uordCcg
 start: June 1, 2022
 title: Building & Maintaining Design Systems

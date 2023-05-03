@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/the-other-side-of-tech-a-documentarian-perspe
 excerpt: We sit down with Stefan Kingham, who helped create the Vue.js documentary and will soon be releasing a new Svelte documentary.
 hashnode: https://hashnode.codingcat.dev/podcast-2-4-the-other-side-of-tech-a-documentarian-perspective
 slug: 2-4-the-other-side-of-tech-a-documentarian-perspective
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/58IX9cHlJzOaALZ47Lou1G?si=ZBrRct2YStuRNR60jaDNNg
 start: January 26, 2022
 title: The Other Side of Tech - A Documentarian Perspective

@@ -14,6 +14,8 @@ guests:
   - pariss-chandler
 hashnode: https://hashnode.codingcat.dev/podcast-2-22-building-connections-for-the-underrepresented
 slug: 2-22-building-connections-for-the-underrepresented
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/6QRl4DJaj6fFjXg9emXiFR?si=GQ5SNoHjQO2hxVQN1K9Xdg
 start: May 11, 2022
 title: Building Connections for the Underrepresented

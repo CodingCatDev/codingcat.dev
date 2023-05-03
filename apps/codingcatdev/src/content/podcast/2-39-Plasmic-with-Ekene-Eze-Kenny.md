@@ -14,6 +14,8 @@ guests:
   - ekene-eze
 hashnode: https://hashnode.codingcat.dev/podcast-Plasmic-with-Ekene-Eze-Kenny
 slug: Plasmic-with-Ekene-Eze-Kenny
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/1kXO4pEgN0SMmAxU6Hkr92?si=ZMjGFjrtTZec5T6hzl3sCg
 start: September 14, 2022 12:00 PM
 title: Plasmic with Ekene Eze (Kenny)

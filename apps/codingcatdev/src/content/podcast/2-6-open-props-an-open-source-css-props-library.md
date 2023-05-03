@@ -15,6 +15,8 @@ guests:
   - adam-argyle
 hashnode: https://hashnode.codingcat.dev/podcast-2-6-open-props-an-open-source-css-props-library
 slug: 2-6-open-props-an-open-source-css-props-library
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/34dNMpOmT5jtHbecQQz2ND?si=qHjvm1ZwQYK_-0iSN7KTYA
 start: February 9, 2022
 title: Open Props - an Open Source CSS Props Library

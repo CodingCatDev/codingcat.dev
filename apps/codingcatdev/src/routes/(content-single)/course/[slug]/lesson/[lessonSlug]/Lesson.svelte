@@ -4,7 +4,7 @@
 	import type { Lesson, Course, Author } from '$lib/types';
 	import { browser } from '$app/environment';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
-	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
+	import Image from '$lib/components/content/Image.svelte';
 	export let data: {
 		course: Course;
 		content: Lesson;
@@ -28,7 +28,7 @@
 				{#if data?.content?.youtube}
 					<Video src={data.content.youtube} title={`${data.content.title}`} />
 				{:else if data?.content?.cover}
-					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
+					<Image src={data.content.cover} alt={data.content.title} />
 				{/if}
 				{#if data?.authors}
 					<section class="flex">
@@ -40,7 +40,7 @@
 								{#if author?.cover}
 									<div class="w-8 md:w-12">
 										{#key author.slug}
-											<CloudinaryImage src={author.cover} alt={author?.name} />
+											<Image src={author.cover} alt={author?.name} />
 										{/key}
 									</div>
 								{/if}

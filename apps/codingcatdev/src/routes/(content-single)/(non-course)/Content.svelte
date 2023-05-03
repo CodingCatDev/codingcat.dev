@@ -4,15 +4,16 @@
 	import { ArrowTopRightOnSquare } from '@steeze-ui/heroicons';
 
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Content, ContentType, Podcast } from '$lib/types';
+	import type { Author, Content, ContentType, Podcast, Sponsor } from '$lib/types';
 	import { pluralize } from '$lib/utils';
-	import CloudinaryImage from '$lib/components/content/CloudinaryImage.svelte';
+	import Image from '$lib/components/content/Image.svelte';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	export let data: {
 		content: Content & Podcast;
 		contentType: ContentType;
 		guests?: Author[];
 		authors?: Author[];
+		sponsors?: Sponsor[];
 	};
 	$: title = pluralize({ type: data.contentType } as Content);
 	$: picks = data?.content?.picks;
@@ -20,7 +21,7 @@
 
 {#if data?.content}
 	<div class="flex justify-center">
-		<section class="flex flex-col justify-center w-full gap-8 p-1 xl:flex-row xl:p-8">
+		<section class="flex flex-col justify-center w-full gap-8 p-2 xl:flex-row xl:p-8">
 			<div class="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
 				<ol class="bcu-breadcrumb">
 					<li class="capitalize bcu-crumb"><a href={`/${title}`}>{title}</a></li>
@@ -30,22 +31,26 @@
 				{#if data?.content?.youtube}
 					<Video src={data.content.youtube} title={`${data.content.title}`} />
 				{:else if data?.content?.cover}
-					<CloudinaryImage src={data.content.cover} alt={data.content.title} />
+					<Image src={data.content.cover} alt={data.content.title} />
 				{/if}
 
-				<!-- Guest and Author Cards -->
 				<div class="flex gap-2 md:gap-8">
+					<!-- Guests -->
 					{#if data?.guests}
 						<section class="flex gap-2 md:gap-8">
 							{#each data?.guests as guest (guest.slug)}
 								<a
-									class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+									class="flex items-center gap-2 p-2 rounded-md bcu-button variant-ghost"
 									href={`/guest/${guest.slug}`}
 								>
 									{#if guest?.cover}
 										<div class="w-8 md:w-12">
 											{#key guest.slug}
-												<CloudinaryImage src={guest.cover} alt={guest?.name} />
+												<Image
+													src={guest.cover}
+													alt={guest?.name}
+													classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square"
+												/>
 											{/key}
 										</div>
 									{/if}
@@ -54,17 +59,23 @@
 							{/each}
 						</section>
 					{/if}
+
+					<!-- Authors -->
 					{#if data?.authors}
 						<section class="flex gap-2 md:gap-8">
 							{#each data?.authors as author (author.slug)}
 								<a
-									class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+									class="flex items-center gap-2 p-2 rounded-md bcu-button variant-ghost"
 									href={`/author/${author.slug}`}
 								>
 									{#if author?.cover}
 										<div class="w-8 md:w-12">
 											{#key author.slug}
-												<CloudinaryImage src={author.cover} alt={author?.name} />
+												<Image
+													src={author.cover}
+													alt={author?.name}
+													classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square"
+												/>
 											{/key}
 										</div>
 									{/if}
@@ -74,8 +85,43 @@
 						</section>
 					{/if}
 				</div>
-				<!-- Main Content -->
 
+				<!-- Sponsors -->
+				{#if data?.sponsors}
+					<hr />
+
+					<h2>Sponsors</h2>
+					<section class="flex flex-col gap-2 md:flex-row md:gap-8">
+						{#each data?.sponsors as sponsor (sponsor.slug)}
+							<a
+								class="max-w-sm overflow-hidden bcu-card bg-initial card-hover"
+								href={`${sponsor.url}`}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<header>
+									{#if sponsor?.cover}
+										<Image
+											src={sponsor.cover}
+											alt={sponsor?.name}
+											classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video"
+										/>
+									{/if}
+								</header>
+								<div class="p-4 space-y-4">
+									<h3 data-toc-ignore="">{sponsor?.name}</h3>
+									<article>
+										<p>
+											{sponsor?.description}
+										</p>
+									</article>
+								</div>
+							</a>
+						{/each}
+					</section>
+				{/if}
+
+				<!-- Main Content -->
 				<section class="flex flex-col flex-grow w-full gap-2 markdown md:gap-8">
 					<CopyCodeInjector>
 						{@html data.content.html}
@@ -91,20 +137,20 @@
 							<section class="flex flex-col gap-2 md:gap-8">
 								{#each data?.guests as guest (guest.slug)}
 									<div class="bcu-card">
-										<header class="bcu-card-header flex gap-2 md:gap-8 items-center">
+										<header class="flex items-center gap-2 bcu-card-header md:gap-8">
 											{#if guest?.cover}
 												<div class="w-8 md:w-12">
 													{#key guest.slug}
-														<CloudinaryImage src={guest.cover} alt={guest?.name} />
+														<Image src={guest.cover} alt={guest?.name} />
 													{/key}
 												</div>
 											{/if}
 											<h3>{guest?.name}</h3>
 										</header>
-										<section class="p-4 flex flex-wrap gap-2 md:gap-8">
+										<section class="flex flex-wrap gap-2 p-4 md:gap-8">
 											{#each picks.filter((p) => p?.author === guest?.slug) as pick (pick.name)}
 												<a
-													class="bcu-button variant-soft-primary flex gap-2"
+													class="flex gap-2 bcu-button variant-soft-primary"
 													href={pick.site}
 													target="_blank"
 													rel="noopener noreferrer"
@@ -125,20 +171,20 @@
 							<section class="flex flex-col gap-2 md:gap-8">
 								{#each data?.authors as author (author.slug)}
 									<div class="bcu-card">
-										<header class="bcu-card-header flex gap-2 md:gap-8 items-center">
+										<header class="flex items-center gap-2 bcu-card-header md:gap-8">
 											{#if author?.cover}
 												<div class="w-8 md:w-12">
 													{#key author.slug}
-														<CloudinaryImage src={author.cover} alt={author?.name} />
+														<Image src={author.cover} alt={author?.name} />
 													{/key}
 												</div>
 											{/if}
 											<h3>{author?.name}</h3>
 										</header>
-										<section class="p-4 flex flex-wrap gap-2 md:gap-8">
+										<section class="flex flex-wrap gap-2 p-4 md:gap-8">
 											{#each picks.filter((p) => p?.author === author?.slug) as pick (pick.name)}
 												<a
-													class="bcu-button variant-soft-primary flex gap-2"
+													class="flex gap-2 bcu-button variant-soft-primary"
 													href={pick.site}
 													target="_blank"
 													rel="noopener noreferrer"

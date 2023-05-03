@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/220-regaining-javascript-performance-in-your-
 excerpt: Ryan Carniato teaches us about all the aspects of frontend frameworks and Javascript today.
 hashnode: https://hashnode.codingcat.dev/podcast-2-20-regaining-java-script-performance-in-your-website
 slug: 2-20-regaining-java-script-performance-in-your-website
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/5RSTfuweUgeCNJVfIcGxcb?si=C8oREMdySce6s7V12eY_rw
 start: May 18, 2022
 title: Regaining JavaScript Performance in your Website

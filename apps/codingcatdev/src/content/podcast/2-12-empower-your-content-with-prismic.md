@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/212-empower-your-content-with-prismic-3io
 excerpt: We sit down with Alex Trost to talk about Prismic and how it can empower your content and content creators.
 hashnode: https://hashnode.codingcat.dev/podcast-2-12-empower-your-content-with-prismic
 slug: 2-12-empower-your-content-with-prismic
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/1F0h01E7oR8bIw08FMAhFc?si=z_hJKzeLR1iAqRv_BT1fPQ
 start: March 23, 2022
 title: Empower your Content with Prismic

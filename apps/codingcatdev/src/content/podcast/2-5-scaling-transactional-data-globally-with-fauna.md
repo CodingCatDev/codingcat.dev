@@ -14,6 +14,8 @@ excerpt: We sit down with Rob Sutter to talk all about his history as a develope
 hashnode: https://hashnode.codingcat.dev/podcast-2-5-scaling-transactional-data-globally-with-fauna
 slug: 2-5-scaling-transactional-data-globally-with-fauna
 spotify: https://open.spotify.com/episode/3Op24f7z9NCD5ufjrshupB?si=Qvn-uUM2QhW7lDowvZWI5g
+sponsors:
+  - builder-io
 start: February 2, 2022
 title: Scaling Transactional Data Globally with Fauna
 youtube: https://www.youtube.com/watch?v=-wjpyBmeYG4

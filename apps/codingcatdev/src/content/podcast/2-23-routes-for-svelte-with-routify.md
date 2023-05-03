@@ -14,6 +14,8 @@ guests:
   - jake-rosenberg
 hashnode: https://hashnode.codingcat.dev/podcast-2-23-routes-for-svelte-with-routify
 slug: 2-23-routes-for-svelte-with-routify
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/5dBWRXsqsXJPlNwSRmAI1s?si=jHQuWoTVQpaJuh_7vD-nZg
 start: June 8, 2022
 title: Routes for Svelte with Routify

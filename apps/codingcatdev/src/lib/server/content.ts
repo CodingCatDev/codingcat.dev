@@ -165,6 +165,31 @@ export const listContentByAuthor = async ({ authorSlug, contentItems }:
 	];
 };
 
+/**
+ * List all content from specified content type by sponsor
+ * */
+export const listContentBySponsor = async ({ sponsorSlug, contentItems }:
+	{
+		sponsorSlug: string,
+		contentItems: Content[];
+	}) => {
+	console.debug(`Searching for items from sponsor: ${sponsorSlug}`);
+	const fullConent = await listContent({ contentItems, after: 0, limit: 10000 });
+	const content = fullConent.content.filter(
+		preview ?
+			(c) =>
+				c.sponsors?.filter((g) => g == sponsorSlug)?.length
+			:
+			(c) =>
+				c.sponsors?.filter((g) => g == sponsorSlug)?.length &&
+				new Date(c.start) <= new Date() &&
+				c.published === ContentPublished.published
+	)
+	return [
+		...content,
+	];
+};
+
 export const getContentBySlug = async ({
 	contentItems,
 	slug
@@ -182,8 +207,9 @@ export const getContentBySlug = async ({
 				:
 				(c) =>
 					c.slug == slug &&
-					new Date(c.start) <= new Date() &&
-					c.published === ContentPublished.published
+						new Date(c.start) <= new Date() &&
+						c.published === ContentPublished.published &&
+						c.end ? new Date(c.end) > new Date() : true
 		)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
 		.slice(0, 1)

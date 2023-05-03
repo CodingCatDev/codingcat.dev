@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
+	import Image from '$lib/components/content/Image.svelte';
 	import type { ContentType, Content } from '$lib/types';
 	export let contentItems: Content[];
 	export let contentType: ContentType;
@@ -8,25 +9,29 @@
 {#each contentItems as p}
 	<a
 		href={`/${contentType}/${p.slug}`}
-		class="flex items-center gap-2 p-2 md:gap-8 bcu-card md:p-4"
+		class="max-w-sm overflow-hidden bcu-card bg-initial card-hover"
 	>
-		<div class="w-60 md:w-80">
+		<header>
 			{#if p?.cover}
 				<Image
 					src={p.cover}
-					alt={p.title || 'Missing Alt Sorry'}
-					classes="rounded-md rounded-b-none cursor-pointer aspect-video"
+					alt={p?.title}
+					classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video rounded-md rounded-b-none"
 				/>
 			{:else}
 				<Image
 					src="https://media.codingcat.dev/image/upload/dev-codingcatdev-photo/v60h88eohd7ufghkspgo"
 					alt={p.title || 'Missing Alt Sorry'}
-					classes="rounded-md rounded-b-none cursor-pointer aspect-video"
+					classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video rounded-md rounded-b-none"
 				/>
 			{/if}
+		</header>
+		<div class="p-4 space-y-4">
+			<article>
+				<p>
+					{p?.title}
+				</p>
+			</article>
 		</div>
-		<h2>
-			{p.title}
-		</h2>
 	</a>
 {/each}

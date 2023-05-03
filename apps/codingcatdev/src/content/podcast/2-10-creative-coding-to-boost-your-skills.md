@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/210-creative-coding-to-boost-your-skills-15nc
 excerpt: Brittney sits down with Jhey Tompkins and talks about how to be creative while improving your skills.
 hashnode: https://hashnode.codingcat.dev/podcast-2-10-creative-coding-to-boost-your-skills
 slug: 2-10-creative-coding-to-boost-your-skills
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/43c5DEVQcuMfYVZTPis7lq?si=Iiu9rwtAR0-tcaLbqCCOwQ
 start: March 9, 2022
 title: Creative Coding to Boost your Skills

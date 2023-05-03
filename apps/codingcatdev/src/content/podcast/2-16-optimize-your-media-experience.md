@@ -13,6 +13,8 @@ guests:
   - colby-fayock
 hashnode: https://hashnode.codingcat.dev/podcast-2-16-optimize-your-media-experience
 slug: 2-16-optimize-your-media-experience
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/5Ry9jd3GcpmQRCvzs7gwn1?si=D58PpolzQfexoPlIyCD9fA
 start: April 20, 2022
 title: Optimize your Media Experience

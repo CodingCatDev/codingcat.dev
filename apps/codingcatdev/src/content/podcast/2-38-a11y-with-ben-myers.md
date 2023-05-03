@@ -13,6 +13,8 @@ devto: https://dev.to/codingcatdev/238-a11y-with-ben-myers-517g
 excerpt: Ben guides us through how A11y is hard to understand if you don’t use it everyday. He also shows us many tools that we can use to help make more accessibility compliant websites.
 hashnode: https://hashnode.codingcat.dev/podcast-2-38-a11y-with-ben-myers
 slug: 2-38-a11y-with-ben-myers
+sponsors:
+  - storyblok
 spotify: https://open.spotify.com/episode/33Zc3prYvzVFI9M66BjWHH?si=Qfl5jsSrQCOb3PdU5eqEbA
 start: September 7, 2022 12:00 PM
 title: A11y with Ben Myers

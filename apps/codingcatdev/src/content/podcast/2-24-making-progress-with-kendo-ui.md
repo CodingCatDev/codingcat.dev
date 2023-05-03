@@ -14,6 +14,8 @@ devto: https://dev.to/codingcatdev/224-creating-and-using-kendo-ui-52la
 excerpt: We have Alyssa Nicoll and Kathryn Grayson from Progress teach us all about KendoUI and how they maintain this frontend library.
 hashnode: https://hashnode.codingcat.dev/podcast-2-24-making-progress-with-kendo-ui
 slug: 2-24-making-progress-with-kendo-ui
+sponsors:
+  - builder-io
 spotify: https://open.spotify.com/episode/0OYdDhAJlAzzbG6nClT7IU?si=sWXjqvYrRf6egX3XixLKYw
 start: May 25, 2022
 title: Creating and Using Kendo UI
