@@ -27,9 +27,22 @@ export const load = (async ({ params }) => {
 		}
 	}
 
+	const authorModules = import.meta.glob(['../../../../../content/author/*.md']);
+	const authorItems = await parseModules(authorModules);
+
+	const authors: Author[] = [];
+
+	for (const authorSlug of ['alex-patterson', 'brittney-postma']) {
+		const author = await getContentBySlug({ contentItems: authorItems, slug: authorSlug }) as unknown as Author;
+		if (author)
+			authors.push(author);
+	}
+
+
 	return {
 		contentType,
 		content,
-		guests
+		guests,
+		authors
 	};
 });

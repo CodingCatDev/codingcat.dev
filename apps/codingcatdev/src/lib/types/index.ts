@@ -35,6 +35,7 @@ export interface Podcast extends Content {
 	recording_date?: Date;
 	podcast?: PodcastType;
 	guests?: string[]; // Guest Slug
+	picks?: Pick[];
 
 	// Exports
 	devto?: string;
@@ -51,6 +52,12 @@ export interface Author {
 	published?: ContentPublished;
 	socials: Socials;
 	websites?: string[];
+}
+
+export interface Pick {
+	author?: string;
+	name?: string;
+	site?: string;
 }
 
 export enum ContentType {
