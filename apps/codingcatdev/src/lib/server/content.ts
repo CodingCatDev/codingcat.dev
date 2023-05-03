@@ -207,9 +207,8 @@ export const getContentBySlug = async ({
 				:
 				(c) =>
 					c.slug == slug &&
-						new Date(c.start) <= new Date() &&
-						c.published === ContentPublished.published &&
-						c.end ? new Date(c.end) > new Date() : true
+					new Date(c.start) <= new Date() &&
+					c.published === ContentPublished.published
 		)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
 		.slice(0, 1)
