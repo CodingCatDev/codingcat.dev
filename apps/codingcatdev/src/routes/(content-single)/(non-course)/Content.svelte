@@ -141,7 +141,11 @@
 											{#if guest?.cover}
 												<div class="w-8 md:w-12">
 													{#key guest.slug}
-														<Image src={guest.cover} alt={guest?.name} />
+														<Image
+															src={guest.cover}
+															alt={guest?.name}
+															classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square"
+														/>
 													{/key}
 												</div>
 											{/if}
@@ -175,7 +179,11 @@
 											{#if author?.cover}
 												<div class="w-8 md:w-12">
 													{#key author.slug}
-														<Image src={author.cover} alt={author?.name} />
+														<Image
+															src={author.cover}
+															alt={author?.name}
+															classes="object-cover w-full bg-cover rounded bg-black/50 aspect-square"
+														/>
 													{/key}
 												</div>
 											{/if}
