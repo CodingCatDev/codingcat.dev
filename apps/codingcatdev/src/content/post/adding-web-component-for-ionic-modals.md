@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1633601665/main-codingcatdev-photo/dy9rc4i1i6klybu27tmm.png
 devto: https://dev.to/codingcatdev/adding-web-component-for-ionic-modals-33jh

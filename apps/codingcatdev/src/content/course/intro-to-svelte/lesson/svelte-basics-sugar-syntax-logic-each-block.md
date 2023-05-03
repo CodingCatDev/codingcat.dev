@@ -1,4 +1,6 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1646791334/main-codingcatdev-photo/Intro_to_Svelte.png
 excerpt: 3 Kinds of templating blocks

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1623783708/main-codingcatdev-photo/dhoffzsdzo9fld1xxpgj.jpg
 devto: https://dev.to/codingcatdev/firebase-multisite-hosting-37d

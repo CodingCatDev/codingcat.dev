@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/FlutterFlameFlappy.png
 excerpt: Spydon teaches Alex and Brittney how to setup and use Flame to build a Flappy Bird clone.

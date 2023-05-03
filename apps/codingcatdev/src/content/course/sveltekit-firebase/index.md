@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681854060/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebaseCourse.png'
 excerpt: 'Learn how to use SvelteKit and Firebase to build high-performance, scalable web applications.'

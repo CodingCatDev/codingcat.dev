@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616547566/main-codingcatdev-photo/wsuyn79owuntcukcwtkg.jpg
 devto: https://dev.to/codingcatdev/npm-tips-and-tricks-2n18

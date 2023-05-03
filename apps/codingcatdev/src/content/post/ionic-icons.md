@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600704494/ccd-cloudinary/ionic_icons_everywhere.png
 devto: https://dev.to/codingcatdev/ionic-icons-1e07

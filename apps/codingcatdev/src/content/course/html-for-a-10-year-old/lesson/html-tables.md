@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1620240196/main-codingcatdev-photo/s58bcshsqx9pdio6q0k5.png
 excerpt: HTML for a 10 Year Old Tables

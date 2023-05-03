@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1662067996/main-codingcatdev-photo/Notion_to_Dev.to_and_Hashnode.jpg
 devto: https://dev.to/codingcatdev/notion-to-hashnode-and-devto-using-pubsub-cloud-functions-3ka

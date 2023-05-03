@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600706377/ccd-cloudinary/29c968a7967e193ed8ec6020ab3bf1e63aec2b38-1920x1080-1.png
 excerpt: I have tried several sticker places and the images always come back terrible and the customer service stinks. Then I found Sticker Mule and everything has been like a dream!

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616546840/main-codingcatdev-photo/hmhr4khpcbyynnmisr5y.jpg
 devto: https://dev.to/codingcatdev/angular-pwa-to-google-play-store-using-trusted-web-activity-5en4

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/0.0.png
 excerpt: We will walk through how to get up and running on Next.js with Supabase. Then we will build UI using http://builder.io/.

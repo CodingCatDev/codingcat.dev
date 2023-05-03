@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1654934534/main-codingcatdev-photo/courses/ForA10YearOld/ForA10YearOldHTMLBasics.png
 excerpt: HTML for a 10 Year Old Basics

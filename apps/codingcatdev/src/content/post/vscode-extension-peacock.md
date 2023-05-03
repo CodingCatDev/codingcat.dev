@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600704493/ccd-cloudinary/peacock.png
 devto: https://dev.to/codingcatdev/vscode-extension-peacock-4hhb

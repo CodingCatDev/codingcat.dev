@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1618943875/main-codingcatdev-photo/ui1ekh1x8djmp8jyehbg.png
 excerpt: Deploying Firebase Cloud Function to use with Slack slash commands. Sending someone a /slap!

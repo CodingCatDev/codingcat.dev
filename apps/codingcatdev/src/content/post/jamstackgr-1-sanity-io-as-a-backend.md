@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1633601768/main-codingcatdev-photo/cveur4s1pl4zbvmelqq7.png
 excerpt: Talking through Sanity.io as a backend to multiple Static Site Generators. A slightly deeper dive into Gatsbyjs.

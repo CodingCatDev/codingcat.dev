@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1634645175/main-codingcatdev-photo/vnj9aqzpv5rxx3yvwzek.png
 devto: https://dev.to/codingcatdev/cloud-function-github-update-1ln4

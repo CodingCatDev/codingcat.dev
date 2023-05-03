@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 excerpt: In this video we review the opacity property.
 published: draft

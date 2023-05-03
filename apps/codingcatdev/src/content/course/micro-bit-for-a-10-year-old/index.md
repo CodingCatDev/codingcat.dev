@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1654934535/main-codingcatdev-photo/courses/ForA10YearOld/ForA10YearOldMicroBitIntro.png
 excerpt: Having some fun learning code with micro:bit

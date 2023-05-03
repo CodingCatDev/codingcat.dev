@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616548231/main-codingcatdev-photo/xpzty9ukcqohrov5vgsu.png
 excerpt: A walk through of how to use Angular Material with Firebase.

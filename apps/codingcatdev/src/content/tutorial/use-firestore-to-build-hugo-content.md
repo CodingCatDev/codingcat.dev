@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616547727/main-codingcatdev-photo/jstxkremimdttdzmghhe.png
 devto: https://dev.to/codingcatdev/use-firestore-to-build-hugo-conten-1o99

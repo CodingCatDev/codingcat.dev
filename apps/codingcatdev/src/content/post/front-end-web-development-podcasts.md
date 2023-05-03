@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1656421568/main-codingcatdev-photo/Front-End-Web-Development-Podcasts.png
 devto: https://dev.to/codingcatdev/front-end-web-development-podcasts-42gg
