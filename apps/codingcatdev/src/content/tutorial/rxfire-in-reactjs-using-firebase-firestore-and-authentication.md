@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616429614/main-codingcatdev-photo/q6a6amtmdfsobeguruak.png
 devto: https://dev.to/codingcatdev/rxfire-in-reactjs-using-firebase-firestore-and-authentication-3ao

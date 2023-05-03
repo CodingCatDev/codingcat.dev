@@ -1,7 +1,7 @@
 ---
 episode: 31
-guest:
-  - Scott-Spence
+guests:
+  - scott-spence
 recording_date: June 1, 2021 9:00 AM
 season: 1
 published: published

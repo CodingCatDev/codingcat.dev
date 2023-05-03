@@ -1,5 +1,5 @@
 import { getContentBySlug, parseLessonModules, parseModules } from '$lib/server/content';
-import { ContentType } from '$lib/types';
+import { ContentType, type Author } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
 const contentType = ContentType.course;
@@ -16,9 +16,23 @@ export const load = (async ({ params }) => {
             message: 'Not found'
         });
     }
+
+    const authorModules = import.meta.glob(['../../../../content/author/*.md']);
+    const authorItems = await parseModules(authorModules);
+
+    const authors: Author[] = [];
+    if (course?.authors?.length) {
+        for (const authorSlug of course.authors) {
+            const author = await getContentBySlug({ contentItems: authorItems, slug: authorSlug }) as unknown as Author;
+            if (author) {
+                authors.push(author);
+            }
+        }
+    }
     return {
         contentType,
         course,
-        courseItems
+        courseItems,
+        authors,
     };
 });

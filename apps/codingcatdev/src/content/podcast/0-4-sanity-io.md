@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/xgaj8ujelqfyj53c3mcc.png
 devto: https://dev.to/codingcatdev/0-4-sanity-io-2ie1
 excerpt: Talking with Knut about Sanity.io and how it fits into your Jamstack requirements.
+guests:
+  - knut-melvaer
 hashnode: https://hashnode.codingcat.dev/podcast-0-4-sanity-io
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=0-4-sanity-io&_id=caa9dabe2edb408d858e43c36ffa13e2
 slug: 0-4-sanity-io

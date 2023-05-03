@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600704109/main-codingcatdev-photo/courses/Angular%20Material/angular_material_firebase_hosting.png
 excerpt: How to deploy your website to firebase hosting.

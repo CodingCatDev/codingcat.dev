@@ -1,4 +1,4 @@
-import { ContentType, ContentPublished, type Lesson } from '$lib/types';
+import { ContentType, ContentPublished, type Lesson, type Podcast } from '$lib/types';
 import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
@@ -140,6 +140,31 @@ export const listContent = async ({
 	};
 };
 
+/**
+ * List all content from specified content type by author
+ * */
+export const listContentByAuthor = async ({ authorSlug, contentItems }:
+	{
+		authorSlug: string,
+		contentItems: Content[];
+	}) => {
+	console.debug(`Searching for items from author: ${authorSlug}`);
+	const fullConent = await listContent({ contentItems, after: 0, limit: 10000 });
+	const content = fullConent.content.filter(
+		preview ?
+			(c) =>
+				c.authors?.filter((g) => g == authorSlug)?.length
+			:
+			(c) =>
+				c.authors?.filter((g) => g == authorSlug)?.length &&
+				new Date(c.start) <= new Date() &&
+				c.published === ContentPublished.published
+	)
+	return [
+		...content,
+	];
+};
+
 export const getContentBySlug = async ({
 	contentItems,
 	slug
@@ -225,4 +250,32 @@ export const getLessonFromCourseSlug = async ({ courseSlug, slug, courseItems }:
 		...doc,
 		courseSlug: course.slug
 	};
+};
+
+
+/**
+ * Get podcast by guest slug
+ * */
+export const getPodcastByGuest = async ({ slug, podcastItems }:
+	{
+		slug: string,
+		podcastItems: Podcast[];
+	}) => {
+	console.debug(`Searching for podcasts from guest: ${slug}`);
+	const podcasts = podcastItems
+		.filter(
+			preview ?
+				(c) =>
+					c.guests?.filter((g) => g == slug)?.length
+				:
+				(c) =>
+					c.guests?.filter((g) => g == slug)?.length &&
+					new Date(c.start) <= new Date() &&
+					c.published === ContentPublished.published
+		)
+		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
+
+	return [
+		...podcasts,
+	];
 };

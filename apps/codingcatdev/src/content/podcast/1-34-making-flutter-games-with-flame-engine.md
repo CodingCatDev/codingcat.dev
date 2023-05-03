@@ -1,9 +1,9 @@
 ---
 episode: 34
-guest:
-  - Lukas-spydon
-  - Jochum-wolfen
-  - Renan
+guests:
+  - lukas-spydon
+  - jochum-wolfen
+  - renan
 recording_date: July 7, 2021 3:00 PM
 season: 1
 published: published

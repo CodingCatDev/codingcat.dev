@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/component-events.png'
 excerpt: 'Event forwarding is a powerful tool that can be used to communicate between components in Svelte.'

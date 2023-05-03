@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1654934533/main-codingcatdev-photo/courses/ForA10YearOld/ForA10YearOldHTML.png
 excerpt: Learn HTML from the very beginning with live coding examples.

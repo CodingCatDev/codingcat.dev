@@ -10,6 +10,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/b7qvododher1u0pgfgn7.png
 devto: https://dev.to/codingcatdev/0-6-nextjs-with-guillermo-rauch-5f8l
 excerpt: Talking about Next.js with CEO of Vercel (Zeit). Everything from why Next.js was started to comparing where to host it.
+guests:
+  - guillermo-rauch
 hashnode: https://hashnode.codingcat.dev/podcast-0-6-nextjs-with-guillermo-rauch
 slug: 0-6-nextjs-with-guillermo-rauch
 spotify: https://open.spotify.com/episode/51aEvSmJWSzrF85Auglnyd?si=kSbGG4kGQKqMwtpQTXEdtg

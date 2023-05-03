@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 published: draft
 slug: welcome-to-js-for-a-10-year-old

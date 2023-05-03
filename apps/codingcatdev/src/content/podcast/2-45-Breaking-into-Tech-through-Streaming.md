@@ -1,7 +1,7 @@
 ---
 episode: 45
-guest:
-  - Jenn-Junod
+guests:
+  - jenn-junod
 recording_date: October 14, 2022 2:00 PM
 season: 2
 published: published

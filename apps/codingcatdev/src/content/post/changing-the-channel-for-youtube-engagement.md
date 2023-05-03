@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1662067105/Not_Changing_the_Channel_asxufz.jpg
 devto: https://dev.to/codingcatdev/updated-changing-the-channel-for-youtube-engagement-was-a-bad-idea-42ek

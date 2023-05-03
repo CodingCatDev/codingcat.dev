@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1609704209/main-codingcatdev-photo/courses/Angular%20Material/xg8m9zjegi5ewxssucal.png
 published: published

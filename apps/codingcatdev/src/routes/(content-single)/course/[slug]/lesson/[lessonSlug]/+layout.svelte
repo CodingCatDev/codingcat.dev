@@ -20,7 +20,7 @@
 		<div class="fixed top-[5.125rem] bottom-24 w-[19.5rem] xl:w-96 py-10 overflow-y-auto ">
 			<div class="flex flex-col gap-2 px-8 md:gap-8">
 				{#key $storeCurrentUrl}
-					<TableOfContents target=".markdown" />
+					<TableOfContents />
 				{/key}
 				{#if data?.course?.lesson && data?.course?.lesson.length > 0 && data?.course?.slug}
 					<LessonList courseSlug={data?.course?.slug} lesson={data.course.lesson} />

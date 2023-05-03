@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1633601188/main-codingcatdev-photo/lxr4hrhmfxa3rb4bilsf.png
 devto: https://dev.to/codingcatdev/anchor-links-from-sanity-in-gatsby-320n

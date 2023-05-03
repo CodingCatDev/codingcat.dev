@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1633601534/main-codingcatdev-photo/sknntx1srr4tpzvhwr6a.png
 devto: https://dev.to/codingcatdev/better-performance-through-analysis-35b8

@@ -1,7 +1,8 @@
 ---
 episode: 26
-guest:
-  - Flor-Antara
+guests:
+  - flor-antara
+  - james-vidler
 recording_date: April 15, 2021 5:00 PM
 season: 1
 published: published

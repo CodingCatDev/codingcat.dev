@@ -8,6 +8,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Crossover_for_Compressed.fm_and_Purrfect.dev.png
 devto: https://dev.to/codingcatdev/145-crossover-for-compressedfm-and-purrfectdev-2g13
 excerpt: We did a fun mashup with James Q Quick and Amy Dutton (selfteachme) from Compressed.fm. We touch a lot on our background and how to become a T shaped or broken comb skillset.
+guests:
+  - amy-dutton
 hashnode: https://hashnode.codingcat.dev/podcast-1-45-crossover-for-compressed-fm-and-purrfect-dev
 slug: 1-45-crossover-for-compressed-fm-and-purrfect-dev
 spotify: https://open.spotify.com/episode/4GUnEEekhSJlGgbIOcKVHX?si=ve5B41DERqyZAXo9no7KNw

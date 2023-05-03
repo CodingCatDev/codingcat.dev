@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1644457297/main-codingcatdev-photo/The_Basics_of_Big_Data_for_Web_Developers.jpg
 devto: https://dev.to/codingcatdev/the-basics-of-big-data-for-web-developers-cl7

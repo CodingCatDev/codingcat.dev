@@ -9,6 +9,9 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/building-connections.jpg
 devto: https://dev.to/codingcatdev/222-building-connections-for-the-underrepresented-5hk
 excerpt: We chat with Pariss Athena and Nick DeJesus about building Black Tech Pipeline. How Black Tech Pipeline is building connections for the underrepresented.
+guests:
+  - nick-dejesus
+  - pariss-chandler
 hashnode: https://hashnode.codingcat.dev/podcast-2-22-building-connections-for-the-underrepresented
 slug: 2-22-building-connections-for-the-underrepresented
 spotify: https://open.spotify.com/episode/6QRl4DJaj6fFjXg9emXiFR?si=GQ5SNoHjQO2hxVQN1K9Xdg

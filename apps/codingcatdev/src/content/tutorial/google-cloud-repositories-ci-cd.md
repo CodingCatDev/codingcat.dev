@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1600989114/ccd-cloudinary/Google-Cloud-Repositories-CICD-.png
 devto: https://dev.to/codingcatdev/google-cloud-repositories-cicd-4i56

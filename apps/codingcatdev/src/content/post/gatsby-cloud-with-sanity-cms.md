@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1618944778/main-codingcatdev-photo/qo6tuotjevkv0dpzzw39.png
 devto: https://dev.to/codingcatdev/gatsby-cloud-with-sanity-cms-2b5e

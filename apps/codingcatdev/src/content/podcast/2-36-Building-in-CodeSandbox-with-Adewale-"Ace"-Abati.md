@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1658338686/main-codingcatdev-photo/Building-in-CodeSandbox-with-Adewale-%22Ace%22-Abati.jpg
 devto: https://dev.to/codingcatdev/building-in-codesandbox-with-adewale-ace-abati-5a1p
 excerpt: Adewale “Ace” Abita, shows us how to use CodeSandbox to improve your developer experience and collaboration.
+guests:
+  - ace-kyd
 hashnode: https://hashnode.codingcat.dev/podcast-2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati
 slug: 2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati
 spotify: https://open.spotify.com/episode/5cl1JKnso0s054qMl4aJQn?si=_5RnCPPIR8u8nwoA8lwCMQ

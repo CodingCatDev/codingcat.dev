@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 codepen: 'codercatdev/pen/LYdLraW'
 cover: https://media.codingcat.dev/image/upload/v1658571304/main-codingcatdev-photo/JS-confetti.png

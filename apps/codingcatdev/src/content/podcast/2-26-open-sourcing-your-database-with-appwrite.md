@@ -1,7 +1,7 @@
 ---
 episode: 26
-guest:
-  - Brandon-Roberts
+guests:
+  - brandon-roberts
 recording_date: May 5, 2022 2:30 PM
 season: 2
 published: published

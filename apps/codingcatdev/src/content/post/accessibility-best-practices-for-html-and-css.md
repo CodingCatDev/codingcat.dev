@@ -1,4 +1,6 @@
 ---
+authors:
+	- brittney-postma
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1629384711/main-codingcatdev-photo/n299y699xo7tjwlctlav.png
 devto: https://dev.to/brittneypostma/accessibility-best-practices-for-html-css-d51

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1633601646/main-codingcatdev-photo/czh38omkhxq4qe2v766h.png
 devto: https://dev.to/codingcatdev/adding-angular-components-to-your-static-site-1g6k

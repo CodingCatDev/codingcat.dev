@@ -1,7 +1,7 @@
 ---
 episode: 3
-guest:
-  - Jon-Meyers
+guests:
+  - jon-meyers
 recording_date: November 9, 2021 6:30 PM
 season: 2
 published: published

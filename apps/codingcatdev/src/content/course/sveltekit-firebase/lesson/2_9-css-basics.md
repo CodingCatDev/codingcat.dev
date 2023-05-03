@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/css-basics.png'
 excerpt: 'Svelte CSS component scope allows you to style components without affecting the rest of the page.'

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1609704484/main-codingcatdev-photo/courses/Angular%20Material/z20eakfncqk5iyshaiek.png
 excerpt: Reactive Forms Showing how to update the form based on updates to data.

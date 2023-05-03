@@ -1,7 +1,7 @@
 ---
 episode: 48
-guest:
-  - Chris-Biscardi
+guests:
+  - chris-biscardi
 recording_date: October 20, 2021 4:00 PM
 season: 1
 published: published

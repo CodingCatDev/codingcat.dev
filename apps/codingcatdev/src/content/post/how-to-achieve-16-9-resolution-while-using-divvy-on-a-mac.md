@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1644851521/main-codingcatdev-photo/Divvy.jpg
 devto: https://dev.to/codingcatdev/how-to-achieve-169-resolution-while-using-divvy-on-a-mac-1iog

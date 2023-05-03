@@ -1,7 +1,7 @@
 ---
 episode: 33
-guest:
-  - Douwe-Maan
+guests:
+  - douwe-maan
 recording_date: June 23, 2022 2:15 PM
 season: 2
 published: published

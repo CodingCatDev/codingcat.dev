@@ -1,10 +1,10 @@
 ---
 episode: 29
-guest:
-  - Amanda-Giannelli
-  - Anuradha-Kumari
-  - Brittany-Walker
-  - Salma-Alam-Naylor
+guests:
+  - amanda-giannelli
+  - anuradha-kumari
+  - brittany-walker
+  - salma-alam-naylor
 recording_date: May 26, 2022 10:00 AM
 season: 2
 published: published

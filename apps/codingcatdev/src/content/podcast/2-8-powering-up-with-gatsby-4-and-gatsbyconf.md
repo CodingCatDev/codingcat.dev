@@ -1,7 +1,7 @@
 ---
 episode: 8
-guest:
-  - Grayson-Hicks
+guests:
+  - grayson-hicks
 recording_date: January 20, 2022 10:30 AM
 season: 2
 published: published

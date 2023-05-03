@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616545942/main-codingcatdev-photo/ivyj5svdql79xzaqx5ii.png
 excerpt: How to utilize Sanity's Webhooks to trigger a Firebase Cloud Function that can backup your data in Cloud Firestore

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1633604046/main-codingcatdev-photo/rbjubpuetc0xhsiburfk.png
 devto: https://dev.to/codingcatdev/slack-workspace-theme-customization-24o

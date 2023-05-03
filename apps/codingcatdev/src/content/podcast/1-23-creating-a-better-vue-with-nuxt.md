@@ -1,7 +1,7 @@
 ---
 episode: 23
-guest:
-  - Daniel-Roe
+guests:
+  - daniel-roe
 recording_date: March 29, 2021 2:30 PM
 season: 1
 published: published

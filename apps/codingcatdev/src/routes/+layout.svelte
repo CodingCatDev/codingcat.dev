@@ -20,7 +20,7 @@
 	import CcdAppBar from './(layout-partials)/CcdAppBar.svelte';
 	import CcdDrawer from './(layout-partials)/CcdDrawer.svelte';
 	import CcdFooter from './(layout-partials)/CcdFooter.svelte';
-	import type { Content } from '$lib/types';
+	import type { Author, Content } from '$lib/types';
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
@@ -71,7 +71,7 @@
 			image: metaDefaults.image
 		}
 	};
-	let content: Content | undefined = undefined;
+	let content: (Content & Author) | undefined = undefined;
 	page.subscribe((page) => {
 		content = page?.data?.content;
 
@@ -86,7 +86,7 @@
 
 		if (content && !Array.isArray(content)) {
 			// Post Data
-			meta.title = `${content.title}`;
+			meta.title = content.title ? `${content.title}` : `${content.name}`;
 			meta.description = `${content.excerpt}`;
 			meta.image = `${content.cover}`;
 			// Article
@@ -100,9 +100,9 @@
 				: new Date().toISOString();
 			meta.article.author = `${content?.authors?.[0]?.name || 'Alex Patterson'}`;
 			// Twitter
-			meta.twitter.title = `${content.title}`;
-			meta.twitter.description = `${content.excerpt}`;
-			meta.twitter.image = `${content.cover}`;
+			meta.twitter.title = meta.title;
+			meta.twitter.description = meta.description;
+			meta.twitter.image = meta.image;
 		}
 	});
 </script>
@@ -157,9 +157,9 @@
 	<!-- Page Content -->
 	{#if $navigationIsDelayed}
 		<!-- LOOK HERE -->
-		<div class="flex flex-col m-2 md:m-8 items-center gap-2 md:gap-8">
+		<div class="flex flex-col items-center gap-2 m-2 md:m-8 md:gap-8">
 			<ProgressCircle stroke={60} value={undefined} width="w-20 md:w-36" />
-			<h1 class="ext-3xl text-center text-cText">Fetching...</h1>
+			<h1 class="text-center ext-3xl text-cText">Fetching...</h1>
 		</div>
 	{:else}
 		<slot />

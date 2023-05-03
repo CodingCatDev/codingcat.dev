@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1648676439/main-codingcatdev-photo/CodingCat.dev_joins_Learn_Build_Teach.png
 devto: https://dev.to/codingcatdev/codingcatdev-is-joining-the-learn-build-teach-community-3l25

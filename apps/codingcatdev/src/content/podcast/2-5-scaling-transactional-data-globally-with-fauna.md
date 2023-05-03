@@ -1,7 +1,7 @@
 ---
 episode: 5
-guest:
-  - Rob-Sutter
+guests:
+  - rob-sutter
 recording_date: December 10, 2021 1:30 PM
 season: 2
 published: published

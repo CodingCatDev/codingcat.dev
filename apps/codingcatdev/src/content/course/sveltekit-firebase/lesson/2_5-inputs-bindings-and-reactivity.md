@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/inputs-bindings-and-reactivity.png'
 excerpt: 'Svelte inputs and bindings allow you to create interactive UIs by connecting user input to application state.'

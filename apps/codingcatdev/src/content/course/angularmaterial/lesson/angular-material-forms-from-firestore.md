@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1609704410/main-codingcatdev-photo/courses/Angular%20Material/mlmionck7owqfc94xoev.png
 excerpt: Angular Material Forms showing how to highlight erros on forms

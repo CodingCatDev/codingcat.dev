@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 codepen: 'codercatdev/pen/VwQgLBy'
 cover: 'https://media.codingcat.dev/image/upload/v1681907256/main-codingcatdev-photo/Round-Loading-Indicator.png'

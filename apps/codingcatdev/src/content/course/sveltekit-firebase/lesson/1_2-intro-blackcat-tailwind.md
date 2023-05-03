@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681854110/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebase_02.png'
 excerpt:

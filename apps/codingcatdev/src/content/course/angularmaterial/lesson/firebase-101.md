@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 
 excerpt: Firebase 101, quick explanation of what we will use in this course.

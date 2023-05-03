@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1649933071/main-codingcatdev-photo/lb.jpg'
 devto: https://dev.to/codingcatdev/learning-builderio-from-a-developers-perspective-c69

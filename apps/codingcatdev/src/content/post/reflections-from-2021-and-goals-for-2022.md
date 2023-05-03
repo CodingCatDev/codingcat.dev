@@ -1,4 +1,6 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1640973161/main-codingcatdev-photo/og-image.jpg
 devto: https://dev.to/codingcatdev/reflections-from-2021-goals-for-2022-3af8

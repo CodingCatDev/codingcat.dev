@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/automating_infrastructuring_digger.jpg
 devto: https://dev.to/codingcatdev/227-automating-infrastructure-with-diggerdev-47l2
 excerpt: We sit down to chat with Igor from http://Digger.dev how to automate all of your infrastructure needs on AWS. The goal of Digger is to make AWS simple!
+guests:
+  - igor-zalutski
 hashnode: https://hashnode.codingcat.dev/podcast-2-27-automating-infrastructure-with-digger-dev
 slug: 2-27-automating-infrastructure-with-digger-dev
 spotify: https://open.spotify.com/episode/7F6vRJ0k2aPICNkkjUSbze?si=D-0ouo9CRaWYzAAlGG5YnQ

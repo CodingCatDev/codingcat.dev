@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1620241182/main-codingcatdev-photo/gmjigd84bzqxklcbiljt.png
 excerpt: micro:bit Introduction

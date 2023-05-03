@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/what-is-svelte.png'
 excerpt: 'Svelte is a modern JavaScript framework that is designed to be fast, simple, and scalable.'

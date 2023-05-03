@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1669730327/main-codingcatdev-photo/Install_Tailwind_in_Svelte.png
 devto: https://dev.to/codingcatdev/install-tailwindcss-in-svelte-with-1-command-2gnm

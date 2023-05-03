@@ -1,4 +1,6 @@
 ---
+authors:
+  - brittney-postma
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Storybook.jpg
 excerpt: Brittney walks through how to get Storybook working in a new SvelteKit project.

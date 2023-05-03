@@ -1,7 +1,7 @@
 ---
 episode: 9
-guest:
-  - Jason-Bahl
+guests:
+  - jason-bahl
 recording_date: December 16, 2021 2:30 PM
 season: 2
 published: published

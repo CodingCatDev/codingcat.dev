@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1618944342/main-codingcatdev-photo/y7qzlepeu5tmeezlxef6.png
 devto: https://dev.to/codingcatdev/aws-amplify-vs-aws-cdk-what-is-the-most-powerful-aws-iac-in-2020-1e1a

@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1616547399/main-codingcatdev-photo/kewwx7rull4s45bdidds.jpg
 devto: https://dev.to/codingcatdev/hugo-ionic-template-5e09

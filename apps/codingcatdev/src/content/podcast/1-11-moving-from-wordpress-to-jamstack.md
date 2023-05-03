@@ -1,8 +1,8 @@
 ---
 episode: 11
 recording_date: February 23, 2021 7:00 PM
-guest:
-  - Jason-Lengstorf
+guests:
+  - jason-lengstorf
 season: 1
 published: published
 podcast: CodingCat.dev

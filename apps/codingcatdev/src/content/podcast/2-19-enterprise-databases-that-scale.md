@@ -9,6 +9,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1650457591/main-codingcatdev-photo/planetscale_enterprise_data_that_scales.jpg
 devto: https://dev.to/codingcatdev/219-enterprise-databases-that-scale-5036
 excerpt: James Q Quick teaches us about how Planetscale's ability to infinitely scale SQL horizontally at the push of a button.
+guests:
+  - james-q-quick
 hashnode: https://hashnode.codingcat.dev/podcast-2-19-enterprise-databases-that-scale
 slug: 2-19-enterprise-databases-that-scale
 spotify: https://open.spotify.com/episode/1NxZ13uIoifkIKCNSPEKiN?si=IX11vRQ1Tx6u3FYZxxatCg

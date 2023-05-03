@@ -1,4 +1,6 @@
 ---
+authors:
+  - alex-patterson
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1626716377/main-codingcatdev-photo/bcovugngp8i1oayazxai.png
 devto: https://dev.to/codingcatdev/finding-a-company-with-great-values-3927
