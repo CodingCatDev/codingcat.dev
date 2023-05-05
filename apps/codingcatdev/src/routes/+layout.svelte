@@ -86,7 +86,7 @@
 		meta.twitter.title = metaDefaults.title;
 		meta.twitter.description = metaDefaults.description;
 		meta.twitter.image = metaDefaults.image;
-		console.log(page);
+		console.log(content);
 
 		if (content && !Array.isArray(content)) {
 			// Post Data
@@ -95,10 +95,10 @@
 			meta.image = `${content.cover}`;
 			// Article
 			meta.article.publishTime = content?.start
-				? content?.start.toISOString()
+				? new Date(content?.start).toISOString()
 				: new Date().toISOString();
 			meta.article.modifiedTime = content?.updated
-				? content?.updated.toISOString()
+				? new Date(content?.updated).toISOString()
 				: content?.start
 				? content?.start.toISOString()
 				: new Date().toISOString();
