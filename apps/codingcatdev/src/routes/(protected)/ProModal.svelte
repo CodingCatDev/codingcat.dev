@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { ArrowTopRightOnSquare, CheckCircle, RocketLaunch } from '@steeze-ui/heroicons';
+	import {
+		ArrowTopRightOnSquare,
+		CheckCircle,
+		PaintBrush,
+		RocketLaunch
+	} from '@steeze-ui/heroicons';
 
 	import KcPrimary from '$lib/components/global/icons/KCPrimary.svelte';
 	import AjPrimary from '$lib/components/global/icons/AJPrimary.svelte';
@@ -45,13 +50,13 @@
 			{/if}
 			<span class="font-medium text-xl">Monthly</span>
 			<div class="flex flex-row items-end justify-center mt-2">
-				<span class="text-5xl font-bold">$25</span>
+				<span class="text-5xl font-bold">$5</span>
 				<div class="mt-5">
 					<span class="text-surface-50-900-token font-medium text-xl">/mo</span>
 				</div>
 			</div>
 			<div class="mb-6">
-				<span class="font-medium text-xs">Just $0.83 per day</span>
+				<span class="font-medium text-xs">Just $0.17 per day</span>
 			</div>
 			<KcPrimary />
 		</button>
@@ -66,13 +71,13 @@
 			{/if}
 			<span class="font-medium text-xl">Annual</span>
 			<div class="flex flex-row items-end justify-center mt-2">
-				<span class="text-5xl font-bold">$225</span>
+				<span class="text-5xl font-bold">$48</span>
 				<div class="mt-5">
 					<span class="text-surface-50-900-token font-medium text-xl">/year</span>
 				</div>
 			</div>
 			<div class="mb-6">
-				<span class="font-medium text-xs">Save $75 compared to monthly</span>
+				<span class="font-medium text-xs">Save $12 compared to monthly</span>
 			</div>
 			<AjPrimary />
 		</button>
@@ -94,8 +99,8 @@
 					Read all PRO tutorials
 				</li>
 				<li class="my-2 flex flex-row gap-1 items-center">
-					<Icon src={RocketLaunch} theme="solid" class="w-8" />
-					Get PRO source code from GitHub
+					<Icon src={PaintBrush} theme="solid" class="w-8" />
+					Pro Picked Custom Theme
 				</li>
 			</ul>
 		</div>
