@@ -35,7 +35,7 @@
 						<Image src={data.content.cover} alt={data.content.title} />
 					{/if}
 
-					<div class="flex gap-2 md:gap-8">
+					<div class="flex gap-2 md:gap-8 overflow-x-auto p-2">
 						<!-- Guests -->
 						{#if data?.guests}
 							<section class="flex gap-2 md:gap-8">
