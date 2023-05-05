@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1683221180/main-codingcatdev-photo/courses/svelte/svelte-course'
 excerpt: 'Master Svelte: The Fast, Simple, and Powerful Framework'
-published: draft
+published: published
 slug: svelte
 start: April 17, 2023
 title: 'Learn Svelte: The Ultimate Guide'

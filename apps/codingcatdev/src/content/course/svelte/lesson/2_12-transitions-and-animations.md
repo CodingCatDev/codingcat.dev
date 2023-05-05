@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1682101455/main-codingcatdev-photo/courses/svelte/transitions-and-animations.png'
 excerpt: 'Make more appealing user interfaces by transitioning and animating DOM elements.'
-published: draft
+published: published
 slug: transitions-and-animations
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/12-transitions-and-animations?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'

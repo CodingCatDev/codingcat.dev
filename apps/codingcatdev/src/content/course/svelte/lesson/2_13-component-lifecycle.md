@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1682107607/main-codingcatdev-photo/courses/svelte/component-lifecycle.png'
 excerpt: 'Overview of the Svelte component lifecycle and its different phases, including the creation, update, and destruction phases.'
-published: draft
+published: published
 slug: component-lifecycle
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/13-component-lifecycle?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'

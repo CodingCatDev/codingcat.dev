@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/await-block.png'
 excerpt: 'Svelte makes dealing with promises easy by using an await block.'
-published: draft
+published: published
 slug: await-block
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/11-await-block?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'

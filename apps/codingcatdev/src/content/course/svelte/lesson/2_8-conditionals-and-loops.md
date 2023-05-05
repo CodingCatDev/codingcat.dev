@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/conditionals-and-loops.png'
 excerpt: 'Conditionals allow you to execute different code depending on the value of a variable or expression. Loops allow you to repeat a block of code a certain number of times or until a condition is met.'
-published: draft
+published: published
 slug: conditionals-and-loops
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/08-conditionals-and-loops?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'

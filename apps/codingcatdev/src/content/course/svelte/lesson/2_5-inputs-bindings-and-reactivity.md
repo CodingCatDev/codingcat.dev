@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/inputs-bindings-and-reactivity.png'
 excerpt: 'Svelte inputs and bindings allow you to create interactive UIs by connecting user input to application state.'
-published: draft
+published: published
 slug: inputs-bindings-and-reactivity
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/05-inputs-bindings-and-reactivity?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'

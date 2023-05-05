@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1683216921/main-codingcatdev-photo/courses/svelte/stores'
 excerpt: 'Svelte data stores are a way to manage application state that is shared between components.'
-published: draft
+published: published
 slug: data-stores
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/14-data-stores?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'

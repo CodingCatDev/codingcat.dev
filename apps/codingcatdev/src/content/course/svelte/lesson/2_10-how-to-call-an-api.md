@@ -4,7 +4,7 @@ authors:
 cloudinary_convert: false
 cover: 'https://media.codingcat.dev/image/upload/v1681939723/main-codingcatdev-photo/courses/svelte/how-to-call-an-api.png'
 excerpt: 'Using fetch within Svelte provides a simple and consistent way to make HTTP requests.'
-published: draft
+published: published
 slug: how-to-call-an-api
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/10-how-to-call-an-api?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
