@@ -2,6 +2,7 @@
 	export let data;
 
 	// Core
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
 	import { navigationIsDelayed, storeCurrentUrl, storeUser } from '$lib/stores/stores';
@@ -21,6 +22,7 @@
 	import CcdDrawer from './(layout-partials)/CcdDrawer.svelte';
 	import CcdFooter from './(layout-partials)/CcdFooter.svelte';
 	import type { Author, Content } from '$lib/types';
+	import { analyticsLogPageView } from '$lib/client/firebase';
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
@@ -48,6 +50,11 @@
 		}
 		// Scroll heading into view
 		scrollHeadingIntoView();
+
+		/* Analytics */
+		if (browser) {
+			analyticsLogPageView();
+		}
 	});
 
 	// SEO Metatags

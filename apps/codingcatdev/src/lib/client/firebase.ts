@@ -1,8 +1,11 @@
+import { browser } from '$app/environment';
+
 import { toastStore } from '@codingcatdev/blackcatui';
 import { initializeApp, getApps, FirebaseError } from 'firebase/app';
 import { getAuth, setPersistence, browserSessionPersistence, signInWithEmailAndPassword, signInWithPopup, type AuthProvider, type Auth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, collection, doc, addDoc, onSnapshot, Firestore } from 'firebase/firestore';
 import { httpsCallable, getFunctions, type Functions } from 'firebase/functions';
+import { getAnalytics, type Analytics, logEvent, type AnalyticsCallOptions } from "firebase/analytics";
 
 import { env } from '$env/dynamic/public';
 
@@ -20,8 +23,10 @@ let app = getApps().at(0);
 let auth: Auth;
 let db: Firestore;
 let functions: Functions;
+let analytics: Analytics;
 
 if (!app &&
+	browser &&
 	firebaseConfig.apiKey &&
 	firebaseConfig.authDomain &&
 	firebaseConfig.projectId &&
@@ -37,6 +42,7 @@ if (!app &&
 	setPersistence(auth, browserSessionPersistence);
 	db = getFirestore(app);
 	functions = getFunctions(app);
+	analytics = getAnalytics(app);
 }
 
 /* AUTH */
@@ -114,4 +120,15 @@ export const openStripePortal = async () => {
 		returnUrl: window.location.href,
 	}) as { data: { url: string } };
 	window.location.assign(data.url);
+}
+
+/* Analytics */
+export const analyticsLogPageView = async (eventParams?: {
+	page_title?: string;
+	page_location?: string;
+	page_path?: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	[key: string]: any;
+}, options?: AnalyticsCallOptions) => {
+	logEvent(analytics, "page_view", eventParams, options)
 }
