@@ -86,7 +86,6 @@
 		meta.twitter.title = metaDefaults.title;
 		meta.twitter.description = metaDefaults.description;
 		meta.twitter.image = metaDefaults.image;
-		console.log(content);
 
 		if (content && !Array.isArray(content)) {
 			// Post Data
