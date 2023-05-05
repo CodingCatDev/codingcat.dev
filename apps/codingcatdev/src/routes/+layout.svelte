@@ -71,9 +71,12 @@
 			image: metaDefaults.image
 		}
 	};
+
 	let content: (Content & Author) | undefined = undefined;
+	let authors: Author[] | undefined = undefined;
 	page.subscribe((page) => {
-		content = page?.data?.content;
+		content = page?.data?.content || page?.data?.course;
+		authors = page?.data?.authors;
 
 		// Restore Page Defaults
 		meta.title = metaDefaults.title;
@@ -83,6 +86,7 @@
 		meta.twitter.title = metaDefaults.title;
 		meta.twitter.description = metaDefaults.description;
 		meta.twitter.image = metaDefaults.image;
+		console.log(page);
 
 		if (content && !Array.isArray(content)) {
 			// Post Data
@@ -98,7 +102,7 @@
 				: content?.start
 				? content?.start.toISOString()
 				: new Date().toISOString();
-			meta.article.author = `${content?.authors?.[0]?.name || 'Alex Patterson'}`;
+			meta.article.author = `${authors?.[0]?.name || 'Alex Patterson'}`;
 			// Twitter
 			meta.twitter.title = meta.title;
 			meta.twitter.description = meta.description;
