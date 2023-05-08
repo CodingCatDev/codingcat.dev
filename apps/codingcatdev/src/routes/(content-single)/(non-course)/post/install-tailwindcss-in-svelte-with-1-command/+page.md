@@ -1,4 +1,5 @@
 ---
+type: post
 authors:
   - alex-patterson
 cloudinary_convert: false

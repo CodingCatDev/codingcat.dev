@@ -26,19 +26,35 @@
 				{#key $storeCurrentUrl}
 					<TableOfContents />
 				{/key}
-				<RecentPostsList contentType={ContentType.course} list={data.course} />
-				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
-				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
-				<RecentPostsList contentType={ContentType.post} list={data.post} />
+				{#if data?.course}
+					<RecentPostsList contentType={ContentType.course} list={data.course} />
+				{/if}
+				{#if data?.tutorial}
+					<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
+				{/if}
+				{#if data?.podcast}
+					<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
+				{/if}
+				{#if data?.post}
+					<RecentPostsList contentType={ContentType.post} list={data.post} />
+				{/if}
 			</div>
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="bcu-app-shell-page-footer">
 		<div class="flex flex-col gap-2 px-2 md:gap-8">
-			<RecentPostsList contentType={ContentType.course} list={data.course} />
-			<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
-			<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
-			<RecentPostsList contentType={ContentType.post} list={data.post} />
+			{#if data?.course}
+				<RecentPostsList contentType={ContentType.course} list={data.course} />
+			{/if}
+			{#if data?.tutorial}
+				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
+			{/if}
+			{#if data?.podcast}
+				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
+			{/if}
+			{#if data?.post}
+				<RecentPostsList contentType={ContentType.post} list={data.post} />
+			{/if}
 		</div>
 	</svelte:fragment>
 </AppShell>

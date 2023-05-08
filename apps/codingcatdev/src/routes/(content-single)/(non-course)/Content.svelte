@@ -10,12 +10,11 @@
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	export let data: {
 		content: Content & Podcast;
-		contentType: ContentType;
 		guests?: Author[];
 		authors?: Author[];
 		sponsors?: Sponsor[];
 	};
-	$: title = pluralize({ type: data.contentType } as Content);
+	$: title = pluralize({ type: data.content.type } as Content);
 	$: picks = data?.content?.picks;
 </script>
 
