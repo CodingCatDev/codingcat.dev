@@ -3,6 +3,7 @@
 	import RecentPostsList from './RecentPostsList.svelte';
 	import { ContentType } from '$lib/types';
 	import { storeCurrentUrl } from '$lib/stores/stores';
+	import Content from './Content.svelte';
 
 	export let data;
 </script>
@@ -14,7 +15,9 @@
 	slotSidebarRight="hidden xl:block"
 >
 	<!-- Page Content -->
-	<slot />
+	<Content {data}>
+		<slot />
+	</Content>
 	<svelte:fragment slot="bcu-app-shell-sidebar-right">
 		<!-- Div takes up same room as fixed -->
 		<div class="w-[19.5rem] xl:w-96" />

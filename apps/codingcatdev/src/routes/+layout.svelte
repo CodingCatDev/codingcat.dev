@@ -106,7 +106,7 @@
 			meta.article.modifiedTime = content?.updated
 				? new Date(content?.updated).toISOString()
 				: content?.start
-				? content?.start.toISOString()
+				? new Date(content?.start).toISOString()
 				: new Date().toISOString();
 			meta.article.author = `${authors?.[0]?.name || 'Alex Patterson'}`;
 			// Twitter

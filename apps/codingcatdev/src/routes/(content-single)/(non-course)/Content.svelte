@@ -123,7 +123,7 @@
 					<!-- Main Content -->
 					<section class="flex flex-col flex-grow w-full gap-2 markdown md:gap-8">
 						<CopyCodeInjector>
-							{@html data.content.html}
+							<slot />
 						</CopyCodeInjector>
 					</section>
 
