@@ -2,19 +2,21 @@
 	import Image from '$lib/components/content/Image.svelte';
 	import type { Content, ContentType } from '$lib/types';
 
-	export let data: { content: Content[]; next?: any };
+	export let data: { contentType: ContentType; content: Content[]; next?: any };
 
 	let next = data.next;
+	const contentType = data.contentType;
 	const more = async () => {
 		const response = await fetch('/api/more-content', {
 			method: 'POST',
-			body: JSON.stringify({ after: next }),
+			body: JSON.stringify({ after: next, contentType }),
 			headers: {
 				'content-type': 'application/json'
 			}
 		});
 		const d = await response.json();
 		data = {
+			contentType,
 			content: [...data.content, ...d.content],
 			next
 		};

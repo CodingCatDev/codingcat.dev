@@ -1,5 +1,5 @@
-import { listContent, parseModules } from '$lib/server/content';
-import { ContentType } from '$lib/types';
+import { getContentTypeDirectory, listContent } from '$lib/server/content';
+import { ContentType, type Content } from '$lib/types';
 import { buildFeed } from '../rss';
 
 
@@ -7,8 +7,10 @@ const contentType = ContentType.post;
 
 /** @type {import('./$types').RequestHandler} */
 export const GET = async () => {
-	const modules = import.meta.glob(['../../../content/post/*.md']);
-	const contentItems = await parseModules(modules);
+	const contentItems = (await listContent<Content>({
+		contentItems: await getContentTypeDirectory<Content>(ContentType.post),
+		limit: 10000
+	})).content
 
 	//xml rss feed response
 	return new Response(
