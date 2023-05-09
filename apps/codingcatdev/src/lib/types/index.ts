@@ -51,13 +51,8 @@ export interface Sponsor extends Content {
 	url: string;
 }
 
-export interface Author {
-	cover: string;
+export interface Author extends Content {
 	name: string;
-	html?: string;
-	slug: string;
-	start: Date;
-	published: ContentPublished;
 	socials: Socials;
 	websites?: string[];
 }

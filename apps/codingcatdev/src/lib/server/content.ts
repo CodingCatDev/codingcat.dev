@@ -1,6 +1,9 @@
-import { ContentType, ContentPublished, type Lesson, type Podcast } from '$lib/types';
+import { ContentType, ContentPublished, type Lesson, type Podcast, type Author } from '$lib/types';
 import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
+import { fileURLToPath } from 'url';
+import { opendirSync, readFileSync } from "fs";
+import { compile } from 'mdsvex';
 
 const LIMIT = 20;
 
@@ -11,113 +14,152 @@ export const preview = env.PREVIEW === "false" ? false : env.VERCEL_ENV === "pre
 // While developing locally this allows you to see pages without setting up firebase.
 export const allowLocal = env.PREVIEW === "false" ? false : import.meta.env.DEV;
 
-export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
-	const contentList: Content[] = [];
-	for (const path in modules) {
-		await modules[path]().then((mod) => {
-			const splitPath = path.split('/');
-			const courseType = splitPath.at(-3);
-			const normalType = splitPath.at(-2);
-			const slug = splitPath.at(-1);
-			const type = courseType === 'content' ? normalType : courseType;
+export const getContentTypeDirectory = async <T>(contentType: ContentType, withCode = true) => {
+	const contentList: T[] = [];
 
-			if (courseType === 'content') {
-				console.log(`Precompiling: ${type}/${slug}`);
-			} else {
-				console.log(`Precompiling: ${type}/${normalType}`);
-			}
-
-			if (!type || !slug) {
-				console.error('Missing name or type');
-				return;
-			}
-
-			const mdsvx = mod as {
-				default: {
-					render: () => { html: string };
-				};
-				metadata: Content;
-			};
-			const { html } = mdsvx.default.render();
-			/**
-			 * This needs to match the function that adds the
-			 * same data to Firestore
-			 */
-			const content = {
-				...mdsvx?.metadata,
-				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
-				type: type as ContentType,
-				html,
-				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
-				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
-			};
-			contentList.push(content);
-		});
+	// Normal Files
+	let root = fileURLToPath(new URL(`../../routes/(content-single)/(non-course)/${contentType}`, import.meta.url));
+	if (contentType === ContentType.course) {
+		root = fileURLToPath(new URL(`../../routes/(content-single)/${contentType}`, import.meta.url));
+	}
+	const dirs = opendirSync(root);
+	for await (const dir of dirs) {
+		const parsed = await parseContentType(`${root}/${dir.name}/+page.md`, withCode) as T;
+		contentList.push(parsed);
 	}
 	return contentList;
 }
 
-export const parseLessonModules = async ({ lessonModules, courses }: { lessonModules: Record<string, () => Promise<unknown>>, courses: Course[] }) => {
-	for (const path in lessonModules) {
-		await lessonModules[path]().then((mod) => {
-			const splitPath = path.split('/');
-			const type = splitPath.at(-4);
-			const slug = splitPath.at(-3);
-			const lessonSlug = splitPath?.at(-1)?.replace(/\.[^/.]+$/, '');
+export const parseContentType = (async (path: string, withCode = true) => {
+	const md = readFileSync(path, 'utf8');
+	const transformed = await compile(md);
+	const frontmatter = transformed?.data?.fm as Content & Podcast | undefined;
 
-			console.log(`Precompiling Lesson: ${type}/${slug}/lesson/${lessonSlug}`);
+	// TODO: Add more checks?
 
-			if (!type || !slug || !lessonSlug) {
-				console.error('Lesson Param missing');
-				return;
-			}
-
-			const mdsvx = mod as {
-				default: {
-					render: () => { html: string };
-				};
-				metadata: Lesson;
-			};
-			const { html } = mdsvx.default.render();
-			/**
-			 * This needs to match the function that adds the
-			 * same data to Firestore
-			 */
-			const content = {
-				...mdsvx?.metadata,
-				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
-				type: ContentType.lesson,
-				courseSlug: slug,
-				html,
-				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
-				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
-				locked: mdsvx?.metadata?.locked || false,
-			};
-
-			courses
-				.filter((c) => c.slug === slug)
-				.map((c) => {
-					c?.lesson ? c.lesson.push(content) : (c['lesson'] = [content]);
-				});
-		});
+	if (!frontmatter?.type) {
+		console.error('Missing Frontmatter details');
+		return;
 	}
-	return courses;
-}
+
+	return {
+		...frontmatter,
+		cover: frontmatter?.cover ? decodeURI(frontmatter?.cover) : '',
+		type: frontmatter?.type as ContentType,
+		html: withCode ? transformed?.code : undefined,
+		weight: frontmatter?.weight ? frontmatter?.weight : 0,
+		published: frontmatter?.published ? frontmatter?.published : ContentPublished.draft,
+		start: frontmatter?.start ? new Date(frontmatter?.start) : new Date('Jan 01, 2000'),
+	};
+})
+
+// export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
+// 	const contentList: Content[] = [];
+// 	for (const path in modules) {
+// 		await modules[path]().then((mod) => {
+// 			const splitPath = path.split('/');
+// 			const courseType = splitPath.at(-3);
+// 			const normalType = splitPath.at(-2);
+// 			const slug = splitPath.at(-1);
+// 			const type = courseType === 'content' ? normalType : courseType;
+
+// 			if (courseType === 'content') {
+// 				console.log(`Precompiling: ${type}/${slug}`);
+// 			} else {
+// 				console.log(`Precompiling: ${type}/${normalType}`);
+// 			}
+
+// 			if (!type || !slug) {
+// 				console.error('Missing name or type');
+// 				return;
+// 			}
+
+// 			const mdsvx = mod as {
+// 				default: {
+// 					render: () => { html: string };
+// 				};
+// 				metadata: Content;
+// 			};
+// 			const { html } = mdsvx.default.render();
+// 			/**
+// 			 * This needs to match the function that adds the
+// 			 * same data to Firestore
+// 			 */
+// 			const content = {
+// 				...mdsvx?.metadata,
+// 				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
+// 				type: type as ContentType,
+// 				html,
+// 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
+// 				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
+// 				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
+// 			};
+// 			contentList.push(content);
+// 		});
+// 	}
+// 	return contentList;
+// }
+
+// export const parseLessonModules = async ({ lessonModules, courses }: { lessonModules: Record<string, () => Promise<unknown>>, courses: Course[] }) => {
+// 	for (const path in lessonModules) {
+// 		await lessonModules[path]().then((mod) => {
+// 			const splitPath = path.split('/');
+// 			const type = splitPath.at(-4);
+// 			const slug = splitPath.at(-3);
+// 			const lessonSlug = splitPath?.at(-1)?.replace(/\.[^/.]+$/, '');
+
+// 			console.log(`Precompiling Lesson: ${type}/${slug}/lesson/${lessonSlug}`);
+
+// 			if (!type || !slug || !lessonSlug) {
+// 				console.error('Lesson Param missing');
+// 				return;
+// 			}
+
+// 			const mdsvx = mod as {
+// 				default: {
+// 					render: () => { html: string };
+// 				};
+// 				metadata: Lesson;
+// 			};
+// 			const { html } = mdsvx.default.render();
+// 			/**
+// 			 * This needs to match the function that adds the
+// 			 * same data to Firestore
+// 			 */
+// 			const content = {
+// 				...mdsvx?.metadata,
+// 				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
+// 				type: ContentType.lesson,
+// 				courseSlug: slug,
+// 				html,
+// 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
+// 				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
+// 				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
+// 				locked: mdsvx?.metadata?.locked || false,
+// 			};
+
+// 			courses
+// 				.filter((c) => c.slug === slug)
+// 				.map((c) => {
+// 					c?.lesson ? c.lesson.push(content) : (c['lesson'] = [content]);
+// 				});
+// 		});
+// 	}
+// 	return courses;
+// }
 
 
 /**
  * List all content from specified content type
  * allows for optionally sending after object
  * */
-export const listContent = async ({
+export const listContent = async <T extends Content>({
 	contentItems,
 	after,
 	limit,
 	contentFilter = (c) => c.published === ContentPublished.published
 }: {
-	contentItems: Content[];
+	contentItems: T[]
 	after?: number;
 	limit?: number;
 	contentFilter?: (c: Content) => boolean;
@@ -126,6 +168,10 @@ export const listContent = async ({
 	const theAfter = after || 0;
 
 	console.log(`List limit of ${theLimit}`);
+
+	for (const c of contentItems) {
+		console.log(c?.title)
+	}
 
 	const fullContent = contentItems
 		.filter(preview ? () => true : contentFilter)
