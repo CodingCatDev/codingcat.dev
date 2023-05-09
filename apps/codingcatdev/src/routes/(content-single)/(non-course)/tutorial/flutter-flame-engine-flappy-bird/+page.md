@@ -2,11 +2,10 @@
 type: tutorial
 authors:
   - alex-patterson
+  - lukas-spydon
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/FlutterFlameFlappy.png
 excerpt: Spydon teaches Alex and Brittney how to setup and use Flame to build a Flappy Bird clone.
-authors:
-  - lukas-spydon
 hashnode: https://hashnode.codingcat.dev/tutorial-flutter-flame-engine-flappy-bird
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=flutter-flame-engine-flappy-bird&_id=795378033f7f4bc7810289bf6b61484a
 published: published
