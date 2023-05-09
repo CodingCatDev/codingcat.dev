@@ -10,7 +10,7 @@ slug: how-to-call-an-api
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/10-how-to-call-an-api?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - How to call an API'
-weight: 3
+weight: 10
 youtube: https://youtu.be/O-72Vwpe5Ag
 ---
 

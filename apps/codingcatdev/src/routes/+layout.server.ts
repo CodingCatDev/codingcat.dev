@@ -1,5 +1,5 @@
 import { ccdValidateSessionCookie, validateStripeRole } from '$lib/server/firebase';
-
+export const prerender = true;
 export const load = (async ({ cookies }) => {
 	try {
 

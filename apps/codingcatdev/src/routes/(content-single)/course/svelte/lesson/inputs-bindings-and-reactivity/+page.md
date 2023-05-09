@@ -10,7 +10,7 @@ slug: inputs-bindings-and-reactivity
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/05-inputs-bindings-and-reactivity?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - Inputs Bindings and Reactivity'
-weight: 2
+weight: 5
 youtube: https://youtu.be/n-sFDfZGdAY
 ---
 

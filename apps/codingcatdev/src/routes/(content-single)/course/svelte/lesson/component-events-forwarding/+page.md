@@ -10,7 +10,7 @@ slug: component-events-forwarding
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/07-component-events-forwarding?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - Component Events and Forwarding'
-weight: 2
+weight: 7
 youtube: https://youtu.be/ZW8hGGwLB3Q
 ---
 

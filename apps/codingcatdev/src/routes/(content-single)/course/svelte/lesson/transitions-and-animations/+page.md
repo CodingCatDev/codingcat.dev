@@ -10,7 +10,7 @@ slug: transitions-and-animations
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/12-transitions-and-animations?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - Transitions and Animations'
-weight: 3
+weight: 12
 youtube: https://youtu.be/vsB33e4ND3k
 ---
 

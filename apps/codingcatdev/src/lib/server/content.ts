@@ -14,23 +14,30 @@ export const preview = env.PREVIEW === "false" ? false : env.VERCEL_ENV === "pre
 // While developing locally this allows you to see pages without setting up firebase.
 export const allowLocal = env.PREVIEW === "false" ? false : import.meta.env.DEV;
 
-export const getContentTypeDirectory = async <T>(contentType: ContentType, withCode = true) => {
-	const contentList: T[] = [];
-
+export const getRootPath = (contentType: ContentType, courseDir?: string) => {
 	// Normal Files
 	let root = fileURLToPath(new URL(`../../routes/(content-single)/(non-course)/${contentType}`, import.meta.url));
 	if (contentType === ContentType.course) {
 		root = fileURLToPath(new URL(`../../routes/(content-single)/${contentType}`, import.meta.url));
 	}
-	const dirs = opendirSync(root);
+	if (contentType === ContentType.lesson && courseDir) {
+		root = fileURLToPath(new URL(`../../routes/(content-single)/course/${courseDir}/${contentType}`, import.meta.url));
+	}
+	return root;
+}
+
+export const getContentTypeDirectory = async <T>(contentType: ContentType, withCode = true, courseDir?: string) => {
+	const contentList: T[] = [];
+	const dirs = opendirSync(getRootPath(contentType, courseDir));
 	for await (const dir of dirs) {
-		const parsed = await parseContentType(`${root}/${dir.name}/+page.md`, withCode) as T;
+		if (dir.isFile()) continue;
+		const parsed = await parseContentType<T>(`${getRootPath(contentType, courseDir)}/${dir.name}/+page.md`, withCode) as T;
 		contentList.push(parsed);
 	}
 	return contentList;
 }
 
-export const parseContentType = (async (path: string, withCode = true) => {
+export const parseContentType = (async <T>(path: string, withCode = true) => {
 	const md = readFileSync(path, 'utf8');
 	const transformed = await compile(md);
 	const frontmatter = transformed?.data?.fm as Content & Podcast | undefined;
@@ -42,7 +49,7 @@ export const parseContentType = (async (path: string, withCode = true) => {
 		return;
 	}
 
-	return {
+	const content = {
 		...frontmatter,
 		cover: frontmatter?.cover ? decodeURI(frontmatter?.cover) : '',
 		type: frontmatter?.type as ContentType,
@@ -50,103 +57,18 @@ export const parseContentType = (async (path: string, withCode = true) => {
 		weight: frontmatter?.weight ? frontmatter?.weight : 0,
 		published: frontmatter?.published ? frontmatter?.published : ContentPublished.draft,
 		start: frontmatter?.start ? new Date(frontmatter?.start) : new Date('Jan 01, 2000'),
+		slug: path.split('/').at(-2)
 	};
+
+	if (frontmatter.type === ContentType.course) {
+		const lesson = (await listContent<Content>({
+			contentItems: await getContentTypeDirectory<Content>(ContentType.lesson, false, frontmatter.slug),
+			limit: 10000
+		})).content
+		return { ...content, lesson } as T;
+	}
+	return { ...content, } as T;
 })
-
-// export const parseModules = async (modules: Record<string, () => Promise<unknown>>) => {
-// 	const contentList: Content[] = [];
-// 	for (const path in modules) {
-// 		await modules[path]().then((mod) => {
-// 			const splitPath = path.split('/');
-// 			const courseType = splitPath.at(-3);
-// 			const normalType = splitPath.at(-2);
-// 			const slug = splitPath.at(-1);
-// 			const type = courseType === 'content' ? normalType : courseType;
-
-// 			if (courseType === 'content') {
-// 				console.log(`Precompiling: ${type}/${slug}`);
-// 			} else {
-// 				console.log(`Precompiling: ${type}/${normalType}`);
-// 			}
-
-// 			if (!type || !slug) {
-// 				console.error('Missing name or type');
-// 				return;
-// 			}
-
-// 			const mdsvx = mod as {
-// 				default: {
-// 					render: () => { html: string };
-// 				};
-// 				metadata: Content;
-// 			};
-// 			const { html } = mdsvx.default.render();
-// 			/**
-// 			 * This needs to match the function that adds the
-// 			 * same data to Firestore
-// 			 */
-// 			const content = {
-// 				...mdsvx?.metadata,
-// 				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
-// 				type: type as ContentType,
-// 				html,
-// 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-// 				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
-// 				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
-// 			};
-// 			contentList.push(content);
-// 		});
-// 	}
-// 	return contentList;
-// }
-
-// export const parseLessonModules = async ({ lessonModules, courses }: { lessonModules: Record<string, () => Promise<unknown>>, courses: Course[] }) => {
-// 	for (const path in lessonModules) {
-// 		await lessonModules[path]().then((mod) => {
-// 			const splitPath = path.split('/');
-// 			const type = splitPath.at(-4);
-// 			const slug = splitPath.at(-3);
-// 			const lessonSlug = splitPath?.at(-1)?.replace(/\.[^/.]+$/, '');
-
-// 			console.log(`Precompiling Lesson: ${type}/${slug}/lesson/${lessonSlug}`);
-
-// 			if (!type || !slug || !lessonSlug) {
-// 				console.error('Lesson Param missing');
-// 				return;
-// 			}
-
-// 			const mdsvx = mod as {
-// 				default: {
-// 					render: () => { html: string };
-// 				};
-// 				metadata: Lesson;
-// 			};
-// 			const { html } = mdsvx.default.render();
-// 			/**
-// 			 * This needs to match the function that adds the
-// 			 * same data to Firestore
-// 			 */
-// 			const content = {
-// 				...mdsvx?.metadata,
-// 				cover: mdsvx?.metadata?.cover ? decodeURI(mdsvx?.metadata?.cover) : '',
-// 				type: ContentType.lesson,
-// 				courseSlug: slug,
-// 				html,
-// 				weight: mdsvx?.metadata?.weight ? mdsvx?.metadata?.weight : 0,
-// 				published: mdsvx?.metadata?.published ? mdsvx?.metadata?.published : ContentPublished.draft,
-// 				start: mdsvx?.metadata?.start ? new Date(mdsvx?.metadata?.start) : new Date('Jan 01, 1900'),
-// 				locked: mdsvx?.metadata?.locked || false,
-// 			};
-
-// 			courses
-// 				.filter((c) => c.slug === slug)
-// 				.map((c) => {
-// 					c?.lesson ? c.lesson.push(content) : (c['lesson'] = [content]);
-// 				});
-// 		});
-// 	}
-// 	return courses;
-// }
 
 
 /**
@@ -157,25 +79,15 @@ export const listContent = async <T extends Content>({
 	contentItems,
 	after,
 	limit,
-	contentFilter = (c) => c.published === ContentPublished.published
 }: {
 	contentItems: T[]
 	after?: number;
 	limit?: number;
-	contentFilter?: (c: Content) => boolean;
 }) => {
 	const theLimit = limit || LIMIT;
 	const theAfter = after || 0;
 
-	console.log(`List limit of ${theLimit}`);
-
-	for (const c of contentItems) {
-		console.log(c?.title)
-	}
-
-	const fullContent = contentItems
-		.filter(preview ? () => true : contentFilter)
-		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf());
+	const fullContent = await filterContent<T>({ contentItems })
 
 	const content = fullContent.slice(0 + theAfter, theLimit + theAfter);
 	const total = fullContent.length;
@@ -185,6 +97,39 @@ export const listContent = async <T extends Content>({
 		content
 	};
 };
+
+
+export const filterContent = async <T extends Content>({
+	contentItems,
+}: {
+	contentItems: T[];
+}) => {
+	const doc = contentItems
+		.filter(
+			preview ?
+				() => true
+				:
+				(c) => new Date(c.start) <= new Date() &&
+					c.published === ContentPublished.published
+		)
+		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
+		.map((c: Course) => {
+			return {
+				...c,
+				lesson: c?.lesson
+					?.filter(
+						preview ?
+							() => true
+							:
+							(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
+					)
+					.sort((a, b) => a.weight && b.weight ? a.weight - b.weight : -1)
+			};
+		}) as unknown as T[];
+
+	return [...doc];
+};
+
 
 /**
  * List all content from specified content type by author
@@ -236,49 +181,6 @@ export const listContentBySponsor = async ({ sponsorSlug, contentItems }:
 	];
 };
 
-export const getContentBySlug = async ({
-	contentItems,
-	slug
-}: {
-	contentItems: Content[];
-	slug: string
-}) => {
-	console.debug(`Searching for slug: ${slug} in ${contentItems.length} items`);
-
-	const doc = contentItems
-		.filter(
-			preview ?
-				(c) =>
-					c.slug == slug
-				:
-				(c) =>
-					c.slug == slug &&
-					new Date(c.start) <= new Date() &&
-					c.published === ContentPublished.published
-		)
-		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
-		.slice(0, 1)
-		.map((c: Course) => {
-			return {
-				...c,
-				lesson: c?.lesson
-					?.filter(
-						preview ?
-							() => true
-							:
-							(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
-					)
-					.sort((a, b) => a.weight && b.weight ? a.weight - b.weight : -1)
-			};
-		})
-		.at(0);
-	if (!doc) {
-		return null;
-	}
-	return {
-		...doc
-	};
-};
 
 /**
  * Get lesson by course and slug

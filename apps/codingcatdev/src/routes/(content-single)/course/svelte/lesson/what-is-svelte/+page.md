@@ -10,7 +10,7 @@ section: Svelte
 slug: what-is-svelte
 start: April 17, 2023
 title: 'Learn Svelte: The Ultimate Guide - What is Svelte?'
-weight: 2
+weight: 1
 youtube: 'https://youtu.be/sp7qvtvCFv8'
 ---
 

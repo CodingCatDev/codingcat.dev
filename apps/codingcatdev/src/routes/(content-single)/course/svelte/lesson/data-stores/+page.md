@@ -10,7 +10,7 @@ slug: data-stores
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/14-data-stores?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - Data Stores'
-weight: 3
+weight: 14
 youtube: https://youtu.be/goxNKlQAb0U
 ---
 

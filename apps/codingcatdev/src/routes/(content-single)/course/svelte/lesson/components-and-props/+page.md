@@ -10,7 +10,7 @@ slug: components-and-props
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/04-components-and-props?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - Components and Props'
-weight: 2
+weight: 4
 youtube: https://youtu.be/JpbgBJZTvuM
 ---
 

@@ -10,7 +10,7 @@ slug: component-lifecycle
 start: April 17, 2023
 stackblitz: 'https://stackblitz.com/github/CodingCatDev/svelte-course/tree/13-component-lifecycle?embed=1&file=apps/svelte-site/src/routes/%2Bpage.svelte'
 title: 'Learn Svelte: The Ultimate Guide - Component Lifecycle'
-weight: 3
+weight: 13
 youtube: https://youtu.be/272Q-4eqSOM
 ---
 
