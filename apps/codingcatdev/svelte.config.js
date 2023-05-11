@@ -8,7 +8,10 @@ import { mdsvex } from 'mdsvex';
 console.log(`Using ${process.env.NODE_ENV} config`);
 const config = {
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		prerender: {
+			handleHttpError: 'warn'
+		}
 	},
 	extensions: ['.svelte', '.svx', '.md'],
 	preprocess: [
