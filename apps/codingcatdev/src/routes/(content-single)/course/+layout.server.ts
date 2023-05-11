@@ -1,6 +1,5 @@
-import { fileURLToPath } from 'url';
 import { error } from '@sveltejs/kit';
-import { filterContent, getContentTypeDirectory, listContent, parseContentType } from '$lib/server/content';
+import { filterContent, getContentTypeDirectory, getContentTypePath, listContent } from '$lib/server/content';
 import { ContentType, type Course, type Author } from '$lib/types';
 
 export const load = (async (params) => {
@@ -9,8 +8,9 @@ export const load = (async (params) => {
         const courseSlug = splitPath.at(2);
         const lessonSlug = splitPath.at(4);
 
-        const path = fileURLToPath(new URL(`./${courseSlug}/+page.md`, import.meta.url));
-        const md = await parseContentType<Course>(path);
+        if (!courseSlug) throw error(404);
+        const md = await getContentTypePath<Course>(ContentType.course, courseSlug);
+
         if (!md) throw error(404);
         const contentItems = await filterContent({ contentItems: [md] })
         const course = contentItems?.at(0);
@@ -25,7 +25,6 @@ export const load = (async (params) => {
             course,
             authors
         }
-
     }
     catch (e) {
         console.error(e)
