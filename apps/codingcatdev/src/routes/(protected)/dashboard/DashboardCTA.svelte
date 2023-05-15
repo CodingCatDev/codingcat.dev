@@ -47,7 +47,7 @@
 	<a
 		class="bcu-card bcu-card-hover p-8 md:col-span-3 md:max-w-full lg:col-span-1 lg:max-w-xs"
 		target="_blank"
-		href="https://github.com/codingcatdev/"
+		href="https://github.com/sponsors/CodingCatDev"
 	>
 		<div class={sectionClasses}>
 			<div class={logoClasses}>
