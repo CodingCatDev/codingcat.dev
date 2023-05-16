@@ -10,7 +10,7 @@ hashnode: https://hashnode.codingcat.dev/tutorial-use-firestore-to-build-hugo-co
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=use-firestore-to-build-hugo-content&_id=5510218aec734cb9aacf4f174266c57d
 published: published
 slug: use-firestore-to-build-hugo-content
-start: May 21, 2022
+start: May 21, 2019
 title: Use Firestore to Build Hugo Content
 ---
 

@@ -10,7 +10,19 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		prerender: {
-			handleMissingId: 'warn'
+			handleMissingId: 'warn',
+			handleHttpError: ({ path, referrer, message }) => {
+				// if nothing refers to it we don't care
+				// most likely this is a draft in production
+				// TODO: can we make this better?
+				if (referrer === null) {
+					console.debug('SKIPPING 404 ISSUE', path);
+					return;
+				}
+
+				// otherwise fail the build
+				throw new Error(message);
+			}
 		}
 	},
 	extensions: ['.svelte', '.svx', '.md'],

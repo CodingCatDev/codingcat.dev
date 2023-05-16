@@ -8,7 +8,7 @@ devto: https://dev.to/codingcatdev/angular-pwa-to-google-play-store-using-truste
 excerpt: Add your PWA to Google Play Store today!
 hashnode: https://hashnode.codingcat.dev/tutorial-angular-pwa-to-google-play-store-using-trusted-web-activity
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=angular-pwa-to-google-play-store-using-trusted-web-activity&_id=c9c11b5cfd37469791c90454c4d2e472
-published: published
+published: archived
 slug: angular-pwa-to-google-play-store-using-trusted-web-activity
 start: May 22, 2022
 title: Angular PWA to Google Play store, using Trusted Web Activity

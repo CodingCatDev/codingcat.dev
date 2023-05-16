@@ -126,8 +126,9 @@ export const filterContent = async <T extends Content>({
 			preview ?
 				() => true
 				:
-				(c) => c?.start ? new Date(c.start) <= new Date() : false &&
-					c.published === ContentPublished.published
+				(c) => c.published === ContentPublished.published &&
+					c?.start ? new Date(c.start) <= new Date() : false
+
 		)
 		?.sort((a, b) => a?.start && b?.start && new Date(b.start).valueOf() - new Date(a.start).valueOf())
 		?.map((c: Course) => {
@@ -138,7 +139,7 @@ export const filterContent = async <T extends Content>({
 						preview ?
 							() => true
 							:
-							(l) => new Date(l.start) <= new Date() && l.published === ContentPublished.published
+							(l) => l.published === ContentPublished.published && new Date(l.start) <= new Date()
 					)
 					.sort((a, b) => a.weight && b.weight ? a.weight - b.weight : -1)
 			};
@@ -163,8 +164,9 @@ export const listContentByAuthor = async <T extends Content>({ authorSlug, conte
 			:
 			(c) =>
 				c.authors?.filter((g) => g == authorSlug)?.length &&
-				new Date(c.start) <= new Date() &&
-				c.published === ContentPublished.published
+					c.published === ContentPublished.published &&
+					c?.start ? new Date(c.start) <= new Date() : false
+
 	)
 	return [
 		...content,
@@ -186,8 +188,8 @@ export const listContentBySponsor = async <T extends Content>({ sponsorSlug, con
 			:
 			(c) =>
 				c.sponsors?.filter((g) => g == sponsorSlug)?.length &&
-				new Date(c.start) <= new Date() &&
-				c.published === ContentPublished.published
+					c.published === ContentPublished.published &&
+					c?.start ? new Date(c.start) <= new Date() : false
 	)
 	return [
 		...content,
@@ -210,8 +212,8 @@ export const listContentByGuest = async ({ slug, podcastItems }:
 				:
 				(c) =>
 					c.guests?.filter((g) => g == slug)?.length &&
-					new Date(c.start) <= new Date() &&
-					c.published === ContentPublished.published
+						c.published === ContentPublished.published &&
+						c?.start ? new Date(c.start) <= new Date() : false
 		)
 		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
 

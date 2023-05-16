@@ -2,6 +2,8 @@ import { error } from '@sveltejs/kit';
 import { filterContent, getContentTypeDirectory, getContentTypePath, listContent } from '$lib/server/content';
 import { ContentType, type Course, type Author } from '$lib/types';
 
+export const prerender = false;
+
 export const load = (async (params) => {
     try {
         const splitPath = params.url.pathname.split('/');

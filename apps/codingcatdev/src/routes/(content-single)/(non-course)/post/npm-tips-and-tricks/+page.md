@@ -10,7 +10,7 @@ hashnode: https://hashnode.codingcat.dev/tutorial-npm-tips-and-tricks
 preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=npm-tips-and-tricks&_id=06b5369e5b7846a9ab2d0f4180e8d526
 published: published
 slug: npm-tips-and-tricks
-start: May 17, 2022
+start: May 17, 2019
 title: NPM Tips and Tricks
 youtube: https://youtu.be/eWc0bg9KMQQ
 ---
