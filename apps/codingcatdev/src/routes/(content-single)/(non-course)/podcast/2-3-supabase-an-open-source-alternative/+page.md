@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 3
 guests:
   - jon-meyers

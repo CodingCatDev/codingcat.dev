@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 33
 recording_date: June 9, 2021 1:30 PM
 season: 1

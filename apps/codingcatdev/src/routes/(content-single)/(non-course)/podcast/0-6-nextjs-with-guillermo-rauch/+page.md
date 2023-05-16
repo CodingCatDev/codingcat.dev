@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/NextJS-with-Guillermo-Rauch-eani0n
 episode: 6
 recording_date: January 17, 2020

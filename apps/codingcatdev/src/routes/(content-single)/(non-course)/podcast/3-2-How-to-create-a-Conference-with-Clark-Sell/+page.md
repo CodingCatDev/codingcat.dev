@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 2
 recording_date: December 29, 2022 2:30 PM
 season: 3

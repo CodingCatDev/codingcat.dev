@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/2-41---Nx-the-Smart--Fast-and-Extensible-Build-System-e1od4to
 episode: 41
 guests:

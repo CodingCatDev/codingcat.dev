@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 10
 recording_date: February 17, 2021 12:00 PM
 season: 1

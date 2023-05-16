@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-8---Cloudinary-with-Tessa-Mero-eaojmf
 episode: 8
 recording_date: January 29, 2020

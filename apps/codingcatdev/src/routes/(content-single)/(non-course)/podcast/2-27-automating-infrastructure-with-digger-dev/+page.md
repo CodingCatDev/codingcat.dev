@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 27
 recording_date: May 10, 2022 12:00 PM
 season: 2

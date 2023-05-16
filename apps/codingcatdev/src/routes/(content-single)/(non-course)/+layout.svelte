@@ -4,6 +4,9 @@
 	import { ContentType } from '$lib/types';
 	import { storeCurrentUrl } from '$lib/stores/stores';
 	import Content from './Content.svelte';
+	import Author from './Author.svelte';
+	import Guest from './Guest.svelte';
+	import Sponsor from './Sponsor.svelte';
 
 	export let data;
 </script>
@@ -15,9 +18,23 @@
 	slotSidebarRight="hidden xl:block"
 >
 	<!-- Page Content -->
-	<Content {data}>
-		<slot />
-	</Content>
+	{#if data.content.type === ContentType.author}
+		<Author {data}>
+			<slot />
+		</Author>
+	{:else if data.content.type === ContentType.guest}
+		<Guest {data}>
+			<slot />
+		</Guest>
+	{:else if data.content.type === ContentType.sponsor}
+		<Sponsor {data}>
+			<slot />
+		</Sponsor>
+	{:else}
+		<Content {data}>
+			<slot />
+		</Content>
+	{/if}
 	<svelte:fragment slot="bcu-app-shell-sidebar-right">
 		<!-- Div takes up same room as fixed -->
 		<div class="w-[19.5rem] xl:w-96" />

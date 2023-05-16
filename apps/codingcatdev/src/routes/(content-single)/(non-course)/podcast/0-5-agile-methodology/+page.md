@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-5---Agile-Methodology-eanfb8
 episode: 5
 recording_date: January 5, 2020

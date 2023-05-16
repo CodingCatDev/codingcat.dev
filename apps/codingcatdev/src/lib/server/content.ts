@@ -1,9 +1,8 @@
-import { ContentType, ContentPublished, type Lesson, type Podcast, type Author } from '$lib/types';
+import { ContentType, ContentPublished, type Podcast } from '$lib/types';
 import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { fileURLToPath } from 'url';
-import { opendirSync, readFileSync } from "fs";
-import { compile } from 'mdsvex';
+import { opendirSync } from "fs";
 
 const LIMIT = 20;
 
@@ -52,8 +51,6 @@ export const parseContentType = (async <T>(path: string, withCode = true) => {
 	// let frontmatter;
 	// let html;
 	// if (prod) {
-	console.log('IMPORT PATH', path);
-
 	const { metadata, default: Page } = await import(path);
 	const frontmatter = metadata;
 	const html = Page?.render()?.html;
@@ -156,14 +153,12 @@ export const filterContent = async <T extends Content>({
 /**
  * List all content from specified content type by author
  * */
-export const listContentByAuthor = async ({ authorSlug, contentItems }:
+export const listContentByAuthor = async <T extends Content>({ authorSlug, contentItems }:
 	{
 		authorSlug: string,
-		contentItems: Content[];
+		contentItems: T[];
 	}) => {
-	console.debug(`Searching for items from author: ${authorSlug}`);
-	const fullConent = await listContent({ contentItems, after: 0, limit: 10000 });
-	const content = fullConent.content.filter(
+	const content = contentItems.filter(
 		preview ?
 			(c) =>
 				c.authors?.filter((g) => g == authorSlug)?.length
@@ -181,14 +176,12 @@ export const listContentByAuthor = async ({ authorSlug, contentItems }:
 /**
  * List all content from specified content type by sponsor
  * */
-export const listContentBySponsor = async ({ sponsorSlug, contentItems }:
+export const listContentBySponsor = async <T extends Content>({ sponsorSlug, contentItems }:
 	{
 		sponsorSlug: string,
-		contentItems: Content[];
+		contentItems: T[];
 	}) => {
-	console.debug(`Searching for items from sponsor: ${sponsorSlug}`);
-	const fullConent = await listContent({ contentItems, after: 0, limit: 10000 });
-	const content = fullConent.content.filter(
+	const content = contentItems.filter(
 		preview ?
 			(c) =>
 				c.sponsors?.filter((g) => g == sponsorSlug)?.length
@@ -203,60 +196,14 @@ export const listContentBySponsor = async ({ sponsorSlug, contentItems }:
 	];
 };
 
-
-/**
- * Get lesson by course and slug
- * */
-export const getLessonFromCourseSlug = async ({ courseSlug, slug, courseItems }:
-	{
-		courseSlug: string, slug: string,
-		courseItems: Content[];
-	}) => {
-	console.debug(`Searching for course: ${courseSlug}`);
-
-	const course = await getContentBySlug({ contentItems: courseItems, slug: courseSlug });
-	if (!course) {
-		console.debug(`course not found`);
-		return null;
-	}
-	console.debug(`Searching within ${course.slug} for lesson slug: ${slug}`);
-
-	// TODO: ADD Pro check?
-	const doc = course
-		?.lesson?.filter(
-			preview ?
-				(l) =>
-					l.slug == slug
-				:
-				(l) =>
-					l.slug == slug &&
-					new Date(l.start) <= new Date() &&
-					l.published === ContentPublished.published
-		)
-		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
-		.slice(0, 1)
-		.at(0);
-	if (!doc) {
-		console.debug(`lesson not found`);
-		return null;
-	}
-
-	return {
-		...doc,
-		courseSlug: course.slug
-	};
-};
-
-
 /**
  * Get podcast by guest slug
  * */
-export const getPodcastByGuest = async ({ slug, podcastItems }:
+export const listContentByGuest = async ({ slug, podcastItems }:
 	{
 		slug: string,
 		podcastItems: Podcast[];
 	}) => {
-	console.debug(`Searching for podcasts from guest: ${slug}`);
 	const podcasts = podcastItems
 		.filter(
 			preview ?

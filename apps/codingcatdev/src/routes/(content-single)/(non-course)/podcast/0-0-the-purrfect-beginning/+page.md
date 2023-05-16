@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-0---The-Purrfect-Beginning-e9hebf
 episode: 0
 recording_date: December 14, 2019

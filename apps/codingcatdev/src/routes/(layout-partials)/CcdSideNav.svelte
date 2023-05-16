@@ -44,11 +44,6 @@
 				</a>
 			</li>
 			<li on:click={onListItemClick} on:keypress>
-				<a href={`/schedule`} class={classesActive('schedule')} data-sveltekit-preload-data="hover">
-					<span class="flex-auto text-3xl font-bold capitalize">schedule</span>
-				</a>
-			</li>
-			<li on:click={onListItemClick} on:keypress>
 				<a href={`/blog`} class={classesActive('blog')} data-sveltekit-preload-data="hover">
 					<span class="flex-auto text-3xl font-bold capitalize">blog</span>
 				</a>

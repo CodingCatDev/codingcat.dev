@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/2-44---Svelte--Accessibility--DX-with-Josefine-Schaefer-e1pj1ll
 episode: 44
 recording_date: October 13, 2022 2:15 PM

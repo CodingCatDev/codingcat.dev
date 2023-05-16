@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 19
 recording_date: February 25, 2022 11:00 AM
 season: 2

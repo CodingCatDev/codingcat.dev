@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 24
 recording_date: April 26, 2021 1:30 PM
 season: 1

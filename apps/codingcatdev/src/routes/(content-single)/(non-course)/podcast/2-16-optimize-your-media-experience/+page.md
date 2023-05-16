@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 16
 recording_date: February 15, 2022 1:00 PM
 season: 2

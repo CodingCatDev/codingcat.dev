@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-2---Purrfect-Program-Management-ea7pop
 episode: 2
 recording_date: December 19, 2019

@@ -74,12 +74,6 @@
 				podcasts
 			</a>
 			<a
-				href="/schedules"
-				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('schedules')}`}
-			>
-				schedules
-			</a>
-			<a
 				href="/blog"
 				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('blog')}`}
 			>

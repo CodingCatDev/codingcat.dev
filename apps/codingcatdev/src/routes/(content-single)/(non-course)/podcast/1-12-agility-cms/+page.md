@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 12
 recording_date: March 2, 2021 2:30 PM
 season: 1

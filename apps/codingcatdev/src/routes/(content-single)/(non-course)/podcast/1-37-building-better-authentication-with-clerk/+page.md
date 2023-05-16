@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 37
 recording_date: August 25, 2021 4:00 PM
 season: 1

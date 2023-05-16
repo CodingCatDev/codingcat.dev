@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/1-6---Jamstack-Handbook-with-Colby-Fayock-epf9of
 episode: 6
 recording_date: January 1, 2021

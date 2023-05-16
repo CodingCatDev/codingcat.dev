@@ -75,7 +75,6 @@ export enum ContentType {
 	page = 'page',
 	podcast = 'podcast',
 	post = 'post',
-	schedule = 'schedule',
 	sponsor = 'sponsor',
 	tutorial = 'tutorial'
 }

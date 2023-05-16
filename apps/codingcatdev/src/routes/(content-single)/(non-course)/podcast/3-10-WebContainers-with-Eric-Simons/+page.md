@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 10
 recording_date: February 16, 2023 2:15 PM
 season: 3

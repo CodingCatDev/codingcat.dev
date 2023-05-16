@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 9
 recording_date: February 16, 2023 2:15 PM
 season: 3
@@ -15,18 +18,13 @@ guests:
 hashnode: https://hashnode.codingcat.dev/podcast-3-6-Effective-Testing-using-Cypress.io
 picks:
   [
-    { author: 'alex-patterson', name: 'Pink Design System', site: 'https://pink.appwrite.io/' },
+    { author: 'alex-patterson', name: 'GitHub Classroom', site: 'https://classroom.github.com/' },
     {
       author: 'brittney-postma',
-      name: 'Netlify buys Gatsby',
-      site: 'https://www.gatsbyjs.com/blog/gatsby-is-joining-netlify'
+      name: 'Hogwarts Legacy',
+      site: 'https://www.hogwartslegacy.com/en-us'
     },
-    {
-      author: 'ankita-kulkarni',
-      name: 'Trampoline',
-      site: 'https://www.youtube.com/watch?v=_cR-JwkFDvs'
-    },
-    { author: 'ankita-kulkarni', name: 'Snapify', site: 'https://snappify.com/' }
+    { author: 'elena-lape', name: 'GeoGuessr', site: 'https://www.geoguessr.com/' }
   ]
 slug: 3-9-Earning-Digital-Badges-with-Holopin
 sponsors:

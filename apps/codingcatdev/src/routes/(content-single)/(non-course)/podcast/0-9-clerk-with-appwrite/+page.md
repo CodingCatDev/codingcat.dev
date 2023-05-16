@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 9
 recording_date: September 14, 2022 1:45 PM
 season: 0

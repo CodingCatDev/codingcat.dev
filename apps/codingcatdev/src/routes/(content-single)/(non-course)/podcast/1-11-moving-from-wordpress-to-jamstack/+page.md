@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 11
 recording_date: February 23, 2021 7:00 PM
 guests:

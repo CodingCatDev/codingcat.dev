@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 5
 recording_date: January 1, 2021
 season: 1
@@ -11,7 +14,7 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/gevydae4
 devto: https://dev.to/codingcatdev/1-5-mdx-with-chris-biscardi-164m
 excerpt: MDX is an authorable format that lets you seamlessly write JSX in your Markdown documents. We talk about MDX and the technology surrounding MDX with Chris Biscardi.
 guests:
-    - chris-biscardi
+  - chris-biscardi
 hashnode: https://hashnode.codingcat.dev/podcast-1-5-mdx-with-chris-biscardi
 slug: 1-5-mdx-with-chris-biscardi
 spotify: https://open.spotify.com/episode/4eLI40xvIyyPgCEt0Ca1bO?si=yyfPraWzT3KiHw3hfqLjvg

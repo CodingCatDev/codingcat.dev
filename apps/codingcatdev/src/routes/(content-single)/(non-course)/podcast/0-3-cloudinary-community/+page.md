@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-3---Cloudinary-Community-ea7rvq
 episode: 3
 recording_date: December 19, 2019

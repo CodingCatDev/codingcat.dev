@@ -129,7 +129,7 @@
 					<!-- Podcast Picks -->
 					{#if picks?.length}
 						<div class="flex flex-col gap-2 md:gap-8">
-							{#if data?.guests}
+							{#if data?.guests && data?.guests.length > 0}
 								<h2>Guest Picks</h2>
 
 								<section class="flex flex-col gap-2 md:gap-8">
@@ -167,7 +167,7 @@
 								</section>
 							{/if}
 
-							{#if data?.authors}
+							{#if data?.authors && data?.authors.length > 0}
 								<h2>Host Picks</h2>
 
 								<section class="flex flex-col gap-2 md:gap-8">

@@ -1,5 +1,5 @@
 import { getContentTypeDirectory, listContent, preview } from "$lib/server/content";
-import { ContentPublished, type Content, type Author, ContentType, type Course } from "$lib/types";
+import { ContentPublished, type Content, type Author, ContentType, type Course, type Sponsor } from "$lib/types";
 
 export const content = async () => {
 
@@ -33,7 +33,12 @@ export const content = async () => {
 		limit: 10000
 	})).content
 
-	const combinedContent = [...author, ...post, ...course, ...guest, ...podcast, ...tutorial];
+	const sponsor = (await listContent<Sponsor>({
+		contentItems: await getContentTypeDirectory<Sponsor>(ContentType.sponsor),
+		limit: 10000
+	})).content
+
+	const combinedContent = [...author, ...post, ...course, ...guest, ...podcast, ...tutorial, ...sponsor];
 
 	const fullContent = combinedContent
 		.filter(preview ? () => true : (c) => c.published === ContentPublished.published)

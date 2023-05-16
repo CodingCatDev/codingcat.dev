@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 27
 recording_date: April 20, 2021 3:30 PM
 season: 1

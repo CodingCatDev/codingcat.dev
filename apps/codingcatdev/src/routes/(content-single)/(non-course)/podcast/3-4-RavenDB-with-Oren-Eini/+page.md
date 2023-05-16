@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 4
 recording_date: January 12, 2023 2:15 PM
 season: 3

@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 2
 recording_date: January 1, 2021
 season: 1
@@ -10,8 +13,8 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/omzc5ridsuuxgxgtvt7o.png
 devto: https://dev.to/codingcatdev/1-2-kinsta-cloud-platform-1foo
 excerpt: Talking with Brian Li all about WordPress hosting provider Kinsta and why they chose to utilize Google Cloud Platform.
-guests: 
-    - brian-li
+guests:
+  - brian-li
 hashnode: https://hashnode.codingcat.dev/podcast-1-2-kinsta-brian-li
 slug: 1-2-kinsta-brian-li
 spotify: https://open.spotify.com/episode/7vtiX25nblEgmeRyltHXSK?si=BrA12SlmTBOOLQ4j7JCyaA

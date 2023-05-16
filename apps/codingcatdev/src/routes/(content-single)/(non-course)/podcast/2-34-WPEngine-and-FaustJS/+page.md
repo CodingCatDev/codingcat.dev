@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 episode: 34
 recording_date: July 7, 2022 2:15 PM
 season: 2

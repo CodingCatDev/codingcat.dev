@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-4---Sanity-io-eanevv
 episode: 4
 recording_date: January 3, 2020

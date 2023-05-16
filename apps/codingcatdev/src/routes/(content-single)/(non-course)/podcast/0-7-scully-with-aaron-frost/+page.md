@@ -1,5 +1,8 @@
 ---
 type: podcast
+authors:
+  - alex-patterson
+  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-7---Scully-with-Aaron-Frost-eanifc
 episode: 7
 recording_date: January 22, 2020
