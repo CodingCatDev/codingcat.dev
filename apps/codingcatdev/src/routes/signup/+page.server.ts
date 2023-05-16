@@ -2,6 +2,8 @@ import { ccdCreateSessionCookie } from '$lib/server/firebase';
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit'
 
+export const prerender = false;
+
 export const actions = {
     signup: async ({ cookies, url }) => {
         const ccdLoginIdToken = cookies.get('__ccdlogin');

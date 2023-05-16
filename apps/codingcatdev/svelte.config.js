@@ -10,7 +10,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		prerender: {
-			handleHttpError: 'warn'
+			handleMissingId: 'warn'
 		}
 	},
 	extensions: ['.svelte', '.svx', '.md'],

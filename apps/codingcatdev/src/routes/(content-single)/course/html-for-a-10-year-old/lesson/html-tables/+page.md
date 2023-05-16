@@ -29,7 +29,7 @@ Below is an example of the entire table, we will walk through each part and how 
 
 > Please note if you are new to web development do not use tables for laying out pages. This was something that happened 20 years ago but we have come a long way since then 😉
 
-<iframe src="[https://codesandbox.io/embed/html-for-a-10-year-old-table-complete-wif2m?fontsize=14&hidenavigation=1&theme=dark&view=preview](https://codesandbox.io/embed/html-for-a-10-year-old-table-complete-wif2m?fontsize=14&hidenavigation=1&theme=dark&view=preview)"
+<iframe src="https://codesandbox.io/embed/html-for-a-10-year-old-table-complete-wif2m?fontsize=14&hidenavigation=1&theme=dark&view=preview"
 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
 title="html-for-a-10-year-old-table-complete"
 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
@@ -189,7 +189,7 @@ Because we are using every cell in the table examples above it makes setting the
 
 ## Live Basic Examples
 
-<iframe src="[https://codesandbox.io/embed/html-for-a-10-year-old-table-1-wqev6?fontsize=14&hidenavigation=1&theme=dark](https://codesandbox.io/embed/html-for-a-10-year-old-table-1-wqev6?fontsize=14&hidenavigation=1&theme=dark)"
+<iframe src="https://codesandbox.io/embed/html-for-a-10-year-old-table-1-wqev6?fontsize=14&hidenavigation=1&theme=dark"
 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
 title="html-for-a-10-year-old-table-1"
 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
@@ -233,7 +233,7 @@ When you see tables in action you often have data that needs to be labeled. The 
 
 Now this simple table setup will work great with a single cell for each column in the first row. But if we add the next row and it has 6 purrfect peeps, we really want to show that the header cell “Purrfect Peeps” is meant for all cells that have emojis.Below you can see the difference between the top table without colspan and with colspan in the second table. Without the colspan the “Purrfect Peeps” cell is taken up by only the cat in the second row, and it does not cover the dog, unicorn, bear, zebra, or otter. In the second table we use “colspan” `<th colspan="6">Purrfect Peeps</th>` to tell the browser that this header should span all 6 columns, notice how all the cells center under the heading.
 
-<iframe src="[https://codesandbox.io/embed/html-for-a-10-year-old-table-columnspan-jdp9q?fontsize=14&hidenavigation=1&theme=dark](https://codesandbox.io/embed/html-for-a-10-year-old-table-columnspan-jdp9q?fontsize=14&hidenavigation=1&theme=dark)"
+<iframe src="https://codesandbox.io/embed/html-for-a-10-year-old-table-columnspan-jdp9q?fontsize=14&hidenavigation=1&theme=dark"
 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
 title="html-for-a-10-year-old-table-columnspan"
 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
@@ -263,7 +263,7 @@ There is a great deal of power that you can add to your tables by nesting an ent
 
 Below you can start to see that the parent header row “Socials” still represents all data in the cell, even the nested table in the second row with a 4×4 table.
 
-<iframe src="[https://codesandbox.io/embed/html-for-a-10-year-old-table-colgroup-wlspl?fontsize=14&hidenavigation=1&theme=dark](https://codesandbox.io/embed/html-for-a-10-year-old-table-colgroup-wlspl?fontsize=14&hidenavigation=1&theme=dark)"
+<iframe src="https://codesandbox.io/embed/html-for-a-10-year-old-table-colgroup-wlspl?fontsize=14&hidenavigation=1&theme=dark"
 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
 title="html-for-a-10-year-old-table-colgroup"
 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
@@ -292,7 +292,7 @@ A very common use case for a footer and the reason for calling it out separately
 </tfoot>
 ```
 
-<iframe src="[https://codesandbox.io/embed/html-for-a-10-year-old-table-footer-npnt7?fontsize=14&hidenavigation=1&theme=dark](https://codesandbox.io/embed/html-for-a-10-year-old-table-footer-npnt7?fontsize=14&hidenavigation=1&theme=dark)"
+<iframe src="https://codesandbox.io/embed/html-for-a-10-year-old-table-footer-npnt7?fontsize=14&hidenavigation=1&theme=dark"
 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
 title="html-for-a-10-year-old-table-footer"
 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
@@ -312,7 +312,7 @@ I find myself using caption less and less over other methods, but I thought it w
 </caption>
 ```
 
-<iframe src="[https://codesandbox.io/embed/html-for-a-10-year-old-table-caption-w1qql?fontsize=14&hidenavigation=1&theme=dark](https://codesandbox.io/embed/html-for-a-10-year-old-table-caption-w1qql?fontsize=14&hidenavigation=1&theme=dark)"
+<iframe src="https://codesandbox.io/embed/html-for-a-10-year-old-table-caption-w1qql?fontsize=14&hidenavigation=1&theme=dark"
 style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
 title="html-for-a-10-year-old-table-caption"
 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"

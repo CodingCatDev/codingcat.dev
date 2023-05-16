@@ -35,7 +35,7 @@ youtube: https://www.youtube.com/watch?v=_iGE7lVfeaI
    - **[Native ES Modules Support](https://nextjs.org/blog/next-12#es-modules-support-and-url-imports)**: Aligning with the standardized module system
    - **[URL Imports (alpha)](https://nextjs.org/blog/next-12#url-imports)**: Import packages from any URL, no installs required
    - **[React Server Components (alpha)](https://nextjs.org/blog/next-12#react-server-components)**: Try it today, including SSR streaming
-3. Will I notice much speed difference with the Rust Compiler on a smaller site (100 pages)?
+3. Will I notice much speed difference with the Rust Compiler on a smaller site `100 pages`?
 4. Lets talk a lot about Serverless functions vs. Edge Functions running on V8. It seems like this might have some pretty specific use cases.
    [https://vercel.com/docs/concepts/functions/edge-functions#middleware-use-cases](https://vercel.com/docs/concepts/functions/edge-functions#middleware-use-cases)
 5. To keep memory low you will probably want to do a lot of streaming of data correct

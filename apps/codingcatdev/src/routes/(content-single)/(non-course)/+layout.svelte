@@ -46,9 +46,6 @@
 				{#if data?.course}
 					<RecentPostsList contentType={ContentType.course} list={data.course} />
 				{/if}
-				{#if data?.tutorial}
-					<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
-				{/if}
 				{#if data?.podcast}
 					<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
 				{/if}
@@ -62,9 +59,6 @@
 		<div class="flex flex-col gap-2 px-2 md:gap-8">
 			{#if data?.course}
 				<RecentPostsList contentType={ContentType.course} list={data.course} />
-			{/if}
-			{#if data?.tutorial}
-				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
 			{/if}
 			{#if data?.podcast}
 				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />

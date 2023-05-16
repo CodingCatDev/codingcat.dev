@@ -27,7 +27,6 @@
 	export let data: {
 		content: Author;
 		authorCourses?: Course[];
-		authorTutorials?: Content[];
 		authorPosts?: Content[];
 	};
 	$: title = pluralize({ type: data.content.type } as Content);
@@ -220,10 +219,6 @@
 				{#if data?.authorCourses?.length}
 					<h2>Courses</h2>
 					<ContentList contentItems={data.authorCourses} contentType={ContentType.course} />
-				{/if}
-				{#if data?.authorTutorials?.length}
-					<h2>Tutorials</h2>
-					<ContentList contentItems={data.authorTutorials} contentType={ContentType.tutorial} />
 				{/if}
 				{#if data?.authorPosts?.length}
 					<h2>Posts</h2>

@@ -31,7 +31,7 @@ youtube: https://www.youtube.com/watch?v=zaH8Za7dmhY
 4. Why are monolithic CMS applications are being replaced by modular, specialized content systems?
 5. How does Gatsby fit into this Landscape
 
-   ![Untitled.png](Untitled.png)
+   ![Content Mesh Diagram showing Headless CMS, Modern Tools, Website all overlapping on Gatsbyjs](https://media.codingcat.dev/image/upload/v1683928952/main-codingcatdev-photo/27a50072b037762955d4dd41cc1c2c7675e342cfd36a446a7b6756b921815c9b.png)
 
 6. Does the content mesh allow content creators/ developers better flows of work?
 7. You personally have been talking a lot about performance recently — why is that?

@@ -9,7 +9,6 @@
 	export let data: {
 		content: Sponsor;
 		sponsorCourses?: Course[];
-		sponsorTutorials?: Content[];
 		sponsorPosts?: Content[];
 		sponsorPodcasts?: Podcast[];
 	};
@@ -52,10 +51,6 @@
 				{#if data?.sponsorCourses?.length}
 					<h2>Courses</h2>
 					<ContentList contentItems={data.sponsorCourses} contentType={ContentType.course} />
-				{/if}
-				{#if data?.sponsorTutorials?.length}
-					<h2>Tutorials</h2>
-					<ContentList contentItems={data.sponsorTutorials} contentType={ContentType.tutorial} />
 				{/if}
 				{#if data?.sponsorPosts?.length}
 					<h2>Posts</h2>

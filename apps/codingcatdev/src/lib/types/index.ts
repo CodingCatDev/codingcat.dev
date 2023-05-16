@@ -76,7 +76,6 @@ export enum ContentType {
 	podcast = 'podcast',
 	post = 'post',
 	sponsor = 'sponsor',
-	tutorial = 'tutorial'
 }
 
 export enum PodcastType {

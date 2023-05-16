@@ -29,31 +29,30 @@ export const getRootPath = (contentType: ContentType, courseDir?: string) => {
 	return root;
 }
 
-export const getContentTypeDirectory = async <T>(contentType: ContentType, withCode = true, courseDir?: string) => {
+export const getContentTypeDirectory = async <T>(contentType: ContentType, courseDir?: string) => {
 	const contentList: T[] = [];
 	const dirs = opendirSync(getRootPath(contentType, courseDir));
 	for await (const dir of dirs) {
 		if (dir.isFile()) continue;
-		const parsed = await parseContentType<T>(`${getRootPath(contentType, courseDir)}/${dir.name}/${suffix}`, withCode) as T;
+		const parsed = await parseContentType<T>(`${getRootPath(contentType, courseDir)}/${dir.name}/${suffix}`) as T;
 		contentList.push(parsed);
 	}
 	return contentList;
 }
 
-export const getContentTypePath = async <T>(contentType: ContentType, path: string, withCode = true, courseDir?: string) => {
+export const getContentTypePath = async <T>(contentType: ContentType, path: string, courseDir?: string) => {
 	const root = getRootPath(contentType, courseDir);
-	return await parseContentType<T>(`${root}/${path}/${suffix}`, withCode) as T;
+	return await parseContentType<T>(`${root}/${path}/${suffix}`) as T;
 }
 
-export const parseContentType = (async <T>(path: string, withCode = true) => {
+export const parseContentType = (async <T>(path: string) => {
 	// If we are in production everything has already been compiled to JavaScript
 	// and we can just read the metadata, otherwise compile and read.
 	// let frontmatter;
 	// let html;
 	// if (prod) {
-	const { metadata, default: Page } = await import(path);
+	const { metadata } = await import(path);
 	const frontmatter = metadata;
-	const html = Page?.render()?.html;
 	// } else {
 	// 	console.log('READ PATH', path);
 	// 	const md = readFileSync(path, 'utf8');
@@ -64,7 +63,7 @@ export const parseContentType = (async <T>(path: string, withCode = true) => {
 	// TODO: Add more checks?
 
 	if (!frontmatter?.type) {
-		console.error('Missing Frontmatter details');
+		console.error('Missing Frontmatter details', path);
 		return;
 	}
 
@@ -72,7 +71,6 @@ export const parseContentType = (async <T>(path: string, withCode = true) => {
 		...frontmatter,
 		cover: frontmatter?.cover ? decodeURI(frontmatter?.cover) : '',
 		type: frontmatter?.type as ContentType,
-		html: withCode ? html : undefined,
 		weight: frontmatter?.weight ? frontmatter?.weight : 0,
 		published: frontmatter?.published ? frontmatter?.published : ContentPublished.draft,
 		start: frontmatter?.start ? new Date(frontmatter?.start) : new Date('Jan 01, 2000'),
@@ -81,7 +79,7 @@ export const parseContentType = (async <T>(path: string, withCode = true) => {
 
 	if (frontmatter.type === ContentType.course) {
 		const lesson = (await listContent<Content>({
-			contentItems: await getContentTypeDirectory<Content>(ContentType.lesson, false, frontmatter.slug),
+			contentItems: await getContentTypeDirectory<Content>(ContentType.lesson, frontmatter.slug),
 			limit: 10000
 		})).content
 		return { ...content, lesson } as T;
@@ -124,15 +122,15 @@ export const filterContent = async <T extends Content>({
 	contentItems: T[];
 }) => {
 	const doc = contentItems
-		.filter(
+		?.filter(
 			preview ?
 				() => true
 				:
-				(c) => new Date(c.start) <= new Date() &&
+				(c) => c?.start ? new Date(c.start) <= new Date() : false &&
 					c.published === ContentPublished.published
 		)
-		.sort((a, b) => new Date(b.start).valueOf() - new Date(a.start).valueOf())
-		.map((c: Course) => {
+		?.sort((a, b) => a?.start && b?.start && new Date(b.start).valueOf() - new Date(a.start).valueOf())
+		?.map((c: Course) => {
 			return {
 				...c,
 				lesson: c?.lesson

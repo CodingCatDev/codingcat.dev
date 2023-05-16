@@ -7,7 +7,8 @@ export const load = async () => {
 	return {
 		contentType,
 		...await listContent<Author>({
-			contentItems: await getContentTypeDirectory<Author>(contentType)
+			contentItems: await getContentTypeDirectory<Author>(contentType),
+			limit: 100
 		})
 	};
 };

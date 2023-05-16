@@ -61,7 +61,7 @@
 	const metaDefaults = {
 		title: 'CodingCat.dev',
 		description:
-			'Codingcat.dev is where you can find all the Purrfect Web Tutorials that you will ever need!',
+			'Codingcat.dev is where you can find all the Purrfect Web Courses that you will ever need!',
 		image:
 			'https://media.codingcat.dev/image/upload/f_jpg/dev-codingcatdev-photo/v60h88eohd7ufghkspgo'
 	};

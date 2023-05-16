@@ -1,5 +1,7 @@
 import { init, inited, search } from '$lib/search';
 
+export const prerender = false;
+
 export async function load({ url, fetch }) {
 	if (!inited) {
 		const res = await fetch('/api/content.json');

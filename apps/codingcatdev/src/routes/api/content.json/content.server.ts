@@ -28,17 +28,12 @@ export const content = async () => {
 		limit: 10000
 	})).content
 
-	const tutorial = (await listContent<Content>({
-		contentItems: await getContentTypeDirectory<Content>(ContentType.tutorial),
-		limit: 10000
-	})).content
-
 	const sponsor = (await listContent<Sponsor>({
 		contentItems: await getContentTypeDirectory<Sponsor>(ContentType.sponsor),
 		limit: 10000
 	})).content
 
-	const combinedContent = [...author, ...post, ...course, ...guest, ...podcast, ...tutorial, ...sponsor];
+	const combinedContent = [...author, ...post, ...course, ...guest, ...podcast, ...sponsor];
 
 	const fullContent = combinedContent
 		.filter(preview ? () => true : (c) => c.published === ContentPublished.published)

@@ -26,7 +26,7 @@ youtube: https://www.youtube.com/watch?v=zyyrwCV5oGg
 ### Questions
 
 1. Why did you start working on Buttondown?
-2. What are the tools used for Buttondown? ([Running-Costs-f29729ded5494272947f656440967cbf](Running-Costs-f29729ded5494272947f656440967cbf))
+2. What are the tools used for Buttondown? ([Running-Costs-f29729ded5494272947f656440967cbf](https://buttondown.notion.site/Running-Costs-f29729ded5494272947f656440967cbf))
    1. Mailgun
    2. Heroku
    3. Stripe
@@ -40,5 +40,3 @@ youtube: https://www.youtube.com/watch?v=zyyrwCV5oGg
 6. How do you test the Gmail Other Tabs?
 7. What has been the most difficult part of getting the service up and running?
 8. What does all this mean?
-
-![Untitled%201.png](Untitled%201.png)

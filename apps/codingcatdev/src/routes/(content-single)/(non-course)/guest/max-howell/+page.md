@@ -10,7 +10,7 @@ socials:
   github: 'https://github.com/mxcl'
   twitter: 'https://twitter.com/mxcl'
 websites:
-  - mxcl.dev
+  - https://mxcl.dev/
 ---
 
 ## About

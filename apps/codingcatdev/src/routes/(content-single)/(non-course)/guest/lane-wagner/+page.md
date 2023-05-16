@@ -10,9 +10,9 @@ socials:
   linkedin: 'https://www.linkedin.com/in/wagslane/'
   twitter: 'https://twitter.com/wagslane'
 websites:
-  - Boot.dev
+  - https://boot.dev/
 ---
 
 ### Profile
 
-Founder of [Boot.dev](https://boot.dev)
+Founder of [Boot.dev](https://boot.dev/)

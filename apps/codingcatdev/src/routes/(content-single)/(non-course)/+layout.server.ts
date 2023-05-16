@@ -57,18 +57,12 @@ export const load = (async (params) => {
             limit: 3
         })).content
 
-        const tutorial = (await listContent<Content>({
-            contentItems: await getContentTypeDirectory<Content>(ContentType.tutorial),
-            limit: 3
-        })).content
-
         const baseContent = {
             content, // Main Content
             authors, // Possibly Empty
             guests, // Possibly Empty
             sponsors, // Possibly Empty
             course, // Top 3
-            tutorial, // Top 3
             podcast, // Top 3
             post, // Top 3
         }
@@ -80,13 +74,6 @@ export const load = (async (params) => {
             })).content;
 
             const authorCourses = await listContentByAuthor<Course>({ authorSlug: content.slug, contentItems: allCourses })
-
-            const allTutorials = (await listContent<Content>({
-                contentItems: await getContentTypeDirectory<Content>(ContentType.tutorial),
-                limit: 10000,
-            })).content;
-
-            const authorTutorials = await listContentByAuthor<Course>({ authorSlug: content.slug, contentItems: allTutorials })
 
             const allPosts = (await listContent<Content>({
                 contentItems: await getContentTypeDirectory<Content>(ContentType.post),
@@ -101,7 +88,6 @@ export const load = (async (params) => {
 
                 // Author Specific
                 authorCourses,
-                authorTutorials,
                 authorPosts
             }
         }
@@ -130,13 +116,6 @@ export const load = (async (params) => {
 
             const sponsorCourses = await listContentBySponsor<Course>({ sponsorSlug: content.slug, contentItems: allCourses })
 
-            const allTutorials = (await listContent<Content>({
-                contentItems: await getContentTypeDirectory<Content>(ContentType.tutorial),
-                limit: 10000,
-            })).content;
-
-            const sponsorTutorials = await listContentBySponsor<Course>({ sponsorSlug: content.slug, contentItems: allTutorials })
-
             const allPosts = (await listContent<Content>({
                 contentItems: await getContentTypeDirectory<Content>(ContentType.post),
                 limit: 10000,
@@ -157,7 +136,6 @@ export const load = (async (params) => {
 
                 // Sponsor Specific
                 sponsorCourses,
-                sponsorTutorials,
                 sponsorPosts,
                 sponsorPodcasts
             }

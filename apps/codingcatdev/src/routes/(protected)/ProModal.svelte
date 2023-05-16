@@ -96,7 +96,7 @@
 				</li>
 				<li class="my-2 flex flex-row gap-1 items-center">
 					<Icon src={RocketLaunch} theme="solid" class="w-8" />
-					Read all PRO tutorials
+					Read all PRO posts
 				</li>
 				<li class="my-2 flex flex-row gap-1 items-center">
 					<Icon src={PaintBrush} theme="solid" class="w-8" />

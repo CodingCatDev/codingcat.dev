@@ -11,6 +11,6 @@ socials:
 
 ## About
 
-Founder & CEO of [@RedpandaData](RedpandaData)
+Founder & CEO of [Redpanda](https://redpanda.com/)
 
 - A Kafka® replacement for mission critical systems. 10x Faster; Safe; API compatible. 🇨🇴

@@ -7,7 +7,7 @@ slug: heather-buchel
 start: January 1, 2000
 socials:
   linkedin: 'https://www.linkedin.com/in/heather-buchel-92bb5b64/'
-  mastodon: '@hbuchel@hachyderm.io'
+  mastodon: 'https://hachyderm.io/@hbuchel'
   twitter: 'https://twitter.com/hbuchel'
 ---
 
