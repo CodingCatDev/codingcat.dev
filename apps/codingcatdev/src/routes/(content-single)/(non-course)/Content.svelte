@@ -34,9 +34,9 @@
 						<Image src={data.content.cover} alt={data.content.title} />
 					{/if}
 
-					<div class="flex gap-2 md:gap-8 overflow-x-auto p-2">
+					<div class="flex gap-2 md:gap-8 overflow-x-auto">
 						<!-- Guests -->
-						{#if data?.guests}
+						{#if data?.guests && data?.guests?.length}
 							<section class="flex gap-2 md:gap-8">
 								{#each data?.guests as guest (guest.slug)}
 									<a
@@ -61,7 +61,7 @@
 						{/if}
 
 						<!-- Authors -->
-						{#if data?.authors}
+						{#if data?.authors && data?.authors?.length}
 							<section class="flex gap-2 md:gap-8">
 								{#each data?.authors as author (author.slug)}
 									<a
@@ -85,6 +85,13 @@
 							</section>
 						{/if}
 					</div>
+					<h1>{data.content.title}</h1>
+					<section class="flex gap-2 md:gap-8">
+						<span>Posted: {data.content.start.toLocaleDateString()}</span>
+						{#if data?.content?.updated && data?.content?.start !== data?.content?.updated}
+							<span>Updated: {data.content.updated.toLocaleDateString()}</span>
+						{/if}
+					</section>
 					<hr />
 					<!-- Sponsors -->
 					{#if data?.sponsors?.length}
