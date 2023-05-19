@@ -21,10 +21,10 @@ export const GET = async () => {
 	return new Response(
 		buildFeed({
 			contentType, contents: contentItems, authorItems
-		}).rss2(),
+		}).json1(),
 		{
 			headers: {
-				'content-type': 'application/rss+xml', 'cache-control': 'max-age=0, s-maxage=3600',
+				'content-type': 'application/json', 'cache-control': 'max-age=0, s-maxage=3600',
 			},
 		}
 	)
