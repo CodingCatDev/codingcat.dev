@@ -75,7 +75,7 @@ In the below illustration you can see three important differences from the Tradi
 
 ## Content Modeling
 
-There are common requirements when you look at content modeling for pages in your web application between a traditional and headless CMS. You must first breakdown the end user experience of each page into different content types and properties. Amplience has an amazing guide on <a target="_blank" rel="noopener noreferrer" href="https://amplience.com/developers/docs/concepts/content-modeling/" class="text-3xl">the process of content modeling.</a>
+There are common requirements when you look at content modeling for pages in your web application between a traditional and headless CMS. You must first breakdown the end user experience of each page into different content types and properties. Amplience has an amazing guide on <a target="_blank" rel="noopener noreferrer" href="https://amplience.com/developers/docs/concepts/content-modeling/">the process of content modeling.</a>
 
 This guide consists of the 4 steps below:
 
