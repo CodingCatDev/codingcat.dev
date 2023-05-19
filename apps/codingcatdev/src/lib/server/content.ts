@@ -3,6 +3,7 @@ import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { fileURLToPath } from 'url';
 import { opendirSync } from "fs";
+import type { SvelteComponentTyped, ComponentType } from 'svelte';
 
 const LIMIT = 20;
 
@@ -29,45 +30,33 @@ export const getRootPath = (contentType: ContentType, courseDir?: string) => {
 	return root;
 }
 
-export const getContentTypeDirectory = async <T>(contentType: ContentType, courseDir?: string) => {
+export const getContentTypeDirectory = async <T>(contentType: ContentType, courseDir?: string, render = false) => {
 	const contentList: T[] = [];
 	const dirs = opendirSync(getRootPath(contentType, courseDir));
 	for await (const dir of dirs) {
 		if (dir.isFile()) continue;
-		const parsed = await parseContentType<T>(`${getRootPath(contentType, courseDir)}/${dir.name}/${suffix}`) as T;
+		const parsed = await parseContentType<T>(`${getRootPath(contentType, courseDir)}/${dir.name}/${suffix}`, render) as T;
 		contentList.push(parsed);
 	}
 	return contentList;
 }
 
-export const getContentTypePath = async <T>(contentType: ContentType, path: string, courseDir?: string) => {
+export const getContentTypePath = async <T>(contentType: ContentType, path: string, courseDir?: string, render = false) => {
 	const root = getRootPath(contentType, courseDir);
-	return await parseContentType<T>(`${root}/${path}/${suffix}`) as T;
+	return await parseContentType<T>(`${root}/${path}/${suffix}`, render) as T;
 }
 
-export const parseContentType = (async <T>(path: string) => {
-	// If we are in production everything has already been compiled to JavaScript
-	// and we can just read the metadata, otherwise compile and read.
-	// let frontmatter;
-	// let html;
-	// if (prod) {
-	const { metadata } = await import(path);
+export const parseContentType = (async <T>(path: string, render = false) => {
+	const { metadata, default: page } = await import(path);
 	const frontmatter = metadata;
-	// } else {
-	// 	console.log('READ PATH', path);
-	// 	const md = readFileSync(path, 'utf8');
-	// 	const transformed = await compile(md);
-	// 	html = transformed?.code;
-	// 	frontmatter = transformed?.data?.fm as Content & Podcast | undefined;
-	// }
-	// TODO: Add more checks?
 
+	// TODO: Add more checks?
 	if (!frontmatter?.type) {
 		console.error('Missing Frontmatter details', path);
 		return;
 	}
 
-	const content = {
+	let content = {
 		...frontmatter,
 		cover: frontmatter?.cover ? decodeURI(frontmatter?.cover) : '',
 		type: frontmatter?.type as ContentType,
@@ -76,6 +65,13 @@ export const parseContentType = (async <T>(path: string) => {
 		start: frontmatter?.start ? new Date(frontmatter?.start) : new Date('Jan 01, 2000'),
 		slug: path.split('/').at(-2)
 	};
+
+	if (render) {
+		content = {
+			...content,
+			html: page?.render()?.html
+		}
+	}
 
 	if (frontmatter.type === ContentType.course) {
 		const lesson = (await listContent<Content>({
