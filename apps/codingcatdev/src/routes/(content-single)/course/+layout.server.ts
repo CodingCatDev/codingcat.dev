@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { filterContent, getContentTypeDirectory, getContentTypePath, listContent } from '$lib/server/content';
-import { ContentType, type Course, type Author } from '$lib/types';
+import { filterContent, getContentTypePath } from '$lib/server/content';
+import { ContentType, type Course, type Author, type Sponsor } from '$lib/types';
 
 export const prerender = false;
 
@@ -18,9 +18,22 @@ export const load = (async (params) => {
         const course = contentItems?.at(0);
         if (!course) throw error(404);
 
-        const authors = (await listContent<Author>({
-            contentItems: await getContentTypeDirectory<Author>(ContentType.author)
-        }))?.content
+        // Content is good, fetch surrounding items
+        const authors: Author[] = [];
+        if (course?.authors) {
+            for (const authorSlug of course.authors) {
+                const author = await getContentTypePath<Author>(ContentType.author, authorSlug);
+                if (author) authors.push(author)
+            }
+        }
+
+        const sponsors: Sponsor[] = [];
+        if (course?.sponsors) {
+            for (const sponsorSlug of course.sponsors) {
+                const sponsor = await getContentTypePath<Sponsor>(ContentType.sponsor, sponsorSlug);
+                if (sponsor) sponsors.push(sponsor)
+            }
+        }
 
         return {
             content: course.lesson?.find(l => l.slug === lessonSlug),
