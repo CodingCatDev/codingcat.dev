@@ -38,7 +38,8 @@ export const load = (async (params) => {
         return {
             content: course.lesson?.find(l => l.slug === lessonSlug),
             course,
-            authors
+            authors,
+            sponsors
         }
     }
     catch (e) {
