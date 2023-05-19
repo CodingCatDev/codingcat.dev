@@ -1,12 +1,13 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Content, Course, Lesson } from '$lib/types';
+	import type { Author, Sponsor, Course } from '$lib/types';
 	import LessonCards from './LessonCards.svelte';
 	import Image from '$lib/components/content/Image.svelte';
 	export let data: {
 		course: Course;
 		authors: Author[];
+		sponsors: Sponsor[];
 	};
 </script>
 
@@ -44,6 +45,38 @@
 					</section>
 				{/if}
 				<h1>{data.course.title}</h1>
+				<!-- Sponsors -->
+				{#if data?.sponsors?.length}
+					<h2>Sponsors</h2>
+					<section class="flex flex-col gap-2 md:flex-row md:gap-8">
+						{#each data?.sponsors as sponsor (sponsor.slug)}
+							<a
+								class="overflow-hidden bcu-card bg-initial card-hover md:flex-1"
+								href={`${sponsor.url}`}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<header>
+									{#if sponsor?.cover}
+										<Image
+											src={sponsor.cover}
+											alt={sponsor.name}
+											classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video"
+										/>
+									{/if}
+								</header>
+								<div class="p-4 space-y-4">
+									<h3 data-toc-ignore="">{sponsor?.name}</h3>
+									<article>
+										<p>
+											{sponsor?.description}
+										</p>
+									</article>
+								</div>
+							</a>
+						{/each}
+					</section>
+				{/if}
 				<section class="flex-grow w-full markdown flex flex-col gap-2 md:gap-8">
 					<slot />
 				</section>
