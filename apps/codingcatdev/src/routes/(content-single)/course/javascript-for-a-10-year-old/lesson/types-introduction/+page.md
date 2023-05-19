@@ -4,8 +4,10 @@ authors:
   - alex-patterson
 cloudinary_convert: false
 published: draft
+section: 'Types'
 slug: types-introduction
 title: Types - Primitives, Variables,  Statements
+weight: 2.1
 ---
 
 ## Types

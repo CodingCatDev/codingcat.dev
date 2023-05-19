@@ -5,7 +5,9 @@ authors:
 cloudinary_convert: false
 published: draft
 slug: welcome-to-js-for-a-10-year-old
+section: Welcome
 title: Welcome to JavaScript for a 10 Year Old
+weight: 1
 ---
 
 ## Welcome
@@ -14,7 +16,7 @@ Hello and welcome to JavaScript for a 10 year old. Okay like all of our 10 year 
 
 ## How to use the Course
 
-People learn in a variety of different formats and at different speeds. I am a very visual learner and need to be able to break everything down into a picture in my head. Others find that just quickly listening and then coding on their own is the best way to learn. No matter which way you  learn my goal is to have the resources for you. If you find something is missing please join us on our [Learn Build Teach Discord](https://discord.gg/vM2bagU).
+People learn in a variety of different formats and at different speeds. I am a very visual learner and need to be able to break everything down into a picture in my head. Others find that just quickly listening and then coding on their own is the best way to learn. No matter which way you learn my goal is to have the resources for you. If you find something is missing please join us on our [Learn Build Teach Discord](https://discord.gg/vM2bagU).
 
 ## How do I access the Course
 

@@ -7,6 +7,7 @@ id: 2105340a6b794de9b167b42341381b9d
 published: draft
 slug: types-strings
 title: Types - Strings
+weight: 2.3
 ---
 
 You can think of primitive types like atoms in our body, there is nothing smaller. Okay well technically [Quarks](<https://www.sciencenewsforstudents.org/article/scientists-say-quark#:~:text=Quark%20(noun%2C%20%E2%80%9CKWARK%E2%80%9D)&text=Subatomic%20means%20%E2%80%9Csmaller%20than%20an,even%20smaller%20particles%20called%20quarks.>) but you get the idea. These are the basis of what all other data is made.
