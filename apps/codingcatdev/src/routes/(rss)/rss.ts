@@ -1,5 +1,5 @@
-import type { Content, ContentType } from "$lib/types";
-import { Feed } from 'feed';
+import type { Content, ContentType, Author } from "$lib/types";
+import { Feed, type Author as FeedAuthor } from 'feed';
 
 const site = 'https://codingcat.dev';
 
@@ -7,9 +7,11 @@ const site = 'https://codingcat.dev';
 export const buildFeed = ({
     contents,
     contentType,
+    authorItems,
 }: {
     contents: Content[];
     contentType: ContentType;
+    authorItems: Author[];
 }) => {
     const feed = new Feed({
         title: `${site} - ${contentType} feed`,
@@ -32,22 +34,27 @@ export const buildFeed = ({
     });
 
     for (const content of contents) {
+
+        const authors = content?.authors?.map((authorSlug) => {
+            return authorItems.filter(a => a.slug === authorSlug).map(a => {
+                return {
+                    name: a.name,
+                    link: `${site}/author/${a.slug}`,
+                }
+            })?.at(0) as FeedAuthor;
+        }).filter(a => a !== undefined)
         feed.addItem({
             title: content.title || '',
+            content: content.html,
             link: `${site}/${contentType}/${content.slug}`,
             description: `${content.excerpt}`,
             image: content.cover || feed.items.at(0)?.image,
             date: content.start || new Date(),
-            author: content?.authors ? content.authors?.map((author) => {
-                return {
-                    name: author.name,
-                    link: `${site}/authors/${author.slug}`,
-                };
-            })
+            author: authors ? authors
                 : [{
                     name: 'Alex Patterson',
                     email: 'alex@codingcat.dev',
-                    link: `${site}`,
+                    link: `${site}/author/alex-patterson`,
                 }],
         });
     }
