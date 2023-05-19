@@ -327,7 +327,7 @@ export default function Counter() {
 
 ## Create Effect
 
-An **[Effect](https://www.solidjs.com/tutorial/introduction_effects)** is an example of an observer that runs a side effect depending on a signal. Effects are a way to make general, arbitrary code (also known as side effects) run whenever dependencies change. `[createEffect](https://www.solidjs.com/docs/latest#createeffect)` creates a new computation (for example to modify the DOM manually) and runs the given function in a tracking scope.
+An **[Effect](https://www.solidjs.com/tutorial/introduction_effects)** is an example of an observer that runs a side effect depending on a signal. Effects are a way to make general, arbitrary code (also known as side effects) run whenever dependencies change. [createEffect](https://www.solidjs.com/docs/latest#createeffect) creates a new computation (for example to modify the DOM manually) and runs the given function in a tracking scope.
 
 ```jsx
 // src/components/Counter.jsx
