@@ -49,7 +49,7 @@ slug: 3-12-how-to-become-a-full-time-content-creator
 sponsors:
   - storyblok
 spotify: https://open.spotify.com/episode/1alJwQzJmCoWupGZIvaRQd?si=8bbf17162e77479e
-start: May 10, 2023
+start: May 18, 2023
 title: 'How to Become a Full Time Content Creator'
 youtube: https://youtu.be/WPrmIwDBodM
 ---
