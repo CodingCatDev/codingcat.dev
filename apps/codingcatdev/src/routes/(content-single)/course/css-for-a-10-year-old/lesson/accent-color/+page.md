@@ -3,10 +3,10 @@ type: lesson
 authors:
   - alex-patterson
 cloudinary_convert: false
-excerpt: In this video we review the opacity property.
+excerpt: In this video we review the accent-color property.
 published: draft
-slug: opacity
+section: Properties
 start: June 11, 2022
-title: Opacity
-weight: 3.1
+title: Accent Color
+weight: 3
 ---
