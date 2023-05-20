@@ -17,6 +17,30 @@ cover: https://media.codingcat.dev/image/upload/v1663010557/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/240-redwoodjs-3aal
 excerpt: Tom chats with us all about Founding GitHub, running Preston Werner Ventures and building RedwoodJS.
 hashnode: https://hashnode.codingcat.dev/podcast-2-40-RedwoodJS
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'JavaScript DOM Manipulation',
+      site: 'https://www.freecodecamp.org/news/javascript-dom-manipulation/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Hacktoberfest',
+      site: 'https://hacktoberfest.digitalocean.com/'
+    },
+    { author: 'brittney-postma', name: 'Sandman', site: 'https://www.netflix.com/title/81150303' },
+    {
+      author: 'brittney-postma',
+      name: 'Developer Downloads',
+      site: 'https://twitter.com/domitriusclark/status/1556757516725456896?s=20&t=7oZc9lY6Bbi0P0CbDDcztQ'
+    },
+    {
+      author: 'tom-preston-werner',
+      name: 'The Wind Rises',
+      site: 'https://en.wikipedia.org/wiki/The_Wind_Rises'
+    }
+  ]
 slug: 2-40-RedwoodJS
 spotify: https://open.spotify.com/episode/58lGzcpwFVlNaGZQiIDaX5?si=sMQIflhIQAODrpvbKRiPmw
 start: September 21, 2022 12:00 PM
@@ -46,8 +70,8 @@ Redwood Videos [https://www.youtube.com/c/RedwoodJS/videos](https://www.youtube.
 6. Are authentication providers built into Redwood?
 7. I probably know Redwood best from the community that is surrounding Redwood. Would you say that this was a focus day one?
 8. RedwoodJS Startup Fund
-9. ~~Why would you choose Redwood over something like Next/Remix? What about Django and Laravel?~~
-10. ~~Will Redwood ever migrate away from GraphQL to something like tRPC?~~
-11. ~~Is Redwood scalable for long term growth?~~
-12. ~~Where do you see Redwood fitting into the landscape of JS Frameworks in the next 5 years?~~
-    1. [~~StateofJS~~](https://2021.stateofjs.com/en-US/libraries/back-end-frameworks)
+9. Why would you choose Redwood over something like Next/Remix? What about Django and Laravel?
+10. Will Redwood ever migrate away from GraphQL to something like tRPC?
+11. Is Redwood scalable for long term growth?
+12. Where do you see Redwood fitting into the landscape of JS Frameworks in the next 5 years?
+    1. [StateofJS](https://2021.stateofjs.com/en-US/libraries/back-end-frameworks)

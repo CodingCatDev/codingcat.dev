@@ -17,6 +17,19 @@ guests:
   - nick-dejesus
   - pariss-chandler
 hashnode: https://hashnode.codingcat.dev/podcast-2-22-building-connections-for-the-underrepresented
+picks:
+  [
+    { author: 'alex-patterson', name: 'SVGOMG', site: 'https://jakearchibald.github.io/svgomg/' },
+    {
+      author: 'alex-patterson',
+      name: 'SVGR - Transform SVGs into React components',
+      site: 'https://react-svgr.com/playground/'
+    },
+    { author: 'alex-patterson', name: 'Refactr.tech, site: 'https://www.refactr.tech/' },
+    { author: 'brittney-postma', name: 'Women of Jamstack', site: 'https://womenofjamstack.com' },
+    { author: 'brittney-postma', name: 'Quordle', site: 'https://www.quordle.com/' },
+    { author: 'brittney-postma', name: 'Render ATL', site: 'https://www.renderatl.com/speakers' }
+  ]
 slug: 2-22-building-connections-for-the-underrepresented
 sponsors:
   - builder-io

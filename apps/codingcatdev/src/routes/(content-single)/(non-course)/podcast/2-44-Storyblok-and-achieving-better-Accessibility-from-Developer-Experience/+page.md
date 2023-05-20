@@ -19,7 +19,40 @@ guests:
   - josefine-schaefer
   - alex-jover-morales
 hashnode: https://hashnode.codingcat.dev/podcast-2-44-contentblok-accessibility
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=Storyblok-and-achieving-better-Accessibility-from-Developer-Experience&_id=bec19ab64cb84903b7798e21bbbc2989
+picks:
+  [
+    { author: 'alex-patterson', name: 'The Boolean Game', site: 'https://boolean.method.ac/' },
+    {
+      author: 'alex-patterson',
+      name: 'VSCode Pets',
+      site: 'https://marketplace.visualstudio.com/items?itemName=tonybaloney.vscode-pets'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'House of the Dragon',
+      site: 'https://www.hbo.com/house-of-the-dragon'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Gitako',
+      site: 'https://chrome.google.com/webstore/detail/gitako-github-file-tree/giljefjcheohhamkjphiebfjnlphnokk?hl=en-US'
+    },
+    {
+      author: 'alex-jover-morales',
+      name: 'Tekken Bloodline',
+      site: 'https://www.netflix.com/title/81002441'
+    },
+    {
+      author: 'josefine-schaefer',
+      name: 'What Font',
+      site: 'https://chrome.google.com/webstore/detail/whatfont/jabopobgcpjmedljpbcaablpmlmfcogm?hl=en'
+    },
+    {
+      author: 'josefine-schaefer',
+      name: 'Soudns Like a Cult',
+      site: 'https://www.soundslikeacult.com/'
+    }
+  ]
 slug: Storyblok-and-achieving-better-Accessibility-from-Developer-Experience
 sponsors:
   - jamstackconf

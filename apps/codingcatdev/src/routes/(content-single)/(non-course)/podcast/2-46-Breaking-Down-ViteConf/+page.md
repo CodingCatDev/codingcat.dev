@@ -16,6 +16,39 @@ cover: https://media.codingcat.dev/image/upload/v1666122849/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/246-breaking-down-viteconf-3fnk
 excerpt: Matias talks to us all about ViteConf, the future of Vite and all of the great speakers at the conference.
 hashnode: https://hashnode.codingcat.dev/podcast-2-46-Breaking-Down-ViteConf
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Cloudflare Streams',
+      site: 'https://www.cloudflare.com/products/cloudflare-stream/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Developer Experience at Vercel - Lee Robinson',
+      site: 'https://leerob.io/blog/dx'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'SvelteKit Netlify Edge Demo',
+      site: 'https://github.com/brittneypostma/sveltekit-netlify-edge-demo'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'pnpm',
+      site: 'https://www.netlify.com/blog/how-to-use-pnpm-with-netlify-build/'
+    },
+    {
+      author: 'matias-capeletto',
+      name: 'Stackblitz Codeflow',
+      site: 'https://stackblitz.com/codeflow'
+    },
+    {
+      author: 'matias-capeletto',
+      name: 'Deno Vite',
+      site: 'https://viteconf.org/schedule/deno__vite'
+    }
+  ]
 slug: 2-46-Breaking-Down-ViteConf
 sponsors:
   - jamstackconf

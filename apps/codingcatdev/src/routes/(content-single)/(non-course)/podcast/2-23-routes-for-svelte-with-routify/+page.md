@@ -17,6 +17,24 @@ guests:
   - willow
   - jake-rosenberg
 hashnode: https://hashnode.codingcat.dev/podcast-2-23-routes-for-svelte-with-routify
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Open Source Alternative To',
+      site: 'https://www.opensourcealternative.to/?ref=producthunt&category=Developer%20Tools'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Severance',
+      site: 'https://tv.apple.com/us/show/severance/umc.cmc.1srk2goyh2q2zdxcx605w8vtx'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Sarah Drasner - DevX at Netlify',
+      site: 'https://www.netlify.com/blog/2021/01/06/developer-experience-at-netlify/'
+    }
+  ]
 slug: 2-23-routes-for-svelte-with-routify
 sponsors:
   - builder-io

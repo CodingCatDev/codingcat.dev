@@ -16,6 +16,35 @@ cover: https://media.codingcat.dev/image/upload/v1652296873/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/225-building-maintaining-design-systems-2ckh
 excerpt: Michael Chan talks all about how to build and maintain Design Systems. Brittney and I have a few ideas of our own too.
 hashnode: https://hashnode.codingcat.dev/podcast-2-25-building-maintaining-design-systems
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'FreeCodeCamp - How to create and Implement a Design System with CSS',
+      site: 'https://www.freecodecamp.org/news/how-to-create-and-implement-a-design-system-with-css/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'AirBnB Design System',
+      site: 'https://airbnb.design/building-a-visual-language/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Using Components within an Atomic Design System',
+      site: 'https://codingcat.dev/tutorial/design-systems-with-web-components'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Brad Frost and Storybook',
+      site: 'https://bradfrost.com/blog/post/atomic-design-and-storybook/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Atomic Design',
+      site: 'https://bradfrost.com/blog/post/atomic-web-design/'
+    },
+    { author: 'michael-chan', name: 'Basecamp Shapeup', site: 'https://basecamp.com/shapeup' }
+  ]
 slug: 2-25-building-maintaining-design-systems
 sponsors:
   - builder-io

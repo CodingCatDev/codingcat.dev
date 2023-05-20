@@ -16,6 +16,35 @@ cover: https://media.codingcat.dev/image/upload/v1655827618/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/217-building-the-future-of-svelte-at-vercel-53ok
 excerpt: We caught up with Rich Harris to see how he was settling into his new role with Vercel and what is next for Svelte.
 hashnode: https://hashnode.codingcat.dev/podcast-2-17-building-the-future-of-svelte-at-vercel
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Creating Generative SVG Grids',
+      site: 'https://frontend.horse/articles/generative-grids/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Geoff Rich generative grids using Svelte',
+      site: 'https://svelte.dev/repl/873988ce33db43f097c0ca69df57b3ac?version=3.46.4'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Discord',
+      site: 'https://discord.com/invite/yy75DKs'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'CodingCat.dev - Intro to Svelte Course',
+      site: 'https://codingcat.dev/course/intro-to-svelte'
+    },
+    {
+      author: 'rich_harris',
+      name: 'Timemore Chestnut C2 Manual Coffee Grinder',
+      site: 'https://www.amazon.com/dp/B0833SDN8M/?tag=thewire06-20&linkCode=xm2&ascsubtag=AwEAAAAAAAAAAfTy'
+    },
+    { author: 'rich_harris', name: 'Stackblitz for Svelte', site: 'https://sveltekit.new' }
+  ]
 slug: 2-17-building-the-future-of-svelte-at-vercel
 sponsors:
   - builder-io
@@ -27,8 +56,7 @@ youtube: https://www.youtube.com/watch?v=F1sSUDVoij4
 
 ## Questions
 
-1. I don’t know if this man needs an introduction, but can you
-   ~~Can you give us a brief introduction and~~ tell us a little about your previous work with Rollup and Svelte and your work at Vercel?
+1. I don’t know if this man needs an introduction, but can you give us a brief introduction and tell us a little about your previous work with Rollup and Svelte and your work at Vercel?
 2. Where does Vercel fit in the future of Svelte?
 3. What is the biggest difference in having a compiler vs the virtual dom?
 4. How does declarative Svelte turn into efficient imperative code for the browser?

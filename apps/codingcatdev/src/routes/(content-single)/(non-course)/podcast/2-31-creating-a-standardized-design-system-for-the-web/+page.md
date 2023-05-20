@@ -16,6 +16,36 @@ cover: https://media.codingcat.dev/image/upload/v1657713352/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/231-creating-a-standardized-design-system-for-the-web-2b57
 excerpt: Greg talks with us about running the OpenUI working group. We talk in detail and give demos on standardizing components across the major browser vendors.
 hashnode: https://hashnode.codingcat.dev/podcast-creating-a-standardized-design-system-for-the-web
+picks:
+  [
+    { author: 'alex-patterson', name: 'Fastify', site: 'https://www.fastify.io/' },
+    {
+      author: 'alex-patterson',
+      name: 'Fastify v4',
+      site: 'https://medium.com/@fastifyjs/fastify-v4-ga-59f2103b5f0e'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Mac Studio',
+      site: 'https://www.apple.com/mac-studio/specs/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Design Systems News',
+      site: 'https://news.design.systems/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Water Enhancers',
+      site: 'https://www.walmart.com/browse/food/water-enhancers/976759_976782_8978567_8932412'
+    },
+    { author: 'greg-whitworth', name: 'Open UI Discord', site: 'https://discord.gg/C4bSjKae' },
+    {
+      author: 'greg-whitworth',
+      name: 'Binging Legal Eagle youtube reviews of lawyers in movies',
+      site: 'https://www.youtube.com/c/LegalEagle'
+    }
+  ]
 slug: creating-a-standardized-design-system-for-the-web
 sponsors:
   - storyblok
