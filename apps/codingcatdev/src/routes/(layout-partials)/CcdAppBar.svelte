@@ -62,22 +62,10 @@
 				courses
 			</a>
 			<a
-				href="/tutorials"
-				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('tutorials')}`}
-			>
-				tutorials
-			</a>
-			<a
 				href="/podcasts"
 				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('podcasts')}`}
 			>
 				podcasts
-			</a>
-			<a
-				href="/schedules"
-				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('schedules')}`}
-			>
-				schedules
 			</a>
 			<a
 				href="/blog"

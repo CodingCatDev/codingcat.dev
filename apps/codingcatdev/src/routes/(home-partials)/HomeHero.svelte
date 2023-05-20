@@ -10,7 +10,7 @@
 	>
 		Purrfect
 		<br />
-		Web Tutorials
+		Web Courses
 	</h1>
 	<div class="font-sans text-2xl" style="maxWidth: '40ch'">
 		Get the skills you need to become a better web developer today. High quality courses with

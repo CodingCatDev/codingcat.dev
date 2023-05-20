@@ -51,13 +51,8 @@ export interface Sponsor extends Content {
 	url: string;
 }
 
-export interface Author {
-	cover: string;
+export interface Author extends Content {
 	name: string;
-	html?: string;
-	slug: string;
-	start: Date;
-	published: ContentPublished;
 	socials: Socials;
 	websites?: string[];
 }
@@ -80,9 +75,7 @@ export enum ContentType {
 	page = 'page',
 	podcast = 'podcast',
 	post = 'post',
-	schedule = 'schedule',
 	sponsor = 'sponsor',
-	tutorial = 'tutorial'
 }
 
 export enum PodcastType {

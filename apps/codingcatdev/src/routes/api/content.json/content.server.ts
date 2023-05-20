@@ -1,24 +1,39 @@
-import { parseModules, preview } from "$lib/server/content";
-import { ContentPublished, type Content, type Author } from "$lib/types";
+import { getContentTypeDirectory, listContent, preview } from "$lib/server/content";
+import { ContentPublished, type Content, type Author, ContentType, type Course, type Sponsor } from "$lib/types";
 
 export const content = async () => {
-	const course = import.meta.glob(['../../../content/course/*/*.md']);
-	const podcast = import.meta.glob(['../../../content/podcast/*.md']);
-	const post = import.meta.glob(['../../../content/post/*.md']);
-	const tutorial = import.meta.glob(['../../../content/tutorial/*.md']);
-	const author = import.meta.glob(['../../../content/author/*.md']);
-	const guest = import.meta.glob(['../../../content/guest/*.md']);
 
-	const p = await Promise.all([
-		parseModules(course),
-		parseModules(podcast),
-		parseModules(post),
-		parseModules(tutorial),
-		parseModules(author),
-		parseModules(guest)
-	])
+	const author = (await listContent<Author>({
+		contentItems: await getContentTypeDirectory<Author>(ContentType.author),
+		limit: 10000
+	})).content
 
-	const combinedContent = [...p[0], ...p[1], ...p[2], ...p[3], ...p[4], ...p[5]];
+	const post = (await listContent<Content>({
+		contentItems: await getContentTypeDirectory<Content>(ContentType.post),
+		limit: 10000
+	})).content
+
+	const course = (await listContent<Course>({
+		contentItems: await getContentTypeDirectory<Course>(ContentType.course),
+		limit: 10000
+	})).content
+
+	const guest = (await listContent<Author>({
+		contentItems: await getContentTypeDirectory<Author>(ContentType.guest),
+		limit: 10000
+	})).content
+
+	const podcast = (await listContent<Content>({
+		contentItems: await getContentTypeDirectory<Content>(ContentType.podcast),
+		limit: 10000
+	})).content
+
+	const sponsor = (await listContent<Sponsor>({
+		contentItems: await getContentTypeDirectory<Sponsor>(ContentType.sponsor),
+		limit: 10000
+	})).content
+
+	const combinedContent = [...author, ...post, ...course, ...guest, ...podcast, ...sponsor];
 
 	const fullContent = combinedContent
 		.filter(preview ? () => true : (c) => c.published === ContentPublished.published)

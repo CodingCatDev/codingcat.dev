@@ -20,7 +20,15 @@
 
 <!-- Nav Links -->
 <section class={classesBase}>
-	<div class="text-3xl font-bold">Menu</div>
+	<nav class="nav-list-nav">
+		<ul>
+			<li on:click={onListItemClick} on:keypress>
+				<a href={`/`} class={classesActive('')} data-sveltekit-preload-data="hover">
+					<span class="flex-auto text-3xl font-bold capitalize">Home</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
 	<hr />
 	<nav class="nav-list-nav">
 		<ul>
@@ -30,22 +38,8 @@
 				</a>
 			</li>
 			<li on:click={onListItemClick} on:keypress>
-				<a
-					href={`/tutorials`}
-					class={classesActive('tutorials')}
-					data-sveltekit-preload-data="hover"
-				>
-					<span class="flex-auto text-3xl font-bold capitalize">tutorials</span>
-				</a>
-			</li>
-			<li on:click={onListItemClick} on:keypress>
 				<a href={`/podcasts`} class={classesActive('podcasts')} data-sveltekit-preload-data="hover">
 					<span class="flex-auto text-3xl font-bold capitalize">podcasts</span>
-				</a>
-			</li>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/schedule`} class={classesActive('schedule')} data-sveltekit-preload-data="hover">
-					<span class="flex-auto text-3xl font-bold capitalize">schedule</span>
 				</a>
 			</li>
 			<li on:click={onListItemClick} on:keypress>

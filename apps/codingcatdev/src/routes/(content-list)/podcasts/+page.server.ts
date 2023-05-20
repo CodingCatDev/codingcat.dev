@@ -1,14 +1,13 @@
-import { listContent, parseModules } from '$lib/server/content';
-import { ContentType } from '$lib/types';
-
+import { getContentTypeDirectory, listContent } from '$lib/server/content';
+import { ContentType, type Content } from '$lib/types';
 
 const contentType = ContentType.podcast;
 
-export const load = (async () => {
-	const modules = import.meta.glob(['../../../content/podcast/*.md']);
-	const contentItems = await parseModules(modules);
+export const load = async () => {
 	return {
 		contentType,
-		...(await listContent({ contentItems }))
+		...await listContent<Content>({
+			contentItems: await getContentTypeDirectory<Content>(contentType)
+		})
 	};
-});
+};

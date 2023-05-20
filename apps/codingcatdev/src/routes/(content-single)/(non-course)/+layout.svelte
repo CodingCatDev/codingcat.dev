@@ -3,6 +3,10 @@
 	import RecentPostsList from './RecentPostsList.svelte';
 	import { ContentType } from '$lib/types';
 	import { storeCurrentUrl } from '$lib/stores/stores';
+	import Content from './Content.svelte';
+	import Author from './Author.svelte';
+	import Guest from './Guest.svelte';
+	import Sponsor from './Sponsor.svelte';
 
 	export let data;
 </script>
@@ -14,7 +18,23 @@
 	slotSidebarRight="hidden xl:block"
 >
 	<!-- Page Content -->
-	<slot />
+	{#if data.content.type === ContentType.author}
+		<Author {data}>
+			<slot />
+		</Author>
+	{:else if data.content.type === ContentType.guest}
+		<Guest {data}>
+			<slot />
+		</Guest>
+	{:else if data.content.type === ContentType.sponsor}
+		<Sponsor {data}>
+			<slot />
+		</Sponsor>
+	{:else}
+		<Content {data}>
+			<slot />
+		</Content>
+	{/if}
 	<svelte:fragment slot="bcu-app-shell-sidebar-right">
 		<!-- Div takes up same room as fixed -->
 		<div class="w-[19.5rem] xl:w-96" />
@@ -23,19 +43,29 @@
 				{#key $storeCurrentUrl}
 					<TableOfContents />
 				{/key}
-				<RecentPostsList contentType={ContentType.course} list={data.course} />
-				<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
-				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
-				<RecentPostsList contentType={ContentType.post} list={data.post} />
+				{#if data?.course}
+					<RecentPostsList contentType={ContentType.course} list={data.course} />
+				{/if}
+				{#if data?.podcast}
+					<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
+				{/if}
+				{#if data?.post}
+					<RecentPostsList contentType={ContentType.post} list={data.post} />
+				{/if}
 			</div>
 		</div>
 	</svelte:fragment>
 	<svelte:fragment slot="bcu-app-shell-page-footer">
 		<div class="flex flex-col gap-2 px-2 md:gap-8">
-			<RecentPostsList contentType={ContentType.course} list={data.course} />
-			<RecentPostsList contentType={ContentType.tutorial} list={data.tutorial} />
-			<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
-			<RecentPostsList contentType={ContentType.post} list={data.post} />
+			{#if data?.course}
+				<RecentPostsList contentType={ContentType.course} list={data.course} />
+			{/if}
+			{#if data?.podcast}
+				<RecentPostsList contentType={ContentType.podcast} list={data.podcast} />
+			{/if}
+			{#if data?.post}
+				<RecentPostsList contentType={ContentType.post} list={data.post} />
+			{/if}
 		</div>
 	</svelte:fragment>
 </AppShell>
