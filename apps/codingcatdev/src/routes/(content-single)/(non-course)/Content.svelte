@@ -159,7 +159,7 @@
 											<section class="flex flex-wrap gap-2 p-4 md:gap-8">
 												{#each picks.filter((p) => p?.author === guest?.slug) as pick (pick.name)}
 													<a
-														class="flex gap-2 bcu-button variant-soft-primary"
+														class="flex gap-2 bcu-button variant-soft-primary whitespace-normal break-word text-left"
 														href={pick.site}
 														target="_blank"
 														rel="noopener noreferrer"
