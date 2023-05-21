@@ -32,9 +32,9 @@ youtube: https://www.youtube.com/watch?v=aSt-D7Dbcuk
 
 ### **Links**
 
-[**https://www.linkedin.com/in/nickrouech/**](https://web.archive.org/web/20210922231020mp_/https://www.linkedin.com/in/nickrouech/)
+[**https://www.linkedin.com/in/nickrouech/**](https://www.linkedin.com/in/nickrouech/)
 
-[https://miblendcoffee.com/](https://web.archive.org/web/20210922231020mp_/https://miblendcoffee.com/)
+[https://miblendcoffee.com/](https://miblendcoffee.com/)
 
 ## **PM Questions**
 
@@ -43,7 +43,7 @@ youtube: https://www.youtube.com/watch?v=aSt-D7Dbcuk
 **What is the difference between a Project Manager and Program Manager?**
 
 **I noticed you have your PMP (Project Management Professional) Certification.
-**[**https://www.pmi.org/certifications/types/project-management-pmp**](https://web.archive.org/web/20210922231020mp_/https://www.pmi.org/certifications/types/project-management-pmp)
+**[**https://www.pmi.org/certifications/types/project-management-pmp**](https://www.pmi.org/certifications/types/project-management-pmp)
 
 **What made you decide to commit the time to get the certification?**
 

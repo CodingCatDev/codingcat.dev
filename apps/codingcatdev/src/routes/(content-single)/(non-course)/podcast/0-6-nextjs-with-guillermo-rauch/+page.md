@@ -30,16 +30,16 @@ youtube: https://www.youtube.com/watch?v=eDUW_zRIiho
 
 ### **Guillermo Rauch - CEO ZEIT**
 
-[**https://www.linkedin.com/in/guillermo-rauch-b834b917b/**](https://web.archive.org/web/20220523073646mp_/https://www.linkedin.com/in/guillermo-rauch-b834b917b/)
+[**https://www.linkedin.com/in/guillermo-rauch-b834b917b/**](https://www.linkedin.com/in/guillermo-rauch-b834b917b/)
 
 ## **Who is Guillermo Rauch?**
 
 1.  \*\*Tell us a little bit about yourself?
 2.  \*\*
 3.  \*\*What pushed you to leave your prior companies as CTO and take on the new role of CEO at Zeit?
-4.  \*\*[\*\*https://zeit.co/about/rauchg](https://web.archive.org/web/20220523073646mp_/https://zeit.co/about/rauchg)
-5.  [\*\*](https://web.archive.org/web/20220523073646mp_/https://zeit.co/about/rauchg)
-6.  **Do you still have time to code like you did back in the** [**https://socket.io/**](https://web.archive.org/web/20220523073646mp_/https://socket.io/)**,** [**https://mongoosejs.com/**](https://web.archive.org/web/20220523073646mp_/https://mongoosejs.com/) **… days. Or has your daily switched over to more business focus and making great products?**
+4.  \*\*[\*\*https://zeit.co/about/rauchg](https://zeit.co/about/rauchg)
+5.  [\*\*](https://zeit.co/about/rauchg)
+6.  **Do you still have time to code like you did back in the** [**https://socket.io/**](https://socket.io/)**,** [**https://mongoosejs.com/**](https://mongoosejs.com/) **… days. Or has your daily switched over to more business focus and making great products?**
 
 ## **Zeit**
 
@@ -71,20 +71,20 @@ youtube: https://www.youtube.com/watch?v=eDUW_zRIiho
 
 ### **Guillermo**
 
-[**https://rauchg.com/2020/2019-in-review**](https://web.archive.org/web/20220523073646mp_/https://rauchg.com/2020/2019-in-review)
+[**https://rauchg.com/2020/2019-in-review**](https://rauchg.com/2020/2019-in-review)
 
 **“Impossible just takes longer”**
 
 **Discord - React Native App**
 
-[**https://blog.discordapp.com/why-discord-is-sticking-with-react-native-ccc34be0d427**](https://web.archive.org/web/20220523073646mp_/https://blog.discordapp.com/why-discord-is-sticking-with-react-native-ccc34be0d427)
+[**https://blog.discordapp.com/why-discord-is-sticking-with-react-native-ccc34be0d427**](https://blog.discordapp.com/why-discord-is-sticking-with-react-native-ccc34be0d427)
 
 ### **Alex P.**
 
-[**https://zeit.co/blog/our-first-online-conference**](https://web.archive.org/web/20220523073646mp_/https://zeit.co/blog/our-first-online-conference) **\- amazing topics**[**https://www.youtube.com/playlist?list=PLBnKlKpPeaglHkjwrD8wDtUDHUMPIYeim**](https://web.archive.org/web/20220523073646mp_/https://www.youtube.com/playlist?list=PLBnKlKpPeaglHkjwrD8wDtUDHUMPIYeim)
+[**https://zeit.co/blog/our-first-online-conference**](https://zeit.co/blog/our-first-online-conference) **\- amazing topics**[**https://www.youtube.com/playlist?list=PLBnKlKpPeaglHkjwrD8wDtUDHUMPIYeim**](https://www.youtube.com/playlist?list=PLBnKlKpPeaglHkjwrD8wDtUDHUMPIYeim)
 
-[**https://www.ng-conf.org/**](https://web.archive.org/web/20220523073646mp_/https://www.ng-conf.org/) **we will have a podcast booth setup so come on by and talk with us!**
+[**https://www.ng-conf.org/**](https://www.ng-conf.org/) **we will have a podcast booth setup so come on by and talk with us!**
 
 \---
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20220523073646mp_/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

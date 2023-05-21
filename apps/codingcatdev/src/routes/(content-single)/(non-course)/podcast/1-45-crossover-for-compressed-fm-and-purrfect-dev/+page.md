@@ -14,6 +14,31 @@ devto: https://dev.to/codingcatdev/145-crossover-for-compressedfm-and-purrfectde
 excerpt: We did a fun mashup with James Q Quick and Amy Dutton (selfteachme) from Compressed.fm. We touch a lot on our background and how to become a T shaped or broken comb skillset.
 guests:
   - amy-dutton
+  - james-q-quick
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Google DevFest 2021',
+      site: 'https://devfest.withgoogle.com/events/devfest21'
+    },
+    { author: 'brittney-postma', name: 'Learn Build Tech', site: 'https://learnbuildteach.com' },
+    {
+      author: 'brittney-postma',
+      name: 'Foundation',
+      site: 'https://tv.apple.com/us/show/foundation/umc.cmc.5983fipzqbicvrve6jdfep4x3'
+    },
+    { author: 'amy-dutton', name: 'Meeter', site: 'https://www.bardeen.ai/meeter' },
+    { author: 'amy-dutton', name: 'Advent of CSS', site: 'https://adventofcss.com/' },
+    { author: 'amy-dutton', name: 'Advent of JS', site: 'https://adventofjs.com/' },
+    { author: 'amy-dutton', name: 'GitHub Education', site: 'https://education.github.com/pack' },
+    { author: 'james-q-quick', name: 'Rode Wireless Go', site: 'https://www.rode.com/wirelessgo' },
+    {
+      author: 'james-q-quick',
+      name: 'Diary of Anne Frank',
+      site: 'https://www.annefrank.org/en/anne-frank/diary/'
+    }
+  ]
 hashnode: https://hashnode.codingcat.dev/podcast-1-45-crossover-for-compressed-fm-and-purrfect-dev
 slug: 1-45-crossover-for-compressed-fm-and-purrfect-dev
 spotify: https://open.spotify.com/episode/4GUnEEekhSJlGgbIOcKVHX?si=ve5B41DERqyZAXo9no7KNw

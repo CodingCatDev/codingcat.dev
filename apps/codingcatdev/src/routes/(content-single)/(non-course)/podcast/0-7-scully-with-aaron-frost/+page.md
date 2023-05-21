@@ -26,7 +26,7 @@ youtube: https://youtu.be/I5kfTAJ3GnU
 
 ### Aaron Frost - Web Architect, ng-conf Oganizer, Google Dev Expert, Podcaster, and Ice-fisherman-extraordinaire.
 
-[https://www.linkedin.com/in/aaronfrost/](https://web.archive.org/web/20220523082430mp_/https://www.linkedin.com/in/aaronfrost/)
+[https://www.linkedin.com/in/aaronfrost/](https://www.linkedin.com/in/aaronfrost/)
 
 ## Who is Aaron Frost?
 
@@ -36,9 +36,9 @@ youtube: https://youtu.be/I5kfTAJ3GnU
 
 ## Scully.io
 
-[https://github.com/scullyio/scully/blob/master/README.md](https://web.archive.org/web/20220523082430mp_/https://github.com/scullyio/scully/blob/master/README.md)
+[https://github.com/scullyio/scully/blob/master/README.md](https://github.com/scullyio/scully/blob/master/README.md)
 
-[https://github.com/scullyio/scully/blob/master/docs/getting-started.md](https://web.archive.org/web/20220523082430mp_/https://github.com/scullyio/scully/blob/master/docs/getting-started.md)
+[https://github.com/scullyio/scully/blob/master/docs/getting-started.md](https://github.com/scullyio/scully/blob/master/docs/getting-started.md)
 
 1.  So did Mulder come up with this name? Where you watching XFiles when trying to come up with a name?
 1.  Will Angular 9 / Ivy be supported?
@@ -60,12 +60,12 @@ Do Aliens Exist?
 
 ### Aaron
 
-[https://www.lastpodcastontheleft.com/](https://web.archive.org/web/20220523082430mp_/https://www.lastpodcastontheleft.com/)
+[https://www.lastpodcastontheleft.com/](https://www.lastpodcastontheleft.com/)
 
 ### Alex P.
 
-[https://www.ng-conf.org/](https://web.archive.org/web/20220523082430mp_/https://www.ng-conf.org/)
+[https://www.ng-conf.org/](https://www.ng-conf.org/)
 
-[https://www.stackbit.com/](https://web.archive.org/web/20220523082430mp_/https://www.stackbit.com/)
+[https://www.stackbit.com/](https://www.stackbit.com/)
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20220523082430mp_/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

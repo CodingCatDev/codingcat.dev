@@ -34,9 +34,9 @@ Web and mobile developer specializing in cross-platform & cloud-enabled applicat
 
 #### **Links**
 
-[**https://www.linkedin.com/in/naderdabit/**](https://web.archive.org/web/20210625093024/https://www.linkedin.com/in/naderdabit/)
+[**https://www.linkedin.com/in/naderdabit/**](https://www.linkedin.com/in/naderdabit/)
 
-[**https://twitter.com/dabit3**](https://web.archive.org/web/20210625093024/https://twitter.com/dabit3)[**https://dev.to/dabit3/**](https://web.archive.org/web/20210625093024/https://dev.to/dabit3/)
+[**https://twitter.com/dabit3**](https://twitter.com/dabit3)[**https://dev.to/dabit3/**](https://dev.to/dabit3/)
 
 ## **Questions**
 
@@ -58,16 +58,16 @@ Web and mobile developer specializing in cross-platform & cloud-enabled applicat
 
 ### **Nader**
 
-[https://www.amazon.com/Flash-Boys-Wall-Street-Revolt/dp/0393351599](https://web.archive.org/web/20210625093024/https://www.amazon.com/Flash-Boys-Wall-Street-Revolt/dp/0393351599)
-[https://www.amazon.com/Autobiography-Malcolm-Told-Alex-Haley/dp/0345350685](https://web.archive.org/web/20210625093024/https://www.amazon.com/Autobiography-Malcolm-Told-Alex-Haley/dp/0345350685)
-[https://www.youtube.com/channel/UCv75sKQFFIenWHrprnrR9aA](https://web.archive.org/web/20210625093024/https://www.youtube.com/channel/UCv75sKQFFIenWHrprnrR9aA)
+[https://www.amazon.com/Flash-Boys-Wall-Street-Revolt/dp/0393351599](https://www.amazon.com/Flash-Boys-Wall-Street-Revolt/dp/0393351599)
+[https://www.amazon.com/Autobiography-Malcolm-Told-Alex-Haley/dp/0345350685](https://www.amazon.com/Autobiography-Malcolm-Told-Alex-Haley/dp/0345350685)
+[https://www.youtube.com/channel/UCv75sKQFFIenWHrprnrR9aA](https://www.youtube.com/channel/UCv75sKQFFIenWHrprnrR9aA)
 
 ### **Alex**
 
 **Amplify Video Tutorial for VOD**
 
-[**https://github.com/awslabs/unicornflix**](https://web.archive.org/web/20210625093024/https://github.com/awslabs/unicornflix)
+[**https://github.com/awslabs/unicornflix**](https://github.com/awslabs/unicornflix)
 
 \- \--
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20210625093024/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

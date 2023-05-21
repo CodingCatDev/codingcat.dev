@@ -62,10 +62,10 @@ How big is the staff that keeps the SDKs up to date?
 
 ### **Tessa**
 
-[**https://www.stackbit.com/**](https://web.archive.org/web/20210625101838/https://www.stackbit.com/)
+[**https://www.stackbit.com/**](https://www.stackbit.com/)
 
 ### **Alex**
 
-[**https://www.sanity.io/plugins/sanity-plugin-asset-source-cloudinary**](https://web.archive.org/web/20210625101838/https://www.sanity.io/plugins/sanity-plugin-asset-source-cloudinary)**\`**
+[**https://www.sanity.io/plugins/sanity-plugin-asset-source-cloudinary**](https://www.sanity.io/plugins/sanity-plugin-asset-source-cloudinary)**\`**
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20210625101838/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

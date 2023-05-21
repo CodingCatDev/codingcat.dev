@@ -31,41 +31,41 @@ youtube: https://www.youtube.com/watch?v=X7Nv1EWCoEM
 
 **Senior Frontend Developer @cloudinary and core maintainer of @StorefrontUI. Founder & Organizer of @VueJSIsrael Meetups. Vietnamese but live in Israel. Speaker. Blogger. Bookworm and hardcore Sailormoon fan.**
 
-[**https://www.github.com/mayashavin**](https://web.archive.org/web/20220523092500mp_/https://www.github.com/mayashavin)
+[**https://www.github.com/mayashavin**](https://www.github.com/mayashavin)
 
-[**https://www.twitter.com/MayaShavin**](https://web.archive.org/web/20220523092500mp_/https://www.twitter.com/MayaShavin)
+[**https://www.twitter.com/MayaShavin**](https://www.twitter.com/MayaShavin)
 
-[**https://www.linkedin.com/in/mayashavin/**](https://web.archive.org/web/20220523092500mp_/https://www.linkedin.com/in/mayashavin/)[**https://www.mayashavin.com/**](https://web.archive.org/web/20220523092500mp_/https://www.mayashavin.com/)
+[**https://www.linkedin.com/in/mayashavin/**](https://www.linkedin.com/in/mayashavin/)[**https://www.mayashavin.com/**](https://www.mayashavin.com/)
 
-[**https://medium.com/@mayashavin**](https://web.archive.org/web/20220523092500mp_/https://medium.com/@mayashavin)
+[**https://medium.com/@mayashavin**](https://medium.com/@mayashavin)
 
 ### **Tim Benniks**
 
 **Director of web development at Valtech Paris. Born in Amsterdam. Speaker. Writer. Organizing front-end meetups in paris.**
 
-[**https://www.linkedin.com/in/timbenniks/**](https://web.archive.org/web/20220523092500mp_/https://www.linkedin.com/in/timbenniks/)
+[**https://www.linkedin.com/in/timbenniks/**](https://www.linkedin.com/in/timbenniks/)
 
-[**https://timbenniks.nl/**](https://web.archive.org/web/20220523092500mp_/https://timbenniks.nl/)[**https://github.com/timbenniks**](https://web.archive.org/web/20220523092500mp_/https://github.com/timbenniks)[**https://twitter.com/timbenniks**](https://web.archive.org/web/20220523092500mp_/https://twitter.com/timbenniks)
+[**https://timbenniks.nl/**](https://timbenniks.nl/)[**https://github.com/timbenniks**](https://github.com/timbenniks)[**https://twitter.com/timbenniks**](https://twitter.com/timbenniks)
 
-[**https://valtech.com/**](https://web.archive.org/web/20220523092500mp_/https://valtech.com/)
+[**https://valtech.com/**](https://valtech.com/)
 
 **Shodipo Ayomide**
 
 **Senior Developer Advocate ???? & Software Engineer • Media Developer Expert @cloudinary • Lead: @unstack\_, @react_summit, @oscafrica, @naijahacks.**
 
-[**https://linkedin.com/in/shodipo-ayomide**](https://web.archive.org/web/20220523092500mp_/https://linkedin.com/in/shodipo-ayomide)
+[**https://linkedin.com/in/shodipo-ayomide**](https://linkedin.com/in/shodipo-ayomide)
 
-[**https://twitter.com/developerayo**](https://web.archive.org/web/20220523092500mp_/https://twitter.com/developerayo)
+[**https://twitter.com/developerayo**](https://twitter.com/developerayo)
 
-[**https://github.com/developerayo**](https://web.archive.org/web/20220523092500mp_/https://github.com/developerayo)
+[**https://github.com/developerayo**](https://github.com/developerayo)
 
-[**https://shodipoayomide.com**](https://web.archive.org/web/20220523092500mp_/https://shodipoayomide.com/)
+[**https://shodipoayomide.com**](https://shodipoayomide.com/)
 
 ## **MDE Questions**
 
 **What is a Media Developer Expert (MDE)?**
 
-[**https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program**](https://web.archive.org/web/20220523092500mp_/https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program)
+[**https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program**](https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program)
 
 **How did you get started as an MDE (or select potential MDE - mainly for Maya :))?**
 
@@ -90,4 +90,4 @@ youtube: https://www.youtube.com/watch?v=X7Nv1EWCoEM
 
 \---
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20220523092500mp_/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

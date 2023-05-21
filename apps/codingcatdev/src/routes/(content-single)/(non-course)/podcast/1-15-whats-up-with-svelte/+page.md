@@ -16,6 +16,26 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/cpg2clvc
 devto: https://dev.to/codingcatdev/what-s-up-with-svelte-59a7
 excerpt: On this podcast we talk with Shawn Wang also known as swyx. We dive into what is happening with Svelte, the Svelte Society, and Svelte Radio.
 hashnode: https://hashnode.codingcat.dev/podcast-1-15-whats-up-with-svelte
+picks:
+  [
+    { author: 'alex-patterson', name: 'unDraw', site: 'https://undraw.co/' },
+    {
+      author: 'alex-patterson',
+      name: 'Web Design in 4 minutes',
+      site: 'https://github.com/sw-yx/spark-joy/blob/master/README.md#illustrations'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte for Sites, React for Apps',
+      site: 'https://www.swyx.io/svelte-sites-react-apps/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Draggable Kanban App with Svelte',
+      site: 'https://www.youtube.com/watch?v=mcaYol_XFk4&t=1529s'
+    },
+    { author: 'swyx', name: 'Three.js - JavaScript 3D Library', site: 'https://threejs.org/' }
+  ]
 slug: 1-15-whats-up-with-svelte
 spotify: https://open.spotify.com/episode/7FdRpURFJO5ZutrfT1weYI?si=qBkv3gHyQZKTJIbu1Tq5Pw
 start: April 7, 2021
@@ -39,7 +59,7 @@ youtube: https://www.youtube.com/watch?v=xLhuUShkYkM
 6. The Svelte docs are really nice, but when it comes to video tutorials there isn't much out there. Where would you tell people to go that wanted to get started learning Svelte and would you ever think about creating a course for Svelte?
 7. We've all heard the rumors that SvelteKit is coming soon and I know you don't work on that specifically. But, with this new solution coming out that will supposedly handle static site generation and server side rendering, do you know if Sapper is going away or what is happening there?
 
-### Additional Links Mentioned
+## Links
 
 - [https://sveltesociety.dev/](https://sveltesociety.dev/)
 - [https://github.com/sw-yx/svelte-actions](https://github.com/sw-yx/svelte-actions)

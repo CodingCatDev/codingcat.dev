@@ -32,7 +32,7 @@ youtube: https://www.youtube.com/watch?v=3LjZ_uWGClQ
 **Knut Melvaer**
 
 **Head of Developer Relations Sanity.io
-**[**https://www.linkedin.com/in/knutmelvaer/detail/contact-info/**](https://web.archive.org/web/20210625103600/https://www.linkedin.com/in/knutmelvaer/detail/contact-info/)[**https://twitter.com/kmelve**](https://web.archive.org/web/20210625103600/https://twitter.com/kmelve)[**https://www.knutmelvaer.no/**](https://web.archive.org/web/20210625103600/https://www.knutmelvaer.no/)
+**[**https://www.linkedin.com/in/knutmelvaer/detail/contact-info/**](https://www.linkedin.com/in/knutmelvaer/detail/contact-info/)[**https://twitter.com/kmelve**](https://twitter.com/kmelve)[**https://www.knutmelvaer.no/**](https://www.knutmelvaer.no/)
 
 ## **Sanity Questions**
 
@@ -58,11 +58,11 @@ youtube: https://www.youtube.com/watch?v=3LjZ_uWGClQ
 
 ## **Purrfect Picks**
 
-**Alex’s:** [**https://www.sanity.io/blog/introducing-squizzy-our-totally-serverless-kahoot-clone-powered-by-sanity-io**](https://web.archive.org/web/20210625103600/https://www.sanity.io/blog/introducing-squizzy-our-totally-serverless-kahoot-clone-powered-by-sanity-io)
+**Alex’s:** [**https://www.sanity.io/blog/introducing-squizzy-our-totally-serverless-kahoot-clone-powered-by-sanity-io**](https://www.sanity.io/blog/introducing-squizzy-our-totally-serverless-kahoot-clone-powered-by-sanity-io)
 
 **Knut’s**
 
-[**http://sanity.io/create**](https://web.archive.org/web/20210625103600/http://sanity.io/create)
+[**http://sanity.io/create**](http://sanity.io/create)
 
 **Take a vacation…it’s good to take a break and shut the laptop down.**
 
@@ -70,4 +70,4 @@ youtube: https://www.youtube.com/watch?v=3LjZ_uWGClQ
 
 \- \--
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20210625103600/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

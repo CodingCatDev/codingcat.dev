@@ -31,7 +31,7 @@ youtube: https://www.youtube.com/watch?v=yVskgThfFbU
 
 ### **Alex Feldman - Agile Evangelist, Agile Coach**
 
-[**https://www.linkedin.com/in/alexanderfeldman/**](https://web.archive.org/web/20210625103521/https://www.linkedin.com/in/alexanderfeldman/)
+[**https://www.linkedin.com/in/alexanderfeldman/**](https://www.linkedin.com/in/alexanderfeldman/)
 
 ## **Agile Related Questions**
 
@@ -55,18 +55,18 @@ youtube: https://www.youtube.com/watch?v=yVskgThfFbU
 
 **Alex Feldman**
 
-**Agile Product Ownership in a Nutshell** [**https://youtu.be/502ILHjX9EE**](https://web.archive.org/web/20210625103521/https://youtu.be/502ILHjX9EE)
+**Agile Product Ownership in a Nutshell** [**https://youtu.be/502ILHjX9EE**](https://youtu.be/502ILHjX9EE)
 
 **Nick R.**
 
-**Ray Dalio - Principles for Success - Mini Series.** [**https://www.youtube.com/watch?v=B9XGUpQZY38**](https://web.archive.org/web/20210625103521/https://www.youtube.com/watch?v=B9XGUpQZY38)
+**Ray Dalio - Principles for Success - Mini Series.** [**https://www.youtube.com/watch?v=B9XGUpQZY38**](https://www.youtube.com/watch?v=B9XGUpQZY38)
 
-[**https://images.app.goo.gl/n1t7RtvK3zAz2ujY6**](https://web.archive.org/web/20210625103521/https://images.app.goo.gl/n1t7RtvK3zAz2ujY6)
+[**https://images.app.goo.gl/n1t7RtvK3zAz2ujY6**](https://images.app.goo.gl/n1t7RtvK3zAz2ujY6)
 
 ## **Useful resources**
 
-**Agile Product Ownership in a Nutshell** [**https://youtu.be/502ILHjX9EE**](https://web.archive.org/web/20210625103521/https://youtu.be/502ILHjX9EE)
+**Agile Product Ownership in a Nutshell** [**https://youtu.be/502ILHjX9EE**](https://youtu.be/502ILHjX9EE)
 
 \- \--
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20210625103521/https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)
