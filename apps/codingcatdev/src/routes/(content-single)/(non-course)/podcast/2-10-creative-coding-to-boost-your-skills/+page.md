@@ -1,7 +1,6 @@
 ---
 type: podcast
 authors:
-  - alex-patterson
   - brittney-postma
 episode: 10
 guests:
@@ -16,6 +15,25 @@ cover: https://media.codingcat.dev/image/upload/v1646709981/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/210-creative-coding-to-boost-your-skills-15nc
 excerpt: Brittney sits down with Jhey Tompkins and talks about how to be creative while improving your skills.
 hashnode: https://hashnode.codingcat.dev/podcast-2-10-creative-coding-to-boost-your-skills
+picks:
+  [
+    {
+      author: 'brittney-postma',
+      name: 'Learn with Jason - Whimsical SVG Animations using GSAP',
+      site: 'https://www.learnwithjason.dev/whimsical-svg-animations-using-gsap'
+    },
+    {
+      author: 'brittney-postma',
+      name: "Accelerating Svelte's Development",
+      site: 'https://svelte.dev/blog/accelerating-sveltes-development'
+    },
+    { author: 'jhey-tompkins', name: 'Muzli Browser Extension', site: 'https://muz.li/' },
+    {
+      author: 'jhey-tompkins',
+      name: 'TickTime Pomodoro Timer',
+      site: 'https://www.ticktime.store/'
+    }
+  ]
 slug: 2-10-creative-coding-to-boost-your-skills
 sponsors:
   - builder-io

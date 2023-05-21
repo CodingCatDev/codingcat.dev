@@ -16,6 +16,35 @@ cover: https://media.codingcat.dev/image/upload/v1642623181/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/23-supabase-an-open-source-alternative-42l
 excerpt: We sit down with Jon Meyers, developer advocate at Supabase. We talk all about supabase and the architecture features along with a live demo.
 hashnode: https://hashnode.codingcat.dev/podcast-2-3-supabase-an-open-source-alternative
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Locke & Key',
+      site: 'https://www.netflix.com/title/80241239'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Gameboy made with CSS',
+      site: 'https://dorian-tested-appliance.glitch.me/'
+    },
+    {
+      author: 'brittney-postma',
+      name: "Let's learn Supabase",
+      site: 'https://www.youtube.com/watch?v=mUBkmT88_-A&t=1763s'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Apple TV+ - Invasion',
+      site: 'https://tv.apple.com/us/show/invasion/umc.cmc.70b7z97fv7azfzn5baqnj88p6'
+    },
+    {
+      author: 'jon-meyers',
+      name: 'Dyson Vacuum',
+      site: 'https://www.dyson.com.au/products/vacuum-cleaners/stick-vacuums/dyson-v15-detect/overview'
+    },
+    { author: 'jon-meyers', name: 'Casio SK-1', site: 'https://www.vintagesynth.com/casio/sk1.php' }
+  ]
 slug: 2-3-supabase-an-open-source-alternative
 sponsors:
   - builder-io

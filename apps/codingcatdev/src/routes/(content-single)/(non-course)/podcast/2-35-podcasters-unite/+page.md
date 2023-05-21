@@ -21,6 +21,36 @@ cover: https://media.codingcat.dev/image/upload/v1658238637/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/235-podcasters-unite-3ad6
 excerpt: We got together the best in the podcast business to find out all their secrets to success.
 hashnode: https://hashnode.codingcat.dev/podcast-2-35-podcasters-unite
+picks:
+  [
+    { author: 'alex-patterson', name: 'Virtual Popsicles', site: 'https://vlolly.net/' },
+    {
+      author: 'alex-patterson',
+      name: 'Amplify UI - Build UI fast with Amplify on React',
+      site: 'https://ui.docs.amplify.aws/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Remotely Interesting',
+      site: 'https://remotelyinteresting.transistor.fm/'
+    },
+    { author: 'brittney-postma', name: 'Compressed.fm', site: 'https://compressed.fm' },
+    {
+      author: 'jason-lengstorf',
+      name: 'Mouse Facts',
+      site: 'https://dev.to/cassidoo/moose-facts-1l9j'
+    },
+    {
+      author: 'cassidy-williams',
+      name: 'PodRocket Stickers',
+      site: 'https://podrocket.logrocket.com/get-podrocket-stickers'
+    },
+    {
+      author: 'anthony-campolo',
+      name: 'Jenn Junod on Twitch',
+      site: 'https://www.twitch.tv/jennjunod'
+    }
+  ]
 slug: 2-35-podcasters-unite
 sponsors:
   - storyblok

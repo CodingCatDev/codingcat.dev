@@ -16,6 +16,16 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Learn_to
 devto: https://dev.to/codingcatdev/148-learn-to-build-reliable-and-efficient-software-in-rust-3enn
 excerpt: We sit down and chat about Rust and Chris Biscardi's new Rust workshop, Rust Adventure.
 hashnode: https://hashnode.codingcat.dev/podcast-1-48-learn-to-build-reliable-and-efficient-software-in-rust
+picks:
+  [
+    { author: 'alex-patterson', name: 'Builder.io', site: 'https://builder.io' },
+    { author: 'brittney-postma', name: 'Svelte Summit Fall', site: 'https://sveltesummit.com/' },
+    {
+      author: 'chris-biscardi',
+      name: 'Townscaper',
+      site: 'https://twitter.com/OskSta/status/1450866120433577989?s=20'
+    }
+  ]
 slug: 1-48-learn-to-build-reliable-and-efficient-software-in-rust
 spotify: https://open.spotify.com/episode/5XEVHjEJtmIPUDsGb6WpAA?si=eX_QkBMeRBSQSHhyi_zIHA
 start: December 1, 2021

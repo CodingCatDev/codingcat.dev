@@ -16,6 +16,26 @@ cover: https://media.codingcat.dev/image/upload/v1652296876/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/226-open-sourcing-your-database-with-appwrite-5cll
 excerpt: Brandon Roberts shows us all about Appwrite by showing off a cool codingcat.dev application!
 hashnode: https://hashnode.codingcat.dev/podcast-2-26-open-sourcing-your-database-with-appwrite
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Moon Knight',
+      site: 'https://disneyplusoriginals.disney.com/show/moon-knight'
+    },
+    { author: 'alex-patterson', name: 'SVGator', site: 'https://www.svgator.com/' },
+    {
+      author: 'brittney-postma',
+      name: 'The Great',
+      site: 'https://www.hulu.com/series/the-great-238db0d4-c476-47ed-9bee-d326fd302f7d'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Cedar Point',
+      site: 'https://www.cedarpoint.com/rides-experiences'
+    },
+    { author: 'brandon-roberts', name: 'NBA Playoffs', site: 'https://www.nba.com' }
+  ]
 slug: 2-26-open-sourcing-your-database-with-appwrite
 sponsors:
   - builder-io

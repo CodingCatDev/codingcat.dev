@@ -19,6 +19,61 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Women_of
 devto: https://dev.to/codingcatdev/229-women-of-jamstack-foj
 excerpt: We had the opportunity to chat with four amazing Women of Jamstack. We talked about things from Redwoodjs to equal pay.
 hashnode: https://hashnode.codingcat.dev/podcast-2-29-women-of-jamstack
+picks:
+  [
+    { author: 'alex-patterson', name: 'CSS Doodle', site: 'https://css-doodle.com/' },
+    { author: 'alex-patterson', name: 'Refactr Tech', site: 'https://www.refactr.tech/' },
+    {
+      author: 'brittney-postma',
+      name: 'Starting with Svelte',
+      site: 'https://cfe.dev/events/gettings-started-with-svelte/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The Lincoln Lawyer',
+      site: 'https://www.netflix.com/title/81303831'
+    },
+    {
+      author: 'salma-alam-naylor',
+      name: "The Handmaid's Tale",
+      site: 'https://www.amazon.co.uk/Handmaids-Tale-Contemporary-Classics/dp/0099740915'
+    },
+    {
+      author: 'salma-alam-naylor',
+      name: 'Advice for Complex CSS Illustrations',
+      site: 'https://css-tricks.com/advice-for-complex-css-illustrations/'
+    },
+    {
+      author: 'brittany-walker',
+      name: 'Lego Nintendo Entertainment System',
+      site: 'https://www.lego.com/en-us/product/nintendo-entertainment-system-71374'
+    },
+    {
+      author: 'brittany-walker',
+      name: 'Tick Tick Boom',
+      site: 'https://www.netflix.com/title/81149184'
+    },
+    {
+      author: 'amanda-giannelli',
+      name: 'Bridgerton',
+      site: 'https://www.netflix.com/title/80232398'
+    },
+    {
+      author: 'amanda-giannelli',
+      name: 'Killing Eve',
+      site: 'https://www.amcplus.com/pages/killingeve'
+    },
+    {
+      author: 'anuradha-kumari',
+      name: 'Stranger Things',
+      site: 'https://www.imdb.com/title/tt4574334/'
+    },
+    {
+      author: 'anuradha-kumari',
+      name: 'GAAD (Global Accessibility Awareness Day)',
+      site: 'https://accessibility.day/'
+    }
+  ]
 slug: 2-29-women-of-jamstack
 sponsors:
   - storyblok

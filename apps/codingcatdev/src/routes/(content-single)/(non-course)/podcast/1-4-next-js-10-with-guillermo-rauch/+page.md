@@ -16,24 +16,53 @@ excerpt: Talking with Guillermo Rauch about Next.js 10 and Vercel. Including pla
 guests:
   - guillermo-rauch
 hashnode: https://hashnode.codingcat.dev/podcast-1-4-next-js-10-with-guillermo-rauch
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Next.js Discussions',
+      site: 'https://github.com/vercel/next.js/discussions'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Lightest - Visualize web performance against competitors.',
+      site: 'https://lightest.app/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Bridgerton (tv series)',
+      site: 'https://www.netflix.com/title/80232398'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The Console Logs (my digital garden/notes site)',
+      site: 'https://www.theconsolelogs.com/'
+    },
+    {
+      author: 'guillermo-rauch',
+      name: 'What is Next for Vercel',
+      site: 'https://rauchg.com/2020/next-for-vercel'
+    },
+    {
+      author: 'guillermo-rauch',
+      name: 'Virtual Event Starter Kit',
+      site: 'https://vercel.com/virtual-event-starter-kit'
+    },
+    { author: 'guillermo-rauch', name: 'Demo Store', site: 'https://demo.vercel.store/' },
+    { author: 'guillermo-rauch', name: 'Vercel Commerce', site: 'https://nextjs.org/commerce' },
+    { author: 'guillermo-rauch', name: 'Cleanshot', site: 'https://cleanshot.com' },
+    {
+      author: 'guillermo-rauch',
+      name: 'Lighthouse Metrics',
+      site: 'https://lighthouse-metrics.com/'
+    }
+  ]
 slug: 1-4-next-js-10-with-guillermo-rauch
 spotify: https://open.spotify.com/episode/5mrXe0wPHc84li5d1ZvVYd?si=SnzQ51ErR8ysFEuCuYJvsg
 start: January 1, 2021
 title: Next.js 10
 youtube: https://www.youtube.com/watch?v=Xr4wqU5FyMI
 ---
-
-# Guest Details
-
-### Guillermo Rauch – CEO Vercel
-
-[https://www.linkedin.com/in/guillermo-rauch-b834b917b/](https://web.archive.org/web/20220523073518mp_/https://www.linkedin.com/in/guillermo-rauch-b834b917b/)
-
-[https://vercel.com/](https://web.archive.org/web/20220523073518mp_/https://vercel.com/)
-
-## Who is Guillermo Rauch?
-
-He’s the founder and CEO of Vercel, a cloud platform for static sites that fits around a Jamstack workflow. He’s also the co-creator of Next.js. He previously founded LearnBoost and CloudUp, and is well-known as the creator of several popular node open source libraries like Socket.io, Mongoose, and SlackIn. Prior to that, he was a core developer on MooTools.
 
 ## Since we last talked a year ago
 
@@ -44,7 +73,7 @@ He’s the founder and CEO of Vercel, a cloud platform for static sites that fit
 5.  Environment Variables
 6.  Fast Refresh
 
-- **Static Regeneration**
+- Static Regeneration
 
 1.  Next.js Analytics / Commerce
 2.  Next.js 10 released
@@ -53,8 +82,8 @@ He’s the founder and CEO of Vercel, a cloud platform for static sites that fit
 
 ## Vercel
 
-- **We are now using Vercel and Next.js in our next version of codingcat.dev. It has taken me a little bit of getting used to the CI/CD flow coming from Amplify and Google Cloud Build for Firebase hosting. Can you tell me more about Deploy Preview?**
-- **https://rauchg.com/2020/vercel#preview**
+- We are now using Vercel and Next.js in our next version of codingcat.dev. It has taken me a little bit of getting used to the CI/CD flow coming from Amplify and Google Cloud Build for Firebase hosting. Can you tell me more about Deploy Preview?
+- https://rauchg.com/2020/vercel#preview
 
 ## NextJS
 
@@ -63,7 +92,7 @@ He’s the founder and CEO of Vercel, a cloud platform for static sites that fit
 3.  In browser navigation not working in Firefox and editing in dev tools requires the server to be restarted.
 4.  Images must be in the public folder.
 
-## CodingCatDev on NextJS
+## CodingCat.dev on Next.js
 
 Currently we are running on Firebase as a backend with two separate Next.js sites
 
@@ -78,36 +107,6 @@ I have read what I will call “way” too much about the Next.js chunks and tha
 
 So in looking at the P99 on Vercel we actually get 100, so what gives, what is this actually showing?
 
-## Purrfect Picks
-
-### Guillermo Rauch
-
-[https://rauchg.com/2020/next-for-vercel](https://web.archive.org/web/20220523073518mp_/https://rauchg.com/2020/next-for-vercel)
-
-[https://vercel.com/virtual-event-starter-kit](https://web.archive.org/web/20220523073518mp_/https://vercel.com/virtual-event-starter-kit)
-
-[https://demo.vercel.store/](https://web.archive.org/web/20220523073518mp_/https://demo.vercel.store/)
-
-[https://nextjs.org/commerce](https://web.archive.org/web/20220523073518mp_/https://nextjs.org/commerce)
-
-[https://cleanshot.com/](https://web.archive.org/web/20220523073518mp_/https://cleanshot.com/)
-
-[https://lighthouse-metrics.com/](https://web.archive.org/web/20220523073518mp_/https://lighthouse-metrics.com/)
+## Guillermo Rauch
 
 “Impossible just takes longer”
-
-### Alex Patterson
-
-Next.js Discussion
-
-\[https://github.com/vercel/next.js/discussions?discussions\_q=preview+mode&page=2
-
-\](https://github.com/vercel/next.js/discussions?discussions\_q=preview+mode&page=2)Lightest
-
-https://lightest.app/
-
-Brittney Postma
-
-Bridgerton – Netflix show: [https://www.netflix.com/title/80232398](https://web.archive.org/web/20220523073518mp_/https://www.netflix.com/title/80232398)
-
-The Console Logs (my digital garden/notes site) – [https://www.theconsolelogs.com/](https://web.archive.org/web/20220523073518mp_/https://www.theconsolelogs.com/)

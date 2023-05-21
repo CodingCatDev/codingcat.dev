@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 38
 guests:
   - omed-habib
@@ -16,6 +15,13 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/dz2owgun
 devto: https://dev.to/codingcatdev/1-38-creating-fake-data-with-tonic-4kg1
 excerpt: We sit down with the VP of Marketing at Tonic.ai to talk about how you can use Tonic to create fake data.
 hashnode: https://hashnode.codingcat.dev/podcast-1-38-creating-fake-data-with-tonic
+picks:
+  [
+    { author: 'omed-habib', name: 'Camo', site: 'https://reincubate.com/camo/' },
+    { author: 'omed-habib', name: 'Ospera', site: 'https://www.opsera.io/' },
+    { author: 'alex-patterson', name: 'NuxtLabs', site: 'https://nuxtlabs.com/' },
+    { author: 'alex-patterson', name: 'Clickbait', site: 'https://www.netflix.com/title/80991754' }
+  ]
 slug: 1-38-creating-fake-data-with-tonic
 spotify: https://open.spotify.com/episode/3S4dkWbqAlF9a0LJJagWmg?si=_19l2JjCTwuBlJ4dTGI18g
 start: September 29, 2021
@@ -23,7 +29,7 @@ title: Creating Fake Data with Tonic
 youtube: https://www.youtube.com/watch?v=vJbBcqKQ710
 ---
 
-### Questions
+## Questions
 
 1. What is fake data exactly and how is it used in the development process?
 2. What are some of the risks that fake data can mitigate? Do you have specific examples?

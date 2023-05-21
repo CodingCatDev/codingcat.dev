@@ -16,6 +16,26 @@ excerpt: James Q Quick teaches us about how Planetscale's ability to infinitely 
 guests:
   - james-q-quick
 hashnode: https://hashnode.codingcat.dev/podcast-2-19-enterprise-databases-that-scale
+picks:
+  [
+    { author: 'alex-patterson', name: 'Envato Elements', site: 'https://elements.envato.com/' },
+    { author: 'alex-patterson', name: 'Raycast', site: 'https://ray.so/' },
+    {
+      author: 'brittney-postma',
+      name: 'Inventing Anna',
+      site: 'https://www.netflix.com/title/81008305'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Sirens Streams - Planetscale with SvelteKit',
+      site: 'https://www.youtube.com/watch?v=iFhDwmI6OL0'
+    },
+    {
+      author: 'james-q-quick',
+      name: 'Sennheiser Professional MKE 400',
+      site: 'https://www.amazon.com/gp/product/B08YS3W16H/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1'
+    }
+  ]
 slug: 2-19-enterprise-databases-that-scale
 sponsors:
   - builder-io

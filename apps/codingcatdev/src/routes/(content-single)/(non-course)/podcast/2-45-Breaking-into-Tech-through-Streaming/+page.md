@@ -18,7 +18,34 @@ cover: https://media.codingcat.dev/image/upload/v1665752345/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/245-breaking-into-tech-through-streaming-3bi
 excerpt: We chat with Jenn Junod on how to break into tech and maintain mental health.
 hashnode: https://hashnode.codingcat.dev/podcast-2-45-Breaking-into-Tech-through-Streaming
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=2-45-Breaking-into-Tech-through-Streaming&_id=20eadcb91e984f5fa10fd5ef51af779a
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Animated Login Screen with Rive',
+      site: 'https://blog.rive.app/animated/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Leading venture capital firms to provide up to $1.25 BILLION to back startups built on Cloudflare Workers',
+      site: 'https://blog.cloudflare.com/workers-launchpad/?ck_subscriber_id=1233693656'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Netlify Lighthouse Integration',
+      site: 'https://www.netlify.com/blog/lighthouse-plugin-full-reports-for-each-deploy/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'West World',
+      site: 'https://www.imdb.com/title/tt0475784/'
+    },
+    {
+      author: 'jenn-junod',
+      name: 'Hunger Games Movies',
+      site: 'https://www.imdb.com/title/tt1392170/'
+    }
+  ]
 slug: 2-45-Breaking-into-Tech-through-Streaming
 spotify: https://open.spotify.com/episode/5sDONt6D5AZ7gifrZOcTJ4?si=eES0eYffSbG5aTMBMKwveg
 sponsors:

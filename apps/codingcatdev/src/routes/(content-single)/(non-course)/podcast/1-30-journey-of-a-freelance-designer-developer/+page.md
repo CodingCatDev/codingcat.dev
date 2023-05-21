@@ -16,6 +16,37 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/vbex1zxo
 devto: https://dev.to/codingcatdev/1-30-journey-of-a-freelance-designer-developer-3a4p
 excerpt: In this episode we sit down with Amy Dutton and to talk about freelancing and what it takes to be a designer and developer. We also talk about working for Zeal and making her awesome channel Self Teach Me.
 hashnode: https://hashnode.codingcat.dev/podcast-1-30-journey-of-a-freelance-designer-developer
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Tips for Finding Clients as a Freelance developer',
+      site: 'https://dev.to/creativetim_official/10-tips-for-finding-clients-as-a-freelance-web-developer-1cbe'
+    },
+    {
+      author: 'alex-patterson',
+      name: "Jupiter's Legacy",
+      site: 'https://www.netflix.com/title/80244953'
+    },
+
+    {
+      author: 'brittney-postma',
+      name: 'Freelance episodes on CompressedFM Part 1',
+      site: 'https://www.compressed.fm/episode/6'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Freelance episodes on CompressedFM Part 2',
+      site: 'https://www.compressed.fm/episode/7'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The Mitchells vs the Machines',
+      site: 'https://www.netflix.com/title/81399614'
+    },
+    { author: 'amy-dutton', name: 'Magnetic Phone Mount', site: 'https://amzn.to/2Q9iLVP' },
+    { author: 'amy-dutton', name: 'Embrava Blynclight', site: 'https://amzn.to/3nXo0o4' }
+  ]
 slug: 1-30-journey-of-a-freelance-designer-developer
 spotify: https://open.spotify.com/episode/6NkckhsW8DdxUNTNfyGY8T?si=tumVwEApThKlYEZhn8WwCg
 start: July 21, 2021
@@ -32,15 +63,14 @@ youtube: https://www.youtube.com/watch?v=T7VQ_x4zZMI
 5. What are the most common projects you get asked for as a freelancer?
    1. What is your tech stack of choice or does it depend on the project?
 
-## Additional Links
+## Links
 
-- [https://www.figma.com/figjam/](https://www.figma.com/figjam/) - Figjam
-- [https://help.figma.com/hc/en-us/articles/360063144053-Create-branches-and-merge-changes](https://help.figma.com/hc/en-us/articles/360063144053-Create-branches-and-merge-changes) - Branches
-- [https://www.framer.com/](https://www.framer.com/) - Framer Prototype
-- [https://www.sanity.io/docs/groq](https://www.sanity.io/docs/groq) - Query Language
-- [https://www.codingzeal.com/hiring](https://www.codingzeal.com/hiring) - Zeal Hiring
-- [https://dribbble.com/](https://dribbble.com/) - Inspiration for designers and creatives
-- [https://www.behance.net/](https://www.behance.net/) - Behance
-- [https://chrome.google.com/webstore/detail/panda-5-your-favorite-web/haafibkemckmbknhfkiiniobjpgkebko?hl=en](https://chrome.google.com/webstore/detail/panda-5-your-favorite-web/haafibkemckmbknhfkiiniobjpgkebko?hl=en) - Panda 5
-- [https://sidebar.io/](https://sidebar.io/) - Sidebar
--
+- [Figjam - Define ideas, align on decisions, and move work forward—all in one place](https://www.figma.com/figjam)
+- [Branches](https://help.figma.com/hc/en-us/articles/360063144053-Create-branches-and-merge-changes)
+- [Framer Prototype](https://www.framer.com/)
+- [Sanity's Query Language](https://www.sanity.io/docs/groq)
+- [Zeal Hiring](https://www.codingzeal.com/hiring)
+- [Dribble - Inspiration for designers and creatives](https://dribbble.com/)
+- [Behance](https://www.behance.net/)
+- [Panda 5](https://chrome.google.com/webstore/detail/panda-5-your-favorite-web/haafibkemckmbknhfkiiniobjpgkebko?hl=en)
+- [Sidebar.io - Newsletter](https://sidebar.io)
