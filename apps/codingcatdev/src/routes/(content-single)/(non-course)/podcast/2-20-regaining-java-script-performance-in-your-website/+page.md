@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 20
 guests:
   - ryan-carniato
@@ -16,6 +15,21 @@ cover: https://media.codingcat.dev/image/upload/v1655840301/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/220-regaining-javascript-performance-in-your-website-5005
 excerpt: Ryan Carniato teaches us about all the aspects of frontend frameworks and Javascript today.
 hashnode: https://hashnode.codingcat.dev/podcast-2-20-regaining-java-script-performance-in-your-website
+picks:
+  [
+    { author: 'alex-patterson', name: 'Hack SolidJS', site: 'https://hack.solidjs.com/' },
+    {
+      author: 'alex-patterson',
+      name: 'SolidJS is what I wanted React to be',
+      site: 'https://typeofnan.dev/solid-js-feels-like-what-i-always-wanted-react-to-be/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Building Qwik with Misko Hevery and Ryan Carniato',
+      site: 'https://www.youtube.com/watch?v=lY6e7Hw4uVo'
+    },
+    { author: 'ryan-carniato', name: 'Resident Alien', site: 'https://www.syfy.com/resident-alien' }
+  ]
 slug: 2-20-regaining-java-script-performance-in-your-website
 sponsors:
   - builder-io

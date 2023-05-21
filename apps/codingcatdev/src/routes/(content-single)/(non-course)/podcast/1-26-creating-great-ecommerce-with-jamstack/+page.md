@@ -17,6 +17,35 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/csxroq0l
 devto: https://dev.to/codingcatdev/1-26-creating-great-ecommerce-with-jamstack-af2
 excerpt: We sit down with Flor Antara and James Vidler to talk all about Ecommerce and the solutions for Jamstack.
 hashnode: https://hashnode.codingcat.dev/podcast-1-26-creating-great-ecommerce-with-jamstack
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Sleeping Bear Marathon',
+      site: 'https://runsignup.com/Race/MI/Empire/SleepingBear?remMeAttempt='
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Accept money on the jamstack by Jason Lengstorf from Netlify and Thor from Stripe',
+      site: 'https://www.netlify.com/blog/2020/04/13/learn-how-to-accept-money-on-jamstack-sites-in-38-minutes/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Jamstack Handbook by Colby Fayock ',
+      site: 'https://jamstackhandbook.com/'
+    },
+    {
+      author: 'flor-antara',
+      name: 'Stackbit - The visual interface for your headless websites and apps',
+      site: 'https://www.stackbit.com/'
+    },
+    {
+      author: 'flor-antara',
+      name: 'Stackbit + Snipcart Tutorial',
+      site: 'https://www.youtube.com/watch?v=jb4GNqCCXP4'
+    },
+    { author: 'flor-antara', name: 'Remarkable', site: 'https://remarkable.com/' }
+  ]
 slug: 1-26-creating-great-ecommerce-with-jamstack
 spotify: https://open.spotify.com/episode/7nxSvs2ROmrsazmlVk3O1o?si=1xxzLXu8TgOeT4QlpGnxew
 start: June 16, 2021

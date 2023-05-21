@@ -16,6 +16,32 @@ cover: https://media.codingcat.dev/image/upload/v1655827786/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/215-stacks-on-stacks-on-stacks-with-codestackr-3c58
 excerpt: We sit down with Jesse Hall of codeSTACKr to talk all about MongoDB, his YouTube channel, and how to make NFT cats.
 hashnode: https://hashnode.codingcat.dev/podcast-2-15-stacks-on-stacks-on-stacks-with-code-stac-kr
+picks:
+  [
+    { author: 'alex-patterson', name: 'GDevelop', site: 'https://gdevelop.io/' },
+    { author: 'alex-patterson', name: 'Dress David Rose', site: 'https://davidrose.style/' },
+    {
+      author: 'brittney-postma',
+      name: 'Wordle',
+      site: 'https://www.nytimes.com/games/wordle/index.html'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Notion Tutorial and Template',
+      site: 'https://www.codestackr.com/blog/notion-youtube-a-powerful-combination-for-productivity/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Sendestar Water Bottle',
+      site: 'https://www.amazon.com/SENDESTAR-Bottle-Insulated-Stainless-Bottle-Wide/dp/B08FZL82FQ/ref=sr_1_6?crid=23NVSJMW3LDNR&keywords=sendestar&qid=1644840624&sprefix=sendestar%2Caps%2C76&sr=8-6'
+    },
+    { author: 'jesse-hall', name: 'CodeCats NFT', site: 'https://opensea.io/collection/codecats' },
+    {
+      author: 'jesse-hall',
+      name: 'VS Code Extension: Multiple cursor case preserve',
+      site: 'https://marketplace.visualstudio.com/items?itemName=Cardinal90.multi-cursor-case-preserve'
+    }
+  ]
 slug: 2-15-stacks-on-stacks-on-stacks-with-code-stac-kr
 sponsors:
   - builder-io

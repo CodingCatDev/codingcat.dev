@@ -16,6 +16,40 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Making_S
 devto: https://dev.to/codingcatdev/150-making-state-management-domain-agnostic-with-derxjs-1dh2
 excerpt: We sit down with Zack DeRose to talk all about @derxjs. We also break down RxJS and its ability to elegantly compose domain-agnostic state management code.
 hashnode: https://hashnode.codingcat.dev/podcast-1-50-making-state-management-domain-agnostic-with-derxjs
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Angular 13',
+      site: 'https://github.com/angular/angular/blob/master/CHANGELOG.md'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Aaron Frost - Angular 13',
+      site: 'https://youtu.be/PUxNiC6Qye4'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'GDI - MOVING FORWARD',
+      site: 'https://girldevelopit.com/blog/gdi-moving-forward/'
+    },
+    { author: 'brittney-postma', name: 'Svelte Sirens', site: 'https://sveltesirens.dev/' },
+    {
+      author: 'zack-derose',
+      name: 'Peak Mind',
+      site: 'https://www.amazon.com/Peak-Mind-Attention-Invest-Minutes-ebook/dp/B08THNJ978'
+    },
+    {
+      author: 'zack-derose',
+      name: 'Nx 13 and 14 Roadmap',
+      site: 'https://github.com/nrwl/nx/discussions/7602'
+    },
+    {
+      author: 'zack-derose',
+      name: 'ZDS Podcast on Leadership and Creating Value with Hicham El Hammouchi and Youssef Taghlabi',
+      site: 'https://www.youtube.com/watch?v=NSzg0QHd_14'
+    }
+  ]
 slug: 1-50-making-state-management-domain-agnostic-with-derxjs
 spotify: https://open.spotify.com/episode/2KyQO8i1jGbn1zQcTxZ5Ho?si=EpqYq5w8Rm6JFe_d5vTbRg
 start: December 15, 2021

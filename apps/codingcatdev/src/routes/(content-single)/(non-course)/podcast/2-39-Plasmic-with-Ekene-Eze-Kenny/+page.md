@@ -17,6 +17,29 @@ excerpt: Kenny tells us all about the amazing no-code tool Plasmic. Plasmic is t
 guests:
   - ekene-eze
 hashnode: https://hashnode.codingcat.dev/podcast-Plasmic-with-Ekene-Eze-Kenny
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Rythm.js - Make your page dance',
+      site: 'https://codingislove.com/rythm-js/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Component Encyclopedia',
+      site: 'https://storybook.js.org/blog/component-encyclopedia/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Creating a Composable Site with Personalization on the Edge',
+      site: 'https://youtu.be/mntPUZRy3wA?t=93'
+    },
+    {
+      author: 'ekene-eze',
+      name: 'DJI Mini 3 Pro Drone',
+      site: 'https://www.amazon.ae/DJI-Mini-controller-White-CP-MA-00000492-01/dp/B09WDBDGBZ/s'
+    }
+  ]
 slug: Plasmic-with-Ekene-Eze-Kenny
 sponsors:
   - storyblok

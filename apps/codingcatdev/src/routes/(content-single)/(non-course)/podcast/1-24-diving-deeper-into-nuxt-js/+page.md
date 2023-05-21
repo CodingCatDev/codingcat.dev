@@ -16,6 +16,34 @@ excerpt: We take a deeper dive into Nuxt.js with Alexander Lichter a core team m
 guests:
   - alexander-lichter
 hashnode: https://hashnode.codingcat.dev/podcast-1-24-diving-deeper-into-nuxt-js
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Lit 2.0',
+      site: 'https://lit.dev/blog/2021-04-21-lit-2.0-meet-lit-all-over-again/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'The Falcon and The Winter Soldier',
+      site: 'https://www.disneyplus.com/series/the-falcon-and-the-winter-soldier/4gglDBMx8icA'
+    },
+    {
+      author: 'brittney-postma',
+      name: "let's learn next learn Nuxt with Jason",
+      site: 'https://www.learnwithjason.dev/let-s-learn-nuxt'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Netflix Shadow and Bone',
+      site: 'https://www.netflix.com/title/80236319'
+    },
+    {
+      author: 'alexander-lichter',
+      name: 'A collection of helpful composables for Vue',
+      site: 'https://vueuse.org/'
+    }
+  ]
 slug: 1-24-diving-deeper-into-nuxt-js
 spotify: https://open.spotify.com/episode/0hiXhA2x4CeZSErKwHMDSB?si=Ywx19GDIS-WT2qz-2yfl_A
 start: June 2, 2021

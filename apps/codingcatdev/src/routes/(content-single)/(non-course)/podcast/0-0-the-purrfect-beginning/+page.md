@@ -21,17 +21,17 @@ start: December 14, 2019
 title: The Purrfect Beginning
 ---
 
-**We are on a mission to provide you with the latest tools and trends, that take you from a house cat to a fierce LION.**
+We are on a mission to provide you with the latest tools and trends, that take you from a house cat to a fierce LION.
 
-**Even when your code isn’t feline that good, we ensure you’ll get there with the right cat-i-tude.**
+Even when your code isn’t feline that good, we ensure you’ll get there with the right cat-i-tude.
 
-**Alright.. Let’s get up and GIT moving..**
+Alright.. Let’s get up and GIT moving..
 
-**Right Meow!!!**
+Right Meow!!!
 
-**Learning how to be a developer is hard, Purrfect.dev will show you how to grow as a developer bit by bit.**
+Learning how to be a developer is hard, Purrfect.dev will show you how to grow as a developer bit by bit.
 
-**What We Cover**
+What We Cover
 
 - JAMStack (Javascript, API, MarkUp)
 - HTML
@@ -46,6 +46,6 @@ title: The Purrfect Beginning
 - Showing developers the successful path
 - Quickest way to get PAID
 
-**Links**
+Links
 
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)
+Send in a voice message: [https://podcasters.spotify.com/pod/show/purrfect-dev/message](https://podcasters.spotify.com/pod/show/purrfect-dev/message)

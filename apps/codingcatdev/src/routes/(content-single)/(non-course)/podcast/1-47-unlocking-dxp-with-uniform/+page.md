@@ -16,6 +16,16 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Unlockin
 devto: https://dev.to/codingcatdev/147-unlocking-dxp-with-uniform-2k1
 excerpt: We sit down with Tim Benniks Dev Advocate for Uniform.
 hashnode: https://hashnode.codingcat.dev/podcast-1-47-unlocking-dxp-with-uniform
+picks:
+  [
+    { author: 'alex-patterson', name: 'Rive', site: 'https://rive.app/' },
+    {
+      author: 'brittney-postma',
+      name: 'Tozo Earbuds',
+      site: 'https://www.amazon.com/TOZO-Bluetooth-Wireless-Headphones-Waterproof/dp/B07J2Z5DBM/?th=1'
+    },
+    { author: 'tim-benniks', name: 'Astro', site: 'https://astro.build' }
+  ]
 slug: 1-47-unlocking-dxp-with-uniform
 spotify: https://open.spotify.com/episode/5zEZARK6JTmd9yZ2O1xqdP?si=-49xTqugR3O067lAYy9TAg
 start: November 24, 2021

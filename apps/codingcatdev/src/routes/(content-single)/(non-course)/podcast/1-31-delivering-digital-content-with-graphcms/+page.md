@@ -16,11 +16,32 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/u8at848k
 devto: https://dev.to/codingcatdev/1-31-delivering-digital-content-with-graphcms-31c2
 excerpt: We sit down with Scott Spence to talk about all things GraphCMS related. Why the decision was to go with a GraphQL only backend as a service.
 hashnode: https://hashnode.codingcat.dev/podcast-1-31-delivering-digital-content-with-graphcms
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Gun.io - Freelance Hiring for Free',
+      site: 'https://www.gun.io/'
+    },
+    { author: 'brittney-postma', name: 'Hygraph Blog', site: 'https://hygraph.com/blog' },
+    { author: 'brittney-postma', name: 'Polywork', site: 'https://polywork.com' },
+    { author: 'scott-spence', name: 'SvelteKit', site: 'https://kit.svelte.dev/' },
+    {
+      author: 'scott-spence',
+      name: 'Jesse Skinner - Joy of Svelte',
+      site: 'https://www.joyofsvelte.com/'
+    },
+    {
+      author: 'scott-spence',
+      name: 'Podcast: Sideways with Matthew Syed, great podcast on many different topics',
+      site: 'https://play.pocketcasts.com/podcasts/c75060d0-4899-0139-3370-0acc26574db2'
+    }
+  ]
 slug: 1-31-delivering-digital-content-with-graphcms
 spotify: https://open.spotify.com/episode/404wafUKZho8inHT6iYcdi?si=RISdrE90Qf-EXOk4znmkHQ
 start: July 28, 2021
 title: Delivering Digital Content with GraphCMS
-youtube: https://www.youtube.com/watch?v=FXigkX0uI0M
+youtube: https://youtu.be/-vDhA2dUfsM
 ---
 
 ## Questions
@@ -40,9 +61,7 @@ youtube: https://www.youtube.com/watch?v=FXigkX0uI0M
    1. Depending on what learner you are, I found Jamie's intro video really useful for me when starting out building a project the last two weeks: [https://www.youtube.com/watch?v=Ylmd737tw5w](https://www.youtube.com/watch?v=Ylmd737tw5w)
    2. There's also the GraphCMS blog and the GitHub examples repo: [https://github.com/GraphCMS/graphcms-examples](https://github.com/GraphCMS/graphcms-examples)
 
-## Additional Links
+## Links
 
 - [https://www.freecodecamp.org/donate/](https://www.freecodecamp.org/donate/) - Freecodecamp has helped a lot of people, please donate
 - [https://graphcms.com/blog](https://graphcms.com/blog) - resources
-- [https://graphcms.nolt.io/roadmap](https://graphcms.nolt.io/roadmap) - Graphcms Roadmap
--

@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 25
 recording_date: March 29, 2021 5:30 PM
 season: 1
@@ -16,6 +15,16 @@ excerpt: We sit down to chat with Alex Gogan about how Sherpa is leveraging Micr
 guests:
   - alex-gogan
 hashnode: https://hashnode.codingcat.dev/podcast-1-25-micro-frontends
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Ultimate Courses',
+      site: 'https://ultimatecourses.com/courses/angular'
+    },
+
+    { author: 'alex-gogan', name: 'Readocracy', site: 'https://readocracy.com/' }
+  ]
 slug: 1-25-micro-frontends
 spotify: https://open.spotify.com/episode/5gkLrF5jX6ny5R1O8GSIBx?si=CXxsNmYjRkOzL1he-RZodQ
 start: June 9, 2021
@@ -23,7 +32,7 @@ title: Creating Macro Benefits from Micro Frontends
 youtube: https://www.youtube.com/watch?v=rgHttPaek8A
 ---
 
-### Questions
+## Questions
 
 [Alex's Slides](https://docs.google.com/presentation/d/1nUkmecPIQJGohxuyGWUSmQ06MCT6xVPpqWOVs0mC8qE/edit?usp=sharing)
 
@@ -81,38 +90,12 @@ youtube: https://www.youtube.com/watch?v=rgHttPaek8A
 - when using post messages to communicate between iFrames, checking for origin/destination and validating payloads is necessary
 - security teams might bring up concerns around click-jacking and end users not being able to distinguish or understand which part of the experience is part the host and which is ours ⇒ we visually indicate through "powered by sherpa°" and logo placements to provide clarity, nothing technical but very relevant
 
-7. **Showtime**
+## Links
 
-- I'd be able to show our whitelabel solution that consists of 3 independent applications with two embedded elements (micro frontends)
-- do a live code example using our SDK which might be interesting to see how simple it can be
-
-Micro frontend resources
-[https://github.com/billyjov/microfrontend-resources](https://github.com/billyjov/microfrontend-resources)
-
-- Notes from initial call
-  Angular Micro Frontend Architecture Questions
-  Questions
-  **What is Micro Frontend Architecture?
-  Can you breakdown the difference between a normal SPA vs. using Angular Elements?**
-  What is the difference between using elements, or complete applications as parts of a larger application, in terms of micro frontend?
-  **Can we talk about Basecamp on how you are using that for project organization?
-  Do micro frontends speed up development time?
-  Especially across large teams?
-  What are some of the key benefits?
-  User-centered design?
-  Incremental development?
-  Maintainable Architecture?
-  Can you still utilize a design system?
-  Do you have to only use a singular framework?
-  Have you ever mixed something like Stencil with Angular Elements?
-  Module Federation**
-  ????
-  **Can we talk about iFrame solution / styling while creating widgets?
-  Single App with multiple routes?
-  How do you share state?**
-  How
-  **Multiple Apps?**
-  Example of using the app
-  [https://apply.joinsherpa.com/explore/USA](https://apply.joinsherpa.com/explore/USA)
-  Additional Useful Links
-  [https://www.angulararchitects.io/en/](https://www.angulararchitects.io/en/)[https://micro-frontends.org/](https://micro-frontends.org/)[https://itnext.io/handling-data-with-web-components-9e7e4a452e6e](https://itnext.io/handling-data-with-web-components-9e7e4a452e6e)[https://micro-frontends.zeef.com/elisabeth.engel?ref=elisabeth.engel&share=ee53d51a914b4951ae5c94ece97642fc](https://micro-frontends.zeef.com/elisabeth.engel?ref=elisabeth.engel&share=ee53d51a914b4951ae5c94ece97642fc)[https://github.com/rajasegar/awesome-micro-frontends](https://github.com/rajasegar/awesome-micro-frontends)[https://basecamp.com/shapeup](https://basecamp.com/shapeup)
+- [microfrontend-resources](https://github.com/billyjov/microfrontend-resources)
+- [Example of using the app](https://apply.joinsherpa.com/explore/USA)
+- [https://www.angulararchitects.io/en/](https://www.angulararchitects.io/en/)
+- [https://micro-frontends.org/](https://micro-frontends.org/)
+- [https://itnext.io/handling-data-with-web-components-9e7e4a452e6e](https://itnext.io/handling-data-with-web-components-9e7e4a452e6e)
+- [https://micro-frontends.zeef.com/elisabeth.engel?ref=elisabeth.engel&share=ee53d51a914b4951ae5c94ece97642fc](https://micro-frontends.zeef.com/elisabeth.engel?ref=elisabeth.engel&share=ee53d51a914b4951ae5c94ece97642fc)
+- [https://github.com/rajasegar/awesome-micro-frontends](https://github.com/rajasegar/awesome-micro-frontends)[https://basecamp.com/shapeup](https://basecamp.com/shapeup)

@@ -16,6 +16,36 @@ excerpt: Brian Rinaldi talks with us all about how he runs http://CFE.dev and wh
 guests:
   - brian-rinaldi
 hashnode: https://hashnode.codingcat.dev/podcast-2-37-Developer-Events-and-Community-on-CFE-dev
+picks:
+  [
+    { author: 'alex-patterson', name: 'Griddy', site: 'https://griddy.io/' },
+    {
+      author: 'alex-patterson',
+      name: '700+ CSS Icons, Customizable, Retina Ready & API',
+      site: 'https://css.gg/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Moar Serverless',
+      site: 'https://cfe.dev/events/moar-serverless-2022/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Getting Started with Svelte Framework',
+      site: 'https://cfe.dev/sessions/intro-to-svelte/'
+    },
+    { author: 'brittney-postma', name: 'Jamstack Conf', site: 'https://jamstack.org/conf/' },
+    {
+      author: 'brian-rinaldi',
+      name: 'Resident Evil (series)',
+      site: 'https://www.netflix.com/title/80996532'
+    },
+    {
+      author: 'brian-rinaldi',
+      name: 'The Jamstack Book',
+      site: 'https://www.manning.com/books/the-jamstack-book'
+    }
+  ]
 slug: 2-37-Developer-Events-and-Community-on-CFE-dev
 sponsors:
   - storyblok

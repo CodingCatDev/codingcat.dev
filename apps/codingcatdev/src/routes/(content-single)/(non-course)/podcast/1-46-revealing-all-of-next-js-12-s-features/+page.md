@@ -16,6 +16,29 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Revealin
 devto: https://dev.to/codingcatdev/146-revealing-all-of-nextjs-12s-features-11cf
 excerpt: We sit down with Lee Robinson, Head of Developer relations at Vercel, to talk all about Next.js 12.
 hashnode: https://hashnode.codingcat.dev/podcast-1-46-revealing-all-of-next-js-12-s-features
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Lottie Files Lightweight, scalable animations for your website and apps',
+      site: 'https://lottiefiles.com/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Complete Next.js Developer',
+      site: 'https://academy.zerotomastery.io/p/learn-next-js?affcode=441520_gjue7n-1'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Jamstack TV',
+      site: 'https://www.youtube.com/channel/UC8bRyfU7ycLXnEBfvdorpUg'
+    },
+    {
+      author: 'lee-robinson',
+      name: "Lee's new M1 Macbook Pro",
+      site: 'https://www.apple.com/shop/buy-mac/macbook-pro/14-inch'
+    }
+  ]
 slug: 1-46-revealing-all-of-next-js-12-s-features
 spotify: https://open.spotify.com/episode/1PBe5x63tPw4lXnPLAFSfx?si=nPsDEJc8Qm26L4JrWwVI_g
 start: November 17, 2021
@@ -30,7 +53,7 @@ youtube: https://www.youtube.com/watch?v=_iGE7lVfeaI
    - **[Rust Compiler](https://nextjs.org/blog/next-12#faster-builds-and-fast-refresh-with-rust-compiler)**: ~3x faster Fast Refresh and ~5x faster builds
    - **[Middleware (beta)](https://nextjs.org/blog/next-12#introducing-middleware)**: Enabling full flexibility in Next.js with code over configuration
    - **[React 18 Support](https://nextjs.org/blog/next-12#preparing-for-react-18)**: Native Next.js APIs are now supported, as well as Suspense
-   - **`[<Image />` AVIF Support](https://nextjs.org/blog/next-12#smaller-images-using-avif)**: Opt-in for 20% smaller images
+   - **[`<Image />` AVIF Support](https://nextjs.org/blog/next-12#smaller-images-using-avif)**: Opt-in for 20% smaller images
    - **[Bot-aware ISR Fallback](https://nextjs.org/blog/next-12#bot-aware-isr-fallback)**: Optimized SEO for web crawlers
    - **[Native ES Modules Support](https://nextjs.org/blog/next-12#es-modules-support-and-url-imports)**: Aligning with the standardized module system
    - **[URL Imports (alpha)](https://nextjs.org/blog/next-12#url-imports)**: Import packages from any URL, no installs required

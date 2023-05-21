@@ -15,7 +15,24 @@ devto: https://dev.to/codingcatdev/building-in-codesandbox-with-adewale-ace-abat
 excerpt: Adewale “Ace” Abita, shows us how to use CodeSandbox to improve your developer experience and collaboration.
 guests:
   - ace-kyd
-hashnode: https://hashnode.codingcat.dev/podcast-2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati
+hashnode: 'https://hashnode.codingcat.dev/podcast-2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati'
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'The Terminal List',
+      site: 'https://www.primevideo.com/detail/The-Terminal-List/0NGB908JKDOZ29WLQ2GS45USOV'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Up and Running with Remix | egghead.io',
+      site: 'https://egghead.io/courses/up-and-running-with-remix-b82b6bb6'
+    },
+    { author: 'brittney-postma', name: 'Centered.App', site: 'https://www.centered.app/' },
+    { author: 'brittney-postma', name: 'Yabai', site: 'https://github.com/koekeishiya/yabai' },
+    { author: 'ace-kyd', name: 'Naruto', site: 'https://www.crunchyroll.com/en-gb/naruto' },
+    { author: 'ace-kyd', name: 'Chakra UI', site: 'https://chakra-ui.com/' }
+  ]
 slug: 2-36-Building-in-CodeSandbox-with-Adewale-"Ace"-Abati
 sponsors:
   - storyblok
