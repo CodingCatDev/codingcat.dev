@@ -17,16 +17,22 @@ excerpt: Talking with Aaron Frost (Frosty) all about Angular and Static Site Gen
 guests:
   - aaron-frost
 hashnode: https://hashnode.codingcat.dev/podcast-0-7-scully-with-aaron-frost
+picks:
+  [
+    { author: 'alex-patterson', name: 'NG-Conf', site: 'https://www.ng-conf.org/' },
+    { author: 'alex-patterson', name: 'Stackbit', site: 'https://www.stackbit.com/' },
+    {
+      author: 'aaron-frost',
+      name: 'Last Podcast on the Left',
+      site: 'https://www.lastpodcastontheleft.com/'
+    }
+  ]
 slug: 0-7-scully-with-aaron-frost
 spotify: https://open.spotify.com/episode/5L9M3dwLg133j7PybqADrc?si=z1ZK-IfoSYmW8uua1rJg9Q
 start: February 8, 2020
 title: Scully with Aaron Frost
 youtube: https://youtu.be/I5kfTAJ3GnU
 ---
-
-### Aaron Frost - Web Architect, ng-conf Oganizer, Google Dev Expert, Podcaster, and Ice-fisherman-extraordinaire.
-
-[https://www.linkedin.com/in/aaronfrost/](https://www.linkedin.com/in/aaronfrost/)
 
 ## Who is Aaron Frost?
 
@@ -55,17 +61,3 @@ youtube: https://youtu.be/I5kfTAJ3GnU
 ## Random Question
 
 Do Aliens Exist?
-
-## Purrfect Picks
-
-### Aaron
-
-[https://www.lastpodcastontheleft.com/](https://www.lastpodcastontheleft.com/)
-
-### Alex P.
-
-[https://www.ng-conf.org/](https://www.ng-conf.org/)
-
-[https://www.stackbit.com/](https://www.stackbit.com/)
-
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)

@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-1---Purrfect-Origin-Story-ea7pgq
 episode: 1
 recording_date: December 14, 2019
@@ -25,3 +24,5 @@ youtube: https://www.youtube.com/watch?v=r33_n0fas8A
 ---
 
 ## The Origin Story
+
+This is the beginning :D

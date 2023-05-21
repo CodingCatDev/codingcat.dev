@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 anchor: https://anchor.fm/purrfect-dev/episodes/0-2---Purrfect-Program-Management-ea7pop
 episode: 2
 recording_date: December 19, 2019
@@ -24,35 +23,23 @@ title: Purrfect Program Management
 youtube: https://www.youtube.com/watch?v=aSt-D7Dbcuk
 ---
 
-## **Guest Details**
+## PM Questions
 
-### **Nicholas Rouech**
+So you are a Project mana
 
-**Infotainment Software Program Manager at General Motors**
+What is the difference between a Project Manager and Program Manager?
 
-### **Links**
+I noticed you have your PMP (Project Management Professional) Certification.
+[https://www.pmi.org/certifications/types/project-management-pmp](https://www.pmi.org/certifications/types/project-management-pmp)
 
-[**https://www.linkedin.com/in/nickrouech/**](https://www.linkedin.com/in/nickrouech/)
+What made you decide to commit the time to get the certification?
 
-[https://miblendcoffee.com/](https://miblendcoffee.com/)
+Can you tell me how hard that was to get?
 
-## **PM Questions**
+Where do you see Program Management in the next 3-5 years.
 
-**So you are a Project mana**
+## Purrfect Picks
 
-**What is the difference between a Project Manager and Program Manager?**
+So you have a side hustle that I help you out on from time to time called mi (my) blend coffee.
 
-**I noticed you have your PMP (Project Management Professional) Certification.
-**[**https://www.pmi.org/certifications/types/project-management-pmp**](https://www.pmi.org/certifications/types/project-management-pmp)
-
-**What made you decide to commit the time to get the certification?**
-
-**Can you tell me how hard that was to get?**
-
-**Where do you see Program Management in the next 3-5 years.**
-
-## **Purrfect Picks**
-
-**So you have a side hustle that I help you out on from time to time called mi (my) blend coffee.**
-
-**Can you tell me what got you into the coffee business?**
+Can you tell me what got you into the coffee business?

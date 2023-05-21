@@ -2,7 +2,7 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
+  - nick-rouech
 anchor: https://anchor.fm/purrfect-dev/episodes/0-3---Cloudinary-Community-ea7rvq
 episode: 3
 recording_date: December 19, 2019
@@ -25,69 +25,22 @@ title: Cloudinary Community
 youtube: https://www.youtube.com/watch?v=X7Nv1EWCoEM
 ---
 
-## **Guest Details**
+## MDE Questions
 
-### **Maya Shavin**
+What is a Media Developer Expert (MDE)?
 
-**Senior Frontend Developer @cloudinary and core maintainer of @StorefrontUI. Founder & Organizer of @VueJSIsrael Meetups. Vietnamese but live in Israel. Speaker. Blogger. Bookworm and hardcore Sailormoon fan.**
+[Announcing Cloudinary’s Media Developer Experts Program](https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program)
 
-[**https://www.github.com/mayashavin**](https://www.github.com/mayashavin)
+How did you get started as an MDE (or select potential MDE - mainly for Maya :))?
 
-[**https://www.twitter.com/MayaShavin**](https://www.twitter.com/MayaShavin)
+Producing content and tutorials take a long time, why are you passionate about it?
 
-[**https://www.linkedin.com/in/mayashavin/**](https://www.linkedin.com/in/mayashavin/)[**https://www.mayashavin.com/**](https://www.mayashavin.com/)
+What areas do you focus on the most concerning Cloudinary?
 
-[**https://medium.com/@mayashavin**](https://medium.com/@mayashavin)
+What are the inspiration and motivation for you to start contributing to the community despite your busy schedule? (like organizing a meetup, contributing to open source, etc)
 
-### **Tim Benniks**
+How do you get local community involvement?
 
-**Director of web development at Valtech Paris. Born in Amsterdam. Speaker. Writer. Organizing front-end meetups in paris.**
+## Random
 
-[**https://www.linkedin.com/in/timbenniks/**](https://www.linkedin.com/in/timbenniks/)
-
-[**https://timbenniks.nl/**](https://timbenniks.nl/)[**https://github.com/timbenniks**](https://github.com/timbenniks)[**https://twitter.com/timbenniks**](https://twitter.com/timbenniks)
-
-[**https://valtech.com/**](https://valtech.com/)
-
-**Shodipo Ayomide**
-
-**Senior Developer Advocate ???? & Software Engineer • Media Developer Expert @cloudinary • Lead: @unstack\_, @react_summit, @oscafrica, @naijahacks.**
-
-[**https://linkedin.com/in/shodipo-ayomide**](https://linkedin.com/in/shodipo-ayomide)
-
-[**https://twitter.com/developerayo**](https://twitter.com/developerayo)
-
-[**https://github.com/developerayo**](https://github.com/developerayo)
-
-[**https://shodipoayomide.com**](https://shodipoayomide.com/)
-
-## **MDE Questions**
-
-**What is a Media Developer Expert (MDE)?**
-
-[**https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program**](https://cloudinary.com/blog/announcing_cloudinary_s_media_developer_experts_program)
-
-**How did you get started as an MDE (or select potential MDE - mainly for Maya :))?**
-
-**Producing content and tutorials take a long time, why are you passionate about it?**
-
-**What areas do you focus on the most concerning Cloudinary?**
-
-- \*\*Client-Side
-- \*\*
-- \*\*Server Side
-- \*\*
-- \*\*Mobile
-- \*\*
-
-**What are the inspiration and motivation for you to start contributing to the community despite your busy schedule? (like organizing a meetup, contributing to open source, etc)**
-
-**How do you get local community involvement?**
-
-## **Random**
-
-**Can we put an overlay using Cloudinary to swap StreamYard for AJ?**
-
-\---
-
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)
+Can we put an overlay using Cloudinary to swap StreamYard for AJ?

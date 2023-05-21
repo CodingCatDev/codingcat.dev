@@ -2,7 +2,7 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
+  - nick-rouech
 anchor: https://anchor.fm/purrfect-dev/episodes/0-5---Agile-Methodology-eanfb8
 episode: 5
 recording_date: January 5, 2020
@@ -16,8 +16,20 @@ devto: https://dev.to/codingcatdev/0-5-agile-methodology-2f7e
 excerpt: Alex Feldman discusses Agile and how it can be used in Project Management.
 guests:
   - alex-feldman
-  - nick-rouech
 hashnode: https://hashnode.codingcat.dev/podcast-0-5-agile-methodology
+picks:
+  [
+    {
+      author: 'nick-rouech',
+      name: 'Ray Dalio - Principles for Success - Mini Series.',
+      site: 'https://www.youtube.com/watch?v=B9XGUpQZY38'
+    },
+    {
+      author: 'alex-feldman',
+      name: 'Agile Product Ownership in a Nutshell',
+      site: 'https://youtu.be/502ILHjX9EE'
+    }
+  ]
 slug: 0-5-agile-methodology
 spotify: https://open.spotify.com/episode/0RVqxa8KhhNzcQxP9WPsWn?si=4Ydbhl60QKC6NXoT4d22jA
 start: February 8, 2020
@@ -25,48 +37,22 @@ title: Agile Methodology
 youtube: https://www.youtube.com/watch?v=yVskgThfFbU
 ---
 
-# **Agile 101**
+## Agile Related Questions
 
-## **Guest Details**
+Tell us a little bit about yourself?
 
-### **Alex Feldman - Agile Evangelist, Agile Coach**
+Why Agile?
 
-[**https://www.linkedin.com/in/alexanderfeldman/**](https://www.linkedin.com/in/alexanderfeldman/)
+What are the biggest hurdles you see in organizations implementing an agile methodology?
 
-## **Agile Related Questions**
+What is the most effective way for an organization to start working in Agile
 
-**Tell us a little bit about yourself?**
+What are some resources you can give to developers and program managers to further their support in Project Management?
 
-**Why Agile?**
+Greg Larman
 
-**What are the biggest hurdles you see in organizations implementing an agile methodology?**
+## Rando Question
 
-**What is the most effective way for an organization to start working in Agile**
+You have a lot of letters on the end of your LinkedIn Profile, what in your mind is most beneficial to your success and future career path.
 
-**What are some resources you can give to developers and program managers to further their support in Project Management?**
-
-**Greg Larman**
-
-## **Rando Question**
-
-**You have a lot of letters on the end of your LinkedIn Profile, what in your mind is most beneficial to your success and future career path.**
-
-## **Purrfect Picks**
-
-**Alex Feldman**
-
-**Agile Product Ownership in a Nutshell** [**https://youtu.be/502ILHjX9EE**](https://youtu.be/502ILHjX9EE)
-
-**Nick R.**
-
-**Ray Dalio - Principles for Success - Mini Series.** [**https://www.youtube.com/watch?v=B9XGUpQZY38**](https://www.youtube.com/watch?v=B9XGUpQZY38)
-
-[**https://images.app.goo.gl/n1t7RtvK3zAz2ujY6**](https://images.app.goo.gl/n1t7RtvK3zAz2ujY6)
-
-## **Useful resources**
-
-**Agile Product Ownership in a Nutshell** [**https://youtu.be/502ILHjX9EE**](https://youtu.be/502ILHjX9EE)
-
-\- \--
-
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://anchor.fm/purrfect-dev/message)
+![Image of 59 Seconds Agile](https://media.codingcat.dev/image/upload/v1684703673/main-codingcatdev-photo/001_003_013_003_002-Agile-Manifesto.gif)
