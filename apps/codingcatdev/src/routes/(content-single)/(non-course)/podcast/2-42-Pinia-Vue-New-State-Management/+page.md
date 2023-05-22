@@ -16,6 +16,26 @@ excerpt: We sat down with Eduardo San Martin Morote to chat all about how he hel
 guests:
   - eduardo-san-martin-morote
 hashnode: https://hashnode.codingcat.dev/podcast-2-42-Pinia-Vue's-New-State-Management
+picks:
+  [
+    { author: 'alex-patterson', name: 'Fresh 1.0', site: 'https://deno.com/blog/fresh-is-stable' },
+    { author: 'alex-patterson', name: 'Primer Prism', site: 'https://github.com/primer/prism' },
+    {
+      author: 'brittney-postma',
+      name: 'Prismic: Give Pinia a Try: Build a Confetti Clicker Game with Us',
+      site: 'https://prismic.io/blog/try-tutorial-vue-pinia'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Prismic: Explore Svelte by Building a Bubble Popping Game',
+      site: 'https://prismic.io/blog/try-svelte-build-game'
+    },
+    {
+      author: 'eduardo-san-martin-morote',
+      name: 'Cult of the Lamb',
+      site: 'https://www.nintendo.com/store/products/cult-of-the-lamb-switch/'
+    }
+  ]
 slug: 2-42-Pinia-Vue-New-State-Management
 sponsors:
   - storyblok
@@ -36,4 +56,3 @@ youtube: https://youtu.be/c9HzsWFjTfM
 ## Links
 
 - [Vue Pinia Playground](https://github.com/vuejs/pinia/tree/v2/packages/playground)
--

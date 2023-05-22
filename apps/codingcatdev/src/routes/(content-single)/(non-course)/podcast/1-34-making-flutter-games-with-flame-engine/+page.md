@@ -18,6 +18,32 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/veso6act
 devto: https://dev.to/codingcatdev/1-34-making-flutter-games-with-flame-engine-d6g
 excerpt: If you love gaming and Flutter, you need to checkout Flame Engine! We sit down with Lukas, Jochum and Renan to chat about how this library works.
 hashnode: https://hashnode.codingcat.dev/podcast-1-34-making-flutter-games-with-flame-engine
+picks:
+  [
+    { author: 'alex-patterson', name: 'GitHub Copilot', site: 'https://copilot.github.com/' },
+    {
+      author: 'brittney-postma',
+      name: 'Mythic Quest - Apple TV+',
+      site: 'https://tv.apple.com/us/show/mythic-quest/umc.cmc.1nfdfd5zlk05fo1bwwetzldy3'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Get Started with Svelte and SvelteKit',
+      site: 'https://www.youtube.com/watch?v=fOD_3iSiwTQ'
+    },
+    { author: 'lukas-spydon', name: 'Melos', site: 'https://github.com/invertase/melos' },
+    { author: 'jochum-wolfen', name: 'SpriteStack', site: 'https://spritestack.io/' },
+    {
+      author: 'jochum-wolfen',
+      name: 'SpriteStack Example',
+      site: 'https://twitter.com/wolfenrain/status/1348698185598951424?s=20'
+    },
+    {
+      author: 'renan',
+      name: 'Tomb Toad',
+      site: 'https://play.google.com/store/apps/details?id=com.crescentmoongames.tombtoad&hl=en&gl=US'
+    }
+  ]
 slug: 1-34-making-flutter-games-with-flame-engine
 spotify: https://open.spotify.com/episode/1LcFMt9R8kW0tQAaf4wTf7?si=GCuE6NQSTl6MtP4R1IsVYg
 start: September 1, 2021
@@ -39,7 +65,7 @@ youtube: https://www.youtube.com/watch?v=8-aj-FxRs1k
 9. Is there any physics engine inside Flame, or one that can be used with Flame?
 10. Where do you turn if you need help with a Flame project?
 
-## Additional Links
+## Links
 
 - Flame Engine - [https://flame-engine.org/](https://flame-engine.org/)
 - Flame Tutorials - [https://github.com/flame-engine/flame/tree/main/tutorials](https://github.com/flame-engine/flame/tree/main/tutorials)
@@ -47,7 +73,3 @@ youtube: https://www.youtube.com/watch?v=8-aj-FxRs1k
 - Discord - [https://discord.com/invite/pxrBmy4](https://discord.com/invite/pxrBmy4)
 - Sprite Stacking - [https://twitter.com/wolfenrain/status/1348698185598951424?s=20](https://twitter.com/wolfenrain/status/1348698185598951424?s=20)
 - Firebase backed game - h[ttps://github.com/Shadow60539/club_penguin_game](https://github.com/Shadow60539/club_penguin_game)
-
-### Alex Patterson
-
-GitHub Copilot [https://copilot.github.com/](https://copilot.github.com/)

@@ -17,6 +17,38 @@ cover: https://media.codingcat.dev/image/upload/v1661891109/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/241-nx-the-smart-fast-and-extensible-build-system-5gn0
 excerpt: We chat with Juri from Nrwl all about monorepos and how Nx fits into your development pipeline.
 hashnode: https://hashnode.codingcat.dev/podcast-Nx-the-Smart-Fast-and-Extensible-Build-System
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Qwik and Qwik City Beta',
+      site: 'https://www.builder.io/blog/qwik-and-qwik-city-have-reached-beta'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Makeswift — the visual builder for Next.js',
+      site: 'https://www.makeswift.com/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Webamp · Winamp 2 in your browser',
+      site: 'https://webamp.org/'
+    },
+    { author: 'brittney-postma', name: 'Vite Conf', site: 'https://viteconf.org/' },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Summit Talks Day 1',
+      site: 'https://www.youtube.com/watch?v=pJcbZr5VlV4'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Summit Talks Day 2',
+      site: 'https://www.youtube.com/watch?v=A8jkJTWacow'
+    },
+    { author: 'juri-strumpflohner', name: 'Nx Conf', site: 'https://nx.dev/conf' },
+    { author: 'juri-strumpflohner', name: 'Nx', site: 'https://nx.dev' },
+    { author: 'juri-strumpflohner', name: 'Nrwl YouTube', site: 'https://www.youtube.com/nrwl_io' }
+  ]
 slug: Nx-the-Smart-Fast-and-Extensible-Build-System
 spotify: https://open.spotify.com/episode/4Zx6ZOttZEgBuYlP6EyA7m?si=389H089iSkGchqkT8aiVmA
 start: September 28, 2022

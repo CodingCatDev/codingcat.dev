@@ -16,4 +16,4 @@ websites:
 
 # Guillermo Rauch
 
-CEO at [Vercel](https://vercel.com)
+CEO at [Vercel](https://vercel.com), a cloud platform for static sites that fits around a Jamstack workflow. He’s also the co-creator of Next.js. He previously founded LearnBoost and CloudUp, and is well-known as the creator of several popular node open source libraries like [Socket.io](https://socket.io/), [Mongoose](https://mongoosejs.com/), and [SlackIn](https://github.com/rauchg/slackin). Prior to that, he was a core developer on [MooTools](https://mootools.net/).

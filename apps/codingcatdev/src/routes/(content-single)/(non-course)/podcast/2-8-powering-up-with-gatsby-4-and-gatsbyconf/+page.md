@@ -16,6 +16,39 @@ cover: https://media.codingcat.dev/image/upload/v1645563382/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/28-powering-up-with-gatsby-4-and-gatsbyconf-lob-temp-slug-6871734
 excerpt: Grayson Hicks joins us to talk all about Gatsby 4 and multiple methods of rendering.
 hashnode: https://hashnode.codingcat.dev/podcast-2-8-powering-up-with-gatsby-4-and-gatsbyconf
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Halo Infinite',
+      site: 'https://www.xbox.com/en-US/games/halo-infinite'
+    },
+    {
+      author: 'alex-patterson',
+      name: '11ty 1.0',
+      site: 'https://www.11ty.dev/blog/eleventy-one-point-oh/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Syntax Gatsby v4',
+      site: 'https://syntax.fm/show/415/gatsby-v4'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'EnterJS',
+      site: 'https://enterjs.de/lecture.php?id=13859&source=0'
+    },
+    {
+      author: 'grayson-hicks',
+      name: 'Zelda Breath of the Wild',
+      site: 'https://www.nintendo.com/games/detail/the-legend-of-zelda-breath-of-the-wild-switch/'
+    },
+    {
+      author: 'grayson-hicks',
+      name: 'Node.js 17',
+      site: 'https://nodejs.org/en/blog/release/v17.0.0/'
+    }
+  ]
 slug: 2-8-powering-up-with-gatsby-4-and-gatsbyconf
 sponsors:
   - builder-io

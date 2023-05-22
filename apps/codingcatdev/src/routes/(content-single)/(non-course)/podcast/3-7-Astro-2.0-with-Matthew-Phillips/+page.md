@@ -1,7 +1,6 @@
 ---
 type: podcast
 authors:
-  - alex-patterson
   - brittney-postma
 episode: 7
 recording_date: February 2, 2023 2:15 PM

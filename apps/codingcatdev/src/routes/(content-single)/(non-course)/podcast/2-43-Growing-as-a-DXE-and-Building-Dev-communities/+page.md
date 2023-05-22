@@ -16,6 +16,23 @@ excerpt: The master of building communities Dom joins us to break down how to bu
 guests:
   - domitrius-clark
 hashnode: https://hashnode.codingcat.dev/podcast-2-43-Growing-as-a-DXE-and-Building-Dev-communities
+picks:
+  [
+    { author: 'alex-patterson', name: 'Courier', site: 'https://www.courier.com/' },
+    { author: 'alex-patterson', name: 'Hacktoberfest Website', site: 'https://hacktoberfest.com/' },
+    { author: 'brittney-postma', name: 'Web Unleashed', site: 'https://fitc.ca/event/webu22/' },
+    { author: 'brittney-postma', name: 'Vite Conf', site: 'https://fitc.ca/event/webu22/' },
+    {
+      author: 'domitrius-clark',
+      name: 'Startup Options, to take them or not',
+      site: 'https://twitter.com/anothercohen/status/1577797241594646530?s=20&t=L4K7mofaa8iBw0UH8SZxLA'
+    },
+    {
+      author: 'domitrius-clark',
+      name: 'Stream Deck',
+      site: 'https://store.steampowered.com/steamdeck'
+    }
+  ]
 slug: 2-43-Growing-as-a-DXE-and-Building-Dev-communities
 sponsors:
   - jamstackconf

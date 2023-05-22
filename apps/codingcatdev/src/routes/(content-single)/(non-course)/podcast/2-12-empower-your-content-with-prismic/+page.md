@@ -16,6 +16,30 @@ cover: https://media.codingcat.dev/image/upload/v1648238389/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/212-empower-your-content-with-prismic-3io
 excerpt: We sit down with Alex Trost to talk about Prismic and how it can empower your content and content creators.
 hashnode: https://hashnode.codingcat.dev/podcast-2-12-empower-your-content-with-prismic
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'gQuery SvelteKit GraphQL Client ',
+      site: 'https://gquery.leveluptutorials.com'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'ThisDotLabs Prismic & Storyblok',
+      site: 'https://www.thisdot.co/blog/build-it-better-headless-cms-with-prismic-and-storyblok'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Frontend Horse YouTube',
+      site: 'https://youtube.com/c/AlexTrosts'
+    },
+    { author: 'brittney-postma', name: 'Bless Unleashed', site: 'https://blessunleashed.com/' },
+    {
+      author: 'alex-trost',
+      name: 'Outer Wilds',
+      site: 'https://www.mobiusdigitalgames.com/outer-wilds.html'
+    }
+  ]
 slug: 2-12-empower-your-content-with-prismic
 sponsors:
   - builder-io

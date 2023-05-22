@@ -16,6 +16,40 @@ excerpt: Colby Fayock walks us through how to optimize your media experience wit
 guests:
   - colby-fayock
 hashnode: https://hashnode.codingcat.dev/podcast-2-16-optimize-your-media-experience
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Divvy, Cloudinary and Remix',
+      site: 'https://divvy.codingcat.dev/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'How to Adopt AVIF for Images with Cloudinary ',
+      site: 'https://cloudinary.com/blog/how_to_adopt_avif_for_images_with_cloudinary'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Personalized Social Media Cards Video',
+      site: 'https://www.youtube.com/watch?v=WYTjd3yl5-g'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Personalized Social Media Cards Post',
+      site: 'https://spacejelly.dev/posts/how-to-generate-personalized-social-media-cards-for-landing-pages-with-next-js-cloudinary/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Sendestar Water Bottle',
+      site: 'https://www.amazon.com/SENDESTAR-Bottle-Insulated-Stainless-Bottle-Wide/dp/B08FZL82FQ/ref=sr_1_6?crid=23NVSJMW3LDNR&keywords=sendestar&qid=1644840624&sprefix=sendestar%2Caps%2C76&sr=8-6'
+    },
+    { author: 'colby-fayock', name: 'Ozark', site: 'https://www.netflix.com/title/80117552' },
+    {
+      author: 'colby-fayock',
+      name: 'Peacemaker',
+      site: 'https://www.hbomax.com/series/urn:hbo:series:GYb0FKQLsGIyPfQEAAAAM'
+    }
+  ]
 slug: 2-16-optimize-your-media-experience
 sponsors:
   - builder-io
