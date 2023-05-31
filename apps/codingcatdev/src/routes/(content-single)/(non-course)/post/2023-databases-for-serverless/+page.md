@@ -83,3 +83,86 @@ Here are some additional details about how complexity is shifting to the databas
 ### Developer eXperience
 
 No one wants to remember how to query a database using SQL (okay maybe a few of you), so it is very important to keep your users writing statements that are in their native language for the majority of users that means [TypeScript](https://www.typescriptlang.org/). If you are working on large applications that have several people included automating the task of type safety is a must! Luckily their are many companies stepping up to the challenge in this area like [Prisma](https://www.prisma.io/), [Kysely](https://github.com/koskimas/kysely), [Drizzle](https://github.com/drizzle-team/drizzle-orm), [Contentlayer](https://www.contentlayer.dev/), and [Zapatos](https://jawj.github.io/zapatos/). These tools will make your DX super easy and remove lots of nasty 🐞's from your code!
+
+## Database Solutions
+
+Interesting it isn't as easy anymore to just say we are going with Postgres, MySQL or MongoDB. There are tons of choices out there already that include or wrap these databases, and there are tons of options coming out that include some awesome future features. So how can one decide? I will break these down into the buckets that have the most feature parity along with general availability (aka won't be a flash in the pan).
+
+### Established Backend as a Service
+
+The BaaS platforms are really unique in that they have so much of the authentication and authorization baked into each one of the products. You often able to customize the database (and other resources) down to the data level.
+
+<section class="flex flex-col gap-2 md:gap-8">
+  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+    <a target="_blank" rel="noopener noreferrer" href="https://firebase.com" class="text-3xl">Firebase</a>
+    <p>
+    I am a <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/community/experts/directory/profile/profile-alex-patterson">Firebase GDE</a> and I still consider <a target="_blank" rel="noopener noreferrer" href="https://firebase.google.com/products/firestore">Firestore</a> to be an amazing product and very well established being more than 5 years old now. Firebase provides built-in support for Authentication, Remote Config, Cloud Functions, Cloud Messaging, Cloud Storage and Hosting. Every Firebase project is a Google Cloud Platform project and can extend its reach in incredible ways.
+    </p>
+  </div>
+  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+    <a target="_blank" rel="noopener noreferrer" href="https://aws.amazon.com/amplify/" class="text-3xl">AWS Amplify</a>
+    <p>
+    I am also an <a target="_blank" rel="noopener noreferrer" href="https://aws.amazon.com/developer/community/community-builders/community-builders-directory/?cb-cards.sort-by=item.additionalFields.cbName&cb-cards.sort-order=asc&awsf.builder-category=*all&awsf.location=*all&awsf.year=*all&cb-cards.q=alex%2Bpatterson&cb-cards.q_operator=AND">AWS Community Builder</a> focusing on Front-End Web & Mobile. The AWS Amplify product includes <a target="_blank" rel="noopener noreferrer" href="https://aws.amazon.com/dynamodb/">DynamoDB</a> which is a fast, flexible NoSQL database service for single-digit millisecond performance at any scale. Utilizing all of the services within Amazon Web Services (AWS) portfolio is amazing powerful. AWS Amplify includes Authentication, PubSub, Functions, Push notifications, and Storage. All of this while using Cloud Formation for IaC to make changes easily (although at times slow) and consistent across environments.
+    </p>
+  </div>
+  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+    <a target="_blank" rel="noopener noreferrer" href="https://appwrite.io/" class="text-3xl">Appwrite</a>
+    <p>
+    Appwrite is an open source alternative to the above mentioned products, it can be loaded with a simple docker compose command anywhere docker runs. Full disclosure I was a Developer Advocate for them as well. Everything in Appwrite is written in PHP but like the others provides a host of different <a target="_blank" rel="noopener noreferrer" href="https://appwrite.io/docs/sdks">SDK's</a> for both web and mobile. As of writing this the database powering the default solution is <a target="_blank" rel="noopener noreferrer" href="https://mariadb.org/">MariaDB</a>. One of the unique abstractions that Appwrite provides is that it allows really for any database type and I am sure the team will add Postgres in the near future. Appwrite also includes Authentication, Storage, and Functions. Appwrite's realtime is not built into the connection like Firestore, but it makes it easy to get any events across the entire system not just the database which is really awesome!
+    </p>
+  </div>
+  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+    <a target="_blank" rel="noopener noreferrer" href="https://supabase.com/" class="text-3xl">Supabase</a>
+    <p>
+    Of course if I am writing about Appwrite I need to also talk about Supabase. Supabase hasn't been around as long as Firebase and AWS Amplify, but it has won the hearts of developers. It includes a <a target="_blank" rel="noopener noreferrer" href="https://supabase.com/database">Postgres Database</a> along with Authentication, Storage, Realtime and Edge Functions.
+    </p>
+  </div>
+  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+    <a target="_blank" rel="noopener noreferrer" href="https://www.mongodb.com/atlas" class="text-3xl">MongoDB Atlas</a>
+    <p>
+     Unlike the solutions above MongoDB actually positions its <a target="_blank" rel="noopener noreferrer" href="https://www.mongodb.com/atlas">Atlas</a> product as a "data platform". As you can read in their blog <a target="_blank" rel="noopener noreferrer" href="https://www.mongodb.com/blog/post/world-recap-why-serverless-architecture-developers">Why Serverless is the Architecture Developers Have Been Waiting For</a> MongoDB is positioning itself really well with the MongoDB Atlas Serverless product!
+    </p>
+  </div>
+</section>
+
+### New Database Services
+
+Some of these might include full BaaS, but are too new to put into an established place. Others have not figured out who they want to be yet. Then there are those who know who they and just offer a database.
+
+<section class="flex flex-col gap-2 md:gap-8">
+  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+    <a target="_blank" rel="noopener noreferrer" href="https://planetscale.com/" class="text-3xl">PlanetScale</a>
+    <p></p>
+  </div>
+</section>
+
+### Postgres
+
+- AWS Aurora
+- CockroachDB
+
+### Redis
+
+- Upstash
+
+### Other
+
+- Fauna
+
+## What to consider in the Future
+
+So you now know the different choices that are available in the market, what is so compelling about some of these future market leaders?
+
+### Branch Preview Deployments
+
+It is very common to when using to preview deployments for your frontend applications to only use a single database like below. This is a huge step forward from hitting any type of production database, but when previewing the deployment you might want to make new backend changes as well for this specific preview without affecting all other previews that other preview branches are working from.
+
+![Shared Images](https://media.codingcat.dev/image/upload/q_auto,f_auto/main-codingcatdev-photo/15d1641c99cb88031236dddc1482e83655653c708d3c9832948b2c4512e2573b.png)
+
+<span class="text-xs"><a href="https://neon.tech/docs/guides/vercel">Image by Neon.tech</a></span>
+
+This is where a solutions like [Neon](https://neon.tech/docs/guides/vercel) and [Xata](https://xata.io/docs/concepts/how-it-works#branches-and-zero-downtime-migrations) are bringing the concept of previews to the next level and including a branch of you database as well to match! You can see in the below diagram you can have a database with specific migrations ready to take place when merge back to your main branch.
+
+![picture 3](https://media.codingcat.dev/image/upload/v1685398212/main-codingcatdev-photo/74a9de0eb93132b58892d7dd2c82a30d67d0d1f93d571098bb0f3f5bf091f72f.png)
+
+<span class="text-xs"><a href="https://neon.tech/docs/guides/vercel">Image by Neon.tech</a></span>
