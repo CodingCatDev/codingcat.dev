@@ -9,7 +9,7 @@ excerpt: Databases that work well with serverless applications in 2023
 hashnode:
 published: draft
 slug: 2023-databases-for-serverless
-start: May 19, 2023
+start: June 7, 2023
 title: '2023 Databases for Serverless Applications'
 youtube:
 ---
@@ -434,8 +434,8 @@ There are a number of great databases that are well-suited for serverless and ed
 
 Remember these key factors:
 
-* Scalability: Your database needs to be able to scale to meet the demands of your application. Serverless and edge compute applications can be highly variable in terms of traffic, so you need a database that can scale up or down automatically.
+- Scalability: Your database needs to be able to scale to meet the demands of your application. Serverless and edge compute applications can be highly variable in terms of traffic, so you need a database that can scale up or down automatically.
 
-* Performance: Your database needs to be able to perform well under load. Serverless and edge compute applications can be very demanding on databases, so you need a database that can handle a lot of requests without sacrificing performance.
+- Performance: Your database needs to be able to perform well under load. Serverless and edge compute applications can be very demanding on databases, so you need a database that can handle a lot of requests without sacrificing performance.
 
-* Ease of use: Your database needs to be easy to use. Serverless and edge compute applications are often developed by developers who are not database experts, so you need a database that is easy to learn and use.
+- Ease of use: Your database needs to be easy to use. Serverless and edge compute applications are often developed by developers who are not database experts, so you need a database that is easy to learn and use.
