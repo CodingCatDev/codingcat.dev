@@ -7,7 +7,7 @@ cover: 'https://media.codingcat.dev/image/upload/v1684351400/main-codingcatdev-p
 devto:
 excerpt: Databases that work well with serverless applications in 2023
 hashnode:
-published: draft
+published: published
 slug: 2023-databases-for-serverless
 start: June 7, 2023
 title: '2023 Databases for Serverless Applications'
