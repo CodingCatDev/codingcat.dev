@@ -7,8 +7,8 @@ cover: 'https://media.codingcat.dev/image/upload/v1686165962/main-codingcatdev-p
 devto:
 excerpt: Databases that work well with serverless applications in 2023
 hashnode:
-published: draft
-start: June 7, 2023
+published: published
+start: June 8, 2023
 title: 'Pulumi Automation API - Static Websites as a RESTful API'
 youtube:
 ---
