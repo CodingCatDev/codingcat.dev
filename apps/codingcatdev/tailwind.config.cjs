@@ -2,8 +2,11 @@
 module.exports = {
 	darkMode: 'class',
 	content: [
-		'./src/**/*.{html,js,svelte,ts}',
-		require('path').join(require.resolve('@codingcatdev/blackcatui'), '../**/*.{html,js,svelte,ts}')
+		'./src/**/*.{html,js,svelte,ts,md}',
+		require('path').join(
+			require.resolve('@codingcatdev/blackcatui'),
+			'../**/*.{html,js,svelte,ts,md}'
+		)
 	],
 	theme: {
 		extend: {}
