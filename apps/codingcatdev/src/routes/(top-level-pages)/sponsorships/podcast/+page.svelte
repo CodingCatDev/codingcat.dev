@@ -52,7 +52,7 @@
 	<li>Podcast Sponsorship</li>
 </ol>
 
-<section>
+<section class="markdown">
 	<!-- <div class="sticky top-0 right-0 z-50 flex m-2 jusify-end">
           <button
             ref={scrollBtn}
@@ -160,7 +160,7 @@
 				<div class="flex flex-col items-center gap-4">
 					<div class="text-4xl font-bold text-primary-500">Age Range</div>
 					<div class="font-bold text-8xl text-primary-500">25-34</div>
-					<div>Most listeners fall within this range.</div>
+					<div class="font-bold">Most listeners fall within this range.</div>
 				</div>
 				<div class="flex flex-col items-center gap-4">
 					<div class="text-4xl font-bold text-primary-500">Spotify</div>
