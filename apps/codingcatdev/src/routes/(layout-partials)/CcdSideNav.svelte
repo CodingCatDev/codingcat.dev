@@ -49,4 +49,38 @@
 			</li>
 		</ul>
 	</nav>
+	<hr />
+	<nav class="nav-list-nav">
+		<ul>
+			<li on:click={onListItemClick} on:keypress>
+				<a href={`/sponsors`} class={classesActive('sponsors')} data-sveltekit-preload-data="hover">
+					<span class="flex-auto text-3xl font-bold capitalize">Sponsors</span>
+				</a>
+			</li>
+			<li on:click={onListItemClick} on:keypress>
+				<a
+					href={`/sponsorships`}
+					class={classesActive('sponsorships')}
+					data-sveltekit-preload-data="hover"
+				>
+					<span class="flex-auto text-3xl font-bold capitalize">Sponsorships</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
+	<hr />
+	<nav class="nav-list-nav">
+		<ul>
+			<li on:click={onListItemClick} on:keypress>
+				<a href={`/guests`} class={classesActive('guests')} data-sveltekit-preload-data="hover">
+					<span class="flex-auto text-3xl font-bold capitalize">Guests</span>
+				</a>
+			</li>
+			<li on:click={onListItemClick} on:keypress>
+				<a href={`/authors`} class={classesActive('authors')} data-sveltekit-preload-data="hover">
+					<span class="flex-auto text-3xl font-bold capitalize">Authors</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
 </section>
