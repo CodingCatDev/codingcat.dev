@@ -7,8 +7,9 @@ cover:
 locked: locked
 published: draft
 slug: solidstart
+section: SolidStart
 title: SolidStart
-weight: 3
+weight: 4
 ---
 
 ## Project Setup

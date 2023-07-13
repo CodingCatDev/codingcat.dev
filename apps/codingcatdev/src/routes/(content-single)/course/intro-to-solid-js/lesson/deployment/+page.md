@@ -8,7 +8,7 @@ locked: locked
 published: draft
 slug: deployment
 title: Deployment
-weight: 2
+weight: 3
 ---
 
 ## Deployment
