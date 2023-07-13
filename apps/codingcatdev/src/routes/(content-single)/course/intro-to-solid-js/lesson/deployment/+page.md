@@ -3,7 +3,7 @@ type: lesson
 authors:
   - anthony-campolo
 cloudinary_convert: false
-cover: 
+cover: https://media.codingcat.dev/image/upload/v1689262234/main-codingcatdev-photo/courses/solidjs-intro/deployment.png
 locked: locked
 published: draft
 slug: deployment
