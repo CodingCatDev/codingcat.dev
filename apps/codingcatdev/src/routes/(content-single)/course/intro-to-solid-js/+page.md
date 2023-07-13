@@ -14,15 +14,17 @@ updated:
 weight: 1
 ---
 
-SolidJS is a modern JavaScript library for building user interfaces. It is designed to be efficient, flexible, and easy to use. SolidJS is based on the idea of reactive state, which means that components are only updated when their state changes. This makes SolidJS very performant, even for large applications.
+## What is Solid?
 
-SolidJS is also very flexible. It supports a wide range of features, including custom hooks, server-side rendering, and Suspense. This makes SolidJS a great choice for building a wide variety of web applications.
+SolidJS is a modern JavaScript library for building user interfaces. It was created by Ryan Carniato in 2018 and has gained a strong following in the open source JavaScript and web development community. SolidJS is based on the idea of reactive state, which means that components are only updated when their state changes.
 
-SolidJS is easy to learn. It has a simple API that is similar to React. If you are already familiar with React, you will be able to pick up SolidJS quickly.
+### What are the Benefits of Solid?
 
-In this course, you will learn everything you need to know to build user interfaces with SolidJS. You will learn about the basics of SolidJS, including its syntax, state management, and routing. You will also learn about more advanced topics, such as custom hooks, server-side rendering, and Suspense.
+It is designed to be efficient, flexible, and easy to use. SolidJS's reactivity gives SolidJS an advantage when it comes to performance, even for large applications. With support for a wide range of features including custom hooks, SSR, and Suspense, SolidJS is a great choice for building a wide variety of web apps.
 
-By the end of this course, you will be able to build high-performance, flexible, and easy-to-use user interfaces with SolidJS.
+The framework aims to have a simple API that is similar to React and easy to learn. If you are already familiar with React, you will be able to pick up SolidJS fairly quickly after learning a few quirks in their differences.
+
+In this course, you will learn everything you need to know to build user interfaces with SolidJS. You will learn the basics of SolidJS's syntax and router along with more advanced topics, such as custom hooks, state management, SSR, and Suspense. By the end of this course, you will be able to build performant, flexible, and intuitive user interfaces with SolidJS.
 
 **What you will learn:**
 
