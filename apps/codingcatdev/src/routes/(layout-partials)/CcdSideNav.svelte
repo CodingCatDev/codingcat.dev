@@ -22,8 +22,14 @@
 <section class={classesBase}>
 	<nav class="nav-list-nav">
 		<ul>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/`} class={classesActive('')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:click={onListItemClick}
+					on:keypress
+					href={`/`}
+					class={classesActive('')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">Home</span>
 				</a>
 			</li>
@@ -32,18 +38,36 @@
 	<hr />
 	<nav class="nav-list-nav">
 		<ul>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/courses`} class={classesActive('courses')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:click={onListItemClick}
+					on:keypress
+					href={`/courses`}
+					class={classesActive('courses')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">courses</span>
 				</a>
 			</li>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/podcasts`} class={classesActive('podcasts')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:click={onListItemClick}
+					on:keypress
+					href={`/podcasts`}
+					class={classesActive('podcasts')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">podcasts</span>
 				</a>
 			</li>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/blog`} class={classesActive('blog')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:click={onListItemClick}
+					on:keypress
+					href={`/blog`}
+					class={classesActive('blog')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">blog</span>
 				</a>
 			</li>
@@ -52,13 +76,21 @@
 	<hr />
 	<nav class="nav-list-nav">
 		<ul>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/sponsors`} class={classesActive('sponsors')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:click={onListItemClick}
+					on:keypress
+					href={`/sponsors`}
+					class={classesActive('sponsors')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">Sponsors</span>
 				</a>
 			</li>
-			<li on:click={onListItemClick} on:keypress>
+			<li>
 				<a
+					on:click={onListItemClick}
+					on:keypress
 					href={`/sponsorships`}
 					class={classesActive('sponsorships')}
 					data-sveltekit-preload-data="hover"
@@ -71,13 +103,23 @@
 	<hr />
 	<nav class="nav-list-nav">
 		<ul>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/guests`} class={classesActive('guests')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:click={onListItemClick}
+					href={`/guests`}
+					class={classesActive('guests')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">Guests</span>
 				</a>
 			</li>
-			<li on:click={onListItemClick} on:keypress>
-				<a href={`/authors`} class={classesActive('authors')} data-sveltekit-preload-data="hover">
+			<li>
+				<a
+					on:keypress
+					href={`/authors`}
+					class={classesActive('authors')}
+					data-sveltekit-preload-data="hover"
+				>
 					<span class="flex-auto text-3xl font-bold capitalize">Authors</span>
 				</a>
 			</li>
