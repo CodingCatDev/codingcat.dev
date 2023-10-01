@@ -39,9 +39,6 @@
 							<Icon src={ArrowRight} theme="mini" class="w-6" />
 						</button>
 					</div>
-					<div>
-						<p>Join 5,000+ students and level up your skills</p>
-					</div>
 					<!-- TODO: Replace with actual users -->
 					<div class="flex">
 						<div>
@@ -86,6 +83,9 @@
 								class="border-2 border-primary-500"
 							/>
 						</div>
+					</div>
+					<div>
+						<p>Join 5,000+ students and level up your skills</p>
 					</div>
 				</div>
 			</div>
