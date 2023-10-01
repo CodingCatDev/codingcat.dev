@@ -4,7 +4,7 @@
   "description": "Repo for all things codingcat.dev",
   "author": "Alex Patterson",
   "devDependencies": {
-    "turbo": "^1.6.3"
+    "turbo": "^1.10.14"
   },
   "scripts": {
     "dev": "turbo run dev",

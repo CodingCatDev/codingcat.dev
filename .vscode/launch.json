@@ -1,0 +1,28 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "CodingCat server",
+            "cwd": "${workspaceFolder}/apps/codingcatdev",
+			"request": "launch",
+			"runtimeArgs": ["run-script", "dev"],
+			"runtimeExecutable": "pnpm",
+			"skipFiles": ["<node_internals>/**"],
+			"type": "node",
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "CodingCat client",
+			"request": "launch",
+			"type": "chrome",
+			"url": "http://localhost:5173",
+			"webRoot": "${workspaceFolder}/apps/codingcatdev"
+		}
+	],
+	"compounds": [
+		{
+			"name": "CodingCat Full",
+			"configurations": ["CodingCat server", "CodingCat client"]
+		}
+	]
+}
