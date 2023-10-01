@@ -3,7 +3,6 @@ import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { fileURLToPath } from 'url';
 import { opendirSync } from "fs";
-import type { SvelteComponentTyped, ComponentType } from 'svelte';
 
 const LIMIT = 20;
 
