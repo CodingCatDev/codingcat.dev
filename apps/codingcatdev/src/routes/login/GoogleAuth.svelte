@@ -16,13 +16,11 @@
 	class="flex justify-center w-full"
 	method="POST"
 	{action}
-	use:enhance={async ({ action, cancel, controller, data, form }) => {
+	use:enhance={async () => {
 		await ccdSignInWithPopUp(provider);
 
-		return async ({ result, update }) => {
-			// `result` is an `ActionResult` object
+		return async ({ update }) => {
 			// `update` is a function which triggers the logic that would be triggered if this callback wasn't set
-
 			update();
 		};
 	}}
