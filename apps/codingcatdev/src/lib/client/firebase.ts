@@ -9,7 +9,7 @@ import { getAnalytics, type Analytics, logEvent, type AnalyticsCallOptions } fro
 
 import { env } from '$env/dynamic/public';
 
-const firebaseConfig = {
+export const firebaseConfig = {
 	apiKey: env.PUBLIC_FB_API_KEY,
 	authDomain: env.PUBLIC_FB_AUTH_DOMAIN,
 	projectId: env.PUBLIC_FB_PROJECT_ID,
@@ -43,6 +43,8 @@ if (!app &&
 	db = getFirestore(app);
 	functions = getFunctions(app);
 	analytics = getAnalytics(app);
+} else {
+	console.debug('Skipping Firebase Initialization, check firebaseconfig.')
 }
 
 /* AUTH */
@@ -84,6 +86,8 @@ export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
 					background: 'variant-filled-error'
 				})
 			}
+		} else {
+			console.error(err);
 		}
 	}
 }
@@ -130,5 +134,10 @@ export const analyticsLogPageView = async (eventParams?: {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any;
 }, options?: AnalyticsCallOptions) => {
-	logEvent(analytics, "page_view", eventParams, options)
+
+	if (firebaseConfig.apiKey) {
+		logEvent(analytics, "page_view", eventParams, options)
+	} else {
+		console.debug('Skipping Firebase Analytics, no key specified.')
+	}
 }
