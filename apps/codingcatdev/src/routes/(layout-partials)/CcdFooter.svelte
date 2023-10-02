@@ -5,9 +5,7 @@
 </script>
 
 <hr />
-<footer
-	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl"
->
+<footer class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 max-w-7xl">
 	<div class="flex flex-col gap-6 md:gap-10">
 		<section class="flex flex-col md:flex-row justify-between gap-8 md:space-y-0 items-center">
 			<p class="text-xs">

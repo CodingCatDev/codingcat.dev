@@ -22,7 +22,7 @@
 </div>
 
 <section
-	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl relative"
+	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 max-w-7xl relative"
 >
 	<div class="flex">
 		<div class="flex flex-col basis-1/12 relative">

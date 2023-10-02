@@ -11,7 +11,7 @@
 <div class=" bg-surface-800-100-token h-[800px]" />
 
 <section
-	class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl relative z-10"
+	class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative z-10"
 >
 	<div class="flex">
 		<div class="flex flex-col basis-1/12 relative">

@@ -8,16 +8,14 @@
 </script>
 
 <section class="bg-primary-200-700-token">
-	<div
-		class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl relative"
-	>
+	<div class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative">
 		<div class="flex">
 			<div class="flex flex-col basis-1/12 relative">
 				<GitLineGradient />
 				<CheckBadgeSvg />
 				<GitLineGradient rotate={true} />
 			</div>
-			<div class="basis-11/12 pl-4 sm:pl-2 py-48">
+			<div class="basis-11/12 pl-4 sm:pl-2 py-20 sm:py-48">
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-2/3 flex flex-col justify-center gap-8">
 						<div class="flex flex-col gap-4">
