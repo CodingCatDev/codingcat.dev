@@ -4,6 +4,7 @@
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 	import CheckBadgeSvg from './CheckBadgeSvg.svelte';
 	import ProSelect from './ProSelect.svelte';
+	import CheckOutArrow from '../(home-latest-course)/CheckOutArrow.svelte';
 </script>
 
 <section class="bg-primary-200-700-token">
@@ -16,10 +17,11 @@
 				<CheckBadgeSvg />
 				<GitLineGradient rotate={true} />
 			</div>
-			<div class="basis-11/12 pl-4 sm:pl-2 py-20">
+			<div class="basis-11/12 pl-4 sm:pl-2 py-48">
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-2/3 flex flex-col justify-center gap-8">
 						<div class="flex flex-col gap-4">
+							<div class="check-out-arrow"><CheckOutArrow /></div>
 							<h2>Subscribe for Premium Benefits</h2>
 							<p class="max-w-lg">
 								Are you ready to take your experience to the next level? Our premium plan unlocks
@@ -72,3 +74,22 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	@media (max-width: 1024px) {
+		.check-out-arrow {
+			display: none;
+		}
+	}
+	@media (min-width: 1024px) {
+		.check-out-arrow {
+			position: absolute;
+			transform: rotate(65deg) scale(1, -1);
+
+			width: 141px;
+			height: 343px;
+			right: 400px;
+			top: -60px;
+		}
+	}
+</style>
