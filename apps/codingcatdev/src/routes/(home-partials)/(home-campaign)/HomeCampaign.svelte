@@ -8,10 +8,23 @@
 	import StarSvg from './StarSvg.svelte';
 
 	import { Avatar } from '@codingcatdev/blackcatui';
+	import Block from './Block.svelte';
+	import Circle from './Circle.svelte';
+	import CatLooking from './CatLooking.svelte';
 </script>
 
+<!-- Absolutes -->
+<div class="hidden lg:block w-12 h-12 absolute text-primary-300 top-8">
+	<Block />
+</div>
+<div class="hidden lg:block w-12 h-12 absolute text-primary-500 top-64 right-0">
+	<Circle />
+</div>
+<div class="hidden lg:block w-72 h-72 absolute text-primary-600 top-[30rem] right-0">
+	<CatLooking />
+</div>
 <section
-	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl"
+	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl relative"
 >
 	<div class="flex">
 		<div class="flex flex-col basis-1/12 relative">
@@ -24,9 +37,9 @@
 		</div>
 		<div class="basis-11/12 pt-44 mt-44 pl-4 sm:pl-2 mb-40">
 			<div class="flex w-full justify-center">
-				<div class="max-w-lg flex flex-col gap-8 text-center items-center">
+				<div class="max-w-2xl flex flex-col gap-8 text-center items-center">
 					<div>
-						<h1>
+						<h1 class="sm:!text-6xl">
 							<span class="relative">
 								<div
 									class="absolute w-8 h-8 -top-3 -left-3 sm:w-12 sm:h-12 sm:-top-4 sm:-left-6 md:w-16 md:h-16 md:-top-6 md:-left-8 -z-10"
@@ -42,7 +55,7 @@
 						with projects to show off your new skills.
 					</div>
 					<div>
-						<button class="bcu-button gap-1 variant-filled">
+						<button class="bcu-button gap-1 variant-filled lg:text-3xl xl:text-4xl">
 							Start learning for <span class="uppercase">free</span>
 							<Icon src={ArrowRight} theme="mini" class="w-6" />
 						</button>

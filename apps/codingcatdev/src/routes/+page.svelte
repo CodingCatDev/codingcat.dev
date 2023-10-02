@@ -4,6 +4,8 @@
 	import HomeReviews from './(home-partials)/(home-reviews)/HomeReviews.svelte';
 </script>
 
-<HomeCampaign />
-<HomeReviews />
-<HomeLatestCourse />
+<div class="relative">
+	<HomeCampaign />
+	<HomeReviews />
+	<HomeLatestCourse />
+</div>
