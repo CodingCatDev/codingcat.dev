@@ -6,7 +6,7 @@
 <section class="relative">
 	<div class="absolute top-0 left-0 w-full -my-32">
 		<div
-			class="snap-x scroll-px-4 snap-mandatory scroll-smooth flex gap-4 overflow-x-auto py-10 justify-center"
+			class="snap-x scroll-px-4 snap-mandatory scroll-smooth flex gap-4 overflow-x-auto py-10 sm:justify-center"
 		>
 			<ReviewCard
 				position="left"

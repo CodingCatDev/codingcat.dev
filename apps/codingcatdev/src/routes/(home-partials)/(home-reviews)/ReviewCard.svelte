@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class={`bcu-card w-96 snap-center shrink-0 !text-surface-500 ${positionStyle} ${$$props.class}`}
+	class={`bcu-card max-w-xs sm:max-w-md snap-center shrink-0 !text-surface-500 ${positionStyle} ${$$props.class}`}
 >
 	<div class="p-4 space-y-4">
 		<div class="flex !text-primary-500">
