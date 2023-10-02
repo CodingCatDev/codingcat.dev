@@ -6,7 +6,7 @@
 	export let podcasts: Podcast[];
 </script>
 
-<section class="relative">
+<section class="bg-surface-800-100-token text-surface-100-800-token relative">
 	<div class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative">
 		<div class="flex">
 			<div class="flex flex-col basis-1/12 relative">

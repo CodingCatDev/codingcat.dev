@@ -4,7 +4,7 @@
 	import TeamSvg from './TeamSvg.svelte';
 </script>
 
-<section class="bg-surface-500-400-token text-on-surface-token">
+<section class="">
 	<div class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative">
 		<div class="flex">
 			<div class="flex flex-col basis-1/12 relative">
@@ -29,7 +29,7 @@
 				<!-- Authors -->
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-1/2 flex flex-col justify-center gap-8">
-						<a class="bcu-card variant-filled-surface p-8" href="/author/alex-patterson">
+						<a class="bcu-card variant-soft-surface p-8" href="/author/alex-patterson">
 							<div class="flex flex-col gap-8">
 								<div class="flex gap-8 justify-center items-center">
 									<Avatar
@@ -49,7 +49,7 @@
 						</a>
 					</div>
 					<div class="sm:basis-1/2 flex flex-col justify-center gap-8">
-						<a class="bcu-card variant-filled-surface p-8" href="/author/brittney-postma">
+						<a class="bcu-card variant-soft-surface p-8" href="/author/brittney-postma">
 							<div class="flex flex-col gap-8">
 								<div class="flex gap-8 justify-center items-center">
 									<Avatar
