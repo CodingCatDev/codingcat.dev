@@ -5,7 +5,9 @@
 </script>
 
 <hr />
-<footer class="md:mx-12 md:my-4 md:gap-16 flex justify-center md:p-8 p-2">
+<footer
+	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl"
+>
 	<div class="flex flex-col gap-6 md:gap-10">
 		<section class="flex flex-col md:flex-row justify-between gap-8 md:space-y-0 items-center">
 			<p class="text-xs">
@@ -72,9 +74,9 @@
 				action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
 				method="post"
 				target="popupwindow"
-				class="embeddable-buttondown-form flex flex-col flex-1"
+				class="embeddable-buttondown-form flex flex-col flex-1 space-y-3"
 			>
-				<label for="email" class="bcu-label">Email</label>
+				<label for="email" class="bcu-label"><h6>Email</h6></label>
 				<div class="flex gap-4 md:gap-8 flex-col md:flex-row">
 					<input type="email" name="email" placeholder="you@example.com" class="text-black input" />
 					<input type="hidden" value="1" name="embed" />
@@ -89,9 +91,3 @@
 		</section>
 	</div>
 </footer>
-
-<style lang="postcss">
-	a {
-		@apply !no-underline;
-	}
-</style>

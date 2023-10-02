@@ -24,11 +24,19 @@
 		</div>
 		<div class="basis-11/12 pt-44 mt-44 pl-4 sm:pl-2 mb-40">
 			<div class="flex w-full justify-center">
-				<div class="max-w-lg flex flex-col gap-8 text-center relative items-center">
-					<div class="absolute w-16 h-16 -top-8 -left-2 -z-10">
-						<StarSvg />
+				<div class="max-w-lg flex flex-col gap-8 text-center items-center">
+					<div>
+						<h1>
+							<span class="relative">
+								<div
+									class="absolute w-8 h-8 -top-3 -left-3 sm:w-12 sm:h-12 sm:-top-4 sm:-left-6 md:w-16 md:h-16 md:-top-6 md:-left-8 -z-10"
+								>
+									<StarSvg />
+								</div>
+								U</span
+							>nlock the power of Web Development
+						</h1>
 					</div>
-					<h1>Unlock the power of Web Development</h1>
 					<div class="p-8 text-xl">
 						Get the skills you need to become a better web developer today. High quality courses
 						with projects to show off your new skills.
@@ -40,47 +48,49 @@
 						</button>
 					</div>
 					<!-- TODO: Replace with actual users -->
-					<div class="flex">
+					<div
+						class="snap-x scroll-px-4 snap-mandatory scroll-smooth sm:flex gap-4 overflow-x-auto py-10 justify-center hidden"
+					>
 						<div>
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1682988242/main-codingcatdev-photo/podcast-guest/whitep4nth3r.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
-						<div class="-ml-8 z-10">
+						<div class="-ml-20 md:-ml-12 lg:-ml-8 z-10">
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1683058098/main-codingcatdev-photo/podcast-guest/guillermo-rauch.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
-						<div class="-ml-8 z-10">
+						<div class="-ml-20 md:-ml-12 lg:-ml-8 z-10">
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1683044362/main-codingcatdev-photo/podcast-guest/jlengstorf.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
-						<div class="-ml-8 z-10">
+						<div class="-ml-20 md:-ml-12 lg:-ml-8 z-10">
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1683042894/main-codingcatdev-photo/podcast-guest/jonmeyers_io.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
-						<div class="-ml-8 z-10">
+						<div class="-ml-20 md:-ml-12 lg:-ml-8 z-10">
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1683044101/main-codingcatdev-photo/podcast-guest/jeffdelaney23.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
-						<div class="-ml-8 z-10">
+						<div class="-ml-20 md:-ml-12 lg:-ml-8 z-10">
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1682991864/main-codingcatdev-photo/podcast-guest/cassidoo.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
-						<div class="-ml-8 z-10">
+						<div class="-ml-20 md:-ml-12 lg:-ml-8 z-10">
 							<Avatar
 								src="https://media.codingcat.dev/image/upload/v1683033670/main-codingcatdev-photo/podcast-guest/maxcell.jpg"
-								class="border-2 border-primary-500"
+								class="snap-center shrink-0 border-2 border-primary-500"
 							/>
 						</div>
 					</div>

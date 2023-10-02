@@ -14,10 +14,12 @@
 			<GitLineGradient />
 		</div>
 		<div class="basis-11/12 pt-44 pl-4 sm:pl-2 -mt-80">
-			<div class="max-w-6xl -mt-80 flex flex-col gap-24 text-surface-50-900-token relative">
+			<div
+				class="max-w-6xl -mt-80 flex flex-col gap-8 sm:gap-24 text-surface-50-900-token relative"
+			>
 				<div class="max-w-lg flex flex-col gap-8 text-center relative items-center mx-auto">
 					<h2>Svelte Front-to-Back</h2>
-					<p>
+					<p class="!text-lg sm:!text-xl">
 						Learn how to build performant full-stack web applications using the Svelte framework
 						from start to production
 					</p>
