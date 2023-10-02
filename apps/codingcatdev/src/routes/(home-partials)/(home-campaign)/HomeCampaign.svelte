@@ -43,7 +43,7 @@
 					<div class="flex">
 						<div>
 							<Avatar
-								src="https://media.codingcat.dev/image/upload/v1684688346/main-codingcatdev-photo/podcast-guest/james_r_perkins.jpg"
+								src="https://media.codingcat.dev/image/upload/v1682988242/main-codingcatdev-photo/podcast-guest/whitep4nth3r.jpg"
 								class="border-2 border-primary-500"
 							/>
 						</div>
@@ -73,13 +73,13 @@
 						</div>
 						<div class="-ml-8 z-10">
 							<Avatar
-								src="https://media.codingcat.dev/image/upload/v1645887998/main-codingcatdev-photo/authors/alex_headshot.png"
+								src="https://media.codingcat.dev/image/upload/v1682991864/main-codingcatdev-photo/podcast-guest/cassidoo.jpg"
 								class="border-2 border-primary-500"
 							/>
 						</div>
 						<div class="-ml-8 z-10">
 							<Avatar
-								src="https://media.codingcat.dev/image/upload/v1648041803/main-codingcatdev-photo/authors/brittney.jpg"
+								src="https://media.codingcat.dev/image/upload/v1683033670/main-codingcatdev-photo/podcast-guest/maxcell.jpg"
 								class="border-2 border-primary-500"
 							/>
 						</div>
