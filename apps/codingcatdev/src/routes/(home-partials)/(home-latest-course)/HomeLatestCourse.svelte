@@ -88,6 +88,8 @@
 								</article>
 							</div>
 						</div>
+					</div>
+					<div class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative">
 						<div class="flex sm:justify-end">
 							<a href="/course/svelte" class="bcu-button sm:bcu-button-xl variant-filled flex gap-1"
 								>Begin Course <Icon src={ArrowRight} theme="solid" class="w-6" />
