@@ -11,13 +11,12 @@
 	import Courses from '$lib/components/global/icons/nav/Courses.svelte';
 	import Podcasts from '$lib/components/global/icons/nav/Podcasts.svelte';
 
-	$: positionStyle =
-		position === 'left'
-			? '-rotate-2 !bg-primary-300 !text-primary-300-token'
-			: 'rotate-2 !bg-white !text-primary-300-token';
+	$: positionStyle = position === 'left' ? '-rotate-2 !bg-primary-300' : 'rotate-2 !bg-white';
 </script>
 
-<div class={`bcu-card w-96 snap-center shrink-0 ${positionStyle} ${$$props.class}`}>
+<div
+	class={`bcu-card w-96 snap-center shrink-0 !text-surface-500 ${positionStyle} ${$$props.class}`}
+>
 	<div class="p-4 space-y-4">
 		<div class="flex !text-primary-500">
 			{#each Array(stars) as star}

@@ -11,7 +11,7 @@
 </script>
 
 <section
-	class="grid justify-center grid-cols-1 p-8 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl"
+	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl"
 >
 	<div class="flex">
 		<div class="flex flex-col basis-1/12 relative">
@@ -22,7 +22,7 @@
 			<CodeSvg />
 			<GitLineGradient />
 		</div>
-		<div class="basis-11/12 pt-44 mt-44 pl-4 sm:pl-2">
+		<div class="basis-11/12 pt-44 mt-44 pl-4 sm:pl-2 mb-40">
 			<div class="flex w-full justify-center">
 				<div class="max-w-lg flex flex-col gap-8 text-center relative items-center">
 					<div class="absolute w-16 h-16 -top-8 -left-2 -z-10">

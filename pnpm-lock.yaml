@@ -51,6 +51,9 @@ importers:
       '@firebase/app-types':
         specifier: ~0.9.0
         version: 0.9.0
+      '@fontsource/shadows-into-light':
+        specifier: ^5.0.13
+        version: 5.0.13
       '@playwright/test':
         specifier: ^1.38.1
         version: 1.38.1
@@ -1999,6 +2002,10 @@ packages:
   /@floating-ui/utils@0.1.4:
     resolution: {integrity: sha512-qprfWkn82Iw821mcKofJ5Pk9wgioHicxcQMxx+5zt5GSKoqdWvgG5AxVmpmUUjzTLPVSH5auBrhI93Deayn/DA==}
     dev: false
+
+  /@fontsource/shadows-into-light@5.0.13:
+    resolution: {integrity: sha512-OcVZKL4nSMD2/dyk47hCn1QV9CzVt7wFk7GcILkhPdVYygoMsFEV1RVjYHOcA6vP1vaIvTd1lOxBmkbwub4I1Q==}
+    dev: true
 
   /@google-cloud/firestore@4.15.1:
     resolution: {integrity: sha512-2PWsCkEF1W02QbghSeRsNdYKN1qavrHBP3m72gPDMHQSYrGULOaTi7fSJquQmAtc4iPVB2/x6h80rdLHTATQtA==}

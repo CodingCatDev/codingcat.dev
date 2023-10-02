@@ -17,6 +17,7 @@
 		"@auth/sveltekit": "^0.3.7",
 		"@codingcatdev/blackcatui": "^0.1.0",
 		"@firebase/app-types": "~0.9.0",
+		"@fontsource/shadows-into-light": "^5.0.13",
 		"@playwright/test": "^1.38.1",
 		"@steeze-ui/heroicons": "^2.2.3",
 		"@steeze-ui/simple-icons": "^1.5.1",
