@@ -20,7 +20,7 @@
 			</div>
 			<div class="block h-[646px] flex-none" />
 			<CodeSvg />
-			<GitLineGradient />
+			<GitLineGradient rotate={true} />
 		</div>
 		<div class="basis-11/12 pt-44 mt-44 pl-4 sm:pl-2 mb-40">
 			<div class="flex w-full justify-center">

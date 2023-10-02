@@ -27,7 +27,7 @@
 				<div class="check-out-text">Check out our latest course!</div>
 				<div class="check-out-arrow"><CheckOutArrow /></div>
 				<div class="block">
-					<Video src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
+					<Video class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
 				</div>
 			</div>
 		</div>
