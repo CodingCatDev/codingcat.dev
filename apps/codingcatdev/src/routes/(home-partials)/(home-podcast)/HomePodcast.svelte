@@ -4,7 +4,6 @@
 	import PodcastCard from './PodcastCard.svelte';
 	import PodcastSvg from './PodcastSvg.svelte';
 	export let podcasts: Podcast[];
-	console.log(podcasts);
 </script>
 
 <section class="relative">
@@ -25,7 +24,9 @@
 						</p>
 					</div>
 					<div class="sm:basis-1/3 flex">
-						<a href="/podcasts" class="bcu-button variant-filled">View all episodes</a>
+						<a href="/podcasts" class="bcu-button variant-filled sm:bcu-button-xl"
+							>View all episodes</a
+						>
 					</div>
 				</div>
 			</div>
