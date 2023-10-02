@@ -10,7 +10,7 @@
 	import { Avatar } from '@codingcatdev/blackcatui';
 	import Block from './Block.svelte';
 	import Circle from './Circle.svelte';
-	import CatLooking from './CatLooking.svelte';
+	import AjPrimary from '$lib/components/global/icons/AJPrimary.svelte';
 </script>
 
 <!-- Absolutes -->
@@ -20,9 +20,7 @@
 <div class="hidden lg:block w-12 h-12 absolute text-primary-500 top-64 right-0">
 	<Circle />
 </div>
-<div class="hidden lg:block w-72 h-72 absolute text-primary-600 top-[30rem] right-0">
-	<CatLooking />
-</div>
+
 <section
 	class="grid justify-center grid-cols-1 px-8 pt-12 mx-auto gap-2 2xl:gap-10 2xl:min-h-768 max-w-7xl relative"
 >
@@ -30,6 +28,9 @@
 		<div class="flex flex-col basis-1/12 relative">
 			<div class="top-0 left-[calc(50%-14px)] h-[646px] absolute">
 				<LinesHero />
+				<div class="absolute text-primary-600 top-0 left-20 -z-10">
+					<AjPrimary cls="block w-48" />
+				</div>
 			</div>
 			<div class="block h-[646px] flex-none" />
 			<CodeSvg />
