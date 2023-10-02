@@ -1,5 +1,7 @@
 <script>
 	import Video from '$lib/components/content/Video.svelte';
+	import { ArrowRight, ArrowTopRightOnSquare } from '@steeze-ui/heroicons';
+	import { Icon } from '@steeze-ui/svelte-icon';
 	import CodeSvg from '../(home-campaign)/CodeSvg.svelte';
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 	import CheckOutArrow from './CheckOutArrow.svelte';
@@ -35,54 +37,68 @@
 				</div>
 
 				<!-- Lessons -->
-				<div
-					class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative py-8 sm:py-0"
-				>
-					<div class="hidden absolute w-full h-full sm:flex justify-center items-center -z-10">
-						<div class="bg-surface-800-100-token rounded-full h-24 w-24" />
-					</div>
-					<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-						<div class="p-4 space-y-4">
-							<div class="text-4xl font-bold text-primary-400-500-token">01</div>
-							<h2>What is Svelte?</h2>
-							<article>
-								<p>
-									Svelte is a modern JavaScript framework that is designed to be fast, simple, and
-									scalable.
-								</p>
-							</article>
+				<div class="flex flex-col gap-8">
+					<div
+						class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative py-8 sm:py-0"
+					>
+						<div class="hidden absolute w-full h-full sm:flex justify-center items-center -z-10">
+							<div class="bg-surface-800-100-token rounded-full h-24 w-24" />
 						</div>
-					</div>
-					<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-						<div class="p-4 space-y-4">
-							<div class="text-4xl font-bold text-primary-400-500-token">02</div>
-							<h2>Getting Started</h2>
-							<article>
-								<p>Explanation of Svelte vs. SvelteKit and other metaframeworks</p>
-							</article>
+						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+							<div class="p-4 space-y-4">
+								<div class="text-4xl font-bold text-primary-400-500-token">01</div>
+								<h2>What is Svelte?</h2>
+								<article>
+									<p>
+										Svelte is a modern JavaScript framework that is designed to be fast, simple, and
+										scalable.
+									</p>
+								</article>
+							</div>
 						</div>
-					</div>
-					<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-						<div class="p-4 space-y-4">
-							<div class="text-4xl font-bold text-primary-400-500-token">03</div>
+						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+							<div class="p-4 space-y-4">
+								<div class="text-4xl font-bold text-primary-400-500-token">02</div>
+								<h2>Getting Started</h2>
+								<article>
+									<p>Explanation of Svelte vs. SvelteKit and other metaframeworks</p>
+								</article>
+							</div>
+						</div>
+						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+							<div class="p-4 space-y-4">
+								<div class="text-4xl font-bold text-primary-400-500-token">03</div>
 
-							<h2>Starting To Code</h2>
-							<article>
-								<p>Setup VSCode and Get Started writing Svelte</p>
-							</article>
+								<h2>Starting To Code</h2>
+								<article>
+									<p>Setup VSCode and Get Started writing Svelte</p>
+								</article>
+							</div>
 						</div>
-					</div>
-					<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-						<div class="p-4 space-y-4">
-							<div class="text-4xl font-bold text-primary-400-500-token">04</div>
+						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+							<div class="p-4 space-y-4">
+								<div class="text-4xl font-bold text-primary-400-500-token">04</div>
 
-							<h2>Components and Props</h2>
-							<article>
-								<p>
-									Components are reusable pieces of code that can be used to build complex user
-									interfaces, props pass data within those components.
-								</p>
-							</article>
+								<h2>Components and Props</h2>
+								<article>
+									<p>
+										Components are reusable pieces of code that can be used to build complex user
+										interfaces, props pass data within those components.
+									</p>
+								</article>
+							</div>
+						</div>
+						<div class="flex sm:justify-end">
+							<a href="/course/svelte" class="bcu-button sm:bcu-button-xl variant-filled flex gap-1"
+								>Begin Course <Icon src={ArrowRight} theme="solid" class="w-6" />
+							</a>
+						</div>
+						<div class="flex sm:justify-start">
+							<a
+								href="/courses"
+								class="bcu-button sm:bcu-button-xl variant-ghost-surface !text-on-surface-token flex gap-1"
+								>Explore other Courses
+							</a>
 						</div>
 					</div>
 				</div>
