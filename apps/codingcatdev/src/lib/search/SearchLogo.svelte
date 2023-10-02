@@ -3,7 +3,6 @@
 	import Blog from '$lib/components/global/icons/nav/Blog.svelte';
 	import Courses from '$lib/components/global/icons/nav/Courses.svelte';
 	import Podcasts from '$lib/components/global/icons/nav/Podcasts.svelte';
-	import Tutorials from '$lib/components/global/icons/nav/Tutorials.svelte';
 	import { ContentType } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 
@@ -21,8 +20,6 @@
 				return { contentType, component: Courses };
 			case ContentType.podcast:
 				return { contentType, component: Podcasts };
-			case ContentType.tutorial:
-				return { contentType, component: Tutorials };
 			case ContentType.post:
 				return { contentType, component: Blog };
 			default:
