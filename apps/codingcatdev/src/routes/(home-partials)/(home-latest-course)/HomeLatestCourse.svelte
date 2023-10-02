@@ -19,7 +19,7 @@
 			<CoursesSvg />
 			<GitLineGradient rotate={true} />
 		</div>
-		<div class="basis-11/12 pt-44 pl-4 sm:pl-2 -mt-80">
+		<div class="basis-11/12 pt-44 pl-4 sm:pl-2 -mt-80 pb-8">
 			<div
 				class="max-w-6xl -mt-80 flex flex-col gap-8 sm:gap-24 text-surface-50-900-token relative"
 			>
@@ -91,14 +91,14 @@
 					</div>
 					<div class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative">
 						<div class="flex sm:justify-end">
-							<a href="/course/svelte" class="bcu-button sm:bcu-button-xl variant-filled flex gap-1"
+							<a href="/course/svelte" class="bcu-button md:bcu-button-xl variant-filled flex gap-1"
 								>Begin Course <Icon src={ArrowRight} theme="solid" class="w-6" />
 							</a>
 						</div>
 						<div class="flex sm:justify-start">
 							<a
 								href="/courses"
-								class="bcu-button sm:bcu-button-xl variant-ghost-surface !text-on-surface-token flex gap-1"
+								class="bcu-button md:bcu-button-xl variant-ghost-surface !text-on-surface-token flex gap-1"
 								>Explore other Courses
 							</a>
 						</div>

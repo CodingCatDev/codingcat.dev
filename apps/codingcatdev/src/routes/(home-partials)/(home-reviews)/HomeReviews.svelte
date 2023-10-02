@@ -58,3 +58,10 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	/* Scrollbars are ugly on horizontal */
+	.scroll-smooth::-webkit-scrollbar {
+		display: none;
+	}
+</style>

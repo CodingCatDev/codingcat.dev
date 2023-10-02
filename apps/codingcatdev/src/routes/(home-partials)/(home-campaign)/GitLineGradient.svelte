@@ -2,7 +2,7 @@
 	export let rotate = false;
 </script>
 
-<div class={`w-[3px] h-full rounded mx-auto ${rotate && 'rotate-180'}`} />
+<div class={`w-[3px] h-full  mx-auto ${rotate && 'rotate-180'}`} />
 
 <style>
 	div {
