@@ -6,108 +6,127 @@
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 	import CheckOutArrow from './CheckOutArrow.svelte';
 	import CoursesSvg from './CoursesSvg.svelte';
+	import { inView } from '$lib/actions/inView';
+	import { fade } from 'svelte/transition';
+
+	let videoVisible = false;
 </script>
 
 <div class=" bg-surface-800-100-token h-[800px]" />
 
-<section
-	class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative z-10"
->
-	<div class="flex">
-		<div class="flex flex-col basis-1/12 relative">
-			<GitLineGradient />
-			<CoursesSvg />
-			<GitLineGradient rotate={true} />
-		</div>
-		<div class="basis-11/12 pt-44 pl-4 sm:pl-2 -mt-80 pb-8">
-			<div
-				class="max-w-6xl -mt-80 flex flex-col gap-8 sm:gap-24 text-surface-50-900-token relative"
-			>
-				<div class="max-w-lg flex flex-col gap-8 text-center relative items-center mx-auto">
-					<h2>Svelte Front-to-Back</h2>
-					<p class="!text-lg sm:!text-xl">
-						Learn how to build performant full-stack web applications using the Svelte framework
-						from start to production
-					</p>
-				</div>
-				<div class="check-out-text">Check out our latest course!</div>
-				<div class="check-out-arrow"><CheckOutArrow /></div>
-				<div class="block">
-					<Video class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
-				</div>
-
-				<!-- Lessons -->
-				<div class="flex flex-col gap-8">
-					<div
-						class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative py-8 sm:py-0"
-					>
-						<div class="hidden absolute w-full h-full sm:flex justify-center items-center -z-10">
-							<div class="bg-surface-800-100-token rounded-full h-24 w-24" />
-						</div>
-						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-							<div class="p-4 space-y-4">
-								<div class="text-4xl font-bold text-primary-400-500-token">01</div>
-								<h2>What is Svelte?</h2>
-								<article>
-									<p>
-										Svelte is a modern JavaScript framework that is designed to be fast, simple, and
-										scalable.
-									</p>
-								</article>
-							</div>
-						</div>
-						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-							<div class="p-4 space-y-4">
-								<div class="text-4xl font-bold text-primary-400-500-token">02</div>
-								<h2>Getting Started</h2>
-								<article>
-									<p>Explanation of Svelte vs. SvelteKit and other metaframeworks</p>
-								</article>
-							</div>
-						</div>
-						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-							<div class="p-4 space-y-4">
-								<div class="text-4xl font-bold text-primary-400-500-token">03</div>
-
-								<h2>Starting To Code</h2>
-								<article>
-									<p>Setup VSCode and Get Started writing Svelte</p>
-								</article>
-							</div>
-						</div>
-						<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-							<div class="p-4 space-y-4">
-								<div class="text-4xl font-bold text-primary-400-500-token">04</div>
-
-								<h2>Components and Props</h2>
-								<article>
-									<p>
-										Components are reusable pieces of code that can be used to build complex user
-										interfaces, props pass data within those components.
-									</p>
-								</article>
-							</div>
-						</div>
+<div>
+	<section
+		class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative z-10"
+	>
+		<div class="flex">
+			<div class="flex flex-col basis-1/12 relative">
+				<GitLineGradient />
+				<CoursesSvg />
+				<GitLineGradient rotate={true} />
+			</div>
+			<div class="basis-11/12 pt-44 pl-4 sm:pl-2 -mt-80 pb-8">
+				<div
+					class="max-w-6xl -mt-80 flex flex-col gap-8 sm:gap-24 text-surface-50-900-token relative"
+				>
+					<div class="max-w-lg flex flex-col gap-8 text-center relative items-center mx-auto">
+						<h2>Svelte Front-to-Back</h2>
+						<p class="!text-lg sm:!text-xl">
+							Learn how to build performant full-stack web applications using the Svelte framework
+							from start to production
+						</p>
 					</div>
-					<div class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative">
-						<div class="flex sm:justify-end">
-							<a href="/course/svelte" class="bcu-button md:bcu-button-xl variant-filled flex gap-1"
-								>Begin Course <Icon src={ArrowRight} theme="solid" class="w-6" />
-							</a>
+					{#if videoVisible}
+						<div class="check-out-text" in:fade={{ delay: 300, duration: 300 }} out:fade>
+							Check out our latest course!
 						</div>
-						<div class="flex sm:justify-start">
-							<a
-								href="/courses"
-								class="bcu-button md:bcu-button-xl variant-ghost-surface !text-on-surface-token flex gap-1"
-								>Explore other Courses
-							</a>
+						<div class="check-out-arrow" in:fade={{ delay: 400, duration: 300 }} out:fade>
+							<CheckOutArrow />
+						</div>
+					{/if}
+					<div
+						class="block"
+						use:inView
+						on:enter={() => (videoVisible = true)}
+						on:exit={() => (videoVisible = false)}
+					>
+						<Video class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
+					</div>
+
+					<!-- Lessons -->
+					<div class="flex flex-col gap-8">
+						<div
+							class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative py-8 sm:py-0"
+						>
+							<div class="hidden absolute w-full h-full sm:flex justify-center items-center -z-10">
+								<div class="bg-surface-800-100-token rounded-full h-24 w-24" />
+							</div>
+							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+								<div class="p-4 space-y-4">
+									<div class="text-4xl font-bold text-primary-400-500-token">01</div>
+									<h2>What is Svelte?</h2>
+									<article>
+										<p>
+											Svelte is a modern JavaScript framework that is designed to be fast, simple,
+											and scalable.
+										</p>
+									</article>
+								</div>
+							</div>
+							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+								<div class="p-4 space-y-4">
+									<div class="text-4xl font-bold text-primary-400-500-token">02</div>
+									<h2>Getting Started</h2>
+									<article>
+										<p>Explanation of Svelte vs. SvelteKit and other metaframeworks</p>
+									</article>
+								</div>
+							</div>
+							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+								<div class="p-4 space-y-4">
+									<div class="text-4xl font-bold text-primary-400-500-token">03</div>
+
+									<h2>Starting To Code</h2>
+									<article>
+										<p>Setup VSCode and Get Started writing Svelte</p>
+									</article>
+								</div>
+							</div>
+							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
+								<div class="p-4 space-y-4">
+									<div class="text-4xl font-bold text-primary-400-500-token">04</div>
+
+									<h2>Components and Props</h2>
+									<article>
+										<p>
+											Components are reusable pieces of code that can be used to build complex user
+											interfaces, props pass data within those components.
+										</p>
+									</article>
+								</div>
+							</div>
+						</div>
+						<div class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative">
+							<div class="flex sm:justify-end">
+								<a
+									href="/course/svelte"
+									class="bcu-button md:bcu-button-xl variant-filled flex gap-1"
+									>Begin Course <Icon src={ArrowRight} theme="solid" class="w-6" />
+								</a>
+							</div>
+							<div class="flex sm:justify-start">
+								<a
+									href="/courses"
+									class="bcu-button md:bcu-button-xl variant-ghost-surface !text-on-surface-token flex gap-1"
+									>Explore other Courses
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
+</div>
 
 <style>
 	@media (max-width: 390px) {
