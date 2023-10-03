@@ -1,6 +1,6 @@
 ---
 type: author
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/codercatdev'
+cover: 'https://media.codingcat.dev/image/upload/v1654730163/main-codingcatdev-photo/headshots/Alex-Patterson-2022.jpg'
 name: Alex Patterson
 published: published
 slug: alex-patterson

@@ -31,7 +31,7 @@
 					<div class="sm:basis-1/2 flex flex-col justify-center gap-8">
 						<a class="bcu-card variant-soft-surface p-8" href="/author/alex-patterson">
 							<div class="flex flex-col gap-8">
-								<div class="flex gap-8 justify-center items-center">
+								<div class="flex flex-col sm:flex-row gap-8 justify-center items-center">
 									<Avatar
 										src="https://media.codingcat.dev/image/upload/c_thumb,g_face,w_200,h_200/main-codingcatdev-photo/headshots/Alex-Patterson-2022.jpg"
 										class="shrink-0"
@@ -51,7 +51,7 @@
 					<div class="sm:basis-1/2 flex flex-col justify-center gap-8">
 						<a class="bcu-card variant-soft-surface p-8" href="/author/brittney-postma">
 							<div class="flex flex-col gap-8">
-								<div class="flex gap-8 justify-center items-center">
+								<div class="flex flex-col sm:flex-row gap-8 justify-center items-center">
 									<Avatar
 										src="https://media.codingcat.dev/image/upload/c_thumb,g_face,w_200,h_200/main-codingcatdev-photo/headshots/brittney.jpg"
 										class="shrink-0"

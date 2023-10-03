@@ -32,7 +32,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="absolute top-64 left-0 w-full">
+	<div class="absolute top-64 left-0 w-full z-10">
 		<div
 			class="snap-x scroll-px-4 snap-mandatory scroll-smooth flex gap-4 overflow-x-auto overflow-y-hidden py-10 sm:justify-center"
 		>
