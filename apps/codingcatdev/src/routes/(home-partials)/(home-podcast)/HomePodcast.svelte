@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { inView } from '$lib/actions/inView';
 	import type { Podcast } from '$lib/types';
+	import { fly } from 'svelte/transition';
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 	import PodcastCard from './PodcastCard.svelte';
 	import PodcastSvg from './PodcastSvg.svelte';
 	export let podcasts: Podcast[];
+	let visible = false;
 </script>
 
 <section class="bg-surface-800-100-token text-surface-100-800-token relative">
@@ -14,7 +17,12 @@
 				<PodcastSvg />
 				<GitLineGradient rotate={true} />
 			</div>
-			<div class="basis-11/12 pl-4 sm:pl-2 pt-8 sm:pt-20 pb-96 lg:mb-72">
+			<div
+				class="basis-11/12 pl-4 sm:pl-2 pt-8 sm:pt-20 pb-96 lg:mb-72"
+				use:inView
+				on:enter={() => (visible = true)}
+				on:exit={() => (visible = false)}
+			>
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-2/3 flex flex-col justify-center gap-8">
 						<h2>CodingCat.dev Podcast</h2>
@@ -37,7 +45,15 @@
 			class="snap-x scroll-px-4 snap-mandatory scroll-smooth flex gap-4 overflow-x-auto overflow-y-hidden py-10 sm:justify-center"
 		>
 			{#each podcasts as content, i}
-				<PodcastCard position={i % 2 ? 'left' : 'right'} {content} />
+				{#if visible}
+					<div
+						class="flex flex-none"
+						in:fly={{ x: 200, delay: 300 * (i + 1), duration: 300 }}
+						out:fly
+					>
+						<PodcastCard position={i % 2 ? 'left' : 'right'} {content} />
+					</div>
+				{/if}
 			{/each}
 		</div>
 	</div>
