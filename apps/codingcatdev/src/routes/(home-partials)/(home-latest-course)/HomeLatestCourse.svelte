@@ -7,11 +7,13 @@
 	import CheckOutArrow from './CheckOutArrow.svelte';
 	import CoursesSvg from './CoursesSvg.svelte';
 	import { inView } from '$lib/actions/inView';
-	import { fade } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 
 	let videoVisible = false;
+	let courseLessons = false;
 </script>
 
+<!-- TODO: Pull Latest from Repo -->
 <div class=" bg-surface-800-100-token h-[800px]" />
 
 <div>
@@ -49,61 +51,84 @@
 						on:enter={() => (videoVisible = true)}
 						on:exit={() => (videoVisible = false)}
 					>
-						<Video class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
+						<div class="relative aspect-video">
+							{#if videoVisible}
+								<div in:fade={{ delay: 500, duration: 300 }}>
+									<Video class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
+								</div>
+							{/if}
+						</div>
 					</div>
 
 					<!-- Lessons -->
 					<div class="flex flex-col gap-8">
 						<div
 							class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative py-8 sm:py-0"
+							use:inView={{ bottom: 100 }}
+							on:enter={() => (courseLessons = true)}
+							on:exit={() => (courseLessons = false)}
 						>
 							<div class="hidden absolute w-full h-full sm:flex justify-center items-center -z-10">
 								<div class="bg-surface-800-100-token rounded-full h-24 w-24" />
 							</div>
-							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-								<div class="p-4 space-y-4">
-									<div class="text-4xl font-bold text-primary-400-500-token">01</div>
-									<h2>What is Svelte?</h2>
-									<article>
-										<p>
-											Svelte is a modern JavaScript framework that is designed to be fast, simple,
-											and scalable.
-										</p>
-									</article>
+							{#if courseLessons}
+								<div
+									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									in:fly={{ x: -200, y: -200, delay: 500, duration: 400 }}
+								>
+									<div class="p-4 space-y-4">
+										<div class="text-4xl font-bold text-primary-400-500-token">01</div>
+										<h2>What is Svelte?</h2>
+										<article>
+											<p>
+												Svelte is a modern JavaScript framework that is designed to be fast, simple,
+												and scalable.
+											</p>
+										</article>
+									</div>
 								</div>
-							</div>
-							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-								<div class="p-4 space-y-4">
-									<div class="text-4xl font-bold text-primary-400-500-token">02</div>
-									<h2>Getting Started</h2>
-									<article>
-										<p>Explanation of Svelte vs. SvelteKit and other metaframeworks</p>
-									</article>
+								<div
+									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									in:fly={{ x: 200, y: -200, delay: 500, duration: 400 }}
+								>
+									<div class="p-4 space-y-4">
+										<div class="text-4xl font-bold text-primary-400-500-token">02</div>
+										<h2>Getting Started</h2>
+										<article>
+											<p>Explanation of Svelte vs. SvelteKit and other metaframeworks</p>
+										</article>
+									</div>
 								</div>
-							</div>
-							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-								<div class="p-4 space-y-4">
-									<div class="text-4xl font-bold text-primary-400-500-token">03</div>
+								<div
+									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									in:fly={{ x: -200, y: 200, delay: 500, duration: 400 }}
+								>
+									<div class="p-4 space-y-4">
+										<div class="text-4xl font-bold text-primary-400-500-token">03</div>
 
-									<h2>Starting To Code</h2>
-									<article>
-										<p>Setup VSCode and Get Started writing Svelte</p>
-									</article>
+										<h2>Starting To Code</h2>
+										<article>
+											<p>Setup VSCode and Get Started writing Svelte</p>
+										</article>
+									</div>
 								</div>
-							</div>
-							<div class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token">
-								<div class="p-4 space-y-4">
-									<div class="text-4xl font-bold text-primary-400-500-token">04</div>
+								<div
+									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									in:fly={{ x: 200, y: 200, delay: 500, duration: 400 }}
+								>
+									<div class="p-4 space-y-4">
+										<div class="text-4xl font-bold text-primary-400-500-token">04</div>
 
-									<h2>Components and Props</h2>
-									<article>
-										<p>
-											Components are reusable pieces of code that can be used to build complex user
-											interfaces, props pass data within those components.
-										</p>
-									</article>
+										<h2>Components and Props</h2>
+										<article>
+											<p>
+												Components are reusable pieces of code that can be used to build complex
+												user interfaces, props pass data within those components.
+											</p>
+										</article>
+									</div>
 								</div>
-							</div>
+							{/if}
 						</div>
 						<div class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative">
 							<div class="flex sm:justify-end">

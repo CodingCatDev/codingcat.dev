@@ -17,7 +17,7 @@
 			<div
 				class="snap-x scroll-px-4 snap-mandatory scroll-smooth flex gap-4 overflow-x-auto py-10 sm:justify-center"
 			>
-				<div in:fly={{ x: 200, delay: 300, duration: 300 }} out:fly>
+				<div class="flex-none" in:fly={{ x: 200, delay: 300, duration: 300 }}>
 					<ReviewCard
 						position="left"
 						stars={5}
@@ -26,7 +26,7 @@
 						icon={ContentType.course}
 					/>
 				</div>
-				<div in:fly={{ x: 200, delay: 400, duration: 300 }} out:fly>
+				<div class="flex-none" in:fly={{ x: 200, delay: 400, duration: 300 }}>
 					<ReviewCard
 						position="right"
 						stars={5}
@@ -38,7 +38,7 @@
 						icon={ContentType.podcast}
 					/>
 				</div>
-				<div in:fly={{ x: 200, delay: 500, duration: 300 }} out:fly>
+				<div class="flex-none" in:fly={{ x: 200, delay: 500, duration: 300 }}>
 					<ReviewCard
 						position="left"
 						stars={5}
@@ -50,7 +50,7 @@
 						icon={ContentType.course}
 					/>
 				</div>
-				<div in:fly={{ x: 200, delay: 600, duration: 300 }} out:fly>
+				<div class="flex-none" in:fly={{ x: 200, delay: 600, duration: 300 }}>
 					<ReviewCard
 						position="right"
 						stars={5}
@@ -62,7 +62,7 @@
 						icon={ContentType.podcast}
 					/>
 				</div>
-				<div in:fly={{ x: 200, delay: 700, duration: 300 }} out:fly>
+				<div class="flex-none" in:fly={{ x: 200, delay: 700, duration: 300 }}>
 					<ReviewCard
 						position="left"
 						stars={5}
