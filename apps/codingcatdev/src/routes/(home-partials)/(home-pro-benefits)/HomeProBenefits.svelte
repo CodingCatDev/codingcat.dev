@@ -5,6 +5,9 @@
 	import CheckBadgeSvg from './CheckBadgeSvg.svelte';
 	import ProSelect from './ProSelect.svelte';
 	import CheckOutArrow from '../(home-latest-course)/CheckOutArrow.svelte';
+	import { inView } from '$lib/actions/inView';
+	import { fade } from 'svelte/transition';
+	let priceVisible = false;
 </script>
 
 <section class="bg-primary-200-700-token">
@@ -19,7 +22,14 @@
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-2/3 flex flex-col justify-center gap-8">
 						<div class="flex flex-col gap-4">
-							<div class="check-out-arrow"><CheckOutArrow /></div>
+							{#if priceVisible}
+								<div class="check-out-text" in:fade={{ delay: 300, duration: 300 }} out:fade>
+									Subscribe today!
+								</div>
+								<div class="check-out-arrow" in:fade={{ delay: 300, duration: 300 }} out:fade>
+									<CheckOutArrow />
+								</div>
+							{/if}
 							<h2>Subscribe for Premium Benefits</h2>
 							<p class="max-w-lg">
 								Are you ready to take your experience to the next level? Our premium plan unlocks
@@ -64,7 +74,12 @@
 							</div>
 						</div>
 					</div>
-					<div class="sm:basis-1/3 flex">
+					<div
+						class="sm:basis-1/3 flex"
+						use:inView
+						on:enter={() => (priceVisible = true)}
+						on:exit={() => (priceVisible = false)}
+					>
 						<ProSelect />
 					</div>
 				</div>
@@ -78,8 +93,28 @@
 		.check-out-arrow {
 			display: none;
 		}
+		.check-out-text {
+			display: none;
+		}
 	}
 	@media (min-width: 1024px) {
+		.check-out-text {
+			position: absolute;
+
+			width: 144px;
+			height: 166px;
+			right: 650px;
+			top: 66px;
+
+			font-family: 'Shadows Into Light';
+			font-style: normal;
+			font-weight: 400;
+			font-size: 64px;
+			line-height: 130.14%;
+			text-align: center;
+
+			transform: rotate(-20deg);
+		}
 		.check-out-arrow {
 			position: absolute;
 			transform: rotate(65deg) scale(1, -1);
