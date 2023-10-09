@@ -10,7 +10,6 @@ import { env as privateEnv } from '$env/dynamic/private';
 
 export let app = getApps().at(0);
 
-let auth: Auth;
 let db: Firestore;
 
 if (!app && publicEnv.PUBLIC_FB_PROJECT_ID && privateEnv.PRIVATE_FB_CLIENT_EMAIL && privateEnv.PRIVATE_FB_PRIVATE_KEY) {
@@ -22,7 +21,6 @@ if (!app && publicEnv.PUBLIC_FB_PROJECT_ID && privateEnv.PRIVATE_FB_CLIENT_EMAIL
         })
     });
 
-    auth = getAuth(app);
     db = getFirestore(app);
 }
 
@@ -31,7 +29,7 @@ if (!app && publicEnv.PUBLIC_FB_PROJECT_ID && privateEnv.PRIVATE_FB_CLIENT_EMAIL
 export const ccdCreateSessionCookie = async (idToken: string) => {
     // Set session expiration to 5 days.
     const expiresIn = 60 * 60 * 24 * 5 * 1000;
-
+    const auth = getAuth(app);
     const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
     // Set cookie policy for session cookie.
     const options = { maxAge: expiresIn, httpOnly: true, secure: true };
@@ -44,10 +42,12 @@ export const ccdCreateSessionCookie = async (idToken: string) => {
 };
 
 export const ccdValidateSessionCookie = async (session: string) => {
+    const auth = getAuth(app);
     return await auth.verifySessionCookie(session, true);
 }
 
 export const validateStripeRole = async (uid: string) => {
+    const auth = getAuth(app);
     const user = await auth.getUser(uid);
     return user.customClaims?.['stripeRole']
 }

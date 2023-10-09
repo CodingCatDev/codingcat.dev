@@ -16,6 +16,29 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Creating
 devto: https://dev.to/codingcatdev/151-creating-opportunities-with-girl-develop-it-nff
 excerpt: We sit down with Katie Franco, Executive Director of Girl Develop It. We dive into how they support woman and non-binary people in the development space.
 hashnode: https://hashnode.codingcat.dev/podcast-1-51-creating-opportunities-with-girl-develop-it
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Mosaic Multicolor 3D print',
+      site: 'https://www.mosaicmfg.com/products/palette-3'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'GDI - MOVING FORWARD',
+      site: 'https://girldevelopit.com/blog/gdi-moving-forward/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The Witcher',
+      site: 'https://www.netflix.com/title/80189685'
+    },
+    {
+      author: 'katie-franco',
+      name: 'Brené Brown’s Atlas of the Heart: Mapping Meaningful Connection and the Language of Human Experience',
+      site: 'https://www.amazon.com/dp/B097416CTT?ref=ks_us_g_133656745320_kwd-1535427052052_a2'
+    }
+  ]
 slug: 1-51-creating-opportunities-with-girl-develop-it
 spotify: https://open.spotify.com/episode/14RH66CndHxPWtv2Og5Tha?si=LOR6ep4GRvaqE6Hos6gQEQ
 start: December 22, 2021

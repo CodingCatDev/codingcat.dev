@@ -16,6 +16,34 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/QuickNod
 devto: https://dev.to/codingcatdev/230-quicknode-builds-infrastructure-for-the-future-4e7k
 excerpt: We sit down with Anthony Campolo (ajcwebdev) to talk about Web3 and working with QuickNode.
 hashnode: https://hashnode.codingcat.dev/podcast-quicknode-builds-infrastructure-for-the-future
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Svelvet - Build interactive, node-based UIs and diagrams in Svelte',
+      site: 'https://svelvet.io/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Adventure With Google',
+      site: 'https://adventure.withgoogle.com/io/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Ergonomic Foot Pad',
+      site: 'https://www.amazon.com/gp/product/B08KGV6GFZ/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'State of CSS Google IO',
+      site: 'https://www.youtube.com/watch?v=Xy9ZXRRgpLk'
+    },
+    {
+      author: 'anthony-campolo',
+      name: 'Bo Burnham: The Inside Outtakes',
+      site: 'https://www.youtube.com/watch?v=5XWEVoI40sE'
+    }
+  ]
 slug: quicknode-builds-infrastructure-for-the-future
 sponsors:
   - storyblok

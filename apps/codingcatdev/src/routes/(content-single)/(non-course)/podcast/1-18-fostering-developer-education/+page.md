@@ -16,6 +16,35 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/pjkucvrz
 devto: https://dev.to/codingcatdev/1-18-fostering-developer-education-140i
 excerpt: We sit down with Lauren Lee (LoLoCoding) to talk about fostering developer education. We review how Lauren switched from being a teacher to become the Director of Community at Puppet
 hashnode: https://hashnode.codingcat.dev/podcast-1-18-fostering-developer-education
+picks:
+  [
+    { author: 'alex-patterson', name: 'A better way to Gather', site: 'https://gather.town/' },
+    {
+      author: 'alex-patterson',
+      name: '🥜 goober, a less than 1KB 🎉 css-in-js alternative with a familiar API',
+      site: 'https://github.com/cristianbote/gooberd'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'CSS Generators List, Smashing Magazine',
+      site: 'https://www.smashingmagazine.com/2021/03/css-generators/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Frixion Erasable Pens - scroll down on page to view this area',
+      site: 'https://a.co/d/3MuKYEf'
+    },
+    {
+      author: 'lauren-lee',
+      name: "Mary Thengvall's book The Business Value of Developer Relations: How and Why Technical Communities Are Key To Your Success",
+      site: 'https://www.marythengvall.com/devrelbook'
+    },
+    {
+      author: 'lauren-lee',
+      name: 'Ada Developers Academy',
+      site: 'https://adadevelopersacademy.org/'
+    }
+  ]
 slug: 1-18-fostering-developer-education
 spotify: https://open.spotify.com/episode/6XqoodfrFs0zhRkp38nJx3?si=0tScuRpISXWyei0hs0FU1Q
 start: April 28, 2021
@@ -30,5 +59,5 @@ youtube: https://www.youtube.com/watch?v=-WmDZM9kdHA
    - Was it easier because of their mission to provide women and gender diverse individuals the skills they need?
 3. How hard was it to get that first job with Amazon on the Kindle Team?
 4. Were you able to pull from a lot of the skills you learned from teaching and leading as a department chair when you tool the role of Technical Product Manager at GoDaddy?
-5. **What made you want to become a developer educator?**
+5. What made you want to become a developer educator?
 6. Was it hard to transition from writing content to managing others writing the content?

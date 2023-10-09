@@ -1,7 +1,6 @@
 ---
 type: podcast
 authors:
-  - alex-patterson
   - brittney-postma
 episode: 47
 recording_date: October 27, 2022 2:15 PM

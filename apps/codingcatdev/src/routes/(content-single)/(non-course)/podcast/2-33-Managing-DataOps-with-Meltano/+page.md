@@ -16,6 +16,30 @@ cover: https://media.codingcat.dev/image/upload/v1655745847/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/233-managing-dataops-with-meltano-2p48
 excerpt: You have heard of DevOps, but what about DataOps? Douwe explains what this is all about and how Meltano solves hard to create data solutions for your infrastructure.
 hashnode: https://hashnode.codingcat.dev/podcast-2-33-Managing-DataOps-with-Meltano
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Svelteness KitDocs',
+      site: 'https://github.com/svelteness/kit-docs'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Connect to Snowflake with Node.js Driver',
+      site: 'https://dbaontap.com/2018/05/11/connect-snowflake-node-js-driver/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Origins',
+      site: 'https://www.youtube.com/watch?v=kMlkCYL9qo0'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Peanut butter & mayo sandwich, just add bananas',
+      site: 'https://twitter.com/BrittneyPostma/status/1534265885233389569'
+    },
+    { author: 'douwe-maan', name: 'Tailscale', site: 'https://tailscale.com/' }
+  ]
 slug: 2-33-Managing-DataOps-with-Meltano
 sponsors:
   - storyblok

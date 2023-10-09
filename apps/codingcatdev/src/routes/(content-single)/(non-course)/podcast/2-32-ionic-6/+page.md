@@ -16,6 +16,22 @@ cover: https://media.codingcat.dev/image/upload/v1655831789/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/232-ionic-6-2pe9
 excerpt: Mike tells us all about himself and starting at Ionic. Mike gives us a full demo of Ionic 6 and the new components.
 hashnode: https://hashnode.codingcat.dev/podcast-2-32-ionic-6
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Angular v14',
+      site: 'https://blog.angular.io/angular-v14-is-now-available-391a6db736af'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Operator Lookup Search Operators by Josh Comeau',
+      site: 'https://www.joshwcomeau.com/operator-lookup/'
+    },
+    { author: 'brittney-postma', name: 'Synergy', site: 'https://symless.com/synergy' },
+    { author: 'brittney-postma', name: 'React Summit', site: 'https://reactsummit.com/' },
+    { author: 'mike-hartington', name: 'Shorsey', site: 'https://www.imdb.com/title/tt18249282/' }
+  ]
 slug: 2-32-ionic-6
 sponsors:
   - storyblok

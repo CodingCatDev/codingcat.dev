@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 27
 recording_date: April 20, 2021 3:30 PM
 season: 1
@@ -16,6 +15,21 @@ excerpt: If you are looking for a simple yet powerful way to create a newsletter
 guests:
   - justin-duke
 hashnode: https://hashnode.codingcat.dev/podcast-1-27-producing-newsletters-with-buttondown
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Cassidy Williams Newsletter',
+      site: 'https://buttondown.email/cassidoo'
+    },
+    { author: 'alex-patterson', name: 'Sport Energy Gels', site: 'https://a.co/d/512vyUs' },
+    { author: 'justin-duke', name: 'Celeste', site: 'https://www.celestegame.com/' },
+    {
+      author: 'justin-duke',
+      name: 'Life and Death of Great American Cities',
+      site: 'https://bookshop.org/books/the-death-and-life-of-great-american-cities-9780679741954/9780679741954'
+    }
+  ]
 slug: 1-27-producing-newsletters-with-buttondown
 spotify: https://open.spotify.com/episode/27SydrPSZEZW0HvYfqkp5Z?si=tZu0yJrERc2hcTBQUlSCJA
 start: June 23, 2021

@@ -16,6 +16,31 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/ggdj4h0v
 devto: https://dev.to/codingcatdev/141-making-tasty-courses-for-web-developers-4bn3
 excerpt: We sit down with Wes Bos from Syntax.fm to talk about how he got started in web development, how to create courses, and how to get paid for your hard work.
 hashnode: https://hashnode.codingcat.dev/podcast-1-41-making-tasty-courses-for-web-developers
+picks:
+  [
+    { author: 'alex-patterson', name: 'Wheel of Names', site: 'https://wheelofnames.com/' },
+    {
+      author: 'alex-patterson',
+      name: 'Beginner JavaScript',
+      site: 'https://beginnerjavascript.com/'
+    },
+    { author: 'alex-patterson', name: 'Apple Event', site: 'https://www.apple.com/apple-events/' },
+    {
+      author: 'brittney-postma',
+      name: 'JavaScript 30 - 30 Day Vanilla JavaScript Coding Challenge',
+      site: 'https://javascript30.com/'
+    },
+    {
+      author: 'brittney-postma',
+      name: "Handmaid's Tale",
+      site: 'https://www.hulu.com/series/the-handmaids-tale-565d8976-9d26-4e63-866c-40f8a137ce5f'
+    },
+    {
+      author: 'wes-bos',
+      name: 'Wes had a home made wallet',
+      site: 'https://wonderfuldiy.com/diy-wallets/'
+    }
+  ]
 slug: 1-41-making-tasty-courses-for-web-developers
 spotify: https://open.spotify.com/episode/3safF02gCSwJUR88YVsgjB?si=oi8cFvMlQdeet3S4G306Zg
 start: October 20, 2021
@@ -39,6 +64,6 @@ youtube: https://www.youtube.com/watch?v=k8qUYodgLf8
 8. You usually create a few courses each year, do you ever consider the monthly model like Scott?
    1. Can you get more in depth in your course model and take more time to explain concepts?
 
-## Additional Links
+## Links
 
 [http://jqueryfordesigners.com/](http://jqueryfordesigners.com/)

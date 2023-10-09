@@ -16,6 +16,30 @@ excerpt: Swyx walks us through how to use http://temporal.io/ to link all of you
 guests:
   - swyx
 hashnode: https://hashnode.codingcat.dev/podcast-2-21-linking-your-microservices-with-workflows
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'The Wonder Years',
+      site: 'https://www.disneyplus.com/series/the-wonder-years/1c7ZvkdOhTaT'
+    },
+    { author: 'alex-patterson', name: 'devtools.fm', site: 'https://devtools.fm/' },
+    {
+      author: 'brittney-postma',
+      name: 'Swyx - Why Temporal',
+      site: 'https://www.swyx.io/why-temporal/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'GitHub CoPilot',
+      site: 'https://github.com/features/copilot'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Build Svelte in 3D',
+      site: 'https://www.youtube.com/watch?v=7PJ_28fgLp8'
+    }
+  ]
 slug: 2-21-linking-your-microservices-with-workflows
 sponsors:
   - builder-io

@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 36
 guests:
   - tim-neutkens
@@ -16,6 +15,11 @@ cover: https://media.codingcat.dev/image/upload/v1632186883/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/1-36-reviewing-next-js-11-features-with-tim-neutkens-3hoi
 excerpt: We sit down with Tim to talk about how he got started with Next.js and what things are upcoming in Next.js 11.
 hashnode: https://hashnode.codingcat.dev/podcast-1-36-reviewing-nextjs-features-with-tim-neutkens
+picks:
+  [
+    { author: 'alex-patterson', name: 'Builder.io Spaces', site: 'https://builder.io/spaces' },
+    { author: 'tim-neutkens', name: 'Lee Robinson', site: 'https://leerob.io/' }
+  ]
 slug: 1-36-reviewing-nextjs-features-with-tim-neutkens
 spotify: https://open.spotify.com/episode/5f7NgscE9NfrDusvHGhhG3?si=YadoDC8YQwO49XWpmlhbkA
 start: September 15, 2021
@@ -23,7 +27,7 @@ title: Reviewing Next.js 11 features with Tim Neutkens
 youtube: https://www.youtube.com/watch?v=S3NokxTVs7Y
 ---
 
-### Questions
+## Questions
 
 1. How did you get started on Next.js**?**
 2. Have you always been a fan of React?
@@ -43,11 +47,11 @@ youtube: https://www.youtube.com/watch?v=S3NokxTVs7Y
     2. On Demand revalidation
 11. Next.js Live - [https://nextjs.org/live](https://nextjs.org/live)
 
-## Additional Links
+## Links
 
-- Next.js - [https://github.com/vercel/next.js](https://github.com/vercel/next.js)
-- MDX - [https://github.com/mdx-js/mdx](https://github.com/mdx-js/mdx)
-- Micro - [https://github.com/vercel/micro](https://github.com/vercel/micro)
-- ncc - [https://github.com/vercel/ncc](https://github.com/vercel/ncc)
-- Tim Neutkens @ Vercel - [https://vercel.com/about/timneutkens](https://vercel.com/about/timneutkens)
-- Chrome Introducing Aurora - [https://web.dev/introducing-aurora/](https://web.dev/introducing-aurora/)
+- [Next.js](https://github.com/vercel/next.js)
+- [MDX](https://github.com/mdx-js/mdx)
+- [Micro - Asynchronous HTTP microservices](https://github.com/vercel/micro)
+- [ncc - Simple CLI for compiling a Node.js module into a single file](https://github.com/vercel/ncc)
+- [Tim Neutkens @ Vercel](https://vercel.com/about/timneutkens)
+- [Chrome Introducing Aurora](https://web.dev/introducing-aurora/)
