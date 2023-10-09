@@ -3,7 +3,6 @@ import type { Content, Course } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { fileURLToPath } from 'url';
 import { opendirSync } from "fs";
-import type { SvelteComponentTyped, ComponentType } from 'svelte';
 
 const LIMIT = 20;
 
@@ -47,7 +46,7 @@ export const getContentTypePath = async <T>(contentType: ContentType, path: stri
 }
 
 export const parseContentType = (async <T>(path: string, render = false) => {
-	const { metadata, default: page } = await import(path);
+	const { metadata, default: page } = await import(/* @vite-ignore */ path);
 	const frontmatter = metadata;
 
 	// TODO: Add more checks?

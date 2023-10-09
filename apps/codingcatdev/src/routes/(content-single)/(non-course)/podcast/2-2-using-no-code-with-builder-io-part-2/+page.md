@@ -16,6 +16,20 @@ cover: https://media.codingcat.dev/image/upload/v1641337525/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/22-using-no-code-with-builderio-part-2-38ch
 excerpt: Alex and Brittney sit down with Steve Sewell, Co-Founder and CEO of http://builder.io/, to understand how http://builder.io/ is different from other no-code solutions.
 hashnode: https://hashnode.codingcat.dev/podcast-using-no-code-with-builder-io-part-2
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Builder.io Open Source',
+      site: 'https://www.builder.io/c/docs/developers'
+    },
+    { author: 'alex-patterson', name: 'Builder.io Ideas', site: 'https://ideas.builder.io/' },
+    {
+      author: 'brittney-postma',
+      name: 'Emily in Paris',
+      site: 'https://www.netflix.com/title/81037371'
+    }
+  ]
 slug: using-no-code-with-builder-io-part-2
 sponsors:
   - builder-io

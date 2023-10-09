@@ -158,7 +158,7 @@ ${post.content}
       const response = await createPublicationStory(input);
       console.log(
         'createPublicationStory result:',
-        JSON.stringify(response?.data)
+        JSON.stringify(response)
       );
 
       const hashnodeSlug =

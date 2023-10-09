@@ -18,6 +18,31 @@ excerpt: We sit down to learn more about Adam Argyle and his new project Open Pr
 guests:
   - adam-argyle
 hashnode: https://hashnode.codingcat.dev/podcast-2-6-open-props-an-open-source-css-props-library
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Qwik and Partytown Live',
+      site: 'https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Spider Man Far From Home',
+      site: 'https://en.wikipedia.org/wiki/Spider-Man:_Far_From_Home'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The CSS Podcast',
+      site: 'https://thecsspodcast.libsyn.com/'
+    },
+    {
+      author: 'brittney-postma',
+      name: "Swyx's Sitdown - Adam Argyle: Complexity Cliffs, DX, and the Disruption of Web Design",
+      site: 'https://www.youtube.com/watch?v=xEyJ6LY7DKI'
+    },
+    { author: 'adam-argyle', name: 'Learn CSS on web.dev', site: 'https://web.dev/learnCSS' },
+    { author: 'adam-argyle', name: 'GUI Challenges', site: 'https://a.nerdy.dev/gui-challenges' }
+  ]
 slug: 2-6-open-props-an-open-source-css-props-library
 sponsors:
   - builder-io

@@ -7,7 +7,12 @@ slug: brad-garropy
 start: January 1, 2000
 picks: https://www.notion.so/TC-Helicon-GoXLR-c06339f126c4463aa38a3cdddff78d36
 socials:
+  discord: https://bradgarropy.com/discord
+  github: https://github.com/bradgarropy
   twitter: 'https://twitter.com/bradgarropy'
+  twitch: https://twitch.tv/bradgarropy
+  youtube: https://youtube.com/bradgarropy
+
 websites:
   - 'https://bradgarropy.com/'
 ---

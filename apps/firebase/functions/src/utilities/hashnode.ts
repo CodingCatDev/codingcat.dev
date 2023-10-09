@@ -28,7 +28,12 @@ export const createPublicationStory = async (input: any) => {
     }
       `,
     variables: {
-      input,
+      input: {
+        isPartOfPublication: {
+          "publicationId": hashnodePublicationId,
+        },
+        ...input,
+      },
     },
   };
   console.log('calling mutation with: ', data);

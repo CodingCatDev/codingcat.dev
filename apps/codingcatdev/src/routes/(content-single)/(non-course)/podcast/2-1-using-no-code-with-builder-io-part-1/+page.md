@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 1
 guests:
   - steve-sewell
@@ -15,6 +14,25 @@ cover: https://media.codingcat.dev/image/upload/v1641337525/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/21-using-no-code-with-builderio-part-1-2fji
 excerpt: In this first part Alex sits down with Steve Sewell to understand how http://builder.io/ is different from other no-code solutions.
 hashnode: https://hashnode.codingcat.dev/podcast-using-no-code-with-builder-io-part-1
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Colby Fayock Cloudinary Builder',
+      site: 'https://cloudinary-transform-designer.netlify.app/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Dune',
+      site: 'https://en.wikipedia.org/wiki/Dune_(2021_film)'
+    },
+    { author: 'steve-sewell', name: 'Growth Design', site: 'https://growth.design/' },
+    {
+      author: 'steve-sewell',
+      name: 'High-speed personalization with Next.js',
+      site: 'https://www.youtube.com/watch?v=zRWZK1wIiao'
+    }
+  ]
 slug: using-no-code-with-builder-io-part-1
 sponsors:
   - builder-io

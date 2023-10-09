@@ -16,6 +16,30 @@ cover: https://media.codingcat.dev/image/upload/v1645564709/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/29-getting-graphiql-with-wordpress-41a9
 excerpt: Jason Bahl joins us to talk about an amazing product he created that lets WordPress become headless with a GraphQL
 hashnode: https://hashnode.codingcat.dev/podcast-2-9-getting-graphiql-with-wordpress
+picks:
+  [
+    { author: 'alex-patterson', name: 'Flutter UI builder', site: 'https://flutterflow.io' },
+    {
+      author: 'alex-patterson',
+      name: 'Remotely Interesting',
+      site: 'https://podcasts.apple.com/us/podcast/remotely-interesting/id1530314876'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Ecommerce on the Jamstack with Snipcart, Next.js, & WordPress',
+      site: 'https://leveluptutorials.com/tutorials/ecommerce-on-the-jamstack-with-snipcart-next-js-and-wordpress/nextjs/?ref=brittneypostma'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Procreate Snow globe',
+      site: 'https://twitter.com/BrittneyPostma/status/1471275815681802248?s=20'
+    },
+    {
+      author: 'jason-bahl',
+      name: 'Local by Flywheel',
+      site: 'https://getflywheel.com/design-and-wordpress-resources/toolbox/local-by-flywheel/'
+    }
+  ]
 slug: 2-9-getting-graphiql-with-wordpress
 sponsors:
   - builder-io

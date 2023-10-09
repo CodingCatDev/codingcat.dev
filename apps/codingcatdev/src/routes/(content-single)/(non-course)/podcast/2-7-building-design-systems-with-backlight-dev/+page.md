@@ -16,6 +16,35 @@ cover: https://media.codingcat.dev/image/upload/v1645562669/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/27-building-design-systems-with-backlightdev-nad
 excerpt: We sit down with m4dz, developer advocate from the <div>RIOTS team. We talk all about the Backlight.dev design system.
 hashnode: https://hashnode.codingcat.dev/podcast-2-7-building-design-systems-with-backlight-dev
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Will Smith Audio Book',
+      site: 'https://www.audible.com/pd/Will-Audiobook/0593146239'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Figma Complex Component Architecture',
+      site: 'https://youtu.be/e1Q2dyZ3cRE'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Build Your Own Design System - Learn with Jason',
+      site: 'https://www.learnwithjason.dev/build-your-own-design-system'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Building Design Systems in SvelteKit',
+      site: 'https://www.youtube.com/watch?time_continue=189&v=3bjVQJwF6O8&feature=emb_title'
+    },
+    {
+      author: 'm4dz',
+      name: 'How I Met Your Mother',
+      site: 'https://www.imdb.com/title/tt0460649/'
+    },
+    { author: 'm4dz', name: 'Open Props', site: 'https://open-props.style/' }
+  ]
 slug: 2-7-building-design-systems-with-backlight-dev
 sponsors:
   - builder-io

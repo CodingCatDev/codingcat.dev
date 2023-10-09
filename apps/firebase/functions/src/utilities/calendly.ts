@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { calendlyAccessToken } from '../config/config';
 const calendlyApi = `https://api.calendly.com`;
 
