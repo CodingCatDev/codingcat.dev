@@ -3,6 +3,7 @@
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 
 	let subscription = 1;
+	export let login = false;
 </script>
 
 <div class="bcu-card bg-gradient-to-b from-surface-700 to-primary-500 p-8 shadow-lg lg:w-full">
@@ -27,12 +28,21 @@
 			{/if}
 		</div>
 	</section>
-	<footer class="bcu-card-footer text-surface-100-800-token">
-		<div class="flex flex-col items-center gap-8">
-			<a href="/terms-of-use" class="!text-surface-100-800-token">Terms & Conditions</a>
-			<a href="/login?redirectTo=/dashboard" class="bcu-button variant-filled-surface w-full"
-				>Let's do it!</a
-			>
-		</div>
-	</footer>
+	{#if login}
+		<footer class="bcu-card-footer text-surface-100-800-token">
+			<div class="flex flex-col items-center gap-8">
+				<a href="/terms-of-use" class="!text-surface-100-800-token">Terms & Conditions</a>
+				<p>Login Above to Get Started</p>
+			</div>
+		</footer>
+	{:else}
+		<footer class="bcu-card-footer text-surface-100-800-token">
+			<div class="flex flex-col items-center gap-8">
+				<a href="/terms-of-use" class="!text-surface-100-800-token">Terms & Conditions</a>
+				<a href="/login?redirectTo=/dashboard" class="bcu-button variant-filled-surface w-full"
+					>Let's do it!</a
+				>
+			</div>
+		</footer>
+	{/if}
 </div>

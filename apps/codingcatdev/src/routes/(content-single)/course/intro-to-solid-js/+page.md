@@ -5,7 +5,7 @@ authors:
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1684518966/main-codingcatdev-photo/courses/solidjs-intro/SolidJSCourse.png
 excerpt: 'In this course, you will learn everything you need to know to build user interfaces with SolidJS.'
-published: draft
+published: published
 slug: intro-to-solid-js
 section: Intro
 start: May 19, 2023 11:15 AM

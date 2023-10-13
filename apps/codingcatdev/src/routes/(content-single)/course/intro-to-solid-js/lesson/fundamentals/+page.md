@@ -4,7 +4,7 @@ authors:
   - anthony-campolo
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1684519320/main-codingcatdev-photo/courses/solidjs-intro/fundamentals.png
-published: draft
+published: published
 section: Getting Started
 title: Fundamentals
 weight: 1
@@ -44,24 +44,24 @@ Also make sure that `type` is set to `module` in `package.json`.
 
 ```json
 {
-  "name": "into-to-solid",
-  "description": "An example SolidJS application using Solid Router and Vite",
-  "type": "module",
-  "keywords": [ "SolidJS" ],
-  "author": "Anthony Campolo",
-  "license": "MIT",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
-  },
-  "devDependencies": {
-    "@solidjs/meta": "^0.28.0",
-    "@solidjs/router": "^0.4.3",
-    "solid-js": "^1.5.5",
-    "vite": "^3.1.3",
-    "vite-plugin-solid": "^2.3.6"
-  }
+	"name": "into-to-solid",
+	"description": "An example SolidJS application using Solid Router and Vite",
+	"type": "module",
+	"keywords": ["SolidJS"],
+	"author": "Anthony Campolo",
+	"license": "MIT",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"serve": "vite preview"
+	},
+	"devDependencies": {
+		"@solidjs/meta": "^0.28.0",
+		"@solidjs/router": "^0.4.3",
+		"solid-js": "^1.5.5",
+		"vite": "^3.1.3",
+		"vite-plugin-solid": "^2.3.6"
+	}
 }
 ```
 
@@ -71,17 +71,17 @@ Create a `vite.config.js` file.
 echo > vite.config.js
 ```
 
-Vite works with multiple frameworks that use different syntaxes and file types like React, Vue, and Svelte. Vite will know what to expect and how to handle different frameworks through plugins in its configuration file. 
+Vite works with multiple frameworks that use different syntaxes and file types like React, Vue, and Svelte. Vite will know what to expect and how to handle different frameworks through plugins in its configuration file.
 
 ```js
 // vite.config.js
 
-import { defineConfig } from 'vite'
-import solidPlugin from 'vite-plugin-solid'
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
 
 export default defineConfig({
-  plugins: [solidPlugin()]
-})
+	plugins: [solidPlugin()]
+});
 ```
 
 Here we have defined our Vite configuration with the Solid Plugin. It is imported as `solidPlugin` from `vite-plugin-solid` and added to the `plugins` array inside Vite's `defineConfig` helper.
@@ -99,20 +99,20 @@ The root Solid component will be imported as an ESM module from `/src/root.jsx` 
 ```html
 <!-- index.html -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <title>A First Look at Solid</title>
-  </head>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<title>A First Look at Solid</title>
+	</head>
 
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <script src="/src/root.jsx" type="module"></script>
-  </body>
+	<body>
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root"></div>
+		<script src="/src/root.jsx" type="module"></script>
+	</body>
 </html>
 ```
 
@@ -136,22 +136,20 @@ The root `render` function takes two arguments:
 // src/root.jsx
 
 /* @refresh reload */
-import { render } from 'solid-js/web'
+import { render } from 'solid-js/web';
 
 function App() {
-  return (
-    <div>
-      <header>
-        <h1>A First Look at Solid</h1>
-        <a href="<https://github.com/solidjs/solid>">
-          Learn Solid
-        </a>
-      </header>
-    </div>
-  )
+	return (
+		<div>
+			<header>
+				<h1>A First Look at Solid</h1>
+				<a href="<https://github.com/solidjs/solid>">Learn Solid</a>
+			</header>
+		</div>
+	);
 }
 
-render(() => <App />, document.getElementById('root'))
+render(() => <App />, document.getElementById('root'));
 ```
 
 Here, the `App` component is the top-level component for the application where your main application logic resides. `document.getElementById('root')` is the DOM node that the application will be mounted to.

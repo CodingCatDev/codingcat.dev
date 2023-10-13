@@ -5,7 +5,7 @@ authors:
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1689262234/main-codingcatdev-photo/courses/solidjs-intro/deployment.png
 locked: locked
-published: draft
+published: published
 slug: deployment
 title: Deployment
 weight: 3

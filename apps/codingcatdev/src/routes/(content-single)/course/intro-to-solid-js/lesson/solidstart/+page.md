@@ -5,7 +5,7 @@ authors:
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1689262234/main-codingcatdev-photo/courses/solidjs-intro/solidstart.png
 locked: locked
-published: draft
+published: published
 slug: solidstart
 section: SolidStart
 title: SolidStart
@@ -18,11 +18,11 @@ Change your `dev`, `build`, and `start` scripts to use the `solid-start` command
 
 ```json
 {
-  "scripts": {
-    "dev": "solid-start dev",
-    "build": "solid-start build",
-    "start": "solid-start start"
-  }
+	"scripts": {
+		"dev": "solid-start dev",
+		"build": "solid-start build",
+		"start": "solid-start start"
+	}
 }
 ```
 
@@ -33,14 +33,14 @@ In `vite.config.js`, remove the `solidPlugin` from `vite-plugin-solid` and repla
 ```jsx
 // vite.config.js
 
-import { defineConfig } from 'vite'
-import solid from 'solid-start/vite'
+import { defineConfig } from 'vite';
+import solid from 'solid-start/vite';
 // import solidPlugin from "vite-plugin-solid"
 
 export default defineConfig({
-  plugins: [solid()]
-  // plugins: [solidPlugin()]
-})
+	plugins: [solid()]
+	// plugins: [solidPlugin()]
+});
 ```
 
 ### Client and Server Entry
@@ -57,11 +57,9 @@ echo > src/entry-server.jsx
 ```jsx
 // src/entry-client.jsx
 
-import { mount, StartClient } from 'solid-start/entry-client'
+import { mount, StartClient } from 'solid-start/entry-client';
 
-mount(
-  () => <StartClient />, document
-)
+mount(() => <StartClient />, document);
 ```
 
 `entry-server.jsx` is where your app starts on the server. `<StartServer event={event} />` wraps our application root and also includes `Context` providers for routing and meta data. It accepts an `event` and passes it to the `renderAsync(codeFn, options)` middleware which then calls Solid's `renderToStringAsync` under the hood to asynchronously render the application. This responds when the page has been fully loaded and rendered.
@@ -69,13 +67,9 @@ mount(
 ```jsx
 // src/entry-server.jsx
 
-import {
-  StartServer, createHandler, renderAsync
-} from 'solid-start/entry-server'
+import { StartServer, createHandler, renderAsync } from 'solid-start/entry-server';
 
-export default createHandler(
-  renderAsync((event) => <StartServer event={event} />)
-)
+export default createHandler(renderAsync((event) => <StartServer event={event} />));
 ```
 
 All `Suspense` and data loading on initial load happens on the server. `Event` objects that originate from our underlying runtime are passed with a `PageEvent` object containing the following information:
@@ -98,31 +92,29 @@ Notably, it provides a space for defining `<Routes>`, positioning `<ErrorBoundar
 // src/root.jsx
 
 // @refresh reload
-import { Suspense } from 'solid-js'
-import {
-  Body, ErrorBoundary, FileRoutes, Head, Html, Meta, Routes, Scripts
-} from 'solid-start'
-import './root.css'
+import { Suspense } from 'solid-js';
+import { Body, ErrorBoundary, FileRoutes, Head, Html, Meta, Routes, Scripts } from 'solid-start';
+import './root.css';
 
 export default function Root() {
-  return (
-    <Html lang="en">
-      <Head>
-        <Meta charset="utf-8" />
-        <Meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      <Body>
-        <ErrorBoundary>
-          <Suspense>
-            <Routes>
-              <FileRoutes />
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-        <Scripts />
-      </Body>
-    </Html>
-  )
+	return (
+		<Html lang="en">
+			<Head>
+				<Meta charset="utf-8" />
+				<Meta name="viewport" content="width=device-width, initial-scale=1" />
+			</Head>
+			<Body>
+				<ErrorBoundary>
+					<Suspense>
+						<Routes>
+							<FileRoutes />
+						</Routes>
+					</Suspense>
+				</ErrorBoundary>
+				<Scripts />
+			</Body>
+		</Html>
+	);
 }
 ```
 
@@ -165,15 +157,17 @@ Return to `vite.config.js` and import `netlify` from `solid-start-netlify`. Set 
 ```jsx
 // vite.config.js
 
-import { defineConfig } from 'vite'
-import solid from 'solid-start/vite'
-import netlify from 'solid-start-netlify'
+import { defineConfig } from 'vite';
+import solid from 'solid-start/vite';
+import netlify from 'solid-start-netlify';
 
 export default defineConfig({
-  plugins: [solid({
-    adapter: netlify({ edge: true })
-  })]
-})
+	plugins: [
+		solid({
+			adapter: netlify({ edge: true })
+		})
+	]
+});
 ```
 
 Push your new changes to GitHub and your Netlify website should rebuild and update automatically.

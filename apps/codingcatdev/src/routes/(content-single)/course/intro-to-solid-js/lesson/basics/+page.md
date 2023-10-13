@@ -5,7 +5,7 @@ authors:
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1684519320/main-codingcatdev-photo/courses/solidjs-intro/basics.png
 locked: locked
-published: draft
+published: published
 section: Basics
 slug: basics
 title: Solid Basics
@@ -33,16 +33,16 @@ Create and export an `App` component that displays a header and link to the Soli
 // src/routes/index.jsx
 
 export default function App() {
-  return (
-    <div class="App">
-      <header class="header">
-        <h1>A First Look at Solid</h1>
-        <a class="link" href="https://github.com/solidjs">
-          Learn Solid
-        </a>
-      </header>
-    </div>
-  )
+	return (
+		<div class="App">
+			<header class="header">
+				<h1>A First Look at Solid</h1>
+				<a class="link" href="https://github.com/solidjs">
+					Learn Solid
+				</a>
+			</header>
+		</div>
+	);
 }
 ```
 
@@ -60,28 +60,28 @@ Include the following styling in that file:
 /* src/root.css */
 
 body {
-  margin: 0;
-  font-family: system-ui;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	font-family: system-ui;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .App {
-  text-align: center;
+	text-align: center;
 }
 
 .header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+	background-color: #282c34;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: white;
 }
 
 .link {
-  color: #b318f0;
+	color: #b318f0;
 }
 ```
 
@@ -91,14 +91,11 @@ Import the `App` component into `root.jsx` file.
 // src/root.jsx
 
 /* @refresh reload */
-import { render } from 'solid-js/web'
-import App from './routes/index'
-import './root.css'
+import { render } from 'solid-js/web';
+import App from './routes/index';
+import './root.css';
 
-render(
-  () => <App />,
-  document.getElementById('root')
-)
+render(() => <App />, document.getElementById('root'));
 ```
 
 ![A page showing A First Look at Solid text](https://media.codingcat.dev/image/upload/v1684519512/main-codingcatdev-photo/courses/solidjs-intro/02-solid-home-page-with-styling.png)
@@ -118,17 +115,17 @@ A Component is a function that accepts a `props` object and returns JSX elements
 // src/components/Counter.jsx
 
 const BasicComponent = (props) => {
-  const value = () => props.value || 'default'
-  return <div>{value}</div>
-}
+	const value = () => props.value || 'default';
+	return <div>{value}</div>;
+};
 
 export default function Counter() {
-  return (
-    <div>
-      <BasicComponent value={value()} />
-      <input type="text" oninput={(e) => setValue(e.currentTarget.value)} />
-    </div>
-  )
+	return (
+		<div>
+			<BasicComponent value={value()} />
+			<input type="text" oninput={(e) => setValue(e.currentTarget.value)} />
+		</div>
+	);
 }
 ```
 
@@ -145,16 +142,16 @@ The `createSignal` function takes an `initialValue` as its first argument and re
 ```jsx
 // src/components/Counter.jsx
 
-import { createSignal } from 'solid-js'
+import { createSignal } from 'solid-js';
 
-const initialValue = 0
+const initialValue = 0;
 
 export default function Counter() {
-  const [getValue, setValue] = createSignal(initialValue)
-  console.log(getValue())
-  // getValue() == 0
+	const [getValue, setValue] = createSignal(initialValue);
+	console.log(getValue());
+	// getValue() == 0
 
-  return <div>Value: {getValue()}</div>
+	return <div>Value: {getValue()}</div>;
 }
 ```
 
@@ -163,20 +160,20 @@ Import the `Counter` component to `src/routes/index.jsx` and return `<Counter />
 ```jsx
 // src/routes/index.jsx
 
-import Counter from '../components/Counter'
+import Counter from '../components/Counter';
 
 export default function App() {
-  return (
-    <div class="App">
-      <header class="header">
-        <h1>A First Look at Solid</h1>
-        <a class="link" href="https://github.com/solidjs">
-          Learn Solid
-        </a>
-        <Counter />
-      </header>
-    </div>
-  )
+	return (
+		<div class="App">
+			<header class="header">
+				<h1>A First Look at Solid</h1>
+				<a class="link" href="https://github.com/solidjs">
+					Learn Solid
+				</a>
+				<Counter />
+			</header>
+		</div>
+	);
 }
 ```
 
@@ -185,21 +182,17 @@ This modifies the state directly by running `getValue` as a function. But your c
 ```jsx
 // src/components/Counter.jsx
 
-import { createSignal } from 'solid-js'
+import { createSignal } from 'solid-js';
 
-const initialValue = 0
-const newValue = 1
+const initialValue = 0;
+const newValue = 1;
 
 export default function Counter() {
-	const [getValue, setValue] = createSignal(initialValue)
-	setValue(newValue)
-	console.log(getValue()) // getValue() == 1
+	const [getValue, setValue] = createSignal(initialValue);
+	setValue(newValue);
+	console.log(getValue()); // getValue() == 1
 
-	return (
-    <>
-      Value: {getValue()}
-    </>
-  )
+	return <>Value: {getValue()}</>;
 }
 ```
 
@@ -212,21 +205,19 @@ An **[Effect](https://www.solidjs.com/tutorial/introduction_effects)** is an exa
 ```jsx
 // src/components/Counter.jsx
 
-import { createSignal, createEffect } from 'solid-js'
+import { createSignal, createEffect } from 'solid-js';
 
 export default function Counter() {
-  const [count, setCount] = createSignal(0)
-  createEffect(() => count())
+	const [count, setCount] = createSignal(0);
+	createEffect(() => count());
 
-  return (
-    <>
-      <button onClick={() => setCount(count() + 1)}>
-        Click Me
-      </button>
+	return (
+		<>
+			<button onClick={() => setCount(count() + 1)}>Click Me</button>
 
-      <div>The count is now: {count()}</div>
-    </>
-  )
+			<div>The count is now: {count()}</div>
+		</>
+	);
 }
 ```
 
@@ -250,21 +241,20 @@ echo > src/components/Users.jsx
 ```jsx
 // src/components/Users.jsx
 
-import { createResource } from 'solid-js'
+import { createResource } from 'solid-js';
 
-const fetchUser = async () => (
-  await fetch(`https://jsonplaceholder.typicode.com/users?_limit=5`)
-).json()
+const fetchUser = async () =>
+	(await fetch(`https://jsonplaceholder.typicode.com/users?_limit=5`)).json();
 
 export default function Users() {
-  const [user] = createResource(fetchUser)
+	const [user] = createResource(fetchUser);
 
-  return (
-    <div>
-      <span>{user.loading && 'Loading...'}</span>
-      <pre>{JSON.stringify(user(), null, 2)}</pre>
-    </div>
-  )
+	return (
+		<div>
+			<span>{user.loading && 'Loading...'}</span>
+			<pre>{JSON.stringify(user(), null, 2)}</pre>
+		</div>
+	);
 }
 ```
 
@@ -273,22 +263,20 @@ This demonstrates the first way of using `createResource` since it involves pass
 ```jsx
 // src/routes/index.jsx
 
-import Counter from '../components/Counter'
-import Users from '../components/Users'
+import Counter from '../components/Counter';
+import Users from '../components/Users';
 
 export default function App() {
-  return (
-    <div class="App">
-      <header class="header">
-        <h1>A First Look at Solid</h1>
-        <a href="https://github.com/solidjs">
-          Learn Solid
-        </a>
-        <Counter />
-        <Users />
-      </header>
-    </div>
-  )
+	return (
+		<div class="App">
+			<header class="header">
+				<h1>A First Look at Solid</h1>
+				<a href="https://github.com/solidjs">Learn Solid</a>
+				<Counter />
+				<Users />
+			</header>
+		</div>
+	);
 }
 ```
 
