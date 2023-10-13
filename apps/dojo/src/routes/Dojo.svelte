@@ -51,16 +51,16 @@
 				druid.left();
 				break;
 			case 'ArrowRight':
-				console.log('move right');
+				console.debug('move right');
 				druid.right();
 				break;
 			case 'ArrowUp':
-				console.log('move up');
+				console.debug('move up');
 				druid.up();
 
 				break;
 			case 'ArrowDown':
-				console.log('move down');
+				console.debug('move down');
 				druid.down();
 
 				break;
