@@ -54,15 +54,14 @@ While Solid can be used with popular styling libraries or framework like [Tailwi
 echo > src/root.css
 ```
 
-Include the following CSS in that file:
+Include the following styling in that file:
 
 ```css
 /* src/root.css */
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
+  font-family: system-ui;
   -moz-osx-font-smoothing: grayscale;
 }
 
@@ -97,7 +96,8 @@ import App from './routes/index'
 import './root.css'
 
 render(
-  () => <App />, document.getElementById('root')
+  () => <App />,
+  document.getElementById('root')
 )
 ```
 
@@ -112,12 +112,10 @@ mkdir src/components
 echo > src/components/Counter.jsx
 ```
 
-A Component is a function that accepts a `props` object and returns JSX elements. It is a lightweight factory function that does not hold state itself.
+A Component is a function that accepts a `props` object and returns JSX elements. It is a lightweight factory function that does not hold state itself. Adding an `input` tag after `BasicComponent` in the following example lets you change the value being passed as `props`.
 
 ```jsx
 // src/components/Counter.jsx
-
-import { createSignal } from 'solid-js'
 
 const BasicComponent = (props) => {
   const value = () => props.value || 'default'
@@ -128,19 +126,13 @@ export default function Counter() {
   return (
     <div>
       <BasicComponent value={value()} />
+      <input type="text" oninput={(e) => setValue(e.currentTarget.value)} />
     </div>
   )
 }
 ```
 
-Add an `input` tag after `BasicComponent` so you can change the value being passed as `props`.
-
-```jsx
-// src/components/Counter.jsx
-
-<BasicComponent value={value()} />
-<input type="text" oninput={(e) => setValue(e.currentTarget.value)} />
-```
+But where is the value coming from in the first place and where it is being stored and modified when state changes in your application?
 
 ### Create Signal
 
@@ -176,9 +168,9 @@ import Counter from '../components/Counter'
 export default function App() {
   return (
     <div class="App">
-      <header>
+      <header class="header">
         <h1>A First Look at Solid</h1>
-        <a href="https://github.com/solidjs">
+        <a class="link" href="https://github.com/solidjs">
           Learn Solid
         </a>
         <Counter />
@@ -188,7 +180,7 @@ export default function App() {
 }
 ```
 
-This modifies the state directly by running `getValue` as a function. Change the `Counter` component so the value will be changed with `setValue`.
+This modifies the state directly by running `getValue` as a function. But your component will only display a value of 0 right now and there is no way to change it. To do this, we have to change the `Counter` component so the value will be set with `setValue`.
 
 ```jsx
 // src/components/Counter.jsx
@@ -258,7 +250,7 @@ echo > src/components/Users.jsx
 ```jsx
 // src/components/Users.jsx
 
-import { createResource, createSignal, For } from 'solid-js'
+import { createResource } from 'solid-js'
 
 const fetchUser = async () => (
   await fetch(`https://jsonplaceholder.typicode.com/users?_limit=5`)
@@ -266,19 +258,11 @@ const fetchUser = async () => (
 
 export default function Users() {
   const [user] = createResource(fetchUser)
-  const [users, setUsers] = createSignal([])
 
   return (
     <div>
       <span>{user.loading && 'Loading...'}</span>
-
-      <div>
-        <pre>{JSON.stringify(user(), null, 2)}</pre>
-      </div>
-
-      <For each={users()} fallback={<p>Loading...</p>}>
-        {(user) => <div>{user.name}</div>}
-      </For>
+      <pre>{JSON.stringify(user(), null, 2)}</pre>
     </div>
   )
 }
@@ -294,19 +278,18 @@ import Users from '../components/Users'
 
 export default function App() {
   return (
-    <main>
-      <h1>A First Look at Solid</h1>
-      <a href="https://github.com/solidjs">
-        Learn Solid
-      </a>
-
-      <Counter />
-      <Users />
-    </main>
+    <div class="App">
+      <header class="header">
+        <h1>A First Look at Solid</h1>
+        <a href="https://github.com/solidjs">
+          Learn Solid
+        </a>
+        <Counter />
+        <Users />
+      </header>
+    </div>
   )
 }
 ```
 
 ![Browser window showing a count of 1 with a list of names](https://media.codingcat.dev/image/upload/v1684519512/main-codingcatdev-photo/courses/solidjs-intro/05-onmount-displaying-users.png)
-
-### Create Store
