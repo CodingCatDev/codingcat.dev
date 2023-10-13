@@ -16,6 +16,31 @@ cover: https://media.codingcat.dev/image/upload/v1647456845/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/211-build-faster-websites-with-astro-k7f
 excerpt: Fred Schott chats with us all about Astro and how you can build static sites with any framework.
 hashnode: https://hashnode.codingcat.dev/podcast-2-11-build-faster-websites-with-astro
+picks:
+  [
+    { author: 'alex-patterson', name: 'Retool, Admin UI Builder', site: 'https://retool.com/' },
+    {
+      author: 'brittney-postma',
+      name: 'Cassidy Williams - Astro from the Ground Up',
+      site: 'https://www.youtube.com/watch?v=9juD4JVGmfc'
+    },
+    {
+      author: 'brittney-postma',
+      name: "Accelerating Svelte's Development",
+      site: 'https://svelte.dev/blog/accelerating-sveltes-development'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Encanto',
+      site: 'https://www.disneyplus.com/movies/encanto/33q7DY1rtHQH'
+    },
+    {
+      author: 'fred-k-schott',
+      name: 'tRPC end-to-end typesafe APIs made easy',
+      site: 'https://trpc.io/'
+    },
+    { author: 'fred-k-schott', name: 'Marko JS', site: 'https://markojs.com/' }
+  ]
 slug: 2-11-build-faster-websites-with-astro
 spotify: https://open.spotify.com/episode/5VxSkOY6uJkTuQ2yJticLU?si=AngcuGgaSX2wlHJVw7_iVA
 sponsors:

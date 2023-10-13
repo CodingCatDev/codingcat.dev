@@ -16,6 +16,34 @@ excerpt: Bryan Robinson teaches us how Orbit helps us build up better communitie
 guests:
   - bryan-robinson
 hashnode: https://hashnode.codingcat.dev/podcast-2-14-building-up-better-communities
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'NextUI a new UI Library for Next.js',
+      site: 'https://nextui.org/docs/guide/getting-started'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'A two-dimensional drawing api geared towards modern web browsers',
+      site: 'https://two.js.org/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Phone Ring Holder ',
+      site: 'https://www.amazon.com/Finger-Stand-Lamicall-Phone-Holder/dp/B07FYJJZDR?th=1'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Jam.dev 2022',
+      site: 'https://www.crowdcast.io/e/jamdev22'
+    },
+    {
+      author: 'bryan-robinson',
+      name: 'Islands Architecture',
+      site: 'https://jasonformat.com/islands-architecture/'
+    }
+  ]
 slug: 2-14-building-up-better-communities
 sponsors:
   - builder-io

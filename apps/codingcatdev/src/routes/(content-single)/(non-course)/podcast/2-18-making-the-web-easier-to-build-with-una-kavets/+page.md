@@ -16,6 +16,18 @@ cover: https://media.codingcat.dev/image/upload/v1650419614/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/218-making-the-web-easier-to-build-i3h
 excerpt: Una Kravets is a DevRel extraordinaire making CSS magic at Google.
 hashnode: https://hashnode.codingcat.dev/podcast-2-18-making-the-web-easier-to-build-with-una-kavets
+picks:
+  [
+    { author: 'alex-patterson', name: 'useHooks', site: 'https://usehooks-ts.com/' },
+    { author: 'alex-patterson', name: 'CSS Podcast', site: 'https://thecsspodcast.libsyn.com/' },
+    { author: 'brittney-postma', name: 'PageSpeed Insigths', site: 'https://pagespeed.web.dev/' },
+    {
+      author: 'brittney-postma',
+      name: 'Hamilton Beach Blender',
+      site: 'https://www.amazon.com/Hamilton-Beach-51131-Single-Serve-Raspberry/dp/B00QNUCV0I/ref=sr_1_3?keywords=hamilton%2Bbeach%2Bblender&qid=1644843398&sr=8-3&th=1'
+    },
+    { author: 'una-kravets', name: 'Screenflow', site: 'https://screenflow.en.softonic.com/mac' }
+  ]
 slug: 2-18-making-the-web-easier-to-build-with-una-kavets
 spotify: https://open.spotify.com/episode/6jCPgXnUuLVjjGEHcGVr0C?si=dwXY8ITrTviUNJkg-zFlTA
 start: May 4, 2022

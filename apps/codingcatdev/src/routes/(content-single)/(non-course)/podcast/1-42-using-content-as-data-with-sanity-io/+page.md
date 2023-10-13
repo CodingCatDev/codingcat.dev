@@ -17,6 +17,37 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/k11r8kqg
 devto: https://dev.to/codingcatdev/142-using-content-as-data-with-sanityio-506n
 excerpt: We sit down with Kap and Knut from Sanity.io to talk about using content as data.
 hashnode: https://hashnode.codingcat.dev/podcast-1-42-using-content-as-data-with-sanity-io
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Vercel Integrations with Sanity',
+      site: 'https://vercel.com/integrations/sanity'
+    },
+    { author: 'alex-patterson', name: 'PGA Tour 2K21', site: 'https://pgatour.2k.com/' },
+    {
+      author: 'brittney-postma',
+      name: 'Next.js for Beginners - Full Course',
+      site: 'https://youtu.be/1WmNXEVia8I'
+    },
+    {
+      author: 'sarah-kapehe',
+      name: 'Jujutsu Kaisen',
+      site: 'https://www.crunchyroll.com/jujutsu-kaisen'
+    },
+    {
+      author: 'sarah-kapehe',
+      name: 'Your lie in April',
+      site: 'https://www.crunchyroll.com/your-lie-in-april'
+    },
+    {
+      author: 'knut-melvaer',
+      name: 'Four Tet Live Sets (especially The Lot ones)',
+      site: 'https://www.fourtet.net/'
+    },
+    { author: 'knut-melvaer', name: 'BETTER', site: 'https://www.youtube.com/watch?v=EFh-vtZHjOQ' },
+    { author: 'knut-melvaer', name: 'fig: autocomplete for terminals', site: 'https://fig.io/' }
+  ]
 slug: 1-42-using-content-as-data-with-sanity-io
 spotify: https://open.spotify.com/episode/4wlShV6YkwHjONHAot56B4?si=nwowF35NTS-Ur_R6xwQtAQ
 start: October 27, 2021
@@ -24,7 +55,7 @@ title: Using Content as Data with Sanity.io
 youtube: https://www.youtube.com/watch?v=C6qa8bYsfLs
 ---
 
-### Questions
+## Questions
 
 1. Knut we last chatted in February of 2020, a lot has happened since then, how are you?
 2. Kap you started at Sanity in July of 2020, but before that you worked for Auth0 and also as a flight attendant for 6 years.
@@ -34,8 +65,7 @@ youtube: https://www.youtube.com/watch?v=C6qa8bYsfLs
 5. What is new in 2.19.2
    1. [https://github.com/sanity-io/sanity/releases/tag/v2.19.0](https://github.com/sanity-io/sanity/releases/tag/v2.19.0)
 
-## Additional Links
+## Links
 
-[https://www.sanity.io/docs/getting-started](https://www.sanity.io/docs/getting-started)
-
-[https://www.sanity.io/exchange](https://www.sanity.io/exchange)
+- [https://www.sanity.io/docs/getting-started](https://www.sanity.io/docs/getting-started)
+- [https://www.sanity.io/exchange](https://www.sanity.io/exchange)

@@ -16,6 +16,39 @@ cover: https://media.codingcat.dev/image/upload/v1655828037/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/213-managing-multiple-data-sources-in-graphql-42dg
 excerpt: We sit down with Anthony Campolo to talk about StepZen and combining multiple GraphQL data sources. We walk through an entire demo live!
 hashnode: https://hashnode.codingcat.dev/podcast-2-13-managing-multiple-data-sources-in-graphql
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Prisma - Next-generation Node.js and TypeScript ORM',
+      site: 'https://www.prisma.io/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Rechargeable Batteries and Charger',
+      site: 'https://www.amazon.com/dp/B07Y5ZB8Z5/ref=sspa_dk_detail_1'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'EBL 2800mAh AA batteries',
+      site: 'https://www.amazon.com/EBL-AA-Batteries-Technology-Rechargeable/dp/B00HSHLC82/ref=sr_1_4_sspa'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'StepZen Netlify Blog',
+      site: 'https://www.netlify.com/blog/2021/06/10/how-to-build-a-database-driven-jamstack-site/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The Morning Show',
+      site: 'https://tv.apple.com/us/show/the-morning-show/umc.cmc.25tn3v8ku4b39tr6ccgb8nl6m'
+    },
+    {
+      author: 'anthony-campolo',
+      name: 'The DEV API',
+      site: 'https://stepzen.com/blog/stepzen-sveltekit-and-the-dev-api'
+    }
+  ]
 slug: 2-13-managing-multiple-data-sources-in-graphql
 sponsors:
   - builder-io

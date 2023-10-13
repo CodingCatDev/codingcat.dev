@@ -16,6 +16,25 @@ excerpt: In this episode we sit down with Braden Sidoti Co-Founder of Clerk. Cle
 guests:
   - braden-sidoti
 hashnode: https://hashnode.codingcat.dev/podcast-1-37-building-better-authentication-with-clerk
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Firebase JS v9',
+      site: 'https://firebase.googleblog.com/2021/08/the-new-firebase-js-sdk-now-ga.html'
+    },
+    {
+      author: 'alex-patterson',
+      name: "Marvel's What If",
+      site: 'https://disneyplusoriginals.disney.com/show/what-if#:~:text="What If…%3F" flips,stars who reprise their roles.'
+    },
+    { author: 'brittney-postma', name: 'Astro', site: 'https://astro.build/' },
+    {
+      author: 'braden-sidoti',
+      name: 'Dr. Death',
+      site: 'https://www.peacocktv.com/stream-tv/dr-death?cid=2107originalsdrdepkpdsearch4656'
+    }
+  ]
 slug: 1-37-building-better-authentication-with-clerk
 spotify: https://open.spotify.com/episode/5k2mZj2NjvWsfoA1zxDeUP?si=gBdYPcKbS6Wq1uVnTUMC3w
 start: September 22, 2021
@@ -23,7 +42,7 @@ title: Building Better Authentication with Clerk
 youtube: https://www.youtube.com/watch?v=8tBlnQfWVQM
 ---
 
-### Questions
+## Questions
 
 1. Why did you start building Clerk?
    1. I noticed your other co-founder is also Sidoti, any relation?
@@ -36,8 +55,8 @@ youtube: https://www.youtube.com/watch?v=8tBlnQfWVQM
    1. What does Clerk do differently with User Management?
 5. Support for frameworks other than React? (Node SDK / Serverless)
 
-### Additional Links
+## Links
 
-- Hiring [https://apply.workable.com/clerk-dev/](https://apply.workable.com/clerk-dev/)
-- Clerk with Firebase from James Perkins - [https://www.youtube.com/watch?v=YcXvZ-nPXXQ](https://www.youtube.com/watch?v=YcXvZ-nPXXQ)
-- [https://bubble.io/](https://bubble.io/) No code integration
+- [Clerk Careers](https://apply.workable.com/clerk-dev/)
+- [Clerk with Firebase from James Perkins](https://www.youtube.com/watch?v=YcXvZ-nPXXQ)
+- [Bubble - No code integration](https://bubble.io/)

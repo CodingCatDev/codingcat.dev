@@ -16,6 +16,26 @@ excerpt: Kellen breaks down how to use Faust.js to build your front-end applicat
 guests:
   - kellen-mace
 hashnode: https://hashnode.codingcat.dev/podcast-2-34-WPEngine-and-FaustJS
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'An Interactive Guide to CSS Transitions',
+      site: 'https://www.joshwcomeau.com/animation/css-transitions/'
+    },
+    { author: 'alex-patterson', name: 'Why Next.js Won', site: 'https://youtu.be/BILxV_vrZO0' },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Sirens Streams Headless WordPress with SvelteKit',
+      site: 'https://www.youtube.com/watch?v=3DbRHeEll3A'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'SvelteKit+Supabase James Q Quick',
+      site: 'https://www.youtube.com/watch?v=YqIyET7XKIQ'
+    },
+    { author: 'kellen-mace', name: 'Video Mentions', site: 'https://VideoMentions.com' }
+  ]
 slug: 2-34-WPEngine-and-FaustJS
 sponsors:
   - storyblok

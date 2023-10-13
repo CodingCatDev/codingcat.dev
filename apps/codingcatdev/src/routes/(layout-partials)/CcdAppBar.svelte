@@ -82,9 +82,14 @@
 				use:popup={{ event: 'click', target: 'theme' }}
 			>
 				{#if $storeUser?.picture}
-					<Avatar class="bcu-avatar-xs w-8 h-8" src={$storeUser.picture} alt="User Photo" />
+					<Avatar
+						class="w-8 h-8 bcu-avatar-xs"
+						src={$storeUser.picture}
+						alt="User Photo"
+						referrerpolicy="no-referrer"
+					/>
 				{:else}
-					<Avatar class="bcu-avatar-xs w-8 h-8">
+					<Avatar class="w-8 h-8 bcu-avatar-xs">
 						<svelte:fragment slot="bcu-avatar-message">
 							<div class="text-sm">AJ</div>
 						</svelte:fragment>
@@ -92,9 +97,9 @@
 				{/if}
 			</button>
 			<!-- popup -->
-			<div class="bcu-card flex flex-col gap-4 p-4 w-60 shadow-xl" data-popup="theme">
-				<div class="space-y-4 mb-2">
-					<section class="flex justify-between items-center">
+			<div class="flex flex-col gap-4 p-4 shadow-xl bcu-card w-60" data-popup="theme">
+				<div class="mb-2 space-y-4">
+					<section class="flex items-center justify-between">
 						<h6>Mode</h6>
 						<LightSwitch />
 					</section>

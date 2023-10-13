@@ -16,6 +16,40 @@ cover: https://media.codingcat.dev/image/upload/v1643068740/main-codingcatdev-ph
 devto: https://dev.to/codingcatdev/the-other-side-of-tech-a-documentarian-perspective-37p1
 excerpt: We sit down with Stefan Kingham, who helped create the Vue.js documentary and will soon be releasing a new Svelte documentary.
 hashnode: https://hashnode.codingcat.dev/podcast-2-4-the-other-side-of-tech-a-documentarian-perspective
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'Lost in Space',
+      site: 'https://www.netflix.com/title/80104198'
+    },
+    { author: 'alex-patterson', name: 'FreeIcons', site: 'https://www.iconshock.com/freeicons/' },
+    {
+      author: 'brittney-postma',
+      name: 'Vue.js The Documentary',
+      site: 'https://www.youtube.com/watch?v=OrxmtDw4pVI/'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Wheel of time',
+      site: 'https://www.amazon.com/dp/B09F5KBXB6/'
+    },
+    {
+      author: 'stefan-kingham',
+      name: 'Locke & Key',
+      site: 'https://www.netflix.com/title/80241239'
+    },
+    {
+      author: 'stefan-kingham',
+      name: 'Kim’s Convenience',
+      site: 'https://www.netflix.com/title/80199128'
+    },
+    {
+      author: 'stefan-kingham',
+      name: 'Harry Potter 20th Anniversary',
+      site: 'https://www.youtube.com/watch?v=X2RzASP6cbA'
+    }
+  ]
 slug: 2-4-the-other-side-of-tech-a-documentarian-perspective
 sponsors:
   - builder-io

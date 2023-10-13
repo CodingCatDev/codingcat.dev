@@ -16,6 +16,19 @@ excerpt: We sit down with Miško Hevery, Inventor of Angular, to talk about a ne
 guests:
   - misko-hevery
 hashnode: https://hashnode.codingcat.dev/podcast-1-49-qwik-the-html-first-framework
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'How to create an NFT',
+      site: 'https://docs.alchemy.com/alchemy/tutorials/how-to-create-an-nft'
+    },
+    {
+      author: 'misko-hevery',
+      name: 'Thinking, Fast and Slow',
+      site: 'https://www.amazon.com/Thinking-Fast-Slow-Daniel-Kahneman/dp/0374533555'
+    }
+  ]
 slug: 1-49-qwik-the-html-first-framework
 spotify: https://open.spotify.com/episode/4rPq0VRdDt5AoC2AuSyLfV?si=xkdXWhzVRKC3myXHzrt0gQ
 start: December 8, 2021

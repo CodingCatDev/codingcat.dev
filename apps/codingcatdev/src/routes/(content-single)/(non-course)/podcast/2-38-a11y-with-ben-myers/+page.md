@@ -4,8 +4,6 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 38
-guests:
-  - ben-myers
 recording_date: August 4, 2022 2:15 PM
 season: 2
 published: published
@@ -15,7 +13,39 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1655831842/main-codingcatdev-photo/A11y_with_Ben_Myers.jpg
 devto: https://dev.to/codingcatdev/238-a11y-with-ben-myers-517g
 excerpt: Ben guides us through how A11y is hard to understand if you don’t use it everyday. He also shows us many tools that we can use to help make more accessibility compliant websites.
+guests:
+  - ben-myers
 hashnode: https://hashnode.codingcat.dev/podcast-2-38-a11y-with-ben-myers
+picks:
+  [
+    {
+      author: 'alex-patterson',
+      name: 'crashmax-dev/fireworks-js',
+      site: 'https://github.com/crashmax-dev/fireworks-js/'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Next.js 12.2',
+      site: 'https://nextjs.org/blog/next-12-2?ck_subscriber_id=1233693656'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Show My Chat Walkthrough',
+      site: 'https://www.youtube.com/watch?v=RA_MAQppvME'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'Build a Component Library with SvelteKit',
+      site: 'https://www.youtube.com/watch?v=eUslcJLGk9g&t=1922s'
+    },
+    {
+      author: 'ben-myers',
+      name: 'Introduction to Web Accessibility',
+      site: 'https://www.youtube.com/watch?v=OPzr8vDNZ9Y'
+    },
+    { author: 'ben-myers', name: 'Teach Jenn Tech', site: 'https://twitch.tv/JennJunod' },
+    { author: 'ben-myers', name: 'Jutanium Stream', site: 'https://twitch.tv/Jutanium' }
+  ]
 slug: 2-38-a11y-with-ben-myers
 sponsors:
   - storyblok
@@ -65,5 +95,3 @@ youtube: https://youtu.be/pnRUoW2OZOU
 [https://blog.codinghorror.com/falling-into-the-pit-of-success/](https://blog.codinghorror.com/falling-into-the-pit-of-success/)
 
 [https://en.wikipedia.org/wiki/Spherical_cow](https://en.wikipedia.org/wiki/Spherical_cow)
-
----

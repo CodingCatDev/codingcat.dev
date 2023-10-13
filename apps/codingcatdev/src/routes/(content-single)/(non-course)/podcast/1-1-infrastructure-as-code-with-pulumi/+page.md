@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 1
 recording_date: January 1, 2021
 season: 1
@@ -16,6 +15,16 @@ excerpt: Talking with Lee Briggs about Infrastructure as Code (IaC). Lee explain
 guests:
   - lee-briggs
 hashnode: https://hashnode.codingcat.dev/podcast-infrastructure-as-code-with-pulumi
+picks:
+  [
+    { author: 'alex-patterson', name: 'Mac Pro', site: 'https://www.apple.com/mac-pro/' },
+    { author: 'lee-briggs', name: 'Pulumi Example', site: 'https://github.com/pulumi/example' },
+    {
+      author: 'lee-briggs',
+      name: 'Intro to Pulumi',
+      site: 'https://www.pulumi.com/resources/introduction-to-pulumi?utm_source=codingcat'
+    }
+  ]
 slug: infrastructure-as-code-with-pulumi
 spotify: https://open.spotify.com/episode/6KXIfXP8ZyUNqNj8pKSRqz?si=Ya6s7TBVT0aOvnmipIpBzw
 start: January 1, 2021
@@ -23,105 +32,52 @@ title: Infrastructure as Code with Pulumi
 youtube: https://www.youtube.com/watch?v=kLXV5IHiNQ4
 ---
 
-**Today we are going to talk with Lee Briggs from Pulumi. Pulumi allows you to create modern Infrastructure as Code, using any cloud using familiar programming languages and tools.**
+## Questions
 
-**The BEST part is that Pulumi is 100% open source.**
+What is Infrastructure as Code (IaC)?
 
-**Guest Details**
+Why would you want to adopt IaC?
 
-### **Lee Briggs**
+- Who made changes to the code
+- Ticket that was linked
+- Collaboration
+- Documentation
 
-#### **Links**
+Does IaC document your infrastructure?
 
-[**https://www.linkedin.com/in/briggsl/**](https://web.archive.org/web/20210625101921/https://www.linkedin.com/in/briggsl/)
+Does IaC allow for solid Dev Ops?
 
-## **General Questions**
+## Pulumi
 
-**What is Infrastructure as Code (IaC)?**
+What is Pulumi?
 
-**Why would you want to adopt IaC?**
+What makes Pulumi different than
 
-- **Who made changes to the code
-  **
-- **Ticket that was linked
-  **
-- **Collaboration
-  **
-- **Documentation
-  **
+- Serverless Framework - [https://www.pulumi.com/docs/intro/vs/serverless/
+  ](https://www.pulumi.com/docs/intro/vs/serverless/)
+- Cloud Formation - [https://www.pulumi.com/docs/intro/vs/cloud \_ templates/
+  ](https://www.pulumi.com/docs/intro/vs/cloud_templates/)
+- Terraform - [https://www.pulumi.com/docs/intro/vs/terraform/
+  ](https://www.pulumi.com/docs/intro/vs/terraform/)
+- Arm
 
-**Does IaC document your infrastructure?**
+Will IaC take longer?
 
-**Does IaC allow for solid Dev Ops?**
+- Should it be used for an MVP?
+- How large of a team would you have before using IaC?
+- Is it worth the time to set up if it is just something quick.
 
-## **Pulumi**
+Is Pulumi good for single code shops that know only a single language?
 
-**What is Pulumi?**
+- Speed to market is easier.
+- No need to learn markup language
 
-**What makes Pulumi different than**
+How big is the learning curve of IaC?
 
-- **Serverless Framework -** [**https://www.pulumi.com/docs/intro/vs/serverless/
-  **](https://web.archive.org/web/20210625101921/https://www.pulumi.com/docs/intro/vs/serverless/)
-- **Cloud Formation -** [**https://www.pulumi.com/docs/intro/vs/cloud \_ templates/
-  **](https://web.archive.org/web/20210625101921/https://www.pulumi.com/docs/intro/vs/cloud_templates/)
-- **Terraform -** [**https://www.pulumi.com/docs/intro/vs/terraform/
-  **](https://web.archive.org/web/20210625101921/https://www.pulumi.com/docs/intro/vs/terraform/)
-- **Arm
-  **
+- Serverless is YAML
 
-**Will IaC take longer?**
+Pulumi support “ecosystems”
 
-- **Should it be used for an MVP?
-  **
-- **How large of a team would you have before using IaC?
-  **
-- **Is it worth the time to set up if it is just something quick.
-  **
-
-**Is Pulumi good for single code shops that know only a single language?**
-
-- **Speed to market is easier.
-  **
-- **No need to learn markup language
-  **
-
-**How big is the learning curve of IaC?**
-
-- **Serverless is YAML
-  **
-
-**Pulumi support “ecosystems”**
-
-- **NodeJS
-  **
-- **Go
-  **
-- **.Net
-  **
-
-## **Purrfect Picks**
-
-### **Lee**
-
-**Great examples**
-
-[**https://github.com/pulumi/examples**](https://web.archive.org/web/20210625101921/https://github.com/pulumi/examples)
-
-[**https://www.pulumi.com/resources/introduction-to-pulumi?utm \_ source=codingcat**](https://web.archive.org/web/20210625101921/https://www.pulumi.com/resources/introduction-to-pulumi?utm_source=codingcat)
-
-**Queen’s Gambit**
-
-### **Alex**
-
-**FUN Stuff**
-
-[**https://reinvent.awsevents.com/**](https://web.archive.org/web/20210625101921/https://reinvent.awsevents.com/)
-
-\- \--
-
-This episode is sponsored by
-· Anchor: The easiest way to make a podcast. [https://anchor.fm/app](https://web.archive.org/web/20210625101921/https://anchor.fm/s/115b203c/podcast/sponsor/acugj9/url/https%3A%2F%2Fanchor.fm%2Fapp)
-
-\- \--
-
-Send in a voice message: [https://anchor.fm/purrfect-dev/message](https://web.archive.org/web/20210625101921/https://anchor.fm/purrfect-dev/message)
+- NodeJS
+- Go
+- .Net

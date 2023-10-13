@@ -16,6 +16,26 @@ excerpt: We sat down with Cassidy Williams to talk about her background as a dev
 guests:
   - cassidy-williams
 hashnode: https://hashnode.codingcat.dev/podcast-1-22-hosting-nextjs-on-netlify
+picks:
+  [
+    { author: 'alex-patterson', name: 'Write Once for all your Apps', site: 'https://expo.io' },
+    {
+      author: 'brittney-postma',
+      name: 'Next.js from the Ground Up',
+      site: 'https://explorers.netlify.com/learn/nextjs'
+    },
+    {
+      author: 'brittney-postma',
+      name: 'The Next.js Handbook',
+      site: 'https://www.freecodecamp.org/news/the-next-js-handbook/'
+    },
+    { author: 'cassidy-williams', name: 'Obsidian', site: 'https://obsidian.md/' },
+    {
+      author: 'cassidy-williams',
+      name: 'Itaewon Class → K-drama on Netflix',
+      site: 'https://www.netflix.com/title/81193309'
+    }
+  ]
 slug: 1-22-hosting-nextjs-on-netlify
 spotify: https://open.spotify.com/episode/6B4r7ksTX2YM1Q6Y2qiY0v?si=z24Gzt1GQ6SA2IRuNpLY-w
 start: May 26, 2021
@@ -34,6 +54,6 @@ youtube: https://www.youtube.com/watch?v=QvYlf0rpJT4
 
 ## Additional Links
 
-- [https://github.com/netlify/netlify-plugin-nextjs](https://github.com/netlify/netlify-plugin-nextjs) - Netlify's Next.js Plugin
-- [https://www.netlify.com/authors/cassidy-williams/](https://www.netlify.com/authors/cassidy-williams/) - Cassidy's Netlify Blog posts (cass.run/nb)
-- [https://www.netlify.com/press/netlify-announces-next-js-integration-enabling-next-js-10-for-enterprise-teams/](https://www.netlify.com/press/netlify-announces-next-js-integration-enabling-next-js-10-for-enterprise-teams/) - Enterprise Next.js 10 on Netlify
+- [Netlify's Next.js Plugin](https://github.com/netlify/netlify-plugin-nextjs)
+- [Cassidy's Netlify Blog posts (cass.run/nb)](https://www.netlify.com/authors/cassidy-williams/)
+- [Enterprise Next.js 10 on Netlify](https://www.netlify.com/press/netlify-announces-next-js-integration-enabling-next-js-10-for-enterprise-teams/)
