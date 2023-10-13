@@ -26,7 +26,7 @@ export class Player {
 		//TODO: Defaults to right, maybe it shouldn't
 		this.view.currentFrame = 5;
 	}
-
+	// TODO: should timeout be used?
 	public down() {
 		this.view.gotoAndStop(0);
 		this.view.position.y = this.view.position.y + this.bounds.height / 2;

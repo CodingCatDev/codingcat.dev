@@ -1,5 +1,6 @@
-import { Assets, TilingSprite, Container } from 'pixi.js';
+import { Assets, TilingSprite, Container, Rectangle } from 'pixi.js';
 import type { Player } from '../players/Player';
+import { MyPlayer } from '../players/MyPlayer';
 
 export const resolution = 4;
 export const movement = 20;
@@ -11,16 +12,20 @@ export class World {
 	paths: TilingSprite[];
 	blocked: TilingSprite[];
 
-	player: Player | undefined;
+	player: Player;
 
-	constructor(paths: TilingSprite[], blocked: TilingSprite[]) {
+	constructor(paths: TilingSprite[], blocked: TilingSprite[], myPlayer: MyPlayer) {
 		this.view = new Container();
 		this.paths = paths;
 		this.blocked = blocked;
+
+		// Add world tiles
 		for (const sprite of [...paths, ...blocked]) {
 			this.view.addChild(sprite);
 		}
-		console.debug(this.blocked);
+		// Add player
+		this.player = myPlayer;
+		this.view.addChild(this.player.view);
 	}
 	static async create() {
 		const textures = Object.values(
@@ -76,10 +81,72 @@ export class World {
 			}),
 		];
 
-		return new World(paths, blocked);
+		// Create a new player
+		const myPlayer = await MyPlayer.create();
+		return new World(paths, blocked, myPlayer);
 	}
+	public onKeyDown(e: KeyboardEvent) {
+		const bounds = this.player.view.getBounds();
+		console.debug('player ', bounds);
 
-	addPlayer(player: Player) {
-		this.player = player;
+		switch (e.key) {
+			case 'ArrowLeft':
+				console.debug('move left');
+				bounds.x = bounds.x - this.player.bounds.width;
+				if (!this.testPlayerHitBlocked(bounds)) {
+					this.player?.left();
+				}
+				break;
+			case 'ArrowRight':
+				console.debug('move right');
+				bounds.x = bounds.x + this.player.bounds.width;
+				if (!this.testPlayerHitBlocked(bounds)) {
+					this.player?.right();
+				}
+				break;
+			case 'ArrowUp':
+				console.debug('move up');
+				bounds.y = bounds.y - this.player.bounds.height;
+				if (!this.testPlayerHitBlocked(bounds)) {
+					this.player?.up();
+				}
+				break;
+			case 'ArrowDown':
+				console.debug('move down');
+				bounds.y = bounds.y + this.player.bounds.height;
+				if (!this.testPlayerHitBlocked(bounds)) {
+					this.player?.down();
+				}
+				break;
+		}
+	}
+	// TODO: is this fast enough?
+	private testPlayerHitBlocked(playerBounds: Rectangle) {
+		let hit = false;
+
+		// Check for overall size
+		if (
+			!(
+				playerBounds.x >= 0 &&
+				playerBounds.x <= width &&
+				playerBounds.y >= 0 &&
+				playerBounds.y <= height
+			)
+		) {
+			console.log('out of range', playerBounds);
+			return true;
+		}
+
+		// Checked for blocked areas
+		for (const b of this.blocked) {
+			const bounds1 = b.getBounds();
+			hit =
+				bounds1.x < playerBounds.x + playerBounds.width &&
+				bounds1.x + bounds1.width > playerBounds.x &&
+				bounds1.y < playerBounds.y + playerBounds.height &&
+				bounds1.y + bounds1.height > playerBounds.y;
+			if (hit) break;
+		}
+		return hit;
 	}
 }

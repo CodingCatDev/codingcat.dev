@@ -7,7 +7,7 @@
 
 	let dojoElem: HTMLDivElement;
 	let dojoRenderer: Renderer;
-	let myPlayer: MyPlayer;
+	let world: World;
 	const loading: any = { amount: 0, complete: false };
 
 	onMount(async () => {
@@ -30,12 +30,8 @@
 		const stage = new Container();
 
 		// Create World
-		const world = await World.create();
+		world = await World.create();
 		stage.addChild(world.view);
-
-		// Create monsters
-		myPlayer = await MyPlayer.create();
-		stage.addChild(myPlayer.view);
 
 		const renderUpdate = () => {
 			dojoRenderer.render(stage);
@@ -54,24 +50,7 @@
 	});
 
 	function onKeyDown(e: KeyboardEvent) {
-		switch (e.key) {
-			case 'ArrowLeft':
-				console.debug('move left');
-				myPlayer.left();
-				break;
-			case 'ArrowRight':
-				console.debug('move right');
-				myPlayer.right();
-				break;
-			case 'ArrowUp':
-				console.debug('move up');
-				myPlayer.up();
-				break;
-			case 'ArrowDown':
-				console.debug('move down');
-				myPlayer.down();
-				break;
-		}
+		world.onKeyDown(e);
 	}
 </script>
 
