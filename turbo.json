@@ -1,7 +1,7 @@
 {
     "pipeline": {
       "build": {
-        "outputs": ["dist/**", ".next/**"]
+        "outputs": ["dist/**", ".svelte-kit/**"]
       },
       "dev": {
         "cache": false
