@@ -1,11 +1,11 @@
-import { Rectangle, Assets, Container } from 'pixi.js';
-import { Monster } from './Monster';
+import { Rectangle, Assets } from 'pixi.js';
+import { Player } from './Player';
 
-export class Druid extends Monster {
+export class MyPlayer extends Player {
 	static bounds = new Rectangle(0, 0, 20, 20);
 
-	static async create(stage: Container) {
-		return new Druid(
+	static async create() {
+		return new MyPlayer(
 			{
 				down: Object.values(
 					await Assets.load([
@@ -32,8 +32,7 @@ export class Druid extends Monster {
 					]),
 				),
 			},
-			Druid.bounds,
-			stage,
+			MyPlayer.bounds,
 		);
 	}
 }

@@ -1,5 +1,5 @@
 import { AnimatedSprite } from 'pixi.js';
-import type { Container, Rectangle, Texture } from 'pixi.js';
+import type { Rectangle, Texture } from 'pixi.js';
 
 export interface AnimatedTextures {
 	down: Texture[];
@@ -8,14 +8,13 @@ export interface AnimatedTextures {
 	up: Texture[];
 }
 
-export class Monster {
+export class Player {
 	bounds: Rectangle;
 
 	positionX = 0;
 	positionY = 0;
-	stage: Container;
 	view: AnimatedSprite;
-	constructor(textures: AnimatedTextures, bounds: Rectangle, stage: Container) {
+	constructor(textures: AnimatedTextures, bounds: Rectangle) {
 		this.bounds = bounds;
 		this.view = new AnimatedSprite([
 			...textures.down,
@@ -23,11 +22,9 @@ export class Monster {
 			...textures.right,
 			...textures.up,
 		]);
-		this.stage = stage;
 
 		//TODO: Defaults to right, maybe it shouldn't
 		this.view.currentFrame = 5;
-		this.stage.addChild(this.view);
 	}
 
 	public down() {
@@ -36,6 +33,7 @@ export class Monster {
 		setTimeout(() => {
 			this.view.gotoAndStop(1);
 			this.view.position.y = this.view.position.y + this.bounds.height / 2;
+			console.debug(this.view.position);
 		}, 200);
 	}
 	public left() {
@@ -44,6 +42,7 @@ export class Monster {
 		setTimeout(() => {
 			this.view.gotoAndStop(3);
 			this.view.position.x = this.view.position.x - this.bounds.width / 2;
+			console.debug(this.view.position);
 		}, 200);
 	}
 	public right() {
@@ -52,14 +51,16 @@ export class Monster {
 		setTimeout(() => {
 			this.view.gotoAndStop(5);
 			this.view.position.x = this.view.position.x + this.bounds.width / 2;
+			console.debug(this.view.position);
 		}, 200);
 	}
 	public up() {
 		this.view.gotoAndStop(6);
 		this.view.position.y = this.view.position.y - this.bounds.height / 2;
 		setTimeout(() => {
-			this.view.position.y = this.view.position.y - this.bounds.height / 2;
 			this.view.gotoAndStop(7);
+			this.view.position.y = this.view.position.y - this.bounds.height / 2;
+			console.debug(this.view.position);
 		}, 200);
 	}
 }
