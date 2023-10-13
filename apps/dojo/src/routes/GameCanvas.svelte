@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { Container, autoDetectRenderer } from 'pixi.js';
+	import { Container, autoDetectRenderer, Application } from 'pixi.js';
 	import type { Renderer } from 'pixi.js';
 	import { onDestroy, onMount } from 'svelte';
 	import { Druid } from './monsters/Druid';
 
 	let elemCanvas: HTMLCanvasElement;
-	let renderer: Renderer;
+	let gameRenderer: Renderer;
 	const loading: any = { amount: 0, complete: false };
 
 	onMount(async () => {
-		renderer = await autoDetectRenderer({
+		gameRenderer = await autoDetectRenderer({
 			preference: 'webgpu',
 			clearBeforeRender: true,
 			backgroundAlpha: 1,
@@ -20,7 +20,8 @@
 			antialias: false,
 			hello: true
 		});
-		elemCanvas.appendChild(renderer.view.canvas as HTMLCanvasElement);
+		const pageContent = document.querySelector('#page-content');
+		pageContent?.appendChild(gameRenderer.view.canvas as HTMLCanvasElement);
 		const stage = new Container();
 
 		// Create monsters
@@ -29,7 +30,7 @@
 		stage.addChild(druid.view);
 
 		const renderUpdate = () => {
-			renderer.render(stage);
+			gameRenderer.render(stage);
 			requestAnimationFrame(renderUpdate);
 		};
 
@@ -38,7 +39,7 @@
 
 	onDestroy(() => {
 		// Helps memory leak issues
-		if (renderer !== undefined) renderer.destroy();
+		if (gameRenderer !== undefined) gameRenderer.destroy();
 	});
 </script>
 
