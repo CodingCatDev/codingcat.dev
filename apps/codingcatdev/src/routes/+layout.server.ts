@@ -3,13 +3,15 @@ import { ccdValidateSessionCookie, validateStripeRole } from '$lib/server/fireba
 import { type Content, ContentType } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
 export const prerender = false;
-export const load = (async ({ cookies }: { cookies: Cookies }) => {
+export const load = async ({ cookies }: { cookies: Cookies }) => {
 	try {
 		// Get latest podcast
-		const podcasts = (await listContent<Content>({
-			contentItems: await getContentTypeDirectory<Content>(ContentType.podcast),
-			limit: 5
-		})).content
+		const podcasts = (
+			await listContent<Content>({
+				contentItems: await getContentTypeDirectory<Content>(ContentType.podcast),
+				limit: 5
+			})
+		).content;
 
 		const ccdsession = cookies.get('session');
 		if (!ccdsession) {
@@ -25,18 +27,14 @@ export const load = (async ({ cookies }: { cookies: Cookies }) => {
 		return {
 			user: {
 				...user,
-				stripeRole,
-				podcasts,
-			}
+				stripeRole
+			},
+			podcasts
 		};
-
-
-
 	} catch (error) {
-		cookies.set('session', "", { expires: new Date(0) });
+		cookies.set('session', '', { expires: new Date(0) });
 
-		console.error(error)
-		return {
-		};
+		console.error(error);
+		return {};
 	}
-});
+};

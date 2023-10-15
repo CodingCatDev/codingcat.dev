@@ -1,0 +1,51 @@
+A	idle_r_1
+B 	idle_d_1
+C 	idle_u_1
+D 	idle_l_1
+E	idle_r_2
+F	idle_d_2
+G	idle_u_2
+H	idle_l_2
+I	atk_r_1
+J	atk_r_2
+K	atk_d_1
+L	atk_d_2
+M	atk_u_1
+N	atk_u_2
+O	atk_l_1
+P	atk_l_2
+Q	dead
+
+
+fighter
+archer
+mage
+priest
+druid
+necro
+knight
+paladin
+gobwar
+gobmage
+orc
+skelwar
+skelshield
+skelmage
+dwarf
+peasant
+reaper
+zombie
+mino
+elffight
+elfarcher
+elfmage
+spider
+wolf
+slime
+bat
+snake
+rat
+chicken
+demon
+eye
+ghost

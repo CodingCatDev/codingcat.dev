@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="wee_monsters.tsx"/>
+ <layer id="1" name="monsters" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,26,43,60,77,94,111,128,145,0,
+0,162,179,196,213,230,247,264,281,0,
+0,298,315,332,349,366,383,400,417,0,
+0,434,451,468,485,502,519,536,553,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>

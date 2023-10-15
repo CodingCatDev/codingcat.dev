@@ -8,16 +8,20 @@
 	import { inView } from '$lib/actions/inView';
 	import { fade } from 'svelte/transition';
 	let priceVisible = false;
+	export let login = false;
 </script>
 
-<section class="bg-primary-200-700-token">
+<section class={`bg-primary-200-700-token ${login ? 'rounded-lg' : ''}`}>
 	<div class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative">
 		<div class="flex">
-			<div class="flex flex-col basis-1/12 relative">
-				<GitLineGradient />
-				<CheckBadgeSvg />
-				<GitLineGradient rotate={true} />
-			</div>
+			{#if !login}
+				<div class="flex flex-col basis-1/12 relative">
+					<GitLineGradient />
+					<CheckBadgeSvg />
+					<GitLineGradient rotate={true} />
+				</div>
+			{/if}
+
 			<div class="basis-11/12 pl-4 sm:pl-2 py-20 sm:py-48">
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-2/3 flex flex-col justify-center gap-8">
@@ -80,7 +84,7 @@
 						on:enter={() => (priceVisible = true)}
 						on:exit={() => (priceVisible = false)}
 					>
-						<ProSelect />
+						<ProSelect {login} />
 					</div>
 				</div>
 			</div>
