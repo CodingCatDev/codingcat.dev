@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
-	import type { Content, ContentType } from '$lib/types';
-
-	export let data: { contentType: ContentType; content: Content[]; next?: any };
+	import type { Content, Course } from '$lib/types';
+	import { ContentType } from '$lib/types';
+	export let data: { contentType: ContentType; content: Content[] & Course[]; next?: any };
 
 	let next = data.next;
 	const contentType = data.contentType;
@@ -48,14 +48,22 @@
 									classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video rounded-md rounded-b-none cursor-pointer"
 								/>
 							{/if}
-
 							<section class="grid h-full grid-cols-1 gap-2 p-4">
 								<div class="space-y-2">
+									{#if contentType === ContentType.course}
+										{#if content?.lesson?.filter((l) => l.locked).length}
+											<span class="chip variant-filled-primary py-1 px-4 rounded-full text-sm"
+												>Pro</span
+											>
+										{:else}
+											<span class="chip variant-ringed py-1 px-4 rounded-full text-sm">Free</span>
+										{/if}
+									{/if}
 									<h3 class="font-sans text-lg tracking-wide text-bold">
 										{content.title}
 									</h3>
 									{#if content?.excerpt}
-										<p class="text-sm font-hairline ">{content.excerpt}</p>
+										<p class="text-sm font-hairline">{content.excerpt}</p>
 									{/if}
 								</div>
 							</section>
