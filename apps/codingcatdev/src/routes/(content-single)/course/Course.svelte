@@ -44,6 +44,15 @@
 						{/each}
 					</section>
 				{/if}
+				<div class="flex">
+					{#if data?.course?.lesson?.filter((l) => l.locked).length}
+						<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
+							>Pro</span
+						>
+					{:else}
+						<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
+					{/if}
+				</div>
 				<h1>{data.course.title}</h1>
 				<!-- Sponsors -->
 				{#if data?.sponsors?.length}
