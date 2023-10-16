@@ -3,28 +3,26 @@ import type { Config } from 'tailwindcss';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import { skeleton } from '@skeletonlabs/tw-plugin';
+import { codingCatDevTheme } from './theme';
 
-export default {
+const config = {
 	darkMode: 'class',
 	content: [
-		'./src/**/*.{html,js,svelte,ts}',
-		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}'),
+		'./src/**/*.{html,js,svelte,ts,md}',
+		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts,md}')
 	],
 	theme: {
-		extend: {},
+		extend: {}
 	},
 	plugins: [
 		forms,
 		typography,
 		skeleton({
 			themes: {
-				preset: [
-					{
-						name: 'gold-nouveau',
-						enhancements: true,
-					},
-				],
-			},
-		}),
-	],
+				custom: [codingCatDevTheme]
+			}
+		})
+	]
 } satisfies Config;
+
+export default config;

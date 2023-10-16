@@ -9,7 +9,8 @@
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { RocketLaunch } from '@steeze-ui/heroicons';
 
-	import { modalStore, type ModalSettings } from '@codingcatdev/blackcatui';
+	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	import ProModal from './ProModal.svelte';
 
@@ -29,7 +30,7 @@
 </script>
 
 <button
-	class="bcu-card variant-filled-primary w-full md:max-w-sm p-8 relative hover:shadow-2xl hover:scale-105 hover:cursor-pointer ease-in-out duration-300 flex flex-col justify-center items-center"
+	class="card variant-filled-primary w-full md:max-w-sm p-8 relative hover:shadow-2xl hover:scale-105 hover:cursor-pointer ease-in-out duration-300 flex flex-col justify-center items-center"
 	aria-label="open-pro-modal"
 	on:click={showPro}
 >

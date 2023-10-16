@@ -9,7 +9,6 @@ export const load = async ({ url, parent }) => {
 	if (!allowLocal && !data?.user?.uid) {
 		throw redirect(307, `/login?redirectTo=${url.pathname}`);
 	}
-	console.log(data?.user?.stripeRole);
 	if (data?.user?.stripeRole && url.searchParams.has('redirectTo')) {
 		throw redirect(303, url.searchParams.get('redirectTo') || '/');
 	}

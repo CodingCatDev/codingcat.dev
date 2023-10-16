@@ -12,7 +12,7 @@
 		<div class="xl:max-w-7xl w-full flex-1">
 			<div class="flex justify-between mb-4">
 				<h1>Account and Settings</h1>
-				<a class="bcu-button variant-filled" href="/dashboard">Dashboard</a>
+				<a class="btn variant-filled" href="/dashboard">Dashboard</a>
 			</div>
 			<div class="flex flex-col w-full jSustify-center items-start gap-4">
 				<AccountCard {data} />

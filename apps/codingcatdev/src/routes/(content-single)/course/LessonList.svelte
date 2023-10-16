@@ -13,8 +13,8 @@
 		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token' : '';
 </script>
 
-<div class="bcu-card p-2 md:p-4">
-	<!-- <header class="bcu-card-header capitalize pb-2 text-2xl font-bold flex justify-center">
+<div class="card p-2 md:p-4">
+	<!-- <header class="card-header capitalize pb-2 text-2xl font-bold flex justify-center">
 		Lessons
 	</header>
 	<hr /> -->

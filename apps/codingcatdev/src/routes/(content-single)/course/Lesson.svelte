@@ -17,13 +17,13 @@
 		<div class="flex justify-center">
 			<section class="flex flex-col xl:flex-row gap-8 justify-center p-2 xl:p-8 w-full">
 				<div class="flex flex-col gap-2 md:gap-8 max-w-7xl w-full">
-					<ol class="bcu-breadcrumb">
-						<li class="bcu-crumb"><a href="/courses">Courses</a></li>
-						<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
-						<li class="bcu-crumb">
+					<ol class="breadcrumb">
+						<li class="crumb"><a href="/courses">Courses</a></li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
+						<li class="crumb">
 							<a href={`/course/${data.course.slug}`}>{data.course.title}</a>
 						</li>
-						<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 						<li>{data.content.title}</li>
 					</ol>
 					{#if data?.content?.youtube}
@@ -35,7 +35,7 @@
 						<section class="flex">
 							{#each data?.authors as author (author.slug)}
 								<a
-									class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+									class="btn flex gap-2 items-center variant-ghost p-2 rounded-md"
 									href={`/author/${author.slug}`}
 								>
 									{#if author?.cover}

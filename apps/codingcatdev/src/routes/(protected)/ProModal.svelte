@@ -14,9 +14,12 @@
 	const onSelect = (setMonth: boolean) => {
 		monthly = setMonth;
 	};
-	import { modalStore, ProgressCircle } from '@codingcatdev/blackcatui';
+	import { getModalStore, getToastStore, ProgressRadial } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+	const toastStore = getToastStore();
+
 	import { addSubscription } from '$lib/client/firebase';
-	import { toastStore } from '@codingcatdev/blackcatui';
+	import { onSnapshot } from 'firebase/firestore';
 
 	let redirecting = false;
 	const onSubscribe = async (products: { role: string; price: string }[], uid: string) => {
@@ -30,21 +33,35 @@
 			});
 		} else {
 			redirecting = true;
-			addSubscription(price, uid);
+			const docRef = await addSubscription(price, uid);
+
+			onSnapshot(docRef, (snap) => {
+				const { error, url } = snap.data() as { error: Error; url: string };
+				if (error) {
+					toastStore.trigger({
+						message: error.message,
+						background: 'variant-filled-error'
+					});
+				}
+				if (url) {
+					// We have a Stripe Checkout URL, let's redirect.
+					window.location.assign(url);
+				}
+			});
 		}
 	};
 
-	const base = 'bcu-card p-2 md:p-8 flex flex-col items-center relative w-full hover:bg-opacity-90';
+	const base = 'card p-2 md:p-8 flex flex-col items-center relative w-full hover:bg-opacity-90';
 </script>
 
-<div class="bcu-card p-2 md:p-8 flex flex-col gap-2 md:gap-8">
+<div class="card p-2 md:p-8 flex flex-col gap-2 md:gap-8">
 	<div class="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-8">
 		<button
 			class={`${base} ${monthly ? 'variant-filled-primary' : 'variant-soft-primary'}`}
 			on:click={() => onSelect(true)}
 		>
 			{#if monthly}
-				<div class="absolute top-0 right-0 mr-2 mt-2 ">
+				<div class="absolute top-0 right-0 mr-2 mt-2">
 					<Icon src={CheckCircle} theme="solid" class="w-8" />
 				</div>
 			{/if}
@@ -65,7 +82,7 @@
 			on:click={() => onSelect(false)}
 		>
 			{#if !monthly}
-				<div class="absolute top-0 right-0 mr-2 mt-2 ">
+				<div class="absolute top-0 right-0 mr-2 mt-2">
 					<Icon src={CheckCircle} theme="solid" class="w-8" />
 				</div>
 			{/if}
@@ -83,7 +100,7 @@
 		</button>
 	</div>
 	<div>
-		<div class="bcu-card variant-filled-primary p-2 md:p-8">
+		<div class="card variant-filled-primary p-2 md:p-8">
 			<h2>Pro</h2>
 			<ul class="text-left text-md md:text-lg">
 				<li class="my-2 flex flex-row gap-1 items-center">
@@ -107,9 +124,9 @@
 	</div>
 
 	{#if redirecting}
-		<button class="bcu-button variant-filled-surface flex self-end gap-2">
+		<button class="btn variant-filled-surface flex self-end gap-2">
 			Redirecting
-			<ProgressCircle
+			<ProgressRadial
 				stroke={100}
 				meter="stroke-primary-50"
 				track="stroke-primary-500/30"
@@ -118,7 +135,7 @@
 		</button>
 	{:else}
 		<button
-			class="bcu-button variant-filled-surface flex self-end gap-2"
+			class="btn variant-filled-surface flex self-end gap-2"
 			on:click|once={() => onSubscribe($modalStore[0].meta?.products, $modalStore[0].meta?.uid)}
 		>
 			Continue

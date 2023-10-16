@@ -7,7 +7,7 @@
 	import { ArrowRight } from '@steeze-ui/heroicons';
 	import StarSvg from './StarSvg.svelte';
 
-	import { Avatar } from '@codingcatdev/blackcatui';
+	import { Avatar } from '@skeletonlabs/skeleton';
 	import Block from './Block.svelte';
 	import Circle from './Circle.svelte';
 	import AjPrimary from '$lib/components/global/icons/AJPrimary.svelte';
@@ -56,7 +56,7 @@
 						with projects to show off your new skills.
 					</div>
 					<div>
-						<button class="bcu-button gap-1 variant-filled lg:text-3xl xl:text-4xl">
+						<button class="btn gap-1 variant-filled lg:text-3xl xl:text-4xl">
 							Start learning for <span class="uppercase">free</span>
 							<Icon src={ArrowRight} theme="mini" class="w-6" />
 						</button>

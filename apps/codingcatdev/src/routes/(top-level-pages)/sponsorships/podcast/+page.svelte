@@ -46,9 +46,9 @@
 	/>
 </svelte:head>
 
-<ol class="bcu-breadcrumb">
-	<li class="capitalize bcu-crumb"><a href="/sponsorships">Sponsorships</a></li>
-	<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+<ol class="breadcrumb">
+	<li class="capitalize crumb"><a href="/sponsorships">Sponsorships</a></li>
+	<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 	<li>Podcast Sponsorship</li>
 </ol>
 
@@ -76,7 +76,7 @@
 				<AJHeadphones cls="w-48 h-48" />
 			</div>
 		</div>
-		<div class="flex justify-center bcu-card variant-soft-surface">
+		<div class="flex justify-center card variant-soft-surface">
 			<div class="flex flex-col max-w-xl gap-4 p-8 font-extrabold">
 				<p class="text-4xl">Are you interested in reaching other web designers and developers?</p>
 				<p class="text-6xl text-primary-500">We&lsquo;d love to help!</p>
@@ -91,7 +91,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="flex flex-wrap justify-center bcu-card variant-soft-surface">
+		<div class="flex flex-wrap justify-center card variant-soft-surface">
 			<div class="flex justify-center w-full gap-4 p-8 font-extrabold">
 				<p class="text-4xl">
 					<span class="text-8xl text-primary-500"> Why </span>
@@ -125,7 +125,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-wrap justify-center bcu-card variant-soft-surface">
+		<div class="flex flex-wrap justify-center card variant-soft-surface">
 			<div class="flex justify-center w-full gap-4 p-8 font-extrabold">
 				<p class="text-4xl">
 					<span class="text-8xl text-primary-500"> Where </span>
@@ -154,7 +154,7 @@
 				<Podcatchers />
 			</div>
 		</div>
-		<div class="flex flex-col justify-center gap-8 p-8 bcu-card variant-soft-surface">
+		<div class="flex flex-col justify-center gap-8 p-8 card variant-soft-surface">
 			<p class="flex justify-center w-full text-6xl font-bold">Audience Breakdown</p>
 			<div class="flex flex-col w-full gap-8 text-2xl">
 				<div class="flex flex-col items-center gap-4">
@@ -184,7 +184,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-wrap justify-center p-8 bcu-card variant-soft-surface">
+		<div class="flex flex-wrap justify-center p-8 card variant-soft-surface">
 			<p class="flex justify-center w-full text-4xl font-bold md:text-6xl">
 				Sponsoring is Purrfect for:
 			</p>
@@ -203,7 +203,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-wrap justify-center p-8 bcu-card variant-soft-surface">
+		<div class="flex flex-wrap justify-center p-8 card variant-soft-surface">
 			<p class="flex justify-start w-full text-4xl font-bold md:text-6xl">Audience Interests:</p>
 			<div class="flex flex-wrap md:flex-nowrap">
 				<div class="flex flex-col max-w-xl gap-4 p-2 font-extrabold md:p-8">
@@ -238,10 +238,8 @@
 				</div>
 			</div>
 		</div>
-		<div
-			class="flex flex-wrap justify-start gap-4 p-8 md:gap-8 md:px-24 bcu-card variant-soft-surface"
-		>
-			<div class="flex flex-col justify-start w-full gap-4 font-extrabold ">
+		<div class="flex flex-wrap justify-start gap-4 p-8 md:gap-8 md:px-24 card variant-soft-surface">
+			<div class="flex flex-col justify-start w-full gap-4 font-extrabold">
 				<p class="text-4xl">
 					<span class="text-8xl text-primary-500"> Pricing </span>
 				</p>
@@ -267,7 +265,7 @@
 				approves both pre-roll and mid-roll videos.
 			</p>
 		</div>
-		<div class="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 bcu-card variant-soft-surface">
+		<div class="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 card variant-soft-surface">
 			<div class="flex flex-col w-full gap-4">
 				<p class="w-full text-4xl font-bold">
 					As part of the sponsorship package, you&lsquo;ll receive:
@@ -292,7 +290,7 @@
 				/>
 			</div>
 		</div>
-		<div class="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 bcu-card variant-soft-surface">
+		<div class="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 card variant-soft-surface">
 			<div class="flex flex-col w-full gap-4">
 				<div class="flex gap-2 py-8 text-2xl items-center">
 					<span class="text-6xl font-bold text-primary-500"> 2 </span>
@@ -320,7 +318,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 bcu-card variant-soft-surface">
+		<div class="flex flex-col gap-4 py-2 md:py-8 md:flex-row md:px-8 card variant-soft-surface">
 			<div class="flex flex-col w-full gap-4">
 				<div class="flex gap-2 py-8 text-2xl items-center">
 					<span class="text-6xl font-bold text-primary-500"> 4 </span>

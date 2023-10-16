@@ -1,7 +1,8 @@
 <script lang="ts">
 	// Stores
 	import { storeCurrentUrl } from '$lib/stores/stores';
-	import { drawerStore } from '@codingcatdev/blackcatui';
+	import { getDrawerStore } from '@skeletonlabs/skeleton';
+	const drawerStore = getDrawerStore();
 
 	// Props
 	export let embedded = false;
