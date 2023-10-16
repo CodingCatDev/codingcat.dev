@@ -3,6 +3,8 @@
 	import type { PageData } from './$types';
 	import DashboardWelcome from './DashboardWelcome.svelte';
 	import DashboardCTA from './DashboardCTA.svelte';
+	import ContentCards from '../../(content-list)/ContentCards.svelte';
+	import { ContentType } from '$lib/types';
 
 	export let data: PageData;
 </script>
@@ -24,13 +26,20 @@
 			<div>
 				<h3>✨ New and Featured</h3>
 				<div class="p-4">
-					<p>Coming soon.</p>
+					<ContentCards {data} />
 				</div>
 			</div>
 			<div>
 				<h3>📅 Coming Soon</h3>
 				<div class="p-4">
-					<p>Coming soon.</p>
+					{#if data?.user?.stripeRole}
+						<ContentCards data={{ contentType: data.contentType, content: data.comingSoon }} />
+					{:else}
+						<div class="flex flex-col gap-2">
+							<div class="text-xl">You must be a Pro member to preview upcoming courses.</div>
+							<ProButton products={data.products} uid={data.user?.uid} />
+						</div>
+					{/if}
 				</div>
 			</div>
 		</section>
