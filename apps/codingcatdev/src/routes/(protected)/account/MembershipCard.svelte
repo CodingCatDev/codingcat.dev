@@ -3,7 +3,7 @@
 	export let data: PageData;
 
 	import { openStripePortal } from '$lib/client/firebase';
-	import { ProgressCircle } from '@skeletonlabs/skeleton';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import ProButton from '../ProButton.svelte';
 
 	import { Icon } from '@steeze-ui/svelte-icon';
@@ -26,7 +26,7 @@
 		{#if redirecting}
 			<button class="btn variant-filled-surface flex gap-2">
 				Redirecting
-				<ProgressCircle
+				<ProgressRadial
 					stroke={100}
 					meter="stroke-primary-50"
 					track="stroke-primary-500/30"

@@ -3,7 +3,8 @@
 
 	import { ccdSignUpWithEmailAndPassword } from '$lib/client/firebase';
 
-	import { toastStore } from '@skeletonlabs/skeleton';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
 
 	export let action: string;
 </script>

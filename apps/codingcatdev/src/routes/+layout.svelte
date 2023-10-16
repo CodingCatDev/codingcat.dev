@@ -52,7 +52,7 @@
 		// Scroll to top
 		const isNewPage: boolean =
 			params.from && params.to && params.from.url.pathname !== params.to.url.pathname;
-		const elemPage = document.querySelector('#appShell');
+		const elemPage = document.querySelector('#page');
 		if (isNewPage && elemPage !== null) {
 			elemPage.scrollTop = 0;
 		}
@@ -184,5 +184,5 @@
 	{/if}
 
 	<!-- Page Footer -->
-	<svelte:fragment slot="footer"><CcdFooter /></svelte:fragment>
+	<svelte:fragment slot="pageFooter"><CcdFooter /></svelte:fragment>
 </AppShell>
