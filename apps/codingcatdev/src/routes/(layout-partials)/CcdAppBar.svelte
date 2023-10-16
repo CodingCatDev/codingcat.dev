@@ -24,7 +24,6 @@
 	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
 	import LogoutButton from '../login/LogoutButton.svelte';
 	import { Search } from '$lib/search';
-	import { page } from '$app/stores';
 
 	$: classesActive = (href: string) =>
 		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token hover:text-token' : '';
@@ -78,7 +77,12 @@
 			<button
 				class="btn hover:variant-soft-primary"
 				aria-label="Popup Showing Theme Options"
-				use:popup={{ event: 'click', target: 'theme' }}
+				use:popup={{
+					event: 'click',
+					target: 'theme',
+					placement: 'bottom-end',
+					middleware: { offset: { crossAxis: -20, mainAxis: 20 } }
+				}}
 			>
 				{#if $storeUser?.picture}
 					<Avatar
@@ -94,7 +98,7 @@
 				{/if}
 			</button>
 			<!-- popup -->
-			<div class="flex flex-col gap-4 p-4 shadow-xl card w-60" data-popup="theme">
+			<div class="flex flex-col gap-4 p-4 shadow-xl card" data-popup="theme">
 				<div class="mb-2 space-y-4">
 					<section class="flex items-center justify-between">
 						<h6>Mode</h6>
