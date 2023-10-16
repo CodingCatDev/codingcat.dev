@@ -98,19 +98,21 @@
 				{/if}
 			</button>
 			<!-- popup -->
-			<div class="flex flex-col gap-4 p-4 shadow-xl card" data-popup="theme">
-				<div class="mb-2 space-y-4">
-					<section class="flex items-center justify-between">
-						<h6>Mode</h6>
-						<LightSwitch />
-					</section>
-				</div>
-				<hr />
-				<div class="flex flex-col gap-2 mt-2">
-					<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
-					<div class="flex gap-2">
-						<a class="btn variant-ringed-primary" href="/dashboard">Dashboard</a>
-						<LogoutButton />
+			<div data-popup="theme">
+				<div class="flex flex-col gap-4 p-4 shadow-xl card">
+					<div class="mb-2 space-y-4">
+						<section class="flex items-center justify-between">
+							<h6>Mode</h6>
+							<LightSwitch />
+						</section>
+					</div>
+					<hr />
+					<div class="flex flex-col gap-2 mt-2">
+						<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
+						<div class="flex gap-2">
+							<a class="btn variant-ringed-primary" href="/dashboard">Dashboard</a>
+							<LogoutButton />
+						</div>
 					</div>
 				</div>
 			</div>

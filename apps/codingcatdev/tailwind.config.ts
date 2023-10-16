@@ -3,6 +3,7 @@ import type { Config } from 'tailwindcss';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import { skeleton } from '@skeletonlabs/tw-plugin';
+import { codingCatDevTheme } from './theme';
 
 const config = {
 	darkMode: 'class',
@@ -18,12 +19,7 @@ const config = {
 		typography,
 		skeleton({
 			themes: {
-				preset: [
-					{
-						name: 'modern',
-						enhancements: true
-					}
-				]
+				custom: [codingCatDevTheme]
 			}
 		})
 	]
