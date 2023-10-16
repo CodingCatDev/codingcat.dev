@@ -4,7 +4,7 @@ import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import { skeleton } from '@skeletonlabs/tw-plugin';
 
-export default {
+const config = {
 	darkMode: 'class',
 	content: [
 		'./src/**/*.{html,js,svelte,ts,md}',
@@ -28,3 +28,5 @@ export default {
 		})
 	]
 } satisfies Config;
+
+export default config;
