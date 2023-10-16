@@ -40,7 +40,7 @@ For example, the following code checks if the variable `isLoggedIn` is true or f
 
 ## Switch
 
-<alert class="bcu-alert variant-soft-primary">This is still in the works 😸</alert>
+<alert class="alert variant-soft-primary">This is still in the works 😸</alert>
 
 **Switch statements** are used to check if a value is equal to one of a set of values. If the value is equal to one of the values, the code inside the corresponding case block will be executed.
 

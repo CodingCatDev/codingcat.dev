@@ -10,8 +10,16 @@
 	//Style
 	import '../app.postcss';
 
-	// BlackCatUI Components
-	import { AppShell, Modal, ProgressCircle, Toast, storePopup } from '@codingcatdev/blackcatui';
+	// Skeleton Components
+	import {
+		AppShell,
+		Modal,
+		ProgressRadial,
+		Toast,
+		storePopup,
+		initializeStores
+	} from '@skeletonlabs/skeleton';
+	initializeStores();
 
 	// Depedency: Floating UI
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
@@ -44,7 +52,7 @@
 		// Scroll to top
 		const isNewPage: boolean =
 			params.from && params.to && params.from.url.pathname !== params.to.url.pathname;
-		const elemPage = document.querySelector('#bcu-app-shell-page');
+		const elemPage = document.querySelector('#appShell');
 		if (isNewPage && elemPage !== null) {
 			elemPage.scrollTop = 0;
 		}
@@ -162,13 +170,13 @@
 <!-- App Shell -->
 <AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token" }>
 	<!-- Header -->
-	<svelte:fragment slot="bcu-app-shell-header"><CcdAppBar /></svelte:fragment>
+	<svelte:fragment slot="header"><CcdAppBar /></svelte:fragment>
 
 	<!-- Page Content -->
 	{#if $navigationIsDelayed}
 		<!-- LOOK HERE -->
 		<div class="flex flex-col items-center gap-2 m-2 md:m-8 md:gap-8">
-			<ProgressCircle stroke={60} value={undefined} width="w-20 md:w-36" />
+			<ProgressRadial stroke={60} value={undefined} width="w-20 md:w-36" />
 			<h1 class="text-center ext-3xl text-cText">Fetching...</h1>
 		</div>
 	{:else}
@@ -176,5 +184,5 @@
 	{/if}
 
 	<!-- Page Footer -->
-	<svelte:fragment slot="bcu-app-shell-page-footer"><CcdFooter /></svelte:fragment>
+	<svelte:fragment slot="footer"><CcdFooter /></svelte:fragment>
 </AppShell>

@@ -8,7 +8,7 @@
 >
 	<HomeHero />
 
-	<div class="bcu-card p-8 col-span-full">
+	<div class="card p-8 col-span-full">
 		<div class="flex flex-wrap justify-center align-middle items-center">
 			<div class="text-2xl max-w-xl flex flex-col gap-2 md:gap-8">
 				<div>

@@ -4,7 +4,8 @@
 
 	import { ccdSignInWithEmailAndPassword } from '$lib/client/firebase';
 
-	import { toastStore } from '@codingcatdev/blackcatui';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
 
 	export let action: string;
 </script>
@@ -57,6 +58,6 @@
 			<span>Password</span>
 			<input class="input" name="password" type="password" />
 		</label>
-		<button class="bcu-button variant-filled-primary" type="submit">Login</button>
+		<button class="btn variant-filled-primary" type="submit">Login</button>
 	</div>
 </form>

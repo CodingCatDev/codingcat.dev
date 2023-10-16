@@ -10,7 +10,7 @@
 </script>
 
 <section
-	class="grid grid-cols-[repeat(1,minmax(0,_1fr))] md:grid-cols-[repeat(2,minmax(0,_1fr))] lg:md:grid-cols-[repeat(3,minmax(0,_1fr))]  gap-2 md:gap-8"
+	class="grid grid-cols-[repeat(1,minmax(0,_1fr))] md:grid-cols-[repeat(2,minmax(0,_1fr))] lg:md:grid-cols-[repeat(3,minmax(0,_1fr))] gap-2 md:gap-8"
 >
 	{#each lesson as l}
 		{#if l?.section}
@@ -22,7 +22,7 @@
 			</div>
 		{/if}
 		<a href={`/course/${courseSlug}/lesson/${l.slug}`} class="!no-underline !text-token">
-			<div class="h-full bcu-card">
+			<div class="h-full card">
 				{#if l?.cover}
 					<Image
 						src={l.cover}
@@ -37,7 +37,7 @@
 					/>
 				{/if}
 				<div class="p-4">
-					<header class="relative py-6 text-2xl font-bold capitalize bcu-card-header">
+					<header class="relative py-6 text-2xl font-bold capitalize card-header">
 						<div class="absolute top-0 right-0 w-6">
 							{#if l?.locked}
 								<Icon src={LockClosed} theme="solid" />

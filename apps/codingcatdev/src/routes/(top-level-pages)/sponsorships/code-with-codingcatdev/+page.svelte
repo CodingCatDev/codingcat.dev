@@ -42,9 +42,9 @@
 	/>
 </svelte:head>
 
-<ol class="bcu-breadcrumb">
-	<li class="capitalize bcu-crumb"><a href="/sponsorships">Sponsorships</a></li>
-	<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+<ol class="breadcrumb">
+	<li class="capitalize crumb"><a href="/sponsorships">Sponsorships</a></li>
+	<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 	<li>Code with CodingCat.dev Sponsorship</li>
 </ol>
 
@@ -62,7 +62,7 @@
 			<AJPrimary cls="w-48 h-48" />
 		</div>
 	</div>
-	<div class="flex justify-center bcu-card variant-soft-surface">
+	<div class="flex justify-center card variant-soft-surface">
 		<div class="flex flex-col p-8">
 			<div class="flex justify-center w-full gap-4 p-8 font-extrabold">
 				<p class="text-4xl">

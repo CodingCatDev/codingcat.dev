@@ -9,7 +9,7 @@
 </script>
 
 <div
-	class={`bcu-card max-w-xs snap-center shrink-0 !text-surface-500 ${positionStyle} ${$$props.class}`}
+	class={`card max-w-xs snap-center shrink-0 !text-surface-500 ${positionStyle} ${$$props.class}`}
 >
 	<a class="self-start !no-underline" href={`/${content.type}/${content.slug}`}>
 		{#if content?.cover}

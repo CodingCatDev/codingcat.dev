@@ -34,7 +34,7 @@
 			<section class="relative grid gap-4 grid-cols-fit sm:gap-10">
 				{#each data?.content as sponsor}
 					<a
-						class="max-w-sm overflow-hidden bcu-card bg-initial card-hover"
+						class="max-w-sm overflow-hidden card bg-initial card-hover"
 						href={`/sponsor/${sponsor.slug}`}
 					>
 						<header>
@@ -55,7 +55,7 @@
 			</section>
 			{#if next}
 				<div class="flex justify-center m-8">
-					<button class="text-2xl bcu-button variant-filled-primary" on:click={() => more()}>
+					<button class="text-2xl btn variant-filled-primary" on:click={() => more()}>
 						Show More
 					</button>
 				</div>
