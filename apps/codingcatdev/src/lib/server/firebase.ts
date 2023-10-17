@@ -1,6 +1,6 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { Auth, getAuth } from 'firebase-admin/auth';
-import { Firestore, getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 
 import { env as publicEnv } from '$env/dynamic/public';
 
@@ -63,6 +63,21 @@ export const setStripeRole = async (uid: string, remove = false) => {
 	auth.setCustomUserClaims(uid, { stripeRole: remove ? null : 'admin' });
 };
 
+export const getShowDrafts = async (uid?: string) => {
+	if (!uid) return false;
+
+	// Check if user is Pro and wants drafts
+	const auth = getAuth(app);
+	const user = await auth.getUser(uid);
+
+	if (!user?.customClaims?.['stripeRole']) return false;
+
+	const db = getFirestore();
+	const doc = await db.collection('users').doc(user.uid).get();
+	const userData = doc.data();
+	return userData?.settings?.showDrafts;
+};
+
 /* DB */
 
 export const getStripeProducts = async () => {
@@ -85,4 +100,37 @@ export const getStripeProducts = async () => {
 		}
 	}
 	return products;
+};
+
+export interface UserSettings {
+	settings: {
+		showDrafts: boolean;
+	};
+}
+
+export const getUser = async (uid?: string) => {
+	if (!uid) return undefined;
+
+	// Check if user is Pro and wants drafts
+	const auth = getAuth(app);
+	const user = await auth.getUser(uid);
+
+	const db = getFirestore();
+	const doc = await db.collection('users').doc(user.uid).get();
+	return doc.data() as UserSettings;
+};
+
+export const updateUser = async (uid?: string, userSettings?: UserSettings) => {
+	if (!uid) return undefined;
+	if (!userSettings) return;
+
+	// Check if user is Pro and wants drafts
+	const auth = getAuth(app);
+	const user = await auth.getUser(uid);
+
+	const db = getFirestore();
+	await db
+		.collection('users')
+		.doc(user.uid)
+		.update(userSettings as any);
 };

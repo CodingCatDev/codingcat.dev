@@ -32,7 +32,7 @@
 			<div>
 				<h3>📅 Coming Soon</h3>
 				<div class="p-4">
-					{#if data?.user?.stripeRole}
+					{#if data?.showDrafts}
 						<ContentCards data={{ contentType: data.contentType, content: data.comingSoon }} />
 					{:else}
 						<div class="flex flex-col gap-2">

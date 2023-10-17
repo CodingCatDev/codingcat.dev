@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
-	import type { Content, Course } from '$lib/types';
+	import { ContentPublished, type Content, type Course } from '$lib/types';
 	import { ContentType } from '$lib/types';
 	export let data: { contentType: ContentType; content: Content[] & Course[]; next?: any };
 
@@ -33,7 +33,14 @@
 		<div class="p-4 sm:p-10">
 			<section class="relative grid gap-4 grid-cols-fit sm:gap-10">
 				{#each data?.content as content}
-					<div class="max-w-6xl ccd-grid-card">
+					<div class="max-w-6xl ccd-grid-card relative">
+						{#if content?.published !== ContentPublished.published}
+							<div class="absolute top-2 right-2">
+								<span class="chip variant-filled-warning py-1 px-4 rounded-full uppercase font-bold"
+									>{content?.published || 'draft'}</span
+								>
+							</div>
+						{/if}
 						<a class="self-start" href={`/${content.type}/${content.slug}`}>
 							{#if content?.cover}
 								<Image

@@ -55,13 +55,14 @@ export const getContentTypePath = async <T>(
 	contentType: ContentType,
 	path: string,
 	courseDir?: string,
-	render = false
+	render = false,
+	userPreview = false
 ) => {
 	const root = getRootPath(contentType, courseDir);
-	return (await parseContentType<T>(`${root}/${path}/${suffix}`, render)) as T;
+	return (await parseContentType<T>(`${root}/${path}/${suffix}`, render, userPreview)) as T;
 };
 
-export const parseContentType = async <T>(path: string, render = false) => {
+export const parseContentType = async <T>(path: string, render = false, userPreview = false) => {
 	const { metadata, default: page } = await import(/* @vite-ignore */ path);
 	const frontmatter = metadata;
 
@@ -92,7 +93,8 @@ export const parseContentType = async <T>(path: string, render = false) => {
 		const lesson = (
 			await listContent<Content>({
 				contentItems: await getContentTypeDirectory<Content>(ContentType.lesson, frontmatter.slug),
-				limit: 10000
+				limit: 10000,
+				userPreview
 			})
 		).content;
 		return { ...content, lesson } as T;
