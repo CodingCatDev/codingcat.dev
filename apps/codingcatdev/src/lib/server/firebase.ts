@@ -104,7 +104,7 @@ export const getStripeProducts = async () => {
 
 export interface UserSettings {
 	settings: {
-		showDrafts: boolean;
+		showDrafts?: boolean;
 	};
 }
 
@@ -129,8 +129,5 @@ export const updateUser = async (uid?: string, userSettings?: UserSettings) => {
 	const user = await auth.getUser(uid);
 
 	const db = getFirestore();
-	await db
-		.collection('users')
-		.doc(user.uid)
-		.update(userSettings as any);
+	await db.collection('users').doc(user.uid).set(userSettings, { merge: true });
 };

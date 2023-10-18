@@ -12,10 +12,20 @@
 		</div>
 		<div class="flex flex-col gap-4 p-8 card md:w-2/3">
 			<!-- TODO: Add enhanced -->
-			<form method="POST">
-				<SlideToggle name="showDrafts" checked={data?.settings?.showDrafts}>Show Drafts</SlideToggle
+			<form method="POST" class="flex flex-col gap-2">
+				<SlideToggle
+					name="showDrafts"
+					checked={data?.settings?.showDrafts}
+					disabled={!data?.user?.stripeRole}
 				>
-				<button class="btn" type="submit">Update</button>
+					<div class="flex gap-2">
+						Show Drafts
+						<div class="chip variant-filled-primary">Pro Feature</div>
+					</div>
+				</SlideToggle>
+				<div class="flex space-y-8">
+					<button class="btn variant-filled" type="submit">Update</button>
+				</div>
 			</form>
 		</div>
 	</div>

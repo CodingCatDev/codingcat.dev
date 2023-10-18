@@ -32,12 +32,19 @@
 			<div>
 				<h3>📅 Coming Soon</h3>
 				<div class="p-4">
-					{#if data?.showDrafts}
-						<ContentCards data={{ contentType: data.contentType, content: data.comingSoon }} />
-					{:else}
+					{#if !data?.user?.stripeRole}
 						<div class="flex flex-col gap-2">
 							<div class="text-xl">You must be a Pro member to preview upcoming courses.</div>
 							<ProButton products={data.products} uid={data.user?.uid} />
+						</div>
+					{:else if data?.showDrafts}
+						<ContentCards data={{ contentType: data.contentType, content: data.comingSoon }} />
+					{:else}
+						<div class="flex">
+							<div class="text-xl">
+								You have chosen to not show drafts, if you would like to start seeing them again go
+								to your <a href="/account">Account</a>.
+							</div>
 						</div>
 					{/if}
 				</div>

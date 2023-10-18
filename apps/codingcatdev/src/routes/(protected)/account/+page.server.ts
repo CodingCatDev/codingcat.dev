@@ -23,7 +23,7 @@ export const actions = {
 			return fail(401, { user: 'missing' });
 		}
 		const user = await ccdValidateSessionCookie(ccdsession);
-		const settings = Object.fromEntries(data.entries()) as unknown as UserSettings;
+		const settings = Object.fromEntries(data.entries());
 
 		await updateUser(user?.uid, { settings });
 	}
