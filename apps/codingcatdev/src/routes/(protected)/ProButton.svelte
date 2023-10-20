@@ -7,12 +7,14 @@
 	export let uid: string | undefined;
 
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { RocketLaunch } from '@steeze-ui/heroicons';
+	import { BookOpen, Clock, Pencil, PencilSquare, RocketLaunch } from '@steeze-ui/heroicons';
 
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 
 	import ProModal from './ProModal.svelte';
+	import CoursesSvg from '../(home-partials)/(home-latest-course)/CoursesSvg.svelte';
+	import Courses from '$lib/components/global/icons/nav/Courses.svelte';
 
 	const showPro = () => {
 		const d: ModalSettings = {
@@ -45,20 +47,20 @@
 		class="text-left w-7/8 justify-self-center font-semibold text-md md:text-lg flex flex-col gap-1 pb-4"
 	>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-6" />
+			<Courses cls="h-6 w-6" />
 			Watch all PRO courses
 		</li>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-6" />
+			<Icon src={Clock} theme="solid" class="w-6" />
 			Join PRO office hours
 		</li>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-6" />
+			<Icon src={BookOpen} theme="solid" class="w-6" />
 			Read all PRO posts
 		</li>
 		<li class="my-2 flex flex-row gap-1 items-center">
-			<Icon src={RocketLaunch} theme="solid" class="w-6" />
-			Get PRO source code from GitHub
+			<Icon src={PencilSquare} theme="solid" class="w-6" />
+			See Course Drafts
 		</li>
 	</ul>
 </button>

@@ -20,9 +20,9 @@
 {#if data?.user?.stripeRole}
 	<div class="card p-8 flex flex-col gap-2 md:gap-8 w-full">
 		<h2>Membership</h2>
-
-		Current Membership: {data?.user?.stripeRole}
-
+		<div class="flex gap-2">
+			Current Membership:<span class="chip variant-filled">{data?.user?.stripeRole}</span>
+		</div>
 		{#if redirecting}
 			<button class="btn variant-filled-surface flex gap-2">
 				Redirecting
