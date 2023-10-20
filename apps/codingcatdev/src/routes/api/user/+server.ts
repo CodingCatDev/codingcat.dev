@@ -2,8 +2,6 @@ import { json } from '@sveltejs/kit';
 import { ccdValidateSessionCookie, isAdmin, validateStripeRole } from '$lib/server/firebase';
 import { error } from 'console';
 
-export const prerender = true;
-
 /** @type {import('./$types').RequestHandler} */
 export const GET = async ({ cookies }) => {
 	const ccdsession = cookies.get('session');
