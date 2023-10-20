@@ -14,9 +14,9 @@
 {#if data?.course}
 	<div class="flex flex-col justify-center !text-token p-2 md:p-4 xl:p-8 w-full items-center">
 		<section class="justify-center flex flex-col gap-2 md:gap-8 max-w-7xl">
-			<ol class="bcu-breadcrumb">
-				<li class="bcu-crumb"><a href="/courses">Courses</a></li>
-				<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+			<ol class="breadcrumb">
+				<li class="crumb"><a href="/courses">Courses</a></li>
+				<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 				<li>{data.course.title}</li>
 			</ol>
 			<div class="flex flex-col gap-2 md:gap-8">
@@ -29,7 +29,7 @@
 					<section class="flex">
 						{#each data?.authors as author (author.slug)}
 							<a
-								class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+								class="btn flex gap-2 items-center variant-ghost p-2 rounded-md"
 								href={`/author/${author.slug}`}
 							>
 								{#if author?.cover}
@@ -60,7 +60,7 @@
 					<section class="flex flex-col gap-2 md:flex-row md:gap-8">
 						{#each data?.sponsors as sponsor (sponsor.slug)}
 							<a
-								class="overflow-hidden bcu-card bg-initial card-hover md:flex-1"
+								class="overflow-hidden card bg-initial card-hover md:flex-1"
 								href={`${sponsor.url}`}
 								target="_blank"
 								rel="noopener noreferrer"

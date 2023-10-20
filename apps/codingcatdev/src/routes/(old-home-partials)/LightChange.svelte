@@ -3,7 +3,7 @@
 	import { Draggable } from 'gsap/Draggable';
 	import { onMount } from 'svelte';
 
-	import { modeCurrent, setModeUserPrefers, setModeCurrent } from '@codingcatdev/blackcatui';
+	import { modeCurrent, setModeUserPrefers, setModeCurrent } from '@skeletonlabs/skeleton';
 
 	function onToggleHandler(): void {
 		$modeCurrent = !$modeCurrent;

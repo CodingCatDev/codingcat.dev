@@ -180,7 +180,7 @@ This form can be found in `src/lib/CreateSite.svelte` and includes the `onCreate
 
 <form class="flex w-full gap-2">
 	<textarea class="flex-1 text-black" bind:value={content} />
-	<button class="bcu-button variant-filled-primary" on:click={() => onCreate()} disabled={creating}>
+	<button class="btn variant-filled-primary" on:click={() => onCreate()} disabled={creating}>
 		{#if creating}
 			Creating...
 		{:else}
@@ -389,7 +389,7 @@ The Svelte component can be found at `src/lib/DeleteStack.svelte` and it contain
 
 <form>
 	<button
-		class="bcu-button bcu-button-sm variant-filled-secondary"
+		class="btn btn-sm variant-filled-secondary"
 		on:click={() => onDelete()}
 		disabled={deleting}
 	>

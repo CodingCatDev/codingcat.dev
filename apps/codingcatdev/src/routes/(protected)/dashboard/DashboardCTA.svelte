@@ -3,7 +3,7 @@
 
 	import { Discord, Github, Twitter, Youtube } from '@steeze-ui/simple-icons';
 
-	const anchorClasses = 'bcu-card bcu-card-hover p-8 min-h-96';
+	const anchorClasses = 'card card-hover p-8 min-h-96';
 	const sectionClasses = 'flex flex-col relative gap-4 justify-start items-start h-52 py-14';
 	const logoClasses = 'absolute top-0';
 	const titleClasses = 'tracking-wide';
@@ -45,7 +45,7 @@
 	</a>
 	<!-- last anchor has different classes for responsiveness-->
 	<a
-		class="bcu-card bcu-card-hover p-8 md:col-span-3 md:max-w-full lg:col-span-1 lg:max-w-xs"
+		class="card card-hover p-8 md:col-span-3 md:max-w-full lg:col-span-1 lg:max-w-xs"
 		target="_blank"
 		href="https://github.com/sponsors/CodingCatDev"
 	>

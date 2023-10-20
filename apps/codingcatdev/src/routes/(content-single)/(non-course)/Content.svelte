@@ -23,9 +23,9 @@
 		<div class="flex justify-center">
 			<section class="flex flex-col justify-center w-full gap-8 p-2 xl:flex-row xl:p-8">
 				<div class="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
-					<ol class="bcu-breadcrumb">
-						<li class="capitalize bcu-crumb"><a href={`/${title}`}>{title}</a></li>
-						<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+					<ol class="breadcrumb">
+						<li class="capitalize crumb"><a href={`/${title}`}>{title}</a></li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 						<li>{data.content.title}</li>
 					</ol>
 					{#if data?.content?.youtube}
@@ -40,7 +40,7 @@
 							<section class="flex gap-2 md:gap-8">
 								{#each data?.guests as guest (guest.slug)}
 									<a
-										class="flex items-center gap-2 p-2 rounded-md bcu-button variant-ghost"
+										class="flex items-center gap-2 p-2 rounded-md btn variant-ghost"
 										href={`/guest/${guest.slug}`}
 									>
 										{#if guest?.cover}
@@ -65,7 +65,7 @@
 							<section class="flex gap-2 md:gap-8">
 								{#each data?.authors as author (author.slug)}
 									<a
-										class="flex items-center gap-2 p-2 rounded-md bcu-button variant-ghost"
+										class="flex items-center gap-2 p-2 rounded-md btn variant-ghost"
 										href={`/author/${author.slug}`}
 									>
 										{#if author?.cover}
@@ -99,7 +99,7 @@
 						<section class="flex flex-col gap-2 md:flex-row md:gap-8">
 							{#each data?.sponsors as sponsor (sponsor.slug)}
 								<a
-									class="overflow-hidden bcu-card bg-initial card-hover md:flex-1"
+									class="overflow-hidden card bg-initial card-hover md:flex-1"
 									href={`${sponsor.url}`}
 									target="_blank"
 									rel="noopener noreferrer"
@@ -141,8 +141,8 @@
 
 								<section class="flex flex-col gap-2 md:gap-8">
 									{#each data?.guests as guest (guest.slug)}
-										<div class="bcu-card">
-											<header class="flex items-center gap-2 bcu-card-header md:gap-8">
+										<div class="card">
+											<header class="flex items-center gap-2 card-header md:gap-8">
 												{#if guest?.cover}
 													<div class="w-8 md:w-12">
 														{#key guest.slug}
@@ -159,7 +159,7 @@
 											<section class="flex flex-wrap gap-2 p-4 md:gap-8">
 												{#each picks.filter((p) => p?.author === guest?.slug) as pick (pick.name)}
 													<a
-														class="flex gap-2 bcu-button variant-soft-primary whitespace-normal break-word text-left"
+														class="flex gap-2 btn variant-soft-primary whitespace-normal break-word text-left"
 														href={pick.site}
 														target="_blank"
 														rel="noopener noreferrer"
@@ -179,8 +179,8 @@
 
 								<section class="flex flex-col gap-2 md:gap-8">
 									{#each data?.authors as author (author.slug)}
-										<div class="bcu-card">
-											<header class="flex items-center gap-2 bcu-card-header md:gap-8">
+										<div class="card">
+											<header class="flex items-center gap-2 card-header md:gap-8">
 												{#if author?.cover}
 													<div class="w-8 md:w-12">
 														{#key author.slug}
@@ -197,7 +197,7 @@
 											<section class="flex flex-wrap gap-2 p-4 md:gap-8">
 												{#each picks.filter((p) => p?.author === author?.slug) as pick (pick.name)}
 													<a
-														class="flex gap-2 bcu-button variant-soft-primary whitespace-normal break-word text-left"
+														class="flex gap-2 btn variant-soft-primary whitespace-normal break-word text-left"
 														href={pick.site}
 														target="_blank"
 														rel="noopener noreferrer"

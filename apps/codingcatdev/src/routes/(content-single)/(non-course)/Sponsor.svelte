@@ -20,11 +20,11 @@
 		<div class="flex justify-center">
 			<section class="flex flex-col justify-center w-full gap-8 p-2 xl:flex-row xl:p-8">
 				<div class="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
-					<ol class="bcu-breadcrumb">
-						<li class="capitalize bcu-crumb">
+					<ol class="breadcrumb">
+						<li class="capitalize crumb">
 							<a href={`/${title}`}>{title}</a>
 						</li>
-						<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 						<li>{data.content.name}</li>
 					</ol>
 					<h1>{data?.content?.name}</h1>

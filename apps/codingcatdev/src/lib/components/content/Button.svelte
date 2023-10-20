@@ -2,4 +2,4 @@
 	let count = 0;
 </script>
 
-<button class="bcu-button variant-filled-primary" on:click={() => count++}>{count}</button>
+<button class="btn variant-filled-primary" on:click={() => count++}>{count}</button>
