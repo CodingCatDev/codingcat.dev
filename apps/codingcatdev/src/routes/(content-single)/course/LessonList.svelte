@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { LockClosed } from '@steeze-ui/heroicons';
+	import { Bookmark, CheckCircle, LockClosed, MinusCircle } from '@steeze-ui/heroicons';
 	import { LockOpen } from '@steeze-ui/heroicons';
 
 	import type { Lesson } from '$lib/types';
 	import { storeCurrentUrl } from '$lib/stores/stores';
+	import BookMark from './BookMark.svelte';
+	import CompletionMark from './CompletionMark.svelte';
 
 	export let lesson: Lesson[];
 	export let courseSlug: string;
@@ -34,7 +36,7 @@
 						href={`/course/${courseSlug}/lesson/${l.slug}`}
 						class={`${classesActive(l.slug)} flex gap-1`}
 					>
-						<div class="w-6 shrink-0">
+						<div class="w-4 shrink-0">
 							{#if l?.locked}
 								<Icon src={LockClosed} theme="solid" />
 							{:else}
@@ -43,6 +45,10 @@
 						</div>
 						<div>
 							{l.title}
+						</div>
+						<div class="flex gap-1 w-10 shrink-0">
+							<BookMark />
+							<CompletionMark />
 						</div>
 					</a>
 				</li>
