@@ -58,7 +58,17 @@ if (
 	functions = getFunctions(app);
 	analytics = getAnalytics(app);
 } else {
-	console.debug('Skipping Firebase Initialization, check firebaseconfig.');
+	if (
+		browser &&
+		(!firebaseConfig.apiKey ||
+			!firebaseConfig.authDomain ||
+			!firebaseConfig.projectId ||
+			!firebaseConfig.storageBucket ||
+			!firebaseConfig.messagingSenderId ||
+			!firebaseConfig.appId ||
+			!firebaseConfig.measurementId)
+	)
+		console.debug('Skipping Firebase Initialization, check firebaseconfig.');
 }
 
 /* AUTH */
