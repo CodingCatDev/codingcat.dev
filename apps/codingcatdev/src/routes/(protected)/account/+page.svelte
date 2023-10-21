@@ -4,7 +4,7 @@
 	import LayoutWrapper from '../../(layout-partials)/LayoutWrapper.svelte';
 	import AccountCard from './AccountCard.svelte';
 	import MembershipCard from './MembershipCard.svelte';
-	import SupportCard from './SupportCard.svelte';
+	import UserSettings from './UserSettings.svelte';
 </script>
 
 <LayoutWrapper>
@@ -17,7 +17,7 @@
 			<div class="flex flex-col w-full jSustify-center items-start gap-4">
 				<AccountCard {data} />
 				<MembershipCard {data} />
-				<SupportCard />
+				<UserSettings {data} />
 			</div>
 		</div>
 	</div>
