@@ -1,58 +1,43 @@
 <script lang="ts">
-	import { Icon } from '@steeze-ui/svelte-icon';
-	import { Bookmark, CheckCircle, LockClosed, MinusCircle } from '@steeze-ui/heroicons';
-	import { LockOpen } from '@steeze-ui/heroicons';
-
 	import type { Lesson } from '$lib/types';
 	import { storeCurrentUrl } from '$lib/stores/stores';
 	import BookMark from './BookMark.svelte';
-	import CompletionMark from './CompletionMark.svelte';
+	import CompletionLockMark from './CompletionLockMark.svelte';
 
-	export let lesson: Lesson[];
-	export let courseSlug: string;
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 
 	$: classesActive = (href: string) =>
-		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token' : '';
+		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token !text-white' : '';
 </script>
 
-<div class="card p-2 md:p-4">
-	<!-- <header class="card-header capitalize pb-2 text-2xl font-bold flex justify-center">
-		Lessons
-	</header>
-	<hr /> -->
-	<nav class="nav-list-nav">
-		<ul>
-			{#each lesson as l}
-				{#if l?.section}
-					<div class="pb-2">
-						<span class="flex py-2 mt-4 text-xl font-bold">
-							{l.section}
-						</span>
-						<hr />
-					</div>
-				{/if}
-				<li>
-					<a
-						href={`/course/${courseSlug}/lesson/${l.slug}`}
-						class={`${classesActive(l.slug)} flex gap-1`}
-					>
-						<div class="w-4 shrink-0">
-							{#if l?.locked}
-								<Icon src={LockClosed} theme="solid" />
-							{:else}
-								<Icon src={LockOpen} theme="solid" />
-							{/if}
+{#if data?.course?.lesson}
+	<div class="card p-2 md:p-4">
+		<nav class="nav-list-nav">
+			<ul>
+				{#each data.course.lesson as l}
+					{#if l?.section}
+						<div class="pb-2">
+							<span class="flex py-2 mt-4 text-xl font-bold">
+								{l.section}
+							</span>
+							<hr />
 						</div>
-						<div>
+					{/if}
+					<li class="flex justify-between">
+						<a
+							href={`/course/${data?.course?.slug}/lesson/${l.slug}`}
+							class={`${classesActive(l.slug)} flex gap-1`}
+						>
 							{l.title}
-						</div>
-						<div class="flex gap-1 w-10 shrink-0">
+						</a>
+						<div class="w-12 flex gap-1">
+							<CompletionLockMark locked={l?.locked} lesson={l} {data} />
 							<BookMark />
-							<CompletionMark />
 						</div>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</nav>
-</div>
+					</li>
+				{/each}
+			</ul>
+		</nav>
+	</div>
+{/if}

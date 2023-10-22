@@ -1,17 +1,24 @@
 import { browser } from '$app/environment';
 
-import { initializeApp, getApps, FirebaseError } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import {
 	getAuth,
-	setPersistence,
-	browserSessionPersistence,
 	signInWithEmailAndPassword,
 	signInWithPopup,
 	type AuthProvider,
 	type Auth,
 	createUserWithEmailAndPassword
 } from 'firebase/auth';
-import { getFirestore, collection, doc, addDoc, onSnapshot, Firestore } from 'firebase/firestore';
+import {
+	getFirestore,
+	collection,
+	doc,
+	addDoc,
+	onSnapshot,
+	Firestore,
+	setDoc,
+	type DocumentData
+} from 'firebase/firestore';
 import { httpsCallable, getFunctions, type Functions } from 'firebase/functions';
 import {
 	getAnalytics,
@@ -32,11 +39,11 @@ export const firebaseConfig = {
 	measurementId: env.PUBLIC_FB_MEASUREMENT_ID
 };
 
-let app = getApps().at(0);
-let auth: Auth;
-let db: Firestore;
-let functions: Functions;
-let analytics: Analytics;
+export let app = getApps().at(0);
+export let auth: Auth;
+export let firestore: Firestore;
+export let functions: Functions;
+export let analytics: Analytics;
 
 if (
 	!app &&
@@ -50,11 +57,11 @@ if (
 	firebaseConfig.measurementId
 ) {
 	app = initializeApp(firebaseConfig);
-
 	auth = getAuth(app);
+
 	// As httpOnly cookies are to be used, do not persist any state client side.
-	setPersistence(auth, browserSessionPersistence);
-	db = getFirestore(app);
+	// setPersistence(auth, browserSessionPersistence);
+	firestore = getFirestore(app);
 	functions = getFunctions(app);
 	analytics = getAnalytics(app);
 } else {
@@ -110,10 +117,13 @@ export const ccdSignInWithPopUp = async (provider: AuthProvider) => {
 };
 
 /* DB */
+export const updateUser = async (docRef: string, data: DocumentData) => {
+	return setDoc(doc(firestore, docRef), data, { merge: true });
+};
 
 /* STRIPE */
 export const addSubscription = async (price: string, uid: string) => {
-	const userDoc = doc(collection(db, 'stripe-customers'), uid);
+	const userDoc = doc(collection(firestore, 'stripe-customers'), uid);
 	return await addDoc(collection(userDoc, 'checkout_sessions'), {
 		price,
 		success_url: window.location.href,

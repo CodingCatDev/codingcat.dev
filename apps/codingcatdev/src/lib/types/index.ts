@@ -75,11 +75,11 @@ export enum ContentType {
 	page = 'page',
 	podcast = 'podcast',
 	post = 'post',
-	sponsor = 'sponsor',
+	sponsor = 'sponsor'
 }
 
 export enum PodcastType {
-	codingcatdev = 'codingcatdev',
+	codingcatdev = 'codingcatdev'
 }
 
 export interface Socials {
@@ -151,3 +151,10 @@ export interface DirectoryStub {
 }
 
 export type Stub = FileStub | DirectoryStub;
+
+export interface UserDoc extends Content {
+	completed?: string[];
+	settings?: {
+		showDrafts?: boolean;
+	};
+}

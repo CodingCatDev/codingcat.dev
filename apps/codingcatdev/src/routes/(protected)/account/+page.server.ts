@@ -1,9 +1,5 @@
-import {
-	ccdValidateSessionCookie,
-	getUser,
-	updateUser,
-	type UserSettings
-} from '$lib/server/firebase';
+import { ccdValidateSessionCookie, getUser, updateUser } from '$lib/server/firebase';
+import type { UserDoc } from '$lib/types/index.js';
 import { fail } from '@sveltejs/kit';
 
 export const prerender = false;
@@ -23,8 +19,8 @@ export const actions = {
 			return fail(401, { user: 'missing' });
 		}
 		const user = await ccdValidateSessionCookie(ccdsession);
-		const settings = Object.fromEntries(data.entries());
+		const settings: UserDoc['settings'] = { ...Object.fromEntries(data.entries()) };
 
-		await updateUser(user?.uid, { settings });
+		await updateUser(user?.uid, settings);
 	}
 };

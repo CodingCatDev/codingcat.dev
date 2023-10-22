@@ -1,14 +1,11 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Sponsor, Course } from '$lib/types';
 	import LessonCards from './LessonCards.svelte';
 	import Image from '$lib/components/content/Image.svelte';
-	export let data: {
-		course: Course;
-		authors: Author[];
-		sponsors: Sponsor[];
-	};
+
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 </script>
 
 {#if data?.course}
@@ -90,12 +87,7 @@
 					<slot />
 				</section>
 			</div>
-			{#if data?.course?.lesson}
-				<div class="flex flex-col gap-2 md:gap-8">
-					<h2>Lessons</h2>
-					<LessonCards lesson={data.course.lesson} courseSlug={data.course.slug} />
-				</div>
-			{/if}
+			<LessonCards {data} />
 		</section>
 	</div>
 {:else}
