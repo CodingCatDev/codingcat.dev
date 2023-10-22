@@ -7,7 +7,7 @@ export const prerender = false;
 export const load = async ({ url, parent }) => {
 	const data = await parent();
 	if (!allowLocal && !data?.user?.uid) {
-		throw redirect(307, `/login?redirectTo=${url.pathname}`);
+		throw redirect(303, `/login?redirectTo=${url.pathname}`);
 	}
 	if (data?.user?.stripeRole && url.searchParams.has('redirectTo')) {
 		throw redirect(303, url.searchParams.get('redirectTo') || '/');
