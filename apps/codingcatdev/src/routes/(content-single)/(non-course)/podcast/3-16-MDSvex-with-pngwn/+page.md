@@ -10,16 +10,16 @@ podcast: CodingCat.dev
 chapters_done: true
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1683829447/main-codingcatdev-photo/MDSvex-with-pngwn.jpg
-devto: 
+devto:
 excerpt: 'Pngwn joins Alex to show discuss his program MDSvex and to walk Alex through how to use it on his own Coding Cat site.'
 guests:
   - pngwn
-hashnode: 
+hashnode:
 picks:
   [
     { author: 'pngwn', name: 'Hugging Face', site: 'https://huggingface.co/chat/' },
     { author: 'pngwn', name: 'Open Assitant', site: 'https://open-assistant.io/' },
-    { author: 'alex-patterson', name: 'Xata', site: 'https://xata.io' },
+    { author: 'alex-patterson', name: 'Xata', site: 'https://xata.io' }
   ]
 slug: 3-16-MDSvex-with-pngwn
 sponsors:
@@ -46,9 +46,9 @@ youtube: https://youtu.be/0ukXs_xUbJ8
 
 There are several benefits to using mdsvex:
 
-* **Simplicity:** mdsvex files are just regular Markdown files, with the addition of the `.svx` extension. This means that you can use any Markdown editor to write your posts, and you don't need to learn any new syntax.
-* **Power:** Svelte is a powerful JavaScript framework that allows you to create interactive web components. With mdsvex, you can embed these components directly into your Markdown posts. This opens up a whole new range of possibilities for your blog.
-* **Flexibility:** mdsvex is compatible with any SvelteKit project. This means that you can use it to create a blog from scratch, or to add interactive elements to an existing blog.
+- **Simplicity:** mdsvex files are just regular Markdown files, with the addition of the `.svx` extension. This means that you can use any Markdown editor to write your posts, and you don't need to learn any new syntax.
+- **Power:** Svelte is a powerful JavaScript framework that allows you to create interactive web components. With mdsvex, you can embed these components directly into your Markdown posts. This opens up a whole new range of possibilities for your blog.
+- **Flexibility:** mdsvex is compatible with any SvelteKit project. This means that you can use it to create a blog from scratch, or to add interactive elements to an existing blog.
 
 ### How to use mdsvex
 
@@ -76,7 +76,7 @@ export default {
 
 Use code with caution. [Learn more](/faq#coding)
 
-content\_copy
+content_copy
 
 Now, you can start writing mdsvex files! To do this, simply create a new file with the `.svx` extension. You can then write Markdown in the file, and embed Svelte components using the `<script>` and `<style>` tags.
 
@@ -116,7 +116,7 @@ This is a poll!
 
 Use code with caution. [Learn more](/faq#coding)
 
-content\_copy
+content_copy
 
 When you build your SvelteKit project, mdsvex will compile the Svelte components in your mdsvex files to JavaScript. This JavaScript will then be included in the HTML of your blog posts.
 
