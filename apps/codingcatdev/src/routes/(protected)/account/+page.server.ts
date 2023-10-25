@@ -2,7 +2,7 @@ import { ccdValidateSessionCookie, getUser, updateUser } from '$lib/server/fireb
 import type { UserDoc } from '$lib/types/index.js';
 import { fail } from '@sveltejs/kit';
 
-export const prerender = false;
+//export const prerender = false;
 
 export const load = async ({ url, parent }) => {
 	const data = await parent();

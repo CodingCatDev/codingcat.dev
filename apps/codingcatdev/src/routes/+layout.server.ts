@@ -2,7 +2,7 @@ import { listContent, getContentTypeDirectory } from '$lib/server/content';
 import { ccdValidateSessionCookie, validateStripeRole } from '$lib/server/firebase';
 import { type Content, ContentType } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
-export const prerender = false;
+//export const prerender = false;
 export const load = async ({ cookies }: { cookies: Cookies }) => {
 	try {
 		// Get latest podcast
