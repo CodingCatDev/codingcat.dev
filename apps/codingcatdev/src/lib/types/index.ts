@@ -151,10 +151,18 @@ export interface DirectoryStub {
 }
 
 export type Stub = FileStub | DirectoryStub;
-
-export interface UserDoc extends Content {
-	completed?: string[];
+export interface UserDoc {
+	pro?: Pro;
+}
+export interface Pro {
 	settings?: {
 		showDrafts?: boolean;
 	};
+	completed?: PathDate[];
+	bookmarked?: PathDate[];
+}
+
+export interface PathDate {
+	path: string;
+	date: number;
 }

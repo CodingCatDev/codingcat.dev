@@ -102,30 +102,3 @@ export const getStripeProducts = async () => {
 	}
 	return products;
 };
-
-export const getUser = async (uid?: string) => {
-	if (!uid) return undefined;
-
-	// Check if user is Pro and wants drafts
-	const auth = getAuth(app);
-	const user = await auth.getUser(uid);
-
-	const db = getFirestore();
-	const doc = await db.collection('users').doc(user.uid).get();
-	return doc.data() as UserDoc;
-};
-
-export const updateUser = async (uid?: string, userSettings?: UserDoc['settings']) => {
-	if (!uid) return undefined;
-	if (!userSettings) return;
-
-	// Check if user is Pro and wants drafts
-	const auth = getAuth(app);
-	const user = await auth.getUser(uid);
-
-	const db = getFirestore();
-	await db
-		.collection('users')
-		.doc(user.uid)
-		.set({ ...(userSettings || null) }, { merge: true });
-};

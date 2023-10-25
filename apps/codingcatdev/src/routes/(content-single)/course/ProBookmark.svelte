@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { auth, firestore, updateUser } from '$lib/client/firebase';
 	import { docStore, userStore } from 'sveltefire';
-	import { CheckCircle } from '@steeze-ui/heroicons';
+	import { Bookmark } from '@steeze-ui/heroicons';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import type { LayoutData } from './$types';
 	import type { Lesson, UserDoc } from '$lib/types';
@@ -16,31 +16,31 @@
 	const lessonRef = `/course/${data.course.slug}/lesson/${lesson.slug}`;
 </script>
 
-{#if $userDoc?.pro?.completed?.filter((c) => c.path === lessonRef)?.length}
+{#if $userDoc?.pro?.bookmarked?.filter((c) => c.path === lessonRef)?.length}
 	<button
 		on:click={() =>
 			updateUser(docRef, {
 				pro: {
-					completed: [...($userDoc?.pro?.completed?.filter((c) => c.path !== lessonRef) || [])]
+					bookmarked: [...($userDoc?.pro?.bookmarked?.filter((c) => c.path !== lessonRef) || [])]
 				}
 			})}
 		class="!p-0"
 	>
-		<Icon src={CheckCircle} theme="solid" />
+		<Icon src={Bookmark} theme="solid" />
 	</button>
 {:else}
 	<button
 		on:click={() =>
 			updateUser(docRef, {
 				pro: {
-					completed: [
-						...($userDoc?.pro?.completed || []),
+					bookmarked: [
+						...($userDoc?.pro?.bookmarked || []),
 						...[{ date: Date.now(), path: lessonRef }]
 					]
 				}
 			})}
 		class="!p-0"
 	>
-		<Icon src={CheckCircle} />
+		<Icon src={Bookmark} />
 	</button>
 {/if}

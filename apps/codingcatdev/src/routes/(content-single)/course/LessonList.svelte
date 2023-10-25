@@ -1,10 +1,8 @@
 <script lang="ts">
-	import type { Lesson } from '$lib/types';
 	import { storeCurrentUrl } from '$lib/stores/stores';
-	import BookMark from './BookMark.svelte';
-	import CompletionLockMark from './CompletionLockMark.svelte';
 
 	import type { LayoutData } from './$types';
+	import ProMark from './ProMark.svelte';
 	export let data: LayoutData;
 
 	$: classesActive = (href: string) =>
@@ -32,8 +30,7 @@
 							{l.title}
 						</a>
 						<div class="w-12 flex gap-1">
-							<CompletionLockMark locked={l?.locked} lesson={l} {data} />
-							<BookMark />
+							<ProMark locked={l?.locked} lesson={l} {data} />
 						</div>
 					</li>
 				{/each}

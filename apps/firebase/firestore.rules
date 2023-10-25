@@ -3,18 +3,6 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
       allow read, write: if belongsTo(userId);
-
-      match /courses/{courseId} {
-        allow read, write: if belongsTo(userId);
-
-        match /sections/{sectionId} {
-          allow read, write: if belongsTo(userId);
-
-          match /lessons/{lessonId} {
-            allow read, write: if belongsTo(userId);
-          }
-        }
-      }
     }
 
     //Stripe

@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { Lesson } from '$lib/types';
 	import Image from '$lib/components/content/Image.svelte';
-	import CompletionLockMark from './CompletionLockMark.svelte';
 
 	import type { LayoutData } from './$types';
+	import ProMark from './ProMark.svelte';
 	export let data: LayoutData;
 </script>
 
@@ -39,8 +38,8 @@
 						{/if}
 						<div class="p-4">
 							<header class="relative py-6 text-2xl font-bold capitalize card-header">
-								<div class="absolute top-0 right-0 w-6">
-									<CompletionLockMark locked={l?.locked} {data} />
+								<div class="absolute top-0 right-0">
+									<ProMark locked={l?.locked} lesson={l} {data} />
 								</div>
 								<div>
 									{l.title}
