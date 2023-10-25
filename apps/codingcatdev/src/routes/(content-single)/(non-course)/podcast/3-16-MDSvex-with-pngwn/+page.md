@@ -30,17 +30,13 @@ title: 'MDSvex with pngwn'
 youtube: https://youtu.be/0ukXs_xUbJ8
 ---
 
-## Chapters
+<script lang="ts">
+	import Button from '$lib/components/content/Button.svelte'
+</script>
 
-00:00 Welcome pngwn and Intro to MDSvex
-03:27 Walkthrough of the Basics
-08:20 Sponsor: Storyblock
-09:20 Using MDSvex with Coding Cat
-16:38 Tradeoffs
-19:28 Simplicity of MDSvex
-24:50 Creating First Component and Live Coding
-52:28 How to Approach MDSvex
-57:16 Perfect Picks
+## What is mdsvex
+
+[mdsvex](https://mdsvex.pngwn.io/) is a file format that combines the best of Markdown and Svelte. It allows you to write content in Markdown, but also includes the ability to embed Svelte components into your posts. This can be useful for adding interactive elements to your blog, such as polls, quizzes, and code editors.
 
 ### Benefits of using mdsvex
 
@@ -54,71 +50,87 @@ There are several benefits to using mdsvex:
 
 To use mdsvex, you first need to install the `mdsvex` package. You can do this with npm or yarn:
 
-```
+```sh
 npm install mdsvex
 ```
 
-```
+```sh
 yarn add mdsvex
 ```
 
-Once you have installed the package, you need to add it to your SvelteKit project's `vite.config.js` file:
+Once you have installed the package, you need to add it to your SvelteKit project's `svelte.config.js` file:
 
-JavaScript
-
-```
+```ts
 import mdsvex from 'mdsvex';
 
 export default {
-  plugins: [mdsvex()],
+	plugins: [mdsvex()]
 };
 ```
 
-Use code with caution. [Learn more](/faq#coding)
+CodingCat.dev's `svelte.config.js`
 
-content_copy
+```ts
+import preprocess from 'svelte-preprocess';
+import adapter from '@sveltejs/adapter-auto';
+import { mdsvex } from 'mdsvex';
 
-Now, you can start writing mdsvex files! To do this, simply create a new file with the `.svx` extension. You can then write Markdown in the file, and embed Svelte components using the `<script>` and `<style>` tags.
+// TODO: remove .svx and .md from production builds
 
-For example, the following mdsvex file would create a simple poll:
+/** @type {import('@sveltejs/kit').Config} */
+console.log(`Using ${process.env.NODE_ENV} config`);
+const config = {
+	kit: {
+		adapter: adapter(),
+		prerender: {
+			handleMissingId: 'warn',
+			handleHttpError: ({ path, referrer, message }) => {
+				// if nothing refers to it we don't care
+				// most likely this is a draft in production
+				// TODO: can we make this better?
+				if (referrer === null) {
+					console.debug('SKIPPING 404 ISSUE', path);
+					return;
+				}
 
-Code snippet
+				// otherwise fail the build
+				throw new Error(message);
+			}
+		}
+	},
+	extensions: ['.svelte', '.svx', '.md'],
+	preprocess: [
+		mdsvex({ extensions: ['.svx', '.md'] }),
+		preprocess({
+			postcss: true
+		})
+	]
+};
 
+export default config;
 ```
+
+Now, you can start writing mdsvex files! To do this, simply create a new file with the `.svx` or `.md` extension. You can then write Markdown in the file, and embed Svelte components using the `<script>` and `<style>` tags.
+
+For example, in this actual post we have the below (appreviated), where in our `.md` file we import the `Button`.
+
+```md
 ---
-title: My poll
+type: podcast
 ---
 
-This is a poll!
-
-<script>
-  import { Poll } from 'svelte-poll';
-
-  const poll = new Poll({
-    options: [
-      'Option 1',
-      'Option 2',
-      'Option 3',
-    ],
-  });
+<script lang="ts">
+	import Button from '$lib/components/content/Button.svelte'
 </script>
 
-<style>
-  .poll {
-    margin: 1rem;
-  }
-</style>
-
-<div class="poll">
-  {poll.render()}
-</div>
+<Button />
 ```
 
-Use code with caution. [Learn more](/faq#coding)
+Which allows for this very button below to be used directly from our markdown. Go ahead click away on it!
 
-content_copy
+<Button />
 
-When you build your SvelteKit project, mdsvex will compile the Svelte components in your mdsvex files to JavaScript. This JavaScript will then be included in the HTML of your blog posts.
+When you build your [SvelteKit](https://kit.svelte.dev/) project, [mdsvex](https://mdsvex.pngwn.io/) will compile the Svelte components in your mdsvex files to JavaScript. This JavaScript will then be included in the HTML of your blog posts.
 
 ### Conclusion
 

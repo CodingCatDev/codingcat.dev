@@ -14,12 +14,6 @@ start: November 28, 2022
 title: Install Tailwindcss in Svelte with 1 command
 ---
 
-<script lang="ts">
-	import Button from '$lib/components/content/Button.svelte'
-</script>
-
-<Button />
-
 Here is how to install Tailwindcss in Svelte
 
 ```bash
