@@ -2,4 +2,6 @@
 	let count = 0;
 </script>
 
-<button class="btn variant-filled-primary" on:click={() => count++}>{count}</button>
+<button class="btn variant-filled-primary" on:click={() => count++}
+	>{count ? count : 'Click Me'}</button
+>
