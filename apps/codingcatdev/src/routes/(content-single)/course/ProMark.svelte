@@ -16,12 +16,12 @@
 </script>
 
 {#if data?.user?.stripeRole && $user?.uid}
-	<div class="w-12 flex gap-1">
+	<div class="flex w-12 gap-1">
 		<ProComplete {data} {lesson} />
 		<ProBookmark {data} {lesson} />
 	</div>
 {:else}
-	<div class="w-6 flex gap-1">
+	<div class="flex w-6 gap-1">
 		<Locked {locked} />
 	</div>
 {/if}

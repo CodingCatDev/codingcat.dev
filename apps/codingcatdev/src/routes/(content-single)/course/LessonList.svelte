@@ -10,7 +10,7 @@
 </script>
 
 {#if data?.course?.lesson}
-	<div class="card p-2 md:p-4">
+	<div class="p-2 card md:p-4">
 		<nav class="nav-list-nav">
 			<ul>
 				{#each data.course.lesson as l}
@@ -29,7 +29,7 @@
 						>
 							{l.title}
 						</a>
-						<div class="w-12 flex gap-1">
+						<div class="flex w-12 gap-1">
 							<ProMark locked={l?.locked} lesson={l} {data} />
 						</div>
 					</li>

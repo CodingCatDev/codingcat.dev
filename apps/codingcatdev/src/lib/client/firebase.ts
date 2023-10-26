@@ -17,7 +17,8 @@ import {
 	onSnapshot,
 	Firestore,
 	setDoc,
-	type DocumentData
+	type DocumentData,
+	initializeFirestore
 } from 'firebase/firestore';
 import { httpsCallable, getFunctions, type Functions } from 'firebase/functions';
 import {
@@ -61,7 +62,7 @@ if (
 
 	// As httpOnly cookies are to be used, do not persist any state client side.
 	// setPersistence(auth, browserSessionPersistence);
-	firestore = getFirestore(app);
+	firestore = initializeFirestore(app, { ignoreUndefinedProperties: true });
 	functions = getFunctions(app);
 	analytics = getAnalytics(app);
 } else {

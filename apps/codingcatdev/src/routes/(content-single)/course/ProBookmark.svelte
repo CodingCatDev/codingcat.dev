@@ -1,29 +1,30 @@
 <script lang="ts">
-	import { auth, firestore, updateUser } from '$lib/client/firebase';
-	import { docStore, userStore } from 'sveltefire';
+	import { auth, firestore } from '$lib/client/firebase';
+	import { collectionStore, userStore } from 'sveltefire';
 	import { Bookmark } from '@steeze-ui/heroicons';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import type { LayoutData } from './$types';
-	import type { Lesson, UserDoc } from '$lib/types';
+	import type { Lesson } from '$lib/types';
+	import { and, collection, deleteDoc, doc, query, setDoc, where } from 'firebase/firestore';
 
 	/* DATA */
-	export let data: LayoutData;
 	export let lesson: Lesson;
+	export let data: LayoutData;
 
 	const user = userStore(auth);
-	const docRef = 'users/' + $user?.uid;
-	const userDoc = docStore<UserDoc>(firestore, docRef);
-	const lessonRef = `/course/${data.course.slug}/lesson/${lesson.slug}`;
+	const collectionRef = 'users/' + $user?.uid + `/bookmarked`;
+	const bookmarked = collectionStore(
+		firestore,
+		query(
+			collection(firestore, collectionRef),
+			and(where('slug', '==', lesson.slug), where('type', '==', lesson.type))
+		)
+	);
 </script>
 
-{#if $userDoc?.pro?.bookmarked?.filter((c) => c.path === lessonRef)?.length}
+{#if $bookmarked?.at(0)}
 	<button
-		on:click={() =>
-			updateUser(docRef, {
-				pro: {
-					bookmarked: [...($userDoc?.pro?.bookmarked?.filter((c) => c.path !== lessonRef) || [])]
-				}
-			})}
+		on:click={() => deleteDoc(doc(firestore, `${collectionRef}/${$bookmarked?.at(0)?.id}`))}
 		class="!p-0"
 	>
 		<Icon src={Bookmark} theme="solid" />
@@ -31,14 +32,14 @@
 {:else}
 	<button
 		on:click={() =>
-			updateUser(docRef, {
-				pro: {
-					bookmarked: [
-						...($userDoc?.pro?.bookmarked || []),
-						...[{ date: Date.now(), path: lessonRef }]
-					]
-				}
-			})}
+			setDoc(
+				doc(
+					firestore,
+					`${collectionRef}/${data.course.type}.${data.course.slug}.${lesson.type}.${lesson.slug}`
+				),
+				lesson,
+				{ merge: true }
+			)}
 		class="!p-0"
 	>
 		<Icon src={Bookmark} />

@@ -3,6 +3,14 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
       allow read, write: if belongsTo(userId);
+
+      match /bookmarked/{bookmarkedId} {
+        allow read, write: if belongsTo(userId);
+      }
+
+      match /completed/{completedId} {
+        allow read, write: if belongsTo(userId);
+      }
     }
 
     //Stripe
