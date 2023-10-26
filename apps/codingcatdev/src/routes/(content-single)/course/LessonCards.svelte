@@ -22,7 +22,7 @@
 					</div>
 				{/if}
 				<a href={`/course/${data.course.slug}/lesson/${l.slug}`} class="!no-underline !text-token">
-					<div class="h-full card">
+					<div class="h-full card ccd-grid-card">
 						{#if l?.cover}
 							<Image
 								src={l.cover}

@@ -24,14 +24,18 @@
 
 {#if $completed?.at(0)}
 	<button
-		on:click={() => deleteDoc(doc(firestore, `${collectionRef}/${$completed?.at(0)?.id}`))}
+		on:click={(e) => {
+			e.preventDefault();
+			deleteDoc(doc(firestore, `${collectionRef}/${$completed?.at(0)?.id}`));
+		}}
 		class="!p-0"
 	>
 		<Icon src={CheckCircle} theme="solid" />
 	</button>
 {:else}
 	<button
-		on:click={() =>
+		on:click={(e) => {
+			e.preventDefault();
 			setDoc(
 				doc(
 					firestore,
@@ -39,7 +43,8 @@
 				),
 				lesson,
 				{ merge: true }
-			)}
+			);
+		}}
 		class="!p-0"
 	>
 		<Icon src={CheckCircle} />
