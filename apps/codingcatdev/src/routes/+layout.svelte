@@ -167,7 +167,7 @@
 <Modal />
 <Toast />
 
-{#if data.previewMode === 'true'}
+{#if data.previewMode !== 'false'}
 	<div
 		class="fixed top-0 left-0 z-50 flex justify-center align-middle variant-filled-warning w-full"
 	>

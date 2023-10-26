@@ -2,7 +2,7 @@ import { listContent, getContentTypeDirectory } from '$lib/server/content';
 import { ccdValidateSessionCookie, validateStripeRole } from '$lib/server/firebase';
 import { type Content, ContentType } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
-import { PREVIEW } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 //export const prerender = false;
 export const load = async ({ cookies }: { cookies: Cookies }) => {
@@ -32,14 +32,14 @@ export const load = async ({ cookies }: { cookies: Cookies }) => {
 				stripeRole
 			},
 			podcasts,
-			previewMode: PREVIEW
+			previewMode: env?.PREVIEW
 		};
 	} catch (error) {
 		cookies.set('session', '', { expires: new Date(0) });
 
 		console.error(error);
 		return {
-			previewMode: PREVIEW
+			previewMode: env?.PREVIEW
 		};
 	}
 };
