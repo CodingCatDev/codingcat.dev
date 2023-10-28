@@ -2,7 +2,7 @@
 	import { storeCurrentUrl } from '$lib/stores/stores';
 
 	import type { LayoutData } from './$types';
-	import ProMark from './ProMark.svelte';
+	import ProCourseMark from './ProCourseMark.svelte';
 	export let data: LayoutData;
 
 	$: classesActive = (href: string) =>
@@ -30,7 +30,7 @@
 							{l.title}
 						</a>
 						<div class="flex w-12 gap-1">
-							<ProMark locked={l?.locked} lesson={l} {data} />
+							<ProCourseMark locked={l?.locked} lesson={l} {data} />
 						</div>
 					</li>
 				{/each}
