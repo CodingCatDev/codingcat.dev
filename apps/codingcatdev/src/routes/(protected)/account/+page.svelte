@@ -5,6 +5,10 @@
 	import AccountCard from './AccountCard.svelte';
 	import MembershipCard from './MembershipCard.svelte';
 	import UserSettings from './UserSettings.svelte';
+	import { auth } from '$lib/client/firebase';
+	import { userStore } from 'sveltefire';
+
+	const user = userStore(auth);
 </script>
 
 <LayoutWrapper>
@@ -17,7 +21,9 @@
 			<div class="flex flex-col w-full jSustify-center items-start gap-4">
 				<AccountCard {data} />
 				<MembershipCard {data} />
-				<UserSettings {data} />
+				{#if $user?.uid}
+					<UserSettings {data} />
+				{/if}
 			</div>
 		</div>
 	</div>

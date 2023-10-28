@@ -61,14 +61,14 @@
 						<TableOfContents />
 					{/key}
 					{#if data?.course?.lesson && data?.course?.lesson.length > 0 && data?.course?.slug}
-						<LessonList courseSlug={data?.course?.slug} lesson={data.course.lesson} />
+						<LessonList {data} />
 					{/if}
 				</div>
 			</div>
 		</svelte:fragment>
 		<svelte:fragment slot="pageFooter">
 			{#if data?.course?.lesson && data?.course?.lesson.length > 0 && data?.course?.slug}
-				<LessonList courseSlug={data?.course?.slug} lesson={data.course.lesson} />
+				<LessonList {data} />
 			{/if}
 		</svelte:fragment>
 	</AppShell>

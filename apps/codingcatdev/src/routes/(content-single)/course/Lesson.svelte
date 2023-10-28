@@ -1,15 +1,12 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Lesson, Course, Author } from '$lib/types';
 	import { browser } from '$app/environment';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import Image from '$lib/components/content/Image.svelte';
-	export let data: {
-		course: Course;
-		content: Lesson | undefined;
-		authors: Author[];
-	};
+	import ProCourseMark from './ProCourseMark.svelte';
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 </script>
 
 {#if data?.content}
@@ -31,6 +28,16 @@
 					{:else if data?.content?.cover}
 						<Image src={data.content.cover} alt={data.content.title} />
 					{/if}
+					<div class="flex justify-between">
+						{#if data?.course?.lesson?.filter((l) => l.locked).length}
+							<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
+								>Pro</span
+							>
+						{:else}
+							<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
+						{/if}
+						<ProCourseMark {data} />
+					</div>
 					{#if data?.authors}
 						<section class="flex">
 							{#each data?.authors as author (author.slug)}

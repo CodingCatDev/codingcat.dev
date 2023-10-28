@@ -43,6 +43,6 @@
 		/* Theme: Rounded */
 		@apply rounded-token;
 		/* Override typograpy */
-		@apply !no-underline !text-base-token dark:!text-dark-token;
+		@apply !no-underline;
 	}
 }
