@@ -172,5 +172,5 @@ export interface Bookmarked extends Content, Course {
 }
 
 export interface Completed extends Content, Course {
-	completeDate: Date;
+	completedDate: Date;
 }

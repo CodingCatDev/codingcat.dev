@@ -2,8 +2,8 @@
 	import Locked from './Locked.svelte';
 	import type { LayoutData } from './$types';
 	import { ContentType, type Lesson } from '$lib/types';
-	import ProCourseComplete from './ProCourseComplete.svelte';
-	import ProCourseBookmark from './ProCourseBookmark.svelte';
+	import ProCourseCompleted from './ProCourseCompleted.svelte';
+	import ProCourseBookmarked from './ProCourseBookmarked.svelte';
 	import { auth } from '$lib/client/firebase';
 	import { userStore } from 'sveltefire';
 
@@ -17,8 +17,8 @@
 
 {#if data?.user?.stripeRole && $user?.uid}
 	<div class="flex w-12 gap-1">
-		<ProCourseComplete {data} {lesson} />
-		<ProCourseBookmark {data} {lesson} />
+		<ProCourseCompleted {data} {lesson} />
+		<ProCourseBookmarked {data} {lesson} />
 	</div>
 {:else if data.content?.type === ContentType.course || data.content?.type === ContentType.lesson}
 	<div class="flex w-6 gap-1">
