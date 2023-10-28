@@ -48,6 +48,7 @@
 				...($saved?.lesson || []),
 				...[
 					{
+						...lesson,
 						savedId: lessonId,
 						savedUpdated: new Date(),
 						savedComplete: true

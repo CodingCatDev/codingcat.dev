@@ -35,11 +35,11 @@
 		</div> -->
 
 		{#each $bookmarked as bookmark}
-			<div>{bookmark.id}</div>
+			<div>{bookmark.title}</div>
 			{#if bookmark?.lesson}
 				<div class="flex flex-col">
 					{#each bookmark.lesson as lesson}
-						<div>{lesson.id}</div>
+						<div>{lesson.title}</div>
 					{/each}
 				</div>
 			{/if}
