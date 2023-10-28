@@ -3,7 +3,7 @@ import { allowLocal, filterContent, getContentTypePath } from '$lib/server/conte
 import { ContentType, type Course, type Author, type Sponsor } from '$lib/types';
 import { getShowDrafts } from '$lib/server/firebase';
 
-export const prerender = false;
+//export const prerender = false;
 
 export const load = async ({ url, parent }) => {
 	const data = await parent();

@@ -2,7 +2,7 @@ import { ccdCreateSessionCookie } from '$lib/server/firebase';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 
-export const prerender = false;
+//export const prerender = false;
 
 export const actions = {
 	login: async ({ cookies, url }) => {

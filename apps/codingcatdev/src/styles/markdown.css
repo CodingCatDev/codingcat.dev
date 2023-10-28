@@ -22,4 +22,10 @@
 	code:is(:not(pre *)) {
 		@apply !text-lg md:!text-2xl;
 	}
+	.markdown
+		a:not(.unstyled):not(.permalink):is(:not(.prose *)):not(.btn):not(.btn-icon):not(
+			.app-bar a
+		):not(.logo-item):not(a.card) {
+		@apply hover:brightness-110 underline;
+	}
 }

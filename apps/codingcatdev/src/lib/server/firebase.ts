@@ -5,6 +5,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { env as publicEnv } from '$env/dynamic/public';
 
 import { env as privateEnv } from '$env/dynamic/private';
+import type { UserDoc } from '$lib/types';
 
 export let app = getApps().at(0);
 
@@ -100,34 +101,4 @@ export const getStripeProducts = async () => {
 		}
 	}
 	return products;
-};
-
-export interface UserSettings {
-	settings: {
-		showDrafts?: boolean;
-	};
-}
-
-export const getUser = async (uid?: string) => {
-	if (!uid) return undefined;
-
-	// Check if user is Pro and wants drafts
-	const auth = getAuth(app);
-	const user = await auth.getUser(uid);
-
-	const db = getFirestore();
-	const doc = await db.collection('users').doc(user.uid).get();
-	return doc.data() as UserSettings;
-};
-
-export const updateUser = async (uid?: string, userSettings?: UserSettings) => {
-	if (!uid) return undefined;
-	if (!userSettings) return;
-
-	// Check if user is Pro and wants drafts
-	const auth = getAuth(app);
-	const user = await auth.getUser(uid);
-
-	const db = getFirestore();
-	await db.collection('users').doc(user.uid).set(userSettings, { merge: true });
 };

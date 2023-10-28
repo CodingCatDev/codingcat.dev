@@ -33,12 +33,6 @@
 		@apply text-base;
 	}
 
-	a:not(.unstyled):not(.permalink):is(:not(.prose *)):not(.btn):not(.btn-icon):not(.app-bar a):not(
-			.logo-item
-		):not(a.card) {
-		@apply text-primary-700 dark:text-primary-500 hover:brightness-110 underline;
-	}
-
 	blockquote:not(.unstyled):is(:not(.prose *)) {
 		@apply text-token text-base italic border-l-8 border-l-secondary-500 px-4 pl-4;
 	}

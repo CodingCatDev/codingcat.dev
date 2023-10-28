@@ -1,6 +1,6 @@
 import { init, inited, search } from '$lib/search';
 
-export const prerender = false;
+//export const prerender = false;
 
 export async function load({ url, fetch }) {
 	if (!inited) {

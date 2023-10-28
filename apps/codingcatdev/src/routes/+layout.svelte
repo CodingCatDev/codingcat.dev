@@ -1,6 +1,5 @@
 <script lang="ts">
 	export let data;
-
 	// Core
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -167,8 +166,16 @@
 <Modal />
 <Toast />
 
+{#if data?.preview}
+	<div
+		class="fixed top-0 left-0 z-50 flex justify-center align-middle variant-filled-warning w-full"
+	>
+		PREVIEW MODE
+	</div>
+{/if}
+
 <!-- App Shell -->
-<AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token" }>
+<AppShell regionPage="overflow-y-scroll" slotPageFooter="pt-4 bg-surface-50-900-token">
 	<!-- Header -->
 	<svelte:fragment slot="header"><CcdAppBar /></svelte:fragment>
 
