@@ -167,16 +167,9 @@ export interface PathDate {
 	date: number;
 }
 
-export interface Bookmarked {
-	id: string;
-	updated: Date;
-	complete: boolean;
-	lesson?: Bookmarked[];
-}
-
-export interface Completed {
-	id: string;
-	updated: Date;
-	complete: boolean;
-	lesson?: Completed[];
+export interface Saved extends Content {
+	savedId: string;
+	savedUpdated: Date;
+	savedComplete: boolean;
+	lesson?: Saved[];
 }

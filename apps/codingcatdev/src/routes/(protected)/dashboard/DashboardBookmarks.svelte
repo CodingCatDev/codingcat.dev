@@ -5,12 +5,12 @@
 	import type { PageData } from './$types';
 	import { collectionStore, userStore } from 'sveltefire';
 	import { auth, firestore } from '$lib/client/firebase';
-	import type { Bookmarked } from '$lib/types';
+	import type { Saved } from '$lib/types';
 	const user = userStore(auth);
 
 	export let data: PageData;
 	const bookmarkedRef = 'users/' + $user?.uid + `/bookmarked`;
-	const bookmarked = collectionStore<Bookmarked>(firestore, bookmarkedRef);
+	const bookmarked = collectionStore<Saved>(firestore, bookmarkedRef);
 </script>
 
 <div>
@@ -35,12 +35,11 @@
 		</div> -->
 
 		{#each $bookmarked as bookmark}
-			<div>hi</div>
-			<div>{bookmark.title}</div>
+			<div>{bookmark.id}</div>
 			{#if bookmark?.lesson}
 				<div class="flex flex-col">
 					{#each bookmark.lesson as lesson}
-						<div>{lesson.title}</div>
+						<div>{lesson.id}</div>
 					{/each}
 				</div>
 			{/if}
