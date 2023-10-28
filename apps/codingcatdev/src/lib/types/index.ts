@@ -166,3 +166,11 @@ export interface PathDate {
 	path: string;
 	date: number;
 }
+
+export interface Bookmarked extends Content, Course {
+	bookmarkedDate: Date;
+}
+
+export interface Completed extends Content, Course {
+	completeDate: Date;
+}

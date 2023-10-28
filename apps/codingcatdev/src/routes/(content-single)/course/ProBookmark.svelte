@@ -17,7 +17,7 @@
 		firestore,
 		query(
 			collection(firestore, collectionRef),
-			and(where('slug', '==', lesson.slug), where('type', '==', lesson.type))
+			and(where('lesson.slug', '==', lesson.slug), where('lesson.type', '==', lesson.type))
 		)
 	);
 </script>
@@ -41,7 +41,10 @@
 					firestore,
 					`${collectionRef}/${data.course.type}.${data.course.slug}.${lesson.type}.${lesson.slug}`
 				),
-				lesson,
+				{
+					...data.course,
+					lesson
+				},
 				{ merge: true }
 			);
 		}}

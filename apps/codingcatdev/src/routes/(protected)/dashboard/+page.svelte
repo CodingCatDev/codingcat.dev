@@ -1,12 +1,18 @@
 <script lang="ts">
 	import ProButton from '../ProButton.svelte';
-	import type { PageData } from './$types';
 	import DashboardWelcome from './DashboardWelcome.svelte';
 	import DashboardCTA from './DashboardCTA.svelte';
-	import ContentCards from '../../(content-list)/ContentCards.svelte';
-	import { ContentType } from '$lib/types';
+	import DashboardNewFeatured from './DashboardNewFeatured.svelte';
+
+	import type { PageData } from './$types';
+	import DashboardComingSoon from './DashboardComingSoon.svelte';
+	import DashboardBookmarks from './DashboardBookmarks.svelte';
+	import { auth } from '$lib/client/firebase';
+	import { userStore } from 'sveltefire';
 
 	export let data: PageData;
+
+	const user = userStore(auth);
 </script>
 
 <div class="flex justify-center p-4">
@@ -22,33 +28,12 @@
 					<ProButton products={data.products} uid={data.user?.uid} />
 				{/if}
 			</div>
+			<DashboardNewFeatured {data} />
+			<DashboardComingSoon {data} />
+			{#if $user?.uid}
+				<DashboardBookmarks {data} />
+			{/if}
 			<DashboardCTA />
-			<div>
-				<h3>✨ New and Featured</h3>
-				<div class="p-4">
-					<ContentCards {data} />
-				</div>
-			</div>
-			<div>
-				<h3>📅 Coming Soon</h3>
-				<div class="p-4">
-					{#if !data?.user?.stripeRole}
-						<div class="flex flex-col gap-2">
-							<div class="text-xl">You must be a Pro member to preview upcoming courses.</div>
-							<ProButton products={data.products} uid={data.user?.uid} />
-						</div>
-					{:else if data?.showDrafts}
-						<ContentCards data={{ contentType: data.contentType, content: data.comingSoon }} />
-					{:else}
-						<div class="flex">
-							<div class="text-xl">
-								You have chosen to not show drafts, if you would like to start seeing them again go
-								to your <a href="/account">Account</a>.
-							</div>
-						</div>
-					{/if}
-				</div>
-			</div>
 		</section>
 	</div>
 </div>
