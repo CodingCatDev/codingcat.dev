@@ -9,8 +9,8 @@
 
 	/* DATA */
 	export let data: LayoutData;
-	export let lesson: Lesson;
-	export let locked: boolean;
+	export let lesson: Lesson | undefined = undefined;
+	export let locked: boolean | undefined = undefined;
 
 	const user = userStore(auth);
 </script>
@@ -20,7 +20,7 @@
 		<ProCourseCompleted {data} {lesson} />
 		<ProCourseBookmarked {data} {lesson} />
 	</div>
-{:else if data.content?.type === ContentType.course || data.content?.type === ContentType.lesson}
+{:else if data.content?.type === ContentType.lesson}
 	<div class="flex w-6 gap-1">
 		<Locked {locked} />
 	</div>

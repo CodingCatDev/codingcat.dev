@@ -167,10 +167,16 @@ export interface PathDate {
 	date: number;
 }
 
-export interface Bookmarked extends Content, Course {
-	bookmarkedDate: Date;
+export interface Bookmarked {
+	id: string;
+	updated: Date;
+	complete: boolean;
+	lesson?: Bookmarked[];
 }
 
-export interface Completed extends Content, Course {
-	completedDate: Date;
+export interface Completed {
+	id: string;
+	updated: Date;
+	complete: boolean;
+	lesson?: Completed[];
 }

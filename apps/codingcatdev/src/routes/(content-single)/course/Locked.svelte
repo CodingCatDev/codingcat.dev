@@ -3,7 +3,7 @@
 	import { LockClosed, LockOpen } from '@steeze-ui/heroicons';
 
 	/* DATA */
-	export let locked: boolean;
+	export let locked: boolean | undefined;
 </script>
 
 {#if locked}
