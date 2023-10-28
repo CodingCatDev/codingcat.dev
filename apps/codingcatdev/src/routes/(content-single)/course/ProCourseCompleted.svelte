@@ -2,11 +2,11 @@
 	import type { LayoutData } from './$types';
 	import type { Lesson } from '$lib/types';
 	import ProCourseSaved from './ProCourseSaved.svelte';
-	import { Bookmark } from '@steeze-ui/heroicons';
+	import { CheckCircle } from '@steeze-ui/heroicons';
 
 	/* DATA */
 	export let lesson: Lesson | undefined = undefined;
 	export let data: LayoutData;
 </script>
 
-<ProCourseSaved {data} {lesson} savedRef="/completed" savedIconSource={Bookmark} />
+<ProCourseSaved {data} {lesson} savedRef="/completed" savedIconSource={CheckCircle} />
