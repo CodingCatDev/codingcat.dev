@@ -2,7 +2,14 @@
 	import Image from '$lib/components/content/Image.svelte';
 	import { ContentPublished, type Content, type Course } from '$lib/types';
 	import { ContentType } from '$lib/types';
-	export let data: { contentType: ContentType; content: Content[] & Course[]; next?: any };
+	import type { LayoutData } from '../$types';
+	import ProCourseMark from '../(content-single)/course/ProCourseMark.svelte';
+	export let data: {
+		contentType: ContentType;
+		content: Content[] & Course[];
+		next?: any;
+		user: LayoutData['user'];
+	};
 
 	let next = data.next;
 	const contentType = data.contentType;
@@ -18,7 +25,8 @@
 		data = {
 			contentType,
 			content: [...data.content, ...d.content],
-			next
+			next,
+			user: data?.user
 		};
 		next = d.next;
 	};
@@ -58,13 +66,30 @@
 							<section class="grid h-full grid-cols-1 gap-2 p-4">
 								<div class="space-y-2">
 									{#if contentType === ContentType.course}
-										{#if content?.lesson?.filter((l) => l.locked).length}
-											<span class="chip variant-filled-primary py-1 px-4 rounded-full text-sm"
-												>Pro</span
-											>
-										{:else}
-											<span class="chip variant-ringed py-1 px-4 rounded-full text-sm">Free</span>
-										{/if}
+										<div class="flex justify-between">
+											{#if content?.lesson?.filter((l) => l.locked).length}
+												<span class="chip variant-filled-primary py-1 px-4 rounded-full text-sm"
+													>Pro</span
+												>
+											{:else}
+												<span class="chip variant-ringed py-1 px-4 rounded-full text-sm">Free</span>
+											{/if}
+											<ProCourseMark
+												data={{
+													course: content,
+													user: data.user
+												}}
+											/>
+										</div>
+									{:else}
+										<div class="flex justify-end h-6">
+											<ProCourseMark
+												data={{
+													content,
+													user: data.user
+												}}
+											/>
+										</div>
 									{/if}
 									<h3 class="font-sans text-lg tracking-wide text-bold">
 										{content.title}

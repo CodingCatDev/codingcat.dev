@@ -9,6 +9,7 @@
 	import DashboardBookmarks from './DashboardBookmarks.svelte';
 	import { auth } from '$lib/client/firebase';
 	import { userStore } from 'sveltefire';
+	import DashboardCompleted from './DashboardCompleted.svelte';
 
 	export let data: PageData;
 
@@ -32,6 +33,7 @@
 			<DashboardComingSoon {data} />
 			{#if $user?.uid}
 				<DashboardBookmarks {data} />
+				<DashboardCompleted {data} />
 			{/if}
 			<DashboardCTA />
 		</section>

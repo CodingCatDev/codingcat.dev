@@ -5,6 +5,7 @@
 	import Image from '$lib/components/content/Image.svelte';
 
 	import type { LayoutData } from './$types';
+	import ProCourseMark from './ProCourseMark.svelte';
 	export let data: LayoutData;
 </script>
 
@@ -30,6 +31,7 @@
 					{:else}
 						<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
 					{/if}
+					<ProCourseMark {data} />
 				</div>
 				{#if data?.authors}
 					<section class="flex">
