@@ -2,13 +2,14 @@
 	import { auth, firestore } from '$lib/client/firebase';
 	import { docStore, userStore } from 'sveltefire';
 	import { Icon, type IconSource } from '@steeze-ui/svelte-icon';
-	import type { LayoutData } from './$types';
-	import type { Saved, Lesson } from '$lib/types';
+	import type { Saved, Lesson, Course } from '$lib/types';
 	import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 	/* DATA */
 	export let lesson: Lesson | undefined = undefined;
-	export let data: LayoutData;
+	export let data: {
+		course: Course;
+	};
 	export let savedRef: string;
 	export let savedIconSource: IconSource;
 

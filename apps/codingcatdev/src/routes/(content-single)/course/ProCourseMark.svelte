@@ -1,14 +1,19 @@
 <script lang="ts">
 	import Locked from './Locked.svelte';
 	import type { LayoutData } from './$types';
-	import { ContentType, type Lesson } from '$lib/types';
+	import type { Content, Course, Lesson, Saved } from '$lib/types';
+	import { ContentType } from '$lib/types';
 	import ProCourseCompleted from './ProCourseCompleted.svelte';
 	import ProCourseBookmarked from './ProCourseBookmarked.svelte';
 	import { auth } from '$lib/client/firebase';
 	import { userStore } from 'sveltefire';
 
 	/* DATA */
-	export let data: LayoutData;
+	export let data: {
+		content?: Content;
+		course: Course | Saved;
+		user?: LayoutData['user'];
+	};
 	export let lesson: Lesson | undefined = undefined;
 	export let locked: boolean | undefined = undefined;
 

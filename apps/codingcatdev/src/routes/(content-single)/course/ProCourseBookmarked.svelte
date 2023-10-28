@@ -1,12 +1,13 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
-	import type { Lesson } from '$lib/types';
+	import type { Course, Lesson } from '$lib/types';
 	import ProCourseSaved from './ProCourseSaved.svelte';
 	import { Bookmark } from '@steeze-ui/heroicons';
 
 	/* DATA */
 	export let lesson: Lesson | undefined = undefined;
-	export let data: LayoutData;
+	export let data: {
+		course: Course;
+	};
 </script>
 
 <ProCourseSaved {data} {lesson} savedRef="/bookmarked" savedIconSource={Bookmark} />

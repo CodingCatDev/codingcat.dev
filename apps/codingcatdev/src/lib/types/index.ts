@@ -167,7 +167,7 @@ export interface PathDate {
 	date: number;
 }
 
-export interface Saved extends Content {
+export interface Saved extends Content, Lesson {
 	savedId: string;
 	savedUpdated: Date;
 	savedComplete: boolean;

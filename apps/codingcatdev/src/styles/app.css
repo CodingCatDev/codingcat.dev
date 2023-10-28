@@ -62,3 +62,7 @@ h6:hover .permalink {
 [data-theme='codingcatdev'] button {
 	font-weight: bold;
 }
+
+.grid-cols-fit {
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
