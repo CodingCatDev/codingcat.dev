@@ -13,7 +13,7 @@ cover:
 devto:
 excerpt: Supabase New Release
 guests:
-  - pngwn
+  - jon-meyers
 hashnode:
 picks:
   [
