@@ -76,7 +76,7 @@ export const getShowDrafts = async (uid?: string) => {
 	const db = getFirestore();
 	const doc = await db.collection('users').doc(user.uid).get();
 	const userData = doc.data();
-	return userData?.settings?.showDrafts;
+	return userData?.pro?.settings?.showDrafts;
 };
 
 /* DB */
