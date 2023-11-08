@@ -6,15 +6,14 @@ import { preview } from '$lib/server/content';
 
 //export const prerender = false;
 export const load = async ({ cookies }: { cookies: Cookies }) => {
+	// Get latest podcast
+	const podcasts = (
+		await listContent<Content>({
+			contentItems: await getContentTypeDirectory<Content>(ContentType.podcast),
+			limit: 5
+		})
+	).content;
 	try {
-		// Get latest podcast
-		const podcasts = (
-			await listContent<Content>({
-				contentItems: await getContentTypeDirectory<Content>(ContentType.podcast),
-				limit: 5
-			})
-		).content;
-
 		const ccdsession = cookies.get('session');
 		if (!ccdsession) {
 			return {
@@ -39,6 +38,9 @@ export const load = async ({ cookies }: { cookies: Cookies }) => {
 		cookies.set('session', '', { expires: new Date(0) });
 
 		console.error(error);
-		return { preview };
+		return {
+			podcasts,
+			preview
+		};
 	}
 };
