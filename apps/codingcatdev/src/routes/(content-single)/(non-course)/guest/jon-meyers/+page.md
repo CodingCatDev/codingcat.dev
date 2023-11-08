@@ -7,6 +7,7 @@ slug: jon-meyers
 start: January 1, 2000
 picks: https://www.notion.so/Casio-SK-1-30cc60bf82e44a058ce98c04240ab773, https://www.notion.so/Dyson-Vacuum-c2dc3a7b4b2a41e381769b55629f7bb1
 socials:
+  github: 'https://github.com/dijonmusters'
   twitter: 'https://twitter.com/jonmeyers_io'
 websites:
   - https://jonmeyers.io/
