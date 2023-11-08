@@ -3,9 +3,9 @@ type: podcast
 authors:
   - alex-patterson
   - brittney-postma
-episode:
+episode: 17
 recording_date: May 12, 2023 9:00 AM
-season:
+season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
