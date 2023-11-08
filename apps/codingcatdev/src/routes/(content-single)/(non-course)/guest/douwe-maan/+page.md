@@ -7,11 +7,11 @@ slug: douwe-maan
 start: January 1, 2000
 picks: https://www.notion.so/Tailscale-910e5d9b4aa34520ac391802c446a75c
 socials:
+  github: https://github.com/DouweM
   linkedin: 'https://www.linkedin.com/in/douwem/'
   twitter: 'https://twitter.com/DouweM'
 websites:
-  - https://www.adewaleabati.com/
-  - https://www.madeinnigeria.dev/
+  - https://douwe.me/
 ---
 
 ## About
