@@ -9,7 +9,7 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover:
+cover: https://media.codingcat.dev/image/upload/v1699404483/main-codingcatdev-photo/3.22-supabase.png
 devto:
 excerpt: Supabase New Release
 guests:
