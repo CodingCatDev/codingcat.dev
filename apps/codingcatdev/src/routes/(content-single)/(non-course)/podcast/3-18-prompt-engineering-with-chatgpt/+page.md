@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode: 18
 recording_date: June 15, 2023 2:15 PM
 season: 3
