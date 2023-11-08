@@ -73,7 +73,7 @@
 							</div>
 							{#if courseLessons}
 								<div
-									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									class="card !text-surface-800-100-token !bg-surface-100-800-token"
 									in:fly={{ x: -200, y: -200, delay: 500, duration: 400 }}
 								>
 									<div class="p-4 space-y-4">
@@ -88,7 +88,7 @@
 									</div>
 								</div>
 								<div
-									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									class="card !text-surface-800-100-token !bg-surface-100-800-token"
 									in:fly={{ x: 200, y: -200, delay: 500, duration: 400 }}
 								>
 									<div class="p-4 space-y-4">
@@ -100,7 +100,7 @@
 									</div>
 								</div>
 								<div
-									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									class="card !text-surface-800-100-token !bg-surface-100-800-token"
 									in:fly={{ x: -200, y: 200, delay: 500, duration: 400 }}
 								>
 									<div class="p-4 space-y-4">
@@ -113,7 +113,7 @@
 									</div>
 								</div>
 								<div
-									class="bcu-card !text-surface-800-100-token !bg-surface-100-800-token"
+									class="card !text-surface-800-100-token !bg-surface-100-800-token"
 									in:fly={{ x: 200, y: 200, delay: 500, duration: 400 }}
 								>
 									<div class="p-4 space-y-4">
@@ -132,16 +132,14 @@
 						</div>
 						<div class="grid grid-cols-1 sm:grid-rows-2 sm:grid-cols-2 gap-4 sm:gap-8 relative">
 							<div class="flex sm:justify-end">
-								<a
-									href="/course/svelte"
-									class="bcu-button md:bcu-button-xl variant-filled flex gap-1"
+								<a href="/course/svelte" class="btn md:btn-xl variant-filled flex gap-1"
 									>Begin Course <Icon src={ArrowRight} theme="solid" class="w-6" />
 								</a>
 							</div>
 							<div class="flex sm:justify-start">
 								<a
 									href="/courses"
-									class="bcu-button md:bcu-button-xl variant-ghost-surface !text-on-surface-token flex gap-1"
+									class="btn md:btn-xl variant-ghost-surface !text-on-surface-token flex gap-1"
 									>Explore other Courses
 								</a>
 							</div>

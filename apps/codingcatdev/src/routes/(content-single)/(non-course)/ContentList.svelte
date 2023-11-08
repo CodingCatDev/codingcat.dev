@@ -6,10 +6,7 @@
 </script>
 
 {#each contentItems as p}
-	<a
-		href={`/${contentType}/${p.slug}`}
-		class="max-w-sm overflow-hidden bcu-card bg-initial card-hover"
-	>
+	<a href={`/${contentType}/${p.slug}`} class="max-w-sm overflow-hidden card bg-initial card-hover">
 		<header>
 			{#if p?.cover}
 				<Image

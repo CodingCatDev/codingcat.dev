@@ -25,7 +25,7 @@
 		};
 	}}
 >
-	<button class="bcu-button flex gap-2 variant-ringed-primary w-full" type="submit">
+	<button class="btn flex gap-2 variant-ringed-primary w-full" type="submit">
 		<Icon src={Twitter} class="w-4" />
 		<div class="text-lg">Twitter</div>
 	</button>

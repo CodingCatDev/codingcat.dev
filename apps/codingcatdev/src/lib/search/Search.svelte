@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { MagnifyingGlass } from '@steeze-ui/heroicons';
-	import { modalStore, type ModalSettings } from '@codingcatdev/blackcatui';
+	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 	import SearchModal from '$lib/search/SearchModal.svelte';
 	import { query } from './stores.js';
 
@@ -35,7 +36,7 @@
 />
 
 <button
-	class="bcu-button p-2 px-4 space-x-4 variant-soft hover:variant-soft-primary flex align-middle"
+	class="btn p-2 px-4 space-x-4 variant-soft hover:variant-soft-primary flex align-middle"
 	on:mousedown|preventDefault={() => showSearch()}
 	on:touchend|preventDefault={() => showSearch()}
 >

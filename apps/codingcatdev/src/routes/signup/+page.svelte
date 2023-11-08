@@ -11,7 +11,7 @@
 </script>
 
 <LayoutWrapper>
-	<section class="bcu-card flex flex-col gap-4 p-4">
+	<section class="card flex flex-col gap-4 p-4">
 		<SignupAuth {action} />
 	</section>
 </LayoutWrapper>

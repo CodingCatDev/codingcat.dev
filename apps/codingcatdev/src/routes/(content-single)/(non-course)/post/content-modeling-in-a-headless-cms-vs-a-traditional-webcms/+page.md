@@ -29,7 +29,7 @@ Like many of you, my first experience with a content management system (CMS) was
 
 In a traditional CMS, the front and back ends are like two cats in a trench coat trying to pass as one human. They're both working towards the same goal, but they're constantly tripping over each other and getting in each other's way. The marketers and content editors are in the front end, trying to create a beautiful and engaging website for the users. The developers are in the back end, trying to keep the website running smoothly and securely. But because they're all sharing the same space, it's a constant battle of who can get their work done first. It's a mess, but somehow it worked in the past.
 
-<aside class="flex flex-col items-start gap-2 bcu-alert variant-ghost">
+<aside class="flex flex-col items-start gap-2 alert variant-ghost">
   <div class="text-2xl">Traditional CMS Architecture</div>
   <ul>
     <li>A database for storing data and content
@@ -54,7 +54,7 @@ A headless CMS is a content management system that does not have a built-in fron
 
 As a frontend developer you know the landscape moves very fast and with meta-frameworks like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Nuxt](https://nuxtjs.org/), and [SvelteKit](https://kit.svelte.dev/) adding features at a lightning pace, it is hard to keep a Traditional CMS updated with these changes.
 
-<aside class="flex flex-col items-start gap-2 bcu-alert variant-ghost">
+<aside class="flex flex-col items-start gap-2 alert variant-ghost">
   <div class="text-2xl">Headless CMS Architecture</div>
   <ul>
     <li>A content management backend (often including text and media)
@@ -125,7 +125,7 @@ When you start to think about this type of modeling start to think of these as b
 ## Popular Headless CMS Platforms
 
 <section class="flex flex-col gap-2 md:gap-8">
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -141,7 +141,7 @@ When you start to think about this type of modeling start to think of these as b
     Amplience provides a very strong set of <a href="https://amplience.com/developers/docs/apis/" target="_blank" rel="noopener noreferrer">API's</a>, that make delivering Media a breeze!
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -154,7 +154,7 @@ When you start to think about this type of modeling start to think of these as b
       Contentful is API-first, which means that it can be integrated with other systems and applications. It is also designed to be scalable, so it can be used by businesses of all sizes. Contentful is a popular choice for businesses that want to create and deliver content quickly and easily. It is also a good choice for businesses that need to integrate content with other systems and applications.
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -167,7 +167,7 @@ When you start to think about this type of modeling start to think of these as b
       Contentstack is a composable digital experience platform (DXP) that empowers marketers and developers to deliver digital experiences at the speed of their imagination. It is a cloud-based, API-first platform that offers a wide range of features and capabilities, including content management, delivery, and personalization.
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -180,7 +180,7 @@ When you start to think about this type of modeling start to think of these as b
       Hygraph is a federated content platform that allows you to build digital experiences the way you envisioned them. Hygraph gives you instant <a href="https://hygraph.com/graphql-headless-cms" target="_blank" rel="noopener noreferrer">GraphQL Content APIs</a> to create, enrich, unify, and deliver your content across platforms. It is a GraphQL-based federated content management system for digital creators and digital products. 
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -193,7 +193,7 @@ When you start to think about this type of modeling start to think of these as b
       Its authoring experience supports content production, modular content reuse, and real-time collaboration and approvals to drive content that's consistent, optimized, and engaging.
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -207,7 +207,7 @@ When you start to think about this type of modeling start to think of these as b
     You can see hear more on two of our podcast episode's <a href="/podcast/0-4-sanity-io">Sanity.io</a> and <a href="/podcast/1-42-using-content-as-data-with-sanity-io">Using Content as Data with Sanity.io</a>.
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"
@@ -220,7 +220,7 @@ When you start to think about this type of modeling start to think of these as b
      Storyblok is a cloud-native, enterprise-grade content management system that is built to scale. Storyblok also has a visual editing experience that makes it easy for anyone to create content, regardless of their technical expertise. Huge thanks goes to Storyblok for being such an amazing <a href="/sponsor/storyblok">sponsor</a>!
     </p>
   </div>
-  <div class="flex flex-col gap-2 p-2 bcu-card variant-soft">
+  <div class="flex flex-col gap-2 p-2 card variant-soft">
     <a
       target="_blank"
       rel="noopener noreferrer"

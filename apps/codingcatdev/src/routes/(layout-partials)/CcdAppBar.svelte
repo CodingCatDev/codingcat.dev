@@ -5,12 +5,14 @@
 	// BlackCatUI
 	import {
 		AppBar,
-		drawerStore,
+		getDrawerStore,
 		type DrawerSettings,
 		Avatar,
 		popup,
 		LightSwitch
-	} from '@codingcatdev/blackcatui';
+	} from '@skeletonlabs/skeleton';
+	const drawerStore = getDrawerStore();
+
 	import AJAlt from '$lib/components/global/icons/AJAlt.svelte';
 
 	// Drawer Handler
@@ -22,7 +24,6 @@
 	import { storeCurrentUrl, storeUser } from '$lib/stores/stores';
 	import LogoutButton from '../login/LogoutButton.svelte';
 	import { Search } from '$lib/search';
-	import { page } from '$app/stores';
 
 	$: classesActive = (href: string) =>
 		$storeCurrentUrl?.split('/').at(-1) === href ? 'bg-primary-active-token hover:text-token' : '';
@@ -31,7 +32,7 @@
 <!-- NOTE: using stopPropagation to override Chrome for Windows search shortcut -->
 <!-- <svelte:window on:keydown|stopPropagation={onWindowKeydown} /> -->
 <AppBar shadow="shadow-xl">
-	<svelte:fragment slot="bcu-app-bar-lead">
+	<svelte:fragment slot="lead">
 		<div class="flex items-center gap-2">
 			<!-- Hamburger Menu -->
 			<button on:click={drawerOpen} class="w-10 lg:!hidden" aria-label="Open Drawer">
@@ -53,68 +54,70 @@
 		</div>
 	</svelte:fragment>
 
-	<svelte:fragment slot="bcu-app-bar-trail">
+	<svelte:fragment slot="trail">
 		<div class="hidden lg:block">
 			<a
 				href="/courses"
-				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('courses')}`}
+				class={`btn hover:variant-soft-primary capitalize ${classesActive('courses')}`}
 			>
 				courses
 			</a>
 			<a
 				href="/podcasts"
-				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('podcasts')}`}
+				class={`btn hover:variant-soft-primary capitalize ${classesActive('podcasts')}`}
 			>
 				podcasts
 			</a>
-			<a
-				href="/blog"
-				class={`bcu-button hover:variant-soft-primary capitalize ${classesActive('blog')}`}
-			>
+			<a href="/blog" class={`btn hover:variant-soft-primary capitalize ${classesActive('blog')}`}>
 				blog
 			</a>
 		</div>
 		<div class="flex justify-center"><Search /></div>
 		{#if $storeUser?.uid}
 			<button
-				class="bcu-button hover:variant-soft-primary"
+				class="btn hover:variant-soft-primary"
 				aria-label="Popup Showing Theme Options"
-				use:popup={{ event: 'click', target: 'theme' }}
+				use:popup={{
+					event: 'click',
+					target: 'theme',
+					placement: 'bottom-end',
+					middleware: { offset: { crossAxis: -20, mainAxis: 20 } }
+				}}
 			>
 				{#if $storeUser?.picture}
 					<Avatar
-						class="w-8 h-8 bcu-avatar-xs"
+						class="w-8 h-8 text-4xl"
 						src={$storeUser.picture}
 						alt="User Photo"
 						referrerpolicy="no-referrer"
 					/>
 				{:else}
-					<Avatar class="w-8 h-8 bcu-avatar-xs">
-						<svelte:fragment slot="bcu-avatar-message">
-							<div class="text-sm">AJ</div>
-						</svelte:fragment>
+					<Avatar class="w-8 h-8 text-4xl">
+						<div class="text-sm">AJ</div>
 					</Avatar>
 				{/if}
 			</button>
 			<!-- popup -->
-			<div class="flex flex-col gap-4 p-4 shadow-xl bcu-card w-60" data-popup="theme">
-				<div class="mb-2 space-y-4">
-					<section class="flex items-center justify-between">
-						<h6>Mode</h6>
-						<LightSwitch />
-					</section>
-				</div>
-				<hr />
-				<div class="flex flex-col gap-2 mt-2">
-					<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
-					<div class="flex gap-2">
-						<a class="bcu-button variant-ringed-primary" href="/dashboard">Dashboard</a>
-						<LogoutButton />
+			<div data-popup="theme">
+				<div class="flex flex-col gap-4 p-4 shadow-xl card">
+					<div class="mb-2 space-y-4">
+						<section class="flex items-center justify-between">
+							<h6>Mode</h6>
+							<LightSwitch />
+						</section>
+					</div>
+					<hr />
+					<div class="flex flex-col gap-2 mt-2">
+						<div class="text-sm text-ellipsis">{$storeUser?.email}</div>
+						<div class="flex gap-2">
+							<a class="btn variant-ringed-primary" href="/dashboard">Dashboard</a>
+							<LogoutButton />
+						</div>
 					</div>
 				</div>
 			</div>
 		{:else}
-			<a class="bcu-button variant-filled-primary" href="/login">Login</a>
+			<a class="btn variant-filled-primary" href="/login">Login</a>
 		{/if}
 	</svelte:fragment>
 </AppBar>

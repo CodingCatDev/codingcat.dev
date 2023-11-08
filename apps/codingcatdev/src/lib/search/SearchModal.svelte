@@ -11,7 +11,8 @@ It appears when the user clicks on the `Search` component or presses the corresp
 	import { query, recent } from './stores';
 	import SearchResults from './SearchResults.svelte';
 	import SearchWorker from './search-worker?worker';
-	import { modalStore } from '@codingcatdev/blackcatui';
+	import { getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	/** @type {HTMLElement} */
 	let modal;
@@ -79,7 +80,7 @@ It appears when the user clicks on the `Search` component or presses the corresp
 	}
 </script>
 
-<div class="bcu-card p-2 md:p-8 flex flex-col gap-2 md:gap-8 w-full h-full md:w-[80%] md:h-[80%]">
+<div class="card p-2 md:p-8 flex flex-col gap-2 md:gap-8 w-full h-full md:w-[80%] md:h-[80%]">
 	<div class="flex gap-2">
 		<!-- svelte-ignore a11y-autofocus -->
 		<input
@@ -99,7 +100,7 @@ It appears when the user clicks on the `Search` component or presses the corresp
 			spellcheck="false"
 			class="input p-2"
 		/>
-		<button class="bcu-button variant-ringed" on:click={() => modalStore.close()}>
+		<button class="btn variant-ringed" on:click={() => modalStore.close()}>
 			<Icon src={XMark} theme="solid" class="w-6 h-6" />
 		</button>
 	</div>

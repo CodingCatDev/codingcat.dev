@@ -1,19 +1,19 @@
 <script>
-	import { RadioGroup, RadioItem } from '@codingcatdev/blackcatui';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 
 	let subscription = 1;
 	export let login = false;
 </script>
 
-<div class="bcu-card bg-gradient-to-b from-surface-700 to-primary-500 p-8 shadow-lg lg:w-full">
-	<header class="bcu-card-header flex justify-center">
-		<RadioGroup hover="hover:variant-ghost-surface" background="bg-primary-200-700-token">
+<div class="card variant-filled-surface p-8 shadow-lg lg:w-full">
+	<header class="card-header flex justify-center">
+		<RadioGroup hover="hover:variant-ghost-surface" background="bg-surface-600">
 			<RadioItem bind:group={subscription} name="justify" value={1}>Annual</RadioItem>
 			<RadioItem bind:group={subscription} name="justify" value={0}>Monthly</RadioItem>
 		</RadioGroup>
 	</header>
-	<section class="p-8 sm:p-20 flex justify-center text-surface-100">
+	<section class="p-8 sm:p-20 flex justify-center">
 		<div class="flex flex-col items-center relative">
 			{#if subscription}
 				<div class="absolute text-2xl top-0 left-0">$</div>
@@ -29,17 +29,17 @@
 		</div>
 	</section>
 	{#if login}
-		<footer class="bcu-card-footer text-surface-100-800-token">
+		<footer class="card-footer">
 			<div class="flex flex-col items-center gap-8">
-				<a href="/terms-of-use" class="!text-surface-100-800-token">Terms & Conditions</a>
+				<a href="/terms-of-use" class="!text-on-surface-token">Terms & Conditions</a>
 				<p>Login Above to Get Started</p>
 			</div>
 		</footer>
 	{:else}
-		<footer class="bcu-card-footer text-surface-100-800-token">
+		<footer class="card-footer">
 			<div class="flex flex-col items-center gap-8">
-				<a href="/terms-of-use" class="!text-surface-100-800-token">Terms & Conditions</a>
-				<a href="/login?redirectTo=/dashboard" class="bcu-button variant-filled-surface w-full"
+				<a href="/terms-of-use" class="!text-on-surface-token">Terms & Conditions</a>
+				<a href="/login?redirectTo=/dashboard" class="btn variant-filled-surface w-full"
 					>Let's do it!</a
 				>
 			</div>
