@@ -27,7 +27,7 @@ picks:
 slug: 3-18-prompt-engineering-with-chatgpt
 sponsors:
   - storyblok
-spotify:
+spotify: https://open.spotify.com/episode/2hhhWw0MwPKsoSK7iT5R0N?si=1Hvdzq4kR8GShwQ7vrL0Ig
 start: June 21, 2023
 title: 'Prompt Engineering with ChatGPT'
 youtube: https://youtu.be/hxbqf4cnfSk

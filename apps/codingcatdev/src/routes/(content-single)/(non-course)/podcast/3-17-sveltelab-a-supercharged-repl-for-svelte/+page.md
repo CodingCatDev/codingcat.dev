@@ -36,7 +36,7 @@ picks:
 slug: 3-17-sveltelab-a-supercharged-repl-for-svelte
 sponsors:
   - storyblok
-spotify:
+spotify: https://open.spotify.com/episode/4b4pdhugoBBrMAIsQin1WS?si=-rVFiJ7JQEiLr1oe_LubCw
 start: June 21, 2023
 title: SvelteLab a supercharged REPL for Svelte
 youtube: https://youtu.be/S1iakhstHlc
