@@ -1,22 +1,20 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Sponsor, Course } from '$lib/types';
 	import LessonCards from './LessonCards.svelte';
 	import Image from '$lib/components/content/Image.svelte';
-	export let data: {
-		course: Course;
-		authors: Author[];
-		sponsors: Sponsor[];
-	};
+
+	import type { LayoutData } from './$types';
+	import ProCourseMark from './ProCourseMark.svelte';
+	export let data: LayoutData;
 </script>
 
 {#if data?.course}
 	<div class="flex flex-col justify-center !text-token p-2 md:p-4 xl:p-8 w-full items-center">
 		<section class="justify-center flex flex-col gap-2 md:gap-8 max-w-7xl">
-			<ol class="bcu-breadcrumb">
-				<li class="bcu-crumb"><a href="/courses">Courses</a></li>
-				<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+			<ol class="breadcrumb">
+				<li class="crumb"><a href="/courses">Courses</a></li>
+				<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 				<li>{data.course.title}</li>
 			</ol>
 			<div class="flex flex-col gap-2 md:gap-8">
@@ -25,11 +23,21 @@
 				{:else if data?.course?.cover}
 					<Image src={data.course.cover} alt={data.course.title} />
 				{/if}
+				<div class="flex">
+					{#if data?.course?.lesson?.filter((l) => l.locked).length}
+						<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
+							>Pro</span
+						>
+					{:else}
+						<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
+					{/if}
+					<ProCourseMark {data} />
+				</div>
 				{#if data?.authors}
 					<section class="flex">
 						{#each data?.authors as author (author.slug)}
 							<a
-								class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+								class="btn flex gap-2 items-center variant-ghost p-2 rounded-md"
 								href={`/author/${author.slug}`}
 							>
 								{#if author?.cover}
@@ -44,15 +52,6 @@
 						{/each}
 					</section>
 				{/if}
-				<div class="flex">
-					{#if data?.course?.lesson?.filter((l) => l.locked).length}
-						<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
-							>Pro</span
-						>
-					{:else}
-						<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
-					{/if}
-				</div>
 				<h1>{data.course.title}</h1>
 				<!-- Sponsors -->
 				{#if data?.sponsors?.length}
@@ -60,7 +59,7 @@
 					<section class="flex flex-col gap-2 md:flex-row md:gap-8">
 						{#each data?.sponsors as sponsor (sponsor.slug)}
 							<a
-								class="overflow-hidden bcu-card bg-initial card-hover md:flex-1"
+								class="overflow-hidden card bg-initial card-hover md:flex-1"
 								href={`${sponsor.url}`}
 								target="_blank"
 								rel="noopener noreferrer"
@@ -90,12 +89,7 @@
 					<slot />
 				</section>
 			</div>
-			{#if data?.course?.lesson}
-				<div class="flex flex-col gap-2 md:gap-8">
-					<h2>Lessons</h2>
-					<LessonCards lesson={data.course.lesson} courseSlug={data.course.slug} />
-				</div>
-			{/if}
+			<LessonCards {data} />
 		</section>
 	</div>
 {:else}

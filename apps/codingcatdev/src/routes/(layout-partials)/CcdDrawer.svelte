@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { Drawer, drawerStore } from '@codingcatdev/blackcatui';
+	import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import MySideNav from './CcdSideNav.svelte';
+	const drawerStore = getDrawerStore();
 
 	$: classesDrawer = $drawerStore.id === 'doc-sidenav' ? 'lg:hidden' : '';
 </script>

@@ -7,8 +7,8 @@
 	$: title = pluralize({ type: contentType } as Content);
 </script>
 
-<div class="bcu-card">
-	<header class="bcu-card-header capitalize pb-2 text-xl font-bold">{title}</header>
+<div class="card">
+	<header class="card-header capitalize pb-2 text-xl font-bold">{title}</header>
 	<hr />
 	<ul>
 		{#each list as content}

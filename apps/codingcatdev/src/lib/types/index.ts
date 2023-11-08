@@ -75,11 +75,11 @@ export enum ContentType {
 	page = 'page',
 	podcast = 'podcast',
 	post = 'post',
-	sponsor = 'sponsor',
+	sponsor = 'sponsor'
 }
 
 export enum PodcastType {
-	codingcatdev = 'codingcatdev',
+	codingcatdev = 'codingcatdev'
 }
 
 export interface Socials {
@@ -151,3 +151,25 @@ export interface DirectoryStub {
 }
 
 export type Stub = FileStub | DirectoryStub;
+export interface UserDoc {
+	pro?: Pro;
+}
+export interface Pro {
+	settings?: {
+		showDrafts?: boolean;
+	};
+	completed?: PathDate[];
+	bookmarked?: PathDate[];
+}
+
+export interface PathDate {
+	path: string;
+	date: number;
+}
+
+export interface Saved extends Content, Lesson {
+	savedId: string;
+	savedUpdated: Date;
+	savedComplete: boolean;
+	lesson?: Saved[];
+}

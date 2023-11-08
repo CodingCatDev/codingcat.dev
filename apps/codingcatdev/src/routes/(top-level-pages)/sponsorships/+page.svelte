@@ -54,7 +54,7 @@
 
 				<!-- Main Content -->
 				<section class="relative grid gap-2 md:gap-4 grid-cols-1 sm:grid-cols-3">
-					<a class="overflow-hidden bcu-card bg-initial card-hover" href="/sponsorships/podcast">
+					<a class="overflow-hidden card bg-initial card-hover" href="/sponsorships/podcast">
 						<header>
 							<Image
 								src="https://media.codingcat.dev/image/upload/v1686699444/main-codingcatdev-photo/podcast-sponsorship.png"
@@ -72,7 +72,7 @@
 						</div>
 					</a>
 					<a
-						class="overflow-hidden bcu-card bg-initial card-hover"
+						class="overflow-hidden card bg-initial card-hover"
 						href="/sponsorships/code-with-codingcatdev"
 					>
 						<header>
@@ -92,7 +92,7 @@
 						</div>
 					</a>
 
-					<a class="overflow-hidden bcu-card bg-initial card-hover" href="/sponsorships/blog">
+					<a class="overflow-hidden card bg-initial card-hover" href="/sponsorships/blog">
 						<header>
 							<Image
 								src="https://media.codingcat.dev/image/upload/v1686700627/main-codingcatdev-photo/blog-sponsorship.png"

@@ -48,7 +48,7 @@
 
 <ul>
 	{#each results as result (result.href)}
-		<li class="bcu-card variant-ghost px-2">
+		<li class="card variant-ghost px-2">
 			<a
 				class="!no-underline !text-token"
 				data-sveltekit-preload-data

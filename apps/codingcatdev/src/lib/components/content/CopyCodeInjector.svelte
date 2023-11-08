@@ -19,8 +19,7 @@
 					copyButton.innerHTML = 'Copy';
 				}, 1500);
 			});
-			copyButton.className =
-				'copy absolute top-0 right-0 mt-2 mr-2 bcu-button variant-ringed-primary';
+			copyButton.className = 'copy absolute top-0 right-0 mt-2 mr-2 btn variant-ringed-primary';
 			copyButton.innerText = 'Copy';
 			pre.appendChild(copyButton);
 		}

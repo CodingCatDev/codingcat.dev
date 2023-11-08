@@ -1,15 +1,12 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
 	import Video from '$lib/components/content/Video.svelte';
-	import type { Lesson, Course, Author } from '$lib/types';
 	import { browser } from '$app/environment';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import Image from '$lib/components/content/Image.svelte';
-	export let data: {
-		course: Course;
-		content: Lesson | undefined;
-		authors: Author[];
-	};
+	import ProCourseMark from './ProCourseMark.svelte';
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 </script>
 
 {#if data?.content}
@@ -17,13 +14,13 @@
 		<div class="flex justify-center">
 			<section class="flex flex-col xl:flex-row gap-8 justify-center p-2 xl:p-8 w-full">
 				<div class="flex flex-col gap-2 md:gap-8 max-w-7xl w-full">
-					<ol class="bcu-breadcrumb">
-						<li class="bcu-crumb"><a href="/courses">Courses</a></li>
-						<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
-						<li class="bcu-crumb">
+					<ol class="breadcrumb">
+						<li class="crumb"><a href="/courses">Courses</a></li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
+						<li class="crumb">
 							<a href={`/course/${data.course.slug}`}>{data.course.title}</a>
 						</li>
-						<li class="bcu-crumb-separator" aria-hidden>&rsaquo;</li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 						<li>{data.content.title}</li>
 					</ol>
 					{#if data?.content?.youtube}
@@ -31,11 +28,21 @@
 					{:else if data?.content?.cover}
 						<Image src={data.content.cover} alt={data.content.title} />
 					{/if}
+					<div class="flex justify-between">
+						{#if data?.course?.lesson?.filter((l) => l.locked).length}
+							<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
+								>Pro</span
+							>
+						{:else}
+							<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
+						{/if}
+						<ProCourseMark {data} />
+					</div>
 					{#if data?.authors}
 						<section class="flex">
 							{#each data?.authors as author (author.slug)}
 								<a
-									class="bcu-button flex gap-2 items-center variant-ghost p-2 rounded-md"
+									class="btn flex gap-2 items-center variant-ghost p-2 rounded-md"
 									href={`/author/${author.slug}`}
 								>
 									{#if author?.cover}

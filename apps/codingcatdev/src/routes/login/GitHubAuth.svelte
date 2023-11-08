@@ -7,6 +7,9 @@
 	import { GithubAuthProvider } from 'firebase/auth';
 	const provider = new GithubAuthProvider();
 
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
+
 	// Display
 	import { enhance } from '$app/forms';
 	export let action: string;
@@ -17,8 +20,16 @@
 	method="POST"
 	{action}
 	use:enhance={async ({ action, cancel, controller, data, form }) => {
-		await ccdSignInWithPopUp(provider);
-
+		try {
+			await ccdSignInWithPopUp(provider);
+		} catch (err) {
+			if (err instanceof Error) {
+				toastStore.trigger({
+					message: err.message,
+					background: 'variant-filled-error'
+				});
+			}
+		}
 		return async ({ result, update }) => {
 			// `result` is an `ActionResult` object
 			// `update` is a function which triggers the logic that would be triggered if this callback wasn't set
@@ -27,7 +38,7 @@
 		};
 	}}
 >
-	<button class="bcu-button flex gap-2 variant-ringed-primary w-full" type="submit">
+	<button class="btn flex gap-2 variant-ringed-primary w-full" type="submit">
 		<Icon src={Github} class="w-4" />
 		<div class="text-lg">GitHub</div>
 	</button>

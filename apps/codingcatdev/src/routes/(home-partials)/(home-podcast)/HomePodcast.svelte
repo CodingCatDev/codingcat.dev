@@ -32,9 +32,7 @@
 						</p>
 					</div>
 					<div class="sm:basis-1/3 flex">
-						<a href="/podcasts" class="bcu-button variant-filled sm:bcu-button-xl"
-							>View all episodes</a
-						>
+						<a href="/podcasts" class="btn variant-filled sm:btn-xl">View all episodes</a>
 					</div>
 				</div>
 			</div>

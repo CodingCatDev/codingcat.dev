@@ -63,7 +63,7 @@
 			</section>
 			{#if next}
 				<div class="flex justify-center m-8">
-					<button class="text-2xl bcu-button variant-filled-primary" on:click={() => more()}>
+					<button class="text-2xl btn variant-filled-primary" on:click={() => more()}>
 						Show More
 					</button>
 				</div>
@@ -71,9 +71,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	.grid-cols-fit {
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	}
-</style>

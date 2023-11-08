@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Avatar } from '@codingcatdev/blackcatui';
+	import { Avatar } from '@skeletonlabs/skeleton';
 	import GitLineGradient from '../(home-campaign)/GitLineGradient.svelte';
 	import TeamSvg from './TeamSvg.svelte';
 </script>
@@ -22,14 +22,13 @@
 						</p>
 					</div>
 					<div class="sm:basis-1/3 flex">
-						<a href="/courses" class="bcu-button variant-filled sm:bcu-button-xl">Explore courses</a
-						>
+						<a href="/courses" class="btn variant-filled sm:btn-xl">Explore courses</a>
 					</div>
 				</div>
 				<!-- Authors -->
 				<div class="flex flex-col lg:flex-row gap-8 items-center">
 					<div class="sm:basis-1/2 flex flex-col justify-center gap-8">
-						<a class="bcu-card variant-soft-surface p-8" href="/author/alex-patterson">
+						<a class="card variant-soft-surface p-8" href="/author/alex-patterson">
 							<div class="flex flex-col gap-8">
 								<div class="flex flex-col sm:flex-row gap-8 justify-center items-center">
 									<Avatar
@@ -49,7 +48,7 @@
 						</a>
 					</div>
 					<div class="sm:basis-1/2 flex flex-col justify-center gap-8">
-						<a class="bcu-card variant-soft-surface p-8" href="/author/brittney-postma">
+						<a class="card variant-soft-surface p-8" href="/author/brittney-postma">
 							<div class="flex flex-col gap-8">
 								<div class="flex flex-col sm:flex-row gap-8 justify-center items-center">
 									<Avatar
