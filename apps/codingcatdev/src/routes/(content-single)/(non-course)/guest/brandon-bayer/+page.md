@@ -7,6 +7,7 @@ slug: brandon-bayer
 start: January 1, 2000
 picks:
 socials:
+  github: https://github.com/flybayer
   twitter: 'https://twitter.com/flybayer'
 websites:
   - https://www.flightcontrol.dev/?ref=codingcatdev

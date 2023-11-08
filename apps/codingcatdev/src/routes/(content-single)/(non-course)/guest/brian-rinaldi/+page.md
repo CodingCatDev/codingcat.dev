@@ -6,10 +6,13 @@ published: published
 slug: brian-rinaldi
 start: January 1, 2000
 socials:
-  linkedin: 'https://www.linkedin.com/in/douwem/'
-  twitter: 'https://twitter.com/DouweM'
+  github: https://github.com/remotesynth
+  linkedin: https://www.linkedin.com/in/brianrinaldi/
+  twitter: 'https://twitter.com/remotesynth'
 websites:
   - https://remotesynthesis.com/
+  - https://launchdarkly.com/blog/author/brian-rinaldi/
+  - https://cfe.dev
 ---
 
 Developer experience engineer [@LaunchDarkly](https://twitter.com/LaunchDarkly)

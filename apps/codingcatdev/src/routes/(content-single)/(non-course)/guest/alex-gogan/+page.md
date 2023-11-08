@@ -8,6 +8,7 @@ slug: alex-gogan
 start: January 1, 2000
 socials:
   twitter: 'https://twitter.com/alexg0g'
+  github: https://github.com/alx-andru
 streams: https://www.notion.so/Creating-Macro-Benefits-from-Micro-Frontends-1a5d4d8bc22a44d88a4f809c548867ca
 websites:
   - https://alexandrugogan.com/

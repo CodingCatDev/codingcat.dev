@@ -18,3 +18,5 @@ websites:
 ### Profile
 
 CSS developer advocate at Google Chrome, podcast co-host, creator of VisBug, and CSS wizard!
+
+Adam is a bright, passionate, punk engineer with an adoration for the web who prefers using his skills for best in class UI/UX and empowering those around him. He’s worked at small and large companies, and built an app for pretty much every screen (or voice). He is capable of over-engineering, but spends lots of brain power not. Loves CSS, loves JS, loves great UX. He's also a member of the CSS Working Group, VisBug and Open Props creator, and overall web fan.

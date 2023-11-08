@@ -83,8 +83,10 @@ export enum PodcastType {
 }
 
 export interface Socials {
+	codepen?: string;
 	devto?: string;
 	discord?: string;
+	dribbble?: string;
 	facebook?: string;
 	github?: string;
 	instagram?: string;

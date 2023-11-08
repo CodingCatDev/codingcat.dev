@@ -7,8 +7,10 @@
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import {
+		Codepen,
 		Devdotto,
 		Discord,
+		Dribbble,
 		Facebook,
 		Github,
 		Instagram,
@@ -58,6 +60,16 @@
 					{/if}
 					<section class="flex flex-wrap gap-8 m-2 md:gap-4 socials">
 						{#if data?.content?.socials}
+							{#if data.content?.socials?.codepen}
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={data.content?.socials?.codepen}
+									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+								>
+									<Icon src={Codepen} class="w-8" theme="solid" />
+								</a>
+							{/if}
 							{#if data.content?.socials?.devto}
 								<a
 									target="_blank"
@@ -76,6 +88,16 @@
 									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
 								>
 									<Icon src={Discord} class="w-8" theme="solid" />
+								</a>
+							{/if}
+							{#if data.content?.socials?.dribbble}
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={data.content?.socials?.dribbble}
+									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+								>
+									<Icon src={Dribbble} class="w-8" theme="solid" />
 								</a>
 							{/if}
 							{#if data.content?.socials?.facebook}

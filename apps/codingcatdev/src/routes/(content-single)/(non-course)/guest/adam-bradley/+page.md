@@ -11,6 +11,6 @@ start: January 1, 2000
 twitter: https://twitter.com/adamdbradley
 ---
 
-### Profile
+## Profile
 
 Directory of Technology at Builder.io. Creator of Partytown.

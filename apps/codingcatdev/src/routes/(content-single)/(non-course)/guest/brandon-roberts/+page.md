@@ -7,7 +7,9 @@ slug: brandon-roberts
 start: January 1, 2000
 picks: https://www.notion.so/NBA-Playoffs-904443427c11468c8959ce86587ac284
 socials:
+  github: https://github.com/brandonroberts
   twitter: 'https://twitter.com/brandontroberts'
+  youtube: https://www.youtube.com/@BrandonRobertsDev
 websites:
   - 'https://brandonroberts.dev/blog/'
 ---
