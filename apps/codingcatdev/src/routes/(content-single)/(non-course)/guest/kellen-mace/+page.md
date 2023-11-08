@@ -6,9 +6,12 @@ published: published
 slug: kellen-mace
 start: January 1, 2000
 socials:
+  github: https://github.com/kellenmace
+  linkedin: https://www.linkedin.com/in/kellenmace/
   twitter: 'https://twitter.com/kellenmace'
 websites:
   - https://headlesswp.rocks/
+  - https://kellenmace.com/
 ---
 
 ### Profile

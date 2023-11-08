@@ -96,6 +96,7 @@ export interface Socials {
 	medium?: string;
 	polywork?: string;
 	stackoverflow?: string;
+	substack?: string;
 	tiktok?: string;
 	twitch?: string;
 	twitter?: string;

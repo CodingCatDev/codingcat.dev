@@ -6,9 +6,14 @@ published: published
 slug: kathryn-grayson
 start: January 1, 2000
 socials:
+  devto: https://dev.to/kathryngrayson
+  github: https://github.com/kathryngraysonnanz
+  linkedin: https://www.linkedin.com/in/kathryngrayson/
+  polywork: https://www.polywork.com/kathrynkay
   twitter: 'https://twitter.com/kathryngrayson'
 websites:
   - http://kgrayson.com/
+  - https://www.telerik.com/blogs/author/kathryn-grayson-nanz
 ---
 
 ## Profile

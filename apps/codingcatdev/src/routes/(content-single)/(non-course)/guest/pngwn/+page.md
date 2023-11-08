@@ -6,6 +6,7 @@ published: published
 slug: pngwn
 start: January 1, 2000
 socials:
+  github: https://github.com/pngwn
   twitter: https://twitter.com/evilpingwin
 ---
 

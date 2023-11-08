@@ -6,10 +6,13 @@ published: published
 slug: matthew-phillips
 start: January 1, 2000
 socials:
-  twitter: 'https://twitter.com/matthewcp'
+  github: https://github.com/matthewp
+  twitter: https://twitter.com/matthewcp
 websites:
   - https://matthewphillips.info/
   - https://social.spooky.click/@matthew
+  - https://thisrobot.life/
+  -
 ---
 
 ### Profile

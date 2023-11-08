@@ -7,6 +7,8 @@ slug: omed-habib
 start: January 1, 2000
 picks: https://www.notion.so/Camo-578f1e55001d4edca0cb0c41995f648e, https://www.notion.so/Ospera-12022efbc50045ce87cb8e9255b6b2e9
 socials:
+  github: https://github.com/omedhabib
+  instagram: https://www.instagram.com/omed.habib
   linkedin: 'https://www.linkedin.com/in/omed/'
   twitter: 'https://twitter.com/omedhabib'
 websites:

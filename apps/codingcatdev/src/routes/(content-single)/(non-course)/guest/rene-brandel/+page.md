@@ -6,8 +6,11 @@ published: published
 slug: rene-brandel
 start: January 1, 2000
 socials:
+  github: https://github.com/renebrandel
   linkedin: 'https://www.linkedin.com/in/renebrandel/'
   twitter: 'https://twitter.com/renebrandel'
 ---
+
+## About
 
 Principal Product Manager [AWS Amplify](https://aws.amazon.com/amplify/) Studio & Data | Ex-PM @microsoft | Passionate about DX | My opinions are my own 🇩🇪 | 🇨🇳 | 🇺🇸

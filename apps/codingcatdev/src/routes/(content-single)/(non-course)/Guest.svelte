@@ -19,6 +19,7 @@
 		Medium,
 		Polywork,
 		Stackoverflow,
+		Substack,
 		Tiktok,
 		Twitch,
 		Twitter,
@@ -178,6 +179,16 @@
 									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
 								>
 									<Icon src={Stackoverflow} class="w-8" theme="solid" />
+								</a>
+							{/if}
+							{#if data.content?.socials?.substack}
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={data.content?.socials?.substack}
+									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+								>
+									<Icon src={Substack} class="w-8" theme="solid" />
 								</a>
 							{/if}
 							{#if data.content?.socials?.tiktok}

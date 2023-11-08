@@ -12,6 +12,6 @@ websites:
   - https://www.sveltelab.dev/
 ---
 
-# Paolo Ricciuti
+## About
 
-Loves to write Svelte with TypeScript and plain CSS- also writes in German and English.
+Loves to write Svelte with TypeScript and plain CSS also writes in German and English.

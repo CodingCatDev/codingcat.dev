@@ -14,6 +14,6 @@ websites:
   - https://svelte.dev/
 ---
 
-### Profile
+## Profile
 
 Rich Harris is the creator of [Svelte](https://svelte.dev) and [Rollup](https://rollupjs.org/), previously worked at the NY Times, now working on Svelte full time at [Vercel](https://vercel.com/).

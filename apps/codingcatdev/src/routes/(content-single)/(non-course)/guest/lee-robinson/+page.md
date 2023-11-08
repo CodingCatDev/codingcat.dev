@@ -7,17 +7,15 @@ slug: lee-robinson
 start: January 1, 2000
 picks: https://www.notion.so/Lee-s-new-M1-Macbook-Pro-96e816c451da4dcc8b9bb9b0b118caae
 socials:
-  github: 'https://github.com/acekyd'
-  linkedin: 'https://www.linkedin.com/in/acekyd/'
-  stackoverflow: 'https://stackoverflow.com/users/1945274/acekyd'
+  github: https://github.com/leerob
+  linkedin: https://www.linkedin.com/in/leeerob/
   twitter: 'https://twitter.com/leeerob'
-  twitch: 'https://www.twitch.tv/elpunish3rr/'
-  youtube: 'https://www.youtube.com/acekyd'
+  youtube: https://www.youtube.com/@leerob
 websites:
   - https://leerob.io/
 ---
 
 ## About
 
-Head of Developer Relations at [Vercel](https://vercel.com)
-Helping developers build a faster web. Teaching about web development, serverless, and React / Next.js.
+VP of Developer Experience at [Vercel](https://vercel.com)
+Helping developers build a faster web. Teaching about web development, serverless, and [React](https://react.dev/) / [Next.js](https://nextjs.org/).
