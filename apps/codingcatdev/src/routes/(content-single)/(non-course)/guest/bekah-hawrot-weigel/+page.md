@@ -1,6 +1,6 @@
 ---
 type: guest
-cover: https://media.codingcat.dev/image/upload/v1699496589/main-codingcatdev-photo/podcast-guest/Bekah-Weigel.png
+cover: https://media.codingcat.dev/image/upload/v1699502152/main-codingcatdev-photo/3.25-opensauced.png
 name: BekahHW
 published: published
 slug: bekah-hawrot-weigel
