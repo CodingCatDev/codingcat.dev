@@ -1,6 +1,5 @@
 import { handleErrorWithSentry, Replay } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
-import { env } from '$env/dynamic/private';
 
 Sentry.init({
 	dsn: 'https://518fe25472568a2e47252e6f29583c6b@o1029244.ingest.sentry.io/4506190917206016',
@@ -16,7 +15,7 @@ Sentry.init({
 
 	// If you don't want to use Session Replay, just remove the line below:
 	integrations: [new Replay()],
-	environment: env.VERCEL_ENV || 'local'
+	environment: import.meta.env.VITE_VERCEL_ENV || 'local'
 });
 
 // If you have a custom error handler, pass it to `handleErrorWithSentry`
