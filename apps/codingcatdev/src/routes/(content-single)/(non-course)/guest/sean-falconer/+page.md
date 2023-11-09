@@ -1,8 +1,8 @@
 ---
 type: guest
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/seanfalconer'
+cover: https://media.codingcat.dev/image/upload/v1699502360/main-codingcatdev-photo/podcast-guest/sean-falconer.png
 name: Sean Falconer
-published: draft
+published: published
 slug: sean-falconer
 start: January 1, 2000
 socials:
