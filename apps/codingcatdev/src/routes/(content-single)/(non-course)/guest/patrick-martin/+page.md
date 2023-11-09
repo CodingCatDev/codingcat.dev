@@ -5,8 +5,8 @@ name: Patrick Martin
 published: published
 slug: patrick-martin
 start: January 1, 2000
-picks: https://www.notion.so/Loop-Hero-game-6fe351ba46da490c8864eac77c062b62, https://www.notion.so/Flutter-2-9cde50e363624c82be99e67a11cf4e2d
 socials:
+  github: https://github.com/patm1987
   linkedin: 'https://www.linkedin.com/in/patrick-martin-268a85a/'
   medium: 'https://medium.com/@pux0r3'
   twitter: 'https://twitter.com/pux0r3'

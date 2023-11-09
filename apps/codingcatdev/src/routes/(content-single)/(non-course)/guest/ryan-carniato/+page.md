@@ -7,6 +7,8 @@ slug: ryan-carniato
 start: January 1, 2000
 picks: https://www.notion.so/Resident-Alien-53ae6fc61b1e479d8d9d6831bdbc021f
 socials:
+  devto: https://dev.to/ryansolid
+  github: https://github.com/ryansolid
   twitter: 'https://twitter.com/RyanCarniato'
 websites:
   - https://ryansolid.medium.com/

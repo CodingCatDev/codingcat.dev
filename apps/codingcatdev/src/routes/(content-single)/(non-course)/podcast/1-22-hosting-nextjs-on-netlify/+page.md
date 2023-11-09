@@ -14,7 +14,7 @@ cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/inhxfdhd
 devto: https://dev.to/codingcatdev/1-22-hosting-next-js-on-netlify-2clh
 excerpt: We sat down with Cassidy Williams to talk about her background as a developer. Then we talked about the cool new Next.js on Netlify hosting feature.
 guests:
-  - cassidy-williams
+  - cassidoo
 hashnode: https://hashnode.codingcat.dev/podcast-1-22-hosting-nextjs-on-netlify
 picks:
   [
@@ -29,9 +29,9 @@ picks:
       name: 'The Next.js Handbook',
       site: 'https://www.freecodecamp.org/news/the-next-js-handbook/'
     },
-    { author: 'cassidy-williams', name: 'Obsidian', site: 'https://obsidian.md/' },
+    { author: 'cassidoo', name: 'Obsidian', site: 'https://obsidian.md/' },
     {
-      author: 'cassidy-williams',
+      author: 'cassidoo',
       name: 'Itaewon Class → K-drama on Netflix',
       site: 'https://www.netflix.com/title/81193309'
     }
@@ -55,5 +55,5 @@ youtube: https://www.youtube.com/watch?v=QvYlf0rpJT4
 ## Additional Links
 
 - [Netlify's Next.js Plugin](https://github.com/netlify/netlify-plugin-nextjs)
-- [Cassidy's Netlify Blog posts (cass.run/nb)](https://www.netlify.com/authors/cassidy-williams/)
+- [Cassidy's Netlify Blog posts (cass.run/nb)](https://www.netlify.com/authors/cassidoo/)
 - [Enterprise Next.js 10 on Netlify](https://www.netlify.com/press/netlify-announces-next-js-integration-enabling-next-js-10-for-enterprise-teams/)

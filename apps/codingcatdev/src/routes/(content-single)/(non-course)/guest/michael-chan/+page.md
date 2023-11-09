@@ -7,6 +7,7 @@ slug: michael-chan
 start: January 1, 2000
 picks: https://www.notion.so/Shape-up-e51c9138836445c3a49bc029ee03f7ee
 socials:
+  github: https://github.com/chantastic
   discord: 'http://discord.gg/lunchdev'
   twitter: 'https://twitter.com/chantastic'
   youtube: 'https://www.youtube.com/c/chantastic'

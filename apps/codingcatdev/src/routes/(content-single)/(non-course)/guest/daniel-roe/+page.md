@@ -7,11 +7,13 @@ slug: daniel-roe
 start: January 1, 2000
 picks: https://www.notion.so/Windi-CSS-edffc5e1acbe47ab89738fdb3d301caa, https://www.notion.so/How-Not-to-Burnout-7ca1f9c4be104a9490fb63b5075e106d, https://www.notion.so/Daily-dev-436e59db66a749c8bca87698fc045c10
 socials:
+  mastodon: https://mastodon.roe.dev/@daniel
   github: 'https://github.com/danielroe'
   twitter: 'https://twitter.com/danielcroe'
+  twitch: https://www.twitch.tv/danielroe
+  youtube: https://www.youtube.com/@danielroe
 websites:
-  - https://regexp.dev/
-  - http://danielroe.dev
+  - https://roe.dev/
 ---
 
 ## About

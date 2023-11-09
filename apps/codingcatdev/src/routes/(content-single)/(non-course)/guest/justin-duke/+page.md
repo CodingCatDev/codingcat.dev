@@ -6,9 +6,11 @@ published: published
 slug: justin-duke
 start: January 1, 2000
 socials:
+  github: https://github.com/jmduke
   twitter: 'https://twitter.com/jmduke'
 websites:
   - https://buttondown.email/
+  - https://www.arcana.computer/
 ---
 
 ## About

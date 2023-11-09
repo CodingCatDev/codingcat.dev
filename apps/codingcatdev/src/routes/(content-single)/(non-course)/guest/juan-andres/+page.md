@@ -6,6 +6,7 @@ published: published
 slug: juan-andres
 start: January 1, 2000
 socials:
+  github: https://github.com/juanwmedia
   twitter: 'https://twitter.com/juanwmedia'
 websites:
   - https://wmedia.es/

@@ -8,6 +8,7 @@ start: January 1, 2000
 socials:
   github: 'https://github.com/codercatdev'
   linkedin: 'https://www.linkedin.com/in/codercatdev/'
+  tiktok: https://www.tiktok.com/@codingcatdev
   twitter: 'https://twitter.com/codercatdev'
   twitch: 'https://www.twitch.tv/codingcatdev/'
   youtube: 'https://www.youtube.com/codingcatdev'

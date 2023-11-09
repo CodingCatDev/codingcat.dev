@@ -7,7 +7,9 @@ slug: ben-myers
 start: January 1, 2000
 picks:
 socials:
+  github: https://github.com/BenDMyers
   linkedin: 'https://www.linkedin.com/in/BenDMyers/'
+  mastodon: https://a11y.info/@ben
   twitter: 'https://twitter.com/BenDMyers'
   twitch: 'https://www.twitch.tv/SomeAnticsDev'
   youtube: 'https://www.youtube.com/channel/UCoc1J1XEEtg4sNrt3V-tNRw'

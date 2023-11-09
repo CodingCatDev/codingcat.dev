@@ -8,8 +8,10 @@ start: January 1, 2000
 picks: https://www.notion.so/Tekken-Bloodline-5869d0fa06b843c4bd8797b70a19a7bc
 socials:
   twitter: 'https://twitter.com/alexjoverm'
+  github: https://github.com/alexjoverm
+  linkedin: https://www.linkedin.com/in/alex-jover-morales-994752102/
 websites:
-  - https://vuedose.tips/
+  - https://alexjover.com/
 ---
 
 ### Profile

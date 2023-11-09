@@ -7,6 +7,7 @@ slug: eric-simons
 start: May 10, 2023
 picks: https://www.notion.so/Call-of-Duty-Warzone-Resurgence-mode-09f77cd4466645dca547da44c66a8706, https://www.notion.so/clack-3cfe2395e2e14265a4dcbea971f502fb
 socials:
+  github: https://github.com/EricSimons
   linkedin: 'https://www.linkedin.com/in/eric-simons-a464a664/'
   twitter: 'https://twitter.com/ericsimons40'
 websites:

@@ -6,7 +6,7 @@ authors:
 episode: 35
 guests:
   - anthony-campolo
-  - cassidy-williams
+  - cassidoo
   - christopher-burns
   - jason-lengstorf
   - james-q-quick
@@ -41,7 +41,7 @@ picks:
       site: 'https://dev.to/cassidoo/moose-facts-1l9j'
     },
     {
-      author: 'cassidy-williams',
+      author: 'cassidoo',
       name: 'PodRocket Stickers',
       site: 'https://podrocket.logrocket.com/get-podrocket-stickers'
     },

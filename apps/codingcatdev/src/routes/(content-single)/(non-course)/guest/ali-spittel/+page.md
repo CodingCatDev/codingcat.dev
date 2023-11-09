@@ -6,10 +6,15 @@ published: published
 slug: ali-spittel
 start: January 1, 2000
 socials:
+  github: https://github.com/aspittel
   twitter: 'https://twitter.com/ASpittel'
+  youtube: https://www.youtube.com/alispitteldev
 websites:
-  - https://www.adewaleabati.com/
-  - https://www.madeinnigeria.dev/
+  - https://welearncode.com/
+  - https://twitter.com/jspartyfm
+  - https://www.ladybug.dev/
+  - https://egghead.io/q/resources-by-ali-spittel
+  - https://github.com/aspittel/cfps
 ---
 
 ## About

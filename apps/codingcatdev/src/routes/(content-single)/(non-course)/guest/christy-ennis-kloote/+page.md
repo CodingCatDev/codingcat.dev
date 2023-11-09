@@ -7,10 +7,11 @@ slug: christy-ennis-kloote
 start: January 1, 2000
 socials:
   linkedin: 'https://www.linkedin.com/in/enniskloote/'
+  medium: https://enniskloote.medium.com/
   twitter: 'https://twitter.com/EnnisKloote'
 websites:
-  - https://midwestuxconference.com/
   - https://www.opendigital.com/
+  - https://www.enniskloote.com/
 ---
 
 ## About

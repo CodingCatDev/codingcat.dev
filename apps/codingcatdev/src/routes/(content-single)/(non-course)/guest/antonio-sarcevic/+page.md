@@ -13,6 +13,6 @@ websites:
   - https://www.sarcevic.dev/
 ---
 
-# Antonio Sarcevic
+## Profile
 
-Loves to write Svelte with TypeScript and plain CSS- also writes in German and English.
+Loves to write [Svelte](https://svelte.dev) with TypeScript and plain CSS- also writes in German and English.

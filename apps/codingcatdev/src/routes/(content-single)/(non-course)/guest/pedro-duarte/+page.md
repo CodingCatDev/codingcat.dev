@@ -1,17 +1,21 @@
 ---
 type: guest
-cover: 'https://media.codingcat.dev/image/upload/v1683033872/main-codingcatdev-photo/podcast-guest/peduarte'
+cover: https://media.codingcat.dev/image/upload/v1699482429/main-codingcatdev-photo/podcast-guest/peduarte.jpg
 name: Pedro Duarte
 published: published
 slug: pedro-duarte
 start: January 1, 2000
-picks: https://www.notion.so/Two-Distant-Strangers-on-Netflix-562a17dd76c94d579c49d722ec11a7ed
 socials:
+  github: https://github.com/peduarte
+  linkedin: https://www.linkedin.com/in/peduarteltd/?originalSubdomain=es
   twitter: 'https://twitter.com/peduarte'
 ---
 
-### Details
+## About
 
-Pedro Duarte is a DX Engineer at Modulz. He is a frontend developer with over 10 years experience with a focus on UI, design systems, developer experience and under engineering.
+Pedro Duarte is a DX Engineer at [Raycast](https://www.raycast.com/). He is a frontend developer with over 10 years experience with a focus on UI, design systems, developer experience and under engineering.
 
-Modulz is a visual code editor for designing and building digital products—without writing code.
+Also Co Creator of:
+
+- [Radix UI](https://www.radix-ui.com/)
+- [Stitches](https://stitches.dev/)

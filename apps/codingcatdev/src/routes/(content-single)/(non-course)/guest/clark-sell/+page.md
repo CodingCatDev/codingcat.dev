@@ -6,8 +6,11 @@ published: published
 slug: clark-sell
 start: January 1, 2000
 socials:
+  github: https://github.com/theClarkSell
   twitter: 'https://twitter.com/theclarksell'
 websites:
+  - https://unspecified.io/
+  - https://that.us/that-conference/
 ---
 
 ### Profile

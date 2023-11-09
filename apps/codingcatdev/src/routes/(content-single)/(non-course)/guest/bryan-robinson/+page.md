@@ -7,6 +7,7 @@ slug: bryan-robinson
 start: January 1, 2000
 picks:
 socials:
+  github: https://github.com/brob
   mastodon: https://hachyderm.io/@brob
   twitch: https://www.twitch.tv/bryanlrobinson
   twitter: 'https://twitter.com/brob'
