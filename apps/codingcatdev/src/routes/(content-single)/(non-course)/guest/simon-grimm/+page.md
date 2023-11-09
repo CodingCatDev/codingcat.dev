@@ -6,6 +6,7 @@ published: published
 slug: simon-grimm
 start: January 1, 2000
 socials:
+  github: https://github.com/saimon24
   twitter: 'https://twitter.com/schlimmson'
   youtube: 'https://www.youtube.com/channel/UCZZPgUIorPao48a1tBYSDgg'
 websites:

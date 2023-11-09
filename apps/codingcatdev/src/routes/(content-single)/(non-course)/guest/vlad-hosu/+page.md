@@ -6,6 +6,7 @@ published: published
 slug: vlad-hosu
 start: January 1, 2000
 socials:
+  github: https://github.com/subpic
   linkedin: https://www.linkedin.com/in/vladhosu/
 websites:
   - https://socialbee.com/

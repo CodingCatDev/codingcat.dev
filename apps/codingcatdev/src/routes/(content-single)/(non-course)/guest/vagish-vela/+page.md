@@ -6,6 +6,9 @@ published: published
 slug: vagish-vela
 start: January 1, 2000
 socials:
+  facebook: https://www.facebook.com/vagishvela/
+  github: https://github.com/vagishvela
+  instagram: https://www.instagram.com/vagish
   twitter: https://twitter.com/vagish
 websites:
   - https://vagish.com/

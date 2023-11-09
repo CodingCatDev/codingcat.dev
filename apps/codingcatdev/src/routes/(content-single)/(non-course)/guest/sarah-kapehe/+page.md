@@ -5,8 +5,8 @@ name: Sarah Kapehe
 published: published
 slug: sarah-kapehe
 start: January 1, 2000
-picks: https://www.notion.so/Jujutsu-Kaisen-65edb39bff89425aaee12ea769af8e04, https://www.notion.so/Your-lie-in-April-7800223bf69e4d0ea76836d0272bc9b9
 socials:
+  github: https://github.com/kapehe-ok
   linkedin: 'https://www.linkedin.com/in/kapehe/'
   twitter: 'https://twitter.com/kapehe_ok'
   youtube: 'https://www.youtube.com/c/betterdevs'

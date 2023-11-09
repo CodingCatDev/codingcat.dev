@@ -7,7 +7,7 @@ slug: swyx
 start: January 1, 2000
 picks: https://www.notion.so/StateOfJS-e99ddf99d7f94f39bed0e0dd97ac5323
 socials:
-  github: 'https://github.com/sw-yx'
+  github: 'https://github.com/swyxio'
   linkedin: 'https://www.linkedin.com/in/shawnswyxwang/'
   stackoverflow: 'https://stackoverflow.com/users/1106414/swyx'
   twitter: 'https://twitter.com/swyx'

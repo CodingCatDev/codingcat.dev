@@ -5,8 +5,8 @@ name: Sam Bhagwat
 published: published
 slug: sam-bhagwat
 start: January 1, 2000
-picks: https://www.notion.so/How-the-Internet-Happened-From-Netscape-to-the-iPhone-Kindle-Edition-fecb8b75dabf458a872892e9f2d02ee4
 socials:
+  github: https://github.com/calcsam
   linkedin: 'https://www.linkedin.com/in/sambhagwat/'
   twitter: 'https://twitter.com/calcsam'
 websites:
