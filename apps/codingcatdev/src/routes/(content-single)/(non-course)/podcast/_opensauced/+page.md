@@ -2,6 +2,7 @@
 type: podcast
 authors:
   - alex-patterson
+  - brittney-postma
 episode:
 recording_date: Nov 17, 2023 9:00 AM
 season:
@@ -18,7 +19,8 @@ hashnode:
 picks:
   [
     { author: 'bekah-hawrot-weigel', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'alex-patterson', name: 'Pick 1', site: 'https://codingcat.dev' }
+    { author: 'alex-patterson', name: 'Pick 1', site: 'https://codingcat.dev' },
+    { author: 'brittney-postma', name: 'Loki', site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)' }
   ]
 slug: _opensauced
 sponsors:
