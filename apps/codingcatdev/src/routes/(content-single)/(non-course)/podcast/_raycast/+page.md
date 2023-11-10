@@ -19,7 +19,7 @@ hashnode:
 picks:
   [
     { author: 'pedro-duarte', name: 'Pick 1', site: 'codingcat.dev' },
-    { author: 'brittney-postma', name: 'Pick 1', site: 'codingcat.dev' },
+    { author: 'brittney-postma', name: 'Svelte Component Documentation', site: '[Svelte Component Documentation](https://svelte.dev/docs/faq)' },
     { author: 'alex-patterson', name: 'Pick 1', site: 'codingcat.dev' }
   ]
 slug: _raycast
