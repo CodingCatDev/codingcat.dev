@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode:
 recording_date: Nov 13,2023 2:00 PM
 season:
@@ -19,7 +18,6 @@ hashnode:
 picks:
   [
     { author: 'dov-alperin', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'brittney-postma', name: 'Pick 1', site: 'https://codingcat.dev' },
     { author: 'alex-patterson', name: 'Pick 1', site: 'https://codingcat.dev' }
   ]
 slug: _fly-io
