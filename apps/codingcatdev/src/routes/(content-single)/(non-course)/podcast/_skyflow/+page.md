@@ -2,7 +2,6 @@
 type: podcast
 authors:
   - alex-patterson
-  - brittney-postma
 episode:
 recording_date: September 14, 2023 1:15 PM
 season:
