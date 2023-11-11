@@ -101,8 +101,10 @@ One powerful concept in Astro is **islands**. This allows you to mix and match A
 
 To use a React, Svelte, etc component as an island, import it and add `client:` before it:
 
+`Page.astro`
+
 ```jsx
----// Page.astro---//...<client:Counter />//...
+<client:Counter />
 ```
 
 This tells Astro to hydrate the component on the client-side. Different directives control when and how it loads:
