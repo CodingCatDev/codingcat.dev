@@ -2,6 +2,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import { storeCurrentUrl } from '$lib/stores/stores';
 	import type { LayoutData } from './$types';
+	import ProCourseMark from './ProCourseMark.svelte';
 	export let data: LayoutData;
 
 	// Scroll heading into view
@@ -39,13 +40,16 @@
 																<hr />
 															</div>
 														{/if}
-														<li class="flex justify-between" id={`nav-${l.slug}`}>
+														<li class="flex justify-between relative" id={`nav-${l.slug}`}>
 															<a
 																href={`/course/${data?.course?.slug}/lesson/${l.slug}`}
 																class={`${classesActive(l.slug)} flex gap-1`}
 															>
 																{l.title}
 															</a>
+															<div class="flex gap-1 absolute right-1 top-1">
+																<ProCourseMark locked={l?.locked} lesson={l} {data} />
+															</div>
 														</li>
 													{/each}
 												</ul>
