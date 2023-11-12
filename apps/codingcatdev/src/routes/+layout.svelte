@@ -30,6 +30,7 @@
 	import CcdFooter from './(layout-partials)/CcdFooter.svelte';
 	import type { Author, Content } from '$lib/types';
 	import { analyticsLogPageView } from '$lib/client/firebase';
+	import CannyButton from './(feedback)/CannyButton.svelte';
 
 	// Scroll heading into view
 	function scrollHeadingIntoView(): void {
@@ -165,6 +166,7 @@
 <CcdDrawer />
 <Modal />
 <Toast />
+<CannyButton />
 
 {#if data?.preview}
 	<div
