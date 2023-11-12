@@ -6,6 +6,7 @@
 	import Image from '$lib/components/content/Image.svelte';
 	import ProCourseMark from './ProCourseMark.svelte';
 	import type { LayoutData } from './$types';
+	import LessonList from './LessonList.svelte';
 	export let data: LayoutData;
 </script>
 
@@ -23,12 +24,19 @@
 						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
 						<li>{data.content.title}</li>
 					</ol>
-					{#if data?.content?.youtube}
-						<Video src={data.content.youtube} title={`${data.content.title}`} />
-					{:else if data?.content?.cover}
-						<Image src={data.content.cover} alt={data.content.title} />
-					{/if}
-					<div class="flex justify-between">
+					<div class="w-full lg:grid lg:grid-cols-12 lg:space-y-0 relative">
+						<div class="col-span-9">
+							{#if data?.content?.youtube}
+								<Video src={data.content.youtube} title={`${data.content.title}`} />
+							{:else if data?.content?.cover}
+								<Image src={data.content.cover} alt={data.content.title} />
+							{/if}
+						</div>
+						<div class="flex flex-col col-span-3">
+							<LessonList {data} />
+						</div>
+					</div>
+					<div class="flex gap-2">
 						{#if data?.course?.lesson?.filter((l) => l.locked).length}
 							<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
 								>Pro</span
@@ -36,7 +44,7 @@
 						{:else}
 							<span class="chip variant-ringed py-1 px-4 rounded-full font-bold text-xl">Free</span>
 						{/if}
-						<ProCourseMark {data} />
+						<ProCourseMark {data} lesson={data.content} />
 					</div>
 					{#if data?.authors}
 						<section class="flex">

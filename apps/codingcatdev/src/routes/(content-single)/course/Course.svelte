@@ -23,7 +23,7 @@
 				{:else if data?.course?.cover}
 					<Image src={data.course.cover} alt={data.course.title} />
 				{/if}
-				<div class="flex">
+				<div class="flex gap-2">
 					{#if data?.course?.lesson?.filter((l) => l.locked).length}
 						<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
 							>Pro</span

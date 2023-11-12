@@ -10,68 +10,9 @@
 </script>
 
 {#if data?.content}
-	<!-- App Shell -->
-	<AppShell
-		regionPage="overflow-y-scroll"
-		slotPageFooter="pt-4 bg-surface-50-900-token block lg:hidden"
-		slotSidebarRight="hidden lg:block"
-	>
-		<!-- Page Content -->
-		<Lesson {data}>
-			<slot />
-		</Lesson>
-		<svelte:fragment slot="sidebarRight">
-			<!-- Div takes up same room as fixed -->
-			<div class="w-[19.5rem] xl:w-96" />
-			<div class="fixed top-[5.125rem] bottom-24 w-[19.5rem] xl:w-96 py-10 overflow-y-auto">
-				<div class="flex flex-col gap-2 px-8 md:gap-8">
-					<!-- Sponsors -->
-					{#if data?.sponsors?.length}
-						<span class="bcu-toc-label px-4 pt-0 font-bold">Sponsors</span>
-						<section class="flex flex-col gap-2 md:flex-row md:gap-8">
-							{#each data?.sponsors as sponsor (sponsor.slug)}
-								<a
-									class="overflow-hidden card bg-initial card-hover md:flex-1"
-									href={`${sponsor.url}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<header>
-										{#if sponsor?.cover}
-											<Image
-												src={sponsor.cover}
-												alt={sponsor.name}
-												classes="object-cover w-full bg-cover rounded bg-black/50 aspect-video"
-											/>
-										{/if}
-									</header>
-									<div class="p-4 space-y-4">
-										<h3 data-toc-ignore="">{sponsor?.name}</h3>
-										<article>
-											<p>
-												{sponsor?.description}
-											</p>
-										</article>
-									</div>
-								</a>
-							{/each}
-						</section>
-					{/if}
-					{#key $storeCurrentUrl}
-						<TableOfContents />
-					{/key}
-					{#if data?.course?.lesson && data?.course?.lesson.length > 0 && data?.course?.slug}
-						<LessonList {data} />
-					{/if}
-				</div>
-			</div>
-		</svelte:fragment>
-		<svelte:fragment slot="pageFooter">
-			{#if data?.course?.lesson && data?.course?.lesson.length > 0 && data?.course?.slug}
-				<LessonList {data} />
-			{/if}
-		</svelte:fragment>
-	</AppShell>
+	<Lesson {data}>
+		<slot />
+	</Lesson>
 {:else}
 	<Course {data}>
 		<slot />
