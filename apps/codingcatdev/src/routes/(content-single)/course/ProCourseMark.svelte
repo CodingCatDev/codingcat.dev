@@ -49,7 +49,7 @@
 			/>
 		</div>{/if}
 {:else if data.content?.type === ContentType.lesson}
-	<div class="flex w-6 gap-1">
+	<div class="flex w-12 gap-1">
 		<Locked {locked} />
 	</div>
 {:else}
