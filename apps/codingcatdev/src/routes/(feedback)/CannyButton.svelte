@@ -4,8 +4,8 @@
 </script>
 
 <div class="fixed bottom-8 right-8 z-50">
-	<a href="/feedback" class="btn variant-filled-surface flex gap-1 items-center">
+	<a href="/feedback" class="btn variant-filled-primary flex flex-col">
 		<span class="hidden md:block">Feedback</span>
-		<div><Icon src={ChatBubbleLeft} theme="solid" class="w-6" /></div></a
+		<div><Icon src={ChatBubbleLeft} theme="solid" class="w-8 md:w-12" /></div></a
 	>
 </div>
