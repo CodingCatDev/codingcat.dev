@@ -10,7 +10,7 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1699496633/main-codingcatdev-photo/opensauced.png
+cover: https://media.codingcat.dev/image/upload/v1699502152/main-codingcatdev-photo/3.25-opensauced.png
 devto:
 excerpt: 'OpenSauced is a platform that helps developers find, contribute to, and learn about open source projects.'
 guests:
@@ -19,8 +19,12 @@ hashnode:
 picks:
   [
     { author: 'bekah-hawrot-weigel', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'alex-patterson', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'brittney-postma', name: 'Loki', site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)' }
+    { author: 'alex-patterson', name: 'Fly.io Postgres', site: 'https://fly.io/docs/postgres/' },
+    {
+      author: 'brittney-postma',
+      name: 'Loki',
+      site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)'
+    }
   ]
 slug: _opensauced
 sponsors:
