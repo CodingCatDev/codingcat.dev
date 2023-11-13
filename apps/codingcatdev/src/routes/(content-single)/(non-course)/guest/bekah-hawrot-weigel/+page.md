@@ -18,6 +18,6 @@ websites:
 
 ## Profile
 
-Bekah graduated from the Flatiron School Software Engineering program in May of 2019 and since then she has started a consultancy specializing in front-end development, created the developer community [Virtual Coffee](https://virtualcoffee.io/), spoke on podcasts and at conferences, and has continued to mom her four kids. In addition to her previous frontend and mobile work, she’s also worked as a Technical Community Builder, and is currently a Team & Community Building Consultant.
+Bekah graduated from the Flatiron School Software Engineering program in May of 2019 and since then she has started a consultancy specializing in front-end development, created the developer community [Virtual Coffee](https://virtualcoffee.io/), spoken on podcasts and at conferences, and has continued to mom her four kids. She is currently the Developer Experience Lead at [OpenSauced](https://opensauced.pizza/).
 
-Prior to tech, she spent 10 years teaching college English, three years organizing events and community, and fully embraces being a writer of many genres: code, non-fiction, screenplay, curriculum.
+Prior to tech, she spent 10 years teaching college English, three years organizing events and community, and fully embraces being a writer of many genres: code, blogs, short stories, non-fiction, screenplay, and curriculum.
