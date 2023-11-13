@@ -166,6 +166,7 @@
 <CcdDrawer />
 <Modal />
 <Toast />
+<CannyButton />
 
 {#if data?.preview}
 	<div
