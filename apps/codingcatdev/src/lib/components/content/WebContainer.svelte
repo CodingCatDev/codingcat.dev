@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { WebContainer, type Unsubscribe } from '@webcontainer/api';
 	import { onDestroy, onMount } from 'svelte';
+	import 'xterm/css/xterm.css';
 
 	export let title = 'Web Container';
 	export let files = {
@@ -13,10 +14,18 @@
 	let webcontainerInstance: WebContainer;
 	let iframeEl: HTMLIFrameElement;
 	let textareaElValue = 'Loading...';
+	let terminalEl: HTMLElement;
 
 	let unSubWebContainerInstance: Unsubscribe;
 	onMount(async () => {
 		textareaElValue = files['index.js'].file.contents;
+
+		const Terminal = (await import('xterm')).Terminal;
+		const terminal = new Terminal({
+			convertEol: true
+		});
+		terminal.open(terminalEl);
+
 		if (!webcontainerInstance) webcontainerInstance = await WebContainer.boot();
 		await webcontainerInstance.mount(files);
 		unSubWebContainerInstance = webcontainerInstance.on(
@@ -28,7 +37,7 @@
 		installProcess.output.pipeTo(
 			new WritableStream({
 				write(data) {
-					console.debug(data);
+					terminal.write(data);
 				}
 			})
 		);
@@ -44,7 +53,7 @@
 		startProcess.output.pipeTo(
 			new WritableStream({
 				write(data) {
-					console.debug(data);
+					terminal.write(data);
 				}
 			})
 		);
@@ -67,6 +76,7 @@
 	<div class="preview">
 		<iframe bind:this={iframeEl} {title}></iframe>
 	</div>
+	<div class="terminal" bind:this={terminalEl}></div>
 </div>
 
 <style>
