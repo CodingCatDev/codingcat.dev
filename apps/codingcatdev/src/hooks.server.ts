@@ -19,6 +19,12 @@ export const handle = sequence(Sentry.sentryHandle(), (async ({ event, resolve }
 	}
 
 	const response = await resolve(event);
+
+	if (event.url.pathname.startsWith('/course')) {
+		response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+		response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+	}
+
 	return response;
 }) satisfies Handle);
 export const handleError = Sentry.handleErrorWithSentry();

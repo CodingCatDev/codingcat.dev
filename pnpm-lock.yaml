@@ -29,6 +29,9 @@ importers:
       '@steeze-ui/material-design-icons':
         specifier: ^1.1.2
         version: 1.1.2
+      '@webcontainer/api':
+        specifier: ^1.1.8
+        version: 1.1.8
       esm-env:
         specifier: ^1.0.0
         version: 1.0.0
@@ -3668,6 +3671,10 @@ packages:
       loupe: 2.3.6
       pretty-format: 29.7.0
     dev: true
+
+  /@webcontainer/api@1.1.8:
+    resolution: {integrity: sha512-m9WRj38oCoFPrqZOTeJcncPjnZ00FZUMq9YHEXxdhAoYhhQ69Rz4qK5p444cIPaMy2j8H7HcNLcAIwMGWnpMpw==}
+    dev: false
 
   /@webgpu/types@0.1.38:
     resolution: {integrity: sha512-7LrhVKz2PRh+DD7+S+PVaFd5HxaWQvoMqBbsV9fNJO1pjUs1P8bM2vQVNfk+3URTqbuTI7gkXi0rfsN0IadoBA==}

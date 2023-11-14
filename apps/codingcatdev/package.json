@@ -58,6 +58,7 @@
 		"@floating-ui/dom": "^1.5.3",
 		"@sentry/sveltekit": "^7.78.0",
 		"@steeze-ui/material-design-icons": "^1.1.2",
+		"@webcontainer/api": "^1.1.8",
 		"esm-env": "^1.0.0",
 		"firebase": "^10.4.0",
 		"gsap": "^3.12.2",
