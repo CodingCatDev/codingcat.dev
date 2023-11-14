@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { WebContainer, type Unsubscribe } from '@webcontainer/api';
 	import { onDestroy, onMount } from 'svelte';
-	import { files } from './files';
 
 	export let title = 'Web Container';
+	export let files = {
+		'index.js': {
+			file: {
+				contents: 'Loading...'
+			}
+		}
+	};
 	let webcontainerInstance: WebContainer;
 	let iframeEl: HTMLIFrameElement;
-	let textareaEl: HTMLTextAreaElement;
+	let textareaElValue = 'Loading...';
 
 	let unSubWebContainerInstance: Unsubscribe;
 	onMount(async () => {
-		textareaEl.value = files['index.js'].file.contents;
+		textareaElValue = files['index.js'].file.contents;
 		if (!webcontainerInstance) webcontainerInstance = await WebContainer.boot();
 		await webcontainerInstance.mount(files);
 		unSubWebContainerInstance = webcontainerInstance.on(
@@ -47,11 +53,16 @@
 	onDestroy(() => {
 		if (unSubWebContainerInstance) unSubWebContainerInstance();
 	});
+
+	async function writeIndexJS(content: string) {
+		await webcontainerInstance.fs.writeFile('/index.js', content);
+	}
 </script>
 
 <div class="container">
 	<div class="editor">
-		<textarea bind:this={textareaEl}>I am a textarea</textarea>
+		<textarea bind:value={textareaElValue} on:input={(e) => writeIndexJS(e.currentTarget.value)}
+		></textarea>
 	</div>
 	<div class="preview">
 		<iframe bind:this={iframeEl} {title}></iframe>
