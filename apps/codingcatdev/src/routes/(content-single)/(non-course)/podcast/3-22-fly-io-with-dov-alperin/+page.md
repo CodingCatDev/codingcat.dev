@@ -18,9 +18,13 @@ hashnode:
 picks:
   [
     { author: 'dov-alperin', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'alex-patterson', name: 'Sentry Performance Monitoring', site: 'https://blog.sentry.io/performance-monitoring-for-every-developer-web-vitals-and-function/?original_referrer=https%3A%2F%2Fsentry.io%2F' }
+    {
+      author: 'alex-patterson',
+      name: 'Sentry Performance Monitoring',
+      site: 'https://blog.sentry.io/performance-monitoring-for-every-developer-web-vitals-and-function/?original_referrer=https%3A%2F%2Fsentry.io%2F'
+    }
   ]
-slug: _fly-io
+slug: fly-io-with-dov-alperin
 sponsors:
   - storyblok
 spotify:
