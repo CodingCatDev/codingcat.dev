@@ -14,11 +14,4 @@ weight: 1
 youtube:
 ---
 
-<script lang="ts">
-  import WebContainers from '$lib/components/content/WebContainer.svelte';
-  import {files} from './files';
-</script>
-
-TESTING WEBCONTAINERS
-
-<WebContainers {files} />
+webcontainers

@@ -18,3 +18,19 @@ export const pluralize = (content: Content) => {
 export const unpluralize = (slug: string) => {
 	return `${slug === 'blog' ? ContentType.post : slug.slice(0, -1)}` as ContentType;
 };
+
+/** @type {Record<string, string>} */
+const chars = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;'
+};
+
+export function escape_html(html: string) {
+	// @ts-ignore
+	return html.replace(/[&<>]/g, (c) => chars[c]);
+}
+
+export function posixify(path: string) {
+	return path.replace(/\\/g, '/');
+}
