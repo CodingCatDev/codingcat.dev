@@ -1,7 +1,6 @@
 <script>
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { Icon } from '@sveltejs/site-kit/components';
 
 	/** @type {boolean} */
 	export let initial;
@@ -70,7 +69,7 @@
 
 				{#if is_svelte}
 					<a href="https://svelte.dev/tutorial/{$page.data.exercise.slug}">
-						Go to the legacy svelte tutorial instead <Icon name="arrow-right" />
+						Go to the legacy svelte tutorial instead
 					</a>
 				{/if}
 			</div>

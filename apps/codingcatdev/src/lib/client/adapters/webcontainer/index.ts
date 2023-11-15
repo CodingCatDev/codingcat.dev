@@ -42,7 +42,6 @@ export async function create(
 			file: { contents: common.unzip }
 		}
 	});
-
 	let $warnings: Record<string, CompilerWarning[]>;
 	warnings.subscribe((value) => ($warnings = value));
 
@@ -95,6 +94,7 @@ export async function create(
 	});
 
 	vm.on('error', ({ message }) => {
+		console.error(message);
 		error.set(new Error(message));
 	});
 
