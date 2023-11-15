@@ -24,7 +24,7 @@ picks:
       site: 'https://blog.sentry.io/performance-monitoring-for-every-developer-web-vitals-and-function/?original_referrer=https%3A%2F%2Fsentry.io%2F'
     }
   ]
-slug: fly-io-with-dov-alperin
+slug: 3-22-fly-io-with-dov-alperin
 sponsors:
   - storyblok
 spotify:
