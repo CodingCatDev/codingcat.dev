@@ -1,6 +1,6 @@
 ---
 type: guest
-cover: https://media.codingcat.dev/image/upload/v1700090249/main-codingcatdev-photo/podcast-guest/richard-bray.jpg
+cover: https://media.codingcat.dev/image/upload/v1700090314/main-codingcatdev-photo/3_typescript-is-freaking-hard.png
 name: Richard Bray
 published: published
 slug: richard-bray
