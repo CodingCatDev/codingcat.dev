@@ -2,9 +2,9 @@
 type: podcast
 authors:
   - alex-patterson
-episode:
+episode: 23
 recording_date: Nov 13, 2023 4:00 PM
-season:
+season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
@@ -17,10 +17,14 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'emma-twersky', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'alex-patterson', name: 'Pick 1', site: 'https://codingcat.dev' }
+    { author: 'emma-twersky', name: 'Community College', site: 'https://www.ccsf.edu/' },
+    {
+      author: 'alex-patterson',
+      name: 'DJI Osmo Mobile 6 Gimbal',
+      site: 'https://www.amazon.com/dp/B0B7XD7R43?ref=ppx_yo2ov_dt_b_product_details&th=1'
+    }
   ]
-slug: _angular-dev
+slug: 3-23-angular-17
 sponsors:
   - storyblok
 spotify:
