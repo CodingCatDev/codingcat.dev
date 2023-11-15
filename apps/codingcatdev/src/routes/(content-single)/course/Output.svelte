@@ -133,7 +133,9 @@
 	{#if browser}
 		<iframe bind:this={iframe} title="Output" on:load={set_iframe_visible} />
 	{/if}
-
+	{paused}
+	{loading}
+	{$error}
 	{#if paused || loading || $error}
 		<Loading {initial} error={$error} progress={$progress.value} status={$progress.text} />
 	{/if}

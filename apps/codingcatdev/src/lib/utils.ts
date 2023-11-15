@@ -34,3 +34,7 @@ export function escape_html(html: string) {
 export function posixify(path: string) {
 	return path.replace(/\\/g, '/');
 }
+export function escape_parens(path: string) {
+	// Using regular expression to replace each '(' or ')' with '\(' or '\)'
+	return path.replace(/([()])/g, '\\$1');
+}

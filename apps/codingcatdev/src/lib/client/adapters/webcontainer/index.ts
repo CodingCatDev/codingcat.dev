@@ -32,16 +32,6 @@ export async function create(
 	progress.set({ value: 1 / 5, text: 'booting webcontainer' });
 	vm = await WebContainer.boot();
 
-	progress.set({ value: 2 / 5, text: 'writing virtual files' });
-	const common = await ready;
-	await vm.mount({
-		'common.zip': {
-			file: { contents: new Uint8Array(common.zipped) }
-		},
-		'unzip.cjs': {
-			file: { contents: common.unzip }
-		}
-	});
 	let $warnings: Record<string, CompilerWarning[]>;
 	warnings.subscribe((value) => ($warnings = value));
 
@@ -78,17 +68,6 @@ export async function create(
 			}
 		});
 
-	progress.set({ value: 3 / 5, text: 'unzipping files' });
-	const unzip = await vm.spawn('node', ['unzip.cjs']);
-	unzip.output.pipeTo(log_stream());
-	const code = await unzip.exit;
-
-	if (code !== 0) {
-		throw new Error('Failed to initialize WebContainer');
-	}
-
-	await vm.spawn('chmod', ['a+x', 'node_modules/vite/bin/vite.js']);
-
 	vm.on('server-ready', (_port, url) => {
 		base.set(url);
 	});
@@ -121,7 +100,7 @@ export async function create(
 			await run_dev();
 
 			async function run_dev() {
-				const process = await vm.spawn('turbo', ['run', 'dev']);
+				const process = await vm.spawn('npm', ['run', 'dev']);
 
 				// TODO differentiate between stdout and stderr (sets `vite_error` to `true`)
 				// https://github.com/stackblitz/webcontainer-core/issues/971
@@ -195,6 +174,16 @@ export async function create(
 				}
 
 				await vm.mount(convert_stubs_to_tree(to_write));
+
+				progress.set({ value: 3 / 5, text: 'installing packages' });
+				const install = await vm.spawn('npm', ['install']);
+				install.output.pipeTo(log_stream());
+				const code = await install.exit;
+
+				if (code !== 0) {
+					throw new Error('Unable to run npm install');
+				}
+
 				await promise;
 				await new Promise((f) => setTimeout(f, 200)); // wait for chokidar
 

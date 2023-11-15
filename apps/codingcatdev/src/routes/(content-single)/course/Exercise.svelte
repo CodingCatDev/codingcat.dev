@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import type { LayoutData } from './$types';
-	import Output from './Output.svelte';
 	// import { afterNavigate, beforeNavigate } from '$app/navigation';
 	// import { SplitPane } from '@rich_harris/svelte-split-pane';
 	// import { Icon } from '@sveltejs/site-kit/components';
@@ -10,7 +9,7 @@
 	// import ContextMenu from './filetree/ContextMenu.svelte';
 	// import Filetree from './filetree/Filetree.svelte';
 	// import ImageViewer from './ImageViewer.svelte';
-	// import Output from './Output.svelte';
+	import Output from './Output.svelte';
 	// import ScreenToggle from './ScreenToggle.svelte';
 	// import Sidebar from './Sidebar.svelte';
 	import {
@@ -49,10 +48,10 @@
 
 		const will_delete = previous_files.some((file) => !(file.name in data.exercise.a));
 
-		if (data.exercise.path !== path || will_delete) paused = true;
+		if (data?.exercise?.path !== path || will_delete) paused = true;
 		await reset($files);
 
-		path = data.exercise.path;
+		path = data?.exercise?.path || '/';
 		paused = false;
 	});
 

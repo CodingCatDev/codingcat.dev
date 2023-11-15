@@ -14,7 +14,7 @@
 	/** @type {string} */
 	export let status;
 
-	$: is_svelte = /Part (1|2)/.test($page.data.exercise.part.title);
+	$: is_svelte = /Part (1|2)/.test('alex');
 </script>
 
 <div class="loading">

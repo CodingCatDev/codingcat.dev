@@ -1,5 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
-import { allowLocal, filterContent, getContentTypePath } from '$lib/server/content';
+import { allowLocal, filterContent, getContentTypePath, getRootPath } from '$lib/server/content';
 import { ContentType, type Course, type Author, type Sponsor } from '$lib/types';
 import { getShowDrafts } from '$lib/server/firebase';
 import { get_exercise } from '$lib/server/exercise';
@@ -59,10 +59,10 @@ export const load = async ({ url, parent }) => {
 			throw 'app:redirect';
 		}
 
-		const exercise = await get_exercise('your-first-component');
-
-		if (!exercise) {
-			throw error(404, 'No such tutorial found');
+		let exercise;
+		if (lessonSlug) {
+			const courseRoot = getRootPath(ContentType.course, courseSlug);
+			exercise = await get_exercise(`${courseRoot}/${courseSlug}/lesson/${lessonSlug}/exercise`);
 		}
 
 		return {
