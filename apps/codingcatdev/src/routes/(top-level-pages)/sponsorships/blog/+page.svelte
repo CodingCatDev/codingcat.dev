@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
 	import AJPrimary from '$lib/components/global/icons/AJPrimary.svelte';
+	import SponsorshipForm from '../SponsorshipForm.svelte';
 </script>
 
 <svelte:head>
@@ -79,12 +80,52 @@
 		</div>
 	</div>
 
-	<div class="flex flex-wrap justify-center p-8 bg-basics-900 text-primary-50 rounded-xl">
-		<iframe
-			class="w-full border-none rounded-xl"
-			height="720px"
-			src="https://notionforms.io/forms/sponsor-submissions"
-			title="Sponsorship Form"
-		/>
+	<SponsorshipForm />
+
+	<div class="flex justify-center card variant-soft-surface">
+		<div class="flex flex-col p-8">
+			<ul class="flex flex-col gap-2">
+				<li data-sourcepos="3:1-4:0">
+					<p data-sourcepos="3:4-3:322">
+						<strong>Increased Brand Awareness and Visibility:</strong>
+						By sponsoring blog posts on CodingCat.dev, your brand will be prominently featured in front
+						of a highly engaged audience of tech enthusiasts and programmers. This exposure can significantly
+						boost brand awareness and make your company more recognizable in the tech industry.
+					</p>
+				</li>
+				<li data-sourcepos="5:1-6:0">
+					<p data-sourcepos="5:4-5:278">
+						<strong>Enhanced Brand Credibility and Reputation:</strong>
+						Being associated with a reputable blog like CodingCat.dev can enhance your brand's credibility
+						and reputation. The blog's audience will associate your company with high-quality content
+						and expertise, fostering trust and loyalty.
+					</p>
+				</li>
+				<li data-sourcepos="7:1-8:0">
+					<p data-sourcepos="7:4-7:297">
+						<strong>Targeted Audience Reach:</strong>
+						CodingCat.dev attracts a dedicated readership of individuals passionate about coding and
+						programming. Sponsoring blog posts on this platform ensures you're reaching a highly targeted
+						audience of potential customers genuinely interested in your products or services.
+					</p>
+				</li>
+				<li data-sourcepos="9:1-10:0">
+					<p data-sourcepos="9:4-9:280">
+						<strong>Long-Term Impact and Brand Recall:</strong>
+						Unlike traditional advertising that fades quickly, sponsoring long-term blog posts on CodingCat.dev
+						creates a lasting impression. Your brand will remain visible and associated with valuable
+						content long after the initial publication date.
+					</p>
+				</li>
+				<li data-sourcepos="11:1-12:0">
+					<p data-sourcepos="11:4-11:301">
+						<strong>Cost-Effective Marketing Strategy:</strong>
+						Compared to traditional advertising methods, blog sponsorship offers a cost-effective way
+						to reach a large audience. The targeted nature of blog readership ensures your marketing
+						efforts are reaching the right people, maximizing the return on your investment.
+					</p>
+				</li>
+			</ul>
+		</div>
 	</div>
 </section>
