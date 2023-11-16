@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
 	import AJPrimary from '$lib/components/global/icons/AJPrimary.svelte';
+	import SponsorshipForm from '../SponsorshipForm.svelte';
 </script>
 
 <svelte:head>
@@ -104,12 +105,5 @@
 		brand, and drive traffic to your website, then sponsoring live YouTube is a great option.
 	</p>
 
-	<div class="flex flex-wrap justify-center p-8 bg-basics-900 text-primary-50 rounded-xl">
-		<iframe
-			class="w-full border-none rounded-xl"
-			height="720px"
-			src="https://notionforms.io/forms/sponsor-submissions"
-			title="Sponsorship Form"
-		/>
-	</div>
+	<SponsorshipForm />
 </section>

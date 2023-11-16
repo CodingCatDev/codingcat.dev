@@ -3,6 +3,7 @@
 	import AJHeadphones from '$lib/components/global/icons/AJHeadphones.svelte';
 	import Podcatchers from './Podcatchers.svelte';
 	import Arrow from './Arrow.svelte';
+	import SponsorshipForm from '../SponsorshipForm.svelte';
 
 	let form;
 </script>
@@ -76,6 +77,9 @@
 				<AJHeadphones cls="w-48 h-48" />
 			</div>
 		</div>
+
+		<SponsorshipForm />
+
 		<div class="flex justify-center card variant-soft-surface">
 			<div class="flex flex-col max-w-xl gap-4 p-8 font-extrabold">
 				<p class="text-4xl">Are you interested in reaching other web designers and developers?</p>
@@ -343,16 +347,6 @@
 			</div>
 		</div>
 
-		<div
-			bind:this={form}
-			class="flex flex-wrap justify-center p-8 bg-basics-900 text-primary-50 rounded-xl"
-		>
-			<iframe
-				class="w-full border-none rounded-xl"
-				height="720px"
-				src="https://notionforms.io/forms/sponsor-submissions"
-				title="Sponsorship Form"
-			/>
-		</div>
+		<SponsorshipForm />
 	</section>
 </section>
