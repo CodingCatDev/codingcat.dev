@@ -25,7 +25,14 @@ title: 'Angular 17, does SSR/SSG really work?'
 youtube: https://youtube.com/live/Yy0XJP9ReJk?feature=share
 ---
 
-> This is a pretty long video. I won't blame you if you want to [see some shorts](#shorts) instead.
+<script lang="ts">
+	import Video from '$lib/components/content/Video.svelte'
+	import Shorts from '$lib/components/content/Shorts.svelte'
+</script>
+
+<Shorts />
+
+Before I even get started Angular 17, I have to say the new design on [Angular.dev](https://angular.dev) looks incredible. It is full on conference season so I hope that they printed some kick ass [custom-stickers](https://www.stickermule.com/custom-stickers) from [Sticker Mule](https://www.stickermule.com/) and are bringing them out to Vegas!
 
 # My Experience Getting Started with Angular SSR and SSG
 
