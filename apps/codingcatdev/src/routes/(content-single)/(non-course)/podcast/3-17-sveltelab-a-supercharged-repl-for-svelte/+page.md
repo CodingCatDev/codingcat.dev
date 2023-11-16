@@ -31,7 +31,11 @@ picks:
       name: 'Citadel',
       site: 'https://www.amazon.com/gp/video/detail/B0B8TPD38B/ref=atv_tv_hom_c_8zC58H_brws_5_1?jic=8%7CEgRzdm9k'
     },
-    { author: 'brittney-postma', name: 'Svelte Hackathon Winners', site: 'hack.sveltesociety.dev' }
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Hackathon Winners',
+      site: 'https://hack.sveltesociety.dev'
+    }
   ]
 slug: 3-17-sveltelab-a-supercharged-repl-for-svelte
 sponsors:

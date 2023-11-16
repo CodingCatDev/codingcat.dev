@@ -4,7 +4,7 @@ import { type Content, ContentType } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
 import { preview } from '$lib/server/content';
 
-//export const prerender = false;
+export const prerender = true;
 export const load = async ({ cookies }: { cookies: Cookies }) => {
 	// Get latest podcast
 	const podcasts = (
