@@ -13,15 +13,18 @@
 </script>
 
 {#if isShort}
-	<div class="aspect-[9/16]">
-		<iframe
-			src={finalSrc}
-			{title}
-			frameborder="0"
-			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-			allowfullscreen
-			class={`w-full h-full ${$$props.class}`}
-		></iframe>
+	<div class="flex justify-center">
+		<div class="aspect-[9/16] flex-1 max-w-md">
+			<iframe
+				src={finalSrc}
+				{title}
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen
+				class={`w-full h-full rounded-md ${$$props.class}`}
+				loading="lazy"
+			></iframe>
+		</div>
 	</div>
 {:else}
 	<div class="aspect-video">
@@ -31,7 +34,8 @@
 			frameborder="0"
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 			allowfullscreen
-			class={`w-full h-full ${$$props.class}`}
+			class={`w-full h-full rounded-md ${$$props.class}`}
+			loading="lazy"
 		/>
 	</div>
 {/if}

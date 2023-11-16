@@ -1,6 +1,7 @@
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-auto';
 import { mdsvex } from 'mdsvex';
+import rehypeSlug from 'rehype-slug';
 
 // TODO: remove .svx and .md from production builds
 
@@ -27,7 +28,7 @@ const config = {
 	},
 	extensions: ['.svelte', '.svx', '.md'],
 	preprocess: [
-		mdsvex({ extensions: ['.svx', '.md'] }),
+		mdsvex({ extensions: ['.svx', '.md'], rehypePlugins: [rehypeSlug] }),
 		preprocess({
 			postcss: true
 		})
