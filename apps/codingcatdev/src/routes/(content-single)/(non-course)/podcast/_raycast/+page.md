@@ -10,7 +10,7 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1699543381/main-codingcatdev-photo/3_raycast.png
+cover: https://media.codingcat.dev/image/upload/v1700179257/main-codingcatdev-photo/3_raycast.png
 devto:
 excerpt: 'Raycast: A lightning-fast launcher that makes your Mac more productive.'
 guests:
@@ -19,7 +19,11 @@ hashnode:
 picks:
   [
     { author: 'pedro-duarte', name: 'Pick 1', site: 'codingcat.dev' },
-    { author: 'brittney-postma', name: 'Svelte Component Documentation', site: '[Svelte Component Documentation](https://svelte.dev/docs/faq)' },
+    {
+      author: 'brittney-postma',
+      name: 'Svelte Component Documentation',
+      site: '[Svelte Component Documentation](https://svelte.dev/docs/faq)'
+    },
     { author: 'alex-patterson', name: 'Pick 1', site: 'codingcat.dev' }
   ]
 slug: _raycast
