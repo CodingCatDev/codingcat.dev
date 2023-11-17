@@ -5,6 +5,7 @@
 	export let src: string;
 	export let alt: string;
 	export let classes: string = 'object-cover w-full bg-cover rounded bg-black/50 aspect-video';
+	console.log(src);
 </script>
 
 {#if loader}

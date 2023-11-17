@@ -47,6 +47,9 @@ importers:
       rehype-slug:
         specifier: ^6.0.0
         version: 6.0.0
+      svelte-cloudinary:
+        specifier: ^1.1.1
+        version: 1.1.1(svelte@4.2.1)
       sveltefire:
         specifier: ^0.4.2
         version: 0.4.2(firebase@10.4.0)(svelte@4.2.1)
@@ -835,6 +838,17 @@ packages:
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
+
+  /@cloudinary-util/url-loader@3.9.0:
+    resolution: {integrity: sha512-DJiu+a3Mr2GEyjAo4Gy2KWX0YoXoP0CFp2jvw8+3gJj7wvmIb7mcjRk1yHSGIyJcolb0uR+tWGO6KVhStpreMg==}
+    dependencies:
+      '@cloudinary-util/util': 2.1.0
+      '@cloudinary/url-gen': 1.11.2
+    dev: false
+
+  /@cloudinary-util/util@2.1.0:
+    resolution: {integrity: sha512-PGjVxyhhOP8IaD6uawXzfDnI8ArPqpiLfIXc8TEjhv3CGhDFBAM3dCT3xeAgg+92sQsx/AN74j+qckdWPfoO6w==}
+    dev: false
 
   /@cloudinary/html@1.11.2:
     resolution: {integrity: sha512-IibBZliI7MOK3dxvz0WlsEyTIsqZhY3SiCBQM0CNwCKxn3N1TO8OgetfU26Now1lJbdoF5JQ8S7Cn6ZWNuU1KA==}
@@ -3646,6 +3660,23 @@ packages:
       '@typescript-eslint/types': 6.7.5
       eslint-visitor-keys: 3.4.3
     dev: true
+
+  /@unpic/core@0.0.24:
+    resolution: {integrity: sha512-HFa7ry3iNYfIOkaWGb0N/w1sxt6MAyUfoXXOvjyz50vtomDUbxK4krcRcQWIca64bORQKncxeJbGETRQLF20WQ==}
+    dependencies:
+      unpic: 3.14.1
+    dev: false
+
+  /@unpic/svelte@0.0.25(svelte@4.2.1):
+    resolution: {integrity: sha512-jXyOl9BDfspJ03/kAeozy69eHjLtKIZjsZ4257mz8J/sn5Il3xsRD4vR701NjEC0fkkLQg9Xol+v92o0LGImtw==}
+    peerDependencies:
+      svelte: '*'
+    dependencies:
+      '@unpic/core': 0.0.24
+      style-object-to-css-string: 1.1.2
+      svelte: 4.2.1
+      unpic: 3.14.1
+    dev: false
 
   /@vercel/nft@0.23.1:
     resolution: {integrity: sha512-NE0xSmGWVhgHF1OIoir71XAd0W0C1UE3nzFyhpFiMr3rVhetww7NvM1kc41trBsPG37Bh+dE5FYCTMzM/gBu0w==}
@@ -10183,6 +10214,10 @@ packages:
     requiresBuild: true
     optional: true
 
+  /style-object-to-css-string@1.1.2:
+    resolution: {integrity: sha512-/Ii9DCTf54Qqjs0psOgQyU5YA5A3aC1VvcQeIQTgDYFuMlRt27FbTvAb60C/IRsXM8aZN1ClYaB0YavPyWm7SQ==}
+    dev: false
+
   /sucrase@3.34.0:
     resolution: {integrity: sha512-70/LQEZ07TEcxiU2dz51FKaE6hCTWC6vr7FOk3Gr0U60C3shtAN+H+BFr9XlYe5xqf3RA8nrc+VIwzCfnxuXJw==}
     engines: {node: '>=8'}
@@ -10250,6 +10285,21 @@ packages:
       - stylus
       - sugarss
     dev: true
+
+  /svelte-cloudinary@1.1.1(svelte@4.2.1):
+    resolution: {integrity: sha512-ZPSA0fbKQfw6g8ougYTKIpGfWxY1uUvTAv85lBaMm1riao2JUmarAPf7Lu2QFXfqSfatgLv/kQfqho5GCdK3fg==}
+    peerDependencies:
+      svelte: ^3.0.0 || ^4.0.0
+    dependencies:
+      '@cloudinary-util/url-loader': 3.9.0
+      '@cloudinary-util/util': 2.1.0
+      '@unpic/core': 0.0.24
+      '@unpic/svelte': 0.0.25(svelte@4.2.1)
+      cloudinary: 1.34.0
+      svelte: 4.2.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /svelte-eslint-parser@0.33.1(svelte@4.2.1):
     resolution: {integrity: sha512-vo7xPGTlKBGdLH8T5L64FipvTrqv3OQRx9d2z5X05KKZDlF4rQk8KViZO4flKERY+5BiVdOh7zZ7JGJWo5P0uA==}
@@ -10916,6 +10966,10 @@ packages:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==}
     engines: {node: '>= 4.0.0'}
     dev: true
+
+  /unpic@3.14.1:
+    resolution: {integrity: sha512-MTr2ktf65nAjxSoX6YGnbZv+YfHcz41H5UJ6v+Bz/cMjNmOxPfcTRfkOOR8RaxI4p4SR126JAiaRizlZvcMHAw==}
+    dev: false
 
   /unpipe@1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
