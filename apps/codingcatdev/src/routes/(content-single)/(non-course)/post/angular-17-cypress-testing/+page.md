@@ -45,35 +45,20 @@ To get started with Cypress component testing, you will need to install Cypress 
 
 ```sh
 npm install cypress -D
-npm install @cypress/angular
 ```
 
-Once Cypress is installed, you can create a new test file. For example, you could create a file called `stepper.component.spec.ts`. This file will contain the tests for your stepper component.
+Once Cypress is installed, you can create a new test file. For example, you could create a file called `stepper.component.cy.ts`. This file will contain the tests for your stepper component.
 
 **Writing your first Angular component test**
 
 The following code snippet shows how to write a simple test for a stepper component:
 
 ```ts
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StepperComponent } from './stepper.component';
 
 describe('StepperComponent', () => {
-	let component: StepperComponent;
-	let fixture: ComponentFixture<StepperComponent>;
-
-	beforeEach(() => {
-		TestBed.configureTestingModule({
-			declarations: [StepperComponent]
-		});
-
-		fixture = TestBed.createComponent(StepperComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
-	});
-
 	it('should render the stepper component', () => {
-		expect(component).toBeTruthy();
+		cy.mount(StepperComponent);
 	});
 });
 ```
