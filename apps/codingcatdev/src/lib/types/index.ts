@@ -1,5 +1,4 @@
 export interface Content {
-	id: string;
 	authors?: string[];
 	cloudinary_conver?: boolean;
 	html?: string;

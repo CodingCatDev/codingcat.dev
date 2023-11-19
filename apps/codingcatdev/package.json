@@ -3,7 +3,7 @@
 	"version": "2.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "tinacms dev -c \"vite dev\"",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
@@ -27,10 +27,12 @@
 		"@sveltejs/kit": "^1.25.1",
 		"@tailwindcss/forms": "^0.5.6",
 		"@tailwindcss/typography": "0.5.10",
+		"@tinacms/cli": "^1.5.33",
 		"@types/node": "^20.8.6",
 		"@types/prismjs": "^1.26.1",
 		"@types/video.js": "^7.3.53",
 		"autoprefixer": "^10.4.16",
+		"cloudinary": "^1.23.0",
 		"eslint": "^8.50.0",
 		"eslint-config-prettier": "^9.0.0",
 		"feed": "^4.2.2",
@@ -39,6 +41,7 @@
 		"glob": "^10.3.10",
 		"marked": "^9.0.3",
 		"mdsvex": "^0.11.0",
+		"multer": "1.4.5-lts.1",
 		"postcss": "^8.4.31",
 		"postcss-load-config": "^4.0.1",
 		"prettier": "^3.0.3",
@@ -62,9 +65,11 @@
 		"esm-env": "^1.0.0",
 		"firebase": "^10.4.0",
 		"gsap": "^3.12.2",
+		"next-tinacms-cloudinary": "^4.4.1",
 		"prism-svelte": "^0.5.0",
 		"prism-themes": "^1.9.0",
 		"rehype-slug": "^6.0.0",
-		"sveltefire": "^0.4.2"
+		"sveltefire": "^0.4.2",
+		"tinacms": "^1.5.24"
 	}
 }
