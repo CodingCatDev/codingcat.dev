@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Image from '$lib/components/content/Image.svelte';
+	import SponsorshipCards from '../SponsorshipCards.svelte';
 	import AJPrimary from '$lib/components/global/icons/AJPrimary.svelte';
 	import SponsorshipForm from '../SponsorshipForm.svelte';
 </script>
@@ -65,6 +65,32 @@
 	</div>
 	<div class="flex justify-center card variant-soft-surface">
 		<div class="flex flex-col p-8">
+			<section class="my-8 flex flex-col gap-1 md:gap-4">
+				<p class="">
+					On CodingCat.dev your advertisement is <span
+						class="uppercase bg-surface-backdrop-token dark:text-primary-500 font-black text-3xl p-2 rounded m-1"
+						>permanent</span
+					>!
+				</p>
+				<p>
+					You read that right, it is not just while you are sponsoring and it doesn't change by the
+					flavor of the week like Carbon or Google Ads.
+				</p>
+
+				<p>
+					Streaming sponsorship is a great way to reach a highly engaged audience of potential
+					customers. By sponsoring a stream, your company can be featured prominently on the footer
+					of the stream of
+					<span class="uppercase font-black text-2xl text-primary-500">over 16K subscribers</span>,
+					with the opportunity to reach a large number of viewers who are already interested in the
+					topics your video is about.
+				</p>
+			</section>
+		</div>
+	</div>
+	<SponsorshipForm />
+	<div class="flex justify-center card variant-soft-surface">
+		<div class="flex flex-col p-8">
 			<div class="flex justify-center w-full gap-4 p-8 font-extrabold">
 				<p class="text-4xl">
 					<span class="text-8xl text-primary-500"> Why </span>
@@ -74,9 +100,9 @@
 			<ul>
 				<li>
 					<strong>Reach a large audience:</strong>
-					Live streaming on YouTube is a great way to reach a large audience. In fact, YouTube Live is
-					one of the most popular live streaming platforms in the world, with millions of viewers tuning
-					in each day.
+					Live streaming on YouTube and Twitch is a great way to reach a large audience. In fact, YouTube
+					Live is one of the most popular live streaming platforms in the world, with millions of viewers
+					tuning in each day.
 				</li>
 				<li>
 					<strong>Engage with your audience:</strong>
@@ -104,6 +130,5 @@
 		If you're looking for a way to reach a large audience, engage with your audience, promote your
 		brand, and drive traffic to your website, then sponsoring live YouTube is a great option.
 	</p>
-
-	<SponsorshipForm />
+	<SponsorshipCards />
 </section>
