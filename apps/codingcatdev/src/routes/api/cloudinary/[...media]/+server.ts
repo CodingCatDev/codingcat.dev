@@ -32,7 +32,11 @@ const mediaHandlerConfig = {
 
 export const GET: RequestHandler = async ({ request, url }) => {
 	try {
-		const { directory = '""', limit = 500, offset } = url.searchParams as MediaListOptions;
+		const {
+			directory = '"main-codingcatdev-photo"',
+			limit = 500,
+			offset
+		} = url.searchParams as MediaListOptions;
 
 		const useRootDirectory = !directory || directory === '/' || directory === '""';
 
@@ -94,15 +98,18 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	}
 };
 
-export async function POST({ request }) {
+export async function POST({ request, body }) {
 	const upload = promisify(
 		multer({
 			storage: multer.diskStorage({
-				// @ts-ignore
-				directory: (req, file, cb) => {
+				directory: (request: any, file: any, cb: (arg0: null, arg1: string) => void) => {
 					cb(null, '/tmp');
 				},
-				filename: (req: any, file: { originalname: any }, cb: (arg0: null, arg1: any) => void) => {
+				filename: (
+					request: any,
+					file: { originalname: any },
+					cb: (arg0: null, arg1: any) => void
+				) => {
 					cb(null, file.originalname);
 				}
 			})
@@ -110,12 +117,10 @@ export async function POST({ request }) {
 	);
 
 	// @ts-ignore
-	await upload(req, res);
+	await upload(request);
 
-	// @ts-ignore
-	// TODO: fix
-	const { directory } = req.body;
-
+	const directory = (await request.formData()).get('directory')?.toString() || '/';
+	console.log('directory', directory);
 	//@ts-ignore
 	const result = await cloudinary.uploader.upload(req.file.path, {
 		folder: directory.replace(/^\//, ''),
