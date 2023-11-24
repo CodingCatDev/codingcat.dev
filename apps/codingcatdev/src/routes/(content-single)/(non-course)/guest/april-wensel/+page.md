@@ -1,6 +1,6 @@
 ---
 type: guest
-cover: 'https://media.codingcat.dev/image/upload/v1700820267/main-codingcatdev-photo/3_compassionate-coding.png'
+cover: 'https://media.codingcat.dev/image/upload/v1700820111/main-codingcatdev-photo/podcast-guest/april-wensel.jpg'
 name: April Wensel
 published: published
 slug: april-wensel
