@@ -90,6 +90,7 @@ export interface Socials {
 	facebook?: string;
 	github?: string;
 	instagram?: string;
+	lastfm?: string;
 	linkedin?: string;
 	email?: string;
 	mastodon?: string;
