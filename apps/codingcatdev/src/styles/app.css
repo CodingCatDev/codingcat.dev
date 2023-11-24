@@ -1,3 +1,9 @@
+@font-face {
+	font-family: 'Nunito';
+	src: url('/fonts/Nunito-VariableFont_wght.ttf');
+	font-display: swap;
+}
+
 ::-webkit-scrollbar {
 	@apply h-2;
 }
@@ -41,15 +47,6 @@ h4:hover .permalink,
 h5:hover .permalink,
 h6:hover .permalink {
 	@apply visible w-auto;
-}
-
-/* https://fonts.google.com/specimen/Quicksand?query=Quicksand */
-/* @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap'); */
-
-@font-face {
-	font-family: 'Quicksand';
-	src: url('/fonts/Quicksand-VariableFont_wght.ttf');
-	font-display: swap;
 }
 
 [data-theme='codingcatdev'] h1,

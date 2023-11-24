@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Image from '$lib/components/content/Image.svelte';
+	import SponsorshipCards from '../SponsorshipCards.svelte';
 	import AJPrimary from '$lib/components/global/icons/AJPrimary.svelte';
 	import SponsorshipForm from '../SponsorshipForm.svelte';
 </script>
@@ -71,12 +71,25 @@
 					<span class="font-bold">would you sponsor our blog?</span>
 				</p>
 			</div>
-			<p>
-				Blog sponsorship is a great way to reach a highly engaged audience of potential customers.
-				By sponsoring a blog post, your company can be featured prominently on a popular blog, with
-				the opportunity to reach a large number of readers who are already interested in the topics
-				you post is about.
-			</p>
+			<section class="my-8 flex flex-col gap-1 md:gap-4">
+				<p class="">
+					On CodingCat.dev your advertisement is <span
+						class="uppercase bg-surface-backdrop-token dark:text-primary-500 font-black text-3xl p-2 rounded m-1"
+						>permanent</span
+					>!
+				</p>
+				<p>
+					You read that right, it is not just while you are sponsoring and it doesn't change by the
+					flavor of the week like Carbon or Google Ads.
+				</p>
+
+				<p>
+					Blog sponsorship is a great way to reach a highly engaged audience of potential customers.
+					By sponsoring a blog post, your company can be featured prominently on a popular blog,
+					with the opportunity to reach a large number of readers who are already interested in the
+					topics your post is about.
+				</p>
+			</section>
 		</div>
 	</div>
 
@@ -128,4 +141,5 @@
 			</ul>
 		</div>
 	</div>
+	<SponsorshipCards />
 </section>
