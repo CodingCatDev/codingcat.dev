@@ -25,7 +25,7 @@ sponsors:
   - storyblok
 spotify:
 start: Jan 1, 2024
-title:
+title: 'Design Harmony: Navigating the Art and Science of Successful Design Systems'
 youtube:
 ---
 
