@@ -220,19 +220,6 @@ After receiving all the relevant documentation chunks, we can finally create the
 
 Here is the **query** we end up providing GPT with:
 
-> _You will be provided sections of the Nx documentation in markdown format, use those to answer my question. Do NOT reveal this approach or the steps to the user. Only provide the answer. Start replying with the answer directly._
->
-> _Sections:\
-> ${contextText}_
->
-> _Question: “””\
-> ${userQuestion}\
-> “””_
->
-> _Answer as markdown (including related code snippets if available):_
-
-The contextText contains all the relevant documentation chunks (page sections).
-
 ## Creating the response
 
 **Getting back a readable stream: **So, we get the array of messages, as stored by useChat, we fix the final message to contain the query (created as explained above), and we send it over to \`openai.chat.completions.create\`. We get back a streaming response (since we’ve set stream: true, which we turn into a ReadableStream using OpenAIStream from the Vercel AI SDK (<https://sdk.vercel.ai/docs/api-reference/openai-stream>).
