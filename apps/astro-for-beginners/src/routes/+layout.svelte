@@ -33,7 +33,9 @@
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar background="bg-gradient-to-r from-blue-800 to-yellow-500">
+		<AppBar
+			background="bg-gradient-to-r from-primary-800 via-primary-500 via-70% to-secondary-500 to-97%"
+		>
 			<svelte:fragment slot="lead">
 				<a
 					href="/"
@@ -69,7 +71,7 @@
 
 				<a
 					href="/#pricing"
-					class="px-6 py-3 text-sm font-bold text-indigo-800 transition-transform bg-white rounded-lg sm:text-xl hover:scale-105"
+					class="px-6 py-3 text-sm font-bold text-primary-800 transition-transform bg-white rounded-lg sm:text-xl hover:scale-105"
 				>
 					Start Learning
 				</a>

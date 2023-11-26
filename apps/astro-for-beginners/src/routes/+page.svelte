@@ -13,7 +13,7 @@
 	import { Tiktok, Youtube } from '@steeze-ui/simple-icons';
 </script>
 
-<main class="bg-gradient-to-r from-blue-800 to-yellow-500">
+<main class="bg-gradient-to-r from-primary-800 via-primary-500 via-70% to-secondary-500 to-97%">
 	<div class="px-10">
 		<div
 			class="relative flex flex-col p-2 pt-20 text-white md:items-center md:text-center overflow-x-clip"
@@ -77,7 +77,7 @@
 	</div>
 	<div class="w-full max-w-3xl px-10 mx-auto text-left translate-y-40">
 		<div class="relative p-4 py-6 pt-12 bg-white md:p-10 rounded-2xl">
-			<h2 class="mb-2 text-3xl font-bold text-blue-800 md:text-4xl md:mb-4">
+			<h2 class="mb-2 text-3xl font-bold text-primary-800 md:text-4xl md:mb-4">
 				Updated for Astro 3.0!
 			</h2>
 
@@ -86,14 +86,14 @@
 			</p>
 
 			<a
-				class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-blue-900 sm:text-xl md:text-2xl hover:scale-105"
+				class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-primary-900 sm:text-xl md:text-2xl hover:scale-105"
 				href="#pricing"
 			>
 				Start Learning
 			</a>
 		</div>
 	</div>
-	<section class="py-20 bg-blue-800 bg-opacity-60" id="overview">
+	<section class="py-20 bg-primary-800 bg-opacity-60" id="overview">
 		<div
 			class="grid items-center justify-between max-w-6xl grid-cols-1 px-10 mx-auto mt-40 text-center sm:grid-cols-1 lg:grid-cols-3 gap-y-24 lg:gap-y-4"
 		>
@@ -180,7 +180,7 @@
 				</div>
 				<div class="order-2 translate-x-0 lg:w-2/3 lg:relative lg:translate-x-10">
 					<div
-						class="absolute right-0 bg-blue-400 rounded-lg -top-5 -bottom-5 left-10 opacity-20"
+						class="absolute right-0 bg-primary-400 rounded-lg -top-5 -bottom-5 left-10 opacity-20"
 					></div>
 					<img
 						src="https://media.codingcat.dev/image/upload/f_auto,q_auto/v1701028803/main-codingcatdev-photo/whisker-word.jpg"
@@ -212,7 +212,7 @@
 	</section>
 	<section
 		id="topics"
-		class="relative px-8 py-24 text-white bg-blue-800 bg-opacity-60 lg:py-40 overflow-x-clip"
+		class="relative px-8 py-24 text-white bg-primary-800 bg-opacity-60 lg:py-40 overflow-x-clip"
 	>
 		<div class="max-w-2xl mx-auto mb-20">
 			<h2 class="text-4xl font-bold md:text-6xl text-left md:text-center mb-6 leading-[3rem]">
@@ -330,7 +330,7 @@
 			</p>
 		</div>
 	</section>
-	<section id="yourInstructor" class="px-8 pb-32 text-white bg-blue-800 bg-opacity-60 pt-60">
+	<section id="yourInstructor" class="px-8 pb-32 text-white bg-primary-800 bg-opacity-60 pt-60">
 		<div class="max-w-6xl mx-auto">
 			<h2 class="mb-20 text-4xl font-bold text-center md:text-6xl lg:text-left lg:mb-4">
 				Hi, I&#39;m Alex Patterson
@@ -346,7 +346,7 @@
 
 				<div class="flex flex-col items-center gap-y-4 mb-10 lg:mb-0 w-full md:min-w-[400px]">
 					<div
-						class="inline-block max-w-sm p-2 rounded-full bg-gradient-to-r from-blue-800 to-yellow-500"
+						class="inline-block max-w-sm p-2 rounded-full bg-gradient-to-r from-primary-800 via-primary-500 via-70% to-secondary-500 to-97%"
 					>
 						<img
 							class="inline-block rounded-full md:h-80 md:w-80"
@@ -405,7 +405,7 @@
 			class="grid grid-cols-1 gap-y-10 lg:grid-cols-[1fr,1fr] justify-stretch items-center ml[10px] max-w-xl lg:max-w-6xl mx-auto"
 		>
 			<div class="shadow-xl lg:min-w-[500px] bg-white rounded-xl p-10 flex flex-col">
-				<h3 class="text-2xl font-bold text-center text-blue-700">Half-stack (Basic Package)</h3>
+				<h3 class="text-2xl font-bold text-center text-primary-700">Half-stack (Basic Package)</h3>
 				<p class="mb-4 text-xl text-center text-gray-500">Static Site Generation Only</p>
 				<p class="flex items-start justify-center mb-10 font-bold text-gray-700 text-7xl">
 					<span class="text-sm">US</span> $75
@@ -416,11 +416,6 @@
 						<span>
 							<Icon src={CheckCircled} class="w-8 h-8" theme="solid" />
 						</span> Astro Components, Integrations, and Islands
-					</li>
-					<li class="relative flex items-center text-lg text-gray-900 gap-2">
-						<span>
-							<Icon src={CheckCircled} class="w-8 h-8" theme="solid" />
-						</span> Markdown and Content Collections with Zod and TypeScript
 					</li>
 					<li class="relative flex items-center text-lg text-gray-900 gap-2">
 						<span>
@@ -440,7 +435,7 @@
 				</ul>
 
 				<a
-					class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-blue-800 sm:text-xl md:text-2xl hover:scale-105"
+					class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-primary-800 sm:text-xl md:text-2xl hover:scale-105"
 					href="https://learn.jamesqquick.com/c0f821a5-6b5d-4668-82fe-4e4684e22d0e"
 					data-podia-embed="link"
 				>
@@ -449,9 +444,11 @@
 				<p class="mb-4 text-sm text-gray-700 text-light">*30 day money-back guarantee</p>
 			</div>
 			<div
-				class="shadow-xl lg:min-w-[500px] bg-white rounded-xl p-10 flex flex-col shadow-blue-900 border-8 border-blue-400 py-20 -ml-[10px]"
+				class="shadow-xl lg:min-w-[500px] bg-white rounded-xl p-10 flex flex-col shadow-primary-900 border-8 border-primary-400 py-20 -ml-[10px]"
 			>
-				<h3 class="text-2xl font-bold text-center text-blue-700">Full-stack (Premium Package)</h3>
+				<h3 class="text-2xl font-bold text-center text-primary-700">
+					Full-stack (Premium Package)
+				</h3>
 				<p class="mb-4 text-xl text-center text-gray-500">
 					Static Site Generation + Server-side Rendering
 				</p>
@@ -473,12 +470,12 @@
 					<li class="relative flex items-center text-lg text-gray-900 gap-2">
 						<span>
 							<Icon src={CheckCircled} class="w-8 h-8" theme="solid" />
-						</span> Database Integration Using Xata
+						</span> Database Integration Using Firebase
 					</li>
 					<li class="relative flex items-center text-lg text-gray-900 gap-2">
 						<span>
 							<Icon src={CheckCircled} class="w-8 h-8" theme="solid" />
-						</span> Building a Basic Auth Strategy Using Cookies
+						</span> Authentication with Firebase on the Server
 					</li>
 					<li class="relative flex items-center text-lg text-gray-900 gap-2">
 						<span>
@@ -488,7 +485,7 @@
 				</ul>
 
 				<a
-					class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-blue-800 sm:text-xl md:text-2xl hover:scale-105"
+					class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-primary-800 sm:text-xl md:text-2xl hover:scale-105"
 					href="https://learn.codingcat.dev/astro-for-beginners"
 					data-podia-embed="link"
 				>
@@ -567,7 +564,7 @@
 		</div>
 	</section>
 	<!-- <Pricing /> -->
-	<section class="relative px-8 text-white bg-blue-800 bg-opacity-60 false overflow-x-clip">
+	<section class="relative px-8 text-white bg-primary-800 bg-opacity-60 false overflow-x-clip">
 		<div class="max-w-2xl mx-auto mb-20"></div>
 
 		<div class="py-20">
@@ -575,7 +572,7 @@
 				<p class="mb-4 text-lg">What are you waiting for?</p>
 				<a
 					href="#pricing"
-					class="px-6 py-3 text-sm font-bold text-indigo-800 transition-transform bg-white rounded-lg sm:text-xl hover:scale-105"
+					class="px-6 py-3 text-sm font-bold text-primary-800 transition-transform bg-white rounded-lg sm:text-xl hover:scale-105"
 				>
 					Start learning today!
 				</a>

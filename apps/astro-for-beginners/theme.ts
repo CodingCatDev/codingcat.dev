@@ -12,36 +12,36 @@ export const astroCustomTheme: CustomThemeConfig = {
 		'--theme-rounded-container': '8px',
 		'--theme-border-base': '1px',
 		// =~= Theme On-X Colors =~=
-		'--on-primary': '0 0 0',
-		'--on-secondary': '255 255 255',
+		'--on-primary': '255 255 255',
+		'--on-secondary': '0 0 0',
 		'--on-tertiary': '0 0 0',
 		'--on-success': '0 0 0',
 		'--on-warning': '0 0 0',
 		'--on-error': '255 255 255',
 		'--on-surface': '255 255 255',
 		// =~= Theme Colors  =~=
-		// primary | #0FBA81
-		'--color-primary-50': '219 245 236', // #dbf5ec
-		'--color-primary-100': '207 241 230', // #cff1e6
-		'--color-primary-200': '195 238 224', // #c3eee0
-		'--color-primary-300': '159 227 205', // #9fe3cd
-		'--color-primary-400': '87 207 167', // #57cfa7
-		'--color-primary-500': '15 186 129', // #0FBA81
-		'--color-primary-600': '14 167 116', // #0ea774
-		'--color-primary-700': '11 140 97', // #0b8c61
-		'--color-primary-800': '9 112 77', // #09704d
-		'--color-primary-900': '7 91 63', // #075b3f
-		// secondary | #4F46E5
-		'--color-secondary-50': '229 227 251', // #e5e3fb
-		'--color-secondary-100': '220 218 250', // #dcdafa
-		'--color-secondary-200': '211 209 249', // #d3d1f9
-		'--color-secondary-300': '185 181 245', // #b9b5f5
-		'--color-secondary-400': '132 126 237', // #847eed
-		'--color-secondary-500': '79 70 229', // #4F46E5
-		'--color-secondary-600': '71 63 206', // #473fce
-		'--color-secondary-700': '59 53 172', // #3b35ac
-		'--color-secondary-800': '47 42 137', // #2f2a89
-		'--color-secondary-900': '39 34 112', // #272270
+		// primary | #4F46E5
+		'--color-primary-50': '229 227 251', // #e5e3fb
+		'--color-primary-100': '220 218 250', // #dcdafa
+		'--color-primary-200': '211 209 249', // #d3d1f9
+		'--color-primary-300': '185 181 245', // #b9b5f5
+		'--color-primary-400': '132 126 237', // #847eed
+		'--color-primary-500': '79 70 229', // #4F46E5
+		'--color-primary-600': '71 63 206', // #473fce
+		'--color-primary-700': '59 53 172', // #3b35ac
+		'--color-primary-800': '47 42 137', // #2f2a89
+		'--color-primary-900': '39 34 112', // #272270
+		// secondary | #EAB308
+		'--color-secondary-50': '252 244 218', // #fcf4da
+		'--color-secondary-100': '251 240 206', // #fbf0ce
+		'--color-secondary-200': '250 236 193', // #faecc1
+		'--color-secondary-300': '247 225 156', // #f7e19c
+		'--color-secondary-400': '240 202 82', // #f0ca52
+		'--color-secondary-500': '234 179 8', // #EAB308
+		'--color-secondary-600': '211 161 7', // #d3a107
+		'--color-secondary-700': '176 134 6', // #b08606
+		'--color-secondary-800': '140 107 5', // #8c6b05
+		'--color-secondary-900': '115 88 4', // #735804
 		// tertiary | #0EA5E9
 		'--color-tertiary-50': '219 242 252', // #dbf2fc
 		'--color-tertiary-100': '207 237 251', // #cfedfb
@@ -75,17 +75,17 @@ export const astroCustomTheme: CustomThemeConfig = {
 		'--color-warning-700': '176 134 6', // #b08606
 		'--color-warning-800': '140 107 5', // #8c6b05
 		'--color-warning-900': '115 88 4', // #735804
-		// error | #D41976
-		'--color-error-50': '249 221 234', // #f9ddea
-		'--color-error-100': '246 209 228', // #f6d1e4
-		'--color-error-200': '244 198 221', // #f4c6dd
-		'--color-error-300': '238 163 200', // #eea3c8
-		'--color-error-400': '225 94 159', // #e15e9f
-		'--color-error-500': '212 25 118', // #D41976
-		'--color-error-600': '191 23 106', // #bf176a
-		'--color-error-700': '159 19 89', // #9f1359
-		'--color-error-800': '127 15 71', // #7f0f47
-		'--color-error-900': '104 12 58', // #680c3a
+		// error | #f80d0d
+		'--color-error-50': '254 219 219', // #fedbdb
+		'--color-error-100': '254 207 207', // #fecfcf
+		'--color-error-200': '253 195 195', // #fdc3c3
+		'--color-error-300': '252 158 158', // #fc9e9e
+		'--color-error-400': '250 86 86', // #fa5656
+		'--color-error-500': '248 13 13', // #f80d0d
+		'--color-error-600': '223 12 12', // #df0c0c
+		'--color-error-700': '186 10 10', // #ba0a0a
+		'--color-error-800': '149 8 8', // #950808
+		'--color-error-900': '122 6 6', // #7a0606
 		// surface | #495a8f
 		'--color-surface-50': '228 230 238', // #e4e6ee
 		'--color-surface-100': '219 222 233', // #dbdee9
