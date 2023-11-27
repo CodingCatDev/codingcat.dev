@@ -9,7 +9,7 @@ published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1701092500/main-codingcatdev-photo/3_ReactNativeExpo.png
+cover: https://media.codingcat.dev/image/upload/v1701093700/main-codingcatdev-photo/3_ReactNativeExpo.png
 devto:
 excerpt: 'Dive into the seamless world of cross-platform app development as we unravel the magic of React Native with Expo, combining power and simplicity for an unparalleled mobile experience.'
 guests:
