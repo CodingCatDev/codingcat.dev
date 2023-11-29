@@ -30,7 +30,7 @@ sponsors:
 spotify:
 start: Jan 1, 2024
 title: Angular.dev
-youtube:
+youtube: https://youtu.be/QHZRLrRRnhw
 ---
 
 Angular v17 is here, and it's the purrfect update for all you cat-loving developers. This new version of the popular JavaScript framework is packed with features that will make your development purr like a kitten. With us today is [Emma Twersky](/guest/emma-twersky) a Senior Developer Relations Engineer, to talk all about the new updates.
