@@ -27,8 +27,8 @@ picks:
 slug: 3-23-angular-17
 sponsors:
   - storyblok
-spotify:
-start: Jan 1, 2024
+spotify: https://open.spotify.com/episode/7rsBtjwYOojkFGJQgunyQ7
+start: Nov 29, 2024
 title: Angular.dev
 youtube: https://youtu.be/QHZRLrRRnhw
 ---
