@@ -2,9 +2,9 @@
 type: podcast
 authors:
   - alex-patterson
-episode:
+episode: 24
 recording_date: September 14, 2023 1:15 PM
-season:
+season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
@@ -17,8 +17,8 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'sean-falconer', name: 'Pick 1', site: 'https://codingcat.dev' },
-    { author: 'alex-patterson', name: 'Pick 1', site: 'https://codingcat.dev' }
+    { author: 'sean-falconer', name: 'The Devil's Plan', site: 'https://www.netflix.com/title/81653386' },
+    { author: 'alex-patterson', name: 'Going Deep on Svelte 5', site: 'https://www.learnwithjason.dev/going-deep-on-svelte-5' }
   ]
 slug: _skyflow
 sponsors:
@@ -26,7 +26,7 @@ sponsors:
 spotify:
 start: December 31, 2024
 title: "Skyflow's privacy vault for building LLMs"
-youtube:
+youtube: https://youtu.be/f_gNOK8cpwI
 ---
 
 In the rapidly evolving realm of artificial intelligence, large language models (LLMs) have emerged as powerful tools for natural language processing and generation. These models, trained on massive datasets of text and code, have demonstrated remarkable capabilities in tasks such as machine translation, text summarization, and creative writing. However, the development and utilization of LLMs raise significant privacy concerns, particularly with regard to the handling of sensitive personal information.
