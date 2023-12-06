@@ -17,14 +17,22 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'sean-falconer', name: 'The Devil's Plan', site: 'https://www.netflix.com/title/81653386' },
-    { author: 'alex-patterson', name: 'Going Deep on Svelte 5', site: 'https://www.learnwithjason.dev/going-deep-on-svelte-5' }
+    {
+      author: 'sean-falconer',
+      name: "The Devil's Plan",
+      site: 'https://www.netflix.com/title/81653386'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'Going Deep on Svelte 5',
+      site: 'https://www.learnwithjason.dev/going-deep-on-svelte-5'
+    }
   ]
-slug: _skyflow
+slug: 3-24-skyflow-privacy-vault
 sponsors:
   - storyblok
-spotify:
-start: December 31, 2024
+spotify: https://podcasters.spotify.com/pod/show/purrfect-dev/episodes/3-24-Skyflows-Privacy-Vault-for-Building-LLMs-with-Sean-Falconer-e2ct2v4
+start: December 6, 2023
 title: "Skyflow's privacy vault for building LLMs"
 youtube: https://youtu.be/f_gNOK8cpwI
 ---
