@@ -31,7 +31,7 @@ picks:
 slug: 3-22-fly-io-with-dov-alperin
 sponsors:
   - storyblok
-spotify: https://podcasters.spotify.com/pod/show/purrfect-dev/episodes/3-22-Fly-io-with-Dov-Alperin-e2c8hoj
+spotify: https://open.spotify.com/episode/5zS8lOvpTyl3SMK7Pd6mhz?si=BNyY0rPDSuyrJMQWyInn6g
 start: Nov 15, 2023
 title: Speedrun Your App Onto Fly.io
 youtube: https://youtu.be/JFObDifxL74

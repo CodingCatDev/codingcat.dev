@@ -31,7 +31,7 @@ picks:
 slug: 3-24-skyflow-privacy-vault
 sponsors:
   - storyblok
-spotify: https://podcasters.spotify.com/pod/show/purrfect-dev/episodes/3-24-Skyflows-Privacy-Vault-for-Building-LLMs-with-Sean-Falconer-e2ct2v4
+spotify: https://open.spotify.com/episode/6nBGOKJDlXE0AW1YQ2H6qO?si=Hs8Ee8GjRZSj-NBq-vZgcQ
 start: December 6, 2023
 title: "Skyflow's privacy vault for building LLMs"
 youtube: https://youtu.be/f_gNOK8cpwI
