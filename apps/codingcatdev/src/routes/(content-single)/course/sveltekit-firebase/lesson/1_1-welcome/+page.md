@@ -8,7 +8,7 @@ excerpt: Thank you for trusting me to teach you this course!
 published: draft
 slug: welcome
 start: April 17, 2023
-section: Intro
+section: Welcome and Resources
 title: Welcome
 weight: 1
 videoCloudinary: https://media.codingcat.dev/video/upload/v1702156346/main-codingcatdev-photo/courses/sveltekit-firebase/sveltekit-firebase-welcome/welcome.mp4
