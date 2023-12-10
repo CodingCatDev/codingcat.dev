@@ -3,7 +3,7 @@ type: lesson
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702162145/main-codingcatdev-photo/courses/sveltekit-firebase/sveltekit-firebase-resources/sveltekit-firebase-resources.png
+cover: https://media.codingcat.dev/video/upload/v1702220205/main-codingcatdev-photo/courses/sveltekit-firebase/sveltekit-firebase-resources/sveltekit-firebase-resources.mp4
 excerpt: Resources and links for the course.
 published: draft
 slug: welcome
