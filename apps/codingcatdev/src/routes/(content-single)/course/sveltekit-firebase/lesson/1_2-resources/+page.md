@@ -5,6 +5,7 @@ authors:
 cloudinary_convert: false
 cover: https://media.codingcat.dev/video/upload/v1702220205/main-codingcatdev-photo/courses/sveltekit-firebase/sveltekit-firebase-resources/sveltekit-firebase-resources.mp4
 excerpt: Resources and links for the course.
+locked: false
 published: draft
 slug: welcome
 start: April 17, 2023
