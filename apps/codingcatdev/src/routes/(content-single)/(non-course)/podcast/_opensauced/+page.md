@@ -3,9 +3,9 @@ type: podcast
 authors:
   - alex-patterson
   - brittney-postma
-episode:
+episode: 25
 recording_date: Nov 17, 2023 9:00 AM
-season:
+season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
@@ -18,7 +18,7 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'bekah-hawrot-weigel', name: 'Pick 1', site: 'https://codingcat.dev' },
+    { author: 'bekah-hawrot-weigel', name: 'Say My Name', site: 'https://saymyname.how/?ref=producthunt' },
     { author: 'alex-patterson', name: 'Fly.io Postgres', site: 'https://fly.io/docs/postgres/' },
     {
       author: 'brittney-postma',
@@ -32,7 +32,7 @@ sponsors:
 spotify:
 start: Jan 1, 2024
 title: 'OpenSauced: Your fast track to open source'
-youtube:
+youtube: https://youtu.be/SF0ddLVRcS4
 ---
 
 In the dynamic realm of software development, open source projects have emerged as a driving force behind innovation and collaboration. OpenSauced, a pioneering platform, empowers developers to seamlessly navigate the open source landscape, fostering meaningful contributions and enriching their professional journeys. Or is it just about pizza 🤷‍♂️, I have no idea that is why [BekahHW](/guest/bekah-hawrot-weigel) is here to explain it all to us!
