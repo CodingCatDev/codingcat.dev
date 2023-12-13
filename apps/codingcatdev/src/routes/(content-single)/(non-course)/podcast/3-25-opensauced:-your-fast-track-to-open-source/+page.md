@@ -34,7 +34,7 @@ slug: 3-25-opensauced:-your-fast-track-to-open-source
 sponsors:
   - storyblok
 spotify: https://open.spotify.com/episode/64UqMEumMd8ZuwVsfuONMo?si=aaacd5f36a7c4a2c
-start: Jan 1, 2024
+start: Dec 13, 2024
 title: 'OpenSauced: Your fast track to open source'
 youtube: https://youtu.be/SF0ddLVRcS4
 ---
