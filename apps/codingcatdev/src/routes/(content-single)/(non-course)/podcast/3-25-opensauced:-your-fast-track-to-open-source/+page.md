@@ -18,7 +18,11 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'bekah-hawrot-weigel', name: 'Say My Name', site: 'https://saymyname.how/?ref=producthunt' },
+    {
+      author: 'bekah-hawrot-weigel',
+      name: 'Say My Name',
+      site: 'https://saymyname.how/?ref=producthunt'
+    },
     { author: 'alex-patterson', name: 'Fly.io Postgres', site: 'https://fly.io/docs/postgres/' },
     {
       author: 'brittney-postma',
@@ -26,10 +30,10 @@ picks:
       site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)'
     }
   ]
-slug: _opensauced
+slug: 3-25-opensauced:-your-fast-track-to-open-source
 sponsors:
   - storyblok
-spotify:
+spotify: https://open.spotify.com/episode/64UqMEumMd8ZuwVsfuONMo?si=aaacd5f36a7c4a2c
 start: Jan 1, 2024
 title: 'OpenSauced: Your fast track to open source'
 youtube: https://youtu.be/SF0ddLVRcS4
