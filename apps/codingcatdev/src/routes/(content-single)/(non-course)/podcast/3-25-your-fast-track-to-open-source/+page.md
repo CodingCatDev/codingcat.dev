@@ -30,7 +30,7 @@ picks:
       site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)'
     }
   ]
-slug: 3-25-opensauced:-your-fast-track-to-open-source
+slug: 3-25-your-fast-track-to-open-source
 sponsors:
   - storyblok
 spotify: https://open.spotify.com/episode/64UqMEumMd8ZuwVsfuONMo?si=aaacd5f36a7c4a2c
