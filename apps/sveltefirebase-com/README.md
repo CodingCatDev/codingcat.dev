@@ -1,4 +1,6 @@
-# create-svelte
+# SvelteKit with Firebase sveltefirebase.com
+
+You can also go pro on [CodingCat.dev](https://codingcat.dev/login).
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
