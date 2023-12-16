@@ -1,5 +1,5 @@
 <script>
-	import Video from '$lib/components/content/Video.svelte';
+	import YouTube from '$lib/components/content/YouTube.svelte';
 	import { ArrowRight, ArrowTopRightOnSquare } from '@steeze-ui/heroicons';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import CodeSvg from '../(home-campaign)/CodeSvg.svelte';
@@ -54,7 +54,7 @@
 						<div class="relative aspect-video">
 							{#if videoVisible}
 								<div in:fade={{ delay: 500, duration: 300 }}>
-									<Video class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
+									<YouTube class="rounded-2xl" src="https://youtu.be/sp7qvtvCFv8" title="Svelte" />
 								</div>
 							{/if}
 						</div>

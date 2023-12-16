@@ -14,7 +14,7 @@ youtube: https://youtu.be/w3smSGP4w1M
 ---
 
 <script lang="ts">
-	import Video from '$lib/components/content/Video.svelte'
+	import YouTube from '$lib/components/content/YouTube.svelte'
 	import Shorts from '$lib/components/content/Shorts.svelte'
 </script>
 
@@ -87,13 +87,13 @@ Angular component testing is an important part of developing Angular application
 
 ## Shorts
 
-<Video src="https://youtube.com/shorts/jum4EQkvr2E" title="Beat the Winter Blues and Boost Your Productivity with Simple Changes" />
-<Video src="https://youtube.com/shorts/oUz4Dg6bfCM" title="Injury Forces Me to Give Up Working Out My Mental Struggle" />
-<Video src="https://youtube.com/shorts/OnXj8czngfM" title="Mastering my Fitness Routine A WellStructured Gym Week" />
-<Video src="https://youtube.com/shorts/vgeDC6VOhOE" title="Revolutionizing Time Zones A World United by a Single Time" />
-<Video src="https://youtube.com/shorts/i4ekWDkOmt4" title="Unbelievable Opportunity Google Sends Me to Singapore for Creators Conference" />
-<Video src="https://youtube.com/shorts/yiVoxYL69rI" title="The versatility of Angular Testing maintenance and love for the framework" />
-<Video src="https://youtube.com/shorts/x968CKBoKbY" title="Unleashing Angular The Exciting Update Revealing its Natural Learning Curve" />
-<Video src="https://youtube.com/shorts/ZiDT55SOk2c" title="Unlock Your Days Potential Conquer Challenges First for Maximum Success" />
-<Video src="https://youtube.com/shorts/z5wS0YNtwsI" title="Unleashing the Power of Angular Exploring Exciting New Changes" />
-<Video src="https://youtube.com/shorts/MADkeUFuXhE" title="Angular's Scully The Missing Link for Angular Web Development?" />
+<YouTube src="https://youtube.com/shorts/jum4EQkvr2E" title="Beat the Winter Blues and Boost Your Productivity with Simple Changes" />
+<YouTube src="https://youtube.com/shorts/oUz4Dg6bfCM" title="Injury Forces Me to Give Up Working Out My Mental Struggle" />
+<YouTube src="https://youtube.com/shorts/OnXj8czngfM" title="Mastering my Fitness Routine A WellStructured Gym Week" />
+<YouTube src="https://youtube.com/shorts/vgeDC6VOhOE" title="Revolutionizing Time Zones A World United by a Single Time" />
+<YouTube src="https://youtube.com/shorts/i4ekWDkOmt4" title="Unbelievable Opportunity Google Sends Me to Singapore for Creators Conference" />
+<YouTube src="https://youtube.com/shorts/yiVoxYL69rI" title="The versatility of Angular Testing maintenance and love for the framework" />
+<YouTube src="https://youtube.com/shorts/x968CKBoKbY" title="Unleashing Angular The Exciting Update Revealing its Natural Learning Curve" />
+<YouTube src="https://youtube.com/shorts/ZiDT55SOk2c" title="Unlock Your Days Potential Conquer Challenges First for Maximum Success" />
+<YouTube src="https://youtube.com/shorts/z5wS0YNtwsI" title="Unleashing the Power of Angular Exploring Exciting New Changes" />
+<YouTube src="https://youtube.com/shorts/MADkeUFuXhE" title="Angular's Scully The Missing Link for Angular Web Development?" />

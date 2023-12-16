@@ -26,7 +26,7 @@ youtube: https://youtube.com/live/Yy0XJP9ReJk?feature=share
 ---
 
 <script lang="ts">
-	import Video from '$lib/components/content/Video.svelte'
+	import YouTube from '$lib/components/content/YouTube.svelte'
 	import Shorts from '$lib/components/content/Shorts.svelte'
 </script>
 

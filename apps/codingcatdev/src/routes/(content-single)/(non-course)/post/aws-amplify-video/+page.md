@@ -154,7 +154,7 @@ class VideoPlayer extends React.Component {
     return (
       <div>
         <div data-vjs-player>
-          <video
+          <YouTube
             ref={(node) => {
               this.videoNode = node;
             }}
