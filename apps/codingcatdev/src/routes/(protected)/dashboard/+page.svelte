@@ -31,7 +31,7 @@
 				{/if}
 			</div>
 			<DashboardNewFeatured {data} />
-			<Purchases {data} />
+			<Purchases />
 			<DashboardComingSoon {data} />
 			{#if $user?.uid}
 				<DashboardBookmarks {data} />

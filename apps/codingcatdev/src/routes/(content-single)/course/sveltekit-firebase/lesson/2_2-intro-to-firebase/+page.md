@@ -6,11 +6,11 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1702256346/main-codingcatdev-photo/courses/sveltekit-firebase/intro-to-firebase/sveltekit-firebase-intro-firebase.png
 excerpt: What is Firebase?
 locked: false
-published: draft
+published: published
 slug: intro-to-firebase
-start: April 17, 2023
+start: Dec 15, 2023
 title: Intro to Firebase
-weight: 4
+weight: 2.2
 videoCloudinary:
 youtube: https://youtu.be/A74_vDWTF0E
 ---

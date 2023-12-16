@@ -22,7 +22,7 @@
 			<div class="flex flex-col w-full jSustify-center items-start gap-4">
 				<AccountCard {data} />
 				<MembershipCard {data} />
-				<Purchases {data} />
+				<Purchases />
 				{#if $user?.uid}
 					<UserSettings {data} />
 				{/if}
