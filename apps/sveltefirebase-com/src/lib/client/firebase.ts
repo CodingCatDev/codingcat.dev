@@ -131,6 +131,7 @@ export const addSubscription = async (price: string, uid: string) => {
 	return await addDoc(collection(userDoc, 'checkout_sessions'), {
 		mode: 'payment',
 		price,
+		allow_promotion_codes: true,
 		success_url: `${window.location.href}/welcome`,
 		cancel_url: window.location.href
 	});
