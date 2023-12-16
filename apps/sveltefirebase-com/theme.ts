@@ -1,6 +1,6 @@
 import type { CustomThemeConfig } from '@skeletonlabs/tw-plugin';
 
-export const astroCustomTheme: CustomThemeConfig = {
+export const custom: CustomThemeConfig = {
 	name: 'custom-theme',
 	properties: {
 		// =~= Theme Properties =~=

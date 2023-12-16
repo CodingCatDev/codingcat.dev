@@ -11,10 +11,10 @@
 		Globe
 	} from '@steeze-ui/radix-icons';
 	import { Tiktok, Youtube } from '@steeze-ui/simple-icons';
-	import BuyButton from '$lib/components/BuyButton.svelte';
+	import BuyButton from './BuyButton.svelte';
 </script>
 
-<main class="bg-gradient-to-r from-primary-600 via-primary-500 via-90% to-secondary-500 to-97%">
+<main>
 	<div class="px-10">
 		<div
 			class="relative flex flex-col p-2 pt-20 text-white md:items-center md:text-center overflow-x-clip"
@@ -22,18 +22,18 @@
 			<img
 				src="/favicon.svg"
 				class="w-[80%] max-w-2xl absolute opacity-20 -top-0 invisible md:visible z-0"
-				alt="Astro Icon"
+				alt="Svelte Icon"
 			/>
 
 			<div class="flex flex-col items-center">
 				<h1
 					class="max-w-6xl mx-auto mb-4 text-5xl font-bold tracking-wider md:text-6xl lg:text-8xl md:mb-6"
 				>
-					<span>Build Purrfect <span class="block">Websites with Astro!</span></span>
+					<span>Build Purrfect <span class="block">Websites with Svelte!</span></span>
 				</h1>
 				<p class="max-w-4xl text-xl italic font-light tracking-wider text-gray-200 md:text-2xl">
 					<span>
-						Learn to build Purrfect websites with Astro, the web framework that scales with you!
+						Learn to build Purrfect websites with Svelte, the web framework that scales with you!
 					</span>
 				</p>
 			</div>
@@ -79,17 +79,22 @@
 	<div class="w-full max-w-3xl px-10 mx-auto text-left translate-y-40">
 		<div class="relative p-4 py-6 pt-12 bg-white md:p-10 rounded-2xl">
 			<h2 class="mb-2 text-3xl font-bold text-primary-500 md:text-4xl md:mb-4">
-				Updated for Astro 3.0!
+				Updated for Svelte 5!
 			</h2>
 
 			<p class="mb-4 text-xl text-left text-gray-700 text-light">
-				This course has been been completely reworked to work with Astro 3.0
+				This course has been been completely reworked to work with Svelte 5
 			</p>
 
-			<a class="btn variant-filled-primary w-full" href="#pricing"> Start Learning </a>
+			<a
+				class="inline-block w-full px-8 py-4 mb-2 text-sm text-center text-white transition-transform duration-200 rounded-lg bg-primary-500 sm:text-xl md:text-2xl hover:scale-105"
+				href="#pricing"
+			>
+				Start Learning
+			</a>
 		</div>
 	</div>
-	<section class="py-20 bg-primary-500 bg-opacity-60" id="overview">
+	<section class="py-20 bg-primary-600" id="overview">
 		<div
 			class="grid items-center justify-between max-w-6xl grid-cols-1 px-10 mx-auto mt-40 text-center sm:grid-cols-1 lg:grid-cols-3 gap-y-24 lg:gap-y-4"
 		>
@@ -193,7 +198,7 @@
 	</section>
 	<section
 		id="topics"
-		class="relative px-8 py-24 text-white bg-primary-500 bg-opacity-60 lg:py-40 overflow-x-clip"
+		class="relative px-8 py-24 text-white bg-primary-600 lg:py-40 overflow-x-clip"
 	>
 		<div class="max-w-2xl mx-auto mb-20">
 			<h2 class="text-4xl font-bold md:text-6xl text-left md:text-center mb-6 leading-[3rem]">
@@ -203,7 +208,7 @@
 			<p
 				class="max-w-2xl mx-auto mb-20 text-lg leading-relaxed tracking-wide text-left md:text-2xl md:text-center"
 			>
-				One thing you can be sure of is that we take no short-cuts! You will learn core Astro
+				One thing you can be sure of is that we take no short-cuts! You will learn core Svelte
 				concepts hands-on and in-depth.
 			</p>
 		</div>
@@ -220,7 +225,7 @@
 				<Icon src={Frame} class="w-12 h-12 my-4" theme="solid" />
 				<h3 class="mb-2 text-2xl font-bold">Static Site Generation vs Server-side Rendering</h3>
 				<p class="text-lg leading-relaxed tracking-wide opacity-90">
-					Learn about the multiple strategies Astro provides for rendering pages in the browser
+					Learn about the multiple strategies Svelte provides for rendering pages in the browser
 				</p>
 			</div>
 			<div>
@@ -235,7 +240,7 @@
 				<Icon src={Image} class="w-12 h-12 my-4" theme="solid" />
 				<h3 class="mb-2 text-2xl font-bold">Image Optimization</h3>
 				<p class="text-lg leading-relaxed tracking-wide opacity-90">
-					Use the Astro Image component to optimized images with lazy loading for faster load times
+					Use the Svelte Image component to optimized images with lazy loading for faster load times
 				</p>
 			</div>
 			<div>
@@ -257,7 +262,7 @@
 				<Icon src={Rocket} class="w-12 h-12 my-4" theme="solid" />
 				<h3 class="mb-2 text-2xl font-bold">Deploying and Hosting</h3>
 				<p class="text-lg leading-relaxed tracking-wide opacity-90">
-					Deploy and host your website with Astro and get your site live in no time
+					Deploy and host your website with Svelte and get your site live in no time
 				</p>
 			</div>
 		</div>
@@ -312,7 +317,7 @@
 			</p>
 		</div>
 	</section>
-	<section id="yourInstructor" class="px-8 pb-32 text-white bg-primary-500 bg-opacity-60 pt-60">
+	<section id="yourInstructor" class="px-8 pb-32 text-white bg-primary-600 pt-60">
 		<div class="max-w-6xl mx-auto">
 			<h2 class="mb-20 text-4xl font-bold text-center md:text-6xl lg:text-left lg:mb-4">
 				Hi, I&#39;m Alex Patterson
@@ -387,7 +392,7 @@
 			class="grid grid-cols-1 gap-y-10 lg:grid-cols-[1fr,1fr] justify-stretch items-center ml[10px] max-w-xl lg:max-w-6xl mx-auto"
 		>
 			<div class="shadow-xl lg:min-w-[500px] bg-white rounded-xl p-10 flex flex-col">
-				<h3 class="text-2xl font-bold text-center text-primary-700">Half-stack (Basic Package)</h3>
+				<h3 class="text-2xl font-bold text-center text-primary-600">Half-stack (Basic Package)</h3>
 				<p class="mb-4 text-xl text-center text-gray-500">Static Site Generation Only</p>
 				<p class="flex items-start justify-center mb-10 font-bold text-gray-700 text-7xl">
 					<span class="text-sm">US</span> $75
@@ -397,7 +402,7 @@
 					<li class="relative flex items-center text-lg text-gray-900 gap-2">
 						<span>
 							<Icon src={CheckCircled} class="w-8 h-8" theme="solid" />
-						</span> Astro Components, Integrations, and Islands
+						</span> Svelte Components, Integrations, and Islands
 					</li>
 					<li class="relative flex items-center text-lg text-gray-900 gap-2">
 						<span>
@@ -416,13 +421,16 @@
 					</li>
 				</ul>
 
-				<BuyButton />
+				<BuyButton
+					products={[{ price: 'price_1ONlQ4BRZJZU8OtitkhgDim4', id: 'prod_PC9jdJ5xQ90vXk' }]}
+					title="Half-stack (Basic Package)"
+				/>
 				<p class="mb-4 text-sm text-gray-700 text-light">*30 day money-back guarantee</p>
 			</div>
 			<div
 				class="shadow-xl lg:min-w-[500px] bg-white rounded-xl p-10 flex flex-col shadow-primary-900 border-8 border-primary-400 py-20 -ml-[10px]"
 			>
-				<h3 class="text-2xl font-bold text-center text-primary-700">
+				<h3 class="text-2xl font-bold text-center text-primary-600">
 					Full-stack (Premium Package)
 				</h3>
 				<p class="mb-4 text-xl text-center text-gray-500">
@@ -460,7 +468,10 @@
 					</li>
 				</ul>
 
-				<BuyButton />
+				<BuyButton
+					products={[{ price: 'price_1ONlQqBRZJZU8OtizR5Evn73', id: 'prod_PC9k21bMz8VfkU' }]}
+					title="Full-stack (Premium Package)"
+				/>
 				<p class="mb-4 text-sm text-gray-700 text-light">*30 day money-back guarantee</p>
 			</div>
 		</div>
@@ -529,12 +540,12 @@
 			<img
 				src="/favicon.svg"
 				class="w-[80%] max-w-2xl absolute opacity-5 left-[50%] -translate-x-1/2 -top-10"
-				alt="Astro Icon"
+				alt="Svelte Icon"
 			/>
 		</div>
 	</section>
 	<!-- <Pricing /> -->
-	<section class="relative px-8 text-white bg-primary-500 bg-opacity-60 false overflow-x-clip">
+	<section class="relative px-8 text-white bg-primary-600 false overflow-x-clip">
 		<div class="max-w-2xl mx-auto mb-20"></div>
 
 		<div class="py-20">

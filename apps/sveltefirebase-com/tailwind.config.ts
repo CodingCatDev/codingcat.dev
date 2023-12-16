@@ -2,7 +2,7 @@ import { join } from 'path';
 import type { Config } from 'tailwindcss';
 import forms from '@tailwindcss/forms';
 import { skeleton } from '@skeletonlabs/tw-plugin';
-import { astroCustomTheme } from './theme';
+import { custom } from './theme';
 
 export default {
 	darkMode: 'class',
@@ -17,7 +17,7 @@ export default {
 		forms,
 		skeleton({
 			themes: {
-				custom: [astroCustomTheme]
+				custom: [custom]
 			}
 		})
 	]

@@ -1,41 +1,22 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Modal, initializeStores, Toast } from '@skeletonlabs/skeleton';
+	initializeStores();
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
-
-	import { FirebaseApp } from 'sveltefire';
-	import { initializeApp } from 'firebase/app';
-	import { getFirestore } from 'firebase/firestore';
-	import { getStorage } from 'firebase/storage';
-	import { getAuth } from 'firebase/auth';
-
-	// Initialize Firebase
-	const app = initializeApp({
-		apiKey: 'AIzaSyC6HNoa2QaPsqnolKbeMQUd5_RR1KG_kOs',
-		authDomain: 'codingcat-dev.firebaseapp.com',
-		databaseURL: 'https://codingcat-dev.firebaseio.com',
-		projectId: 'codingcat-dev',
-		storageBucket: 'codingcat-dev.appspot.com',
-		messagingSenderId: '67840007708',
-		appId: '1:67840007708:web:cce11b8a7708056a3d89d9',
-		measurementId: 'G-S7B60EGPMJ'
-	});
-	const firestore = getFirestore(app);
-	const storage = getStorage(app);
-	const auth = getAuth(app);
 </script>
+
+<Modal />
+<Toast />
 
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar
-			background="bg-gradient-to-r from-primary-600 via-primary-500 via-90% to-secondary-500 to-97%"
-		>
+		<AppBar background="">
 			<svelte:fragment slot="lead">
 				<a
 					href="/"
@@ -78,7 +59,5 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
-	<FirebaseApp {auth} {firestore} {storage}>
-		<slot />
-	</FirebaseApp>
+	<slot />
 </AppShell>
