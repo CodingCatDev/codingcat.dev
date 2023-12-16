@@ -132,7 +132,7 @@ export const addSubscription = async (price: string, uid: string) => {
 		mode: 'payment',
 		price,
 		allow_promotion_codes: true,
-		success_url: `${window.location.href}/welcome`,
+		success_url: `${window.location.origin}/welcome`,
 		cancel_url: window.location.href
 	});
 };

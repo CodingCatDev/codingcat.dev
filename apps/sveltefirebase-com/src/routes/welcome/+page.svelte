@@ -3,7 +3,7 @@
 		class="relative flex flex-col p-2 pt-20 text-white md:items-center md:text-center overflow-x-clip"
 	>
 		<a
-			href="https://codingcat.dev/courses"
+			href="https://codingcat.dev/course/sveltekit-firebase"
 			class="flex flex-col items-center card variant-filled-primary z-10 bg-opacity-100"
 		>
 			<h1
