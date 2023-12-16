@@ -1,11 +1,10 @@
 ---
 type: guest
-cover: 'https://media.codingcat.dev/image/upload/v1682982938/main-codingcatdev-photo/podcast-guest/timbenniks'
+cover: https://media.codingcat.dev/image/upload/v1702737165/main-codingcatdev-photo/podcast-guest/timbenniks.png
 name: Tim Benniks
 published: published
 slug: tim-benniks
 start: January 1, 2000
-picks: https://www.notion.so/Astro-Build-6b385a19ec294708adc4fe80e6b0b708
 socials:
   github: https://github.com/timbenniks
   linkedin: 'https://www.linkedin.com/in/timbenniks/'
