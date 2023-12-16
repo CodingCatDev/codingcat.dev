@@ -22,6 +22,7 @@ export interface Content {
 }
 
 export interface Course extends Content {
+	product?: string[];
 	lesson?: Lesson[];
 }
 export interface Lesson extends Content {

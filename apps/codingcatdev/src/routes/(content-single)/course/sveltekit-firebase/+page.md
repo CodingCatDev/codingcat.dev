@@ -6,6 +6,9 @@ cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1702159174/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebaseCourse.png
 excerpt: 'Learn how to use SvelteKit and Firebase to build high-performance, scalable web applications.'
 published: draft
+product:
+  - 'prod_PC9jdJ5xQ90vXk'
+  - 'prod_PC9k21bMz8VfkU'
 slug: sveltekit-firebase
 start: Jan 1, 2024
 title: 'Learn SvelteKit and Firebase: The Ultimate Guide'
