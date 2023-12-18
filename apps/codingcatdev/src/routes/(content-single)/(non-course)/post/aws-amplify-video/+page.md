@@ -3,15 +3,20 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1610334436/ccd-cloudinary/nepnvay0yphf0dgg8ci6.png
-excerpt: How to easily add Video for Livestreaming or Video on Demand to your next Amplify project.
-hashnode: https://hashnode.codingcat.dev/tutorial-aws-amplify-video
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=aws-amplify-video&_id=f6cce8731d6e474da666659ac07f28c6
+cover: >-
+  https://media.codingcat.dev/image/upload/v1610334436/ccd-cloudinary/nepnvay0yphf0dgg8ci6.png
+excerpt: >-
+  How to easily add Video for Livestreaming or Video on Demand to your next
+  Amplify project.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-aws-amplify-video'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=aws-amplify-video&_id=f6cce8731d6e474da666659ac07f28c6
 published: published
 slug: aws-amplify-video
-start: May 31, 2022
+start: 'May 31, 2022'
 title: AWS Amplify Video
-youtube: https://youtu.be/vM_YoZbLQQ0
+youtube: 'https://youtu.be/vM_YoZbLQQ0'
+devto: 'https://dev.to/codingcatdev/aws-amplify-video-1dk9-temp-slug-1827245'
 ---
 
 > AWS Account is required for this lesson. You may (and probably will) incur fees associated with these activities. Livestreaming is VERY expensive so be careful!

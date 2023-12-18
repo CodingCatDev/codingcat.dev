@@ -3,15 +3,18 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1683910220/main-codingcatdev-photo/Firebase-App-Check.png'
-devto:
-excerpt: Learn how to add Firebase App Check using reCAPTCHA v3, to your next website and block those malicious requests!
-hashnode:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1683910220/main-codingcatdev-photo/Firebase-App-Check.png
+devto: 'https://dev.to/codingcatdev/firebase-app-check-1meb-temp-slug-7012666'
+excerpt: >-
+  Learn how to add Firebase App Check using reCAPTCHA v3, to your next website
+  and block those malicious requests!
+hashnode: null
 published: published
 slug: firebase-app-check-web
-start: May 12, 2023
+start: 'May 12, 2023'
 title: Firebase App Check
-youtube: https://youtu.be/bpTw4aMxCU8
+youtube: 'https://youtu.be/bpTw4aMxCU8'
 ---
 
 ## Adding App Check
