@@ -57,14 +57,13 @@ for await (const file of g) {
 			// Get new devto url and update
 			if (response.status === 201) {
 				const json = await response.json();
-				console.log('data from devto', json);
 				if (json?.url) {
 					console.log('Updating', file, { devto: json.url });
 					const newMdFile = matter.stringify(content, {
 						...data,
 						devto: json.url
 					});
-					fs.writeFileSync(file, newMdFile, { encoding: 'utf8', flag: 'r' });
+					fs.writeFileSync(file, newMdFile, { encoding: 'utf8' });
 				}
 			}
 		} catch (error) {
