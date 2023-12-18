@@ -26,10 +26,10 @@ for await (const file of g) {
 	const mdFile = fs.readFileSync(file, { encoding: 'utf8', flag: 'r' });
 	const { data, content } = await matter(mdFile); // data has frontmatter, code is html
 	const fm = data;
-	if (!fm) continue; // Skip if missing frontmattter
+	if (!fm) continue;
+	// TODO: We might need to add a check on cononical if this page is already in dev.to
 	if (
 		fm?.slug &&
-		fm?.slug === 'the-myth-of-just-press-record-in-podcasting' &&
 		fm?.title &&
 		fm?.cover &&
 		fm?.published === 'published' &&

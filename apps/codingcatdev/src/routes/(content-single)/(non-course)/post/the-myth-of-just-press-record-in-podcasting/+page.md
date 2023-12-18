@@ -6,7 +6,7 @@ cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1702768286/main-codingcatdev-photo/mythofjustpressrecord-blue.png
 devto: >-
-  https://dev.to/codingcatdev/the-myth-of-just-press-record-in-podcasting-20lm-temp-slug-30776
+  https://dev.to/codingcatdev/the-myth-of-just-press-record-in-podcasting-3gek
 excerpt: Databases that work well with serverless applications in 2023
 hashnode: null
 published: published
