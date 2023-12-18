@@ -56,16 +56,17 @@ for await (const file of g) {
 	// TODO: We might need to add a check on cononical if this page is already in dev.to
 	if (
 		fm?.slug &&
+		fm.slug === 'angular-17-cypress-testing' &&
 		fm?.title &&
 		fm?.cover &&
 		fm?.published === 'published' &&
 		new Date(fm?.start) < new Date() &&
-		!fm?.hasnode
+		!fm?.hashnode
 	) {
-		console.log('Adding', { slug: fm?.slug, hashnode: fm?.hasnode });
+		console.log('Adding', { slug: fm?.slug, hashnode: fm?.hashnode });
 
 		try {
-			console.log('addArticle to hasnode');
+			console.log('addArticle to hashnode');
 
 			// const response = await addArticle(
 
@@ -107,15 +108,16 @@ ${content}`;
 			// Get new devto url and update
 			if (response.status === 200) {
 				const json = await response.json();
+				console.log('hashnode url', json?.data?.createPublicationStory?.post?.slug);
 				const hashnodeSlug = json?.data?.createPublicationStory?.post?.slug;
 
 				if (!hashnodeSlug) {
-					console.error('hasnode url missing');
+					console.error('hashnode url missing');
 					continue;
 				}
 
 				if (hashnodeSlug) {
-					console.log('Updating', file, { hashnode: json.url });
+					console.log('Updating', file, { hashnode: hashnodeSlug });
 					const newMdFile = matter.stringify(content, {
 						...data,
 						hashnode: hashnodeSlug
