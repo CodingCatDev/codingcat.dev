@@ -10,7 +10,7 @@
 
 <form action="https://api.web3forms.com/submit" method="POST" class="flex flex-col gap-2 p-4 card">
 	<input type="hidden" name="access_key" value="43c66d05-bf68-4708-a58c-8ac5da1fc4a1" />
-	<input type="hidden" name="subject" value="CodingCat Sponsorship Request" />
+	<input type="hidden" name="subject" value="CodingCat.dev Sticker Request" />
 
 	<label class="label"
 		><span>Name</span>
