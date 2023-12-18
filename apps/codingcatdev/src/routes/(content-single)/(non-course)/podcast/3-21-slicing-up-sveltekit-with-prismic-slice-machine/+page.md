@@ -12,7 +12,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1695832306/main-codingcatdev-photo/3.21-slicemachine.png
-devto: null
+devto: https://dev.to/codingcatdev/slicing-up-sveltekit-with-prismics-new-slice-machine-1bpg
 excerpt: >-
   Sam joins the podcast to talk about his journey to Prismic and to give an in
   depth look at Slice Machine.

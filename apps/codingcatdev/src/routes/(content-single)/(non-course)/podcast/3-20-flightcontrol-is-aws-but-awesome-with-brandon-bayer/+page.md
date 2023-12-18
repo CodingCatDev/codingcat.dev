@@ -12,7 +12,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1695832306/main-codingcatdev-photo/3.20-flightcontrol.png
-devto: null
+devto: https://dev.to/codingcatdev/flightcontrol-is-aws-but-awesome-with-brandon-bayer-2m0o
 excerpt: With Flightcontrol you can forget the pain of AWS.
 guests:
   - brandon-bayer

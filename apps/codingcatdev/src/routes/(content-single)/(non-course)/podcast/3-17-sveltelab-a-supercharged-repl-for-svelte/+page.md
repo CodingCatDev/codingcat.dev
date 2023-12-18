@@ -12,7 +12,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1683829164/main-codingcatdev-photo/SvelteLab.png
-devto: null
+devto: https://dev.to/codingcatdev/sveltelab-a-supercharged-repl-for-svelte-2im9
 excerpt: >-
   SvelteLab is a powerful development environment for Svelte, a modern
   JavaScript framework for building user interfaces.

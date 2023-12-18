@@ -11,7 +11,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1687891614/main-codingcatdev-photo/PrompEngineering.png
-devto: null
+devto: https://dev.to/codingcatdev/prompt-engineering-with-chatgpt-1a77
 excerpt: >-
   Prompt engineering is the process of crafting effective prompts for large
   language models (LLMs) like ChatGPT. A well-crafted prompt can help an LLM

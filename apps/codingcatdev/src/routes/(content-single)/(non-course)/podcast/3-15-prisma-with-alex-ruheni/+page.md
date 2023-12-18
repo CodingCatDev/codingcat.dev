@@ -11,7 +11,7 @@ chapters_done: true
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1682536815/main-codingcatdev-photo/Prisma-with-Alex-Ruheni.jpg
-devto: ''
+devto: https://dev.to/codingcatdev/315-prisma-with-alex-ruheni-3jhi
 excerpt: >-
   Alex Ruheni joins us to show us the great things you can do with Prisma and
   walks Alex through live coding examples.
