@@ -3,15 +3,17 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1684351400/main-codingcatdev-photo/2023-serverless-databases.png'
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1684351400/main-codingcatdev-photo/2023-serverless-databases.png
+devto: >-
+  https://dev.to/codingcatdev/2023-databases-for-serverless-applications-4na7-temp-slug-9257656
 excerpt: Databases that work well with serverless applications in 2023
-hashnode:
+hashnode: null
 published: published
 slug: 2023-databases-for-serverless
-start: June 7, 2023
-title: '2023 Databases for Serverless Applications'
-youtube:
+start: 'June 7, 2023'
+title: 2023 Databases for Serverless Applications
+youtube: null
 ---
 
 So what's the deal with serverless and edge compute? Well, basically, they're ways of running applications without having to worry about managing servers. This is great for developers because it means they can focus on building cool stuff instead of worrying about infrastructure.
