@@ -4,39 +4,38 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 25
-recording_date: Nov 17, 2023 9:00 AM
+recording_date: 'Nov 17, 2023 9:00 AM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1699502152/main-codingcatdev-photo/3.25-opensauced.png
-devto:
-excerpt: 'OpenSauced is a platform that helps developers find, contribute to, and learn about open source projects.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1699502152/main-codingcatdev-photo/3.25-opensauced.png
+devto: 'https://dev.to/codingcatdev/opensauced-your-fast-track-to-open-source-a77'
+excerpt: >-
+  OpenSauced is a platform that helps developers find, contribute to, and learn
+  about open source projects.
 guests:
   - bekah-hawrot-weigel
-hashnode:
+hashnode: null
 picks:
-  [
-    {
-      author: 'bekah-hawrot-weigel',
-      name: 'Say My Name',
-      site: 'https://saymyname.how/?ref=producthunt'
-    },
-    { author: 'alex-patterson', name: 'Fly.io Postgres', site: 'https://fly.io/docs/postgres/' },
-    {
-      author: 'brittney-postma',
-      name: 'Loki',
-      site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)'
-    }
-  ]
+  - author: bekah-hawrot-weigel
+    name: Say My Name
+    site: 'https://saymyname.how/?ref=producthunt'
+  - author: alex-patterson
+    name: Fly.io Postgres
+    site: 'https://fly.io/docs/postgres/'
+  - author: brittney-postma
+    name: Loki
+    site: 'https://en.wikipedia.org/wiki/Loki_(TV_series)'
 slug: 3-25-your-fast-track-to-open-source
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/64UqMEumMd8ZuwVsfuONMo?si=aaacd5f36a7c4a2c
-start: Dec 13, 2023
+spotify: 'https://open.spotify.com/episode/64UqMEumMd8ZuwVsfuONMo?si=aaacd5f36a7c4a2c'
+start: 'Dec 13, 2023'
 title: 'OpenSauced: Your fast track to open source'
-youtube: https://youtu.be/SF0ddLVRcS4
+youtube: 'https://youtu.be/SF0ddLVRcS4'
 ---
 
 In the dynamic realm of software development, open source projects have emerged as a driving force behind innovation and collaboration. OpenSauced, a pioneering platform, empowers developers to seamlessly navigate the open source landscape, fostering meaningful contributions and enriching their professional journeys. Or is it just about pizza 🤷‍♂️, I have no idea that is why [BekahHW](/guest/bekah-hawrot-weigel) is here to explain it all to us!
