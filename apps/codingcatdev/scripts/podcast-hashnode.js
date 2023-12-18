@@ -112,6 +112,10 @@ ${content}`;
 			// Get new devto url and update
 			if (response.status === 200) {
 				const json = await response.json();
+				if (json?.errors?.length) {
+					console.error(JSON.stringify(json.errors));
+					continue;
+				}
 				console.log('hashnode url', json?.data?.createPublicationStory?.post?.slug);
 				const hashnodeSlug = json?.data?.createPublicationStory?.post?.slug;
 

@@ -56,6 +56,7 @@ for await (const file of g) {
 	// TODO: We might need to add a check on cononical if this page is already in dev.to
 	if (
 		fm?.slug &&
+		fm.slug === 'angular-17-cypress-testing' &&
 		fm?.title &&
 		fm?.cover &&
 		fm?.published === 'published' &&
@@ -107,6 +108,11 @@ ${content}`;
 			// Get new devto url and update
 			if (response.status === 200) {
 				const json = await response.json();
+				if (json?.errors?.length) {
+					console.error(JSON.stringify(json.errors));
+					continue;
+				}
+
 				console.log('hashnode url', json?.data?.createPublicationStory?.post?.slug);
 				const hashnodeSlug = json?.data?.createPublicationStory?.post?.slug;
 
