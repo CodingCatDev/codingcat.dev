@@ -21,7 +21,7 @@ guests:
   - ankita-kulkarni
   - james-q-quick
   - simon-grimm
-hashnode: null
+hashnode: podcast-3-12-how-to-become-a-full-time-content-creator
 picks:
   - author: alex-patterson
     name: Monaco Editor

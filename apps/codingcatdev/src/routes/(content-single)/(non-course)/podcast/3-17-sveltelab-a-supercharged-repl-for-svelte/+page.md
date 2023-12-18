@@ -4,42 +4,47 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 17
-recording_date: May 12, 2023 9:00 AM
+recording_date: 'May 12, 2023 9:00 AM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1683829164/main-codingcatdev-photo/SvelteLab.png
-devto:
-excerpt: SvelteLab is a powerful development environment for Svelte, a modern JavaScript framework for building user interfaces.
+cover: >-
+  https://media.codingcat.dev/image/upload/v1683829164/main-codingcatdev-photo/SvelteLab.png
+devto: null
+excerpt: >-
+  SvelteLab is a powerful development environment for Svelte, a modern
+  JavaScript framework for building user interfaces.
 guests:
   - antonio-sarcevic
   - paolo-ricciuti
-hashnode:
+hashnode: podcast-3-17-sveltelab-a-supercharged-repl-for-svelte
 picks:
-  [
-    { author: 'antonio-sarcevic', name: 'Zelda', site: 'https://www.zelda.com/' },
-    {
-      author: 'paolo-ricciuti',
-      name: 'BlueSky',
-      site: 'https://staging.bsky.app/profile/ricciuti.me'
-    },
-    { author: 'alex-patterson', name: 'Google I/O Adventure', site: 'https://io.google/2023/' },
-    {
-      author: 'brittney-postma',
-      name: 'Citadel',
-      site: 'https://www.amazon.com/gp/video/detail/B0B8TPD38B/ref=atv_tv_hom_c_8zC58H_brws_5_1?jic=8%7CEgRzdm9k'
-    },
-    { author: 'brittney-postma', name: 'Svelte Hackathon Winners', site: 'hack.sveltesociety.dev' }
-  ]
+  - author: antonio-sarcevic
+    name: Zelda
+    site: 'https://www.zelda.com/'
+  - author: paolo-ricciuti
+    name: BlueSky
+    site: 'https://staging.bsky.app/profile/ricciuti.me'
+  - author: alex-patterson
+    name: Google I/O Adventure
+    site: 'https://io.google/2023/'
+  - author: brittney-postma
+    name: Citadel
+    site: >-
+      https://www.amazon.com/gp/video/detail/B0B8TPD38B/ref=atv_tv_hom_c_8zC58H_brws_5_1?jic=8%7CEgRzdm9k
+  - author: brittney-postma
+    name: Svelte Hackathon Winners
+    site: hack.sveltesociety.dev
 slug: 3-17-sveltelab-a-supercharged-repl-for-svelte
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/4b4pdhugoBBrMAIsQin1WS?si=-rVFiJ7JQEiLr1oe_LubCw
-start: June 21, 2023
+spotify: >-
+  https://open.spotify.com/episode/4b4pdhugoBBrMAIsQin1WS?si=-rVFiJ7JQEiLr1oe_LubCw
+start: 'June 21, 2023'
 title: SvelteLab a supercharged REPL for Svelte
-youtube: https://youtu.be/S1iakhstHlc
+youtube: 'https://youtu.be/S1iakhstHlc'
 ---
 
 [Svelte](https://svelte.dev/) is a modern JavaScript framework for building user interfaces. It is known for its reactivity, performance, and small bundle size. SvelteLab is a powerful development environment for Svelte that provides a range of features to enhance your development experience.

@@ -18,7 +18,7 @@ excerpt: >-
   about open source projects.
 guests:
   - bekah-hawrot-weigel
-hashnode: null
+hashnode: podcast-3-25-your-fast-track-to-open-source
 picks:
   - author: bekah-hawrot-weigel
     name: Say My Name

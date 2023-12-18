@@ -3,26 +3,29 @@ type: podcast
 authors:
   - alex-patterson
 episode: 1
-recording_date: September 10, 2023 6:00 PM
+recording_date: 'September 10, 2023 6:00 PM'
 season: 1
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700091644/main-codingcatdev-photo/1.1.png
-devto:
-excerpt: Join Jordan and Alex as they try to get Angular 17 SSG working and talk about SSR.
+cover: >-
+  https://media.codingcat.dev/image/upload/v1700091644/main-codingcatdev-photo/1.1.png
+devto: null
+excerpt: >-
+  Join Jordan and Alex as they try to get Angular 17 SSG working and talk about
+  SSR.
 guests:
   - jordan-powell
-hashnode:
-picks:
+hashnode: podcast-cwcc-1-1-angular-17
+picks: null
 slug: cwcc-1-1-angular-17
 sponsors:
   - storyblok
-spotify:
-start: Nov 11, 2023
+spotify: null
+start: 'Nov 11, 2023'
 title: 'Angular 17, does SSR/SSG really work?'
-youtube: https://youtube.com/live/Yy0XJP9ReJk?feature=share
+youtube: 'https://youtube.com/live/Yy0XJP9ReJk?feature=share'
 ---
 
 <script lang="ts">

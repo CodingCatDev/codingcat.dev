@@ -3,34 +3,37 @@ type: podcast
 authors:
   - alex-patterson
 episode: 18
-recording_date: June 15, 2023 2:15 PM
+recording_date: 'June 15, 2023 2:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1687891614/main-codingcatdev-photo/PrompEngineering.png
-devto:
-excerpt: 'Prompt engineering is the process of crafting effective prompts for large language models (LLMs) like ChatGPT. A well-crafted prompt can help an LLM generate more relevant, informative, and creative outputs.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1687891614/main-codingcatdev-photo/PrompEngineering.png
+devto: null
+excerpt: >-
+  Prompt engineering is the process of crafting effective prompts for large
+  language models (LLMs) like ChatGPT. A well-crafted prompt can help an LLM
+  generate more relevant, informative, and creative outputs.
 guests:
   - vagish-vela
-hashnode:
+hashnode: podcast-3-18-prompt-engineering-with-chatgpt
 picks:
-  [
-    { author: 'vagish-vela', name: 'Alien', site: 'https://www.imdb.com/title/tt0078748/' },
-    {
-      author: 'alex-patterson',
-      name: 'Spider-Man Across the Spider-Verse',
-      site: 'https://www.imdb.com/title/tt9362722/?ref_=nv_sr_srsg_0_tt_8_nm_0_q_spider'
-    }
-  ]
+  - author: vagish-vela
+    name: Alien
+    site: 'https://www.imdb.com/title/tt0078748/'
+  - author: alex-patterson
+    name: Spider-Man Across the Spider-Verse
+    site: 'https://www.imdb.com/title/tt9362722/?ref_=nv_sr_srsg_0_tt_8_nm_0_q_spider'
 slug: 3-18-prompt-engineering-with-chatgpt
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/2hhhWw0MwPKsoSK7iT5R0N?si=1Hvdzq4kR8GShwQ7vrL0Ig
-start: June 21, 2023
-title: 'Prompt Engineering with ChatGPT'
-youtube: https://youtu.be/hxbqf4cnfSk
+spotify: >-
+  https://open.spotify.com/episode/2hhhWw0MwPKsoSK7iT5R0N?si=1Hvdzq4kR8GShwQ7vrL0Ig
+start: 'June 21, 2023'
+title: Prompt Engineering with ChatGPT
+youtube: 'https://youtu.be/hxbqf4cnfSk'
 ---
 
 In the realm of artificial intelligence, large language models (LLMs) have emerged as powerful tools capable of generating human-quality text, translating languages, writing various creative content formats, and answering questions in an informative way. [ChatGPT](https://chat.openai.com/auth/login), a recently introduced LLM from [OpenAI](https://openai.com/), has garnered considerable attention for its versatility and ability to engage in open-ended, fluent conversations. However, harnessing the full potential of ChatGPT and other LLMs requires a crucial skill known as prompt engineering.

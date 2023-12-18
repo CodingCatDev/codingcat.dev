@@ -22,6 +22,7 @@ title: Live Coding with the Amplify UI team
 youtube: 'https://youtu.be/weT3YwBZt-k'
 devto: >-
   https://dev.to/codingcatdev/live-coding-with-the-amplify-ui-team-1596-temp-slug-3596967
+hashnode: post-cwcc-0-8-amplify-ui
 ---
 
 ## AWS Amplify UI: Build UI Fast with Amplify on React

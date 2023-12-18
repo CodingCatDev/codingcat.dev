@@ -18,7 +18,7 @@ excerpt: >-
   new features.
 guests:
   - patricio-vargas
-hashnode: null
+hashnode: podcast-3-19-angular-16-hydration-signals-vite
 picks:
   - author: patricio-vargas
     name: Tulum in the City

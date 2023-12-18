@@ -4,25 +4,26 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 6
-recording_date: August 17, 2022 6:00 PM
+recording_date: 'August 17, 2022 6:00 PM'
 season: 0
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1657910422/main-codingcatdev-photo/Remix-with-KentCDodds.jpg
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1657910422/main-codingcatdev-photo/Remix-with-KentCDodds.jpg
+devto: null
 excerpt: Kent C. Dodds walks us through an Epic reveal of Remix
 guests:
   - kent-c-dodds
-hashnode:
-picks:
+hashnode: podcast-cwcc-0-6-remix-with-kent-c-dodds
+picks: null
 slug: cwcc-0-6-remix-with-kent-c-dodds
-sponsors:
-spotify:
-start: August 17, 2022
-title: 'Remix with Kent C. Dodds'
-youtube: https://youtu.be/ZWVYJOclIXY
+sponsors: null
+spotify: null
+start: 'August 17, 2022'
+title: Remix with Kent C. Dodds
+youtube: 'https://youtu.be/ZWVYJOclIXY'
 ---
 
 <script lang="ts">

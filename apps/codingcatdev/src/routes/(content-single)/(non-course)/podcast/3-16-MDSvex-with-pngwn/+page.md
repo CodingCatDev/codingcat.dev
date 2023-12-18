@@ -17,7 +17,7 @@ excerpt: >-
   how to use it on his own Coding Cat site.
 guests:
   - pngwn
-hashnode: null
+hashnode: podcast-3-16-MDSvex-with-pngwn
 picks:
   - author: pngwn
     name: Hugging Face

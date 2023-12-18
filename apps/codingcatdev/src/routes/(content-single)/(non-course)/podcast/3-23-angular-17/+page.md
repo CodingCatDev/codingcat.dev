@@ -15,7 +15,7 @@ devto: 'https://dev.to/codingcatdev/angulardev-4aa2'
 excerpt: Angular.dev is the future home for Angular developers.
 guests:
   - emma-twersky
-hashnode: null
+hashnode: podcast-3-23-angular-17
 picks:
   - author: emma-twersky
     name: Community College

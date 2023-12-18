@@ -8,7 +8,7 @@ cover: >-
 devto: >-
   https://dev.to/codingcatdev/content-modeling-in-a-headless-cms-vs-traditional-web-cms-42jm-temp-slug-4276315
 excerpt: Learn how to model content for Headless CMS
-hashnode: null
+hashnode: post-content-modeling-in-a-headless-cms-vs-a-traditional-webcms
 published: published
 slug: content-modeling-in-a-headless-cms-vs-a-traditional-webcms
 start: 'May 17, 2023'

@@ -8,7 +8,7 @@ cover: >-
 devto: >-
   https://dev.to/codingcatdev/2023-databases-for-serverless-applications-4na7-temp-slug-9257656
 excerpt: Databases that work well with serverless applications in 2023
-hashnode: null
+hashnode: post-2023-databases-for-serverless
 published: published
 slug: 2023-databases-for-serverless
 start: 'June 7, 2023'
