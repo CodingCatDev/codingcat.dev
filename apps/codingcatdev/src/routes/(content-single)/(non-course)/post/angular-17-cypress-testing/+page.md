@@ -3,15 +3,16 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700112316/main-codingcatdev-photo/cypress-angular-testing.png
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1700112316/main-codingcatdev-photo/cypress-angular-testing.png
+devto: 'https://dev.to/codingcatdev/how-to-test-angular-17-using-cypressio-27cg'
 excerpt: How you can easily test Angular 17 components with Cypress
-hashnode:
+hashnode: null
 published: published
-start: November 11, 2023
+start: 'November 11, 2023'
 slug: angular-17-cypress-testing
 title: How to test Angular 17 using Cypress.io
-youtube: https://youtu.be/w3smSGP4w1M
+youtube: 'https://youtu.be/w3smSGP4w1M'
 ---
 
 <script lang="ts">
