@@ -12,7 +12,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1702842558/main-codingcatdev-photo/2023-holiday-special.png
-devto: null
+devto: https://dev.to/codercatdev/codingcatdev-podcast-holiday-special-11do
 excerpt: >-
   Reviewing things that happened in 2023 and generally just having a fun holiday
   episode
