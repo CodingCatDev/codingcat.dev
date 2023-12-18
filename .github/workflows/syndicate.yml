@@ -40,4 +40,4 @@ jobs:
           PRIVATE_DEVTO: ${{ secrets.PRIVATE_DEVTO }}
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: devto updated
+          commit_message: devto updates
