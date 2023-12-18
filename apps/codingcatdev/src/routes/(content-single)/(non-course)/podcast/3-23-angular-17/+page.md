@@ -3,34 +3,34 @@ type: podcast
 authors:
   - alex-patterson
 episode: 23
-recording_date: Nov 13, 2023 4:00 PM
+recording_date: 'Nov 13, 2023 4:00 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1699492773/main-codingcatdev-photo/3.24-angular-dev.png
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1699492773/main-codingcatdev-photo/3.24-angular-dev.png
+devto: 'https://dev.to/codingcatdev/angulardev-4aa2'
 excerpt: Angular.dev is the future home for Angular developers.
 guests:
   - emma-twersky
-hashnode:
+hashnode: null
 picks:
-  [
-    { author: 'emma-twersky', name: 'Community College', site: 'https://www.ccsf.edu/' },
-    {
-      author: 'alex-patterson',
-      name: 'DJI Osmo Mobile 6 Gimbal',
-      site: 'https://www.amazon.com/dp/B0B7XD7R43?ref=ppx_yo2ov_dt_b_product_details&th=1'
-    }
-  ]
+  - author: emma-twersky
+    name: Community College
+    site: 'https://www.ccsf.edu/'
+  - author: alex-patterson
+    name: DJI Osmo Mobile 6 Gimbal
+    site: >-
+      https://www.amazon.com/dp/B0B7XD7R43?ref=ppx_yo2ov_dt_b_product_details&th=1
 slug: 3-23-angular-17
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/7rsBtjwYOojkFGJQgunyQ7
-start: Nov 29, 2023
+spotify: 'https://open.spotify.com/episode/7rsBtjwYOojkFGJQgunyQ7'
+start: 'Nov 29, 2023'
 title: Angular.dev
-youtube: https://youtu.be/QHZRLrRRnhw
+youtube: 'https://youtu.be/QHZRLrRRnhw'
 ---
 
 Angular v17 is here, and it's the purrfect update for all you cat-loving developers. This new version of the popular JavaScript framework is packed with features that will make your development purr like a kitten. With us today is [Emma Twersky](/guest/emma-twersky) a Senior Developer Relations Engineer, to talk all about the new updates.
