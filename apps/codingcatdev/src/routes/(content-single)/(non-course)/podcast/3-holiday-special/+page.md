@@ -3,30 +3,35 @@ type: podcast
 authors:
   - alex-patterson
   - brittney-postma
-episode:
-recording_date: Dec 20, 2023 9:00 AM
+episode: null
+recording_date: 'Dec 20, 2023 9:00 AM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702842558/main-codingcatdev-photo/2023-holiday-special.png
-devto:
-excerpt: 'Reviewing things that happened in 2023 and generally just having a fun holiday episode'
-guests:
-hashnode:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1702842558/main-codingcatdev-photo/2023-holiday-special.png
+devto: null
+excerpt: >-
+  Reviewing things that happened in 2023 and generally just having a fun holiday
+  episode
+guests: null
+hashnode: podcast-3-holiday-special
 picks:
-  [
-    { author: 'alex-patterson', name: 'example', site: 'example.com' },
-    { author: 'brittney-postma', name: 'example', site: 'example.com' }
-  ]
+  - author: alex-patterson
+    name: example
+    site: example.com
+  - author: brittney-postma
+    name: example
+    site: example.com
 slug: 3-holiday-special
 sponsors:
   - stickermule
-spotify:
-start: Dec 17, 2023
-title: 'CodingCat.dev Podcast - Holiday Special'
-youtube: https://youtube.com/live/UsjKVJWXkLg?feature=share
+spotify: null
+start: 'Dec 17, 2023'
+title: CodingCat.dev Podcast - Holiday Special
+youtube: 'https://youtube.com/live/UsjKVJWXkLg?feature=share'
 ---
 
 <script lang="ts">
