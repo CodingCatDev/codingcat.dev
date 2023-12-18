@@ -53,10 +53,14 @@ for await (const file of g) {
 					canonical_url: `https://codingcat.dev/${TYPE}/${fm.slug}`,
 					description: fm?.excerpt || '',
 					organization_id: '1009',
-					body_markdown: `Original: https://codingcat.dev/${TYPE}/${fm.slug}
-				  {% youtube ${fm?.youtube} %}
-				  {% spotify spotify:episode:${fm?.spotify?.split('/')?.at(-1)?.split('?')?.at(0)} %}
-				  ${content}`
+					body_markdown: `
+Original: https://codingcat.dev/${TYPE}/${fm.slug}
+
+{% youtube ${fm?.youtube} %}
+
+{% spotify spotify:episode:${fm?.spotify?.split('/')?.at(-1)?.split('?')?.at(0)} %}
+
+${content}`
 				}
 			});
 			console.log('addArticle result:', response.status);
