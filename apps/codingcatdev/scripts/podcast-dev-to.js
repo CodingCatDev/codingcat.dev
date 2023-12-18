@@ -33,6 +33,8 @@ for await (const file of g) {
 		fm?.slug &&
 		fm?.title &&
 		fm?.cover &&
+		fm?.spotify &&
+		fm?.youtube &&
 		fm?.published === 'published' &&
 		new Date(fm?.start) < new Date() &&
 		!fm?.devto
@@ -53,7 +55,7 @@ for await (const file of g) {
 					organization_id: '1009',
 					body_markdown: `Original: https://codingcat.dev/${TYPE}/${fm.slug}
 				  {% youtube ${fm?.youtube} %}
-				  {% spotify spotify:episode:${fm?.spotify.split('/').at(-1).split('?').at(0)} %}
+				  {% spotify spotify:episode:${fm?.spotify?.split('/')?.at(-1)?.split('?')?.at(0)} %}
 				  ${content}`
 				}
 			});
