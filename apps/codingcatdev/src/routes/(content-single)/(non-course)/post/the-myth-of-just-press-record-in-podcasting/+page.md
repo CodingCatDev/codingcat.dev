@@ -3,15 +3,17 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702768286/main-codingcatdev-photo/mythofjustpressrecord-blue.png
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1702768286/main-codingcatdev-photo/mythofjustpressrecord-blue.png
+devto: >-
+  https://dev.to/codingcatdev/the-myth-of-just-press-record-in-podcasting-20lm-temp-slug-30776
 excerpt: Databases that work well with serverless applications in 2023
-hashnode:
+hashnode: null
 published: published
 slug: the-myth-of-just-press-record-in-podcasting
-start: Dec 17, 2023
-title: "The Myth of 'Just Press Record' in Podcasting"
-youtube:
+start: 'Dec 17, 2023'
+title: The Myth of 'Just Press Record' in Podcasting
+youtube: null
 ---
 
 Podcasting is often romanticized as a simple, straightforward affair — just press record, speak your heart out, and voila, you've got an episode. Well this is kinda true, but I strongly believe that just talking to no one is pretty boring, you might as well be [talking to the wall](https://youtu.be/WqY6VjDtbvA?si=GeOwKb78YpLPH8lW)! As the detailed workflows from a seaons of podcasting reveal, creating a successful podcast involves a complex array of steps, each requiring attention to detail and a deep understanding of people, content and technology.
