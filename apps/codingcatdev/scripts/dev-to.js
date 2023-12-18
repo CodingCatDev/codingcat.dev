@@ -43,7 +43,7 @@ for await (const file of g) {
 			const response = await addArticle({
 				article: {
 					title: fm.title,
-					published: false,
+					published: true,
 					tags: ['podcast', 'webdev', 'javascript', 'beginners'],
 					main_image: fm.cover.replace('upload/', 'upload/b_rgb:5e1186,c_pad,w_1000,h_420/'),
 					canonical_url: `https://codingcat.dev/${TYPE}/${fm.slug}`,
