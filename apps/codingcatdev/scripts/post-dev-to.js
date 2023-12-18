@@ -68,7 +68,7 @@ for await (const file of g) {
 				}
 			}
 			// Avoid 429
-			delay(Integer(process.env.SYNDICATE_DELAY) || 10000);
+			await delay(process.env?.SYNDICATE_DELAY ? Integer(process.env.SYNDICATE_DELAY) : 10000);
 		} catch (error) {
 			console.error(error);
 		}
