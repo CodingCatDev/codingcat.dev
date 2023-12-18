@@ -3,15 +3,17 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1684343153/main-codingcatdev-photo/content-modeling-in-a-headless-cms-vs-a-traditional-webcms.png'
-devto:
-excerpt: 'Learn how to model content for Headless CMS'
-hashnode:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1684343153/main-codingcatdev-photo/content-modeling-in-a-headless-cms-vs-a-traditional-webcms.png
+devto: >-
+  https://dev.to/codingcatdev/content-modeling-in-a-headless-cms-vs-traditional-web-cms-42jm-temp-slug-4276315
+excerpt: Learn how to model content for Headless CMS
+hashnode: null
 published: published
 slug: content-modeling-in-a-headless-cms-vs-a-traditional-webcms
-start: May 17, 2023
+start: 'May 17, 2023'
 title: Content Modeling in a Headless CMS vs. Traditional Web CMS
-youtube:
+youtube: null
 ---
 
 <script lang="ts">
