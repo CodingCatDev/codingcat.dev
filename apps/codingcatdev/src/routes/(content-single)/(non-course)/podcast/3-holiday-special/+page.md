@@ -28,7 +28,7 @@ picks:
 slug: 3-holiday-special
 sponsors:
   - stickermule
-spotify: 'updateme'
+spotify: https://open.spotify.com/show/2kiOI0PCB2jXMU0cdqUy4z?si=1a7d7b4c975e47e3
 start: 'Dec 17, 2023'
 title: CodingCat.dev Podcast - Holiday Special
 youtube: 'https://youtube.com/live/UsjKVJWXkLg?feature=share'
