@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   blog-dev-to:
+    environment: main
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
