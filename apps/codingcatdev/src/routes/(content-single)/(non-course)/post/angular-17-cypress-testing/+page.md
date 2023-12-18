@@ -9,6 +9,7 @@ excerpt: How you can easily test Angular 17 components with Cypress
 hashnode:
 published: published
 start: November 11, 2023
+slug: angular-17-cypress-testing
 title: How to test Angular 17 using Cypress.io
 youtube: https://youtu.be/w3smSGP4w1M
 ---
