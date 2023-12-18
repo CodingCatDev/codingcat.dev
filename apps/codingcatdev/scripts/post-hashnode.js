@@ -17,7 +17,7 @@ const addArticle = async (input) => {
 	return fetch('https://api.hashnode.com/', {
 		method: 'POST',
 		headers: {
-			authorization: '2b02d999-9e2d-409a-a2b4-7a1bcbbc58d5',
+			authorization: process.env.PRIVATE_HASHNODE,
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
@@ -56,6 +56,7 @@ for await (const file of g) {
 	// TODO: We might need to add a check on cononical if this page is already in dev.to
 	if (
 		fm?.slug &&
+		fm.slug === 'angular-17-cypress-testing' &&
 		fm?.title &&
 		fm?.cover &&
 		fm?.published === 'published' &&
@@ -105,13 +106,20 @@ ${content}`;
 			console.log('addArticle result:', response.status);
 			if (response?.error) console.error('error', response.error);
 			// Get new devto url and update
-			if (response.status === 201) {
+			if (response.status === 200) {
 				const json = await response.json();
-				if (json?.url) {
-					console.log('Updating', file, { devto: json.url });
+				const hashnodeSlug = json?.data?.createPublicationStory?.post?.slug;
+
+				if (!hashnodeSlug) {
+					console.error('hasnode url missing');
+					continue;
+				}
+
+				if (hashnodeSlug) {
+					console.log('Updating', file, { hashnode: json.url });
 					const newMdFile = matter.stringify(content, {
 						...data,
-						devto: json.url
+						hashnode: hashnodeSlug
 					});
 					fs.writeFileSync(file, newMdFile, { encoding: 'utf8' });
 				}
