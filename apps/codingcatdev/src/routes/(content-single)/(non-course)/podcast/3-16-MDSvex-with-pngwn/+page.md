@@ -3,31 +3,39 @@ type: podcast
 authors:
   - alex-patterson
 episode: 16
-recording_date: May 4, 2023 2:15 PM
+recording_date: 'May 4, 2023 2:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: true
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1683829447/main-codingcatdev-photo/MDSvex-with-pngwn.jpg
-devto:
-excerpt: 'Pngwn joins Alex to show discuss his program MDSvex and to walk Alex through how to use it on his own Coding Cat site.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1683829447/main-codingcatdev-photo/MDSvex-with-pngwn.jpg
+devto: 'https://dev.to/codingcatdev/mdsvex-with-pngwn-37d3'
+excerpt: >-
+  Pngwn joins Alex to show discuss his program MDSvex and to walk Alex through
+  how to use it on his own Coding Cat site.
 guests:
   - pngwn
-hashnode:
+hashnode: null
 picks:
-  [
-    { author: 'pngwn', name: 'Hugging Face', site: 'https://huggingface.co/chat/' },
-    { author: 'pngwn', name: 'Open Assitant', site: 'https://open-assistant.io/' },
-    { author: 'alex-patterson', name: 'Xata', site: 'https://xata.io' }
-  ]
+  - author: pngwn
+    name: Hugging Face
+    site: 'https://huggingface.co/chat/'
+  - author: pngwn
+    name: Open Assitant
+    site: 'https://open-assistant.io/'
+  - author: alex-patterson
+    name: Xata
+    site: 'https://xata.io'
 slug: 3-16-MDSvex-with-pngwn
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/2dkxDnNqCPvsOwBTUhu0bD?si=_wknx6m5RVa4r1q0uTyvew
-start: June 14, 2023
-title: 'MDSvex with pngwn'
-youtube: https://youtu.be/0ukXs_xUbJ8
+spotify: >-
+  https://open.spotify.com/episode/2dkxDnNqCPvsOwBTUhu0bD?si=_wknx6m5RVa4r1q0uTyvew
+start: 'June 14, 2023'
+title: MDSvex with pngwn
+youtube: 'https://youtu.be/0ukXs_xUbJ8'
 ---
 
 <script lang="ts">

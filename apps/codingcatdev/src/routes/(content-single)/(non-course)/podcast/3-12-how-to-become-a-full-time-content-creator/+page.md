@@ -4,54 +4,55 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 12
-recording_date: March 17, 2023 2:15 PM
+recording_date: 'March 17, 2023 2:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: true
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1682538400/main-codingcatdev-photo/How-to-Become-a-Full-Time-Content-Creator.png
-devto:
-excerpt: 'CodingCat.dev has ALL the guest this week as we are joined by some of our favorite dev content creators.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1682538400/main-codingcatdev-photo/How-to-Become-a-Full-Time-Content-Creator.png
+devto: 'https://dev.to/codingcatdev/how-to-become-a-full-time-content-creator-3hlo'
+excerpt: >-
+  CodingCat.dev has ALL the guest this week as we are joined by some of our
+  favorite dev content creators.
 guests:
   - lane-wagner
   - ankita-kulkarni
   - james-q-quick
   - simon-grimm
-hashnode:
+hashnode: null
 picks:
-  [
-    {
-      author: 'alex-patterson',
-      name: 'Monaco Editor',
-      site: 'https://microsoft.github.io/monaco-editor/'
-    },
-    {
-      author: 'brittney-postma',
-      name: 'PS VR 2',
-      site: 'https://direct.playstation.com/en-us/consoles/console/playstationvr2.1000033579'
-    },
-    {
-      author: 'brittney-postma',
-      name: 'A Look at Gender Demographics in the Developer Community',
-      site: 'https://dev.to/sachagreif/a-look-at-gender-demographics-in-the-developer-community-part-1-4d76'
-    },
-    { author: 'james-q-quick', name: 'frontmatter.codes', site: 'https://frontmatter.codes/' },
-    { author: 'lane-wagner', name: 'codemirror', site: 'https://codemirror.net' },
-    {
-      author: 'ankita-kulkarni',
-      name: 'Open AI - Dall E 2',
-      site: 'https://openai.com/product/dall-e-2'
-    },
-    { author: 'simon-grimm', name: 'Galaxies', site: 'https://galaxies.dev/' }
-  ]
+  - author: alex-patterson
+    name: Monaco Editor
+    site: 'https://microsoft.github.io/monaco-editor/'
+  - author: brittney-postma
+    name: PS VR 2
+    site: >-
+      https://direct.playstation.com/en-us/consoles/console/playstationvr2.1000033579
+  - author: brittney-postma
+    name: A Look at Gender Demographics in the Developer Community
+    site: >-
+      https://dev.to/sachagreif/a-look-at-gender-demographics-in-the-developer-community-part-1-4d76
+  - author: james-q-quick
+    name: frontmatter.codes
+    site: 'https://frontmatter.codes/'
+  - author: lane-wagner
+    name: codemirror
+    site: 'https://codemirror.net'
+  - author: ankita-kulkarni
+    name: Open AI - Dall E 2
+    site: 'https://openai.com/product/dall-e-2'
+  - author: simon-grimm
+    name: Galaxies
+    site: 'https://galaxies.dev/'
 slug: 3-12-how-to-become-a-full-time-content-creator
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/1alJwQzJmCoWupGZIvaRQd?si=8bbf17162e77479e
-start: May 18, 2023
-title: 'How to Become a Full Time Content Creator'
-youtube: https://youtu.be/WPrmIwDBodM
+spotify: 'https://open.spotify.com/episode/1alJwQzJmCoWupGZIvaRQd?si=8bbf17162e77479e'
+start: 'May 18, 2023'
+title: How to Become a Full Time Content Creator
+youtube: 'https://youtu.be/WPrmIwDBodM'
 ---
 
 ## Questions
