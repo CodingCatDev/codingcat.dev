@@ -22,6 +22,7 @@ picks:
   ]
 slug: 3-holiday-special
 sponsors:
+  - stickermule
 spotify:
 start: Dec 17, 2023
 title: 'CodingCat.dev Podcast - Holiday Special'
@@ -31,6 +32,12 @@ youtube:
 <script lang="ts">
 	import TweetEmbed from '$lib/components/content/TweetEmbed.svelte'
 </script>
+
+## All the swags
+
+Dont worry you have landed in the right place, for our event we will be giving away lots of free stuff this year!
+
+The peeps from [StickerMule](https://mule.to/p5h2) have hooked us up with lots of stickers to give away to all of our awesome members so don't forget click on their logo above and make some swag for your own side projects!
 
 ## Rough Outline
 
