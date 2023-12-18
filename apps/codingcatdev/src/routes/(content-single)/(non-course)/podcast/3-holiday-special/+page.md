@@ -26,11 +26,12 @@ sponsors:
 spotify:
 start: Dec 17, 2023
 title: 'CodingCat.dev Podcast - Holiday Special'
-youtube:
+youtube: https://youtube.com/live/UsjKVJWXkLg?feature=share
 ---
 
 <script lang="ts">
 	import TweetEmbed from '$lib/components/content/TweetEmbed.svelte'
+	import SwagForm from './SwagForm.svelte'
 </script>
 
 ## All the swags
@@ -39,7 +40,13 @@ Dont worry you have landed in the right place, for our event we will be giving a
 
 The peeps from [StickerMule](https://mule.to/p5h2) have hooked us up with lots of stickers to give away to all of our awesome members so don't forget click on their logo above and make some swag for your own side projects!
 
-## Rough Outline
+You can fill out the below form and Alex will send you some stickers!!
+
+![AJ Sticker with headphones and CodingCat.dev Podcast on them](https://media.codingcat.dev/image/upload/v1702928104/main-codingcatdev-photo/stickermule-example.png)
+
+<SwagForm />
+
+## Rough Outline of our talk
 
 January:
 
