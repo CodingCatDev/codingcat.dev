@@ -18,8 +18,9 @@ hashnode:
 picks:
 slug: cwcc-2023-12-20-building-your-own-sass
 sponsors:
+  - algolia
 spotify:
-start: Dec 20, 2023
+start: Dec 18, 2023
 title: Building your Own SaSS
 youtube: https://www.youtube.com/live/G1JabZnaoNA?si=ciTR8oJGuq5ZgTQ2
 ---
@@ -30,7 +31,7 @@ Creating a SaaS platform using Supabase, Nuxt.js, and Algolia is an exciting pro
 
 2. **Front-End with Nuxt.js**: Nuxt.js is a progressive Vue.js framework ideal for building server-side rendered applications. It simplifies web development and offers great features for building robust, modern web applications.
 
-3. **Search Functionality with Algolia**: Incorporate Algolia for efficient and fast search experiences. Algolia's hosted search API is easy to integrate and provides powerful search capabilities with minimal setup.
+3. **Search Functionality with Algolia**: Incorporate [Algolia](https://www.algolia.com/) for efficient and fast search experiences. Algolia's hosted search API is easy to integrate and provides powerful search capabilities with minimal setup.
 
 4. **Integrating the Stack**: After setting up Supabase and familiarizing yourself with Nuxt.js, integrate Algolia for the search functionality. Ensure that your Nuxt.js application can communicate effectively with Supabase for backend services, and use Algolia for handling search queries and indexing your data.
 
