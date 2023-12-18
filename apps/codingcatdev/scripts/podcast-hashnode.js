@@ -71,8 +71,11 @@ for await (const file of g) {
 
 			const finalContent = `
 Original: https://codingcat.dev/${TYPE}/${fm.slug}
+
 ${fm?.spotify ? '%[' + fm.spotify + ']' : ''}
+
 ${fm?.youtube ? '%[' + fm.youtube + ']' : ''}
+
 ${content}`;
 			const response = await addArticle({
 				title: fm.title,
