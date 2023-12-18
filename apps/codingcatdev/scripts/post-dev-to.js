@@ -11,6 +11,7 @@ const TYPE = 'post';
 const BASE = `../src/routes/(content-single)/(non-course)/${TYPE}/`;
 const g = new Glob(`${BASE}**/*.md`, {});
 
+const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 const addArticle = async (data) => {
 	return fetch('https://dev.to/api/articles/', {
 		method: 'POST',
@@ -66,6 +67,8 @@ for await (const file of g) {
 					fs.writeFileSync(file, newMdFile, { encoding: 'utf8' });
 				}
 			}
+			// Avoid 429
+			delay(Integer(process.env.SYNDICATE_DELAY) || 10000);
 		} catch (error) {
 			console.error(error);
 		}
