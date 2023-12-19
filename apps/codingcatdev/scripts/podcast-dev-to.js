@@ -56,7 +56,7 @@ for await (const file of g) {
 					body_markdown: `
 Original: https://codingcat.dev/${TYPE}/${fm.slug}
 
-{% youtube ${fm?.youtube} %}
+{% youtube ${fm?.youtube?.replace('live', 'embed')} %}
 
 {% spotify spotify:episode:${fm?.spotify?.split('/')?.at(-1)?.split('?')?.at(0)} %}
 
