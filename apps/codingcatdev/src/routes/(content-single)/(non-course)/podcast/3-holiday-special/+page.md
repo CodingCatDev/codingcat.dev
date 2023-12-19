@@ -30,7 +30,7 @@ sponsors:
   - stickermule
 spotify: https://open.spotify.com/show/2kiOI0PCB2jXMU0cdqUy4z?si=1a7d7b4c975e47e3
 start: 'Dec 17, 2023'
-title: CodingCat.dev Podcast - Holiday Special
+title: CodingCat.dev Podcast - Holiday Special Live December 20 9a ET
 youtube: 'https://youtube.com/live/UsjKVJWXkLg?feature=share'
 ---
 
