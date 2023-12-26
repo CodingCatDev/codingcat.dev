@@ -65,7 +65,7 @@ Below is a basic example of how you might handle user authentication in your app
 
 `login.vue`
 
-```vue
+```ts
 <script setup lang="ts">
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
@@ -169,7 +169,7 @@ This is a simple but very powerful feature to quickly add search into your front
 
 `algolia.vue`
 
-```vue
+```ts
 <script setup lang="ts">
 import {
 	AisInstantSearch,
