@@ -3,26 +3,27 @@ type: podcast
 authors:
   - alex-patterson
 episode: 4
-recording_date: December 20, 2023 12:00 PM
+recording_date: 'December 20, 2023 12:00 PM'
 season: 1
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702737519/main-codingcatdev-photo/2023-12-20-benniks.png
-devto:
-excerpt: Tim teaches Alex how to make your own SaaS using Supabase, Algolia and Nuxt.
+cover: >-
+  https://media.codingcat.dev/image/upload/v1702737519/main-codingcatdev-photo/2023-12-20-benniks.png
+devto: null
+excerpt: 'Tim teaches Alex how to make your own SaaS using Supabase, Algolia and Nuxt.'
 guests:
   - tim-benniks
-hashnode:
-picks:
+hashnode: podcast-cwcc-2023-12-20-building-your-own-sass
+picks: null
 slug: cwcc-2023-12-20-building-your-own-sass
 sponsors:
   - algolia
-spotify:
-start: Dec 18, 2023
+spotify: null
+start: 'Dec 18, 2023'
 title: Building your Own SaSS
-youtube: https://www.youtube.com/live/G1JabZnaoNA?si=ciTR8oJGuq5ZgTQ2
+youtube: 'https://www.youtube.com/live/G1JabZnaoNA?si=ciTR8oJGuq5ZgTQ2'
 ---
 
 <script>
