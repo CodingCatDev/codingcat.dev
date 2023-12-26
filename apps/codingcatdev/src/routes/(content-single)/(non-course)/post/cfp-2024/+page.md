@@ -14,6 +14,10 @@ title: 'Purr-fectly Scripted: Clawing Your Way to a Successful Web Dev CFP Submi
 youtube:
 ---
 
+<script lang="ts">
+	import CFPTable from './CFPTable.svelte'
+</script>
+
 > TL;DR Check the [links](#links) section to find places to submit a CFP.
 
 Are you ready to make your mark on the web development conference circuit? If you're like me, a person running around with a black cat logo and a penchant for JavaScript, you know that a well-crafted Call for Papers (CFP) submission can be as tempting as a laser pointer on a blank wall. Let's leap into the world of CFPs with some cat-tastic humor and land on our feet, ready to conquer JavaScript topics at your next web development conference.
@@ -54,12 +58,18 @@ So, stretch out those paws, sharpen your claws on the keyboard, and submit a CFP
 
 ## Links
 
-### Conferences
+### Conference Tools
 
 Two of the biggest tools that I use when trying to find conferences are:
 
-​- [https://confs.tech/​](https://confs.tech/​)
-​- [https://twitter.com/TechDailyCFP](https://twitter.com/TechDailyCFP)
+- [confs.tech​](https://confs.tech/​) - Open-source and crowd-sourced list of conferences around software development
+- [TechDailyCFP](https://twitter.com/TechDailyCFP) - Retweeting Calls for Presenters for Tech Conferences and Code Camps
+- [Sessionize](https://sessionize.com/) - easy place to submit and reuse CFPs.
+
+### Conferences
+
+(somewhat in date order)
+<CFPTable />
 
 ## Hosting a Conference
 
