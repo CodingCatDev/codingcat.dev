@@ -58,7 +58,6 @@ for await (const file of g) {
 		fm?.slug &&
 		fm?.title &&
 		fm?.cover &&
-		fm?.spotify &&
 		fm?.youtube &&
 		fm?.published === 'published' &&
 		new Date(fm?.start) < new Date() &&

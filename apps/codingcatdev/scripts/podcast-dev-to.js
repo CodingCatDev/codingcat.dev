@@ -33,7 +33,6 @@ for await (const file of g) {
 		fm?.slug &&
 		fm?.title &&
 		fm?.cover &&
-		fm?.spotify &&
 		fm?.youtube &&
 		fm?.published === 'published' &&
 		new Date(fm?.start) < new Date() &&
@@ -58,7 +57,11 @@ Original: https://codingcat.dev/${TYPE}/${fm.slug}
 
 {% youtube ${fm?.youtube?.replace('live', 'embed')} %}
 
-{% spotify spotify:episode:${fm?.spotify?.split('/')?.at(-1)?.split('?')?.at(0)} %}
+${
+	fm?.spotify
+		? '{% spotify spotify:episode:' + fm?.spotify?.split('/')?.at(-1)?.split('?')?.at(0) + ' %}'
+		: ''
+}
 
 ${content}`
 				}
