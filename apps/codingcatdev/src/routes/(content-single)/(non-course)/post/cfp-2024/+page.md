@@ -3,15 +3,22 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1703348801/main-codingcatdev-photo/blog-cfp-2024.png
-devto:
-excerpt: 'Writing a call for papers (CFP) for a web development conference in 2024 requires a strategic approach to create high-quality submissions that reflect the latest trends and innovations in the field, this is a guide to creating an effective CFP in 2024'
-hashnode:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1703348801/main-codingcatdev-photo/blog-cfp-2024.png
+devto: null
+excerpt: >-
+  Writing a call for papers (CFP) for a web development conference in 2024
+  requires a strategic approach to create high-quality submissions that reflect
+  the latest trends and innovations in the field, this is a guide to creating an
+  effective CFP in 2024
+hashnode: post-2023-databases-for-serverless-1
 published: published
 slug: 2023-databases-for-serverless
-start: Dec 23, 2023
-title: 'Purr-fectly Scripted: Clawing Your Way to a Successful Web Dev CFP Submission in 2024!'
-youtube:
+start: 'Dec 23, 2023'
+title: >-
+  Purr-fectly Scripted: Clawing Your Way to a Successful Web Dev CFP Submission
+  in 2024!
+youtube: null
 ---
 
 <script lang="ts">
