@@ -2,26 +2,30 @@
 type: podcast
 authors:
   - alex-patterson
-episode:
-recording_date: Dec 18, 2023 12:00 PM
+episode: null
+recording_date: 'Dec 18, 2023 12:00 PM'
 season: 3
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1703611617/main-codingcatdev-photo/3_ReactNativeExpo.png
-devto:
-excerpt: 'Dive into the seamless world of cross-platform app development as we unravel the magic of React Native with Expo, combining power and simplicity for an unparalleled mobile experience.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1703611617/main-codingcatdev-photo/3_ReactNativeExpo.png
+devto: null
+excerpt: >-
+  Dive into the seamless world of cross-platform app development as we unravel
+  the magic of React Native with Expo, combining power and simplicity for an
+  unparalleled mobile experience.
 guests:
   - simon-grimm
-hashnode:
-picks:
+hashnode: podcast-cwcc-1-expo-react-native
+picks: null
 slug: cwcc-1-expo-react-native
-sponsors:
-spotify:
-start: Dec 18, 2023
+sponsors: null
+spotify: null
+start: 'Dec 18, 2023'
 title: 'Exploring React Native: A Journey into Cross-Platform Delight'
-youtube: https://youtube.com/live/xtj5wPgWuf4?feature=share
+youtube: 'https://youtube.com/live/xtj5wPgWuf4?feature=share'
 ---
 
 <script>
