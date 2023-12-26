@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import { storeCurrentUrl } from '$lib/stores/stores';
+	import { ContentType } from '$lib/types';
 	import type { LayoutData } from './$types';
 	import ProCourseMark from './ProCourseMark.svelte';
 	export let data: LayoutData;
@@ -48,7 +49,12 @@
 																{l.title}
 															</a>
 															<div class="flex gap-1 absolute right-1 top-1">
-																<ProCourseMark locked={l?.locked} lesson={l} {data} />
+																<ProCourseMark
+																	locked={l?.locked}
+																	lesson={l}
+																	{data}
+																	contentType={ContentType.lesson}
+																/>
 															</div>
 														</li>
 													{/each}

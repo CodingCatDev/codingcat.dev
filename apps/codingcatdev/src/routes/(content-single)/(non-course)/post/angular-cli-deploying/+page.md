@@ -3,14 +3,19 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1600872811/ccd-cloudinary/angular-cli-deploy.png
-excerpt: Demonstrating how to quickly deploy using Angular CLI to 6 places. Then how to setup CI/CD in Azure, AWS, and Google Cloud Platform.
-hashnode: https://hashnode.codingcat.dev/tutorial-angular-cli-deploying
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=angular-cli-deploying&_id=35b3e0aaaab04dbebc04b4306e13f381
+cover: >-
+  https://media.codingcat.dev/image/upload/v1600872811/ccd-cloudinary/angular-cli-deploy.png
+excerpt: >-
+  Demonstrating how to quickly deploy using Angular CLI to 6 places. Then how to
+  setup CI/CD in Azure, AWS, and Google Cloud Platform.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-angular-cli-deploying'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=angular-cli-deploying&_id=35b3e0aaaab04dbebc04b4306e13f381
 published: published
 slug: angular-cli-deploying
-start: May 27, 2022
+start: 'May 27, 2022'
 title: Angular CLI Deploying
+devto: 'https://dev.to/codingcatdev/angular-cli-deploying-20ca-temp-slug-5654900'
 ---
 
 ## Deploying Fast

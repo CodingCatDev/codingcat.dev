@@ -3,38 +3,37 @@ type: podcast
 authors:
   - alex-patterson
 episode: 24
-recording_date: September 14, 2023 1:15 PM
+recording_date: 'September 14, 2023 1:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1699502966/main-codingcatdev-photo/3_skyflow.png
-devto:
-excerpt: "Skyflow's Privacy Vault empowers organizations to build and deploy LLMs responsibly, ensuring data privacy and compliance throughout the entire LLM lifecycle."
+cover: >-
+  https://media.codingcat.dev/image/upload/v1699502966/main-codingcatdev-photo/3_skyflow.png
+devto: 'https://dev.to/codingcatdev/skyflows-privacy-vault-for-building-llms-36i2'
+excerpt: >-
+  Skyflow's Privacy Vault empowers organizations to build and deploy LLMs
+  responsibly, ensuring data privacy and compliance throughout the entire LLM
+  lifecycle.
 guests:
   - sean-falconer
-hashnode:
+hashnode: podcast-3-24-skyflow-privacy-vault
 picks:
-  [
-    {
-      author: 'sean-falconer',
-      name: "The Devil's Plan",
-      site: 'https://www.netflix.com/title/81653386'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'Going Deep on Svelte 5',
-      site: 'https://www.learnwithjason.dev/going-deep-on-svelte-5'
-    }
-  ]
+  - author: sean-falconer
+    name: The Devil's Plan
+    site: 'https://www.netflix.com/title/81653386'
+  - author: alex-patterson
+    name: Going Deep on Svelte 5
+    site: 'https://www.learnwithjason.dev/going-deep-on-svelte-5'
 slug: 3-24-skyflow-privacy-vault
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/6nBGOKJDlXE0AW1YQ2H6qO?si=Hs8Ee8GjRZSj-NBq-vZgcQ
-start: December 6, 2023
-title: "Skyflow's privacy vault for building LLMs"
-youtube: https://youtu.be/f_gNOK8cpwI
+spotify: >-
+  https://open.spotify.com/episode/6nBGOKJDlXE0AW1YQ2H6qO?si=Hs8Ee8GjRZSj-NBq-vZgcQ
+start: 'December 6, 2023'
+title: Skyflow's privacy vault for building LLMs
+youtube: 'https://youtu.be/f_gNOK8cpwI'
 ---
 
 In the rapidly evolving realm of artificial intelligence, large language models (LLMs) have emerged as powerful tools for natural language processing and generation. These models, trained on massive datasets of text and code, have demonstrated remarkable capabilities in tasks such as machine translation, text summarization, and creative writing. However, the development and utilization of LLMs raise significant privacy concerns, particularly with regard to the handling of sensitive personal information.

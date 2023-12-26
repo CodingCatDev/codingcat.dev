@@ -1,0 +1,184 @@
+[
+    {
+        "name": "CodeMash Prime",
+        "location": "Sandusky, OH, USA",
+        "date": "2024-01-09",
+        "notes": "https://codemash.org/",
+        "cfp": "2023-08-31"
+    },
+    {
+        "name": "THAT conference - TX",
+        "location": "Round Rock, Texas, USA",
+        "date": "2024-01-29",
+        "notes": "https://thatconference.com/tx/2024/",
+        "cfp": "2024-08-01"
+    },
+    {
+        "name": "Jfokus",
+        "location": "Stockholm, Sweden",
+        "date": "2024-02-05",
+        "notes": "https://www.jfokus.se/",
+        "cfp": "2023-09-30"
+    },
+    {
+        "name": "DeveloperWeek",
+        "location": "San Francisco, CA, USA",
+        "date": "2024-02-21",
+        "notes": "https://www.developerweek.com/",
+        "cfp": "2023-09-30"
+    },
+    {
+        "name": "Confoo",
+        "location": "Montreal, Canada",
+        "date": "2024-02-21",
+        "notes": "https://confoo.ca/en/2024",
+        "cfp": "2023-09-23"
+    },
+    {
+        "name": "Nordic APIS",
+        "location": "Austin, TX",
+        "date": "2024-03-11",
+        "notes": "https://nordicapis.com/events/austin-api-summit-2024/",
+        "cfp": "2023-12-01"
+    },
+    {
+        "name": "IEEE VR",
+        "location": "Orlando, FL, USA",
+        "date": "2024-03-16",
+        "notes": "https://ieeevr.org/",
+        "cfp": "2023-09-27"
+    },
+    {
+        "name": "CityJS London",
+        "location": "London, England",
+        "date": "2024-04-05",
+        "notes": "https://london.cityjsconf.org/",
+        "cfp": "2023-12-31"
+    },
+    {
+        "name": "DevNexus",
+        "location": "Atlanta, GA, USA",
+        "date": "2024-04-09",
+        "notes": "https://devnexus.com/",
+        "cfp": null
+    },
+    {
+        "name": "jsday",
+        "location": "Verona, Italy",
+        "date": "2024-04-11",
+        "notes": "https://2024.jsday.it/",
+        "cfp": "2023-12-15"
+    },
+    {
+        "name": "PHP[TEK]",
+        "location": "ROSEMONT, IL, USA",
+        "date": "2024-04-23",
+        "notes": "https://tek.phparch.com/",
+        "cfp": "2023-11-30"
+    },
+    {
+        "name": "RailsConf",
+        "location": "Atlanta, Georgia, USA",
+        "date": "2024-04-24",
+        "notes": "https://railsconf.org/",
+        "cfp": "2024-02-24"
+    },
+    {
+        "name": "Devopsdays Denver",
+        "location": "Denver, Colorado, USA",
+        "date": "2024-04-29",
+        "notes": "https://devopsdays.org/events/2024-denver/welcome/",
+        "cfp": "2024-01-12"
+    },
+    {
+        "name": "sw2con",
+        "location": "Broomfield, Colorado",
+        "date": "2024-05-14",
+        "notes": "https://www.sw2con.com/",
+        "cfp": "2024-01-01"
+    },
+    {
+        "name": "MSPGeekCon",
+        "location": "Orlando, Florida, USA",
+        "date": "2024-05-19",
+        "notes": "https://mspgeekcon.com/",
+        "cfp": "2024-01-31"
+    },
+    {
+        "name": "Denver Dev Day",
+        "location": "Denver, Colorado, USA",
+        "date": "2024-10-27",
+        "notes": "https://denverdevday.github.io/oct-2023/",
+        "cfp": null
+    },
+    {
+        "name": "European Identity and Cloud Conference 2024",
+        "location": "Berlin, Germany",
+        "date": "2024-06-04",
+        "notes": "https://www.kuppingercole.com/events/eic2024",
+        "cfp": "2024-01-31"
+    },
+    {
+        "name": "re:inforce",
+        "location": "Philadelphia, PA, USA",
+        "date": "2024-06-10",
+        "notes": "https://reinforce.awsevents.com/",
+        "cfp": null
+    },
+    {
+        "name": "KCDC (Kansas City Developer Conference)",
+        "location": "Kansas City, Kansas, USA",
+        "date": "2024-06-20",
+        "notes": "https://www.kcdc.info/",
+        "cfp": "2024-01-19"
+    },
+    {
+        "name": "THAT conference - WI",
+        "location": "Wisconsin Dells, WI, USA",
+        "date": "2024-07-29",
+        "notes": "https://thatconference.com/wi/2024/",
+        "cfp": "2024-03-01"
+    },
+    {
+        "name": "SpringOne",
+        "location": "Las Vegas, Nevada, USA",
+        "date": "2024-08-19",
+        "notes": "https://springone.io/",
+        "cfp": "2023-05-01"
+    },
+    {
+        "name": "dev2next",
+        "location": "Lone Tree, CO, USA",
+        "date": "2024-09-30",
+        "notes": "https://www.dev2next.com/",
+        "cfp": null
+    },
+    {
+        "name": "momentumdevcon - Momentum Developer Conference",
+        "location": "Cincinnati, Ohio, USA",
+        "date": "2024-10-17",
+        "notes": "https://momentumdevcon.com/",
+        "cfp": "2023-05-31"
+    },
+    {
+        "name": "TechBash",
+        "location": "Pocono Manor, Pennsylvania, USA",
+        "date": "2024-11-05",
+        "notes": "https://techbash.com/",
+        "cfp": "2024-04-12"
+    },
+    {
+        "name": "Visual Studio Live",
+        "location": "Orlando, FL, USA",
+        "date": "2024-11-12",
+        "notes": "https://vslive.com/ECG/live360events/Events/Orlando-2023/VSLive.aspx",
+        "cfp": null
+    },
+    {
+        "name": "DEVInstersection",
+        "location": "Orlando, FL, USA",
+        "date": "2024-12-05",
+        "notes": "https://devintersection.com",
+        "cfp": null
+    }
+]
