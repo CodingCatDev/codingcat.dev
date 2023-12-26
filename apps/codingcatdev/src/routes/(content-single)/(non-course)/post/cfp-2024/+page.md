@@ -5,7 +5,7 @@ authors:
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1703348801/main-codingcatdev-photo/blog-cfp-2024.png
-devto: null
+devto: https://dev.to/codercatdev/purr-fectly-scripted-clawing-your-way-to-a-successful-web-dev-cfp-submission-in-2024-2lel
 excerpt: >-
   Writing a call for papers (CFP) for a web development conference in 2024
   requires a strategic approach to create high-quality submissions that reflect
