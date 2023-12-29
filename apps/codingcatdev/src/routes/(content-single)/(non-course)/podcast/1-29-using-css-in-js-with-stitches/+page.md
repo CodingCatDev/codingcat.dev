@@ -6,44 +6,41 @@ authors:
 episode: 29
 guests:
   - pedro-duarte
-recording_date: May 7, 2021 12:00 PM
+recording_date: 'May 7, 2021 12:00 PM'
 season: 1
 published: published
 podcast: CodingCat.dev
 chapters_done: true
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/vz7ramuqpbyhcu3azajy.png
-devto: https://dev.to/codingcatdev/1-29-using-css-in-js-with-stitches-3994
-excerpt: We sit down with Pedro Duarte to talk all about using CSS in JavaScript and why Modulz created Stitches.
+cover: >-
+  https://media.codingcat.dev/image/upload/main-codingcatdev-photo/vz7ramuqpbyhcu3azajy.png
+devto: 'https://dev.to/codingcatdev/1-29-using-css-in-js-with-stitches-3994'
+excerpt: >-
+  We sit down with Pedro Duarte to talk all about using CSS in JavaScript and
+  why Modulz created Stitches.
 picks:
-  [
-    {
-      author: 'alex-patterson',
-      name: 'Invincible TV Show',
-      site: 'https://www.imdb.com/title/tt6741278/'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'JS and Friends Conference',
-      site: 'https://www.javascriptandfriends.com/'
-    },
-    {
-      author: 'brittney-postma',
-      name: 'The Differing Perspectives on CSS-in-JS',
-      site: 'https://css-tricks.com/the-differing-perspectives-on-css-in-js/'
-    },
-    { author: 'brittney-postma', name: 'Snowpack', site: 'https://www.snowpack.dev/' },
-    {
-      author: 'pedro-duarte',
-      name: 'Two Distant Strangers, on Netflix',
-      site: 'https://www.netflix.com/title/81447229'
-    }
-  ]
+  - author: alex-patterson
+    name: Invincible TV Show
+    site: 'https://www.imdb.com/title/tt6741278/'
+  - author: alex-patterson
+    name: JS and Friends Conference
+    site: 'https://www.javascriptandfriends.com/'
+  - author: brittney-postma
+    name: "The Differing Perspectives on\_CSS-in-JS"
+    site: 'https://css-tricks.com/the-differing-perspectives-on-css-in-js/'
+  - author: brittney-postma
+    name: Snowpack
+    site: 'https://www.snowpack.dev/'
+  - author: pedro-duarte
+    name: 'Two Distant Strangers, on Netflix'
+    site: 'https://www.netflix.com/title/81447229'
 slug: 1-29-using-css-in-js-with-stitches
-spotify: https://open.spotify.com/episode/6BgooamhwjgQSCrsBofhyF?si=2OdvuAbUTJyS3qX0M93LSA
-start: July 14, 2021
+spotify: >-
+  https://open.spotify.com/episode/6BgooamhwjgQSCrsBofhyF?si=2OdvuAbUTJyS3qX0M93LSA
+start: 'July 14, 2021'
 title: Using CSS in JS with Stitches
-youtube: https://youtu.be/GBKQcjX-1Lo
+youtube: 'https://youtu.be/GBKQcjX-1Lo'
+hashnode: podcast-1-29-using-css-in-js-with-stitches
 ---
 
 ## Questions

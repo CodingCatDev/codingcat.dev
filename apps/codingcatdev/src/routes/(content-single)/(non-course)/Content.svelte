@@ -3,7 +3,7 @@
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { ArrowTopRightOnSquare } from '@steeze-ui/heroicons';
 
-	import Video from '$lib/components/content/Video.svelte';
+	import YouTube from '$lib/components/content/YouTube.svelte';
 	import type { Author, Content, Podcast, Sponsor } from '$lib/types';
 	import { ContentType } from '$lib/types';
 	import { pluralize } from '$lib/utils';
@@ -31,7 +31,7 @@
 						<li>{data.content.title}</li>
 					</ol>
 					{#if data?.content?.youtube}
-						<Video src={data.content.youtube} title={`${data.content.title}`} />
+						<YouTube src={data.content.youtube} title={`${data.content.title}`} />
 					{:else if data?.content?.cover}
 						<Image src={data.content.cover} alt={data.content.title} />
 					{/if}

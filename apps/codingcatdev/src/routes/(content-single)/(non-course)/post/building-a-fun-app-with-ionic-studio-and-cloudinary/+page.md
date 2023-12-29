@@ -49,7 +49,7 @@ upload_preset is now all set for incorporation into the code:
 Now complete the upload through the endpoint:
 
 ```html
-<video controls="controls" height="600">
+<YouTube controls="controls" height="600">
 	<source
 		src="https://res.cloudinary.com/ajonp/video/upload/q_auto/ajonp-ajonp-com/blog/cloudinary_api_endpoing_upload.webm"
 		type="video/webm"

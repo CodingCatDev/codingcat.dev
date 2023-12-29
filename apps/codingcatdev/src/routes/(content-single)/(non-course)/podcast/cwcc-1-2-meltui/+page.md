@@ -3,25 +3,28 @@ type: podcast
 authors:
   - alex-patterson
 episode: 2
-recording_date: December 11, 2023 12:00 PM
+recording_date: 'December 11, 2023 12:00 PM'
 season: 1
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702492693/main-codingcatdev-photo/2023-12-11-meltui.png
-devto:
-excerpt: Thomas teaches Brittney and Alex how to use Melt and how Runes can be used to improve builders.
+cover: >-
+  https://media.codingcat.dev/image/upload/v1702492693/main-codingcatdev-photo/2023-12-11-meltui.png
+devto: null
+excerpt: >-
+  Thomas teaches Brittney and Alex how to use Melt and how Runes can be used to
+  improve builders.
 guests:
   - thomas-g-lopes
-hashnode:
-picks:
+hashnode: podcast-cwcc-1-2-meltui
+picks: null
 slug: cwcc-1-2-meltui
-sponsors:
-spotify:
-start: Dec 11, 2023
+sponsors: null
+spotify: null
+start: 'Dec 11, 2023'
 title: 'Open Source Svelte Magic: Melting Minds through Melt UI!'
-youtube: https://youtube.com/live/Crlo-Qfu6qs?feature=share
+youtube: 'https://youtube.com/live/Crlo-Qfu6qs?feature=share'
 ---
 
 [GitHub Repo of Example](https://github.com/CodingCatDev/code-with-codingcat-meltui)
