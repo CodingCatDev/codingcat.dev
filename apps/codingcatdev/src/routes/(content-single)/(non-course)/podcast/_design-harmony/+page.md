@@ -76,6 +76,13 @@ In the fast-paced world of design, creating a seamless and efficient user experi
 
 - Design systems as a tool for scalability.
 - How efficient design systems streamline workflows and save time.
+- How do design systems scale to meet the needs of a growing organization while balancing fast product roadmaps?
+  - [Ship faster by building design systems slower](https://bigmedium.com/ideas/design-system-pace-layers-slow-fast.html)
+
+### The Layer Cake Approach
+
+- What are the layers of a design system and how do they build upon each other?
+  - [The design system ecosystem](https://bigmedium.com/ideas/design-system-ecosystem.html)
 
 ## 4. Implementing Design Harmony
 
@@ -83,6 +90,16 @@ In the fast-paced world of design, creating a seamless and efficient user experi
 
 - Step-by-step guide to initiating a design system.
 - Key considerations and best practices.
+
+#### Design System Tools
+
+- How do you decide which tools to use for your design system?
+  - Documentation
+  - Design Tokens - source of truth
+  - Component Libraries
+  - Playground/Storybook
+- Web components and their role in the future of design systems.
+- Is there a place for no-code tools in design systems?
 
 ### Case Studies
 
