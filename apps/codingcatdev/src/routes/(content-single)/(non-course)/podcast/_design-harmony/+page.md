@@ -18,7 +18,10 @@ hashnode:
 picks:
   [
     { author: 'brad-frost', name: 'example', site: 'example.com' },
-    { author: 'alex-patterson', name: 'example', site: 'example.com' }
+    { author: 'alex-patterson', name: 'example', site: 'example.com' },
+    {
+      author: 'brittney-postma', name: 'Repo of awesome design systems', site: 'https://github.com/alexpate/awesome-design-systems'
+    }
   ]
 slug: _design-harmony
 sponsors:
