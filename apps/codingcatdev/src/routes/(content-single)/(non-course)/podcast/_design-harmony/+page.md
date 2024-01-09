@@ -87,7 +87,52 @@ In the fast-paced world of design, creating a seamless and efficient user experi
 - What are the layers of a design system and how do they build upon each other?
   - [The design system ecosystem](https://bigmedium.com/ideas/design-system-ecosystem.html)
 
-## 4. Implementing Design Harmony
+## 4. A Global Design System
+
+| A Global Design System would improve the quality and accessibility of the world’s web experiences, save the world’s web designers and developers millions of hours, and make better use of our collective human potential. - Brad Frost, [A Global Design System](https://bradfrost.com/blog/post/a-global-design-system/)
+
+### The Problem
+
+We made the case for design systems and many organizations now depend on many of them to create their products. However, there are many design systems out there and they are not all compatible with each other. This creates a lot of friction for designers and developers who have to learn and use multiple systems to create their products. There is room to improve the quality and accessibility of the world’s web experiences, save the world’s web designers and developers millions of hours, and make better use of our collective potential.
+
+### The Proposal
+
+Band together to create a global design system that can be used by the majority of the world's designers and developers to free up their time to focus on solving more complex problems. Make the system open source and strictly governed by a community of designers and developers. Dramatically improve the quality and accessibility and usability of the world’s web experiences. There is an opportunity to make the web a better place for everyone and show what true worldwide collaboration can accomplish.
+
+- Centralize common UI components
+- Layer on top of HTML
+- Accessible and front-end best practices baked in
+- Unstyled and easily themeable
+- Intuitive and easy to use
+- Interoperable with other systems
+- Internationalized and localized
+- Composable and extensible
+
+#### Where
+- A code repository
+- Code packages
+- Design library
+- Documentation, reference site
+
+#### How
+
+- Have conversations
+- Create a working group
+- Do research
+- Lay out a plan of attack
+- Design and build
+- Release
+- Iterate
+- Govern
+- Maintain and support integration into HTML spec
+
+#### Who
+- You, I, and everyone who can contribute! Not owned by a specific company or organization, but sponsored by them and supported by the community.
+- [Open UI](https://open-ui.org/)
+- [W3C](https://www.w3.org/)
+- [Design Tokens Community Group](https://tr.designtokens.org/)
+
+## 5. Implementing Design Harmony
 
 ### Building a Design System from Scratch
 
@@ -109,7 +154,7 @@ In the fast-paced world of design, creating a seamless and efficient user experi
 - Real-world examples of successful design system implementations.
 - Learnings from prominent companies and their design journeys.
 
-## 5. Challenges and Solutions
+## 6. Challenges and Solutions
 
 ### Common Pitfalls
 
@@ -121,7 +166,7 @@ In the fast-paced world of design, creating a seamless and efficient user experi
 - Adapting design systems to changing requirements.
 - Strategies for continuous improvement.
 
-## 6. Future Trends in Design Harmony
+## 7. Future Trends in Design Harmony
 
 ### AI and Automation
 
@@ -133,7 +178,7 @@ In the fast-paced world of design, creating a seamless and efficient user experi
 - Navigating design harmony across various platforms.
 - Strategies for maintaining consistency in a multi-platform world.
 
-## 7. Conclusion
+## 8. Conclusion
 
 ### Recap of Design Harmony Principles
 
