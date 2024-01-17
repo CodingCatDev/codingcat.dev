@@ -28,7 +28,7 @@ picks:
   ]
 slug: _raycast
 sponsors:
-  - storyblok
+  - cloudinary
 spotify:
 start: Jan 24, 2024
 title: 'Raycast a launcher faster than F1!'
