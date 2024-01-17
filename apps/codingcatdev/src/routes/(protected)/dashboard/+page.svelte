@@ -4,14 +4,15 @@
 	import DashboardCTA from './DashboardCTA.svelte';
 	import DashboardNewFeatured from './DashboardNewFeatured.svelte';
 
-	import type { PageData } from './$types';
+	import type { LayoutData, PageData } from './$types';
 	import DashboardComingSoon from './DashboardComingSoon.svelte';
 	import DashboardBookmarks from './DashboardBookmarks.svelte';
 	import { auth } from '$lib/client/firebase';
 	import { userStore } from 'sveltefire';
 	import DashboardCompleted from './DashboardCompleted.svelte';
+	import Purchases from '../Purchases.svelte';
 
-	export let data: PageData;
+	export let data: LayoutData;
 
 	const user = userStore(auth);
 </script>
@@ -30,6 +31,7 @@
 				{/if}
 			</div>
 			<DashboardNewFeatured {data} />
+			<Purchases />
 			<DashboardComingSoon {data} />
 			{#if $user?.uid}
 				<DashboardBookmarks {data} />

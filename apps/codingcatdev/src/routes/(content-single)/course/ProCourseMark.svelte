@@ -1,8 +1,7 @@
 <script lang="ts">
 	import Locked from './Locked.svelte';
 	import type { LayoutData } from './$types';
-	import type { Content, Course, Lesson, Saved } from '$lib/types';
-	import { ContentType } from '$lib/types';
+	import { ContentType, type Content, type Course, type Lesson, type Saved } from '$lib/types';
 	import ProCourseCompleted from './ProCourseCompleted.svelte';
 	import ProCourseBookmarked from './ProCourseBookmarked.svelte';
 	import ProSaved from './ProSaved.svelte';
@@ -18,6 +17,7 @@
 	};
 	export let lesson: Lesson | undefined = undefined;
 	export let locked: boolean | undefined = undefined;
+	export let contentType: ContentType | undefined = undefined;
 
 	const user = userStore(auth);
 </script>
@@ -47,11 +47,10 @@
 				savedRef="/bookmarked"
 				savedIconSource={Bookmark}
 			/>
-		</div>{/if}
-{:else if data.content?.type === ContentType.lesson}
+		</div>
+	{/if}
+{:else if contentType === ContentType.lesson}
 	<div class="flex w-12 gap-1">
 		<Locked {locked} />
 	</div>
-{:else}
-	<div />
 {/if}

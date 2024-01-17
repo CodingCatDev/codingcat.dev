@@ -15,7 +15,7 @@ title: How to achieve 16:9 resolution while using Divvy on a Mac
 ---
 
 <script lang="ts">
-	import Video from '$lib/components/content/Video.svelte';
+	import YouTube from '$lib/components/content/YouTube.svelte';
 </script>
 
 Have you ever tried to record a video and notice that it is a few pixels off? Lets fix that so you can produce good quality videos!
@@ -96,7 +96,7 @@ So if you screen is 4K 3840px by 2160px, and your menu is 24px high then your ac
 
 This is an amazingly simple, but yet very powerful tool. You can break your screen up into anything from 1x1 all the way to 10x10 blocks. There are a lot more features check out the below video to see more of what is possible.
 
-<Video src="https://youtu.be/Z6eBPC-4ZOY" title="Divvy Blocks" />
+<YouTube src="https://youtu.be/Z6eBPC-4ZOY" title="Divvy Blocks" />
 
 ## What is the big deal
 

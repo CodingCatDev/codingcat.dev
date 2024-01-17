@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import { allowLocal, filterContent, getContentTypePath } from '$lib/server/content';
 import { ContentType, type Course, type Author, type Sponsor } from '$lib/types';
-import { getShowDrafts } from '$lib/server/firebase';
+import { didUserPurchase, getShowDrafts } from '$lib/server/firebase';
 
 //export const prerender = false;
 
@@ -28,7 +28,7 @@ export const load = async ({ url, parent }) => {
 			contentItems: [md],
 			userPreview: showDrafts
 		});
-		const course = contentItems?.at(0);
+		let course = contentItems?.at(0);
 		if (!course) throw error(404);
 
 		// Content is good, fetch surrounding items
@@ -48,7 +48,24 @@ export const load = async ({ url, parent }) => {
 			}
 		}
 
-		const content = course.lesson?.find((l) => l.slug === lessonSlug);
+		/*
+		 * Single Course Purchase check to see if lesson should be unlocked
+		 * stripe-products/productId/metadata.slug will have course
+		 * this shoudl be updated in the stripe product and it will push to firestore
+		 */
+
+		const singlePurchase = await didUserPurchase(course.slug, data?.user?.uid);
+
+		course = {
+			...course,
+			lesson: course.lesson?.map((l) => {
+				return { ...l, locked: l.locked ? !singlePurchase : l.locked };
+			})
+		};
+
+		// Mark any of the current lessons as locked or not
+		let content = course.lesson?.find((l) => l.slug === lessonSlug);
+
 		if (
 			lessonSlug &&
 			content?.locked &&
@@ -62,7 +79,8 @@ export const load = async ({ url, parent }) => {
 			content,
 			course,
 			authors,
-			sponsors
+			sponsors,
+			singlePurchase
 		};
 	} catch (e) {
 		console.error(e);
