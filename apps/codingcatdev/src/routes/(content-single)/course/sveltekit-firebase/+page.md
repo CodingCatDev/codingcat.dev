@@ -3,11 +3,11 @@ type: course
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1681854060/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebaseCourse.png'
+cover: https://media.codingcat.dev/image/upload/v1702159174/main-codingcatdev-photo/courses/sveltekit-firebase/SvelteFirebaseCourse.png
 excerpt: 'Learn how to use SvelteKit and Firebase to build high-performance, scalable web applications.'
-published: draft
+published: published
 slug: sveltekit-firebase
-start: April 17, 2023
+start: Dec 15, 2023
 title: 'Learn SvelteKit and Firebase: The Ultimate Guide'
 youtube:
 ---
@@ -18,6 +18,6 @@ In this course, you will learn how to use SvelteKit and Firebase to build high-p
 
 By the end of this course, you will be able to use SvelteKit and Firebase to build any type of web application you can imagine.
 
-This course is perfect for developers who want to learn how to use SvelteKit and Firebase to build high-performance, scalable web applications. No prior experience with SvelteKit or Firebase is required.
+This course is perfect for developers who want to learn how to use SvelteKit and Firebase to build high-performance, scalable web applications.
 
 I hope you enjoy the course!

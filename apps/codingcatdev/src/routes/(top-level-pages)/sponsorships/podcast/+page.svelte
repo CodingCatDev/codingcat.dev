@@ -3,8 +3,8 @@
 	import AJHeadphones from '$lib/components/global/icons/AJHeadphones.svelte';
 	import Podcatchers from './Podcatchers.svelte';
 	import Arrow from './Arrow.svelte';
-
-	let form;
+	import SponsorshipForm from '../SponsorshipForm.svelte';
+	import SponsorshipCards from '../SponsorshipCards.svelte';
 </script>
 
 <svelte:head>
@@ -76,6 +76,34 @@
 				<AJHeadphones cls="w-48 h-48" />
 			</div>
 		</div>
+		<div class="flex justify-center card variant-soft-surface">
+			<div class="flex flex-col p-8">
+				<section class="my-8 flex flex-col gap-1 md:gap-4">
+					<p class="">
+						On CodingCat.dev your advertisement is <span
+							class="uppercase bg-surface-backdrop-token dark:text-primary-500 font-black text-3xl p-2 rounded m-1"
+							>permanent</span
+						>!
+					</p>
+					<p>
+						You read that right, it is not just while you are sponsoring and it doesn't change by
+						the flavor of the week like Carbon or Google Ads.
+					</p>
+
+					<p>
+						Podcast sponsorship is a great way to reach a highly engaged audience of potential
+						customers. By sponsoring a podcast, your company can be featured prominently in the
+						pre-roll and mid-roll of a channel with
+						<span class="uppercase font-black text-2xl text-primary-500">over 16K subscribers</span
+						>, with the opportunity to reach a large number of viewers who are already interested in
+						the topics your video is about.
+					</p>
+				</section>
+			</div>
+		</div>
+
+		<SponsorshipForm />
+
 		<div class="flex justify-center card variant-soft-surface">
 			<div class="flex flex-col max-w-xl gap-4 p-8 font-extrabold">
 				<p class="text-4xl">Are you interested in reaching other web designers and developers?</p>
@@ -343,16 +371,7 @@
 			</div>
 		</div>
 
-		<div
-			bind:this={form}
-			class="flex flex-wrap justify-center p-8 bg-basics-900 text-primary-50 rounded-xl"
-		>
-			<iframe
-				class="w-full border-none rounded-xl"
-				height="720px"
-				src="https://notionforms.io/forms/sponsor-submissions"
-				title="Sponsorship Form"
-			/>
-		</div>
+		<SponsorshipForm />
+		<SponsorshipCards />
 	</section>
 </section>

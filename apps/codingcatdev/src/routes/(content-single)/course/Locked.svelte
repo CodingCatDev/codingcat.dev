@@ -7,7 +7,7 @@
 </script>
 
 {#if locked}
-	<Icon src={LockClosed} theme="solid" />
+	<Icon src={LockClosed} theme="solid" class="w-6" />
 {:else}
-	<Icon src={LockOpen} theme="solid" />
+	<Icon src={LockOpen} theme="solid" class="w-6" />
 {/if}

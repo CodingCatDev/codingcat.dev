@@ -3,14 +3,20 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1600879025/ccd-cloudinary/stencil-design-system.png
-excerpt: How Stencil can build Web Components for any Design System. This is a developers view into how a design system will work in any size organization.
-hashnode: https://hashnode.codingcat.dev/tutorial-design-systems-with-web-components
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=design-systems-with-web-components&_id=efc15ebec3b9466a915c866944ce6e21
+cover: >-
+  https://media.codingcat.dev/image/upload/v1600879025/ccd-cloudinary/stencil-design-system.png
+excerpt: >-
+  How Stencil can build Web Components for any Design System. This is a
+  developers view into how a design system will work in any size organization.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-design-systems-with-web-components'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=design-systems-with-web-components&_id=efc15ebec3b9466a915c866944ce6e21
 published: published
 slug: design-systems-with-web-components
-start: May 25, 2022
+start: 'May 25, 2022'
 title: Design Systems with Web Components
+devto: >-
+  https://dev.to/codingcatdev/design-systems-with-web-components-89-temp-slug-9951467
 ---
 
 If you have ever worked for a company that has several disparate sites, built with multiple technologies, keep reading. We will walk through building principles behind good Atomic Design, how to create Web Components using Stencil, and finally (perhaps most importantly) how to allow your company to create and adopt a design system.

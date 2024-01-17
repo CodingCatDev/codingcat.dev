@@ -4,15 +4,21 @@ authors:
   - alex-patterson
   - lukas-spydon
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/FlutterFlameFlappy.png
-excerpt: Spydon teaches Alex and Brittney how to setup and use Flame to build a Flappy Bird clone.
-hashnode: https://hashnode.codingcat.dev/tutorial-flutter-flame-engine-flappy-bird
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=flutter-flame-engine-flappy-bird&_id=795378033f7f4bc7810289bf6b61484a
+cover: >-
+  https://media.codingcat.dev/image/upload/main-codingcatdev-photo/FlutterFlameFlappy.png
+excerpt: >-
+  Spydon teaches Alex and Brittney how to setup and use Flame to build a Flappy
+  Bird clone.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-flutter-flame-engine-flappy-bird'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=flutter-flame-engine-flappy-bird&_id=795378033f7f4bc7810289bf6b61484a
 published: published
 slug: flutter-flame-engine-flappy-bird
-start: November 21, 2022
+start: 'November 21, 2022'
 title: How to make a Flappy Bird clone with Flutter and Flame Engine
-youtube: https://youtu.be/y_0ouvhP8V4
+youtube: 'https://youtu.be/y_0ouvhP8V4'
+devto: >-
+  https://dev.to/codingcatdev/how-to-make-a-flappy-bird-clone-with-flutter-and-flame-engine-2l45-temp-slug-8303325
 ---
 
 Lukas Klingsbo (spydon) teaches Alex and Brittney how to setup and use Flame to build a Flappy Bird clone. In this tutorial we will walk through everything from repo setup to final game.
