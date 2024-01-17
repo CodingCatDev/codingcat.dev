@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Image from '$lib/components/content/Image.svelte';
+	import { ContentType } from '$lib/types';
 
 	import type { LayoutData } from './$types';
 	import ProCourseMark from './ProCourseMark.svelte';
@@ -39,7 +40,12 @@
 						<div class="p-4">
 							<header class="relative py-6 text-2xl font-bold capitalize card-header">
 								<div class="absolute top-0 right-0">
-									<ProCourseMark locked={l?.locked} lesson={l} {data} />
+									<ProCourseMark
+										locked={l?.locked}
+										lesson={l}
+										{data}
+										contentType={ContentType.lesson}
+									/>
 								</div>
 								<div>
 									{l.title}

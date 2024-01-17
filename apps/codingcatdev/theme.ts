@@ -3,8 +3,8 @@ import type { CustomThemeConfig } from '@skeletonlabs/tw-plugin';
 export const codingCatDevTheme: CustomThemeConfig = {
 	name: 'codingcatdev',
 	properties: {
-		'--theme-font-family-base': "'Quicksand', sans-serif",
-		'--theme-font-family-heading': "'Quicksand', sans-serif",
+		'--theme-font-family-base': "'Nunito', sans-serif",
+		'--theme-font-family-heading': "'Nunito', sans-serif",
 		'--theme-font-color-base': 'var(--color-surface-900)',
 		'--theme-font-color-dark': 'var(--color-tertiary-50)',
 		'--theme-rounded-base': '12px',
