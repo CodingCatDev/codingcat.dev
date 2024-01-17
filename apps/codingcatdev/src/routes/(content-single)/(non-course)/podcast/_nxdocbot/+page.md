@@ -22,7 +22,7 @@ picks:
   ]
 slug: _nxdocbot
 sponsors:
-  - storyblok
+  - cloudinary
 spotify:
 start: Jan 1, 2024
 title: 'DocBot: Your Fun and Fabulous AI Sidekick for Document Adventures!'
