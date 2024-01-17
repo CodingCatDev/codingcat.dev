@@ -22,7 +22,7 @@ picks:
   ]
 slug: _compassionate-coding
 sponsors:
-  - storyblok
+  - cloudinary
 spotify:
 start: Jan 1, 2024
 title: 'Compassionate Coding: Emotional Intelligence for Engineers'
