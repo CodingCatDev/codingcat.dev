@@ -4,34 +4,35 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 20
-recording_date: August 17, 2023 2:15 PM
+recording_date: 'August 17, 2023 2:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1695832306/main-codingcatdev-photo/3.20-flightcontrol.png
-devto:
-excerpt: 'With Flightcontrol you can forget the pain of AWS.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1695832306/main-codingcatdev-photo/3.20-flightcontrol.png
+devto: https://dev.to/codingcatdev/flightcontrol-is-aws-but-awesome-with-brandon-bayer-2m0o
+excerpt: With Flightcontrol you can forget the pain of AWS.
 guests:
   - brandon-bayer
-hashnode:
+hashnode: podcast-3-20-flightcontrol-is-aws-but-awesome-with-brandon-bayer
 picks:
-  [
-    {
-      author: 'brittney-postma',
-      name: 'ASTARRY Controller for Gaming',
-      site: 'https://www.amazon.com/dp/B07ZYQ81NN?psc=1&ref=ppx_yo2ov_dt_b_product_details'
-    },
-    { author: 'alex-patterson', name: 'shadcn/ui', site: 'https://ui.shadcn.com/' }
-  ]
+  - author: brittney-postma
+    name: ASTARRY Controller for Gaming
+    site: >-
+      https://www.amazon.com/dp/B07ZYQ81NN?psc=1&ref=ppx_yo2ov_dt_b_product_details
+  - author: alex-patterson
+    name: shadcn/ui
+    site: 'https://ui.shadcn.com/'
 slug: 3-20-flightcontrol-is-aws-but-awesome-with-brandon-bayer
 sponsors:
   - storyblok
-spotify: 'https://open.spotify.com/episode/0GjLoB80A1nhFCi2OspwRC?si=QRbcRPduTdabVtYjI8XBaw'
-start: Oct 4, 2023
+spotify: >-
+  https://open.spotify.com/episode/0GjLoB80A1nhFCi2OspwRC?si=QRbcRPduTdabVtYjI8XBaw
+start: 'Oct 4, 2023'
 title: 'Flightcontrol is AWS, but Awesome! with Brandon Bayer'
-youtube: https://www.youtube.com/watch?v=VE2nzk1rC6k
+youtube: 'https://www.youtube.com/watch?v=VE2nzk1rC6k'
 ---
 
 In today's world, businesses are increasingly moving to the cloud. This is due to a number of factors, including the scalability, flexibility, and cost-effectiveness of cloud computing. However, moving to the cloud can also be a complex and time-consuming process. This is where services like [Flightcontrol](https://www.flightcontrol.dev/) come in.

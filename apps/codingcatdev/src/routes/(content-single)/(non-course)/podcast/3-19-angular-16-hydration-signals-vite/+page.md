@@ -4,40 +4,43 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 19
-recording_date: June 22, 2023 2:15 PM
+recording_date: 'June 22, 2023 2:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1683208745/main-codingcatdev-photo/Angular-16-Hydration-Signals-Vite.jpg
-devto:
-excerpt: 'Angular 16 is a major release of the Angular framework that introduces several new features.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1683208745/main-codingcatdev-photo/Angular-16-Hydration-Signals-Vite.jpg
+devto: 'https://dev.to/codingcatdev/angular-16-hydration-signals-vite-4one'
+excerpt: >-
+  Angular 16 is a major release of the Angular framework that introduces several
+  new features.
 guests:
   - patricio-vargas
-hashnode:
+hashnode: podcast-3-19-angular-16-hydration-signals-vite
 picks:
-  [
-    {
-      author: 'patricio-vargas',
-      name: 'Tulum in the City',
-      site: 'https://partiful.com/e/JEySXFEz0nRYSIyJZPqZ'
-    },
-    {
-      author: 'brittney-postma',
-      name: 'Config Keynotes',
-      site: 'https://www.youtube.com/watch?time_continue=2&v=JUTFghsG8nI&embeds_referring_euri=https%3A%2F%2Fwww.bing.com%2F&embeds_referring_origin=https%3A%2F%2Fwww.bing.com&source_ve_path=MjM4NTE&feature=emb_title'
-    },
-    { author: 'brittney-postma', name: 'Svelte 4', site: 'https://svelte.dev/blog/svelte-4' },
-    { author: 'alex-patterson', name: 'Ticker', site: 'https://www.tiicker.com/' }
-  ]
+  - author: patricio-vargas
+    name: Tulum in the City
+    site: 'https://partiful.com/e/JEySXFEz0nRYSIyJZPqZ'
+  - author: brittney-postma
+    name: Config Keynotes
+    site: >-
+      https://www.youtube.com/watch?time_continue=2&v=JUTFghsG8nI&embeds_referring_euri=https%3A%2F%2Fwww.bing.com%2F&embeds_referring_origin=https%3A%2F%2Fwww.bing.com&source_ve_path=MjM4NTE&feature=emb_title
+  - author: brittney-postma
+    name: Svelte 4
+    site: 'https://svelte.dev/blog/svelte-4'
+  - author: alex-patterson
+    name: Ticker
+    site: 'https://www.tiicker.com/'
 slug: 3-19-angular-16-hydration-signals-vite
 sponsors:
   - storyblok
-spotify: 'https://open.spotify.com/episode/3g1xbgaUBXWJStpdMDPNhG?si=agEy5pP7R0KJ5TGdVXDKWw'
-start: July 5, 2023
+spotify: >-
+  https://open.spotify.com/episode/3g1xbgaUBXWJStpdMDPNhG?si=agEy5pP7R0KJ5TGdVXDKWw
+start: 'July 5, 2023'
 title: 'Angular 16 Hydration, Signals, Vite'
-youtube: https://youtu.be/UCsJKrt0GhE?si=QbMIiRlP9zAmWSHA
+youtube: 'https://youtu.be/UCsJKrt0GhE?si=QbMIiRlP9zAmWSHA'
 ---
 
 [Angular 16](https://blog.angular.io/angular-v16-is-here-4d7a28ec680d) is a major release of the Angular framework that introduces several new features, including:

@@ -34,7 +34,7 @@
 	}
 
 	blockquote:not(.unstyled):is(:not(.prose *)) {
-		@apply text-token text-base italic border-l-8 border-l-secondary-500 px-4 pl-4;
+		@apply text-token text-base italic border-l-8 border-l-surface-500 px-4 pl-4;
 	}
 
 	/* Keyboard */
