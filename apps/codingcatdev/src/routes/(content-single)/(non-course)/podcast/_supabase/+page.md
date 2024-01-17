@@ -22,7 +22,7 @@ picks:
   ]
 slug: _supabase
 sponsors:
-  - storyblok
+  - cloudinary
 spotify:
 start: Dec 19, 2023
 title: Supabase New Release
