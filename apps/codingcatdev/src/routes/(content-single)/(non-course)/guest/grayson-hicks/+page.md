@@ -7,6 +7,7 @@ slug: grayson-hicks
 start: January 1, 2000
 picks: https://www.notion.so/Nintendo-Switch-Zelda-79949f25e00f45f4a052a68162736123, https://www.notion.so/Node-17-cf1ba73b07e54d0982e946eeb0f06a78
 socials:
+  github: https://github.com/graysonhicks
   twitter: 'https://twitter.com/graysonhicks'
 websites:
   - https://graysonhicks.com/

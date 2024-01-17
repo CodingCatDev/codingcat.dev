@@ -6,14 +6,14 @@ published: published
 slug: kelly-vaughn
 start: January 1, 2000
 socials:
-  github: 'https://github.com/acekyd'
-  linkedin: 'https://www.linkedin.com/in/acekyd/'
-  stackoverflow: 'https://stackoverflow.com/users/1945274/acekyd'
+  github: https://github.com/kellyvaughn
+  instagram: https://www.instagram.com/kelllyvaughn/
+  linkedin: https://www.linkedin.com/in/kellyvaughn/
+  substack: https://substack.com/@kvlly
   twitter: 'https://twitter.com/kvlly'
-  twitch: 'https://www.twitch.tv/elpunish3rr/'
-  youtube: 'https://www.youtube.com/acekyd'
 websites:
   - https://www.engineeringleadership.xyz/
+  - https://www.kvlly.com/
 ---
 
 ## About

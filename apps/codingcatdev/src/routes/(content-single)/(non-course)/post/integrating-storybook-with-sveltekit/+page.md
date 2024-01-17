@@ -3,15 +3,20 @@ type: post
 authors:
   - brittney-postma
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Storybook.jpg
-excerpt: Brittney walks through how to get Storybook working in a new SvelteKit project.
-hashnode: https://hashnode.codingcat.dev/tutorial-integrating-storybook-with-sveltekit
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=integrating-storybook-with-sveltekit&_id=d62f77b86e45401999c1c60f6a0ec2bc
+cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/Storybook.jpg'
+excerpt: >-
+  Brittney walks through how to get Storybook working in a new SvelteKit
+  project.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-integrating-storybook-with-sveltekit'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=integrating-storybook-with-sveltekit&_id=d62f77b86e45401999c1c60f6a0ec2bc
 published: published
 slug: integrating-storybook-with-sveltekit
-start: June 4, 2022
+start: 'June 4, 2022'
 title: Integrating Storybook with SvelteKit
-youtube: https://youtu.be/Kc1ULlfyUcw
+youtube: 'https://youtu.be/Kc1ULlfyUcw'
+devto: >-
+  https://dev.to/codingcatdev/integrating-storybook-with-sveltekit-4e7i-temp-slug-7210586
 ---
 
 ## Intro

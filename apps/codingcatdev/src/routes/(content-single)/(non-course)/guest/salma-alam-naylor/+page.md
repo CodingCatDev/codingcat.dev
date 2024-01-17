@@ -5,10 +5,11 @@ name: Salma Alam-Naylor
 published: published
 slug: salma-alam-naylor
 start: January 1, 2000
-picks: https://www.notion.so/The-Handmaid-s-Tale-d2172c212a024967bb97e3ee2ebb6143, https://www.notion.so/Advice-for-Complex-CSS-Illustrations-b58a23e0d5944785b2d4fce879192a99
 socials:
+  github: https://github.com/whitep4nth3r
   linkedin: 'https://www.linkedin.com/in/whitep4nth3r/?originalSubdomain=uk'
   twitter: 'https://twitter.com/whitep4nth3r'
+  twitch: https://www.twitch.tv/whitep4nth3r
 websites:
   - https://whitep4nth3r.com/
   - https://remotelyinteresting.transistor.fm/

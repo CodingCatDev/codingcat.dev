@@ -8,7 +8,9 @@ start: January 1, 2000
 picks: https://www.notion.so/Ozark-cd0d778b54144e4b98ab489674917975, https://www.notion.so/Peacemaker-788e450d24694546802599f9323a53cb
 socials:
   github: 'https://github.com/colbyfayock'
+  mastodon: https://hachyderm.io/@colbyfayock
   twitter: 'https://twitter.com/colbyfayock'
+  twitch: https://www.twitch.tv/colbyfayock
   youtube: 'https://www.youtube.com/colbyfayock'
 websites:
   - https://spacejelly.dev/
@@ -17,4 +19,4 @@ websites:
 
 ## About
 
-Senior Developer Experience at [Cloudinary](https://cloudinary.com/)
+Director of Developer Experience Engineering at [Cloudinary](https://cloudinary.com/)

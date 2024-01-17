@@ -6,7 +6,9 @@ published: published
 slug: lee-briggs
 start: January 1, 2000
 socials:
-  twitter: 'https://twitter.com/briggsl'
+  github: https://github.com/jaxxstorm
+  linkedin: https://www.linkedin.com/in/briggsl/
+  twitter: https://twitter.com/briggsl
 websites:
   - https://www.leebriggs.co.uk/
 ---

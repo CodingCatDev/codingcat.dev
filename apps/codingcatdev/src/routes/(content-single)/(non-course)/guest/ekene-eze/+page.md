@@ -6,9 +6,11 @@ published: published
 slug: ekene-eze
 start: January 1, 2000
 socials:
+  github: https://github.com/kenny-io
   twitter: 'https://twitter.com/kenny_io'
   youtube: 'https://www.youtube.com/c/EkeneEze'
 websites:
+  - https://kenny.engineer/
 ---
 
 ## About

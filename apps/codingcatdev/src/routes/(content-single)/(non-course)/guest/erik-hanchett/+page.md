@@ -6,13 +6,13 @@ published: published
 slug: erik-hanchett
 start: January 1, 2000
 socials:
+  github: https://github.com/ErikCH
   twitter: 'https://twitter.com/ErikCH'
   youtube: 'https://www.youtube.com/c/programwitherik'
 websites:
-  - https://www.adewaleabati.com/
-  - https://www.madeinnigeria.dev/
+  - https://www.programwitherik.com/
 ---
 
 ### Profile
 
-Erik is a frontend engineer at AWS.
+Erik is a frontend engineer at [AWS Amplify](https://aws.amazon.com/amplify/).

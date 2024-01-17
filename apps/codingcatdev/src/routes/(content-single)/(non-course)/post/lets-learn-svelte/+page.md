@@ -3,15 +3,23 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1635950500/main-codingcatdev-photo/let_s_learn_svelte.png
-excerpt: Embrace the hype. Give Svelte and SvelteKit a try!  Learn how to build modern web applications with SvelteKit, a quickly growing framework for generating static web pages (SSG) as well as Server Side Rendered content (SSR). In this crash course, you'll learn all the basics including file-based routing, API routes, dynamic routes, global and scoped CSS, and much more!
-hashnode: https://hashnode.codingcat.dev/tutorial-lets-learn-svelte
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=lets-learn-svelte&_id=8f6384fea1654269a196e7be6a85c0f1
+cover: >-
+  https://media.codingcat.dev/image/upload/v1635950500/main-codingcatdev-photo/let_s_learn_svelte.png
+excerpt: >-
+  Embrace the hype. Give Svelte and SvelteKit a try!  Learn how to build modern
+  web applications with SvelteKit, a quickly growing framework for generating
+  static web pages (SSG) as well as Server Side Rendered content (SSR). In this
+  crash course, you'll learn all the basics including file-based routing, API
+  routes, dynamic routes, global and scoped CSS, and much more!
+hashnode: 'https://hashnode.codingcat.dev/tutorial-lets-learn-svelte'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=lets-learn-svelte&_id=8f6384fea1654269a196e7be6a85c0f1
 published: published
 slug: lets-learn-svelte
-start: June 1, 2022
+start: 'June 1, 2022'
 title: Let's Learn Svelte
-youtube: https://youtu.be/fOD_3iSiwTQ
+youtube: 'https://youtu.be/fOD_3iSiwTQ'
+devto: 'https://dev.to/codingcatdev/lets-learn-svelte-4fa5-temp-slug-5073912'
 ---
 
 Learn how to build modern web applications with SvelteKit, a quickly growing framework for generating static web pages (SSG) as well as Server Side Rendered content (SSR). In this crash course, you'll learn all the basics including file-based routing, API routes, dynamic routes, global and scoped CSS, and much more!

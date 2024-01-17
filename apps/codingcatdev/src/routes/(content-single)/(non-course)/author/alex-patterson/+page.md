@@ -1,6 +1,6 @@
 ---
 type: author
-cover: 'https://media.codingcat.dev/image/upload/v1654730163/main-codingcatdev-photo/headshots/Alex-Patterson-2022.jpg'
+cover: https://media.codingcat.dev/image/upload/v1701023146/main-codingcatdev-photo/headshots/cool-calm-alex.jpg
 name: Alex Patterson
 published: published
 slug: alex-patterson
@@ -8,6 +8,7 @@ start: January 1, 2000
 socials:
   github: 'https://github.com/codercatdev'
   linkedin: 'https://www.linkedin.com/in/codercatdev/'
+  tiktok: https://www.tiktok.com/@codingcatdev
   twitter: 'https://twitter.com/codercatdev'
   twitch: 'https://www.twitch.tv/codingcatdev/'
   youtube: 'https://www.youtube.com/codingcatdev'

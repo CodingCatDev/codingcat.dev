@@ -7,6 +7,7 @@ slug: brian-douglas
 start: January 1, 2000
 picks: https://www.notion.so/Campsite-Design-b9770e75ee31496899851eb2d164a5c4
 socials:
+  linkedin: https://www.linkedin.com/in/brianldouglas/
   github: 'https://github.com/bdougie'
   twitter: 'https://twitter.com/bdougieYO'
 websites:

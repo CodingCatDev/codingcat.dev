@@ -7,9 +7,11 @@ slug: greg-whitworth
 start: January 1, 2000
 picks: https://www.notion.so/Join-the-Open-UI-Discord-to-stay-up-to-date-on-information-and-join-the-weekly-telecons-27df5fdda525413c8ec46db16d6b4aef, https://www.notion.so/Binging-Legal-Eagle-youtube-reviews-of-lawyers-in-movies-2cddc53b3cdc48608265870ebc0ae2a8
 socials:
+  github: https://github.com/gregwhitworth
   twitter: 'https://twitter.com/gregwhitworth'
 websites:
-  - https://twitter.com/openuicg
+  - https://open-ui.org/
+  - https://www.gwhitworth.com/
 ---
 
 ### Profile

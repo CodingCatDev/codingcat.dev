@@ -5,8 +5,10 @@ name: Nick Hodges
 published: published
 slug: nick-hodges
 start: January 1, 2000
-picks: https://www.notion.so/Learn-CSS-on-web-dev-b053a6fcb5ba475384e2472812269ad1, https://www.notion.so/GUI-Challenges-c37331dfe86c40b6b118a50220923623, https://www.notion.so/gradient-style-1032a3c3783f4175aec4c442a27a891f
 socials:
+  github: https://github.com/nickhodges
+  linkedin: https://www.linkedin.com/in/nickhodges/
+  medium: https://nickhodges.medium.com/
   twitter: 'https://twitter.com/nickhodges'
 websites:
   - https://www.nickhodges.com/

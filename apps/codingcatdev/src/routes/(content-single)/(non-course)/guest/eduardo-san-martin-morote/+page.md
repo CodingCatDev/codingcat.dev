@@ -6,6 +6,7 @@ published: published
 slug: eduardo-san-martin-morote
 start: January 1, 2000
 socials:
+  mastodon: https://m.webtoo.ls/@posva
   github: 'https://github.com/posva'
   twitter: 'https://twitter.com/posva'
 websites:

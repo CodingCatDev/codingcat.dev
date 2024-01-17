@@ -6,6 +6,7 @@ published: published
 slug: nader-dabit
 start: January 1, 2000
 socials:
+  github: https://github.com/dabit3
   linkedin: 'https://www.linkedin.com/in/naderdabit/'
   twitter: 'https://twitter.com/dabit3'
 websites:

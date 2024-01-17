@@ -6,10 +6,11 @@ published: published
 slug: alexander-gallego
 start: January 1, 2000
 socials:
+  github: https://github.com/emaxerrno
   twitter: 'https://twitter.com/emaxerrno'
 ---
 
-## About
+## Profile
 
 Founder & CEO of [Redpanda](https://redpanda.com/)
 

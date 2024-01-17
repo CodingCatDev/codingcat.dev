@@ -76,7 +76,7 @@ export const getShowDrafts = async (uid?: string) => {
 	const db = getFirestore();
 	const doc = await db.collection('users').doc(user.uid).get();
 	const userData = doc.data();
-	return userData?.settings?.showDrafts;
+	return userData?.pro?.settings?.showDrafts;
 };
 
 /* DB */
@@ -101,4 +101,35 @@ export const getStripeProducts = async () => {
 		}
 	}
 	return products;
+};
+
+export const didUserPurchase = async (slug: string, uid?: string) => {
+	if (!uid) return false;
+
+	// User
+	const auth = getAuth(app);
+	const user = await auth.getUser(uid);
+
+	const db = getFirestore();
+
+	if (!db) return false;
+
+	const snapshot = await db
+		.collection(`stripe-customers/${user.uid}/payments`)
+		.where('canceled_at', '==', null)
+		.get();
+
+	if (snapshot.empty) return false;
+
+	for (const doc of snapshot.docs) {
+		const payment = doc.data();
+		for (const item of payment?.items) {
+			const productSnapshot = await db.doc(`stripe-products/${item?.price?.product}`).get();
+			if (!productSnapshot) return false;
+
+			const product = productSnapshot.data();
+			if (product?.metadata?.slug === slug) return true;
+		}
+	}
+	return false;
 };

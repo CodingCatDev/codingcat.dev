@@ -18,7 +18,9 @@
 			<ProButton products={data.products} uid={data.user?.uid} />
 		</div>
 	{:else if data?.showDrafts}
-		<ContentCards data={{ contentType: data.contentType, content: data.comingSoon }} />
+		<ContentCards
+			data={{ contentType: data.contentType, content: data.comingSoon, user: data.user }}
+		/>
 	{:else}
 		<div class="flex">
 			<div class="text-xl">

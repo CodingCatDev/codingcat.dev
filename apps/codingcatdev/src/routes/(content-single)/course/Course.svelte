@@ -1,11 +1,12 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
-	import Video from '$lib/components/content/Video.svelte';
+	import YouTube from '$lib/components/content/YouTube.svelte';
 	import LessonCards from './LessonCards.svelte';
 	import Image from '$lib/components/content/Image.svelte';
 
 	import type { LayoutData } from './$types';
 	import ProCourseMark from './ProCourseMark.svelte';
+	import CloudinaryVideo from '$lib/components/content/CloudinaryVideo.svelte';
 	export let data: LayoutData;
 </script>
 
@@ -19,11 +20,13 @@
 			</ol>
 			<div class="flex flex-col gap-2 md:gap-8">
 				{#if data?.course?.youtube}
-					<Video src={data.course.youtube} title={`${data.course.title}`} />
+					<YouTube src={data.course.youtube} title={`${data.course.title}`} />
+				{:else if data?.content?.videoCloudinary}
+					<CloudinaryVideo src={data.content.videoCloudinary} poster={data?.content?.cover} />
 				{:else if data?.course?.cover}
 					<Image src={data.course.cover} alt={data.course.title} />
 				{/if}
-				<div class="flex">
+				<div class="flex gap-2">
 					{#if data?.course?.lesson?.filter((l) => l.locked).length}
 						<span class="chip variant-filled-primary py-1 px-4 rounded-full font-bold text-xl"
 							>Pro</span

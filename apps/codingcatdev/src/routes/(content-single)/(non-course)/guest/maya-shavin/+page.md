@@ -6,7 +6,11 @@ published: published
 slug: maya-shavin
 start: January 1, 2000
 socials:
+  facebook: https://www.facebook.com/mayashavin
+  linkedin: https://www.linkedin.com/in/mayashavin/
+  github: https://github.com/mayashavin
   twitter: 'https://twitter.com/MayaShavin'
+  youtube: https://www.youtube.com/@mayashavin
 websites:
   - https://mayashavin.com/
 ---

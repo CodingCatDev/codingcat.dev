@@ -1,11 +1,13 @@
 ---
 type: guest
-cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/podcast-guest/seanfalconer'
+cover: https://media.codingcat.dev/image/upload/v1699502360/main-codingcatdev-photo/podcast-guest/sean-falconer.png
 name: Sean Falconer
-published: draft
+published: published
 slug: sean-falconer
 start: January 1, 2000
 socials:
+  github: https://github.com/thefalc
+  linkedin: https://www.linkedin.com/in/seanf/
   twitter: 'https://twitter.com/seanfalconer'
 websites:
   - https://thefalc.com/

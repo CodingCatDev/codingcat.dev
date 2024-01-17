@@ -5,8 +5,10 @@ name: Oren Eini
 published: published
 slug: oren-eini
 start: January 1, 2000
-picks: https://www.notion.so/Learn-CSS-on-web-dev-b053a6fcb5ba475384e2472812269ad1, https://www.notion.so/GUI-Challenges-c37331dfe86c40b6b118a50220923623, https://www.notion.so/gradient-style-1032a3c3783f4175aec4c442a27a891f
 socials:
+  facebook: https://www.facebook.com/profile.php?id=100063550929698
+  github: https://github.com/ayende
+  linkedin: https://www.linkedin.com/in/ravendb/
   twitter: 'https://twitter.com/ayende'
 websites:
   - https://ayende.com/blog/

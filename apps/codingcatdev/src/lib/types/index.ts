@@ -17,6 +17,7 @@ export interface Content {
 	title: string;
 	updated?: Date;
 	weight?: number;
+	videoCloudinary?: string;
 	youtube?: string;
 }
 
@@ -83,8 +84,10 @@ export enum PodcastType {
 }
 
 export interface Socials {
+	codepen?: string;
 	devto?: string;
 	discord?: string;
+	dribbble?: string;
 	facebook?: string;
 	github?: string;
 	instagram?: string;
@@ -94,6 +97,7 @@ export interface Socials {
 	medium?: string;
 	polywork?: string;
 	stackoverflow?: string;
+	substack?: string;
 	tiktok?: string;
 	twitch?: string;
 	twitter?: string;

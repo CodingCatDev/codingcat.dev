@@ -30,11 +30,11 @@ It was a huge help to talk with Tim about a product that I am supporting and bui
 
 Because I have been learning the product over several months now there were many areas that I take for granted. When I show people the product it is going to be important to mention very key items that both developers and content creators will find useful. For instance, when I was entering one of the data bindings for state Tim was surprised by the editor.
 
-[https://media.codingcat.dev/image/upload/f_auto,c_limit,w_3840,q_auto/main-codingcatdev-photo/Screen_Shot_2022-04-13_at_8.11.20_PM](https://media.codingcat.dev/image/upload/f_auto,c_limit,w_3840,q_auto/main-codingcatdev-photo/Screen_Shot_2022-04-13_at_8.11.20_PM)
+![Builder.io's editor](https://media.codingcat.dev/image/upload/f_auto,c_limit,w_3840,q_auto/main-codingcatdev-photo/Screen_Shot_2022-04-13_at_8.11.20_PM)
 
 Something I forgot to mention was the fact this is not the only editor. Not only can you use components and bind dynamic data, there is also the capability to access global styling and JavaScript with a built in editor as well. In the image below you can see that you are also able to run JavaScript on the server via Builder.isServer as well as only on the client via Builder.isBrowser.
 
-[https://media.codingcat.dev/image/upload/f_auto,c_limit,w_3840,q_auto/main-codingcatdev-photo/Screen_Shot_2022-04-13_at_8.15.41_PM](https://media.codingcat.dev/image/upload/f_auto,c_limit,w_3840,q_auto/main-codingcatdev-photo/Screen_Shot_2022-04-13_at_8.15.41_PM)
+![Builder.io's editor showing JavaScript](https://media.codingcat.dev/image/upload/f_auto,c_limit,w_3840,q_auto/main-codingcatdev-photo/Screen_Shot_2022-04-13_at_8.15.41_PM)
 
 ## More Details
 

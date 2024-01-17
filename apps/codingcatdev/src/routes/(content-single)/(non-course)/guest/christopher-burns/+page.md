@@ -7,7 +7,7 @@ slug: christopher-burns
 start: January 1, 2000
 picks:
 socials:
-  github: 'https://github.com/Burnsy'
+  github: https://github.com/burnedchris
   linkedin: 'https://www.linkedin.com/in/burnedchris/'
   twitter: 'https://twitter.com/burnedchris'
   twitch: 'https://www.twitch.tv/burnedchris'
