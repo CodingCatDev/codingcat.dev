@@ -9,7 +9,7 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: 'https://media.codingcat.dev/image/upload/v1699492773/main-codingcatdev-photo/3.24-angular-dev.png'
+cover: https://media.codingcat.dev/image/upload/v1700090314/main-codingcatdev-photo/3_typescript-is-freaking-hard.png
 devto:
 excerpt: "Join us as we delve into the fundamentals of TypeScript, a superset of JavaScript that elevates code quality and maintainability through static typing, in this comprehensive beginner's course."
 guests:
@@ -19,7 +19,7 @@ picks:
   [{ author: 'richard-bray', name: '', site: '' }, { author: 'alex-patterson', name: '', site: '' }]
 slug: _typescript-is-freaking-hard
 sponsors:
-  - storyblok
+  - cloudinary
 spotify:
 start: Jan 1, 2024
 title: TypeScript is freaking hard!
