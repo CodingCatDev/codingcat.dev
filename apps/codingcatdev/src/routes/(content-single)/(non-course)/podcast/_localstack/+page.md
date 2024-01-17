@@ -18,16 +18,20 @@ hashnode:
 picks:
   [
     { author: 'waldemar-hummer', name: 'SuikaGame', site: 'https://suikagame.com/' },
-    { author: 'alex-patterson', name: 'Kaiber', site: 'https://kaiber.ai/' }
-    { author: 'alex-patterson', name: 'CodingCat.dev Holiday Songs', site: 'https://www.youtube.com/watch?v=HBzX8cDbxns' }
+    { author: 'alex-patterson', name: 'Kaiber', site: 'https://kaiber.ai/' },
+    {
+      author: 'alex-patterson',
+      name: 'CodingCat.dev Holiday Songs',
+      site: 'https://www.youtube.com/watch?v=HBzX8cDbxns'
+    }
   ]
 slug: _localstack
 sponsors:
-  -
+  - cloudinary
 spotify:
 start: Dec 29, 2023
 title: 'Master Offline AWS Development: Harness the Power of LocalStack!'
-youtube: 
+youtube:
 ---
 
 LocalStack provides a comprehensive platform for developing and testing AWS applications locally, offering a significant reduction in development time and AWS costs. It emulates over 80 AWS services, allowing developers to work efficiently without internet access or AWS cloud resources. The tool is designed for seamless integration into existing workflows, supporting favorite cloud development tools and enabling faster deployment and testing. It's widely appreciated in the developer community for enhancing productivity and simplifying cloud application development. For more detailed information, please visit [LocalStack's website](https://www.localstack.cloud/).
