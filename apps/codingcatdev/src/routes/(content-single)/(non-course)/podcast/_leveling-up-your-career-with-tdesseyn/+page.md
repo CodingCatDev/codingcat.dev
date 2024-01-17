@@ -22,7 +22,7 @@ picks:
   ]
 slug: _leveling-up-your-career-with-tdesseyn
 sponsors:
-  - storyblok
+  - cloudinary
 spotify:
 start: Jan 1, 2024
 title: 'Leveling Up Your Career: Unleashing Your Full Potential!'
