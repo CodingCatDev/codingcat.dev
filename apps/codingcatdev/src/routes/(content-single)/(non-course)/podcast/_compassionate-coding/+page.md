@@ -24,7 +24,7 @@ picks:
 slug: _compassionate-coding
 sponsors:
   - cloudinary
-spotify:
+spotify: https://spotifyanchor-web.app.link/e/tOJrQZ2itGb
 start: Jan 1, 2024
 title: 'Compassionate Coding: Emotional Intelligence for Engineers'
 youtube: https://youtu.be/GZ0xgZEvlt8
