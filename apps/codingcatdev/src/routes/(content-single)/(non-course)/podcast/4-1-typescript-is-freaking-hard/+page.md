@@ -2,36 +2,40 @@
 type: podcast
 authors:
   - alex-patterson
-episode:
-recording_date: Nov 13, 2023 4:00 PM
+episode: null
+recording_date: 'Nov 13, 2023 4:00 PM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700090314/main-codingcatdev-photo/3_typescript-is-freaking-hard.png
-devto:
-excerpt: "Join us as we delve into the fundamentals of TypeScript, a superset of JavaScript that elevates code quality and maintainability through static typing, in this comprehensive beginner's course."
+cover: >-
+  https://media.codingcat.dev/image/upload/v1700090314/main-codingcatdev-photo/3_typescript-is-freaking-hard.png
+devto: 'https://dev.to/codingcatdev/typescript-is-freaking-hard-20k6'
+excerpt: >-
+  Join us as we delve into the fundamentals of TypeScript, a superset of
+  JavaScript that elevates code quality and maintainability through static
+  typing, in this comprehensive beginner's course.
 guests:
   - richard-bray
-hashnode:
+hashnode: null
 picks:
-  [
-    { author: 'richard-bray', name: 'Paw Patrol Movie', site: 'https://www.pawpatrol.movie' },
-    {
-      author: 'alex-patterson',
-      name: 'Slow Horses',
-      site: 'https://tv.apple.com/us/show/slow-horses/umc.cmc.2szz3fdt71tl1ulnbp8utgq5o'
-    },
-    { author: 'brittney-postma', name: 'Yard House', site: 'https://www.yardhouse.com/home' }
-  ]
+  - author: richard-bray
+    name: Paw Patrol Movie
+    site: 'https://www.pawpatrol.movie'
+  - author: alex-patterson
+    name: Slow Horses
+    site: 'https://tv.apple.com/us/show/slow-horses/umc.cmc.2szz3fdt71tl1ulnbp8utgq5o'
+  - author: brittney-postma
+    name: Yard House
+    site: 'https://www.yardhouse.com/home'
 slug: 4-1-typescript-is-freaking-hard
 sponsors:
   - cloudinary
-spotify:
-start: Jan 1, 2024
+spotify: null
+start: 'Jan 1, 2024'
 title: TypeScript is freaking hard!
-youtube: https://youtu.be/ouHZioTXYyM
+youtube: 'https://youtu.be/ouHZioTXYyM'
 ---
 
 ## Navigating the Complexities of TypeScript: A Comprehensive Beginner's Guide
