@@ -16,14 +16,22 @@ guests:
   - richard-bray
 hashnode:
 picks:
-  [{ author: 'richard-bray', name: 'Paw Patrol Movie', site: 'https://www.pawpatrol.movie' }, { author: 'alex-patterson', name: 'Slow Horses', site: 'https://tv.apple.com/us/show/slow-horses/umc.cmc.2szz3fdt71tl1ulnbp8utgq5o' }, { author: 'brittney-postma', name: 'Yard House', site: 'https://www.yardhouse.com/home' }]
-slug: _typescript-is-freaking-hard
+  [
+    { author: 'richard-bray', name: 'Paw Patrol Movie', site: 'https://www.pawpatrol.movie' },
+    {
+      author: 'alex-patterson',
+      name: 'Slow Horses',
+      site: 'https://tv.apple.com/us/show/slow-horses/umc.cmc.2szz3fdt71tl1ulnbp8utgq5o'
+    },
+    { author: 'brittney-postma', name: 'Yard House', site: 'https://www.yardhouse.com/home' }
+  ]
+slug: 4-1-typescript-is-freaking-hard
 sponsors:
   - cloudinary
 spotify:
 start: Jan 1, 2024
 title: TypeScript is freaking hard!
-youtube:  https://youtu.be/ouHZioTXYyM
+youtube: https://youtu.be/ouHZioTXYyM
 ---
 
 ## Navigating the Complexities of TypeScript: A Comprehensive Beginner's Guide
