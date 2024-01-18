@@ -18,7 +18,7 @@ excerpt: >-
   typing, in this comprehensive beginner's course.
 guests:
   - richard-bray
-hashnode: null
+hashnode: podcast-4-1-typescript-is-freaking-hard-1
 picks:
   - author: richard-bray
     name: Paw Patrol Movie
