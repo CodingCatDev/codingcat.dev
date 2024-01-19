@@ -32,7 +32,7 @@ picks:
 slug: 4-1-typescript-is-freaking-hard
 sponsors:
   - cloudinary
-spotify: https://podcasters.spotify.com/pod/show/codingcatdev/episodes/4-1-Typscript-is-Freaking-Hard-with-Richard-Bray-e2eje6s
+spotify: https://open.spotify.com/episode/0JjK1NBR4LwD4om3XpJXPA?si=QtvrpLHHR6iVgVCFzSaDuQ
 start: 'Jan 1, 2024'
 title: TypeScript is freaking hard!
 youtube: 'https://youtu.be/ouHZioTXYyM'
