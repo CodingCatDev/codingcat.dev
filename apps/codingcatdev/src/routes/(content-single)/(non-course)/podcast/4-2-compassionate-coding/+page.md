@@ -11,7 +11,8 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1700820267/main-codingcatdev-photo/3_compassionate-coding.png
-devto: null
+devto: >-
+  https://dev.to/codingcatdev/compassionate-coding-emotional-intelligence-for-engineers-2d35
 excerpt: >-
   Compassionate Coding is an approach to software development that combines
   compassion, mindfulness, and ethics to empower companies and individuals to
@@ -36,7 +37,8 @@ picks:
 slug: 4-2-compassionate-coding
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/19w0f5G1B6CiwuD7X38Qty?si=mWgInpmcQhKq_bz-0aHY0g
+spotify: >-
+  https://open.spotify.com/episode/19w0f5G1B6CiwuD7X38Qty?si=mWgInpmcQhKq_bz-0aHY0g
 start: 'Jan 19, 2024'
 title: 'Compassionate Coding: Emotional Intelligence for Engineers'
 youtube: 'https://youtu.be/GZ0xgZEvlt8'
