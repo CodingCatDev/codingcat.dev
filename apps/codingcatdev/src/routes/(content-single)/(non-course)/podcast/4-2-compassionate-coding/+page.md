@@ -3,43 +3,43 @@ type: podcast
 authors:
   - alex-patterson
 episode: 2
-recording_date: Dec 5,2023 3:00 PM
+recording_date: 'Dec 5,2023 3:00 PM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700820267/main-codingcatdev-photo/3_compassionate-coding.png
-devto:
-excerpt: 'Compassionate Coding is an approach to software development that combines compassion, mindfulness, and ethics to empower companies and individuals to create collaborative development environments to deliver more socially conscious products.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1700820267/main-codingcatdev-photo/3_compassionate-coding.png
+devto: null
+excerpt: >-
+  Compassionate Coding is an approach to software development that combines
+  compassion, mindfulness, and ethics to empower companies and individuals to
+  create collaborative development environments to deliver more socially
+  conscious products.
 guests:
   - april-wensel
-hashnode:
+hashnode: podcast-4-2-compassionate-coding
 picks:
-  [
-    {
-      author: 'april-wensel',
-      name: 'Grattitude Journal',
-      site: 'https://www.amazon.com/Mindfulness-Productivity-Affirmation-Positivity-Manifestation/dp/B09V7G267S/ref=sr_1_2_sspa?crid=26H483EB4NEB5&dib=eyJ2IjoiMSJ9.V24BKl5ERkeaKuQMhL4tMdbH--y-8wO_Ips85RDI6Hjf7xiMUkT4a_uVEzegfeSnGPQfPyUqPbO8wNOUhMbtOAsdO5CGNbTbO76acC84ZJw3ZbDZmf1SsBNdkD0-tWbXt09XDz_dAf8_7AmKCo5l83vmctetmPHeaS0o3bhsy6zbPcjT66V_KRedoRwYRUTEZZfnpnApL9W2aR_njDQKLRhSJ7cA7KNgXPBc3HjPFFNbYRU3MqGs0LE78oKqc-FzsfPS1m3DNhCVsCHRJF7VNusjdcLFU_KF9aBeKaqGYyc.1p9xlJzGgVrOdQ1XbI2onU3hOQo8ltEPWKP-fiM381g&dib_tag=se&keywords=gratitude+journal&qid=1705618346&sprefix=grattitude%2Caps%2C106&sr=8-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1&smid=A1J1GHGQ8H89N0'
-    },
-    {
-      author: 'brittney-postma',
-      name: 'example',
-      site: 'https://www.max.com/shows/flight-attendant/b23a0db7-a12b-4205-a7e0-3eb372e34fd3'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'example',
-      site: 'https://tv.apple.com/us/show/monarch-legacy-of-monsters/umc.cmc.62l8x0ixrhyq3yaqa5y8yo7ew'
-    }
-  ]
+  - author: april-wensel
+    name: Grattitude Journal
+    site: >-
+      https://www.amazon.com/Mindfulness-Productivity-Affirmation-Positivity-Manifestation/dp/B09V7G267S/ref=sr_1_2_sspa?crid=26H483EB4NEB5&dib=eyJ2IjoiMSJ9.V24BKl5ERkeaKuQMhL4tMdbH--y-8wO_Ips85RDI6Hjf7xiMUkT4a_uVEzegfeSnGPQfPyUqPbO8wNOUhMbtOAsdO5CGNbTbO76acC84ZJw3ZbDZmf1SsBNdkD0-tWbXt09XDz_dAf8_7AmKCo5l83vmctetmPHeaS0o3bhsy6zbPcjT66V_KRedoRwYRUTEZZfnpnApL9W2aR_njDQKLRhSJ7cA7KNgXPBc3HjPFFNbYRU3MqGs0LE78oKqc-FzsfPS1m3DNhCVsCHRJF7VNusjdcLFU_KF9aBeKaqGYyc.1p9xlJzGgVrOdQ1XbI2onU3hOQo8ltEPWKP-fiM381g&dib_tag=se&keywords=gratitude+journal&qid=1705618346&sprefix=grattitude%2Caps%2C106&sr=8-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1&smid=A1J1GHGQ8H89N0
+  - author: brittney-postma
+    name: example
+    site: >-
+      https://www.max.com/shows/flight-attendant/b23a0db7-a12b-4205-a7e0-3eb372e34fd3
+  - author: alex-patterson
+    name: example
+    site: >-
+      https://tv.apple.com/us/show/monarch-legacy-of-monsters/umc.cmc.62l8x0ixrhyq3yaqa5y8yo7ew
 slug: 4-2-compassionate-coding
 sponsors:
   - cloudinary
-spotify: https://spotifyanchor-web.app.link/e/tOJrQZ2itGb
-start: Jan 19, 2024
+spotify: 'https://spotifyanchor-web.app.link/e/tOJrQZ2itGb'
+start: 'Jan 19, 2024'
 title: 'Compassionate Coding: Emotional Intelligence for Engineers'
-youtube: https://youtu.be/GZ0xgZEvlt8
+youtube: 'https://youtu.be/GZ0xgZEvlt8'
 ---
 
 ## Introduction
