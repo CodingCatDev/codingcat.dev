@@ -3,11 +3,11 @@ type: podcast
 authors:
   - alex-patterson
 episode:
-recording_date: Dec 06,2023 3:00 PM
-season: 3
+recording_date: December 06,2023 3:00 PM
+season: 4
 published: published
 podcast: CodingCat.dev
-chapters_done: false
+chapters_done: true
 cloudinary_convert: false
 cover: https://media.codingcat.dev/image/upload/v1700668380/main-codingcatdev-photo/3_leveling-up-your-career-with-tdesseyn.png
 devto:
@@ -17,8 +17,8 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'taylor-desseyn', name: 'example', site: 'example.com' },
-    { author: 'alex-patterson', name: 'example', site: 'example.com' }
+    { author: 'taylor-desseyn', name: 'Suits', site: 'https://www.netflix.com/title/70195800' },
+    { author: 'alex-patterson', name: 'Easy EdgeDB', site: 'https://www.edgedb.com/easy-edgedb' }
   ]
 slug: _leveling-up-your-career-with-tdesseyn
 sponsors:
@@ -26,7 +26,7 @@ sponsors:
 spotify:
 start: Jan 1, 2024
 title: 'Leveling Up Your Career: Unleashing Your Full Potential!'
-youtube:
+youtube: https://youtu.be/WN4s-jYO2LU
 ---
 
 Add more copy here.
