@@ -11,7 +11,7 @@ chapters_done: true
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1700668380/main-codingcatdev-photo/3_leveling-up-your-career-with-tdesseyn.png
-devto: null
+devto: https://dev.to/codingcatdev/leveling-up-your-career-unleashing-your-full-potential-1a0k
 excerpt: >-
   Embark on a transformative journey of self-discovery and skill enhancement in
   'Leveling Up Your Career,' where you'll unlock the secrets to unleashing your
