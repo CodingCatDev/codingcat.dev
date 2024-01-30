@@ -29,7 +29,7 @@ picks:
 slug: 4-3-leveling-up-your-career-with-tdesseyn
 sponsors:
   - cloudinary
-spotify: null
+spotify: https://open.spotify.com/episode/1BkVoIY9oXK2TFCsi0Rrp0
 start: 'Jan 24, 2024'
 title: 'Leveling Up Your Career: Unleashing Your Full Potential!'
 youtube: 'https://youtu.be/WN4s-jYO2LU'
