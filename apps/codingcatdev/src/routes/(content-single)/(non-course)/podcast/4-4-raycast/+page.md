@@ -38,7 +38,7 @@ slug: 4-4-raycast
 sponsors:
   - cloudinary
 spotify: https://open.spotify.com/episode/7CC5JgPr0zlNLU72rbU7As?si=-ZEnO3W0R1m598mg8TN3Bw
-start: Jan 24, 2024
+start: Jan 31, 2024
 title: 'Raycast a launcher faster than F1!'
 youtube: https://youtu.be/1lzKPe9zMr8
 ---
