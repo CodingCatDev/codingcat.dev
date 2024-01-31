@@ -12,7 +12,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1700179257/main-codingcatdev-photo/3_raycast.png
-devto: null
+devto: https://dev.to/codingcatdev/raycast-a-launcher-faster-than-f1-1hnp
 excerpt: 'Raycast: A lightning-fast launcher that makes your Mac more productive.'
 guests:
   - pedro-duarte
