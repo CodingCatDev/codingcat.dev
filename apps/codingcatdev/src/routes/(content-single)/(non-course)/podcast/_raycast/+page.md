@@ -5,7 +5,7 @@ authors:
   - brittney-postma
 episode:
 recording_date: Dec 12, 2023 9:00 AM
-season: 3
+season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
@@ -18,13 +18,13 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'pedro-duarte', name: 'Pick 1', site: 'codingcat.dev' },
+    { author: 'pedro-duarte', name: 'Vercell Open Graph Image Genreation', site: 'https://vercel.com/docs/functions/edge-functions/og-image-generation' },
     {
       author: 'brittney-postma',
       name: 'Svelte Component Documentation',
       site: '[Svelte Component Documentation](https://svelte.dev/docs/faq)'
     },
-    { author: 'alex-patterson', name: 'Pick 1', site: 'codingcat.dev' }
+    { author: 'alex-patterson', name: 'EdgeDB Auth', site: 'https://www.edgedb.com/docs/guides/auth/index' }
   ]
 slug: _raycast
 sponsors:
@@ -32,7 +32,7 @@ sponsors:
 spotify:
 start: Jan 24, 2024
 title: 'Raycast a launcher faster than F1!'
-youtube:
+youtube: https://youtu.be/1lzKPe9zMr8
 ---
 
 ## Questions
