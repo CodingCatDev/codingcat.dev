@@ -3,7 +3,7 @@ type: podcast
 authors:
   - alex-patterson
   - brittney-postma
-episode:
+episode: 4
 recording_date: Dec 12, 2023 9:00 AM
 season: 4
 published: published
@@ -18,18 +18,26 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'pedro-duarte', name: 'Vercell Open Graph Image Genreation', site: 'https://vercel.com/docs/functions/edge-functions/og-image-generation' },
+    {
+      author: 'pedro-duarte',
+      name: 'Vercell Open Graph Image Genreation',
+      site: 'https://vercel.com/docs/functions/edge-functions/og-image-generation'
+    },
     {
       author: 'brittney-postma',
       name: 'Svelte Component Documentation',
       site: '[Svelte Component Documentation](https://svelte.dev/docs/faq)'
     },
-    { author: 'alex-patterson', name: 'EdgeDB Auth', site: 'https://www.edgedb.com/docs/guides/auth/index' }
+    {
+      author: 'alex-patterson',
+      name: 'EdgeDB Auth',
+      site: 'https://www.edgedb.com/docs/guides/auth/index'
+    }
   ]
-slug: _raycast
+slug: 4-4-raycast
 sponsors:
   - cloudinary
-spotify:
+spotify: https://open.spotify.com/episode/7CC5JgPr0zlNLU72rbU7As?si=-ZEnO3W0R1m598mg8TN3Bw
 start: Jan 24, 2024
 title: 'Raycast a launcher faster than F1!'
 youtube: https://youtu.be/1lzKPe9zMr8
