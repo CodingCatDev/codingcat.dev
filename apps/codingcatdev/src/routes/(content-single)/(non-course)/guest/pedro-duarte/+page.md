@@ -1,6 +1,6 @@
 ---
 type: guest
-cover: https://media.codingcat.dev/image/upload/v1699482429/main-codingcatdev-photo/podcast-guest/peduarte.jpg
+cover: https://media.codingcat.dev/image/upload/v1700179438/main-codingcatdev-photo/podcast-guest/peduarte.jpg
 name: Pedro Duarte
 published: published
 slug: pedro-duarte
