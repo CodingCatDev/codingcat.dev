@@ -28,6 +28,6 @@ youtube: 'https://youtube.com/live/A6WwrGFMQio?feature=share'
 
 # View Transitions
 
-Live Recording: https://youtube.com/live/A6WwrGFMQio?feature=share
 Repo: https://github.com/CodingCatDev/svelte-view-transitions-pokemon
+
 Library: https://github.com/paoloricciuti/sveltekit-view-transition
