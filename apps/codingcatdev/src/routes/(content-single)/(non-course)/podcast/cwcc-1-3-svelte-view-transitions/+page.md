@@ -11,7 +11,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1707158808/main-codingcatdev-photo/svelte-transitions.png
-devto: null
+devto: https://dev.to/codingcatdev/simplyfing-sveltekit-view-transitions-with-paolo-ricciuti-m94
 excerpt: >-
   sveltekit-view-transitions offers a straightforward approach for implementing
   these transitions without complexity, aiming to enhance the user interface
