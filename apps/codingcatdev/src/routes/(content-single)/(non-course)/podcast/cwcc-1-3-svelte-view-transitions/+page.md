@@ -13,16 +13,18 @@ cover: >-
   https://media.codingcat.dev/image/upload/v1707158808/main-codingcatdev-photo/svelte-transitions.png
 devto: null
 excerpt: >-
-  sveltekit-view-transitions offers a straightforward approach for implementing these transitions without complexity, aiming to enhance the user interface with smooth and visually appealing changes between views.
+  sveltekit-view-transitions offers a straightforward approach for implementing
+  these transitions without complexity, aiming to enhance the user interface
+  with smooth and visually appealing changes between views.
 guests:
   - paolo-ricciuti
-hashnode: null
+hashnode: podcast-cwcc-1-3-svelte-view-transitions
 picks: null
 slug: cwcc-1-3-svelte-view-transitions
 sponsors: null
 spotify: null
 start: 'Feb 5, 2024'
-title: 'Simplyfing SvelteKit View Transitions with Paolo Ricciuti'
+title: Simplyfing SvelteKit View Transitions with Paolo Ricciuti
 youtube: 'https://youtube.com/live/A6WwrGFMQio?feature=share'
 ---
 
