@@ -10,7 +10,7 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700179257/main-codingcatdev-photo/3_raycast.png
+cover: https://media.codingcat.dev/image/upload/v1707320419/main-codingcatdev-photo/4_video-tap.png
 devto: null
 excerpt: 'Unleashing the Power of Video Content: A Deep Dive into VideoTap'
 guests:
