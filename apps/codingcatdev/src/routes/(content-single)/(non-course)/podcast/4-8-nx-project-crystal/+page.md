@@ -2,7 +2,7 @@
 type: podcast
 authors:
   - alex-patterson
-episode: 8
+episode: 5
 recording_date: Nov 13,2023 2:00 PM
 season: 4
 published: published
@@ -17,8 +17,8 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'katerina-skroumpelou', name: 'example', site: 'example.com' },
-    { author: 'alex-patterson', name: 'example', site: 'hexample.com' }
+    { author: 'katerina-skroumpelou', name: '3 Body Problem', site: 'https://www.netflix.com/title/81024821' },
+    { author: 'alex-patterson', name: 'The Bear', site: 'https://www.fxnetworks.com/shows/the-bear' }
   ]
 slug: 4-8-nx-project-crystal
 sponsors:
@@ -26,7 +26,7 @@ sponsors:
 spotify:
 start: Feb 7, 2024
 title: 'Nx - Project Crystal'
-youtube:
+youtube: https://youtu.be/o6ihJKJ23BQ
 ---
 
 - **Introduction of Project Crystal in NX**: Project Crystal is a new feature in NX, revolutionizing how NX is used. It enhances the functionality of NX plugins, making them more like VS Code or WebStorm extensions, providing subtle but helpful features for developers.
