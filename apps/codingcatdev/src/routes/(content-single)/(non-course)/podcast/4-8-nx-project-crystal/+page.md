@@ -3,38 +3,36 @@ type: podcast
 authors:
   - alex-patterson
 episode: 5
-recording_date: Nov 13,2023 2:00 PM
+recording_date: 'Nov 13,2023 2:00 PM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1707355750/main-codingcatdev-photo/4_NxProjectCrystal.png
-devto:
-excerpt: Imagine a world where integrating Nx plugins into your workflow is as seamless as adding extensions to VSCode. That's the vision of Nx Project Crystal!
+cover: >-
+  https://media.codingcat.dev/image/upload/v1707355750/main-codingcatdev-photo/4_NxProjectCrystal.png
+devto: null
+excerpt: >-
+  Imagine a world where integrating Nx plugins into your workflow is as seamless
+  as adding extensions to VSCode. That's the vision of Nx Project Crystal!
 guests:
   - katerina-skroumpelou
-hashnode:
+hashnode: podcast-4-8-nx-project-crystal
 picks:
-  [
-    {
-      author: 'katerina-skroumpelou',
-      name: '3 Body Problem',
-      site: 'https://www.netflix.com/title/81024821'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'The Bear',
-      site: 'https://www.fxnetworks.com/shows/the-bear'
-    }
-  ]
+  - author: katerina-skroumpelou
+    name: 3 Body Problem
+    site: 'https://www.netflix.com/title/81024821'
+  - author: alex-patterson
+    name: The Bear
+    site: 'https://www.fxnetworks.com/shows/the-bear'
 slug: 4-8-nx-project-crystal
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/1xSAtPm69TmcafQuLcBjdV?si=iZEaHYtsRzihWPt2_unHFw
-start: Feb 7, 2024
-title: 'Nx - Project Crystal'
-youtube: https://youtu.be/o6ihJKJ23BQ
+spotify: >-
+  https://open.spotify.com/episode/1xSAtPm69TmcafQuLcBjdV?si=iZEaHYtsRzihWPt2_unHFw
+start: 'Feb 7, 2024'
+title: Nx - Project Crystal
+youtube: 'https://youtu.be/o6ihJKJ23BQ'
 ---
 
 - **Introduction of Project Crystal in NX**: Project Crystal is a new feature in NX, revolutionizing how NX is used. It enhances the functionality of NX plugins, making them more like VS Code or WebStorm extensions, providing subtle but helpful features for developers.
