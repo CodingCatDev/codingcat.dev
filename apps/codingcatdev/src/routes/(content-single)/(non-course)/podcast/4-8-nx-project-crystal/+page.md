@@ -11,7 +11,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1707355750/main-codingcatdev-photo/4_NxProjectCrystal.png
-devto: null
+devto: https://dev.to/codingcatdev/nx-project-crystal-2b66
 excerpt: >-
   Imagine a world where integrating Nx plugins into your workflow is as seamless
   as adding extensions to VSCode. That's the vision of Nx Project Crystal!
