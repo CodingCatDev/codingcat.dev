@@ -2,7 +2,7 @@
 type: podcast
 authors:
   - alex-patterson
-episode:
+episode: null
 recording_date: 'February 06, 2024 12:00 PM'
 season: 1
 published: published
@@ -12,18 +12,17 @@ cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1707261042/main-codingcatdev-photo/2024-2-07-starlight.png
 devto: null
-excerpt: >-
-  Chris teaches Alex how to use Starlight for docs.
+excerpt: Chris teaches Alex how to use Starlight for docs.
 guests:
   - chris-swithinbank
-hashnode: null
+hashnode: podcast-cwcc-1-building-docs-with-starlight-and-astro
 picks: null
 slug: cwcc-1-building-docs-with-starlight-and-astro
 sponsors: null
 spotify: null
-start: Feb 07, 2024
+start: 'Feb 07, 2024'
 title: Building docs with Starlight and Astro
-youtube: https://youtube.com/live/sF6UcV3moZg?feature=share
+youtube: 'https://youtube.com/live/sF6UcV3moZg?feature=share'
 ---
 
 Starlight, a documentation theme from [Astro](https://astro.build/), simplifies creating accessible, high-performance websites. Key features include:
