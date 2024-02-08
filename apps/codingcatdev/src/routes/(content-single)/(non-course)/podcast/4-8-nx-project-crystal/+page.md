@@ -9,7 +9,7 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1707165426/main-codingcatdev-photo/3_NxProjectCrystal.png
+cover: https://media.codingcat.dev/image/upload/v1707355750/main-codingcatdev-photo/4_NxProjectCrystal.png
 devto:
 excerpt: Imagine a world where integrating Nx plugins into your workflow is as seamless as adding extensions to VSCode. That's the vision of Nx Project Crystal!
 guests:
@@ -17,8 +17,16 @@ guests:
 hashnode:
 picks:
   [
-    { author: 'katerina-skroumpelou', name: '3 Body Problem', site: 'https://www.netflix.com/title/81024821' },
-    { author: 'alex-patterson', name: 'The Bear', site: 'https://www.fxnetworks.com/shows/the-bear' }
+    {
+      author: 'katerina-skroumpelou',
+      name: '3 Body Problem',
+      site: 'https://www.netflix.com/title/81024821'
+    },
+    {
+      author: 'alex-patterson',
+      name: 'The Bear',
+      site: 'https://www.fxnetworks.com/shows/the-bear'
+    }
   ]
 slug: 4-8-nx-project-crystal
 sponsors:
