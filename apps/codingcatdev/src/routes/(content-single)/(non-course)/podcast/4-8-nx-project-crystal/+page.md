@@ -31,7 +31,7 @@ picks:
 slug: 4-8-nx-project-crystal
 sponsors:
   - cloudinary
-spotify:
+spotify: https://open.spotify.com/episode/1xSAtPm69TmcafQuLcBjdV?si=iZEaHYtsRzihWPt2_unHFw
 start: Feb 7, 2024
 title: 'Nx - Project Crystal'
 youtube: https://youtu.be/o6ihJKJ23BQ
