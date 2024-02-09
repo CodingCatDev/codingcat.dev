@@ -11,7 +11,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1707261042/main-codingcatdev-photo/2024-2-07-starlight.png
-devto: null
+devto: https://dev.to/codingcatdev/building-docs-with-starlight-and-astro-310d
 excerpt: Chris teaches Alex how to use Starlight for docs.
 guests:
   - chris-swithinbank
