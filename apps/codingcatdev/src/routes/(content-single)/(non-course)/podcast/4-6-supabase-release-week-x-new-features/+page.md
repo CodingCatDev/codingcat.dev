@@ -36,7 +36,7 @@ picks:
 slug: 4-6-supabase-release-week-x-new-features
 sponsors:
   - cloudinary
-spotify:
+spotify: https://open.spotify.com/episode/4FchOc10UBalWYNoR9tdwK?si=QnsbrwA_ROKWRmc5CRlkFQ
 start: Feb 13, 2024
 title: Supabase New Release
 youtube: https://youtu.be/Ym8YqeDJE5g
