@@ -3,43 +3,39 @@ type: podcast
 authors:
   - alex-patterson
 episode: 6
-recording_date: Dec 19, 2023 5:00 PM
+recording_date: 'Dec 19, 2023 5:00 PM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1707860877/main-codingcatdev-photo/4-supabase-release-week-x.png
-devto:
-excerpt: Supabase dropped a lot of new features during their X launch, I review these with Jon.
+cover: >-
+  https://media.codingcat.dev/image/upload/v1707860877/main-codingcatdev-photo/4-supabase-release-week-x.png
+devto: 'https://dev.to/codingcatdev/supabase-new-release-33fe'
+excerpt: >-
+  Supabase dropped a lot of new features during their X launch, I review these
+  with Jon.
 guests:
   - jon-meyers
-hashnode:
+hashnode: null
 picks:
-  [
-    {
-      author: 'jon-meyers',
-      name: 'Little Bits Synth Kit',
-      site: 'https://reverb.com/p/korg-little-bits-synth-kit'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'Roll Your Own SaaS with Vue, Algolia, and Cloudinary',
-      site: 'https://codingcat.dev/podcast/cwcc-2023-12-20-building-your-own-sass'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'CodingCat.dev on Apple Podcast',
-      site: 'https://podcasts.apple.com/us/podcast/codingcat-dev-podcast/id1491655542'
-    }
-  ]
+  - author: jon-meyers
+    name: Little Bits Synth Kit
+    site: 'https://reverb.com/p/korg-little-bits-synth-kit'
+  - author: alex-patterson
+    name: 'Roll Your Own SaaS with Vue, Algolia, and Cloudinary'
+    site: 'https://codingcat.dev/podcast/cwcc-2023-12-20-building-your-own-sass'
+  - author: alex-patterson
+    name: CodingCat.dev on Apple Podcast
+    site: 'https://podcasts.apple.com/us/podcast/codingcat-dev-podcast/id1491655542'
 slug: 4-6-supabase-release-week-x-new-features
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/4FchOc10UBalWYNoR9tdwK?si=QnsbrwA_ROKWRmc5CRlkFQ
-start: Feb 13, 2024
+spotify: >-
+  https://open.spotify.com/episode/4FchOc10UBalWYNoR9tdwK?si=QnsbrwA_ROKWRmc5CRlkFQ
+start: 'Feb 13, 2024'
 title: Supabase New Release
-youtube: https://youtu.be/Ym8YqeDJE5g
+youtube: 'https://youtu.be/Ym8YqeDJE5g'
 ---
 
 **Top 10 Launches**
