@@ -17,7 +17,7 @@ excerpt: >-
   with Jon.
 guests:
   - jon-meyers
-hashnode: null
+hashnode: podcast-4-6-supabase-release-week-x-new-features-1
 picks:
   - author: jon-meyers
     name: Little Bits Synth Kit
