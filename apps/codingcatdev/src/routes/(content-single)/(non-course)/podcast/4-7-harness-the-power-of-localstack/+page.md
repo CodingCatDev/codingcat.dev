@@ -25,7 +25,7 @@ picks:
       site: 'https://www.youtube.com/watch?v=HBzX8cDbxns'
     }
   ]
-slug: _localstack
+slug: 4-7-harness-the-power-of-localstack
 sponsors:
   - cloudinary
 spotify:
