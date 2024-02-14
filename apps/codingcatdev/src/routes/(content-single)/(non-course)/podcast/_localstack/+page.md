@@ -2,7 +2,7 @@
 type: podcast
 authors:
   - alex-patterson
-episode:
+episode: 7
 recording_date: Dec 29, 2023 2:00 PM
 season: 4
 published: published
@@ -29,9 +29,9 @@ slug: _localstack
 sponsors:
   - cloudinary
 spotify:
-start: Dec 29, 2023
+start: Feb 20, 2024
 title: 'Master Offline AWS Development: Harness the Power of LocalStack!'
-youtube:
+youtube: https://youtu.be/2AWmuA7ADNI
 ---
 
 LocalStack provides a comprehensive platform for developing and testing AWS applications locally, offering a significant reduction in development time and AWS costs. It emulates over 80 AWS services, allowing developers to work efficiently without internet access or AWS cloud resources. The tool is designed for seamless integration into existing workflows, supporting favorite cloud development tools and enabling faster deployment and testing. It's widely appreciated in the developer community for enhancing productivity and simplifying cloud application development. For more detailed information, please visit [LocalStack's website](https://www.localstack.cloud/).
