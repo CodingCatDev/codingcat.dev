@@ -3,35 +3,40 @@ type: podcast
 authors:
   - alex-patterson
 episode: 7
-recording_date: Dec 29, 2023 2:00 PM
+recording_date: 'Dec 29, 2023 2:00 PM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702529964/main-codingcatdev-photo/4_LocalStack.png
-devto:
-excerpt: 'Effortlessly Develop AWS Applications Offline with LocalStack: Your Ultimate Guide!'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1702529964/main-codingcatdev-photo/4_LocalStack.png
+devto: >-
+  https://dev.to/codingcatdev/master-offline-aws-development-harness-the-power-of-localstack-50cn
+excerpt: >-
+  Effortlessly Develop AWS Applications Offline with LocalStack: Your Ultimate
+  Guide!
 guests:
   - waldemar-hummer
-hashnode:
+hashnode: podcast-4-7-harness-the-power-of-localstack-1
 picks:
-  [
-    { author: 'waldemar-hummer', name: 'SuikaGame', site: 'https://suikagame.com/' },
-    { author: 'alex-patterson', name: 'Kaiber', site: 'https://kaiber.ai/' },
-    {
-      author: 'alex-patterson',
-      name: 'CodingCat.dev Holiday Songs',
-      site: 'https://www.youtube.com/watch?v=HBzX8cDbxns'
-    }
-  ]
+  - author: waldemar-hummer
+    name: SuikaGame
+    site: 'https://suikagame.com/'
+  - author: alex-patterson
+    name: Kaiber
+    site: 'https://kaiber.ai/'
+  - author: alex-patterson
+    name: CodingCat.dev Holiday Songs
+    site: 'https://www.youtube.com/watch?v=HBzX8cDbxns'
 slug: 4-7-harness-the-power-of-localstack
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/7C44Xjrx6mRR1ZOo6vq4gl?si=Pz7fsA7xTjyTgzRXM1ylUw
-start: Feb 20, 2024
+spotify: >-
+  https://open.spotify.com/episode/7C44Xjrx6mRR1ZOo6vq4gl?si=Pz7fsA7xTjyTgzRXM1ylUw
+start: 'Feb 20, 2024'
 title: 'Master Offline AWS Development: Harness the Power of LocalStack!'
-youtube: https://youtu.be/2AWmuA7ADNI
+youtube: 'https://youtu.be/2AWmuA7ADNI'
 ---
 
 LocalStack provides a comprehensive platform for developing and testing AWS applications locally, offering a significant reduction in development time and AWS costs. It emulates over 80 AWS services, allowing developers to work efficiently without internet access or AWS cloud resources. The tool is designed for seamless integration into existing workflows, supporting favorite cloud development tools and enabling faster deployment and testing. It's widely appreciated in the developer community for enhancing productivity and simplifying cloud application development. For more detailed information, please visit [LocalStack's website](https://www.localstack.cloud/).
