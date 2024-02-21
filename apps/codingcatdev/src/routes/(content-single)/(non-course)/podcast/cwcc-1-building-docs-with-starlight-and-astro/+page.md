@@ -25,6 +25,12 @@ title: Building docs with Starlight and Astro
 youtube: 'https://youtube.com/live/sF6UcV3moZg?feature=share'
 ---
 
+<script>
+  import OpenIn from '$lib/components/content/OpenIn.svelte'
+</script>
+
+<OpenIn url="https://github.com/CodingCatDev/astro-starlight-code-with-codingcatdev"  />
+
 Starlight, a documentation theme from [Astro](https://astro.build/), simplifies creating accessible, high-performance websites. Key features include:
 
 1. **Content Support**: Starlight is compatible with Markdown, MDX, or Markdoc formats, facilitating quick website creation.
