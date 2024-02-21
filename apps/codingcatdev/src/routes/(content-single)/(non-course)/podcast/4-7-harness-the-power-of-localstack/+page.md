@@ -18,7 +18,7 @@ excerpt: >-
   Guide!
 guests:
   - waldemar-hummer
-hashnode: null
+hashnode: podcast-4-7-harness-the-power-of-localstack-1
 picks:
   - author: waldemar-hummer
     name: SuikaGame
