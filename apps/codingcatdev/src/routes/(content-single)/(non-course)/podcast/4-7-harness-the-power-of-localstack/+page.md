@@ -36,61 +36,18 @@ youtube: https://youtu.be/2AWmuA7ADNI
 
 LocalStack provides a comprehensive platform for developing and testing AWS applications locally, offering a significant reduction in development time and AWS costs. It emulates over 80 AWS services, allowing developers to work efficiently without internet access or AWS cloud resources. The tool is designed for seamless integration into existing workflows, supporting favorite cloud development tools and enabling faster deployment and testing. It's widely appreciated in the developer community for enhancing productivity and simplifying cloud application development. For more detailed information, please visit [LocalStack's website](https://www.localstack.cloud/).
 
-![](https://media.codingcat.dev/image/upload/v1703881364/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_19.png)
-
-## Introduction
-
-- Brief overview of cloud computing and AWS.
-- Introduction to LocalStack.
-- Importance of local development environments.
-
-## Section 1: Understanding LocalStack
-
-- Detailed explanation of LocalStack.
-- Overview of the AWS services it emulates.
-- The technology behind LocalStack.
-
-## Section 2: Benefits of Using LocalStack
-
-- Cost savings by reducing reliance on actual AWS services.
-- Improved development efficiency by allowing offline work.
-- Examples of scenarios where LocalStack is particularly beneficial.
-
-## Section 3: Integration and Compatibility
-
-- How LocalStack integrates into existing development workflows.
-- Compatibility with popular cloud development tools.
-- Step-by-step guide to setting up LocalStack in a typical development environment.
-
-## Section 4: LocalStack in Action
-
-- Case studies or examples of projects using LocalStack.
-- Testimonials from developers or companies.
-- Comparison with other local AWS emulation tools.
-
-## Section 5: Challenges and Limitations
-
-- Discussion of any limitations or challenges in using LocalStack.
-- How the developer community is addressing these challenges.
-
-## Section 6: LocalStack’s Role in Enhancing Productivity
-
-- Analysis of how LocalStack improves development productivity.
-- Insights from industry experts or surveys.
-- Future predictions for tools like LocalStack in cloud development.
-
-## Section 7: Community and Support
-
-- Overview of the LocalStack community.
-- Resources available for new users.
-- How to contribute to the LocalStack project.
-
-## Conclusion
-
-- Recap of the key points.
-- Final thoughts on the future of LocalStack and its impact on cloud development.
-
-## Additional Resources
-
-- Links to LocalStack documentation, forums, and user guides.
-- Related readings or courses for interested readers.
+![Demo Slide](https://media.codingcat.dev/image/upload/v1703881358/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_1.png)
+![Context](https://media.codingcat.dev/image/upload/v1703881359/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_2.png)
+![1000 foot view of localstack](https://media.codingcat.dev/image/upload/v1703881359/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_3.png)
+![comparison localstack to aws](https://media.codingcat.dev/image/upload/v1703881360/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_4.png)
+![growing ecosystem of integrations](https://media.codingcat.dev/image/upload/v1703881360/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_5.png)
+![s3 bucket notifications](https://media.codingcat.dev/image/upload/v1703881359/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_6.png)
+![web app](https://media.codingcat.dev/image/upload/v1703881361/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_7.png)
+![cloud pods](https://media.codingcat.dev/image/upload/v1703881361/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_8.png)
+![iam live policy generation](https://media.codingcat.dev/image/upload/v1703881362/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_9.png)
+![fault injection and simulation](https://media.codingcat.dev/image/upload/v1703881362/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_10.png)
+![localstack extensions](https://media.codingcat.dev/image/upload/v1703881362/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_11.png)
+![stack insights](https://media.codingcat.dev/image/upload/v1703881363/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_12.png)
+![debugging your ci builds](https://media.codingcat.dev/image/upload/v1703881363/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_13.png)
+![previews / ephemeral instances](https://media.codingcat.dev/image/upload/v1703881364/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_14.png)
+![our story](https://media.codingcat.dev/image/upload/v1703881364/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_19.png)
