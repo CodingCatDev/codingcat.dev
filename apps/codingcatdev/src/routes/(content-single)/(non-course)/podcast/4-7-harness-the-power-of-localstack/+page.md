@@ -28,7 +28,7 @@ picks:
 slug: 4-7-harness-the-power-of-localstack
 sponsors:
   - cloudinary
-spotify:
+spotify: https://open.spotify.com/episode/7C44Xjrx6mRR1ZOo6vq4gl?si=Pz7fsA7xTjyTgzRXM1ylUw
 start: Feb 20, 2024
 title: 'Master Offline AWS Development: Harness the Power of LocalStack!'
 youtube: https://youtu.be/2AWmuA7ADNI
