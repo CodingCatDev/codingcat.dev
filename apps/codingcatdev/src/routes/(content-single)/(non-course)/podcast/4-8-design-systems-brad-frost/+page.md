@@ -4,39 +4,41 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 8
-recording_date: Jan 10, 2024 9:00 AM
+recording_date: 'Jan 10, 2024 9:00 AM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700822445/main-codingcatdev-photo/3_design-harmony.png
-devto:
-excerpt: 'Dive into the world of creating and maintaining successful design systems, unpack the layer cake approach, and explore the potential future of a global design system.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1700822445/main-codingcatdev-photo/3_design-harmony.png
+devto: >-
+  https://dev.to/codingcatdev/design-systems-from-atomic-design-to-a-global-solution-1fmc
+excerpt: >-
+  Dive into the world of creating and maintaining successful design systems,
+  unpack the layer cake approach, and explore the potential future of a global
+  design system.
 guests:
   - brad-frost
-hashnode:
+hashnode: null
 picks:
-  [
-    { author: 'brad-frost', name: 'Frostapalooza', site: 'https://frostapalooza.bradfrost.com/' },
-    {
-      author: 'alex-patterson',
-      name: 'Aquaman and the Lost Kingdom',
-      site: 'https://www.imdb.com/title/tt9663764/'
-    },
-    {
-      author: 'brittney-postma',
-      name: 'Repo of awesome design systems',
-      site: 'https://github.com/alexpate/awesome-design-systems'
-    }
-  ]
+  - author: brad-frost
+    name: Frostapalooza
+    site: 'https://frostapalooza.bradfrost.com/'
+  - author: alex-patterson
+    name: Aquaman and the Lost Kingdom
+    site: 'https://www.imdb.com/title/tt9663764/'
+  - author: brittney-postma
+    name: Repo of awesome design systems
+    site: 'https://github.com/alexpate/awesome-design-systems'
 slug: 4-8-design-systems-brad-frost
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/7jbeqkUHJsKGdNJIqSpEXE?si=VheIc2fOQMWT-ldoo0Gvrg
-start: Jan 1, 2024
+spotify: >-
+  https://open.spotify.com/episode/7jbeqkUHJsKGdNJIqSpEXE?si=VheIc2fOQMWT-ldoo0Gvrg
+start: 'Jan 1, 2024'
 title: 'Design Systems: From Atomic Design to a Global Solution'
-youtube: https://youtu.be/WiryDTsHDec
+youtube: 'https://youtu.be/WiryDTsHDec'
 ---
 
 In the fast-paced world of design, creating a seamless and efficient user experience is crucial. Design systems have emerged as a powerful solution, marrying art and science to ensure consistency and cohesiveness. In this episode, we explore the complexities of successful design systems and how they bridge the gap between product and consistency.
