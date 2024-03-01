@@ -20,7 +20,7 @@ excerpt: >-
   design system.
 guests:
   - brad-frost
-hashnode: null
+hashnode: podcast-4-8-design-systems-brad-frost-1
 picks:
   - author: brad-frost
     name: Frostapalooza
