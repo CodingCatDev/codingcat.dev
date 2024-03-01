@@ -2,6 +2,7 @@ import { handleErrorWithSentry, Replay } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 
 Sentry.init({
+	enabled: import.meta.env.PROD,
 	dsn: 'https://518fe25472568a2e47252e6f29583c6b@o1029244.ingest.sentry.io/4506190917206016',
 	tracesSampleRate: 1.0,
 

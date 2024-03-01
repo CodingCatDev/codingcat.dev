@@ -3,15 +3,21 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1618943875/main-codingcatdev-photo/ui1ekh1x8djmp8jyehbg.png
-excerpt: Deploying Firebase Cloud Function to use with Slack slash commands. Sending someone a /slap!
-hashnode: https://hashnode.codingcat.dev/tutorial-slap-someone-with-slack-commands
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=slap-someone-with-slack-commands&_id=350572ae003a496eab3b852b67a299bd
+cover: >-
+  https://media.codingcat.dev/image/upload/v1618943875/main-codingcatdev-photo/ui1ekh1x8djmp8jyehbg.png
+excerpt: >-
+  Deploying Firebase Cloud Function to use with Slack slash commands. Sending
+  someone a /slap!
+hashnode: 'https://hashnode.codingcat.dev/tutorial-slap-someone-with-slack-commands'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=slap-someone-with-slack-commands&_id=350572ae003a496eab3b852b67a299bd
 published: published
 slug: slap-someone-with-slack-commands
-start: May 26, 2022
+start: 'May 26, 2022'
 title: Slap Someone with Slack Commands
-youtube: https://youtu.be/3A4iucpZiwo
+youtube: 'https://youtu.be/3A4iucpZiwo'
+devto: >-
+  https://dev.to/codingcatdev/slap-someone-with-slack-commands-3479-temp-slug-4934245
 ---
 
 ## Slappy Slack

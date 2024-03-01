@@ -93,7 +93,6 @@
 	let topLevelPage: boolean | undefined = false;
 	page.subscribe((page) => {
 		topLevelPage = page?.route?.id?.includes('top-level-pages');
-		console.log(topLevelPage);
 
 		content = page?.data?.content || page?.data?.course;
 		authors = page?.data?.authors;

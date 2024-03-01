@@ -4,39 +4,39 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 21
-recording_date: September 14, 2023 1:15 PM
+recording_date: 'September 14, 2023 1:15 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1695832306/main-codingcatdev-photo/3.21-slicemachine.png
-devto:
-excerpt: 'Sam joins the podcast to talk about his journey to Prismic and to give an in depth look at Slice Machine.'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1695832306/main-codingcatdev-photo/3.21-slicemachine.png
+devto: https://dev.to/codingcatdev/slicing-up-sveltekit-with-prismics-new-slice-machine-1bpg
+excerpt: >-
+  Sam joins the podcast to talk about his journey to Prismic and to give an in
+  depth look at Slice Machine.
 guests:
   - sam-littlefair
-hashnode:
+hashnode: podcast-3-21-slicing-up-sveltekit-with-prismic-slice-machine
 picks:
-  [
-    { author: 'sam-littlefair', name: 'Mad Men', site: 'https://www.imdb.com/title/tt0804503/' },
-    {
-      author: 'brittney-postma',
-      name: 'Foundation Season 2',
-      site: 'https://tv.apple.com/us/show/foundation/umc.cmc.5983fipzqbicvrve6jdfep4x3'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'Bun 1.0 Video',
-      site: 'https://www.youtube.com/watch?v=BsnCpESUEqM'
-    }
-  ]
+  - author: sam-littlefair
+    name: Mad Men
+    site: 'https://www.imdb.com/title/tt0804503/'
+  - author: brittney-postma
+    name: Foundation Season 2
+    site: 'https://tv.apple.com/us/show/foundation/umc.cmc.5983fipzqbicvrve6jdfep4x3'
+  - author: alex-patterson
+    name: Bun 1.0 Video
+    site: 'https://www.youtube.com/watch?v=BsnCpESUEqM'
 slug: 3-21-slicing-up-sveltekit-with-prismic-slice-machine
 sponsors:
   - storyblok
-spotify: https://open.spotify.com/episode/0cejaDhe88cLh7tRexqmR6?si=u7Qs8qlhR5alMcRVI8CMiQ
-start: Oct 24, 2023
-title: 'Slicing Up SvelteKit with Prismic’s New Slice Machine'
-youtube: https://youtu.be/GVURWmOj8ec
+spotify: >-
+  https://open.spotify.com/episode/0cejaDhe88cLh7tRexqmR6?si=u7Qs8qlhR5alMcRVI8CMiQ
+start: 'Oct 24, 2023'
+title: Slicing Up SvelteKit with Prismic’s New Slice Machine
+youtube: 'https://youtu.be/GVURWmOj8ec'
 ---
 
 Prismic's Slice Machine is a powerful tool that allows developers to create content models and slices for their Prismic repositories. Slices are reusable components of content that can be combined to create rich and dynamic pages. The Slice Machine makes it easy to create and manage slices, and it also provides a preview of how slices will look on a page.

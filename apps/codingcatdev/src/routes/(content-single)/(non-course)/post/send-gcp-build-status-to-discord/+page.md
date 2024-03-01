@@ -3,15 +3,22 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1616540053/main-codingcatdev-photo/krny5cr60ahjh7qo9sow.png
-excerpt: If you use Google Cloud Build and find yourself in Discord all day, it might be handy to receive a messge about your builds. Or just any webhook message in Discord.
-hashnode: https://hashnode.codingcat.dev/tutorial-send-gcp-build-status-to-discord
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=send-gcp-build-status-to-discord&_id=1d8af205c40e414fb80fe5017391bb77
+cover: >-
+  https://media.codingcat.dev/image/upload/v1616540053/main-codingcatdev-photo/krny5cr60ahjh7qo9sow.png
+excerpt: >-
+  If you use Google Cloud Build and find yourself in Discord all day, it might
+  be handy to receive a messge about your builds. Or just any webhook message in
+  Discord.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-send-gcp-build-status-to-discord'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=send-gcp-build-status-to-discord&_id=1d8af205c40e414fb80fe5017391bb77
 published: published
 slug: send-gcp-build-status-to-discord
-start: May 30, 2022
+start: 'May 30, 2022'
 title: Send GCP Build Status to Discord
-youtube: https://youtu.be/J4ImOB5etB4
+youtube: 'https://youtu.be/J4ImOB5etB4'
+devto: >-
+  https://dev.to/codingcatdev/send-gcp-build-status-to-discord-1fpo-temp-slug-9597330
 ---
 
 ## Creating a new project

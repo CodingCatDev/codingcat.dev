@@ -12,19 +12,19 @@
 </script>
 
 <section class={`bg-primary-200-700-token ${login ? 'rounded-lg' : ''}`}>
-	<div class="grid justify-center grid-cols-1 px-8 mx-auto gap-2 2xl:gap-10 max-w-7xl relative">
+	<div class="relative grid justify-center grid-cols-1 gap-2 px-8 mx-auto 2xl:gap-10 max-w-7xl">
 		<div class="flex">
 			{#if !login}
-				<div class="flex flex-col basis-1/12 relative">
+				<div class="relative flex flex-col basis-1/12">
 					<GitLineGradient />
 					<CheckBadgeSvg />
 					<GitLineGradient rotate={true} />
 				</div>
 			{/if}
 
-			<div class="basis-11/12 pl-4 sm:pl-2 py-20 sm:py-48">
-				<div class="flex flex-col lg:flex-row gap-8 items-center">
-					<div class="sm:basis-2/3 flex flex-col justify-center gap-8">
+			<div class="py-20 pl-4 basis-11/12 sm:pl-2 sm:py-48">
+				<div class="flex flex-col items-center gap-8 lg:flex-row">
+					<div class="flex flex-col justify-center gap-8 sm:basis-2/3">
 						<div class="flex flex-col gap-4">
 							{#if priceVisible}
 								<div class="check-out-text" in:fade={{ delay: 300, duration: 300 }} out:fade>
@@ -79,7 +79,7 @@
 						</div>
 					</div>
 					<div
-						class="sm:basis-1/3 flex"
+						class="flex sm:basis-1/3"
 						use:inView
 						on:enter={() => (priceVisible = true)}
 						on:exit={() => (priceVisible = false)}

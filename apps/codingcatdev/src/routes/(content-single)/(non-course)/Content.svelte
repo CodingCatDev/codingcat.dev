@@ -3,11 +3,13 @@
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { ArrowTopRightOnSquare } from '@steeze-ui/heroicons';
 
-	import Video from '$lib/components/content/Video.svelte';
-	import type { Author, Content, ContentType, Podcast, Sponsor } from '$lib/types';
+	import YouTube from '$lib/components/content/YouTube.svelte';
+	import type { Author, Content, Podcast, Sponsor } from '$lib/types';
+	import { ContentType } from '$lib/types';
 	import { pluralize } from '$lib/utils';
 	import Image from '$lib/components/content/Image.svelte';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
+	import PodcastComponent from '$lib/components/content/Podcast.svelte';
 	export let data: {
 		content: Content & Podcast;
 		guests?: Author[];
@@ -29,9 +31,13 @@
 						<li>{data.content.title}</li>
 					</ol>
 					{#if data?.content?.youtube}
-						<Video src={data.content.youtube} title={`${data.content.title}`} />
+						<YouTube src={data.content.youtube} title={`${data.content.title}`} />
 					{:else if data?.content?.cover}
 						<Image src={data.content.cover} alt={data.content.title} />
+					{/if}
+
+					{#if data.content.type === ContentType.podcast && data.content?.spotify}
+						<PodcastComponent src={data.content.spotify} title={`${data.content.title}`} />
 					{/if}
 
 					<div class="flex gap-2 md:gap-8 overflow-x-auto">

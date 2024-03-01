@@ -17,6 +17,7 @@ export interface Content {
 	title: string;
 	updated?: Date;
 	weight?: number;
+	videoCloudinary?: string;
 	youtube?: string;
 }
 
