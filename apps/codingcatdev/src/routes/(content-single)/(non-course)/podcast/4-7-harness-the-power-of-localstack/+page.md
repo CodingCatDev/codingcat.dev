@@ -3,94 +3,70 @@ type: podcast
 authors:
   - alex-patterson
 episode: 7
-recording_date: Dec 29, 2023 2:00 PM
+recording_date: 'Dec 29, 2023 2:00 PM'
 season: 4
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1702529964/main-codingcatdev-photo/4_LocalStack.png
-devto:
-excerpt: 'Effortlessly Develop AWS Applications Offline with LocalStack: Your Ultimate Guide!'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1702529964/main-codingcatdev-photo/4_LocalStack.png
+devto: >-
+  https://dev.to/codingcatdev/master-offline-aws-development-harness-the-power-of-localstack-50cn
+excerpt: >-
+  Effortlessly Develop AWS Applications Offline with LocalStack: Your Ultimate
+  Guide!
 guests:
   - waldemar-hummer
-hashnode:
+hashnode: podcast-4-7-harness-the-power-of-localstack-1
 picks:
-  [
-    { author: 'waldemar-hummer', name: 'SuikaGame', site: 'https://suikagame.com/' },
-    { author: 'alex-patterson', name: 'Kaiber', site: 'https://kaiber.ai/' },
-    {
-      author: 'alex-patterson',
-      name: 'CodingCat.dev Holiday Songs',
-      site: 'https://www.youtube.com/watch?v=HBzX8cDbxns'
-    }
-  ]
+  - author: waldemar-hummer
+    name: SuikaGame
+    site: 'https://suikagame.com/'
+  - author: alex-patterson
+    name: Kaiber
+    site: 'https://kaiber.ai/'
+  - author: alex-patterson
+    name: CodingCat.dev Holiday Songs
+    site: 'https://www.youtube.com/watch?v=HBzX8cDbxns'
 slug: 4-7-harness-the-power-of-localstack
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/7C44Xjrx6mRR1ZOo6vq4gl?si=Pz7fsA7xTjyTgzRXM1ylUw
-start: Feb 20, 2024
+spotify: >-
+  https://open.spotify.com/episode/7C44Xjrx6mRR1ZOo6vq4gl?si=Pz7fsA7xTjyTgzRXM1ylUw
+start: 'Feb 20, 2024'
 title: 'Master Offline AWS Development: Harness the Power of LocalStack!'
-youtube: https://youtu.be/2AWmuA7ADNI
+youtube: 'https://youtu.be/2AWmuA7ADNI'
 ---
 
 LocalStack provides a comprehensive platform for developing and testing AWS applications locally, offering a significant reduction in development time and AWS costs. It emulates over 80 AWS services, allowing developers to work efficiently without internet access or AWS cloud resources. The tool is designed for seamless integration into existing workflows, supporting favorite cloud development tools and enabling faster deployment and testing. It's widely appreciated in the developer community for enhancing productivity and simplifying cloud application development. For more detailed information, please visit [LocalStack's website](https://www.localstack.cloud/).
 
-![](https://media.codingcat.dev/image/upload/v1703881364/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_19.png)
+![Demo Slide](https://media.codingcat.dev/image/upload/v1703881358/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_1.png)
 
-## Introduction
+![Context](https://media.codingcat.dev/image/upload/v1703881359/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_2.png)
 
-- Brief overview of cloud computing and AWS.
-- Introduction to LocalStack.
-- Importance of local development environments.
+![1000 foot view of localstack](https://media.codingcat.dev/image/upload/v1703881359/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_3.png)
 
-## Section 1: Understanding LocalStack
+![comparison localstack to aws](https://media.codingcat.dev/image/upload/v1703881360/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_4.png)
 
-- Detailed explanation of LocalStack.
-- Overview of the AWS services it emulates.
-- The technology behind LocalStack.
+![growing ecosystem of integrations](https://media.codingcat.dev/image/upload/v1703881360/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_5.png)
 
-## Section 2: Benefits of Using LocalStack
+![s3 bucket notifications](https://media.codingcat.dev/image/upload/v1703881359/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_6.png)
 
-- Cost savings by reducing reliance on actual AWS services.
-- Improved development efficiency by allowing offline work.
-- Examples of scenarios where LocalStack is particularly beneficial.
+![web app](https://media.codingcat.dev/image/upload/v1703881361/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_7.png)
 
-## Section 3: Integration and Compatibility
+![cloud pods](https://media.codingcat.dev/image/upload/v1703881361/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_8.png)
 
-- How LocalStack integrates into existing development workflows.
-- Compatibility with popular cloud development tools.
-- Step-by-step guide to setting up LocalStack in a typical development environment.
+![iam live policy generation](https://media.codingcat.dev/image/upload/v1703881362/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_9.png)
 
-## Section 4: LocalStack in Action
+![fault injection and simulation](https://media.codingcat.dev/image/upload/v1703881362/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_10.png)
 
-- Case studies or examples of projects using LocalStack.
-- Testimonials from developers or companies.
-- Comparison with other local AWS emulation tools.
+![localstack extensions](https://media.codingcat.dev/image/upload/v1703881362/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_11.png)
 
-## Section 5: Challenges and Limitations
+![stack insights](https://media.codingcat.dev/image/upload/v1703881363/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_12.png)
 
-- Discussion of any limitations or challenges in using LocalStack.
-- How the developer community is addressing these challenges.
+![debugging your ci builds](https://media.codingcat.dev/image/upload/v1703881363/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_13.png)
 
-## Section 6: LocalStack’s Role in Enhancing Productivity
+![previews / ephemeral instances](https://media.codingcat.dev/image/upload/v1703881364/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_14.png)
 
-- Analysis of how LocalStack improves development productivity.
-- Insights from industry experts or surveys.
-- Future predictions for tools like LocalStack in cloud development.
-
-## Section 7: Community and Support
-
-- Overview of the LocalStack community.
-- Resources available for new users.
-- How to contribute to the LocalStack project.
-
-## Conclusion
-
-- Recap of the key points.
-- Final thoughts on the future of LocalStack and its impact on cloud development.
-
-## Additional Resources
-
-- Links to LocalStack documentation, forums, and user guides.
-- Related readings or courses for interested readers.
+![our story](https://media.codingcat.dev/image/upload/v1703881364/main-codingcatdev-photo/1703881295934-4625cb52-38c9-4efb-a96e-2c020774be72_19.png)

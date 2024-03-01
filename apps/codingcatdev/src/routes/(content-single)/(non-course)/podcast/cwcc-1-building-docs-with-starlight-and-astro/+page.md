@@ -11,7 +11,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1707261042/main-codingcatdev-photo/2024-2-07-starlight.png
-devto: null
+devto: https://dev.to/codingcatdev/building-docs-with-starlight-and-astro-310d
 excerpt: Chris teaches Alex how to use Starlight for docs.
 guests:
   - chris-swithinbank
@@ -24,6 +24,12 @@ start: 'Feb 07, 2024'
 title: Building docs with Starlight and Astro
 youtube: 'https://youtube.com/live/sF6UcV3moZg?feature=share'
 ---
+
+<script>
+  import OpenIn from '$lib/components/content/OpenIn.svelte'
+</script>
+
+<OpenIn url="https://github.com/CodingCatDev/astro-starlight-code-with-codingcatdev"  />
 
 Starlight, a documentation theme from [Astro](https://astro.build/), simplifies creating accessible, high-performance websites. Key features include:
 

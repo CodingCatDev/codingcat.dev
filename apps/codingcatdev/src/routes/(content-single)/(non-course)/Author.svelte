@@ -13,6 +13,7 @@
 		Github,
 		Instagram,
 		Linkedin,
+		Lastdotfm,
 		Mastodon,
 		Medium,
 		Polywork,
@@ -106,6 +107,16 @@
 									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
 								>
 									<Icon src={Instagram} class="w-8" theme="solid" />
+								</a>
+							{/if}
+							{#if data.content?.socials?.lastfm}
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={data.content?.socials?.lastfm}
+									class="hover:!text-primary-500 !text-surface-900 dark:!text-surface-300 dark:hover:!text-primary-500 hover:!scale-110"
+								>
+									<Icon src={Lastdotfm} class="w-8" theme="solid" />
 								</a>
 							{/if}
 							{#if data.content?.socials?.linkedin}
