@@ -53,6 +53,7 @@ jobs:
           commit_message: dev-devto updates
           branch: dev
   hashnode:
+    needs: dev-to
     environment: main
     runs-on: ubuntu-latest
     steps:

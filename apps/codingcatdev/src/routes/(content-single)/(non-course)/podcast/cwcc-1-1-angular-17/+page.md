@@ -11,7 +11,7 @@ chapters_done: false
 cloudinary_convert: false
 cover: >-
   https://media.codingcat.dev/image/upload/v1700091644/main-codingcatdev-photo/1.1.png
-devto: null
+devto: 'https://dev.to/codingcatdev/angular-17-does-ssrssg-really-work-54k0'
 excerpt: >-
   Join Jordan and Alex as they try to get Angular 17 SSG working and talk about
   SSR.

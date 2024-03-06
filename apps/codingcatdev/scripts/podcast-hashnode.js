@@ -14,22 +14,20 @@ const g = new Glob(`${BASE}**/*.md`, {});
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
 const addArticle = async (input) => {
-	return fetch('https://api.hashnode.com/', {
+	return fetch('https://gql.hashnode.com', {
 		method: 'POST',
 		headers: {
-			authorization: process.env.PRIVATE_HASHNODE,
+			authorization: 'c4c3f6be-eb75-4489-b3db-fa13257b5142',
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			operationName: 'createPublication',
-			query: `mutation createPublication($input: CreateStoryInput!) { 
-				createPublicationStory(
-				  publicationId: "60242f8180da6c44eadf775b"
+			operationName: 'publishPost',
+			query: `mutation publishPost($input: PublishPostInput!) { 
+				publishPost(
 				  input: $input
 				) {
-				message
 				post {
-				  _id
+				  id
 				  title
 				  slug
 				}
@@ -38,9 +36,6 @@ const addArticle = async (input) => {
 			  `,
 			variables: {
 				input: {
-					isPartOfPublication: {
-						publicationId: '60242f8180da6c44eadf775b'
-					},
 					...input
 				}
 			}
@@ -58,7 +53,6 @@ for await (const file of g) {
 		fm?.slug &&
 		fm?.title &&
 		fm?.cover &&
-		fm?.spotify &&
 		fm?.youtube &&
 		fm?.published === 'published' &&
 		new Date(fm?.start) < new Date() &&
@@ -82,30 +76,32 @@ ${content}`;
 			const response = await addArticle({
 				title: fm.title,
 				subtitle: fm?.excerpt || '',
+				publicationId: '60242f8180da6c44eadf775b',
 				slug: `${TYPE}-${fm.slug}`,
+				seriesId: '65a9ad4ef60adbf4aeedd0a2',
 				contentMarkdown: finalContent,
-				coverImageURL: fm.cover,
-				isRepublished: {
-					originalArticleURL: `https://codingcat.dev/${TYPE}/${fm.slug}`
+				coverImageOptions: {
+					coverImageURL: fm.cover
 				},
+				originalArticleURL: `https://codingcat.dev/${TYPE}/${fm.slug}`,
 				tags: [
 					{
-						_id: '56744722958ef13879b950d3',
+						id: '56744722958ef13879b950d3',
 						name: 'podcast',
 						slug: 'podcast'
 					},
 					{
-						_id: '56744721958ef13879b94cad',
+						id: '56744721958ef13879b94cad',
 						name: 'JavaScript',
 						slug: 'javascript'
 					},
 					{
-						_id: '56744722958ef13879b94f1b',
+						id: '56744722958ef13879b94f1b',
 						name: 'Web Development',
 						slug: 'web-development'
 					},
 					{
-						_id: '56744723958ef13879b955a9',
+						id: '56744723958ef13879b955a9',
 						name: 'Beginner Developers',
 						slug: 'beginners'
 					}
@@ -113,16 +109,14 @@ ${content}`;
 			});
 
 			console.log('addArticle result:', response.status);
-			if (response?.error) console.error('error', response.error);
-			// Get new devto url and update
+			const json = await response.json();
+			if (json?.errors?.length) {
+				console.error(JSON.stringify(json.errors));
+				continue;
+			}
 			if (response.status === 200) {
-				const json = await response.json();
-				if (json?.errors?.length) {
-					console.error(JSON.stringify(json.errors));
-					continue;
-				}
-				console.log('hashnode url', json?.data?.createPublicationStory?.post?.slug);
-				const hashnodeSlug = json?.data?.createPublicationStory?.post?.slug;
+				console.log('hashnode url', json?.data?.publishPost?.post?.slug);
+				const hashnodeSlug = json?.data?.publishPost?.post?.slug;
 
 				if (!hashnodeSlug) {
 					console.error('hashnode url missing');

@@ -27,7 +27,11 @@ title: 'Open Source Svelte Magic: Melting Minds through Melt UI!'
 youtube: 'https://youtube.com/live/Crlo-Qfu6qs?feature=share'
 ---
 
-[GitHub Repo of Example](https://github.com/CodingCatDev/code-with-codingcat-meltui)
+<script>
+  import OpenIn from '$lib/components/content/OpenIn.svelte'
+</script>
+
+<OpenIn url="https://github.com/CodingCatDev/code-with-codingcat-meltui"  />
 
 Melt UI is an open-source collection of component builders designed for creating user interfaces with the Svelte framework. It stands out for its accessibility and customization features, enabling developers to build user interfaces that are both accessible and uniquely styled. Here are some key aspects of Melt UI:
 
