@@ -13,7 +13,7 @@ cover: >-
   https://media.codingcat.dev/image/upload/v1703262044/main-codingcatdev-photo/2024-2-21_refine.png
 devto: null
 excerpt: >-
-  Update later.
+  Build Internal Tools and Web Apps with Blazing Speed.
 guests:
   - batuhan-ozdemir
 hashnode:
