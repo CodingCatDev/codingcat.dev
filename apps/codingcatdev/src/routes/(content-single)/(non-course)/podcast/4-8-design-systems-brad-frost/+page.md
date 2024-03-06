@@ -34,10 +34,12 @@ slug: 4-8-design-systems-brad-frost
 sponsors:
   - cloudinary
 spotify: https://open.spotify.com/episode/7jbeqkUHJsKGdNJIqSpEXE?si=VheIc2fOQMWT-ldoo0Gvrg
-start: Jan 1, 2024
+start: Feb 28, 2024
 title: 'Design Systems: From Atomic Design to a Global Solution'
 youtube: https://youtu.be/WiryDTsHDec
 ---
+
+<iframe src="https://podcasters.spotify.com/pod/show/codingcatdev/embed/episodes/4-9---Flutter-2024---Build-beautiful--native-experiences-across-platforms-from-a-single-codebase-e2gnnhj/a-ab1osf4" height="102px" width="400px" frameborder="0" scrolling="no"></iframe>
 
 In the fast-paced world of design, creating a seamless and efficient user experience is crucial. Design systems have emerged as a powerful solution, marrying art and science to ensure consistency and cohesiveness. In this episode, we explore the complexities of successful design systems and how they bridge the gap between product and consistency.
 
