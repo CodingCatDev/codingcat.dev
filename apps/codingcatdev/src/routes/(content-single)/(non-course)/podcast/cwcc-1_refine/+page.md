@@ -19,7 +19,8 @@ guests:
 hashnode:
 picks: null
 slug: cwcc-1_refine
-sponsors: null
+sponsors:
+  - refine
 spotify: null
 start: 'Feb 21, 2024'
 title: 'Open-source Retool for Enterprise Building React Internal Tool'
@@ -72,8 +73,10 @@ We'll not just talk about Refine but actually build with it - kickstarting a sim
 
 Let's initialize our Refine journey with their CLI:
 
+## Kickstart your app with Refine's CLI
+
 ```bash
-# Kickstart your app with Refine's CLInpm create refine app
+npm create refine app
 ```
 
 It's delightful to see a new app come alive, and Refine's CLI artistry adds a dash of whimsy to the otherwise mundane terminal window.
@@ -83,7 +86,9 @@ However, Refine's true magic lies in how effortlessly it handles routing, data f
 Here's a snippet showing Refine's GraphQL data handling:
 
 ```js
-// Fetching data with GraphQL in Refineconst { tableProps } = useTable({resource: "posts",gqlQuery: postsList});return <Table {...tableProps} />;
+// Fetching data with GraphQL in Refine
+const { tableProps } = useTable({ resource: 'posts', gqlQuery: postsList });
+return <Table {...tableProps} />;
 ```
 
 With ease, you're now managing data via a polished UI. All thanks to Refine's fluid integration between your UI library and its refined (pun intended) core.
@@ -93,7 +98,17 @@ With ease, you're now managing data via a polished UI. All thanks to Refine's fl
 And what about the ever-critical realm of authentication? Not to worry - Refine's got you covered here too with a simplified approach:
 
 ```js
-// Refine auth setup// Login handlerfunction login() {// Auth logicreturn {userId: "user123"}}// Access checkfunction check() {// Authorizationreturn true}
+// Refine auth setup
+// Login handler
+function login() {
+	// Auth logic
+	return { userId: 'user123' };
+}
+// Access check
+function check() {
+	// Authorization
+	return true;
+}
 ```
 
 With barely a dozen lines of code, we've patched authentication into our app! Of course, this omits necessary complexity for real-world security - but it exemplifies the speed at which Refine can incorporate auth.
