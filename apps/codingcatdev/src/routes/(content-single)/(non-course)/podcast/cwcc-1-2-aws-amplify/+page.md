@@ -3,7 +3,7 @@ type: podcast
 authors:
   - alex-patterson
 episode: 2
-recording_date: Feb 14, 2023 12:00 PM
+recording_date: Feb 14, 2024 12:00 PM
 season: 1
 published: published
 podcast: code-with-coding-cat
@@ -19,7 +19,7 @@ picks:
 slug: cwcc-1-2-aws-amplify
 sponsors:
 spotify:
-start: Jan 1, 2024
+start: Feb 14, 2024
 title: 'Next.js Amplified: Full-Stack Web Apps on AWS Amplify Gen2'
 youtube: https://youtube.com/live/SAF2gP7U5CM?feature=share
 ---
