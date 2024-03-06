@@ -16,7 +16,7 @@ devto: >-
 excerpt: 'AWS Amplify using Gen2, a code first approach'
 guests:
   - erik-hanchett
-hashnode: null
+hashnode: podcast-cwcc-1-2-aws-amplify-1
 picks: null
 slug: cwcc-1-2-aws-amplify
 sponsors: null
