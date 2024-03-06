@@ -4,29 +4,30 @@ authors:
   - alex-patterson
   - brittney-postma
 episode: 6
-recording_date: August 17, 2022 6:00 PM
+recording_date: 'August 17, 2022 6:00 PM'
 season: 0
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1657910422/main-codingcatdev-photo/Remix-with-KentCDodds.jpg
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1657910422/main-codingcatdev-photo/Remix-with-KentCDodds.jpg
+devto: null
 excerpt: Kent C. Dodds walks us through an Epic reveal of Remix
 guests:
   - kent-c-dodds
-hashnode:
-picks:
+hashnode: podcast-cwcc-0-6-remix-with-kent-c-dodds
+picks: null
 slug: cwcc-0-6-remix-with-kent-c-dodds
-sponsors:
-spotify:
-start: August 17, 2022
-title: 'Remix with Kent C. Dodds'
-youtube: https://youtu.be/ZWVYJOclIXY
+sponsors: null
+spotify: null
+start: 'August 17, 2022'
+title: Remix with Kent C. Dodds
+youtube: 'https://youtu.be/ZWVYJOclIXY'
 ---
 
 <script lang="ts">
-	import Video from '$lib/components/content/Video.svelte'
+	import YouTube from '$lib/components/content/YouTube.svelte'
 	import Shorts from '$lib/components/content/Shorts.svelte'
 </script>
 
@@ -160,14 +161,14 @@ Remix offers several advantages over other React frameworks:
 
 ## Shorts
 
-<Video title="Exciting future developments in Angular Router and Remix Router" src="https://youtube.com/shorts/kx5CVRBnhdI" />
-<Video title="No JavaScript Needed State Management for Apps Made Easy" src="https://youtube.com/shorts/Mc0awq5d15A" />
-<Video title="Mastering React Using Closures to Avoid Bugs" src="https://youtube.com/shorts/lvM-8rzPGgk" />
-<Video title="Revolutionary Remix Ensuring Seamless JavaScript Experience for Users" src="https://youtube.com/shorts/RRa2mfs5YcQ" />
-<Video title="Revolutionary Remix Router Revolutionizing UX and DX on a Server" src="https://youtube.com/shorts/TURK2J6yxfA" />
-<Video title="Revolutionize your Web Experiences with Remix The Ultimate JavaScript Framework" src="https://youtube.com/shorts/5QOjDtmLWrU" />
-<Video title="Revolutionizing Data Loading Remix Center Stack Simplifies JavaScript Development" src="https://youtube.com/shorts/LRBUVrFH27k" />
-<Video title="Remix Center Stack Simplifies JavaScript Development" src="https://youtube.com/shorts/LRBUVrFH27k" />
-<Video title="Data Management Remix Makes Network Tab a Breeze" src="https://youtube.com/shorts/GspbUXLmpeY" />
-<Video title="Spicing Up My Background with a Neon Remix Sign" src="https://youtube.com/shorts/3UlJknYDV8w" />
-<Video title="Unleash Your Creativity with the Ultimate Fake Books App in Remix" src="https://youtube.com/shorts/TbdZU7b2bKQ" />
+<YouTube title="Exciting future developments in Angular Router and Remix Router" src="https://youtube.com/shorts/kx5CVRBnhdI" />
+<YouTube title="No JavaScript Needed State Management for Apps Made Easy" src="https://youtube.com/shorts/Mc0awq5d15A" />
+<YouTube title="Mastering React Using Closures to Avoid Bugs" src="https://youtube.com/shorts/lvM-8rzPGgk" />
+<YouTube title="Revolutionary Remix Ensuring Seamless JavaScript Experience for Users" src="https://youtube.com/shorts/RRa2mfs5YcQ" />
+<YouTube title="Revolutionary Remix Router Revolutionizing UX and DX on a Server" src="https://youtube.com/shorts/TURK2J6yxfA" />
+<YouTube title="Revolutionize your Web Experiences with Remix The Ultimate JavaScript Framework" src="https://youtube.com/shorts/5QOjDtmLWrU" />
+<YouTube title="Revolutionizing Data Loading Remix Center Stack Simplifies JavaScript Development" src="https://youtube.com/shorts/LRBUVrFH27k" />
+<YouTube title="Remix Center Stack Simplifies JavaScript Development" src="https://youtube.com/shorts/LRBUVrFH27k" />
+<YouTube title="Data Management Remix Makes Network Tab a Breeze" src="https://youtube.com/shorts/GspbUXLmpeY" />
+<YouTube title="Spicing Up My Background with a Neon Remix Sign" src="https://youtube.com/shorts/3UlJknYDV8w" />
+<YouTube title="Unleash Your Creativity with the Ultimate Fake Books App in Remix" src="https://youtube.com/shorts/TbdZU7b2bKQ" />

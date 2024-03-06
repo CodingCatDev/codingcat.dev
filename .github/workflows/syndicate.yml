@@ -1,0 +1,102 @@
+name: syndicate
+on: 
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  dev-to:
+    environment: main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/setup-node@v4
+        name: Install node
+        with:
+          node-version: 18
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        working-directory: ./apps/codingcatdev
+        run: pnpm i
+      - name: syndicate:post-dev-to
+        working-directory: ./apps/codingcatdev/scripts
+        run: node post-dev-to.js
+        env:
+          PRIVATE_DEVTO: ${{ secrets.PRIVATE_DEVTO }}
+      - name: syndicate:podcast-dev-to
+        working-directory: ./apps/codingcatdev/scripts
+        run: node podcast-dev-to.js
+        env:
+          PRIVATE_DEVTO: ${{ secrets.PRIVATE_DEVTO }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: main-devto updates
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: dev-devto updates
+          branch: dev
+  hashnode:
+    needs: dev-to
+    environment: main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/setup-node@v4
+        name: Install node
+        with:
+          node-version: 18
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        working-directory: ./apps/codingcatdev
+        run: pnpm i
+      - name: syndicate:post-hashnode
+        working-directory: ./apps/codingcatdev/scripts
+        run: node post-hashnode.js
+        env:
+          PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
+      - name: syndicate:podcast-hashnode
+        working-directory: ./apps/codingcatdev/scripts
+        run: node podcast-hashnode.js
+        env:
+          PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: main-devto updates
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: dev-devto updates
+          branch: dev

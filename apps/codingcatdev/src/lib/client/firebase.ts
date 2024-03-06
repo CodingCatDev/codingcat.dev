@@ -29,6 +29,7 @@ import {
 } from 'firebase/analytics';
 
 import { env } from '$env/dynamic/public';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 export const firebaseConfig = {
 	apiKey: env.PUBLIC_FB_API_KEY,
@@ -45,6 +46,7 @@ export let auth: Auth;
 export let firestore: Firestore;
 export let functions: Functions;
 export let analytics: Analytics;
+export let storage: FirebaseStorage;
 
 if (
 	!app &&
@@ -65,6 +67,7 @@ if (
 	firestore = initializeFirestore(app, { ignoreUndefinedProperties: true });
 	functions = getFunctions(app);
 	analytics = getAnalytics(app);
+	storage = getStorage(app);
 } else {
 	if (
 		browser &&

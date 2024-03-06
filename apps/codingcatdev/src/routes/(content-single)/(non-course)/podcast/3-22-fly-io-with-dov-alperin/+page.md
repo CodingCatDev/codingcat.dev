@@ -3,38 +3,38 @@ type: podcast
 authors:
   - alex-patterson
 episode: 22
-recording_date: Nov 13,2023 2:00 PM
+recording_date: 'Nov 13,2023 2:00 PM'
 season: 3
 published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1700665455/main-codingcatdev-photo/3.23-fly.io.png
-devto:
-excerpt: 'Fly is a platform for running full stack apps and databases close to your users'
+cover: >-
+  https://media.codingcat.dev/image/upload/v1700665455/main-codingcatdev-photo/3.23-fly.io.png
+devto: 'https://dev.to/codingcatdev/speedrun-your-app-onto-flyio-1227'
+excerpt: >-
+  Fly is a platform for running full stack apps and databases close to your
+  users
 guests:
   - dov-alperin
-hashnode:
+hashnode: podcast-3-22-fly-io-with-dov-alperin
 picks:
-  [
-    {
-      author: 'dov-alperin',
-      name: 'The Morning Show',
-      site: 'https://tv.apple.com/us/show/the-morning-show/umc.cmc.25tn3v8ku4b39tr6ccgb8nl6m'
-    },
-    {
-      author: 'alex-patterson',
-      name: 'Sentry Performance Monitoring',
-      site: 'https://blog.sentry.io/performance-monitoring-for-every-developer-web-vitals-and-function/?original_referrer=https%3A%2F%2Fsentry.io%2F'
-    }
-  ]
+  - author: dov-alperin
+    name: The Morning Show
+    site: >-
+      https://tv.apple.com/us/show/the-morning-show/umc.cmc.25tn3v8ku4b39tr6ccgb8nl6m
+  - author: alex-patterson
+    name: Sentry Performance Monitoring
+    site: >-
+      https://blog.sentry.io/performance-monitoring-for-every-developer-web-vitals-and-function/?original_referrer=https%3A%2F%2Fsentry.io%2F
 slug: 3-22-fly-io-with-dov-alperin
 sponsors:
   - storyblok
-spotify: https://podcasters.spotify.com/pod/show/purrfect-dev/episodes/3-22-Fly-io-with-Dov-Alperin-e2c8hoj
-start: Nov 15, 2023
+spotify: >-
+  https://open.spotify.com/episode/5zS8lOvpTyl3SMK7Pd6mhz?si=BNyY0rPDSuyrJMQWyInn6g
+start: 'Nov 15, 2023'
 title: Speedrun Your App Onto Fly.io
-youtube: https://youtu.be/JFObDifxL74
+youtube: 'https://youtu.be/JFObDifxL74'
 ---
 
 In today's rapidly evolving digital landscape, businesses are constantly seeking ways to enhance their online presence, improve application performance, and deliver seamless user experiences. Enter edge computing, a transformative technology that brings computational resources closer to the end-users, enabling faster data processing, reduced latency, and enhanced scalability. Fly.io emerges as a frontrunner in this domain, providing a powerful JavaScript platform that empowers developers to build, deploy, and manage edge applications with unparalleled ease and efficiency.

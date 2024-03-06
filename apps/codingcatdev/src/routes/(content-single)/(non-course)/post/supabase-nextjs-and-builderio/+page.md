@@ -3,15 +3,20 @@ type: post
 authors:
   - alex-patterson
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/main-codingcatdev-photo/0.0.png
-excerpt: We will walk through how to get up and running on Next.js with Supabase. Then we will build UI using http://builder.io/.
-hashnode: https://hashnode.codingcat.dev/tutorial-supabase-nextjs-and-builderio
-preview: https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=supabase-nextjs-and-builderio&_id=5dd332cdc7504b7c98f12dfe63fc7271
+cover: 'https://media.codingcat.dev/image/upload/main-codingcatdev-photo/0.0.png'
+excerpt: >-
+  We will walk through how to get up and running on Next.js with Supabase. Then
+  we will build UI using http://builder.io/.
+hashnode: 'https://hashnode.codingcat.dev/tutorial-supabase-nextjs-and-builderio'
+preview: >-
+  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=tutorial&selectionSlug=supabase-nextjs-and-builderio&_id=5dd332cdc7504b7c98f12dfe63fc7271
 published: published
 slug: supabase-nextjs-and-builderio
-start: June 12, 2022
-title: Supabase, Next.js and Builder.io
-youtube: https://youtu.be/yPohaXjNqxU
+start: 'June 12, 2022'
+title: 'Supabase, Next.js and Builder.io'
+youtube: 'https://youtu.be/yPohaXjNqxU'
+devto: >-
+  https://dev.to/codingcatdev/supabase-nextjs-and-builderio-45ai-temp-slug-4310128
 ---
 
 ## What are similar tools to Supabase that you may have used?

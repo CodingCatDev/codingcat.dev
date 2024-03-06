@@ -17,6 +17,7 @@ export interface Content {
 	title: string;
 	updated?: Date;
 	weight?: number;
+	videoCloudinary?: string;
 	youtube?: string;
 }
 
@@ -90,6 +91,7 @@ export interface Socials {
 	facebook?: string;
 	github?: string;
 	instagram?: string;
+	lastfm?: string;
 	linkedin?: string;
 	email?: string;
 	mastodon?: string;

@@ -1,12 +1,13 @@
 <script lang="ts">
 	import 'prism-themes/themes/prism-shades-of-purple.min.css';
-	import Video from '$lib/components/content/Video.svelte';
+	import YouTube from '$lib/components/content/YouTube.svelte';
 	import { browser } from '$app/environment';
 	import CopyCodeInjector from '$lib/components/content/CopyCodeInjector.svelte';
 	import Image from '$lib/components/content/Image.svelte';
 	import ProCourseMark from './ProCourseMark.svelte';
 	import type { LayoutData } from './$types';
 	import LessonList from './LessonList.svelte';
+	import CloudinaryVideo from '$lib/components/content/CloudinaryVideo.svelte';
 	export let data: LayoutData;
 </script>
 
@@ -27,7 +28,9 @@
 					<div class="w-full lg:grid lg:grid-cols-12 lg:space-y-0 relative">
 						<div class="col-span-9">
 							{#if data?.content?.youtube}
-								<Video src={data.content.youtube} title={`${data.content.title}`} />
+								<YouTube src={data.content.youtube} title={`${data.content.title}`} />
+							{:else if data?.content?.videoCloudinary}
+								<CloudinaryVideo src={data.content.videoCloudinary} />
 							{:else if data?.content?.cover}
 								<Image src={data.content.cover} alt={data.content.title} />
 							{/if}

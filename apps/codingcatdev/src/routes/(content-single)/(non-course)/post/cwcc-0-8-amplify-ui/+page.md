@@ -3,7 +3,7 @@ type: post
 authors:
   - alex-patterson
 episode: 8
-recording_date: August 19, 2022 10:45 AM
+recording_date: 'August 19, 2022 10:45 AM'
 season: 0
 published: published
 podcast: code-with-coding-cat
@@ -14,9 +14,12 @@ excerpt: 'Amplify UI is a collection of accessible, themeable, performant React 
 guests:
   - erik-hanchett
 slug: cwcc-0-8-amplify-ui
-start: August 19, 2022
+start: 'August 19, 2022'
 title: Live Coding with the Amplify UI team
-youtube: https://youtu.be/weT3YwBZt-k
+youtube: 'https://youtu.be/weT3YwBZt-k'
+devto: >-
+  https://dev.to/codingcatdev/live-coding-with-the-amplify-ui-team-1596-temp-slug-3596967
+hashnode: post-cwcc-0-8-amplify-ui
 ---
 
 ## AWS Amplify UI: Build UI Fast with Amplify on React
