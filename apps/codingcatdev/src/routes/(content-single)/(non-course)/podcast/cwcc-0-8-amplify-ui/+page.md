@@ -1,5 +1,5 @@
 ---
-type: post
+type: podcast
 authors:
   - alex-patterson
 episode: 8
@@ -9,13 +9,10 @@ published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: >-
-  https://media.codingcat.dev/image/upload/v1659308888/main-codingcatdev-photo/Amplify-UI.jpg
-excerpt: >-
-  Amplify UI is a collection of accessible, themeable, performant React (and
-  more!) components that can connect directly to the cloud.
-preview: >-
-  https://codingcat.dev/api/preview?secret=7tjQhb1qQlS3FtyV3b0I&selectionType=podcast&selectionSlug=Amplify-UI&_id=fbe488bf6b204daea1e634eb1768b1b9
+cover: https://media.codingcat.dev/image/upload/v1659308888/main-codingcatdev-photo/Amplify-UI.jpg
+excerpt: 'Amplify UI is a collection of accessible, themeable, performant React (and more!) components that can connect directly to the cloud.'
+guests:
+  - erik-hanchett
 slug: cwcc-0-8-amplify-ui
 start: 'August 19, 2022'
 title: Live Coding with the Amplify UI team

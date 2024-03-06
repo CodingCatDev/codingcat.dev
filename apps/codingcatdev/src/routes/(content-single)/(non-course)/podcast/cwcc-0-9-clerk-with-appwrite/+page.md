@@ -1,5 +1,5 @@
 ---
-type: post
+type: podcast
 authors:
   - alex-patterson
 episode: 9
