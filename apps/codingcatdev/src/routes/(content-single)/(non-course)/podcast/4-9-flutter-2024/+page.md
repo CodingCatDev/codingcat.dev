@@ -9,12 +9,13 @@ published: published
 podcast: CodingCat.dev
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1709747785/main-codingcatdev-photo/4_flutter-2024.png
-devto: https://dev.to/codingcatdev/nx-project-crystal-2b66
-excerpt: Build beautiful, native experiences across platforms from a single codebase.
+cover: >-
+  https://media.codingcat.dev/image/upload/v1709747785/main-codingcatdev-photo/4_flutter-2024.png
+devto: 'https://dev.to/codingcatdev/nx-project-crystal-2b66'
+excerpt: 'Build beautiful, native experiences across platforms from a single codebase.'
 guests:
   - randal-schwartz
-hashnode:
+hashnode: podcast-4-9-flutter-2024
 picks:
   - author: randal-schwartz
     name: Stern Pinball
@@ -25,10 +26,11 @@ picks:
 slug: 4-9-flutter-2024
 sponsors:
   - cloudinary
-spotify: https://open.spotify.com/episode/2cHDn2AvRPCfYfR15FVU5i?si=ioz3SX3LTyCFwGtNSIcaiQ
+spotify: >-
+  https://open.spotify.com/episode/2cHDn2AvRPCfYfR15FVU5i?si=ioz3SX3LTyCFwGtNSIcaiQ
 start: 'March 6, 2024'
 title: Flutter 2024
-youtube: https://youtu.be/VeUppmui46g
+youtube: 'https://youtu.be/VeUppmui46g'
 ---
 
 **The State of Flutter in 2024: A Comprehensive Look**
