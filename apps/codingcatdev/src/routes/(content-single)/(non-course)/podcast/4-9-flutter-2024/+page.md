@@ -72,3 +72,7 @@ In conclusion, Flutter's position in the app development landscape remains stron
 
 - Flutter official website: [https://flutter.dev/](https://flutter.dev/)
 - Flutter roadmap: [https://github.com/topics/flutter-roadmap](https://github.com/topics/flutter-roadmap)
+- FLOSS - https://twit.tv/shows/floss-weekly
+- Fuchsia OS - https://fuchsia.dev/
+- Flutter Roadmap - https://github.com/flutter/flutter/wiki/Roadmap
+- FLOSS Restart - https://hackaday.com/2024/01/09/floss-weekly-episode-765-that-ship-sailed-and-sank/
