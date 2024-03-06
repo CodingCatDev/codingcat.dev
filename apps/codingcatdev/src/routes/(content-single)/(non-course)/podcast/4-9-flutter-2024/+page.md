@@ -25,7 +25,7 @@ picks:
 slug: 4-9-flutter-2024
 sponsors:
   - cloudinary
-spotify:
+spotify: https://open.spotify.com/episode/2cHDn2AvRPCfYfR15FVU5i?si=ioz3SX3LTyCFwGtNSIcaiQ
 start: 'March 6, 2024'
 title: Flutter 2024
 youtube: https://youtu.be/VeUppmui46g
@@ -72,4 +72,3 @@ In conclusion, Flutter's position in the app development landscape remains stron
 
 - Flutter official website: [https://flutter.dev/](https://flutter.dev/)
 - Flutter roadmap: [https://github.com/topics/flutter-roadmap](https://github.com/topics/flutter-roadmap)
--
