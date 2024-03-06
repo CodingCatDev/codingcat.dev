@@ -24,7 +24,7 @@ slug: _angular-cookbook
 sponsors:
   - cloudinary
 spotify:
-start: Jan 1, 2024
+start: March 6, 2024
 title: 'Design Systems: From Atomic Design to a Global Solution'
 youtube:
 ---
