@@ -7,7 +7,7 @@ name: Refine
 published: published
 slug: refine
 start: Jan 1, 2024
-url: 'https://cld.media/codingcatdev'
+url: 'https://refine.dev?utm=codingcat.dev'
 ---
 
 If you're a developer who has grown weary of the repetitive grind of building CRUD (Create, Read, Update, Delete) operations, state management, authentication systems, and the like for internal tools and web apps – Refine.dev is about to become your new best friend.
