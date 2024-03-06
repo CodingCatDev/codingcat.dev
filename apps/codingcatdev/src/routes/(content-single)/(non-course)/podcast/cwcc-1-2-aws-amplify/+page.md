@@ -3,25 +3,27 @@ type: podcast
 authors:
   - alex-patterson
 episode: 2
-recording_date: Feb 14, 2024 12:00 PM
+recording_date: 'Feb 14, 2024 12:00 PM'
 season: 1
 published: published
 podcast: code-with-coding-cat
 chapters_done: false
 cloudinary_convert: false
-cover: https://media.codingcat.dev/image/upload/v1707339236/main-codingcatdev-photo/2024-2-14-amplify-gen2.png
-devto:
+cover: >-
+  https://media.codingcat.dev/image/upload/v1707339236/main-codingcatdev-photo/2024-2-14-amplify-gen2.png
+devto: >-
+  https://dev.to/codingcatdev/nextjs-amplified-full-stack-web-apps-on-aws-amplify-gen2-191f
 excerpt: 'AWS Amplify using Gen2, a code first approach'
 guests:
   - erik-hanchett
-hashnode:
-picks:
+hashnode: null
+picks: null
 slug: cwcc-1-2-aws-amplify
-sponsors:
-spotify:
-start: Feb 14, 2024
+sponsors: null
+spotify: null
+start: 'Feb 14, 2024'
 title: 'Next.js Amplified: Full-Stack Web Apps on AWS Amplify Gen2'
-youtube: https://youtube.com/live/SAF2gP7U5CM?feature=share
+youtube: 'https://youtube.com/live/SAF2gP7U5CM?feature=share'
 ---
 
 <script>
