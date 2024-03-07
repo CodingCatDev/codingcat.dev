@@ -8,7 +8,8 @@ start: January 1, 2000
 socials:
   github: 'https://github.com/BatuhanW'
   twitter: 'https://twitter.com/kakamelatte'
-
+websites:
+  - https://batuhan.dev/
 ---
 
 ## About
