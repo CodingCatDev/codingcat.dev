@@ -10,7 +10,7 @@ socials:
   linkedin: https://www.linkedin.com/in/mrdowden/
   medium: https://mrdowden.medium.com/
   tiktok: https://www.tiktok.com/@mrdowden
-  twitch: https://www.twitch.tv/mrdowden
+  twitch: https://www.twitch.tv/andromedagalactic
   twitter: https://twitter.com/mrdowden
   youtube: https://www.youtube.com/@mrdowden
 websites:
