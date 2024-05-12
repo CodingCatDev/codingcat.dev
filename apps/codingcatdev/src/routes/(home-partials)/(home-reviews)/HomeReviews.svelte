@@ -56,7 +56,7 @@
 						stars={5}
 						description="Fireship is the best, congratulations on the interview 🎉🎉"
 						link={{
-							href: 'http://localhost:5173/podcast/0-9-jeff-delaney-of-fireship-io',
+							href: '/podcast/0-9-jeff-delaney-of-fireship-io',
 							name: 'Fireship.io'
 						}}
 						icon={ContentType.podcast}
