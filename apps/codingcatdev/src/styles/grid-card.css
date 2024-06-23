@@ -1,9 +1,0 @@
-@layer components {
-	.ccd-grid-card {
-		@apply card grid transition-all rounded-md shadow-lg hover:shadow-2xl hover:scale-105 ease-in-out duration-150;
-	}
-	.ccd-grid-card a {
-		/* Override typograpy */
-		@apply !no-underline !text-base-token dark:!text-dark-token;
-	}
-}
