@@ -1,28 +1,29 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "CodingCat server",
-            "cwd": "${workspaceFolder}/apps/codingcatdev",
-			"request": "launch",
-			"runtimeArgs": ["run-script", "dev"],
-			"runtimeExecutable": "pnpm",
-			"skipFiles": ["<node_internals>/**"],
-			"type": "node",
-			"console": "integratedTerminal"
-		},
-		{
-			"name": "CodingCat client",
-			"request": "launch",
-			"type": "chrome",
-			"url": "http://localhost:5173",
-			"webRoot": "${workspaceFolder}/apps/codingcatdev"
-		}
-	],
-	"compounds": [
-		{
-			"name": "CodingCat Full",
-			"configurations": ["CodingCat server", "CodingCat client"]
-		}
-	]
+  "version": "0.2.0",
+  "runtimeArgs": ["--preserve-symlinks"],
+  "configurations": [
+    {
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "Next.js: debug client-side",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ]
 }
