@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import { CourseQueryResult, HomePageQueryResult } from "@/sanity.types";
+import { Price3 } from "@/lib/stripe.types";
 
 export default function Buy({
   title,
@@ -25,10 +26,7 @@ export default function Buy({
 }) {
   const { currentUser } = useFirestoreUser();
   const [redirecting, setRedirecting] = useState(false);
-  const [price, setPrice] = useState({
-    product: "",
-    unit_amount: 0,
-  });
+  const [price, setPrice] = useState<Price3 | null>(null);
   const [showBuy, setShowBuy] = useState(false);
   const { toast } = useToast();
   const [cookies] = useCookies(["app.idt"]);
@@ -50,13 +48,15 @@ export default function Buy({
 
   const getPrice = async () => {
     const price = await getStripePrice({ stripeProduct });
-    setPrice(price.data() as any);
+    const priceData = price.data() as any;
+    console.log(priceData);
+    setPrice(priceData);
   };
 
   useEffect(() => {
-    if (stripeProduct) getPrice();
+    if (stripeProduct && showBuy) getPrice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stripeProduct]);
+  }, [stripeProduct, showBuy]);
 
   const onSubscribe = async () => {
     setRedirecting(true);
@@ -81,8 +81,19 @@ export default function Buy({
   const subscribe = (
     <>
       <DialogHeader>
-        <DialogTitle>Purchase {title}</DialogTitle>
+        <DialogTitle className="text-2xl font-bold">
+          Purchase: {title}
+        </DialogTitle>
       </DialogHeader>
+      {price && (
+        <div className="mt-4 flex gap-2 sm:gap-4 text-xl sm:text-2xl">
+          <div className="flex items-center justify-between">Price:</div>
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-bold">{price.unit_amount / 100}</span>
+            <span className="uppercase"> {price.currency}</span>
+          </div>
+        </div>
+      )}
       <Button onClick={onSubscribe} disabled={redirecting}>
         {redirecting ? "Redirecting..." : "Continue to Stripe"}
         {!redirecting && <ArrowRightIcon className="ml-2" />}
