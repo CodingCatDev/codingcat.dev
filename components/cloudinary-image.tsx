@@ -3,7 +3,8 @@
 import { CldImage as CldImageDefault, CldImageProps } from "next-cloudinary";
 
 const CldImage = (props: CldImageProps) => {
-  return <CldImageDefault {...props} />;
+  const dev = process.env.NODE_ENV !== "production";
+  return <CldImageDefault {...props} grayscale={dev} />;
 };
 
 export default CldImage;
