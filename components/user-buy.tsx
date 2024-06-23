@@ -107,7 +107,14 @@ export default function Buy({
     </>
   );
 
-  const hooray = <>You bought this course or are a Pro 🎉</>;
+  const hooray = (
+    <>
+      <DialogHeader>
+        <DialogTitle>Pro</DialogTitle>
+      </DialogHeader>
+      You bought this course or are a Pro already 🎉
+    </>
+  );
 
   return (
     <>

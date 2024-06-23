@@ -141,7 +141,14 @@ export default function GoPro({
     </>
   );
 
-  const hooray = <>You are a Pro 🎉</>;
+  const hooray = (
+    <>
+      <DialogHeader>
+        <DialogTitle>Pro</DialogTitle>
+      </DialogHeader>
+      You are a Pro already 🎉
+    </>
+  );
 
   return (
     <Dialog defaultOpen onOpenChange={(open) => setShowGoPro(open)}>

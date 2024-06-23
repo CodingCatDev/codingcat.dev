@@ -1,5 +1,10 @@
 "use client";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import AlgoliaSearch from "@/components/algolia-search";
 import { FaMagnifyingGlass } from "react-icons/fa6";
@@ -29,6 +34,9 @@ export default function AlgoliaDialog() {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-screen-lg p-0 sm:px-6 ">
+        <div className="hidden">
+          <DialogTitle>Search</DialogTitle>
+        </div>
         <AlgoliaSearch showFacets={false} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
