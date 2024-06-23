@@ -9,6 +9,7 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import ProBenefits from "@/components/pro-benefits";
+import { Suspense } from "react";
 
 type Props = {
   params: false;
@@ -54,7 +55,11 @@ export default async function ProPage() {
   return (
     <div className="container px-5 mx-auto">
       <div className="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
-        {page.coverImage && <ProBenefits coverImage={page.coverImage} />}
+        {page.coverImage && 
+        <Suspense>
+          <ProBenefits coverImage={page.coverImage} />
+        </Suspense>
+        }
       </div>
       <article>
         {page.content?.length && (

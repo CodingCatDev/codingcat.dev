@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import GoogleAuth from "./google";
 import GitHubAuth from "./github";
+import { Suspense } from "react";
 
 export default function LoginForm() {
   return (
@@ -20,8 +21,10 @@ export default function LoginForm() {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <GoogleAuth />
-            <GitHubAuth />
+            <Suspense>
+              <GoogleAuth />
+              <GitHubAuth />
+            </Suspense>
           </CardContent>
         </Card>
       </div>
