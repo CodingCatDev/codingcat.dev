@@ -8,13 +8,13 @@ import { draftMode } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { client } from "@/sanity/lib/client";
-// import { token } from "@/sanity/lib/token";
+import { token } from "@/sanity/lib/token";
 
-// const clientWithToken = client.withConfig({ token });
+const clientWithToken = client.withConfig({ token });
 
 export async function GET(request: Request) {
   const { isValid, redirectTo = "/" } = await validatePreviewUrl(
-    client,
+    clientWithToken,
     request.url
   );
   if (!isValid) {
