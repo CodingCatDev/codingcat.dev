@@ -280,7 +280,7 @@ export interface Price3 {
   created: number;
   custom_unit_amount: any;
   type: string;
-  product: Product2 | string;
+  product: Product2;
   active: boolean;
   unit_amount: number;
   billing_scheme: string;
