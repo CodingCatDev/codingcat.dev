@@ -24,6 +24,7 @@ export default async function HomePage() {
                 </div>
                 <Link
                   href={`/${homePage?.featuredCourse?._type}/${homePage?.featuredCourse?.slug}`}
+                  className="w-full"
                 >
                   {homePage?.featuredCourse?.coverImage && (
                     <CoverImage image={homePage?.featuredCourse?.coverImage} priority />
@@ -35,13 +36,16 @@ export default async function HomePage() {
                     {homePage?.featuredCourse?.excerpt}
                   </p>
                 </Link>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Buy
-                    stripeProduct={homePage?.featuredCourse?.stripeProduct}
-                    title={homePage?.featuredCourse?.title}
-                  />
-                  <UserGoProButton />
-                </div>
+                {homePage?.featuredCourse?.stripeProduct &&
+                  homePage?.featuredCourse?.title && (
+                    <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                      <Buy
+                        stripeProduct={homePage?.featuredCourse?.stripeProduct}
+                        title={homePage?.featuredCourse?.title}
+                      />
+                      <UserGoProButton />
+                    </div>
+                  )}
               </div>
             )}
 
@@ -52,6 +56,7 @@ export default async function HomePage() {
                 </div>
                 <Link
                   href={`/${homePage?.latestPodcast?._type}/${homePage?.latestPodcast?.slug}`}
+                  className="w-full"
                 >
                   {homePage?.latestPodcast?.coverImage && (
                     <CoverImage image={homePage?.latestPodcast?.coverImage} priority />
@@ -96,14 +101,14 @@ export default async function HomePage() {
                   <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">
                     {fc?.excerpt}
                   </p>
-                  {homePage?.featuredCourse?.stripeProduct &&
-                    homePage?.featuredCourse?.title && (
+                  {fc?.stripeProduct &&
+                    fc?.title && (
                       <div className="flex flex-col gap-2 min-[400px]:flex-row">
                         <Buy
                           stripeProduct={
-                            homePage?.featuredCourse?.stripeProduct
+                            fc?.stripeProduct
                           }
-                          title={homePage?.featuredCourse?.title}
+                          title={fc?.title}
                         />
                         <UserGoProButton />
                       </div>
