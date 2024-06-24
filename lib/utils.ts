@@ -22,13 +22,7 @@ export const unpluralize = (_type: string) => {
 };
 
 export const publicURL = () => {
-
-  console.debug(process.env.NEXT_PUBLIC_VERCEL_ENV)
-  console.debug(process.env.NEXT_PUBLIC_VERCEL_URL)
-  console.debug(process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL)
-  console.debug(process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL)
-
-  return process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
-    ? "https://" + process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
+  return process.env.NEXT_PUBLIC_VERCEL_URL
+    ? "https://" + process.env.NEXT_PUBLIC_VERCEL_URL
     : "http://localhost:3000";
 };
