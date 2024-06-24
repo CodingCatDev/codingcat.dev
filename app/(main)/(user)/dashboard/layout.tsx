@@ -7,7 +7,7 @@ export default function SettingsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const paths = ["/dashboard/browse"];
+  const paths = ["/dashboard/bookmarks"];
   return (
     <div className="grid h-full w-full lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">

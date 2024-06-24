@@ -165,7 +165,7 @@ export default function Component() {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>The Danger Zone</CardTitle>
         </CardHeader>
@@ -179,7 +179,7 @@ export default function Component() {
             </div>
           </form>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

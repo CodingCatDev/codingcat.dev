@@ -12,8 +12,8 @@ export default function SettingsLayout({
     "/settings/profile",
     "/settings/account",
     "/settings/appearance",
-    "/settings/notifications",
-    "/settings/display",
+    // "/settings/notifications",
+    // "/settings/display",
   ];
   return (
     <div className="grid h-full w-full lg:grid-cols-[280px_1fr]">

@@ -52,7 +52,9 @@ export default function CoverImage(props: CoverImageProps) {
         height={height || 1080}
         priority={priority}
         quality={quality || "auto"}
-        sizes="100vw"
+        sizes="(max-width: 768px) 100vw,
+          (max-width: 1200px) 50vw,
+          33vw"
         alt={source?.context?.custom?.alt || ""}
         src={source?.public_id}
         placeholder="blur"
