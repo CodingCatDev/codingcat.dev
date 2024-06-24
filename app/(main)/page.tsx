@@ -26,7 +26,7 @@ export default async function HomePage() {
                   href={`/${homePage?.featuredCourse?._type}/${homePage?.featuredCourse?.slug}`}
                 >
                   {homePage?.featuredCourse?.coverImage && (
-                    <CoverImage image={homePage?.featuredCourse?.coverImage} />
+                    <CoverImage image={homePage?.featuredCourse?.coverImage} priority />
                   )}
                   <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                     {homePage?.featuredCourse?.title}
@@ -54,7 +54,7 @@ export default async function HomePage() {
                   href={`/${homePage?.latestPodcast?._type}/${homePage?.latestPodcast?.slug}`}
                 >
                   {homePage?.latestPodcast?.coverImage && (
-                    <CoverImage image={homePage?.latestPodcast?.coverImage} />
+                    <CoverImage image={homePage?.latestPodcast?.coverImage} priority />
                   )}
                   <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                     {homePage?.latestPodcast?.title}
