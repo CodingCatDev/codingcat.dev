@@ -1261,7 +1261,7 @@ export declare const internalGroqTypeReferenceTo: unique symbol;
 // Query: count(*[_type == $type])
 export type DocCountResult = number;
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]
+// Query: *[_type == "settings"][0]{  ...,  ogImage{    secure_url  }}
 export type SettingsQueryResult = {
   _id: string;
   _type: "settings";
@@ -1293,7 +1293,9 @@ export type SettingsQueryResult = {
     sideOnly?: boolean;
     _key: string;
   }>;
-  ogImage?: CloudinaryAsset;
+  ogImage: {
+    secure_url: string | null;
+  } | null;
 } | null;
 // Variable: homePageQuery
 // Query: *[_type == "settings" ][0]{  "featuredCourse": *[_type == "course" && featured > 0]|order(featured desc)[0]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),        stripeProduct,  },  "featuredCourses": *[_type == "course" && featured > 0]|order(featured desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),        stripeProduct,  },  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPodcasts": *[_type == "podcast" && views > 0]|order(views desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{       _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPosts": *[_type == "post" && views > 0]|order(views desc)[0...4]{      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },}
