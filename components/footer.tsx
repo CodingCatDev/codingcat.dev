@@ -104,6 +104,7 @@ export default async function Footer() {
             target="popupwindow"
           >
             <Input
+              name="email"
               type="email"
               placeholder="Enter your email"
               className="max-w-lg flex-1"
@@ -117,3 +118,4 @@ export default async function Footer() {
     </footer>
   );
 }
+
