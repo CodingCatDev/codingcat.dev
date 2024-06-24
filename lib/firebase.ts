@@ -164,13 +164,12 @@ export const getStripePrice = async ({
   }
 
   // Get Price
+  console.debug('query for strip-product', id)
   const pricesQuery = await query(
-    collection(
-      doc(collection(getFirestore(), "stripe-products"), id),
-      "prices"
-    ),
+    collection(getFirestore(), `stripe-products/${id}/prices`),
     where("active", "==", true)
   );
+  console.debug('query', pricesQuery)
   const pricesSnapshot = await getDocs(pricesQuery);
   const price = pricesSnapshot.docs[0];
 
@@ -200,24 +199,24 @@ export const addSubscription = async ({
     collection(userDoc, "checkout_sessions"),
     stripeProduct
       ? {
-          line_items: [
-            {
-              price: price.id,
-              quantity: 1,
-            },
-          ],
-          mode: "payment",
-          allow_promotion_codes: true,
-          success_url: window.location.href,
-          cancel_url: window.location.href,
-        }
+        line_items: [
+          {
+            price: price.id,
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        allow_promotion_codes: true,
+        success_url: window.location.href,
+        cancel_url: window.location.href,
+      }
       : {
-          mode: "subscription",
-          allow_promotion_codes: true,
-          price: price.id,
-          success_url: window.location.href,
-          cancel_url: window.location.href,
-        }
+        mode: "subscription",
+        allow_promotion_codes: true,
+        price: price.id,
+        success_url: window.location.href,
+        cancel_url: window.location.href,
+      }
   );
 };
 

@@ -49,7 +49,7 @@ export default function Buy({
   const getPrice = async () => {
     const price = await getStripePrice({ stripeProduct });
     const priceData = price.data() as any;
-    console.log(priceData);
+    console.debug(priceData);
     setPrice(priceData);
   };
 
