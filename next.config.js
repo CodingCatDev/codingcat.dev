@@ -19,6 +19,7 @@ module.exports = withSentryConfig(
 
     org: "codingcatdev",
     project: "main-codingcat-dev",
+    authToken: process.env.SENTRY_AUTH_TOKEN,
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,
