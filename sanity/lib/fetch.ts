@@ -19,8 +19,9 @@ export async function sanityFetch<QueryResponse>({
    * The Sanity Presentation Tool will enable Draft Mode when loading up the live preview, and we use it as a signal for when to embed source maps.
    * When outside of the Sanity Studio we also support the Vercel Toolbar Visual Editing feature, which is only enabled in production when it's a Vercel Preview Deployment.
    */
-  stega = perspective === "previewDrafts" ||
-    process.env.VERCEL_ENV === "preview",
+  // stega = perspective === "previewDrafts" ||
+  //   process.env.VERCEL_ENV === "preview",
+  stega = false,
 }: {
   query: string;
   params?: QueryParams;
@@ -29,7 +30,7 @@ export async function sanityFetch<QueryResponse>({
 }) {
   if (perspective === "previewDrafts") {
     return client.fetch<QueryResponse>(query, params, {
-      stega,
+      stega: false,
       perspective: "previewDrafts",
       // The token is required to fetch draft content
       token,
@@ -40,7 +41,7 @@ export async function sanityFetch<QueryResponse>({
     });
   }
   return client.fetch<QueryResponse>(query, params, {
-    stega,
+    stega: false,
     perspective: "published",
     // The `published` perspective is available on the API CDN
     useCdn: true,
