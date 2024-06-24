@@ -13,6 +13,7 @@ export async function middleware(request: NextRequest) {
   const redirectTo = request.nextUrl.searchParams.get("redirectTo");
 
   const clearCookies = () => {
+    console.debug('clearing cookies');
     // If sending to login, it could mean that cookies are off
     // so we will delete them all before redirect
     request.cookies.delete("app.at");
@@ -21,6 +22,7 @@ export async function middleware(request: NextRequest) {
   };
 
   const sendToLogin = () => {
+    console.log('sending to login')
     if (login) {
       clearCookies();
       return NextResponse.next();
@@ -41,6 +43,8 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  console.debug(responseAPI.status);
+
   //Return to /login if token is not authorized
   if (responseAPI.status !== 200 && !login) {
     clearCookies();
@@ -54,6 +58,7 @@ export async function middleware(request: NextRequest) {
       : NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
+  console.debug('redirecting to:', redirectTo || request.nextUrl.pathname)
   return redirectTo
     ? NextResponse.redirect(new URL(redirectTo, request.url))
     : NextResponse.next();
