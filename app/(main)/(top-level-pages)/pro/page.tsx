@@ -33,7 +33,7 @@ export async function generateMetadata(
     title: page?.title,
     description: page?.excerpt,
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      images: ogImage ? ogImage : previousImages,
     },
   } satisfies Metadata;
 }
@@ -55,10 +55,10 @@ export default async function ProPage() {
   return (
     <div className="container px-5 mx-auto">
       <div className="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
-        {page.coverImage && 
-        <Suspense>
-          <ProBenefits coverImage={page.coverImage} />
-        </Suspense>
+        {page.coverImage &&
+          <Suspense>
+            <ProBenefits coverImage={page.coverImage} />
+          </Suspense>
         }
       </div>
       <article>

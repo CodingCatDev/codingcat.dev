@@ -32,7 +32,7 @@ export async function generateMetadata(
     title: page?.title,
     description: page?.excerpt,
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      images: ogImage ? ogImage : previousImages,
     },
   } satisfies Metadata;
 }

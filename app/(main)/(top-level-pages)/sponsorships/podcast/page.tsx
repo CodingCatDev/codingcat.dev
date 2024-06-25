@@ -37,7 +37,7 @@ export async function generateMetadata(
     title: page?.title,
     description: page?.excerpt,
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      images: ogImage ? ogImage : previousImages,
     },
   } satisfies Metadata;
 }
@@ -428,7 +428,7 @@ export default async function SponsorshipsPodcastPage() {
                       },
                     },
                   }}
-                  // classes="object-cover w-full bg-cover rounded bg-black/50"
+                // classes="object-cover w-full bg-cover rounded bg-black/50"
                 />
               </div>
             </div>

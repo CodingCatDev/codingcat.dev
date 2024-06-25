@@ -42,7 +42,7 @@ export async function generateMetadata(
     title: podcast?.title,
     description: podcast?.excerpt,
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      images: ogImage ? ogImage : previousImages,
     },
   } satisfies Metadata;
 }
