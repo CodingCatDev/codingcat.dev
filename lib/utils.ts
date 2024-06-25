@@ -26,3 +26,5 @@ export const publicURL = () => {
     ? "https://" + process.env.NEXT_PUBLIC_VERCEL_URL
     : "http://localhost:3000";
 };
+
+export const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms));

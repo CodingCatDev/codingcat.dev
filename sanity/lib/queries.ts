@@ -71,7 +71,8 @@ const podcastFields = `
     user->,
     name,
     site
-  }
+  },
+  spotify
 `;
 
 const courseFields = `

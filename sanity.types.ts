@@ -2524,7 +2524,7 @@ export type MorePodcastQueryResult = Array<{
   }> | null;
 }>;
 // Variable: podcastQuery
-// Query: *[_type == "podcast" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  }}
+// Query: *[_type == "podcast" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify}
 export type PodcastQueryResult = {
   _id: string;
   _type: "podcast";
@@ -3085,6 +3085,7 @@ export type PodcastQueryResult = {
     name: string | null;
     site: string | null;
   }> | null;
+  spotify: PodcastRssEpisode | null;
 } | null;
 // Variable: coursesQuery
 // Query: *[_type == "course" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    stripeProduct,  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
@@ -3317,7 +3318,7 @@ export type MoreCourseQueryResult = Array<{
   }> | null;
 }>;
 // Variable: courseQuery
-// Query: *[_type == "course" && slug.current == $courseSlug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    stripeProduct,    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  }}
+// Query: *[_type == "course" && slug.current == $courseSlug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    stripeProduct,    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify}
 export type CourseQueryResult = {
   _id: string;
   _type: "course";
@@ -3572,6 +3573,7 @@ export type CourseQueryResult = {
   recordingDate: null;
   guest: null;
   pick: null;
+  spotify: null;
 } | null;
 // Variable: lessonsInCourseQuery
 // Query: *[_type == "course" && slug.current == $courseSlug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    stripeProduct,  sections[]{    title,    lesson[]->{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),        locked,  videoCloudinary    }  }}
