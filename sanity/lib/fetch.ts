@@ -3,7 +3,7 @@ import { draftMode } from "next/headers";
 
 import { client } from "@/sanity/lib/client";
 import { token } from "@/sanity/lib/token";
-
+console.debug('env', process.env.VERCEL_ENV)
 /**
  * Used to fetch data in Server Components, it has built in support for handling Draft Mode and perspectives.
  * When using the "published" perspective then time-based revalidation is used, set to match the time-to-live on Sanity's API CDN (60 seconds)
