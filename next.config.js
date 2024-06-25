@@ -4,6 +4,11 @@ module.exports = {
     // Used to guard against accidentally leaking SANITY_API_READ_TOKEN to the browser
     taint: true,
   },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error'],
+    } : false,
+  },
 };
 
 

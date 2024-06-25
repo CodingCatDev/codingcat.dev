@@ -1,9 +1,8 @@
-import type { ClientPerspective, QueryParams } from "next-sanity";
+import type { ClientPerspective, FilteredResponseQueryOptions, QueryParams } from "next-sanity";
 import { draftMode } from "next/headers";
 
 import { client } from "@/sanity/lib/client";
 import { token } from "@/sanity/lib/token";
-console.debug('env', process.env.VERCEL_ENV)
 /**
  * Used to fetch data in Server Components, it has built in support for handling Draft Mode and perspectives.
  * When using the "published" perspective then time-based revalidation is used, set to match the time-to-live on Sanity's API CDN (60 seconds)
@@ -26,8 +25,19 @@ export async function sanityFetch<QueryResponse>({
   perspective?: Omit<ClientPerspective, "raw">;
   stega?: boolean;
 }) {
+
+  let config: FilteredResponseQueryOptions = {
+    stega,
+    perspective: "published",
+    // The `published` perspective is available on the API CDN
+    useCdn: true,
+    // Only enable Stega in production if it's a Vercel Preview Deployment, as the Vercel Toolbar supports Visual Editing
+    // When using the `published` perspective we use time-based revalidation to match the time-to-live on Sanity's API CDN (60 seconds)
+    next: { revalidate: 60 },
+  }
+
   if (perspective === "previewDrafts") {
-    return client.fetch<QueryResponse>(query, params, {
+    config = {
       stega,
       perspective: "previewDrafts",
       // The token is required to fetch draft content
@@ -36,15 +46,16 @@ export async function sanityFetch<QueryResponse>({
       useCdn: false,
       // And we can't cache the responses as it would slow down the live preview experience
       next: { revalidate: 0 },
-    });
+    }
   }
-  return client.fetch<QueryResponse>(query, params, {
-    stega,
-    perspective: "published",
-    // The `published` perspective is available on the API CDN
-    useCdn: true,
-    // Only enable Stega in production if it's a Vercel Preview Deployment, as the Vercel Toolbar supports Visual Editing
-    // When using the `published` perspective we use time-based revalidation to match the time-to-live on Sanity's API CDN (60 seconds)
-    next: { revalidate: 60 },
-  });
+
+
+  console.debug({
+    // replace "\n" with carriage return
+    query: query.replace(/\n/g, ""),
+    params,
+    config
+  })
+
+  return client.fetch<QueryResponse>(query, params, config);
 }
