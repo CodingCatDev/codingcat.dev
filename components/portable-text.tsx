@@ -48,13 +48,13 @@ export default function CustomPortableText({
     marks: {
       link: ({ children, value }) => {
         return (
-          <Link href={value?.href} rel="noreferrer noopener" target="_blank">
+          <Link href={value?.href || "#"} rel="noreferrer noopener" target="_blank">
             {children}
           </Link>
         );
       },
       internalLink: ({ children, value }) => {
-        return <Link href={value?.href}>{children}</Link>;
+        return <Link href={value?.href || "#"}>{children}</Link>;
       },
     },
   };
