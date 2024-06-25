@@ -9,7 +9,7 @@ import { draftMode } from "next/headers";
 import { JSX, SVGProps, Suspense } from "react";
 
 import AlertBanner from "@/components/alert-banner";
-
+import NextTopLoader from 'nextjs-toploader';
 import type { SettingsQueryResult } from "@/sanity.types";
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -94,7 +94,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           {draftMode().isEnabled && <AlertBanner />}
-
+          <NextTopLoader color="hsl(var(--primary))" />
           <section className="flex flex-col min-h-[100dvh]">
             <header className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background">
               <div className="flex items-center gap-4">
@@ -125,7 +125,6 @@ export default async function RootLayout({
                 </Sheet>
               </div>
             </header>
-
             <main className="mt-20">{children}</main>
             <Toaster />
             <Suspense>
