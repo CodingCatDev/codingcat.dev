@@ -12,11 +12,11 @@ export const client = createClient({
     studioUrl,
     // logger: console,
     filter: (props) => {
-      if (props.sourcePath.at(-1) === "title") {
-        return true;
+      if (props.sourcePath.at(0) !== "content") {
+        return false;
+      } else {
+        return props.filterDefault(props);
       }
-
-      return props.filterDefault(props);
     },
   },
 });
