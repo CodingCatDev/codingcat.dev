@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FaUserGear } from "react-icons/fa6";
 import UserNav from "../user-nav";
 import { Suspense } from "react";
+import UserNavMenu from "../user-nav-menu";
 
 export default function SettingsLayout({
   children,
@@ -36,10 +37,13 @@ export default function SettingsLayout({
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
-          <Link href="#" className="lg:hidden" prefetch={false}>
+          <Link href="/settings" className="lg:hidden" prefetch={false}>
             <FaUserGear className="h-6 w-6" />
             <span className="sr-only">Settings</span>
           </Link>
+          <div className="flex lg:hidden">
+            <UserNavMenu paths={paths} />
+          </div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
           {children}

@@ -1,5 +1,5 @@
 "use client";
-import CoverImage from "@/components/cover-image";
+import CloudinaryImage from "@/components/cloudinary-image";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -20,11 +20,16 @@ export default function Bookmarks() {
           key={bookmark._id}
           className="overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg relative flex flex-col"
         >
-          <CardHeader className="p-0">
-            <Link href={bookmark._cc_pathname} className="block mb-5 group">
-              <CoverImage image={bookmark.coverImage} priority={false} />
-            </Link>
-          </CardHeader>
+          {bookmark?.coverImage?.public_id && (
+            <CardHeader className="p-0">
+              <Link href={bookmark._cc_pathname} className="block mb-5 group">
+                <CloudinaryImage
+                  src={bookmark?.coverImage?.public_id}
+                  alt={bookmark?.coverImage?.context?.custom?.alt || ""}
+                />
+              </Link>
+            </CardHeader>
+          )}
           <CardContent className="flex-grow">
             <h3 className="mb-3 text-3xl leading-snug text-balance">
               <Link href={bookmark._cc_pathname} className="hover:underline">

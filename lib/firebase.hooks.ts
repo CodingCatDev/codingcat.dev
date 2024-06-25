@@ -70,11 +70,11 @@ export function useCompletedLesson({
   const lessonRef = doc(
     getFirestore(),
     "users/" +
-      currentUser?.uid +
-      "/completed/" +
-      course._id +
-      "/lesson/" +
-      lesson._id
+    currentUser?.uid +
+    "/completed/" +
+    course._id +
+    "/lesson/" +
+    lesson._id
   );
 
   useEffect(() => {
@@ -156,7 +156,6 @@ export function useBookmarks() {
     const unsub = onSnapshot(contentRef, (doc) => {
       doc.docs.forEach((doc) => {
         const base = doc.data() as BookmarkPath;
-        console.log(base);
         setBookmarks((prev) => [...prev, base]);
       });
     });

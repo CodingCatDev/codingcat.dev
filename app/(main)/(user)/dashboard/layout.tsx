@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FaVrCardboard } from "react-icons/fa6";
 import UserNav from "../user-nav";
+import UserNavMenu from "../user-nav-menu";
 
 export default function SettingsLayout({
   children,
@@ -31,6 +32,9 @@ export default function SettingsLayout({
             <FaVrCardboard className="h-6 w-6" />
             <span className="sr-only">Dashboard</span>
           </Link>
+          <div className="flex lg:hidden">
+            <UserNavMenu paths={paths} />
+          </div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
           {children}

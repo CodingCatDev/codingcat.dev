@@ -47,12 +47,6 @@ export default async function CoverImage(props: CoverImageProps) {
         src={originalImage?.public_id}
         placeholder="blur"
         blurDataURL={await getImageUrl(originalImage.public_id)}
-        config={{
-          url: {
-            secureDistribution: "media.codingcat.dev",
-            privateCdn: true,
-          },
-        }}
       />
     );
   } else {
