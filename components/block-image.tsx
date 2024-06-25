@@ -1,6 +1,5 @@
 import { CloudinaryAsset } from "@/sanity.types";
 import CloudinaryImage from "@/components/cloudinary-image";
-import { stegaClean } from "@sanity/client/stega";
 
 import { getCldImageUrl } from "next-cloudinary";
 
@@ -11,11 +10,10 @@ interface CoverImageProps {
 export default async function BlockImage(props: CoverImageProps) {
   const { image: originalImage } = props;
 
-  const source = stegaClean(originalImage);
   let image;
-  if (source?.public_id) {
+  if (originalImage?.public_id) {
     const imageUrl = getCldImageUrl({
-      src: source.public_id,
+      src: originalImage.public_id,
       width: 100,
     });
     const response = await fetch(imageUrl);
@@ -30,8 +28,8 @@ export default async function BlockImage(props: CoverImageProps) {
         width={1920}
         height={1080}
         sizes="100vw"
-        alt={source?.context?.custom?.alt || ""}
-        src={source?.public_id}
+        alt={originalImage?.context?.custom?.alt || ""}
+        src={originalImage?.public_id}
         placeholder="blur"
         blurDataURL={dataUrl}
         config={{

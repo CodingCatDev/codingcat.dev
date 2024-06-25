@@ -1,7 +1,6 @@
 "use client";
 import { CloudinaryAsset } from "@/sanity.types";
 import CloudinaryImage from "@/components/cloudinary-image";
-import { stegaClean } from "@sanity/client/stega";
 import { getCldImageUrl } from "next-cloudinary";
 import { useEffect, useState } from "react";
 
@@ -23,13 +22,12 @@ export default function CoverImage(props: CoverImageProps) {
     height,
     quality,
   } = props;
-  const source = stegaClean(originalImage);
   const [dataUrl, setDataUrl] = useState("");
 
   useEffect(() => {
-    if (!source?.public_id) return;
-    getImageUrl(source?.public_id);
-  }, [source?.public_id]);
+    if (!originalImage?.public_id) return;
+    getImageUrl(originalImage?.public_id);
+  }, [originalImage?.public_id]);
 
   const getImageUrl = async (src: string) => {
     const imageUrl = getCldImageUrl({
@@ -44,7 +42,7 @@ export default function CoverImage(props: CoverImageProps) {
   };
 
   let image;
-  if (source?.public_id && dataUrl) {
+  if (originalImage?.public_id && dataUrl) {
     image = (
       <CloudinaryImage
         className={className || "w-full h-auto aspect-video"}
@@ -55,8 +53,8 @@ export default function CoverImage(props: CoverImageProps) {
         sizes="(max-width: 768px) 100vw,
           (max-width: 1200px) 50vw,
           33vw"
-        alt={source?.context?.custom?.alt || ""}
-        src={source?.public_id}
+        alt={originalImage?.context?.custom?.alt || ""}
+        src={originalImage?.public_id}
         placeholder="blur"
         blurDataURL={dataUrl}
         config={{

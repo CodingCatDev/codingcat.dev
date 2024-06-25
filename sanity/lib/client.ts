@@ -12,7 +12,8 @@ export const client = createClient({
     studioUrl,
     // logger: console,
     filter: (props) => {
-      if (props.sourcePath.at(0) !== "content") {
+      const type = props.sourcePath.at(0) as string;
+      if (!["content"].includes(type)) {
         return false;
       } else {
         return props.filterDefault(props);
