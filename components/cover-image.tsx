@@ -1,8 +1,6 @@
-"use client";
 import { CloudinaryAsset } from "@/sanity.types";
 import CloudinaryImage from "@/components/cloudinary-image";
 import { getCldImageUrl } from "next-cloudinary";
-import { useEffect, useState } from "react";
 
 interface CoverImageProps {
   image: CloudinaryAsset | null | undefined;
@@ -10,10 +8,10 @@ interface CoverImageProps {
   className?: string;
   width?: number;
   height?: number;
-  quality?: number;
+  quality?: number | `${number}`
 }
 
-export default function CoverImage(props: CoverImageProps) {
+export default async function CoverImage(props: CoverImageProps) {
   const {
     image: originalImage,
     priority,
@@ -22,12 +20,6 @@ export default function CoverImage(props: CoverImageProps) {
     height,
     quality,
   } = props;
-  const [dataUrl, setDataUrl] = useState("");
-
-  useEffect(() => {
-    if (!originalImage?.public_id) return;
-    getImageUrl(originalImage?.public_id);
-  }, [originalImage?.public_id]);
 
   const getImageUrl = async (src: string) => {
     const imageUrl = getCldImageUrl({
@@ -38,11 +30,11 @@ export default function CoverImage(props: CoverImageProps) {
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const base64 = buffer.toString("base64");
-    setDataUrl(`data:${response.type};base64,${base64}`);
+    return `data:${response.type};base64,${base64}`
   };
 
   let image;
-  if (originalImage?.public_id && dataUrl) {
+  if (originalImage?.public_id) {
     image = (
       <CloudinaryImage
         className={className || "w-full h-auto aspect-video"}
@@ -50,13 +42,11 @@ export default function CoverImage(props: CoverImageProps) {
         height={height || 1080}
         priority={priority}
         quality={quality || "auto"}
-        sizes="(max-width: 768px) 100vw,
-          (max-width: 1200px) 50vw,
-          33vw"
+        sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw, 33vw"
         alt={originalImage?.context?.custom?.alt || ""}
         src={originalImage?.public_id}
         placeholder="blur"
-        blurDataURL={dataUrl}
+        blurDataURL={await getImageUrl(originalImage.public_id)}
         config={{
           url: {
             secureDistribution: "media.codingcat.dev",
