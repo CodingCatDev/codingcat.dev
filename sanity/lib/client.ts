@@ -13,11 +13,12 @@ export const client = createClient({
     // logger: console,
     filter: (props) => {
       const type = props.sourcePath.at(0) as string;
-      if (!["content"].includes(type)) {
+      const block = props.sourcePath.at(-1) as string;
+      // If it is content but not of specified types
+      if (!["content"].includes(type) || ["public_id", "secure_url"].includes(block)) {
         return false;
-      } else {
-        return props.filterDefault(props);
       }
+      return props.filterDefault(props);
     },
   },
 });
