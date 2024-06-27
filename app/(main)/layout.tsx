@@ -24,6 +24,8 @@ import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/toaster";
 import AvatarDropdown from "./avatar-dropdown";
 import AlgoliaDialog from "@/components/algolia-dialog";
+import { FaBars } from "react-icons/fa6";
+import PlayerFloating from "@/components/player-floating";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -111,7 +113,7 @@ export default async function RootLayout({
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button className="md:hidden" size="icon" variant="ghost">
-                      <MenuIcon className="w-6 h-6" />
+                      <FaBars className="w-6 h-6" />
                       <span className="sr-only">Toggle navigation menu</span>
                     </Button>
                   </SheetTrigger>
@@ -131,31 +133,11 @@ export default async function RootLayout({
               <Footer />
             </Suspense>
           </section>
+          <PlayerFloating />
           {draftMode().isEnabled && <VisualEditing />}
           <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
-  );
-}
-
-function MenuIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="4" x2="20" y1="12" y2="12" />
-      <line x1="4" x2="20" y1="6" y2="6" />
-      <line x1="4" x2="20" y1="18" y2="18" />
-    </svg>
   );
 }

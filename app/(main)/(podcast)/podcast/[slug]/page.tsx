@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import { groq, type PortableTextBlock } from "next-sanity";
+import { type PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -17,6 +17,7 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
 import Avatar from "@/components/avatar";
 import Picks from "./picks";
+import PlayerPlayButton from "@/components/player-play-button";
 
 type Props = {
   params: { slug: string };
@@ -59,6 +60,8 @@ export default async function PodcastPage({ params }: Props) {
     return notFound();
   }
 
+  const mp3 = podcast?.spotify?.enclosures?.at(0)?.url;
+
   return (
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
@@ -96,6 +99,9 @@ export default async function PodcastPage({ params }: Props) {
             <div className="text-lg">
               <DateComponent dateString={podcast.date} />
             </div>
+            {mp3 && (
+              <PlayerPlayButton src={mp3} />
+            )}
           </div>
         </div>
         <div className="mb-8 sm:mx-0 md:mb-16">
@@ -132,6 +138,9 @@ export default async function PodcastPage({ params }: Props) {
             <div className="mb-4 text-lg">
               <DateComponent dateString={podcast.date} />
             </div>
+            {mp3 && (
+              <PlayerPlayButton src={mp3} />
+            )}
           </div>
         </div>
         {podcast?.sponsor?.length && (
