@@ -1,5 +1,4 @@
 import { PodcastQueryResult } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
 import { podcastQuery, postQuery } from "@/sanity/lib/queries";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import toMarkdown from '@sanity/block-content-to-markdown'
@@ -17,7 +16,7 @@ const sanityWriteClient = createClient({
 export async function POST(request: Request) {
   if (!secret)
     return Response.json(
-      { success: false, error: "Missing Secret PRIVATE_ALGOLIA_WEBOOK_SECRET" },
+      { success: false, error: "Missing Secret PRIVATE_SYNDICATE_WEBOOK_SECRET" },
       { status: 400 }
     );
 
@@ -42,17 +41,13 @@ export async function POST(request: Request) {
   const deleted = sanityDoc.deleted;
   const updated = sanityDoc.updated;
 
-  delete sanityDoc.created;
-  delete sanityDoc.deleted;
-  delete sanityDoc.updated;
-
   try {
     if (created) {
       await formatPodcast(sanityDoc._type, sanityDoc.slug)
     } else if (updated) {
       await formatPodcast(sanityDoc._type, sanityDoc.slug)
     } else {
-      await unPublishPodcast(sanityDoc._type, sanityDoc.slug)
+      await unPublishPodcast(sanityDoc._type, sanityDoc._id, sanityDoc.devto)
     }
   } catch (e) {
     const error = JSON.stringify(e);
@@ -108,9 +103,11 @@ ${toMarkdown(podcast.content, { serializers })}`
       console.debug('addArticle result:', response.status);
     }
 
+    const json = await response.json();
+    console.debug("result payload", JSON.stringify(json, null, 2));
+
     // Get new devto url and update
     if (response.status >= 200 && response.status <= 299) {
-      const json = await response.json();
       if (json?.url && !podcast?.devto) {
         console.debug('Article Added to Dev.to', JSON.stringify(json, null, 2));
         await updateSanity(podcast._id, json.url);
@@ -127,29 +124,26 @@ ${toMarkdown(podcast.content, { serializers })}`
   }
 }
 
-const unPublishPodcast = async (_type: string, slug: string) => {
-  const podcast = await sanityQuery(_type, slug);
-  if (!podcast?._id) {
+const unPublishPodcast = async (_type: string, id: string, devto: string) => {
+  if (!id) {
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Unpublishing', { slug: podcast?.slug, devto: podcast?.devto });
+  console.debug('Unpublishing', { _type, id, devto });
 
   try {
 
-    if (!podcast?.devto) {
+    if (!devto) {
       return Response.json({ success: false, error: "DevTo not found" }, { status: 404 });
     }
-    const response = await unpublishArticle(podcast._id, podcast.devto);
+    const response = await unpublishArticle(devto);
 
-    // Get new devto url and update
+    // Remove devto from sanity
     if (response.status >= 200 && response.status <= 299) {
-      const unpubResponse = await unpublishArticle(podcast._id, podcast.devto);
-      if (unpubResponse.status === 204) {
-        console.debug('Unpublished Article', podcast._id, podcast.devto);
-      }
+      console.debug('removed post from devto')
+      return Response.json({ success: true }, { status: 200 });
     }
-    return Response.json({ success: true }, { status: 201 });
+    return Response.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error(error);
     return Response.json(
@@ -193,7 +187,7 @@ const updateArticle = async (devto: string, article: any) => {
   });
 };
 
-const unpublishArticle = async (_id: string, devto: string) => {
+const unpublishArticle = async (devto: string) => {
   const requestedArticle = await getArticle(devto);
   const json = await requestedArticle.json();
   return fetch(`https://dev.to/api/articles/${json?.id}/unpublish`, {
@@ -212,14 +206,17 @@ const updateSanity = async (_id: string, url: string) => {
 const sanityQuery = async (_type: string, slug: string) => {
   const query = _type === 'podcast' ? podcastQuery : postQuery;
   const [podcast] = await Promise.all([
-    sanityFetch<PodcastQueryResult>({
+    sanityWriteClient.fetch<PodcastQueryResult>(
       query,
-      params: {
+      {
         slug
       },
-      stega: false,
-      perspective: "raw",
-    }),
+      {
+        stega: false,
+        perspective: "raw",
+        useCdn: false
+      }
+    ),
   ]);
   return podcast;
 }

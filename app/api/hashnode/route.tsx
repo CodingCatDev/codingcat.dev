@@ -1,6 +1,5 @@
 import { PodcastQueryResult } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
-import { podcastQuery } from "@/sanity/lib/queries";
+import { podcastQuery, postQuery } from "@/sanity/lib/queries";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import toMarkdown from '@sanity/block-content-to-markdown'
 import { createClient } from "next-sanity";
@@ -17,7 +16,7 @@ const sanityWriteClient = createClient({
 export async function POST(request: Request) {
   if (!secret)
     return Response.json(
-      { success: false, error: "Missing Secret PRIVATE_ALGOLIA_WEBOOK_SECRET" },
+      { success: false, error: "Missing Secret PRIVATE_SYNDICATE_WEBOOK_SECRET" },
       { status: 400 }
     );
 
@@ -48,11 +47,11 @@ export async function POST(request: Request) {
 
   try {
     if (created) {
-      await formatPodcast(sanityDoc.slug)
+      await formatPodcast(sanityDoc._type, sanityDoc.slug)
     } else if (updated) {
-      await formatPodcast(sanityDoc.slug)
+      await formatPodcast(sanityDoc._type, sanityDoc.slug)
     } else {
-      await unPublishPodcast(sanityDoc.slug)
+      await unPublishPodcast(sanityDoc._type, sanityDoc._id, sanityDoc.hashnode)
     }
   } catch (e) {
     const error = JSON.stringify(e);
@@ -62,57 +61,82 @@ export async function POST(request: Request) {
   return Response.json({ success: true });
 }
 
-const formatPodcast = async (slug: string) => {
-  const [podcast] = await Promise.all([
-    sanityFetch<PodcastQueryResult>({
-      query: podcastQuery,
-      params: {
-        slug
-      },
-      stega: false,
-      perspective: "raw",
-    }),
-  ]);
+const formatPodcast = async (_type: string, slug: string) => {
+
+  const podcast = await sanityQuery(_type, slug);
 
   if (!podcast?._id) {
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Adding', { slug: podcast?.slug, devto: podcast?.devto });
+  console.debug('Adding', { slug: podcast?.slug, hashnode: podcast?.hashnode });
 
   try {
-    const article = {
-      article: {
-        title: podcast.title,
-        published: true,
-        tags: ['podcast', 'webdev', 'javascript', 'beginners'],
-        main_image: podcast?.coverImage?.secure_url?.replace('upload/', 'upload/b_rgb:5e1186,c_pad,w_1000,h_420/'),
-        canonical_url: `https://codingcat.dev/${podcast._type}/${podcast.slug}`,
-        description: podcast?.excerpt || '',
-        organization_id: '1009',
-        body_markdown: toMarkdown(podcast.content, { serializers })
-      }
+    const article: any = {
+      title: podcast.title,
+      subtitle: podcast?.excerpt?.length && podcast?.excerpt?.length > 250 ? podcast?.excerpt?.substring(0, 247) + "..." : podcast?.excerpt || '',
+      publicationId: '60242f8180da6c44eadf775b',
+      slug: `${podcast._type}-${podcast.slug}`,
+      tags: [
+        {
+          id: '56744721958ef13879b94cad',
+          name: 'JavaScript',
+          slug: 'javascript'
+        },
+        {
+          id: '56744722958ef13879b94f1b',
+          name: 'Web Development',
+          slug: 'web-development'
+        },
+        {
+          id: '56744723958ef13879b955a9',
+          name: 'Beginner Developers',
+          slug: 'beginners'
+        }
+      ],
+      coverImageOptions: {
+        coverImageURL: podcast?.coverImage?.secure_url,
+      },
+      originalArticleURL: `https://codingcat.dev/${podcast._type}/${podcast.slug}`,
+      contentMarkdown: `
+Original: https://codingcat.dev/${podcast._type}/${podcast.slug}
+
+${podcast?.youtube ? '%[' + podcast?.youtube?.replace('live', 'embed') + ']' : ''}
+
+${toMarkdown(podcast.content, { serializers })}`
+    }
+
+    if (_type === 'podcast') {
+      article.tags.push({
+        id: '56744722958ef13879b950d3',
+        name: 'podcast',
+        slug: 'podcast'
+      });
+      article.seriesId = '65a9ad4ef60adbf4aeedd0a2';
     }
     console.debug("article", JSON.stringify(article, null, 2));
 
     let response;
-    if (podcast?.devto) {
-      console.debug('updateArticle to devto');
-      response = await updateArticle(podcast.devto, article);
+    if (podcast?.hashnode) {
+      console.debug('updateArticle to hashnode');
+      response = await updateArticle(podcast.hashnode, article);
       console.debug('updateArticle result:', response.status);
     } else {
-      console.debug('addArticle to devto');
+      console.debug('addArticle to hashnode');
       response = await addArticle(article);
       console.debug('addArticle result:', response.status);
     }
 
-    // Get new devto url and update
+    const json = await response.json();
+    console.debug("result payload", JSON.stringify(json, null, 2));
+
+    // Get new hashnode url and update
     if (response.status >= 200 && response.status <= 299) {
-      const json = await response.json();
-      if (json?.url && !podcast?.devto) {
-        console.debug('Article Added to Dev.to', JSON.stringify(json, null, 2));
-        await updateSanity(podcast._id, json.url);
-        console.debug('Sanity Updated', podcast._id, json.url);
+      const hashnode = json?.data?.publishPost?.post?.slug;
+      if (hashnode && !podcast?.hashnode) {
+        console.debug('Article Added to hashnode', JSON.stringify(json, null, 2));
+        await updateSanity(podcast._id, hashnode);
+        console.debug('Sanity Updated', podcast._id, hashnode);
       }
     }
     return Response.json({ success: true }, { status: 201 });
@@ -125,39 +149,28 @@ const formatPodcast = async (slug: string) => {
   }
 }
 
-const unPublishPodcast = async (slug: string) => {
-  const [podcast] = await Promise.all([
-    sanityFetch<PodcastQueryResult>({
-      query: podcastQuery,
-      params: {
-        slug
-      },
-      stega: false,
-      perspective: "raw"
-    }),
-  ]);
-
-  if (!podcast?._id) {
+const unPublishPodcast = async (_type: string, id: string, hashnode: string) => {
+  if (!id) {
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Unpublishing', { slug: podcast?.slug, devto: podcast?.devto });
+  console.debug('Unpublishing', { _type, id, hashnode });
 
   try {
 
-    if (!podcast?.devto) {
-      return Response.json({ success: false, error: "DevTo not found" }, { status: 404 });
+    if (!hashnode) {
+      return Response.json({ success: false, error: "hashnode not found" }, { status: 404 });
     }
-    const response = await unpublishArticle(podcast._id, podcast.devto);
+    const response = await unpublishArticle(hashnode);
 
-    // Get new devto url and update
+    // Remove hashnode from sanity
     if (response.status >= 200 && response.status <= 299) {
-      const unpubResponse = await unpublishArticle(podcast._id, podcast.devto);
-      if (unpubResponse.status === 204) {
-        console.debug('Unpublished Article', podcast._id, podcast.devto);
-      }
+      const json = await response.json();
+      console.log('hashnode remove response', JSON.stringify(json, null, 2))
+      if (json.error)
+        return Response.json({ success: false, error: JSON.stringify(json, null, 2) }, { status: 200 });
     }
-    return Response.json({ success: true }, { status: 201 });
+    return Response.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error(error);
     return Response.json(
@@ -168,54 +181,141 @@ const unPublishPodcast = async (slug: string) => {
 }
 
 const addArticle = async (article: any) => {
-  return fetch('https://dev.to/api/articles/', {
+  return fetch('https://gql.hashnode.com', {
     method: 'POST',
     headers: {
-      'api-key': process.env.PRIVATE_DEVTO || '',
+      authorization: process.env.PRIVATE_HASHNODE || '',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(article)
+    body: JSON.stringify({
+      operationName: 'publishPost',
+      query: `mutation publishPost($input: PublishPostInput!) { 
+				publishPost(
+				  input: $input
+				) {
+				post {
+				  id
+				  title
+				  slug
+				}
+			  }
+			}
+			  `,
+      variables: {
+        input: {
+          ...article
+        }
+      }
+    })
   });
 };
 
-const getArticle = async (devto: any) => {
-  return fetch(`https://dev.to/api/articles/${devto.split("https://dev.to/").at(-1)}`, {
-    method: 'GET',
+const getArticle = async (hashnode: any) => {
+  return fetch('https://gql.hashnode.com', {
+    method: 'POST',
     headers: {
-      'api-key': process.env.PRIVATE_DEVTO || '',
-      'Content-Type': 'application/json'
-    }
-  });
-};
-
-const updateArticle = async (devto: string, article: any) => {
-  const requestedArticle = await getArticle(devto);
-  const json = await requestedArticle.json();
-  return fetch(`https://dev.to/api/articles/${json?.id}`, {
-    method: 'PUT',
-    headers: {
-      'api-key': process.env.PRIVATE_DEVTO || '',
+      authorization: process.env.PRIVATE_HASHNODE || '',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(article)
+    body: JSON.stringify({
+      operationName: 'Publication',
+      query: `query Publication {
+        publication(host: "hashnode.codingcat.dev") {
+            post(slug: "${hashnode}") {
+                id
+            }
+        }
+      }`})
   });
 };
 
-const unpublishArticle = async (_id: string, devto: string) => {
-  const requestedArticle = await getArticle(devto);
+const unpublishArticle = async (hashnode: string) => {
+  const requestedArticle = await getArticle(hashnode);
   const json = await requestedArticle.json();
-  return fetch(`https://dev.to/api/articles/${json?.id}/unpublish`, {
-    method: 'PUT',
+  return fetch('https://gql.hashnode.com', {
+    method: 'POST',
     headers: {
-      'api-key': process.env.PRIVATE_DEVTO || '',
+      authorization: process.env.PRIVATE_HASHNODE || '',
       'Content-Type': 'application/json'
-    }
+    },
+    body: JSON.stringify({
+      operationName: 'removePost',
+      query: `mutation removePost($input: RemovePostInput!) { 
+				removePost(
+				  input: $input
+				) {
+          post {
+            slug
+          }
+			  }
+			}
+			  `,
+      variables: {
+        input: {
+          id: json?.data?.publication?.post?.id
+        }
+      }
+    })
   });
 };
 
-const updateSanity = async (_id: string, url: string) => {
-  return sanityWriteClient.patch(_id).set({ devto: url }).commit();
+const updateArticle = async (hashnode: string, article: any) => {
+  const requestedArticle = await getArticle(hashnode);
+  const json = await requestedArticle.json();
+
+  //slug cannot be set again
+  const update = article;
+  delete update.slug;
+
+  return fetch('https://gql.hashnode.com', {
+    method: 'POST',
+    headers: {
+      authorization: process.env.PRIVATE_HASHNODE || '',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      operationName: 'updatePost',
+      query: `mutation updatePost($input: UpdatePostInput!) { 
+				updatePost(
+				  input: $input
+				) {
+          post {
+            slug
+          }
+			  }
+			}
+			  `,
+      variables: {
+        input: {
+          ...json?.data?.publication?.post,
+          ...update
+        }
+      }
+    })
+  });
 };
+
+const updateSanity = async (_id: string, hashnode: string) => {
+  return sanityWriteClient.patch(_id).set({ hashnode }).commit();
+};
+
+const sanityQuery = async (_type: string, slug: string) => {
+  const query = _type === 'podcast' ? podcastQuery : postQuery;
+  const [podcast] = await Promise.all([
+    sanityWriteClient.fetch<PodcastQueryResult>(
+      query,
+      {
+        slug
+      },
+      {
+        stega: false,
+        perspective: "raw",
+        useCdn: false
+      }
+    ),
+  ]);
+  return podcast;
+}
 
 // Check base.ts for the custom types
 const serializers = {
