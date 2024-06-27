@@ -20,8 +20,8 @@ import { v2 as cloudinary } from "cloudinary";
 cloudinary.config({
   secure: true,
   cloud_name: "ajonp",
-  api_key: "881233585921241",
-  api_secret: "4s_FBZpUnyaoLWKRW6RPfLunp6M",
+  api_key: "none",
+  api_secret: "none",
 });
 
 const TYPE = "podcast";
