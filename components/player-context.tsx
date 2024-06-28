@@ -1,6 +1,5 @@
 "use client"
 import { PodcastQueryResult } from "@/sanity.types";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { Dispatch, MutableRefObject, SetStateAction, createContext, useEffect, useRef, useState } from "react";
 
 export const PlayerContext = createContext<{
@@ -63,10 +62,6 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
     });
     const audioRef = useRef<HTMLAudioElement>();
     const [volume, setVolume] = useState(100);
-    const [defaultVolume, saveDefaultVolume] = useLocalStorage(
-        "codingcatdev:player:volume",
-        100
-    );
 
     useEffect(() => {
         const src = podcast?.spotify?.enclosures?.at(0)?.url;
