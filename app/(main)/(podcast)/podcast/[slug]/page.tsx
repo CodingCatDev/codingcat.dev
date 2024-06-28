@@ -60,7 +60,7 @@ export default async function PodcastPage({ params }: Props) {
     return notFound();
   }
 
-  const mp3 = podcast?.spotify?.enclosures?.at(0)?.url;
+  const src = podcast?.spotify?.enclosures?.at(0)?.url;
 
   return (
     <div className="container px-5 mx-auto">
@@ -99,8 +99,8 @@ export default async function PodcastPage({ params }: Props) {
             <div className="text-lg">
               <DateComponent dateString={podcast.date} />
             </div>
-            {mp3 && (
-              <PlayerPlayButton src={mp3} />
+            {src && (
+              <PlayerPlayButton podcast={podcast} />
             )}
           </div>
         </div>
@@ -138,8 +138,8 @@ export default async function PodcastPage({ params }: Props) {
             <div className="mb-4 text-lg">
               <DateComponent dateString={podcast.date} />
             </div>
-            {mp3 && (
-              <PlayerPlayButton src={mp3} />
+            {src && (
+              <PlayerPlayButton podcast={podcast} />
             )}
           </div>
         </div>

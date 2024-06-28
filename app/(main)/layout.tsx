@@ -26,6 +26,7 @@ import AvatarDropdown from "./avatar-dropdown";
 import AlgoliaDialog from "@/components/algolia-dialog";
 import { FaBars } from "react-icons/fa6";
 import PlayerFloating from "@/components/player-floating";
+import { PlayerProvider } from "@/components/player-context";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -89,54 +90,54 @@ export default async function RootLayout({
           inter.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {draftMode().isEnabled && <AlertBanner />}
-          <NextTopLoader color="hsl(var(--primary))" />
-          <section className="flex flex-col min-h-[100dvh]">
-            <header className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background">
-              <div className="flex items-center gap-4">
-                <Link className="text-lg font-bold md:text-2xl" href="/">
-                  CodingCat.dev
-                </Link>
-                <nav className="items-center hidden md:flex gap-6">
-                  <NavHeader navLinks={data?.navLinks} />
-                </nav>
-              </div>
-              <div className="flex items-center gap-2">
-                <AlgoliaDialog />
-                <AvatarDropdown />
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button className="md:hidden" size="icon" variant="ghost">
-                      <FaBars className="w-6 h-6" />
-                      <span className="sr-only">Toggle navigation menu</span>
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="right">
-                    <nav className="py-6 grid gap-2">
-                      <SheetTrigger asChild>
-                        <NavHeader navLinks={data?.navLinks} sideOnly />
-                      </SheetTrigger>
-                    </nav>
-                  </SheetContent>
-                </Sheet>
-              </div>
-            </header>
-            <main className="mt-20">{children}</main>
-            <Toaster />
-            <Suspense>
+        <PlayerProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {draftMode().isEnabled && <AlertBanner />}
+            <NextTopLoader color="hsl(var(--primary))" />
+            <section className="flex flex-col min-h-[100dvh]">
+              <header className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background">
+                <div className="flex items-center gap-4">
+                  <Link className="text-lg font-bold md:text-2xl" href="/">
+                    CodingCat.dev
+                  </Link>
+                  <nav className="items-center hidden md:flex gap-6">
+                    <NavHeader navLinks={data?.navLinks} />
+                  </nav>
+                </div>
+                <div className="flex items-center gap-2">
+                  <AlgoliaDialog />
+                  <AvatarDropdown />
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button className="md:hidden" size="icon" variant="ghost">
+                        <FaBars className="w-6 h-6" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right">
+                      <nav className="py-6 grid gap-2">
+                        <SheetTrigger asChild>
+                          <NavHeader navLinks={data?.navLinks} sideOnly />
+                        </SheetTrigger>
+                      </nav>
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              </header>
+              <main className="mt-20">{children}</main>
+              <Toaster />
               <Footer />
-            </Suspense>
-          </section>
-          <PlayerFloating />
-          {draftMode().isEnabled && <VisualEditing />}
-          <SpeedInsights />
-        </ThemeProvider>
+            </section>
+            <PlayerFloating />
+            {draftMode().isEnabled && <VisualEditing />}
+            <SpeedInsights />
+          </ThemeProvider>
+        </PlayerProvider>
       </body>
     </html>
   );

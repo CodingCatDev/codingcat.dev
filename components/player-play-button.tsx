@@ -1,35 +1,37 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { usePlayer } from "@/lib/hooks"
-import { useEffect } from "react";
-import { FaPlay } from "react-icons/fa6";
+import { useContext, useEffect } from "react";
+import { FaCirclePause, FaPlay } from "react-icons/fa6";
+import { PlayerContext } from "@/components/player-context";
+import { PodcastQueryResult } from "@/sanity.types";
 
-export default function PlayerPlayButton({ src }: { src: string }) {
+export default function PlayerPlayButton({ podcast }: { podcast: NonNullable<PodcastQueryResult> }) {
+    const { setPodcast, audio, audioRef, setIsOpen, podcast: currentPodcast } = useContext(PlayerContext);
 
-    const { audioRef, podcast, setPodcast } = usePlayer();
-
-    useEffect(() => {
-        if (src) {
-            setPodcast((pod) => {
-                return {
-                    ...pod,
-                    src
-                }
-            })
+    const setCurrent = () => {
+        setIsOpen(true);
+        if (audioRef?.current && podcast?.spotify?.enclosures?.at(0)?.url === audio.src) {
+            audioRef.current.play();
+            return;
         }
-    }, [src]);
+        setPodcast(() => podcast)
+    }
 
-    useEffect(() => {
-        if (src === audioRef.current?.src &&
-            podcast?.duration === audioRef.current?.duration) {
-            audioRef.current?.play();
-        }
-    }, [podcast]);
-
+    if (!audioRef) return null;
 
     return (
-        <Button variant="ghost" size="icon" onClick={() => audioRef.current?.play()}>
-            <FaPlay className="h-5 w-5" />
-        </Button>
+        <>
+            {currentPodcast?._id === podcast?._id && audio?.isPlaying ? (
+                <Button variant="ghost" size="icon" onClick={() => audioRef.current?.pause()}>
+                    <FaCirclePause className="h-5 w-5" />
+                </Button>
+            ) :
+                (
+                    <Button variant="ghost" size="icon" onClick={setCurrent}>
+                        <FaPlay className="h-5 w-5" />
+                    </Button>
+                )
+            }
+        </>
     )
 }

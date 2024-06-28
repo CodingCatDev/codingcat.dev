@@ -32,7 +32,7 @@ export default function LessonPanel({
   course: NonNullable<LessonsInCourseQueryResult>;
 }) {
   const [defaultLayout, saveDefaultLayout] = useLocalStorage(
-    "react-resizable-panels:layout",
+    "codingcatdev:lesson:layout",
     [25, 75]
   );
 

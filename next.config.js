@@ -9,6 +9,16 @@ module.exports = {
       exclude: ['error'],
     } : false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+        port: '',
+        pathname: '**',
+      },
+    ],
+  },
 };
 
 
