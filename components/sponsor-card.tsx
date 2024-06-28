@@ -24,6 +24,7 @@ export default function SponsorCard({
             href={url || `/sponsor/${slug}`}
             key={_id}
             target={url ? "_blank" : "_self"}
+            className="max-w-xl"
           >
             <Card
               key={_id}

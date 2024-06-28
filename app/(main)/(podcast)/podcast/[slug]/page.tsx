@@ -74,8 +74,16 @@ export default async function PodcastPage({ params }: Props) {
         <h1 className="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl">
           {podcast.title}
         </h1>
-        <div className="hidden md:mb-12 md:block">
-          <div className="flex flex-col gap-8">
+
+        <div className="mb-8 sm:mx-0 md:mb-16">
+          <CoverMedia
+            cloudinaryImage={podcast?.coverImage}
+            cloudinaryVideo={podcast?.videoCloudinary}
+            youtube={podcast?.youtube}
+          />
+        </div>
+        <div className="max-w-2xl sm:max-w-none">
+          <div className="mb-6">
             {(podcast?.author || podcast?.guest) && (
               <div className="flex flex-wrap gap-2">
                 {podcast?.author?.map((a) => (
@@ -96,60 +104,24 @@ export default async function PodcastPage({ params }: Props) {
                 ))}
               </div>
             )}
-            <div className="text-lg">
-              <DateComponent dateString={podcast.date} />
-            </div>
-            {src && (
-              <PlayerPlayButton podcast={podcast} />
-            )}
           </div>
-        </div>
-        <div className="mb-8 sm:mx-0 md:mb-16">
-          <CoverMedia
-            cloudinaryImage={podcast?.coverImage}
-            cloudinaryVideo={podcast?.videoCloudinary}
-            youtube={podcast?.youtube}
-          />
-        </div>
-        <div className="block md:hidden">
-          <div className="max-w-2xl mx-auto">
-            <div className="mb-6">
-              {(podcast?.author || podcast?.guest) && (
-                <div className="flex flex-wrap gap-2">
-                  {podcast?.author?.map((a) => (
-                    <Avatar
-                      key={a._id}
-                      name={a.title}
-                      href={`/author/${a?.slug}`}
-                      coverImage={a?.coverImage}
-                    />
-                  ))}
-                  {podcast?.guest?.map((a) => (
-                    <Avatar
-                      key={a._id}
-                      name={a.title}
-                      href={`/guest/${a?.slug}`}
-                      coverImage={a?.coverImage}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="mb-4 text-lg">
-              <DateComponent dateString={podcast.date} />
-            </div>
-            {src && (
-              <PlayerPlayButton podcast={podcast} />
-            )}
+          <div className="mb-4 text-lg">
+            <DateComponent dateString={podcast.date} />
           </div>
+          {src && (
+            <div className="flex justify-start flex-wrap w-full">
+              <PlayerPlayButton podcast={podcast} />
+            </div>
+          )}
         </div>
         {podcast?.sponsor?.length && (
-          <section className="flex flex-col mx-auto max-w-[100ch]">
+          <section className="flex flex-col mt-10 mb-10">
             <h2 className="mb-4 text-2xl font-bold">Sponsors</h2>
-            <hr className="mb-10 border-accent-2 mt-10" />
+            <hr className="border-accent-2" />
             <div className="my-12 ">
               <SponsorCard sponsors={podcast.sponsor} />
             </div>
+            <hr className="border-accent-2" />
           </section>
         )}
         {podcast?.content?.length && (

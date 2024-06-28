@@ -27,11 +27,14 @@ export default function PlayerFloating() {
 
     return (
         <>
-            {audioRef?.current && isOpen && (
-                <div className="sticky inset-x-0 bottom-0 z-50 bg-background shadow-lg md:rounded-t-xl flex flex-col">
-                    <div className="px-4 py-3 md:px-6 md:py-4">
-                        <div className="flex items-center justify-between gap-2 md:gap-4">
-                            <div className="flex items-center gap-4">
+            {audioRef?.current && isOpen && podcast && (
+                <div className="sticky inset-x-0 bottom-0 z-50 bg-background shadow-lg rounded-t-xl flex flex-col border border-primary">
+                    <div className="px-4 py-3 md:px-6 md:py-4 flex flex-col gap-1">
+                        <div className="flex sm:hidden text-xs">
+                            {podcast.title}
+                        </div>
+                        <div className="flex items-center justify-between gap-2 md:gap-4 flex-wrap-reverse">
+                            <div className="flex items-center gap-4 flex-1">
                                 <Button variant="ghost" size="icon" onClick={() => audioRef.current!.currentTime -= 30.0}>
                                     <FaBackward className="h-5 w-5" />
                                 </Button>
@@ -48,8 +51,6 @@ export default function PlayerFloating() {
                                 <Button variant="ghost" size="icon" onClick={() => audioRef.current!.currentTime += 30.0}>
                                     <FaForward className="h-5 w-5" />
                                 </Button>
-                            </div>
-                            <div className="flex-1">
                                 <Slider
                                     className="[&>span:first-child]:h-1 [&>span:first-child]:bg-primary [&_[role=slider]]:bg-primary [&_[role=slider]]:w-3 [&_[role=slider]]:h-3 [&_[role=slider]]:border-0 [&>span:first-child_span]:bg-primary [&_[role=slider]:focus-visible]:ring-0 [&_[role=slider]:focus-visible]:ring-offset-0 [&_[role=slider]:focus-visible]:scale-105 [&_[role=slider]:focus-visible]:transition-transform"
                                     min={0}
@@ -77,8 +78,6 @@ export default function PlayerFloating() {
                                         <SelectItem value="2.0">2.0x</SelectItem>
                                     </SelectContent>
                                 </Select>
-                            </div>
-                            <div className="flex items-center gap-4">
                                 {volume === 0 ?
                                     <Button variant="ghost" size="icon" onClick={max}>
                                         <FaVolumeXmark className="h-5 w-5" />
@@ -89,7 +88,7 @@ export default function PlayerFloating() {
                                     </Button>
                                 }
                                 <Slider
-                                    className="w-20 [&>span:first-child]:h-1 [&>span:first-child]:bg-primary [&_[role=slider]]:bg-primary [&_[role=slider]]:w-3 [&_[role=slider]]:h-3 [&_[role=slider]]:border-0 [&>span:first-child_span]:bg-primary [&_[role=slider]:focus-visible]:ring-0 [&_[role=slider]:focus-visible]:ring-offset-0 [&_[role=slider]:focus-visible]:scale-105 [&_[role=slider]:focus-visible]:transition-transform"
+                                    className="min-w-20 [&>span:first-child]:h-1 [&>span:first-child]:bg-primary [&_[role=slider]]:bg-primary [&_[role=slider]]:w-3 [&_[role=slider]]:h-3 [&_[role=slider]]:border-0 [&>span:first-child_span]:bg-primary [&_[role=slider]:focus-visible]:ring-0 [&_[role=slider]:focus-visible]:ring-offset-0 [&_[role=slider]:focus-visible]:scale-105 [&_[role=slider]:focus-visible]:transition-transform"
                                     value={[volume]}
                                     min={0}
                                     max={100}
@@ -98,7 +97,7 @@ export default function PlayerFloating() {
                                     }}
                                 />
                             </div>
-                            <div className="ml-auto flex items-center gap-4">
+                            <div className="ml-auto hidden lg:flex items-center gap-4">
                                 {isMinimized ? (
                                     <Button variant="ghost" size="icon" onClick={() => setIsMinimized(false)}>
                                         <FaChevronUp className="h-5 w-5" />
@@ -108,12 +107,14 @@ export default function PlayerFloating() {
                                         <FaChevronDown className="h-5 w-5" />
                                     </Button>
                                 )}
+                            </div>
+                            <div className="ml-auto items-center gap-4 absolute top-0 right-0 sm:relative">
                                 <Button variant="ghost" size="icon" onClick={close}>
                                     <FaX className="h-5 w-5" />
                                 </Button>
                             </div>
                         </div>
-                        {podcast && !isMinimized && (
+                        {!isMinimized && (
                             <div className="hidden lg:flex">
                                 <div className="w-48">
                                     {podcast?.spotify?.itunes?.image?.href && (
