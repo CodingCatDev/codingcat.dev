@@ -68,7 +68,6 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
         if (!src) return;
         if (src === audio.src) return;
         setAudio((p) => { return { ...p, src } });
-        setVolume(defaultVolume);
         setIsOpen(true);
     }, [podcast]);
 
