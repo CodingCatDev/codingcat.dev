@@ -22,15 +22,15 @@ export default function PlayerPlayButton({ podcast }: { podcast: NonNullable<Pod
     return (
         <>
             {currentPodcast?._id === podcast?._id && audio?.isPlaying ? (
-                <Button variant="ghost" onClick={() => audioRef.current?.pause()} className="flex gap-2">
+                <Button variant="default" onClick={() => audioRef.current?.pause()} className="flex gap-2">
                     <FaCirclePause className="h-5 w-5" />
-                    <div className="text-xl">Play Episode</div>
+                    <div className="text-xl">Pause Episode</div>
                 </Button>
             ) :
                 (
-                    <Button variant="ghost" onClick={setCurrent} className="flex gap-2">
+                    <Button variant="default" onClick={setCurrent} className="flex gap-2">
                         <FaPlay className="h-5 w-5" />
-                        <div className="text-xl">Pause Episode</div>
+                        <div className="text-xl">Play Episode</div>
                     </Button>
                 )
             }

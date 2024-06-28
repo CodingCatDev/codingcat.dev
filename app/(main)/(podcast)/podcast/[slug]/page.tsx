@@ -18,6 +18,9 @@ import SponsorCard from "@/components/sponsor-card";
 import Avatar from "@/components/avatar";
 import Picks from "./picks";
 import PlayerPlayButton from "@/components/player-play-button";
+import PodcastOpenSpotify from "@/components/podcast-open-spotify";
+import PodcastOpenApple from "@/components/podcast-open-apple";
+import PodcastOpenYouTube from "@/components/podcast-open-youtube";
 
 type Props = {
   params: { slug: string };
@@ -109,8 +112,15 @@ export default async function PodcastPage({ params }: Props) {
             <DateComponent dateString={podcast.date} />
           </div>
           {src && (
-            <div className="flex justify-start flex-wrap w-full">
+            <div className="flex flex-col sm:flex-row justify-start flex-wrap w-full p-2 sm:p-4 border border-foreground gap-2 sm:gap-4 items-center">
+              <h2 className="text-xl font-bold w-full text-center sm:text-start">Listening Options</h2>
               <PlayerPlayButton podcast={podcast} />
+              <span className="text-xl">or</span>
+              <div className="flex gap-1">
+                <PodcastOpenSpotify podcast={podcast} />
+                <PodcastOpenApple />
+                <PodcastOpenYouTube podcast={podcast} />
+              </div>
             </div>
           )}
         </div>
