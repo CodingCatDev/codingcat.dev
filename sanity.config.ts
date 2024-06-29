@@ -22,7 +22,7 @@ import {
   defineLocations,
   type DocumentLocation,
 } from "sanity/presentation";
-import { structureTool } from "sanity/structure";
+import { DocumentTypeListBuilder, StructureResolver, structureTool } from "sanity/structure";
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
@@ -43,6 +43,32 @@ const homeLocation = {
   title: "Home",
   href: "/",
 } satisfies DocumentLocation;
+
+export const podcastStructure = (
+  structure: StructureResolver
+): StructureResolver => {
+  return (S) => {
+    return S.list()
+      .title("Content")
+      .items([
+        S.listItem()
+          .title('Podcasts')
+          .child(
+            S.documentTypeList('podcastType')
+              .title('Podcast by Type')
+              .child((podcastTypeId) =>
+                S.documentList()
+                  .title('Posts')
+                  .filter('_type == "podcast" && $podcastTypeId == podcastType._ref')
+                  .params({ podcastTypeId })
+              )
+          ),
+        ...S.documentTypeListItems().filter(
+          (listItem) => !['podcast'].includes(`${listItem.getId()}`)
+        ),
+      ]);
+  };
+};
 
 export default defineConfig({
   basePath: studioUrl,
@@ -98,7 +124,7 @@ export default defineConfig({
       },
       previewUrl: { previewMode: { enable: "/api/draft" } },
     }),
-    structureTool({ structure: pageStructure([settings]) }),
+    structureTool({ structure: podcastStructure(pageStructure([settings])) }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([settings.name]),
     // Sets up AI Assist with preset prompts
@@ -119,6 +145,6 @@ export default defineConfig({
     // Vision lets you query your content with GROQ in the studio
     // https://www.sanity.io/docs/the-vision-plugin
     process.env.NODE_ENV === "development" &&
-      visionTool({ defaultApiVersion: apiVersion }),
+    visionTool({ defaultApiVersion: apiVersion }),
   ].filter(Boolean) as PluginOptions[],
 });
