@@ -54,18 +54,62 @@ export const podcastStructure = (
         S.listItem()
           .title('Podcasts')
           .child(
-            S.documentTypeList('podcastType')
-              .title('Podcast by Type')
-              .child((podcastTypeId) =>
-                S.documentList()
-                  .title('Posts')
-                  .filter('_type == "podcast" && $podcastTypeId == podcastType._ref')
-                  .params({ podcastTypeId })
-              )
+            S.list()
+              .title("Filters")
+              .items([
+                S.listItem()
+                  .title('By Type')
+                  .child(
+                    S.documentTypeList('podcastType')
+                      .title('Podcast by Type')
+                      .child((podcastTypeId) =>
+                        S.documentList()
+                          .title('Podcasts')
+                          .filter('_type == "podcast" && $podcastTypeId == podcastType._ref')
+                          .params({ podcastTypeId })
+                      )
+                  ),
+                S.listItem()
+                  .title('Missing Hashnode')
+                  .child(() =>
+                    S.documentList()
+                      .title('Podcasts')
+                      .filter('_type == "podcast" && hashnode == null')
+                  ),
+                S.listItem()
+                  .title('Missing Dev.to')
+                  .child(() =>
+                    S.documentList()
+                      .title('Podcasts')
+                      .filter('_type == "podcast" && devto == null')
+                  ),
+                S.listItem()
+                  .title('Missing Season')
+                  .child(() =>
+                    S.documentList()
+                      .title('Podcasts')
+                      .filter('_type == "podcast" && season == null')
+                  ),
+                S.listItem()
+                  .title('Missing Episode')
+                  .child(() =>
+                    S.documentList()
+                      .title('Podcasts')
+                      .filter('_type == "podcast" && episode == null')
+                  ),
+                S.listItem()
+                  .title('Missing YouTube')
+                  .child(() =>
+                    S.documentList()
+                      .title('Podcasts')
+                      .filter('_type == "podcast" && youtube == null')
+                  ),
+              ])
           ),
-        ...S.documentTypeListItems().filter(
-          (listItem) => !['podcast'].includes(`${listItem.getId()}`)
-        ),
+        ...S.documentTypeListItems()
+        // .filter(
+        //   (listItem) => !['podcast'].includes(`${listItem.getId()}`)
+        // ),
       ]);
   };
 };
