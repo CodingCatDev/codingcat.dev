@@ -80,25 +80,23 @@ export default async function PostPage({ params }: Props) {
             youtube={post?.youtube}
           />
         </div>
-        <div className="block md:hidden">
-          <div className="max-w-2xl mx-auto">
-            <div className="mb-6">
-              {post.author && (
-                <div className="flex">
-                  {post.author.map((a) => (
-                    <Avatar
-                      key={a._id}
-                      name={a.title}
-                      href={`/author/${a?.slug}`}
-                      coverImage={a?.coverImage}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="mb-4 text-lg">
-              <DateComponent dateString={post.date} />
-            </div>
+        <div className="max-w-2xl sm:max-w-none">
+          <div className="mb-6">
+            {(post?.author) && (
+              <div className="flex flex-wrap gap-2">
+                {post?.author?.map((a) => (
+                  <Avatar
+                    key={a._id}
+                    name={a.title}
+                    href={`/author/${a?.slug}`}
+                    coverImage={a?.coverImage}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="mb-4 text-lg">
+            <DateComponent dateString={post.date} />
           </div>
         </div>
         {post?.sponsor?.length ? (
