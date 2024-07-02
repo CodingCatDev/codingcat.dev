@@ -110,10 +110,9 @@ export default async function PostPage({ params }: Props) {
           </section>
         ) : (
           <GoogleAdBanner
-            data-ad-slot="slotnumber"
+            data-ad-slot="4960900523"
             data-full-width-responsive="true"
-            data-ad-layout="in-article"
-            data-ad-format="fluid"
+            data-ad-format="auto"
           />
         )}
         {post.content?.length && (
