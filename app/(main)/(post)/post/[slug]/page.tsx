@@ -22,6 +22,7 @@ import CoverMedia from "@/components/cover-media";
 import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
+import CarbonAdBanner from "@/components/carbon-ad-banner";
 
 type Props = {
   params: { slug: string };
@@ -109,11 +110,7 @@ export default async function PostPage({ params }: Props) {
             <hr className="border-accent-2" />
           </section>
         ) : (
-          <GoogleAdBanner
-            data-ad-slot="4960900523"
-            data-full-width-responsive="true"
-            data-ad-format="auto"
-          />
+          <CarbonAdBanner />
         )}
         {post.content?.length && (
           <PortableText
