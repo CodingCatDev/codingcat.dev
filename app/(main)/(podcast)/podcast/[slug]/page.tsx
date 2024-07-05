@@ -21,6 +21,7 @@ import PlayerPlayButton from "@/components/player-play-button";
 import PodcastOpenSpotify from "@/components/podcast-open-spotify";
 import PodcastOpenApple from "@/components/podcast-open-apple";
 import PodcastOpenYouTube from "@/components/podcast-open-youtube";
+import CarbonAdBanner from "@/components/carbon-ad-banner";
 
 type Props = {
   params: { slug: string };
@@ -124,7 +125,7 @@ export default async function PodcastPage({ params }: Props) {
             </div>
           )}
         </div>
-        {podcast?.sponsor?.length && (
+        {podcast?.sponsor?.length ? (
           <section className="flex flex-col mt-10 mb-10">
             <h2 className="mb-4 text-2xl font-bold">Sponsors</h2>
             <hr className="border-accent-2" />
@@ -133,6 +134,8 @@ export default async function PodcastPage({ params }: Props) {
             </div>
             <hr className="border-accent-2" />
           </section>
+        ) : (
+          <CarbonAdBanner />
         )}
         {podcast?.content?.length && (
           <PortableText
