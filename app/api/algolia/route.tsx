@@ -13,6 +13,31 @@ if (!algoliaIndex) throw "Missing NEXT_PUBLIC_ALGOLIA_INDEX";
 const algolia = algoliasearch(algoliaAppId, algoliaAdminApiKey);
 const index = algolia.initIndex(algoliaIndex);
 
+function toAlgoliaObject(sanityDoc: any) {
+  const doc = { ...sanityDoc };
+  delete doc.content;
+
+  return sanityDoc?.content
+    // loop through each block
+    ?.map((block: any, i: number) => {
+      // if it's not a text block with children, 
+      // return nothing
+      if (block._type !== 'block' || !block.children) {
+        return {
+          ...doc,
+          objectID: `${doc._id}-${i}`
+        }
+      }
+      // loop through the children spans, and join the
+      // text strings
+      return {
+        ...doc,
+        objectID: `${doc._id}-${i}`,
+        content: block.children.map((child: any) => child.text).join('')
+      }
+    })
+}
+
 export async function POST(request: Request) {
   if (!secret)
     return Response.json(
@@ -43,7 +68,6 @@ export async function POST(request: Request) {
   //   ...,
   //   "objectID":_id,
   //   "slug": slug.current,
-  //   "content": pt::text(content),
   //   "guest": null,
   //   "spotify": null,
   //   "created": select(before() == null && after() != null => _id),
@@ -59,12 +83,13 @@ export async function POST(request: Request) {
   delete sanityDoc.deleted;
   delete sanityDoc.updated;
 
+  const algoliaDoc = toAlgoliaObject(sanityDoc);
+
   try {
     if (created) {
-      await index.saveObject(sanityDoc).wait();
+      await index.saveObjects(algoliaDoc).wait();
     } else if (updated) {
-      // await index.partialUpdateObject(sanityDoc).wait();
-      await index.saveObject(sanityDoc).wait();
+      await index.saveObjects(algoliaDoc).wait();
     } else {
       await index.deleteObject(sanityDoc.objectID).wait();
     }
