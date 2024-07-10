@@ -86,32 +86,39 @@ export default async function PodcastPage({ params }: Props) {
             youtube={podcast?.youtube}
           />
         </div>
+
         <div className="max-w-2xl sm:max-w-none">
-          <div className="mb-6">
-            {(podcast?.author || podcast?.guest) && (
-              <div className="flex flex-wrap gap-2">
-                {podcast?.author?.map((a) => (
-                  <Avatar
-                    key={a._id}
-                    name={a.title}
-                    href={`/author/${a?.slug}`}
-                    coverImage={a?.coverImage}
-                  />
-                ))}
-                {podcast?.guest?.map((a) => (
-                  <Avatar
-                    key={a._id}
-                    name={a.title}
-                    href={`/guest/${a?.slug}`}
-                    coverImage={a?.coverImage}
-                  />
-                ))}
+          <div className="flex flex-wrap justify-between">
+            <div className="flex-1">
+              <div className="mb-6">
+                {(podcast?.author || podcast?.guest) && (
+                  <div className="flex flex-wrap gap-2">
+                    {podcast?.author?.map((a) => (
+                      <Avatar
+                        key={a._id}
+                        name={a.title}
+                        href={`/author/${a?.slug}`}
+                        coverImage={a?.coverImage}
+                      />
+                    ))}
+                    {podcast?.guest?.map((a) => (
+                      <Avatar
+                        key={a._id}
+                        name={a.title}
+                        href={`/guest/${a?.slug}`}
+                        coverImage={a?.coverImage}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+              <div className="mb-4 text-lg">
+                <DateComponent dateString={podcast.date} />
+              </div>
+            </div>
+            <CarbonAdBanner />
           </div>
-          <div className="mb-4 text-lg">
-            <DateComponent dateString={podcast.date} />
-          </div>
+
           {src && (
             <div className="flex flex-col sm:flex-row justify-start flex-wrap w-full p-2 sm:p-4 border border-foreground gap-2 sm:gap-4 items-center">
               <h2 className="text-xl font-bold w-full text-center sm:text-start">Listening Options</h2>
@@ -125,7 +132,7 @@ export default async function PodcastPage({ params }: Props) {
             </div>
           )}
         </div>
-        {podcast?.sponsor?.length ? (
+        {podcast?.sponsor?.length && (
           <section className="flex flex-col mt-10 mb-10">
             <h2 className="mb-4 text-2xl font-bold">Sponsors</h2>
             <hr className="border-accent-2" />
@@ -134,9 +141,8 @@ export default async function PodcastPage({ params }: Props) {
             </div>
             <hr className="border-accent-2" />
           </section>
-        ) : (
-          <CarbonAdBanner />
         )}
+
         {podcast?.content?.length && (
           <PortableText
             className="mx-auto prose-violet lg:prose-xl dark:prose-invert"

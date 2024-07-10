@@ -16,7 +16,7 @@ export default function SponsorCard({
   if (!sponsors?.length) return <></>;
 
   return (
-    <div className="p-4 grid gap-6 md:p-6 grid-flow-col auto-cols-[1fr]">
+    <div className="p-4 grid gap-6 md:p-6 lg:grid-flow-col lg:auto-cols-[1fr] justify-center">
       {sponsors?.map((sponsor) => {
         const { slug, _id, title, excerpt, coverImage, url } = sponsor;
         return (
@@ -24,11 +24,11 @@ export default function SponsorCard({
             href={url || `/sponsor/${slug}`}
             key={_id}
             target={url ? "_blank" : "_self"}
-            className="max-w-xl"
+            className="max-w-xl overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg relative flex flex-col"
           >
             <Card
               key={_id}
-              className="overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg relative flex flex-col"
+              className="flex-grow"
             >
               <CardHeader className="p-0 pb-6">
                 <CoverImage image={coverImage} priority={false} />

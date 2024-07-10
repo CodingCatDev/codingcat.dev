@@ -81,26 +81,29 @@ export default async function PostPage({ params }: Props) {
             youtube={post?.youtube}
           />
         </div>
-        <div className="max-w-2xl sm:max-w-none">
-          <div className="mb-6">
-            {(post?.author) && (
-              <div className="flex flex-wrap gap-2">
-                {post?.author?.map((a) => (
-                  <Avatar
-                    key={a._id}
-                    name={a.title}
-                    href={`/author/${a?.slug}`}
-                    coverImage={a?.coverImage}
-                  />
-                ))}
-              </div>
-            )}
+        <div className="flex flex-wrap justify-between">
+          <div className="max-w-2xl sm:max-w-none flex-1">
+            <div className="mb-6">
+              {(post?.author) && (
+                <div className="flex flex-wrap gap-2">
+                  {post?.author?.map((a) => (
+                    <Avatar
+                      key={a._id}
+                      name={a.title}
+                      href={`/author/${a?.slug}`}
+                      coverImage={a?.coverImage}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="mb-4 text-lg">
+              <DateComponent dateString={post.date} />
+            </div>
           </div>
-          <div className="mb-4 text-lg">
-            <DateComponent dateString={post.date} />
-          </div>
+          <CarbonAdBanner />
         </div>
-        {post?.sponsor?.length ? (
+        {post?.sponsor?.length && (
           <section className="flex flex-col mt-10 mb-10">
             <h2 className="mb-4 text-2xl font-bold">Sponsors</h2>
             <hr className="border-accent-2" />
@@ -109,8 +112,6 @@ export default async function PostPage({ params }: Props) {
             </div>
             <hr className="border-accent-2" />
           </section>
-        ) : (
-          <CarbonAdBanner />
         )}
         {post.content?.length && (
           <PortableText
