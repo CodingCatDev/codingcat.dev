@@ -55,7 +55,6 @@ export default async function SponsorshipsPage() {
 
   return (
     <div className="container px-5 mx-auto">
-      <BreadcrumbLinks links={[{ title: page.title }]} />
       <div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12">
         <div className="flex flex-col gap-2 md:gap-">
           <h1 className="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl">

@@ -58,8 +58,7 @@ export default async function AuthorPage({ params }: Props) {
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
         links={[
-          { title: "Authors", href: "/authors/page/1" },
-          { title: author.title },
+          { title: "Authors", href: "/authors/page/1" }
         ]}
       />
       <div className="w-full flex flex-col gap-4 md:gap-8">

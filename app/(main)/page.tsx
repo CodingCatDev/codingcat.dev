@@ -1,3 +1,4 @@
+import CarbonAdBanner from "@/components/carbon-ad-banner";
 import CoverImage from "@/components/cover-image";
 import Buy from "@/components/user-buy";
 import UserGoProButton from "@/components/user-go-pro-button";
@@ -73,6 +74,11 @@ export default async function HomePage() {
           </div>
         </section>
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+          <div className="relative mb-32 flex flex-col justify-center items-center">
+            <div className="lg:absolute lg:-mt-36 px-8">
+              <CarbonAdBanner />
+            </div>
+          </div>
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">

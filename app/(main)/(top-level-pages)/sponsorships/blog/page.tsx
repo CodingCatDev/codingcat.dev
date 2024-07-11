@@ -55,8 +55,7 @@ export default async function SponsorshipsPage() {
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
         links={[
-          { title: "Sponsorships", href: "/sponsorships" },
-          { title: page.title },
+          { title: "Sponsorships", href: "/sponsorships" }
         ]}
       />
       <section className="grid grid-cols-1 gap-2 mx-2 md:mx-8 md:gap-8 markdown">

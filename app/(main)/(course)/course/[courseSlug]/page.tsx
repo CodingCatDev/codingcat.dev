@@ -20,6 +20,7 @@ import Buy from "@/components/user-buy";
 import Link from "next/link";
 import ShowPro from "./show-pro";
 import UserGoProButton from "@/components/user-go-pro-button";
+import CarbonAdBanner from "@/components/carbon-ad-banner";
 
 type Props = {
   params: { courseSlug: string };
@@ -67,65 +68,45 @@ export default async function CoursePage({ params }: Props) {
       <ShowPro />
       <BreadcrumbLinks
         links={[
-          { title: "Courses", href: "/courses/page/1" },
-          { title: course.title },
+          { title: "Courses", href: "/courses/page/1" }
         ]}
       />
       <article>
         <h1 className="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl">
           {course.title}
         </h1>
-        <div className="hidden md:mb-12 md:block">
-          <div className="flex flex-col gap-8">
-            {course?.author && (
-              <div className="flex">
-                {course.author.map((a) => (
-                  <Avatar
-                    key={a._id}
-                    href={`/author/${a?.slug}`}
-                    name={a.title}
-                    coverImage={a?.coverImage}
-                  />
-                ))}
-              </div>
-            )}
-            <div className="text-lg">
-              <DateComponent dateString={course.date} />
-            </div>
-          </div>
-        </div>
         <div className="mb-8 sm:mx-0 md:mb-16 flex flex-col gap-2 md:gap-8">
           <CoverMedia
             cloudinaryImage={course.coverImage}
             cloudinaryVideo={course.videoCloudinary}
             youtube={course.youtube}
           />
-          {course?.stripeProduct && course?.title && (
-            <section className="flex gap-2">
-              <Buy stripeProduct={course.stripeProduct} title={course.title} />
-              <UserGoProButton />
-            </section>
-          )}
-        </div>
-        <div className="block md:hidden">
-          <div className="max-w-2xl mx-auto">
-            <div className="mb-6">
-              {course.author && (
-                <div className="flex">
-                  {course.author.map((a) => (
-                    <Avatar
-                      key={a._id}
-                      href={`/author/${a?.slug}`}
-                      name={a.title}
-                      coverImage={a?.coverImage}
-                    />
-                  ))}
-                </div>
-              )}
+          <div className="flex justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-6">
+                {course.author && (
+                  <div className="flex">
+                    {course.author.map((a) => (
+                      <Avatar
+                        key={a._id}
+                        href={`/author/${a?.slug}`}
+                        name={a.title}
+                        coverImage={a?.coverImage}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="mb-4 text-lg">
+                <DateComponent dateString={course.date} />
+              </div>
             </div>
-            <div className="mb-4 text-lg">
-              <DateComponent dateString={course.date} />
-            </div>
+            {course?.stripeProduct && course?.title && (
+              <section className="flex gap-2">
+                <Buy stripeProduct={course.stripeProduct} title={course.title} />
+                <UserGoProButton />
+              </section>
+            )}
           </div>
         </div>
         {course.content?.length && (
@@ -134,6 +115,9 @@ export default async function CoursePage({ params }: Props) {
             value={course.content as PortableTextBlock[]}
           />
         )}
+        <div className="p-8 flex justify-end">
+          <CarbonAdBanner />
+        </div>
       </article>
       <Suspense>
         <Lessons courseSlug={params.courseSlug} />

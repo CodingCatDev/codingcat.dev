@@ -13,6 +13,7 @@ import { podcastsQuery } from "@/sanity/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import MoreHeader from "@/components/more-header";
+import CarbonAdBanner from "@/components/carbon-ad-banner";
 
 function HeroPodcast({
   title,
@@ -31,7 +32,7 @@ function HeroPodcast({
       <Link className="block mb-8 group md:mb-16" href={`/podcast/${slug}`}>
         <CoverImage image={coverImage} priority />
       </Link>
-      <div className="mb-20 md:mb-28 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
+      <div className="mb-8 md:mb-16 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
         <div>
           <h3 className="mb-4 text-4xl leading-tight text-pretty lg:text-6xl">
             <Link href={`/podcast/${slug}`} className="hover:underline">
@@ -93,6 +94,7 @@ export default async function Page() {
       ) : (
         <Onboarding />
       )}
+      <CarbonAdBanner />
       {heroPost?._id && (
         <aside>
           <MoreHeader title="Latest Podcasts" href="/podcasts/page/1" />

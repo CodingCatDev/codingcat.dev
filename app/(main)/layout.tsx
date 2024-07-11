@@ -6,7 +6,6 @@ import { VisualEditing, toPlainText } from "next-sanity";
 import { Nunito } from "next/font/google";
 import { Inter } from "next/font/google";
 import { draftMode } from "next/headers";
-import { JSX, SVGProps, Suspense } from "react";
 
 import AlertBanner from "@/components/alert-banner";
 import NextTopLoader from 'nextjs-toploader';
@@ -27,7 +26,6 @@ import AlgoliaDialog from "@/components/algolia-dialog";
 import { FaBars } from "react-icons/fa6";
 import PlayerFloating from "@/components/player-floating";
 import { PlayerProvider } from "@/components/player-context";
-import Script from "next/script";
 
 const nunito = Nunito({
   subsets: ["latin"],
