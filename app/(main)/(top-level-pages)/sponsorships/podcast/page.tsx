@@ -73,8 +73,7 @@ export default async function SponsorshipsPodcastPage() {
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
         links={[
-          { title: "Sponsorships", href: "/sponsorships" },
-          { title: page.title },
+          { title: "Sponsorships", href: "/sponsorships" }
         ]}
       />
       <div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12">

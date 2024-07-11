@@ -70,8 +70,7 @@ export default async function PodcastPage({ params }: Props) {
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
         links={[
-          { title: "Podcasts", href: "/podcasts/page/1" },
-          { title: podcast.title },
+          { title: "Podcasts", href: "/podcasts/page/1" }
         ]}
       />
       <article>

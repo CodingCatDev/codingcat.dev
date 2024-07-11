@@ -68,7 +68,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
-        links={[{ title: "Blog", href: "/blog/page/1" }, { title: post.title }]}
+        links={[{ title: "Blog", href: "/blog/page/1" }]}
       />
       <article>
         <h1 className="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl">

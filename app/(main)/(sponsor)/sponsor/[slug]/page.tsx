@@ -58,8 +58,7 @@ export default async function SponsorPage({ params }: Props) {
     <div className="container px-5 mx-auto">
       <BreadcrumbLinks
         links={[
-          { title: "Sponsors", href: "/sponsors/page/1" },
-          { title: sponsor.title },
+          { title: "Sponsors", href: "/sponsors/page/1" }
         ]}
       />
       <div className="w-full flex flex-col gap-4 md:gap-8">

@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import { groq, type PortableTextBlock } from "next-sanity";
+import { type PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";
@@ -8,7 +8,6 @@ import type { PageQueryResult } from "@/sanity.types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
-import { BreadcrumbLinks } from "@/components/breadrumb-links";
 
 type Props = {
   params: { slug: string };
@@ -49,7 +48,6 @@ export default async function PagePage({ params }: Props) {
 
   return (
     <div className="container px-5 mx-auto">
-      <BreadcrumbLinks links={[{ title: page.title }]} />
       <div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12">
         <div className="flex flex-col gap-2 md:gap-">
           <h1 className="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl">

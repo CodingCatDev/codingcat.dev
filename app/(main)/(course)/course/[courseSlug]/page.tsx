@@ -68,8 +68,7 @@ export default async function CoursePage({ params }: Props) {
       <ShowPro />
       <BreadcrumbLinks
         links={[
-          { title: "Courses", href: "/courses/page/1" },
-          { title: course.title },
+          { title: "Courses", href: "/courses/page/1" }
         ]}
       />
       <article>
@@ -102,7 +101,6 @@ export default async function CoursePage({ params }: Props) {
                 <DateComponent dateString={course.date} />
               </div>
             </div>
-            <CarbonAdBanner />
             {course?.stripeProduct && course?.title && (
               <section className="flex gap-2">
                 <Buy stripeProduct={course.stripeProduct} title={course.title} />
@@ -111,13 +109,15 @@ export default async function CoursePage({ params }: Props) {
             )}
           </div>
         </div>
-
         {course.content?.length && (
           <PortableText
             className="mx-auto prose-violet lg:prose-xl dark:prose-invert"
             value={course.content as PortableTextBlock[]}
           />
         )}
+        <div className="p-8 flex justify-end">
+          <CarbonAdBanner />
+        </div>
       </article>
       <Suspense>
         <Lessons courseSlug={params.courseSlug} />
