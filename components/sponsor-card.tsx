@@ -24,11 +24,11 @@ export default function SponsorCard({
             href={url || `/sponsor/${slug}`}
             key={_id}
             target={url ? "_blank" : "_self"}
-            className="max-w-xl overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg relative flex flex-col"
+            className="flex"
           >
             <Card
               key={_id}
-              className="flex-grow"
+              className="flex-grow max-w-xl overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg"
             >
               <CardHeader className="p-0 pb-6">
                 <CoverImage image={coverImage} priority={false} />
