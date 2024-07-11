@@ -20,6 +20,8 @@ import BlockCode from "@/components/block-code";
 import TwitterEmbed from "@/components/twitter-embed";
 import CodePenEmbed from "@/components/codepen-embed";
 import CodeSandboxEmbed from "./codesandbox-embed";
+import HTMLEmbed from "@/components/html-embed";
+
 
 export default function CustomPortableText({
   className,
@@ -36,6 +38,7 @@ export default function CustomPortableText({
       codepen: ({ value }) => <CodePenEmbed {...value} />,
       codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
       twitter: ({ value }) => <TwitterEmbed {...value} />,
+      htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
     },
     block: {
       h5: ({ children }) => (
