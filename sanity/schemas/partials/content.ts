@@ -12,17 +12,12 @@ const content = defineType({
   type: "object",
   groups: [
     {
-      name: "export",
-      title: "External Exports",
+      name: "data",
+      title: "Data Updates",
     },
   ],
   fields: [
     ...baseType.fields,
-    defineField({
-      name: "views",
-      title: "Views",
-      type: "number",
-    }),
     defineField({
       name: "videoCloudinary",
       title: "Cloudinary Video",
@@ -55,18 +50,6 @@ const content = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "devto",
-      title: "Dev.to",
-      type: "url",
-      group: "export",
-    }),
-    defineField({
-      name: "hashnode",
-      title: "Hashnode",
-      type: "string",
-      group: "export",
-    }),
-    defineField({
       name: "sponsor",
       title: "Sponsor",
       type: "array",
@@ -85,6 +68,47 @@ const content = defineType({
         includeFromRelated: "tags",
       },
       validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
+      name: "devto",
+      title: "Dev.to",
+      type: "url",
+      group: "data",
+    }),
+    defineField({
+      name: "hashnode",
+      title: "Hashnode",
+      type: "string",
+      group: "data",
+    }),
+    defineField({
+      name: "statistics",
+      type: "object",
+      group: "data",
+      fields: [
+        defineField({
+          name: "youtube",
+          type: "object",
+          fields: [
+            defineField({
+              name: "commentCount",
+              type: "number",
+            }),
+            defineField({
+              name: "favoriteCount",
+              type: "number",
+            }),
+            defineField({
+              name: "likeCount",
+              type: "number",
+            }),
+            defineField({
+              name: "viewCount",
+              type: "number",
+            }),
+          ]
+        }),
+      ]
     }),
   ],
 });

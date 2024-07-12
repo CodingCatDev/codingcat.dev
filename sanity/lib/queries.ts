@@ -129,13 +129,13 @@ export const homePageQuery = groq`*[_type == "settings" ][0]{
   "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{
       ${baseFieldsNoContent},
   },
-  "topPodcasts": *[_type == "podcast" && views > 0]|order(views desc)[0...4]{
+  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{
       ${baseFieldsNoContent},
   },
   "latestPosts": *[_type == "post"]|order(date desc)[0...4]{
      ${baseFieldsNoContent},
   },
-  "topPosts": *[_type == "post" && views > 0]|order(views desc)[0...4]{
+  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{
     ${baseFieldsNoContent},
   },
 }`;
