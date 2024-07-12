@@ -14,6 +14,7 @@ import codepen from "../custom/codepen";
 import codesandbox from "../custom/codesandbox";
 import html from "../custom/html";
 import twitter from "../custom/twitter-embed";
+import quote from "../custom/quote";
 
 const baseType = defineType({
   name: "base",
@@ -96,6 +97,7 @@ const baseType = defineType({
         defineArrayMember(codesandbox),
         defineArrayMember(twitter),
         defineArrayMember(html),
+        defineArrayMember(quote),
       ],
     }),
   ],

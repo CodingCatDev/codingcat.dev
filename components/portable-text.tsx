@@ -21,6 +21,7 @@ import TwitterEmbed from "@/components/twitter-embed";
 import CodePenEmbed from "@/components/codepen-embed";
 import CodeSandboxEmbed from "./codesandbox-embed";
 import HTMLEmbed from "@/components/html-embed";
+import QuoteEmbed from "@/components/quote-embed";
 
 
 export default function CustomPortableText({
@@ -39,6 +40,7 @@ export default function CustomPortableText({
       codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
       twitter: ({ value }) => <TwitterEmbed {...value} />,
       htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
+      quote: ({ value }) => <QuoteEmbed {...value} />,
     },
     block: {
       h5: ({ children }) => (
