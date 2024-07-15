@@ -34,7 +34,9 @@ export async function GET(request: NextRequest) {
     const lastId = sanityRead?._id;
 
     if (!lastId) {
-      return Response.json({ success: true, message: `No doc found based on lastId ${lastId}` }, { status: 200 });
+      const message = `No doc found based on lastId ${lastId}`;
+      console.debug(message);
+      return Response.json({ success: true, message }, { status: 200 });
     }
 
     // These should never match, if they do bail.
