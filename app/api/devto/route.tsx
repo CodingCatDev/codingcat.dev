@@ -10,7 +10,9 @@ const secret = process.env.PRIVATE_SYNDICATE_WEBOOK_SECRET;
 const sanityWriteClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-  token: process.env.SANITY_API_WRITE_TOKEN
+  token: process.env.SANITY_API_WRITE_TOKEN,
+  apiVersion: '2022-03-07',
+  perspective: 'raw'
 });
 
 export async function POST(request: Request) {
@@ -80,7 +82,7 @@ const formatPodcast = async (_type: string, slug: string) => {
         body_markdown: `
 Original: https://codingcat.dev/${podcast._type}/${podcast.slug}
 
-{% youtube ${podcast?.youtube?.replace('live', 'embed')} %}
+${podcast?.youtube ? `{% youtube ${podcast?.youtube?.replace('live', 'embed')} %}` : ``}
 
 ${toMarkdown(podcast.content, { serializers })}`
       }
@@ -228,6 +230,7 @@ const serializers = {
     "cloudinary.asset": (props: any) => `![](${props?.node?.secure_url})`,
     codepen: (props: any) => `{% codepen ${props?.node?.url} %}`,
     codesandbox: (props: any) => `{% codesandbox ${props?.node?.url?.split('https://codesandbox.io/p/sandbox/')?.at(-1)} %}`,
-    twitter: (props: any) => `{% twitter ${props?.node?.id} %}`
+    twitter: (props: any) => `{% twitter ${props?.node?.id} %}`,
+    quote: (props: any) => `> ${toMarkdown(props?.node?.content, { serializers })}`
   }
 }
