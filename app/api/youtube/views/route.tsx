@@ -1,4 +1,4 @@
-import { youtubeParser } from '@/lib/utils';
+import { publicURL, youtubeParser } from '@/lib/utils';
 import { createClient } from 'next-sanity';
 import type { NextRequest } from 'next/server';
 
@@ -6,38 +6,50 @@ const sanityWriteClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
   token: process.env.SANITY_API_WRITE_TOKEN,
-  useCdn: false,
+  apiVersion: '2022-03-07',
   perspective: 'raw'
 });
 
 export async function GET(request: NextRequest) {
-  // const authHeader = request.headers.get('authorization');
-  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return new Response('Unauthorized', {
-  //     status: 401,
-  //   });
-  // }
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new Response('Unauthorized', {
+      status: 401,
+    });
+  }
 
   const searchParams = request.nextUrl.searchParams;
-  const youtube = searchParams.get('youtube');
-  const _id = searchParams.get('_id');
-
-  if (!_id) {
-    console.error('Missing Sanity ID');
-    return new Response('Missing Sanity ID', { status: 404 });
-  }
-
-  if (!youtube) {
-    console.error('Missing YouTube URL');
-    return new Response('Missing YouTube URL', { status: 404 });
-  }
-  const id = youtubeParser(youtube)
-  if (!id) {
-    console.error('Missing YouTube Id');
-    return new Response('Missing YouTube Id', { status: 404 });
-  }
+  const lastIdParam = searchParams.get('lastId');
 
   try {
+    // Assume if lastId is missing that the request will be the initial starting the process.
+    const sanityRead = await sanityWriteClient.fetch(
+      `*[youtube != null && _id > $lastId]| order(_id)[0]{
+        _id,
+        youtube
+      }`, {
+      lastId: lastIdParam || ''
+    })
+
+    const lastId = sanityRead?._id;
+
+    if (!lastId) {
+      return Response.json({ success: true, message: `No doc found based on lastId ${lastId}` }, { status: 200 });
+    }
+
+    // These should never match, if they do bail.
+    if (!lastId && lastIdParam) {
+      console.error('lastId matches current doc, stopping calls.');
+      return new Response('lastId matches current doc, stopping calls.', { status: 200 });
+    }
+
+    const id = youtubeParser(sanityRead?.youtube);
+
+    if (!id) {
+      console.error('Missing YouTube Id');
+      return new Response('Missing YouTube Id', { status: 404 });
+    }
+
     const videoResp = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${process.env.YOUTUBE_API_KEY}&fields=items(id,statistics)&part=statistics`)
     const json = await videoResp.json();
     if (videoResp.status !== 200) {
@@ -53,12 +65,18 @@ export async function GET(request: NextRequest) {
       return new Response(words, { status: 404 });
     }
 
-    const sanityUpdate = await sanityWriteClient.patch(_id).set({
+    // Update current doc with stats
+    const sanityUpdate = await sanityWriteClient.patch(lastId).set({
       'statistics.youtube.commentCount': parseInt(statistics.commentCount),
       'statistics.youtube.favoriteCount': parseInt(statistics.favoriteCount),
       'statistics.youtube.likeCount': parseInt(statistics.likeCount),
       'statistics.youtube.viewCount': parseInt(statistics.viewCount),
     }).commit();
+
+    // Trigger next call, don't wait for response
+    fetch(publicURL() + `/api/youtube/views?lastId=${lastId}`,
+      { headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } });
+
     return Response.json(sanityUpdate);
   } catch (error) {
     console.error(JSON.stringify(error));
