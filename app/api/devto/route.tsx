@@ -67,7 +67,7 @@ const formatPodcast = async (_type: string, slug: string) => {
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Adding', { slug: podcast?.slug, devto: podcast?.devto });
+  console.log('Adding', { slug: podcast?.slug, devto: podcast?.devto });
 
   try {
     const article: any = {
@@ -92,28 +92,28 @@ ${toMarkdown(podcast.content, { serializers })}`
       article.article.tags.push('podcast');
       article.article.series = `codingcatdev_podcast_${podcast?.season || 4}`;
     }
-    console.debug("article", JSON.stringify(article, null, 2));
+    console.log("article", JSON.stringify(article, null, 2));
 
     let response;
     if (podcast?.devto) {
-      console.debug('updateArticle to devto');
+      console.log('updateArticle to devto');
       response = await updateArticle(podcast.devto, article);
-      console.debug('updateArticle result:', response.status);
+      console.log('updateArticle result:', response.status);
     } else {
-      console.debug('addArticle to devto');
+      console.log('addArticle to devto');
       response = await addArticle(article);
-      console.debug('addArticle result:', response.status);
+      console.log('addArticle result:', response.status);
     }
 
     const json = await response.json();
-    console.debug("result payload", JSON.stringify(json, null, 2));
+    console.log("result payload", JSON.stringify(json, null, 2));
 
     // Get new devto url and update
     if (response.status >= 200 && response.status <= 299) {
       if (json?.url && !podcast?.devto) {
-        console.debug('Article Added to Dev.to', JSON.stringify(json, null, 2));
+        console.log('Article Added to Dev.to', JSON.stringify(json, null, 2));
         await updateSanity(podcast._id, json.url);
-        console.debug('Sanity Updated', podcast._id, json.url);
+        console.log('Sanity Updated', podcast._id, json.url);
       }
     }
     return Response.json({ success: true }, { status: 201 });
@@ -131,7 +131,7 @@ const unPublishPodcast = async (_type: string, id: string, devto: string) => {
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Unpublishing', { _type, id, devto });
+  console.log('Unpublishing', { _type, id, devto });
 
   try {
 
@@ -142,7 +142,7 @@ const unPublishPodcast = async (_type: string, id: string, devto: string) => {
 
     // Remove devto from sanity
     if (response.status >= 200 && response.status <= 299) {
-      console.debug('removed post from devto')
+      console.log('removed post from devto')
       return Response.json({ success: true }, { status: 200 });
     }
     return Response.json({ success: true }, { status: 200 });

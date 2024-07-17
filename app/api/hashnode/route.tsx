@@ -71,7 +71,7 @@ const formatPodcast = async (_type: string, slug: string) => {
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Adding', { slug: podcast?.slug, hashnode: podcast?.hashnode });
+  console.log('Adding', { slug: podcast?.slug, hashnode: podcast?.hashnode });
 
   try {
     const article: any = {
@@ -116,29 +116,29 @@ ${toMarkdown(podcast.content, { serializers })}`
       });
       article.seriesId = '65a9ad4ef60adbf4aeedd0a2';
     }
-    console.debug("article", JSON.stringify(article, null, 2));
+    console.log("article", JSON.stringify(article, null, 2));
 
     let response;
     if (podcast?.hashnode) {
-      console.debug('updateArticle to hashnode');
+      console.log('updateArticle to hashnode');
       response = await updateArticle(podcast.hashnode, article);
-      console.debug('updateArticle result:', response.status);
+      console.log('updateArticle result:', response.status);
     } else {
-      console.debug('addArticle to hashnode');
+      console.log('addArticle to hashnode');
       response = await addArticle(article);
-      console.debug('addArticle result:', response.status);
+      console.log('addArticle result:', response.status);
     }
 
     const json = await response.json();
-    console.debug("result payload", JSON.stringify(json, null, 2));
+    console.log("result payload", JSON.stringify(json, null, 2));
 
     // Get new hashnode url and update
     if (response.status >= 200 && response.status <= 299) {
       const hashnode = json?.data?.publishPost?.post?.slug;
       if (hashnode && !podcast?.hashnode) {
-        console.debug('Article Added to hashnode', JSON.stringify(json, null, 2));
+        console.log('Article Added to hashnode', JSON.stringify(json, null, 2));
         await updateSanity(podcast._id, hashnode);
-        console.debug('Sanity Updated', podcast._id, hashnode);
+        console.log('Sanity Updated', podcast._id, hashnode);
       }
     }
     return Response.json({ success: true }, { status: 201 });
@@ -156,7 +156,7 @@ const unPublishPodcast = async (_type: string, id: string, hashnode: string) => 
     return Response.json({ success: false, error: "Podcast not found" }, { status: 404 });
   }
 
-  console.debug('Unpublishing', { _type, id, hashnode });
+  console.log('Unpublishing', { _type, id, hashnode });
 
   try {
 

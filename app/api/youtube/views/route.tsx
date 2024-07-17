@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     if (!lastId) {
       const message = `No doc found based on lastId ${lastId}`;
-      console.debug(message);
+      console.log(message);
       return Response.json({ success: true, message }, { status: 200 });
     }
 
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       console.error(JSON.stringify(json));
       return Response.json(json, { status: videoResp.status })
     }
-    console.debug(JSON.stringify(json));
+    console.log(JSON.stringify(json));
     const statistics = json?.items?.at(0)?.statistics;
 
     if (!statistics) {
