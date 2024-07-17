@@ -7,7 +7,8 @@ const sanityWriteClient = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
   token: process.env.SANITY_API_WRITE_TOKEN,
   apiVersion: '2022-03-07',
-  perspective: 'raw'
+  perspective: 'published',
+  useCdn: false
 });
 
 export async function GET(request: NextRequest) {
