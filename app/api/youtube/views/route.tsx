@@ -11,7 +11,7 @@ const sanityWriteClient = createClient({
   useCdn: false
 });
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response('Unauthorized', {
@@ -78,7 +78,10 @@ export async function GET(request: NextRequest) {
 
     // Trigger next call, don't wait for response
     fetch(publicURL() + `/api/youtube/views?lastId=${lastId}`,
-      { headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } });
+      {
+        method: 'POST',
+        headers: { authorization: `Bearer ${process.env.CRON_SECRET}` }
+      });
 
     return Response.json(sanityUpdate);
   } catch (error) {

@@ -11,7 +11,10 @@ export function GET(request: NextRequest) {
   // Don't await just trigger
   console.log('youtube views triggered');
   fetch(publicURL() + `/api/youtube/views`,
-    { headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } });
+    {
+      method: 'POST',
+      headers: { authorization: `Bearer ${process.env.CRON_SECRET}` }
+    });
 
   return Response.json({ success: true });
 }
