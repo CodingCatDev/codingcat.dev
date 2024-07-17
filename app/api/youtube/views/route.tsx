@@ -1,3 +1,5 @@
+export const fetchCache = 'force-no-store'
+
 import { publicURL, youtubeParser } from '@/lib/utils';
 import { createClient } from 'next-sanity';
 import type { NextRequest } from 'next/server';
@@ -41,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     // These should never match, if they do bail.
-    if (!lastId && lastIdParam) {
+    if (lastId === lastIdParam) {
       console.error('lastId matches current doc, stopping calls.');
       return new Response('lastId matches current doc, stopping calls.', { status: 200 });
     }
@@ -80,7 +82,10 @@ export async function POST(request: NextRequest) {
     fetch(publicURL() + `/api/youtube/views?lastId=${lastId}`,
       {
         method: 'POST',
-        headers: { authorization: `Bearer ${process.env.CRON_SECRET}` }
+        headers: {
+          authorization: `Bearer ${process.env.CRON_SECRET}`,
+          'Cache-Control': 'no-cache'
+        }
       });
 
     return Response.json(sanityUpdate);

@@ -1,3 +1,5 @@
+export const fetchCache = 'force-no-store'
+
 import { publicURL } from '@/lib/utils';
 import type { NextRequest } from 'next/server';
 
@@ -13,7 +15,10 @@ export function GET(request: NextRequest) {
   fetch(publicURL() + `/api/youtube/views`,
     {
       method: 'POST',
-      headers: { authorization: `Bearer ${process.env.CRON_SECRET}` }
+      headers: {
+        authorization: `Bearer ${process.env.CRON_SECRET}`,
+        'Cache-Control': 'no-cache'
+      }
     });
 
   return Response.json({ success: true });
