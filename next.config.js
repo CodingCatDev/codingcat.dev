@@ -38,7 +38,7 @@ module.exports = withSentryConfig(
 
     // Source maps are too slow for non-prod builds.
     sourcemaps: {
-      disable: process.env.VERCEL_ENV === "preview"
+      disable: true,
     },
 
     // Only print logs for uploading source maps in CI
