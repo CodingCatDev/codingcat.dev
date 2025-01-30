@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // defaults to auto
+
 import { Feed } from 'feed';
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY as string;
