@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { Feed } from 'feed';
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY as string;
@@ -71,11 +70,12 @@ export async function GET() {
         data.items.forEach(item => {
           feed.addItem({
             title: item.snippet.title,
-            id: item.snippet.resourceId.videoId,
+            content: item.snippet.description || '',
             link: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`,
             description: item.snippet.description,
-            date: new Date(item.snippet.publishedAt),
             image: `https://img.youtube.com/vi/${item.snippet.resourceId.videoId}/maxresdefault.jpg`,
+            date: new Date(item.snippet.publishedAt),
+            id: item.snippet.resourceId.videoId,
           });
         });
 
@@ -83,9 +83,15 @@ export async function GET() {
       } while (pageToken);
     }
 
-    return NextResponse.json(JSON.parse(feed.json1()));
+  return new Response(feed.rss2(), {
+    headers: {
+      "content-type": "text/xml",
+      "cache-control": "max-age=0, s-maxage=3600",
+    },
+  });
+
   } catch (error) {
     console.error('Error generating podcast feed:', error);
-    return NextResponse.json({ error: 'Error generating podcast feed' }, { status: 500 });
+    return Response.json({ error: 'Error generating podcast feed' }, { status: 500 });
   }
 }
