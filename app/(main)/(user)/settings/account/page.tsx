@@ -1,28 +1,27 @@
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
+	Card,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+	CardContent,
 } from "@/components/ui/card";
 import Subscriptions from "./subscriptions";
 import { Suspense } from "react";
 
 export default function AccountPage() {
+	return (
+		<div className="grid gap-6">
+			<Card>
+				<CardHeader>
+					<CardTitle>Account</CardTitle>
+					<CardDescription>Manage your account settings.</CardDescription>
+				</CardHeader>
+				<Suspense fallback={<CardContent>Loading...</CardContent>}>
+					<Subscriptions />
+				</Suspense>
+			</Card>
 
-  return (
-    <div className="grid gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Account</CardTitle>
-          <CardDescription>Manage your account settings.</CardDescription>
-        </CardHeader>
-        <Suspense fallback={<CardContent>Loading...</CardContent>}>
-          <Subscriptions />
-        </Suspense>
-      </Card>
-
-      {/* <Card>
+			{/* <Card>
         <CardHeader>
           <CardTitle>The Danger Zone</CardTitle>
         </CardHeader>
@@ -37,6 +36,6 @@ export default function AccountPage() {
           </form>
         </CardContent>
       </Card> */}
-    </div>
-  );
+		</div>
+	);
 }

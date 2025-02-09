@@ -6,48 +6,48 @@ import { useToast } from "@/components/ui/use-toast";
 import type { BaseCompletedLesson } from "@/lib/types";
 
 export default function LessonComplete({
-  lesson,
-  course,
+	lesson,
+	course,
 }: {
-  lesson: BaseCompletedLesson;
-  course: NonNullable<LessonsInCourseQueryResult>;
+	lesson: BaseCompletedLesson;
+	course: NonNullable<LessonsInCourseQueryResult>;
 }) {
-  const { currentUser } = useFirestoreUser();
-  const { completeLesson, addComplete, removeComplete } = useCompletedLesson({
-    lesson,
-    course,
-  });
-  const { toast } = useToast();
+	const { currentUser } = useFirestoreUser();
+	const { completeLesson, addComplete, removeComplete } = useCompletedLesson({
+		lesson,
+		course,
+	});
+	const { toast } = useToast();
 
-  const makeComplete = async (isChecked: boolean | "indeterminate") => {
-    if (!currentUser?.uid) {
-      toast({
-        variant: "destructive",
-        description: "You must be logged in to complete a lesson.",
-      });
-      return;
-    }
-    if (isChecked) {
-      await addComplete();
-      toast({
-        description: "What a rockstar! 🎉",
-      });
-    } else {
-      await removeComplete();
-    }
-  };
-  return (
-    <>
-      {currentUser?.uid ? (
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={completeLesson?._id ? true : false}
-            onCheckedChange={makeComplete}
-          />
-        </div>
-      ) : (
-        <></>
-      )}
-    </>
-  );
+	const makeComplete = async (isChecked: boolean | "indeterminate") => {
+		if (!currentUser?.uid) {
+			toast({
+				variant: "destructive",
+				description: "You must be logged in to complete a lesson.",
+			});
+			return;
+		}
+		if (isChecked) {
+			await addComplete();
+			toast({
+				description: "What a rockstar! 🎉",
+			});
+		} else {
+			await removeComplete();
+		}
+	};
+	return (
+		<>
+			{currentUser?.uid ? (
+				<div className="flex items-center gap-2">
+					<Checkbox
+						checked={completeLesson?._id ? true : false}
+						onCheckedChange={makeComplete}
+					/>
+				</div>
+			) : (
+				<></>
+			)}
+		</>
+	);
 }

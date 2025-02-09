@@ -29,125 +29,125 @@ import { toPlainText, VisualEditing } from "next-sanity";
 import { DisableDraftMode } from "@/components/disable-draft-mode";
 
 const nunito = Nunito({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunito",
+	subsets: ["latin"],
+	display: "swap",
+	variable: "--font-nunito",
 });
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
+	subsets: ["latin"],
+	display: "swap",
+	variable: "--font-inter",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settingsFetch = await sanityFetch({
-    query: settingsQuery,
-    // Metadata should never contain stega
-    stega: false,
-  });
+	const settingsFetch = await sanityFetch({
+		query: settingsQuery,
+		// Metadata should never contain stega
+		stega: false,
+	});
 
-  const settings = settingsFetch.data as SettingsQueryResult;
-  const title = settings?.title || demo.title;
-  const description = settings?.description || demo.description;
+	const settings = settingsFetch.data as SettingsQueryResult;
+	const title = settings?.title || demo.title;
+	const description = settings?.description || demo.description;
 
-  // const ogImage = resolveOpenGraphImage(settings?.ogImage);
-  const ogImage = settings?.ogImage?.secure_url;
-  return {
-    title: {
-      template: `%s | ${title}`,
-      default: title,
-    },
-    description: toPlainText(description),
-    openGraph: {
-      images: ogImage ? [ogImage] : [],
-      siteName: "CodingCat.dev",
-      url: "https://codingcat.dev",
-    },
-    alternates: {
-      types: {
-        "application/rss+xml": [
-          { url: "/blog/rss.xml", title: "Blog" },
-          { url: "/courses/rss.xml", title: "Courses" },
-          { url: "/podcasts/rss.xml", title: "Podcasts" },
-        ],
-      },
-    },
-  };
+	// const ogImage = resolveOpenGraphImage(settings?.ogImage);
+	const ogImage = settings?.ogImage?.secure_url;
+	return {
+		title: {
+			template: `%s | ${title}`,
+			default: title,
+		},
+		description: toPlainText(description),
+		openGraph: {
+			images: ogImage ? [ogImage] : [],
+			siteName: "CodingCat.dev",
+			url: "https://codingcat.dev",
+		},
+		alternates: {
+			types: {
+				"application/rss+xml": [
+					{ url: "/blog/rss.xml", title: "Blog" },
+					{ url: "/courses/rss.xml", title: "Courses" },
+					{ url: "/podcasts/rss.xml", title: "Podcasts" },
+				],
+			},
+		},
+	};
 }
 
 export default async function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  const settingsFetch = await sanityFetch({
-    query: settingsQuery,
-  });
-  const settings = settingsFetch.data as SettingsQueryResult;
+	const settingsFetch = await sanityFetch({
+		query: settingsQuery,
+	});
+	const settings = settingsFetch.data as SettingsQueryResult;
 
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          nunito.variable,
-          inter.variable
-        )}
-      >
-        <PlayerProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <NextTopLoader color="hsl(var(--primary))" />
-            <section className="flex flex-col min-h-[100dvh]">
-              <header className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background">
-                <div className="flex items-center gap-4">
-                  <Link className="text-lg font-bold md:text-2xl" href="/">
-                    CodingCat.dev
-                  </Link>
-                  <nav className="items-center hidden md:flex gap-6">
-                    <NavHeader navLinks={settings?.navLinks} />
-                  </nav>
-                </div>
-                <div className="flex items-center gap-2">
-                  <AlgoliaDialog />
-                  <AvatarDropdown />
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button className="md:hidden" size="icon" variant="ghost">
-                        <FaBars className="w-6 h-6" />
-                        <span className="sr-only">Toggle navigation menu</span>
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right">
-                      <nav className="py-6 grid gap-2">
-                        <SheetTrigger asChild>
-                          <NavHeader navLinks={settings?.navLinks} sideOnly />
-                        </SheetTrigger>
-                      </nav>
-                    </SheetContent>
-                  </Sheet>
-                </div>
-              </header>
-              <main className="mt-20">{children}</main>
-              <Toaster />
-              <Footer />
-            </section>
-            <PlayerFloating />
-            <SanityLive />
-            {(await draftMode()).isEnabled && (
-              <>
-                <DisableDraftMode />
-                <VisualEditing />
-              </>
-            )}
-            <SpeedInsights />
-          </ThemeProvider>
-        </PlayerProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body
+				className={cn(
+					"min-h-screen bg-background font-sans antialiased",
+					nunito.variable,
+					inter.variable,
+				)}
+			>
+				<PlayerProvider>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<NextTopLoader color="hsl(var(--primary))" />
+						<section className="flex flex-col min-h-[100dvh]">
+							<header className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background">
+								<div className="flex items-center gap-4">
+									<Link className="text-lg font-bold md:text-2xl" href="/">
+										CodingCat.dev
+									</Link>
+									<nav className="items-center hidden md:flex gap-6">
+										<NavHeader navLinks={settings?.navLinks} />
+									</nav>
+								</div>
+								<div className="flex items-center gap-2">
+									<AlgoliaDialog />
+									<AvatarDropdown />
+									<Sheet>
+										<SheetTrigger asChild>
+											<Button className="md:hidden" size="icon" variant="ghost">
+												<FaBars className="w-6 h-6" />
+												<span className="sr-only">Toggle navigation menu</span>
+											</Button>
+										</SheetTrigger>
+										<SheetContent side="right">
+											<nav className="py-6 grid gap-2">
+												<SheetTrigger asChild>
+													<NavHeader navLinks={settings?.navLinks} sideOnly />
+												</SheetTrigger>
+											</nav>
+										</SheetContent>
+									</Sheet>
+								</div>
+							</header>
+							<main className="mt-20">{children}</main>
+							<Toaster />
+							<Footer />
+						</section>
+						<PlayerFloating />
+						<SanityLive />
+						{(await draftMode()).isEnabled && (
+							<>
+								<DisableDraftMode />
+								<VisualEditing />
+							</>
+						)}
+						<SpeedInsights />
+					</ThemeProvider>
+				</PlayerProvider>
+			</body>
+		</html>
+	);
 }

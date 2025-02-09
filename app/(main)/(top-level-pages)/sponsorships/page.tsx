@@ -12,64 +12,67 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import CoverImage from "@/components/cover-image";
 import SponsorshipCards from "./sponsorship-cards";
 
-
 export async function generateMetadata(
-  parent: ResolvingMetadata
+	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const page = (await sanityFetch({
-    query: pageQuery,
-    params: {
-      slug: "sponsorships",
-    },
-    stega: false,
-  })).data as PageQueryResult;
-  const previousImages = (await parent).openGraph?.images || [];
-  const ogImage = resolveOpenGraphImage(page?.coverImage);
+	const page = (
+		await sanityFetch({
+			query: pageQuery,
+			params: {
+				slug: "sponsorships",
+			},
+			stega: false,
+		})
+	).data as PageQueryResult;
+	const previousImages = (await parent).openGraph?.images || [];
+	const ogImage = resolveOpenGraphImage(page?.coverImage);
 
-  return {
-    title: page?.title,
-    description: page?.excerpt,
-    openGraph: {
-      images: ogImage ? ogImage : previousImages,
-    },
-  } satisfies Metadata;
+	return {
+		title: page?.title,
+		description: page?.excerpt,
+		openGraph: {
+			images: ogImage ? ogImage : previousImages,
+		},
+	} satisfies Metadata;
 }
 
 export default async function SponsorshipsPage() {
-  const page = (await sanityFetch({
-    query: pageQuery,
-    params: {
-      slug: "sponsorships",
-    },
-    stega: false,
-  })).data as PageQueryResult;
+	const page = (
+		await sanityFetch({
+			query: pageQuery,
+			params: {
+				slug: "sponsorships",
+			},
+			stega: false,
+		})
+	).data as PageQueryResult;
 
-  if (!page?._id) {
-    return notFound();
-  }
+	if (!page?._id) {
+		return notFound();
+	}
 
-  return (
-    <div className="container px-5 mx-auto">
-      <div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12">
-        <div className="flex flex-col gap-2 md:gap-">
-          <h1 className="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl">
-            {page.title}
-          </h1>
-        </div>
-        <div className="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
-          {page?.coverImage && <CoverImage image={page.coverImage} priority />}
+	return (
+		<div className="container px-5 mx-auto">
+			<div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12">
+				<div className="flex flex-col gap-2 md:gap-">
+					<h1 className="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl">
+						{page.title}
+					</h1>
+				</div>
+				<div className="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
+					{page?.coverImage && <CoverImage image={page.coverImage} priority />}
 
-          <SponsorshipCards />
-        </div>
-        <article>
-          {page.content?.length && (
-            <PortableText
-              className="prose-violet lg:prose-xl dark:prose-invert"
-              value={page.content as PortableTextBlock[]}
-            />
-          )}
-        </article>
-      </div>
-    </div>
-  );
+					<SponsorshipCards />
+				</div>
+				<article>
+					{page.content?.length && (
+						<PortableText
+							className="prose-violet lg:prose-xl dark:prose-invert"
+							value={page.content as PortableTextBlock[]}
+						/>
+					)}
+				</article>
+			</div>
+		</div>
+	);
 }

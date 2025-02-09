@@ -2,26 +2,26 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 /*
-* General hooks
-*
-*/
+ * General hooks
+ *
+ */
 
 export function useActivePath(): (path?: string) => boolean {
-  const pathname = usePathname();
+	const pathname = usePathname();
 
-  const checkActivePath = (path?: string) => {
-    return path === pathname;
-  };
+	const checkActivePath = (path?: string) => {
+		return path === pathname;
+	};
 
-  return checkActivePath;
+	return checkActivePath;
 }
 
 export function useKeyPress(callback: () => void, key: string): void {
-  useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.code === key) {
-        callback();
-      }
-    });
-  });
+	useEffect(() => {
+		document.addEventListener("keydown", (e) => {
+			if ((e.metaKey || e.ctrlKey) && e.code === key) {
+				callback();
+			}
+		});
+	});
 }
