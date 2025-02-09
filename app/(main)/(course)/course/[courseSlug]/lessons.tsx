@@ -15,9 +15,10 @@ import Buy from "@/components/user-buy";
 import UserGoProButton from "@/components/user-go-pro-button";
 
 export default async function Lessons(params: { courseSlug: string }) {
+  const { courseSlug } = await params;
   const course = (await sanityFetch({
     query: lessonsInCourseQuery,
-    params,
+    params: { courseSlug },
   })).data as LessonsInCourseQueryResult;
 
   return (
@@ -51,7 +52,7 @@ export default async function Lessons(params: { courseSlug: string }) {
                     >
                       <CardHeader className="p-0">
                         <Link
-                          href={`/course/${params.courseSlug}/${_type}/${slug}`}
+                          href={`/course/${courseSlug}/${_type}/${slug}`}
                           className="block mb-5 group"
                         >
                           <CoverImage image={coverImage} priority={false} />
@@ -60,7 +61,7 @@ export default async function Lessons(params: { courseSlug: string }) {
                       <CardContent className="flex-grow">
                         <h3 className="mb-3 text-3xl leading-snug text-balance">
                           <Link
-                            href={`/course/${params.courseSlug}/${_type}/${slug}`}
+                            href={`/course/${courseSlug}/${_type}/${slug}`}
                             className="hover:underline"
                           >
                             {title}

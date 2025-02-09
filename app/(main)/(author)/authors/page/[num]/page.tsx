@@ -12,16 +12,15 @@ type Props = {
 };
 
 export default async function Page({ params }: Props) {
-  const count = (await 
-    sanityFetch({
-      query: docCount,
-      params: {
-        type: "author",
-      },
-    })
-  ).data as DocCountResult;
+  const { num } = await params;
 
-  const { num } = params;
+  const count = (await sanityFetch({
+    query: docCount,
+    params: {
+      type: "author",
+    },
+  })).data as DocCountResult;
+
   const pageNumber = Number(num);
   const offset = (pageNumber - 1) * LIMIT;
   const limit = offset + LIMIT;

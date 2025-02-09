@@ -17,9 +17,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { slug } = await params;
+
   const page = (await sanityFetch({
     query: pageQuery,
-    params,
+    params: { slug },
     stega: false,
   })).data as PageQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
@@ -35,10 +37,12 @@ export async function generateMetadata(
 }
 
 export default async function PagePage({ params }: Props) {
+  const { slug } = await params;
+
   const [page] = (await Promise.all([
     sanityFetch({
       query: pageQuery,
-      params,
+      params: { slug },
       stega: false,
     }),
   ])).map((res) => res.data) as [PageQueryResult];

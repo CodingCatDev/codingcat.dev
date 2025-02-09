@@ -25,9 +25,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { slug } = await params;
+
   const sponsor = (await sanityFetch({
     query: sponsorQuery,
-    params,
+    params: { slug },
     stega: false,
   })).data as SponsorQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
@@ -43,10 +45,12 @@ export async function generateMetadata(
 }
 
 export default async function SponsorPage({ params }: Props) {
+  const { slug } = await params;
+
   const [sponsor] = (await Promise.all([
     sanityFetch({
       query: sponsorQueryWithRelated,
-      params,
+      params: { slug },
     }),
   ])).map((res) => res.data) as [SponsorQueryWithRelatedResult];
 

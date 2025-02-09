@@ -25,9 +25,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { slug } = await params
+
   const author = (await sanityFetch({
     query: authorQuery,
-    params,
+    params: { slug },
     stega: false,
   })).data as AuthorQueryResult;
 
@@ -44,10 +46,12 @@ export async function generateMetadata(
 }
 
 export default async function AuthorPage({ params }: Props) {
+  const { slug } = await params
+
   const [authorFetch] = await Promise.all([
     sanityFetch({
       query: authorQueryWithRelated,
-      params,
+      params: { slug },
     }),
   ]);
 

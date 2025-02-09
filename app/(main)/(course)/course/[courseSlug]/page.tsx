@@ -30,9 +30,10 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { courseSlug } = await params;
   const course = (await sanityFetch({
     query: courseQuery,
-    params,
+    params: { courseSlug },
     stega: false,
   })).data as CourseQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
@@ -52,9 +53,11 @@ export async function generateMetadata(
 }
 
 export default async function CoursePage({ params }: Props) {
+  const { courseSlug } = await params;
+
   const course = (await sanityFetch({
     query: courseQuery,
-    params,
+    params: { courseSlug },
     stega: false,
   })).data as CourseQueryResult;
 

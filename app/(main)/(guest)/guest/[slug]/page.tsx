@@ -26,9 +26,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { slug } = await params;
+
   const guest = (await sanityFetch({
     query: guestQuery,
-    params,
+    params: { slug },
     stega: false,
   })).data as GuestQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
@@ -44,10 +46,12 @@ export async function generateMetadata(
 }
 
 export default async function GuestPage({ params }: Props) {
+  const { slug } = await params;
+
   const [guest] = (await Promise.all([
     sanityFetch({
       query: guestQueryWithRelated,
-      params,
+      params: { slug },
     }),
   ])).map(res => res.data) as [GuestQueryWithRelatedResult];
 

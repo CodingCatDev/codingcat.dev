@@ -48,7 +48,7 @@ export async function buildFeed(params: {
   for (const item of data) {
     feed.addItem({
       title: item.title || "",
-      content: item.content ? toHTML(item.content as any) : "",
+      content: item.content && Array.isArray(item.content) ? toHTML(item.content) : "",
       link: `${site}/${item._type}/${item.slug}`,
       description: `${item.excerpt}`,
       image: item.coverImage?.secure_url || feed.items.at(0)?.image,

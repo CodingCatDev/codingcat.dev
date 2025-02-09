@@ -11,12 +11,7 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import ProBenefits from "@/components/pro-benefits";
 import { Suspense } from "react";
 
-type Props = {
-  params: false;
-};
-
 export async function generateMetadata(
-  { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const page = (await sanityFetch({

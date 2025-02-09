@@ -13,12 +13,7 @@ import SponsorshipCards from "../sponsorship-cards";
 import SponsorshipForm from "../sponsorship-form";
 import AJPrimary from "@/components/icons/aj-primary";
 
-type Props = {
-  params: false;
-};
-
 export async function generateMetadata(
-  { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const page = (await sanityFetch({

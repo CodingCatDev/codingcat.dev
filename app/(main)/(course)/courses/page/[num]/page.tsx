@@ -21,7 +21,7 @@ export default async function Page({ params }: Props) {
     }),
   ])).map(res => res.data) as [DocCountResult];
 
-  const { num } = params;
+  const { num } = await params;
   const pageNumber = Number(num);
   const offset = (pageNumber - 1) * LIMIT;
   const limit = offset + LIMIT;
