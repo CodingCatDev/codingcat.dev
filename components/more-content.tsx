@@ -45,7 +45,7 @@ export default async function MoreContent(params: {
     }
   };
 
-  const data = await sanityFetch<MorePodcastQueryResult>({
+  const data = (await sanityFetch({
     query: whichQuery(),
     params: {
       type: params.type,
@@ -53,7 +53,7 @@ export default async function MoreContent(params: {
       limit: params.limit || 4,
       offset: params.offset || 0,
     },
-  });
+  })).data as MorePodcastQueryResult;
 
   return (
     <div className="flex flex-col">

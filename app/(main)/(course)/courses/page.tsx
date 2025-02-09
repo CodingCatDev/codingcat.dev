@@ -65,9 +65,10 @@ function HeroCourse({
 }
 
 export default async function Page() {
-  const [heroPost] = await Promise.all([
-    sanityFetch<CoursesQueryResult>({ query: coursesQuery }),
-  ]);
+  const [heroPost] = (await Promise.all([
+    sanityFetch({ query: coursesQuery }),
+  ])).map(res => res.data) as [CoursesQueryResult];
+
   return (
     <div className="container px-5 mx-auto">
       {heroPost ? (

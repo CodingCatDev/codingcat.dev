@@ -12,14 +12,14 @@ type Props = {
 };
 
 export default async function Page({ params }: Props) {
-  const [count] = await Promise.all([
-    sanityFetch<DocCountResult>({
+  const [count] = (await Promise.all([
+    sanityFetch({
       query: docCount,
       params: {
         type: "guest",
       },
     }),
-  ]);
+  ])).map(res => res.data) as [DocCountResult];
 
   const { num } = params;
   const pageNumber = Number(num);

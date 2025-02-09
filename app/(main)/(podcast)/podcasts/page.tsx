@@ -76,9 +76,11 @@ function HeroPodcast({
 }
 
 export default async function Page() {
-  const [heroPost] = await Promise.all([
-    sanityFetch<PodcastsQueryResult>({ query: podcastsQuery }),
-  ]);
+  const [heroPost] = (await Promise.all([
+    sanityFetch({
+      query: podcastsQuery,
+    }),
+  ])).map((res) => res.data) as [PodcastsQueryResult];
   return (
     <div className="container px-5 mx-auto">
       {heroPost ? (

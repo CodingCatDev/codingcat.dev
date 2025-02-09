@@ -20,13 +20,13 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const page = await sanityFetch<PageQueryResult>({
+  const page = (await sanityFetch({
     query: pageQuery,
     params: {
       slug: "sponsorships",
     },
     stega: false,
-  });
+  })).data as PageQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
   const ogImage = resolveOpenGraphImage(page?.coverImage);
 
@@ -40,14 +40,13 @@ export async function generateMetadata(
 }
 
 export default async function SponsorshipsPage() {
-  const [page] = await Promise.all([
-    sanityFetch<PageQueryResult>({
-      query: pageQuery,
-      params: {
-        slug: "sponsorships",
-      },
-    }),
-  ]);
+  const page = (await sanityFetch({
+    query: pageQuery,
+    params: {
+      slug: "sponsorships",
+    },
+    stega: false,
+  })).data as PageQueryResult;
 
   if (!page?._id) {
     return notFound();

@@ -31,11 +31,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const podcast = await sanityFetch<PodcastQueryResult>({
+  const podcast = (await sanityFetch({
     query: podcastQuery,
     params,
     stega: false,
-  });
+  })).data as PodcastQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
   const ogImage = resolveOpenGraphImage(podcast?.coverImage);
 
@@ -53,12 +53,12 @@ export async function generateMetadata(
 }
 
 export default async function PodcastPage({ params }: Props) {
-  const [podcast] = await Promise.all([
-    sanityFetch<PodcastQueryResult>({
+  const [podcast] = (await Promise.all([
+    sanityFetch({
       query: podcastQuery,
       params,
     }),
-  ]);
+  ])).map(res => res.data) as [PodcastQueryResult];
 
   if (!podcast?._id) {
     return notFound();

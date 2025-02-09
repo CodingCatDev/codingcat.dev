@@ -23,13 +23,13 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const page = await sanityFetch<PageQueryResult>({
+  const page = (await sanityFetch({
     query: pageQuery,
     params: {
       slug: "podcast",
     },
     stega: false,
-  });
+  })).data as PageQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
   const ogImage = resolveOpenGraphImage(page?.coverImage);
 
@@ -43,14 +43,14 @@ export async function generateMetadata(
 }
 
 export default async function SponsorshipsPodcastPage() {
-  const [page] = await Promise.all([
-    sanityFetch<PageQueryResult>({
+  const [page] = (await Promise.all([
+    sanityFetch({
       query: pageQuery,
       params: {
         slug: "podcast",
       },
     }),
-  ]);
+  ])).map((res) => res.data as PageQueryResult);
 
   if (!page?._id) {
     return notFound();
@@ -61,6 +61,9 @@ export default async function SponsorshipsPodcastPage() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
+      aria-hidden="true"
+      role="img"
+      aria-label="Right arrow"
     >
       <path
         xmlns="http://www.w3.org/2000/svg"

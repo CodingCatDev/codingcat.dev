@@ -25,11 +25,12 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const author = await sanityFetch<AuthorQueryResult>({
+  const author = (await sanityFetch({
     query: authorQuery,
     params,
     stega: false,
-  });
+  })).data as AuthorQueryResult;
+
   const previousImages = (await parent).openGraph?.images || [];
   const ogImage = resolveOpenGraphImage(author?.coverImage);
 
@@ -43,12 +44,15 @@ export async function generateMetadata(
 }
 
 export default async function AuthorPage({ params }: Props) {
-  const [author] = await Promise.all([
-    sanityFetch<AuthorQueryWithRelatedResult>({
+  const [authorFetch] = await Promise.all([
+    sanityFetch({
       query: authorQueryWithRelated,
       params,
     }),
   ]);
+
+  const author = authorFetch.data as AuthorQueryWithRelatedResult;
+
 
   if (!author?._id) {
     return notFound();

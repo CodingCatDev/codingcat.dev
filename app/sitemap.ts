@@ -11,9 +11,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ? `https://${productionDomain}`
     : "https://codingcat.dev";
 
-  const content = await sanityFetch<SitemapQueryResult>({
+  const content = (await sanityFetch({
     query: sitemapQuery,
-  });
+  })).data as SitemapQueryResult;
 
   const sitemap: MetadataRoute.Sitemap = [
     {

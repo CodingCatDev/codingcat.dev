@@ -15,10 +15,11 @@ import Buy from "@/components/user-buy";
 import UserGoProButton from "@/components/user-go-pro-button";
 
 export default async function Lessons(params: { courseSlug: string }) {
-  const course = await sanityFetch<LessonsInCourseQueryResult>({
+  const course = (await sanityFetch({
     query: lessonsInCourseQuery,
     params,
-  });
+  })).data as LessonsInCourseQueryResult;
+
   return (
     <>
       {course?.sections && (
@@ -28,7 +29,7 @@ export default async function Lessons(params: { courseSlug: string }) {
             Lessons
           </h2>
           {course?.sections?.map((section, i) => (
-            <div key={i} className="flex flex-col">
+            <div key={section.title} className="flex flex-col">
               <div className="text-xl">
                 <h3 className="mb-3 text-3xl leading-snug">{section?.title}</h3>
               </div>

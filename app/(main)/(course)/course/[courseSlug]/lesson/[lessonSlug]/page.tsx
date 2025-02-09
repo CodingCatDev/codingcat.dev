@@ -29,21 +29,21 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const post = await sanityFetch<LessonQueryResult>({
+  const lesson = (await sanityFetch({
     query: lessonQuery,
     params,
     stega: false,
-  });
+  })).data as LessonQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
-  const ogImage = resolveOpenGraphImage(post?.coverImage);
+  const ogImage = resolveOpenGraphImage(lesson?.coverImage);
 
   return {
     authors:
-      post?.author?.map((a) => {
+      lesson?.author?.map((a) => {
         return { name: a.title };
       }) || [],
-    title: post?.title,
-    description: post?.excerpt,
+    title: lesson?.title,
+    description: lesson?.excerpt,
     openGraph: {
       images: ogImage ? ogImage : previousImages,
     },
@@ -51,16 +51,10 @@ export async function generateMetadata(
 }
 
 export default async function LessonPage({ params }: Props) {
-  const [lesson, course] = await Promise.all([
-    sanityFetch<LessonQueryResult>({
-      query: lessonQuery,
-      params,
-    }),
-    sanityFetch<LessonsInCourseQueryResult>({
-      query: lessonsInCourseQuery,
-      params,
-    }),
-  ]);
+  const [lesson, course] = (await Promise.all([
+    sanityFetch({ query: lessonQuery, params }),
+    sanityFetch({ query: lessonsInCourseQuery, params })
+  ])).map(res => res.data) as [LessonQueryResult, NonNullable<LessonsInCourseQueryResult>];
 
   if (!lesson && !course) {
     return notFound();

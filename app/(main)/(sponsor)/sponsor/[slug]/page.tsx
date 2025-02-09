@@ -25,11 +25,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const sponsor = await sanityFetch<SponsorQueryResult>({
+  const sponsor = (await sanityFetch({
     query: sponsorQuery,
     params,
     stega: false,
-  });
+  })).data as SponsorQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
   const ogImage = resolveOpenGraphImage(sponsor?.coverImage);
 
@@ -43,12 +43,12 @@ export async function generateMetadata(
 }
 
 export default async function SponsorPage({ params }: Props) {
-  const [sponsor] = await Promise.all([
-    sanityFetch<SponsorQueryWithRelatedResult>({
+  const [sponsor] = (await Promise.all([
+    sanityFetch({
       query: sponsorQueryWithRelated,
       params,
     }),
-  ]);
+  ])).map((res) => res.data) as [SponsorQueryWithRelatedResult];
 
   if (!sponsor?._id) {
     return notFound();

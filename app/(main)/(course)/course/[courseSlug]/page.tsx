@@ -30,11 +30,11 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const course = await sanityFetch<CourseQueryResult>({
+  const course = (await sanityFetch({
     query: courseQuery,
     params,
     stega: false,
-  });
+  })).data as CourseQueryResult;
   const previousImages = (await parent).openGraph?.images || [];
   const ogImage = resolveOpenGraphImage(course?.coverImage);
 
@@ -52,12 +52,11 @@ export async function generateMetadata(
 }
 
 export default async function CoursePage({ params }: Props) {
-  const [course] = await Promise.all([
-    sanityFetch<CourseQueryResult>({
-      query: courseQuery,
-      params,
-    }),
-  ]);
+  const course = (await sanityFetch({
+    query: courseQuery,
+    params,
+    stega: false,
+  })).data as CourseQueryResult;
 
   if (!course?._id) {
     return notFound();
