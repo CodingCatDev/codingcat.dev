@@ -21,7 +21,7 @@ type Params = Promise<{ slug: string }>;
 
 
 export async function generateMetadata(
-	{ params }: { params: { slug: string } },
+	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { slug } = await params;
