@@ -125,7 +125,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 				</div>
 			</article>
 			<Suspense>
-				<Lessons courseSlug={params.courseSlug} />
+				<Lessons courseSlug={courseSlug} />
 			</Suspense>
 			<aside>
 				<MoreHeader title="Recent Courses" href="/courses/page/1" />
