@@ -12,7 +12,7 @@ import ProBenefits from "@/components/pro-benefits";
 import { Suspense } from "react";
 
 export async function generateMetadata(
-	parent: ResolvingMetadata,
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
 	const page = (
 		await sanityFetch({
