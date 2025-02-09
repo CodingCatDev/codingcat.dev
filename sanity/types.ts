@@ -388,9 +388,6 @@ export type Lesson = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -696,9 +693,6 @@ export type Post = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -849,9 +843,6 @@ export type Podcast = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -1313,9 +1304,6 @@ export type Course = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -1479,9 +1467,6 @@ export type Page = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -1564,29 +1549,12 @@ export type PodcastRssEpisode = {
   };
 };
 
-export type IconPicker = {
-  _type: "iconPicker";
-  provider?: string;
-  name?: string;
-  svg?: string;
-};
-
 export type Code = {
   _type: "code";
   language?: string;
   filename?: string;
   code?: string;
   highlightedLines?: Array<number>;
-};
-
-export type Tags = Array<{
-  _key: string;
-} & Tag>;
-
-export type Tag = {
-  _type: "tag";
-  value?: string;
-  label?: string;
 };
 
 export type CloudinaryAssetContextCustom = {
@@ -1750,7 +1718,7 @@ export type SanityAssistSchemaTypeField = {
   } & SanityAssistInstruction>;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | SanityAssetSourceData | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Slug | Settings | PodcastRssEpisode | IconPicker | Code | Tags | Tag | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | SanityAssetSourceData | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Slug | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: sanity/lib/queries.ts
 // Variable: docCount
@@ -2315,9 +2283,7 @@ export type PageQueryResult = {
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | null;
@@ -3107,9 +3073,7 @@ export type PostQueryResult = {
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | null;
@@ -4205,9 +4169,7 @@ export type PodcastQueryResult = {
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
   podcastType: null;
@@ -5467,9 +5429,7 @@ export type CourseQueryResult = {
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
   podcastType: null;
@@ -5964,9 +5924,7 @@ export type LessonQueryResult = {
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
   locked: boolean | null;
@@ -7975,9 +7933,7 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -8616,9 +8572,7 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -9075,9 +9029,7 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -9534,9 +9486,7 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -10175,9 +10125,7 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {

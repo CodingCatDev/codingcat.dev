@@ -32,7 +32,6 @@ import type {
 } from "@/sanity/types";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { iconPicker } from "sanity-plugin-icon-picker";
 import { ContentType } from "@/lib/types";
 
 const appId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;

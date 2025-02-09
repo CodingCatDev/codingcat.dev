@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next --turbo",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -74,29 +74,27 @@
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.475.0",
     "micromark": "^4.0.1",
-    "next": "^14.2.23",
+    "next": "^15.1.6",
     "next-cloudinary": "^6.16.0",
     "next-sanity": "^9.8.54",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^1.6.12",
     "postcss": "^8.5.1",
-    "react": "^19.0.0",
+    "react": "^18.3.1",
     "react-cookie": "^7.2.2",
     "react-day-picker": "^9.5.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.4.0",
     "react-inlinesvg": "^4.1.8",
     "react-instantsearch": "^7.15.3",
-    "react-instantsearch-nextjs": "^0.3.21",
+    "react-instantsearch-nextjs": "^0.4.4",
     "react-resizable-panels": "^2.1.7",
     "react-syntax-highlighter": "^15.6.1",
     "react-twitter-embed": "^4.0.4",
     "sanity": "^3.74.1",
     "sanity-plugin-cloudinary": "^1.1.5",
-    "sanity-plugin-icon-picker": "^3.3.0",
-    "sanity-plugin-tags": "^2.1.1",
     "server-only": "^0.0.1",
     "sonner": "^1.7.4",
     "styled-components": "^6.1.15",
@@ -121,9 +119,11 @@
     "typescript": "^5"
   },
   "pnpm": {
-    "overrides": {
-      "react": "^18.0.0",
-      "react-dom": "^18.0.0"
+    "peerDependencyRules": {
+      "allowAny": [
+        "react",
+        "react-dom"
+      ]
     }
   }
 }
