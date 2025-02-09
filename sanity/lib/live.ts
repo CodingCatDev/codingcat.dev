@@ -6,12 +6,7 @@ import { client } from "@/sanity/lib/client";
 import { token } from "@/sanity/lib/token";
 
 export const { sanityFetch, SanityLive } = defineLive({
-  client: client.withConfig({
-    // Live content is currently only available on the experimental API
-    // https://www.sanity.io/docs/api-versioning
-    apiVersion: "vX",
-    //@ts-ignore
-    browserToken: token,
-    serverToken: token,
-  }),
+  client,
+  serverToken: token,
+  browserToken: token,
 });
