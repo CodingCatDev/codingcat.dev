@@ -9,12 +9,10 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
-type Props = {
-	params: { slug: string };
-};
+type Params = Promise<{ slug: string }>
 
 export async function generateMetadata(
-	{ params }: Props,
+	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { slug } = await params;
@@ -38,7 +36,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function PagePage({ params }: Props) {
+export default async function PagePage({ params }: { params: Params }) {
 	const { slug } = await params;
 
 	const [page] = (

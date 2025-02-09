@@ -18,12 +18,10 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 
-type Props = {
-	params: { slug: string };
-};
+type Params = Promise<{ slug: string }>
 
 export async function generateMetadata(
-	{ params }: Props,
+	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { slug } = await params;
@@ -51,7 +49,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function PostPage({ params }: Props) {
+export default async function PostPage({ params }: { params: Params }) {
 	const { slug } = await params;
 
 	const [post] = (

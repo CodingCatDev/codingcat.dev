@@ -44,7 +44,7 @@ export const ccdValidateSessionCookie = async (session: string) => {
 export const validateStripeRole = async (uid: string) => {
 	const auth = getAuth(app);
 	const user = await auth.getUser(uid);
-	return user.customClaims?.["stripeRole"];
+	return user.customClaims?.stripeRole;
 };
 
 export const isAdmin = async (uid: string) => {
@@ -66,7 +66,7 @@ export const getShowDrafts = async (uid?: string) => {
 	const auth = getAuth(app);
 	const user = await auth.getUser(uid);
 
-	if (!user?.customClaims?.["stripeRole"]) return false;
+	if (!user?.customClaims?.stripeRole) return false;
 
 	const db = getFirestore();
 	const doc = await db.collection("users").doc(user.uid).get();
