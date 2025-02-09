@@ -7,11 +7,10 @@ import { docCount } from "@/sanity/lib/queries";
 
 const LIMIT = 10;
 
-type Props = {
-	params: { num: string };
-};
+type Params = Promise<{ num: string }>;
 
-export default async function Page({ params }: Props) {
+
+export default async function Page({ params }: { params: Params }) {
 	const [count] = (
 		await Promise.all([
 			sanityFetch({

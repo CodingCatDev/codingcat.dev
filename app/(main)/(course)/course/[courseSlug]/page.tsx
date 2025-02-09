@@ -22,12 +22,10 @@ import ShowPro from "./show-pro";
 import UserGoProButton from "@/components/user-go-pro-button";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 
-type Props = {
-	params: { courseSlug: string };
-};
+type Params = Promise<{ courseSlug: string }>;
 
 export async function generateMetadata(
-	{ params }: Props,
+	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { courseSlug } = await params;
@@ -54,7 +52,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function CoursePage({ params }: Props) {
+export default async function CoursePage({ params }: { params: Params }) {
 	const { courseSlug } = await params;
 
 	const course = (

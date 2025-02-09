@@ -17,12 +17,11 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import UserSocials from "@/components/user-socials";
 import UserRelated from "@/components/user-related";
 
-type Props = {
-	params: { slug: string };
-};
+type Params = Promise<{ slug: string }>;
+
 
 export async function generateMetadata(
-	{ params }: Props,
+	{ params }: { params: { slug: string } },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { slug } = await params;
@@ -46,7 +45,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function SponsorPage({ params }: Props) {
+export default async function SponsorPage({ params }: { params: Params }) {
 	const { slug } = await params;
 
 	const [sponsor] = (

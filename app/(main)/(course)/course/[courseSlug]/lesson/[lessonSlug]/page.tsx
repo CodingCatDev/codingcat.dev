@@ -21,12 +21,10 @@ import { jwtDecode } from "jwt-decode";
 import type { Idt } from "@/lib/firebase.types";
 import { didUserPurchase } from "@/lib/server/firebase";
 
-type Props = {
-	params: { lessonSlug: string; courseSlug: string };
-};
+type Params = Promise<{ lessonSlug: string; courseSlug: string }>;
 
 export async function generateMetadata(
-	{ params }: Props,
+	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const lesson = (
@@ -52,7 +50,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function LessonPage({ params }: Props) {
+export default async function LessonPage({ params }: { params: Params }) {
 	const [lesson, course] = (
 		await Promise.all([
 			sanityFetch({ query: lessonQuery, params }),
@@ -70,7 +68,7 @@ export default async function LessonPage({ params }: Props) {
 	// Check if user is either a pro or paid for lesson
 	if (course?.stripeProduct && lesson?.locked) {
 		//First check if user session is valid
-		const cookieStore = cookies();
+		const cookieStore = await cookies();
 		const sessionCookie = cookieStore.get("app.at");
 		if (!sessionCookie) return redirect(`/course/${course?.slug}?showPro=true`);
 		const jwtPayload = jwtDecode(sessionCookie?.value) as Idt;
