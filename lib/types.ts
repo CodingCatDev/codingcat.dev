@@ -1,4 +1,4 @@
-import { LessonsInCourseQueryResult, PageQueryResult } from "@/sanity.types";
+import type { LessonsInCourseQueryResult, PageQueryResult } from "@/sanity/types";
 
 export type NonNull<T> = Exclude<T, null | undefined>;
 
