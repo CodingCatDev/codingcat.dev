@@ -2,13 +2,12 @@ import "../globals.css";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { VisualEditing, toPlainText } from "next-sanity";
+import { SanityLive } from "@/sanity/lib/live";
 import { Nunito } from "next/font/google";
 import { Inter } from "next/font/google";
 import { draftMode } from "next/headers";
 
-import AlertBanner from "@/components/alert-banner";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
 import type { SettingsQueryResult } from "@/sanity/types";
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -26,6 +25,8 @@ import AlgoliaDialog from "@/components/algolia-dialog";
 import { FaBars } from "react-icons/fa6";
 import PlayerFloating from "@/components/player-floating";
 import { PlayerProvider } from "@/components/player-context";
+import { toPlainText, VisualEditing } from "next-sanity";
+import { DisableDraftMode } from "@/components/disable-draft-mode";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -39,11 +40,13 @@ const inter = Inter({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await sanityFetch<SettingsQueryResult>({
+  const settingsFetch = await sanityFetch({
     query: settingsQuery,
     // Metadata should never contain stega
     stega: false,
   });
+
+  const settings = settingsFetch.data as SettingsQueryResult;
   const title = settings?.title || demo.title;
   const description = settings?.description || demo.description;
 
@@ -77,9 +80,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const data = await sanityFetch<SettingsQueryResult>({
+  const settingsFetch = await sanityFetch({
     query: settingsQuery,
   });
+  const settings = settingsFetch.data as SettingsQueryResult;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -96,7 +101,6 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {draftMode().isEnabled && <AlertBanner />}
             <NextTopLoader color="hsl(var(--primary))" />
             <section className="flex flex-col min-h-[100dvh]">
               <header className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background">
@@ -105,7 +109,7 @@ export default async function RootLayout({
                     CodingCat.dev
                   </Link>
                   <nav className="items-center hidden md:flex gap-6">
-                    <NavHeader navLinks={data?.navLinks} />
+                    <NavHeader navLinks={settings?.navLinks} />
                   </nav>
                 </div>
                 <div className="flex items-center gap-2">
@@ -121,7 +125,7 @@ export default async function RootLayout({
                     <SheetContent side="right">
                       <nav className="py-6 grid gap-2">
                         <SheetTrigger asChild>
-                          <NavHeader navLinks={data?.navLinks} sideOnly />
+                          <NavHeader navLinks={settings?.navLinks} sideOnly />
                         </SheetTrigger>
                       </nav>
                     </SheetContent>
@@ -133,7 +137,13 @@ export default async function RootLayout({
               <Footer />
             </section>
             <PlayerFloating />
-            {draftMode().isEnabled && <VisualEditing />}
+            <SanityLive />
+            {(await draftMode()).isEnabled && (
+              <>
+                <DisableDraftMode />
+                <VisualEditing />
+              </>
+            )}
             <SpeedInsights />
           </ThemeProvider>
         </PlayerProvider>

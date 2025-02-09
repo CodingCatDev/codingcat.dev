@@ -1,4 +1,4 @@
-import { CloudinaryAsset } from "@/sanity/types";
+import type { CloudinaryAsset } from "@/sanity/types";
 import CloudinaryImage from "@/components/cloudinary-image";
 import { getCldImageUrl } from "next-cloudinary";
 
@@ -33,7 +33,7 @@ export default async function CoverImage(props: CoverImageProps) {
     return `data:${response.type};base64,${base64}`
   };
 
-  let image;
+  let image: JSX.Element | undefined;
   if (originalImage?.public_id) {
     image = (
       <CloudinaryImage

@@ -167,7 +167,12 @@ export default defineConfig({
           }),
         },
       },
-      previewUrl: { previewMode: { enable: "/api/draft" } },
+      previewUrl: {
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+          disable: '/api/draft-mode/disable',
+        },
+      },
     }),
     structureTool({ structure: podcastStructure(pageStructure([settings])) }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
