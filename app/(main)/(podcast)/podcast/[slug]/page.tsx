@@ -7,7 +7,7 @@ import DateComponent from "@/components/date";
 import MoreContent from "@/components/more-content";
 import PortableText from "@/components/portable-text";
 
-import type { PodcastQueryResult } from "@/sanity.types";
+import type { PodcastQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { podcastQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";

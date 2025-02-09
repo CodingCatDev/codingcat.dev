@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PodcastQueryResult } from "@/sanity.types";
+import { PodcastQueryResult } from "@/sanity/types";
 import {
   Table,
   TableBody,

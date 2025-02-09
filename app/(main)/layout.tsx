@@ -9,7 +9,7 @@ import { draftMode } from "next/headers";
 
 import AlertBanner from "@/components/alert-banner";
 import NextTopLoader from 'nextjs-toploader';
-import type { SettingsQueryResult } from "@/sanity.types";
+import type { SettingsQueryResult } from "@/sanity/types";
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/live";
 import { settingsQuery } from "@/sanity/lib/queries";

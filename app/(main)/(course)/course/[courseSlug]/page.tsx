@@ -9,7 +9,7 @@ import DateComponent from "@/components/date";
 import MoreContent from "@/components/more-content";
 import PortableText from "@/components/portable-text";
 
-import type { CourseQueryResult } from "@/sanity.types";
+import type { CourseQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { courseQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";

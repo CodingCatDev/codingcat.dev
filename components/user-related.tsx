@@ -1,7 +1,7 @@
 import type {
   AuthorQueryWithRelatedResult,
   GuestQueryResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 
 import Link from "next/link";
 import CoverImage from "@/components/cover-image";

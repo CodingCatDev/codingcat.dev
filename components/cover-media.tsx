@@ -1,4 +1,4 @@
-import { CloudinaryAsset } from "@/sanity.types";
+import { CloudinaryAsset } from "@/sanity/types";
 import { YouTube } from "@/components/youtube";
 import CoverImage from "@/components/cover-image";
 import CoverVideo from "@/components/cover-video";

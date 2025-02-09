@@ -7,7 +7,7 @@ import DateComponent from "@/components/date";
 import MoreContent from "@/components/more-content";
 import Onboarding from "@/components/onboarding";
 
-import type { CoursesQueryResult } from "@/sanity.types";
+import type { CoursesQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { coursesQuery } from "@/sanity/lib/queries";
 import MoreHeader from "@/components/more-header";

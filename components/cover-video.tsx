@@ -1,4 +1,4 @@
-import { CloudinaryAsset } from "@/sanity.types";
+import { CloudinaryAsset } from "@/sanity/types";
 import CloudinaryVideo from "@/components/cloudinary-video";
 
 interface CoverImageProps {

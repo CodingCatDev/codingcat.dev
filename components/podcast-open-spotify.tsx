@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { FaSpotify } from "react-icons/fa6";
-import { PodcastQueryResult } from "@/sanity.types";
+import { PodcastQueryResult } from "@/sanity/types";
 import Link from "next/link";
 
 export default function PodcastOpenSpotify({ podcast }: { podcast: NonNullable<PodcastQueryResult> }) {

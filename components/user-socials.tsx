@@ -1,6 +1,6 @@
 "use client";
 
-import type { AuthorQueryResult } from "@/sanity.types";
+import type { AuthorQueryResult } from "@/sanity/types";
 
 import {
   FaDev,

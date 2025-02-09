@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { useContext, useEffect } from "react";
 import { FaCirclePause, FaPlay } from "react-icons/fa6";
 import { PlayerContext } from "@/components/player-context";
-import { PodcastQueryResult } from "@/sanity.types";
+import { PodcastQueryResult } from "@/sanity/types";
 
 export default function PlayerPlayButton({ podcast }: { podcast: NonNullable<PodcastQueryResult> }) {
     const { setPodcast, audio, audioRef, setIsOpen, podcast: currentPodcast } = useContext(PlayerContext);

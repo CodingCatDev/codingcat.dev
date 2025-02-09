@@ -2,17 +2,20 @@ import CarbonAdBanner from "@/components/carbon-ad-banner";
 import CoverImage from "@/components/cover-image";
 import Buy from "@/components/user-buy";
 import UserGoProButton from "@/components/user-go-pro-button";
-import type { HomePageQueryResult } from "@/sanity.types";
+import type { HomePageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { homePageQuery } from "@/sanity/lib/queries";
 import Link from "next/link";
 
 export default async function HomePage() {
-  const [homePage] = await Promise.all([
-    sanityFetch<HomePageQueryResult>({
+  const [homePageFetch] = await Promise.all([
+    sanityFetch({
       query: homePageQuery,
     }),
   ]);
+
+  const homePage = homePageFetch.data as HomePageQueryResult;
+
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <main className="flex-1">
@@ -141,7 +144,10 @@ export default async function HomePage() {
               {homePage?.topPodcasts
                 ?.slice(0, homePage?.topPodcasts.length / 2)
                 .map((p, i) => (
-                  <div className="grid gap-4" key={i}>
+                  <div 
+                    className="grid gap-4" 
+                    key={`podcast-group-${homePage?.topPodcasts[i * 2]?._id}-${homePage?.topPodcasts[i * 2 + 1]?._id}`}
+                  >
                     {homePage?.topPodcasts
                       ?.slice(i * 2, i * 2 + 2)
                       .map((podcast) => (
@@ -193,20 +199,20 @@ export default async function HomePage() {
               {homePage?.latestPosts
                 ?.slice(0, homePage?.latestPosts.length / 2)
                 .map((p, i) => (
-                  <div className="grid gap-4" key={i}>
+                  <div className="grid gap-4" key={`posts-group-${homePage?.latestPosts[i * 2]?._id}-${homePage?.latestPosts[i * 2 + 1]?._id}`}>
                     {homePage?.latestPosts
                       ?.slice(i * 2, i * 2 + 2)
-                      .map((podcast) => (
+                      .map((post) => (
                         <Link
-                          key={podcast?._id}
-                          href={`/${podcast?._type}/${podcast?.slug}`}
+                          key={post?._id}
+                          href={`/${post?._type}/${post?.slug}`}
                           className="flex flex-col gap-4 shadow-sm hover:scale-105 transform transition duration-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-muted"
                           prefetch={false}
                         >
                           <div className="flex flex-col">
-                            {podcast.coverImage && (
+                            {post.coverImage && (
                               <CoverImage
-                                image={podcast.coverImage}
+                                image={post.coverImage}
                                 width={320}
                                 height={180}
                                 className="aspect-video w-full object-cover object-center"
@@ -214,10 +220,10 @@ export default async function HomePage() {
                             )}
                             <div className="flex flex-col gap-2 p-2 sm:p-6">
                               <h3 className="text-xl sm:text-3xl font-semibold">
-                                {podcast.title}
+                                {post.title}
                               </h3>
                               <p className="text-sm text-muted-foreground line-clamp-2">
-                                {podcast.excerpt}
+                                {post.excerpt}
                               </p>
                             </div>
                           </div>
@@ -230,49 +236,5 @@ export default async function HomePage() {
         </section>
       </main>
     </div>
-  );
-}
-
-function CalendarIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 2v4" />
-      <path d="M16 2v4" />
-      <rect width="18" height="18" x="3" y="4" rx="2" />
-      <path d="M3 10h18" />
-    </svg>
-  );
-}
-
-function CatIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z" />
-      <path d="M8 14v.5" />
-      <path d="M16 14v.5" />
-      <path d="M11.25 16.25h1.5L12 17l-.75-.75Z" />
-    </svg>
   );
 }

@@ -2,7 +2,7 @@
 import type {
   LessonQueryResult,
   LessonsInCourseQueryResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 import { useEffect, useState } from "react";
 import LessonPanel from "./lesson-panel";
 

@@ -9,7 +9,7 @@ import Link from "next/link";
 import type {
   LessonQueryResult,
   LessonsInCourseQueryResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 import BadgePro from "@/components/badge-pro";
 import NavLesson from "./nav-lesson";
 import CoverMedia from "@/components/cover-media";

@@ -1,6 +1,6 @@
 "use client";
 
-import type { LessonsInCourseQueryResult } from "@/sanity.types";
+import type { LessonsInCourseQueryResult } from "@/sanity/types";
 import Link from "next/link";
 
 import { useActivePath } from "@/lib/hooks";

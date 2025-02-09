@@ -1,7 +1,7 @@
 "use client";
 import { useCompletedLesson, useFirestoreUser } from "@/lib/firebase.hooks";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LessonsInCourseQueryResult } from "@/sanity.types";
+import { LessonsInCourseQueryResult } from "@/sanity/types";
 import { useToast } from "@/components/ui/use-toast";
 import { BaseCompletedLesson } from "@/lib/types";
 

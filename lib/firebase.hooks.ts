@@ -16,7 +16,7 @@ import {
 import { useEffect, useState } from "react";
 import { app } from "@/lib/firebase";
 import { User } from "./firebase.types";
-import { LessonsInCourseQueryResult } from "@/sanity.types";
+import { LessonsInCourseQueryResult } from "@/sanity/types";
 import { usePathname } from "next/navigation";
 import {
   BaseBookmarkContent,

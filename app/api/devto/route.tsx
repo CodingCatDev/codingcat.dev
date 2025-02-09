@@ -1,4 +1,4 @@
-import { PodcastQueryResult } from "@/sanity.types";
+import { PodcastQueryResult } from "@/sanity/types";
 import { podcastQuery, postQuery } from "@/sanity/lib/queries";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import toMarkdown from '@sanity/block-content-to-markdown'

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import type {
   MorePodcastQueryResult,
   MorePostQueryResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import {
   morePodcastQuery,

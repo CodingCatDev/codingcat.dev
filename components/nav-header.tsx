@@ -1,6 +1,6 @@
 "use client";
 
-import type { Settings } from "@/sanity.types";
+import type { Settings } from "@/sanity/types";
 
 import { useActivePath } from "@/lib/hooks";
 import NavLink from "@/components/nav-link";

@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { PodcastQueryResult } from "@/sanity.types";
+import { PodcastQueryResult } from "@/sanity/types";
 import Link from "next/link";
 import { SiApplepodcasts } from "react-icons/si";
 

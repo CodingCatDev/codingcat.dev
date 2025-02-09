@@ -7,7 +7,7 @@ import PortableText from "@/components/portable-text";
 import type {
   GuestQueryResult,
   GuestQueryWithRelatedResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { guestQuery, guestQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";

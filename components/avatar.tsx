@@ -1,7 +1,7 @@
 "use client";
 
 import { CldImage } from "next-cloudinary";
-import type { Author } from "@/sanity.types";
+import type { Author } from "@/sanity/types";
 import Link from "next/link";
 
 interface Props {

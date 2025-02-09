@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";
 
-import type { PageQueryResult } from "@/sanity.types";
+import type { PageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";

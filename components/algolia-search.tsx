@@ -29,7 +29,7 @@ import {
   GuestQueryResult,
   PodcastQueryResult,
   PostQueryResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { iconPicker } from "sanity-plugin-icon-picker";

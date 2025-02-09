@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import type {
   LessonQueryResult,
   LessonsInCourseQueryResult,
-} from "@/sanity.types";
+} from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { lessonQuery, lessonsInCourseQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
