@@ -1,4 +1,4 @@
-import { htmlToBlocks } from "@sanity/block-tools";
+import { htmlToBlocks } from "@portabletext/block-tools";
 import { micromark } from "micromark";
 
 interface Input {
