@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { Box, Stack, TextInput } from "@sanity/ui";
-import { ObjectInputProps, set, unset } from "sanity";
+import { type ObjectInputProps, set, unset } from "sanity";
 import { youtubeParser } from "@/lib/utils";
 
 export function VideoPreview(props: { youtube: string }) {

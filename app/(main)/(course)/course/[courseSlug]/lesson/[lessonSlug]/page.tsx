@@ -15,10 +15,10 @@ import LessonPanelClientOnly from "./lesson-client-only";
 import MoreContent from "@/components/more-content";
 import MoreHeader from "@/components/more-header";
 import PortableText from "@/components/portable-text";
-import { type PortableTextBlock } from "next-sanity";
+import type { PortableTextBlock } from "next-sanity";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
-import { Idt } from "@/lib/firebase.types";
+import type { Idt } from "@/lib/firebase.types";
 import { didUserPurchase } from "@/lib/server/firebase";
 
 type Props = {

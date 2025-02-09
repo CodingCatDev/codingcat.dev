@@ -14,8 +14,8 @@ import { useFirestoreUser } from "@/lib/firebase.hooks";
 import Link from "next/link";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
-import { CourseQueryResult, HomePageQueryResult } from "@/sanity/types";
-import { Price3 } from "@/lib/stripe.types";
+import { CourseQueryResult, type HomePageQueryResult } from "@/sanity/types";
+import type { Price3 } from "@/lib/stripe.types";
 
 export default function Buy({
   title,

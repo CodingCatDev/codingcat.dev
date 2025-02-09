@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import { type PortableTextBlock } from "next-sanity";
+import type { PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";

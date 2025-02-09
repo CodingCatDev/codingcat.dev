@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import { type PortableTextBlock } from "next-sanity";
+import type { PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";
@@ -163,7 +163,7 @@ export default async function SponsorshipsPodcastPage() {
               <div className="flex flex-wrap justify-center sm:flex-nowrap">
                 <div className="flex flex-col gap-4 p-8 font-extrabold">
                   <p className="text-2xl">
-                    <a href="/author/alex-patterson" target="_blank">
+                    <a href="/author/alex-patterson" target="_blank" rel="noreferrer">
                       Alex
                     </a>{" "}
                     created CodingCat.dev so that everyone has access to a great

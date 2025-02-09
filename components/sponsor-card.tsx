@@ -1,4 +1,4 @@
-import { PodcastQueryResult } from "@/sanity/types";
+import type { PodcastQueryResult } from "@/sanity/types";
 import Link, { LinkProps } from "next/link";
 import {
   Card,

@@ -1,7 +1,7 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { sitemapQuery } from "@/sanity/lib/queries";
 import { sanityFetch } from "@/sanity/lib/live";
-import { SitemapQueryResult } from "@/sanity/types";
+import type { SitemapQueryResult } from "@/sanity/types";
 import { ContentType } from "@/lib/types";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

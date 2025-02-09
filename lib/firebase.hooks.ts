@@ -15,10 +15,10 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { app } from "@/lib/firebase";
-import { User } from "./firebase.types";
-import { LessonsInCourseQueryResult } from "@/sanity/types";
+import type { User } from "./firebase.types";
+import type { LessonsInCourseQueryResult } from "@/sanity/types";
 import { usePathname } from "next/navigation";
-import {
+import type {
   BaseBookmarkContent,
   BaseCompletedLesson,
   BookmarkPath,

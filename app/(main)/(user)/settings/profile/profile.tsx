@@ -11,11 +11,11 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FormEvent, Suspense, useEffect, useState } from "react";
+import { type FormEvent, Suspense, useEffect, useState } from "react";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { app } from "@/lib/firebase";
-import { User } from "@/lib/firebase.types";
+import type { User } from "@/lib/firebase.types";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { useFirestoreUser } from "@/lib/firebase.hooks";

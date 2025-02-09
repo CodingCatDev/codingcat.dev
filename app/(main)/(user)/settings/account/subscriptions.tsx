@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useFirestoreUser } from "@/lib/firebase.hooks";
-import { Subscription } from "@/lib/stripe.types";
+import type { Subscription } from "@/lib/stripe.types";
 import {
   collection,
   doc,

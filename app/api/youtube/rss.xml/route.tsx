@@ -37,7 +37,7 @@ async function fetchPodcastPlaylists(channelId: string): Promise<PlaylistItem[]>
   );
 }
 
-async function fetchPlaylistItems(playlistId: string, pageToken: string = ''): Promise<PlaylistItemsResponse> {
+async function fetchPlaylistItems(playlistId: string, pageToken = ''): Promise<PlaylistItemsResponse> {
   const url = `https://www.googleapis.com/youtube/v3/playlistItems?key=${YOUTUBE_API_KEY}&playlistId=${playlistId}&part=snippet&maxResults=50${pageToken ? `&pageToken=${pageToken}` : ''}`;
   const response = await fetch(url);
   return response.json();

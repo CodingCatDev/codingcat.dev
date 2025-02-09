@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import GoPro from "./user-go-pro";
 import Link from "next/link";
 import CoverImage from "./cover-image";
-import { CloudinaryAsset } from "@/sanity/types";
+import type { CloudinaryAsset } from "@/sanity/types";
 import { Button } from "./ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 

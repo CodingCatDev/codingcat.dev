@@ -1,9 +1,9 @@
 "use client";
 import { useCompletedLesson, useFirestoreUser } from "@/lib/firebase.hooks";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LessonsInCourseQueryResult } from "@/sanity/types";
+import type { LessonsInCourseQueryResult } from "@/sanity/types";
 import { useToast } from "@/components/ui/use-toast";
-import { BaseCompletedLesson } from "@/lib/types";
+import type { BaseCompletedLesson } from "@/lib/types";
 
 export default function LessonComplete({
   lesson,

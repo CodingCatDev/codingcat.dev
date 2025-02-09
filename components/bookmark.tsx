@@ -2,7 +2,7 @@
 import { useBookmarked, useFirestoreUser } from "@/lib/firebase.hooks";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { BaseBookmarkContent } from "@/lib/types";
+import type { BaseBookmarkContent } from "@/lib/types";
 
 export default function Bookmark({
   content,

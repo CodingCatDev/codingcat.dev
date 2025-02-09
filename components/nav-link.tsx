@@ -1,6 +1,6 @@
 "use client";
 
-import Link, { LinkProps } from "next/link";
+import Link, { type LinkProps } from "next/link";
 
 import { useActivePath } from "@/lib/hooks";
 

@@ -1,4 +1,4 @@
-import { CloudinaryAsset } from "@/sanity/types";
+import type { CloudinaryAsset } from "@/sanity/types";
 import CloudinaryImage from "@/components/cloudinary-image";
 
 import { getCldImageUrl } from "next-cloudinary";

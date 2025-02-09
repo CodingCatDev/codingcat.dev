@@ -2,7 +2,7 @@
 
 import {
   CldVideoPlayer as CldVideoPlayerDefault,
-  CldVideoPlayerProps,
+  type CldVideoPlayerProps,
 } from "next-cloudinary";
 import "next-cloudinary/dist/cld-video-player.css";
 

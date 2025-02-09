@@ -1,6 +1,6 @@
 "use client"
-import { PodcastQueryResult } from "@/sanity/types";
-import { Dispatch, MutableRefObject, SetStateAction, createContext, useEffect, useRef, useState } from "react";
+import type { PodcastQueryResult } from "@/sanity/types";
+import { type Dispatch, type MutableRefObject, type SetStateAction, createContext, useEffect, useRef, useState } from "react";
 
 export const PlayerContext = createContext<{
     podcast: PodcastQueryResult,

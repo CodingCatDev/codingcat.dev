@@ -1,10 +1,10 @@
 import { getAuth } from "firebase-admin/auth";
 import { app } from "@/lib/server/firebase";
 import { jwtDecode } from "jwt-decode";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  let sessionCookie = request.cookies.get("app.at");
+  const sessionCookie = request.cookies.get("app.at");
 
   if (!sessionCookie) return Response.json({}, { status: 401 });
 

@@ -2,7 +2,7 @@ import { getAuth } from "firebase-admin/auth";
 import { cookies } from "next/headers";
 import { app } from "@/lib/server/firebase";
 import { jwtDecode } from "jwt-decode";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   const data = await request.json();

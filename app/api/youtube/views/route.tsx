@@ -72,10 +72,10 @@ export async function POST(request: NextRequest) {
 
     // Update current doc with stats
     const sanityUpdate = await sanityWriteClient.patch(lastId).set({
-      'statistics.youtube.commentCount': parseInt(statistics.commentCount),
-      'statistics.youtube.favoriteCount': parseInt(statistics.favoriteCount),
-      'statistics.youtube.likeCount': parseInt(statistics.likeCount),
-      'statistics.youtube.viewCount': parseInt(statistics.viewCount),
+      'statistics.youtube.commentCount': Number.parseInt(statistics.commentCount),
+      'statistics.youtube.favoriteCount': Number.parseInt(statistics.favoriteCount),
+      'statistics.youtube.likeCount': Number.parseInt(statistics.likeCount),
+      'statistics.youtube.viewCount': Number.parseInt(statistics.viewCount),
     }).commit();
 
     // Trigger next call, don't wait for response

@@ -1,5 +1,5 @@
 import { youtubeParser } from "@/lib/utils";
-import { CloudinaryAsset } from "@/sanity/types";
+import type { CloudinaryAsset } from "@/sanity/types";
 import CoverImage from "@/components/cover-image";
 import { YouTubeEmbed } from "./youtube-embed";
 

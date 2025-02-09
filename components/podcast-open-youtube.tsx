@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { FaYoutube } from "react-icons/fa6";
-import { PodcastQueryResult } from "@/sanity/types";
+import type { PodcastQueryResult } from "@/sanity/types";
 import Link from "next/link";
 
 export default function PodcastOpenYouTube({ podcast }: { podcast: NonNullable<PodcastQueryResult> }) {

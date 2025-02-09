@@ -8,7 +8,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { addSubscription } from "@/lib/firebase";
 import { onSnapshot } from "firebase/firestore";

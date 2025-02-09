@@ -77,7 +77,7 @@ export interface Container {
   providers: Providers;
 }
 
-export interface Providers {}
+export type Providers = {}
 
 export interface DatabaseId {
   projectId: string;
@@ -95,7 +95,7 @@ export interface Settings {
   useFetchStreams: boolean;
 }
 
-export interface ExperimentalLongPollingOptions {}
+export type ExperimentalLongPollingOptions = {}
 
 export interface Product {
   converter: any;
@@ -149,7 +149,7 @@ export interface Container2 {
   providers: Providers2;
 }
 
-export interface Providers2 {}
+export type Providers2 = {}
 
 export interface DatabaseId2 {
   projectId: string;
@@ -167,7 +167,7 @@ export interface Settings2 {
   useFetchStreams: boolean;
 }
 
-export interface ExperimentalLongPollingOptions2 {}
+export type ExperimentalLongPollingOptions2 = {}
 
 export interface CanceledAt {
   seconds: number;
@@ -231,7 +231,7 @@ export interface Container3 {
   providers: Providers3;
 }
 
-export interface Providers3 {}
+export type Providers3 = {}
 
 export interface DatabaseId3 {
   projectId: string;
@@ -249,7 +249,7 @@ export interface Settings3 {
   useFetchStreams: boolean;
 }
 
-export interface ExperimentalLongPollingOptions3 {}
+export type ExperimentalLongPollingOptions3 = {}
 
 export interface EndedAt {
   seconds: number;
@@ -292,7 +292,7 @@ export interface Price3 {
   recurring: Recurring;
 }
 
-export interface Metadata {}
+export type Metadata = {}
 
 export interface Product2 {
   features: any[];
@@ -354,13 +354,13 @@ export interface Plan {
   transform_usage: any;
 }
 
-export interface Metadata3 {}
+export type Metadata3 = {}
 
-export interface Metadata4 {}
+export type Metadata4 = {}
 
 export interface Created {
   seconds: number;
   nanoseconds: number;
 }
 
-export interface Metadata5 {}
+export type Metadata5 = {}

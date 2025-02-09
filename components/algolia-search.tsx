@@ -1,7 +1,7 @@
 "use client";
 
 import algoliasearch from "algoliasearch/lite";
-import { Hit as AlgoliaHit, SearchClient } from "instantsearch.js";
+import type { Hit as AlgoliaHit, SearchClient } from "instantsearch.js";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaX } from "react-icons/fa6";
@@ -18,13 +18,13 @@ import {
   Highlight,
   SearchBox,
   RefinementList,
-  UseDynamicWidgetsProps,
+  type UseDynamicWidgetsProps,
   PoweredBy,
 } from "react-instantsearch";
 import { InstantSearchNext } from "react-instantsearch-nextjs";
 import { useDynamicWidgets } from "react-instantsearch";
 
-import {
+import type {
   AuthorQueryResult,
   GuestQueryResult,
   PodcastQueryResult,
