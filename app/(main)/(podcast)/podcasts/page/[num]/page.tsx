@@ -1,6 +1,6 @@
 import MoreContent from "@/components/more-content";
 import { DocCountResult } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 
 import PaginateList from "@/components/paginate-list";
 import { docCount } from "@/sanity/lib/queries";

@@ -11,7 +11,7 @@ import AlertBanner from "@/components/alert-banner";
 import NextTopLoader from 'nextjs-toploader';
 import type { SettingsQueryResult } from "@/sanity.types";
 import * as demo from "@/sanity/lib/demo";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";

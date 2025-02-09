@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 import { sitemapQuery } from "@/sanity/lib/queries";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { SitemapQueryResult } from "@/sanity.types";
 import { ContentType } from "@/lib/types";
 

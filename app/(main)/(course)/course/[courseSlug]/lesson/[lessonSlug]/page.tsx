@@ -8,7 +8,7 @@ import type {
   LessonQueryResult,
   LessonsInCourseQueryResult,
 } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { lessonQuery, lessonsInCourseQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import LessonPanelClientOnly from "./lesson-client-only";

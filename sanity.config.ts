@@ -3,7 +3,7 @@
  * This config is used to set up Sanity Studio that's mounted on the `app/(sanity)/studio/[[...tool]]/page.tsx` route
  */
 import { visionTool } from "@sanity/vision";
-import { PluginOptions, defineConfig } from "sanity";
+import { type PluginOptions, defineConfig } from "sanity";
 import { cloudinarySchemaPlugin } from "sanity-plugin-cloudinary";
 import { tags } from "sanity-plugin-tags";
 import { codeInput } from "@sanity/code-input";
@@ -22,7 +22,7 @@ import {
   defineLocations,
   type DocumentLocation,
 } from "sanity/presentation";
-import { DocumentTypeListBuilder, StructureResolver, structureTool } from "sanity/structure";
+import { DocumentTypeListBuilder, type StructureResolver, structureTool } from "sanity/structure";
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
@@ -158,6 +158,7 @@ export default defineConfig({
               locations: [
                 {
                   title: doc?.title || "Untitled",
+                  // biome-ignore lint/style/noNonNullAssertion: <explanation>
                   href: resolveHref("post", doc?.slug)!,
                 },
                 homeLocation,

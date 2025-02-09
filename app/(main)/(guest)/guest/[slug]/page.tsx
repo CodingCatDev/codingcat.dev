@@ -8,7 +8,7 @@ import type {
   GuestQueryResult,
   GuestQueryWithRelatedResult,
 } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { guestQuery, guestQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";

@@ -8,7 +8,7 @@ import MoreContent from "@/components/more-content";
 import Onboarding from "@/components/onboarding";
 
 import type { BlogQueryResult } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { blogQuery } from "@/sanity/lib/queries";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

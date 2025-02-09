@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import CoverImage from "@/components/cover-image";
 import type { LessonsInCourseQueryResult } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { lessonsInCourseQuery } from "@/sanity/lib/queries";
 import {
   Card,

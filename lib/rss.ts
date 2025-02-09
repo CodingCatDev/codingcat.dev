@@ -1,5 +1,5 @@
 import { Feed, type Author as FeedAuthor } from "feed";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { RssQueryResult } from "@/sanity.types";
 import { rssQuery } from "@/sanity/lib/queries";
 import { toHTML } from "@portabletext/to-html";

@@ -8,7 +8,7 @@ import type {
   AuthorQueryResult,
   AuthorQueryWithRelatedResult,
 } from "@/sanity.types";
-import { sanityFetch } from "@/sanity/lib/fetch";
+import { sanityFetch } from "@/sanity/lib/live";
 import { authorQuery, authorQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";

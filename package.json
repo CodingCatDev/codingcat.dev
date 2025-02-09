@@ -1,12 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "predev": "pnpx sanity@latest schema extract --path=./sanity/extract.json && pnpx sanity@latest typegen generate",
     "dev": "next",
-    "prebuild": "pnpx sanity@latest schema extract --path=./sanity/extract.json && pnpx sanity@latest typegen generate",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "predev": "npm run typegen",
+    "prebuild": "npm run typegen",
+    "typegen": "sanity schema extract --path=./sanity/extract.json && sanity typegen generate"
   },
   "dependencies": {
     "@codingcatdev/sanity-plugin-podcast-rss": "^1.0.0",
