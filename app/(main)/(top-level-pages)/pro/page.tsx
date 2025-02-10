@@ -12,7 +12,7 @@ import ProBenefits from "@/components/pro-benefits";
 import { Suspense } from "react";
 
 type Props = {
-  params: Promise
+  params: Promise<{ slug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
  
