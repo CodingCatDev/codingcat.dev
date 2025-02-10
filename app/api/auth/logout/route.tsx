@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
-export function POST(request: Request) {
-	const cookieStore = cookies();
+export async function POST(request: Request) {
+	const cookieStore = await cookies();
 	cookieStore.delete("app.at");
 	cookieStore.delete("app.at_exp");
 	cookieStore.delete("app.idt");
