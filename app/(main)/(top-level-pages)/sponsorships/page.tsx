@@ -12,8 +12,14 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import CoverImage from "@/components/cover-image";
 import SponsorshipCards from "./sponsorship-cards";
 
+type Props = {
+  params: Promise
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+ 
 export async function generateMetadata(
-	parent: ResolvingMetadata,
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
 	const page = (
 		await sanityFetch({
@@ -36,7 +42,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function SponsorshipsPage() {
+export default async function SponsorshipsPage({ params, searchParams }: Props) {
 	const page = (
 		await sanityFetch({
 			query: pageQuery,
