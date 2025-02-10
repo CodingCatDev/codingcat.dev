@@ -13,7 +13,7 @@ import CoverImage from "@/components/cover-image";
 import SponsorshipCards from "./sponsorship-cards";
 
 type Props = {
-  params: Promise
+  params: Promise<{ slug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
  
