@@ -12,13 +12,13 @@ import ProBenefits from "@/components/pro-benefits";
 import { Suspense } from "react";
 
 type Props = {
-  params: Promise<{ slug: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
- 
+	params: Promise<{ slug: string }>;
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
 export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
+	{ params, searchParams }: Props,
+	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const page = (
 		await sanityFetch({

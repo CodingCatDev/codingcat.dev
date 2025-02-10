@@ -10,13 +10,13 @@ import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
 type Props = {
-  params: Promise<{ slug: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
- 
+	params: Promise<{ slug: string }>;
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
 export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
+	{ params, searchParams }: Props,
+	parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { slug } = await params;
 

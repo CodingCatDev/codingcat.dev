@@ -9,7 +9,6 @@ const LIMIT = 10;
 
 type Params = Promise<{ num: string }>;
 
-
 export default async function Page({ params }: { params: Params }) {
 	const [count] = (
 		await Promise.all([

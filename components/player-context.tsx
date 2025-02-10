@@ -85,8 +85,8 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
 
 	useEffect(() => {
 		const src = podcast?.spotify?.enclosures?.at(0)?.url;
-		if (!src) return;
-		if (src === audio.src) return;
+		if (!src){ return;}
+		if (src === audio.src){ return;}
 		setAudio((p) => {
 			return { ...p, src };
 		});
@@ -94,7 +94,7 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
 	}, [podcast, audio.src]);
 
 	useEffect(() => {
-		if (!audioRef.current) return;
+		if (!audioRef.current){ return;}
 		audioRef.current.volume = volume / 100;
 	}, [volume]);
 
@@ -105,11 +105,11 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
 	}, [podcast]);
 
 	useEffect(() => {
-		if (audioRef.current) audioRef.current.playbackRate = audio.playbackRate;
+		if (audioRef.current){ audioRef.current.playbackRate = audio.playbackRate;}
 	}, [audio.playbackRate]);
 
 	useEffect(() => {
-		if (!audio?.src || audioRef.current?.src === audio.src) return;
+		if (!audio?.src || audioRef.current?.src === audio.src){ return;}
 
 		audioRef.current = new Audio(audio.src);
 
@@ -131,9 +131,9 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
 		});
 
 		// time and duration
-		audioRef.current.addEventListener("loadedmetadata", (e) => {
+		audioRef.current.addEventListener("loadedmetadata", () => {
 			setAudio((p) => {
-				if (!audioRef?.current) return p;
+				if (!audioRef?.current){ return p;}
 				return {
 					...p,
 					curTime: audioRef.current.currentTime,
@@ -143,7 +143,7 @@ export const PlayerProvider = ({ children }: { children: JSX.Element }) => {
 		});
 		audioRef.current.addEventListener("timeupdate", () => {
 			setAudio((p) => {
-				if (!audioRef?.current) return p;
+				if (!audioRef?.current){ return p;}
 				return {
 					...p,
 					curTime: audioRef.current.currentTime,

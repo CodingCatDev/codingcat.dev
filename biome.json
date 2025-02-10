@@ -17,7 +17,6 @@
 			},
 			"correctness": {
 				"useExhaustiveDependencies": "off",
-				"noUnusedImports": "error",
 				"noUnusedFunctionParameters": "warn"
 			},
 			"style": {
@@ -26,7 +25,7 @@
 					"fix": "safe"
 				},
 				"noNonNullAssertion": "warn",
-				"useBlockStatements": "warn"
+				"useBlockStatements": "error"
 			}
 		}
 	},
@@ -34,10 +33,14 @@
 		"enabled": true
 	},
 	"files": {
-		"ignore": ["./packages/database/src/zod/index.ts"]
+		"ignore": ["node_modules/**", "sanity/types.ts"]
 	},
 	"javascript": {
-		"jsxRuntime": "reactClassic"
+		"jsxRuntime": "reactClassic",
+		"formatter": {
+			"trailingCommas": "all",
+			"semicolons": "always"
+		}
 	},
 	"vcs": {
 		"enabled": true,

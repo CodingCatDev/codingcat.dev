@@ -23,7 +23,7 @@ import PodcastOpenApple from "@/components/podcast-open-apple";
 import PodcastOpenYouTube from "@/components/podcast-open-youtube";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 
-type Params = Promise<{ slug: string }>
+type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata(
 	{ params }: { params: Params },

@@ -39,11 +39,9 @@ export default async function PaginateList({
 						</>
 					)}
 					{pageNumber > 2 && (
-						<>
-							<PaginationItem>
-								<PaginationEllipsis />
-							</PaginationItem>
-						</>
+						<PaginationItem>
+							<PaginationEllipsis />
+						</PaginationItem>
 					)}
 					<PaginationItem>
 						<PaginationLink
@@ -54,11 +52,9 @@ export default async function PaginateList({
 						</PaginationLink>
 					</PaginationItem>
 					{pageNumber < total - 1 && (
-						<>
-							<PaginationItem>
-								<PaginationEllipsis />
-							</PaginationItem>
-						</>
+						<PaginationItem>
+							<PaginationEllipsis />
+						</PaginationItem>
 					)}
 					{pageNumber !== total && (
 						<PaginationItem>

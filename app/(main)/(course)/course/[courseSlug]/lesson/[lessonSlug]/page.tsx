@@ -70,13 +70,13 @@ export default async function LessonPage({ params }: { params: Params }) {
 		//First check if user session is valid
 		const cookieStore = await cookies();
 		const sessionCookie = cookieStore.get("app.at");
-		if (!sessionCookie) return redirect(`/course/${course?.slug}?showPro=true`);
+		if (!sessionCookie){ return redirect(`/course/${course?.slug}?showPro=true`);}
 		const jwtPayload = jwtDecode(sessionCookie?.value) as Idt;
-		if (!jwtPayload?.exp)
-			return redirect(`/course/${course?.slug}?showPro=true`);
+		if (!jwtPayload?.exp){
+			return redirect(`/course/${course?.slug}?showPro=true`);}
 		const expiration = jwtPayload.exp;
 		const isExpired = expiration * 1000 < Date.now();
-		if (isExpired) return redirect(`/course/${course?.slug}?showPro=true`);
+		if (isExpired){ return redirect(`/course/${course?.slug}?showPro=true`);}
 
 		//Check if user isn't pro
 		if (!jwtPayload?.stripeRole) {
@@ -84,7 +84,7 @@ export default async function LessonPage({ params }: { params: Params }) {
 				course.stripeProduct,
 				jwtPayload.user_id,
 			);
-			if (!purchased) return redirect(`/course/${course?.slug}?showPro=true`);
+			if (!purchased){ return redirect(`/course/${course?.slug}?showPro=true`);}
 		}
 	}
 

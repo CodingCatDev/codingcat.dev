@@ -31,7 +31,7 @@ export default async function Lessons(params: { courseSlug: string }) {
 					<h2 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
 						Lessons
 					</h2>
-					{course?.sections?.map((section, i) => (
+					{course?.sections?.map((section) => (
 						<div key={section.title} className="flex flex-col">
 							<div className="text-xl">
 								<h3 className="mb-3 text-3xl leading-snug">{section?.title}</h3>

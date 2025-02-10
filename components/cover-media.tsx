@@ -14,10 +14,20 @@ export default function CoverMedia(props: CoverMediaProps) {
 	const { cloudinaryImage, cloudinaryVideo, youtube, className } = props;
 
 	if (cloudinaryVideo?.public_id) {
-		return <CoverVideo cloudinaryVideo={cloudinaryVideo} className={className} />;
+		return (
+			<CoverVideo cloudinaryVideo={cloudinaryVideo} className={className} />
+		);
 	}
 	if (youtube) {
-		return <YouTube youtube={youtube} image={cloudinaryImage} className={className} />;
+		return (
+			<YouTube
+				youtube={youtube}
+				image={cloudinaryImage}
+				className={className}
+			/>
+		);
 	}
-	return <CoverImage image={cloudinaryImage} priority={true} className={className} />;
+	return (
+		<CoverImage image={cloudinaryImage} priority={true} className={className} />
+	);
 }

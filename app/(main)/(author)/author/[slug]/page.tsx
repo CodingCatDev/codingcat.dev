@@ -17,7 +17,7 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import UserSocials from "@/components/user-socials";
 import UserRelated from "@/components/user-related";
 
-type Params = Promise<{ slug: string }>
+type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata(
 	{ params }: { params: Params },

@@ -40,7 +40,11 @@ export default async function UserRelated(
 					return (
 						<article key={_id}>
 							<Link href={`/${_type}/${slug}`} className="block mb-5 group">
-								<CoverImage image={coverImage} priority={false} className="w-24 h-24 md:w-32 md:h-32 rounded-md" />
+								<CoverImage
+									image={coverImage}
+									priority={false}
+									className="w-24 h-24 md:w-32 md:h-32 rounded-md"
+								/>
 							</Link>
 							<h3 className="mb-3 text-3xl leading-snug text-balance">
 								<Link href={`/${_type}/${slug}`} className="hover:underline">
@@ -68,7 +72,7 @@ export default async function UserRelated(
 					coverImage: CloudinaryAsset | null;
 					date: string;
 				}>;
-				if (!contents?.length) return <span key={_type} />;
+				if (!contents?.length){ return <span key={_type} />;}
 				return (
 					<section key={_type} className="flex flex-col">
 						<hr className="my-12 md:my-24 border-accent-2" />

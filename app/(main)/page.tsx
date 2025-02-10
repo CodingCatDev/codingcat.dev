@@ -146,7 +146,7 @@ export default async function HomePage() {
 						<div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
 							{homePage?.topPodcasts
 								?.slice(0, homePage?.topPodcasts.length / 2)
-								.map((p, i) => (
+								.map((_p, i) => (
 									<div
 										className="grid gap-4"
 										key={`podcast-group-${homePage?.topPodcasts[i * 2]?._id}-${homePage?.topPodcasts[i * 2 + 1]?._id}`}
@@ -201,7 +201,7 @@ export default async function HomePage() {
 						<div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
 							{homePage?.latestPosts
 								?.slice(0, homePage?.latestPosts.length / 2)
-								.map((p, i) => (
+								.map((_p, i) => (
 									<div
 										className="grid gap-4"
 										key={`posts-group-${homePage?.latestPosts[i * 2]?._id}-${homePage?.latestPosts[i * 2 + 1]?._id}`}

@@ -48,9 +48,7 @@ const homeLocation = {
 	href: "/",
 } satisfies DocumentLocation;
 
-export const podcastStructure = (
-	structure: StructureResolver,
-): StructureResolver => {
+export const podcastStructure = (): StructureResolver => {
 	return (S) => {
 		return S.list()
 			.title("Content")
@@ -180,11 +178,11 @@ export default defineConfig({
 				},
 			},
 		}),
-		structureTool({ structure: podcastStructure(pageStructure([settings])) }),
+		structureTool({ structure: podcastStructure() }),
 		// Configures the global "new document" button, and document actions, to suit the Settings document singleton
 		singletonPlugin([settings.name]),
 		// Sets up AI Assist with preset prompts
-		// https://www.sanity.io/docs/ai-assist
+		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
 		cloudinarySchemaPlugin(),
 		// tags(),

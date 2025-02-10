@@ -60,13 +60,13 @@ export const setStripeRole = async (uid: string, remove = false) => {
 };
 
 export const getShowDrafts = async (uid?: string) => {
-	if (!uid) return false;
+	if (!uid) {return false;}
 
 	// Check if user is Pro and wants drafts
 	const auth = getAuth(app);
 	const user = await auth.getUser(uid);
 
-	if (!user?.customClaims?.stripeRole) return false;
+	if (!user?.customClaims?.stripeRole) {return false;}
 
 	const db = getFirestore();
 	const doc = await db.collection("users").doc(user.uid).get();
@@ -80,7 +80,7 @@ export const getStripeProducts = async () => {
 	const products: any = [];
 	const db = getFirestore();
 
-	if (!db) return products;
+	if (!db) {return products;}
 
 	const snapshot = await db
 		.collection("stripe-products")
@@ -105,7 +105,7 @@ export const getStripeProducts = async () => {
 };
 
 export const didUserPurchase = async (stripeId: string, uid?: string) => {
-	if (!uid) return false;
+	if (!uid) {return false;}
 
 	// User
 	const auth = getAuth(app);
@@ -113,7 +113,7 @@ export const didUserPurchase = async (stripeId: string, uid?: string) => {
 
 	const db = getFirestore();
 
-	if (!db) return false;
+	if (!db) {return false;}
 
 	const snapshot = await db
 		.collection(`stripe-customers/${user.uid}/payments`)

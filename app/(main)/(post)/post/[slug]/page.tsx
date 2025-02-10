@@ -18,7 +18,7 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 
-type Params = Promise<{ slug: string }>
+type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata(
 	{ params }: { params: Params },
