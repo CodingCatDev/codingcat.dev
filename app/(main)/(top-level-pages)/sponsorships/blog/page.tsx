@@ -11,7 +11,7 @@ import SponsorshipForm from "../sponsorship-form";
 import AJPrimary from "@/components/icons/aj-primary";
 
 type Props = {
-  params: Promise
+  params: Promise<{ slug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
  
