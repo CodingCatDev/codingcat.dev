@@ -22,6 +22,10 @@ const content = defineType({
 			group: "socials",
 			fields: [
 				defineField({
+					name: "bluesky",
+					type: "string",
+				}),
+				defineField({
 					name: "codepen",
 					type: "string",
 				}),

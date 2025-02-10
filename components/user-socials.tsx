@@ -18,6 +18,7 @@ import {
 	FaTiktok,
 	FaTwitch,
 	FaYoutube,
+	FaBluesky,
 } from "react-icons/fa6";
 import { BsSubstack } from "react-icons/bs";
 
@@ -36,6 +37,13 @@ export default function UserSocials({
 
 	const renderIcon = (icon: string) => {
 		switch (icon) {
+			case "bluesky":
+				return (
+					<>
+						<FaBluesky /> <span className="sr-only">Codepen</span>
+					</>
+				);
+
 			case "codepen":
 				return (
 					<>
