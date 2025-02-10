@@ -16,7 +16,7 @@ import SponsorshipCards from "../sponsorship-cards";
 import SponsorshipForm from "../sponsorship-form";
 
 type Props = {
-  params: Promise
+  params: Promise<{ slug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
  
