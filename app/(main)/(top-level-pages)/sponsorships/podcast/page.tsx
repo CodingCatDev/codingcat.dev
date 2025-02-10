@@ -15,8 +15,14 @@ import Podcatchers from "./podcatchers";
 import SponsorshipCards from "../sponsorship-cards";
 import SponsorshipForm from "../sponsorship-form";
 
+type Props = {
+  params: Promise
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+ 
 export async function generateMetadata(
-	parent: ResolvingMetadata,
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
 	const page = (
 		await sanityFetch({
@@ -39,7 +45,7 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function SponsorshipsPodcastPage() {
+export default async function SponsorshipsPodcastPage({ params, searchParams }: Props) {
 	const [page] = (
 		await Promise.all([
 			sanityFetch({
