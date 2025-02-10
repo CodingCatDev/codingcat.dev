@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 	if (!idToken)
 		return Response.json({ error: "Missing idToken" }, { status: 401 });
 
-	const cookieStore = cookies();
+	const cookieStore = await cookies();
 
 	// Set session expiration to 1 day
 	const expiresIn = 86400000 * 1;
