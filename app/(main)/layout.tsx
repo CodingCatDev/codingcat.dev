@@ -6,6 +6,7 @@ import { SanityLive } from "@/sanity/lib/live";
 import { Nunito } from "next/font/google";
 import { Inter } from "next/font/google";
 import { draftMode } from "next/headers";
+import { Suspense } from 'react'
 
 import NextTopLoader from "nextjs-toploader";
 import type { SettingsQueryResult } from "@/sanity/types";
@@ -95,10 +96,12 @@ export default async function RootLayout({
 					inter.variable,
 				)}
 			>
-				<SpeedInsights />
-				<MetaPixel />
-				<DisableDraftMode />
-				<VisualEditing />
+				<Suspense>
+					<SpeedInsights />
+					<MetaPixel />
+					<DisableDraftMode />
+					<VisualEditing />
+				</Suspense>
 				<PlayerProvider>
 					<ThemeProvider
 						attribute="class"
