@@ -9,9 +9,9 @@
  */
 
 import {
-  PortableText,
-  type PortableTextComponents,
-  type PortableTextBlock,
+	PortableText,
+	type PortableTextComponents,
+	type PortableTextBlock,
 } from "next-sanity";
 import Link from "next/link";
 
@@ -23,50 +23,53 @@ import CodeSandboxEmbed from "./codesandbox-embed";
 import HTMLEmbed from "@/components/html-embed";
 import QuoteEmbed from "@/components/quote-embed";
 
-
 export default function CustomPortableText({
-  className,
-  value,
+	className,
+	value,
 }: {
-  className?: string;
-  value: PortableTextBlock[];
+	className?: string;
+	value: PortableTextBlock[];
 }) {
-  const components: PortableTextComponents = {
-    // TODO: make this more dynamic
-    types: {
-      "cloudinary.asset": ({ value }) => <BlockImage image={value} />,
-      code: ({ value }) => <BlockCode {...value} />,
-      codepen: ({ value }) => <CodePenEmbed {...value} />,
-      codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
-      twitter: ({ value }) => <TwitterEmbed {...value} />,
-      htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
-      quote: ({ value }) => <QuoteEmbed {...value} />,
-    },
-    block: {
-      h5: ({ children }) => (
-        <h5 className="mb-2 text-sm font-semibold">{children}</h5>
-      ),
-      h6: ({ children }) => (
-        <h6 className="mb-1 text-xs font-semibold">{children}</h6>
-      ),
-    },
-    marks: {
-      link: ({ children, value }) => {
-        return (
-          <Link href={value?.href || "#"} rel="noreferrer noopener" target="_blank">
-            {children}
-          </Link>
-        );
-      },
-      internalLink: ({ children, value }) => {
-        return <Link href={value?.href || "#"}>{children}</Link>;
-      },
-    },
-  };
+	const components: PortableTextComponents = {
+		// TODO: make this more dynamic
+		types: {
+			"cloudinary.asset": ({ value }) => <BlockImage image={value} />,
+			code: ({ value }) => <BlockCode {...value} />,
+			codepen: ({ value }) => <CodePenEmbed {...value} />,
+			codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
+			twitter: ({ value }) => <TwitterEmbed {...value} />,
+			htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
+			quote: ({ value }) => <QuoteEmbed {...value} />,
+		},
+		block: {
+			h5: ({ children }) => (
+				<h5 className="mb-2 text-sm font-semibold">{children}</h5>
+			),
+			h6: ({ children }) => (
+				<h6 className="mb-1 text-xs font-semibold">{children}</h6>
+			),
+		},
+		marks: {
+			link: ({ children, value }) => {
+				return (
+					<Link
+						href={value?.href || "#"}
+						rel="noreferrer noopener"
+						target="_blank"
+					>
+						{children}
+					</Link>
+				);
+			},
+			internalLink: ({ children, value }) => {
+				return <Link href={value?.href || "#"}>{children}</Link>;
+			},
+		},
+	};
 
-  return (
-    <div className={["prose", className].filter(Boolean).join(" ")}>
-      <PortableText components={components} value={value} />
-    </div>
-  );
+	return (
+		<div className={["prose", className].filter(Boolean).join(" ")}>
+			<PortableText components={components} value={value} />
+		</div>
+	);
 }

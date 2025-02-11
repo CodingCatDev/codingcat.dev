@@ -179,11 +179,11 @@ export type Sponsor = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -304,11 +304,11 @@ export type Lesson = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -388,9 +388,6 @@ export type Lesson = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -458,11 +455,11 @@ export type Author = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -527,6 +524,7 @@ export type Author = {
     _key: string;
   }>;
   socials?: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -612,11 +610,11 @@ export type Post = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -696,9 +694,6 @@ export type Post = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -765,11 +760,11 @@ export type Podcast = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -849,9 +844,6 @@ export type Podcast = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -951,11 +943,11 @@ export type Guest = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1020,6 +1012,7 @@ export type Guest = {
     _key: string;
   }>;
   socials?: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -1105,11 +1098,11 @@ export type PodcastType = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1229,11 +1222,11 @@ export type Course = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1313,9 +1306,6 @@ export type Course = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -1395,11 +1385,11 @@ export type Page = {
     level?: number;
     _type: "block";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & CloudinaryAsset) | ({
+  } & CloudinaryAsset | {
     _key: string;
-  } & Code) | {
+  } & Code | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1479,9 +1469,6 @@ export type Page = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "sponsor";
   }>;
-  tags?: Array<{
-    _key: string;
-  } & Tag>;
   devto?: string;
   hashnode?: string;
   statistics?: {
@@ -1564,29 +1551,12 @@ export type PodcastRssEpisode = {
   };
 };
 
-export type IconPicker = {
-  _type: "iconPicker";
-  provider?: string;
-  name?: string;
-  svg?: string;
-};
-
 export type Code = {
   _type: "code";
   language?: string;
   filename?: string;
   code?: string;
   highlightedLines?: Array<number>;
-};
-
-export type Tags = Array<{
-  _key: string;
-} & Tag>;
-
-export type Tag = {
-  _type: "tag";
-  value?: string;
-  label?: string;
 };
 
 export type CloudinaryAssetContextCustom = {
@@ -1708,13 +1678,13 @@ export type SanityAssistInstructionPrompt = Array<{
     text?: string;
     _type: "span";
     _key: string;
-  } | ({
+  } | {
     _key: string;
-  } & SanityAssistInstructionFieldRef) | ({
+  } & SanityAssistInstructionFieldRef | {
     _key: string;
-  } & SanityAssistInstructionContext) | ({
+  } & SanityAssistInstructionContext | {
     _key: string;
-  } & SanityAssistInstructionUserInput)>;
+  } & SanityAssistInstructionUserInput>;
   style?: "normal";
   listItem?: never;
   markDefs?: null;
@@ -1735,11 +1705,11 @@ export type SanityAssistInstruction = {
   title?: string;
   userId?: string;
   createdById?: string;
-  output?: Array<({
+  output?: Array<{
     _key: string;
-  } & SanityAssistOutputField) | ({
+  } & SanityAssistOutputField | {
     _key: string;
-  } & SanityAssistOutputType)>;
+  } & SanityAssistOutputType>;
 };
 
 export type SanityAssistSchemaTypeField = {
@@ -1749,8 +1719,10 @@ export type SanityAssistSchemaTypeField = {
     _key: string;
   } & SanityAssistInstruction>;
 };
+
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | SanityAssetSourceData | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Slug | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ./sanity/lib/queries.ts
+// Source: sanity/lib/queries.ts
 // Variable: docCount
 // Query: count(*[_type == $type])
 export type DocCountResult = number;
@@ -1869,9 +1841,6 @@ export type PageQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -1881,9 +1850,30 @@ export type PageQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -1907,10 +1897,61 @@ export type PageQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -1922,11 +1963,6 @@ export type PageQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -1950,6 +1986,11 @@ export type PageQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -1957,22 +1998,12 @@ export type PageQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -1987,11 +2018,11 @@ export type PageQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2001,11 +2032,6 @@ export type PageQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2029,9 +2055,26 @@ export type PageQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -2044,11 +2087,6 @@ export type PageQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -2072,6 +2110,11 @@ export type PageQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -2081,23 +2124,12 @@ export type PageQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2142,11 +2174,11 @@ export type PageQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2156,11 +2188,6 @@ export type PageQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2184,9 +2211,26 @@ export type PageQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -2199,11 +2243,6 @@ export type PageQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -2227,6 +2266,11 @@ export type PageQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -2236,27 +2280,13 @@ export type PageQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | null;
@@ -2283,11 +2313,11 @@ export type BlogQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2297,11 +2327,6 @@ export type BlogQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2325,9 +2350,26 @@ export type BlogQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -2340,11 +2382,6 @@ export type BlogQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -2368,6 +2405,11 @@ export type BlogQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -2377,23 +2419,12 @@ export type BlogQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2448,11 +2479,11 @@ export type MorePostQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2462,11 +2493,6 @@ export type MorePostQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2490,9 +2516,26 @@ export type MorePostQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -2505,11 +2548,6 @@ export type MorePostQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -2533,6 +2571,11 @@ export type MorePostQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -2542,23 +2585,12 @@ export type MorePostQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2602,9 +2634,6 @@ export type PostQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -2614,9 +2643,30 @@ export type PostQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -2640,10 +2690,61 @@ export type PostQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -2655,11 +2756,6 @@ export type PostQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2683,6 +2779,11 @@ export type PostQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -2690,22 +2791,12 @@ export type PostQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -2720,11 +2811,11 @@ export type PostQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2734,11 +2825,6 @@ export type PostQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2762,9 +2848,26 @@ export type PostQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -2777,11 +2880,6 @@ export type PostQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -2805,6 +2903,11 @@ export type PostQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -2814,23 +2917,12 @@ export type PostQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2875,11 +2967,11 @@ export type PostQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2889,11 +2981,6 @@ export type PostQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -2917,9 +3004,26 @@ export type PostQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -2932,11 +3036,6 @@ export type PostQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -2960,6 +3059,11 @@ export type PostQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -2969,27 +3073,13 @@ export type PostQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | null;
@@ -3016,11 +3106,11 @@ export type PodcastsQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3030,11 +3120,6 @@ export type PodcastsQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3058,9 +3143,26 @@ export type PodcastsQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -3073,11 +3175,6 @@ export type PodcastsQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -3101,6 +3198,11 @@ export type PodcastsQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -3110,23 +3212,12 @@ export type PodcastsQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3169,11 +3260,11 @@ export type PodcastsQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3183,11 +3274,6 @@ export type PodcastsQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3211,9 +3297,26 @@ export type PodcastsQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -3226,11 +3329,6 @@ export type PodcastsQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -3254,6 +3352,11 @@ export type PodcastsQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -3263,23 +3366,12 @@ export type PodcastsQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3334,11 +3426,11 @@ export type MorePodcastQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3348,11 +3440,6 @@ export type MorePodcastQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3376,9 +3463,26 @@ export type MorePodcastQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -3391,11 +3495,6 @@ export type MorePodcastQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -3419,6 +3518,11 @@ export type MorePodcastQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -3428,23 +3532,12 @@ export type MorePodcastQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3487,11 +3580,11 @@ export type MorePodcastQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3501,11 +3594,6 @@ export type MorePodcastQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3529,9 +3617,26 @@ export type MorePodcastQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -3544,11 +3649,6 @@ export type MorePodcastQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -3572,6 +3672,11 @@ export type MorePodcastQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -3581,23 +3686,12 @@ export type MorePodcastQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3641,9 +3735,6 @@ export type PodcastQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -3653,9 +3744,30 @@ export type PodcastQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -3679,10 +3791,61 @@ export type PodcastQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -3694,11 +3857,6 @@ export type PodcastQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3722,6 +3880,11 @@ export type PodcastQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -3729,22 +3892,12 @@ export type PodcastQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -3759,11 +3912,11 @@ export type PodcastQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3773,11 +3926,6 @@ export type PodcastQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3801,9 +3949,26 @@ export type PodcastQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -3816,11 +3981,6 @@ export type PodcastQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -3844,6 +4004,11 @@ export type PodcastQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -3853,23 +4018,12 @@ export type PodcastQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3914,11 +4068,11 @@ export type PodcastQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3928,11 +4082,6 @@ export type PodcastQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -3956,9 +4105,26 @@ export type PodcastQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -3971,11 +4137,6 @@ export type PodcastQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -3999,6 +4160,11 @@ export type PodcastQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -4008,27 +4174,13 @@ export type PodcastQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
   podcastType: null;
@@ -4047,11 +4199,11 @@ export type PodcastQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4061,11 +4213,6 @@ export type PodcastQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -4089,9 +4236,26 @@ export type PodcastQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -4104,11 +4268,6 @@ export type PodcastQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -4132,6 +4291,11 @@ export type PodcastQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -4141,23 +4305,12 @@ export type PodcastQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4201,11 +4354,11 @@ export type PodcastQueryResult = {
       slug?: Slug;
       excerpt?: string;
       featured?: number;
-      content?: Array<({
+      content?: Array<{
         _key: string;
-      } & CloudinaryAsset) | ({
+      } & CloudinaryAsset | {
         _key: string;
-      } & Code) | {
+      } & Code | {
         children?: Array<{
           marks?: Array<string>;
           text?: string;
@@ -4215,11 +4368,6 @@ export type PodcastQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -4243,9 +4391,26 @@ export type PodcastQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
+        _key: string;
+      } | {
+        url?: string;
+        _type: "codepen";
+        _key: string;
+      } | {
+        url?: string;
+        _type: "codesandbox";
+        _key: string;
+      } | {
+        html?: string;
+        _type: "htmlBlock";
         _key: string;
       } | {
         content?: Array<{
@@ -4258,11 +4423,6 @@ export type PodcastQueryResult = {
           style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
           listItem?: "bullet" | "number";
           markDefs?: Array<{
-            href?: string;
-            blank?: boolean;
-            _type: "link";
-            _key: string;
-          } | {
             reference?: {
               _ref: string;
               _type: "reference";
@@ -4286,6 +4446,11 @@ export type PodcastQueryResult = {
             };
             _type: "internalLink";
             _key: string;
+          } | {
+            href?: string;
+            blank?: boolean;
+            _type: "link";
+            _key: string;
           }>;
           level?: number;
           _type: "block";
@@ -4295,23 +4460,12 @@ export type PodcastQueryResult = {
         _type: "quote";
         _key: string;
       } | {
-        html?: string;
-        _type: "htmlBlock";
-        _key: string;
-      } | {
         id?: string;
         _type: "twitter";
         _key: string;
-      } | {
-        url?: string;
-        _type: "codepen";
-        _key: string;
-      } | {
-        url?: string;
-        _type: "codesandbox";
-        _key: string;
       }>;
       socials?: {
+        bluesky?: string;
         codepen?: string;
         devto?: string;
         discord?: string;
@@ -4353,11 +4507,11 @@ export type PodcastQueryResult = {
       slug?: Slug;
       excerpt?: string;
       featured?: number;
-      content?: Array<({
+      content?: Array<{
         _key: string;
-      } & CloudinaryAsset) | ({
+      } & CloudinaryAsset | {
         _key: string;
-      } & Code) | {
+      } & Code | {
         children?: Array<{
           marks?: Array<string>;
           text?: string;
@@ -4367,11 +4521,6 @@ export type PodcastQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -4395,9 +4544,26 @@ export type PodcastQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
+        _key: string;
+      } | {
+        url?: string;
+        _type: "codepen";
+        _key: string;
+      } | {
+        url?: string;
+        _type: "codesandbox";
+        _key: string;
+      } | {
+        html?: string;
+        _type: "htmlBlock";
         _key: string;
       } | {
         content?: Array<{
@@ -4410,11 +4576,6 @@ export type PodcastQueryResult = {
           style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
           listItem?: "bullet" | "number";
           markDefs?: Array<{
-            href?: string;
-            blank?: boolean;
-            _type: "link";
-            _key: string;
-          } | {
             reference?: {
               _ref: string;
               _type: "reference";
@@ -4438,6 +4599,11 @@ export type PodcastQueryResult = {
             };
             _type: "internalLink";
             _key: string;
+          } | {
+            href?: string;
+            blank?: boolean;
+            _type: "link";
+            _key: string;
           }>;
           level?: number;
           _type: "block";
@@ -4447,23 +4613,12 @@ export type PodcastQueryResult = {
         _type: "quote";
         _key: string;
       } | {
-        html?: string;
-        _type: "htmlBlock";
-        _key: string;
-      } | {
         id?: string;
         _type: "twitter";
         _key: string;
-      } | {
-        url?: string;
-        _type: "codepen";
-        _key: string;
-      } | {
-        url?: string;
-        _type: "codesandbox";
-        _key: string;
       }>;
       socials?: {
+        bluesky?: string;
         codepen?: string;
         devto?: string;
         discord?: string;
@@ -4523,11 +4678,11 @@ export type CoursesQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4537,11 +4692,6 @@ export type CoursesQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -4565,9 +4715,26 @@ export type CoursesQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -4580,11 +4747,6 @@ export type CoursesQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -4608,6 +4770,11 @@ export type CoursesQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -4617,23 +4784,12 @@ export type CoursesQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4689,11 +4845,11 @@ export type MoreCourseQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4703,11 +4859,6 @@ export type MoreCourseQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -4731,9 +4882,26 @@ export type MoreCourseQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -4746,11 +4914,6 @@ export type MoreCourseQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -4774,6 +4937,11 @@ export type MoreCourseQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -4783,23 +4951,12 @@ export type MoreCourseQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4844,9 +5001,6 @@ export type CourseQueryResult = {
   date: string;
   stripeProduct: string | null;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -4856,9 +5010,30 @@ export type CourseQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -4882,10 +5057,61 @@ export type CourseQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -4897,11 +5123,6 @@ export type CourseQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -4925,6 +5146,11 @@ export type CourseQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -4932,22 +5158,12 @@ export type CourseQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -4962,11 +5178,11 @@ export type CourseQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4976,11 +5192,6 @@ export type CourseQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5004,9 +5215,26 @@ export type CourseQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -5019,11 +5247,6 @@ export type CourseQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -5047,6 +5270,11 @@ export type CourseQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -5056,23 +5284,12 @@ export type CourseQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -5117,11 +5334,11 @@ export type CourseQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -5131,11 +5348,6 @@ export type CourseQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5159,9 +5371,26 @@ export type CourseQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -5174,11 +5403,6 @@ export type CourseQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -5202,6 +5426,11 @@ export type CourseQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -5211,27 +5440,13 @@ export type CourseQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
   podcastType: null;
@@ -5282,9 +5497,6 @@ export type LessonQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -5294,9 +5506,30 @@ export type LessonQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -5320,10 +5553,61 @@ export type LessonQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -5335,11 +5619,6 @@ export type LessonQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5363,6 +5642,11 @@ export type LessonQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -5370,22 +5654,12 @@ export type LessonQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -5400,11 +5674,11 @@ export type LessonQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -5414,11 +5688,6 @@ export type LessonQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5442,9 +5711,26 @@ export type LessonQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -5457,11 +5743,6 @@ export type LessonQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -5485,6 +5766,11 @@ export type LessonQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -5494,23 +5780,12 @@ export type LessonQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -5555,11 +5830,11 @@ export type LessonQueryResult = {
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -5569,11 +5844,6 @@ export type LessonQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5597,9 +5867,26 @@ export type LessonQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -5612,11 +5899,6 @@ export type LessonQueryResult = {
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -5640,6 +5922,11 @@ export type LessonQueryResult = {
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -5649,27 +5936,13 @@ export type LessonQueryResult = {
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
   locked: boolean | null;
@@ -5698,9 +5971,6 @@ export type AuthorQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -5710,9 +5980,30 @@ export type AuthorQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -5736,10 +6027,61 @@ export type AuthorQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -5751,11 +6093,6 @@ export type AuthorQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5779,6 +6116,11 @@ export type AuthorQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -5786,22 +6128,12 @@ export type AuthorQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -5812,6 +6144,7 @@ export type AuthorQueryResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -5854,9 +6187,6 @@ export type AuthorQueryWithRelatedResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -5866,9 +6196,30 @@ export type AuthorQueryWithRelatedResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -5892,10 +6243,61 @@ export type AuthorQueryWithRelatedResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -5907,11 +6309,6 @@ export type AuthorQueryWithRelatedResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -5935,6 +6332,11 @@ export type AuthorQueryWithRelatedResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -5942,22 +6344,12 @@ export type AuthorQueryWithRelatedResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -5968,6 +6360,7 @@ export type AuthorQueryWithRelatedResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -5998,9 +6391,36 @@ export type AuthorQueryWithRelatedResult = {
     _key: string;
   }> | null;
   related: {
-    course: Array<never>;
-    podcast: Array<never>;
-    post: Array<never>;
+    course: Array<{
+      _id: string;
+      _type: "course";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
+    podcast: Array<{
+      _id: string;
+      _type: "podcast";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
+    post: Array<{
+      _id: string;
+      _type: "post";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
   };
 } | null;
 // Variable: moreGuestQuery
@@ -6027,9 +6447,6 @@ export type GuestQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -6039,9 +6456,30 @@ export type GuestQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -6065,10 +6503,61 @@ export type GuestQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -6080,11 +6569,6 @@ export type GuestQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6108,6 +6592,11 @@ export type GuestQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -6115,22 +6604,12 @@ export type GuestQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -6141,6 +6620,7 @@ export type GuestQueryResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -6183,9 +6663,6 @@ export type GuestQueryWithRelatedResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -6195,9 +6672,30 @@ export type GuestQueryWithRelatedResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -6221,10 +6719,61 @@ export type GuestQueryWithRelatedResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -6236,11 +6785,6 @@ export type GuestQueryWithRelatedResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6264,6 +6808,11 @@ export type GuestQueryWithRelatedResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -6271,22 +6820,12 @@ export type GuestQueryWithRelatedResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -6297,6 +6836,7 @@ export type GuestQueryWithRelatedResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -6327,9 +6867,36 @@ export type GuestQueryWithRelatedResult = {
     _key: string;
   }> | null;
   related: {
-    course: Array<never>;
-    podcast: Array<never>;
-    post: Array<never>;
+    course: Array<{
+      _id: string;
+      _type: "course";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
+    podcast: Array<{
+      _id: string;
+      _type: "podcast";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
+    post: Array<{
+      _id: string;
+      _type: "post";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
   };
 } | null;
 // Variable: moreSponsorQuery
@@ -6356,9 +6923,6 @@ export type SponsorQueryResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -6368,9 +6932,30 @@ export type SponsorQueryResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -6394,10 +6979,61 @@ export type SponsorQueryResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -6409,11 +7045,6 @@ export type SponsorQueryResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6437,6 +7068,11 @@ export type SponsorQueryResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -6444,22 +7080,12 @@ export type SponsorQueryResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -6484,9 +7110,6 @@ export type SponsorQueryWithRelatedResult = {
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -6496,9 +7119,30 @@ export type SponsorQueryWithRelatedResult = {
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -6522,10 +7166,61 @@ export type SponsorQueryWithRelatedResult = {
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -6537,11 +7232,6 @@ export type SponsorQueryWithRelatedResult = {
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6565,6 +7255,11 @@ export type SponsorQueryWithRelatedResult = {
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -6572,22 +7267,12 @@ export type SponsorQueryWithRelatedResult = {
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -6600,31 +7285,41 @@ export type SponsorQueryWithRelatedResult = {
   socials: null;
   websites: null;
   related: {
-    course: Array<never>;
-    podcast: Array<never>;
-    post: Array<never>;
+    course: Array<{
+      _id: string;
+      _type: "course";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
+    podcast: Array<{
+      _id: string;
+      _type: "podcast";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
+    post: Array<{
+      _id: string;
+      _type: "post";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: string | null;
+      coverImage: CloudinaryAsset | null;
+      date: string;
+    }>;
   };
 } | null;
 // Variable: rssQuery
 // Query: *[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,}
 export type RssQueryResult = Array<{
-  _id: string;
-  _type: "assist.instruction.context";
-  status: "draft" | "published";
-  title: string | "Untitled";
-  slug: null;
-  excerpt: null;
-  coverImage: null;
-  date: null | string;
-  content: null;
-  author: null;
-  devto: null;
-  hashnode: null;
-  sponsor: null;
-  tags: null;
-  videoCloudinary: null;
-  youtube: null;
-} | {
   _id: string;
   _type: "author";
   status: "draft" | "published";
@@ -6634,9 +7329,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -6646,9 +7338,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -6672,10 +7385,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -6687,11 +7451,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6715,6 +7474,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -6722,22 +7486,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -6757,9 +7511,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -6769,9 +7520,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -6795,10 +7567,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -6810,11 +7633,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6838,6 +7656,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -6845,22 +7668,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -6875,11 +7688,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -6889,11 +7702,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -6917,9 +7725,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -6932,11 +7757,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -6960,6 +7780,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -6969,23 +7794,12 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -7030,11 +7844,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -7044,11 +7858,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7072,9 +7881,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -7087,11 +7913,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -7115,6 +7936,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -7124,27 +7950,13 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -7157,9 +7969,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -7169,9 +7978,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -7195,10 +8025,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -7210,11 +8091,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7238,6 +8114,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -7245,22 +8126,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -7280,9 +8151,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -7292,9 +8160,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -7318,10 +8207,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -7333,11 +8273,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7361,6 +8296,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -7368,22 +8308,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -7398,11 +8328,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -7412,11 +8342,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7440,9 +8365,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -7455,11 +8397,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -7483,6 +8420,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -7492,23 +8434,12 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -7553,11 +8484,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -7567,11 +8498,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7595,9 +8521,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -7610,11 +8553,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -7638,6 +8576,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -7647,27 +8590,13 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -7680,9 +8609,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -7692,9 +8618,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -7718,10 +8665,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -7733,11 +8731,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7761,6 +8754,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -7768,22 +8766,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -7798,11 +8786,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -7812,11 +8800,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7840,9 +8823,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -7855,11 +8855,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -7883,6 +8878,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -7892,23 +8892,12 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -7953,11 +8942,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -7967,11 +8956,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -7995,9 +8979,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -8010,11 +9011,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -8038,6 +9034,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -8047,27 +9048,13 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -8080,9 +9067,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -8092,9 +9076,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -8118,10 +9123,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -8133,11 +9189,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8161,6 +9212,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -8168,22 +9224,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -8198,11 +9244,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8212,11 +9258,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8240,9 +9281,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -8255,11 +9313,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -8283,6 +9336,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -8292,23 +9350,12 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -8353,11 +9400,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8367,11 +9414,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8395,9 +9437,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -8410,11 +9469,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -8438,6 +9492,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -8447,27 +9506,13 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
 } | {
@@ -8480,9 +9525,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -8492,9 +9534,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -8518,10 +9581,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -8533,11 +9647,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8561,6 +9670,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -8568,22 +9682,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -8603,9 +9707,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -8615,9 +9716,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -8641,10 +9763,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -8656,11 +9829,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8684,6 +9852,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -8691,22 +9864,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: Array<{
@@ -8721,11 +9884,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8735,11 +9898,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8763,9 +9921,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -8778,11 +9953,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -8806,6 +9976,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -8815,23 +9990,12 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
       _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
-      _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -8876,11 +10040,11 @@ export type RssQueryResult = Array<{
     slug: string | null;
     excerpt?: string;
     featured?: number;
-    content?: Array<({
+    content?: Array<{
       _key: string;
-    } & CloudinaryAsset) | ({
+    } & CloudinaryAsset | {
       _key: string;
-    } & Code) | {
+    } & Code | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8890,11 +10054,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -8918,9 +10077,26 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codepen";
+      _key: string;
+    } | {
+      url?: string;
+      _type: "codesandbox";
+      _key: string;
+    } | {
+      html?: string;
+      _type: "htmlBlock";
       _key: string;
     } | {
       content?: Array<{
@@ -8933,11 +10109,6 @@ export type RssQueryResult = Array<{
         style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
-          href?: string;
-          blank?: boolean;
-          _type: "link";
-          _key: string;
-        } | {
           reference?: {
             _ref: string;
             _type: "reference";
@@ -8961,6 +10132,11 @@ export type RssQueryResult = Array<{
           };
           _type: "internalLink";
           _key: string;
+        } | {
+          href?: string;
+          blank?: boolean;
+          _type: "link";
+          _key: string;
         }>;
         level?: number;
         _type: "block";
@@ -8970,80 +10146,15 @@ export type RssQueryResult = Array<{
       _type: "quote";
       _key: string;
     } | {
-      html?: string;
-      _type: "htmlBlock";
-      _key: string;
-    } | {
       id?: string;
       _type: "twitter";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codepen";
-      _key: string;
-    } | {
-      url?: string;
-      _type: "codesandbox";
       _key: string;
     }>;
     url?: string;
   }> | null;
-  tags: Array<{
-    _key: string;
-  } & Tag> | null;
+  tags: null;
   videoCloudinary: CloudinaryAsset | null;
   youtube: string | null;
-} | {
-  _id: string;
-  _type: "sanity.fileAsset";
-  status: "draft" | "published";
-  title: string | "Untitled";
-  slug: null;
-  excerpt: null;
-  coverImage: null;
-  date: null | string;
-  content: null;
-  author: null;
-  devto: null;
-  hashnode: null;
-  sponsor: null;
-  tags: null;
-  videoCloudinary: null;
-  youtube: null;
-} | {
-  _id: string;
-  _type: "sanity.imageAsset";
-  status: "draft" | "published";
-  title: string | "Untitled";
-  slug: null;
-  excerpt: null;
-  coverImage: null;
-  date: null | string;
-  content: null;
-  author: null;
-  devto: null;
-  hashnode: null;
-  sponsor: null;
-  tags: null;
-  videoCloudinary: null;
-  youtube: null;
-} | {
-  _id: string;
-  _type: "settings";
-  status: "draft" | "published";
-  title: string | "Untitled";
-  slug: null;
-  excerpt: null;
-  coverImage: null;
-  date: null | string;
-  content: null;
-  author: null;
-  devto: null;
-  hashnode: null;
-  sponsor: null;
-  tags: null;
-  videoCloudinary: null;
-  youtube: null;
 } | {
   _id: string;
   _type: "sponsor";
@@ -9054,9 +10165,6 @@ export type RssQueryResult = Array<{
   coverImage: CloudinaryAsset | null;
   date: string;
   content: Array<{
-    _key: string;
-    markDefs: null;
-  } | {
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -9066,9 +10174,30 @@ export type RssQueryResult = Array<{
     style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
     listItem?: "bullet" | "number";
     markDefs: Array<{
-      href?: string;
-      blank?: boolean;
-      _type: "link";
+      reference?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "course";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "page";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "podcast";
+      } | {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "post";
+      };
+      _type: "internalLink";
+      _key: string;
+      href: string | null;
     } | {
       reference?: {
         _ref: string;
@@ -9092,10 +10221,61 @@ export type RssQueryResult = Array<{
         [internalGroqTypeReferenceTo]?: "post";
       };
       _type: "internalLink";
-      href: string | null;
+      _key: string;
+    } | {
+      href?: string;
+      blank?: boolean;
+      _type: "link";
+      _key: string;
     }> | null;
     level?: number;
     _type: "block";
+    _key: string;
+  } | {
+    _key: string;
+    _type: "cloudinary.asset";
+    public_id?: string;
+    resource_type?: string;
+    type?: string;
+    format?: string;
+    version?: number;
+    url?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    tags?: Array<string>;
+    created_at?: string;
+    derived?: Array<{
+      _key: string;
+    } & CloudinaryAssetDerived>;
+    access_mode?: string;
+    context?: CloudinaryAssetContext;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "code";
+    language?: string;
+    filename?: string;
+    code?: string;
+    highlightedLines?: Array<number>;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codepen";
+    _key: string;
+    markDefs: null;
+  } | {
+    url?: string;
+    _type: "codesandbox";
+    _key: string;
+    markDefs: null;
+  } | {
+    html?: string;
+    _type: "htmlBlock";
+    _key: string;
+    markDefs: null;
   } | {
     content?: Array<{
       children?: Array<{
@@ -9107,11 +10287,6 @@ export type RssQueryResult = Array<{
       style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
       listItem?: "bullet" | "number";
       markDefs?: Array<{
-        href?: string;
-        blank?: boolean;
-        _type: "link";
-        _key: string;
-      } | {
         reference?: {
           _ref: string;
           _type: "reference";
@@ -9135,6 +10310,11 @@ export type RssQueryResult = Array<{
         };
         _type: "internalLink";
         _key: string;
+      } | {
+        href?: string;
+        blank?: boolean;
+        _type: "link";
+        _key: string;
       }>;
       level?: number;
       _type: "block";
@@ -9142,22 +10322,12 @@ export type RssQueryResult = Array<{
     }>;
     url?: string;
     _type: "quote";
-    markDefs: null;
-  } | {
-    html?: string;
-    _type: "htmlBlock";
+    _key: string;
     markDefs: null;
   } | {
     id?: string;
     _type: "twitter";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codepen";
-    markDefs: null;
-  } | {
-    url?: string;
-    _type: "codesandbox";
+    _key: string;
     markDefs: null;
   }> | null;
   author: null;
@@ -9212,3 +10382,36 @@ export type SitemapQueryResult = Array<{
   slug: string | null;
   sections: null;
 }>;
+
+// Query TypeMap
+import "@sanity/client";
+declare module "@sanity/client" {
+  interface SanityQueries {
+    "count(*[_type == $type])": DocCountResult;
+    "*[_type == \"settings\"][0]{\n  ...,\n  ogImage{\n    secure_url\n  }\n}": SettingsQueryResult;
+    "*[_type == \"settings\" ][0]{\n  \"featuredCourse\": *[_type == \"course\" && featured > 0]|order(featured desc)[0]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n      \n  stripeProduct\n,\n  },\n  \"featuredCourses\": *[_type == \"course\" && featured > 0]|order(featured desc)[0...4]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n      \n  stripeProduct\n,\n  },\n  \"latestPodcast\": *[_type == \"podcast\"]|order(date desc)[0]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"topPodcasts\": *[_type == \"podcast\" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"latestPosts\": *[_type == \"post\"]|order(date desc)[0...4]{\n     \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"topPosts\": *[_type == \"post\" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n}": HomePageQueryResult;
+    "*[_type == \"page\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}": PageQueryResult;
+    "*[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": BlogQueryResult;
+    "*[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": MorePostQueryResult;
+    "*[_type == \"post\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}": PostQueryResult;
+    "*[_type == \"podcast\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  guest[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": PodcastsQueryResult;
+    "*[_type == \"podcast\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  guest[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": MorePodcastQueryResult;
+    "*[_type == \"podcast\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    \"title\": coalesce(title, \"Missing Podcast Title\"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n\n}": PodcastQueryResult;
+    "*[_type == \"course\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  stripeProduct\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": CoursesQueryResult;
+    "*[_type == \"course\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  stripeProduct\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": MoreCourseQueryResult;
+    "*[_type == \"course\" && slug.current == $courseSlug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  stripeProduct\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    \"title\": coalesce(title, \"Missing Podcast Title\"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n\n}": CourseQueryResult;
+    "*[_type == \"course\" && slug.current == $courseSlug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  stripeProduct\n,\n  sections[]{\n    title,\n    lesson[]->{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n      \n  locked,\n  videoCloudinary\n\n    }\n  }\n}": LessonsInCourseQueryResult;
+    "*[_type == \"lesson\" && slug.current == $lessonSlug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  locked,\n  videoCloudinary\n\n}": LessonQueryResult;
+    "*[_type == \"author\" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n}": MoreAuthorQueryResult;
+    "*[_type == \"author\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}": AuthorQueryResult;
+    "*[_type == \"author\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  \"related\":{\n    \"course\": *[_type == \"course\" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n    \"podcast\": *[_type == \"podcast\" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n    \"post\": *[_type == \"post\" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n  }\n\n}": AuthorQueryWithRelatedResult;
+    "*[_type == \"guest\" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n}": MoreGuestQueryResult;
+    "*[_type == \"guest\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}": GuestQueryResult;
+    "*[_type == \"guest\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  \"related\":{\n    \"course\": *[_type == \"course\" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n    \"podcast\": *[_type == \"podcast\" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n    \"post\": *[_type == \"post\" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n  }\n\n}": GuestQueryWithRelatedResult;
+    "*[_type == \"sponsor\" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n}": MoreSponsorQueryResult;
+    "*[_type == \"sponsor\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}": SponsorQueryResult;
+    "*[_type == \"sponsor\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  \"related\":{\n    \"course\": *[_type == \"course\" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n    \"podcast\": *[_type == \"podcast\" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n    \"post\": *[_type == \"post\" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n\n    },\n  }\n\n}": SponsorQueryWithRelatedResult;
+    "*[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n}": RssQueryResult;
+    "*[_type in [\"author\", \"course\", \"guest\", \"page\", \"podcast\", \"post\", \"sponsor\"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {\n  _type,\n  _updatedAt,\n  \"slug\": slug.current,\n  sections[]{\n    lesson[]->{\n      _type,\n      _updatedAt,\n      \"slug\": slug.current,\n    }\n  }\n}": SitemapQueryResult;
+  }
+}

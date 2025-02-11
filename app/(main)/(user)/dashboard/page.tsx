@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
-  redirect("/dashboard/bookmarks");
+	redirect("/dashboard/bookmarks");
 }

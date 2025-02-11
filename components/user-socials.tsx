@@ -1,23 +1,24 @@
 "use client";
 
-import type { AuthorQueryResult } from "@/sanity.types";
+import type { AuthorQueryResult } from "@/sanity/types";
 
 import {
-  FaDev,
-  FaGithub,
-  FaCodepen,
-  FaDiscord,
-  FaLastfm,
-  FaInstagram,
-  FaFacebook,
-  FaLinkedin,
-  FaMastodon,
-  FaMedium,
-  FaStackOverflow,
-  FaSquareXTwitter,
-  FaTiktok,
-  FaTwitch,
-  FaYoutube,
+	FaDev,
+	FaGithub,
+	FaCodepen,
+	FaDiscord,
+	FaLastfm,
+	FaInstagram,
+	FaFacebook,
+	FaLinkedin,
+	FaMastodon,
+	FaMedium,
+	FaStackOverflow,
+	FaSquareXTwitter,
+	FaTiktok,
+	FaTwitch,
+	FaYoutube,
+	FaBluesky,
 } from "react-icons/fa6";
 import { BsSubstack } from "react-icons/bs";
 
@@ -26,150 +27,157 @@ import Link from "next/link";
 import { IconContext } from "react-icons/lib";
 
 export default function UserSocials({
-  socials,
+	socials,
 }: {
-  socials?: NonNullable<AuthorQueryResult>["socials"];
+	socials?: NonNullable<AuthorQueryResult>["socials"];
 }) {
-  if (!socials) {
-    return <></>;
-  }
+	if (!socials) {
+		return <></>;
+	}
 
-  const renderIcon = (icon: string) => {
-    switch (icon) {
-      case "codepen":
-        return (
-          <>
-            <FaCodepen /> <span className="sr-only">Codepen</span>
-          </>
-        );
+	const renderIcon = (icon: string) => {
+		switch (icon) {
+			case "bluesky":
+				return (
+					<>
+						<FaBluesky /> <span className="sr-only">Codepen</span>
+					</>
+				);
 
-      case "devto":
-        return (
-          <>
-            <FaDev /> <span className="sr-only">Dev.to</span>
-          </>
-        );
+			case "codepen":
+				return (
+					<>
+						<FaCodepen /> <span className="sr-only">Codepen</span>
+					</>
+				);
 
-      case "discord":
-        return (
-          <>
-            <FaDiscord /> <span className="sr-only">Discord</span>
-          </>
-        );
+			case "devto":
+				return (
+					<>
+						<FaDev /> <span className="sr-only">Dev.to</span>
+					</>
+				);
 
-      case "dribble":
-        return (
-          <>
-            <Dribble /> <span className="sr-only">Dribble</span>
-          </>
-        );
+			case "discord":
+				return (
+					<>
+						<FaDiscord /> <span className="sr-only">Discord</span>
+					</>
+				);
 
-      case "facebook":
-        return (
-          <>
-            <FaFacebook /> <span className="sr-only">Facebook</span>
-          </>
-        );
+			case "dribble":
+				return (
+					<>
+						<Dribble /> <span className="sr-only">Dribble</span>
+					</>
+				);
 
-      case "github":
-        return (
-          <>
-            <FaGithub /> <span className="sr-only">GitHub</span>
-          </>
-        );
+			case "facebook":
+				return (
+					<>
+						<FaFacebook /> <span className="sr-only">Facebook</span>
+					</>
+				);
 
-      case "instagram":
-        return (
-          <>
-            <FaInstagram /> <span className="sr-only">Instagram</span>
-          </>
-        );
+			case "github":
+				return (
+					<>
+						<FaGithub /> <span className="sr-only">GitHub</span>
+					</>
+				);
 
-      case "lastfm":
-        return (
-          <>
-            <FaLastfm /> <span className="sr-only">Last.fm</span>
-          </>
-        );
+			case "instagram":
+				return (
+					<>
+						<FaInstagram /> <span className="sr-only">Instagram</span>
+					</>
+				);
 
-      case "linkedin":
-        return (
-          <>
-            <FaLinkedin /> <span className="sr-only">LinkedIn</span>
-          </>
-        );
+			case "lastfm":
+				return (
+					<>
+						<FaLastfm /> <span className="sr-only">Last.fm</span>
+					</>
+				);
 
-      case "mastodon":
-        return (
-          <>
-            <FaMastodon /> <span className="sr-only">Mastodon</span>
-          </>
-        );
+			case "linkedin":
+				return (
+					<>
+						<FaLinkedin /> <span className="sr-only">LinkedIn</span>
+					</>
+				);
 
-      case "medium":
-        return (
-          <>
-            <FaMedium /> <span className="sr-only">Medium</span>
-          </>
-        );
+			case "mastodon":
+				return (
+					<>
+						<FaMastodon /> <span className="sr-only">Mastodon</span>
+					</>
+				);
 
-      case "stackoverflow":
-        return (
-          <>
-            <FaStackOverflow /> <span className="sr-only">Stack Overflow</span>
-          </>
-        );
+			case "medium":
+				return (
+					<>
+						<FaMedium /> <span className="sr-only">Medium</span>
+					</>
+				);
 
-      case "substack":
-        return (
-          <>
-            <BsSubstack /> <span className="sr-only">Substack</span>
-          </>
-        );
+			case "stackoverflow":
+				return (
+					<>
+						<FaStackOverflow /> <span className="sr-only">Stack Overflow</span>
+					</>
+				);
 
-      case "tiktok":
-        return (
-          <>
-            <FaTiktok /> <span className="sr-only">TikTok</span>
-          </>
-        );
+			case "substack":
+				return (
+					<>
+						<BsSubstack /> <span className="sr-only">Substack</span>
+					</>
+				);
 
-      case "twitch":
-        return (
-          <>
-            <FaTwitch /> <span className="sr-only">Twitch</span>
-          </>
-        );
+			case "tiktok":
+				return (
+					<>
+						<FaTiktok /> <span className="sr-only">TikTok</span>
+					</>
+				);
 
-      case "twitter":
-        return (
-          <>
-            <FaSquareXTwitter /> <span className="sr-only">X (Twitter)</span>
-          </>
-        );
+			case "twitch":
+				return (
+					<>
+						<FaTwitch /> <span className="sr-only">Twitch</span>
+					</>
+				);
 
-      case "youtube":
-        return (
-          <>
-            <FaYoutube /> <span className="sr-only">YouTube</span>
-          </>
-        );
-    }
-  };
+			case "twitter":
+				return (
+					<>
+						<FaSquareXTwitter /> <span className="sr-only">X (Twitter)</span>
+					</>
+				);
 
-  return (
-    <IconContext.Provider value={{ size: "100%" }}>
-      {Object.entries(socials).map((s) => (
-        <Link
-          href={s.at(1) || ""}
-          key={s.at(0)}
-          className="w-8 md:w-8 hover:text-primary"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {renderIcon(s.at(0) || "")}
-        </Link>
-      ))}
-    </IconContext.Provider>
-  );
+			case "youtube":
+				return (
+					<>
+						<FaYoutube /> <span className="sr-only">YouTube</span>
+					</>
+				);
+		}
+	};
+
+	return (
+		<IconContext.Provider value={{ size: "100%" }}>
+			{Object.entries(socials).map((s) => (
+				<Link
+					href={s.at(1) || ""}
+					key={s.at(0)}
+					className="w-8 md:w-8 hover:text-primary"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{renderIcon(s.at(0) || "")}
+				</Link>
+			))}
+		</IconContext.Provider>
+	);
 }

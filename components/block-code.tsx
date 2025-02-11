@@ -6,31 +6,31 @@ import BlockCodeButton from "@/components/block-code-btn";
 import { prismLanguages } from "@/lib/prism";
 
 interface CodeProps {
-  code: string;
-  language?: string;
+	code: string;
+	language?: string;
 }
 
 export default function BlockCode(props: CodeProps) {
-  const { code, language } = props;
+	const { code, language } = props;
 
-  // See https://raw.githubusercontent.com/react-syntax-highlighter/react-syntax-highlighter/master/AVAILABLE_LANGUAGES_PRISM.MD
+	// See https://raw.githubusercontent.com/react-syntax-highlighter/react-syntax-highlighter/master/AVAILABLE_LANGUAGES_PRISM.MD
 
-  let cleanLanguage = "typescript";
-  if (language && prismLanguages.includes(language)) {
-    cleanLanguage = language;
-  }
+	let cleanLanguage = "typescript";
+	if (language && prismLanguages.includes(language)) {
+		cleanLanguage = language;
+	}
 
-  return (
-    <div className="relative grid">
-      <BlockCodeButton code={code} />
-      <SyntaxHighlighter
-        language={cleanLanguage}
-        style={okaidia}
-        wrapLines
-        // showLineNumbers
-      >
-        {code}
-      </SyntaxHighlighter>
-    </div>
-  );
+	return (
+		<div className="relative grid">
+			<BlockCodeButton code={code} />
+			<SyntaxHighlighter
+				language={cleanLanguage}
+				style={okaidia}
+				wrapLines
+				// showLineNumbers
+			>
+				{code}
+			</SyntaxHighlighter>
+		</div>
+	);
 }

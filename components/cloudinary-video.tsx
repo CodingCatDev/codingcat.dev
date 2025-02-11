@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  CldVideoPlayer as CldVideoPlayerDefault,
-  CldVideoPlayerProps,
+	CldVideoPlayer as CldVideoPlayerDefault,
+	type CldVideoPlayerProps,
 } from "next-cloudinary";
 import "next-cloudinary/dist/cld-video-player.css";
 
 const CldVideoPlayer = (props: CldVideoPlayerProps) => {
-  return <CldVideoPlayerDefault {...props} analytics={false} />;
+	return <CldVideoPlayerDefault {...props} analytics={false} />;
 };
 
 export default CldVideoPlayer;
