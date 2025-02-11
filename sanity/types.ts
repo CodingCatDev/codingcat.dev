@@ -524,6 +524,7 @@ export type Author = {
     _key: string;
   }>;
   socials?: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -1011,6 +1012,7 @@ export type Guest = {
     _key: string;
   }>;
   socials?: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -2127,6 +2129,7 @@ export type PageQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2421,6 +2424,7 @@ export type BlogQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2586,6 +2590,7 @@ export type MorePostQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -2917,6 +2922,7 @@ export type PostQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3211,6 +3217,7 @@ export type PodcastsQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3364,6 +3371,7 @@ export type PodcastsQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3529,6 +3537,7 @@ export type MorePodcastQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -3682,6 +3691,7 @@ export type MorePodcastQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4013,6 +4023,7 @@ export type PodcastQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4299,6 +4310,7 @@ export type PodcastQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4453,6 +4465,7 @@ export type PodcastQueryResult = {
         _key: string;
       }>;
       socials?: {
+        bluesky?: string;
         codepen?: string;
         devto?: string;
         discord?: string;
@@ -4605,6 +4618,7 @@ export type PodcastQueryResult = {
         _key: string;
       }>;
       socials?: {
+        bluesky?: string;
         codepen?: string;
         devto?: string;
         discord?: string;
@@ -4775,6 +4789,7 @@ export type CoursesQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -4941,6 +4956,7 @@ export type MoreCourseQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -5273,6 +5289,7 @@ export type CourseQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -5768,6 +5785,7 @@ export type LessonQueryResult = {
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -6126,6 +6144,7 @@ export type AuthorQueryResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -6341,6 +6360,7 @@ export type AuthorQueryWithRelatedResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -6600,6 +6620,7 @@ export type GuestQueryResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -6815,6 +6836,7 @@ export type GuestQueryWithRelatedResult = {
   videoCloudinary: null;
   youtube: null;
   socials: {
+    bluesky?: string;
     codepen?: string;
     devto?: string;
     discord?: string;
@@ -7777,6 +7799,7 @@ export type RssQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -8416,6 +8439,7 @@ export type RssQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -8873,6 +8897,7 @@ export type RssQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -9330,6 +9355,7 @@ export type RssQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;
@@ -9969,6 +9995,7 @@ export type RssQueryResult = Array<{
       _key: string;
     }>;
     socials?: {
+      bluesky?: string;
       codepen?: string;
       devto?: string;
       discord?: string;

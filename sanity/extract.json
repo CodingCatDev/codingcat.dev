@@ -3602,6 +3602,13 @@
         "value": {
           "type": "object",
           "attributes": {
+            "bluesky": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "codepen": {
               "type": "objectAttribute",
               "value": {
@@ -7091,6 +7098,13 @@
         "value": {
           "type": "object",
           "attributes": {
+            "bluesky": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "codepen": {
               "type": "objectAttribute",
               "value": {
