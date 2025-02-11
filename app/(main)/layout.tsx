@@ -27,6 +27,7 @@ import PlayerFloating from "@/components/player-floating";
 import { PlayerProvider } from "@/components/player-context";
 import { toPlainText, VisualEditing } from "next-sanity";
 import { DisableDraftMode } from "@/components/disable-draft-mode";
+import MetaPixel from "./meta-pixel";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -94,6 +95,10 @@ export default async function RootLayout({
 					inter.variable,
 				)}
 			>
+				<SpeedInsights />
+				<MetaPixel />
+				<DisableDraftMode />
+				<VisualEditing />
 				<PlayerProvider>
 					<ThemeProvider
 						attribute="class"
