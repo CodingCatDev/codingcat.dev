@@ -43,7 +43,7 @@ export default async function UserRelated(
 								<CoverImage
 									image={coverImage}
 									priority={false}
-									className="w-24 h-24 md:w-32 md:h-32 rounded-md"
+									className="rounded-md"
 								/>
 							</Link>
 							<h3 className="mb-3 text-3xl leading-snug text-balance">
