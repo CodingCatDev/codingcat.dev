@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavHeader from "@/components/nav-header";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -134,9 +134,7 @@ export default async function RootLayout({
 											</SheetTrigger>
 											<SheetContent side="right">
 												<nav className="py-6 grid gap-2">
-													<SheetTrigger asChild>
-														<NavHeader navLinks={settings?.navLinks} sideOnly />
-													</SheetTrigger>
+													<NavHeader navLinks={settings?.navLinks} sideOnly />
 												</nav>
 											</SheetContent>
 										</Sheet>
