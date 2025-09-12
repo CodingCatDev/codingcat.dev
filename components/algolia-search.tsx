@@ -103,12 +103,18 @@ export default function AlgoliaSearch({
 							<Highlight
 								hit={hit}
 								attribute="title"
-								classNames={{ highlighted: "bg-primary" }}
+								classNames={{
+									highlighted:
+										"bg-primary text-primary-foreground text-xl px-1 py-0.5 rounded-md",
+								}}
 							/>
 							<Highlight
 								hit={hit}
 								attribute="excerpt"
-								classNames={{ highlighted: "bg-primary text-xs sm:text-sm" }}
+								classNames={{
+									highlighted:
+										"bg-primary text-primary-foreground text-xl px-1 py-0.5 rounded-md",
+								}}
 							/>
 						</div>
 					</Link>
