@@ -118,15 +118,12 @@ const sponsorRelated = `
 `;
 
 export const homePageQuery = groq`*[_type == "settings" ][0]{
-  "featuredCourse": *[_type == "course" && featured > 0]|order(featured desc)[0]{
-      ${baseFieldsNoContent},
-      ${courseFields},
-  },
-  "featuredCourses": *[_type == "course" && featured > 0]|order(featured desc)[0...4]{
-      ${baseFieldsNoContent},
-      ${courseFields},
-  },
   "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{
+      ${baseFieldsNoContent},
+      youtube,
+      videoCloudinary,
+  },
+  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{
       ${baseFieldsNoContent},
   },
   "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{

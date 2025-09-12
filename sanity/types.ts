@@ -1764,30 +1764,8 @@ export type SettingsQueryResult = {
   } | null;
 } | null;
 // Variable: homePageQuery
-// Query: *[_type == "settings" ][0]{  "featuredCourse": *[_type == "course" && featured > 0]|order(featured desc)[0]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),        stripeProduct,  },  "featuredCourses": *[_type == "course" && featured > 0]|order(featured desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),        stripeProduct,  },  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{       _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },}
+// Query: *[_type == "settings" ][0]{  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),      youtube,      videoCloudinary,  },  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{       _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },}
 export type HomePageQueryResult = {
-  featuredCourse: {
-    _id: string;
-    _type: "course";
-    status: "draft" | "published";
-    title: string | "Untitled";
-    slug: string | null;
-    excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
-    date: string;
-    stripeProduct: string | null;
-  } | null;
-  featuredCourses: Array<{
-    _id: string;
-    _type: "course";
-    status: "draft" | "published";
-    title: string | "Untitled";
-    slug: string | null;
-    excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
-    date: string;
-    stripeProduct: string | null;
-  }>;
   latestPodcast: {
     _id: string;
     _type: "podcast";
@@ -1797,7 +1775,19 @@ export type HomePageQueryResult = {
     excerpt: string | null;
     coverImage: CloudinaryAsset | null;
     date: string;
+    youtube: string | null;
+    videoCloudinary: CloudinaryAsset | null;
   } | null;
+  latestPodcasts: Array<{
+    _id: string;
+    _type: "podcast";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    coverImage: CloudinaryAsset | null;
+    date: string;
+  }>;
   topPodcasts: Array<{
     _id: string;
     _type: "podcast";
@@ -10889,7 +10879,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "count(*[_type == $type])": DocCountResult;
     "*[_type == \"settings\"][0]{\n  ...,\n  ogImage{\n    secure_url\n  }\n}": SettingsQueryResult;
-    "*[_type == \"settings\" ][0]{\n  \"featuredCourse\": *[_type == \"course\" && featured > 0]|order(featured desc)[0]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n      \n  stripeProduct\n,\n  },\n  \"featuredCourses\": *[_type == \"course\" && featured > 0]|order(featured desc)[0...4]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n      \n  stripeProduct\n,\n  },\n  \"latestPodcast\": *[_type == \"podcast\"]|order(date desc)[0]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"topPodcasts\": *[_type == \"podcast\" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"latestPosts\": *[_type == \"post\"]|order(date desc)[0...4]{\n     \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"topPosts\": *[_type == \"post\" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n}": HomePageQueryResult;
+    "*[_type == \"settings\" ][0]{\n  \"latestPodcast\": *[_type == \"podcast\"]|order(date desc)[0]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n      youtube,\n      videoCloudinary,\n  },\n  \"latestPodcasts\": *[_type == \"podcast\"]|order(date desc)[0...4]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"topPodcasts\": *[_type == \"podcast\" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"latestPosts\": *[_type == \"post\"]|order(date desc)[0...4]{\n     \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n  \"topPosts\": *[_type == \"post\" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  },\n}": HomePageQueryResult;
     "*[_type == \"page\" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == \"internalLink\" => {\n        @.reference->_type == \"page\" => {\n          \"href\": \"/\" + @.reference->slug.current\n        },\n        @.reference->_type != \"page\" => {\n          \"href\": \"/\" + @.reference->_type + \"/\" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}": PageQueryResult;
     "*[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": BlogQueryResult;
     "*[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage,\n  \"date\": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    \"title\": coalesce(title, \"Anonymous\"),\n    \"slug\": slug.current,\n  }\n}": MorePostQueryResult;
