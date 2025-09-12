@@ -6,7 +6,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { addSubscription } from "@/lib/firebase";
@@ -16,6 +15,7 @@ import Link from "next/link";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
 export default function GoPro({
 	setShowGoPro,
@@ -47,10 +47,7 @@ export default function GoPro({
 			const { error, url } = snap.data() as { error: Error; url: string };
 			if (error) {
 				console.error(error);
-				toast({
-					variant: "destructive",
-					description: error.message,
-				});
+				toast(error.message);
 			}
 			if (url) {
 				// We have a Stripe Checkout URL, let's redirect.

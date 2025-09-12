@@ -1,20 +1,26 @@
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
-import algoliasearch from "algoliasearch";
+import { algoliasearch } from "algoliasearch";
 
 const secret = process.env.PRIVATE_ALGOLIA_WEBOOK_SECRET;
 const algoliaAdminApiKey = process.env.PRIVATE_ALGOLIA_ADMIN_API_KEY;
 const algoliaAppId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const algoliaIndex = process.env.NEXT_PUBLIC_ALGOLIA_INDEX;
 
-if (!algoliaAdminApiKey) throw "Missing PRIVATE_ALGOLIA_ADMIN_API_KEY";
-if (!algoliaAppId) throw "Missing NEXT_PUBLIC_ALGOLIA_APP_ID";
-if (!algoliaIndex) throw "Missing NEXT_PUBLIC_ALGOLIA_INDEX";
+if (!algoliaAdminApiKey) {
+	throw "Missing PRIVATE_ALGOLIA_ADMIN_API_KEY";
+}
+if (!algoliaAppId) {
+	throw "Missing NEXT_PUBLIC_ALGOLIA_APP_ID";
+}
+if (!algoliaIndex) {
+	throw "Missing NEXT_PUBLIC_ALGOLIA_INDEX";
+}
 
-const algolia = algoliasearch(algoliaAppId, algoliaAdminApiKey);
-const index = algolia.initIndex(algoliaIndex);
+const client = algoliasearch(algoliaAppId, algoliaAdminApiKey);
 
 function toAlgoliaObject(sanityDoc: any) {
 	const doc = { ...sanityDoc };
+	// biome-ignore lint/performance/noDelete: <explanation>
 	delete doc.content;
 
 	return (
@@ -41,19 +47,21 @@ function toAlgoliaObject(sanityDoc: any) {
 }
 
 export async function POST(request: Request) {
-	if (!secret)
+	if (!secret) {
 		return Response.json(
 			{ success: false, error: "Missing Secret PRIVATE_ALGOLIA_WEBOOK_SECRET" },
 			{ status: 400 },
 		);
+	}
 
 	const signature = request.headers.get(SIGNATURE_HEADER_NAME);
 
-	if (!signature)
+	if (!signature) {
 		return Response.json(
 			{ success: false, error: "Missing Signature Header" },
 			{ status: 401 },
 		);
+	}
 
 	const body = await request.text();
 	if (!(await isValidSignature(body, signature, secret))) {
@@ -81,19 +89,31 @@ export async function POST(request: Request) {
 	const deleted = sanityDoc.deleted;
 	const updated = sanityDoc.updated;
 
+	// biome-ignore lint/performance/noDelete: <explanation>
 	delete sanityDoc.created;
+	// biome-ignore lint/performance/noDelete: <explanation>
 	delete sanityDoc.deleted;
+	// biome-ignore lint/performance/noDelete: <explanation>
 	delete sanityDoc.updated;
 
 	const algoliaDoc = toAlgoliaObject(sanityDoc);
 
 	try {
 		if (created) {
-			await index.saveObjects(algoliaDoc).wait();
+			await client.saveObjects({
+				indexName: algoliaIndex as string,
+				objects: [algoliaDoc],
+			});
 		} else if (updated) {
-			await index.saveObjects(algoliaDoc).wait();
+			await client.saveObjects({
+				indexName: algoliaIndex as string,
+				objects: [algoliaDoc],
+			});
 		} else {
-			await index.deleteObject(sanityDoc.objectID).wait();
+			await client.deleteObject({
+				indexName: algoliaIndex as string,
+				objectID: sanityDoc.objectID,
+			});
 		}
 	} catch (e) {
 		const error = JSON.stringify(e);

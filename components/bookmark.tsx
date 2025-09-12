@@ -1,8 +1,8 @@
 "use client";
 import { useBookmarked, useFirestoreUser } from "@/lib/firebase.hooks";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/components/ui/use-toast";
 import type { BaseBookmarkContent } from "@/lib/types";
+import { toast } from "sonner";
 
 export default function Bookmark({
 	content,
@@ -13,21 +13,15 @@ export default function Bookmark({
 	const { bookmarked, addBookmark, removeBookmark } = useBookmarked({
 		content,
 	});
-	const { toast } = useToast();
 
 	const makeComplete = async (isChecked: boolean) => {
 		if (!currentUser?.uid) {
-			toast({
-				variant: "destructive",
-				description: "You must be logged in to complete a lesson.",
-			});
+			toast("You must be logged in to complete a lesson.");
 			return;
 		}
 		if (isChecked) {
 			await addBookmark();
-			toast({
-				description: "Bookmark added 〽️",
-			});
+			toast("Bookmark added 〽️");
 		} else {
 			await removeBookmark();
 		}
@@ -37,7 +31,7 @@ export default function Bookmark({
 			{currentUser?.uid ? (
 				<div className="flex items-center gap-2">
 					<Checkbox
-						checked={bookmarked?._id ? true : false}
+						checked={!!bookmarked?._id}
 						onCheckedChange={makeComplete}
 					/>
 				</div>

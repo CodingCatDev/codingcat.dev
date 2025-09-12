@@ -4,7 +4,12 @@ import { handlePaste } from "./pastehandler";
 
 const wordsPerMinute = 200;
 
-function BlockEditor(props: any, ref: any) {
+import React from "react";
+
+const BlockEditor = React.forwardRef(function BlockEditor(
+	props: any,
+	ref: any,
+) {
 	const value = props.value ?? [];
 	const plainText = toPlainText(value);
 	const characterCount = plainText.length;
@@ -30,8 +35,6 @@ function BlockEditor(props: any, ref: any) {
 			</div>
 		</div>
 	);
-}
-// TODO: Add stronger typing
-
+});
 const input = (props: any) => <BlockEditor {...props} onPaste={handlePaste} />;
 export default input;

@@ -13,15 +13,15 @@ import { useFirestoreUser } from "@/lib/firebase.hooks";
 import Link from "next/link";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
-import { CourseQueryResult, type HomePageQueryResult } from "@/sanity/types";
+import type { CoursesQueryResult } from "@/sanity/types";
 import type { Price3 } from "@/lib/stripe.types";
 
 export default function Buy({
 	title,
 	stripeProduct,
 }: {
-	title: NonNullable<HomePageQueryResult>["featuredCourses"][0]["title"];
-	stripeProduct: NonNullable<HomePageQueryResult>["featuredCourses"][0]["stripeProduct"];
+	title: NonNullable<CoursesQueryResult>["title"];
+	stripeProduct: NonNullable<CoursesQueryResult>["stripeProduct"];
 }) {
 	const { currentUser } = useFirestoreUser();
 	const [redirecting, setRedirecting] = useState(false);
@@ -31,7 +31,9 @@ export default function Buy({
 	const [jwt, setJwt] = useState<any | null>(null);
 
 	useEffect(() => {
-		if (showBuy) { setRedirecting(false); }
+		if (showBuy) {
+			setRedirecting(false);
+		}
 	}, [showBuy]);
 
 	useEffect(() => {
@@ -52,7 +54,9 @@ export default function Buy({
 	};
 
 	useEffect(() => {
-		if (stripeProduct && showBuy) { getPrice(); }
+		if (stripeProduct && showBuy) {
+			getPrice();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stripeProduct, showBuy]);
 
@@ -79,9 +83,7 @@ export default function Buy({
 	const subscribe = (
 		<>
 			<DialogHeader>
-				<DialogTitle>
-					Purchase: {title}
-				</DialogTitle>
+				<DialogTitle>Purchase: {title}</DialogTitle>
 			</DialogHeader>
 			{price && (
 				<div className="mt-4 flex gap-2 sm:gap-4 text-xl sm:text-2xl">

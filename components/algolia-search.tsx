@@ -104,7 +104,6 @@ export default function AlgoliaSearch({
 								hit={hit}
 								attribute="title"
 								classNames={{ highlighted: "bg-primary" }}
-								className="text-sm sm:text-xl font-bold"
 							/>
 							<Highlight
 								hit={hit}
