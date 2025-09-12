@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { addSubscription, getStripePrice } from "@/lib/firebase";
 import { onSnapshot } from "firebase/firestore";
 import { useFirestoreUser } from "@/lib/firebase.hooks";
@@ -28,12 +27,11 @@ export default function Buy({
 	const [redirecting, setRedirecting] = useState(false);
 	const [price, setPrice] = useState<Price3 | null>(null);
 	const [showBuy, setShowBuy] = useState(false);
-	const { toast } = useToast();
 	const [cookies] = useCookies(["app.idt"]);
 	const [jwt, setJwt] = useState<any | null>(null);
 
 	useEffect(() => {
-		if (showBuy) setRedirecting(false);
+		if (showBuy) { setRedirecting(false); }
 	}, [showBuy]);
 
 	useEffect(() => {
@@ -54,7 +52,7 @@ export default function Buy({
 	};
 
 	useEffect(() => {
-		if (stripeProduct && showBuy) getPrice();
+		if (stripeProduct && showBuy) { getPrice(); }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stripeProduct, showBuy]);
 
@@ -66,10 +64,10 @@ export default function Buy({
 			const { error, url } = snap.data() as { error: Error; url: string };
 			if (error) {
 				console.error(error);
-				toast({
-					variant: "destructive",
-					description: error.message,
-				});
+				// toast({
+				// 	variant: "destructive",
+				// 	description: error.message,
+				// });
 			}
 			if (url) {
 				// We have a Stripe Checkout URL, let's redirect.
@@ -81,7 +79,7 @@ export default function Buy({
 	const subscribe = (
 		<>
 			<DialogHeader>
-				<DialogTitle className="text-2xl font-bold">
+				<DialogTitle>
 					Purchase: {title}
 				</DialogTitle>
 			</DialogHeader>

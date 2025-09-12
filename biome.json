@@ -26,6 +26,9 @@
 				},
 				"noNonNullAssertion": "warn",
 				"useBlockStatements": "error"
+			},      
+			"a11y": {
+				"noSvgWithoutTitle": "off"
 			}
 		}
 	},

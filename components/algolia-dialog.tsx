@@ -33,7 +33,7 @@ export default function AlgoliaDialog() {
 					</span>
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-screen-lg p-0 sm:px-6 ">
+			<DialogContent className="sm:max-w-(--breakpoint-lg) p-0 sm:px-6 ">
 				<div className="hidden">
 					<DialogTitle>Search</DialogTitle>
 				</div>

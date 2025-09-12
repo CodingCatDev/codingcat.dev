@@ -30,7 +30,7 @@ export default function Bookmarks() {
 							</Link>
 						</CardHeader>
 					)}
-					<CardContent className="flex-grow">
+					<CardContent className="grow">
 						<h3 className="mb-3 text-3xl leading-snug text-balance">
 							<Link href={bookmark._cc_pathname} className="hover:underline">
 								{bookmark.title}

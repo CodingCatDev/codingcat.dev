@@ -9,7 +9,6 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { addSubscription } from "@/lib/firebase";
 import { onSnapshot } from "firebase/firestore";
 import { useFirestoreUser } from "@/lib/firebase.hooks";
@@ -26,7 +25,6 @@ export default function GoPro({
 	const { currentUser } = useFirestoreUser();
 	const [subType, setSubType] = useState("yearly");
 	const [redirecting, setRedirecting] = useState(false);
-	const { toast } = useToast();
 	const [cookies] = useCookies(["app.idt"]);
 	const [jwt, setJwt] = useState<any | null>(null);
 	const pathname = usePathname();

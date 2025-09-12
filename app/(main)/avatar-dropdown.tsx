@@ -47,7 +47,7 @@ export default function AvatarDropdown() {
 	}, [cookies]);
 
 	// Only show after window is loaded
-	if (!isClient) return null;
+	if (!isClient) { return null; }
 
 	const logout = async () => {
 		await ccdSignOut();

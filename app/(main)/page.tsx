@@ -17,7 +17,7 @@ export default async function HomePage() {
 	const homePage = homePageFetch.data as HomePageQueryResult;
 
 	return (
-		<div className="flex flex-col min-h-[100dvh]">
+		<div className="flex flex-col min-h-dvh">
 			<main className="flex-1">
 				<section className="w-full pb-12 md:py-24 lg:py-32">
 					<div className="container px-4 md:px-6 grid gap-8 md:grid-cols-2 lg:gap-16">

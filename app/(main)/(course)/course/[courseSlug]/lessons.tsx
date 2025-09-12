@@ -60,7 +60,7 @@ export default async function Lessons(params: { courseSlug: string }) {
 													<CoverImage image={coverImage} priority={false} />
 												</Link>
 											</CardHeader>
-											<CardContent className="flex-grow">
+											<CardContent className="grow">
 												<h3 className="mb-3 text-3xl leading-snug text-balance">
 													<Link
 														href={`/course/${courseSlug}/${_type}/${slug}`}

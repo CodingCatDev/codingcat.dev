@@ -1,6 +1,6 @@
 "use client";
 
-import algoliasearch from "algoliasearch/lite";
+import { liteClient as algoliasearch } from "algoliasearch/lite";
 import type { Hit as AlgoliaHit, SearchClient } from "instantsearch.js";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,7 @@ export default function AlgoliaSearch({
 	const openInSearch = () => {
 		const search = Array.from(searchParams.entries());
 		router.push(`/search?${search?.at(0)?.join("=")}`);
-		setOpen && setOpen(false);
+		setOpen?.(false);
 	};
 
 	const iconPicker = (type: string) => {
@@ -97,7 +97,7 @@ export default function AlgoliaSearch({
 					<Link
 						href={`/${hit._type}/${hit.slug}`}
 						className="hover:underline flex-1"
-						onClick={() => setOpen && setOpen(false)}
+						onClick={() => setOpen?.(false)}
 					>
 						<div className="flex flex-col gap-1">
 							<Highlight

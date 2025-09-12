@@ -28,12 +28,12 @@ export default function SponsorCard({
 					>
 						<Card
 							key={_id}
-							className="flex-grow max-w-xl overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg"
+							className="grow max-w-xl overflow-hidden shadow-md transition-all hover:scale-[1.02] hover:shadow-lg"
 						>
 							<CardHeader className="p-0 pb-6">
 								<CoverImage image={coverImage} priority={false} />
 							</CardHeader>
-							<CardContent className="flex-grow">
+							<CardContent className="grow">
 								<h3 className="mb-3 text-3xl text-balance">{title}</h3>
 							</CardContent>
 							<CardFooter className="">

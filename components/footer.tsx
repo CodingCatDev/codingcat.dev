@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import NavLink from "@/components/nav-link";
 
-export default async function Footer() {
+export default function Footer() {
 	return (
 		<footer className="flex flex-col gap-6 lg:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t justify-center">
 			<div className="flex flex-col sm:flex-row items-center gap-4">
