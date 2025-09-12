@@ -70,7 +70,7 @@ export default async function Page() {
 	).map((res) => res.data) as [CoursesQueryResult];
 
 	return (
-		<div className=" px-5 mx-auto">
+		<div className="container px-5 mx-auto">
 			{heroPost ? (
 				<HeroCourse
 					title={heroPost.title}

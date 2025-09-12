@@ -61,7 +61,7 @@ export default async function SponsorPage({ params }: { params: Params }) {
 	}
 
 	return (
-		<div className=" px-5 mx-auto">
+		<div className="container px-5 mx-auto">
 			<BreadcrumbLinks
 				links={[{ title: "Sponsors", href: "/sponsors/page/1" }]}
 			/>

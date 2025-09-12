@@ -58,7 +58,7 @@ export default async function ProPage({ params, searchParams }: Props) {
 	}
 
 	return (
-		<div className=" px-5 mx-auto">
+		<div className="container px-5 mx-auto">
 			<div className="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
 				{page.coverImage && (
 					<Suspense>

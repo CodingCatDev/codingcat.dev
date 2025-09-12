@@ -62,7 +62,7 @@ export default async function AuthorPage({ params }: { params: Params }) {
 	}
 
 	return (
-		<div className=" px-5 mx-auto">
+		<div className="container px-5 mx-auto">
 			<BreadcrumbLinks
 				links={[{ title: "Authors", href: "/authors/page/1" }]}
 			/>

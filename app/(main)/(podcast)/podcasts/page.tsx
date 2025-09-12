@@ -84,7 +84,7 @@ export default async function Page() {
 		])
 	).map((res) => res.data) as [PodcastsQueryResult];
 	return (
-		<div className=" px-5 mx-auto">
+		<div className="container px-5 mx-auto">
 			{heroPost ? (
 				<HeroPodcast
 					title={heroPost.title}
