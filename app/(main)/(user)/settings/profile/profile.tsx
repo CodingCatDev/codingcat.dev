@@ -16,7 +16,7 @@ import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { app } from "@/lib/firebase";
 import type { User } from "@/lib/firebase.types";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useFirestoreUser } from "@/lib/firebase.hooks";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -27,7 +27,6 @@ import UploadProfileImage from "./upload-profile-image";
 export default function Profile() {
 	const { user } = useFirestoreUser();
 	const [saving, setSaving] = useState(false);
-	const { toast } = useToast();
 	const [cookies] = useCookies(["app.idt"]);
 	const [jwt, setJwt] = useState<any | null>(null);
 
@@ -50,34 +49,28 @@ export default function Profile() {
 		const uid = getAuth(app)?.currentUser?.uid;
 		if (!uid) {
 			setSaving(false);
-			toast({
-				variant: "destructive",
-				description: "missing uid, try logging in again",
-			});
+			toast("missing uid, try logging in again");
 			return;
 		}
 		const profile: NonNullable<User["settings"]>["profile"] = values;
 		try {
 			await setDoc(
-				doc(getFirestore(), "users/" + uid),
+				doc(getFirestore(), `users/${uid}`),
 				{
 					settings: { profile },
 				},
 				{ merge: true },
 			);
-			toast({
-				description: "Saved.",
-			});
+			toast("Saved.");
 		} catch (error) {
-			toast({
-				variant: "destructive",
-				description: JSON.stringify(error),
-			});
+			toast(JSON.stringify(error));
 		}
 		setSaving(false);
 	};
 
-	if (!user) return <CardContent>Loadig...</CardContent>;
+	if (!user) {
+		return <CardContent>Loadig...</CardContent>;
+	}
 
 	return (
 		<form onSubmit={handleSubmit}>

@@ -2,7 +2,7 @@
 import { useCompletedLesson, useFirestoreUser } from "@/lib/firebase.hooks";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { LessonsInCourseQueryResult } from "@/sanity/types";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import type { BaseCompletedLesson } from "@/lib/types";
 
 export default function LessonComplete({
@@ -17,21 +17,15 @@ export default function LessonComplete({
 		lesson,
 		course,
 	});
-	const { toast } = useToast();
 
 	const makeComplete = async (isChecked: boolean | "indeterminate") => {
 		if (!currentUser?.uid) {
-			toast({
-				variant: "destructive",
-				description: "You must be logged in to complete a lesson.",
-			});
+			toast("You must be logged in to complete a lesson.");
 			return;
 		}
 		if (isChecked) {
 			await addComplete();
-			toast({
-				description: "What a rockstar! 🎉",
-			});
+			toast("What a rockstar! 🎉");
 		} else {
 			await removeComplete();
 		}
@@ -41,7 +35,7 @@ export default function LessonComplete({
 			{currentUser?.uid ? (
 				<div className="flex items-center gap-2">
 					<Checkbox
-						checked={completeLesson?._id ? true : false}
+						checked={!!completeLesson?._id}
 						onCheckedChange={makeComplete}
 					/>
 				</div>

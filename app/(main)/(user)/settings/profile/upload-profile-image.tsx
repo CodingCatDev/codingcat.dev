@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { useState, useCallback } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useFirestoreUser } from "@/lib/firebase.hooks";
 import {
@@ -31,7 +31,6 @@ export default function UploadProfileImage() {
 	const [uploading, setUploading] = useState(false);
 	const [removing, setRemoving] = useState(false);
 	const [progress, setProgress] = useState(0);
-	const { toast } = useToast();
 
 	const reset = () => {
 		setUploading(false);
@@ -43,7 +42,7 @@ export default function UploadProfileImage() {
 		setUploading(true);
 
 		if (!currentUser?.uid) {
-			toast({ variant: "destructive", description: "Please login first" });
+			toast("Please login first");
 			reset();
 			return;
 		}
@@ -51,10 +50,7 @@ export default function UploadProfileImage() {
 		const file = acceptedFiles.at(0);
 
 		if (!file) {
-			toast({
-				variant: "destructive",
-				description: "File not found or invalid",
-			});
+			toast("File not found or invalid");
 			reset();
 			return;
 		}
@@ -74,10 +70,7 @@ export default function UploadProfileImage() {
 				},
 				(error: any) => {
 					console.error(error);
-					toast({
-						variant: "destructive",
-						description: "Failed to upload image",
-					});
+					toast("Failed to upload image");
 					reset();
 				},
 				async () => {
@@ -86,30 +79,22 @@ export default function UploadProfileImage() {
 					);
 					try {
 						await setDoc(
-							doc(getFirestore(), "users/" + currentUser.uid),
+							doc(getFirestore(), `users/${currentUser.uid}`),
 							{
 								settings: { profile: { picture: url } },
 							},
 							{ merge: true },
 						);
-						toast({
-							description: "Saved.",
-						});
+						toast("Saved.");
 					} catch (error) {
-						toast({
-							variant: "destructive",
-							description: JSON.stringify(error),
-						});
+						toast(JSON.stringify(error));
 					}
 					reset();
 				},
 			);
 		} catch (error) {
 			console.error(error);
-			toast({
-				variant: "destructive",
-				description: "Failed to upload image",
-			});
+			toast("Failed to upload image");
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -125,14 +110,11 @@ export default function UploadProfileImage() {
 
 	const removeProfileImage = async () => {
 		if (!currentUser?.uid) {
-			toast({
-				variant: "destructive",
-				description: "Must be logged in to remove image",
-			});
+			toast("Must be logged in to remove image");
 			return;
 		}
 		await setDoc(
-			doc(getFirestore(), "users/" + currentUser.uid),
+			doc(getFirestore(), `users/${currentUser.uid}`),
 			{
 				settings: { profile: { picture: null } },
 			},

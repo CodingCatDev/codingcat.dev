@@ -7,16 +7,15 @@ const provider = new GithubAuthProvider();
 
 // Display
 import { FirebaseError } from "firebase/app";
-import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { FaGithub } from "react-icons/fa";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 export default function GitHubAuth() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const redirect = searchParams.get("redirectTo");
-	const { toast } = useToast();
 
 	const login = async () => {
 		try {
@@ -29,22 +28,14 @@ export default function GitHubAuth() {
 		} catch (err: any) {
 			if (err instanceof FirebaseError) {
 				if (err.code === "auth/account-exists-with-different-credential") {
-					toast({
-						variant: "destructive",
-						description:
-							"Account Exists with Different Login Method. Please first login and then link within your Account page.",
-					});
+					toast(
+						"Account Exists with Different Login Method. Please first login and then link within your Account page.",
+					);
 				} else {
-					toast({
-						variant: "destructive",
-						description: err.message,
-					});
+					toast(`${err.message}`);
 				}
 			} else {
-				toast({
-					variant: "destructive",
-					description: JSON.stringify(err),
-				});
+				toast(JSON.stringify(err));
 				console.error(err);
 			}
 		}
