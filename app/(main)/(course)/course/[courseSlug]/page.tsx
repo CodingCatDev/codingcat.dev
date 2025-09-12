@@ -68,7 +68,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 	}
 
 	return (
-		<div className="container px-5 mx-auto">
+		<div className=" px-5 mx-auto">
 			<ShowPro />
 			<BreadcrumbLinks
 				links={[{ title: "Courses", href: "/courses/page/1" }]}

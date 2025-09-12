@@ -91,7 +91,7 @@ export default async function LessonPage({ params }: { params: Params }) {
 	return (
 		<>
 			{lesson?._id && course?._id && (
-				<div className="container px-5 mx-auto grid gap-2">
+				<div className=" px-5 mx-auto grid gap-2">
 					<Suspense fallback={<>Loading Lesson Panel...</>}>
 						<LessonPanelClientOnly lesson={lesson} course={course} />
 					</Suspense>

@@ -81,7 +81,7 @@ export default async function SponsorshipsPodcastPage({
 	);
 
 	return (
-		<div className="container px-5 mx-auto">
+		<div className=" px-5 mx-auto">
 			<BreadcrumbLinks
 				links={[{ title: "Sponsorships", href: "/sponsorships" }]}
 			/>

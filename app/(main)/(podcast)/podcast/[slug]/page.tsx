@@ -73,7 +73,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
 	const src = podcast?.spotify?.enclosures?.at(0)?.url;
 
 	return (
-		<div className="container px-5 mx-auto">
+		<div className=" px-5 mx-auto">
 			<BreadcrumbLinks
 				links={[{ title: "Podcasts", href: "/podcasts/page/1" }]}
 			/>

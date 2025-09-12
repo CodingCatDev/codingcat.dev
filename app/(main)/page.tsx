@@ -20,7 +20,7 @@ export default async function HomePage() {
 		<div className="flex flex-col min-h-dvh">
 			<main className="flex-1">
 				<section className="w-full pb-12 md:py-24 lg:py-32">
-					<div className="container px-4 md:px-6 grid gap-8 md:grid-cols-2 lg:gap-16">
+					<div className=" px-4 md:px-6 grid gap-8 md:grid-cols-2 lg:gap-16">
 						{homePage?.featuredCourse && (
 							<div className="space-y-4 flex flex-col items-start gap-2">
 								<div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
@@ -88,7 +88,7 @@ export default async function HomePage() {
 							<CarbonAdBanner />
 						</div>
 					</div>
-					<div className="container px-4 md:px-6">
+					<div className=" px-4 md:px-6">
 						<div className="flex flex-col items-center justify-center space-y-4 text-center">
 							<div className="space-y-2">
 								<h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -131,7 +131,7 @@ export default async function HomePage() {
 					</div>
 				</section>
 				<section className="w-full py-12 md:py-24 lg:py-32 ">
-					<div className="container px-4 md:px-6">
+					<div className=" px-4 md:px-6">
 						<div className="flex flex-col items-center justify-center space-y-4 text-center">
 							<div className="space-y-2">
 								<h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -186,7 +186,7 @@ export default async function HomePage() {
 					</div>
 				</section>
 				<section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-					<div className="container px-4 md:px-6">
+					<div className=" px-4 md:px-6">
 						<div className="flex flex-col items-center justify-center space-y-4 text-center">
 							<div className="space-y-2">
 								<h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">

@@ -71,7 +71,7 @@ export default async function Page() {
 		await Promise.all([sanityFetch({ query: blogQuery })])
 	).map((res) => res.data) as [BlogQueryResult];
 	return (
-		<div className="container px-5 mx-auto">
+		<div className=" px-5 mx-auto">
 			{heroPost ? (
 				<HeroPost
 					title={heroPost.title}

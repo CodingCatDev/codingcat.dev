@@ -62,7 +62,7 @@ export default async function GuestPage({ params }: { params: Params }) {
 	}
 
 	return (
-		<div className="container px-5 mx-auto">
+		<div className=" px-5 mx-auto">
 			<BreadcrumbLinks links={[{ title: "Guests", href: "/guests/page/1" }]} />
 			<div className="w-full flex flex-col gap-4 md:gap-8">
 				<div className="flex gap-2 md:gap-8">

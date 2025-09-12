@@ -11,7 +11,7 @@ import { Suspense } from "react";
 
 export default function LoginForm() {
 	return (
-		<div className="container px-5 mx-auto">
+		<div className=" px-5 mx-auto">
 			<div className="w-full flex justify-center p-8 sm:p-20 md:p-32">
 				<Card className="w-full max-w-sm">
 					<CardHeader>

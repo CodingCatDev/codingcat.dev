@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Params }) {
 	const limit = offset + LIMIT;
 
 	return (
-		<div className="container px-5 mx-auto mb-32">
+		<div className=" px-5 mx-auto mb-32">
 			<MoreContent type="guest" limit={limit} offset={offset} showHeader />
 			<PaginateList
 				base="guests"
