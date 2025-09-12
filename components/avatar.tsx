@@ -3,6 +3,8 @@
 import { CldImage } from "next-cloudinary";
 import type { Author } from "@/sanity/types";
 import Link from "next/link";
+import { stegaClean } from "@sanity/client/stega";
+
 
 interface Props {
 	name?: string;
@@ -21,15 +23,16 @@ export default function Avatar({
 	width,
 	height,
 }: Props) {
-	if (!href && coverImage?.public_id) {
+	const source = stegaClean(coverImage);
+	if (!href && source?.public_id) {
 		return (
 			<div className={`${imgSize ? imgSize : "w-12 h-12 mr-4"}`}>
 				<CldImage
 					className="w-full h-auto aspect-square rounded-md object-cover"
 					width={width || 48}
 					height={height || 48}
-					alt={coverImage?.context?.custom?.alt || ""}
-					src={coverImage.public_id}
+					alt={source?.context?.custom?.alt || ""}
+					src={source.public_id}
 					config={{
 						url: {
 							secureDistribution: "media.codingcat.dev",
@@ -40,17 +43,17 @@ export default function Avatar({
 			</div>
 		);
 	}
-	if (href && coverImage?.public_id) {
+	if (href && source?.public_id) {
 		return (
 			<Link className="flex items-center text-xl" href={href}>
-				{coverImage?.public_id && (
+				{source?.public_id && (
 					<div className={`${imgSize ? imgSize : "w-12 h-12 mr-4"}`}>
 						<CldImage
 							className="w-full h-auto aspect-square rounded-md object-cover"
 							width={width || 48}
 							height={height || 48}
-							alt={coverImage?.context?.custom?.alt || ""}
-							src={coverImage.public_id}
+							alt={source?.context?.custom?.alt || ""}
+							src={source.public_id}
 							config={{
 								url: {
 									secureDistribution: "media.codingcat.dev",
