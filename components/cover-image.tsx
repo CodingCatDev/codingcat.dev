@@ -1,6 +1,7 @@
 import type { CloudinaryAsset } from "@/sanity/types";
 import CloudinaryImage from "@/components/cloudinary-image";
 import { getCldImageUrl } from "next-cloudinary";
+import { stegaClean } from "@sanity/client/stega";
 
 interface CoverImageProps {
 	image: CloudinaryAsset | null | undefined;
@@ -21,6 +22,9 @@ export default async function CoverImage(props: CoverImageProps) {
 		quality,
 	} = props;
 
+	const source = stegaClean(originalImage);
+
+
 	const getImageUrl = async (src: string) => {
 		const imageUrl = getCldImageUrl({
 			src,
@@ -34,7 +38,7 @@ export default async function CoverImage(props: CoverImageProps) {
 	};
 
 	let image: JSX.Element | undefined;
-	if (originalImage?.public_id) {
+	if (source?.public_id) {
 		image = (
 			<CloudinaryImage
 				className={className || "w-full h-auto aspect-video rounded-md"}
@@ -43,10 +47,10 @@ export default async function CoverImage(props: CoverImageProps) {
 				priority={priority}
 				quality={quality || "auto"}
 				sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw, 33vw"
-				alt={originalImage?.context?.custom?.alt || ""}
-				src={originalImage?.public_id}
+				alt={source?.context?.custom?.alt || ""}
+				src={source?.public_id}
 				placeholder="blur"
-				blurDataURL={await getImageUrl(originalImage.public_id)}
+				blurDataURL={await getImageUrl(source.public_id)}
 			/>
 		);
 	} else {
