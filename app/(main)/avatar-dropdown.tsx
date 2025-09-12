@@ -106,7 +106,7 @@ export default function AvatarDropdown() {
 									Log Out
 								</DropdownMenuItem>
 							</DropdownMenuGroup>
-							<DropdownMenuGroup>
+							{/* <DropdownMenuGroup>
 								{!jwt?.stripeRole && (
 									<DropdownMenuItem
 										className="bg-primary hover:cursor-pointer"
@@ -115,7 +115,7 @@ export default function AvatarDropdown() {
 										Go Pro
 									</DropdownMenuItem>
 								)}
-							</DropdownMenuGroup>
+							</DropdownMenuGroup> */}
 						</DropdownMenuContent>
 					</DropdownMenu>
 					{showGoPro && <GoPro setShowGoPro={setShowGoPro} />}
