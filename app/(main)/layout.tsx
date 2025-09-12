@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { SanityLive } from "@/sanity/lib/live";
 import { Nunito } from "next/font/google";
 import { Inter } from "next/font/google";
-import { draftMode } from "next/headers";
 import { Suspense } from 'react'
 
 import NextTopLoader from "nextjs-toploader";
@@ -26,7 +25,8 @@ import AlgoliaDialog from "@/components/algolia-dialog";
 import { FaBars } from "react-icons/fa6";
 import PlayerFloating from "@/components/player-floating";
 import { PlayerProvider } from "@/components/player-context";
-import { toPlainText, VisualEditing } from "next-sanity";
+import { toPlainText } from "next-sanity";
+import {VisualEditing} from 'next-sanity/visual-editing'
 import { DisableDraftMode } from "@/components/disable-draft-mode";
 import MetaPixel from "./meta-pixel";
 
@@ -146,12 +146,6 @@ export default async function RootLayout({
 						</section>
 						<PlayerFloating />
 						<SanityLive />
-						{(await draftMode()).isEnabled && (
-							<>
-								<DisableDraftMode />
-								<VisualEditing />
-							</>
-						)}
 						<SpeedInsights />
 					</ThemeProvider>
 				</PlayerProvider>
