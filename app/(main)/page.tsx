@@ -48,7 +48,7 @@ export default async function HomePage() {
 										cloudinaryImage={homePage?.latestPodcast?.coverImage}
 										cloudinaryVideo={homePage?.latestPodcast?.videoCloudinary}
 										youtube={homePage?.latestPodcast?.youtube}
-										className="w-full aspect-video rounded-md"
+										className="w-full aspect-video"
 									/>
 								</div>
 							</div>
