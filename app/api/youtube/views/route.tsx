@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 	try {
 		// Fetch up to 10 pending/inProgress youtubeUpdateTask docs
 		const tasks = await sanityWriteClient.fetch(
-			`*[_type == "youtubeUpdateTask" && (status == "pending" || status == "inProgress")]| order(lastChecked asc nulls first)[0...10]{ _id, targetDoc->{_id, _type, youtube}, status }`
+			`*[_type == "youtubeUpdateTask" && (status == "pending" || status == "inProgress")]| order(lastChecked asc)[0...10]{ _id, targetDoc->{_id, _type, youtube}, status }`
 		);
 
 		if (!tasks || tasks.length === 0) {
