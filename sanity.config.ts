@@ -41,6 +41,7 @@ import podcastType from "@/sanity/schemas/documents/podcastType";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
+import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -123,20 +124,21 @@ export default defineConfig({
 	projectId,
 	dataset,
 	schema: {
-		types: [
-			// Singletons
-			settings,
-			// Documents
-			author,
-			course,
-			lesson,
-			guest,
-			page,
-			podcast,
-			podcastType,
-			post,
-			sponsor,
-		],
+		   types: [
+			   // Singletons
+			   settings,
+			   // Documents
+			   author,
+			   course,
+			   lesson,
+			   guest,
+			   page,
+			   podcast,
+			   podcastType,
+			   post,
+			   sponsor,
+			   youtubeUpdateTask,
+		   ],
 	},
 	plugins: [
 		presentationTool({
