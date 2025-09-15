@@ -16,53 +16,79 @@ const sanityWriteClient = createClient({
 
 
 
-async function processSingleTask() {
+
+async function processBatchTasks() {
+	// Fetch up to 50 pending tasks
 	let tasks = await sanityWriteClient.fetch(
-		`*[_type == "youtubeUpdateTask" && (status == "pending" || status == "inProgress")]| order(lastChecked asc)[0...1]{ _id, targetDoc->{_id, _type, youtube}, status }`
+		`*[_type == "youtubeUpdateTask" && status == "pending"]| order(lastChecked asc)[0...50]{ _id, targetDoc->{_id, _type, youtube}, status }`
 	);
-	if (!tasks || tasks.length === 0) return false;
-	const task = tasks[0];
-	const { _id: taskId, targetDoc, status } = task;
-	if (!targetDoc || !targetDoc.youtube) {
-		await sanityWriteClient.patch(taskId)
-			.set({ status: "error", errorMessage: "Missing YouTube field on targetDoc", lastChecked: new Date().toISOString() })
-			.commit();
-		return false;
-	}
-	// Mark as inProgress
-	await sanityWriteClient.patch(taskId)
-		.set({ status: "inProgress", lastChecked: new Date().toISOString() })
-		.commit();
+	if (!tasks || tasks.length === 0) return { processed: 0 };
 
-	const id = youtubeParser(targetDoc.youtube);
-	if (!id) {
-		await sanityWriteClient.patch(taskId)
-			.set({ status: "error", errorMessage: "Invalid YouTube URL", lastChecked: new Date().toISOString() })
-			.commit();
-		return false;
+	// Prepare video IDs and map taskId to docId
+	const validTasks = [];
+	const errorTasks = [];
+	for (const task of tasks) {
+		const { _id: taskId, targetDoc } = task;
+		if (!targetDoc || !targetDoc.youtube) {
+			errorTasks.push({ taskId, error: "Missing YouTube field on targetDoc" });
+			continue;
+		}
+		const id = youtubeParser(targetDoc.youtube);
+		if (!id) {
+			errorTasks.push({ taskId, error: "Invalid YouTube URL" });
+			continue;
+		}
+		validTasks.push({ taskId, docId: targetDoc._id, youtubeId: id });
 	}
 
-	try {
-		const videoResp = await fetch(
-			`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${process.env.YOUTUBE_API_KEY}&fields=items(id,statistics)&part=statistics`,
-		);
-		const json = await videoResp.json();
-		if (videoResp.status !== 200) {
-			await sanityWriteClient.patch(taskId)
+	// Mark all valid tasks as inProgress
+	for (const t of validTasks) {
+		await sanityWriteClient.patch(t.taskId)
+			.set({ status: "inProgress", lastChecked: new Date().toISOString() })
+			.commit();
+	}
+
+	// Mark all error tasks as error
+	for (const t of errorTasks) {
+		await sanityWriteClient.patch(t.taskId)
+			.set({ status: "error", errorMessage: t.error, lastChecked: new Date().toISOString() })
+			.commit();
+	}
+
+	if (validTasks.length === 0) return { processed: 0, errors: errorTasks.length };
+
+	// Batch YouTube API call
+	const ids = validTasks.map(t => t.youtubeId).join(",");
+	console.log("[YOUTUBE] Fetching stats for IDs:", ids);
+	const videoResp = await fetch(
+		`https://www.googleapis.com/youtube/v3/videos?id=${ids}&key=${process.env.YOUTUBE_API_KEY}&fields=items(id,statistics)&part=statistics`,
+	);
+	const json = await videoResp.json();
+	if (videoResp.status !== 200) {
+		// Mark all as error
+		for (const t of validTasks) {
+			await sanityWriteClient.patch(t.taskId)
 				.set({ status: "error", errorMessage: JSON.stringify(json), lastChecked: new Date().toISOString() })
 				.commit();
-			return false;
 		}
-		const statistics = json?.items?.at(0)?.statistics;
+		return { processed: 0, errors: validTasks.length };
+	}
+	const statsMap = new Map();
+	for (const item of json?.items || []) {
+		statsMap.set(item.id, item.statistics);
+	}
+
+	let completed = 0;
+	for (const t of validTasks) {
+		const statistics = statsMap.get(t.youtubeId);
 		if (!statistics) {
-			await sanityWriteClient.patch(taskId)
+			await sanityWriteClient.patch(t.taskId)
 				.set({ status: "error", errorMessage: "No statistics found", lastChecked: new Date().toISOString() })
 				.commit();
-			return false;
+			continue;
 		}
-
 		// Update target doc with stats
-		await sanityWriteClient.patch(targetDoc._id)
+		await sanityWriteClient.patch(t.docId)
 			.set({
 				"statistics.youtube.commentCount": Number.parseInt(statistics.commentCount),
 				"statistics.youtube.favoriteCount": Number.parseInt(statistics.favoriteCount),
@@ -70,18 +96,13 @@ async function processSingleTask() {
 				"statistics.youtube.viewCount": Number.parseInt(statistics.viewCount),
 			})
 			.commit();
-
 		// Mark task as completed
-		await sanityWriteClient.patch(taskId)
+		await sanityWriteClient.patch(t.taskId)
 			.set({ status: "completed", lastChecked: new Date().toISOString(), errorMessage: undefined })
 			.commit();
-		return true;
-	} catch (err) {
-		await sanityWriteClient.patch(taskId)
-			.set({ status: "error", errorMessage: String(err), lastChecked: new Date().toISOString() })
-			.commit();
-		return false;
+		completed++;
 	}
+	return { processed: completed, errors: errorTasks.length + (validTasks.length - completed) };
 }
 
 export async function POST(request: NextRequest) {
@@ -94,7 +115,7 @@ export async function POST(request: NextRequest) {
 	try {
 		// Repopulate youtubeUpdateTask queue if empty
 		let tasks = await sanityWriteClient.fetch(
-			`*[_type == "youtubeUpdateTask" && (status == "pending" || status == "inProgress")]| order(lastChecked asc)[0...1]{ _id, targetDoc->{_id, _type, youtube}, status }`
+			`*[_type == "youtubeUpdateTask" && status == "pending"]| order(lastChecked asc)[0...1]{ _id }`
 		);
 		if (!tasks || tasks.length === 0) {
 			const posts = await sanityWriteClient.fetch(
@@ -120,27 +141,9 @@ export async function POST(request: NextRequest) {
 			}
 		}
 
-		// Process a single task
-		const didProcess = await processSingleTask();
-
-		// Wait in a while loop until 30 seconds have passed
-		const startTime = Date.now();
-		const maxDuration = 30 * 1000; // 30 seconds
-		while (Date.now() - startTime < maxDuration) {
-			// Busy-wait (not recommended for production, but per user request)
-			console.log('waiting...');
-		}
-
-		// Trigger the next batch by calling this API again
-		fetch(`${publicURL()}/api/youtube/views`, {
-			method: "POST",
-			headers: {
-				authorization: `Bearer ${process.env.CRON_SECRET}`,
-				"Cache-Control": "no-cache",
-			},
-		});
-
-		return Response.json({ success: true, didProcess });
+		// Process a batch of tasks
+		const result = await processBatchTasks();
+		return Response.json({ success: true, ...result });
 	} catch (error) {
 		console.error("[YOUTUBE] Unexpected error:", error);
 		return Response.json({ success: false, error: String(error) }, { status: 500 });
