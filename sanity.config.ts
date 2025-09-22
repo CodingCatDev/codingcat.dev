@@ -30,8 +30,10 @@ import {
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
+import { sharePreviewAction } from "@/sanity/components/documentActions/sharePreviewAction";
 import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
+import previewSession from "@/sanity/schemas/previewSession";
 import course from "@/sanity/schemas/documents/course";
 import lesson from "@/sanity/schemas/documents/lesson";
 import guest from "@/sanity/schemas/documents/guest";
@@ -118,27 +120,35 @@ export const podcastStructure = (): StructureResolver => {
 			]);
 	};
 };
-
 export default defineConfig({
 	basePath: studioUrl,
 	projectId,
 	dataset,
 	schema: {
-		   types: [
-			   // Singletons
-			   settings,
-			   // Documents
-			   author,
-			   course,
-			   lesson,
-			   guest,
-			   page,
-			   podcast,
-			   podcastType,
-			   post,
-			   sponsor,
-			   youtubeUpdateTask,
-		   ],
+		types: [
+			// Singletons
+			settings,
+			// Documents
+			author,
+			course,
+			lesson,
+			guest,
+			page,
+			podcast,
+			podcastType,
+			post,
+			sponsor,
+			youtubeUpdateTask,
+			previewSession,
+		],
+	},
+	document: {
+		actions: (prev, context) => {
+			if (context.schemaType === 'post' || context.schemaType === 'podcast') {
+				return [sharePreviewAction, ...prev];
+			}
+			return prev;
+		},
 	},
 	plugins: [
 		presentationTool({
