@@ -21,7 +21,6 @@ const SharePreviewActionButton: React.FC<SharePreviewActionButtonProps> = ({ id,
     setLoading(true);
     setError(null);
     setShareUrl(null);
-    console.log('Generating preview link for document ID:', id);
     try {
       const res = await fetch('/api/generate-preview-token', {
         method: 'POST',
@@ -33,7 +32,7 @@ const SharePreviewActionButton: React.FC<SharePreviewActionButtonProps> = ({ id,
       });
       const data = await res.json();
       if (res.ok && data.token) {
-        setShareUrl(`${window.location.origin}/preview/${data.token}`);
+        setShareUrl(`${window.location.origin}/${type}/preview/${data.token}`);
       } else {
         setError(data.error || 'Failed to generate link');
       }

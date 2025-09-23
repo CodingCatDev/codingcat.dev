@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const token = uuidv4();
-  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(); // 2 hours expiry
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(); // 7 days
 
   // Create previewSession document in Sanity
   await sanityClient.create({

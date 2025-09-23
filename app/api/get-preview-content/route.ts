@@ -1,13 +1,15 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createClient } from 'next-sanity';
+import { podcastQuery, postQuery } from '@/sanity/lib/queries';
 
 const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   apiVersion: '2025-09-22',
-  token: process.env.SANITY_API_TOKEN, // must have read access
+  token: process.env.SANITY_API_READ_TOKEN,
   useCdn: false,
+  perspective: 'drafts',
 });
 
 export async function POST(req: NextRequest) {
@@ -36,5 +38,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Document not found' }, { status: 404 });
   }
 
-  return NextResponse.json({ document: doc });
+  if (doc?._type !== 'post' && doc?._type !== 'podcast' && !doc.slug?.current) {
+    return NextResponse.json({ error: 'Document not found' }, { status: 404 });
+  }
+
+  if(doc?._type === 'podcast') {
+    return NextResponse.json({ document: await sanityClient.fetch(podcastQuery, { slug: doc.slug.current }) });
+  }
+
+  if(doc?._type === 'post') {
+    return NextResponse.json({ document: await sanityClient.fetch(postQuery, { slug: doc.slug.current }) });
+  }
+
+  return NextResponse.json({ error: 'Document not found' }, { status: 404 });
 }
