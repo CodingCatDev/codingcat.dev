@@ -27,6 +27,7 @@ import { PlayerProvider } from "@/components/player-context";
 import { toPlainText } from "next-sanity";
 import { VisualEditing } from 'next-sanity/visual-editing'
 import { DisableDraftMode } from "@/components/disable-draft-mode";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -119,6 +120,7 @@ export default async function RootLayout({
 									</div>
 									<div className="flex items-center gap-2">
 										<AlgoliaDialog />
+										<ModeToggle />
 										<Sheet>
 											<SheetTrigger asChild>
 												<Button className="md:hidden" size="icon" variant="ghost">
