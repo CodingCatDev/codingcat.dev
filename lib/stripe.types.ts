@@ -318,9 +318,7 @@ export interface Product2 {
 	updated: number;
 }
 
-export interface Metadata2 {
-	firebaseRole: string;
-}
+export interface Metadata2 {}
 
 export interface Recurring {
 	aggregate_usage: any;

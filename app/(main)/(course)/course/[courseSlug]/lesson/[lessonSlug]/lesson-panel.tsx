@@ -20,9 +20,9 @@ import {
 	FaCircleArrowRight,
 	FaHouse,
 } from "react-icons/fa6";
-import LessonComplete from "./lesson-complete";
+
 import { useLocalStorage } from "@uidotdev/usehooks";
-import Bookmark from "@/components/bookmark";
+
 
 export default function LessonPanel({
 	lesson,
@@ -70,10 +70,7 @@ export default function LessonPanel({
 					/>
 				</main>
 				<footer className="grid grid-cols-3 h-14 lg:h-[60px] gap-1 sm:gap-4 border-b px-6 dark:bg-gray-800/40">
-					<div className="flex-0 flex justify-start items-center gap-1">
-						<Bookmark content={lessonNoContent} />
-						<p className="text-sm sm:text-xl">Bookmark</p>
-					</div>
+					
 					<div className="flex justify-center items-center">
 						{lessonIndex > 0 && (
 							<Button variant="ghost" asChild>
@@ -95,10 +92,7 @@ export default function LessonPanel({
 							</Button>
 						)}
 					</div>
-					<div className="flex-0 flex justify-end items-center gap-1">
-						<LessonComplete lesson={lessonNoContent} course={course} />
-						<p className="text-sm sm:text-xl">Complete</p>
-					</div>
+					
 				</footer>
 			</div>
 		);

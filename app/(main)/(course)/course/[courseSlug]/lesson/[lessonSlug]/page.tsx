@@ -18,8 +18,7 @@ import PortableText from "@/components/portable-text";
 import type { PortableTextBlock } from "next-sanity";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
-import type { Idt } from "@/lib/firebase.types";
-import { didUserPurchase } from "@/lib/server/firebase";
+
 
 type Params = Promise<{ lessonSlug: string; courseSlug: string }>;
 
@@ -71,21 +70,6 @@ export default async function LessonPage({ params }: { params: Params }) {
 		const cookieStore = await cookies();
 		const sessionCookie = cookieStore.get("app.at");
 		if (!sessionCookie){ return redirect(`/course/${course?.slug}?showPro=true`);}
-		const jwtPayload = jwtDecode(sessionCookie?.value) as Idt;
-		if (!jwtPayload?.exp){
-			return redirect(`/course/${course?.slug}?showPro=true`);}
-		const expiration = jwtPayload.exp;
-		const isExpired = expiration * 1000 < Date.now();
-		if (isExpired){ return redirect(`/course/${course?.slug}?showPro=true`);}
-
-		//Check if user isn't pro
-		if (!jwtPayload?.stripeRole) {
-			const purchased = await didUserPurchase(
-				course.stripeProduct,
-				jwtPayload.user_id,
-			);
-			if (!purchased){ return redirect(`/course/${course?.slug}?showPro=true`);}
-		}
 	}
 
 	return (

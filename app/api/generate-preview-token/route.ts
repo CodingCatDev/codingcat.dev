@@ -2,13 +2,14 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { createClient } from 'next-sanity';
+import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
 
 // Set this in your environment variables for security
 const SHARED_SECRET = process.env.NEXT_PUBLIC_PREVIEW_TOKEN_SECRET;
 const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: '2025-09-22',
+	projectId,
+	dataset,
+  apiVersion,
   token: process.env.SANITY_API_WRITE_TOKEN, // Must have write access
   useCdn: false,
 });

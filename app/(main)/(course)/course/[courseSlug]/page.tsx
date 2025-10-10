@@ -16,10 +16,8 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import Lessons from "./lessons";
 import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
-import Buy from "@/components/user-buy";
 import Link from "next/link";
 import ShowPro from "./show-pro";
-import UserGoProButton from "@/components/user-go-pro-button";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 
 type Params = Promise<{ courseSlug: string }>;
@@ -105,11 +103,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 						</div>
 						{course?.stripeProduct && course?.title && (
 							<section className="flex gap-2">
-								<Buy
-									stripeProduct={course.stripeProduct}
-									title={course.title}
-								/>
-								<UserGoProButton />
+								
 							</section>
 						)}
 					</div>

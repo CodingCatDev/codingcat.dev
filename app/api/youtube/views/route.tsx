@@ -1,15 +1,15 @@
 export const fetchCache = "force-no-store";
-
-
 import { publicURL, youtubeParser } from "@/lib/utils";
 import { createClient } from "next-sanity";
 import type { NextRequest } from "next/server";
+import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
+
 
 const sanityWriteClient = createClient({
-	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+	projectId,
+	dataset,
+	apiVersion,
 	token: process.env.SANITY_API_WRITE_TOKEN,
-	apiVersion: "2025-09-15",
 	perspective: "published",
 	useCdn: false,
 });

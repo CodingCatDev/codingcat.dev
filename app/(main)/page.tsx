@@ -1,7 +1,5 @@
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 import CoverImage from "@/components/cover-image";
-import Buy from "@/components/user-buy";
-import UserGoProButton from "@/components/user-go-pro-button";
 import type { HomePageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { homePageQuery } from "@/sanity/lib/queries";

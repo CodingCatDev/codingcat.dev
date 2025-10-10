@@ -14,14 +14,15 @@ import {
 	type PortableTextBlock,
 } from "next-sanity";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
-import BlockImage from "@/components/block-image";
-import BlockCode from "@/components/block-code";
-import TwitterEmbed from "@/components/twitter-embed";
-import CodePenEmbed from "@/components/codepen-embed";
-import CodeSandboxEmbed from "./codesandbox-embed";
-import HTMLEmbed from "@/components/html-embed";
-import QuoteEmbed from "@/components/quote-embed";
+const BlockImage = dynamic(() => import("@/components/block-image"));
+const BlockCode = dynamic(() => import("@/components/block-code"));
+const TwitterEmbed = dynamic(() => import("@/components/twitter-embed"));
+const CodePenEmbed = dynamic(() => import("@/components/codepen-embed"));
+const CodeSandboxEmbed = dynamic(() => import("./codesandbox-embed"));
+const HTMLEmbed = dynamic(() => import("@/components/html-embed"));
+const QuoteEmbed = dynamic(() => import("@/components/quote-embed"));
 
 export default function CustomPortableText({
 	className,

@@ -1,6 +1,5 @@
 import "../globals.css";
 
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { SanityLive } from "@/sanity/lib/live";
 import { Nunito } from "next/font/google";
@@ -21,15 +20,13 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 import NavHeader from "@/components/nav-header";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import AvatarDropdown from "./avatar-dropdown";
 import AlgoliaDialog from "@/components/algolia-dialog";
 import { FaBars } from "react-icons/fa6";
 import PlayerFloating from "@/components/player-floating";
 import { PlayerProvider } from "@/components/player-context";
 import { toPlainText } from "next-sanity";
-import {VisualEditing} from 'next-sanity/visual-editing'
+import { VisualEditing } from 'next-sanity/visual-editing'
 import { DisableDraftMode } from "@/components/disable-draft-mode";
-import MetaPixel from "./meta-pixel";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -99,8 +96,6 @@ export default async function RootLayout({
 			>
 				<CookiesProviderClient>
 					<Suspense>
-						<SpeedInsights />
-						<MetaPixel />
 						<DisableDraftMode />
 						<VisualEditing />
 					</Suspense>
@@ -124,7 +119,6 @@ export default async function RootLayout({
 									</div>
 									<div className="flex items-center gap-2">
 										<AlgoliaDialog />
-										<AvatarDropdown />
 										<Sheet>
 											<SheetTrigger asChild>
 												<Button className="md:hidden" size="icon" variant="ghost">
@@ -146,7 +140,6 @@ export default async function RootLayout({
 							</section>
 							<PlayerFloating />
 							<SanityLive />
-							<SpeedInsights />
 						</ThemeProvider>
 					</PlayerProvider>
 				</CookiesProviderClient>

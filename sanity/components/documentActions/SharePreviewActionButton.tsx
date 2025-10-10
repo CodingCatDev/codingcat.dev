@@ -3,6 +3,7 @@ import { useClient } from 'sanity';
 import { CopyIcon } from '@sanity/icons';
 import { Button, Dialog, Text, Stack, Card } from '@sanity/ui';
 import { RecycleIcon } from 'lucide-react';
+import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 
 interface SharePreviewActionButtonProps {
   id: string;
@@ -15,7 +16,6 @@ const SharePreviewActionButton: React.FC<SharePreviewActionButtonProps> = ({ id,
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const client = useClient({ apiVersion: '2025-09-22' });
 
   const fetchShareUrl = async () => {
     setLoading(true);

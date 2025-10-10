@@ -11,8 +11,7 @@ import {
 	CardHeader,
 } from "@/components/ui/card";
 
-import Buy from "@/components/user-buy";
-import UserGoProButton from "@/components/user-go-pro-button";
+
 
 export default async function Lessons(params: { courseSlug: string }) {
 	const { courseSlug } = await params;
@@ -79,11 +78,7 @@ export default async function Lessons(params: { courseSlug: string }) {
 											<CardFooter className="flex flex-col items-start gap-2">
 												{locked && course?.stripeProduct && course?.title && (
 													<section className="flex flex-wrap gap-2">
-														<Buy
-															stripeProduct={course?.stripeProduct}
-															title={course.title}
-														/>
-														<UserGoProButton />
+														
 													</section>
 												)}
 											</CardFooter>

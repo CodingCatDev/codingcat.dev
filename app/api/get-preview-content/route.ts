@@ -2,11 +2,12 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createClient } from 'next-sanity';
 import { podcastQuery, postQuery } from '@/sanity/lib/queries';
+import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 
 const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: '2025-09-22',
+  projectId,
+  dataset,
+  apiVersion,
   token: process.env.SANITY_API_READ_TOKEN,
   useCdn: false,
   perspective: 'drafts',
