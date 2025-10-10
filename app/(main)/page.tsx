@@ -1,3 +1,4 @@
+import AnimatedHero from "@/components/animated-hero";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
 import CoverImage from "@/components/cover-image";
 import type { HomePageQueryResult } from "@/sanity/types";
@@ -18,41 +19,7 @@ export default async function HomePage() {
 	return (
 		<div className="flex flex-col min-h-dvh">
 			<main className="flex-1">
-				<section className="w-full pb-12 md:py-24 lg:py-32 flex flex-col items-center justify-center">
-					<div className="container px-4 md:px-6 grid gap-8 md:grid-cols-2 lg:gap-16">
-						<div className="flex flex-col items-start justify-center space-y-4">
-							<h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-								CodingCat.dev Podcast
-							</h1>
-							<p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">
-								Purrfect Podcast for Web Developers
-							</p>
-							<div className="flex flex-col gap-2 min-[400px]:flex-row">
-								<Link
-									href="/podcasts"
-									className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary px-5 py-3 text-base font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:px-10"
-								>
-									Explore Podcasts
-								</Link>
-							</div>
-						</div>
-						{homePage?.latestPodcast && (
-							<div className="space-y-4 flex flex-col items-start gap-2">
-								<div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
-									Latest Podcast
-								</div>
-								<div className="w-full">
-									<CoverMedia
-										cloudinaryImage={homePage?.latestPodcast?.coverImage}
-										cloudinaryVideo={homePage?.latestPodcast?.videoCloudinary}
-										youtube={homePage?.latestPodcast?.youtube}
-										className="w-full aspect-video"
-									/>
-								</div>
-							</div>
-						)}
-					</div>
-				</section>
+				<AnimatedHero />
 				<section className="w-full py-12 md:py-24 lg:py-32 bg-muted flex flex-col items-center justify-center">
 					<div className="container px-4 md:px-6">
 						<div className="flex flex-col items-center justify-center space-y-4 text-center">

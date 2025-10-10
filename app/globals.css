@@ -162,3 +162,65 @@
     @apply bg-background text-foreground;
 	}
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes paw-one {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-40px, 40px) rotate(-15deg);
+  }
+  40% {
+    transform: translate(-30px, 30px) rotate(-5deg);
+  }
+  60% {
+    transform: translate(-40px, 40px) rotate(-15deg);
+  }
+  80% {
+    transform: translate(-30px, 30px) rotate(-5deg);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes paw-two {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(40px, -40px) rotate(15deg);
+  }
+  40% {
+    transform: translate(30px, -30px) rotate(5deg);
+  }
+  60% {
+    transform: translate(40px, -40px) rotate(15deg);
+  }
+  80% {
+    transform: translate(30px, -30px) rotate(5deg);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.animate-paw-one {
+  animation: paw-one 8s ease-in-out infinite;
+}
+
+.animate-paw-two {
+  animation: paw-two 8s ease-in-out infinite 2s;
+}
