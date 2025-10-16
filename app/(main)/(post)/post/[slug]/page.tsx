@@ -16,7 +16,7 @@ import CoverMedia from "@/components/cover-media";
 import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
-import CarbonAdBanner from "@/components/carbon-ad-banner";
+
 
 type Params = Promise<{ slug: string }>;
 
@@ -99,7 +99,7 @@ export default async function PostPage({ params }: { params: Params }) {
 							<DateComponent dateString={post.date} />
 						</div>
 					</div>
-					<CarbonAdBanner />
+					
 				</div>
 				{post?.sponsor?.length && (
 					<section className="flex flex-col mt-10 mb-10">

@@ -18,7 +18,7 @@ import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import Link from "next/link";
 import ShowPro from "./show-pro";
-import CarbonAdBanner from "@/components/carbon-ad-banner";
+
 
 type Params = Promise<{ courseSlug: string }>;
 
@@ -115,7 +115,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 					/>
 				)}
 				<div className="p-8 flex justify-end">
-					<CarbonAdBanner />
+					
 				</div>
 			</article>
 			<Suspense>

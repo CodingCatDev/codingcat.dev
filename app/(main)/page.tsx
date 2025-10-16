@@ -1,5 +1,5 @@
 import AnimatedHero from "@/components/animated-hero";
-import CarbonAdBanner from "@/components/carbon-ad-banner";
+
 import CoverImage from "@/components/cover-image";
 import type { HomePageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";

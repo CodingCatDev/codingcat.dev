@@ -12,7 +12,7 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { blogQuery } from "@/sanity/lib/queries";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import CarbonAdBanner from "@/components/carbon-ad-banner";
+
 import MoreHeader from "@/components/more-header";
 
 function HeroPost({
@@ -84,7 +84,7 @@ export default async function Page() {
 			) : (
 				<Onboarding />
 			)}
-			<CarbonAdBanner />
+			
 			{heroPost?._id && (
 				<aside>
 					<MoreHeader title="View More" href="/blog/page/1" />

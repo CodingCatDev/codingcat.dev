@@ -16,7 +16,7 @@ import PlayerPlayButton from "@/components/player-play-button";
 import PodcastOpenSpotify from "@/components/podcast-open-spotify";
 import PodcastOpenApple from "@/components/podcast-open-apple";
 import PodcastOpenYouTube from "@/components/podcast-open-youtube";
-import CarbonAdBanner from "@/components/carbon-ad-banner";
+
 import PodmatchBadge from "@/components/podmatch-badge";
 
 export default async function Podcast({ podcast }: { podcast: NonNullable<PodcastQueryResult> }) {

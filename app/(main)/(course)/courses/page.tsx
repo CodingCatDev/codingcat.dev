@@ -11,7 +11,7 @@ import type { CoursesQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import { coursesQuery } from "@/sanity/lib/queries";
 import MoreHeader from "@/components/more-header";
-import CarbonAdBanner from "@/components/carbon-ad-banner";
+
 
 function HeroCourse({
 	title,
@@ -83,7 +83,7 @@ export default async function Page() {
 			) : (
 				<Onboarding />
 			)}
-			<CarbonAdBanner />
+			
 			{heroPost?._id && (
 				<aside>
 					<MoreHeader title="Latest Courses" href="/courses/page/1" />
