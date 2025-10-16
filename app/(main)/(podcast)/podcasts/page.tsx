@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import MoreHeader from "@/components/more-header";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
+import PodmatchBadge from "@/components/podmatch-badge";
 
 function HeroPodcast({
 	title,
@@ -99,6 +100,9 @@ export default async function Page() {
 				<Onboarding />
 			)}
 			<CarbonAdBanner />
+			<div className="flex m-2 md:m-8 justify-center">
+				<PodmatchBadge />
+			</div>
 			{heroPost?._id && (
 				<aside>
 					<MoreHeader title="Latest Podcasts" href="/podcasts/page/1" />

@@ -17,6 +17,7 @@ import PodcastOpenSpotify from "@/components/podcast-open-spotify";
 import PodcastOpenApple from "@/components/podcast-open-apple";
 import PodcastOpenYouTube from "@/components/podcast-open-youtube";
 import CarbonAdBanner from "@/components/carbon-ad-banner";
+import PodmatchBadge from "@/components/podmatch-badge";
 
 export default async function Podcast({ podcast }: { podcast: NonNullable<PodcastQueryResult> }) {
 
@@ -70,7 +71,10 @@ export default async function Podcast({ podcast }: { podcast: NonNullable<Podcas
                                 <DateComponent dateString={podcast.date} />
                             </div>
                         </div>
-                        <CarbonAdBanner />
+                        <div className="flex m-2 md:m-8 justify-center">
+
+                            <PodmatchBadge />
+                        </div>
                     </div>
 
                     {src && (
@@ -98,14 +102,18 @@ export default async function Podcast({ podcast }: { podcast: NonNullable<Podcas
                         <hr className="border-accent-2" />
                     </section>
                 )}
-
-                {podcast?.content?.length && (
-                    <PortableText
-                        className="mx-auto prose-violet lg:prose-xl dark:prose-invert"
-                        value={podcast.content as PortableTextBlock[]}
-                    />
-                )}
+                <div className="my-2 md:my-8">
+                    {podcast?.content?.length && (
+                        <PortableText
+                            className="mx-auto prose-violet lg:prose-xl dark:prose-invert"
+                            value={podcast.content as PortableTextBlock[]}
+                        />
+                    )}
+                </div>
             </article>
+            <div className="flex m-2 md:m-8 justify-center">
+                <PodmatchBadge />
+            </div>
             {podcast?.pick?.length && (
                 <>
                     <hr className="mb-8 sm:mb-24 border-accent-2 mt-8 sm:mt-28" />
