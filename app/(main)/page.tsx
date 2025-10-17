@@ -1,4 +1,5 @@
 import AnimatedHero from "@/components/animated-hero";
+import PodmatchBadge from "@/components/podmatch-badge";
 
 import CoverImage from "@/components/cover-image";
 import type { HomePageQueryResult } from "@/sanity/types";
@@ -20,6 +21,9 @@ export default async function HomePage() {
 		<div className="flex flex-col min-h-dvh">
 			<main className="flex-1">
 				<AnimatedHero />
+				<div className="flex justify-center -mb-8">
+					<PodmatchBadge />
+				</div>
 				<section className="w-full py-12 md:py-24 lg:py-32 bg-muted flex flex-col items-center justify-center">
 					<div className="container px-4 md:px-6">
 						<div className="flex flex-col items-center justify-center space-y-4 text-center">
