@@ -31,3 +31,4 @@ The project follows a standard Next.js app directory structure. It uses Sanity f
 *   **Styling:** The project uses Tailwind CSS for styling.
 *   **UI Components:** The project uses Radix UI for accessible UI components.
 *   **Code Formatting:** The project uses Biome for code formatting.
+*   **Language:** All components should be React and TypeScript should be used everywhere.

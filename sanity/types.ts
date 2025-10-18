@@ -13,6 +13,19 @@
  */
 
 // Source: schema.json
+export type SponsorshipRequest = {
+  _id: string;
+  _type: "sponsorshipRequest";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  fullName?: string;
+  email?: string;
+  companyName?: string;
+  sponsorshipTier?: "dedicated-video" | "mid-roll-ad" | "shout-out" | "blog-newsletter" | "video-series";
+  message?: string;
+};
+
 export type PreviewSession = {
   _id: string;
   _type: "previewSession";
@@ -1753,7 +1766,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = PreviewSession | YoutubeUpdateTask | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = SponsorshipRequest | PreviewSession | YoutubeUpdateTask | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: sanity/lib/queries.ts
 // Variable: docCount
