@@ -10,7 +10,6 @@ import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import CoverImage from "@/components/cover-image";
-import SponsorshipCards from "./sponsorship-cards";
 
 type Props = {
 	params: Promise<{ slug: string }>;
@@ -69,9 +68,7 @@ export default async function SponsorshipsPage({
 					</h1>
 				</div>
 				<div className="flex flex-col w-full gap-2 md:gap-8 max-w-7xl">
-					{page?.coverImage && <CoverImage image={page.coverImage} priority />}
 
-					<SponsorshipCards />
 				</div>
 				<article>
 					{page.content?.length && (
