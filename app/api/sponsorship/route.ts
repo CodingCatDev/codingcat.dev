@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
 import { createClient } from "next-sanity";
+import { Resend } from 'resend';
+import { EmailTemplate } from "./sponsorship-template";
 
 const sanityWriteClient = createClient({
   projectId,
@@ -13,7 +15,15 @@ const sanityWriteClient = createClient({
   useCdn: false,
 });
 
-const formSchema = z.object({
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const rateLimitStore: Record<string, { count: number; timestamp: number }> = {};
+
+const RATE_LIMIT_COUNT = 2; // 2 requests
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+
+
+export const formSchema = z.object({
   fullName: z.string(),
   email: z.string().email(),
   companyName: z.string().optional(),
@@ -42,7 +52,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Spam detected" }, { status: 400 });
     }
 
-    const ip = request.headers.get("CF-Connecting-IP");
+    const ip = request.headers.get("x-forwarded-for") || request.headers.get("CF-Connecting-IP") || "127.0.0.1";
+
+    const now = Date.now();
+    const userEntry = rateLimitStore[ip];
+
+    if (userEntry && now - userEntry.timestamp < RATE_LIMIT_WINDOW) {
+      if (userEntry.count >= RATE_LIMIT_COUNT) {
+        return NextResponse.json({ message: "Too many requests" }, { status: 429 });
+      }
+      userEntry.count++;
+    } else {
+      rateLimitStore[ip] = { count: 1, timestamp: now };
+    }
+
     const turnstileResponse = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
@@ -82,6 +105,24 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    const { data, error } = await resend.emails.send({
+      from: 'Acme <onboarding@resend.dev>',
+      to: ['delivered@resend.dev'],
+      subject: 'New Sponsorship Request',
+      react: EmailTemplate({
+        fullName,
+        email,
+        companyName,
+        sponsorshipTier,
+        message,
+      }),
+    });
+
+    if (error) {
+      return NextResponse.json({ message: error.message }, { status: 400 });
+    }
+
 
     return NextResponse.json({ message: "Sponsorship request submitted successfully" });
   } catch (error) {

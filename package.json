@@ -95,6 +95,7 @@
 		"react-syntax-highlighter": "^15.6.6",
 		"react-twitter-embed": "^4.0.4",
 		"recharts": "2.15.4",
+		"resend": "^6.2.0",
 		"sanity": "^4.8.1",
 		"sanity-plugin-cloudinary": "^1.4.0",
 		"server-only": "^0.0.1",
