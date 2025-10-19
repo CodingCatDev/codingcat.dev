@@ -123,7 +123,7 @@ export default defineType({
 			name: "spotify",
 			title: "Spotify",
 			type: "podcastRssEpisode",
-			validation: (rule) => [rule.required()],
+			// validation: (rule) => [rule.required()],
 		}),
 	],
 	orderings: [
