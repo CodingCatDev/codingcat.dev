@@ -1,5 +1,7 @@
 'use client';
 
+import Image from "next/image";
+
 export default function PodmatchBadge() {
   return (
     <div style={{ minWidth: 160, maxWidth: 400 }}>
@@ -26,13 +28,15 @@ export default function PodmatchBadge() {
               background: "none",
             }}
           >
-            <img
+            <Image
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src = "https://podmatch.com/assets/img/waveform_img.png";
               }}
               alt="Cover Art"
-              style={{ height: 85 }}
+              width={85}
+              height={85}
+              style={{ height: 85, width: 85 }}
               src="https://img.rephonic.com/artwork/purrfectdev.jpg?width=600&height=600&quality=95"
             />
           </div>
@@ -45,9 +49,11 @@ export default function PodmatchBadge() {
             }}
           >
             <span style={{ display: "block", marginBottom: 3 }}>
-              <img
+              <Image
                 src="https://podmatch.com/assets/img/PodMatch_Logo.png"
                 alt="PodMatch Logo"
+                width={80}
+                height={18}
                 style={{ width: 80 }}
               />
             </span>

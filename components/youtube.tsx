@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { youtubeParser } from "@/lib/utils";
 import type { CloudinaryAsset } from "@/sanity/types";
 import CoverImage from "@/components/cover-image";
@@ -25,15 +26,12 @@ export function YouTube(props: {
 							`https://i.ytimg.com/vi_webp/${id}/sddefault.webp 640w`,
 						].join(", ")}
 					/>
-					<img
+					<Image
 						style={{ width: "100%", height: "100%", objectFit: "cover" }}
 						src={`https://i.ytimg.com/vi/${id}/sddefault.jpg`}
-						srcSet={[
-							`https://i.ytimg.com/vi/${id}/mqdefault.jpg 320w`,
-							`https://i.ytimg.com/vi/${id}/hqdefault.jpg 480w`,
-							`https://i.ytimg.com/vi/${id}/sddefault.jpg 640w`,
-						].join(", ")}
 						alt=""
+            width={640}
+            height={480}
 					/>
 				</picture>
 			)}

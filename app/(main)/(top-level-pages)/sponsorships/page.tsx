@@ -17,13 +17,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,21 +60,7 @@ const sponsorshipTiers = [
 	},
 ];
 
-const formSchema = z.object({
-	fullName: z.string().min(2, {
-		message: "Full name must be at least 2 characters.",
-	}),
-	email: z.string().email({
-		message: "Please enter a valid email address.",
-	}),
-	companyName: z.string().optional(),
-	sponsorshipTier: z.array(z.string()).refine((value) => value.some((item) => item), {
-		message: "You have to select at least one item.",
-	}),
-	message: z.string().optional(),
-	honeypot: z.string().optional(), // Honeypot field
-	"cf-turnstile-response": z.string().min(1, { message: "Please complete the CAPTCHA." }),
-});
+import { formSchema } from "@/lib/sponsorship-schema";
 
 export default function SponsorshipsPage() {
 	const [isSuccess, setIsSuccess] = useState(false);
@@ -254,10 +233,10 @@ export default function SponsorshipsPage() {
 																		return checked
 																			? field.onChange([...field.value, item.value])
 																			: field.onChange(
-																					field.value?.filter(
-																						(value) => value !== item.value,
-																					),
-																			  );
+																				field.value?.filter(
+																					(value: string) => value !== item.value,
+																				),
+																			);
 																	}}
 																/>
 															</FormControl>

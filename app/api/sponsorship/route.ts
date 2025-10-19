@@ -5,6 +5,7 @@ import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
 import { createClient } from "next-sanity";
 import { Resend } from 'resend';
 import { EmailTemplate } from "./sponsorship-template";
+import { formSchema } from "@/lib/sponsorship-schema";
 
 const sanityWriteClient = createClient({
   projectId,
@@ -21,17 +22,6 @@ const rateLimitStore: Record<string, { count: number; timestamp: number }> = {};
 
 const RATE_LIMIT_COUNT = 2; // 2 requests
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-
-
-export const formSchema = z.object({
-  fullName: z.string(),
-  email: z.string().email(),
-  companyName: z.string().optional(),
-  sponsorshipTier: z.array(z.string()),
-  message: z.string().optional(),
-  honeypot: z.string().optional(),
-  "cf-turnstile-response": z.string(),
-});
 
 export async function POST(request: Request) {
   const body = await request.json();
