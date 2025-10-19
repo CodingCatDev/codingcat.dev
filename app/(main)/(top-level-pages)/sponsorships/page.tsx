@@ -1,6 +1,9 @@
 'use client';
 
 import { z } from "zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -81,6 +84,8 @@ const formSchema = z.object({
 });
 
 export default function SponsorshipsPage() {
+	const [isSuccess, setIsSuccess] = useState(false);
+	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -97,34 +102,47 @@ export default function SponsorshipsPage() {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Honeypot check
 		if (values.honeypot) {
-			console.log("Honeypot field filled out, ignoring submission.");
+			toast.error("Spam detected!");
 			return;
 		}
-		// TODO: Add Cloudflare Turnstile verification here
 
 		const response = await fetch("/api/sponsorship", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			// We only send the values that the API route expects, excluding the turnstile response
-			// which is verified on the server from the body.
-			// body: JSON.stringify({
-			// 	...values,
-			// 	// The turnstile token is automatically included in the form data
-			// 	// and will be sent to the server.
-			// }),
 			body: JSON.stringify(values),
 		});
 
+		const result = await response.json();
+
 		if (response.ok) {
+			toast.success("Sponsorship request submitted successfully!");
 			form.reset();
-			// TODO: Show a success message to the user
-			console.log("Sponsorship request submitted successfully!");
+			setIsSuccess(true);
+			setTimeout(() => {
+				router.push("/sponsors/page/1");
+			}, 3000);
 		} else {
-			// TODO: Show an error message to the user
-			console.error("Failed to submit sponsorship request.");
+			toast.error(result.message, {
+				description: result.details ? JSON.stringify(result.details) : "",
+			});
+			if (result.message === "Invalid CAPTCHA") {
+				window.location.reload();
+			}
 		}
+	}
+
+	if (isSuccess) {
+		return (
+			<div className="container px-5 mx-auto">
+				<div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12 items-center">
+					<h1 className="text-3xl font-bold">Thank you for your submission!</h1>
+					<p>We will get back to you shortly.</p>
+					<p>Redirecting you to our sponsors page...</p>
+				</div>
+			</div>
+		);
 	}
 
 	return (

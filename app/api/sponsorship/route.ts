@@ -1,7 +1,17 @@
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { client } from "@/sanity/lib/client";
+import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
+import { createClient } from "next-sanity";
+
+const sanityWriteClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  token: process.env.SANITY_API_WRITE_TOKEN,
+  perspective: "published",
+  useCdn: false,
+});
 
 const formSchema = z.object({
   fullName: z.string(),
@@ -10,6 +20,7 @@ const formSchema = z.object({
   sponsorshipTier: z.array(z.string()),
   message: z.string().optional(),
   honeypot: z.string().optional(),
+  "cf-turnstile-response": z.string(),
 });
 
 export async function POST(request: Request) {
@@ -23,6 +34,7 @@ export async function POST(request: Request) {
       sponsorshipTier,
       message,
       honeypot,
+      "cf-turnstile-response": turnstileToken,
     } = formSchema.parse(body);
 
     // Honeypot check
@@ -30,27 +42,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Spam detected" }, { status: 400 });
     }
 
-    // TODO: Verify Cloudflare Turnstile token
-    // const turnstileToken = request.headers.get("X-Turnstile-Token");
-    // const ip = request.headers.get("CF-Connecting-IP");
-    // const turnstileResponse = await fetch(
-    //   "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
-    //       response: turnstileToken,
-    //       remoteip: ip,
-    //     }),
-    //   }
-    // );
-    // const turnstileData = await turnstileResponse.json();
-    // if (!turnstileData.success) {
-    //   return NextResponse.json({ message: "Spam detected" }, { status: 400 });
-    // }
+    const ip = request.headers.get("CF-Connecting-IP");
+    const turnstileResponse = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+          remoteip: ip,
+        }),
+      }
+    );
+    const turnstileData = await turnstileResponse.json();
+    if (!turnstileData.success) {
+      return NextResponse.json(
+        { message: "Invalid CAPTCHA", details: turnstileData["error-codes"] },
+        { status: 400 }
+      );
+    }
 
     const sponsorshipRequest = {
       _type: "sponsorshipRequest",
@@ -61,7 +74,14 @@ export async function POST(request: Request) {
       message,
     };
 
-    await client.create(sponsorshipRequest);
+    try {
+      await sanityWriteClient.create(sponsorshipRequest);
+    } catch (error) {
+      return NextResponse.json(
+        { message: "Failed to save sponsorship request", details: error },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ message: "Sponsorship request submitted successfully" });
   } catch (error) {
