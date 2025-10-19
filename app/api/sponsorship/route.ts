@@ -16,7 +16,7 @@ const sanityWriteClient = createClient({
   useCdn: false,
 });
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_SPONSORSHIP_API_KEY);
 
 const rateLimitStore: Record<string, { count: number; timestamp: number }> = {};
 
