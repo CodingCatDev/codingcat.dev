@@ -26,7 +26,8 @@ export default defineType({
     defineField({
       name: 'sponsorshipTier',
       title: 'Sponsorship Tier',
-      type: 'string',
+      type: 'array',
+      of: [{type: 'string'}],
       options: {
         list: [
           {title: 'Dedicated Video', value: 'dedicated-video'},

@@ -21,6 +21,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CloudflareTurnstileWidget } from "@/components/cloudflare-turnstile";
@@ -71,7 +72,9 @@ const formSchema = z.object({
 		message: "Please enter a valid email address.",
 	}),
 	companyName: z.string().optional(),
-	sponsorshipTier: z.string().min(1, "Please select a sponsorship tier."),
+	sponsorshipTier: z.array(z.string()).refine((value) => value.some((item) => item), {
+		message: "You have to select at least one item.",
+	}),
 	message: z.string().optional(),
 	honeypot: z.string().optional(), // Honeypot field
 	"cf-turnstile-response": z.string().min(1, { message: "Please complete the CAPTCHA." }),
@@ -84,7 +87,7 @@ export default function SponsorshipsPage() {
 			fullName: "",
 			email: "",
 			companyName: "",
-			sponsorshipTier: undefined,
+			sponsorshipTier: [],
 			message: "",
 			honeypot: "",
 			"cf-turnstile-response": "",
@@ -207,26 +210,47 @@ export default function SponsorshipsPage() {
 							<FormField
 								control={form.control}
 								name="sponsorshipTier"
-								render={({ field }) => (
+								render={() => (
 									<FormItem>
-										<FormLabel>Sponsorship Tier of Interest</FormLabel>
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Select a tier" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{sponsorshipTiers.map((tier) => (
-													<SelectItem key={tier.value} value={tier.value}>
-														{tier.name}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
+										<div className="mb-4">
+											<FormLabel className="text-base">Sponsorship Tiers of Interest</FormLabel>
+											<FormDescription>
+												Select all that apply.
+											</FormDescription>
+										</div>
+										{sponsorshipTiers.map((item) => (
+											<FormField
+												key={item.value}
+												control={form.control}
+												name="sponsorshipTier"
+												render={({ field }) => {
+													return (
+														<FormItem
+															key={item.value}
+															className="flex flex-row items-start space-x-3 space-y-0"
+														>
+															<FormControl>
+																<Checkbox
+																	checked={field.value?.includes(item.value)}
+																	onCheckedChange={(checked) => {
+																		return checked
+																			? field.onChange([...field.value, item.value])
+																			: field.onChange(
+																					field.value?.filter(
+																						(value) => value !== item.value,
+																					),
+																			  );
+																	}}
+																/>
+															</FormControl>
+															<FormLabel className="font-normal">
+																{item.name}
+															</FormLabel>
+														</FormItem>
+													);
+												}}
+											/>
+										))}
 										<FormMessage />
 									</FormItem>
 								)}

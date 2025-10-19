@@ -7,7 +7,7 @@ const formSchema = z.object({
   fullName: z.string(),
   email: z.string().email(),
   companyName: z.string().optional(),
-  sponsorshipTier: z.string(),
+  sponsorshipTier: z.array(z.string()),
   message: z.string().optional(),
   honeypot: z.string().optional(),
 });

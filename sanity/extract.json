@@ -58,29 +58,10 @@
       "sponsorshipTier": {
         "type": "objectAttribute",
         "value": {
-          "type": "union",
-          "of": [
-            {
-              "type": "string",
-              "value": "dedicated-video"
-            },
-            {
-              "type": "string",
-              "value": "mid-roll-ad"
-            },
-            {
-              "type": "string",
-              "value": "shout-out"
-            },
-            {
-              "type": "string",
-              "value": "blog-newsletter"
-            },
-            {
-              "type": "string",
-              "value": "video-series"
-            }
-          ]
+          "type": "array",
+          "of": {
+            "type": "string"
+          }
         },
         "optional": true
       },

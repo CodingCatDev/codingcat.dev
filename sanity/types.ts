@@ -22,7 +22,7 @@ export type SponsorshipRequest = {
   fullName?: string;
   email?: string;
   companyName?: string;
-  sponsorshipTier?: "dedicated-video" | "mid-roll-ad" | "shout-out" | "blog-newsletter" | "video-series";
+  sponsorshipTier?: Array<string>;
   message?: string;
 };
 
