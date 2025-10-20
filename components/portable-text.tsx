@@ -23,6 +23,7 @@ const CodePenEmbed = dynamic(() => import("@/components/codepen-embed"));
 const CodeSandboxEmbed = dynamic(() => import("./codesandbox-embed"));
 const HTMLEmbed = dynamic(() => import("@/components/html-embed"));
 const QuoteEmbed = dynamic(() => import("@/components/quote-embed"));
+const BlockTable = dynamic(() => import("@/components/block-table"));
 
 export default function CustomPortableText({
 	className,
@@ -41,6 +42,7 @@ export default function CustomPortableText({
 			twitter: ({ value }) => <TwitterEmbed {...value} />,
 			htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
 			quote: ({ value }) => <QuoteEmbed {...value} />,
+			table: ({ value }) => <BlockTable value={value} />,
 		},
 		block: {
 			h5: ({ children }) => (

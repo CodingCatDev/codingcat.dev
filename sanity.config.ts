@@ -45,6 +45,7 @@ import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
+import table from "@/sanity/schemas/objects/table";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -142,6 +143,7 @@ export default defineConfig({
 			youtubeUpdateTask,
 			previewSession,
 			sponsorshipRequest,
+			table,
 		],
 	},
 	document: {

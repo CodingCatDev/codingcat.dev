@@ -98,6 +98,7 @@ const baseType = defineType({
 				defineArrayMember(twitter),
 				defineArrayMember(html),
 				defineArrayMember(quote),
+				defineArrayMember({ type: 'table' }),
 			],
 		}),
 	],

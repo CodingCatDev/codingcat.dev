@@ -1,5 +1,6 @@
 import { htmlToBlocks } from "@portabletext/block-tools";
 import { micromark } from "micromark";
+import { gfmTable, gfmTableHtml } from "micromark-extension-gfm-table";
 
 interface Input {
 	event: ClipboardEvent;
@@ -31,7 +32,10 @@ export async function handlePaste(
 	const json = event.clipboardData?.getData("application/json");
 
 	if (text && !json) {
-		const html = micromark(text);
+		const html = micromark(text, {
+			extensions: [gfmTable()],
+			htmlExtensions: [gfmTableHtml()],
+		});
 		return html
 			? convertHtmlToSanityPortableTextPatch(html, schemaTypes, path)
 			: undefined;
@@ -45,16 +49,30 @@ function convertHtmlToSanityPortableTextPatch(
 	schemaTypes: SchemaTypes,
 	path: Array<any>,
 ): InsertPatch | undefined {
-	if (!isCodeTypeAvailable(schemaTypes) || !html) return undefined;
+	if (!isCodeTypeAvailable(schemaTypes) || !isTableTypeAvailable(schemaTypes) || !html) return undefined;
 
 	const blocks = htmlToBlocks(html, schemaTypes.portableText, {
 		rules: [
 			// @ts-ignore
 			{ deserialize: deserializeCodeBlockElement },
+			// @ts-ignore
+			{ deserialize: deserializeTableElement },
 		],
 	});
 
 	return blocks ? { insert: blocks, path } : undefined;
+}
+
+function isTableTypeAvailable(schemaTypes: SchemaTypes): boolean {
+	const hasTableType = schemaTypes.blockObjects.some(
+		(type) => type.name === "table",
+	);
+	if (!hasTableType) {
+		console.warn(
+			'A table type is not defined in the schema. This is required to paste tables.',
+		);
+	}
+	return hasTableType;
 }
 
 function isCodeTypeAvailable(schemaTypes: SchemaTypes): boolean {
@@ -124,4 +142,27 @@ function mapLanguageAliasToActualLanguage(languageAlias: string): string {
 		languageMapping[languageAlias as keyof typeof languageMapping] ||
 		(languageAlias as string)
 	);
+}
+
+function deserializeTableElement(
+	el: Element,
+	next: any,
+	block: (block: any) => any,
+) {
+	if (el?.tagName?.toLowerCase() !== 'table') {
+		return undefined;
+	}
+
+	const rows = Array.from(el.querySelectorAll('tr')).map((tr) => {
+		const cells = Array.from(tr.querySelectorAll('th, td')).map((td) => td.textContent);
+		return {
+			_type: 'row',
+			cells,
+		};
+	});
+
+	return block({
+		_type: 'table',
+		rows,
+	});
 }
