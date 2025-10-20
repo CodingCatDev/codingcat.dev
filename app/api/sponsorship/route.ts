@@ -112,7 +112,7 @@ export async function POST(request: Request) {
     try {
       console.log("Sending email with Resend");
       const { data, error } = await resend.emails.send({
-        from: 'Alex <alex@codingcat.dev>',
+        from: 'Sponsorships <onboarding@resend.dev>',
         to: ['alex@codingcat.dev'],
         subject: 'New Sponsorship Request',
         html: await render(EmailTemplate({
