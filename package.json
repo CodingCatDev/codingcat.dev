@@ -45,6 +45,7 @@
 		"@radix-ui/react-toggle": "^1.1.10",
 		"@radix-ui/react-toggle-group": "^1.1.11",
 		"@radix-ui/react-tooltip": "^1.2.8",
+		"@react-email/render": "^1.4.0",
 		"@sanity/assist": "^5.0.0",
 		"@sanity/block-content-to-markdown": "^1.0.0",
 		"@sanity/client": "^7.11.1",

@@ -6,6 +6,7 @@ import { createClient } from "next-sanity";
 import { Resend } from 'resend';
 import { EmailTemplate } from "./sponsorship-template";
 import { formSchema } from "@/lib/sponsorship-schema";
+import { render } from '@react-email/render';
 
 const sanityWriteClient = createClient({
   projectId,
@@ -114,13 +115,13 @@ export async function POST(request: Request) {
         from: 'Alex <alex@codingcat.dev>',
         to: ['alex@codingcat.dev'],
         subject: 'New Sponsorship Request',
-        react: EmailTemplate({
+        html: await render(EmailTemplate({
           fullName,
           email,
           companyName,
           sponsorshipTier,
           message,
-        }),
+        })),
       });
       console.log("Resend response:", { data, error });
       if (error) {
