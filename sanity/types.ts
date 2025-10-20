@@ -13,15 +13,6 @@
  */
 
 // Source: schema.json
-export type Table = {
-  _type: "table";
-  rows?: Array<{
-    cells?: Array<string>;
-    _type: "row";
-    _key: string;
-  }>;
-};
-
 export type SponsorshipRequest = {
   _id: string;
   _type: "sponsorshipRequest";
@@ -189,7 +180,9 @@ export type Sponsor = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   url?: string;
 };
 
@@ -314,7 +307,9 @@ export type Lesson = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   videoCloudinary?: CloudinaryAsset;
   youtube?: string;
   author?: Array<{
@@ -465,7 +460,9 @@ export type Author = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   socials?: {
     bluesky?: string;
     codepen?: string;
@@ -620,7 +617,9 @@ export type Post = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   videoCloudinary?: CloudinaryAsset;
   youtube?: string;
   author?: Array<{
@@ -770,7 +769,9 @@ export type Podcast = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   videoCloudinary?: CloudinaryAsset;
   youtube?: string;
   author?: Array<{
@@ -953,7 +954,9 @@ export type Guest = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   socials?: {
     bluesky?: string;
     codepen?: string;
@@ -1108,7 +1111,9 @@ export type PodcastType = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
 };
 
 export type Course = {
@@ -1232,7 +1237,9 @@ export type Course = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   videoCloudinary?: CloudinaryAsset;
   youtube?: string;
   author?: Array<{
@@ -1395,7 +1402,9 @@ export type Page = {
     url?: string;
     _type: "quote";
     _key: string;
-  }>;
+  } | {
+    _key: string;
+  } & Table>;
   videoCloudinary?: CloudinaryAsset;
   youtube?: string;
   author?: Array<{
@@ -1534,6 +1543,18 @@ export type CloudinaryAsset = {
 export type CloudinaryAssetContext = {
   _type: "cloudinary.assetContext";
   custom?: CloudinaryAssetContextCustom;
+};
+
+export type Table = {
+  _type: "table";
+  rows?: Array<{
+    _key: string;
+  } & TableRow>;
+};
+
+export type TableRow = {
+  _type: "tableRow";
+  cells?: Array<string>;
 };
 
 export type SanityAssistInstructionTask = {
@@ -1775,7 +1796,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Table | SponsorshipRequest | PreviewSession | YoutubeUpdateTask | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = SponsorshipRequest | PreviewSession | YoutubeUpdateTask | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | Table | TableRow | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: sanity/lib/queries.ts
 // Variable: docCount
@@ -2071,6 +2092,13 @@ export type PageQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -2093,6 +2121,8 @@ export type PageQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2249,6 +2279,8 @@ export type PageQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2388,6 +2420,8 @@ export type BlogQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2554,6 +2588,8 @@ export type MorePostQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -2889,6 +2925,13 @@ export type PostQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -2911,6 +2954,8 @@ export type PostQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3067,6 +3112,8 @@ export type PostQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3206,6 +3253,8 @@ export type PodcastsQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3360,6 +3409,8 @@ export type PodcastsQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3526,6 +3577,8 @@ export type MorePodcastQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -3680,6 +3733,8 @@ export type MorePodcastQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4015,6 +4070,13 @@ export type PodcastQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -4037,6 +4099,8 @@ export type PodcastQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4193,6 +4257,8 @@ export type PodcastQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4324,6 +4390,8 @@ export type PodcastQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4479,6 +4547,8 @@ export type PodcastQueryResult = {
       } & CloudinaryAsset | {
         _key: string;
       } & Code | {
+        _key: string;
+      } & Table | {
         children?: Array<{
           marks?: Array<string>;
           text?: string;
@@ -4632,6 +4702,8 @@ export type PodcastQueryResult = {
       } & CloudinaryAsset | {
         _key: string;
       } & Code | {
+        _key: string;
+      } & Table | {
         children?: Array<{
           marks?: Array<string>;
           text?: string;
@@ -4803,6 +4875,8 @@ export type CoursesQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -4970,6 +5044,8 @@ export type MoreCourseQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -5306,6 +5382,13 @@ export type CourseQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -5328,6 +5411,8 @@ export type CourseQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -5484,6 +5569,8 @@ export type CourseQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -5827,6 +5914,13 @@ export type LessonQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -5849,6 +5943,8 @@ export type LessonQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -6005,6 +6101,8 @@ export type LessonQueryResult = {
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -6326,6 +6424,13 @@ export type AuthorQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -6565,6 +6670,13 @@ export type AuthorQueryWithRelatedResult = {
     url?: string;
     _type: "quote";
     _key: string;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
     markDefs: null;
   } | {
     id?: string;
@@ -6852,6 +6964,13 @@ export type GuestQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -7091,6 +7210,13 @@ export type GuestQueryWithRelatedResult = {
     url?: string;
     _type: "quote";
     _key: string;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
     markDefs: null;
   } | {
     id?: string;
@@ -7378,6 +7504,13 @@ export type SponsorQueryResult = {
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -7588,6 +7721,13 @@ export type SponsorQueryWithRelatedResult = {
     url?: string;
     _type: "quote";
     _key: string;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
     markDefs: null;
   } | {
     id?: string;
@@ -7834,6 +7974,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -8041,6 +8188,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -8063,6 +8217,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8219,6 +8375,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8524,6 +8682,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -8731,6 +8896,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -8753,6 +8925,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -8909,6 +9083,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -9214,6 +9390,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -9236,6 +9419,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -9392,6 +9577,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -9697,6 +9884,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -9719,6 +9913,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -9875,6 +10071,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -10180,6 +10378,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -10387,6 +10592,13 @@ export type RssQueryResult = Array<{
     _key: string;
     markDefs: null;
   } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
+    markDefs: null;
+  } | {
     id?: string;
     _type: "twitter";
     _key: string;
@@ -10409,6 +10621,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -10565,6 +10779,8 @@ export type RssQueryResult = Array<{
     } & CloudinaryAsset | {
       _key: string;
     } & Code | {
+      _key: string;
+    } & Table | {
       children?: Array<{
         marks?: Array<string>;
         text?: string;
@@ -10868,6 +11084,13 @@ export type RssQueryResult = Array<{
     url?: string;
     _type: "quote";
     _key: string;
+    markDefs: null;
+  } | {
+    _key: string;
+    _type: "table";
+    rows?: Array<{
+      _key: string;
+    } & TableRow>;
     markDefs: null;
   } | {
     id?: string;

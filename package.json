@@ -94,6 +94,7 @@
 		"react-inlinesvg": "^4.2.0",
 		"react-instantsearch": "^7.16.3",
 		"react-instantsearch-nextjs": "^1.0.2",
+		"react-markdown": "^10.1.0",
 		"react-resizable-panels": "^3.0.6",
 		"react-syntax-highlighter": "^15.6.6",
 		"react-twitter-embed": "^4.0.4",

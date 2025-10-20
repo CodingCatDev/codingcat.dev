@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MarkdownLink } from './markdown-link';
+import ReactMarkdown from 'react-markdown';
 
 export default function BlockTable({ value }: { value: { rows: { _key: string; cells: string[] }[] } }) {
   const { rows } = value;
@@ -14,7 +14,7 @@ export default function BlockTable({ value }: { value: { rows: { _key: string; c
           <tr key={row._key}>
             {row.cells.map((cell, cellIndex) => (
               <td key={cellIndex}>
-                <MarkdownLink text={cell} />
+                <ReactMarkdown>{cell}</ReactMarkdown>
               </td>
             ))}
           </tr>
