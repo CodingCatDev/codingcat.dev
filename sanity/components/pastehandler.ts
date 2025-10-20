@@ -49,7 +49,7 @@ function convertHtmlToSanityPortableTextPatch(
 	schemaTypes: SchemaTypes,
 	path: Array<any>,
 ): InsertPatch | undefined {
-	if (!isCodeTypeAvailable(schemaTypes) || !isTableTypeAvailable(schemaTypes) || !html) return undefined;
+	if (!html) return undefined;
 
 	const blocks = htmlToBlocks(html, schemaTypes.portableText, {
 		rules: [

@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export default function BlockTable({ value }: { value: { rows: { cells: string[] }[] } }) {
+export default function BlockTable({ value }: { value: { rows: { _key: string; cells: string[] }[] } }) {
   const { rows } = value;
   if (!rows) {
     return null;
@@ -9,8 +9,8 @@ export default function BlockTable({ value }: { value: { rows: { cells: string[]
   return (
     <table>
       <tbody>
-        {rows.map((row, rowIndex) => (
-          <tr key={rowIndex}>
+        {rows.map((row) => (
+          <tr key={row._key}>
             {row.cells.map((cell, cellIndex) => (
               <td key={cellIndex}>{cell}</td>
             ))}

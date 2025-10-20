@@ -45,7 +45,7 @@ import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
-import table from "@/sanity/schemas/objects/table";
+import { table } from "@sanity/table";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -143,7 +143,6 @@ export default defineConfig({
 			youtubeUpdateTask,
 			previewSession,
 			sponsorshipRequest,
-			table,
 		],
 	},
 	document: {
@@ -200,6 +199,7 @@ export default defineConfig({
 		// Sets up AI Assist with preset prompts
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
+		table(),
 		cloudinarySchemaPlugin(),
 		// tags(),
 		codeInput(),
@@ -215,6 +215,6 @@ export default defineConfig({
 		// Vision lets you query your content with GROQ in the studio
 		// https://www.sanity.io/docs/the-vision-plugin
 		process.env.NODE_ENV === "development" &&
-			visionTool({ defaultApiVersion: apiVersion }),
+		visionTool({ defaultApiVersion: apiVersion }),
 	].filter(Boolean) as PluginOptions[],
 });

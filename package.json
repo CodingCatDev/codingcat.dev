@@ -54,6 +54,7 @@
 		"@sanity/image-url": "^1.2.0",
 		"@sanity/preview-url-secret": "^2.1.15",
 		"@sanity/studio-secrets": "^3.0.2",
+		"@sanity/table": "^2.0.0",
 		"@sanity/ui": "^3.1.0",
 		"@sanity/vision": "^4.8.1",
 		"@sanity/webhook": "^4.0.4",
