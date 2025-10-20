@@ -1,6 +1,5 @@
 
 import type { Metadata, ResolvingMetadata } from "next";
-import { notFound } from "next/navigation";
 
 import type { PageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -47,14 +46,11 @@ const sponsorshipTiers = [
 	},
 ];
 
-type Props = {
-	params: { slug: string };
-};
-
 export async function generateMetadata(
-	{ params }: Props,
-	parent: ResolvingMetadata
+	{ params }: { params: any },
+	parent: ResolvingMetadata,
 ): Promise<Metadata> {
+
 	const page = (await sanityFetch({
 		query: pageQuery,
 		params: { slug: "sponsorships" },
@@ -68,9 +64,9 @@ export async function generateMetadata(
 		title: page?.title,
 		description: page?.excerpt,
 		openGraph: {
-			images: ogImage ? [ogImage] : previousImages,
+			images: ogImage ? ogImage : previousImages,
 		},
-	};
+	} satisfies Metadata;
 }
 
 export default async function SponsorshipsPage() {
