@@ -24,7 +24,9 @@ const RATE_LIMIT_COUNT = 2; // 2 requests
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 
 export async function POST(request: Request) {
+  console.log("Received sponsorship request");
   const body = await request.json();
+  console.log("Request body:", body);
 
   try {
     const {
@@ -39,16 +41,20 @@ export async function POST(request: Request) {
 
     // Honeypot check
     if (honeypot) {
+      console.warn("Honeypot triggered");
       return NextResponse.json({ message: "Spam detected" }, { status: 400 });
     }
 
     const ip = request.headers.get("x-forwarded-for") || request.headers.get("CF-Connecting-IP") || "127.0.0.1";
+    console.log("Client IP:", ip);
 
     const now = Date.now();
     const userEntry = rateLimitStore[ip];
+    console.log("Rate limit store:", rateLimitStore);
 
     if (userEntry && now - userEntry.timestamp < RATE_LIMIT_WINDOW) {
       if (userEntry.count >= RATE_LIMIT_COUNT) {
+        console.warn("Rate limit exceeded for IP:", ip);
         return NextResponse.json({ message: "Too many requests" }, { status: 429 });
       }
       userEntry.count++;
@@ -56,6 +62,7 @@ export async function POST(request: Request) {
       rateLimitStore[ip] = { count: 1, timestamp: now };
     }
 
+    console.log("Verifying Turnstile token");
     const turnstileResponse = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
@@ -71,7 +78,9 @@ export async function POST(request: Request) {
       }
     );
     const turnstileData = await turnstileResponse.json();
+    console.log("Turnstile response:", turnstileData);
     if (!turnstileData.success) {
+      console.warn("Invalid CAPTCHA", turnstileData["error-codes"]);
       return NextResponse.json(
         { message: "Invalid CAPTCHA", details: turnstileData["error-codes"] },
         { status: 400 }
@@ -88,34 +97,45 @@ export async function POST(request: Request) {
     };
 
     try {
-      await sanityWriteClient.create(sponsorshipRequest);
+      console.log("Creating Sanity document:", sponsorshipRequest);
+      const sanityResponse = await sanityWriteClient.create(sponsorshipRequest);
+      console.log("Sanity response:", sanityResponse);
     } catch (error) {
+      console.error("Failed to save sponsorship request:", error);
       return NextResponse.json(
         { message: "Failed to save sponsorship request", details: error },
         { status: 500 }
       );
     }
 
-    const { data, error } = await resend.emails.send({
-      from: 'Acme <onboarding@resend.dev>',
-      to: ['delivered@resend.dev'],
-      subject: 'New Sponsorship Request',
-      react: EmailTemplate({
-        fullName,
-        email,
-        companyName,
-        sponsorshipTier,
-        message,
-      }),
-    });
-
-    if (error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
+    try {
+      console.log("Sending email with Resend");
+      const { data, error } = await resend.emails.send({
+        from: 'Alex <alex@codingcat.dev>',
+        to: ['alex@codingcat.dev'],
+        subject: 'New Sponsorship Request',
+        react: EmailTemplate({
+          fullName,
+          email,
+          companyName,
+          sponsorshipTier,
+          message,
+        }),
+      });
+      console.log("Resend response:", { data, error });
+      if (error) {
+        console.error("Failed to send email:", error);
+        return NextResponse.json({ message: error.message }, { status: 400 });
+      }
+    } catch (error) {
+      console.error("Error sending email with Resend:", error);
+      return NextResponse.json({ message: "Failed to send email" }, { status: 500 });
     }
 
 
     return NextResponse.json({ message: "Sponsorship request submitted successfully" });
   } catch (error) {
+    console.error("Error processing sponsorship request:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
