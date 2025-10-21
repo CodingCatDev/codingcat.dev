@@ -24,7 +24,6 @@ export default async function CoverImage(props: CoverImageProps) {
 
 	const source = stegaClean(originalImage);
 
-
 	const getImageUrl = async (src: string) => {
 		const imageUrl = getCldImageUrl({
 			src,

@@ -4,7 +4,6 @@ import { createClient } from "next-sanity";
 import type { NextRequest } from "next/server";
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 
-
 const sanityWriteClient = createClient({
 	projectId,
 	dataset,
@@ -15,9 +14,11 @@ const sanityWriteClient = createClient({
 });
 
 async function processBatchTasks() {
-	console.log("[YOUTUBE] Fetching up to 10 pending youtubeUpdateTask tasks from Sanity");
+	console.log(
+		"[YOUTUBE] Fetching up to 10 pending youtubeUpdateTask tasks from Sanity",
+	);
 	let tasks = await sanityWriteClient.fetch(
-		`*[_type == "youtubeUpdateTask" && status == "pending"]| order(lastChecked asc)[0...10]{ _id, targetDoc->{_id, _type, youtube}, status }`
+		`*[_type == "youtubeUpdateTask" && status == "pending"]| order(lastChecked asc)[0...10]{ _id, targetDoc->{_id, _type, youtube}, status }`,
 	);
 	console.log(`[YOUTUBE] Fetched ${tasks?.length || 0} tasks`);
 	if (!tasks || tasks.length === 0) {
@@ -41,19 +42,25 @@ async function processBatchTasks() {
 		}
 		validTasks.push({ taskId, docId: targetDoc._id, youtubeId: id });
 	}
-	console.log(`[YOUTUBE] validTasks: ${validTasks.length}, errorTasks: ${errorTasks.length}`);
+	console.log(
+		`[YOUTUBE] validTasks: ${validTasks.length}, errorTasks: ${errorTasks.length}`,
+	);
 
 	// Mark all valid tasks as inProgress (sequential)
 	try {
 		for (const t of validTasks) {
 			console.log(`[YOUTUBE] Marking task ${t.taskId} as inProgress`);
 			try {
-				await sanityWriteClient.patch(t.taskId)
+				await sanityWriteClient
+					.patch(t.taskId)
 					.set({ status: "inProgress", lastChecked: new Date().toISOString() })
 					.commit({ visibility: "async" });
 				console.log(`[YOUTUBE] Task ${t.taskId} marked as inProgress`);
 			} catch (err) {
-				console.error(`[YOUTUBE] Error marking task ${t.taskId} as inProgress:`, err);
+				console.error(
+					`[YOUTUBE] Error marking task ${t.taskId} as inProgress:`,
+					err,
+				);
 			}
 		}
 		console.log(`[YOUTUBE] Marked ${validTasks.length} tasks as inProgress`);
@@ -65,10 +72,17 @@ async function processBatchTasks() {
 	if (errorTasks.length > 0) {
 		try {
 			for (const t of errorTasks) {
-				console.log(`[YOUTUBE] Marking error task ${t.taskId} as error: ${t.error}`);
+				console.log(
+					`[YOUTUBE] Marking error task ${t.taskId} as error: ${t.error}`,
+				);
 				try {
-					await sanityWriteClient.patch(t.taskId)
-						.set({ status: "error", errorMessage: t.error, lastChecked: new Date().toISOString() })
+					await sanityWriteClient
+						.patch(t.taskId)
+						.set({
+							status: "error",
+							errorMessage: t.error,
+							lastChecked: new Date().toISOString(),
+						})
 						.commit({ visibility: "async" });
 					console.log(`[YOUTUBE] Error task ${t.taskId} marked as error`);
 				} catch (err) {
@@ -92,7 +106,7 @@ async function processBatchTasks() {
 	let apiError = null;
 	for (let i = 0; i < validTasks.length; i += batchSize) {
 		const batch = validTasks.slice(i, i + batchSize);
-		const ids = batch.map(t => t.youtubeId).join(",");
+		const ids = batch.map((t) => t.youtubeId).join(",");
 		console.log(`[YOUTUBE] Fetching stats for IDs batch: ${ids}`);
 		let videoResp: Response, json: any;
 		try {
@@ -106,14 +120,24 @@ async function processBatchTasks() {
 				apiError = json;
 				// Mark all tasks in this batch as error
 				for (const t of batch) {
-					console.log(`[YOUTUBE] Marking batch task ${t.taskId} as error due to API error`);
+					console.log(
+						`[YOUTUBE] Marking batch task ${t.taskId} as error due to API error`,
+					);
 					try {
-						await sanityWriteClient.patch(t.taskId)
-							.set({ status: "error", errorMessage: JSON.stringify(json), lastChecked: new Date().toISOString() })
+						await sanityWriteClient
+							.patch(t.taskId)
+							.set({
+								status: "error",
+								errorMessage: JSON.stringify(json),
+								lastChecked: new Date().toISOString(),
+							})
 							.commit({ visibility: "async" });
 						console.log(`[YOUTUBE] Batch task ${t.taskId} marked as error`);
 					} catch (err) {
-						console.error(`[YOUTUBE] Error marking task ${t.taskId} as error after YouTube API error:`, err);
+						console.error(
+							`[YOUTUBE] Error marking task ${t.taskId} as error after YouTube API error:`,
+							err,
+						);
 					}
 				}
 				break;
@@ -126,14 +150,24 @@ async function processBatchTasks() {
 			console.error("[YOUTUBE] Error fetching YouTube stats", err);
 			apiError = err;
 			for (const t of batch) {
-				console.log(`[YOUTUBE] Marking batch task ${t.taskId} as error due to fetch error`);
+				console.log(
+					`[YOUTUBE] Marking batch task ${t.taskId} as error due to fetch error`,
+				);
 				try {
-					await sanityWriteClient.patch(t.taskId)
-						.set({ status: "error", errorMessage: String(err), lastChecked: new Date().toISOString() })
+					await sanityWriteClient
+						.patch(t.taskId)
+						.set({
+							status: "error",
+							errorMessage: String(err),
+							lastChecked: new Date().toISOString(),
+						})
 						.commit({ visibility: "async" });
 					console.log(`[YOUTUBE] Batch task ${t.taskId} marked as error`);
 				} catch (err2) {
-					console.error(`[YOUTUBE] Error marking task ${t.taskId} as error after fetch error:`, err2);
+					console.error(
+						`[YOUTUBE] Error marking task ${t.taskId} as error after fetch error:`,
+						err2,
+					);
 				}
 			}
 			break;
@@ -149,49 +183,83 @@ async function processBatchTasks() {
 	const completedTaskOps = [];
 	const erroredTaskOps = [];
 	for (const t of validTasks) {
-		console.log(`[YOUTUBE] Processing validTask: taskId=${t.taskId}, docId=${t.docId}, youtubeId=${t.youtubeId}`);
+		console.log(
+			`[YOUTUBE] Processing validTask: taskId=${t.taskId}, docId=${t.docId}, youtubeId=${t.youtubeId}`,
+		);
 		const statistics = statsMap.get(t.youtubeId);
 		if (!statistics) {
-			console.log(`[YOUTUBE] No statistics found for youtubeId=${t.youtubeId}, marking task ${t.taskId} as error`);
+			console.log(
+				`[YOUTUBE] No statistics found for youtubeId=${t.youtubeId}, marking task ${t.taskId} as error`,
+			);
 			try {
-				await sanityWriteClient.patch(t.taskId)
-					.set({ status: "error", errorMessage: "No statistics found", lastChecked: new Date().toISOString() })
+				await sanityWriteClient
+					.patch(t.taskId)
+					.set({
+						status: "error",
+						errorMessage: "No statistics found",
+						lastChecked: new Date().toISOString(),
+					})
 					.commit({ visibility: "async" });
-				console.log(`[YOUTUBE] Task ${t.taskId} marked as error (no statistics)`);
+				console.log(
+					`[YOUTUBE] Task ${t.taskId} marked as error (no statistics)`,
+				);
 			} catch (err) {
-				console.error(`[YOUTUBE] Error marking task ${t.taskId} as error:`, err);
+				console.error(
+					`[YOUTUBE] Error marking task ${t.taskId} as error:`,
+					err,
+				);
 			}
 			continue;
 		}
 		try {
-			console.log(`[YOUTUBE] Updating doc ${t.docId} with statistics for youtubeId=${t.youtubeId}`);
-			await sanityWriteClient.patch(t.docId)
+			console.log(
+				`[YOUTUBE] Updating doc ${t.docId} with statistics for youtubeId=${t.youtubeId}`,
+			);
+			await sanityWriteClient
+				.patch(t.docId)
 				.set({
-					"statistics.youtube.commentCount": Number.parseInt(statistics.commentCount),
-					"statistics.youtube.favoriteCount": Number.parseInt(statistics.favoriteCount),
+					"statistics.youtube.commentCount": Number.parseInt(
+						statistics.commentCount,
+					),
+					"statistics.youtube.favoriteCount": Number.parseInt(
+						statistics.favoriteCount,
+					),
 					"statistics.youtube.likeCount": Number.parseInt(statistics.likeCount),
 					"statistics.youtube.viewCount": Number.parseInt(statistics.viewCount),
 				})
 				.commit({ visibility: "async" });
 			console.log(`[YOUTUBE] Updated doc ${t.docId}`);
-			await sanityWriteClient.patch(t.taskId)
-				.set({ status: "completed", lastChecked: new Date().toISOString(), errorMessage: undefined })
+			await sanityWriteClient
+				.patch(t.taskId)
+				.set({
+					status: "completed",
+					lastChecked: new Date().toISOString(),
+					errorMessage: undefined,
+				})
 				.commit({ visibility: "async" });
 			console.log(`[YOUTUBE] Task ${t.taskId} marked as completed`);
 			completed++;
 		} catch (err) {
-			console.error(`[YOUTUBE] Error updating doc ${t.docId} or task ${t.taskId}:`, err);
+			console.error(
+				`[YOUTUBE] Error updating doc ${t.docId} or task ${t.taskId}:`,
+				err,
+			);
 		}
 	}
 	// Log summary
 	console.log(`[YOUTUBE] Patched ${completed} docs/tasks sequentially`);
-	return { processed: completed, errors: errorTasks.length + (validTasks.length - completed) };
+	return {
+		processed: completed,
+		errors: errorTasks.length + (validTasks.length - completed),
+	};
 }
 
 export async function POST(request: NextRequest) {
 	const authHeader = request.headers.get("authorization");
 	if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-		console.error("[YOUTUBE] Unauthorized request: invalid authorization header");
+		console.error(
+			"[YOUTUBE] Unauthorized request: invalid authorization header",
+		);
 		return new Response("Unauthorized", { status: 401 });
 	}
 
@@ -199,35 +267,50 @@ export async function POST(request: NextRequest) {
 		console.log("[YOUTUBE] POST handler started");
 		// Repopulate youtubeUpdateTask queue if empty
 		let tasks = await sanityWriteClient.fetch(
-			`*[_type == "youtubeUpdateTask" && status == "pending"]| order(lastChecked asc)[0...1]{ _id }`
+			`*[_type == "youtubeUpdateTask" && status == "pending"]| order(lastChecked asc)[0...1]{ _id }`,
 		);
 		console.log(`[YOUTUBE] Pending tasks in queue: ${tasks?.length || 0}`);
 		if (!tasks || tasks.length === 0) {
-			console.log("[YOUTUBE] No pending tasks, repopulating queue from posts and podcasts");
+			console.log(
+				"[YOUTUBE] No pending tasks, repopulating queue from posts and podcasts",
+			);
 			const podcasts = await sanityWriteClient.fetch(
-				'*[_type == "podcast" && defined(youtube)]{_id, _type, youtube,date} | order(date desc)[0...1000]'
+				'*[_type == "podcast" && defined(youtube)]{_id, _type, youtube,date} | order(date desc)[0...1000]',
 			);
 			const posts = await sanityWriteClient.fetch(
-				'*[_type == "post" && defined(youtube)]{_id, _type, youtube,date} | order(date desc)[0...1000]'
+				'*[_type == "post" && defined(youtube)]{_id, _type, youtube,date} | order(date desc)[0...1000]',
 			);
 			const allDocs = [...podcasts, ...posts];
 			console.log(`[YOUTUBE] Found ${allDocs.length} docs with YouTube`);
 			// Fetch all existing youtubeUpdateTask docs for these docs
 			const existingTasks = await sanityWriteClient.fetch(
-				'*[_type == "youtubeUpdateTask" && defined(targetDoc._ref)]{_id, targetDoc}'
+				'*[_type == "youtubeUpdateTask" && defined(targetDoc._ref)]{_id, targetDoc}',
 			);
-			const existingTaskMap = new Map(existingTasks.map((t: { _id: string, targetDoc?: { _ref?: string } }) => [t.targetDoc?._ref, t._id]));
+			const existingTaskMap = new Map(
+				existingTasks.map(
+					(t: { _id: string; targetDoc?: { _ref?: string } }) => [
+						t.targetDoc?._ref,
+						t._id,
+					],
+				),
+			);
 			for (const doc of allDocs) {
 				const taskId = existingTaskMap.get(doc._id);
-				if (typeof taskId === 'string' && taskId) {
+				if (typeof taskId === "string" && taskId) {
 					// Update status to pending
 					try {
-						await sanityWriteClient.patch(taskId)
+						await sanityWriteClient
+							.patch(taskId)
 							.set({ status: "pending", lastChecked: null })
 							.commit({ visibility: "async" });
-						console.log(`[YOUTUBE] Marked existing youtubeUpdateTask ${taskId} as pending for doc ${doc._id}`);
+						console.log(
+							`[YOUTUBE] Marked existing youtubeUpdateTask ${taskId} as pending for doc ${doc._id}`,
+						);
 					} catch (err) {
-						console.error(`[YOUTUBE] Error marking youtubeUpdateTask ${taskId} as pending for doc ${doc._id}:`, err);
+						console.error(
+							`[YOUTUBE] Error marking youtubeUpdateTask ${taskId} as pending for doc ${doc._id}:`,
+							err,
+						);
 					}
 				} else {
 					// Create new youtubeUpdateTask
@@ -238,9 +321,14 @@ export async function POST(request: NextRequest) {
 							status: "pending",
 							lastChecked: null,
 						});
-						console.log(`[YOUTUBE] Created new youtubeUpdateTask for doc ${doc._id}`);
+						console.log(
+							`[YOUTUBE] Created new youtubeUpdateTask for doc ${doc._id}`,
+						);
 					} catch (err) {
-						console.error(`[YOUTUBE] Error creating youtubeUpdateTask for doc ${doc._id}:`, err);
+						console.error(
+							`[YOUTUBE] Error creating youtubeUpdateTask for doc ${doc._id}:`,
+							err,
+						);
 					}
 				}
 			}
@@ -252,6 +340,9 @@ export async function POST(request: NextRequest) {
 		return Response.json({ success: true, ...result });
 	} catch (error) {
 		console.error("[YOUTUBE] Unexpected error:", error);
-		return Response.json({ success: false, error: String(error) }, { status: 500 });
+		return Response.json(
+			{ success: false, error: String(error) },
+			{ status: 500 },
+		);
 	}
 }

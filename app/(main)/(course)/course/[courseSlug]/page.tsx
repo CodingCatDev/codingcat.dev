@@ -19,7 +19,6 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import Link from "next/link";
 import ShowPro from "./show-pro";
 
-
 type Params = Promise<{ courseSlug: string }>;
 
 export async function generateMetadata(
@@ -102,9 +101,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 							</div>
 						</div>
 						{course?.stripeProduct && course?.title && (
-							<section className="flex gap-2">
-								
-							</section>
+							<section className="flex gap-2"></section>
 						)}
 					</div>
 				</div>
@@ -114,9 +111,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 						value={course.content as PortableTextBlock[]}
 					/>
 				)}
-				<div className="p-8 flex justify-end">
-					
-				</div>
+				<div className="p-8 flex justify-end"></div>
 			</article>
 			<Suspense>
 				<Lessons courseSlug={courseSlug} />

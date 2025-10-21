@@ -19,7 +19,6 @@ import type { PortableTextBlock } from "next-sanity";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
-
 type Params = Promise<{ lessonSlug: string; courseSlug: string }>;
 
 export async function generateMetadata(
@@ -69,7 +68,9 @@ export default async function LessonPage({ params }: { params: Params }) {
 		//First check if user session is valid
 		const cookieStore = await cookies();
 		const sessionCookie = cookieStore.get("app.at");
-		if (!sessionCookie){ return redirect(`/course/${course?.slug}?showPro=true`);}
+		if (!sessionCookie) {
+			return redirect(`/course/${course?.slug}?showPro=true`);
+		}
 	}
 
 	return (

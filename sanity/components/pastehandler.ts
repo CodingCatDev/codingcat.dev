@@ -69,7 +69,7 @@ function isTableTypeAvailable(schemaTypes: SchemaTypes): boolean {
 	);
 	if (!hasTableType) {
 		console.warn(
-			'A table type is not defined in the schema. This is required to paste tables.',
+			"A table type is not defined in the schema. This is required to paste tables.",
 		);
 	}
 	return hasTableType;
@@ -149,26 +149,26 @@ function deserializeTableElement(
 	next: any,
 	block: (block: any) => any,
 ) {
-	if (el?.tagName?.toLowerCase() !== 'table') {
+	if (el?.tagName?.toLowerCase() !== "table") {
 		return undefined;
 	}
 
-	const rows = Array.from(el.querySelectorAll('tr')).map((tr) => {
-		const cells = Array.from(tr.querySelectorAll('th, td')).map((td) => {
-			const link = td.querySelector('a');
+	const rows = Array.from(el.querySelectorAll("tr")).map((tr) => {
+		const cells = Array.from(tr.querySelectorAll("th, td")).map((td) => {
+			const link = td.querySelector("a");
 			if (link) {
 				return `[${link.textContent}](${link.href})`;
 			}
 			return td.textContent;
 		});
 		return {
-			_type: 'row',
+			_type: "row",
 			cells,
 		};
 	});
 
 	return block({
-		_type: 'table',
+		_type: "table",
 		rows,
 	});
 }

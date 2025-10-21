@@ -181,6 +181,10 @@ export type Sponsor = {
     _type: "quote";
     _key: string;
   } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
     _key: string;
   } & Table>;
   url?: string;
@@ -306,6 +310,10 @@ export type Lesson = {
     }>;
     url?: string;
     _type: "quote";
+    _key: string;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -459,6 +467,10 @@ export type Author = {
     }>;
     url?: string;
     _type: "quote";
+    _key: string;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -618,6 +630,10 @@ export type Post = {
     _type: "quote";
     _key: string;
   } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
     _key: string;
   } & Table>;
   videoCloudinary?: CloudinaryAsset;
@@ -768,6 +784,10 @@ export type Podcast = {
     }>;
     url?: string;
     _type: "quote";
+    _key: string;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -955,6 +975,10 @@ export type Guest = {
     _type: "quote";
     _key: string;
   } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
     _key: string;
   } & Table>;
   socials?: {
@@ -1112,6 +1136,10 @@ export type PodcastType = {
     _type: "quote";
     _key: string;
   } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
     _key: string;
   } & Table>;
 };
@@ -1236,6 +1264,10 @@ export type Course = {
     }>;
     url?: string;
     _type: "quote";
+    _key: string;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -1401,6 +1433,10 @@ export type Page = {
     }>;
     url?: string;
     _type: "quote";
+    _key: string;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -2103,6 +2139,11 @@ export type PageQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -2226,6 +2267,10 @@ export type PageQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -2385,6 +2430,10 @@ export type PageQueryResult = {
       id?: string;
       _type: "twitter";
       _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
+      _key: string;
     }>;
     url?: string;
   }> | null;
@@ -2525,6 +2574,10 @@ export type BlogQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -2693,6 +2746,10 @@ export type MorePostQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -2936,6 +2993,11 @@ export type PostQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -3059,6 +3121,10 @@ export type PostQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -3218,6 +3284,10 @@ export type PostQueryResult = {
       id?: string;
       _type: "twitter";
       _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
+      _key: string;
     }>;
     url?: string;
   }> | null;
@@ -3358,6 +3428,10 @@ export type PodcastsQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -3514,6 +3588,10 @@ export type PodcastsQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -3683,6 +3761,10 @@ export type MorePodcastQueryResult = Array<{
       id?: string;
       _type: "twitter";
       _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
+      _key: string;
     }>;
     socials?: {
       bluesky?: string;
@@ -3838,6 +3920,10 @@ export type MorePodcastQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -4081,6 +4167,11 @@ export type PodcastQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -4204,6 +4295,10 @@ export type PodcastQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -4363,6 +4458,10 @@ export type PodcastQueryResult = {
       id?: string;
       _type: "twitter";
       _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
+      _key: string;
     }>;
     url?: string;
   }> | null;
@@ -4495,6 +4594,10 @@ export type PodcastQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -4653,6 +4756,10 @@ export type PodcastQueryResult = {
         id?: string;
         _type: "twitter";
         _key: string;
+      } | {
+        youtube?: string;
+        _type: "youtube";
+        _key: string;
       }>;
       socials?: {
         bluesky?: string;
@@ -4807,6 +4914,10 @@ export type PodcastQueryResult = {
       } | {
         id?: string;
         _type: "twitter";
+        _key: string;
+      } | {
+        youtube?: string;
+        _type: "youtube";
         _key: string;
       }>;
       socials?: {
@@ -4981,6 +5092,10 @@ export type CoursesQueryResult = {
       id?: string;
       _type: "twitter";
       _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
+      _key: string;
     }>;
     socials?: {
       bluesky?: string;
@@ -5149,6 +5264,10 @@ export type MoreCourseQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -5393,6 +5512,11 @@ export type CourseQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -5516,6 +5640,10 @@ export type CourseQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -5674,6 +5802,10 @@ export type CourseQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -5925,6 +6057,11 @@ export type LessonQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -6048,6 +6185,10 @@ export type LessonQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -6206,6 +6347,10 @@ export type LessonQueryResult = {
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -6433,6 +6578,11 @@ export type AuthorQueryResult = {
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;
@@ -6681,6 +6831,11 @@ export type AuthorQueryWithRelatedResult = {
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;
@@ -6975,6 +7130,11 @@ export type GuestQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: null;
   devto: null;
@@ -7221,6 +7381,11 @@ export type GuestQueryWithRelatedResult = {
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;
@@ -7515,6 +7680,11 @@ export type SponsorQueryResult = {
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: null;
   devto: null;
@@ -7732,6 +7902,11 @@ export type SponsorQueryWithRelatedResult = {
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;
@@ -7985,6 +8160,11 @@ export type RssQueryResult = Array<{
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: null;
   devto: null;
@@ -8199,6 +8379,11 @@ export type RssQueryResult = Array<{
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -8322,6 +8507,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -8480,6 +8669,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -8691,6 +8884,11 @@ export type RssQueryResult = Array<{
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;
@@ -8907,6 +9105,11 @@ export type RssQueryResult = Array<{
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -9030,6 +9233,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -9188,6 +9395,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -9401,6 +9612,11 @@ export type RssQueryResult = Array<{
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -9524,6 +9740,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -9682,6 +9902,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -9895,6 +10119,11 @@ export type RssQueryResult = Array<{
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -10018,6 +10247,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -10176,6 +10409,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -10387,6 +10624,11 @@ export type RssQueryResult = Array<{
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;
@@ -10603,6 +10845,11 @@ export type RssQueryResult = Array<{
     _type: "twitter";
     _key: string;
     markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -10726,6 +10973,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     socials?: {
@@ -10884,6 +11135,10 @@ export type RssQueryResult = Array<{
     } | {
       id?: string;
       _type: "twitter";
+      _key: string;
+    } | {
+      youtube?: string;
+      _type: "youtube";
       _key: string;
     }>;
     url?: string;
@@ -11095,6 +11350,11 @@ export type RssQueryResult = Array<{
   } | {
     id?: string;
     _type: "twitter";
+    _key: string;
+    markDefs: null;
+  } | {
+    youtube?: string;
+    _type: "youtube";
     _key: string;
     markDefs: null;
   }> | null;

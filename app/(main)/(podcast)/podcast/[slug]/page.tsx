@@ -53,7 +53,5 @@ export default async function PodcastPage({ params }: { params: Params }) {
 		return notFound();
 	}
 
-	return (
-		<Podcast podcast={podcast} />
-	);
+	return <Podcast podcast={podcast} />;
 }

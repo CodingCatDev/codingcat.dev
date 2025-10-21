@@ -6,7 +6,9 @@ import Link from "next/link";
 
 export default function PodcastOpenYouTube({
 	podcast,
-}: { podcast: NonNullable<PodcastQueryResult> }) {
+}: {
+	podcast: NonNullable<PodcastQueryResult>;
+}) {
 	return (
 		<>
 			{podcast?.youtube && (

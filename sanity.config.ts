@@ -147,7 +147,7 @@ export default defineConfig({
 	},
 	document: {
 		actions: (prev, context) => {
-			if (context.schemaType === 'post' || context.schemaType === 'podcast') {
+			if (context.schemaType === "post" || context.schemaType === "podcast") {
 				return [sharePreviewAction, ...prev];
 			}
 			return prev;

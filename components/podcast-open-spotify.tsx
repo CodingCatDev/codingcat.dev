@@ -6,7 +6,9 @@ import Link from "next/link";
 
 export default function PodcastOpenSpotify({
 	podcast,
-}: { podcast: NonNullable<PodcastQueryResult> }) {
+}: {
+	podcast: NonNullable<PodcastQueryResult>;
+}) {
 	return (
 		<>
 			{podcast?._id && (

@@ -1,7 +1,9 @@
 import type { CloudinaryAsset } from "@/sanity/types";
 import dynamic from "next/dynamic";
 
-const YouTube = dynamic(() => import("@/components/youtube").then(mod => mod.YouTube));
+const YouTube = dynamic(() =>
+	import("@/components/youtube").then((mod) => mod.YouTube),
+);
 const CoverImage = dynamic(() => import("@/components/cover-image"));
 const CoverVideo = dynamic(() => import("@/components/cover-video"));
 

@@ -5,7 +5,6 @@ import type { Author } from "@/sanity/types";
 import Link from "next/link";
 import { stegaClean } from "@sanity/client/stega";
 
-
 interface Props {
 	name?: string;
 	href?: string;

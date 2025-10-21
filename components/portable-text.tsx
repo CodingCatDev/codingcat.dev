@@ -24,6 +24,9 @@ const CodeSandboxEmbed = dynamic(() => import("./codesandbox-embed"));
 const HTMLEmbed = dynamic(() => import("@/components/html-embed"));
 const QuoteEmbed = dynamic(() => import("@/components/quote-embed"));
 const BlockTable = dynamic(() => import("@/components/block-table"));
+const BlockYoutube = dynamic(() =>
+	import("@/components/youtube").then((mod) => mod.YouTube),
+);
 
 export default function CustomPortableText({
 	className,
@@ -39,6 +42,7 @@ export default function CustomPortableText({
 			code: ({ value }) => <BlockCode {...value} />,
 			codepen: ({ value }) => <CodePenEmbed {...value} />,
 			codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
+			youtube: ({ value }) => <div className="not-prose"><BlockYoutube {...value} /></div>,
 			twitter: ({ value }) => <TwitterEmbed {...value} />,
 			htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
 			quote: ({ value }) => <QuoteEmbed {...value} />,

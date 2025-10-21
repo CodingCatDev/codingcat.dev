@@ -11,8 +11,6 @@ import {
 	CardHeader,
 } from "@/components/ui/card";
 
-
-
 export default async function Lessons(params: { courseSlug: string }) {
 	const { courseSlug } = await params;
 	const course = (
@@ -77,9 +75,7 @@ export default async function Lessons(params: { courseSlug: string }) {
 											</CardContent>
 											<CardFooter className="flex flex-col items-start gap-2">
 												{locked && course?.stripeProduct && course?.title && (
-													<section className="flex flex-wrap gap-2">
-														
-													</section>
+													<section className="flex flex-wrap gap-2"></section>
 												)}
 											</CardFooter>
 										</Card>

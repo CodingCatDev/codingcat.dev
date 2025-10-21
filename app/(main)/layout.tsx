@@ -5,7 +5,7 @@ import { SanityLive } from "@/sanity/lib/live";
 import { Nunito } from "next/font/google";
 import { Inter } from "next/font/google";
 import CookiesProviderClient from "@/components/cookies-provider-client";
-import { Suspense } from 'react'
+import { Suspense } from "react";
 
 import NextTopLoader from "nextjs-toploader";
 import type { SettingsQueryResult } from "@/sanity/types";
@@ -16,7 +16,12 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetTrigger,
+} from "@/components/ui/sheet";
 import NavHeader from "@/components/nav-header";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -25,7 +30,7 @@ import { FaBars } from "react-icons/fa6";
 import PlayerFloating from "@/components/player-floating";
 import { PlayerProvider } from "@/components/player-context";
 import { toPlainText } from "next-sanity";
-import { VisualEditing } from 'next-sanity/visual-editing'
+import { VisualEditing } from "next-sanity/visual-editing";
 import { DisableDraftMode } from "@/components/disable-draft-mode";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -123,9 +128,15 @@ export default async function RootLayout({
 										<ModeToggle />
 										<Sheet>
 											<SheetTrigger asChild>
-												<Button className="md:hidden" size="icon" variant="ghost">
+												<Button
+													className="md:hidden"
+													size="icon"
+													variant="ghost"
+												>
 													<FaBars className="w-6 h-6" />
-													<span className="sr-only">Toggle navigation menu</span>
+													<span className="sr-only">
+														Toggle navigation menu
+													</span>
 												</Button>
 											</SheetTrigger>
 											<SheetContent side="right">

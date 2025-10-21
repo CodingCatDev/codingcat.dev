@@ -7,7 +7,9 @@ import type { PodcastQueryResult } from "@/sanity/types";
 
 export default function PlayerPlayButton({
 	podcast,
-}: { podcast: NonNullable<PodcastQueryResult> }) {
+}: {
+	podcast: NonNullable<PodcastQueryResult>;
+}) {
 	const {
 		setPodcast,
 		audio,

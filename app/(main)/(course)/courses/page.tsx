@@ -12,7 +12,6 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { coursesQuery } from "@/sanity/lib/queries";
 import MoreHeader from "@/components/more-header";
 
-
 function HeroCourse({
 	title,
 	slug,
@@ -83,7 +82,7 @@ export default async function Page() {
 			) : (
 				<Onboarding />
 			)}
-			
+
 			{heroPost?._id && (
 				<aside>
 					<MoreHeader title="Latest Courses" href="/courses/page/1" />

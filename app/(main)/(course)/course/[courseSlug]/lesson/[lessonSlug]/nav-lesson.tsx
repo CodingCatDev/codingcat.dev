@@ -7,7 +7,6 @@ import { useActivePath } from "@/lib/hooks";
 import { Separator } from "@/components/ui/separator";
 import BadgePro from "@/components/badge-pro";
 
-
 interface Props {
 	course: LessonsInCourseQueryResult | undefined;
 }
@@ -30,8 +29,6 @@ export default function NavLesson({ course }: Props) {
 							className="flex gap-2 justify-center align-middle items-center"
 							key={l._id}
 						>
-							
-
 							<Link
 								href={`/course/${course.slug}/lesson/${l.slug}`}
 								className={`flex-1 ${

@@ -15,6 +15,7 @@ import codesandbox from "../custom/codesandbox";
 import html from "../custom/html";
 import twitter from "../custom/twitter-embed";
 import quote from "../custom/quote";
+import youtube from "../custom/youtube";
 
 const baseType = defineType({
 	name: "base",
@@ -98,7 +99,8 @@ const baseType = defineType({
 				defineArrayMember(twitter),
 				defineArrayMember(html),
 				defineArrayMember(quote),
-				defineArrayMember({ type: 'table' }),
+				defineArrayMember(youtube),
+				defineArrayMember({ type: "table" }),
 			],
 		}),
 	],

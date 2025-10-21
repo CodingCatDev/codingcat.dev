@@ -30,8 +30,8 @@ export function YouTube(props: {
 						style={{ width: "100%", height: "100%", objectFit: "cover" }}
 						src={`https://i.ytimg.com/vi/${id}/sddefault.jpg`}
 						alt=""
-            width={640}
-            height={480}
+						width={640}
+						height={480}
 					/>
 				</picture>
 			)}

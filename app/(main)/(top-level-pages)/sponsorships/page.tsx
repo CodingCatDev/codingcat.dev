@@ -1,4 +1,3 @@
-
 import type { Metadata, ResolvingMetadata } from "next";
 
 import type { PageQueryResult } from "@/sanity/types";
@@ -50,12 +49,13 @@ export async function generateMetadata(
 	{ params }: { params: any },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-
-	const page = (await sanityFetch({
-		query: pageQuery,
-		params: { slug: "sponsorships" },
-		tags: ["page:sponsorships"],
-	})).data as PageQueryResult;
+	const page = (
+		await sanityFetch({
+			query: pageQuery,
+			params: { slug: "sponsorships" },
+			tags: ["page:sponsorships"],
+		})
+	).data as PageQueryResult;
 
 	const previousImages = (await parent).openGraph?.images || [];
 	const ogImage = resolveOpenGraphImage(page?.coverImage);
@@ -70,7 +70,6 @@ export async function generateMetadata(
 }
 
 export default async function SponsorshipsPage() {
-
 	return (
 		<div className="container px-5 mx-auto">
 			<div className="w-full flex flex-col gap-4 md:gap-8 my-8 md:my-12">
@@ -92,9 +91,7 @@ export default async function SponsorshipsPage() {
 							</CardHeader>
 							<CardContent>
 								<p className="text-2xl font-bold">{tier.price}</p>
-								<p className="mt-2 text-muted-foreground">
-									{tier.description}
-								</p>
+								<p className="mt-2 text-muted-foreground">{tier.description}</p>
 							</CardContent>
 						</Card>
 					))}

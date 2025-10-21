@@ -33,7 +33,9 @@ export default async function Page({ params }: { params: Params }) {
 		<div className="container px-5 mx-auto mb-32">
 			<div className="flex flex-col items-center my-8">
 				<h2 className="text-2xl font-bold">Want to see your name here?</h2>
-				<p className="text-lg text-muted-foreground">Become a sponsor and support our content.</p>
+				<p className="text-lg text-muted-foreground">
+					Become a sponsor and support our content.
+				</p>
 				<Button asChild className="mt-4">
 					<Link href="/sponsorships">Become a Sponsor</Link>
 				</Button>

@@ -17,7 +17,6 @@ import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
 
-
 type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata(
@@ -99,7 +98,6 @@ export default async function PostPage({ params }: { params: Params }) {
 							<DateComponent dateString={post.date} />
 						</div>
 					</div>
-					
 				</div>
 				{post?.sponsor?.length && (
 					<section className="flex flex-col mt-10 mb-10">
@@ -111,12 +109,12 @@ export default async function PostPage({ params }: { params: Params }) {
 						<hr className="border-accent-2" />
 					</section>
 				)}
-				{post.content?.length && (
-					<PortableText
-						className="mx-auto prose-violet lg:prose-xl dark:prose-invert"
-						value={post.content as PortableTextBlock[]}
-					/>
-				)}
+								{post.content?.length && (
+									<PortableText
+										className="mx-auto prose-violet lg:prose-xl dark:prose-invert"
+										value={post.content as PortableTextBlock[]}
+									/>
+								)}
 			</article>
 			<aside>
 				<MoreHeader title="Recent Posts" href="/blog/page/1" />

@@ -99,7 +99,7 @@ export default async function Page() {
 			) : (
 				<Onboarding />
 			)}
-			
+
 			<div className="flex m-2 md:m-8 justify-center">
 				<PodmatchBadge />
 			</div>

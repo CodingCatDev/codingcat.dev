@@ -23,7 +23,6 @@ import {
 
 import { useLocalStorage } from "@uidotdev/usehooks";
 
-
 export default function LessonPanel({
 	lesson,
 	course,
@@ -70,7 +69,6 @@ export default function LessonPanel({
 					/>
 				</main>
 				<footer className="grid grid-cols-3 h-14 lg:h-[60px] gap-1 sm:gap-4 border-b px-6 dark:bg-gray-800/40">
-					
 					<div className="flex justify-center items-center">
 						{lessonIndex > 0 && (
 							<Button variant="ghost" asChild>
@@ -92,7 +90,6 @@ export default function LessonPanel({
 							</Button>
 						)}
 					</div>
-					
 				</footer>
 			</div>
 		);

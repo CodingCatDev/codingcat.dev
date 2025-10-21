@@ -84,7 +84,7 @@ export default async function Page() {
 			) : (
 				<Onboarding />
 			)}
-			
+
 			{heroPost?._id && (
 				<aside>
 					<MoreHeader title="View More" href="/blog/page/1" />

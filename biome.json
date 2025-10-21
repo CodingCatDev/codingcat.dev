@@ -26,17 +26,11 @@
 				},
 				"noNonNullAssertion": "warn",
 				"useBlockStatements": "error"
-			},      
+			},
 			"a11y": {
 				"noSvgWithoutTitle": "off"
 			}
 		}
-	},
-	"organizeImports": {
-		"enabled": true
-	},
-	"files": {
-		"ignore": ["node_modules/**", "sanity/types.ts"]
 	},
 	"javascript": {
 		"jsxRuntime": "reactClassic",

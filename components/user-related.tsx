@@ -72,7 +72,9 @@ export default async function UserRelated(
 					coverImage: CloudinaryAsset | null;
 					date: string;
 				}>;
-				if (!contents?.length){ return <span key={_type} />;}
+				if (!contents?.length) {
+					return <span key={_type} />;
+				}
 				return (
 					<section key={_type} className="flex flex-col">
 						<hr className="my-12 md:my-24 border-accent-2" />
