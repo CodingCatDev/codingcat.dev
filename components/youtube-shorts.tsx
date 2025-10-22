@@ -30,7 +30,9 @@ export function YouTubeShorts(props: { shorts: string[] }) {
     })
   }, [api])
 
-  if (shorts.length === 1) {
+  if (!shorts?.length) return (<></>);
+
+  if (shorts?.length === 1) {
     return (
       <div className='flex items-center justify-center w-full'>
         <div className="aspect-w-9 aspect-h-16 w-full max-w-xs">
