@@ -16,6 +16,7 @@ import html from "../custom/html";
 import twitter from "../custom/twitter-embed";
 import quote from "../custom/quote";
 import youtube from "../custom/youtube";
+import youtubeShorts from "../custom/youtube-shorts";
 
 const baseType = defineType({
 	name: "base",
@@ -94,12 +95,13 @@ const baseType = defineType({
 					},
 				}),
 				//Custom Schemas
+				defineArrayMember(youtube),
+				defineArrayMember(youtubeShorts),
 				defineArrayMember(codepen),
 				defineArrayMember(codesandbox),
 				defineArrayMember(twitter),
 				defineArrayMember(html),
 				defineArrayMember(quote),
-				defineArrayMember(youtube),
 				defineArrayMember({ type: "table" }),
 			],
 		}),

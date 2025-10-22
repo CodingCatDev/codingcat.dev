@@ -27,6 +27,7 @@ const BlockTable = dynamic(() => import("@/components/block-table"));
 const BlockYoutube = dynamic(() =>
 	import("@/components/youtube").then((mod) => mod.YouTube),
 );
+const YouTubeShorts = dynamic(() => import("./youtube-shorts").then((mod) => mod.YouTubeShorts));
 
 export default function CustomPortableText({
 	className,
@@ -43,6 +44,7 @@ export default function CustomPortableText({
 			codepen: ({ value }) => <CodePenEmbed {...value} />,
 			codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
 			youtube: ({ value }) => <div className="not-prose"><BlockYoutube {...value} /></div>,
+			youtubeShorts: ({ value }) => <div className="not-prose"><YouTubeShorts {...value} /></div>,
 			twitter: ({ value }) => <TwitterEmbed {...value} />,
 			htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
 			quote: ({ value }) => <QuoteEmbed {...value} />,

@@ -118,6 +118,14 @@ export type Sponsor = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -179,10 +187,6 @@ export type Sponsor = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -249,6 +253,14 @@ export type Lesson = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -310,10 +322,6 @@ export type Lesson = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -406,6 +414,14 @@ export type Author = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -467,10 +483,6 @@ export type Author = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -567,6 +579,14 @@ export type Post = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -628,10 +648,6 @@ export type Post = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -723,6 +739,14 @@ export type Podcast = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -784,10 +808,6 @@ export type Podcast = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -912,6 +932,14 @@ export type Guest = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -973,10 +1001,6 @@ export type Guest = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -1073,6 +1097,14 @@ export type PodcastType = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1134,10 +1166,6 @@ export type PodcastType = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -1203,6 +1231,14 @@ export type Course = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1264,10 +1300,6 @@ export type Course = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -1372,6 +1404,14 @@ export type Page = {
   } & CloudinaryAsset | {
     _key: string;
   } & Code | {
+    youtube?: string;
+    _type: "youtube";
+    _key: string;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+  } | {
     url?: string;
     _type: "codepen";
     _key: string;
@@ -1433,10 +1473,6 @@ export type Page = {
     }>;
     url?: string;
     _type: "quote";
-    _key: string;
-  } | {
-    youtube?: string;
-    _type: "youtube";
     _key: string;
   } | {
     _key: string;
@@ -2144,6 +2180,11 @@ export type PageQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -2271,6 +2312,10 @@ export type PageQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -2434,6 +2479,10 @@ export type PageQueryResult = {
       youtube?: string;
       _type: "youtube";
       _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
+      _key: string;
     }>;
     url?: string;
   }> | null;
@@ -2578,6 +2627,10 @@ export type BlogQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -2750,6 +2803,10 @@ export type MorePostQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -2998,6 +3055,11 @@ export type PostQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -3125,6 +3187,10 @@ export type PostQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -3288,6 +3354,10 @@ export type PostQueryResult = {
       youtube?: string;
       _type: "youtube";
       _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
+      _key: string;
     }>;
     url?: string;
   }> | null;
@@ -3432,6 +3502,10 @@ export type PodcastsQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -3592,6 +3666,10 @@ export type PodcastsQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -3765,6 +3843,10 @@ export type MorePodcastQueryResult = Array<{
       youtube?: string;
       _type: "youtube";
       _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
+      _key: string;
     }>;
     socials?: {
       bluesky?: string;
@@ -3924,6 +4006,10 @@ export type MorePodcastQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -4172,6 +4258,11 @@ export type PodcastQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -4299,6 +4390,10 @@ export type PodcastQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -4462,6 +4557,10 @@ export type PodcastQueryResult = {
       youtube?: string;
       _type: "youtube";
       _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
+      _key: string;
     }>;
     url?: string;
   }> | null;
@@ -4598,6 +4697,10 @@ export type PodcastQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -4760,6 +4863,10 @@ export type PodcastQueryResult = {
         youtube?: string;
         _type: "youtube";
         _key: string;
+      } | {
+        shorts?: Array<string>;
+        _type: "youtubeShorts";
+        _key: string;
       }>;
       socials?: {
         bluesky?: string;
@@ -4918,6 +5025,10 @@ export type PodcastQueryResult = {
       } | {
         youtube?: string;
         _type: "youtube";
+        _key: string;
+      } | {
+        shorts?: Array<string>;
+        _type: "youtubeShorts";
         _key: string;
       }>;
       socials?: {
@@ -5096,6 +5207,10 @@ export type CoursesQueryResult = {
       youtube?: string;
       _type: "youtube";
       _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
+      _key: string;
     }>;
     socials?: {
       bluesky?: string;
@@ -5268,6 +5383,10 @@ export type MoreCourseQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -5517,6 +5636,11 @@ export type CourseQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -5644,6 +5768,10 @@ export type CourseQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -5806,6 +5934,10 @@ export type CourseQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -6062,6 +6194,11 @@ export type LessonQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -6189,6 +6326,10 @@ export type LessonQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -6351,6 +6492,10 @@ export type LessonQueryResult = {
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -6583,6 +6728,11 @@ export type AuthorQueryResult = {
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
@@ -6836,6 +6986,11 @@ export type AuthorQueryWithRelatedResult = {
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
@@ -7135,6 +7290,11 @@ export type GuestQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: null;
   devto: null;
@@ -7386,6 +7546,11 @@ export type GuestQueryWithRelatedResult = {
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
@@ -7685,6 +7850,11 @@ export type SponsorQueryResult = {
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: null;
   devto: null;
@@ -7907,6 +8077,11 @@ export type SponsorQueryWithRelatedResult = {
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
@@ -8165,6 +8340,11 @@ export type RssQueryResult = Array<{
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: null;
   devto: null;
@@ -8384,6 +8564,11 @@ export type RssQueryResult = Array<{
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -8511,6 +8696,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -8673,6 +8862,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -8889,6 +9082,11 @@ export type RssQueryResult = Array<{
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
@@ -9110,6 +9308,11 @@ export type RssQueryResult = Array<{
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -9237,6 +9440,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -9399,6 +9606,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -9617,6 +9828,11 @@ export type RssQueryResult = Array<{
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -9744,6 +9960,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -9906,6 +10126,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -10124,6 +10348,11 @@ export type RssQueryResult = Array<{
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -10251,6 +10480,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -10413,6 +10646,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -10629,6 +10866,11 @@ export type RssQueryResult = Array<{
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
@@ -10850,6 +11092,11 @@ export type RssQueryResult = Array<{
     _type: "youtube";
     _key: string;
     markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
+    _key: string;
+    markDefs: null;
   }> | null;
   author: Array<{
     _id: string;
@@ -10977,6 +11224,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     socials?: {
@@ -11139,6 +11390,10 @@ export type RssQueryResult = Array<{
     } | {
       youtube?: string;
       _type: "youtube";
+      _key: string;
+    } | {
+      shorts?: Array<string>;
+      _type: "youtubeShorts";
       _key: string;
     }>;
     url?: string;
@@ -11355,6 +11610,11 @@ export type RssQueryResult = Array<{
   } | {
     youtube?: string;
     _type: "youtube";
+    _key: string;
+    markDefs: null;
+  } | {
+    shorts?: Array<string>;
+    _type: "youtubeShorts";
     _key: string;
     markDefs: null;
   }> | null;
