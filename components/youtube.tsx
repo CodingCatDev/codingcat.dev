@@ -10,6 +10,9 @@ export function YouTube(props: {
 	className?: string;
 }) {
 	const { youtube, image, className } = props;
+	if (!youtube) {
+		return <></>;
+	}
 	const id = youtubeParser(youtube);
 
 	return (
