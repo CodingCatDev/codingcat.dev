@@ -8,12 +8,13 @@ export function YouTubeShort(props: {
 	youtube: string;
 	image?: CloudinaryAsset | null | undefined;
 	className?: string;
+    isActive?: boolean;
 }) {
-	const { youtube, image, className } = props;
+	const { youtube, image, className, isActive } = props;
 	const id = youtubeParser(youtube);
 
 	return (
-		<YouTubeShortEmbed youtube={youtube}>
+		<YouTubeShortEmbed youtube={youtube} loadEmbed={isActive}>
 			{image?.public_id ? (
 				<CoverImage image={image} priority={true} className={className} />
 			) : (

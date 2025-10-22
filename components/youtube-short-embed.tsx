@@ -1,15 +1,24 @@
 "use client";
 
 import { youtubeParser } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function YouTubeShortEmbed(props: {
 	youtube: string;
 	children?: React.ReactNode;
+	loadEmbed?: boolean;
 }) {
-	const { youtube, children } = props;
+	const { youtube, children, loadEmbed: load } = props;
 	const [loadEmbed, setLoadEmbed] = useState(false);
 	const id = youtubeParser(youtube);
+
+	useEffect(() => {
+		if (load) {
+			setLoadEmbed(true);
+		} else {
+			setLoadEmbed(false);
+		}
+	}, [load]);
 
 	return (
 		<div
@@ -57,13 +66,31 @@ export function YouTubeShortEmbed(props: {
 				</button>
 			</div>
 			{loadEmbed && (
-				<iframe
-					style={{ height: "100%", width: "100%", border: 0 }}
-					src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&fs=0`}
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-					allowFullScreen
-					title="YouTube video player"
-				/>
+				<>
+					<iframe
+						style={{ height: "100%", width: "100%", border: 0 }}
+						src={`https://www.youtube-nocookie.com/embed/${id}?fs=0`}
+						allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						allowFullScreen
+						title="YouTube video player"
+					/>
+					<button
+						type="button"
+						onClick={() => setLoadEmbed(false)}
+						aria-label="Close"
+						style={{
+							border: "0",
+							background: "none",
+							position: "absolute",
+							top: 0,
+							right: 0,
+							color: "white",
+							padding: "8px"
+						}}
+					>
+						X
+					</button>
+				</>
 			)}
 		</div>
 	);
