@@ -36,10 +36,10 @@
 		"enabled": true
 	},
 	"files": {
-		"ignore": ["node_modules/**", "sanity/types.ts"]
+		"ignore": ["node_modules/**", "sanity/types.ts", "supabase/**", "playwright-report/**", "test-results/**"]
 	},
 	"javascript": {
-		"jsxRuntime": "reactClassic",
+		"jsxRuntime": "automatic",
 		"formatter": {
 			"trailingCommas": "all",
 			"semicolons": "always"
