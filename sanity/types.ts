@@ -823,6 +823,36 @@ export type Podcast = {
   spotify?: PodcastRssEpisode;
 };
 
+export type PodcastRssEpisode = {
+  _type: "podcastRssEpisode";
+  title?: string;
+  description?: string;
+  link?: string;
+  guid?: {
+    id?: string;
+    isPermaLink?: boolean;
+  };
+  pubDate?: string;
+  enclosures?: Array<{
+    url?: string;
+    length?: number;
+    type?: string;
+    _type: "enclosure";
+    _key: string;
+  }>;
+  itunes?: {
+    summary?: string;
+    explicit?: string;
+    duration?: string;
+    season?: string;
+    episode?: string;
+    episodeType?: string;
+    image?: {
+      href?: string;
+    };
+  };
+};
+
 export type Guest = {
   _id: string;
   _type: "guest";
@@ -1415,6 +1445,34 @@ export type Page = {
   };
 };
 
+export type CloudinaryAsset = {
+  _type: "cloudinary.asset";
+  public_id?: string;
+  resource_type?: string;
+  type?: string;
+  format?: string;
+  version?: number;
+  url?: string;
+  secure_url?: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+  duration?: number;
+  tags?: Array<string>;
+  created_at?: string;
+  derived?: Array<{
+    _key: string;
+  } & CloudinaryAssetDerived>;
+  access_mode?: string;
+  context?: CloudinaryAssetContext;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
 export type Settings = {
   _id: string;
   _type: "settings";
@@ -1449,36 +1507,6 @@ export type Settings = {
   ogImage?: CloudinaryAsset;
 };
 
-export type PodcastRssEpisode = {
-  _type: "podcastRssEpisode";
-  title?: string;
-  description?: string;
-  link?: string;
-  guid?: {
-    id?: string;
-    isPermaLink?: boolean;
-  };
-  pubDate?: string;
-  enclosures?: Array<{
-    url?: string;
-    length?: number;
-    type?: string;
-    _type: "enclosure";
-    _key: string;
-  }>;
-  itunes?: {
-    summary?: string;
-    explicit?: string;
-    duration?: string;
-    season?: string;
-    episode?: string;
-    episodeType?: string;
-    image?: {
-      href?: string;
-    };
-  };
-};
-
 export type Code = {
   _type: "code";
   language?: string;
@@ -1493,38 +1521,16 @@ export type CloudinaryAssetContextCustom = {
   caption?: string;
 };
 
+export type CloudinaryAssetContext = {
+  _type: "cloudinary.assetContext";
+  custom?: CloudinaryAssetContextCustom;
+};
+
 export type CloudinaryAssetDerived = {
   _type: "cloudinary.assetDerived";
   raw_transformation?: string;
   url?: string;
   secure_url?: string;
-};
-
-export type CloudinaryAsset = {
-  _type: "cloudinary.asset";
-  public_id?: string;
-  resource_type?: string;
-  type?: string;
-  format?: string;
-  version?: number;
-  url?: string;
-  secure_url?: string;
-  width?: number;
-  height?: number;
-  bytes?: number;
-  duration?: number;
-  tags?: Array<string>;
-  created_at?: string;
-  derived?: Array<{
-    _key: string;
-  } & CloudinaryAssetDerived>;
-  access_mode?: string;
-  context?: CloudinaryAssetContext;
-};
-
-export type CloudinaryAssetContext = {
-  _type: "cloudinary.assetContext";
-  custom?: CloudinaryAssetContextCustom;
 };
 
 export type SanityAssistInstructionTask = {
@@ -1674,6 +1680,17 @@ export type SanityImageDimensions = {
   aspectRatio?: number;
 };
 
+export type SanityImageMetadata = {
+  _type: "sanity.imageMetadata";
+  location?: Geopoint;
+  dimensions?: SanityImageDimensions;
+  palette?: SanityImagePalette;
+  lqip?: string;
+  blurHash?: string;
+  hasAlpha?: boolean;
+  isOpaque?: boolean;
+};
+
 export type SanityImageHotspot = {
   _type: "sanity.imageHotspot";
   x?: number;
@@ -1712,6 +1729,13 @@ export type SanityFileAsset = {
   source?: SanityAssetSourceData;
 };
 
+export type SanityAssetSourceData = {
+  _type: "sanity.assetSourceData";
+  name?: string;
+  id?: string;
+  url?: string;
+};
+
 export type SanityImageAsset = {
   _id: string;
   _type: "sanity.imageAsset";
@@ -1735,17 +1759,6 @@ export type SanityImageAsset = {
   source?: SanityAssetSourceData;
 };
 
-export type SanityImageMetadata = {
-  _type: "sanity.imageMetadata";
-  location?: Geopoint;
-  dimensions?: SanityImageDimensions;
-  palette?: SanityImagePalette;
-  lqip?: string;
-  blurHash?: string;
-  hasAlpha?: boolean;
-  isOpaque?: boolean;
-};
-
 export type Geopoint = {
   _type: "geopoint";
   lat?: number;
@@ -1753,20 +1766,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
-};
-
-export type SanityAssetSourceData = {
-  _type: "sanity.assetSourceData";
-  name?: string;
-  id?: string;
-  url?: string;
-};
-
-export type AllSanitySchemaTypes = SponsorshipRequest | PreviewSession | YoutubeUpdateTask | Sponsor | Lesson | Author | Post | Podcast | Guest | PodcastType | Course | Page | Settings | PodcastRssEpisode | Code | CloudinaryAssetContextCustom | CloudinaryAssetDerived | CloudinaryAsset | CloudinaryAssetContext | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = SponsorshipRequest | PreviewSession | YoutubeUpdateTask | Sponsor | Lesson | Author | Post | Podcast | PodcastRssEpisode | Guest | PodcastType | Course | Page | CloudinaryAsset | Slug | Settings | Code | CloudinaryAssetContextCustom | CloudinaryAssetContext | CloudinaryAssetDerived | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: sanity/lib/queries.ts
 // Variable: docCount
