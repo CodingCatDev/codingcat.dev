@@ -56,8 +56,7 @@
 		"@sanity/ui": "^3.1.0",
 		"@sanity/vision": "^4.8.1",
 		"@sanity/webhook": "^4.0.4",
-		"@supabase/ssr": "^0.9.0",
-		"@supabase/supabase-js": "^2.98.0",
+		"@tailwindcss/postcss": "^4.1.13",
 		"@uidotdev/usehooks": "^2.4.1",
 		"algoliasearch": "^5.37.0",
 		"autoprefixer": "^10.4.21",
@@ -108,8 +107,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.2.4",
 		"@eslint/eslintrc": "^3.3.1",
-		"@tailwindcss/postcss": "^4.2.1",
-		"@tailwindcss/typography": "^0.5.19",
+		"@tailwindcss/typography": "^0.5.16",
 		"@types/node": "^24.3.1",
 		"@types/react": "^19.1.12",
 		"@types/react-dom": "^19.1.9",
@@ -117,7 +115,7 @@
 		"eslint": "^9.35.0",
 		"eslint-config-next": "15.5.3",
 		"postcss": "^8",
-		"tailwindcss": "^4.2.1",
+		"tailwindcss": "^4.1.13",
 		"typescript": "^5"
 	},
 	"pnpm": {
