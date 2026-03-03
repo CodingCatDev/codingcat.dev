@@ -101,9 +101,10 @@ export default defineType({
           {title: '1 - Draft', value: 'draft'},
           {title: '2 - Script Ready', value: 'script_ready'},
           {title: '3 - Audio Generation', value: 'audio_gen'},
-          {title: '4 - Video Rendering', value: 'video_gen'},
-          {title: '5 - Uploading', value: 'uploading'},
-          {title: '6 - Published', value: 'published'},
+          {title: '4 - Rendering', value: 'rendering'},
+          {title: '5 - Video Generation', value: 'video_gen'},
+          {title: '6 - Uploading', value: 'uploading'},
+          {title: '7 - Published', value: 'published'},
           {title: 'Flagged', value: 'flagged'},
         ],
       },
@@ -154,6 +155,19 @@ export default defineType({
       title: 'Short URL',
       type: 'url',
       description: 'Direct URL to the short video (auto-populated from video asset)',
+    }),
+    defineField({
+      name: 'renderData',
+      title: 'Render Data',
+      type: 'object',
+      description: 'Remotion Lambda render tracking data (auto-populated)',
+      fields: [
+        defineField({ name: 'mainRenderId', title: 'Main Render ID', type: 'string' }),
+        defineField({ name: 'shortRenderId', title: 'Short Render ID', type: 'string' }),
+        defineField({ name: 'bucketName', title: 'Bucket Name', type: 'string' }),
+        defineField({ name: 'startedAt', title: 'Started At', type: 'datetime' }),
+      ],
+      hidden: true, // internal tracking, not for manual editing
     }),
     defineField({
       name: 'youtubeId',

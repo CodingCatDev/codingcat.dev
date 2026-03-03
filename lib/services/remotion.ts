@@ -21,8 +21,6 @@ import {
   deployFunction,
   getOrCreateBucket,
   type AwsRegion,
-  type RenderMediaOnLambdaInput,
-  type RenderProgress,
 } from "@remotion/lambda";
 
 // ---------------------------------------------------------------------------
@@ -85,9 +83,6 @@ const POLL_INTERVAL_MS = 2_000;
 
 /** Maximum time to wait for a render before timing out (15 minutes) */
 const RENDER_TIMEOUT_MS = 15 * 60 * 1_000;
-
-/** Progress thresholds at which we log milestones (0–1) */
-const LOG_MILESTONES = [0.1, 0.25, 0.5, 0.75, 0.9, 1.0];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -171,24 +166,45 @@ function getFunctionName(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Core render + poll
+// Types – render start (no polling)
+// ---------------------------------------------------------------------------
+
+export interface RenderStartResult {
+  mainRenderId: string;
+  shortRenderId: string;
+  bucketName: string;
+}
+
+export interface RenderProgressResult {
+  done: boolean;
+  /** 0-100 */
+  progress: number;
+  outputUrl?: string;
+  outputSize?: number;
+  errors?: string;
+}
+
+export interface BothRendersResult {
+  allDone: boolean;
+  main: RenderProgressResult;
+  short: RenderProgressResult;
+}
+
+// ---------------------------------------------------------------------------
+// Core – start a single render (no polling)
 // ---------------------------------------------------------------------------
 
 /**
- * Trigger a render on Lambda and poll until completion.
- *
- * @param composition - The Remotion composition ID ("MainVideo" or "ShortVideo")
- * @param input       - The render input data
- * @returns           - The render result with video URL and metadata
+ * Trigger a render on Lambda and return immediately with the render ID.
+ * Does NOT poll for completion.
  */
-async function triggerAndPollRender(
+async function startRender(
   composition: string,
   input: RenderInput
-): Promise<RenderResult> {
+): Promise<{ renderId: string; bucketName: string }> {
   const config = getRemotionConfig();
   const functionName = getFunctionName();
   const region = config.region as AwsRegion;
-  const startTime = Date.now();
 
   log(`Starting render for composition "${composition}"`, {
     scenes: input.script.scenes.length,
@@ -196,10 +212,6 @@ async function triggerAndPollRender(
     functionName,
     region,
   });
-
-  // ---- 1. Trigger the render ----
-  let renderId: string;
-  let bucketName: string;
 
   try {
     const renderResponse = await renderMediaOnLambda({
@@ -209,182 +221,199 @@ async function triggerAndPollRender(
       inputProps: mapInputProps(input),
       region,
       functionName,
-      // Remotion reads AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY from env
-      // automatically, but we can also pass them explicitly if needed.
     });
-
-    renderId = renderResponse.renderId;
-    bucketName = renderResponse.bucketName;
 
     log(`Render triggered successfully`, {
-      renderId,
-      bucketName,
+      renderId: renderResponse.renderId,
+      bucketName: renderResponse.bucketName,
       composition,
     });
+
+    return {
+      renderId: renderResponse.renderId,
+      bucketName: renderResponse.bucketName,
+    };
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : String(err);
+    const message = err instanceof Error ? err.message : String(err);
     throw new Error(
       `[REMOTION] Failed to trigger Lambda render for "${composition}": ${message}. ` +
         `Ensure the Lambda function "${functionName}" is deployed in ${region} ` +
         `and REMOTION_SERVE_URL points to a valid Remotion bundle.`
     );
   }
-
-  // ---- 2. Poll for completion ----
-  let lastLoggedMilestone = -1;
-
-  while (true) {
-    const elapsed = Date.now() - startTime;
-
-    if (elapsed > RENDER_TIMEOUT_MS) {
-      throw new Error(
-        `[REMOTION] Render timed out after ${Math.round(elapsed / 1000)}s ` +
-          `for composition "${composition}" (renderId: ${renderId}). ` +
-          `Max timeout is ${RENDER_TIMEOUT_MS / 1000}s.`
-      );
-    }
-
-    await sleep(POLL_INTERVAL_MS);
-
-    let progress: RenderProgress;
-    try {
-      progress = await getRenderProgress({
-        renderId,
-        bucketName,
-        region,
-        functionName,
-      });
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : String(err);
-      log(`Warning: Failed to fetch render progress (will retry): ${message}`);
-      continue;
-    }
-
-    // Log milestone progress
-    const overallProgress = progress.overallProgress ?? 0;
-    for (const milestone of LOG_MILESTONES) {
-      if (
-        overallProgress >= milestone &&
-        milestone > lastLoggedMilestone
-      ) {
-        log(
-          `Render progress: ${Math.round(overallProgress * 100)}% ` +
-            `(composition: ${composition}, renderId: ${renderId})`
-        );
-        lastLoggedMilestone = milestone;
-        break;
-      }
-    }
-
-    // Check for fatal errors
-    if (progress.fatalErrorEncountered) {
-      const errorMessages = (progress.errors ?? [])
-        .map((e) => {
-          if (typeof e === "string") return e;
-          if (e && typeof e === "object" && "message" in e)
-            return (e as { message: string }).message;
-          return JSON.stringify(e);
-        })
-        .join("; ");
-
-      throw new Error(
-        `[REMOTION] Render failed for "${composition}" (renderId: ${renderId}): ` +
-          `${errorMessages || "Unknown fatal error"}. ` +
-          `Check CloudWatch logs for function "${functionName}" in ${region}.`
-      );
-    }
-
-    // Check for completion
-    if (progress.done) {
-      const elapsedSeconds = (Date.now() - startTime) / 1000;
-      const outputUrl = progress.outputFile ?? "";
-      const outputSize = progress.outputSizeInBytes ?? 0;
-
-      if (!outputUrl) {
-        throw new Error(
-          `[REMOTION] Render completed but no output URL returned ` +
-            `for "${composition}" (renderId: ${renderId}). ` +
-            `This may indicate a configuration issue with the S3 bucket.`
-        );
-      }
-
-      log(`Render complete for "${composition}"`, {
-        renderId,
-        durationSeconds: Math.round(elapsedSeconds * 10) / 10,
-        fileSizeBytes: outputSize,
-        outputUrl,
-      });
-
-      return {
-        videoUrl: outputUrl,
-        renderDurationSeconds: Math.round(elapsedSeconds * 10) / 10,
-        fileSizeBytes: outputSize,
-      };
-    }
-  }
 }
 
 // ---------------------------------------------------------------------------
-// Public API
+// Public API – start renders
 // ---------------------------------------------------------------------------
 
 /**
- * Render the main 16:9 landscape video using Remotion Lambda.
+ * Start both video renders (main 16:9 + short 9:16) in parallel on Lambda.
+ * Returns render IDs immediately — does NOT poll for completion.
  *
- * @param input - Render input data (audio, script, B-roll, sponsor)
- * @returns Render result with video URL
+ * Use `checkBothRenders` to poll for progress separately.
  */
-export async function renderMainVideo(
+export async function startBothRenders(
   input: RenderInput
-): Promise<RenderResult> {
-  log(
-    `renderMainVideo called with ${input.script.scenes.length} scenes, ` +
-      `${input.audioDurationSeconds}s audio`
-  );
-  return triggerAndPollRender("MainVideo", input);
-}
-
-/**
- * Render the 9:16 portrait Short video using Remotion Lambda.
- *
- * @param input - Render input data (audio, script, B-roll, sponsor)
- * @returns Render result with video URL
- */
-export async function renderShortVideo(
-  input: RenderInput
-): Promise<RenderResult> {
-  log(
-    `renderShortVideo called with ${input.script.scenes.length} scenes, ` +
-      `${input.audioDurationSeconds}s audio`
-  );
-  return triggerAndPollRender("ShortVideo", input);
-}
-
-/**
- * Render both video formats (main + short) in parallel.
- *
- * @param input - Render input data
- * @returns Object with both render results
- */
-export async function renderBothFormats(
-  input: RenderInput
-): Promise<{ main: RenderResult; short: RenderResult }> {
+): Promise<RenderStartResult> {
   log(
     `Starting parallel render of MainVideo + ShortVideo ` +
       `(${input.script.scenes.length} scenes, ${input.audioDurationSeconds}s audio)`
   );
 
-  const [main, short] = await Promise.all([
-    renderMainVideo(input),
-    renderShortVideo(input),
+  const [mainResult, shortResult] = await Promise.all([
+    startRender("MainVideo", input),
+    startRender("ShortVideo", input),
   ]);
 
+  // Both should use the same bucket, but we take the main one as canonical
+  log(`Both renders started`, {
+    mainRenderId: mainResult.renderId,
+    shortRenderId: shortResult.renderId,
+    bucketName: mainResult.bucketName,
+  });
+
+  return {
+    mainRenderId: mainResult.renderId,
+    shortRenderId: shortResult.renderId,
+    bucketName: mainResult.bucketName,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Public API – check render progress
+// ---------------------------------------------------------------------------
+
+/**
+ * Check the progress of a single Remotion Lambda render.
+ */
+export async function checkRenderProgress(
+  renderId: string,
+  bucketName: string
+): Promise<RenderProgressResult> {
+  const config = getRemotionConfig();
+  const functionName = getFunctionName();
+  const region = config.region as AwsRegion;
+
+  const progress = await getRenderProgress({
+    renderId,
+    bucketName,
+    region,
+    functionName,
+  });
+
+  // Check for fatal errors
+  if (progress.fatalErrorEncountered) {
+    const errorMessages = (progress.errors ?? [])
+      .map((e) => {
+        if (typeof e === "string") return e;
+        if (e && typeof e === "object" && "message" in e)
+          return (e as { message: string }).message;
+        return JSON.stringify(e);
+      })
+      .join("; ");
+
+    return {
+      done: false,
+      progress: Math.round((progress.overallProgress ?? 0) * 100),
+      errors:
+        errorMessages ||
+        `Fatal error in render ${renderId}. Check CloudWatch logs for "${functionName}" in ${region}.`,
+    };
+  }
+
+  if (progress.done) {
+    const outputUrl = progress.outputFile ?? "";
+    const outputSize = progress.outputSizeInBytes ?? 0;
+
+    return {
+      done: true,
+      progress: 100,
+      outputUrl: outputUrl || undefined,
+      outputSize,
+    };
+  }
+
+  return {
+    done: false,
+    progress: Math.round((progress.overallProgress ?? 0) * 100),
+  };
+}
+
+/**
+ * Check progress of both main and short renders.
+ */
+export async function checkBothRenders(
+  mainRenderId: string,
+  shortRenderId: string,
+  bucketName: string
+): Promise<BothRendersResult> {
+  const [main, short] = await Promise.all([
+    checkRenderProgress(mainRenderId, bucketName),
+    checkRenderProgress(shortRenderId, bucketName),
+  ]);
+
+  return {
+    allDone: main.done && short.done,
+    main,
+    short,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Legacy API (kept for backward compatibility)
+// ---------------------------------------------------------------------------
+
+/**
+ * @deprecated Use `startBothRenders` + `checkBothRenders` instead.
+ * Render both video formats (main + short) in parallel, polling until done.
+ */
+export async function renderBothFormats(
+  input: RenderInput
+): Promise<{ main: RenderResult; short: RenderResult }> {
   log(
-    `Both renders complete. Main: ${main.fileSizeBytes} bytes (${main.renderDurationSeconds}s), ` +
-      `Short: ${short.fileSizeBytes} bytes (${short.renderDurationSeconds}s)`
+    `[DEPRECATED] renderBothFormats called — use startBothRenders + checkBothRenders instead`
   );
+
+  const startResult = await startBothRenders(input);
+
+  // Poll until both are done
+  const pollSingle = async (
+    renderId: string,
+    bucketName: string,
+    label: string
+  ): Promise<RenderResult> => {
+    const startTime = Date.now();
+    while (true) {
+      const elapsed = Date.now() - startTime;
+      if (elapsed > RENDER_TIMEOUT_MS) {
+        throw new Error(
+          `[REMOTION] Render timed out after ${Math.round(elapsed / 1000)}s (${label}, renderId: ${renderId})`
+        );
+      }
+      await sleep(POLL_INTERVAL_MS);
+      const result = await checkRenderProgress(renderId, bucketName);
+      if (result.errors) {
+        throw new Error(`[REMOTION] Render failed (${label}): ${result.errors}`);
+      }
+      if (result.done) {
+        if (!result.outputUrl) {
+          throw new Error(`[REMOTION] Render done but no output URL (${label})`);
+        }
+        return {
+          videoUrl: result.outputUrl,
+          renderDurationSeconds: Math.round(elapsed / 100) / 10,
+          fileSizeBytes: result.outputSize ?? 0,
+        };
+      }
+      log(`${label} progress: ${result.progress}%`);
+    }
+  };
+
+  const [main, short] = await Promise.all([
+    pollSingle(startResult.mainRenderId, startResult.bucketName, "MainVideo"),
+    pollSingle(startResult.shortRenderId, startResult.bucketName, "ShortVideo"),
+  ]);
 
   return { main, short };
 }
