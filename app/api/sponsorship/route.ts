@@ -6,6 +6,8 @@ import { Resend } from "resend";
 import { EmailTemplate } from "./sponsorship-template";
 import { formSchema } from "@/lib/sponsorship-schema";
 import { render } from "@react-email/render";
+import { extractSponsorIntent } from "@/lib/sponsor/gemini-intent";
+import { sanityWriteClient as pipelineClient } from "@/lib/sanity-write-client";
 
 const sanityWriteClient = createClient({
 	projectId,
@@ -110,6 +112,30 @@ export async function POST(request: Request) {
 				{ message: "Failed to save sponsorship request", details: error },
 				{ status: 500 },
 			);
+		}
+
+		// Also create a sponsorLead for the automated pipeline
+		try {
+			const intent = await extractSponsorIntent(
+				`Company: ${companyName || "Unknown"}\nFrom: ${fullName} (${email})\nTiers: ${sponsorshipTier.join(", ")}\n${message || ""}`,
+			);
+
+			await pipelineClient.create({
+				_type: "sponsorLead",
+				companyName: intent.companyName || companyName || "Unknown",
+				contactName: intent.contactName || fullName,
+				contactEmail: email,
+				source: "inbound",
+				status: "new",
+				intent: intent.intent,
+				rateCard: sponsorshipTier.join(", "),
+				threadId: crypto.randomUUID(),
+				lastEmailAt: new Date().toISOString(),
+			});
+			console.log("[SPONSOR] Created sponsorLead from form submission");
+		} catch (error) {
+			// Don't fail the form submission if pipeline creation fails
+			console.error("[SPONSOR] Failed to create sponsorLead from form:", error);
 		}
 
 		try {
