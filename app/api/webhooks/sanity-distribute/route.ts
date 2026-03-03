@@ -1,31 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
-import * as crypto from "node:crypto";
+import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import { writeClient } from "@/lib/sanity-write-client";
 import { generateWithGemini } from "@/lib/gemini";
 import { uploadVideo, uploadShort, generateShortsMetadata } from "@/lib/youtube-upload";
 import { notifySubscribers } from "@/lib/resend-notify";
 import { postVideoAnnouncement } from "@/lib/x-social";
 
-// ---------------------------------------------------------------------------
-// Webhook signature validation
-// ---------------------------------------------------------------------------
-
-function isValidSignature(body: string, signature: string | null): boolean {
-  const secret = process.env.SANITY_WEBHOOK_SECRET;
-  if (!secret) {
-    console.warn("[sanity-distribute] SANITY_WEBHOOK_SECRET not set");
-    return true;
-  }
-  if (!signature) return false;
-  const hmac = crypto.createHmac("sha256", secret);
-  hmac.update(body);
-  const digest = hmac.digest("base64");
-  try {
-    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
-  } catch {
-    return false;
-  }
-}
+const WEBHOOK_SECRET = process.env.SANITY_WEBHOOK_SECRET;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -122,8 +103,15 @@ async function updateStatus(docId: string, status: string, extra: Record<string,
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const rawBody = await req.text();
-  const signature = req.headers.get("sanity-webhook-signature");
-  if (!isValidSignature(rawBody, signature)) {
+  const signature = req.headers.get(SIGNATURE_HEADER_NAME);
+
+  if (!WEBHOOK_SECRET) {
+    console.error("[sanity-distribute] Missing SANITY_WEBHOOK_SECRET");
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
+
+  if (!signature || !(await isValidSignature(rawBody, signature, WEBHOOK_SECRET))) {
+    console.log("[sanity-distribute] Invalid signature");
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
