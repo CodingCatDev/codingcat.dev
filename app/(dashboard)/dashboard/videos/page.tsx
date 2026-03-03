@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { VideosTable } from "./videos-table";
+import { PageRefreshButton } from "@/components/page-refresh-button";
 
 interface AutomatedVideo {
 	_id: string;
@@ -43,13 +44,17 @@ export default async function VideosPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div>
-				<h1 className="text-3xl font-bold tracking-tight">
-					Automated Videos
-				</h1>
-				<p className="text-muted-foreground">
-					Monitor the video pipeline — from script generation to publishing.
-				</p>
+			<div className="flex items-center justify-between">
+				<div>
+					<h1 className="text-3xl font-bold tracking-tight">
+						Automated Videos
+					</h1>
+					<p className="text-muted-foreground">
+						Monitor the video pipeline — from script generation to
+						publishing.
+					</p>
+				</div>
+				<PageRefreshButton />
 			</div>
 
 			<VideosTable videos={videos} />
