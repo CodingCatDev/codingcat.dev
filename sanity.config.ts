@@ -45,6 +45,10 @@ import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
+import contentIdea from "@/sanity/schemas/documents/contentIdea";
+import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
+import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
+import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -142,6 +146,10 @@ export default defineConfig({
 			youtubeUpdateTask,
 			previewSession,
 			sponsorshipRequest,
+			contentIdea,
+			automatedVideo,
+			sponsorLead,
+			sponsorPool,
 		],
 	},
 	document: {
