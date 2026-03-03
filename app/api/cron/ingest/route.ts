@@ -2,7 +2,7 @@ export const fetchCache = "force-no-store";
 
 import type { NextRequest } from "next/server";
 
-import { generateWithGemini } from "@/lib/gemini";
+import { generateWithGemini, stripCodeFences } from "@/lib/gemini";
 import { writeClient } from "@/lib/sanity-write-client";
 
 // ---------------------------------------------------------------------------
@@ -333,7 +333,9 @@ export async function GET(request: NextRequest) {
 
 		let script: GeneratedScript;
 		try {
-			script = JSON.parse(rawResponse) as GeneratedScript;
+			// Strip markdown code fences if present (Gemini sometimes wraps JSON in ```json ... ```)
+			const cleaned = stripCodeFences(rawResponse);
+			script = JSON.parse(cleaned) as GeneratedScript;
 		} catch (parseErr) {
 			console.error(
 				"[CRON/ingest] Failed to parse Gemini response:",

@@ -20,3 +20,11 @@ export async function generateWithGemini(
 	const response = result.response;
 	return response.text();
 }
+
+/**
+ * Strip markdown code fences from a string.
+ * Gemini often wraps JSON responses in ```json ... ``` blocks.
+ */
+export function stripCodeFences(text: string): string {
+	return text.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+}
