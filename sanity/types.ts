@@ -71,6 +71,126 @@ export type ItunesImage = {
   href?: string;
 };
 
+export type SponsorPool = {
+  _id: string;
+  _type: "sponsorPool";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  companyName?: string;
+  contactName?: string;
+  contactEmail?: string;
+  website?: string;
+  category?: string;
+  source?: "curated" | "enriched";
+  relevanceScore?: number;
+  lastContactedAt?: string;
+  optedOut?: boolean;
+  notes?: string;
+};
+
+export type ContentIdeaReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "contentIdea";
+};
+
+export type SponsorLeadReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sponsorLead";
+};
+
+export type AutomatedVideo = {
+  _id: string;
+  _type: "automatedVideo";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  contentIdea?: ContentIdeaReference;
+  script?: {
+    hook?: string;
+    scenes?: Array<{
+      sceneNumber?: number;
+      narration?: string;
+      visualDescription?: string;
+      bRollKeywords?: Array<string>;
+      durationEstimate?: number;
+      _key: string;
+    }>;
+    cta?: string;
+  };
+  scriptQualityScore?: number;
+  status?:
+    | "draft"
+    | "script_ready"
+    | "audio_gen"
+    | "video_gen"
+    | "flagged"
+    | "uploading"
+    | "published";
+  audioUrl?: string;
+  videoUrl?: string;
+  shortUrl?: string;
+  youtubeId?: string;
+  youtubeShortId?: string;
+  scheduledPublishAt?: string;
+  sponsorSlot?: SponsorLeadReference;
+  flaggedReason?: string;
+};
+
+export type AutomatedVideoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "automatedVideo";
+};
+
+export type SponsorLead = {
+  _id: string;
+  _type: "sponsorLead";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  companyName?: string;
+  contactName?: string;
+  contactEmail?: string;
+  source?: "inbound" | "outbound";
+  status?: "new" | "contacted" | "replied" | "negotiating" | "booked" | "paid";
+  intent?: string;
+  rateCard?: string;
+  stripeInvoiceId?: string;
+  bookedSlot?: AutomatedVideoReference;
+  threadId?: string;
+  lastEmailAt?: string;
+  notes?: string;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
+export type ContentIdea = {
+  _id: string;
+  _type: "contentIdea";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceUrl?: string;
+  title?: string;
+  summary?: string;
+  topics?: Array<string>;
+  collectedAt?: string;
+  status?: "new" | "approved" | "rejected";
+  reasonRejected?: string;
+};
+
 export type SponsorshipRequest = {
   _id: string;
   _type: "sponsorshipRequest";
@@ -1436,12 +1556,6 @@ export type CloudinaryAsset = {
   context?: CloudinaryAssetContext;
 };
 
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
-};
-
 export type Settings = {
   _id: string;
   _type: "settings";
@@ -1760,6 +1874,14 @@ export type AllSanitySchemaTypes =
   | Guid
   | Itunes
   | ItunesImage
+  | SponsorPool
+  | ContentIdeaReference
+  | SponsorLeadReference
+  | AutomatedVideo
+  | AutomatedVideoReference
+  | SponsorLead
+  | Slug
+  | ContentIdea
   | SponsorshipRequest
   | PreviewSession
   | PostReference
@@ -1783,7 +1905,6 @@ export type AllSanitySchemaTypes =
   | Course
   | Page
   | CloudinaryAsset
-  | Slug
   | Settings
   | Code
   | CloudinaryAssetContextCustom
@@ -7080,6 +7201,24 @@ export type RssQueryResult = Array<
             markDefs: null;
           }
       > | null;
+      author: null;
+      devto: null;
+      hashnode: null;
+      sponsor: null;
+      tags: null;
+      videoCloudinary: null;
+      youtube: null;
+    }
+  | {
+      _id: string;
+      _type: "automatedVideo";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      slug: string | null;
+      excerpt: null;
+      coverImage: null;
+      date: string;
+      content: null;
       author: null;
       devto: null;
       hashnode: null;
