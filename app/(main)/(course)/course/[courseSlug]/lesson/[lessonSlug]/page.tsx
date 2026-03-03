@@ -26,10 +26,11 @@ export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
+	const resolvedParams = await params;
 	const lesson = (
 		await sanityFetch({
 			query: lessonQuery,
-			params,
+			params: resolvedParams,
 			stega: false,
 		})
 	).data as LessonQueryResult;
@@ -50,10 +51,11 @@ export async function generateMetadata(
 }
 
 export default async function LessonPage({ params }: { params: Params }) {
+	const resolvedParams = await params;
 	const [lesson, course] = (
 		await Promise.all([
-			sanityFetch({ query: lessonQuery, params }),
-			sanityFetch({ query: lessonsInCourseQuery, params }),
+			sanityFetch({ query: lessonQuery, params: resolvedParams }),
+			sanityFetch({ query: lessonsInCourseQuery, params: resolvedParams }),
 		])
 	).map((res) => res.data) as [
 		LessonQueryResult,
