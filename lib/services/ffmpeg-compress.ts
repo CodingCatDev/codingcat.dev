@@ -8,7 +8,7 @@
  */
 
 import { execFileSync, execSync } from "child_process";
-import { writeFileSync, readFileSync, unlinkSync, mkdtempSync } from "fs";
+import { writeFileSync, readFileSync, unlinkSync, mkdtempSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
@@ -133,7 +133,7 @@ function makeTempDir() {
     }
     try {
       // Remove the temp directory itself
-      execSync(`rm -rf "${dir}"`, { stdio: "ignore" });
+      rmSync(dir, { recursive: true, force: true });
     } catch {
       /* ignore */
     }

@@ -8,7 +8,11 @@ import {
   useVideoConfig,
 } from "remotion";
 import type { SceneProps } from "../types";
-import { ANIMATION, COLORS, FONT_SIZES, FPS } from "../constants";
+import { ANIMATION, COLORS, FONT_SIZES } from "../constants";
+
+/** When narration exceeds this many words, animate in chunks of 3 instead of per-word */
+const WORD_CHUNK_THRESHOLD = 60;
+const CHUNK_SIZE = 3;
 
 export const Scene: React.FC<SceneProps> = ({
   narration,
@@ -96,12 +100,22 @@ export const Scene: React.FC<SceneProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
-  // --- Word-by-word reveal ---
+  // --- Word-by-word reveal (with chunking for long narrations) ---
   const words = narration.split(/\s+/).filter(Boolean);
   const totalWords = words.length;
-  // Spread word reveals across the available time (leave some buffer at end)
-  const revealWindow = Math.max(durationInFrames * 0.65, ANIMATION.fadeIn + totalWords * 2);
-  const framesPerWord = Math.max(2, (revealWindow - ANIMATION.fadeIn * 0.5) / totalWords);
+  const useChunking = totalWords > WORD_CHUNK_THRESHOLD;
+
+  // Build display units: either individual words or chunks of CHUNK_SIZE
+  const displayUnits: string[] = useChunking
+    ? Array.from({ length: Math.ceil(totalWords / CHUNK_SIZE) }, (_, i) =>
+        words.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE).join(" ")
+      )
+    : words;
+  const totalUnits = displayUnits.length;
+
+  // Spread reveals across the available time (leave some buffer at end)
+  const revealWindow = Math.max(durationInFrames * 0.65, ANIMATION.fadeIn + totalUnits * 2);
+  const framesPerUnit = Math.max(2, (revealWindow - ANIMATION.fadeIn * 0.5) / totalUnits);
 
   // Alternating gradient directions for visual variety
   const gradientAngle = (sceneIndex % 4) * 90;
@@ -247,36 +261,36 @@ export const Scene: React.FC<SceneProps> = ({
               gap: "0 0.35em",
             }}
           >
-            {words.map((word, i) => {
-              const wordStartFrame = ANIMATION.fadeIn * 0.3 + i * framesPerWord;
-              const wordOpacity = interpolate(
+            {displayUnits.map((unit, i) => {
+              const unitStartFrame = ANIMATION.fadeIn * 0.3 + i * framesPerUnit;
+              const unitOpacity = interpolate(
                 frame,
                 [
-                  wordStartFrame,
-                  wordStartFrame + 6,
+                  unitStartFrame,
+                  unitStartFrame + 6,
                   durationInFrames - ANIMATION.fadeOut,
                   durationInFrames,
                 ],
                 [0, 1, 1, 0],
                 { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
               );
-              const wordScale = interpolate(
+              const unitScale = interpolate(
                 frame,
-                [wordStartFrame, wordStartFrame + 6],
+                [unitStartFrame, unitStartFrame + 6],
                 [0.88, 1],
                 { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
               );
               return (
                 <span
-                  key={`${i}-${word}`}
+                  key={`${i}-${unit}`}
                   style={{
-                    opacity: wordOpacity,
-                    transform: `scale(${wordScale})`,
+                    opacity: unitOpacity,
+                    transform: `scale(${unitScale})`,
                     display: "inline-block",
                     willChange: "opacity, transform",
                   }}
                 >
-                  {word}
+                  {unit}
                 </span>
               );
             })}

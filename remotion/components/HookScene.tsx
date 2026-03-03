@@ -40,16 +40,18 @@ const DotGrid: React.FC<{
   durationInFrames: number;
   isVertical: boolean;
 }> = ({ frame, durationInFrames, isVertical }) => {
-  const cols = isVertical ? 10 : 16;
-  const rows = isVertical ? 18 : 10;
-  const dotSpacingX = isVertical ? 108 : 120;
-  const dotSpacingY = isVertical ? 107 : 108;
+  const cols = isVertical ? 6 : 8;
+  const rows = isVertical ? 8 : 6;
+  const dotSpacingX = isVertical ? 180 : 240;
+  const dotSpacingY = isVertical ? 240 : 180;
 
   // Slow drift of the entire grid
   const driftX = interpolate(frame, [0, durationInFrames], [0, 30], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const driftY = interpolate(frame, [0, durationInFrames], [0, -20], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
@@ -92,11 +94,13 @@ const Particles: React.FC<{
   frame: number;
   durationInFrames: number;
   isVertical: boolean;
-}> = ({ frame, durationInFrames, isVertical }) => {
+  width: number;
+  height: number;
+}> = ({ frame, durationInFrames, isVertical, width, height }) => {
   const count = 18;
   const particles: React.ReactNode[] = [];
-  const baseWidth = isVertical ? 1080 : 1920;
-  const baseHeight = isVertical ? 1920 : 1080;
+  const baseWidth = width;
+  const baseHeight = height;
 
   for (let i = 0; i < count; i++) {
     const startX = seededRandom(i * 7 + 1) * baseWidth;
@@ -145,11 +149,12 @@ const Particles: React.FC<{
 /** Glowing sweep lines that cross the screen before text appears */
 const GlowSweeps: React.FC<{
   frame: number;
-  fps: number;
   isVertical: boolean;
-}> = ({ frame, fps, isVertical }) => {
-  const screenW = isVertical ? 1080 : 1920;
-  const screenH = isVertical ? 1920 : 1080;
+  width: number;
+  height: number;
+}> = ({ frame, isVertical, width, height }) => {
+  const screenW = width;
+  const screenH = height;
 
   // Line 1: horizontal sweep at ~frame 5-25
   const sweep1Progress = interpolate(frame, [5, 25], [0, 1], {
@@ -241,16 +246,18 @@ export const HookScene: React.FC<HookSceneProps> = ({
   isVertical = false,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
   const fonts = isVertical ? FONT_SIZES.portrait : FONT_SIZES.landscape;
 
   // ── Dynamic gradient background ──────────────────────────────────────────
   // Rotate hue and shift gradient angle over the scene
   const gradientAngle = interpolate(frame, [0, durationInFrames], [135, 315], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   // We'll use CSS hue-rotate for dynamic color shifting
   const hueShift = interpolate(frame, [0, durationInFrames], [0, 30], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
@@ -342,11 +349,13 @@ export const HookScene: React.FC<HookSceneProps> = ({
 
   // ── Decorative circles (enhanced) ────────────────────────────────────────
   const circle1Scale = interpolate(frame, [0, 60], [0.3, 1.3], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const circle1Pulse = Math.sin(frame * 0.05) * 0.1;
 
   const circle2Scale = interpolate(frame, [10, 70], [0.2, 1.1], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const circle2Pulse = Math.sin(frame * 0.04 + 1) * 0.08;
@@ -366,6 +375,7 @@ export const HookScene: React.FC<HookSceneProps> = ({
         style={{
           background: `radial-gradient(ellipse at ${isVertical ? "50% 40%" : "30% 50%"}, ${COLORS.primary}33 0%, transparent 70%)`,
           opacity: interpolate(frame, [0, 40], [0, 0.8], {
+            extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           }),
         }}
@@ -383,10 +393,12 @@ export const HookScene: React.FC<HookSceneProps> = ({
         frame={frame}
         durationInFrames={durationInFrames}
         isVertical={isVertical}
+        width={width}
+        height={height}
       />
 
       {/* ── Glow sweep lines ── */}
-      <GlowSweeps frame={frame} fps={fps} isVertical={isVertical} />
+      <GlowSweeps frame={frame} isVertical={isVertical} width={width} height={height} />
 
       {/* ── Decorative circles ── */}
       <div
