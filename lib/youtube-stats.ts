@@ -303,11 +303,6 @@ export async function pushStatsToSanity(
     return new Date(row.last_fetched_at!) > new Date(row.last_synced_to_sanity_at);
   }).slice(0, batchSize);
 
-  if (queryError) {
-    console.error(`[youtube-stats] Error querying Supabase for sync:`, queryError);
-    throw new Error(`Supabase query error: ${queryError.message}`);
-  }
-
   if (!rows || rows.length === 0) {
     console.log("[youtube-stats] No records need syncing to Sanity");
     return { synced: 0, errors: 0 };
