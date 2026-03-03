@@ -16,8 +16,6 @@ const sanityWriteClient = createClient({
 	useCdn: false,
 });
 
-const resend = new Resend(process.env.RESEND_SPONSORSHIP_API_KEY);
-
 const rateLimitStore: Record<string, { count: number; timestamp: number }> = {};
 
 const RATE_LIMIT_COUNT = 2; // 2 requests
@@ -115,9 +113,12 @@ export async function POST(request: Request) {
 		}
 
 		try {
-			console.log("Sending email with Resend");
-			const { data, error } = await resend.emails.send({
-				from: "Sponsorships <onboarding@resend.dev>",
+			const resendApiKey = process.env.RESEND_SPONSORSHIP_API_KEY;
+			if (resendApiKey) {
+				console.log("Sending email with Resend");
+				const resend = new Resend(resendApiKey);
+				const { data, error } = await resend.emails.send({
+					from: "Sponsorships <onboarding@resend.dev>",
 				to: ["alex@codingcat.dev"],
 				subject: "New Sponsorship Request",
 				html: await render(
@@ -129,11 +130,14 @@ export async function POST(request: Request) {
 						message,
 					}),
 				),
-			});
-			console.log("Resend response:", { data, error });
-			if (error) {
-				console.error("Failed to send email:", error);
-				return NextResponse.json({ message: error.message }, { status: 400 });
+				});
+				console.log("Resend response:", { data, error });
+				if (error) {
+					console.error("Failed to send email:", error);
+					return NextResponse.json({ message: error.message }, { status: 400 });
+				}
+			} else {
+				console.warn("RESEND_SPONSORSHIP_API_KEY not set — skipping email");
 			}
 		} catch (error) {
 			console.error("Error sending email with Resend:", error);

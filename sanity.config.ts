@@ -50,7 +50,8 @@ import contentIdea from "@/sanity/schemas/documents/contentIdea";
 import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
 import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
 import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
-import { resolveHref } from "@/sanity/lib/utils";
+import table, { rowType } from "@/sanity/schemas/custom/table";
+import { resolveHref } from "@/sanity/lib/resolveHref";
 
 const homeLocation = {
 	title: "Home",
@@ -130,8 +131,11 @@ export default defineConfig({
 	basePath: studioUrl,
 	projectId,
 	dataset,
-	schema: {
+		schema: {
 		types: [
+			// Portable text block types (table)
+			table,
+			rowType,
 			// Singletons
 			settings,
 			// Documents

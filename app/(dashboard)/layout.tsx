@@ -8,10 +8,16 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	const hasSupabase =
+		process.env.NEXT_PUBLIC_SUPABASE_URL &&
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+	let user = null;
+	if (hasSupabase) {
+		const supabase = await createClient();
+		const { data } = await supabase.auth.getUser();
+		user = data?.user ?? null;
+	}
 
 	if (!user) {
 		return <>{children}</>;
