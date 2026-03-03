@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Nunito, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
-import { createClient } from "@/lib/supabase/server";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -34,17 +33,6 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const hasSupabase =
-		process.env.NEXT_PUBLIC_SUPABASE_URL &&
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-	let user = null;
-	if (hasSupabase) {
-		const supabase = await createClient();
-		const { data } = await supabase.auth.getUser();
-		user = data?.user ?? null;
-	}
-
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
@@ -60,19 +48,15 @@ export default async function DashboardLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					{!user ? (
-						<>{children}</>
-					) : (
-						<SidebarProvider>
-							<AppSidebar user={user} />
-							<SidebarInset>
-								<SiteHeader />
-								<main className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-									{children}
-								</main>
-							</SidebarInset>
-						</SidebarProvider>
-					)}
+					<SidebarProvider>
+						<AppSidebar />
+						<SidebarInset>
+							<SiteHeader />
+							<main className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+								{children}
+							</main>
+						</SidebarInset>
+					</SidebarProvider>
 					<Toaster />
 				</ThemeProvider>
 			</body>

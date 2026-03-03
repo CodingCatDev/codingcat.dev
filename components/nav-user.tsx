@@ -5,7 +5,6 @@ import {
 	ChevronsUpDown,
 	LogOut,
 } from "lucide-react"
-import { signOut } from "@/app/(dashboard)/dashboard/actions"
 
 import {
 	Avatar,
@@ -89,13 +88,9 @@ export function NavUser({
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem asChild>
-							<form action={signOut} className="w-full">
-								<button type="submit" className="flex w-full items-center gap-2">
-									<LogOut className="size-4" />
-									Log out
-								</button>
-							</form>
+						<DropdownMenuItem>
+							<LogOut />
+							Log out
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

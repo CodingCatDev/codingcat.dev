@@ -8,7 +8,6 @@ import {
 	Handshake,
 	Settings,
 } from "lucide-react"
-import type { User } from "@supabase/supabase-js"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -52,18 +51,28 @@ const navItems = [
 	},
 ]
 
+const defaultUser = {
+	name: "CodingCat",
+	email: "admin@codingcat.dev",
+	avatar: "",
+}
+
 export function AppSidebar({
 	user,
 	...props
-}: React.ComponentProps<typeof Sidebar> & { user: User }) {
-	const userData = {
-		name:
-			user.user_metadata?.full_name ||
-			user.email?.split("@")[0] ||
-			"User",
-		email: user.email || "",
-		avatar: user.user_metadata?.avatar_url || "",
-	}
+}: React.ComponentProps<typeof Sidebar> & {
+	user?: { email?: string; user_metadata?: Record<string, string> }
+}) {
+	const userData = user
+		? {
+				name:
+					user.user_metadata?.full_name ||
+					user.email?.split("@")[0] ||
+					"User",
+				email: user.email || "",
+				avatar: user.user_metadata?.avatar_url || "",
+			}
+		: defaultUser
 
 	return (
 		<Sidebar collapsible="icon" {...props}>
