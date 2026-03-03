@@ -22,6 +22,13 @@ function isValidSignature(body: string, signature: string | null): boolean {
   }
 }
 
+// Minimal webhook payload — we fetch the full doc from Sanity
+interface WebhookPayload {
+  _id: string;
+  _type: string;
+  status?: string;
+}
+
 interface AutomatedVideoDoc {
   _id: string;
   _type: "automatedVideo";
@@ -75,38 +82,58 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  let payload: AutomatedVideoDoc;
-  try { payload = JSON.parse(rawBody); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  // Parse the minimal webhook payload (just _id, _type, status)
+  let webhookPayload: WebhookPayload;
+  try { webhookPayload = JSON.parse(rawBody); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
 
-  if (payload._type !== "automatedVideo") return NextResponse.json({ skipped: true, reason: "Not automatedVideo" });
-  if (payload.status !== "video_gen") return NextResponse.json({ skipped: true, reason: `Status "${payload.status}" != "video_gen"` });
-  if (payload.flaggedReason) return NextResponse.json({ skipped: true, reason: "Flagged" });
+  if (webhookPayload._type !== "automatedVideo") return NextResponse.json({ skipped: true, reason: "Not automatedVideo" });
+  if (webhookPayload.status !== "video_gen") return NextResponse.json({ skipped: true, reason: `Status "${webhookPayload.status}" != "video_gen"` });
 
-  const docId = payload._id;
-  console.log(`[sanity-distribute] Processing ${docId}: "${payload.title}"`);
+  const docId = webhookPayload._id;
+
+  // Fetch the full document from Sanity (webhook only sends minimal projection)
+  const doc = await writeClient.fetch<AutomatedVideoDoc | null>(
+    `*[_id == $id][0]`,
+    { id: docId }
+  );
+
+  if (!doc) {
+    console.error(`[sanity-distribute] Document ${docId} not found in Sanity`);
+    return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  // Re-check status from the actual document (in case of race condition)
+  if (doc.status !== "video_gen") {
+    return NextResponse.json({ skipped: true, reason: `Document status is "${doc.status}", not "video_gen"` });
+  }
+  if (doc.flaggedReason) {
+    return NextResponse.json({ skipped: true, reason: "Flagged" });
+  }
+
+  console.log(`[sanity-distribute] Processing ${docId}: "${doc.title}"`);
 
   try {
     await updateStatus(docId, "uploading");
 
     // Step 1: Gemini metadata
-    const metadata = await generateYouTubeMetadata(payload);
+    const metadata = await generateYouTubeMetadata(doc);
 
     // Step 2: Upload main video
     let youtubeVideoId = "";
-    if (payload.videoUrl) {
-      const r = await uploadVideo({ videoUrl: payload.videoUrl, title: metadata.title, description: metadata.description, tags: metadata.tags });
+    if (doc.videoUrl) {
+      const r = await uploadVideo({ videoUrl: doc.videoUrl, title: metadata.title, description: metadata.description, tags: metadata.tags });
       youtubeVideoId = r.videoId;
     }
 
     // Step 3: Upload short
     let youtubeShortId = "";
-    if (payload.shortUrl) {
-      const r = await uploadShort({ videoUrl: payload.shortUrl, title: metadata.title, description: metadata.description, tags: metadata.tags });
+    if (doc.shortUrl) {
+      const r = await uploadShort({ videoUrl: doc.shortUrl, title: metadata.title, description: metadata.description, tags: metadata.tags });
       youtubeShortId = r.videoId;
     }
 
     // Step 4: Email (non-fatal)
-    const ytUrl = youtubeVideoId ? `https://www.youtube.com/watch?v=${youtubeVideoId}` : payload.videoUrl || "";
+    const ytUrl = youtubeVideoId ? `https://www.youtube.com/watch?v=${youtubeVideoId}` : doc.videoUrl || "";
     try {
       await notifySubscribers({ subject: `New Video: ${metadata.title}`, videoTitle: metadata.title, videoUrl: ytUrl, description: metadata.description.slice(0, 280) });
     } catch (e) { console.warn("[sanity-distribute] Email error:", e); }
