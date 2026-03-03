@@ -7,7 +7,7 @@ import { type PluginOptions, defineConfig } from "sanity";
 import { cloudinarySchemaPlugin } from "sanity-plugin-cloudinary";
 // import { tags } from "sanity-plugin-tags";
 import { codeInput } from "@sanity/code-input";
-import { table } from "@sanity/table";
+// import { table } from "@sanity/table"; // optional: add @sanity/table for studio table UI
 // import { iconPicker } from "sanity-plugin-icon-picker" https://github.com/christopherafbjur/sanity-plugin-icon-picker/issues/73;
 import { podcastRss } from "@codingcatdev/sanity-plugin-podcast-rss";
 
@@ -51,7 +51,7 @@ import contentIdea from "@/sanity/schemas/documents/contentIdea";
 import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
 import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
 import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
-import table, { rowType } from "@/sanity/schemas/custom/table";
+import tableSchema, { rowType } from "@/sanity/schemas/custom/table";
 import { resolveHref } from "@/sanity/lib/resolveHref";
 
 const homeLocation = {
@@ -135,7 +135,7 @@ export default defineConfig({
 		schema: {
 		types: [
 			// Portable text block types (table)
-			table,
+			tableSchema,
 			rowType,
 			// Singletons
 			settings,
@@ -213,7 +213,7 @@ export default defineConfig({
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
 		cloudinarySchemaPlugin(),
-		table(),
+		// table(), // enable when @sanity/table is installed
 		// tags(),
 		codeInput(),
 		// iconPicker(),
