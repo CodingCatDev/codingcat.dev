@@ -126,6 +126,9 @@
 				"react",
 				"react-dom"
 			]
+		},
+		"overrides": {
+			"@portabletext/sanity-bridge": "^1.2.14"
 		}
 	}
 }

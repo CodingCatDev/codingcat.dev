@@ -33,7 +33,7 @@ export function BecomeSponsorPopup() {
           <AlertDialogTitle>Become a Sponsor!</AlertDialogTitle>
           <AlertDialogDescription>
             Enjoying the content? Help us keep it going by becoming a sponsor.
-            You'll get your brand in front of a large audience of developers.
+            You&apos;ll get your brand in front of a large audience of developers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
