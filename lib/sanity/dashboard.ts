@@ -9,7 +9,7 @@ import { projectId, dataset, apiVersion } from "@/sanity/lib/api";
  * Returns null if SANITY_API_TOKEN is not set (e.g., during build).
  */
 function createDashboardClient(): SanityClient | null {
-	const token = process.env.SANITY_API_TOKEN;
+	const token = process.env.SANITY_API_TOKEN || process.env.SANITY_API_WRITE_TOKEN;
 	if (!token) {
 		console.warn(
 			"SANITY_API_TOKEN not set — dashboard queries will return empty results",

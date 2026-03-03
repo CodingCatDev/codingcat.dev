@@ -54,7 +54,7 @@ interface SponsorLeadDocument {
 // --- Sanity Write Client ---
 
 function getSanityWriteClient(): SanityClient {
-  const token = process.env.SANITY_API_TOKEN;
+  const token = process.env.SANITY_API_TOKEN || process.env.SANITY_API_WRITE_TOKEN;
   if (!token) {
     throw new Error('[VIDEO-PIPELINE] Missing SANITY_API_TOKEN environment variable');
   }
