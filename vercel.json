@@ -15,7 +15,7 @@
 		},
 		{
 			"path": "/api/cron/check-renders",
-			"schedule": "0 * * * *"
+			"schedule": "0 7 * * *"
 		}
 	]
 }
