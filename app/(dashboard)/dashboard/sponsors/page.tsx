@@ -4,6 +4,7 @@ import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SponsorLeadsTable } from "./sponsor-leads-table";
 import { SponsorPoolTable } from "./sponsor-pool-table";
+import { PageRefreshButton } from "@/components/page-refresh-button";
 
 interface SponsorLead {
 	_id: string;
@@ -74,14 +75,17 @@ export default async function SponsorsPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div>
-				<h1 className="text-3xl font-bold tracking-tight">
-					Sponsor Pipeline
-				</h1>
-				<p className="text-muted-foreground">
-					Manage sponsor leads, track deals through the pipeline, and browse the
-					sponsor pool.
-				</p>
+			<div className="flex items-center justify-between">
+				<div>
+					<h1 className="text-3xl font-bold tracking-tight">
+						Sponsor Pipeline
+					</h1>
+					<p className="text-muted-foreground">
+						Manage sponsor leads, track deals through the pipeline, and
+						browse the sponsor pool.
+					</p>
+				</div>
+				<PageRefreshButton />
 			</div>
 
 			<Tabs defaultValue="pipeline">

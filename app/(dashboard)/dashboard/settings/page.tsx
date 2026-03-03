@@ -68,8 +68,8 @@ const INTEGRATIONS = [
 		description: "AI voice generation for videos",
 	},
 	{
-		name: "OpenAI",
-		envVar: "OPENAI_API_KEY",
+		name: "Gemini",
+		envVar: "GEMINI_API_KEY",
 		description: "Script generation and content AI",
 	},
 	{
