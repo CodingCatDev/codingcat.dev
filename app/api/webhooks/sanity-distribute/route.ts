@@ -108,7 +108,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Step 4: Email (non-fatal)
     const ytUrl = youtubeVideoId ? `https://www.youtube.com/watch?v=${youtubeVideoId}` : payload.videoUrl || "";
     try {
-      await notifySubscribers({ videoTitle: metadata.title, videoUrl: ytUrl, shortDescription: metadata.description.slice(0, 280), thumbnailUrl: `https://img.youtube.com/vi/${youtubeVideoId}/maxresdefault.jpg` });
+      await notifySubscribers({ subject: `New Video: ${metadata.title}`, videoTitle: metadata.title, videoUrl: ytUrl, description: metadata.description.slice(0, 280) });
     } catch (e) { console.warn("[sanity-distribute] Email error:", e); }
 
     // Step 5: Mark published

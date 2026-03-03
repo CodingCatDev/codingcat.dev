@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
 			},
 		],
 	},
+	serverExternalPackages: [
+		"@remotion/lambda",
+		"@remotion/bundler",
+		"@remotion/cli",
+		"@rspack/core",
+		"@rspack/binding",
+	],
 };
 
 export default nextConfig;
