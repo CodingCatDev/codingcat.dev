@@ -13,7 +13,7 @@ export async function generateWithGemini(
 	systemInstruction?: string,
 ): Promise<string> {
 	const model = genAI.getGenerativeModel({
-		model: "gemini-2.5-flash",
+		model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
 		...(systemInstruction && { systemInstruction }),
 	});
 	const result = await model.generateContent(prompt);

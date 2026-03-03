@@ -42,7 +42,7 @@ export async function generateOutreachEmail(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-flash' })
 
   const optOutUrl = sponsor.optOutToken
     ? `${process.env.NEXT_PUBLIC_URL || 'https://codingcat.dev'}/api/sponsor/opt-out?token=${sponsor.optOutToken}`
