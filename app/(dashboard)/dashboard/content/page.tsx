@@ -5,9 +5,11 @@ interface ContentIdea {
 	_id: string;
 	_createdAt: string;
 	title: string;
-	status: "new" | "approved" | "rejected" | "published";
-	source?: string;
-	category?: string;
+	status: "new" | "approved" | "rejected";
+	sourceUrl?: string;
+	summary?: string;
+	topics?: string[];
+	collectedAt?: string;
 }
 
 const CONTENT_IDEAS_QUERY = `*[_type == "contentIdea"] | order(_createdAt desc) {
@@ -15,8 +17,10 @@ const CONTENT_IDEAS_QUERY = `*[_type == "contentIdea"] | order(_createdAt desc) 
 	_createdAt,
 	title,
 	status,
-	source,
-	category
+	sourceUrl,
+	summary,
+	topics,
+	collectedAt
 }`;
 
 export default async function ContentPage() {
@@ -35,7 +39,7 @@ export default async function ContentPage() {
 					Content Ideas
 				</h1>
 				<p className="text-muted-foreground">
-					Manage content ideas \u2014 approve, reject, or review incoming topics.
+					Manage content ideas — approve, reject, or review incoming topics.
 				</p>
 			</div>
 

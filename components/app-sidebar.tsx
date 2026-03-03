@@ -8,6 +8,7 @@ import {
 	Handshake,
 	Settings,
 } from "lucide-react"
+import type { User } from "@supabase/supabase-js"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -51,14 +52,19 @@ const navItems = [
 	},
 ]
 
-// TODO: Replace with real user data from auth
-const placeholderUser = {
-	name: "CodingCat",
-	email: "admin@codingcat.dev",
-	avatar: "",
-}
+export function AppSidebar({
+	user,
+	...props
+}: React.ComponentProps<typeof Sidebar> & { user: User }) {
+	const userData = {
+		name:
+			user.user_metadata?.full_name ||
+			user.email?.split("@")[0] ||
+			"User",
+		email: user.email || "",
+		avatar: user.user_metadata?.avatar_url || "",
+	}
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
@@ -82,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<NavMain items={navItems} />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser user={placeholderUser} />
+				<NavUser user={userData} />
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>

@@ -23,43 +23,60 @@ interface AutomatedVideo {
 	_id: string;
 	_createdAt: string;
 	title: string;
-	status: "script_gen" | "audio_gen" | "video_gen" | "published" | "failed";
-	flagged: boolean;
+	status:
+		| "draft"
+		| "script_ready"
+		| "audio_gen"
+		| "video_gen"
+		| "flagged"
+		| "uploading"
+		| "published";
 	flaggedReason?: string;
-	duration?: number;
+	scriptQualityScore?: number;
+	scheduledPublishAt?: string;
+	youtubeId?: string;
 }
 
-const statusConfig: Record<
-	string,
-	{ label: string; className: string }
-> = {
-	script_gen: {
-		label: "Script Gen",
-		className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300",
+const statusConfig: Record<string, { label: string; className: string }> = {
+	draft: {
+		label: "Draft",
+		className:
+			"bg-gray-100 text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300",
+	},
+	script_ready: {
+		label: "Script Ready",
+		className:
+			"bg-yellow-100 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300",
 	},
 	audio_gen: {
 		label: "Audio Gen",
-		className: "bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-900 dark:text-orange-300",
+		className:
+			"bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-900 dark:text-orange-300",
 	},
 	video_gen: {
 		label: "Video Gen",
-		className: "bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300",
+		className:
+			"bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300",
+	},
+	flagged: {
+		label: "Flagged",
+		className:
+			"bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900 dark:text-red-300",
+	},
+	uploading: {
+		label: "Uploading",
+		className:
+			"bg-purple-100 text-purple-800 hover:bg-purple-100 dark:bg-purple-900 dark:text-purple-300",
 	},
 	published: {
 		label: "Published",
-		className: "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300",
-	},
-	failed: {
-		label: "Failed",
-		className: "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900 dark:text-red-300",
+		className:
+			"bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300",
 	},
 };
 
 function StatusBadge({ status }: { status: string }) {
-	const config = statusConfig[status] ?? {
-		label: status,
-		className: "",
-	};
+	const config = statusConfig[status] ?? { label: status, className: "" };
 	return (
 		<Badge variant="outline" className={config.className}>
 			{config.label}
@@ -73,13 +90,6 @@ function formatDate(dateString: string) {
 		day: "numeric",
 		year: "numeric",
 	});
-}
-
-function formatDuration(seconds?: number) {
-	if (!seconds) return "\u2014";
-	const mins = Math.floor(seconds / 60);
-	const secs = seconds % 60;
-	return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
 export function VideosTable({ videos }: { videos: AutomatedVideo[] }) {
@@ -105,7 +115,7 @@ export function VideosTable({ videos }: { videos: AutomatedVideo[] }) {
 							<TableHead>Title</TableHead>
 							<TableHead>Status</TableHead>
 							<TableHead>Flagged</TableHead>
-							<TableHead>Duration</TableHead>
+							<TableHead>Score</TableHead>
 							<TableHead>Created</TableHead>
 							<TableHead className="text-right">Actions</TableHead>
 						</TableRow>
@@ -120,7 +130,7 @@ export function VideosTable({ videos }: { videos: AutomatedVideo[] }) {
 									<StatusBadge status={video.status} />
 								</TableCell>
 								<TableCell>
-									{video.flagged ? (
+									{video.status === "flagged" ? (
 										<Tooltip>
 											<TooltipTrigger asChild>
 												<span className="inline-flex cursor-help">
@@ -136,30 +146,34 @@ export function VideosTable({ videos }: { videos: AutomatedVideo[] }) {
 									)}
 								</TableCell>
 								<TableCell className="text-muted-foreground">
-									{formatDuration(video.duration)}
+									{video.scriptQualityScore ?? "\u2014"}
 								</TableCell>
 								<TableCell className="text-muted-foreground">
 									{formatDate(video._createdAt)}
 								</TableCell>
 								<TableCell className="text-right">
 									<div className="flex justify-end gap-2">
-										{(video.status === "failed" || video.status === "audio_gen" || video.status === "video_gen") && (
+										{(video.status === "flagged" || video.status === "draft") && (
 											<form action={regenerateScript.bind(null, video._id)}>
 												<Button size="sm" variant="outline">
 													Regenerate Script
 												</Button>
 											</form>
 										)}
-										{video.status === "failed" && (
+										{video.status === "flagged" && (
 											<form action={retryRender.bind(null, video._id)}>
 												<Button size="sm" variant="outline">
 													Retry Render
 												</Button>
 											</form>
 										)}
-										{video.flagged && video.status !== "published" && (
+										{video.status === "flagged" && (
 											<form action={publishAnyway.bind(null, video._id)}>
-												<Button size="sm" variant="outline" className="text-purple-600 hover:text-purple-700">
+												<Button
+													size="sm"
+													variant="outline"
+													className="text-purple-600 hover:text-purple-700"
+												>
 													Publish Anyway
 												</Button>
 											</form>

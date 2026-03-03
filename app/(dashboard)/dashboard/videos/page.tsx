@@ -5,10 +5,18 @@ interface AutomatedVideo {
 	_id: string;
 	_createdAt: string;
 	title: string;
-	status: "script_gen" | "audio_gen" | "video_gen" | "published" | "failed";
-	flagged: boolean;
+	status:
+		| "draft"
+		| "script_ready"
+		| "audio_gen"
+		| "video_gen"
+		| "flagged"
+		| "uploading"
+		| "published";
 	flaggedReason?: string;
-	duration?: number;
+	scriptQualityScore?: number;
+	scheduledPublishAt?: string;
+	youtubeId?: string;
 }
 
 const VIDEOS_QUERY = `*[_type == "automatedVideo"] | order(_createdAt desc) {
@@ -16,9 +24,10 @@ const VIDEOS_QUERY = `*[_type == "automatedVideo"] | order(_createdAt desc) {
 	_createdAt,
 	title,
 	status,
-	flagged,
 	flaggedReason,
-	duration
+	scriptQualityScore,
+	scheduledPublishAt,
+	youtubeId
 }`;
 
 export default async function VideosPage() {
@@ -37,7 +46,7 @@ export default async function VideosPage() {
 					Automated Videos
 				</h1>
 				<p className="text-muted-foreground">
-					Monitor the video pipeline \u2014 from script generation to publishing.
+					Monitor the video pipeline — from script generation to publishing.
 				</p>
 			</div>
 

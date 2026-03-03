@@ -16,7 +16,7 @@ async function fetchDashboardMetrics() {
 					`count(*[_type == "automatedVideo" && status == "published"])`,
 				),
 				dashboardQuery<number>(
-					`count(*[_type == "automatedVideo" && flagged == true])`,
+					`count(*[_type == "automatedVideo" && status == "flagged"])`,
 				),
 				dashboardQuery<number>(
 					`count(*[_type == "contentIdea" && status == "new"])`,
@@ -56,7 +56,7 @@ export async function SectionCards() {
 		{
 			title: "Flagged for Review",
 			value: metrics.flaggedForReview,
-			description: "Content ideas needing attention",
+			description: "Content needing attention",
 			icon: Flag,
 		},
 		{
