@@ -66,12 +66,32 @@ export async function GET(request: NextRequest) {
     }`
   );
 
-  if (renderingDocs.length === 0) {
-    console.log('[CHECK-RENDERS] No documents in "rendering" status');
-    return Response.json({ processed: 0, results: [] });
+  // Also find docs stuck in "audio_gen" for more than 10 minutes (pipeline timed out)
+  const stuckDocs = await client.fetch<Array<{ _id: string; title?: string; _updatedAt: string }>>(
+    `*[_type == "automatedVideo" && status == "audio_gen" && dateTime(_updatedAt) < dateTime(now()) - 60*10]{
+      _id, title, _updatedAt
+    }`
+  );
+
+  // Flag stuck audio_gen docs
+  for (const doc of stuckDocs) {
+    console.log(`[CHECK-RENDERS] Flagging stuck document "${doc.title || doc._id}" (audio_gen since ${doc._updatedAt})`);
+    try {
+      await client.patch(doc._id).set({
+        status: 'flagged',
+        flaggedReason: `Pipeline timed out during audio generation. Document stuck in audio_gen since ${doc._updatedAt}. Reset status to script_ready to retry.`,
+      }).commit();
+    } catch (err) {
+      console.error(`[CHECK-RENDERS] Failed to flag stuck doc ${doc._id}:`, err);
+    }
   }
 
-  console.log(`[CHECK-RENDERS] Found ${renderingDocs.length} document(s) to check`);
+  if (renderingDocs.length === 0 && stuckDocs.length === 0) {
+    console.log('[CHECK-RENDERS] No documents to process');
+    return Response.json({ processed: 0, stuckFlagged: 0, results: [] });
+  }
+
+  console.log(`[CHECK-RENDERS] Found ${renderingDocs.length} rendering, ${stuckDocs.length} stuck`);
 
   const results: ProcessResult[] = [];
 
@@ -184,6 +204,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  console.log(`[CHECK-RENDERS] Done. Processed ${results.length} document(s).`);
-  return Response.json({ processed: results.length, results });
+  console.log(`[CHECK-RENDERS] Done. Processed ${results.length} rendering, ${stuckDocs.length} stuck flagged.`);
+  return Response.json({ processed: results.length, stuckFlagged: stuckDocs.length, results });
 }
