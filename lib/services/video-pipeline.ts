@@ -144,8 +144,14 @@ export async function processVideoProduction(documentId: string): Promise<void> 
     const audioUrl = audioResult.url;
     console.log(`[VIDEO-PIPELINE] Audio uploaded: ${audioUrl} (${audioResult.size} bytes)`);
 
-    // Step 6: Update Sanity doc with audioUrl
-    await updateStatus(client, documentId, { audioUrl });
+    // Step 6: Update Sanity doc with audioUrl and file reference
+    await updateStatus(client, documentId, {
+      audioUrl,
+      audioFile: {
+        _type: 'file',
+        asset: { _type: 'reference', _ref: audioResult.assetId },
+      },
+    });
 
     // Step 7: Fetch B-roll for scenes
     console.log(`[VIDEO-PIPELINE] Fetching B-roll for ${script.scenes.length} scenes...`);
@@ -229,12 +235,20 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       `[VIDEO-PIPELINE] Videos uploaded — main: ${mainUploadResult.url}, short: ${shortUploadResult.url}`
     );
 
-    // Step 12: Update status to video_gen with video URLs
+    // Step 12: Update status to video_gen with video URLs and file references
     console.log(`[VIDEO-PIPELINE] Updating status to "video_gen" with video URLs`);
     await updateStatus(client, documentId, {
       status: 'video_gen',
       videoUrl: mainUploadResult.url,
+      videoFile: {
+        _type: 'file',
+        asset: { _type: 'reference', _ref: mainUploadResult.assetId },
+      },
       shortUrl: shortUploadResult.url,
+      shortFile: {
+        _type: 'file',
+        asset: { _type: 'reference', _ref: shortUploadResult.assetId },
+      },
     });
 
     console.log(`[VIDEO-PIPELINE] ✅ Pipeline complete for document: ${documentId}`);
