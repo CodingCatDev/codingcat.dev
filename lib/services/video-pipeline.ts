@@ -12,7 +12,7 @@
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
 import { generateSpeechFromScript } from '@/lib/services/elevenlabs';
-import { uploadAudio, uploadVideo } from '@/lib/services/gcs';
+import { uploadAudioToSanity, uploadVideoToSanity } from '@/lib/services/sanity-upload';
 import { getBRollForScenes } from '@/lib/services/pexels';
 import { renderBothFormats } from '@/lib/services/remotion';
 
@@ -87,10 +87,10 @@ async function updateStatus(
  * 1. Fetch document from Sanity
  * 2. Validate script structure
  * 3. Generate TTS audio (ElevenLabs)
- * 4. Upload audio to GCS
+ * 4. Upload audio to Sanity
  * 5. Fetch B-roll clips (Pexels)
  * 6. Render both video formats (Remotion Lambda)
- * 7. Upload videos to GCS
+ * 7. Upload videos to Sanity
  * 8. Update Sanity with video URLs and status
  *
  * On failure: sets status to "flagged" with flaggedReason.
@@ -138,9 +138,9 @@ export async function processVideoProduction(documentId: string): Promise<void> 
     });
     console.log(`[VIDEO-PIPELINE] TTS audio generated: ${audioBuffer.length} bytes`);
 
-    // Step 5: Upload audio to GCS
-    console.log(`[VIDEO-PIPELINE] Uploading audio to GCS...`);
-    const audioResult = await uploadAudio(audioBuffer, documentId);
+    // Step 5: Upload audio to Sanity
+    console.log(`[VIDEO-PIPELINE] Uploading audio to Sanity...`);
+    const audioResult = await uploadAudioToSanity(audioBuffer, `${documentId}.mp3`);
     const audioUrl = audioResult.url;
     console.log(`[VIDEO-PIPELINE] Audio uploaded: ${audioUrl} (${audioResult.size} bytes)`);
 
@@ -201,8 +201,8 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       `[VIDEO-PIPELINE] Render complete — main: ${renderResults.main.fileSizeBytes} bytes, short: ${renderResults.short.fileSizeBytes} bytes`
     );
 
-    // Step 11: Download rendered videos and upload to GCS
-    console.log(`[VIDEO-PIPELINE] Downloading and re-uploading rendered videos to GCS...`);
+    // Step 11: Download rendered videos and upload to Sanity
+    console.log(`[VIDEO-PIPELINE] Downloading and re-uploading rendered videos to Sanity...`);
     const [mainVideoResponse, shortVideoResponse] = await Promise.all([
       fetch(renderResults.main.videoUrl),
       fetch(renderResults.short.videoUrl),
@@ -221,8 +221,8 @@ export async function processVideoProduction(documentId: string): Promise<void> 
     ]);
 
     const [mainUploadResult, shortUploadResult] = await Promise.all([
-      uploadVideo(mainVideoBuffer, documentId, 'main'),
-      uploadVideo(shortVideoBuffer, documentId, 'short'),
+      uploadVideoToSanity(mainVideoBuffer, `${documentId}-main.mp4`),
+      uploadVideoToSanity(shortVideoBuffer, `${documentId}-short.mp4`),
     ]);
 
     console.log(
