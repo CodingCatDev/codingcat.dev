@@ -2,6 +2,15 @@ import { Resend } from 'resend'
 
 const FROM_EMAIL = 'Alex Patterson <alex@codingcat.dev>'
 
+/** Lazy Resend client — only created when actually needed (avoids build-time crash) */
+let _resend: Resend | null = null
+function getResendClient(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY)
+  }
+  return _resend
+}
+
 /**
  * Send a sponsor-related email via Resend.
  * Falls back to console logging if RESEND_API_KEY is not set.

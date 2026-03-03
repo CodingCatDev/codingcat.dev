@@ -7,6 +7,7 @@ import { type PluginOptions, defineConfig } from "sanity";
 import { cloudinarySchemaPlugin } from "sanity-plugin-cloudinary";
 // import { tags } from "sanity-plugin-tags";
 import { codeInput } from "@sanity/code-input";
+import { table } from "@sanity/table";
 // import { iconPicker } from "sanity-plugin-icon-picker" https://github.com/christopherafbjur/sanity-plugin-icon-picker/issues/73;
 import { podcastRss } from "@codingcatdev/sanity-plugin-podcast-rss";
 
@@ -212,6 +213,7 @@ export default defineConfig({
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
 		cloudinarySchemaPlugin(),
+		table(),
 		// tags(),
 		codeInput(),
 		// iconPicker(),
