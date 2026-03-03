@@ -9,6 +9,10 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # next.js
 /.next/
@@ -46,4 +50,4 @@ next-env.d.ts
 .genkit/
 # Firebase debug files
 firebase-debug.log
-firebase-debug.*.log
+firebase-debug.*.logpackage-lock.json

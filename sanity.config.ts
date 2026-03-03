@@ -43,9 +43,13 @@ import podcastType from "@/sanity/schemas/documents/podcastType";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
+
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
-import { table } from "@sanity/table";
+import contentIdea from "@/sanity/schemas/documents/contentIdea";
+import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
+import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
+import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -143,11 +147,15 @@ export default defineConfig({
 			youtubeUpdateTask,
 			previewSession,
 			sponsorshipRequest,
+			contentIdea,
+			automatedVideo,
+			sponsorLead,
+			sponsorPool,
 		],
 	},
 	document: {
 		actions: (prev, context) => {
-			if (context.schemaType === "post" || context.schemaType === "podcast") {
+			if (context.schemaType === 'post' || context.schemaType === 'podcast') {
 				return [sharePreviewAction, ...prev];
 			}
 			return prev;
@@ -199,7 +207,6 @@ export default defineConfig({
 		// Sets up AI Assist with preset prompts
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
-		table(),
 		cloudinarySchemaPlugin(),
 		// tags(),
 		codeInput(),
@@ -215,6 +222,6 @@ export default defineConfig({
 		// Vision lets you query your content with GROQ in the studio
 		// https://www.sanity.io/docs/the-vision-plugin
 		process.env.NODE_ENV === "development" &&
-		visionTool({ defaultApiVersion: apiVersion }),
+			visionTool({ defaultApiVersion: apiVersion }),
 	].filter(Boolean) as PluginOptions[],
 });
