@@ -292,7 +292,13 @@ async function createSanityDocuments(
 			_type: "reference",
 			_ref: contentIdea._id,
 		},
-		script: script.script,
+		script: {
+			...script.script,
+			scenes: script.script.scenes.map((scene, i) => ({
+				...scene,
+				_key: `scene-${i + 1}`,
+			})),
+		},
 		scriptQualityScore: criticResult.score,
 		status: isFlagged ? "flagged" : "script_ready",
 		...(isFlagged && {
