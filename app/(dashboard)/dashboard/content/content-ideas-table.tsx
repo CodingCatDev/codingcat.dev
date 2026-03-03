@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, ExternalLink } from "lucide-react";
+import { Lightbulb, ExternalLink } from "@/components/icons";
 import { approveIdea, rejectIdea } from "./actions";
 
 interface ContentIdea {
