@@ -1,43 +1,41 @@
-/**
- * Email service for sponsor communications.
- * 
- * STUBBED — needs RESEND_API_KEY
- * TODO: Wire up Resend when API key is available
- */
+import { Resend } from 'resend'
 
-export interface EmailResult {
-  success: boolean
-  messageId?: string
-}
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+const FROM_EMAIL = 'Alex Patterson <alex@codingcat.dev>'
 
 /**
- * Send an email to a sponsor contact.
- * Currently stubbed — logs the email and returns success.
+ * Send a sponsor-related email via Resend.
+ * Falls back to console logging if RESEND_API_KEY is not set.
  */
 export async function sendSponsorEmail(
   to: string,
   subject: string,
   body: string
-): Promise<EmailResult> {
-  // TODO: Wire up Resend when RESEND_API_KEY is available
-  // import { Resend } from 'resend'
-  // const resend = new Resend(process.env.RESEND_API_KEY)
-  // const { data, error } = await resend.emails.send({
-  //   from: 'Alex Patterson <alex@codingcat.dev>',
-  //   to,
-  //   subject,
-  //   text: body,
-  // })
+): Promise<{ success: boolean; messageId?: string }> {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('[SPONSOR] RESEND_API_KEY not set — logging email instead')
+    console.log('[SPONSOR] Email:', { to, subject, body: body.slice(0, 200) + '...' })
+    return { success: true }
+  }
 
-  console.log('[SPONSOR] Email send (stubbed):', {
-    to,
-    subject,
-    bodyLength: body.length,
-    timestamp: new Date().toISOString(),
-  })
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      subject,
+      text: body,
+    })
 
-  return {
-    success: true,
-    messageId: `stub_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+    if (error) {
+      console.error('[SPONSOR] Resend error:', error)
+      return { success: false }
+    }
+
+    console.log('[SPONSOR] Email sent via Resend:', { to, subject, messageId: data?.id })
+    return { success: true, messageId: data?.id }
+  } catch (error) {
+    console.error('[SPONSOR] Failed to send email:', error)
+    return { success: false }
   }
 }
