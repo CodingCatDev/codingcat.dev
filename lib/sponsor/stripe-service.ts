@@ -7,7 +7,7 @@
 
 export interface SponsorLeadForInvoice {
   _id: string
-  company: string
+  companyName: string
   contactName: string
   contactEmail: string
 }
@@ -34,7 +34,7 @@ export async function createSponsorInvoice(
   // const customer = await stripe.customers.create({
   //   email: lead.contactEmail,
   //   name: lead.contactName,
-  //   metadata: { company: lead.company, sanityLeadId: lead._id },
+  //   metadata: { companyName: lead.companyName, sanityLeadId: lead._id },
   // })
   //
   // // Create invoice
@@ -59,7 +59,7 @@ export async function createSponsorInvoice(
 
   console.log('[SPONSOR] Invoice creation (stubbed):', {
     leadId: lead._id,
-    company: lead.company,
+    company: lead.companyName,
     amount,
     description,
     timestamp: new Date().toISOString(),

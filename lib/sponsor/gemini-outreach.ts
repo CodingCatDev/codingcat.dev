@@ -2,11 +2,11 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export interface SponsorPoolEntry {
   _id: string
-  company: string
+  companyName: string
   contactName: string
   contactEmail: string
   website?: string
-  industry?: string
+  category?: string
   relevanceScore?: number
   optOutToken?: string
 }
@@ -51,10 +51,10 @@ export async function generateOutreachEmail(
   const prompt = `You are writing a personalized cold outreach email from Alex Patterson, the creator of CodingCat.dev, to a potential sponsor.
 
 Sponsor details:
-- Company: ${sponsor.company}
+- Company: ${sponsor.companyName}
 - Contact: ${sponsor.contactName}
 - Website: ${sponsor.website || 'N/A'}
-- Industry: ${sponsor.industry || 'Technology'}
+- Category: ${sponsor.category || 'Technology'}
 
 Rate card:
 ${rateCard}
@@ -79,7 +79,7 @@ Respond ONLY with valid JSON, no markdown formatting:
     const jsonStr = text.replace(/^\`\`\`json?\n?/i, '').replace(/\n?\`\`\`$/i, '').trim()
     const parsed = JSON.parse(jsonStr) as OutreachEmail
 
-    console.log('[SPONSOR] Gemini outreach email generated for:', sponsor.company)
+    console.log('[SPONSOR] Gemini outreach email generated for:', sponsor.companyName)
     return parsed
   } catch (error) {
     console.error('[SPONSOR] Gemini outreach generation failed:', error)
@@ -93,12 +93,12 @@ function getTemplateEmail(sponsor: SponsorPoolEntry, rateCard: string): Outreach
     : ''
 
   return {
-    subject: `Partnership opportunity with CodingCat.dev — ${sponsor.company}`,
+    subject: `Partnership opportunity with CodingCat.dev — ${sponsor.companyName}`,
     body: `Hi ${sponsor.contactName},
 
 I'm Alex Patterson, creator of CodingCat.dev — a developer education platform reaching 50K+ developers through YouTube, podcasts, and newsletters.
 
-I think ${sponsor.company} would be a great fit for our audience of web developers who are always looking for tools to improve their workflow.
+I think ${sponsor.companyName} would be a great fit for our audience of web developers who are always looking for tools to improve their workflow.
 
 Here are our current sponsorship options:
 

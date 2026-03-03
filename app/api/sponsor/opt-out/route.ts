@@ -13,12 +13,12 @@ export async function GET(request: Request) {
 
   try {
     // Query Sanity for sponsorPool entry with matching optOutToken
-    const query = '*[_type == "sponsorPool" && optOutToken == $token][0]{ _id, company }'
+    const query = '*[_type == "sponsorPool" && optOutToken == $token][0]{ _id, companyName }'
     const params = { token } as Record<string, string>
     const sponsor = await sanityWriteClient.fetch(
       query,
       params
-    ) as { _id: string; company: string } | null
+    ) as { _id: string; companyName: string } | null
 
     if (!sponsor) {
       console.warn('[SPONSOR] Opt-out: invalid token:', token)
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     // Set optedOut = true
     await sanityWriteClient.patch(sponsor._id).set({ optedOut: true }).commit()
 
-    console.log('[SPONSOR] Opt-out processed for:', sponsor.company)
+    console.log('[SPONSOR] Opt-out processed for:', sponsor.companyName)
 
     return new Response(
       renderHtml(

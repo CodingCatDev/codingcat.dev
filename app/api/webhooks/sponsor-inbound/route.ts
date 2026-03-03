@@ -62,23 +62,15 @@ export async function POST(request: Request) {
     // Create sponsorLead in Sanity
     const leadDoc = {
       _type: 'sponsorLead',
-      company: intent.company || company || 'Unknown',
+      companyName: intent.companyName || company || 'Unknown',
       contactName: intent.contactName || fullName,
       contactEmail: email,
       source: 'inbound',
       status: 'new',
       intent: intent.intent,
-      selectedTiers: tiers.length > 0 ? tiers : intent.suggestedTiers,
-      threadHistory: [
-        {
-          _key: crypto.randomUUID(),
-          date: new Date().toISOString(),
-          direction: 'inbound',
-          subject: `Sponsorship inquiry from ${fullName}`,
-          body: message || '',
-        },
-      ],
-      lastContactedAt: new Date().toISOString(),
+      rateCard: tiers.length > 0 ? tiers.join(', ') : intent.suggestedTiers.join(', '),
+      threadId: crypto.randomUUID(),
+      lastEmailAt: new Date().toISOString(),
     }
 
     const created = await sanityWriteClient.create(leadDoc)

@@ -43,8 +43,7 @@ import podcastType from "@/sanity/schemas/documents/podcastType";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
-import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
-import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
+
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
 import { resolveHref } from "@/sanity/lib/utils";
@@ -141,8 +140,6 @@ export default defineConfig({
 			podcastType,
 			post,
 			sponsor,
-			sponsorLead,
-			sponsorPool,
 			youtubeUpdateTask,
 			previewSession,
 			sponsorshipRequest,

@@ -9,7 +9,7 @@ const SPONSORSHIP_TIERS = [
 ] as const
 
 export interface SponsorIntent {
-  company: string
+  companyName: string
   contactName: string
   intent: string
   suggestedTiers: string[]
@@ -25,7 +25,7 @@ export async function extractSponsorIntent(message: string): Promise<SponsorInte
   if (!apiKey) {
     console.warn('[SPONSOR] GEMINI_API_KEY not set — returning default intent extraction')
     return {
-      company: '',
+      companyName: '',
       contactName: '',
       intent: message.slice(0, 500),
       suggestedTiers: [],
@@ -46,14 +46,14 @@ Available sponsorship tiers:
 - video-series (custom pricing) — Multi-video series partnership
 
 Analyze this message and extract:
-1. company — The company name (if mentioned)
+1. companyName — The company name (if mentioned)
 2. contactName — The contact person's name (if mentioned)
 3. intent — A brief summary of what they want (1-2 sentences)
 4. suggestedTiers — Which tiers seem relevant based on their message (array of tier values from the list above)
 5. urgency — How urgent this seems: "low", "medium", or "high"
 
 Respond ONLY with valid JSON, no markdown formatting:
-{"company": "", "contactName": "", "intent": "", "suggestedTiers": [], "urgency": "medium"}
+{"companyName": "", "contactName": "", "intent": "", "suggestedTiers": [], "urgency": "medium"}
 
 Message to analyze:
 ${message}`
@@ -78,7 +78,7 @@ ${message}`
     }
 
     console.log('[SPONSOR] Gemini intent extraction successful:', {
-      company: parsed.company,
+      companyName: parsed.companyName,
       tiers: parsed.suggestedTiers,
       urgency: parsed.urgency,
     })
@@ -87,7 +87,7 @@ ${message}`
   } catch (error) {
     console.error('[SPONSOR] Gemini intent extraction failed:', error)
     return {
-      company: '',
+      companyName: '',
       contactName: '',
       intent: message.slice(0, 500),
       suggestedTiers: [],

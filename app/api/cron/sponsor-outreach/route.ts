@@ -35,11 +35,11 @@ export async function POST(request: Request) {
       )
     ] | order(relevanceScore desc) [0...${MAX_PER_RUN - 1}] {
       _id,
-      company,
+      companyName,
       contactName,
       contactEmail,
       website,
-      industry,
+      category,
       relevanceScore,
       optOutToken
     }`
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       })
     }
 
-    const results: Array<{ company: string; success: boolean; error?: string }> = []
+    const results: Array<{ companyName: string; success: boolean; error?: string }> = []
 
     for (const sponsor of sponsors) {
       try {
@@ -82,36 +82,28 @@ export async function POST(request: Request) {
           // Create a sponsorLead with source='outbound'
           await sanityWriteClient.create({
             _type: 'sponsorLead',
-            company: sponsor.company,
+            companyName: sponsor.companyName,
             contactName: sponsor.contactName,
             contactEmail: sponsor.contactEmail,
             source: 'outbound',
             status: 'contacted',
-            threadHistory: [
-              {
-                _key: crypto.randomUUID(),
-                date: new Date().toISOString(),
-                direction: 'outbound',
-                subject: email.subject,
-                body: email.body,
-              },
-            ],
-            lastContactedAt: new Date().toISOString(),
+            threadId: crypto.randomUUID(),
+            lastEmailAt: new Date().toISOString(),
           })
 
-          results.push({ company: sponsor.company, success: true })
-          console.log(`[SPONSOR] Outreach sent to: ${sponsor.company}`)
+          results.push({ companyName: sponsor.companyName, success: true })
+          console.log(`[SPONSOR] Outreach sent to: ${sponsor.companyName}`)
         } else {
           results.push({
-            company: sponsor.company,
+            companyName: sponsor.companyName,
             success: false,
             error: 'Email send failed',
           })
         }
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
-        console.error(`[SPONSOR] Outreach failed for ${sponsor.company}:`, errorMsg)
-        results.push({ company: sponsor.company, success: false, error: errorMsg })
+        console.error(`[SPONSOR] Outreach failed for ${sponsor.companyName}:`, errorMsg)
+        results.push({ companyName: sponsor.companyName, success: false, error: errorMsg })
       }
     }
 
