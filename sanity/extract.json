@@ -1,5 +1,329 @@
 [
   {
+    "type": "type",
+    "name": "statistics",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "youtube": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "youtube"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
+    "name": "youtube",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "commentCount": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "favoriteCount": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "likeCount": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "viewCount": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
+    "name": "socials",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "bluesky": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "codepen": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "devto": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "discord": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "dribble": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "facebook": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "github": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "instagram": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "lastfm": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "linkedin": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "email": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "mastodon": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "medium": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "polywork": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "stackoverflow": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "substack": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "tiktok": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "twitch": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "twitter": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "youtube": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
+    "name": "link",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "href": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "blank": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
+    "name": "guid",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "id": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "isPermaLink": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
+    "name": "itunes",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "summary": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "explicit": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "duration": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "season": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "episode": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "episodeType": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "image": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "itunes.image"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
+    "name": "itunes.image",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "href": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "name": "sponsorshipRequest",
     "type": "document",
     "attributes": {
@@ -133,6 +457,66 @@
     }
   },
   {
+    "type": "type",
+    "name": "post.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "post"
+    }
+  },
+  {
+    "type": "type",
+    "name": "podcast.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "podcast"
+    }
+  },
+  {
     "name": "youtubeUpdateTask",
     "type": "document",
     "attributes": {
@@ -173,56 +557,12 @@
           "type": "union",
           "of": [
             {
-              "type": "object",
-              "attributes": {
-                "_ref": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                },
-                "_type": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string",
-                    "value": "reference"
-                  }
-                },
-                "_weak": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "boolean"
-                  },
-                  "optional": true
-                }
-              },
-              "dereferencesTo": "post"
+              "type": "inline",
+              "name": "post.reference"
             },
             {
-              "type": "object",
-              "attributes": {
-                "_ref": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                },
-                "_type": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string",
-                    "value": "reference"
-                  }
-                },
-                "_weak": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "boolean"
-                  },
-                  "optional": true
-                }
-              },
-              "dereferencesTo": "podcast"
+              "type": "inline",
+              "name": "podcast.reference"
             }
           ]
         },
@@ -267,6 +607,66 @@
         },
         "optional": true
       }
+    }
+  },
+  {
+    "type": "type",
+    "name": "course.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "course"
+    }
+  },
+  {
+    "type": "type",
+    "name": "page.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "page"
     }
   },
   {
@@ -516,108 +916,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -993,108 +1305,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -1194,6 +1418,66 @@
         },
         "optional": true
       }
+    }
+  },
+  {
+    "type": "type",
+    "name": "author.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "author"
+    }
+  },
+  {
+    "type": "type",
+    "name": "sponsor.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "sponsor"
     }
   },
   {
@@ -1443,108 +1727,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -1920,108 +2116,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -2136,38 +2244,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "author",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "author.reference"
             }
           }
         },
@@ -2180,38 +2266,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "sponsor",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "sponsor.reference"
             }
           }
         },
@@ -2234,46 +2298,8 @@
       "statistics": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "object",
-                "attributes": {
-                  "commentCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "favoriteCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "likeCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "viewCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  }
-                }
-              },
-              "optional": true
-            }
-          }
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -2533,108 +2559,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -3010,108 +2948,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -3207,149 +3057,8 @@
       "socials": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "bluesky": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "codepen": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "devto": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "discord": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "dribble": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "facebook": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "github": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "instagram": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "lastfm": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "linkedin": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "email": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "mastodon": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "medium": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "polywork": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "stackoverflow": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "substack": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "tiktok": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "twitch": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "twitter": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            }
-          }
+          "type": "inline",
+          "name": "socials"
         },
         "optional": true
       },
@@ -3370,23 +3079,8 @@
               "link": {
                 "type": "objectAttribute",
                 "value": {
-                  "type": "object",
-                  "attributes": {
-                    "href": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "string"
-                      },
-                      "optional": true
-                    },
-                    "blank": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "boolean"
-                      },
-                      "optional": true
-                    }
-                  }
+                  "type": "inline",
+                  "name": "link"
                 },
                 "optional": true
               },
@@ -3662,108 +3356,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -4139,108 +3745,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -4355,38 +3873,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "author",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "author.reference"
             }
           }
         },
@@ -4399,38 +3895,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "sponsor",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "sponsor.reference"
             }
           }
         },
@@ -4453,49 +3927,71 @@
       "statistics": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "object",
-                "attributes": {
-                  "commentCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "favoriteCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "likeCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "viewCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  }
-                }
-              },
-              "optional": true
-            }
-          }
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       }
+    }
+  },
+  {
+    "type": "type",
+    "name": "podcastType.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "podcastType"
+    }
+  },
+  {
+    "type": "type",
+    "name": "guest.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "guest"
     }
   },
   {
@@ -4745,108 +4241,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -5222,108 +4630,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -5438,38 +4758,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "author",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "author.reference"
             }
           }
         },
@@ -5482,38 +4780,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "sponsor",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "sponsor.reference"
             }
           }
         },
@@ -5536,76 +4812,16 @@
       "statistics": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "object",
-                "attributes": {
-                  "commentCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "favoriteCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "likeCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "viewCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  }
-                }
-              },
-              "optional": true
-            }
-          }
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
       "podcastType": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "_ref": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              }
-            },
-            "_type": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string",
-                "value": "reference"
-              }
-            },
-            "_weak": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "boolean"
-              },
-              "optional": true
-            }
-          },
-          "dereferencesTo": "podcastType"
+          "type": "inline",
+          "name": "podcastType.reference"
         },
         "optional": true
       },
@@ -5637,38 +4853,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "guest",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "guest.reference"
             }
           }
         },
@@ -5687,56 +4881,12 @@
                   "type": "union",
                   "of": [
                     {
-                      "type": "object",
-                      "attributes": {
-                        "_ref": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          }
-                        },
-                        "_type": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string",
-                            "value": "reference"
-                          }
-                        },
-                        "_weak": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "boolean"
-                          },
-                          "optional": true
-                        }
-                      },
-                      "dereferencesTo": "guest"
+                      "type": "inline",
+                      "name": "guest.reference"
                     },
                     {
-                      "type": "object",
-                      "attributes": {
-                        "_ref": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          }
-                        },
-                        "_type": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string",
-                            "value": "reference"
-                          }
-                        },
-                        "_weak": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "boolean"
-                          },
-                          "optional": true
-                        }
-                      },
-                      "dereferencesTo": "author"
+                      "type": "inline",
+                      "name": "author.reference"
                     }
                   ]
                 },
@@ -5779,6 +4929,117 @@
           "name": "podcastRssEpisode"
         },
         "optional": true
+      }
+    }
+  },
+  {
+    "name": "podcastRssEpisode",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "podcastRssEpisode"
+          }
+        },
+        "title": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "description": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "link": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "guid": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "guid"
+          },
+          "optional": true
+        },
+        "pubDate": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "enclosures": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "array",
+            "of": {
+              "type": "object",
+              "attributes": {
+                "url": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  },
+                  "optional": true
+                },
+                "length": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "number"
+                  },
+                  "optional": true
+                },
+                "type": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  },
+                  "optional": true
+                },
+                "_type": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string",
+                    "value": "enclosure"
+                  }
+                }
+              },
+              "rest": {
+                "type": "object",
+                "attributes": {
+                  "_key": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "optional": true
+        },
+        "itunes": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "itunes"
+          },
+          "optional": true
+        }
       }
     }
   },
@@ -6029,108 +5290,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -6506,108 +5679,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -6703,149 +5788,8 @@
       "socials": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "bluesky": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "codepen": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "devto": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "discord": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "dribble": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "facebook": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "github": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "instagram": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "lastfm": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "linkedin": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "email": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "mastodon": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "medium": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "polywork": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "stackoverflow": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "substack": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "tiktok": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "twitch": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "twitter": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            },
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              },
-              "optional": true
-            }
-          }
+          "type": "inline",
+          "name": "socials"
         },
         "optional": true
       },
@@ -6866,23 +5810,8 @@
               "link": {
                 "type": "objectAttribute",
                 "value": {
-                  "type": "object",
-                  "attributes": {
-                    "href": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "string"
-                      },
-                      "optional": true
-                    },
-                    "blank": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "boolean"
-                      },
-                      "optional": true
-                    }
-                  }
+                  "type": "inline",
+                  "name": "link"
                 },
                 "optional": true
               },
@@ -7158,108 +6087,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -7635,108 +6476,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -7829,6 +6582,36 @@
         },
         "optional": true
       }
+    }
+  },
+  {
+    "type": "type",
+    "name": "lesson.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "lesson"
     }
   },
   {
@@ -8078,108 +6861,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -8555,108 +7250,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -8771,38 +7378,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "author",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "author.reference"
             }
           }
         },
@@ -8815,38 +7400,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "sponsor",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "sponsor.reference"
             }
           }
         },
@@ -8869,46 +7432,8 @@
       "statistics": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "object",
-                "attributes": {
-                  "commentCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "favoriteCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "likeCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "viewCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  }
-                }
-              },
-              "optional": true
-            }
-          }
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -8940,38 +7465,16 @@
                   "of": {
                     "type": "object",
                     "attributes": {
-                      "_ref": {
+                      "_key": {
                         "type": "objectAttribute",
                         "value": {
                           "type": "string"
                         }
-                      },
-                      "_type": {
-                        "type": "objectAttribute",
-                        "value": {
-                          "type": "string",
-                          "value": "reference"
-                        }
-                      },
-                      "_weak": {
-                        "type": "objectAttribute",
-                        "value": {
-                          "type": "boolean"
-                        },
-                        "optional": true
                       }
                     },
-                    "dereferencesTo": "lesson",
                     "rest": {
-                      "type": "object",
-                      "attributes": {
-                        "_key": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          }
-                        }
-                      }
+                      "type": "inline",
+                      "name": "lesson.reference"
                     }
                   }
                 },
@@ -9249,108 +7752,20 @@
                                   "type": "union",
                                   "of": [
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "post"
+                                      "type": "inline",
+                                      "name": "post.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "podcast"
+                                      "type": "inline",
+                                      "name": "podcast.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "course"
+                                      "type": "inline",
+                                      "name": "course.reference"
                                     },
                                     {
-                                      "type": "object",
-                                      "attributes": {
-                                        "_ref": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "_type": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "string",
-                                            "value": "reference"
-                                          }
-                                        },
-                                        "_weak": {
-                                          "type": "objectAttribute",
-                                          "value": {
-                                            "type": "boolean"
-                                          },
-                                          "optional": true
-                                        }
-                                      },
-                                      "dereferencesTo": "page"
+                                      "type": "inline",
+                                      "name": "page.reference"
                                     }
                                   ]
                                 },
@@ -9726,108 +8141,20 @@
                                           "type": "union",
                                           "of": [
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "post"
+                                              "type": "inline",
+                                              "name": "post.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "podcast"
+                                              "type": "inline",
+                                              "name": "podcast.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "course"
+                                              "type": "inline",
+                                              "name": "course.reference"
                                             },
                                             {
-                                              "type": "object",
-                                              "attributes": {
-                                                "_ref": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "_type": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "string",
-                                                    "value": "reference"
-                                                  }
-                                                },
-                                                "_weak": {
-                                                  "type": "objectAttribute",
-                                                  "value": {
-                                                    "type": "boolean"
-                                                  },
-                                                  "optional": true
-                                                }
-                                              },
-                                              "dereferencesTo": "page"
+                                              "type": "inline",
+                                              "name": "page.reference"
                                             }
                                           ]
                                         },
@@ -9942,38 +8269,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "author",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "author.reference"
             }
           }
         },
@@ -9986,38 +8291,16 @@
           "of": {
             "type": "object",
             "attributes": {
-              "_ref": {
+              "_key": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
                 }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
               }
             },
-            "dereferencesTo": "sponsor",
             "rest": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              }
+              "type": "inline",
+              "name": "sponsor.reference"
             }
           }
         },
@@ -10040,48 +8323,187 @@
       "statistics": {
         "type": "objectAttribute",
         "value": {
-          "type": "object",
-          "attributes": {
-            "youtube": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "object",
-                "attributes": {
-                  "commentCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "favoriteCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "likeCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
-                  },
-                  "viewCount": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "number"
-                    },
-                    "optional": true
+          "type": "inline",
+          "name": "statistics"
+        },
+        "optional": true
+      }
+    }
+  },
+  {
+    "name": "cloudinary.asset",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "cloudinary.asset"
+          }
+        },
+        "public_id": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "resource_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "format": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "version": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "url": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "secure_url": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "width": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "height": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "bytes": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "duration": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "tags": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "array",
+            "of": {
+              "type": "string"
+            }
+          },
+          "optional": true
+        },
+        "created_at": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "derived": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "array",
+            "of": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
                   }
                 }
               },
-              "optional": true
+              "rest": {
+                "type": "inline",
+                "name": "cloudinary.assetDerived"
+              }
             }
+          },
+          "optional": true
+        },
+        "access_mode": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "context": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "cloudinary.assetContext"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "name": "slug",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "slug"
           }
         },
-        "optional": true
+        "current": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "source": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
       }
     }
   },
@@ -10324,191 +8746,6 @@
     }
   },
   {
-    "name": "podcastRssEpisode",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "podcastRssEpisode"
-          }
-        },
-        "title": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "description": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "link": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "guid": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "object",
-            "attributes": {
-              "id": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "isPermaLink": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
-              }
-            }
-          },
-          "optional": true
-        },
-        "pubDate": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "enclosures": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "array",
-            "of": {
-              "type": "object",
-              "attributes": {
-                "url": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  },
-                  "optional": true
-                },
-                "length": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "number"
-                  },
-                  "optional": true
-                },
-                "type": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  },
-                  "optional": true
-                },
-                "_type": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string",
-                    "value": "enclosure"
-                  }
-                }
-              },
-              "rest": {
-                "type": "object",
-                "attributes": {
-                  "_key": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "optional": true
-        },
-        "itunes": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "object",
-            "attributes": {
-              "summary": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "explicit": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "duration": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "season": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "episode": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "episodeType": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                },
-                "optional": true
-              },
-              "image": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "object",
-                  "attributes": {
-                    "href": {
-                      "type": "objectAttribute",
-                      "value": {
-                        "type": "string"
-                      },
-                      "optional": true
-                    }
-                  }
-                },
-                "optional": true
-              }
-            }
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
     "name": "code",
     "type": "type",
     "value": {
@@ -10586,6 +8823,30 @@
     }
   },
   {
+    "name": "cloudinary.assetContext",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "cloudinary.assetContext"
+          }
+        },
+        "custom": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "cloudinary.assetContextCustom"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "name": "cloudinary.assetDerived",
     "type": "type",
     "value": {
@@ -10616,177 +8877,6 @@
           "type": "objectAttribute",
           "value": {
             "type": "string"
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
-    "name": "cloudinary.asset",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "cloudinary.asset"
-          }
-        },
-        "public_id": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "resource_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "format": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "version": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "url": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "secure_url": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "width": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "height": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "bytes": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "duration": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "tags": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "array",
-            "of": {
-              "type": "string"
-            }
-          },
-          "optional": true
-        },
-        "created_at": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "derived": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "array",
-            "of": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              },
-              "rest": {
-                "type": "inline",
-                "name": "cloudinary.assetDerived"
-              }
-            }
-          },
-          "optional": true
-        },
-        "access_mode": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "context": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "cloudinary.assetContext"
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
-    "name": "cloudinary.assetContext",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "cloudinary.assetContext"
-          }
-        },
-        "custom": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "cloudinary.assetContextCustom"
           },
           "optional": true
         }
@@ -10974,6 +9064,36 @@
     }
   },
   {
+    "type": "type",
+    "name": "assist.instruction.context.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "assist.instruction.context"
+    }
+  },
+  {
     "name": "sanity.assist.instruction.context",
     "type": "type",
     "value": {
@@ -10989,30 +9109,8 @@
         "reference": {
           "type": "objectAttribute",
           "value": {
-            "type": "object",
-            "attributes": {
-              "_ref": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              },
-              "_type": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string",
-                  "value": "reference"
-                }
-              },
-              "_weak": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "boolean"
-                },
-                "optional": true
-              }
-            },
-            "dereferencesTo": "assist.instruction.context"
+            "type": "inline",
+            "name": "assist.instruction.context.reference"
           },
           "optional": true
         }
@@ -11683,6 +9781,81 @@
     }
   },
   {
+    "name": "sanity.imageMetadata",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "sanity.imageMetadata"
+          }
+        },
+        "location": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "geopoint"
+          },
+          "optional": true
+        },
+        "dimensions": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sanity.imageDimensions"
+          },
+          "optional": true
+        },
+        "palette": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sanity.imagePalette"
+          },
+          "optional": true
+        },
+        "lqip": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "blurHash": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "thumbHash": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "hasAlpha": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        },
+        "isOpaque": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "name": "sanity.imageHotspot",
     "type": "type",
     "value": {
@@ -11907,6 +10080,43 @@
     }
   },
   {
+    "name": "sanity.assetSourceData",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "sanity.assetSourceData"
+          }
+        },
+        "name": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "id": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "url": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "name": "sanity.imageAsset",
     "type": "document",
     "attributes": {
@@ -12051,74 +10261,6 @@
     }
   },
   {
-    "name": "sanity.imageMetadata",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "sanity.imageMetadata"
-          }
-        },
-        "location": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "geopoint"
-          },
-          "optional": true
-        },
-        "dimensions": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "sanity.imageDimensions"
-          },
-          "optional": true
-        },
-        "palette": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "sanity.imagePalette"
-          },
-          "optional": true
-        },
-        "lqip": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "blurHash": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "hasAlpha": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "boolean"
-          },
-          "optional": true
-        },
-        "isOpaque": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "boolean"
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
     "name": "geopoint",
     "type": "type",
     "value": {
@@ -12149,73 +10291,6 @@
           "type": "objectAttribute",
           "value": {
             "type": "number"
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
-    "name": "slug",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "slug"
-          }
-        },
-        "current": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "source": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
-    "name": "sanity.assetSourceData",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "sanity.assetSourceData"
-          }
-        },
-        "name": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "id": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "url": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
           },
           "optional": true
         }
