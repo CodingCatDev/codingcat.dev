@@ -50,4 +50,4 @@ next-env.d.ts
 .genkit/
 # Firebase debug files
 firebase-debug.log
-firebase-debug.*.log
+firebase-debug.*.logpackage-lock.json
