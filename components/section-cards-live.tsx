@@ -10,16 +10,14 @@ import {
 } from "@/components/ui/card";
 import { FileVideo, Flag, Handshake, DollarSign, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { POLL_INTERVAL_MS, type DashboardMetrics } from "@/lib/types/dashboard";
 
-interface Metrics {
-	videosPublished: number;
-	flaggedForReview: number;
-	sponsorPipeline: number;
-	revenue: number | null;
-}
-
-export function SectionCardsLive({ initialMetrics }: { initialMetrics?: Metrics }) {
-	const [metrics, setMetrics] = useState<Metrics>(
+export function SectionCardsLive({
+	initialMetrics,
+}: {
+	initialMetrics?: DashboardMetrics;
+}) {
+	const [metrics, setMetrics] = useState<DashboardMetrics>(
 		initialMetrics ?? {
 			videosPublished: 0,
 			flaggedForReview: 0,
@@ -29,6 +27,7 @@ export function SectionCardsLive({ initialMetrics }: { initialMetrics?: Metrics 
 	);
 	const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [secondsAgo, setSecondsAgo] = useState(0);
 
 	const fetchMetrics = useCallback(async () => {
 		try {
@@ -38,6 +37,7 @@ export function SectionCardsLive({ initialMetrics }: { initialMetrics?: Metrics 
 				const data = await res.json();
 				setMetrics(data);
 				setLastUpdated(new Date());
+				setSecondsAgo(0);
 			}
 		} catch (error) {
 			console.error("Failed to refresh metrics:", error);
@@ -48,9 +48,23 @@ export function SectionCardsLive({ initialMetrics }: { initialMetrics?: Metrics 
 
 	useEffect(() => {
 		fetchMetrics();
-		const interval = setInterval(fetchMetrics, 30000);
+		const interval = setInterval(fetchMetrics, POLL_INTERVAL_MS);
 		return () => clearInterval(interval);
 	}, [fetchMetrics]);
+
+	useEffect(() => {
+		const tick = setInterval(() => {
+			setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
+		}, 1000);
+		return () => clearInterval(tick);
+	}, [lastUpdated]);
+
+	const timeAgo =
+		secondsAgo < 5
+			? "just now"
+			: secondsAgo < 60
+				? `${secondsAgo}s ago`
+				: `${Math.floor(secondsAgo / 60)}m ago`;
 
 	const cards = [
 		{
@@ -78,15 +92,6 @@ export function SectionCardsLive({ initialMetrics }: { initialMetrics?: Metrics 
 			icon: DollarSign,
 		},
 	];
-
-	// Format relative time
-	const secondsAgo = Math.floor((Date.now() - lastUpdated.getTime()) / 1000);
-	const timeAgo =
-		secondsAgo < 5
-			? "just now"
-			: secondsAgo < 60
-				? `${secondsAgo}s ago`
-				: `${Math.floor(secondsAgo / 60)}m ago`;
 
 	return (
 		<div className="flex flex-col gap-2">
