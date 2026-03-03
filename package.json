@@ -6,7 +6,7 @@
 		"start": "next start",
 		"lint": "biome check .",
 		"predev": "npm run typegen",
-		"prebuild": "npm run typegen",
+		"prebuild": "npx sanity schema extract --path=./sanity/extract.json && npx sanity typegen generate || echo 'Sanity typegen skipped (env vars not available)'",
 		"typegen": "sanity schema extract --path=./sanity/extract.json && sanity typegen generate",
 		"format": "biome format . --write"
 	},
