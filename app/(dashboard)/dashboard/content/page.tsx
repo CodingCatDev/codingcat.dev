@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { ContentIdeasTable } from "./content-ideas-table";
 

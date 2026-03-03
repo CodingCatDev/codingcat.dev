@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { SectionCards } from "@/components/section-cards"
 
 export default function DashboardPage() {
