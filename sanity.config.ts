@@ -46,6 +46,7 @@ import settings from "@/sanity/schemas/singletons/settings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
 
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
+import youtubeUpdateTask from "@/sanity/schemas/documents/youtubeUpdateTask";
 import contentIdea from "@/sanity/schemas/documents/contentIdea";
 import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
 import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
@@ -148,6 +149,7 @@ export default defineConfig({
 			podcastType,
 			post,
 			sponsor,
+			youtubeUpdateTask,
 			previewSession,
 			sponsorshipRequest,
 			contentIdea,

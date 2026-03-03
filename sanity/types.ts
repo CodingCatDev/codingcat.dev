@@ -229,6 +229,18 @@ export type PodcastReference = {
   [internalGroqTypeReferenceTo]?: "podcast";
 };
 
+export type YoutubeUpdateTask = {
+  _id: string;
+  _type: "youtubeUpdateTask";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  targetDoc?: PostReference | PodcastReference;
+  status?: "pending" | "inProgress" | "completed" | "error";
+  lastChecked?: string;
+  errorMessage?: string;
+};
+
 export type CourseReference = {
   _ref: string;
   _type: "reference";
@@ -2005,6 +2017,7 @@ export type AllSanitySchemaTypes =
   | PreviewSession
   | PostReference
   | PodcastReference
+  | YoutubeUpdateTask
   | CourseReference
   | PageReference
   | Sponsor
