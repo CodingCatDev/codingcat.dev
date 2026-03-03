@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { ContentIdeasTable } from "./content-ideas-table";
+import { PageRefreshButton } from "@/components/page-refresh-button";
 
 interface ContentIdea {
 	_id: string;
@@ -36,13 +37,17 @@ export default async function ContentPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div>
-				<h1 className="text-3xl font-bold tracking-tight">
-					Content Ideas
-				</h1>
-				<p className="text-muted-foreground">
-					Manage content ideas — approve, reject, or review incoming topics.
-				</p>
+			<div className="flex items-center justify-between">
+				<div>
+					<h1 className="text-3xl font-bold tracking-tight">
+						Content Ideas
+					</h1>
+					<p className="text-muted-foreground">
+						Manage content ideas — approve, reject, or review incoming
+						topics.
+					</p>
+				</div>
+				<PageRefreshButton />
 			</div>
 
 			<ContentIdeasTable ideas={ideas} />
