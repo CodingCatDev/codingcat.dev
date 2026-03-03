@@ -12,7 +12,10 @@ export function GET(request: NextRequest) {
 		});
 	}
 	try {
-		const url = `${publicURL()}/api/youtube/views`;
+		// Forward the action param if present (discover, fetch, sync)
+		const action = request.nextUrl.searchParams.get("action");
+		const params = action ? `?action=${action}` : "";
+		const url = `${publicURL()}/api/youtube/views${params}`;
 		console.log("[CRON] Triggering YouTube views update:", url);
 		fetch(url, {
 			method: "POST",
