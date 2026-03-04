@@ -10,14 +10,17 @@ export async function GET() {
 		process.env.NEXT_PUBLIC_SUPABASE_URL &&
 		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-	if (hasSupabase) {
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
-		if (!user) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+	if (!hasSupabase) {
+		return NextResponse.json({ error: "Auth not configured" }, { status: 503 });
+	}
+
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
 	try {

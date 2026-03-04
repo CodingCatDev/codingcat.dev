@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
-
-const POLL_INTERVAL_MS = 30_000;
+import { POLL_INTERVAL_MS } from "@/lib/types/dashboard";
 
 interface PipelineData {
 	draft: number;
 	scriptReady: number;
 	audioGen: number;
+	rendering: number;
 	videoGen: number;
 	flagged: number;
 	uploading: number;
@@ -26,6 +26,7 @@ const STAGES: {
 	{ key: "draft", label: "Draft", color: "text-gray-700 dark:text-gray-300", bg: "bg-gray-200 dark:bg-gray-700", ring: "ring-gray-300 dark:ring-gray-600" },
 	{ key: "scriptReady", label: "Script", color: "text-yellow-700 dark:text-yellow-300", bg: "bg-yellow-200 dark:bg-yellow-800", ring: "ring-yellow-300 dark:ring-yellow-600" },
 	{ key: "audioGen", label: "Audio", color: "text-orange-700 dark:text-orange-300", bg: "bg-orange-200 dark:bg-orange-800", ring: "ring-orange-300 dark:ring-orange-600" },
+	{ key: "rendering", label: "Render", color: "text-cyan-700 dark:text-cyan-300", bg: "bg-cyan-200 dark:bg-cyan-800", ring: "ring-cyan-300 dark:ring-cyan-600" },
 	{ key: "videoGen", label: "Video", color: "text-blue-700 dark:text-blue-300", bg: "bg-blue-200 dark:bg-blue-800", ring: "ring-blue-300 dark:ring-blue-600" },
 	{ key: "flagged", label: "Flagged", color: "text-red-700 dark:text-red-300", bg: "bg-red-200 dark:bg-red-800", ring: "ring-red-300 dark:ring-red-600" },
 	{ key: "uploading", label: "Upload", color: "text-purple-700 dark:text-purple-300", bg: "bg-purple-200 dark:bg-purple-800", ring: "ring-purple-300 dark:ring-purple-600" },
@@ -35,14 +36,22 @@ const STAGES: {
 export function PipelineStatus() {
 	const [data, setData] = useState<PipelineData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const abortRef = useRef<AbortController | null>(null);
 
 	const fetchPipeline = useCallback(async () => {
+		abortRef.current?.abort();
+		const controller = new AbortController();
+		abortRef.current = controller;
+
 		try {
-			const res = await fetch("/api/dashboard/pipeline");
+			const res = await fetch("/api/dashboard/pipeline", {
+				signal: controller.signal,
+			});
 			if (res.ok) {
 				setData(await res.json());
 			}
-		} catch {
+		} catch (error) {
+			if (error instanceof DOMException && error.name === "AbortError") return;
 			// Silently fail — will retry on next poll
 		} finally {
 			setLoading(false);
@@ -52,7 +61,10 @@ export function PipelineStatus() {
 	useEffect(() => {
 		fetchPipeline();
 		const interval = setInterval(fetchPipeline, POLL_INTERVAL_MS);
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+			abortRef.current?.abort();
+		};
 	}, [fetchPipeline]);
 
 	if (loading) {
@@ -111,7 +123,7 @@ export function PipelineStatus() {
 					<div key={stage.key} className="flex flex-1 items-center">
 						<div className={`h-0.5 flex-1 ${stage.bg}`} />
 						{i < STAGES.length - 1 && (
-							<span className="text-[10px] text-muted-foreground">→</span>
+							<span className="text-[10px] text-muted-foreground">\u2192</span>
 						)}
 					</div>
 				))}

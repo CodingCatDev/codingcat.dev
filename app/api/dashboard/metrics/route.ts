@@ -10,37 +10,31 @@ export async function GET() {
 		process.env.NEXT_PUBLIC_SUPABASE_URL &&
 		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-	if (hasSupabase) {
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
-		if (!user) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+	if (!hasSupabase) {
+		return NextResponse.json({ error: "Auth not configured" }, { status: 503 });
+	}
+
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
 	try {
-		const [videosPublished, flaggedVideos, newIdeas, sponsorPipeline] =
-			await Promise.all([
-				dashboardQuery<number>(
-					`count(*[_type == "automatedVideo" && status == "published"])`,
-				),
-				dashboardQuery<number>(
-					`count(*[_type == "automatedVideo" && status == "flagged"])`,
-				),
-				dashboardQuery<number>(
-					`count(*[_type == "contentIdea" && status == "new"])`,
-				),
-				dashboardQuery<number>(
-					`count(*[_type == "sponsorLead" && status != "paid"])`,
-				),
-			]);
+		const counts = await dashboardQuery<Record<string, number>>(`{
+			"videosPublished": count(*[_type == "automatedVideo" && status == "published"]),
+			"flaggedVideos": count(*[_type == "automatedVideo" && status == "flagged"]),
+			"newIdeas": count(*[_type == "contentIdea" && status == "new"]),
+			"sponsorPipeline": count(*[_type == "sponsorLead" && status != "paid"])
+		}`);
 
 		const metrics: DashboardMetrics = {
-			videosPublished: videosPublished ?? 0,
-			flaggedForReview: (flaggedVideos ?? 0) + (newIdeas ?? 0),
-			sponsorPipeline: sponsorPipeline ?? 0,
+			videosPublished: counts?.videosPublished ?? 0,
+			flaggedForReview: (counts?.flaggedVideos ?? 0) + (counts?.newIdeas ?? 0),
+			sponsorPipeline: counts?.sponsorPipeline ?? 0,
 			revenue: null,
 		};
 

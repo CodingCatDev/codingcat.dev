@@ -5,33 +5,41 @@ import { dashboardQuery } from "@/lib/sanity/dashboard";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-	const hasSupabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-	if (hasSupabase) {
-		const supabase = await createClient();
-		const { data: { user } } = await supabase.auth.getUser();
-		if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	const hasSupabase =
+		process.env.NEXT_PUBLIC_SUPABASE_URL &&
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+	if (!hasSupabase) {
+		return NextResponse.json({ error: "Auth not configured" }, { status: 503 });
+	}
+
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
 	try {
-		const [draft, scriptReady, audioGen, videoGen, flagged, uploading, published] = await Promise.all([
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "draft"])`),
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "script_ready"])`),
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "audio_gen"])`),
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "video_gen"])`),
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "flagged"])`),
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "uploading"])`),
-			dashboardQuery<number>(`count(*[_type == "automatedVideo" && status == "published"])`),
-		]);
+		// Single consolidated GROQ query for all pipeline stages
+		const counts = await dashboardQuery<Record<string, number>>(`{
+			"draft": count(*[_type == "automatedVideo" && status == "draft"]),
+			"scriptReady": count(*[_type == "automatedVideo" && status == "script_ready"]),
+			"audioGen": count(*[_type == "automatedVideo" && status == "audio_gen"]),
+			"rendering": count(*[_type == "automatedVideo" && status == "rendering"]),
+			"videoGen": count(*[_type == "automatedVideo" && status == "video_gen"]),
+			"flagged": count(*[_type == "automatedVideo" && status == "flagged"]),
+			"uploading": count(*[_type == "automatedVideo" && status == "uploading"]),
+			"published": count(*[_type == "automatedVideo" && status == "published"])
+		}`);
+
+		const total = Object.values(counts ?? {}).reduce((sum, n) => sum + (n ?? 0), 0);
 
 		return NextResponse.json({
-			draft: draft ?? 0,
-			scriptReady: scriptReady ?? 0,
-			audioGen: audioGen ?? 0,
-			videoGen: videoGen ?? 0,
-			flagged: flagged ?? 0,
-			uploading: uploading ?? 0,
-			published: published ?? 0,
-			total: (draft ?? 0) + (scriptReady ?? 0) + (audioGen ?? 0) + (videoGen ?? 0) + (flagged ?? 0) + (uploading ?? 0) + (published ?? 0),
+			...counts,
+			total,
 		});
 	} catch (error) {
 		console.error("Failed to fetch pipeline status:", error);
