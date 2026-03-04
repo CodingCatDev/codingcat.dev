@@ -170,7 +170,6 @@ export const DynamicListScene: React.FC<DynamicListSceneProps> = ({
                   display: "flex",
                   alignItems: "center",
                   gap: 16,
-                  transition: "background 0.15s ease, border-color 0.15s ease",
                   boxShadow: isActive
                     ? `0 0 20px rgba(167, 139, 250, 0.2)`
                     : "none",
