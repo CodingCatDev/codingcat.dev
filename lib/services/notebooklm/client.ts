@@ -144,6 +144,7 @@ export class NotebookLMClient {
     }
 
     const responseText = await response.text();
+    console.log(`[NotebookLM] RPC ${methodId} response: ${responseText.length} bytes, first 200: ${responseText.substring(0, 200)}`);
     return decodeResponse(responseText, methodId);
   }
 
@@ -341,6 +342,7 @@ export class NotebookLMClient {
     }
 
     const result = await this.rpcCall(methodId, params);
+    console.log(`[NotebookLM] startResearch raw result:`, JSON.stringify(result));
     const resultArr = result as unknown[];
 
     // Extract task ID from response
@@ -380,6 +382,8 @@ export class NotebookLMClient {
       EXTENDED_FETCH_TIMEOUT_MS
     );
 
+    console.log(`[NotebookLM] pollResearch raw result:`, JSON.stringify(result)?.substring(0, 500));
+
     const resultArr = result as unknown[];
     const emptyResult: ResearchResult = {
       taskId: '',
@@ -389,54 +393,91 @@ export class NotebookLMClient {
       summary: '',
     };
 
-    if (!Array.isArray(resultArr)) {
+    if (!Array.isArray(resultArr) || resultArr.length === 0) {
       return emptyResult;
     }
 
-    // Extract task ID
-    const taskId =
-      typeof resultArr[0] === 'string' ? resultArr[0] : '';
-
+    // Response format (from notebooklm-py _research.py):
+    // result = [[task_data, ...], ...]  or  [task_data, ...]
+    // task_data = [task_id, task_info]
+    // task_info = [?, query_info, ?, sources_and_summary, status_code]
+    // query_info = [query_text, ...]
+    // sources_and_summary = [sources_array, summary_text]
     // Research status: 1=in_progress, 2=completed
-    const statusCode = safeGet(resultArr, 1);
-    let status: ResearchResult['status'] = 'no_research';
-    if (statusCode === 1) {
-      status = 'in_progress';
-    } else if (statusCode === 2) {
-      status = 'completed';
+
+    // Unwrap if double-nested
+    let tasks = resultArr;
+    if (
+      Array.isArray(tasks[0]) &&
+      tasks[0].length > 0 &&
+      Array.isArray(tasks[0][0]) &&
+      tasks[0][0].length > 0 &&
+      Array.isArray(tasks[0][0][0])
+    ) {
+      tasks = tasks[0] as unknown[];
+    } else if (
+      Array.isArray(tasks[0]) &&
+      tasks[0].length > 0 &&
+      typeof tasks[0][0] === 'string'
+    ) {
+      // Already at task level: [[taskId, taskInfo], ...]
+      // wrap in array for uniform processing
+      tasks = [tasks];
     }
 
-    // Extract query
-    const query =
-      typeof safeGet(resultArr, 2) === 'string'
-        ? (safeGet(resultArr, 2) as string)
-        : '';
+    // Find the most recent task
+    for (const taskData of tasks) {
+      if (!Array.isArray(taskData) || taskData.length < 2) continue;
 
-    // Extract sources — typically an array of [url, title] pairs
-    const sources: Array<{ url: string; title: string }> = [];
-    const sourcesArr = safeGet(resultArr, 3);
-    if (Array.isArray(sourcesArr)) {
-      for (const src of sourcesArr) {
-        if (Array.isArray(src)) {
-          const srcUrl = safeGet(src, 2, 0);
-          const srcTitle = safeGet(src, 2, 1);
-          if (typeof srcUrl === 'string') {
-            sources.push({
-              url: srcUrl,
-              title: typeof srcTitle === 'string' ? srcTitle : '',
-            });
+      const taskId = taskData[0];
+      const taskInfo = taskData[1];
+
+      if (typeof taskId !== 'string' || !Array.isArray(taskInfo)) continue;
+
+      const queryInfo = taskInfo[1];
+      const sourcesAndSummary = taskInfo[3];
+      const statusCode = taskInfo[4];
+
+      const queryText =
+        Array.isArray(queryInfo) && typeof queryInfo[0] === 'string'
+          ? queryInfo[0]
+          : '';
+
+      // Parse sources
+      const sources: Array<{ url: string; title: string }> = [];
+      let summary = '';
+
+      if (Array.isArray(sourcesAndSummary) && sourcesAndSummary.length >= 1) {
+        const sourcesData = Array.isArray(sourcesAndSummary[0])
+          ? sourcesAndSummary[0]
+          : [];
+        if (
+          sourcesAndSummary.length >= 2 &&
+          typeof sourcesAndSummary[1] === 'string'
+        ) {
+          summary = sourcesAndSummary[1];
+        }
+
+        for (const src of sourcesData) {
+          if (!Array.isArray(src) || src.length < 2) continue;
+          const url =
+            typeof src[0] === 'string' ? src[0] : '';
+          const title =
+            typeof src[1] === 'string' ? src[1] : '';
+          if (title || url) {
+            sources.push({ url, title });
           }
         }
       }
+
+      // Research status: 1=in_progress, 2=completed
+      const status: ResearchResult['status'] =
+        statusCode === 2 ? 'completed' : 'in_progress';
+
+      return { taskId, status, query: queryText, sources, summary };
     }
 
-    // Extract summary
-    const summary =
-      typeof safeGet(resultArr, 4) === 'string'
-        ? (safeGet(resultArr, 4) as string)
-        : '';
-
-    return { taskId, status, query, sources, summary };
+    return emptyResult;
   }
 
   /**
