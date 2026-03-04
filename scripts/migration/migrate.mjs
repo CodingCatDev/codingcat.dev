@@ -316,6 +316,15 @@ function findCloudinaryRefs(obj, currentPath = '') {
 
   if (typeof obj === 'string') {
     if (containsCloudinaryRef(obj)) {
+      // Skip URLs that are inside cloudinary.asset sub-fields (derived, url, secure_url)
+      // These will be replaced when the parent cloudinary.asset object is swapped out
+      const skipPatterns = ['.derived[', '.secure_url', '.url'];
+      const isSubField = skipPatterns.some((p) => currentPath.includes(p)) &&
+        (currentPath.includes('coverImage') || currentPath.includes('videoCloudinary') || currentPath.includes('ogImage'));
+      if (isSubField) {
+        return results;
+      }
+
       const urls = extractCloudinaryUrls(obj);
       const isFullUrl = obj.trim().startsWith('http') && !obj.includes(' ') && urls.length === 1;
 
