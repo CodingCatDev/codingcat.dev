@@ -322,7 +322,6 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
                     backgroundColor: highlighted
                       ? CODE_COLORS.lineHighlight
                       : "transparent",
-                    transition: "background-color 0.2s",
                     paddingRight: 16,
                   }}
                 >

@@ -12,6 +12,8 @@
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
 import { generateSpeechFromScript } from '@/lib/services/elevenlabs';
+import { generatePerSceneAudio } from '@/lib/services/elevenlabs';
+import type { WordTimestamp } from '@/lib/utils/audio-timestamps';
 import { uploadAudioToSanity } from '@/lib/services/sanity-upload';
 import { getBRollForScenes } from '@/lib/services/pexels';
 import { startBothRenders } from '@/lib/services/remotion';
@@ -24,6 +26,11 @@ interface VideoScene {
   visualDescription?: string;
   bRollKeywords?: string[];
   durationEstimate?: number;
+  sceneType?: string;
+  code?: { snippet: string; language: string; highlightLines?: number[] };
+  list?: { items: string[]; icon?: string };
+  comparison?: { leftLabel: string; rightLabel: string; rows: { left: string; right: string }[] };
+  mockup?: { deviceType: string; screenContent: string };
 }
 
 interface VideoScript {
@@ -129,14 +136,60 @@ export async function processVideoProduction(documentId: string): Promise<void> 
     console.log(`[VIDEO-PIPELINE] Updating status to "audio_gen"`);
     await updateStatus(client, documentId, { status: 'audio_gen' });
 
-    // Step 4: Generate speech with ElevenLabs
+    // Step 4: Generate per-scene audio with timestamps (or fallback to single blob)
     console.log(`[VIDEO-PIPELINE] Generating TTS audio...`);
-    const audioBuffer = await generateSpeechFromScript({
-      hook: script.hook,
-      scenes: script.scenes,
-      cta: script.cta,
-    });
-    console.log(`[VIDEO-PIPELINE] TTS audio generated: ${audioBuffer.length} bytes`);
+    let audioBuffer: Buffer;
+    let audioDurationSeconds: number;
+    let sceneWordTimestamps: (WordTimestamp[] | undefined)[] = [];
+
+    try {
+      console.log(`[VIDEO-PIPELINE] Attempting per-scene audio generation with timestamps...`);
+      const perSceneResult = await generatePerSceneAudio({
+        hook: script.hook,
+        scenes: script.scenes,
+        cta: script.cta,
+      });
+
+      // Concatenate all audio buffers into one combined buffer
+      const allBuffers = [
+        perSceneResult.hook.audioBuffer,
+        ...perSceneResult.scenes.map(s => s.audioBuffer),
+        perSceneResult.cta.audioBuffer,
+      ];
+      audioBuffer = Buffer.concat(allBuffers);
+
+      // Use actual duration from ElevenLabs (much more accurate than estimates)
+      audioDurationSeconds = Math.ceil(perSceneResult.totalDurationMs / 1000);
+
+      // Collect per-scene word timestamps for Remotion
+      sceneWordTimestamps = perSceneResult.scenes.map(s => s.wordTimestamps);
+
+      console.log(
+        `[VIDEO-PIPELINE] Per-scene audio generated: ${allBuffers.length} segments, ` +
+        `${audioBuffer.length} bytes, ${audioDurationSeconds}s total`
+      );
+    } catch (perSceneError) {
+      console.warn(
+        `[VIDEO-PIPELINE] Per-scene audio failed, falling back to single blob: ` +
+        `${perSceneError instanceof Error ? perSceneError.message : String(perSceneError)}`
+      );
+
+      // Fallback: single blob without timestamps
+      audioBuffer = await generateSpeechFromScript({
+        hook: script.hook,
+        scenes: script.scenes,
+        cta: script.cta,
+      });
+
+      // Estimate duration from scene estimates (existing behavior)
+      const estimatedDurationFromScenes = script.scenes.reduce(
+        (sum, s) => sum + (s.durationEstimate || 15),
+        0
+      );
+      audioDurationSeconds = estimatedDurationFromScenes + 10;
+    }
+
+    console.log(`[VIDEO-PIPELINE] TTS audio: ${audioBuffer.length} bytes, ${audioDurationSeconds}s`);
 
     // Step 5: Upload audio to Sanity
     console.log(`[VIDEO-PIPELINE] Uploading audio to Sanity...`);
@@ -167,16 +220,7 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       bRollUrls[sceneIndex] = clip.videoUrl;
     });
 
-    // Step 8: Calculate audio duration from scene estimates (or estimate from buffer)
-    const estimatedDurationFromScenes = script.scenes.reduce(
-      (sum, s) => sum + (s.durationEstimate || 15),
-      0
-    );
-    // Add ~5s for hook and ~5s for CTA
-    const audioDurationSeconds = estimatedDurationFromScenes + 10;
-    console.log(`[VIDEO-PIPELINE] Estimated audio duration: ${audioDurationSeconds}s`);
-
-    // Step 9: Fetch sponsor data if sponsorSlot is set
+    // Step 8: Fetch sponsor data if sponsorSlot is set
     let sponsor: { name: string; logoUrl?: string; message?: string } | undefined;
     if (doc.sponsorSlot?._ref) {
       console.log(`[VIDEO-PIPELINE] Fetching sponsor data: ${doc.sponsorSlot._ref}`);
@@ -190,13 +234,16 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       }
     }
 
-    // Step 10: Start Remotion renders for both formats (no polling — returns immediately)
+    // Step 9: Start Remotion renders for both formats (no polling — returns immediately)
     console.log(`[VIDEO-PIPELINE] Starting Remotion renders (main + short)...`);
     const renderResults = await startBothRenders({
       audioUrl,
       script: {
         hook: script.hook,
-        scenes: script.scenes,
+        scenes: script.scenes.map((s, i) => ({
+          ...s,
+          wordTimestamps: sceneWordTimestamps[i],
+        })),
         cta: script.cta,
       },
       bRollUrls,
@@ -207,7 +254,7 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       `[VIDEO-PIPELINE] Renders started — mainRenderId: ${renderResults.mainRenderId}, shortRenderId: ${renderResults.shortRenderId}`
     );
 
-    // Step 11: Store render IDs and set status to "rendering"
+    // Step 10: Store render IDs and set status to "rendering"
     // The check-renders cron will poll for completion, download, upload, and set video_gen.
     console.log(`[VIDEO-PIPELINE] Storing render IDs and setting status to "rendering"`);
     await updateStatus(client, documentId, {
