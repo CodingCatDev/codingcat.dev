@@ -60,11 +60,18 @@ function parseCookiesFromEnv(): Record<string, string> {
 
   let storageState: { cookies?: NotebookLMCookie[] };
   try {
-    storageState = JSON.parse(authJson) as { cookies?: NotebookLMCookie[] };
+    // .env.local may double-quote the value, producing a JSON string literal.
+    // Try parsing once; if the result is a string, parse again.
+    let parsed: unknown = JSON.parse(authJson);
+    if (typeof parsed === 'string') {
+      parsed = JSON.parse(parsed);
+    }
+    storageState = parsed as { cookies?: NotebookLMCookie[] };
   } catch {
     throw new Error(
       '[NotebookLM] NOTEBOOKLM_AUTH_JSON is not valid JSON. ' +
-        'Expected Playwright storage state format: {"cookies": [...]}'
+        'Expected Playwright storage state format: {"cookies": [...]}. ' +
+        'Tip: In .env.local, set it without wrapping quotes: NOTEBOOKLM_AUTH_JSON={"cookies":[...]}'
     );
   }
 
