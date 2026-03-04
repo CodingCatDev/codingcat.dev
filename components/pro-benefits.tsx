@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import GoPro from "./user-go-pro";
 import Link from "next/link";
 import CoverImage from "./cover-image";
-import type { CloudinaryAsset } from "@/sanity/types";
+
 import { Button } from "./ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProBenefits({
 	coverImage,
 }: {
-	coverImage: CloudinaryAsset;
+	coverImage: any;
 }) {
 	const [showGoPro, setShowGoPro] = useState(false);
 	const router = useRouter();

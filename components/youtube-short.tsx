@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { youtubeParser } from "@/lib/utils";
-import type { CloudinaryAsset } from "@/sanity/types";
+
 import CoverImage from "@/components/cover-image";
 import { YouTubeShortEmbed } from "./youtube-short-embed";
 
 export function YouTubeShort(props: {
 	youtube: string;
-	image?: CloudinaryAsset | null | undefined;
+	image?: any;
 	className?: string;
     isActive?: boolean;
 }) {
@@ -15,7 +15,7 @@ export function YouTubeShort(props: {
 
 	return (
 		<YouTubeShortEmbed youtube={youtube} loadEmbed={isActive}>
-			{image?.public_id ? (
+			{image?.asset?._ref ? (
 				<CoverImage image={image} priority={true} className={className} />
 			) : (
 				<picture>

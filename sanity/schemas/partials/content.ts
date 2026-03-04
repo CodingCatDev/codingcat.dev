@@ -20,8 +20,8 @@ const content = defineType({
 		...baseType.fields,
 		defineField({
 			name: "videoCloudinary",
-			title: "Cloudinary Video",
-			type: "cloudinary.asset",
+			title: "Video",
+			type: "file",
 		}),
 		defineField({
 			name: "youtube",

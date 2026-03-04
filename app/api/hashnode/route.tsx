@@ -3,6 +3,7 @@ import { podcastQuery, postQuery } from "@/sanity/lib/queries";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import toMarkdown from "@sanity/block-content-to-markdown";
 import { createClient } from "next-sanity";
+import { urlForImage } from "@/sanity/lib/utils";
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 
 const secret = process.env.PRIVATE_SYNDICATE_WEBOOK_SECRET;
@@ -110,7 +111,7 @@ const formatPodcast = async (_type: string, slug: string) => {
 				},
 			],
 			coverImageOptions: {
-				coverImageURL: podcast?.coverImage?.secure_url,
+				coverImageURL: urlForImage(podcast?.coverImage)?.width(1600).height(840).url() || "",
 			},
 			originalArticleURL: `https://codingcat.dev/${podcast._type}/${podcast.slug}`,
 			contentMarkdown: `
@@ -344,7 +345,12 @@ const serializers = {
 	types: {
 		code: (props: any) =>
 			"```" + props?.node?.language + "\n" + props?.node?.code + "\n```",
-		"cloudinary.asset": (props: any) => `![](${props?.node?.secure_url})`,
+		image: (props: any) => {
+			const url = props?.node?.asset?._ref
+				? urlForImage(props.node)?.url()
+				: "";
+			return `![](${url})`;
+		},
 		codepen: (props: any) => `{% codepen ${props?.node?.url} %}`,
 		codesandbox: (props: any) =>
 			`{% codesandbox ${props?.node?.url?.split("https://codesandbox.io/p/sandbox/")?.at(-1)} %}`,

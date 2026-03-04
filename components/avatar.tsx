@@ -1,74 +1,55 @@
 "use client";
 
-import { CldImage } from "next-cloudinary";
+import Image from "next/image";
 import type { Author } from "@/sanity/types";
 import Link from "next/link";
-import { stegaClean } from "@sanity/client/stega";
+import { urlForImage } from "@/sanity/lib/image";
 
 interface Props {
-	name?: string;
-	href?: string;
-	coverImage: Exclude<Author["coverImage"], undefined> | undefined;
-	imgSize?: string;
-	width?: number;
-	height?: number;
+    name?: string;
+    href?: string;
+    coverImage: Exclude<Author["coverImage"], undefined> | undefined;
+    imgSize?: string;
+    width?: number;
+    height?: number;
 }
 
 export default function Avatar({
-	name,
-	href,
-	coverImage,
-	imgSize,
-	width,
-	height,
+    name,
+    href,
+    coverImage,
+    imgSize,
+    width,
+    height,
 }: Props) {
-	const source = stegaClean(coverImage);
-	if (!href && source?.public_id) {
-		return (
-			<div className={`${imgSize ? imgSize : "w-12 h-12 mr-4"}`}>
-				<CldImage
-					className="w-full h-auto aspect-square rounded-md object-cover"
-					width={width || 48}
-					height={height || 48}
-					alt={source?.context?.custom?.alt || ""}
-					src={source.public_id}
-					config={{
-						url: {
-							secureDistribution: "media.codingcat.dev",
-							privateCdn: true,
-						},
-					}}
-				/>
-			</div>
-		);
-	}
-	if (href && source?.public_id) {
-		return (
-			<Link className="flex items-center text-xl" href={href}>
-				{source?.public_id && (
-					<div className={`${imgSize ? imgSize : "w-12 h-12 mr-4"}`}>
-						<CldImage
-							className="w-full h-auto aspect-square rounded-md object-cover"
-							width={width || 48}
-							height={height || 48}
-							alt={source?.context?.custom?.alt || ""}
-							src={source.public_id}
-							config={{
-								url: {
-									secureDistribution: "media.codingcat.dev",
-									privateCdn: true,
-								},
-							}}
-						/>
-					</div>
-				)}
-				{name && (
-					<div className="text-xl font-bold text-pretty hover:underline">
-						{name}
-					</div>
-				)}
-			</Link>
-		);
-	}
-	return <></>;
+    const imageUrl = coverImage?.asset?._ref
+        ? urlForImage(coverImage)?.width(width || 48).height(height || 48).url()
+        : null;
+
+    if (!imageUrl) return <></>;
+
+    const imageElement = (
+        <div className={`${imgSize ? imgSize : "w-12 h-12 mr-4"}`}>
+            <Image
+                className="w-full h-auto aspect-square rounded-md object-cover"
+                width={width || 48}
+                height={height || 48}
+                alt={coverImage?.alt || ""}
+                src={imageUrl}
+            />
+        </div>
+    );
+
+    if (!href) return imageElement;
+
+    return (
+        <Link className="flex items-center text-xl" href={href}>
+            {imageElement}
+            {name && (
+                <div className="text-xl font-bold text-pretty hover:underline">
+                    {name}
+                </div>
+            )}
+        </Link>
+    );
 }

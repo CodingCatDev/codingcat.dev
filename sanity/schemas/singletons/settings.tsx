@@ -84,7 +84,8 @@ export default defineType({
 		defineField({
 			name: "ogImage",
 			title: "Open Graph Image",
-			type: "cloudinary.asset",
+			type: "image",
+			options: { hotspot: true },
 			description: "Displayed on social cards and search engine results.",
 		}),
 	],

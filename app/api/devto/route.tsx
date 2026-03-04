@@ -3,6 +3,7 @@ import { podcastQuery, postQuery } from "@/sanity/lib/queries";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import toMarkdown from "@sanity/block-content-to-markdown";
 import { createClient } from "next-sanity";
+import { urlForImage } from "@/sanity/lib/utils";
 
 const secret = process.env.PRIVATE_SYNDICATE_WEBOOK_SECRET;
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
@@ -81,10 +82,7 @@ const formatPodcast = async (_type: string, slug: string) => {
 				title: podcast.title,
 				published: true,
 				tags: ["webdev", "javascript", "beginners"],
-				main_image: podcast?.coverImage?.secure_url?.replace(
-					"upload/",
-					"upload/b_rgb:5e1186,c_pad,w_1000,h_420/",
-				),
+				main_image: urlForImage(podcast?.coverImage)?.width(1000).height(420).url() || "",
 				canonical_url: `https://codingcat.dev/${podcast._type}/${podcast.slug}`,
 				description: podcast?.excerpt || "",
 				organization_id: "1009",
@@ -239,7 +237,12 @@ const serializers = {
 	types: {
 		code: (props: any) =>
 			"```" + props?.node?.language + "\n" + props?.node?.code + "\n```",
-		"cloudinary.asset": (props: any) => `![](${props?.node?.secure_url})`,
+		image: (props: any) => {
+			const url = props?.node?.asset?._ref
+				? urlForImage(props.node)?.url()
+				: "";
+			return `![](${url})`;
+		},
 		codepen: (props: any) => `{% codepen ${props?.node?.url} %}`,
 		codesandbox: (props: any) =>
 			`{% codesandbox ${props?.node?.url?.split("https://codesandbox.io/p/sandbox/")?.at(-1)} %}`,
