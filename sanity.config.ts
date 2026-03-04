@@ -4,7 +4,6 @@
  */
 import { visionTool } from "@sanity/vision";
 import { type PluginOptions, defineConfig } from "sanity";
-import { cloudinarySchemaPlugin } from "sanity-plugin-cloudinary";
 // import { tags } from "sanity-plugin-tags";
 import { codeInput } from "@sanity/code-input";
 // import { table } from "@sanity/table"; // optional: add @sanity/table for studio table UI
@@ -213,7 +212,6 @@ export default defineConfig({
 		// Sets up AI Assist with preset prompts
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
-		cloudinarySchemaPlugin(),
 		media(),
 		// table(), // enable when @sanity/table is installed
 		// tags(),

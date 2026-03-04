@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { SiCloudinary } from "react-icons/si";
+import { ImageIcon } from "@sanity/icons";
 
 //Custom Editor for markdown paste
 import input from "../../components/BlockEditor";
@@ -25,7 +25,8 @@ const baseType = defineType({
 		defineField({
 			name: "coverImage",
 			title: "Cover Image",
-			type: "cloudinary.asset",
+			type: "image",
+			options: { hotspot: true },
 			validation: (rule) => rule.required(),
 		}),
 		defineField({
@@ -82,9 +83,9 @@ const baseType = defineType({
 				}),
 				//Plugins
 				defineArrayMember({
-					type: "cloudinary.asset",
-					title: "Cloudinary",
-					icon: SiCloudinary,
+					type: "image",
+					title: "Image",
+					icon: ImageIcon,
 				}),
 				defineArrayMember({
 					type: "code",

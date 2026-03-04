@@ -39,7 +39,7 @@ export default function CustomPortableText({
 	const components: PortableTextComponents = {
 		// TODO: make this more dynamic
 		types: {
-			"cloudinary.asset": ({ value }) => <BlockImage image={value} />,
+			image: ({ value }) => <BlockImage image={value} />,
 			code: ({ value }) => <BlockCode {...value} />,
 			codepen: ({ value }) => <CodePenEmbed {...value} />,
 			codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
