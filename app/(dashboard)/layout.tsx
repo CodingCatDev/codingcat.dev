@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { SiteAnalytics } from "@/components/analytics";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -83,6 +84,7 @@ export default async function DashboardLayout({
 					)}
 					<Toaster />
 				</ThemeProvider>
+				<SiteAnalytics />
 			</body>
 		</html>
 	);
