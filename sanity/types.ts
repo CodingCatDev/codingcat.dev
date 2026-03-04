@@ -96,6 +96,13 @@ export type ContentIdeaReference = {
   [internalGroqTypeReferenceTo]?: "contentIdea";
 };
 
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
 export type SponsorLeadReference = {
   _ref: string;
   _type: "reference";
@@ -129,18 +136,48 @@ export type AutomatedVideo = {
     | "draft"
     | "script_ready"
     | "audio_gen"
+    | "rendering"
     | "video_gen"
-    | "flagged"
     | "uploading"
-    | "published";
+    | "published"
+    | "flagged";
+  audioFile?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
   audioUrl?: string;
+  videoFile?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
   videoUrl?: string;
+  shortFile?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
   shortUrl?: string;
+  renderData?: {
+    mainRenderId?: string;
+    shortRenderId?: string;
+    bucketName?: string;
+    startedAt?: string;
+  };
   youtubeId?: string;
   youtubeShortId?: string;
   scheduledPublishAt?: string;
   sponsorSlot?: SponsorLeadReference;
   flaggedReason?: string;
+  distributionLog?: Array<{
+    step?: string;
+    status?: "success" | "failed" | "skipped";
+    error?: string;
+    timestamp?: string;
+    result?: string;
+    _key: string;
+  }>;
 };
 
 export type AutomatedVideoReference = {
@@ -1661,6 +1698,23 @@ export type CloudinaryAsset = {
   context?: CloudinaryAssetContext;
 };
 
+export type DashboardSettings = {
+  _id: string;
+  _type: "dashboardSettings";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  videosPerWeek?: number;
+  publishDays?: Array<string>;
+  contentCategories?: Array<string>;
+  rateCardTiers?: Array<{
+    name?: string;
+    description?: string;
+    price?: number;
+    _key: string;
+  }>;
+};
+
 export type Settings = {
   _id: string;
   _type: "settings";
@@ -1715,6 +1769,15 @@ export type Code = {
   filename?: string;
   code?: string;
   highlightedLines?: Array<number>;
+};
+
+export type MediaTag = {
+  _id: string;
+  _type: "media.tag";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: Slug;
 };
 
 export type CloudinaryAssetContextCustom = {
@@ -1995,6 +2058,7 @@ export type AllSanitySchemaTypes =
   | ItunesImage
   | SponsorPool
   | ContentIdeaReference
+  | SanityFileAssetReference
   | SponsorLeadReference
   | AutomatedVideo
   | AutomatedVideoReference
@@ -2023,10 +2087,12 @@ export type AllSanitySchemaTypes =
   | Course
   | Page
   | CloudinaryAsset
+  | DashboardSettings
   | Settings
   | Row
   | Table
   | Code
+  | MediaTag
   | CloudinaryAssetContextCustom
   | CloudinaryAssetContext
   | CloudinaryAssetDerived
