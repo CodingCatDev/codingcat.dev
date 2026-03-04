@@ -9,7 +9,7 @@ import {
   SPONSOR_INSERT_SECONDS,
 } from "../constants";
 import { HookScene } from "../components/HookScene";
-import { Scene } from "../components/Scene";
+import { SceneRouter } from "../components/SceneRouter";
 import { CTAScene } from "../components/CTAScene";
 import { SponsorSlot } from "../components/SponsorSlot";
 
@@ -71,10 +71,8 @@ export const MainVideo: React.FC<VideoInputProps> = ({
             durationInFrames={perSceneFrames}
             name={`Scene ${index + 1}`}
           >
-            <Scene
-              narration={scene.narration}
-              bRollUrl={scene.bRollUrl}
-              visualDescription={scene.visualDescription}
+            <SceneRouter
+              scene={scene}
               sceneIndex={index}
               durationInFrames={perSceneFrames}
               isVertical={false}

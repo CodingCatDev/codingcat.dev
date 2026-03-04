@@ -6,6 +6,13 @@
  *   script text → ElevenLabs TTS → MP3 audio → upload to GCS → Remotion render
  */
 
+import {
+  aggregateToWordTimestamps,
+  type CharacterAlignment,
+  type WordTimestamp,
+  type SceneAudioResult,
+} from "@/lib/utils/audio-timestamps";
+
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";
 
 /** Configuration for the ElevenLabs TTS service. */
@@ -41,6 +48,12 @@ export interface VideoScript {
     durationEstimate?: number;
   }>;
   cta: string;
+}
+
+/** Response from ElevenLabs /with-timestamps endpoint */
+interface TTSWithTimestampsResponse {
+  audio_base64: string;
+  alignment: CharacterAlignment;
 }
 
 /**
@@ -213,3 +226,181 @@ export async function generateSpeechFromScript(
 
   return generateSpeech(combinedText);
 }
+
+/**
+ * Generate speech with word-level timestamps using the ElevenLabs
+ * `/text-to-speech/{voiceId}/with-timestamps` endpoint.
+ *
+ * Returns both the audio buffer and word-level timing data that can be
+ * used to sync Remotion visuals to the narration.
+ *
+ * @param text - The text to convert to speech.
+ * @returns Audio buffer + word-level timestamps.
+ */
+export async function generateSpeechWithTimestamps(
+  text: string
+): Promise<SceneAudioResult> {
+  if (!text || text.trim().length === 0) {
+    throw new Error("Cannot generate speech from empty text.");
+  }
+
+  const { apiKey, voiceId } = getConfig();
+
+  const url = `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}/with-timestamps`;
+
+  const body: TTSRequestBody = {
+    text,
+    model_id: "eleven_multilingual_v2",
+    voice_settings: {
+      stability: 0.5,
+      similarity_boost: 0.75,
+      style: 0.5,
+    },
+  };
+
+  let response: Response;
+
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "xi-api-key": apiKey,
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    throw new Error(
+      `ElevenLabs timestamps API request failed: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+
+  if (!response.ok) {
+    let errorDetail: string;
+    try {
+      const errorBody = await response.json();
+      errorDetail =
+        errorBody?.detail?.message ||
+        errorBody?.detail ||
+        JSON.stringify(errorBody);
+    } catch {
+      errorDetail = response.statusText || "Unknown error";
+    }
+    throw new Error(
+      `ElevenLabs timestamps API error (${response.status}): ${errorDetail}`
+    );
+  }
+
+  const data = (await response.json()) as TTSWithTimestampsResponse;
+
+  if (!data.audio_base64) {
+    throw new Error("ElevenLabs timestamps API returned no audio data.");
+  }
+
+  const audioBuffer = Buffer.from(data.audio_base64, "base64");
+  const wordTimestamps = aggregateToWordTimestamps(data.alignment);
+
+  // Calculate duration from the last word's end time, or estimate from buffer
+  const durationMs =
+    wordTimestamps.length > 0
+      ? wordTimestamps[wordTimestamps.length - 1].endMs
+      : Math.round((audioBuffer.length / 32000) * 1000); // rough estimate for MP3
+
+  return {
+    audioBase64: data.audio_base64,
+    audioBuffer,
+    wordTimestamps,
+    durationMs,
+  };
+}
+
+/**
+ * Generate per-scene audio with timestamps from a structured video script.
+ *
+ * Instead of concatenating everything into one blob, this generates
+ * separate audio for each section (hook, scenes, CTA) with word-level
+ * timestamps. This enables:
+ * - Precise scene boundary timing
+ * - Per-scene word timestamps for visual sync
+ * - Fault isolation (retry one scene instead of all)
+ *
+ * @param script - The video script
+ * @returns Array of SceneAudioResult, one per section (hook + scenes + CTA)
+ */
+export async function generatePerSceneAudio(
+  script: VideoScript
+): Promise<{
+  hook: SceneAudioResult;
+  scenes: SceneAudioResult[];
+  cta: SceneAudioResult;
+  totalDurationMs: number;
+}> {
+  const sections: { label: string; text: string }[] = [];
+
+  if (script.hook?.trim()) {
+    sections.push({ label: "hook", text: script.hook.trim() });
+  } else {
+    throw new Error("Script must have a hook.");
+  }
+
+  if (!script.scenes?.length) {
+    throw new Error("Script must have at least one scene.");
+  }
+
+  for (const scene of script.scenes) {
+    if (scene.narration?.trim()) {
+      sections.push({
+        label: `scene-${scene.sceneNumber ?? sections.length}`,
+        text: scene.narration.trim(),
+      });
+    }
+  }
+
+  if (script.cta?.trim()) {
+    sections.push({ label: "cta", text: script.cta.trim() });
+  } else {
+    throw new Error("Script must have a CTA.");
+  }
+
+  console.log(
+    `[elevenlabs] Generating per-scene audio for ${sections.length} sections...`
+  );
+
+  // Generate audio for all sections concurrently (with a concurrency limit)
+  const CONCURRENCY = 3;
+  const results: SceneAudioResult[] = [];
+
+  for (let i = 0; i < sections.length; i += CONCURRENCY) {
+    const batch = sections.slice(i, i + CONCURRENCY);
+    const batchResults = await Promise.all(
+      batch.map(async (section) => {
+        console.log(
+          `[elevenlabs] Generating audio for ${section.label} (${section.text.length} chars)...`
+        );
+        return generateSpeechWithTimestamps(section.text);
+      })
+    );
+    results.push(...batchResults);
+  }
+
+  const totalDurationMs = results.reduce((sum, r) => sum + r.durationMs, 0);
+
+  console.log(
+    `[elevenlabs] Per-scene audio complete: ${results.length} sections, ${Math.round(totalDurationMs / 1000)}s total`
+  );
+
+  // Split results back into hook, scenes, CTA
+  const hookResult = results[0];
+  const sceneResults = results.slice(1, results.length - 1);
+  const ctaResult = results[results.length - 1];
+
+  return {
+    hook: hookResult,
+    scenes: sceneResults,
+    cta: ctaResult,
+    totalDurationMs,
+  };
+}
+
+// Re-export timestamp types for consumers
+export type { WordTimestamp, SceneAudioResult, CharacterAlignment } from "@/lib/utils/audio-timestamps";
