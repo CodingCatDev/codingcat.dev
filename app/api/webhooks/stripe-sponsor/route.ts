@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sanityWriteClient } from '@/lib/sanity-write-client'
+import { bridgeSponsorLeadToSponsor } from '@/lib/sponsor/sponsor-bridge'
 
 /**
  * Stripe webhook handler for sponsor invoices.
@@ -69,6 +70,12 @@ export async function POST(request: Request) {
           break
         }
 
+        // Idempotency guard — skip if already paid (Stripe retries on 5xx)
+        if (lead.status === 'paid') {
+          console.log('[SPONSOR] Lead already paid, skipping (idempotent):', lead._id)
+          break
+        }
+
         // Update status to 'paid'
         await sanityWriteClient
           .patch(lead._id)
@@ -80,9 +87,18 @@ export async function POST(request: Request) {
 
         console.log('[SPONSOR] Updated sponsorLead to paid:', lead._id)
 
+        // Bridge: create/link sponsor doc for content attribution
+        try {
+          await bridgeSponsorLeadToSponsor(lead._id)
+          console.log('[SPONSOR] Sponsor bridge completed for lead:', lead._id)
+        } catch (bridgeError) {
+          // Non-fatal — don't fail the webhook if bridge fails
+          console.error('[SPONSOR] Sponsor bridge failed (non-fatal):', bridgeError)
+        }
+
         // Find next available automatedVideo (status script_ready or later, no sponsorSlot assigned)
         const availableVideo = await sanityWriteClient.fetch(
-          `*[_type == "automatedVideo" && status in ["script_ready", "media_ready", "ready_to_publish"] && !defined(bookedSlot)][0]{
+          `*[_type == "automatedVideo" && status in ["script_ready", "media_ready", "ready_to_publish"] && !defined(bookedSlot)] | order(_createdAt asc) [0]{
             _id,
             title,
             status
