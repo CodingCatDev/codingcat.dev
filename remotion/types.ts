@@ -2,13 +2,67 @@ import { z } from "zod";
 
 // --- Zod Schemas (used for Remotion input props validation) ---
 
+// Scene type discriminator — Gemini picks this per scene
+export const SCENE_TYPES = ["narration", "code", "list", "comparison", "mockup"] as const;
+export type SceneType = typeof SCENE_TYPES[number];
+
+// Word-level timestamp from ElevenLabs
+export const wordTimestampSchema = z.object({
+  text: z.string(),
+  startMs: z.number(),
+  endMs: z.number(),
+});
+export type WordTimestamp = z.infer<typeof wordTimestampSchema>;
+
+// Code scene data
+export const codeDataSchema = z.object({
+  snippet: z.string(),
+  language: z.string(),
+  highlightLines: z.array(z.number()).optional(),
+});
+
+// List scene data
+export const listDataSchema = z.object({
+  items: z.array(z.string()).min(1),
+  icon: z.string().optional(), // emoji or SVG reference
+});
+
+// Comparison scene data
+export const comparisonRowSchema = z.object({
+  left: z.string(),
+  right: z.string(),
+});
+export const comparisonDataSchema = z.object({
+  leftLabel: z.string(),
+  rightLabel: z.string(),
+  rows: z.array(comparisonRowSchema).min(1),
+});
+
+// Mockup scene data
+export const mockupDataSchema = z.object({
+  deviceType: z.enum(["browser", "phone", "terminal"]),
+  screenContent: z.string(), // URL or description
+});
+
 export const sceneDataSchema = z.object({
   narration: z.string(),
+  sceneType: z.enum(SCENE_TYPES).optional(),
   bRollKeywords: z.array(z.string()).optional(),
   visualDescription: z.string().optional(),
   sceneNumber: z.number().optional(),
   durationEstimate: z.number().optional(),
   bRollUrl: z.string().url().optional(),
+  // Scene-type-specific data
+  code: codeDataSchema.optional(),
+  list: listDataSchema.optional(),
+  comparison: comparisonDataSchema.optional(),
+  mockup: mockupDataSchema.optional(),
+  // Word-level timestamps from ElevenLabs
+  wordTimestamps: z.array(wordTimestampSchema).optional(),
+  // Per-scene audio URL (for per-scene audio generation)
+  audioUrl: z.string().url().optional(),
+  // Per-scene audio duration in ms
+  audioDurationMs: z.number().optional(),
 });
 
 export const sponsorDataSchema = z.object({
@@ -73,4 +127,43 @@ export interface SponsorSlotProps {
   sponsor: SponsorData;
   durationInFrames: number;
   isVertical?: boolean;
+}
+
+// --- New Scene Component Prop Types ---
+
+// Base props shared by all scene components
+export interface BaseSceneProps {
+  narration: string;
+  sceneIndex: number;
+  durationInFrames: number;
+  isVertical?: boolean;
+  wordTimestamps?: WordTimestamp[];
+}
+
+// CodeMorphScene props
+export interface CodeMorphSceneProps extends BaseSceneProps {
+  code: {
+    snippet: string;
+    language: string;
+    highlightLines?: number[];
+  };
+}
+
+// DynamicListScene props
+export interface DynamicListSceneProps extends BaseSceneProps {
+  items: string[];
+  icon?: string;
+}
+
+// ComparisonGridScene props
+export interface ComparisonGridSceneProps extends BaseSceneProps {
+  leftLabel: string;
+  rightLabel: string;
+  rows: { left: string; right: string }[];
+}
+
+// IsometricMockupScene props
+export interface IsometricMockupSceneProps extends BaseSceneProps {
+  deviceType: "browser" | "phone" | "terminal";
+  screenContent: string;
 }

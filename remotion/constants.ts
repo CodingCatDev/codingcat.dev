@@ -69,6 +69,10 @@ export const FONT_SIZES = {
     sponsorTitle: 28,
     sponsorMessage: 22,
     sponsorLabel: 16,
+    code: 24,
+    listItem: 36,
+    comparisonCell: 28,
+    comparisonHeader: 32,
   },
   /** Short video (portrait) — larger for mobile readability */
   portrait: {
@@ -79,6 +83,10 @@ export const FONT_SIZES = {
     sponsorTitle: 32,
     sponsorMessage: 26,
     sponsorLabel: 18,
+    code: 20,
+    listItem: 40,
+    comparisonCell: 32,
+    comparisonHeader: 36,
   },
 } as const;
 
@@ -106,4 +114,48 @@ export const BRAND = {
   youtube: "@CodingCatDev",
   twitter: "@CodingCatDev",
   discord: "discord.gg/codingcatdev",
+} as const;
+
+// --- Code Scene Colors ---
+export const CODE_COLORS = {
+  /** Glassmorphism window background */
+  windowBg: "rgba(15, 15, 35, 0.85)",
+  /** Window border */
+  windowBorder: "rgba(167, 139, 250, 0.3)",
+  /** Window title bar */
+  titleBar: "rgba(30, 30, 60, 0.9)",
+  /** Traffic light dots */
+  dotRed: "#FF5F57",
+  dotYellow: "#FEBC2E",
+  dotGreen: "#28C840",
+  /** Line highlight */
+  lineHighlight: "rgba(109, 40, 217, 0.25)",
+  /** Line number color */
+  lineNumber: "rgba(255, 255, 255, 0.3)",
+} as const;
+
+// --- List Scene Constants ---
+export const LIST_COLORS = {
+  /** Active item background */
+  activeBg: "rgba(109, 40, 217, 0.3)",
+  /** Active item border */
+  activeBorder: "#A78BFA",
+  /** Inactive item opacity */
+  inactiveOpacity: 0.35,
+  /** Bullet/check color */
+  bulletColor: "#10B981",
+} as const;
+
+// --- Comparison Scene Constants ---
+export const COMPARISON_COLORS = {
+  /** Grid line color */
+  gridLine: "rgba(167, 139, 250, 0.4)",
+  /** Header background */
+  headerBg: "rgba(109, 40, 217, 0.5)",
+  /** Active row highlight */
+  activeRow: "rgba(109, 40, 217, 0.2)",
+  /** Left column accent */
+  leftAccent: "#A78BFA",
+  /** Right column accent */
+  rightAccent: "#F59E0B",
 } as const;

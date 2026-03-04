@@ -16,10 +16,30 @@ interface RSSItem {
 
 interface ScriptScene {
 	sceneNumber: number;
+	sceneType: "narration" | "code" | "list" | "comparison" | "mockup";
 	narration: string;
 	visualDescription: string;
 	bRollKeywords: string[];
 	durationEstimate: number;
+	// Scene-type-specific data
+	code?: {
+		snippet: string;
+		language: string;
+		highlightLines?: number[];
+	};
+	list?: {
+		items: string[];
+		icon?: string;
+	};
+	comparison?: {
+		leftLabel: string;
+		rightLabel: string;
+		rows: { left: string; right: string }[];
+	};
+	mockup?: {
+		deviceType: "browser" | "phone" | "terminal";
+		screenContent: string;
+	};
 }
 
 interface GeneratedScript {
@@ -159,7 +179,29 @@ function buildPrompt(topics: RSSItem[]): string {
 
 ${topicList}
 
-Pick the MOST interesting and timely topic for a short explainer video (60-90 seconds). Then generate a complete video script as JSON matching this exact schema:
+Pick the MOST interesting and timely topic for a short explainer video (60-90 seconds). Then generate a complete video script as JSON.
+
+## Scene Types
+
+Each scene MUST have a "sceneType" that determines its visual treatment. Choose the best type for the content:
+
+- **"code"** — Use when explaining code snippets, API usage, config files, or CLI commands. Provide the actual code in the "code" field.
+- **"list"** — Use for enumerated content: "Top 5 features", "3 reasons why", key takeaways. Provide items in the "list" field.
+- **"comparison"** — Use for A-vs-B content: "React vs Vue", "SQL vs NoSQL", pros/cons. Provide structured data in the "comparison" field.
+- **"mockup"** — Use when showing a UI, website, app screen, or terminal output. Provide device type and content description in the "mockup" field.
+- **"narration"** — Use for conceptual explanations, introductions, or transitions where B-roll footage is appropriate. This is the default/fallback.
+
+**Guidelines:**
+- A good video uses 2-3 different scene types for visual variety
+- Code-heavy topics should have at least one "code" scene
+- Always include "bRollKeywords" and "visualDescription" as fallbacks even for non-narration scenes
+- For "code" scenes, provide REAL, working code snippets (not pseudocode)
+- For "list" scenes, provide 3-6 concise items
+- For "comparison" scenes, provide 2-4 rows
+
+## JSON Schema
+
+Return ONLY a JSON object matching this exact schema:
 
 {
   "title": "string - catchy video title",
@@ -171,10 +213,31 @@ Pick the MOST interesting and timely topic for a short explainer video (60-90 se
     "scenes": [
       {
         "sceneNumber": 1,
+        "sceneType": "code | list | comparison | mockup | narration",
         "narration": "string - what the narrator says",
-        "visualDescription": "string - what to show on screen",
+        "visualDescription": "string - what to show on screen (fallback for all types)",
         "bRollKeywords": ["keyword1", "keyword2"],
-        "durationEstimate": 15
+        "durationEstimate": 15,
+        "code": {
+          "snippet": "string - actual code to display (only for sceneType: code)",
+          "language": "typescript | javascript | jsx | tsx | css | html | json | bash",
+          "highlightLines": [1, 3]
+        },
+        "list": {
+          "items": ["Item 1", "Item 2", "Item 3"],
+          "icon": "🚀"
+        },
+        "comparison": {
+          "leftLabel": "Option A",
+          "rightLabel": "Option B",
+          "rows": [
+            { "left": "Feature of A", "right": "Feature of B" }
+          ]
+        },
+        "mockup": {
+          "deviceType": "browser | phone | terminal",
+          "screenContent": "Description of what appears on the device screen"
+        }
       }
     ],
     "cta": "string - call to action (subscribe, check link, etc.)"
@@ -185,7 +248,9 @@ Pick the MOST interesting and timely topic for a short explainer video (60-90 se
 Requirements:
 - The script should have 3-5 scenes totaling 60-90 seconds
 - The hook should be punchy and curiosity-driven
-- Each scene should have clear visual direction
+- Use at least 2 different scene types for visual variety
+- Only include the type-specific field that matches the sceneType (e.g., only include "code" when sceneType is "code")
+- For "code" scenes, provide real, syntactically correct code
 - The qualityScore should be your honest self-assessment (0-100)
 - Return ONLY the JSON object, no markdown or extra text`;
 }
