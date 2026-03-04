@@ -44,6 +44,7 @@ import podcast from "@/sanity/schemas/documents/podcast";
 import podcastType from "@/sanity/schemas/documents/podcastType";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
+import dashboardSettings from "@/sanity/schemas/singletons/dashboardSettings";
 import sponsor from "@/sanity/schemas/documents/sponsor";
 
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
@@ -139,6 +140,7 @@ export default defineConfig({
 			rowType,
 			// Singletons
 			settings,
+			dashboardSettings,
 			// Documents
 			author,
 			course,
@@ -207,7 +209,7 @@ export default defineConfig({
 		}),
 		structureTool({ structure: podcastStructure() }),
 		// Configures the global "new document" button, and document actions, to suit the Settings document singleton
-		singletonPlugin([settings.name]),
+		singletonPlugin([settings.name, dashboardSettings.name]),
 		// Sets up AI Assist with preset prompts
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),

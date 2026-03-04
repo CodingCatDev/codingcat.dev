@@ -195,6 +195,25 @@ export default defineType({
       title: 'Flagged Reason',
       type: 'text',
     }),
+    defineField({
+      name: 'distributionLog',
+      title: 'Distribution Log',
+      type: 'array',
+      description: 'Tracks distribution step results for retry and debugging',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'step', title: 'Step', type: 'string' }),
+            defineField({ name: 'status', title: 'Status', type: 'string', options: { list: ['success', 'failed', 'skipped'] } }),
+            defineField({ name: 'error', title: 'Error', type: 'text' }),
+            defineField({ name: 'timestamp', title: 'Timestamp', type: 'datetime' }),
+            defineField({ name: 'result', title: 'Result', type: 'string', description: 'e.g. YouTube video ID, tweet ID' }),
+          ],
+        },
+      ],
+      hidden: true,
+    }),
   ],
   orderings: [
     {

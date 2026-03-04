@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { SectionCardsLive } from "@/components/section-cards-live";
 import { RecentActivity } from "@/components/recent-activity";
+import { PipelineStatus } from "@/components/pipeline-status";
 
 export default function DashboardPage() {
 	return (
@@ -11,7 +12,7 @@ export default function DashboardPage() {
 					Content Ops Dashboard
 				</h1>
 				<p className="text-muted-foreground">
-					Overview of your automated content engine \u2014 videos, sponsors,
+					Overview of your automated content engine — videos, sponsors,
 					and pipeline health.
 				</p>
 			</div>
@@ -25,7 +26,9 @@ export default function DashboardPage() {
 					<p className="mt-2 text-sm text-muted-foreground">
 						Real-time view of content moving through the pipeline.
 					</p>
-					{/* Pipeline status will be added here */}
+					<div className="mt-4">
+						<PipelineStatus />
+					</div>
 				</div>
 			</div>
 		</div>
