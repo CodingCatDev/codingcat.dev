@@ -34,7 +34,7 @@ export default function Avatar({
                 className="w-full h-auto aspect-square rounded-md object-cover"
                 width={width || 48}
                 height={height || 48}
-                alt={coverImage?.alt || ""}
+                alt={name || ""}
                 src={imageUrl}
             />
         </div>

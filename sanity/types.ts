@@ -13,6 +13,34 @@
  */
 
 // Source: sanity/extract.json
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type CoverImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  _type: "image";
+};
+
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
+export type VideoCloudinary = {
+  asset?: SanityFileAssetReference;
+  media?: unknown; // Unable to locate the referenced type "videoCloudinary.media" in schema
+  _type: "file";
+};
+
 export type Statistics = {
   youtube?: Youtube;
 };
@@ -94,13 +122,6 @@ export type ContentIdeaReference = {
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "contentIdea";
-};
-
-export type SanityFileAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
 };
 
 export type SponsorLeadReference = {
@@ -286,7 +307,7 @@ export type Sponsor = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -331,9 +352,14 @@ export type Sponsor = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -437,7 +463,7 @@ export type Lesson = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -482,9 +508,14 @@ export type Lesson = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -565,7 +596,7 @@ export type Lesson = {
         _key: string;
       } & Table)
   >;
-  videoCloudinary?: CloudinaryAsset;
+  videoCloudinary?: VideoCloudinary;
   youtube?: string;
   author?: Array<
     {
@@ -589,7 +620,7 @@ export type Author = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -634,9 +665,14 @@ export type Author = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -732,7 +768,7 @@ export type Post = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -777,9 +813,14 @@ export type Post = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -860,7 +901,7 @@ export type Post = {
         _key: string;
       } & Table)
   >;
-  videoCloudinary?: CloudinaryAsset;
+  videoCloudinary?: VideoCloudinary;
   youtube?: string;
   author?: Array<
     {
@@ -897,7 +938,7 @@ export type Podcast = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -942,9 +983,14 @@ export type Podcast = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -1025,7 +1071,7 @@ export type Podcast = {
         _key: string;
       } & Table)
   >;
-  videoCloudinary?: CloudinaryAsset;
+  videoCloudinary?: VideoCloudinary;
   youtube?: string;
   author?: Array<
     {
@@ -1081,7 +1127,7 @@ export type Guest = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -1126,9 +1172,14 @@ export type Guest = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -1224,7 +1275,7 @@ export type PodcastType = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -1269,9 +1320,14 @@ export type PodcastType = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -1367,7 +1423,7 @@ export type Course = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -1412,9 +1468,14 @@ export type Course = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -1495,7 +1556,7 @@ export type Course = {
         _key: string;
       } & Table)
   >;
-  videoCloudinary?: CloudinaryAsset;
+  videoCloudinary?: VideoCloudinary;
   youtube?: string;
   author?: Array<
     {
@@ -1529,7 +1590,7 @@ export type Page = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  coverImage?: CloudinaryAsset;
+  coverImage?: CoverImage;
   date?: string;
   title?: string;
   slug?: Slug;
@@ -1574,9 +1635,14 @@ export type Page = {
         _type: "block";
         _key: string;
       }
-    | ({
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
-      } & CloudinaryAsset)
+      }
     | ({
         _key: string;
       } & Code)
@@ -1657,7 +1723,7 @@ export type Page = {
         _key: string;
       } & Table)
   >;
-  videoCloudinary?: CloudinaryAsset;
+  videoCloudinary?: VideoCloudinary;
   youtube?: string;
   author?: Array<
     {
@@ -1674,28 +1740,20 @@ export type Page = {
   statistics?: Statistics;
 };
 
-export type CloudinaryAsset = {
-  _type: "cloudinary.asset";
-  public_id?: string;
-  resource_type?: string;
-  type?: string;
-  format?: string;
-  version?: number;
-  url?: string;
-  secure_url?: string;
-  width?: number;
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
   height?: number;
-  bytes?: number;
-  duration?: number;
-  tags?: Array<string>;
-  created_at?: string;
-  derived?: Array<
-    {
-      _key: string;
-    } & CloudinaryAssetDerived
-  >;
-  access_mode?: string;
-  context?: CloudinaryAssetContext;
+  width?: number;
 };
 
 export type DashboardSettings = {
@@ -1746,7 +1804,13 @@ export type Settings = {
     sideOnly?: boolean;
     _key: string;
   }>;
-  ogImage?: CloudinaryAsset;
+  ogImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
 };
 
 export type Row = {
@@ -1778,24 +1842,6 @@ export type MediaTag = {
   _updatedAt: string;
   _rev: string;
   name?: Slug;
-};
-
-export type CloudinaryAssetContextCustom = {
-  _type: "cloudinary.assetContextCustom";
-  alt?: string;
-  caption?: string;
-};
-
-export type CloudinaryAssetContext = {
-  _type: "cloudinary.assetContext";
-  custom?: CloudinaryAssetContextCustom;
-};
-
-export type CloudinaryAssetDerived = {
-  _type: "cloudinary.assetDerived";
-  raw_transformation?: string;
-  url?: string;
-  secure_url?: string;
 };
 
 export type SanityAssistInstructionTask = {
@@ -1973,22 +2019,6 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
 export type SanityFileAsset = {
   _id: string;
   _type: "sanity.fileAsset";
@@ -2049,6 +2079,10 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | SanityImageAssetReference
+  | CoverImage
+  | SanityFileAssetReference
+  | VideoCloudinary
   | Statistics
   | Youtube
   | Socials
@@ -2058,7 +2092,6 @@ export type AllSanitySchemaTypes =
   | ItunesImage
   | SponsorPool
   | ContentIdeaReference
-  | SanityFileAssetReference
   | SponsorLeadReference
   | AutomatedVideo
   | AutomatedVideoReference
@@ -2086,16 +2119,14 @@ export type AllSanitySchemaTypes =
   | LessonReference
   | Course
   | Page
-  | CloudinaryAsset
+  | SanityImageCrop
+  | SanityImageHotspot
   | DashboardSettings
   | Settings
   | Row
   | Table
   | Code
   | MediaTag
-  | CloudinaryAssetContextCustom
-  | CloudinaryAssetContext
-  | CloudinaryAssetDerived
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations
@@ -2113,8 +2144,6 @@ export type AllSanitySchemaTypes =
   | SanityImagePalette
   | SanityImageDimensions
   | SanityImageMetadata
-  | SanityImageHotspot
-  | SanityImageCrop
   | SanityFileAsset
   | SanityAssetSourceData
   | SanityImageAsset
@@ -2129,7 +2158,7 @@ export type DocCountResult = number;
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{  ...,  ogImage{    secure_url  }}
+// Query: *[_type == "settings"][0]{  ...,  ogImage}
 export type SettingsQueryResult = {
   _id: string;
   _type: "settings";
@@ -2162,7 +2191,11 @@ export type SettingsQueryResult = {
     _key: string;
   }>;
   ogImage: {
-    secure_url: string | null;
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
   } | null;
 } | null;
 
@@ -2177,10 +2210,10 @@ export type HomePageQueryResult = {
     title: string | "Untitled";
     slug: string | null;
     excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
+    coverImage: CoverImage | null;
     date: string;
     youtube: string | null;
-    videoCloudinary: CloudinaryAsset | null;
+    videoCloudinary: VideoCloudinary | null;
   } | null;
   latestPodcasts: Array<{
     _id: string;
@@ -2189,7 +2222,7 @@ export type HomePageQueryResult = {
     title: string | "Untitled";
     slug: string | null;
     excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
+    coverImage: CoverImage | null;
     date: string;
   }>;
   topPodcasts: Array<{
@@ -2199,7 +2232,7 @@ export type HomePageQueryResult = {
     title: string | "Untitled";
     slug: string | null;
     excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
+    coverImage: CoverImage | null;
     date: string;
   }>;
   latestPosts: Array<{
@@ -2209,7 +2242,7 @@ export type HomePageQueryResult = {
     title: string | "Untitled";
     slug: string | null;
     excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
+    coverImage: CoverImage | null;
     date: string;
   }>;
   topPosts: Array<{
@@ -2219,7 +2252,7 @@ export type HomePageQueryResult = {
     title: string | "Untitled";
     slug: string | null;
     excerpt: string | null;
-    coverImage: CloudinaryAsset | null;
+    coverImage: CoverImage | null;
     date: string;
   }>;
 } | null;
@@ -2234,7 +2267,7 @@ export type PageQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -2297,31 +2330,6 @@ export type PageQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -2344,6 +2352,15 @@ export type PageQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -2426,16 +2443,13 @@ export type PageQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -2493,6 +2507,14 @@ export type PageQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -2570,16 +2592,13 @@ export type PageQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -2637,6 +2656,14 @@ export type PageQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -2701,7 +2728,7 @@ export type PageQueryResult = {
     url?: string;
   }> | null;
   tags: null;
-  videoCloudinary: CloudinaryAsset | null;
+  videoCloudinary: VideoCloudinary | null;
   youtube: string | null;
 } | null;
 
@@ -2715,7 +2742,7 @@ export type BlogQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   author: Array<{
     _id: string;
@@ -2723,16 +2750,13 @@ export type BlogQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -2790,6 +2814,14 @@ export type BlogQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -2871,7 +2903,7 @@ export type MorePostQueryResult = Array<{
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   author: Array<{
     _id: string;
@@ -2879,16 +2911,13 @@ export type MorePostQueryResult = Array<{
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -2946,6 +2975,14 @@ export type MorePostQueryResult = Array<{
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -3027,7 +3064,7 @@ export type PostQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -3090,31 +3127,6 @@ export type PostQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -3137,6 +3149,15 @@ export type PostQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -3219,16 +3240,13 @@ export type PostQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -3286,6 +3304,14 @@ export type PostQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -3363,16 +3389,13 @@ export type PostQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -3430,6 +3453,14 @@ export type PostQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -3494,7 +3525,7 @@ export type PostQueryResult = {
     url?: string;
   }> | null;
   tags: null;
-  videoCloudinary: CloudinaryAsset | null;
+  videoCloudinary: VideoCloudinary | null;
   youtube: string | null;
 } | null;
 
@@ -3508,7 +3539,7 @@ export type PodcastsQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   author: Array<{
     _id: string;
@@ -3516,16 +3547,13 @@ export type PodcastsQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -3583,6 +3611,14 @@ export type PodcastsQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -3658,16 +3694,13 @@ export type PodcastsQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -3725,6 +3758,14 @@ export type PodcastsQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -3806,7 +3847,7 @@ export type MorePodcastQueryResult = Array<{
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   author: Array<{
     _id: string;
@@ -3814,16 +3855,13 @@ export type MorePodcastQueryResult = Array<{
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -3881,6 +3919,14 @@ export type MorePodcastQueryResult = Array<{
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -3956,16 +4002,13 @@ export type MorePodcastQueryResult = Array<{
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -4023,6 +4066,14 @@ export type MorePodcastQueryResult = Array<{
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -4104,7 +4155,7 @@ export type PodcastQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -4167,31 +4218,6 @@ export type PodcastQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -4214,6 +4240,15 @@ export type PodcastQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -4296,16 +4331,13 @@ export type PodcastQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -4363,6 +4395,14 @@ export type PodcastQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -4440,16 +4480,13 @@ export type PodcastQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -4507,6 +4544,14 @@ export type PodcastQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -4571,7 +4616,7 @@ export type PodcastQueryResult = {
     url?: string;
   }> | null;
   tags: null;
-  videoCloudinary: CloudinaryAsset | null;
+  videoCloudinary: VideoCloudinary | null;
   youtube: string | null;
   podcastType: null;
   season: number | null;
@@ -4583,16 +4628,13 @@ export type PodcastQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -4650,6 +4692,14 @@ export type PodcastQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -4727,16 +4777,13 @@ export type PodcastQueryResult = {
           _createdAt: string;
           _updatedAt: string;
           _rev: string;
-          coverImage?: CloudinaryAsset;
+          coverImage?: CoverImage;
           date?: string;
           title?: string;
           slug?: Slug;
           excerpt?: string;
           featured?: number;
           content?: Array<
-            | ({
-                _key: string;
-              } & CloudinaryAsset)
             | ({
                 _key: string;
               } & Code)
@@ -4794,6 +4841,14 @@ export type PodcastQueryResult = {
             | {
                 html?: string;
                 _type: "htmlBlock";
+                _key: string;
+              }
+            | {
+                asset?: SanityImageAssetReference;
+                media?: unknown;
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
                 _key: string;
               }
             | {
@@ -4869,16 +4924,13 @@ export type PodcastQueryResult = {
           _createdAt: string;
           _updatedAt: string;
           _rev: string;
-          coverImage?: CloudinaryAsset;
+          coverImage?: CoverImage;
           date?: string;
           title?: string;
           slug?: Slug;
           excerpt?: string;
           featured?: number;
           content?: Array<
-            | ({
-                _key: string;
-              } & CloudinaryAsset)
             | ({
                 _key: string;
               } & Code)
@@ -4936,6 +4988,14 @@ export type PodcastQueryResult = {
             | {
                 html?: string;
                 _type: "htmlBlock";
+                _key: string;
+              }
+            | {
+                asset?: SanityImageAssetReference;
+                media?: unknown;
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
                 _key: string;
               }
             | {
@@ -5022,7 +5082,7 @@ export type CoursesQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   stripeProduct: string | null;
   author: Array<{
@@ -5031,16 +5091,13 @@ export type CoursesQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -5098,6 +5155,14 @@ export type CoursesQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -5179,7 +5244,7 @@ export type MoreCourseQueryResult = Array<{
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   stripeProduct: string | null;
   author: Array<{
@@ -5188,16 +5253,13 @@ export type MoreCourseQueryResult = Array<{
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -5255,6 +5317,14 @@ export type MoreCourseQueryResult = Array<{
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -5336,7 +5406,7 @@ export type CourseQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   stripeProduct: string | null;
   content: Array<
@@ -5400,31 +5470,6 @@ export type CourseQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -5447,6 +5492,15 @@ export type CourseQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -5529,16 +5583,13 @@ export type CourseQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -5596,6 +5647,14 @@ export type CourseQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -5673,16 +5732,13 @@ export type CourseQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -5740,6 +5796,14 @@ export type CourseQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -5804,7 +5868,7 @@ export type CourseQueryResult = {
     url?: string;
   }> | null;
   tags: null;
-  videoCloudinary: CloudinaryAsset | null;
+  videoCloudinary: VideoCloudinary | null;
   youtube: string | null;
   podcastType: null;
   season: null;
@@ -5825,7 +5889,7 @@ export type LessonsInCourseQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   stripeProduct: string | null;
   sections: Array<{
@@ -5837,10 +5901,10 @@ export type LessonsInCourseQueryResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       locked: boolean | null;
-      videoCloudinary: CloudinaryAsset | null;
+      videoCloudinary: VideoCloudinary | null;
     }> | null;
   }> | null;
 } | null;
@@ -5855,7 +5919,7 @@ export type LessonQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -5918,31 +5982,6 @@ export type LessonQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -5965,6 +6004,15 @@ export type LessonQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -6047,16 +6095,13 @@ export type LessonQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -6114,6 +6159,14 @@ export type LessonQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -6191,16 +6244,13 @@ export type LessonQueryResult = {
     _createdAt: string;
     _updatedAt: string;
     _rev: string;
-    coverImage?: CloudinaryAsset;
+    coverImage?: CoverImage;
     date?: string;
     title: string | "Anonymous";
     slug: string | null;
     excerpt?: string;
     featured?: number;
     content?: Array<
-      | ({
-          _key: string;
-        } & CloudinaryAsset)
       | ({
           _key: string;
         } & Code)
@@ -6258,6 +6308,14 @@ export type LessonQueryResult = {
       | {
           html?: string;
           _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
           _key: string;
         }
       | {
@@ -6322,7 +6380,7 @@ export type LessonQueryResult = {
     url?: string;
   }> | null;
   tags: null;
-  videoCloudinary: CloudinaryAsset | null;
+  videoCloudinary: VideoCloudinary | null;
   youtube: string | null;
   locked: boolean | null;
 } | null;
@@ -6337,7 +6395,7 @@ export type MoreAuthorQueryResult = Array<{
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
 }>;
 
@@ -6351,7 +6409,7 @@ export type AuthorQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -6414,31 +6472,6 @@ export type AuthorQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -6461,6 +6494,15 @@ export type AuthorQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -6563,7 +6605,7 @@ export type AuthorQueryWithRelatedResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -6626,31 +6668,6 @@ export type AuthorQueryWithRelatedResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -6673,6 +6690,15 @@ export type AuthorQueryWithRelatedResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -6771,7 +6797,7 @@ export type AuthorQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
     podcast: Array<{
@@ -6781,7 +6807,7 @@ export type AuthorQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
     post: Array<{
@@ -6791,7 +6817,7 @@ export type AuthorQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
   };
@@ -6807,7 +6833,7 @@ export type MoreGuestQueryResult = Array<{
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
 }>;
 
@@ -6821,7 +6847,7 @@ export type GuestQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -6884,31 +6910,6 @@ export type GuestQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -6931,6 +6932,15 @@ export type GuestQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -7033,7 +7043,7 @@ export type GuestQueryWithRelatedResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -7096,31 +7106,6 @@ export type GuestQueryWithRelatedResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -7143,6 +7128,15 @@ export type GuestQueryWithRelatedResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -7241,7 +7235,7 @@ export type GuestQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
     podcast: Array<{
@@ -7251,7 +7245,7 @@ export type GuestQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
     post: Array<{
@@ -7261,7 +7255,7 @@ export type GuestQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
   };
@@ -7277,7 +7271,7 @@ export type MoreSponsorQueryResult = Array<{
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
 }>;
 
@@ -7291,7 +7285,7 @@ export type SponsorQueryResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -7354,31 +7348,6 @@ export type SponsorQueryResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -7401,6 +7370,15 @@ export type SponsorQueryResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -7498,7 +7476,7 @@ export type SponsorQueryWithRelatedResult = {
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
-  coverImage: CloudinaryAsset | null;
+  coverImage: CoverImage | null;
   date: string;
   content: Array<
     | {
@@ -7561,31 +7539,6 @@ export type SponsorQueryWithRelatedResult = {
       }
     | {
         _key: string;
-        _type: "cloudinary.asset";
-        public_id?: string;
-        resource_type?: string;
-        type?: string;
-        format?: string;
-        version?: number;
-        url?: string;
-        secure_url?: string;
-        width?: number;
-        height?: number;
-        bytes?: number;
-        duration?: number;
-        tags?: Array<string>;
-        created_at?: string;
-        derived?: Array<
-          {
-            _key: string;
-          } & CloudinaryAssetDerived
-        >;
-        access_mode?: string;
-        context?: CloudinaryAssetContext;
-        markDefs: null;
-      }
-    | {
-        _key: string;
         _type: "code";
         language?: string;
         filename?: string;
@@ -7608,6 +7561,15 @@ export type SponsorQueryWithRelatedResult = {
     | {
         html?: string;
         _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
         _key: string;
         markDefs: null;
       }
@@ -7701,7 +7663,7 @@ export type SponsorQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
     podcast: Array<{
@@ -7711,7 +7673,7 @@ export type SponsorQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
     post: Array<{
@@ -7721,7 +7683,7 @@ export type SponsorQueryWithRelatedResult = {
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
     }>;
   };
@@ -7738,7 +7700,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -7801,31 +7763,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -7848,6 +7785,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -7957,7 +7903,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -8020,31 +7966,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -8067,6 +7988,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -8149,16 +8079,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -8216,6 +8143,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -8293,16 +8228,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -8360,6 +8292,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -8424,7 +8364,7 @@ export type RssQueryResult = Array<
         url?: string;
       }> | null;
       tags: null;
-      videoCloudinary: CloudinaryAsset | null;
+      videoCloudinary: VideoCloudinary | null;
       youtube: string | null;
     }
   | {
@@ -8434,7 +8374,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -8497,31 +8437,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -8544,6 +8459,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -8635,7 +8559,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -8698,31 +8622,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -8745,6 +8644,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -8827,16 +8735,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -8894,6 +8799,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -8971,16 +8884,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -9038,6 +8948,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -9102,7 +9020,7 @@ export type RssQueryResult = Array<
         url?: string;
       }> | null;
       tags: null;
-      videoCloudinary: CloudinaryAsset | null;
+      videoCloudinary: VideoCloudinary | null;
       youtube: string | null;
     }
   | {
@@ -9112,7 +9030,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -9175,31 +9093,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -9222,6 +9115,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -9304,16 +9206,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -9371,6 +9270,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -9448,16 +9355,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -9515,6 +9419,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -9579,7 +9491,7 @@ export type RssQueryResult = Array<
         url?: string;
       }> | null;
       tags: null;
-      videoCloudinary: CloudinaryAsset | null;
+      videoCloudinary: VideoCloudinary | null;
       youtube: string | null;
     }
   | {
@@ -9589,7 +9501,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -9652,31 +9564,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -9699,6 +9586,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -9781,16 +9677,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -9848,6 +9741,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -9925,16 +9826,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -9992,6 +9890,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -10056,7 +9962,7 @@ export type RssQueryResult = Array<
         url?: string;
       }> | null;
       tags: null;
-      videoCloudinary: CloudinaryAsset | null;
+      videoCloudinary: VideoCloudinary | null;
       youtube: string | null;
     }
   | {
@@ -10066,7 +9972,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -10129,31 +10035,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -10176,6 +10057,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -10267,7 +10157,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -10330,31 +10220,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -10377,6 +10242,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -10459,16 +10333,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -10526,6 +10397,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -10603,16 +10482,13 @@ export type RssQueryResult = Array<
         _createdAt: string;
         _updatedAt: string;
         _rev: string;
-        coverImage?: CloudinaryAsset;
+        coverImage?: CoverImage;
         date?: string;
         title: string | "Anonymous";
         slug: string | null;
         excerpt?: string;
         featured?: number;
         content?: Array<
-          | ({
-              _key: string;
-            } & CloudinaryAsset)
           | ({
               _key: string;
             } & Code)
@@ -10670,6 +10546,14 @@ export type RssQueryResult = Array<
           | {
               html?: string;
               _type: "htmlBlock";
+              _key: string;
+            }
+          | {
+              asset?: SanityImageAssetReference;
+              media?: unknown;
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
               _key: string;
             }
           | {
@@ -10734,7 +10618,7 @@ export type RssQueryResult = Array<
         url?: string;
       }> | null;
       tags: null;
-      videoCloudinary: CloudinaryAsset | null;
+      videoCloudinary: VideoCloudinary | null;
       youtube: string | null;
     }
   | {
@@ -10744,7 +10628,7 @@ export type RssQueryResult = Array<
       title: string | "Untitled";
       slug: string | null;
       excerpt: string | null;
-      coverImage: CloudinaryAsset | null;
+      coverImage: CoverImage | null;
       date: string;
       content: Array<
         | {
@@ -10807,31 +10691,6 @@ export type RssQueryResult = Array<
           }
         | {
             _key: string;
-            _type: "cloudinary.asset";
-            public_id?: string;
-            resource_type?: string;
-            type?: string;
-            format?: string;
-            version?: number;
-            url?: string;
-            secure_url?: string;
-            width?: number;
-            height?: number;
-            bytes?: number;
-            duration?: number;
-            tags?: Array<string>;
-            created_at?: string;
-            derived?: Array<
-              {
-                _key: string;
-              } & CloudinaryAssetDerived
-            >;
-            access_mode?: string;
-            context?: CloudinaryAssetContext;
-            markDefs: null;
-          }
-        | {
-            _key: string;
             _type: "code";
             language?: string;
             filename?: string;
@@ -10854,6 +10713,15 @@ export type RssQueryResult = Array<
         | {
             html?: string;
             _type: "htmlBlock";
+            _key: string;
+            markDefs: null;
+          }
+        | {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
             _key: string;
             markDefs: null;
           }
@@ -10999,7 +10867,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "count(*[_type == $type])": DocCountResult;
-    '*[_type == "settings"][0]{\n  ...,\n  ogImage{\n    secure_url\n  }\n}': SettingsQueryResult;
+    '*[_type == "settings"][0]{\n  ...,\n  ogImage\n}': SettingsQueryResult;
     '*[_type == "settings" ][0]{\n  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n      youtube,\n      videoCloudinary,\n  },\n  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{\n     \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n}': HomePageQueryResult;
     '*[_type == "page" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}': PageQueryResult;
     '*[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': BlogQueryResult;
