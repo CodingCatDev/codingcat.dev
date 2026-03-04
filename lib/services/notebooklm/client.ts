@@ -288,7 +288,7 @@ export class NotebookLMClient {
       ];
     }
 
-    const result = await this.rpcCall(RPCMethod.ADD_SOURCE, params);
+    const result = await this.rpcCall(RPCMethod.ADD_SOURCE, params, `/notebook/${notebookId}`);
 
     // Extract source ID from response
     const resultArr = result as unknown[];
@@ -341,7 +341,7 @@ export class NotebookLMClient {
       params = [[query, 1], null, 1, notebookId];
     }
 
-    const result = await this.rpcCall(methodId, params);
+    const result = await this.rpcCall(methodId, params, `/notebook/${notebookId}`);
     console.log(`[NotebookLM] startResearch raw result:`, JSON.stringify(result));
     const resultArr = result as unknown[];
 
@@ -378,7 +378,7 @@ export class NotebookLMClient {
     const result = await this.rpcCall(
       RPCMethod.POLL_RESEARCH,
       [null, null, notebookId],
-      undefined,
+      `/notebook/${notebookId}`,
       EXTENDED_FETCH_TIMEOUT_MS
     );
 
@@ -512,7 +512,7 @@ export class NotebookLMClient {
       taskId,
       notebookId,
       sourceArray,
-    ]);
+    ], `/notebook/${notebookId}`);
 
     console.log('[NotebookLM] Research sources imported');
   }
@@ -569,7 +569,7 @@ export class NotebookLMClient {
     ];
 
     try {
-      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params);
+      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params, `/notebook/${notebookId}`);
       return this.parseGenerationResult(result);
     } catch (error: unknown) {
       console.error(
@@ -626,7 +626,7 @@ export class NotebookLMClient {
     ];
 
     try {
-      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params);
+      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params, `/notebook/${notebookId}`);
       return this.parseGenerationResult(result);
     } catch (error: unknown) {
       console.error(
@@ -675,7 +675,7 @@ export class NotebookLMClient {
         [2],
         notebookId,
         'NOT artifact.status = "ARTIFACT_STATUS_SUGGESTED"',
-      ]);
+      ], `/notebook/${notebookId}`);
 
       const resultArr = result as unknown[];
       if (!Array.isArray(resultArr) || !Array.isArray(resultArr[0])) {
@@ -725,7 +725,7 @@ export class NotebookLMClient {
       const result = await this.rpcCall(RPCMethod.SUMMARIZE, [
         notebookId,
         [2],
-      ]);
+      ], `/notebook/${notebookId}`);
 
       const resultArr = result as unknown[];
       if (!Array.isArray(resultArr)) {
