@@ -315,6 +315,12 @@ export const rssQuery = groq`*[_type == $type && _id != $skip && defined(slug.cu
   ${contentFields},
 }`;
 
+export const rssPodcastQuery = groq`*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {
+  ${baseFieldsNoContent},
+  ${contentFields},
+  ${podcastFields},
+}`;
+
 // Sitemaps
 export const sitemapQuery = groq`*[_type in ["author", "course", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {
   _type,

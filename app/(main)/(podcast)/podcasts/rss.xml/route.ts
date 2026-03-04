@@ -1,15 +1,12 @@
 export const dynamic = "force-dynamic"; // defaults to auto
 
-import { buildFeed } from "@/lib/rss";
-import { ContentType } from "@/lib/types";
+import { buildPodcastFeed } from "@/lib/rss";
 
 export async function GET() {
-	const feed = await buildFeed({
-		type: ContentType.podcast,
-	});
-	return new Response(feed.rss2(), {
+	const xml = await buildPodcastFeed({});
+	return new Response(xml, {
 		headers: {
-			"content-type": "text/xml",
+			"content-type": "application/rss+xml; charset=utf-8",
 			"cache-control": "max-age=0, s-maxage=3600",
 		},
 	});
