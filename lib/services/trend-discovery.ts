@@ -287,9 +287,14 @@ async function fetchWithTimeout(
   init?: RequestInit,
 ): Promise<Response> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10_000);
+  const timeout = setTimeout(() => controller.abort(), 15_000);
   try {
-    return await fetch(url, { ...init, signal: controller.signal });
+    return await fetch(url, {
+      ...init,
+      signal: controller.signal,
+      // Next.js extends fetch() with aggressive caching — disable it
+      cache: 'no-store' as RequestCache,
+    });
   } finally {
     clearTimeout(timeout);
   }
@@ -550,7 +555,10 @@ async function fetchDevto(lookbackDays: number): Promise<TrendSignal[]> {
         const res = await fetchWithTimeout(
           `https://dev.to/api/articles?tag=${tag}&top=${lookbackDays}`,
         );
-        if (!res.ok) return [];
+        if (!res.ok) {
+          console.warn(`${LOG_PREFIX} Dev.to tag ${tag} failed: ${res.status}`);
+          return [];
+        }
         return (await res.json()) as DevtoArticle[];
       }),
     );
@@ -613,6 +621,9 @@ async function fetchBlogFeeds(lookbackDays: number): Promise<TrendSignal[]> {
         }
         const xml = await res.text();
         const items = parseFeedItems(xml);
+        if (items.length === 0) {
+          console.warn(`${LOG_PREFIX} Blog feed ${feed.name}: parsed 0 items from ${xml.length} bytes`);
+        }
         return items.map((item) => ({ ...item, feedName: feed.name }));
       }),
     );
@@ -776,9 +787,9 @@ function parseGitHubTrendingHTML(html: string, language: string): GitHubTrending
       .replace(/<[^>]+>/g, "")
       .trim();
 
-    // Stars today from "N stars today" text
+    // Stars from "N stars today" or "N stars this week" text
     const starsMatch = block.match(
-      /(\d[\d,]*)\s+stars?\s+today/i,
+      /(\d[\d,]*)\s+stars?\s+(?:today|this\s+week|this\s+month)/i,
     );
     const starsToday = starsMatch
       ? parseInt(starsMatch[1].replace(/,/g, ""), 10)
