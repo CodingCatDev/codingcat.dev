@@ -4,8 +4,8 @@ import { Scene } from "./Scene";
 // Scene component imports (uncomment as components are built):
 import { CodeMorphScene } from "./CodeMorphScene";
 import { DynamicListScene } from "./DynamicListScene";
-// import { ComparisonGridScene } from "./ComparisonGridScene";
-// import { IsometricMockupScene } from "./IsometricMockupScene";
+import { ComparisonGridScene } from "./ComparisonGridScene";
+import { IsometricMockupScene } from "./IsometricMockupScene";
 
 interface SceneRouterProps {
   scene: SceneData;
@@ -47,15 +47,13 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
 
     case "comparison":
       if (scene.comparison) {
-        // TODO: Replace with ComparisonGridScene when built
-        // return <ComparisonGridScene {...baseProps} {...scene.comparison} />;
+        return <ComparisonGridScene {...baseProps} {...scene.comparison} />;
       }
       break;
 
     case "mockup":
       if (scene.mockup) {
-        // TODO: Replace with IsometricMockupScene when built
-        // return <IsometricMockupScene {...baseProps} {...scene.mockup} />;
+        return <IsometricMockupScene {...baseProps} {...scene.mockup} />;
       }
       break;
 
