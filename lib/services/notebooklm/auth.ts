@@ -47,32 +47,66 @@ function isAllowedDomain(domain: string): boolean {
 }
 
 /**
- * Parse the Playwright storage state JSON from the env var.
+ * Load the Playwright storage state JSON from env var or file path.
+ *
+ * Supports three modes:
+ * 1. NOTEBOOKLM_AUTH_JSON contains raw JSON: {"cookies": [...]}
+ * 2. NOTEBOOKLM_AUTH_JSON contains a file path: ~/.notebooklm/storage_state.json
+ * 3. NOTEBOOKLM_AUTH_JSON contains double-quoted JSON (from .env.local quoting)
  */
 function parseCookiesFromEnv(): Record<string, string> {
   const authJson = process.env.NOTEBOOKLM_AUTH_JSON;
   if (!authJson) {
     throw new Error(
       '[NotebookLM] NOTEBOOKLM_AUTH_JSON env var is not set. ' +
-        'Set it to a Playwright storage state JSON with Google cookies.'
+        'Set it to a file path (e.g., ~/.notebooklm/storage_state.json) ' +
+        'or inline Playwright storage state JSON.'
     );
   }
 
   let storageState: { cookies?: NotebookLMCookie[] };
-  try {
-    // .env.local may double-quote the value, producing a JSON string literal.
-    // Try parsing once; if the result is a string, parse again.
-    let parsed: unknown = JSON.parse(authJson);
-    if (typeof parsed === 'string') {
-      parsed = JSON.parse(parsed);
+
+  // Check if the value looks like a file path (doesn't start with { or ")
+  const trimmed = authJson.trim();
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('"') && !trimmed.startsWith("'")) {
+    // Treat as file path — resolve ~ to home directory
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const fs = require('fs') as typeof import('fs');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const path = require('path') as typeof import('path');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const os = require('os') as typeof import('os');
+
+      const resolvedPath = trimmed.startsWith('~')
+        ? path.join(os.homedir(), trimmed.slice(1))
+        : path.resolve(trimmed);
+
+      console.log(`[NotebookLM] Loading auth from file: ${resolvedPath}`);
+      const fileContent = fs.readFileSync(resolvedPath, 'utf-8');
+      storageState = JSON.parse(fileContent) as { cookies?: NotebookLMCookie[] };
+    } catch (err) {
+      throw new Error(
+        `[NotebookLM] Failed to read auth file "${trimmed}": ${err instanceof Error ? err.message : String(err)}`
+      );
     }
-    storageState = parsed as { cookies?: NotebookLMCookie[] };
-  } catch {
-    throw new Error(
-      '[NotebookLM] NOTEBOOKLM_AUTH_JSON is not valid JSON. ' +
-        'Expected Playwright storage state format: {"cookies": [...]}. ' +
-        'Tip: In .env.local, set it without wrapping quotes: NOTEBOOKLM_AUTH_JSON={"cookies":[...]}'
-    );
+  } else {
+    // Treat as inline JSON
+    try {
+      // .env.local may double-quote the value, producing a JSON string literal.
+      // Try parsing once; if the result is a string, parse again.
+      let parsed: unknown = JSON.parse(trimmed);
+      if (typeof parsed === 'string') {
+        parsed = JSON.parse(parsed);
+      }
+      storageState = parsed as { cookies?: NotebookLMCookie[] };
+    } catch {
+      throw new Error(
+        '[NotebookLM] NOTEBOOKLM_AUTH_JSON is not valid JSON and not a valid file path. ' +
+          'Set it to a file path (e.g., ~/.notebooklm/storage_state.json) ' +
+          'or valid Playwright storage state JSON: {"cookies": [...]}'
+      );
+    }
   }
 
   const rawCookies = storageState.cookies;
