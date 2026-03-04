@@ -1,6 +1,5 @@
 import type {
 	AuthorQueryWithRelatedResult,
-	CloudinaryAsset,
 	GuestQueryResult,
 } from "@/sanity/types";
 
@@ -29,7 +28,7 @@ export default async function UserRelated(
 			title: string;
 			slug: string | null;
 			excerpt: string | null;
-			coverImage: CloudinaryAsset | null;
+			coverImage: any;
 			date: string;
 		}>,
 	) => {
@@ -69,7 +68,7 @@ export default async function UserRelated(
 					title: string;
 					slug: string | null;
 					excerpt: string | null;
-					coverImage: CloudinaryAsset | null;
+					coverImage: any;
 					date: string;
 				}>;
 				if (!contents?.length) {

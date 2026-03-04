@@ -17,12 +17,12 @@ export const urlForImage = (source: any) => {
 };
 
 export function resolveOpenGraphImage(image: any, width = 1920, height = 1080) {
-	if (!image || !image?.secure_url) return;
-	const url = image?.secure_url;
+	if (!image?.asset?._ref) return;
+	const url = urlForImage(image)?.width(width).height(height).url();
 	if (!url) return;
 	return {
 		url,
-		alt: image?.context?.custom?.alt || "CodingCat.dev Image",
+		alt: image?.alt || "CodingCat.dev Image",
 		width,
 		height,
 	};

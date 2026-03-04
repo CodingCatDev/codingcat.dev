@@ -1,64 +1,46 @@
-import type { CloudinaryAsset } from "@/sanity/types";
-import CloudinaryImage from "@/components/cloudinary-image";
-import { getCldImageUrl } from "next-cloudinary";
-import { stegaClean } from "@sanity/client/stega";
+import Image from "next/image";
+import { urlForImage } from "@/sanity/lib/image";
 
 interface CoverImageProps {
-	image: CloudinaryAsset | null | undefined;
-	priority?: boolean;
-	className?: string;
-	width?: number;
-	height?: number;
-	quality?: number | `${number}`;
+    image: any;
+    priority?: boolean;
+    className?: string;
+    width?: number;
+    height?: number;
+    quality?: number;
 }
 
-export default async function CoverImage(props: CoverImageProps) {
-	const {
-		image: originalImage,
-		priority,
-		className,
-		width,
-		height,
-		quality,
-	} = props;
+export default function CoverImage(props: CoverImageProps) {
+    const { image, priority, className, width, height, quality } = props;
 
-	const source = stegaClean(originalImage);
+    const imageUrl = image?.asset?._ref
+        ? urlForImage(image)?.width(width || 1920).height(height || 1080).quality(quality || 80).url()
+        : null;
 
-	const getImageUrl = async (src: string) => {
-		const imageUrl = getCldImageUrl({
-			src,
-			width: 100,
-		});
-		const response = await fetch(imageUrl);
-		const arrayBuffer = await response.arrayBuffer();
-		const buffer = Buffer.from(arrayBuffer);
-		const base64 = buffer.toString("base64");
-		return `data:${response.type};base64,${base64}`;
-	};
+    // TODO: Add LQIP blur placeholder for progressive loading. Options:
+    // 1. Query Sanity for lqip metadata: image.asset->metadata.lqip
+    // 2. Use a tiny base64 placeholder generated at build time
 
-	let image: JSX.Element | undefined;
-	if (source?.public_id) {
-		image = (
-			<CloudinaryImage
-				className={className || "w-full h-auto aspect-video rounded-md"}
-				width={width || 1920}
-				height={height || 1080}
-				priority={priority}
-				quality={quality || "auto"}
-				sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw, 33vw"
-				alt={source?.context?.custom?.alt || ""}
-				src={source?.public_id}
-				placeholder="blur"
-				blurDataURL={await getImageUrl(source.public_id)}
-			/>
-		);
-	} else {
-		image = <div className="bg-background" style={{ paddingTop: "50%" }} />;
-	}
+    if (!imageUrl) {
+        return (
+            <div className="transition-shadow duration-200 shadow-md group-hover:shadow-lg sm:mx-0">
+                <div className="bg-background" style={{ paddingTop: "50%" }} />
+            </div>
+        );
+    }
 
-	return (
-		<div className="transition-shadow duration-200 shadow-md group-hover:shadow-lg sm:mx-0">
-			{image}
-		</div>
-	);
+    return (
+        <div className="transition-shadow duration-200 shadow-md group-hover:shadow-lg sm:mx-0">
+            <Image
+                className={className || "w-full h-auto aspect-video rounded-md"}
+                width={width || 1920}
+                height={height || 1080}
+                priority={priority}
+                quality={quality || 80}
+                sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw, 33vw"
+                alt={image?.alt || ""}
+                src={imageUrl}
+            />
+        </div>
+    );
 }

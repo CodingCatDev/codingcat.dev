@@ -33,6 +33,26 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
+	// Try to get user — if Supabase isn't configured or user isn't logged in,
+	// the proxy will have already redirected to login for protected routes.
+	// The login page itself renders without the sidebar chrome.
+	let user = null;
+	try {
+		const supabaseUrl =
+			process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+		const supabaseAnonKey =
+			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+		if (supabaseUrl && supabaseAnonKey) {
+			const { createClient } = await import("@/lib/supabase/server");
+			const supabase = await createClient();
+			const { data } = await supabase.auth.getUser();
+			user = data?.user ?? null;
+		}
+	} catch {
+		// Supabase not available — continue without user
+	}
+
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
@@ -48,15 +68,19 @@ export default async function DashboardLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<SidebarProvider>
-						<AppSidebar />
-						<SidebarInset>
-							<SiteHeader />
-							<main className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-								{children}
-							</main>
-						</SidebarInset>
-					</SidebarProvider>
+					{user ? (
+						<SidebarProvider>
+							<AppSidebar user={user} />
+							<SidebarInset>
+								<SiteHeader />
+								<main className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+									{children}
+								</main>
+							</SidebarInset>
+						</SidebarProvider>
+					) : (
+						<>{children}</>
+					)}
 					<Toaster />
 				</ThemeProvider>
 			</body>

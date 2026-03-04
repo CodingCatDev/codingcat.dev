@@ -2,10 +2,7 @@ import { createBrowserClient } from "@supabase/ssr";
 
 /**
  * Creates a Supabase client for use in Client Components (browser).
- *
- * Usage:
- *   import { createClient } from "@/lib/supabase/client";
- *   const supabase = createClient();
+ * Requires NEXT_PUBLIC_ prefixed env vars (exposed to browser by Next.js).
  */
 export function createClient() {
 	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

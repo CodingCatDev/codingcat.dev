@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { youtubeParser } from "@/lib/utils";
-import type { CloudinaryAsset } from "@/sanity/types";
+
 import CoverImage from "@/components/cover-image";
 import { YouTubeEmbed } from "./youtube-embed";
 
 export function YouTube(props: {
 	youtube: string;
-	image?: CloudinaryAsset | null | undefined;
+	image?: any;
 	className?: string;
 }) {
 	const { youtube, image, className } = props;
@@ -17,7 +17,7 @@ export function YouTube(props: {
 
 	return (
 		<YouTubeEmbed youtube={youtube}>
-			{image?.public_id ? (
+			{image?.asset?._ref ? (
 				<CoverImage image={image} priority={true} className={className} />
 			) : (
 				<picture>

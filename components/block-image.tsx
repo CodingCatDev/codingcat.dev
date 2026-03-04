@@ -1,52 +1,35 @@
-import type { CloudinaryAsset } from "@/sanity/types";
-import CloudinaryImage from "@/components/cloudinary-image";
+import Image from "next/image";
+import { urlForImage } from "@/sanity/lib/image";
 
-import { getCldImageUrl } from "next-cloudinary";
-
-interface CoverImageProps {
-	image: CloudinaryAsset;
+interface BlockImageProps {
+    image: any;
 }
 
-export default async function BlockImage(props: CoverImageProps) {
-	const { image: originalImage } = props;
+export default function BlockImage(props: BlockImageProps) {
+    const { image } = props;
 
-	let image;
-	if (originalImage?.public_id) {
-		const imageUrl = getCldImageUrl({
-			src: originalImage.public_id,
-			width: 100,
-		});
-		const response = await fetch(imageUrl);
-		const arrayBuffer = await response.arrayBuffer();
-		const buffer = Buffer.from(arrayBuffer);
-		const base64 = buffer.toString("base64");
-		const dataUrl = `data:${response.type};base64,${base64}`;
+    const imageUrl = image?.asset?._ref
+        ? urlForImage(image)?.width(1920).height(1080).url()
+        : null;
 
-		image = (
-			<CloudinaryImage
-				className="w-full h-auto"
-				width={1920}
-				height={1080}
-				sizes="100vw"
-				alt={originalImage?.context?.custom?.alt || ""}
-				src={originalImage?.public_id}
-				placeholder="blur"
-				blurDataURL={dataUrl}
-				config={{
-					url: {
-						secureDistribution: "media.codingcat.dev",
-						privateCdn: true,
-					},
-				}}
-			/>
-		);
-	} else {
-		image = <div className="bg-slate-50" style={{ paddingTop: "50%" }} />;
-	}
+    if (!imageUrl) {
+        return (
+            <div className="shadow-md transition-shadow duration-200 group-hover:shadow-lg sm:mx-0">
+                <div className="bg-slate-50" style={{ paddingTop: "50%" }} />
+            </div>
+        );
+    }
 
-	return (
-		<div className="shadow-md transition-shadow duration-200 group-hover:shadow-lg sm:mx-0">
-			{image}
-		</div>
-	);
+    return (
+        <div className="shadow-md transition-shadow duration-200 group-hover:shadow-lg sm:mx-0">
+            <Image
+                className="w-full h-auto"
+                width={1920}
+                height={1080}
+                sizes="100vw"
+                alt={image?.alt || ""}
+                src={imageUrl}
+            />
+        </div>
+    );
 }

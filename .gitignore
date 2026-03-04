@@ -51,3 +51,11 @@ next-env.d.ts
 # Firebase debug files
 firebase-debug.log
 firebase-debug.*.logpackage-lock.json
+
+# Migration tool generated files
+scripts/migration/discovered-references.json
+scripts/migration/unique-cloudinary-urls.json
+scripts/migration/asset-mapping.json
+scripts/migration/migration-report.json
+scripts/migration/node_modules/
+scripts/migration/.env

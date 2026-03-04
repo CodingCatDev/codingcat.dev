@@ -3,6 +3,7 @@ import { sanityFetch } from "@/sanity/lib/live";
 import type { RssQueryResult } from "@/sanity/types";
 import { rssQuery } from "@/sanity/lib/queries";
 import { toHTML } from "@portabletext/to-html";
+import { urlForImage } from "@/sanity/lib/utils";
 
 const productionDomain = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const site = productionDomain
@@ -55,7 +56,7 @@ export async function buildFeed(params: {
 				item.content && Array.isArray(item.content) ? toHTML(item.content) : "",
 			link: `${site}/${item._type}/${item.slug}`,
 			description: `${item.excerpt}`,
-			image: item.coverImage?.secure_url || feed.items.at(0)?.image,
+			image: urlForImage(item.coverImage)?.width(1200).height(630).url() || feed.items.at(0)?.image,
 			date: item.date ? new Date(item.date) : new Date(),
 			id: item._id,
 			author: item.author
