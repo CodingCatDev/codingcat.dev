@@ -174,6 +174,11 @@ export async function initAuth(): Promise<AuthTokens> {
   );
 
   // Step 2: Fetch NotebookLM homepage to get CSRF and session tokens
+  // IMPORTANT: The homepage response sets fresh session cookies (SIDCC, NID,
+  // __Secure-*PSIDCC) via Set-Cookie headers. These MUST be captured and
+  // included in subsequent RPC calls, otherwise the API returns error code [5].
+  // Python's httpx handles this automatically via its cookie jar; we must do
+  // it manually since Node.js fetch() doesn't merge Set-Cookie into requests.
   let html: string;
   let finalUrl: string;
 
@@ -194,6 +199,29 @@ export async function initAuth(): Promise<AuthTokens> {
 
     finalUrl = response.url;
     html = await response.text();
+
+    // Capture Set-Cookie headers and merge into our cookies
+    // Google rotates SIDCC, __Secure-*PSIDCC, and NID on every page load
+    const setCookieHeaders = response.headers.getSetCookie?.() ?? [];
+    let freshCookieCount = 0;
+    for (const setCookie of setCookieHeaders) {
+      // Parse "NAME=VALUE; ..." format
+      const eqIdx = setCookie.indexOf('=');
+      if (eqIdx === -1) continue;
+      const name = setCookie.substring(0, eqIdx);
+      const rest = setCookie.substring(eqIdx + 1);
+      const semiIdx = rest.indexOf(';');
+      const value = semiIdx === -1 ? rest : rest.substring(0, semiIdx);
+      if (name && value) {
+        cookies[name] = value;
+        freshCookieCount++;
+      }
+    }
+    if (freshCookieCount > 0) {
+      console.log(
+        `[NotebookLM] Captured ${freshCookieCount} fresh cookies from homepage response`
+      );
+    }
   } catch (error: unknown) {
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error(
@@ -238,11 +266,14 @@ export async function initAuth(): Promise<AuthTokens> {
   }
   const sessionId = sessionMatch[1];
 
+  // Rebuild cookie header with fresh cookies from homepage response
+  const updatedCookieHeader = buildCookieHeader(cookies);
+
   console.log('[NotebookLM] Authentication initialized successfully');
 
   return {
     cookies,
-    cookieHeader,
+    cookieHeader: updatedCookieHeader,
     csrfToken,
     sessionId,
   };
