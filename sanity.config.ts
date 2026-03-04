@@ -10,6 +10,7 @@ import { codeInput } from "@sanity/code-input";
 // import { table } from "@sanity/table"; // optional: add @sanity/table for studio table UI
 // import { iconPicker } from "sanity-plugin-icon-picker" https://github.com/christopherafbjur/sanity-plugin-icon-picker/issues/73;
 import { podcastRss } from "@codingcatdev/sanity-plugin-podcast-rss";
+import { media } from "sanity-plugin-media";
 
 // TODO: Review for possible plugins
 // import {draftReviewPluginV3} from 'sanity-plugin-draft-review-v3'
@@ -211,6 +212,7 @@ export default defineConfig({
 		// https://www.sanity.io/docs/ai-assistPcli
 		assistWithPresets(),
 		cloudinarySchemaPlugin(),
+		media(),
 		// table(), // enable when @sanity/table is installed
 		// tags(),
 		codeInput(),

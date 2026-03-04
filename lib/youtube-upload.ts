@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { Readable } from "node:stream";
 
 const oauth2Client = new google.auth.OAuth2(
 	process.env.YOUTUBE_CLIENT_ID,
@@ -37,6 +38,10 @@ export async function uploadVideo(opts: UploadOptions): Promise<{ videoId: strin
 
 	const resolvedPrivacyStatus = opts.privacyStatus || getDefaultPrivacyStatus();
 	console.log(`[youtube-upload] Uploading "${opts.title.slice(0, 60)}" with privacy: ${resolvedPrivacyStatus}`);
+	// Convert Web ReadableStream to Node.js Readable stream
+	// googleapis expects a Node.js stream with .pipe(), not a Web ReadableStream
+	const buffer = Buffer.from(await response.arrayBuffer());
+	const nodeStream = Readable.from(buffer);
 
 	const res = await youtube.videos.insert({
 		part: ["snippet", "status"],
@@ -54,7 +59,7 @@ export async function uploadVideo(opts: UploadOptions): Promise<{ videoId: strin
 			},
 		},
 		media: {
-			body: response.body as unknown as NodeJS.ReadableStream,
+			body: nodeStream,
 		},
 	});
 

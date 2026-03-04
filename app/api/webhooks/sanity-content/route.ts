@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook';
 import { processVideoProduction } from '@/lib/services/video-pipeline';
 
@@ -82,10 +82,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Fire and forget — trigger pipeline in background, return 200 immediately
+    // Use after() to run the pipeline after the response is sent.
+    // On Vercel, serverless functions terminate after the response — fire-and-forget
+    // (promise.catch() without await) silently dies. after() keeps the function alive.
     console.log(`[WEBHOOK] Triggering video production for document: ${body._id}`);
-    processVideoProduction(body._id).catch((error) => {
-      console.log(`[WEBHOOK] Background processing error for ${body._id}:`, error);
+    after(async () => {
+      try {
+        await processVideoProduction(body._id);
+      } catch (error) {
+        console.error(`[WEBHOOK] Background processing error for ${body._id}:`, error);
+      }
     });
 
     return NextResponse.json({ triggered: true }, { status: 200 });

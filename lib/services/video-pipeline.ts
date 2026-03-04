@@ -12,9 +12,9 @@
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
 import { generateSpeechFromScript } from '@/lib/services/elevenlabs';
-import { uploadAudio, uploadVideo } from '@/lib/services/gcs';
+import { uploadAudioToSanity } from '@/lib/services/sanity-upload';
 import { getBRollForScenes } from '@/lib/services/pexels';
-import { renderBothFormats } from '@/lib/services/remotion';
+import { startBothRenders } from '@/lib/services/remotion';
 
 // --- Types (matching @content's automatedVideo schema) ---
 
@@ -87,10 +87,10 @@ async function updateStatus(
  * 1. Fetch document from Sanity
  * 2. Validate script structure
  * 3. Generate TTS audio (ElevenLabs)
- * 4. Upload audio to GCS
+ * 4. Upload audio to Sanity
  * 5. Fetch B-roll clips (Pexels)
  * 6. Render both video formats (Remotion Lambda)
- * 7. Upload videos to GCS
+ * 7. Upload videos to Sanity
  * 8. Update Sanity with video URLs and status
  *
  * On failure: sets status to "flagged" with flaggedReason.
@@ -138,14 +138,20 @@ export async function processVideoProduction(documentId: string): Promise<void> 
     });
     console.log(`[VIDEO-PIPELINE] TTS audio generated: ${audioBuffer.length} bytes`);
 
-    // Step 5: Upload audio to GCS
-    console.log(`[VIDEO-PIPELINE] Uploading audio to GCS...`);
-    const audioResult = await uploadAudio(audioBuffer, documentId);
+    // Step 5: Upload audio to Sanity
+    console.log(`[VIDEO-PIPELINE] Uploading audio to Sanity...`);
+    const audioResult = await uploadAudioToSanity(audioBuffer, `${documentId}.mp3`);
     const audioUrl = audioResult.url;
     console.log(`[VIDEO-PIPELINE] Audio uploaded: ${audioUrl} (${audioResult.size} bytes)`);
 
-    // Step 6: Update Sanity doc with audioUrl
-    await updateStatus(client, documentId, { audioUrl });
+    // Step 6: Update Sanity doc with audioUrl and file reference
+    await updateStatus(client, documentId, {
+      audioUrl,
+      audioFile: {
+        _type: 'file',
+        asset: { _type: 'reference', _ref: audioResult.assetId },
+      },
+    });
 
     // Step 7: Fetch B-roll for scenes
     console.log(`[VIDEO-PIPELINE] Fetching B-roll for ${script.scenes.length} scenes...`);
@@ -184,9 +190,9 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       }
     }
 
-    // Step 10: Trigger Remotion render for both formats
-    console.log(`[VIDEO-PIPELINE] Starting Remotion render (main + short)...`);
-    const renderResults = await renderBothFormats({
+    // Step 10: Start Remotion renders for both formats (no polling — returns immediately)
+    console.log(`[VIDEO-PIPELINE] Starting Remotion renders (main + short)...`);
+    const renderResults = await startBothRenders({
       audioUrl,
       script: {
         hook: script.hook,
@@ -198,46 +204,23 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       audioDurationSeconds,
     });
     console.log(
-      `[VIDEO-PIPELINE] Render complete — main: ${renderResults.main.fileSizeBytes} bytes, short: ${renderResults.short.fileSizeBytes} bytes`
+      `[VIDEO-PIPELINE] Renders started — mainRenderId: ${renderResults.mainRenderId}, shortRenderId: ${renderResults.shortRenderId}`
     );
 
-    // Step 11: Download rendered videos and upload to GCS
-    console.log(`[VIDEO-PIPELINE] Downloading and re-uploading rendered videos to GCS...`);
-    const [mainVideoResponse, shortVideoResponse] = await Promise.all([
-      fetch(renderResults.main.videoUrl),
-      fetch(renderResults.short.videoUrl),
-    ]);
-
-    if (!mainVideoResponse.ok) {
-      throw new Error(`Failed to download main video: ${mainVideoResponse.status}`);
-    }
-    if (!shortVideoResponse.ok) {
-      throw new Error(`Failed to download short video: ${shortVideoResponse.status}`);
-    }
-
-    const [mainVideoBuffer, shortVideoBuffer] = await Promise.all([
-      Buffer.from(await mainVideoResponse.arrayBuffer()),
-      Buffer.from(await shortVideoResponse.arrayBuffer()),
-    ]);
-
-    const [mainUploadResult, shortUploadResult] = await Promise.all([
-      uploadVideo(mainVideoBuffer, documentId, 'main'),
-      uploadVideo(shortVideoBuffer, documentId, 'short'),
-    ]);
-
-    console.log(
-      `[VIDEO-PIPELINE] Videos uploaded — main: ${mainUploadResult.url}, short: ${shortUploadResult.url}`
-    );
-
-    // Step 12: Update status to video_gen with video URLs
-    console.log(`[VIDEO-PIPELINE] Updating status to "video_gen" with video URLs`);
+    // Step 11: Store render IDs and set status to "rendering"
+    // The check-renders cron will poll for completion, download, upload, and set video_gen.
+    console.log(`[VIDEO-PIPELINE] Storing render IDs and setting status to "rendering"`);
     await updateStatus(client, documentId, {
-      status: 'video_gen',
-      videoUrl: mainUploadResult.url,
-      shortUrl: shortUploadResult.url,
+      status: 'rendering',
+      renderData: {
+        mainRenderId: renderResults.mainRenderId,
+        shortRenderId: renderResults.shortRenderId,
+        bucketName: renderResults.bucketName,
+        startedAt: new Date().toISOString(),
+      },
     });
 
-    console.log(`[VIDEO-PIPELINE] ✅ Pipeline complete for document: ${documentId}`);
+    console.log(`[VIDEO-PIPELINE] ✅ Pipeline phase 1 complete for document: ${documentId} (renders started, awaiting cron pickup)`);
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : String(error);
