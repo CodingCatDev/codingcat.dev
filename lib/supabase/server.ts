@@ -4,18 +4,16 @@ import { cookies } from "next/headers";
 /**
  * Creates a Supabase client for use in Server Components, Route Handlers,
  * and Server Actions.
- *
- * Usage:
- *   import { createClient } from "@/lib/supabase/server";
- *   const supabase = await createClient();
  */
 export async function createClient() {
-	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-	const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+	const supabaseUrl =
+		process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+	const supabaseAnonKey =
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
 	if (!supabaseUrl || !supabaseAnonKey) {
 		throw new Error(
-			"Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables",
+			"Missing Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL)",
 		);
 	}
 
@@ -32,9 +30,8 @@ export async function createClient() {
 						cookieStore.set(name, value, options);
 					}
 				} catch {
-					// The `setAll` method was called from a Server Component.
-					// This can be ignored if you have middleware refreshing
-					// user sessions.
+					// The setAll method was called from a Server Component.
+					// This can be ignored if you have proxy refreshing user sessions.
 				}
 			},
 		},
@@ -44,22 +41,18 @@ export async function createClient() {
 /**
  * Creates a Supabase admin client using the service role key.
  * WARNING: This bypasses Row Level Security — use only in trusted server contexts.
- *
- * Usage:
- *   import { createAdminClient } from "@/lib/supabase/server";
- *   const supabase = createAdminClient();
  */
 export function createAdminClient() {
-	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+	const supabaseUrl =
+		process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 	const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 	if (!supabaseUrl || !supabaseServiceRoleKey) {
 		throw new Error(
-			"Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables",
+			"Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables",
 		);
 	}
 
-	// Import directly to avoid cookie overhead for admin operations
 	const { createClient } = require("@supabase/supabase-js");
 	return createClient(supabaseUrl, supabaseServiceRoleKey, {
 		auth: {

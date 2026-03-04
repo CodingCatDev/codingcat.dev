@@ -4,10 +4,14 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function proxy(request: NextRequest) {
 	let supabaseResponse = NextResponse.next({ request });
 
-	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-	const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+	// Support both NEXT_PUBLIC_ and non-prefixed env var names
+	const supabaseUrl =
+		process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+	const supabaseAnonKey =
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
 	if (!supabaseUrl || !supabaseAnonKey) {
+		// No Supabase configured — allow access without auth
 		return supabaseResponse;
 	}
 
@@ -34,10 +38,12 @@ export async function proxy(request: NextRequest) {
 
 	const { pathname } = request.nextUrl;
 
+	// Allow login and auth callback pages without auth
 	if (
 		pathname === "/dashboard/login" ||
 		pathname.startsWith("/dashboard/auth/")
 	) {
+		// If already logged in, redirect to dashboard
 		if (user) {
 			const url = request.nextUrl.clone();
 			url.pathname = "/dashboard";
@@ -46,6 +52,7 @@ export async function proxy(request: NextRequest) {
 		return supabaseResponse;
 	}
 
+	// Protect all other /dashboard routes
 	if (pathname.startsWith("/dashboard") && !user) {
 		const url = request.nextUrl.clone();
 		url.pathname = "/dashboard/login";
@@ -56,5 +63,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+	// ONLY match dashboard routes — never touch the main site
 	matcher: ["/dashboard/:path*"],
 };
