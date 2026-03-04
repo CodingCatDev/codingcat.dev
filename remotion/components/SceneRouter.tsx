@@ -1,9 +1,9 @@
 import React from "react";
 import type { SceneData } from "../types";
 import { Scene } from "./Scene";
-// Future imports (uncomment as components are built):
-// import { CodeMorphScene } from "./CodeMorphScene";
-// import { DynamicListScene } from "./DynamicListScene";
+// Scene component imports (uncomment as components are built):
+import { CodeMorphScene } from "./CodeMorphScene";
+import { DynamicListScene } from "./DynamicListScene";
 // import { ComparisonGridScene } from "./ComparisonGridScene";
 // import { IsometricMockupScene } from "./IsometricMockupScene";
 
@@ -35,15 +35,13 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
   switch (scene.sceneType) {
     case "code":
       if (scene.code) {
-        // TODO: Replace with CodeMorphScene when built
-        // return <CodeMorphScene {...baseProps} code={scene.code} />;
+        return <CodeMorphScene {...baseProps} code={scene.code} />;
       }
       break;
 
     case "list":
       if (scene.list) {
-        // TODO: Replace with DynamicListScene when built
-        // return <DynamicListScene {...baseProps} items={scene.list.items} icon={scene.list.icon} />;
+        return <DynamicListScene {...baseProps} items={scene.list.items} icon={scene.list.icon} />;
       }
       break;
 
