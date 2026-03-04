@@ -123,6 +123,8 @@ export class NotebookLMClient {
       this.auth.sessionId
     );
 
+    console.log(`[NotebookLM] RPC ${methodId} URL: ${url}`);
+    console.log(`[NotebookLM] RPC ${methodId} body length: ${body.length}`);
     const response = await fetchWithTimeout(
       url,
       {
@@ -132,6 +134,7 @@ export class NotebookLMClient {
           Cookie: this.auth.cookieHeader,
         },
         body,
+        cache: 'no-store' as RequestCache,
       },
       timeoutMs ?? DEFAULT_FETCH_TIMEOUT_MS
     );
