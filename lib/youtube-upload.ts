@@ -10,6 +10,14 @@ oauth2Client.setCredentials({
 
 const youtube = google.youtube({ version: "v3", auth: oauth2Client });
 
+function getDefaultPrivacyStatus(): "public" | "private" | "unlisted" {
+	const envValue = process.env.YOUTUBE_UPLOAD_VISIBILITY?.toLowerCase();
+	if (envValue === "public" || envValue === "private" || envValue === "unlisted") {
+		return envValue;
+	}
+	return "private"; // Default to private when not set
+}
+
 interface UploadOptions {
 	title: string;
 	description: string;
@@ -27,6 +35,9 @@ export async function uploadVideo(opts: UploadOptions): Promise<{ videoId: strin
 	const response = await fetch(opts.videoUrl);
 	if (!response.ok) throw new Error(`Failed to fetch video: ${response.statusText}`);
 
+	const resolvedPrivacyStatus = opts.privacyStatus || getDefaultPrivacyStatus();
+	console.log(`[youtube-upload] Uploading "${opts.title.slice(0, 60)}" with privacy: ${resolvedPrivacyStatus}`);
+
 	const res = await youtube.videos.insert({
 		part: ["snippet", "status"],
 		requestBody: {
@@ -38,7 +49,7 @@ export async function uploadVideo(opts: UploadOptions): Promise<{ videoId: strin
 				defaultLanguage: "en",
 			},
 			status: {
-				privacyStatus: opts.privacyStatus || "public",
+				privacyStatus: resolvedPrivacyStatus,
 				selfDeclaredMadeForKids: opts.madeForKids ?? false,
 			},
 		},
