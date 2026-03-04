@@ -383,10 +383,16 @@ export async function GET(request: NextRequest) {
 	try {
 		// Step 1: Discover trending topics (replaces fetchTrendingTopics)
 		console.log("[CRON/ingest] Discovering trending topics...");
-		let trends = await discoverTrends({ lookbackDays: 7, maxTopics: 10 });
-		console.log(`[CRON/ingest] Found ${trends.length} trending topics`);
+		let trends: TrendResult[];
+		try {
+			trends = await discoverTrends({ lookbackDays: 7, maxTopics: 10 });
+			console.log(`[CRON/ingest] Found ${trends.length} trending topics`);
+		} catch (err) {
+			console.warn("[CRON/ingest] Trend discovery failed, using fallback topics:", err);
+			trends = [];
+		}
 
-		// Fall back to hardcoded topics if discovery returns empty
+		// Fall back to hardcoded topics if discovery returns empty or failed
 		if (trends.length === 0) {
 			console.warn("[CRON/ingest] No trends discovered, using fallback topics");
 			trends = FALLBACK_TRENDS;
