@@ -34,6 +34,7 @@ import { toPlainText } from "next-sanity";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { DisableDraftMode } from "@/components/disable-draft-mode";
 import { ModeToggle } from "@/components/mode-toggle";
+import { SiteAnalytics } from "@/components/analytics";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -156,6 +157,7 @@ export default async function RootLayout({
 						</ThemeProvider>
 					</PlayerProvider>
 				</CookiesProviderClient>
+				<SiteAnalytics />
 			</body>
 		</html>
 	);
