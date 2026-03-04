@@ -11,7 +11,12 @@ export async function proxy(request: NextRequest) {
 		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
 	if (!supabaseUrl || !supabaseAnonKey) {
-		// No Supabase configured — allow access without auth
+		// Auth not configured — block access to dashboard
+		const url = request.nextUrl.clone();
+		url.pathname = "/dashboard/login";
+		if (request.nextUrl.pathname !== "/dashboard/login") {
+			return NextResponse.redirect(url);
+		}
 		return supabaseResponse;
 	}
 
