@@ -427,6 +427,28 @@ function parseFeedItems(xml: string): FeedItem[] {
 // Source 1: Hacker News
 // ---------------------------------------------------------------------------
 
+/** YouTube Data API v3 search response shape. */
+interface YouTubeSearchItem {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    publishedAt: string;
+    channelTitle: string;
+  };
+}
+
+interface YouTubeSearchResponse {
+  items?: YouTubeSearchItem[];
+}
+
+/** YouTube Data API v3 video statistics response shape. */
+interface YouTubeVideoStats {
+  items?: Array<{
+    id: string;
+    statistics: { viewCount?: string };
+  }>;
+}
+
 interface HNItem {
   id: number;
   title?: string;
@@ -654,7 +676,8 @@ async function fetchYouTube(
       Date.now() - lookbackDays * 86400 * 1000,
     ).toISOString();
 
-    const queries = ["web development 2025", "nextjs react tutorial", "AI coding tools"];
+    const currentYear = new Date().getFullYear();
+    const queries = [`web development ${currentYear}`, "nextjs react tutorial", "AI coding tools"];
     const results = await Promise.allSettled(
       queries.map(async (q) => {
         const params = new URLSearchParams({
@@ -673,15 +696,8 @@ async function fetchYouTube(
           console.warn(`${LOG_PREFIX} YouTube search failed: ${res.status}`);
           return [];
         }
-        const data = await res.json();
-        return (data.items ?? []) as Array<{
-          id: { videoId: string };
-          snippet: {
-            title: string;
-            publishedAt: string;
-            channelTitle: string;
-          };
-        }>;
+        const data: YouTubeSearchResponse = await res.json();
+        return (data.items ?? []);
       }),
     );
 

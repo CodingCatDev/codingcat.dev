@@ -167,11 +167,11 @@ async function runNotebookLM(
   }
 }
 
-/** Parse JSON from CLI stdout, with a fallback for non-JSON output. */
-function parseJsonOutput<T = unknown>(stdout: string): T {
+/** Parse JSON from CLI stdout, with a fallback for non-JSON output. Returns null for empty input. */
+function parseJsonOutput<T = unknown>(stdout: string): T | null {
   const trimmed = stdout.trim();
   if (!trimmed) {
-    return {} as T;
+    return null;
   }
   try {
     return JSON.parse(trimmed) as T;
@@ -530,7 +530,7 @@ export async function conductResearch(
   const createResult = parseJsonOutput<{ id?: string; notebook_id?: string }>(
     createOutput
   );
-  const notebookId = createResult.id || createResult.notebook_id || "";
+  const notebookId = createResult?.id || createResult?.notebook_id || "";
 
   if (!notebookId) {
     throw new Error(
@@ -625,7 +625,7 @@ export async function conductResearch(
 
   // Parse artifact results
   const mindMap = mindMapResult
-    ? (parseJsonOutput<{ content?: string }>(mindMapResult).content ??
+    ? (parseJsonOutput<{ content?: string }>(mindMapResult)?.content ??
         mindMapResult.trim())
     : undefined;
 
@@ -635,7 +635,7 @@ export async function conductResearch(
   const briefing = briefingParsed?.content ?? briefingResult?.trim() ?? "";
 
   const dataTable = dataTableResult
-    ? (parseJsonOutput<{ content?: string }>(dataTableResult).content ??
+    ? (parseJsonOutput<{ content?: string }>(dataTableResult)?.content ??
         dataTableResult.trim())
     : undefined;
 
@@ -665,7 +665,7 @@ export async function conductResearch(
         text?: string;
       }>(result);
       answers[key] =
-        parsed.answer || parsed.response || parsed.text || result.trim();
+        parsed?.answer || parsed?.response || parsed?.text || result.trim();
     }
   }
 
