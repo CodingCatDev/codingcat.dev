@@ -1,6 +1,8 @@
 import "../globals.css";
 
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { metadata as studioMetadata, viewport } from "next-sanity/studio";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -8,7 +10,15 @@ const inter = Inter({
 	display: "swap",
 });
 
-export { metadata, viewport } from "next-sanity/studio";
+export { viewport };
+
+export const metadata: Metadata = {
+	...studioMetadata,
+	icons: {
+		icon: "/sanity-icons/icon.ico",
+		apple: "/sanity-icons/apple-icon.png",
+	},
+};
 
 export default function RootLayout({
 	children,
