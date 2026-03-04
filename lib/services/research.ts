@@ -11,6 +11,7 @@
  */
 
 import { NotebookLMClient } from './notebooklm/client';
+import { sleep } from './notebooklm/rpc';
 
 // ---------------------------------------------------------------------------
 // Types (kept identical for backward compatibility with ingest route)
@@ -32,7 +33,7 @@ export interface ResearchPayload {
   prosCons?: Record<string, string[]>;
   commonMistakes?: string[];
   sceneHints: SceneHint[];
-  infographicPath?: string; // URL to infographic (renamed semantically but kept for compat)
+  infographicUrl?: string;
 }
 
 export interface ResearchSource {
@@ -233,12 +234,6 @@ async function safeStep<T>(
 
 // ---------------------------------------------------------------------------
 // Sleep helper
-// ---------------------------------------------------------------------------
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 // ---------------------------------------------------------------------------
 // Main pipeline
 // ---------------------------------------------------------------------------
@@ -465,7 +460,7 @@ export async function conductResearch(
     talkingPoints,
     codeExamples,
     sceneHints,
-    infographicPath: infographicUrl ?? undefined,
+    infographicUrl: infographicUrl ?? undefined,
   };
 
   console.log(

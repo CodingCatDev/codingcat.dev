@@ -26,6 +26,8 @@ import {
   buildRpcUrl,
   decodeResponse,
   NotebookLMRPCError,
+  fetchWithTimeout,
+  sleep,
 } from './rpc';
 import { initAuth } from './auth';
 
@@ -47,40 +49,11 @@ const DEFAULT_SOURCE_PATH = '/';
 // ---------------------------------------------------------------------------
 
 /**
- * Fetch with AbortController timeout.
- */
-async function fetchWithTimeout(
-  url: string,
-  init: RequestInit,
-  timeoutMs: number
-): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch(url, {
-      ...init,
-      signal: controller.signal,
-    });
-    return response;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/**
  * Check if a URL is a YouTube URL.
  */
 function isYouTubeUrl(url: string): boolean {
   const lower = url.toLowerCase();
   return lower.includes('youtube.com') || lower.includes('youtu.be');
-}
-
-/**
- * Sleep for a given number of milliseconds.
- */
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**

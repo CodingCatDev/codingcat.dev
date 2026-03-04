@@ -9,6 +9,7 @@
  */
 
 import type { AuthTokens, NotebookLMCookie } from './types';
+import { fetchWithTimeout } from './rpc';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -105,28 +106,6 @@ function buildCookieHeader(cookies: Record<string, string>): string {
   return Object.entries(cookies)
     .map(([name, value]) => `${name}=${value}`)
     .join('; ');
-}
-
-/**
- * Fetch with an AbortController timeout.
- */
-async function fetchWithTimeout(
-  url: string,
-  init: RequestInit,
-  timeoutMs: number
-): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch(url, {
-      ...init,
-      signal: controller.signal,
-    });
-    return response;
-  } finally {
-    clearTimeout(timer);
-  }
 }
 
 // ---------------------------------------------------------------------------
