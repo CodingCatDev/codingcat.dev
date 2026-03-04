@@ -309,9 +309,27 @@ function findCloudinaryRefs(obj, currentPath = '') {
         url: resolvedUrl,
         publicId: publicId,
         resourceType: obj.resource_type || 'image',
+        format: obj.format || null,
       });
     }
     return results; // Don't recurse into cloudinary.asset children
+  }
+
+  // Check for raw Cloudinary objects (old format without _type)
+  if (typeof obj === 'object' && !Array.isArray(obj) && obj.public_id && (obj.secure_url || obj.url) && !obj._type) {
+    const url = obj.secure_url || obj.url || null;
+    const publicId = obj.public_id;
+    if (url) {
+      results.push({
+        path: currentPath,
+        type: 'raw-cloudinary-object',
+        url: url,
+        publicId: publicId,
+        resourceType: obj.resource_type || 'image',
+        format: obj.format || null,
+      });
+    }
+    return results; // Don't recurse into raw Cloudinary object children (derived[], etc.)
   }
 
   if (typeof obj === 'string') {
@@ -426,6 +444,7 @@ async function phase1_discoverReferences(sanityClient) {
   log(1, `Found ${docsWithRefs.length} documents with Cloudinary references`);
 
   let cloudinaryAssetCount = 0;
+  let rawCloudinaryCount = 0;
   let urlCount = 0;
   let embeddedCount = 0;
 
@@ -434,12 +453,13 @@ async function phase1_discoverReferences(sanityClient) {
     for (const r of d.refs) {
       log(1, `    ${r.path} [${r.type}] → ${r.url || r.publicId || '(no url)'}`);
       if (r.type === 'cloudinary.asset') cloudinaryAssetCount++;
+      else if (r.type === 'raw-cloudinary-object') rawCloudinaryCount++;
       else if (r.type === 'url') urlCount++;
       else if (r.type === 'embedded') embeddedCount++;
     }
   }
 
-  log(1, `\n  Breakdown: ${cloudinaryAssetCount} cloudinary.asset objects, ${urlCount} URL fields, ${embeddedCount} embedded URLs`);
+  log(1, `\n  Breakdown: ${cloudinaryAssetCount} cloudinary.asset objects, ${rawCloudinaryCount} raw Cloudinary objects, ${urlCount} URL fields, ${embeddedCount} embedded URLs`);
 
   // Save to disk for resume
   if (!DRY_RUN) {
@@ -448,6 +468,26 @@ async function phase1_discoverReferences(sanityClient) {
   }
 
   return docsWithRefs;
+}
+
+// ─── Utility: strip Cloudinary transformations from URL ──────────────────────
+function stripTransformations(url) {
+  // Cloudinary URL format: .../upload/[transformations/]v{version}/{public_id}.{ext}
+  // Strip everything between /upload/ and /v{version}/
+  return url.replace(
+    /(\/upload\/)((?:[a-z_][a-z0-9_,:]+(?:\/|$))*)(v\d+\/)/i,
+    '$1$3'
+  );
+}
+
+// ─── Utility: get canonical original URL for a Cloudinary reference ──────────
+function getOriginalUrl(ref) {
+  if (ref.publicId && ref.resourceType) {
+    const ext = ref.format || (ref.resourceType === 'video' ? 'mp4' : 'png');
+    return `https://media.codingcat.dev/${ref.resourceType}/upload/${ref.publicId}.${ext}`;
+  }
+  // Fallback: strip transformations from the URL
+  return stripTransformations(ref.url);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -469,20 +509,22 @@ async function phase2_extractUniqueUrls(docsWithRefs) {
 
   for (const doc of docsWithRefs) {
     for (const ref of doc.refs) {
-      const url = ref.url;
-      if (!url) continue;
+      if (!ref.url) continue;
 
-      if (urlMap.has(url)) {
+      // Get the canonical original URL (strips transformations, uses CNAME)
+      const originalUrl = getOriginalUrl(ref);
+
+      if (urlMap.has(originalUrl)) {
         // Add this doc as another source
-        const entry = urlMap.get(url);
+        const entry = urlMap.get(originalUrl);
         if (!entry.sourceDocIds.includes(doc._id)) {
           entry.sourceDocIds.push(doc._id);
         }
       } else {
-        urlMap.set(url, {
-          cloudinaryUrl: url,
-          cloudinaryPublicId: ref.publicId || extractPublicIdFromUrl(url),
-          resourceType: ref.resourceType || guessResourceType(url),
+        urlMap.set(originalUrl, {
+          cloudinaryUrl: originalUrl,
+          cloudinaryPublicId: ref.publicId || extractPublicIdFromUrl(originalUrl),
+          resourceType: ref.resourceType || guessResourceType(originalUrl),
           sourceDocIds: [doc._id],
         });
       }
@@ -634,10 +676,23 @@ async function phase3_downloadAndUpload(uniqueUrls) {
 /**
  * Given a Cloudinary URL, find the matching Sanity asset in the mapping.
  */
-function findMappingForUrl(url, mapping) {
+function findMappingForUrl(url, mapping, refPublicId) {
   // Try exact URL match first
   let entry = mapping.find((m) => m.cloudinaryUrl === url);
   if (entry) return entry;
+
+  // Try matching by the ref's own publicId (from the Cloudinary object)
+  if (refPublicId) {
+    entry = mapping.find((m) => m.cloudinaryPublicId === refPublicId);
+    if (entry) return entry;
+  }
+
+  // Try matching by stripped/canonical URL
+  const strippedUrl = stripTransformations(url);
+  if (strippedUrl !== url) {
+    entry = mapping.find((m) => m.cloudinaryUrl === strippedUrl);
+    if (entry) return entry;
+  }
 
   // Try matching by public_id extracted from the URL
   const publicId = extractPublicIdFromUrl(url);
@@ -694,7 +749,7 @@ async function phase4_updateReferences(sanityClient, docsWithRefs, mapping) {
         continue;
       }
 
-      const mappingEntry = findMappingForUrl(refUrl, mapping);
+      const mappingEntry = findMappingForUrl(refUrl, mapping, ref.publicId);
 
       if (!mappingEntry) {
         log(4, `  ⚠ No mapping found for URL: ${refUrl} (in ${docId} at ${fieldPath})`);
@@ -705,8 +760,8 @@ async function phase4_updateReferences(sanityClient, docsWithRefs, mapping) {
       const sanityId = mappingEntry.sanityAssetId;
       const cdnUrl = mappingEntry.sanityUrl || sanityAssetUrl(sanityId);
 
-      if (refType === 'cloudinary.asset') {
-        // ── Replace entire cloudinary.asset object with Sanity image/file reference ──
+      if (refType === 'cloudinary.asset' || refType === 'raw-cloudinary-object') {
+        // ── Replace entire cloudinary.asset or raw Cloudinary object with Sanity image/file reference ──
         const isImage = (ref.resourceType || 'image') === 'image';
         const refObj = isImage
           ? {
@@ -830,6 +885,10 @@ async function phase5_report(docsWithRefs, uniqueUrls, mapping, changes) {
     (sum, d) => sum + d.refs.filter((r) => r.type === 'cloudinary.asset').length,
     0
   );
+  const rawCloudinaryRefs = docsWithRefs.reduce(
+    (sum, d) => sum + d.refs.filter((r) => r.type === 'raw-cloudinary-object').length,
+    0
+  );
   const urlRefs = docsWithRefs.reduce(
     (sum, d) => sum + d.refs.filter((r) => r.type === 'url').length,
     0
@@ -846,6 +905,7 @@ async function phase5_report(docsWithRefs, uniqueUrls, mapping, changes) {
       totalDocumentsWithRefs: docsWithRefs.length,
       totalReferencesFound: totalRefs,
       cloudinaryAssetObjects: cloudinaryAssetRefs,
+      rawCloudinaryObjects: rawCloudinaryRefs,
       urlStringRefs: urlRefs,
       embeddedUrlRefs: embeddedRefs,
       uniqueCloudinaryUrls: uniqueUrls.length,
@@ -864,6 +924,7 @@ async function phase5_report(docsWithRefs, uniqueUrls, mapping, changes) {
   console.log(`  Documents with refs:        ${report.summary.totalDocumentsWithRefs}`);
   console.log(`  Total references found:     ${report.summary.totalReferencesFound}`);
   console.log(`    cloudinary.asset objects:  ${report.summary.cloudinaryAssetObjects}`);
+  console.log(`    raw Cloudinary objects:    ${report.summary.rawCloudinaryObjects}`);
   console.log(`    URL string fields:        ${report.summary.urlStringRefs}`);
   console.log(`    Embedded URLs in text:    ${report.summary.embeddedUrlRefs}`);
   console.log(`  Unique Cloudinary URLs:     ${report.summary.uniqueCloudinaryUrls}`);

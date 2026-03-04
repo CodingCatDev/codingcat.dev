@@ -63,8 +63,7 @@ export async function GET() {
 			updated: new Date(),
 			generator: "Next.js using Feed for Node.js",
 			feedLinks: {
-				json: `${process.env.NEXT_PUBLIC_BASE_URL}/api/podcast-feed`,
-				atom: `${process.env.NEXT_PUBLIC_BASE_URL}/api/podcast-feed?format=atom`,
+				rss2: `${process.env.NEXT_PUBLIC_BASE_URL || "https://codingcat.dev"}/api/youtube/rss.xml`,
 			},
 		});
 
@@ -93,7 +92,7 @@ export async function GET() {
 
 		return new Response(feed.rss2(), {
 			headers: {
-				"content-type": "text/xml",
+				"content-type": "application/rss+xml; charset=utf-8",
 				"cache-control": "max-age=0, s-maxage=3600",
 			},
 		});
