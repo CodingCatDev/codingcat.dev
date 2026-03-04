@@ -13,6 +13,7 @@ import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/live";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { cn } from "@/lib/utils";
+import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -56,8 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	const title = settings?.title || demo.title;
 	const description = settings?.description || demo.description;
 
-	// const ogImage = resolveOpenGraphImage(settings?.ogImage);
-	const ogImage = settings?.ogImage?.secure_url;
+	const ogImage = resolveOpenGraphImage(settings?.ogImage);
 	return {
 		title: {
 			template: `%s | ${title}`,
