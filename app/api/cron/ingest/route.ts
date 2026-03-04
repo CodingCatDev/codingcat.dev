@@ -4,15 +4,12 @@ import type { NextRequest } from "next/server";
 
 import { generateWithGemini, stripCodeFences } from "@/lib/gemini";
 import { writeClient } from "@/lib/sanity-write-client";
+import { discoverTrends, type TrendResult } from "@/lib/services/trend-discovery";
+import { conductResearch, type ResearchPayload } from "@/lib/services/research";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-interface RSSItem {
-	title: string;
-	url: string;
-}
 
 interface ScriptScene {
 	sceneNumber: number;
@@ -62,106 +59,51 @@ interface CriticResult {
 }
 
 // ---------------------------------------------------------------------------
-// RSS Feed Helpers
+// Fallback topics (used when discoverTrends returns empty)
 // ---------------------------------------------------------------------------
 
-const RSS_FEEDS = [
-	"https://hnrss.org/newest?q=javascript+OR+react+OR+nextjs+OR+typescript&points=50",
-	"https://dev.to/feed/tag/webdev",
+const FALLBACK_TRENDS: TrendResult[] = [
+	{
+		topic: "React Server Components: The Future of Web Development",
+		slug: "react-server-components",
+		score: 80,
+		signals: [{ source: "blog", title: "React Server Components", url: "https://react.dev/blog", score: 80 }],
+		whyTrending: "Major shift in React architecture",
+		suggestedAngle: "Explain what RSC changes for everyday React developers",
+	},
+	{
+		topic: "TypeScript 5.x: New Features Every Developer Should Know",
+		slug: "typescript-5x-features",
+		score: 75,
+		signals: [{ source: "blog", title: "TypeScript 5.x", url: "https://devblogs.microsoft.com/typescript/", score: 75 }],
+		whyTrending: "New TypeScript release with major DX improvements",
+		suggestedAngle: "Walk through the top 5 new features with code examples",
+	},
+	{
+		topic: "Next.js App Router Best Practices for 2025",
+		slug: "nextjs-app-router-2025",
+		score: 70,
+		signals: [{ source: "blog", title: "Next.js App Router", url: "https://nextjs.org/blog", score: 70 }],
+		whyTrending: "App Router adoption is accelerating",
+		suggestedAngle: "Common pitfalls and how to avoid them",
+	},
+	{
+		topic: "The State of CSS in 2025: Container Queries, Layers, and More",
+		slug: "css-2025-state",
+		score: 65,
+		signals: [{ source: "blog", title: "CSS 2025", url: "https://web.dev/blog", score: 65 }],
+		whyTrending: "CSS has gained powerful new features",
+		suggestedAngle: "Demo the top 3 CSS features you should be using today",
+	},
+	{
+		topic: "WebAssembly is Changing How We Build Web Apps",
+		slug: "webassembly-web-apps",
+		score: 60,
+		signals: [{ source: "blog", title: "WebAssembly", url: "https://webassembly.org/", score: 60 }],
+		whyTrending: "WASM adoption growing in production apps",
+		suggestedAngle: "Real-world use cases where WASM outperforms JS",
+	},
 ];
-
-const FALLBACK_TOPICS: RSSItem[] = [
-	{
-		title: "React Server Components: The Future of Web Development",
-		url: "https://react.dev/blog",
-	},
-	{
-		title: "TypeScript 5.x: New Features Every Developer Should Know",
-		url: "https://devblogs.microsoft.com/typescript/",
-	},
-	{
-		title: "Next.js App Router Best Practices for 2025",
-		url: "https://nextjs.org/blog",
-	},
-	{
-		title: "The State of CSS in 2025: Container Queries, Layers, and More",
-		url: "https://web.dev/blog",
-	},
-	{
-		title: "WebAssembly is Changing How We Build Web Apps",
-		url: "https://webassembly.org/",
-	},
-];
-
-function extractRSSItems(xml: string): RSSItem[] {
-	const items: RSSItem[] = [];
-	const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
-	let itemMatch: RegExpExecArray | null;
-
-	while ((itemMatch = itemRegex.exec(xml)) !== null) {
-		const block = itemMatch[1];
-
-		const titleMatch = block.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
-		const titleAlt = block.match(/<title>(.*?)<\/title>/);
-		const title = titleMatch?.[1] ?? titleAlt?.[1] ?? "";
-
-		const linkMatch = block.match(/<link>(.*?)<\/link>/);
-		const url = linkMatch?.[1] ?? "";
-
-		if (title && url) {
-			items.push({ title: title.trim(), url: url.trim() });
-		}
-	}
-
-	return items;
-}
-
-async function fetchTrendingTopics(): Promise<RSSItem[]> {
-	const allItems: RSSItem[] = [];
-
-	const results = await Promise.allSettled(
-		RSS_FEEDS.map(async (feedUrl) => {
-			const controller = new AbortController();
-			const timeout = setTimeout(() => controller.abort(), 10_000);
-			try {
-				const res = await fetch(feedUrl, { signal: controller.signal });
-				if (!res.ok) {
-					console.warn(
-						`[CRON/ingest] RSS fetch failed for ${feedUrl}: ${res.status}`,
-					);
-					return [];
-				}
-				const xml = await res.text();
-				return extractRSSItems(xml);
-			} finally {
-				clearTimeout(timeout);
-			}
-		}),
-	);
-
-	for (const result of results) {
-		if (result.status === "fulfilled") {
-			allItems.push(...result.value);
-		} else {
-			console.warn("[CRON/ingest] RSS feed error:", result.reason);
-		}
-	}
-
-	const seen = new Set<string>();
-	const unique = allItems.filter((item) => {
-		const key = item.title.toLowerCase();
-		if (seen.has(key)) return false;
-		seen.add(key);
-		return true;
-	});
-
-	if (unique.length === 0) {
-		console.warn("[CRON/ingest] No RSS items fetched, using fallback topics");
-		return FALLBACK_TOPICS;
-	}
-
-	return unique.slice(0, 10);
-}
 
 // ---------------------------------------------------------------------------
 // Gemini Script Generation
@@ -170,14 +112,54 @@ async function fetchTrendingTopics(): Promise<RSSItem[]> {
 const SYSTEM_INSTRUCTION =
 	"You are a content strategist for CodingCat.dev, a web development education channel. You create engaging, Cleo Abram-style explainer video scripts that are educational, energetic, and concise (60-90 seconds).";
 
-function buildPrompt(topics: RSSItem[]): string {
-	const topicList = topics
-		.map((t, i) => `${i + 1}. "${t.title}" — ${t.url}`)
+function buildPrompt(trends: TrendResult[], research?: ResearchPayload): string {
+	const topicList = trends
+		.map((t, i) => `${i + 1}. "${t.topic}" (score: ${t.score}) — ${t.whyTrending}\n   Sources: ${t.signals.map(s => s.url).join(", ")}`)
 		.join("\n");
+
+	// If we have research data, include it as enrichment
+	let researchContext = "";
+	if (research) {
+		researchContext = `\n\n## Research Data (use this to create an informed, accurate script)\n\n`;
+		researchContext += `### Briefing\n${research.briefing}\n\n`;
+
+		if (research.talkingPoints.length > 0) {
+			researchContext += `### Key Talking Points\n${research.talkingPoints.map((tp, i) => `${i + 1}. ${tp}`).join("\n")}\n\n`;
+		}
+
+		if (research.codeExamples.length > 0) {
+			researchContext += `### Code Examples (use these in "code" scenes)\n`;
+			for (const ex of research.codeExamples.slice(0, 5)) {
+				researchContext += `\`\`\`${ex.language}\n${ex.snippet}\n\`\`\`\nContext: ${ex.context}\n\n`;
+			}
+		}
+
+		if (research.comparisonData && research.comparisonData.length > 0) {
+			researchContext += `### Comparison Data (use in "comparison" scenes)\n`;
+			for (const comp of research.comparisonData) {
+				researchContext += `${comp.leftLabel} vs ${comp.rightLabel}:\n`;
+				for (const row of comp.rows) {
+					researchContext += `  - ${row.left} | ${row.right}\n`;
+				}
+				researchContext += "\n";
+			}
+		}
+
+		if (research.sceneHints.length > 0) {
+			researchContext += `### Scene Type Suggestions\n`;
+			for (const hint of research.sceneHints) {
+				researchContext += `- ${hint.suggestedSceneType}: ${hint.reason}\n`;
+			}
+		}
+
+		if (research.infographicPath) {
+			researchContext += `\n### Infographic Available\nAn infographic has been generated for this topic. Use sceneType "narration" with bRollUrl pointing to the infographic for at least one scene.\n`;
+		}
+	}
 
 	return `Here are today's trending web development topics:
 
-${topicList}
+${topicList}${researchContext}
 
 Pick the MOST interesting and timely topic for a short explainer video (60-90 seconds). Then generate a complete video script as JSON.
 
@@ -334,6 +316,8 @@ Respond with ONLY the JSON object.`,
 async function createSanityDocuments(
 	script: GeneratedScript,
 	criticResult: CriticResult,
+	trends: TrendResult[],
+	research?: ResearchPayload,
 ) {
 	const isFlagged = criticResult.score < 50;
 
@@ -369,6 +353,9 @@ async function createSanityDocuments(
 		...(isFlagged && {
 			flaggedReason: `Quality score ${criticResult.score}/100. Issues: ${criticResult.issues.join("; ") || "Low quality score"}`,
 		}),
+		trendScore: trends[0]?.score,
+		trendSources: trends[0]?.signals.map(s => s.source).join(", "),
+		researchNotebookId: research?.notebookId,
 	});
 
 	console.log(`[CRON/ingest] Created automatedVideo: ${automatedVideo._id}`);
@@ -394,12 +381,32 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		console.log("[CRON/ingest] Fetching trending topics...");
-		const topics = await fetchTrendingTopics();
-		console.log(`[CRON/ingest] Found ${topics.length} topics`);
+		// Step 1: Discover trending topics (replaces fetchTrendingTopics)
+		console.log("[CRON/ingest] Discovering trending topics...");
+		let trends = await discoverTrends({ lookbackDays: 7, maxTopics: 10 });
+		console.log(`[CRON/ingest] Found ${trends.length} trending topics`);
 
+		// Fall back to hardcoded topics if discovery returns empty
+		if (trends.length === 0) {
+			console.warn("[CRON/ingest] No trends discovered, using fallback topics");
+			trends = FALLBACK_TRENDS;
+		}
+
+		// Step 2: Optional deep research on top topic
+		let research: ResearchPayload | undefined;
+		if (process.env.ENABLE_NOTEBOOKLM_RESEARCH === "true") {
+			console.log(`[CRON/ingest] Conducting research on: "${trends[0].topic}"...`);
+			try {
+				research = await conductResearch(trends[0].topic);
+				console.log(`[CRON/ingest] Research complete: ${research.sources.length} sources, ${research.sceneHints.length} scene hints`);
+			} catch (err) {
+				console.warn("[CRON/ingest] Research failed, continuing without:", err);
+			}
+		}
+
+		// Step 3: Generate script with Gemini (enriched with research)
 		console.log("[CRON/ingest] Generating script with Gemini...");
-		const prompt = buildPrompt(topics);
+		const prompt = buildPrompt(trends, research);
 		const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
 
 		let script: GeneratedScript;
@@ -430,7 +437,7 @@ export async function GET(request: NextRequest) {
 		);
 
 		console.log("[CRON/ingest] Creating Sanity documents...");
-		const result = await createSanityDocuments(script, criticResult);
+		const result = await createSanityDocuments(script, criticResult, trends, research);
 
 		console.log("[CRON/ingest] Done!", result);
 
@@ -439,7 +446,9 @@ export async function GET(request: NextRequest) {
 			...result,
 			title: script.title,
 			criticScore: criticResult.score,
-			topicCount: topics.length,
+			trendCount: trends.length,
+			trendScore: trends[0]?.score,
+			researchEnabled: !!research,
 		});
 	} catch (err) {
 		console.error("[CRON/ingest] Unexpected error:", err);
