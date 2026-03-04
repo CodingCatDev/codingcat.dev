@@ -17,6 +17,10 @@ export default function CoverImage(props: CoverImageProps) {
         ? urlForImage(image)?.width(width || 1920).height(height || 1080).quality(quality || 80).url()
         : null;
 
+    // TODO: Add LQIP blur placeholder for progressive loading. Options:
+    // 1. Query Sanity for lqip metadata: image.asset->metadata.lqip
+    // 2. Use a tiny base64 placeholder generated at build time
+
     if (!imageUrl) {
         return (
             <div className="transition-shadow duration-200 shadow-md group-hover:shadow-lg sm:mx-0">

@@ -18,8 +18,8 @@ export default function CoverVideo(props: CoverVideoProps) {
         );
     }
 
-    // Convert file-{hash}-{ext} to URL
-    // file-abc123-mp4 -> https://cdn.sanity.io/files/{projectId}/{dataset}/abc123.mp4
+    // Sanity file asset references follow the format: file-{id}-{extension}
+    // e.g., "file-abc123def456-mp4" → https://cdn.sanity.io/files/{projectId}/{dataset}/abc123def456.mp4
     const parts = assetRef.split('-');
     const ext = parts.pop();
     const hash = parts.slice(1).join('-');
