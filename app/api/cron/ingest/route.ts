@@ -5,7 +5,9 @@ import type { NextRequest } from "next/server";
 import { generateWithGemini, stripCodeFences } from "@/lib/gemini";
 import { writeClient } from "@/lib/sanity-write-client";
 import { discoverTrends, type TrendResult } from "@/lib/services/trend-discovery";
-import { conductResearch, type ResearchPayload } from "@/lib/services/research";
+import type { ResearchPayload } from "@/lib/services/research";
+import { NotebookLMClient } from "@/lib/services/notebooklm/client";
+import { initAuth } from "@/lib/services/notebooklm/auth";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -329,8 +331,12 @@ async function createSanityDocuments(
 	criticResult: CriticResult,
 	trends: TrendResult[],
 	research?: ResearchPayload,
+	researchMeta?: { notebookId: string; taskId: string },
 ) {
 	const isFlagged = criticResult.score < 50;
+	// When research is in-flight, status is "researching" (check-research cron will transition to script_ready)
+	const isResearching = !!researchMeta?.notebookId;
+	const status = isFlagged ? "flagged" : isResearching ? "researching" : "script_ready";
 
 	const contentIdea = await writeClient.create({
 		_type: "contentIdea",
@@ -360,13 +366,14 @@ async function createSanityDocuments(
 			})),
 		},
 		scriptQualityScore: criticResult.score,
-		status: isFlagged ? "flagged" : "script_ready",
+		status,
 		...(isFlagged && {
 			flaggedReason: `Quality score ${criticResult.score}/100. Issues: ${criticResult.issues.join("; ") || "Low quality score"}`,
 		}),
 		trendScore: trends[0]?.score,
 		trendSources: trends[0]?.signals.map(s => s.source).join(", "),
-		researchNotebookId: research?.notebookId,
+		researchNotebookId: researchMeta?.notebookId ?? research?.notebookId,
+		...(researchMeta?.taskId && { researchTaskId: researchMeta.taskId }),
 	});
 
 	console.log(`[CRON/ingest] Created automatedVideo: ${automatedVideo._id}`);
@@ -374,7 +381,7 @@ async function createSanityDocuments(
 	return {
 		contentIdeaId: contentIdea._id,
 		automatedVideoId: automatedVideo._id,
-		status: isFlagged ? "flagged" : "script_ready",
+		status,
 	};
 }
 
@@ -409,26 +416,49 @@ export async function GET(request: NextRequest) {
 			trends = FALLBACK_TRENDS;
 		}
 
-		// Step 2: Optional deep research on top topic
-		let research: ResearchPayload | undefined;
+		// Step 2: Optional deep research on top topic (fire-and-forget)
+		// When research is enabled, we create a notebook and start research
+		// but DON'T wait for it — the check-research cron will poll and enrich later
+		let researchMeta: { notebookId: string; taskId: string } | undefined;
 		if (process.env.ENABLE_NOTEBOOKLM_RESEARCH === "true") {
-			console.log(`[CRON/ingest] Conducting research on: "${trends[0].topic}"...`);
+			console.log(`[CRON/ingest] Starting fire-and-forget research on: "${trends[0].topic}"...`);
 			try {
-				// Extract source URLs from trend signals to seed the notebook
+				const auth = await initAuth();
+				const nbClient = new NotebookLMClient(auth);
+
+				// Create notebook
+				const notebook = await nbClient.createNotebook(trends[0].topic);
+				const notebookId = notebook.id;
+				console.log(`[CRON/ingest] Created notebook: ${notebookId}`);
+
+				// Add source URLs from trend signals
 				const sourceUrls = (trends[0].signals ?? [])
 					.map((s: { url?: string }) => s.url)
 					.filter((u): u is string => !!u && u.startsWith("http"))
 					.slice(0, 5);
-				research = await conductResearch(trends[0].topic, { sourceUrls });
-				console.log(`[CRON/ingest] Research complete: ${research.sources.length} sources, ${research.sceneHints.length} scene hints`);
+
+				for (const url of sourceUrls) {
+					await nbClient.addSource(notebookId, url).catch((err) => {
+						console.warn(`[CRON/ingest] Failed to add source ${url}:`, err);
+					});
+				}
+				console.log(`[CRON/ingest] Added ${sourceUrls.length} source URLs to notebook`);
+
+				// Start deep research (fire-and-forget — don't poll!)
+				const researchTask = await nbClient.startResearch(notebookId, trends[0].topic, "deep");
+				const researchTaskId = researchTask?.taskId ?? "";
+				console.log(`[CRON/ingest] Research started — taskId: ${researchTaskId}. check-research cron will poll.`);
+
+				researchMeta = { notebookId, taskId: researchTaskId };
 			} catch (err) {
-				console.warn("[CRON/ingest] Research failed, continuing without:", err);
+				console.warn("[CRON/ingest] Research start failed, continuing without:", err);
 			}
 		}
 
-		// Step 3: Generate script with Gemini (enriched with research)
+		// Step 3: Generate script with Gemini (basic — without research data)
+		// When research is enabled, check-research will re-generate an enriched script later
 		console.log("[CRON/ingest] Generating script with Gemini...");
-		const prompt = buildPrompt(trends, research);
+		const prompt = buildPrompt(trends);
 		const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
 
 		let script: GeneratedScript;
@@ -459,7 +489,7 @@ export async function GET(request: NextRequest) {
 		);
 
 		console.log("[CRON/ingest] Creating Sanity documents...");
-		const result = await createSanityDocuments(script, criticResult, trends, research);
+		const result = await createSanityDocuments(script, criticResult, trends, undefined, researchMeta);
 
 		console.log("[CRON/ingest] Done!", result);
 
@@ -470,7 +500,8 @@ export async function GET(request: NextRequest) {
 			criticScore: criticResult.score,
 			trendCount: trends.length,
 			trendScore: trends[0]?.score,
-			researchEnabled: !!research,
+			researchStarted: !!researchMeta,
+			researchNotebookId: researchMeta?.notebookId,
 		});
 	} catch (err) {
 		console.error("[CRON/ingest] Unexpected error:", err);
