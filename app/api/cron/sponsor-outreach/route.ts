@@ -11,8 +11,13 @@ const COOLDOWN_DAYS = 14
 
 export async function POST(request: Request) {
   // Auth: Bearer token check against CRON_SECRET
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error('[SPONSOR] CRON_SECRET not configured');
+    return new Response('Server misconfigured', { status: 503 });
+  }
   const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${cronSecret}`) {
     console.error('[SPONSOR] Outreach cron: unauthorized request')
     return new Response('Unauthorized', { status: 401 })
   }
