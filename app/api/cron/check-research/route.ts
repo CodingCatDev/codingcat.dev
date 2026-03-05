@@ -109,8 +109,6 @@ async function buildStuckThresholds(): Promise<Record<string, number>> {
 /** Max docs to process per status per run — keeps total time well under 60s */
 const MAX_DOCS_PER_STATUS = 2;
 
-import { getConfigValue } from "@/lib/config";
-
 /** Default infographic instructions — used when content_config singleton doesn't exist yet */
 const DEFAULT_INFOGRAPHIC_INSTRUCTIONS = [
   'Create a high-level architecture overview diagram',
