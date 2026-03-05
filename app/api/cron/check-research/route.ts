@@ -10,6 +10,7 @@ import { ArtifactTypeCode, ArtifactStatus } from '@/lib/services/notebooklm/type
 import { generateWithGemini, stripCodeFences } from '@/lib/gemini';
 import { getConfigValue } from '@/lib/config';
 import type { ResearchPayload } from '@/lib/services/research';
+import { writeClient } from '@/lib/sanity-write-client';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -351,20 +352,77 @@ async function stepInfographicsGenerating(
     return { id: doc._id, title: doc.title, step: 'infographics_generating', outcome: 'still_generating' };
   }
 
-  // Collect infographic URLs from completed artifacts
+  // Download and upload infographics to Sanity
+  interface SanityImageRef {
+    _type: 'image';
+    _key: string;
+    alt?: string;
+    asset: { _type: 'reference'; _ref: string };
+  }
+
+  const infographicRefs: SanityImageRef[] = [];
   const infographicUrls: string[] = [];
-  for (const artifactId of artifactIds) {
+
+  for (let i = 0; i < artifactIds.length; i++) {
+    const artifactId = artifactIds[i];
     try {
-      const url = await nbClient.getInfographicUrl(notebookId, artifactId);
-      if (url) {
-        infographicUrls.push(url);
+      // Step 1: Get the auth-gated URL
+      const authUrl = await nbClient.getInfographicUrl(notebookId, artifactId);
+      if (!authUrl) {
+        console.warn(`[check-research] No URL for artifact ${artifactId}`);
+        continue;
       }
+
+      // Step 2: Download PNG with NotebookLM auth cookies
+      const cookies = nbClient.getCookieHeader();
+      const imageResponse = await fetch(authUrl, {
+        headers: { Cookie: cookies },
+        redirect: 'follow',
+      });
+
+      if (!imageResponse.ok) {
+        console.warn(`[check-research] Failed to download infographic ${artifactId}: ${imageResponse.status}`);
+        continue;
+      }
+
+      const contentType = imageResponse.headers.get('content-type') || '';
+      if (!contentType.includes('image')) {
+        console.warn(`[check-research] Infographic ${artifactId} returned non-image: ${contentType}`);
+        continue;
+      }
+
+      const arrayBuffer = await imageResponse.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      console.log(`[check-research] Downloaded infographic ${i + 1}: ${buffer.length} bytes`);
+
+      // Step 3: Upload to Sanity assets
+      const filename = `infographic-${doc._id}-${i}.png`;
+      const asset = await writeClient.assets.upload('image', buffer, {
+        filename,
+        contentType: 'image/png',
+      });
+
+      console.log(`[check-research] Uploaded to Sanity: ${asset._id}`);
+
+      // Step 4: Build image reference for the array field
+      const artifact = ourArtifacts.find(a => a.id === artifactId);
+      infographicRefs.push({
+        _type: 'image',
+        _key: artifactId.slice(0, 8),
+        alt: artifact?.title || `Research infographic ${i + 1}`,
+        asset: { _type: 'reference', _ref: asset._id },
+      });
+
+      // Also store the Sanity CDN URL for researchData backward compat
+      const cdnUrl = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${asset._id.replace('image-', '').replace('-png', '.png').replace('-jpg', '.jpg')}`;
+      infographicUrls.push(cdnUrl);
+
     } catch (err) {
-      console.warn(`[check-research] Failed to get infographic URL for ${artifactId}:`, err instanceof Error ? err.message : err);
+      console.warn(`[check-research] Failed to process infographic ${artifactId}:`, err instanceof Error ? err.message : err);
     }
   }
 
-  console.log(`[check-research] Collected ${infographicUrls.length} infographic URLs`);
+  console.log(`[check-research] Processed ${infographicRefs.length} infographics (${infographicUrls.length} URLs)`);
 
   // Parse existing research data and add infographic URLs
   let researchData: Record<string, unknown> = {};
@@ -377,15 +435,19 @@ async function stepInfographicsGenerating(
   }
   researchData.infographicUrls = infographicUrls;
 
-  await sanity
-    .patch(doc._id)
-    .set({
-      status: 'enriching',
-      researchData: JSON.stringify(researchData),
-    })
-    .commit();
+  const patchData: Record<string, unknown> = {
+    status: 'enriching',
+    researchData: JSON.stringify(researchData),
+  };
 
-  console.log(`[check-research] "${doc.title}" → enriching (${infographicUrls.length} infographic URLs)`);
+  // Add infographic image refs if we have any
+  if (infographicRefs.length > 0) {
+    patchData.infographics = infographicRefs;
+  }
+
+  await sanity.patch(doc._id).set(patchData).commit();
+
+  console.log(`[check-research] "${doc.title}" → enriching (${infographicRefs.length} infographics, ${infographicUrls.length} URLs)`);
   return { id: doc._id, title: doc.title, step: 'infographics_generating', outcome: 'enriching' };
 }
 
