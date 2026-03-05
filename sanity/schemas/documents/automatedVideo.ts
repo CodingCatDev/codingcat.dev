@@ -227,6 +227,7 @@ export default defineType({
       options: {
         list: [
           {title: '1 - Draft', value: 'draft'},
+          {title: '1.5 - Researching', value: 'researching'},
           {title: '2 - Script Ready', value: 'script_ready'},
           {title: '3 - Audio Generation', value: 'audio_gen'},
           {title: '4 - Rendering', value: 'rendering'},
@@ -317,6 +318,39 @@ export default defineType({
       title: 'Sponsor Slot',
       type: 'reference',
       to: [{type: 'sponsorLead'}],
+    }),
+    defineField({
+      name: 'researchNotebookId',
+      title: 'NotebookLM Notebook ID',
+      type: 'string',
+      description: 'UUID of the NotebookLM notebook used for research',
+      hidden: true,
+    }),
+    defineField({
+      name: 'researchTaskId',
+      title: 'Research Task ID',
+      type: 'string',
+      description: 'UUID of the NotebookLM deep research task',
+      hidden: true,
+    }),
+    defineField({
+      name: 'researchData',
+      title: 'Research Data',
+      type: 'text',
+      description: 'JSON-serialized research payload from NotebookLM',
+      hidden: true,
+    }),
+    defineField({
+      name: 'trendScore',
+      title: 'Trend Score',
+      type: 'number',
+      description: 'Score from trend discovery (0-100)',
+    }),
+    defineField({
+      name: 'trendSources',
+      title: 'Trend Sources',
+      type: 'string',
+      description: 'Comma-separated list of trend signal sources',
     }),
     defineField({
       name: 'flaggedReason',

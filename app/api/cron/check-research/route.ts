@@ -1,0 +1,697 @@
+export const fetchCache = 'force-no-store';
+export const maxDuration = 300;
+
+import { type NextRequest } from 'next/server';
+import { after } from 'next/server';
+import { createClient, type SanityClient } from 'next-sanity';
+import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
+import { NotebookLMClient } from '@/lib/services/notebooklm/client';
+import { initAuth } from '@/lib/services/notebooklm/auth';
+import { sleep } from '@/lib/services/notebooklm/rpc';
+import { generateWithGemini, stripCodeFences } from '@/lib/gemini';
+import type { ResearchPayload } from '@/lib/services/research';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface ResearchingDoc {
+  _id: string;
+  title: string;
+  status: string;
+  researchNotebookId: string;
+  researchTaskId?: string;
+  trendScore?: number;
+  trendSources?: string;
+  script?: {
+    hook: string;
+    scenes: Array<{
+      _key: string;
+      sceneNumber: number;
+      sceneType: string;
+      narration: string;
+      visualDescription: string;
+      bRollKeywords: string[];
+      durationEstimate: number;
+      code?: { snippet: string; language: string; highlightLines?: number[] };
+      list?: { items: string[]; icon?: string };
+      comparison?: {
+        leftLabel: string;
+        rightLabel: string;
+        rows: { left: string; right: string }[];
+      };
+      mockup?: { deviceType: string; screenContent: string };
+    }>;
+    cta: string;
+  };
+  _updatedAt: string;
+}
+
+interface EnrichedScript {
+  title: string;
+  summary: string;
+  sourceUrl: string;
+  topics: string[];
+  script: {
+    hook: string;
+    scenes: Array<{
+      sceneNumber: number;
+      sceneType: string;
+      narration: string;
+      visualDescription: string;
+      bRollKeywords: string[];
+      durationEstimate: number;
+      code?: { snippet: string; language: string; highlightLines?: number[] };
+      list?: { items: string[]; icon?: string };
+      comparison?: {
+        leftLabel: string;
+        rightLabel: string;
+        rows: { left: string; right: string }[];
+      };
+      mockup?: { deviceType: string; screenContent: string };
+    }>;
+    cta: string;
+  };
+  qualityScore: number;
+}
+
+interface CriticResult {
+  score: number;
+  issues: string[];
+  summary: string;
+}
+
+interface ProcessResult {
+  id: string;
+  title: string;
+  status: 'script_ready' | 'researching' | 'flagged' | 'error';
+  error?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+/** Docs stuck in "researching" longer than this are flagged (ms) */
+const STUCK_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
+
+/** Max infographic wait time per artifact (ms) */
+const INFOGRAPHIC_WAIT_MS = 120_000; // 2 minutes
+
+/** Infographic instructions for visual variety */
+const INFOGRAPHIC_INSTRUCTIONS = [
+  'Create a high-level architecture overview diagram',
+  'Create a comparison chart of key features and alternatives',
+  'Create a step-by-step workflow diagram',
+  'Create a timeline of key developments and milestones',
+  'Create a pros and cons visual summary',
+];
+
+// ---------------------------------------------------------------------------
+// Sanity Write Client
+// ---------------------------------------------------------------------------
+
+function getSanityWriteClient(): SanityClient {
+  const token = process.env.SANITY_API_TOKEN || process.env.SANITY_API_WRITE_TOKEN;
+  if (!token) {
+    throw new Error('[check-research] Missing SANITY_API_TOKEN environment variable');
+  }
+  return createClient({ projectId, dataset, apiVersion, token, useCdn: false });
+}
+
+// ---------------------------------------------------------------------------
+// Gemini Script Enrichment
+// ---------------------------------------------------------------------------
+
+const SYSTEM_INSTRUCTION = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
+
+Your style is inspired by Cleo Abram's "Huge If True" — you make complex technical topics feel exciting, accessible, and important. Key principles:
+- Start with a BOLD claim or surprising fact that makes people stop scrolling
+- Use analogies and real-world comparisons to explain technical concepts
+- Build tension: "Here's the problem... here's why it matters... here's the breakthrough"
+- Keep energy HIGH — short sentences, active voice, conversational tone
+- End with a clear takeaway that makes the viewer feel smarter
+- Target audience: developers who want to stay current but don't have time to read everything
+
+Script format: 60-90 second explainer videos. Think TikTok/YouTube Shorts energy with real educational depth.
+
+CodingCat.dev covers: React, Next.js, TypeScript, Svelte, web APIs, CSS, Node.js, cloud services, AI/ML for developers, and web platform updates.`;
+
+function buildEnrichmentPrompt(
+  doc: ResearchingDoc,
+  research: ResearchPayload,
+): string {
+  const existingScript = doc.script
+    ? JSON.stringify(doc.script, null, 2)
+    : 'No existing script';
+
+  let researchContext = '';
+  researchContext += `### Briefing\n${research.briefing}\n\n`;
+
+  if (research.talkingPoints.length > 0) {
+    researchContext += `### Key Talking Points\n${research.talkingPoints.map((tp, i) => `${i + 1}. ${tp}`).join('\n')}\n\n`;
+  }
+
+  if (research.codeExamples.length > 0) {
+    researchContext += `### Code Examples (use these in "code" scenes)\n`;
+    for (const ex of research.codeExamples.slice(0, 5)) {
+      researchContext += `\`\`\`${ex.language}\n${ex.snippet}\n\`\`\`\nContext: ${ex.context}\n\n`;
+    }
+  }
+
+  if (research.comparisonData && research.comparisonData.length > 0) {
+    researchContext += `### Comparison Data (use in "comparison" scenes)\n`;
+    for (const comp of research.comparisonData) {
+      researchContext += `${comp.leftLabel} vs ${comp.rightLabel}:\n`;
+      for (const row of comp.rows) {
+        researchContext += `  - ${row.left} | ${row.right}\n`;
+      }
+      researchContext += '\n';
+    }
+  }
+
+  if (research.sceneHints.length > 0) {
+    researchContext += `### Scene Type Suggestions\n`;
+    for (const hint of research.sceneHints) {
+      researchContext += `- ${hint.suggestedSceneType}: ${hint.reason}\n`;
+    }
+  }
+
+  if (research.infographicUrls && research.infographicUrls.length > 0) {
+    researchContext += `\n### Infographics Available (${research.infographicUrls.length})\nMultiple infographics have been generated for this topic. Use sceneType "narration" with bRollUrl pointing to an infographic for visual scenes.\n`;
+  }
+
+  return `You have an existing video script for "${doc.title}" and new deep research data.
+Re-write the script to be MORE accurate, MORE insightful, and MORE engaging using the research.
+
+## Existing Script
+${existingScript}
+
+## Research Data (use this to create an informed, accurate script)
+${researchContext}
+
+Re-generate the complete video script as JSON. Keep the same format but enrich it with research insights.
+
+## Scene Types
+Each scene MUST have a "sceneType" that determines its visual treatment:
+- **"code"** — code snippets, API usage, config files. Provide actual code in the "code" field.
+- **"list"** — enumerated content: "Top 5 features", key takeaways. Provide items in the "list" field.
+- **"comparison"** — A-vs-B content. Provide structured data in the "comparison" field.
+- **"mockup"** — UI, website, app screen, or terminal output. Provide device type and content in the "mockup" field.
+- **"narration"** — conceptual explanations, introductions, or transitions. Default/fallback.
+
+## JSON Schema
+Return ONLY a JSON object:
+{
+  "title": "string - catchy video title",
+  "summary": "string - 1-2 sentence summary",
+  "sourceUrl": "string - URL of the primary source",
+  "topics": ["string array of relevant tags"],
+  "script": {
+    "hook": "string - attention-grabbing opening line (5-10 seconds)",
+    "scenes": [
+      {
+        "sceneNumber": 1,
+        "sceneType": "code | list | comparison | mockup | narration",
+        "narration": "string - what the narrator says",
+        "visualDescription": "string - what to show on screen",
+        "bRollKeywords": ["keyword1", "keyword2"],
+        "durationEstimate": 15,
+        "code": { "snippet": "string", "language": "string", "highlightLines": [1, 3] },
+        "list": { "items": ["Item 1", "Item 2"], "icon": "🚀" },
+        "comparison": { "leftLabel": "A", "rightLabel": "B", "rows": [{ "left": "...", "right": "..." }] },
+        "mockup": { "deviceType": "browser | phone | terminal", "screenContent": "..." }
+      }
+    ],
+    "cta": "string - call to action"
+  },
+  "qualityScore": 75
+}
+
+Requirements:
+- 3-5 scenes totaling 60-90 seconds
+- Use at least 2 different scene types
+- Include REAL code snippets from the research where applicable
+- The qualityScore should be your honest self-assessment (0-100)
+- Return ONLY the JSON object, no markdown or extra text`;
+}
+
+// ---------------------------------------------------------------------------
+// Claude Critic (same as ingest route)
+// ---------------------------------------------------------------------------
+
+async function claudeCritic(script: EnrichedScript): Promise<CriticResult> {
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) {
+    return { score: script.qualityScore, issues: [], summary: 'No critic available' };
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: `You are a quality reviewer for short-form educational video scripts about web development.
+
+Review this video script and provide a JSON response with:
+- "score": number 0-100 (overall quality rating)
+- "issues": string[] (list of specific problems, if any)
+- "summary": string (brief overall assessment)
+
+Evaluate based on:
+1. Educational value — does it teach something useful?
+2. Engagement — is the hook compelling? Is the pacing good?
+3. Accuracy — are there any technical inaccuracies?
+4. Clarity — is the narration clear and concise?
+5. Visual direction — are the visual descriptions actionable?
+
+Script to review:
+${JSON.stringify(script, null, 2)}
+
+Respond with ONLY the JSON object.`,
+          },
+        ],
+      }),
+    });
+
+    if (!res.ok) {
+      console.warn(`[check-research] Claude critic failed: ${res.status}`);
+      return { score: script.qualityScore, issues: [], summary: 'Critic API error' };
+    }
+
+    const data = (await res.json()) as { content?: Array<{ text?: string }> };
+    const text = data.content?.[0]?.text ?? '{}';
+
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return { score: script.qualityScore, issues: [], summary: 'Could not parse critic response' };
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]) as CriticResult;
+    return {
+      score: typeof parsed.score === 'number' ? parsed.score : script.qualityScore,
+      issues: Array.isArray(parsed.issues) ? parsed.issues : [],
+      summary: typeof parsed.summary === 'string' ? parsed.summary : 'No summary',
+    };
+  } catch (err) {
+    console.warn('[check-research] Claude critic error:', err);
+    return { score: script.qualityScore, issues: [], summary: 'Critic error' };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Research payload builder (mirrors research.ts logic)
+// ---------------------------------------------------------------------------
+
+function extractTalkingPoints(text: string): string[] {
+  const lines = text.split('\n');
+  const points: string[] = [];
+  for (const line of lines) {
+    const cleaned = line.replace(/^[\s]*[-•*\d]+[.)]\s*/, '').trim();
+    if (cleaned.length > 20) {
+      points.push(cleaned);
+    }
+  }
+  return points.slice(0, 8);
+}
+
+function extractCodeExamples(text: string): Array<{ snippet: string; language: string; context: string }> {
+  const examples: Array<{ snippet: string; language: string; context: string }> = [];
+  const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    const language = match[1] || 'typescript';
+    const snippet = match[2].trim();
+    const beforeBlock = text.slice(0, match.index);
+    const contextLines = beforeBlock.split('\n').filter((l) => l.trim());
+    const context =
+      contextLines.length > 0
+        ? contextLines[contextLines.length - 1].trim()
+        : 'Code example';
+    examples.push({ snippet, language, context });
+  }
+
+  return examples;
+}
+
+function classifyScene(
+  content: string,
+): 'narration' | 'code' | 'list' | 'comparison' | 'mockup' {
+  if (
+    /```[\s\S]*?```/.test(content) ||
+    /^\s{2,}(const|let|var|function|import|export|class|def|return)\b/m.test(content)
+  ) {
+    return 'code';
+  }
+  const listMatches = content.match(/^[\s]*[-•*\d]+[.)]\s/gm);
+  if (listMatches && listMatches.length >= 3) {
+    return 'list';
+  }
+  if (
+    /\bvs\.?\b/i.test(content) ||
+    /\bcompare[ds]?\b/i.test(content) ||
+    /\bdifference[s]?\b/i.test(content) ||
+    /\bpros\s+(and|&)\s+cons\b/i.test(content)
+  ) {
+    return 'comparison';
+  }
+  if (
+    /\b(UI|interface|dashboard|screen|layout|component|widget|button|modal)\b/i.test(content)
+  ) {
+    return 'mockup';
+  }
+  return 'narration';
+}
+
+function classifySourceType(url: string): 'youtube' | 'article' | 'docs' | 'unknown' {
+  if (!url) return 'unknown';
+  const lower = url.toLowerCase();
+  if (lower.includes('youtube.com') || lower.includes('youtu.be')) return 'youtube';
+  if (lower.includes('/docs') || lower.includes('documentation') || lower.includes('developer.') || lower.includes('mdn')) return 'docs';
+  if (lower.includes('blog') || lower.includes('medium.com') || lower.includes('dev.to') || lower.includes('hashnode')) return 'article';
+  return 'unknown';
+}
+
+function buildResearchPayload(
+  doc: ResearchingDoc,
+  briefing: string,
+  sources: Array<{ url: string; title: string }>,
+  infographicUrls: string[],
+): ResearchPayload {
+  const talkingPoints = extractTalkingPoints(briefing);
+  const codeExamples = extractCodeExamples(briefing);
+
+  const sections = briefing
+    .split(/\n(?=#{1,3}\s)|\n\n/)
+    .filter((s) => s.trim().length > 50);
+  const sceneHints = sections.map((section) => ({
+    content: section.slice(0, 500),
+    suggestedSceneType: classifyScene(section),
+    reason: `Classified from research content`,
+  }));
+
+  return {
+    topic: doc.title,
+    notebookId: doc.researchNotebookId,
+    createdAt: doc._updatedAt,
+    completedAt: new Date().toISOString(),
+    sources: sources.map((s) => ({
+      title: s.title,
+      url: s.url,
+      type: classifySourceType(s.url),
+    })),
+    briefing,
+    talkingPoints,
+    codeExamples,
+    sceneHints,
+    infographicUrls: infographicUrls.length > 0 ? infographicUrls : undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Safe step wrapper
+// ---------------------------------------------------------------------------
+
+async function safeStep<T>(
+  label: string,
+  fn: () => Promise<T>,
+): Promise<T | undefined> {
+  try {
+    return await fn();
+  } catch (error) {
+    console.error(
+      `[check-research] Step "${label}" failed:`,
+      error instanceof Error ? error.message : error,
+    );
+    return undefined;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Process a single researching doc
+// ---------------------------------------------------------------------------
+
+async function processResearchingDoc(
+  doc: ResearchingDoc,
+  nbClient: NotebookLMClient,
+  sanityClient: SanityClient,
+): Promise<ProcessResult> {
+  const notebookId = doc.researchNotebookId;
+  console.log(`[check-research] Processing doc ${doc._id} ("${doc.title}") — notebook: ${notebookId}`);
+
+  // Step 1: Poll research status
+  console.log(`[check-research] Polling research status for notebook ${notebookId}...`);
+  const pollResult = await nbClient.pollResearch(notebookId);
+  console.log(`[check-research] Research status: ${pollResult.status} (${pollResult.sources.length} sources)`);
+
+  if (pollResult.status === 'in_progress') {
+    console.log(`[check-research] Research still in progress for "${doc.title}" — will retry next run`);
+    return { id: doc._id, title: doc.title, status: 'researching' };
+  }
+
+  if (pollResult.status === 'no_research') {
+    console.warn(`[check-research] No research found for "${doc.title}" — marking as script_ready with existing script`);
+    await sanityClient.patch(doc._id).set({ status: 'script_ready' }).commit();
+    return { id: doc._id, title: doc.title, status: 'script_ready' };
+  }
+
+  // Research is completed — proceed with enrichment pipeline
+  console.log(`[check-research] Research completed for "${doc.title}" — starting enrichment pipeline`);
+
+  const researchTaskId = pollResult.taskId || doc.researchTaskId || '';
+  const researchSources = pollResult.sources;
+
+  // Step 2: Import research sources
+  if (researchSources.length > 0 && researchTaskId) {
+    console.log(`[check-research] Importing ${researchSources.length} research sources...`);
+    await safeStep('import-sources', () =>
+      nbClient.importResearchSources(notebookId, researchTaskId, researchSources),
+    );
+  }
+
+  // Step 3: Generate infographics
+  console.log(`[check-research] Generating ${INFOGRAPHIC_INSTRUCTIONS.length} infographics...`);
+  const infographicTaskIds: string[] = [];
+
+  for (const instruction of INFOGRAPHIC_INSTRUCTIONS) {
+    const result = await safeStep(`generate-infographic`, () =>
+      nbClient.generateInfographic(notebookId, {
+        instructions: instruction,
+        language: 'en',
+        orientation: 1, // landscape
+        detailLevel: 2, // detailed
+      }),
+    );
+    if (result?.taskId) {
+      infographicTaskIds.push(result.taskId);
+    }
+  }
+
+  console.log(`[check-research] Started ${infographicTaskIds.length} infographic generations`);
+
+  // Step 4: Wait for infographics to complete
+  if (infographicTaskIds.length > 0) {
+    console.log(`[check-research] Waiting for infographics to complete...`);
+    const waitPromises = infographicTaskIds.map((taskId) =>
+      safeStep(`wait-infographic-${taskId.substring(0, 8)}`, () =>
+        nbClient.waitForArtifact(notebookId, taskId, {
+          timeoutMs: INFOGRAPHIC_WAIT_MS,
+          pollIntervalMs: 10_000,
+        }),
+      ),
+    );
+    await Promise.allSettled(waitPromises);
+  }
+
+  // Step 5: Get notebook summary
+  console.log(`[check-research] Getting notebook summary...`);
+  const briefing = (await safeStep('get-summary', () => nbClient.getSummary(notebookId))) ?? '';
+
+  // Step 6: Collect infographic URLs
+  console.log(`[check-research] Collecting infographic URLs...`);
+  const infographicUrls: string[] = [];
+  for (const taskId of infographicTaskIds) {
+    const url = await safeStep(`get-infographic-url-${taskId.substring(0, 8)}`, () =>
+      nbClient.getInfographicUrl(notebookId, taskId),
+    );
+    if (url) {
+      infographicUrls.push(url);
+    }
+  }
+  console.log(`[check-research] Found ${infographicUrls.length} infographic URLs`);
+
+  // Step 7: Build research payload
+  const researchPayload = buildResearchPayload(doc, briefing, researchSources, infographicUrls);
+
+  // Step 8: Re-generate enriched script with Gemini
+  console.log(`[check-research] Re-generating enriched script with Gemini...`);
+  let enrichedScript: EnrichedScript | null = null;
+
+  try {
+    const prompt = buildEnrichmentPrompt(doc, researchPayload);
+    const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
+    const cleaned = stripCodeFences(rawResponse);
+    enrichedScript = JSON.parse(cleaned) as EnrichedScript;
+    console.log(`[check-research] Enriched script generated: "${enrichedScript.title}"`);
+  } catch (err) {
+    console.error('[check-research] Failed to generate enriched script:', err);
+    // Fall through — we'll use the existing script
+  }
+
+  // Step 9: Run critic pass
+  let criticScore = 0;
+  if (enrichedScript) {
+    console.log(`[check-research] Running critic pass...`);
+    const criticResult = await claudeCritic(enrichedScript);
+    criticScore = criticResult.score;
+    console.log(`[check-research] Critic score: ${criticScore}/100 — ${criticResult.summary}`);
+
+    const isFlagged = criticScore < 50;
+
+    // Step 10: Update Sanity doc with enriched data
+    console.log(`[check-research] Updating Sanity doc ${doc._id}...`);
+    await sanityClient
+      .patch(doc._id)
+      .set({
+        script: {
+          ...enrichedScript.script,
+          scenes: enrichedScript.script.scenes.map((scene, i) => ({
+            ...scene,
+            _key: `scene-${i + 1}`,
+          })),
+        },
+        scriptQualityScore: criticScore,
+        status: isFlagged ? 'flagged' : 'script_ready',
+        researchData: JSON.stringify(researchPayload),
+        ...(isFlagged && {
+          flaggedReason: `Quality score ${criticScore}/100. Issues: ${(criticResult.issues ?? []).join('; ') || 'Low quality score'}`,
+        }),
+      })
+      .commit();
+
+    console.log(`[check-research] Doc ${doc._id} updated to "${isFlagged ? 'flagged' : 'script_ready'}"`);
+    return { id: doc._id, title: doc.title, status: isFlagged ? 'flagged' : 'script_ready' };
+  }
+
+  // Fallback: no enriched script, just transition to script_ready with existing script
+  console.warn(`[check-research] No enriched script — transitioning ${doc._id} to script_ready with existing script`);
+  await sanityClient
+    .patch(doc._id)
+    .set({
+      status: 'script_ready',
+      researchData: JSON.stringify(researchPayload),
+    })
+    .commit();
+
+  return { id: doc._id, title: doc.title, status: 'script_ready' };
+}
+
+// ---------------------------------------------------------------------------
+// Route Handler
+// ---------------------------------------------------------------------------
+
+export async function GET(request: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error('[check-research] CRON_SECRET not configured');
+    return Response.json({ error: 'Server misconfigured' }, { status: 503 });
+  }
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${cronSecret}`) {
+    console.error('[check-research] Unauthorized request: invalid authorization header');
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const sanity = getSanityWriteClient();
+
+    // Phase 1: Query all researching docs
+    const docs = await sanity.fetch<ResearchingDoc[]>(
+      `*[_type == "automatedVideo" && status == "researching" && defined(researchNotebookId)] {
+        _id,
+        title,
+        status,
+        researchNotebookId,
+        researchTaskId,
+        trendScore,
+        trendSources,
+        script,
+        _updatedAt
+      }`,
+    );
+
+    console.log(`[check-research] Found ${docs.length} docs in "researching" status`);
+
+    if (docs.length === 0) {
+      return Response.json({ success: true, message: 'No docs to process', processed: 0 });
+    }
+
+    // Phase 2: Separate stuck from active (no NotebookLM needed)
+    const stuckResults: ProcessResult[] = [];
+    const activeDocs: ResearchingDoc[] = [];
+    const now = Date.now();
+
+    for (const doc of docs) {
+      const docAge = now - new Date(doc._updatedAt).getTime();
+      if (docAge > STUCK_THRESHOLD_MS) {
+        console.warn(
+          `[check-research] Doc ${doc._id} ("${doc.title}") stuck in "researching" for ${Math.round(docAge / 60_000)}min — flagging`,
+        );
+        await sanity
+          .patch(doc._id)
+          .set({
+            status: 'flagged',
+            flaggedReason: `Stuck in "researching" for ${Math.round(docAge / 60_000)} minutes (threshold: ${STUCK_THRESHOLD_MS / 60_000}min). Research may have failed.`,
+          })
+          .commit();
+        stuckResults.push({ id: doc._id, title: doc.title, status: 'flagged', error: 'Stuck in researching' });
+      } else {
+        activeDocs.push(doc);
+      }
+    }
+
+    // Phase 3: Process active docs (needs NotebookLM)
+    if (activeDocs.length > 0) {
+      console.log('[check-research] Initializing NotebookLM client...');
+      const auth = await initAuth();
+      const nbClient = new NotebookLMClient(auth);
+
+      for (const doc of activeDocs) {
+        after(async () => {
+          try {
+            await processResearchingDoc(doc, nbClient, sanity);
+          } catch (err) {
+            console.error(`[check-research] after() error for ${doc._id}:`, err);
+            try {
+              await sanity.patch(doc._id).set({
+                status: 'flagged',
+                flaggedReason: `Research processing error: ${err instanceof Error ? err.message : String(err)}`,
+              }).commit();
+            } catch { /* best-effort */ }
+          }
+        });
+      }
+    }
+
+    return Response.json({ success: true, processing: activeDocs.length, flagged: stuckResults.length });
+  } catch (err) {
+    console.error('[check-research] Unexpected error:', err);
+    return Response.json(
+      {
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      },
+      { status: 500 },
+    );
+  }
+}
