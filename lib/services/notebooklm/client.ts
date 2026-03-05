@@ -503,19 +503,16 @@ export class NotebookLMClient {
       `[NotebookLM] Importing ${sources.length} research sources into notebook ${notebookId}`
     );
 
-    const sourceArray = sources.map((s) => [
-      null,
-      null,
-      [s.url, s.title],
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      2,
-    ]);
+    const sourceArray = sources
+      .filter((s) => s.url) // Skip sources without URLs
+      .map((s) => {
+        if (isYouTubeUrl(s.url)) {
+          // YouTube URLs go in index 7 as [url] array
+          return [null, null, null, null, null, null, null, [s.url], null, null, 2];
+        }
+        // Regular URLs go in index 2 as [url, title]
+        return [null, null, [s.url, s.title || 'Untitled'], null, null, null, null, null, null, null, 2];
+      });
 
     await this.rpcCall(RPCMethod.IMPORT_RESEARCH, [
       null,
