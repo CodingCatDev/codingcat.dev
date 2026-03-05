@@ -1,4 +1,4 @@
-// Config migration: audited — no tweakable config in this route.
+// Config migration: audited â no tweakable config in this route.
 // Remotion/ElevenLabs config is in the service layer (owned by @videopipe).
 // YouTube SEO prompt is specific to this route, not the shared system instruction.
 export const fetchCache = 'force-no-store';
@@ -124,7 +124,7 @@ Return JSON:
 Include in the description:
 - Brief summary of what viewers will learn
 - Key topics covered
-- Links section placeholder (🔗 Links mentioned in this video:)
+- Links section placeholder (ð Links mentioned in this video:)
 - Social links placeholder
 - Relevant hashtags at the end`;
 
@@ -157,13 +157,13 @@ async function processDistribution(docId: string): Promise<void> {
     if (!doc) throw new Error(`Document not found: ${docId}`);
 
     // Step 1: Generate YouTube metadata via Gemini
-    console.log(`[PIPELINE] Distribution step 1/6 — Generating YouTube metadata for ${docId}`);
+    console.log(`[PIPELINE] Distribution step 1/6 â Generating YouTube metadata for ${docId}`);
     const metadata = await generateYouTubeMetadata(doc);
 
     // Step 2: Upload main video to YouTube
     let youtubeVideoId = '';
     if (doc.videoUrl) {
-      console.log(`[PIPELINE] Distribution step 2/6 — Uploading main video for ${docId}`);
+      console.log(`[PIPELINE] Distribution step 2/6 â Uploading main video for ${docId}`);
       const r = await uploadVideo({
         videoUrl: doc.videoUrl,
         title: metadata.title,
@@ -176,7 +176,7 @@ async function processDistribution(docId: string): Promise<void> {
     // Step 3: Generate Shorts metadata + upload Short
     let youtubeShortId = '';
     if (doc.shortUrl) {
-      console.log(`[PIPELINE] Distribution step 3/6 — Generating Shorts metadata + uploading for ${docId}`);
+      console.log(`[PIPELINE] Distribution step 3/6 â Generating Shorts metadata + uploading for ${docId}`);
       const shortsMetadata = await generateShortsMetadata(generateWithGemini, doc);
       const r = await uploadShort({
         videoUrl: doc.shortUrl,
@@ -188,7 +188,7 @@ async function processDistribution(docId: string): Promise<void> {
     }
 
     // Step 4: Email (non-fatal)
-    console.log(`[PIPELINE] Distribution step 4/6 — Sending email for ${docId}`);
+    console.log(`[PIPELINE] Distribution step 4/6 â Sending email for ${docId}`);
     const ytUrl = youtubeVideoId
       ? `https://www.youtube.com/watch?v=${youtubeVideoId}`
       : doc.videoUrl || '';
@@ -204,7 +204,7 @@ async function processDistribution(docId: string): Promise<void> {
     }
 
     // Step 5: X/Twitter (non-fatal)
-    console.log(`[PIPELINE] Distribution step 5/6 — Posting to X/Twitter for ${docId}`);
+    console.log(`[PIPELINE] Distribution step 5/6 â Posting to X/Twitter for ${docId}`);
     try {
       await postVideoAnnouncement({
         videoTitle: metadata.title,
@@ -216,372 +216,20 @@ async function processDistribution(docId: string): Promise<void> {
     }
 
     // Step 6: Mark published
-    console.log(`[PIPELINE] Distribution step 6/6 — Marking published for ${docId}`);
+    console.log(`[PIPELINE] Distribution step 6/6 â Marking published for ${docId}`);
     await client.patch(docId).set({
       status: 'published',
       youtubeId: youtubeVideoId || undefined,
       youtubeShortId: youtubeShortId || undefined,
     }).commit();
 
-    console.log(`[PIPELINE] ✅ Distribution complete for ${docId}`);
+    console.log(`[PIPELINE] â Distribution complete for ${docId}`);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error(`[PIPELINE] ❌ Distribution failed for ${docId}: ${msg}`);
+    console.error(`[PIPELINE] â Distribution failed for ${docId}: ${msg}`);
     try {
       await client.patch(docId).set({
         status: 'flagged',
         flaggedReason: `Distribution error: ${msg}`,
       }).commit();
-    } catch { /* best-effort flag */ }
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Handler 1: script_ready → audio_gen (claim) → video pipeline via after()
-// ---------------------------------------------------------------------------
-
-async function handleScriptReady(client: SanityClient): Promise<{ claimed: number; ids: string[] }> {
-  const docs = await client.fetch<ScriptReadyDoc[]>(
-    `*[_type == "automatedVideo" && status == "script_ready"]{ _id, title }`
-  );
-
-  if (docs.length === 0) return { claimed: 0, ids: [] };
-
-  const claimedIds: string[] = [];
-
-  for (const doc of docs) {
-    console.log(`[PIPELINE] Claiming script_ready → audio_gen: "${doc.title || doc._id}"`);
-    try {
-      // CLAIM: immediately advance status so next cron run skips this doc
-      await client.patch(doc._id).set({ status: 'audio_gen' }).commit();
-      claimedIds.push(doc._id);
-
-      // WORK: run video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] in background via after()
-      after(async () => {
-        try {
-          console.log(`[PIPELINE] Starting video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] for ${doc._id}`);
-          await processVideoProduction(doc._id);
-          console.log(`[PIPELINE] ✅ Video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] complete for ${doc._id}`);
-        } catch (error) {
-          const msg = error instanceof Error ? error.message : String(error);
-          console.error(`[PIPELINE] ❌ Video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] failed for ${doc._id}: ${msg}`);
-          // processVideoProduction already sets flagged on error, but just in case:
-          try {
-            const c = getSanityWriteClient();
-            await c.patch(doc._id).set({
-              status: 'flagged',
-              flaggedReason: `Video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] error: ${msg}`,
-            }).commit();
-          } catch { /* best-effort */ }
-        }
-      });
-    } catch (error) {
-      console.error(`[PIPELINE] Failed to claim ${doc._id}:`, error);
     }
-  }
-
-  return { claimed: claimedIds.length, ids: claimedIds };
-}
-
-// ---------------------------------------------------------------------------
-// Handler 2: rendering → check Lambda progress → video_gen
-// ---------------------------------------------------------------------------
-
-async function handleRendering(client: SanityClient): Promise<{
-  completed: number;
-  inProgress: number;
-  errors: number;
-  results: RenderProcessResult[];
-}> {
-  const docs = await client.fetch<RenderingDoc[]>(
-    `*[_type == "automatedVideo" && status == "rendering" && defined(renderData)]{
-      _id, title, renderData
-    }`
-  );
-
-  if (docs.length === 0) return { completed: 0, inProgress: 0, errors: 0, results: [] };
-
-  const results: RenderProcessResult[] = [];
-  let completed = 0;
-  let inProgress = 0;
-  let errors = 0;
-
-  for (const doc of docs) {
-    try {
-      console.log(`[PIPELINE] Checking renders for "${doc.title || doc._id}"...`);
-
-      const progress = await checkBothRenders(
-        doc.renderData.mainRenderId,
-        doc.renderData.shortRenderId,
-        doc.renderData.bucketName
-      );
-
-      // Check for render errors
-      if (progress.main.errors || progress.short.errors) {
-        const errorMsg = [progress.main.errors, progress.short.errors]
-          .filter(Boolean)
-          .join('; ');
-        console.error(`[PIPELINE] Render error for ${doc._id}: ${errorMsg}`);
-
-        await client.patch(doc._id).set({
-          status: 'flagged',
-          flaggedReason: `Remotion render failed: ${errorMsg}`,
-        }).commit();
-
-        errors++;
-        results.push({ id: doc._id, title: doc.title, status: 'error', error: errorMsg });
-        continue;
-      }
-
-      if (progress.allDone) {
-        console.log(`[PIPELINE] Both renders done for "${doc.title || doc._id}", downloading...`);
-
-        // Download rendered videos from Remotion S3
-        const [mainVideoResponse, shortVideoResponse] = await Promise.all([
-          fetch(progress.main.outputUrl!),
-          fetch(progress.short.outputUrl!),
-        ]);
-
-        if (!mainVideoResponse.ok) {
-          throw new Error(`Failed to download main video: ${mainVideoResponse.status}`);
-        }
-        if (!shortVideoResponse.ok) {
-          throw new Error(`Failed to download short video: ${shortVideoResponse.status}`);
-        }
-
-        const [mainVideoBuffer, shortVideoBuffer] = await Promise.all([
-          Buffer.from(await mainVideoResponse.arrayBuffer()),
-          Buffer.from(await shortVideoResponse.arrayBuffer()),
-        ]);
-
-        console.log(
-          `[PIPELINE] Downloaded — main: ${mainVideoBuffer.length} bytes, short: ${shortVideoBuffer.length} bytes`
-        );
-
-        // Upload to Sanity
-        const [mainUploadResult, shortUploadResult] = await Promise.all([
-          uploadVideoToSanity(mainVideoBuffer, `${doc._id}-main.mp4`),
-          uploadVideoToSanity(shortVideoBuffer, `${doc._id}-short.mp4`),
-        ]);
-
-        console.log(
-          `[PIPELINE] Uploaded — main: ${mainUploadResult.url}, short: ${shortUploadResult.url}`
-        );
-
-        // Update Sanity document with video URLs and advance to video_gen
-        await client.patch(doc._id).set({
-          status: 'video_gen',
-          videoUrl: mainUploadResult.url,
-          videoFile: {
-            _type: 'file',
-            asset: { _type: 'reference', _ref: mainUploadResult.assetId },
-          },
-          shortUrl: shortUploadResult.url,
-          shortFile: {
-            _type: 'file',
-            asset: { _type: 'reference', _ref: shortUploadResult.assetId },
-          },
-        }).commit();
-
-        console.log(`[PIPELINE] ✅ ${doc._id} → video_gen`);
-        completed++;
-        results.push({ id: doc._id, title: doc.title, status: 'completed' });
-      } else {
-        console.log(
-          `[PIPELINE] Still rendering "${doc.title || doc._id}" — ` +
-            `main: ${progress.main.progress}%, short: ${progress.short.progress}%`
-        );
-        inProgress++;
-        results.push({
-          id: doc._id,
-          title: doc.title,
-          status: 'rendering',
-          mainProgress: progress.main.progress,
-          shortProgress: progress.short.progress,
-        });
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`[PIPELINE] ❌ Error processing ${doc._id}: ${errorMessage}`);
-
-      try {
-        await client.patch(doc._id).set({
-          status: 'flagged',
-          flaggedReason: `check-renders error: ${errorMessage}`,
-        }).commit();
-      } catch (patchError) {
-        console.error(`[PIPELINE] Failed to flag ${doc._id}:`, patchError);
-      }
-
-      errors++;
-      results.push({ id: doc._id, title: doc.title, status: 'error', error: errorMessage });
-    }
-  }
-
-  return { completed, inProgress, errors, results };
-}
-
-// ---------------------------------------------------------------------------
-// Handler 3: video_gen → uploading (claim) → distribution via after()
-// ---------------------------------------------------------------------------
-
-async function handleVideoGen(client: SanityClient): Promise<{ claimed: number; ids: string[] }> {
-  const docs = await client.fetch<VideoGenDoc[]>(
-    `*[_type == "automatedVideo" && status == "video_gen"]{ _id, title }`
-  );
-
-  if (docs.length === 0) return { claimed: 0, ids: [] };
-
-  const claimedIds: string[] = [];
-
-  for (const doc of docs) {
-    console.log(`[PIPELINE] Claiming video_gen → uploading: "${doc.title || doc._id}"`);
-    try {
-      // CLAIM: immediately advance status so next cron run skips this doc
-      await client.patch(doc._id).set({ status: 'uploading' }).commit();
-      claimedIds.push(doc._id);
-
-      // WORK: run distribution in background via after()
-      after(async () => {
-        try {
-          console.log(`[PIPELINE] Starting distribution for ${doc._id}`);
-          await processDistribution(doc._id);
-        } catch (error) {
-          const msg = error instanceof Error ? error.message : String(error);
-          console.error(`[PIPELINE] ❌ Distribution after() failed for ${doc._id}: ${msg}`);
-        }
-      });
-    } catch (error) {
-      console.error(`[PIPELINE] Failed to claim ${doc._id}:`, error);
-    }
-  }
-
-  return { claimed: claimedIds.length, ids: claimedIds };
-}
-
-// ---------------------------------------------------------------------------
-// Handler 4: Stuck detection
-// ---------------------------------------------------------------------------
-
-async function handleStuckDocs(client: SanityClient): Promise<{ audioGen: number; rendering: number }> {
-  let audioGenFlagged = 0;
-  let renderingFlagged = 0;
-
-  // audio_gen stuck > 10 minutes
-  const stuckAudioGen = await client.fetch<StuckDoc[]>(
-    `*[_type == "automatedVideo" && status == "audio_gen" && dateTime(_updatedAt) < dateTime(now()) - 60*10]{
-      _id, title, _updatedAt
-    }`
-  );
-
-  for (const doc of stuckAudioGen) {
-    console.log(`[PIPELINE] Flagging stuck audio_gen: "${doc.title || doc._id}" (since ${doc._updatedAt})`);
-    try {
-      await client.patch(doc._id).set({
-        status: 'flagged',
-        flaggedReason: `Pipeline timed out during audio generation. Stuck in audio_gen since ${doc._updatedAt}. Reset status to script_ready to retry.`,
-      }).commit();
-      audioGenFlagged++;
-    } catch (err) {
-      console.error(`[PIPELINE] Failed to flag stuck audio_gen doc ${doc._id}:`, err);
-    }
-  }
-
-  // rendering stuck > 30 minutes
-  const stuckRendering = await client.fetch<StuckDoc[]>(
-    `*[_type == "automatedVideo" && status == "rendering" && dateTime(_updatedAt) < dateTime(now()) - 60*30]{
-      _id, title, _updatedAt
-    }`
-  );
-
-  for (const doc of stuckRendering) {
-    console.log(`[PIPELINE] Flagging stuck rendering: "${doc.title || doc._id}" (since ${doc._updatedAt})`);
-    try {
-      await client.patch(doc._id).set({
-        status: 'flagged',
-        flaggedReason: `Render timed out. Stuck in rendering since ${doc._updatedAt}. Reset status to script_ready to retry.`,
-      }).commit();
-      renderingFlagged++;
-    } catch (err) {
-      console.error(`[PIPELINE] Failed to flag stuck rendering doc ${doc._id}:`, err);
-    }
-  }
-
-  return { audioGen: audioGenFlagged, rendering: renderingFlagged };
-}
-
-// ---------------------------------------------------------------------------
-// Route Handler — Unified Pipeline Cron
-// ---------------------------------------------------------------------------
-
-/**
- * Unified pipeline cron — the single driver for ALL status transitions.
- * Replaces the sanity-content and sanity-distribute webhooks.
- *
- * Runs every 1-2 minutes via Supabase cron. Uses "claim first, work second"
- * pattern to prevent duplicate processing on overlapping runs.
- *
- * Status transitions handled:
- *   script_ready → audio_gen (claim) → video pipeline via after()
- *   rendering → check Lambda → video_gen (or flagged)
- *   video_gen → uploading (claim) → distribution via after()
- *   audio_gen stuck >10min → flagged
- *   rendering stuck >30min → flagged
- */
-export async function GET(request: NextRequest) {
-  // Auth check
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    console.error('[PIPELINE] CRON_SECRET not configured');
-    return Response.json({ error: 'Server misconfigured' }, { status: 503 });
-  }
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    console.error('[PIPELINE] Unauthorized cron request');
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  console.log('[PIPELINE] ⏰ Unified cron starting...');
-
-  const client = getSanityWriteClient();
-
-  // Run all handlers in parallel where safe
-  // Note: script_ready and video_gen use after() so they return quickly
-  const [scriptReady, rendering, videoGen, stuckFlagged] = await Promise.all([
-    handleScriptReady(client),
-    handleRendering(client),
-    handleVideoGen(client),
-    handleStuckDocs(client),
-  ]);
-
-  const summary = {
-    scriptReady,
-    rendering: {
-      completed: rendering.completed,
-      inProgress: rendering.inProgress,
-      errors: rendering.errors,
-      results: rendering.results,
-    },
-    videoGen,
-    stuckFlagged,
-    timestamp: new Date().toISOString(),
-  };
-
-  const totalActions =
-    scriptReady.claimed +
-    rendering.completed +
-    rendering.errors +
-    videoGen.claimed +
-    stuckFlagged.audioGen +
-    stuckFlagged.rendering;
-
-  if (totalActions > 0) {
-    console.log(`[PIPELINE] ⏰ Cron complete — ${totalActions} actions taken`, JSON.stringify(summary, null, 2));
-  } else if (rendering.inProgress > 0) {
-    console.log(`[PIPELINE] ⏰ Cron complete — ${rendering.inProgress} renders in progress`);
-  } else {
-    console.log('[PIPELINE] ⏰ Cron complete — nothing to do');
-  }
-
-  return Response.json(summary);
-}

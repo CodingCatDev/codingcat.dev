@@ -1,7 +1,7 @@
 /**
- * Remotion Lambda rendering service — runtime only.
+ * Remotion Lambda rendering service â runtime only.
  *
- * Handles triggering and polling Remotion Lambda renders for video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET].
+ * Handles triggering and polling Remotion Lambda renders for video production.
  * Produces both 16:9 (main) and 9:16 (short) video formats.
  *
  * Deploy functions (deploySite, deployFunction, getOrCreateBucket) live in
@@ -167,7 +167,7 @@ async function getFunctionName(): Promise<string> {
 }
 
 // ---------------------------------------------------------------------------
-// Types – render start (no polling)
+// Types â render start (no polling)
 // ---------------------------------------------------------------------------
 
 export interface RenderStartResult {
@@ -192,7 +192,7 @@ export interface BothRendersResult {
 }
 
 // ---------------------------------------------------------------------------
-// Core – start a single render (no polling)
+// Core â start a single render (no polling)
 // ---------------------------------------------------------------------------
 
 /**
@@ -245,176 +245,8 @@ async function startRender(
 }
 
 // ---------------------------------------------------------------------------
-// Public API – start renders
+// Public API â start renders
 // ---------------------------------------------------------------------------
 
 /**
- * Start both video renders (main 16:9 + short 9:16) in parallel on Lambda.
- * Returns render IDs immediately — does NOT poll for completion.
- *
- * Use `checkBothRenders` to poll for progress separately.
- */
-export async function startBothRenders(
-  input: RenderInput
-): Promise<RenderStartResult> {
-  log(
-    `Starting parallel render of MainVideo + ShortVideo ` +
-      `(${input.script.scenes.length} scenes, ${input.audioDurationSeconds}s audio)`
-  );
-
-  const [mainResult, shortResult] = await Promise.all([
-    startRender("MainVideo", input),
-    startRender("ShortVideo", input),
-  ]);
-
-  // Both should use the same bucket, but we take the main one as canonical
-  log(`Both renders started`, {
-    mainRenderId: mainResult.renderId,
-    shortRenderId: shortResult.renderId,
-    bucketName: mainResult.bucketName,
-  });
-
-  return {
-    mainRenderId: mainResult.renderId,
-    shortRenderId: shortResult.renderId,
-    bucketName: mainResult.bucketName,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Public API – check render progress
-// ---------------------------------------------------------------------------
-
-/**
- * Check the progress of a single Remotion Lambda render.
- */
-export async function checkRenderProgress(
-  renderId: string,
-  bucketName: string
-): Promise<RenderProgressResult> {
-  const config = await getRemotionConfig();
-  const functionName = await getFunctionName();
-  const region = config.region as AwsRegion;
-
-  const progress = await getRenderProgress({
-    renderId,
-    bucketName,
-    region,
-    functionName,
-  });
-
-  // Check for fatal errors
-  if (progress.fatalErrorEncountered) {
-    const errorMessages = (progress.errors ?? [])
-      .map((e) => {
-        if (typeof e === "string") return e;
-        if (e && typeof e === "object" && "message" in e)
-          return (e as { message: string }).message;
-        return JSON.stringify(e);
-      })
-      .join("; ");
-
-    return {
-      done: false,
-      progress: Math.round((progress.overallProgress ?? 0) * 100),
-      errors:
-        errorMessages ||
-        `Fatal error in render ${renderId}. Check CloudWatch logs for "${functionName}" in ${region}.`,
-    };
-  }
-
-  if (progress.done) {
-    const outputUrl = progress.outputFile ?? "";
-    const outputSize = progress.outputSizeInBytes ?? 0;
-
-    return {
-      done: true,
-      progress: 100,
-      outputUrl: outputUrl || undefined,
-      outputSize,
-    };
-  }
-
-  return {
-    done: false,
-    progress: Math.round((progress.overallProgress ?? 0) * 100),
-  };
-}
-
-/**
- * Check progress of both main and short renders.
- */
-export async function checkBothRenders(
-  mainRenderId: string,
-  shortRenderId: string,
-  bucketName: string
-): Promise<BothRendersResult> {
-  const [main, short] = await Promise.all([
-    checkRenderProgress(mainRenderId, bucketName),
-    checkRenderProgress(shortRenderId, bucketName),
-  ]);
-
-  return {
-    allDone: main.done && short.done,
-    main,
-    short,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Legacy API (kept for backward compatibility)
-// ---------------------------------------------------------------------------
-
-/**
- * @deprecated Use `startBothRenders` + `checkBothRenders` instead.
- * Render both video formats (main + short) in parallel, polling until done.
- */
-export async function renderBothFormats(
-  input: RenderInput
-): Promise<{ main: RenderResult; short: RenderResult }> {
-  log(
-    `[DEPRECATED] renderBothFormats called — use startBothRenders + checkBothRenders instead`
-  );
-
-  const startResult = await startBothRenders(input);
-
-  // Poll until both are done
-  const pollSingle = async (
-    renderId: string,
-    bucketName: string,
-    label: string
-  ): Promise<RenderResult> => {
-    const startTime = Date.now();
-    while (true) {
-      const elapsed = Date.now() - startTime;
-      if (elapsed > RENDER_TIMEOUT_MS) {
-        throw new Error(
-          `[REMOTION] Render timed out after ${Math.round(elapsed / 1000)}s (${label}, renderId: ${renderId})`
-        );
-      }
-      await sleep(POLL_INTERVAL_MS);
-      const result = await checkRenderProgress(renderId, bucketName);
-      if (result.errors) {
-        throw new Error(`[REMOTION] Render failed (${label}): ${result.errors}`);
-      }
-      if (result.done) {
-        if (!result.outputUrl) {
-          throw new Error(`[REMOTION] Render done but no output URL (${label})`);
-        }
-        return {
-          videoUrl: result.outputUrl,
-          renderDurationSeconds: Math.round(elapsed / 100) / 10,
-          fileSizeBytes: result.outputSize ?? 0,
-        };
-      }
-      log(`${label} progress: ${result.progress}%`);
-    }
-  };
-
-  const [main, short] = await Promise.all([
-    pollSingle(startResult.mainRenderId, startResult.bucketName, "MainVideo"),
-    pollSingle(startResult.shortRenderId, startResult.bucketName, "ShortVideo"),
-  ]);
-
-  return { main, short };
-}
+ * Start 
