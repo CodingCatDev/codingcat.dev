@@ -5,6 +5,7 @@ import { generateWithGemini } from "@/lib/gemini";
 import { uploadVideo, uploadShort, generateShortsMetadata } from "@/lib/youtube-upload";
 import { notifySubscribers } from "@/lib/resend-notify";
 import { postVideoAnnouncement } from "@/lib/x-social";
+import { getConfig } from "@/lib/config";
 
 const WEBHOOK_SECRET = process.env.SANITY_WEBHOOK_SECRET;
 
@@ -140,6 +141,9 @@ async function appendDistributionLog(docId: string, entries: DistributionLogEntr
 async function runDistribution(docId: string, doc: AutomatedVideoDoc): Promise<void> {
   const log: DistributionLogEntry[] = [];
 
+  // Fetch distribution config from Sanity singleton
+  const distConfig = await getConfig("distribution_config");
+
   try {
     await updateStatus(docId, "uploading");
 
@@ -197,7 +201,7 @@ async function runDistribution(docId: string, doc: AutomatedVideoDoc): Promise<v
       log.push(logEntry("youtube-short", "skipped", { error: "No shortUrl" }));
     }
 
-    // Step 4: Email notification (non-fatal)
+    // Step 4: Email notification (non-fatal) — uses distribution config
     console.log("[sanity-distribute] Step 4/6 - Sending email");
     const ytUrl = youtubeVideoId ? `https://www.youtube.com/watch?v=${youtubeVideoId}` : doc.videoUrl || "";
     try {
@@ -206,6 +210,8 @@ async function runDistribution(docId: string, doc: AutomatedVideoDoc): Promise<v
         videoTitle: metadata.title,
         videoUrl: ytUrl,
         description: metadata.description.slice(0, 280),
+        fromEmail: distConfig.resendFromEmail,
+        notificationEmails: distConfig.notificationEmails,
       });
       log.push(logEntry("email", "success"));
     } catch (e) {
