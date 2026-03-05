@@ -10,12 +10,14 @@ export default defineType({
       name: "cooldownDays",
       title: "Cooldown Days",
       type: "number",
+      description: "Days to wait before contacting a sponsor again after the last outreach",
       initialValue: 14,
     }),
     defineField({
       name: "rateCardTiers",
       title: "Rate Card Tiers",
       type: "array",
+      description: "Sponsorship pricing tiers shown in outreach emails. Each tier has a name, description, and price",
       of: [
         {
           type: "object",
@@ -48,12 +50,14 @@ export default defineType({
       name: "outreachEmailTemplate",
       title: "Outreach Email Template",
       type: "text",
+      description: "Template for automated sponsor outreach emails. Use {{companyName}} for personalization",
       initialValue: "Hi {{companyName}},\n\nI run CodingCat.dev...",
     }),
     defineField({
       name: "maxOutreachPerRun",
       title: "Max Outreach Per Run",
       type: "number",
+      description: "Maximum sponsor emails to send per cron run. Keeps volume manageable and avoids spam flags",
       initialValue: 10,
     }),
   ],

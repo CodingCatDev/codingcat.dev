@@ -10,6 +10,7 @@ export default defineType({
       name: "rssFeeds",
       title: "RSS Feeds",
       type: "array",
+      description: "RSS/Atom feeds to monitor for trending topics. The ingest cron checks these daily for new content ideas",
       of: [
         {
           type: "object",
@@ -42,6 +43,7 @@ export default defineType({
       name: "trendSourcesEnabled",
       title: "Trend Sources Enabled",
       type: "object",
+      description: "Toggle individual trend discovery sources on/off. Disabling a source skips it during the daily ingest scan",
       fields: [
         defineField({
           name: "hn",
@@ -79,24 +81,28 @@ export default defineType({
       name: "systemInstruction",
       title: "System Instruction",
       type: "text",
+      description: "The AI system prompt used for script generation. Defines the writing style, tone, and format for all generated video scripts",
       initialValue: "You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.\n\nYour style is inspired by Cleo Abram's \"Huge If True\" — you make complex technical topics feel exciting, accessible, and important. Key principles:\n- Start with a BOLD claim or surprising fact that makes people stop scrolling\n- Use analogies and real-world comparisons to explain technical concepts\n- Build tension: \"Here's the problem... here's why it matters... here's the breakthrough\"\n- Keep energy HIGH — short sentences, active voice, conversational tone\n- End with a clear takeaway that makes the viewer feel smarter\n- Target audience: developers who want to stay current but don't have time to read everything\n\nScript format: 60-90 second explainer videos. Think TikTok/YouTube Shorts energy with real educational depth.\n\nCodingCat.dev covers: React, Next.js, TypeScript, Svelte, web APIs, CSS, Node.js, cloud services, AI/ML for developers, and web platform updates.",
     }),
     defineField({
       name: "targetVideoDurationSec",
       title: "Target Video Duration (sec)",
       type: "number",
+      description: "Target duration for generated videos in seconds. Scripts are calibrated to this length",
       initialValue: 90,
     }),
     defineField({
       name: "sceneCountMin",
       title: "Scene Count Min",
       type: "number",
+      description: "Minimum number of scenes per video. The AI generates at least this many visual segments",
       initialValue: 3,
     }),
     defineField({
       name: "sceneCountMax",
       title: "Scene Count Max",
       type: "number",
+      description: "Maximum number of scenes per video. Keeps videos focused and within duration targets",
       initialValue: 5,
     }),
   ],

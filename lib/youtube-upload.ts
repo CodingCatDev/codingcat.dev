@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import { Readable } from "node:stream";
+import { getConfigValue } from "@/lib/config";
 
 const oauth2Client = new google.auth.OAuth2(
 	process.env.YOUTUBE_CLIENT_ID,
@@ -11,12 +12,12 @@ oauth2Client.setCredentials({
 
 const youtube = google.youtube({ version: "v3", auth: oauth2Client });
 
-function getDefaultPrivacyStatus(): "public" | "private" | "unlisted" {
-	const envValue = process.env.YOUTUBE_UPLOAD_VISIBILITY?.toLowerCase();
-	if (envValue === "public" || envValue === "private" || envValue === "unlisted") {
-		return envValue;
+async function getDefaultPrivacyStatus(): Promise<"public" | "private" | "unlisted"> {
+	const value = await getConfigValue("pipeline_config", "youtubeUploadVisibility", "private");
+	if (value === "public" || value === "private" || value === "unlisted") {
+		return value;
 	}
-	return "private"; // Default to private when not set
+	return "private"; // Default to private when not set or invalid
 }
 
 interface UploadOptions {
@@ -36,7 +37,7 @@ export async function uploadVideo(opts: UploadOptions): Promise<{ videoId: strin
 	const response = await fetch(opts.videoUrl);
 	if (!response.ok) throw new Error(`Failed to fetch video: ${response.statusText}`);
 
-	const resolvedPrivacyStatus = opts.privacyStatus || getDefaultPrivacyStatus();
+	const resolvedPrivacyStatus = opts.privacyStatus || await getDefaultPrivacyStatus();
 	console.log(`[youtube-upload] Uploading "${opts.title.slice(0, 60)}" with privacy: ${resolvedPrivacyStatus}`);
 	// Convert Web ReadableStream to Node.js Readable stream
 	// googleapis expects a Node.js stream with .pipe(), not a Web ReadableStream

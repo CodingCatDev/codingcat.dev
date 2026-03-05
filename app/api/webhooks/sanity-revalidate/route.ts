@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
 
 		// Revalidate all sanity-tagged caches (the "heavy hammer" approach)
 		// This is a backup for when no visitors are active to trigger SanityLive revalidation
-		revalidateTag("sanity");
+		// Next.js 16 requires a second argument — { expire: 0 } for immediate invalidation
+		revalidateTag("sanity", { expire: 0 });
 
 		return NextResponse.json({
 			revalidated: true,
