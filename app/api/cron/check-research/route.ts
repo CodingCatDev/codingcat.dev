@@ -109,8 +109,10 @@ async function buildStuckThresholds(): Promise<Record<string, number>> {
 /** Max docs to process per status per run — keeps total time well under 60s */
 const MAX_DOCS_PER_STATUS = 2;
 
-/** Infographic instructions for visual variety */
-const INFOGRAPHIC_INSTRUCTIONS = [
+import { getConfigValue } from "@/lib/config";
+
+/** Default infographic instructions — used when content_config singleton doesn't exist yet */
+const DEFAULT_INFOGRAPHIC_INSTRUCTIONS = [
   'Create a high-level architecture overview diagram',
   'Create a comparison chart of key features and alternatives',
   'Create a step-by-step workflow diagram',
@@ -261,9 +263,14 @@ async function stepResearchComplete(
   const sourceIds = await nbClient.getSourceIds(notebookId);
   console.log(`[check-research] Found ${sourceIds.length} source IDs`);
 
-  // Start all 5 infographic generations
+  // Start all infographic generations (instructions from Sanity config)
+  const infographicInstructions = await getConfigValue(
+    "content_config",
+    "infographicInstructions",
+    DEFAULT_INFOGRAPHIC_INSTRUCTIONS,
+  );
   const artifactIds: string[] = [];
-  for (const instruction of INFOGRAPHIC_INSTRUCTIONS) {
+  for (const instruction of infographicInstructions) {
     try {
       const result = await nbClient.generateInfographic(notebookId, {
         sourceIds,
