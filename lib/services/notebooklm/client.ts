@@ -96,6 +96,14 @@ export class NotebookLMClient {
     return new NotebookLMClient(auth);
   }
 
+  /**
+   * Get the raw cookie header string for authenticated fetch calls.
+   * Useful for downloading auth-gated resources (e.g., infographic images).
+   */
+  getCookieHeader(): string {
+    return this.auth.cookieHeader;
+  }
+
   // -------------------------------------------------------------------------
   // Internal RPC helper
   // -------------------------------------------------------------------------
