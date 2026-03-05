@@ -223,7 +223,7 @@ export default defineType({
       name: 'status',
       title: 'Pipeline Status',
       type: 'string',
-      description: 'Current stage in the automated video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] pipeline',
+      description: 'Current stage in the automated video production pipeline',
       options: {
         list: [
           {title: '1 - Draft', value: 'draft'},
@@ -331,6 +331,13 @@ export default defineType({
       title: 'Research Task ID',
       type: 'string',
       description: 'UUID of the NotebookLM deep research task',
+      hidden: true,
+    }),
+    defineField({
+      name: 'researchData',
+      title: 'Research Data',
+      type: 'text',
+      description: 'JSON-serialized research payload from NotebookLM',
       hidden: true,
     }),
     defineField({

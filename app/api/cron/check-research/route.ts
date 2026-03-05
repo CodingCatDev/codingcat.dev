@@ -1,7 +1,8 @@
 export const fetchCache = 'force-no-store';
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 import { type NextRequest } from 'next/server';
+import { after } from 'next/server';
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
 import { NotebookLMClient } from '@/lib/services/notebooklm/client';
@@ -43,7 +44,7 @@ interface ResearchingDoc {
     }>;
     cta: string;
   };
-  _createdAt: string;
+  _updatedAt: string;
 }
 
 interface EnrichedScript {
@@ -402,7 +403,7 @@ function buildResearchPayload(
   return {
     topic: doc.title,
     notebookId: doc.researchNotebookId,
-    createdAt: doc._createdAt,
+    createdAt: doc._updatedAt,
     completedAt: new Date().toISOString(),
     sources: sources.map((s) => ({
       title: s.title,
@@ -600,8 +601,13 @@ async function processResearchingDoc(
 // ---------------------------------------------------------------------------
 
 export async function GET(request: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error('[check-research] CRON_SECRET not configured');
+    return Response.json({ error: 'Server misconfigured' }, { status: 503 });
+  }
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${cronSecret}`) {
     console.error('[check-research] Unauthorized request: invalid authorization header');
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -609,7 +615,7 @@ export async function GET(request: NextRequest) {
   try {
     const sanity = getSanityWriteClient();
 
-    // Query for docs in "researching" status with a notebook ID
+    // Phase 1: Query all researching docs
     const docs = await sanity.fetch<ResearchingDoc[]>(
       `*[_type == "automatedVideo" && status == "researching" && defined(researchNotebookId)] {
         _id,
@@ -620,7 +626,7 @@ export async function GET(request: NextRequest) {
         trendScore,
         trendSources,
         script,
-        _createdAt
+        _updatedAt
       }`,
     );
 
@@ -630,17 +636,13 @@ export async function GET(request: NextRequest) {
       return Response.json({ success: true, message: 'No docs to process', processed: 0 });
     }
 
-    // Initialize NotebookLM client
-    console.log('[check-research] Initializing NotebookLM client...');
-    const auth = await initAuth();
-    const nbClient = new NotebookLMClient(auth);
-
-    const results: ProcessResult[] = [];
+    // Phase 2: Separate stuck from active (no NotebookLM needed)
+    const stuckResults: ProcessResult[] = [];
+    const activeDocs: ResearchingDoc[] = [];
     const now = Date.now();
 
     for (const doc of docs) {
-      // Stuck detection: flag docs stuck in "researching" for >30 minutes
-      const docAge = now - new Date(doc._createdAt).getTime();
+      const docAge = now - new Date(doc._updatedAt).getTime();
       if (docAge > STUCK_THRESHOLD_MS) {
         console.warn(
           `[check-research] Doc ${doc._id} ("${doc.title}") stuck in "researching" for ${Math.round(docAge / 60_000)}min — flagging`,
@@ -652,31 +654,36 @@ export async function GET(request: NextRequest) {
             flaggedReason: `Stuck in "researching" for ${Math.round(docAge / 60_000)} minutes (threshold: ${STUCK_THRESHOLD_MS / 60_000}min). Research may have failed.`,
           })
           .commit();
-        results.push({ id: doc._id, title: doc.title, status: 'flagged', error: 'Stuck in researching' });
-        continue;
+        stuckResults.push({ id: doc._id, title: doc.title, status: 'flagged', error: 'Stuck in researching' });
+      } else {
+        activeDocs.push(doc);
       }
+    }
 
-      try {
-        const result = await processResearchingDoc(doc, nbClient, sanity);
-        results.push(result);
-      } catch (err) {
-        console.error(`[check-research] Error processing doc ${doc._id}:`, err);
-        results.push({
-          id: doc._id,
-          title: doc.title,
-          status: 'error',
-          error: err instanceof Error ? err.message : String(err),
+    // Phase 3: Process active docs (needs NotebookLM)
+    if (activeDocs.length > 0) {
+      console.log('[check-research] Initializing NotebookLM client...');
+      const auth = await initAuth();
+      const nbClient = new NotebookLMClient(auth);
+
+      for (const doc of activeDocs) {
+        after(async () => {
+          try {
+            await processResearchingDoc(doc, nbClient, sanity);
+          } catch (err) {
+            console.error(`[check-research] after() error for ${doc._id}:`, err);
+            try {
+              await sanity.patch(doc._id).set({
+                status: 'flagged',
+                flaggedReason: `Research processing error: ${err instanceof Error ? err.message : String(err)}`,
+              }).commit();
+            } catch { /* best-effort */ }
+          }
         });
       }
     }
 
-    console.log('[check-research] Done!', JSON.stringify(results));
-
-    return Response.json({
-      success: true,
-      processed: results.length,
-      results,
-    });
+    return Response.json({ success: true, processing: activeDocs.length, flagged: stuckResults.length });
   } catch (err) {
     console.error('[check-research] Unexpected error:', err);
     return Response.json(

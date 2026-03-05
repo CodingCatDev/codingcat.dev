@@ -390,8 +390,13 @@ async function createSanityDocuments(
 // ---------------------------------------------------------------------------
 
 export async function GET(request: NextRequest) {
+	const cronSecret = process.env.CRON_SECRET;
+	if (!cronSecret) {
+		console.error("[CRON/ingest] CRON_SECRET not configured");
+		return Response.json({ error: "Server misconfigured" }, { status: 503 });
+	}
 	const authHeader = request.headers.get("authorization");
-	if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+	if (authHeader !== `Bearer ${cronSecret}`) {
 		console.error(
 			"[CRON/ingest] Unauthorized request: invalid authorization header",
 		);
