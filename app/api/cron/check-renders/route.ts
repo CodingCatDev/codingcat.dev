@@ -527,8 +527,13 @@ async function handleStuckDocs(client: SanityClient): Promise<{ audioGen: number
  */
 export async function GET(request: NextRequest) {
   // Auth check
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error('[PIPELINE] CRON_SECRET not configured');
+    return Response.json({ error: 'Server misconfigured' }, { status: 503 });
+  }
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${cronSecret}`) {
     console.error('[PIPELINE] Unauthorized cron request');
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
