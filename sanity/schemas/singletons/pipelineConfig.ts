@@ -34,7 +34,7 @@ export default defineType({
       name: "youtubeChannelId",
       title: "YouTube Channel ID",
       type: "string",
-      description: "Your YouTube channel ID \u2014 used for analytics and upload targeting",
+      description: "Your YouTube channel ID — used for analytics and upload targeting",
       initialValue: "",
     }),
     defineField({
@@ -43,6 +43,34 @@ export default defineType({
       type: "boolean",
       description: "When enabled, the ingest cron creates a NotebookLM notebook for deep research before script generation. Requires NOTEBOOKLM_AUTH_JSON env var",
       initialValue: false,
+    }),
+    defineField({
+      name: "enableDeepResearch",
+      title: "Enable Deep Research",
+      type: "boolean",
+      description: "When enabled, the ingest cron uses Gemini Deep Research API for comprehensive topic research before script generation. Replaces NotebookLM research.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "deepResearchAgent",
+      title: "Deep Research Agent",
+      type: "string",
+      description: "The Gemini Deep Research agent model ID. This is the agent used for autonomous web research via the Interactions API",
+      initialValue: "deep-research-pro-preview-12-2025",
+    }),
+    defineField({
+      name: "deepResearchPromptTemplate",
+      title: "Deep Research Prompt Template",
+      type: "text",
+      description: "Template for Deep Research queries. Use {topic} as placeholder for the trend topic. Sent to the Deep Research agent for autonomous web research",
+      initialValue: "Research comprehensively: \"{topic}\"\n\nFocus areas:\n- What is it and why does it matter?\n- How does it work technically?\n- Key features and capabilities\n- Comparison with alternatives\n- Getting started guide\n- Common pitfalls and best practices\n\nTarget audience: Web developers learning new tech.\nTone: Educational, accessible, engaging.",
+    }),
+    defineField({
+      name: "infographicModel",
+      title: "Infographic Model",
+      type: "string",
+      description: "Model used for generating brand-consistent infographics from research data. Imagen 4 Fast ($0.02/image) supports seed-based reproducibility",
+      initialValue: "imagen-4-fast",
     }),
     defineField({
       name: "qualityThreshold",

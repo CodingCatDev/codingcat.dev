@@ -11,6 +11,10 @@ export interface PipelineConfig {
   youtubeUploadVisibility: string;
   youtubeChannelId: string;
   enableNotebookLmResearch: boolean;
+  enableDeepResearch: boolean;
+  deepResearchAgent: string;
+  deepResearchPromptTemplate: string;
+  infographicModel: string;
   qualityThreshold: number;
   stuckTimeoutMinutes: number;
   maxIdeasPerRun: number;
