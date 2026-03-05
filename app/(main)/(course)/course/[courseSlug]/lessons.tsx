@@ -17,6 +17,7 @@ export default async function Lessons(params: { courseSlug: string }) {
 		await sanityFetch({
 			query: lessonsInCourseQuery,
 			params: { courseSlug },
+			tags: ["course", "lesson"],
 		})
 	).data as LessonsInCourseQueryResult;
 

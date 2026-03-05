@@ -1,14 +1,15 @@
-// Querying with "sanityFetch" will keep content automatically updated
-// Before using it, import and render "<SanityLive />" in your layout, see
-// https://github.com/sanity-io/next-sanity#live-content-api for more information.
-
 import { defineLive } from "next-sanity/live";
 import { client } from "@/sanity/lib/client";
 import { token } from "@/sanity/lib/token";
-import { stegaClean } from "@sanity/client/stega";
 
-export const { sanityFetch, SanityLive } = defineLive({
+// SanityLive is only used in draft mode for real-time updates
+const live = defineLive({
 	client,
-	serverToken: token,
-	browserToken: token,
+	serverToken: token || undefined,
+	browserToken: token || undefined,
 });
+
+export const SanityLive = live.SanityLive;
+
+// Re-export the ISR-compatible sanityFetch
+export { sanityFetch } from "@/sanity/lib/fetch";

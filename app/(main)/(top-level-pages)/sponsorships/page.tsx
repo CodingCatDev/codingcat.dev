@@ -7,6 +7,7 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SponsorshipForm } from "./sponsorship-form";
 
+export const revalidate = 86400;
 const sponsorshipTiers = [
 	{
 		name: "Dedicated Video",
@@ -53,7 +54,7 @@ export async function generateMetadata(
 		await sanityFetch({
 			query: pageQuery,
 			params: { slug: "sponsorships" },
-			tags: ["page:sponsorships"],
+			tags: ["page", "sponsorships"],
 		})
 	).data as PageQueryResult;
 

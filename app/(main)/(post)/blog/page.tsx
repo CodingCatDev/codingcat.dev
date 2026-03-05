@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 
 import MoreHeader from "@/components/more-header";
 
+export const revalidate = 60;
 function HeroPost({
 	title,
 	slug,
@@ -68,7 +69,7 @@ function HeroPost({
 
 export default async function Page() {
 	const [heroPost] = (
-		await Promise.all([sanityFetch({ query: blogQuery })])
+		await Promise.all([sanityFetch({ query: blogQuery, tags: ["post-list", "post"] })])
 	).map((res) => res.data) as [BlogQueryResult];
 	return (
 		<div className="container px-5 mx-auto">

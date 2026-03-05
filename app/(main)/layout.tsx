@@ -33,6 +33,7 @@ import { PlayerProvider } from "@/components/player-context";
 import { toPlainText } from "next-sanity";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { DisableDraftMode } from "@/components/disable-draft-mode";
+import { draftMode } from "next/headers";
 import { ModeToggle } from "@/components/mode-toggle";
 import { SiteAnalytics } from "@/components/analytics";
 
@@ -52,6 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		query: settingsQuery,
 		// Metadata should never contain stega
 		stega: false,
+		tags: ["settings"],
 	});
 
 	const settings = settingsFetch.data as SettingsQueryResult;
@@ -87,8 +89,10 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
+	const { isEnabled: isDraftMode } = await draftMode();
 	const settingsFetch = await sanityFetch({
 		query: settingsQuery,
+		tags: ["settings"],
 	});
 	const settings = settingsFetch.data as SettingsQueryResult;
 
@@ -102,10 +106,12 @@ export default async function RootLayout({
 				)}
 			>
 				<CookiesProviderClient>
-					<Suspense>
-						<DisableDraftMode />
-						<VisualEditing />
-					</Suspense>
+					{isDraftMode && (
+						<Suspense>
+							<DisableDraftMode />
+							<VisualEditing />
+						</Suspense>
+					)}
 					<PlayerProvider>
 						<ThemeProvider
 							attribute="class"
@@ -153,7 +159,7 @@ export default async function RootLayout({
 								<Footer />
 							</section>
 							<PlayerFloating />
-							<SanityLive />
+							{isDraftMode && <SanityLive />}
 						</ThemeProvider>
 					</PlayerProvider>
 				</CookiesProviderClient>

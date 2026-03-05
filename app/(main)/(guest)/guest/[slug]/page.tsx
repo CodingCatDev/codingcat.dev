@@ -20,6 +20,8 @@ import Avatar from "@/components/avatar";
 
 type Params = Promise<{ slug: string }>;
 
+export const revalidate = 3600;
+
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
@@ -31,6 +33,7 @@ export async function generateMetadata(
 			query: guestQuery,
 			params: { slug },
 			stega: false,
+			tags: ["guest", `guest:${slug}`],
 		})
 	).data as GuestQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -45,6 +48,15 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetch({
+		query: groq`*[_type == "guest" && defined(slug.current)].slug.current`,
+		tags: ["guest-list"],
+		stega: false,
+	});
+	return (data as string[]).map((slug) => ({ slug }));
+}
+
 export default async function GuestPage({ params }: { params: Params }) {
 	const { slug } = await params;
 
@@ -53,6 +65,7 @@ export default async function GuestPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: guestQueryWithRelated,
 				params: { slug },
+				tags: ["guest", `guest:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [GuestQueryWithRelatedResult];

@@ -19,6 +19,8 @@ import UserRelated from "@/components/user-related";
 
 type Params = Promise<{ slug: string }>;
 
+export const revalidate = 3600;
+
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
@@ -30,6 +32,7 @@ export async function generateMetadata(
 			query: authorQuery,
 			params: { slug },
 			stega: false,
+			tags: ["author", `author:${slug}`],
 		})
 	).data as AuthorQueryResult;
 
@@ -45,6 +48,15 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetch({
+		query: groq`*[_type == "author" && defined(slug.current)].slug.current`,
+		tags: ["author-list"],
+		stega: false,
+	});
+	return (data as string[]).map((slug) => ({ slug }));
+}
+
 export default async function AuthorPage({ params }: { params: Params }) {
 	const { slug } = await params;
 
@@ -52,6 +64,7 @@ export default async function AuthorPage({ params }: { params: Params }) {
 		sanityFetch({
 			query: authorQueryWithRelated,
 			params: { slug },
+			tags: ["author", `author:${slug}`],
 		}),
 	]);
 

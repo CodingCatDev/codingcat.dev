@@ -21,6 +21,8 @@ import ShowPro from "./show-pro";
 
 type Params = Promise<{ courseSlug: string }>;
 
+export const revalidate = 3600;
+
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
@@ -31,6 +33,7 @@ export async function generateMetadata(
 			query: courseQuery,
 			params: { courseSlug },
 			stega: false,
+			tags: ["course", `course:${courseSlug}`],
 		})
 	).data as CourseQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -49,6 +52,15 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetch({
+		query: groq`*[_type == "course" && defined(slug.current)].slug.current`,
+		tags: ["course-list"],
+		stega: false,
+	});
+	return (data as string[]).map((courseSlug) => ({ courseSlug }));
+}
+
 export default async function CoursePage({ params }: { params: Params }) {
 	const { courseSlug } = await params;
 
@@ -57,6 +69,7 @@ export default async function CoursePage({ params }: { params: Params }) {
 			query: courseQuery,
 			params: { courseSlug },
 			stega: false,
+			tags: ["course", `course:${courseSlug}`],
 		})
 	).data as CourseQueryResult;
 

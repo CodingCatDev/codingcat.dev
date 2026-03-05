@@ -19,6 +19,8 @@ import UserRelated from "@/components/user-related";
 
 type Params = Promise<{ slug: string }>;
 
+export const revalidate = 3600;
+
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
@@ -30,6 +32,7 @@ export async function generateMetadata(
 			query: sponsorQuery,
 			params: { slug },
 			stega: false,
+			tags: ["sponsor", `sponsor:${slug}`],
 		})
 	).data as SponsorQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -44,6 +47,15 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetch({
+		query: groq`*[_type == "sponsor" && defined(slug.current)].slug.current`,
+		tags: ["sponsor-list"],
+		stega: false,
+	});
+	return (data as string[]).map((slug) => ({ slug }));
+}
+
 export default async function SponsorPage({ params }: { params: Params }) {
 	const { slug } = await params;
 
@@ -52,6 +64,7 @@ export default async function SponsorPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: sponsorQueryWithRelated,
 				params: { slug },
+				tags: ["sponsor", `sponsor:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [SponsorQueryWithRelatedResult];

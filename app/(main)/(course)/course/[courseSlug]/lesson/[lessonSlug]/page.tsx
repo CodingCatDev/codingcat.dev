@@ -31,6 +31,7 @@ export async function generateMetadata(
 			query: lessonQuery,
 			params: resolvedParams,
 			stega: false,
+			tags: ["lesson"],
 		})
 	).data as LessonQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -53,8 +54,8 @@ export default async function LessonPage({ params }: { params: Params }) {
 	const resolvedParams = await params;
 	const [lesson, course] = (
 		await Promise.all([
-			sanityFetch({ query: lessonQuery, params: resolvedParams }),
-			sanityFetch({ query: lessonsInCourseQuery, params: resolvedParams }),
+			sanityFetch({ query: lessonQuery, params: resolvedParams, tags: ["lesson"] }),
+			sanityFetch({ query: lessonsInCourseQuery, params: resolvedParams, tags: ["course", "lesson"] }),
 		])
 	).map((res) => res.data) as [
 		LessonQueryResult,

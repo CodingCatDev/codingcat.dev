@@ -19,6 +19,8 @@ import SponsorCard from "@/components/sponsor-card";
 
 type Params = Promise<{ slug: string }>;
 
+export const revalidate = 3600;
+
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
@@ -30,6 +32,7 @@ export async function generateMetadata(
 			query: postQuery,
 			params: { slug },
 			stega: false,
+			tags: ["post", `post:${slug}`],
 		})
 	).data as PostQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -48,6 +51,15 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetch({
+		query: groq`*[_type == "post" && defined(slug.current)].slug.current`,
+		tags: ["post-list"],
+		stega: false,
+	});
+	return (data as string[]).map((slug) => ({ slug }));
+}
+
 export default async function PostPage({ params }: { params: Params }) {
 	const { slug } = await params;
 
@@ -56,6 +68,7 @@ export default async function PostPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: postQuery,
 				params: { slug },
+				tags: ["post", `post:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [PostQueryResult];

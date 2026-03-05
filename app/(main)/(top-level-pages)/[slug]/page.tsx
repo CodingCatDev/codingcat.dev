@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import type { PortableTextBlock } from "next-sanity";
+import { groq, type PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";
@@ -14,6 +14,8 @@ type Props = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export const revalidate = 86400;
+
 export async function generateMetadata(
 	{ params, searchParams }: Props,
 	parent: ResolvingMetadata,
@@ -25,6 +27,7 @@ export async function generateMetadata(
 			query: pageQuery,
 			params: { slug },
 			stega: false,
+			tags: ["page", `page:${slug}`],
 		})
 	).data as PageQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -39,6 +42,15 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetch({
+		query: groq`*[_type == "page" && defined(slug.current)].slug.current`,
+		tags: ["page-list"],
+		stega: false,
+	});
+	return (data as string[]).map((slug) => ({ slug }));
+}
+
 export default async function PagePage({ params, searchParams }: Props) {
 	const { slug } = await params;
 
@@ -48,6 +60,7 @@ export default async function PagePage({ params, searchParams }: Props) {
 				query: pageQuery,
 				params: { slug },
 				stega: false,
+				tags: ["page", `page:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [PageQueryResult];

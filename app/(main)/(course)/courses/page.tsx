@@ -12,6 +12,7 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { coursesQuery } from "@/sanity/lib/queries";
 import MoreHeader from "@/components/more-header";
 
+export const revalidate = 60;
 function HeroCourse({
 	title,
 	slug,
@@ -65,7 +66,7 @@ function HeroCourse({
 
 export default async function Page() {
 	const [heroPost] = (
-		await Promise.all([sanityFetch({ query: coursesQuery })])
+		await Promise.all([sanityFetch({ query: coursesQuery, tags: ["course-list", "course"] })])
 	).map((res) => res.data) as [CoursesQueryResult];
 
 	return (
