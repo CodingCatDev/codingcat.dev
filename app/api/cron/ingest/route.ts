@@ -7,8 +7,7 @@ import { writeClient } from "@/lib/sanity-write-client";
 import { getConfigValue } from "@/lib/config";
 import { discoverTrends, type TrendResult } from "@/lib/services/trend-discovery";
 import type { ResearchPayload } from "@/lib/services/research";
-import { NotebookLMClient } from "@/lib/services/notebooklm/client";
-import { initAuth } from "@/lib/services/notebooklm/auth";
+import { submitResearch } from "@/lib/services/gemini-research";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -103,7 +102,7 @@ const FALLBACK_TRENDS: TrendResult[] = [
 		slug: "webassembly-web-apps",
 		score: 60,
 		signals: [{ source: "blog", title: "WebAssembly", url: "https://webassembly.org/", score: 60 }],
-		whyTrending: "WASM adoption growing in production apps",
+		whyTrending: "WASM adoption growing in [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] apps",
 		suggestedAngle: "Real-world use cases where WASM outperforms JS",
 	},
 ];
@@ -469,11 +468,11 @@ async function createSanityDocuments(
 	selectedTrend: TrendResult,
 	qualityThreshold: number,
 	research?: ResearchPayload,
-	researchMeta?: { notebookId: string; taskId: string },
+	researchInteractionId?: string,
 ) {
 	const isFlagged = criticResult.score < qualityThreshold;
 	// When research is in-flight, status is "researching" (check-research cron will transition to script_ready)
-	const isResearching = !!researchMeta?.notebookId;
+	const isResearching = !!researchInteractionId;
 	const status = isFlagged ? "flagged" : isResearching ? "researching" : "script_ready";
 
 	const contentIdea = await writeClient.create({
@@ -510,8 +509,7 @@ async function createSanityDocuments(
 		}),
 		trendScore: selectedTrend.score,
 		trendSources: selectedTrend.signals.map(s => s.source).join(", "),
-		researchNotebookId: researchMeta?.notebookId ?? research?.notebookId,
-		...(researchMeta?.taskId && { researchTaskId: researchMeta.taskId }),
+		researchInteractionId: researchInteractionId || undefined,
 	});
 
 	console.log(`[CRON/ingest] Created automatedVideo: ${automatedVideo._id}`);
@@ -548,9 +546,9 @@ export async function GET(request: NextRequest) {
 			"systemInstruction",
 			SYSTEM_INSTRUCTION_FALLBACK,
 		);
-		const enableNotebookLmResearch = await getConfigValue(
+		const enableDeepResearch = await getConfigValue(
 			"pipeline_config",
-			"enableNotebookLmResearch",
+			"enableDeepResearch",
 			false,
 		);
 		const qualityThreshold = await getConfigValue(
@@ -620,41 +618,21 @@ export async function GET(request: NextRequest) {
 		console.log(`[CRON/ingest] Dedup: selected "${selectedTrend.topic}" (score: ${selectedTrend.score}, skipped ${skippedCount} topics)`);
 
 		// Step 2: Optional deep research on selected topic (fire-and-forget)
-		// When research is enabled, we create a notebook and start research
+		// When research is enabled, we submit to Gemini Deep Research
 		// but DON'T wait for it — the check-research cron will poll and enrich later
-		let researchMeta: { notebookId: string; taskId: string } | undefined;
-		if (enableNotebookLmResearch) {
-			console.log(`[CRON/ingest] Starting fire-and-forget research on: "${selectedTrend.topic}"...`);
+		let researchInteractionId: string | undefined;
+		if (enableDeepResearch) {
+			console.log(`[CRON/ingest] Starting Gemini Deep Research on: "${selectedTrend.topic}"...`);
 			try {
-				const auth = await initAuth();
-				const nbClient = new NotebookLMClient(auth);
-
-				// Create notebook
-				const notebook = await nbClient.createNotebook(selectedTrend.topic);
-				const notebookId = notebook.id;
-				console.log(`[CRON/ingest] Created notebook: ${notebookId}`);
-
-				// Add source URLs from trend signals
 				const sourceUrls = (selectedTrend.signals ?? [])
 					.map((s: { url?: string }) => s.url)
 					.filter((u): u is string => !!u && u.startsWith("http"))
 					.slice(0, 5);
 
-				for (const url of sourceUrls) {
-					await nbClient.addSource(notebookId, url).catch((err) => {
-						console.warn(`[CRON/ingest] Failed to add source ${url}:`, err);
-					});
-				}
-				console.log(`[CRON/ingest] Added ${sourceUrls.length} source URLs to notebook`);
-
-				// Start deep research (fire-and-forget — don't poll!)
-				const researchTask = await nbClient.startResearch(notebookId, selectedTrend.topic, "deep");
-				const researchTaskId = researchTask?.taskId ?? "";
-				console.log(`[CRON/ingest] Research started — taskId: ${researchTaskId}. check-research cron will poll.`);
-
-				researchMeta = { notebookId, taskId: researchTaskId };
+				researchInteractionId = await submitResearch(selectedTrend.topic, { sourceUrls });
+				console.log(`[CRON/ingest] Deep Research submitted — interactionId: ${researchInteractionId}. check-research cron will poll.`);
 			} catch (err) {
-				console.warn("[CRON/ingest] Research start failed, continuing without:", err);
+				console.warn("[CRON/ingest] Deep Research submission failed, continuing without:", err);
 			}
 		}
 
@@ -692,7 +670,7 @@ export async function GET(request: NextRequest) {
 		);
 
 		console.log("[CRON/ingest] Creating Sanity documents...");
-		const result = await createSanityDocuments(script, criticResult, selectedTrend, qualityThreshold, undefined, researchMeta);
+		const result = await createSanityDocuments(script, criticResult, selectedTrend, qualityThreshold, undefined, researchInteractionId);
 
 		console.log("[CRON/ingest] Done!", result);
 
@@ -704,8 +682,8 @@ export async function GET(request: NextRequest) {
 			trendCount: trends.length,
 			trendScore: selectedTrend.score,
 			skippedCount,
-			researchStarted: !!researchMeta,
-			researchNotebookId: researchMeta?.notebookId,
+			researchStarted: !!researchInteractionId,
+			researchInteractionId: researchInteractionId,
 		});
 	} catch (err) {
 		console.error("[CRON/ingest] Unexpected error:", err);
