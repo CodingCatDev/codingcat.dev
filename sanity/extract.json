@@ -754,6 +754,225 @@
                         "type": "number"
                       },
                       "optional": true
+                    },
+                    "sceneType": {
+                      "type": "objectAttribute",
+                      "value": {
+                        "type": "union",
+                        "of": [
+                          {
+                            "type": "string",
+                            "value": "narration"
+                          },
+                          {
+                            "type": "string",
+                            "value": "code"
+                          },
+                          {
+                            "type": "string",
+                            "value": "list"
+                          },
+                          {
+                            "type": "string",
+                            "value": "comparison"
+                          },
+                          {
+                            "type": "string",
+                            "value": "mockup"
+                          }
+                        ]
+                      },
+                      "optional": true
+                    },
+                    "code": {
+                      "type": "objectAttribute",
+                      "value": {
+                        "type": "object",
+                        "attributes": {
+                          "snippet": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "language": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "union",
+                              "of": [
+                                {
+                                  "type": "string",
+                                  "value": "typescript"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "javascript"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "jsx"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "tsx"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "css"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "html"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "json"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "bash"
+                                }
+                              ]
+                            },
+                            "optional": true
+                          },
+                          "highlightLines": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "array",
+                              "of": {
+                                "type": "number"
+                              }
+                            },
+                            "optional": true
+                          }
+                        }
+                      },
+                      "optional": true
+                    },
+                    "list": {
+                      "type": "objectAttribute",
+                      "value": {
+                        "type": "object",
+                        "attributes": {
+                          "items": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "array",
+                              "of": {
+                                "type": "string"
+                              }
+                            },
+                            "optional": true
+                          },
+                          "icon": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          }
+                        }
+                      },
+                      "optional": true
+                    },
+                    "comparison": {
+                      "type": "objectAttribute",
+                      "value": {
+                        "type": "object",
+                        "attributes": {
+                          "leftLabel": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "rightLabel": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "rows": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "array",
+                              "of": {
+                                "type": "object",
+                                "attributes": {
+                                  "left": {
+                                    "type": "objectAttribute",
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "optional": true
+                                  },
+                                  "right": {
+                                    "type": "objectAttribute",
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "optional": true
+                                  }
+                                },
+                                "rest": {
+                                  "type": "object",
+                                  "attributes": {
+                                    "_key": {
+                                      "type": "objectAttribute",
+                                      "value": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "optional": true
+                          }
+                        }
+                      },
+                      "optional": true
+                    },
+                    "mockup": {
+                      "type": "objectAttribute",
+                      "value": {
+                        "type": "object",
+                        "attributes": {
+                          "deviceType": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "union",
+                              "of": [
+                                {
+                                  "type": "string",
+                                  "value": "browser"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "phone"
+                                },
+                                {
+                                  "type": "string",
+                                  "value": "terminal"
+                                }
+                              ]
+                            },
+                            "optional": true
+                          },
+                          "screenContent": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          }
+                        }
+                      },
+                      "optional": true
                     }
                   },
                   "rest": {
@@ -1122,6 +1341,36 @@
     }
   },
   {
+    "type": "type",
+    "name": "sponsor.reference",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_ref": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          }
+        },
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "reference"
+          }
+        },
+        "_weak": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        }
+      },
+      "dereferencesTo": "sponsor"
+    }
+  },
+  {
     "name": "sponsorLead",
     "type": "document",
     "attributes": {
@@ -1253,6 +1502,14 @@
         "value": {
           "type": "inline",
           "name": "automatedVideo.reference"
+        },
+        "optional": true
+      },
+      "sponsorDocId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "sponsor.reference"
         },
         "optional": true
       },
@@ -2561,36 +2818,6 @@
         }
       },
       "dereferencesTo": "author"
-    }
-  },
-  {
-    "type": "type",
-    "name": "sponsor.reference",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_ref": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          }
-        },
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "reference"
-          }
-        },
-        "_weak": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "boolean"
-          },
-          "optional": true
-        }
-      },
-      "dereferencesTo": "sponsor"
     }
   },
   {

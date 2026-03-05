@@ -148,6 +148,37 @@ export type AutomatedVideo = {
       visualDescription?: string;
       bRollKeywords?: Array<string>;
       durationEstimate?: number;
+      sceneType?: "narration" | "code" | "list" | "comparison" | "mockup";
+      code?: {
+        snippet?: string;
+        language?:
+          | "typescript"
+          | "javascript"
+          | "jsx"
+          | "tsx"
+          | "css"
+          | "html"
+          | "json"
+          | "bash";
+        highlightLines?: Array<number>;
+      };
+      list?: {
+        items?: Array<string>;
+        icon?: string;
+      };
+      comparison?: {
+        leftLabel?: string;
+        rightLabel?: string;
+        rows?: Array<{
+          left?: string;
+          right?: string;
+          _key: string;
+        }>;
+      };
+      mockup?: {
+        deviceType?: "browser" | "phone" | "terminal";
+        screenContent?: string;
+      };
       _key: string;
     }>;
     cta?: string;
@@ -208,6 +239,13 @@ export type AutomatedVideoReference = {
   [internalGroqTypeReferenceTo]?: "automatedVideo";
 };
 
+export type SponsorReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sponsor";
+};
+
 export type SponsorLead = {
   _id: string;
   _type: "sponsorLead";
@@ -223,6 +261,7 @@ export type SponsorLead = {
   rateCard?: string;
   stripeInvoiceId?: string;
   bookedSlot?: AutomatedVideoReference;
+  sponsorDocId?: SponsorReference;
   threadId?: string;
   lastEmailAt?: string;
   notes?: string;
@@ -448,13 +487,6 @@ export type AuthorReference = {
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "author";
-};
-
-export type SponsorReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sponsor";
 };
 
 export type Lesson = {
@@ -2095,6 +2127,7 @@ export type AllSanitySchemaTypes =
   | SponsorLeadReference
   | AutomatedVideo
   | AutomatedVideoReference
+  | SponsorReference
   | SponsorLead
   | Slug
   | ContentIdea
@@ -2106,7 +2139,6 @@ export type AllSanitySchemaTypes =
   | PageReference
   | Sponsor
   | AuthorReference
-  | SponsorReference
   | Lesson
   | Author
   | Post
@@ -10809,6 +10841,933 @@ export type RssQueryResult = Array<
 >;
 
 // Source: sanity/lib/queries.ts
+// Variable: rssPodcastQuery
+// Query: *[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify,}
+export type RssPodcastQueryResult = Array<{
+  _id: string;
+  _type: "podcast";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  coverImage: CoverImage | null;
+  date: string;
+  content: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
+        listItem?: "bullet" | "number";
+        markDefs: Array<
+          | {
+              reference?:
+                | CourseReference
+                | PageReference
+                | PodcastReference
+                | PostReference;
+              _type: "internalLink";
+              _key: string;
+              href: string | null;
+            }
+          | {
+              reference?:
+                | CourseReference
+                | PageReference
+                | PodcastReference
+                | PostReference;
+              _type: "internalLink";
+              _key: string;
+              href: string | null;
+            }
+          | {
+              reference?:
+                | CourseReference
+                | PageReference
+                | PodcastReference
+                | PostReference;
+              _type: "internalLink";
+              _key: string;
+            }
+          | {
+              href?: string;
+              blank?: boolean;
+              _type: "link";
+              _key: string;
+            }
+        > | null;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        _key: string;
+        _type: "code";
+        language?: string;
+        filename?: string;
+        code?: string;
+        highlightedLines?: Array<number>;
+        markDefs: null;
+      }
+    | {
+        url?: string;
+        _type: "codepen";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        url?: string;
+        _type: "codesandbox";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        html?: string;
+        _type: "htmlBlock";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        content?: Array<{
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "blockquote"
+            | "h1"
+            | "h2"
+            | "h3"
+            | "h4"
+            | "h5"
+            | "h6"
+            | "normal";
+          listItem?: "bullet" | "number";
+          markDefs?: Array<
+            | {
+                reference?:
+                  | CourseReference
+                  | PageReference
+                  | PodcastReference
+                  | PostReference;
+                _type: "internalLink";
+                _key: string;
+              }
+            | {
+                href?: string;
+                blank?: boolean;
+                _type: "link";
+                _key: string;
+              }
+          >;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }>;
+        url?: string;
+        _type: "quote";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        _key: string;
+        _type: "table";
+        rows?: Array<
+          {
+            _key: string;
+          } & Row
+        >;
+        markDefs: null;
+      }
+    | {
+        id?: string;
+        _type: "twitter";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        youtube?: string;
+        _type: "youtube";
+        _key: string;
+        markDefs: null;
+      }
+    | {
+        shorts?: Array<string>;
+        _type: "youtubeShorts";
+        _key: string;
+        markDefs: null;
+      }
+  > | null;
+  author: Array<{
+    _id: string;
+    _type: "author";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    coverImage?: CoverImage;
+    date?: string;
+    title: string | "Anonymous";
+    slug: string | null;
+    excerpt?: string;
+    featured?: number;
+    content?: Array<
+      | ({
+          _key: string;
+        } & Code)
+      | ({
+          _key: string;
+        } & Table)
+      | {
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "blockquote"
+            | "h1"
+            | "h2"
+            | "h3"
+            | "h4"
+            | "h5"
+            | "h6"
+            | "normal";
+          listItem?: "bullet" | "number";
+          markDefs?: Array<
+            | {
+                reference?:
+                  | CourseReference
+                  | PageReference
+                  | PodcastReference
+                  | PostReference;
+                _type: "internalLink";
+                _key: string;
+              }
+            | {
+                href?: string;
+                blank?: boolean;
+                _type: "link";
+                _key: string;
+              }
+          >;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }
+      | {
+          url?: string;
+          _type: "codepen";
+          _key: string;
+        }
+      | {
+          url?: string;
+          _type: "codesandbox";
+          _key: string;
+        }
+      | {
+          html?: string;
+          _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+        }
+      | {
+          content?: Array<{
+            children?: Array<{
+              marks?: Array<string>;
+              text?: string;
+              _type: "span";
+              _key: string;
+            }>;
+            style?:
+              | "blockquote"
+              | "h1"
+              | "h2"
+              | "h3"
+              | "h4"
+              | "h5"
+              | "h6"
+              | "normal";
+            listItem?: "bullet" | "number";
+            markDefs?: Array<
+              | {
+                  reference?:
+                    | CourseReference
+                    | PageReference
+                    | PodcastReference
+                    | PostReference;
+                  _type: "internalLink";
+                  _key: string;
+                }
+              | {
+                  href?: string;
+                  blank?: boolean;
+                  _type: "link";
+                  _key: string;
+                }
+            >;
+            level?: number;
+            _type: "block";
+            _key: string;
+          }>;
+          url?: string;
+          _type: "quote";
+          _key: string;
+        }
+      | {
+          id?: string;
+          _type: "twitter";
+          _key: string;
+        }
+      | {
+          youtube?: string;
+          _type: "youtube";
+          _key: string;
+        }
+      | {
+          shorts?: Array<string>;
+          _type: "youtubeShorts";
+          _key: string;
+        }
+    >;
+    socials?: Socials;
+    websites?: Array<{
+      site?: string;
+      link?: Link;
+      _type: "site";
+      _key: string;
+    }>;
+  }> | null;
+  devto: string | null;
+  hashnode: string | null;
+  sponsor: Array<{
+    _id: string;
+    _type: "sponsor";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    coverImage?: CoverImage;
+    date?: string;
+    title: string | "Anonymous";
+    slug: string | null;
+    excerpt?: string;
+    featured?: number;
+    content?: Array<
+      | ({
+          _key: string;
+        } & Code)
+      | ({
+          _key: string;
+        } & Table)
+      | {
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "blockquote"
+            | "h1"
+            | "h2"
+            | "h3"
+            | "h4"
+            | "h5"
+            | "h6"
+            | "normal";
+          listItem?: "bullet" | "number";
+          markDefs?: Array<
+            | {
+                reference?:
+                  | CourseReference
+                  | PageReference
+                  | PodcastReference
+                  | PostReference;
+                _type: "internalLink";
+                _key: string;
+              }
+            | {
+                href?: string;
+                blank?: boolean;
+                _type: "link";
+                _key: string;
+              }
+          >;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }
+      | {
+          url?: string;
+          _type: "codepen";
+          _key: string;
+        }
+      | {
+          url?: string;
+          _type: "codesandbox";
+          _key: string;
+        }
+      | {
+          html?: string;
+          _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+        }
+      | {
+          content?: Array<{
+            children?: Array<{
+              marks?: Array<string>;
+              text?: string;
+              _type: "span";
+              _key: string;
+            }>;
+            style?:
+              | "blockquote"
+              | "h1"
+              | "h2"
+              | "h3"
+              | "h4"
+              | "h5"
+              | "h6"
+              | "normal";
+            listItem?: "bullet" | "number";
+            markDefs?: Array<
+              | {
+                  reference?:
+                    | CourseReference
+                    | PageReference
+                    | PodcastReference
+                    | PostReference;
+                  _type: "internalLink";
+                  _key: string;
+                }
+              | {
+                  href?: string;
+                  blank?: boolean;
+                  _type: "link";
+                  _key: string;
+                }
+            >;
+            level?: number;
+            _type: "block";
+            _key: string;
+          }>;
+          url?: string;
+          _type: "quote";
+          _key: string;
+        }
+      | {
+          id?: string;
+          _type: "twitter";
+          _key: string;
+        }
+      | {
+          youtube?: string;
+          _type: "youtube";
+          _key: string;
+        }
+      | {
+          shorts?: Array<string>;
+          _type: "youtubeShorts";
+          _key: string;
+        }
+    >;
+    url?: string;
+  }> | null;
+  tags: null;
+  videoCloudinary: VideoCloudinary | null;
+  youtube: string | null;
+  podcastType: null;
+  season: number | null;
+  episode: number | null;
+  recordingDate: string | null;
+  guest: Array<{
+    _id: string;
+    _type: "guest";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    coverImage?: CoverImage;
+    date?: string;
+    title: string | "Anonymous";
+    slug: string | null;
+    excerpt?: string;
+    featured?: number;
+    content?: Array<
+      | ({
+          _key: string;
+        } & Code)
+      | ({
+          _key: string;
+        } & Table)
+      | {
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "blockquote"
+            | "h1"
+            | "h2"
+            | "h3"
+            | "h4"
+            | "h5"
+            | "h6"
+            | "normal";
+          listItem?: "bullet" | "number";
+          markDefs?: Array<
+            | {
+                reference?:
+                  | CourseReference
+                  | PageReference
+                  | PodcastReference
+                  | PostReference;
+                _type: "internalLink";
+                _key: string;
+              }
+            | {
+                href?: string;
+                blank?: boolean;
+                _type: "link";
+                _key: string;
+              }
+          >;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }
+      | {
+          url?: string;
+          _type: "codepen";
+          _key: string;
+        }
+      | {
+          url?: string;
+          _type: "codesandbox";
+          _key: string;
+        }
+      | {
+          html?: string;
+          _type: "htmlBlock";
+          _key: string;
+        }
+      | {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+        }
+      | {
+          content?: Array<{
+            children?: Array<{
+              marks?: Array<string>;
+              text?: string;
+              _type: "span";
+              _key: string;
+            }>;
+            style?:
+              | "blockquote"
+              | "h1"
+              | "h2"
+              | "h3"
+              | "h4"
+              | "h5"
+              | "h6"
+              | "normal";
+            listItem?: "bullet" | "number";
+            markDefs?: Array<
+              | {
+                  reference?:
+                    | CourseReference
+                    | PageReference
+                    | PodcastReference
+                    | PostReference;
+                  _type: "internalLink";
+                  _key: string;
+                }
+              | {
+                  href?: string;
+                  blank?: boolean;
+                  _type: "link";
+                  _key: string;
+                }
+            >;
+            level?: number;
+            _type: "block";
+            _key: string;
+          }>;
+          url?: string;
+          _type: "quote";
+          _key: string;
+        }
+      | {
+          id?: string;
+          _type: "twitter";
+          _key: string;
+        }
+      | {
+          youtube?: string;
+          _type: "youtube";
+          _key: string;
+        }
+      | {
+          shorts?: Array<string>;
+          _type: "youtubeShorts";
+          _key: string;
+        }
+    >;
+    socials?: Socials;
+    websites?: Array<{
+      site?: string;
+      link?: Link;
+      _type: "site";
+      _key: string;
+    }>;
+  }> | null;
+  pick: Array<{
+    user:
+      | {
+          _id: string;
+          _type: "author";
+          _createdAt: string;
+          _updatedAt: string;
+          _rev: string;
+          coverImage?: CoverImage;
+          date?: string;
+          title?: string;
+          slug?: Slug;
+          excerpt?: string;
+          featured?: number;
+          content?: Array<
+            | ({
+                _key: string;
+              } & Code)
+            | ({
+                _key: string;
+              } & Table)
+            | {
+                children?: Array<{
+                  marks?: Array<string>;
+                  text?: string;
+                  _type: "span";
+                  _key: string;
+                }>;
+                style?:
+                  | "blockquote"
+                  | "h1"
+                  | "h2"
+                  | "h3"
+                  | "h4"
+                  | "h5"
+                  | "h6"
+                  | "normal";
+                listItem?: "bullet" | "number";
+                markDefs?: Array<
+                  | {
+                      reference?:
+                        | CourseReference
+                        | PageReference
+                        | PodcastReference
+                        | PostReference;
+                      _type: "internalLink";
+                      _key: string;
+                    }
+                  | {
+                      href?: string;
+                      blank?: boolean;
+                      _type: "link";
+                      _key: string;
+                    }
+                >;
+                level?: number;
+                _type: "block";
+                _key: string;
+              }
+            | {
+                url?: string;
+                _type: "codepen";
+                _key: string;
+              }
+            | {
+                url?: string;
+                _type: "codesandbox";
+                _key: string;
+              }
+            | {
+                html?: string;
+                _type: "htmlBlock";
+                _key: string;
+              }
+            | {
+                asset?: SanityImageAssetReference;
+                media?: unknown;
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
+                _key: string;
+              }
+            | {
+                content?: Array<{
+                  children?: Array<{
+                    marks?: Array<string>;
+                    text?: string;
+                    _type: "span";
+                    _key: string;
+                  }>;
+                  style?:
+                    | "blockquote"
+                    | "h1"
+                    | "h2"
+                    | "h3"
+                    | "h4"
+                    | "h5"
+                    | "h6"
+                    | "normal";
+                  listItem?: "bullet" | "number";
+                  markDefs?: Array<
+                    | {
+                        reference?:
+                          | CourseReference
+                          | PageReference
+                          | PodcastReference
+                          | PostReference;
+                        _type: "internalLink";
+                        _key: string;
+                      }
+                    | {
+                        href?: string;
+                        blank?: boolean;
+                        _type: "link";
+                        _key: string;
+                      }
+                  >;
+                  level?: number;
+                  _type: "block";
+                  _key: string;
+                }>;
+                url?: string;
+                _type: "quote";
+                _key: string;
+              }
+            | {
+                id?: string;
+                _type: "twitter";
+                _key: string;
+              }
+            | {
+                youtube?: string;
+                _type: "youtube";
+                _key: string;
+              }
+            | {
+                shorts?: Array<string>;
+                _type: "youtubeShorts";
+                _key: string;
+              }
+          >;
+          socials?: Socials;
+          websites?: Array<{
+            site?: string;
+            link?: Link;
+            _type: "site";
+            _key: string;
+          }>;
+        }
+      | {
+          _id: string;
+          _type: "guest";
+          _createdAt: string;
+          _updatedAt: string;
+          _rev: string;
+          coverImage?: CoverImage;
+          date?: string;
+          title?: string;
+          slug?: Slug;
+          excerpt?: string;
+          featured?: number;
+          content?: Array<
+            | ({
+                _key: string;
+              } & Code)
+            | ({
+                _key: string;
+              } & Table)
+            | {
+                children?: Array<{
+                  marks?: Array<string>;
+                  text?: string;
+                  _type: "span";
+                  _key: string;
+                }>;
+                style?:
+                  | "blockquote"
+                  | "h1"
+                  | "h2"
+                  | "h3"
+                  | "h4"
+                  | "h5"
+                  | "h6"
+                  | "normal";
+                listItem?: "bullet" | "number";
+                markDefs?: Array<
+                  | {
+                      reference?:
+                        | CourseReference
+                        | PageReference
+                        | PodcastReference
+                        | PostReference;
+                      _type: "internalLink";
+                      _key: string;
+                    }
+                  | {
+                      href?: string;
+                      blank?: boolean;
+                      _type: "link";
+                      _key: string;
+                    }
+                >;
+                level?: number;
+                _type: "block";
+                _key: string;
+              }
+            | {
+                url?: string;
+                _type: "codepen";
+                _key: string;
+              }
+            | {
+                url?: string;
+                _type: "codesandbox";
+                _key: string;
+              }
+            | {
+                html?: string;
+                _type: "htmlBlock";
+                _key: string;
+              }
+            | {
+                asset?: SanityImageAssetReference;
+                media?: unknown;
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
+                _key: string;
+              }
+            | {
+                content?: Array<{
+                  children?: Array<{
+                    marks?: Array<string>;
+                    text?: string;
+                    _type: "span";
+                    _key: string;
+                  }>;
+                  style?:
+                    | "blockquote"
+                    | "h1"
+                    | "h2"
+                    | "h3"
+                    | "h4"
+                    | "h5"
+                    | "h6"
+                    | "normal";
+                  listItem?: "bullet" | "number";
+                  markDefs?: Array<
+                    | {
+                        reference?:
+                          | CourseReference
+                          | PageReference
+                          | PodcastReference
+                          | PostReference;
+                        _type: "internalLink";
+                        _key: string;
+                      }
+                    | {
+                        href?: string;
+                        blank?: boolean;
+                        _type: "link";
+                        _key: string;
+                      }
+                  >;
+                  level?: number;
+                  _type: "block";
+                  _key: string;
+                }>;
+                url?: string;
+                _type: "quote";
+                _key: string;
+              }
+            | {
+                id?: string;
+                _type: "twitter";
+                _key: string;
+              }
+            | {
+                youtube?: string;
+                _type: "youtube";
+                _key: string;
+              }
+            | {
+                shorts?: Array<string>;
+                _type: "youtubeShorts";
+                _key: string;
+              }
+          >;
+          socials?: Socials;
+          websites?: Array<{
+            site?: string;
+            link?: Link;
+            _type: "site";
+            _key: string;
+          }>;
+        }
+      | null;
+    name: string | null;
+    site: string | null;
+  }> | null;
+  spotify: PodcastRssEpisode | null;
+}>;
+
+// Source: sanity/lib/queries.ts
 // Variable: sitemapQuery
 // Query: *[_type in ["author", "course", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {  _type,  _updatedAt,  "slug": slug.current,  sections[]{    lesson[]->{      _type,      _updatedAt,      "slug": slug.current,    }  }}
 export type SitemapQueryResult = Array<
@@ -10891,6 +11850,7 @@ declare module "@sanity/client" {
     '*[_type == "sponsor" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': SponsorQueryResult;
     '*[_type == "sponsor" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "course": *[_type == "course" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': SponsorQueryWithRelatedResult;
     '*[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n}': RssQueryResult;
+    '*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    "title": coalesce(title, "Missing Podcast Title"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n,\n}': RssPodcastQueryResult;
     '*[_type in ["author", "course", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {\n  _type,\n  _updatedAt,\n  "slug": slug.current,\n  sections[]{\n    lesson[]->{\n      _type,\n      _updatedAt,\n      "slug": slug.current,\n    }\n  }\n}': SitemapQueryResult;
   }
 }
