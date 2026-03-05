@@ -5,10 +5,10 @@
  * Authenticates via service account JWT → OAuth2 access token exchange.
  *
  * Requires env vars:
- * - GCS_BUCKET
- * - GCS_PROJECT_ID
  * - GCS_CLIENT_EMAIL
  * - GCS_PRIVATE_KEY
+ *
+ * GCS bucket and project config is read from Sanity singletons via getConfigValue().
  *
  * @module lib/services/gcs
  */
@@ -58,27 +58,30 @@ const TOKEN_REFRESH_MARGIN_MS = 5 * 60 * 1000; // 5 minutes
 // ---------------------------------------------------------------------------
 
 /**
- * Get GCS configuration from environment variables.
- * Throws if any required env var is missing.
+ * Get GCS configuration from Sanity config + environment variables.
+ * Bucket and project ID come from Sanity; credentials from env vars.
+ * Throws if any required value is missing.
  *
  * The private key may contain literal `\\n` sequences from the env var;
  * these are converted to real newline characters.
  */
 export async function getGCSConfig(): Promise<GCSConfig> {
-  const bucket = await getConfigValue("gcs_config", "bucketName", process.env.GCS_BUCKET);
-  const projectId = await getConfigValue("gcs_config", "projectId", process.env.GCS_PROJECT_ID);
+  const bucket = await getConfigValue("gcs_config", "bucketName", "codingcatdev-content-engine");
+  const projectId = await getConfigValue("gcs_config", "projectId", "codingcatdev");
   const clientEmail = process.env.GCS_CLIENT_EMAIL;
   let privateKey = process.env.GCS_PRIVATE_KEY;
 
   if (!bucket || !projectId || !clientEmail || !privateKey) {
     const missing = [
-      !bucket && "GCS_BUCKET",
-      !projectId && "GCS_PROJECT_ID",
+      !bucket && "gcs_config.bucketName",
+      !projectId && "gcs_config.projectId",
       !clientEmail && "GCS_CLIENT_EMAIL",
       !privateKey && "GCS_PRIVATE_KEY",
     ].filter(Boolean);
     throw new Error(
-      `[GCS] Missing required environment variables: ${missing.join(", ")}`
+      `[GCS] Missing required configuration: ${missing.join(", ")}. ` +
+        `Bucket and project ID are managed in the Sanity GCS Config singleton. ` +
+        `Credentials (GCS_CLIENT_EMAIL, GCS_PRIVATE_KEY) come from env vars.`
     );
   }
 

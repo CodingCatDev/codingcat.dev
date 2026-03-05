@@ -67,7 +67,7 @@ async function getElevenLabsConfig(): Promise<ElevenLabsConfig> {
   const apiKey = process.env.ELEVENLABS_API_KEY;
   const voiceId = await getConfigValue(
     "pipeline_config", "elevenLabsVoiceId",
-    process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"
+    "pNInz6obpgDQGcFmaJgB"
   );
 
   if (!apiKey) {

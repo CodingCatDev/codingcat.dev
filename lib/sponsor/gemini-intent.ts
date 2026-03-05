@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { getConfigValue } from '@/lib/config'
 
 const SPONSORSHIP_TIERS = [
   'dedicated-video',
@@ -33,8 +34,9 @@ export async function extractSponsorIntent(message: string): Promise<SponsorInte
     }
   }
 
+  const geminiModel = await getConfigValue('pipeline_config', 'geminiModel', 'gemini-2.0-flash')
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-flash' })
+  const model = genAI.getGenerativeModel({ model: geminiModel })
 
   const prompt = `You are analyzing an inbound sponsorship inquiry for CodingCat.dev, a developer education platform with YouTube videos, podcasts, blog posts, and newsletters.
 
