@@ -93,7 +93,7 @@ COMMENT ON TABLE remotion_config IS 'Remotion Lambda rendering: AWS region, func
 -- =========================================================================
 CREATE TABLE IF NOT EXISTS content_config (
   id                        integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
-  rss_feeds                 jsonb        NOT NULL DEFAULT '["https://hnrss.org/newest?points=100&count=20","https://dev.to/feed/tag/javascript","https://dev.to/feed/tag/webdev","https://css-tricks.com/feed/","https://blog.chromium.org/feeds/posts/default","https://web.dev/feed.xml","https://www.smashingmagazine.com/feed/","https://javascriptweekly.com/rss/"]'::jsonb,
+  rss_feeds                 jsonb        NOT NULL DEFAULT '[{"name":"HN Top","url":"https://hnrss.org/newest?points=100&count=20"},{"name":"Dev.to JavaScript","url":"https://dev.to/feed/tag/javascript"},{"name":"Dev.to WebDev","url":"https://dev.to/feed/tag/webdev"},{"name":"CSS-Tricks","url":"https://css-tricks.com/feed/"},{"name":"Chromium Blog","url":"https://blog.chromium.org/feeds/posts/default"},{"name":"web.dev","url":"https://web.dev/feed.xml"},{"name":"Smashing Magazine","url":"https://www.smashingmagazine.com/feed/"},{"name":"JavaScript Weekly","url":"https://javascriptweekly.com/rss/"}]'::jsonb,
   trend_sources_enabled     jsonb        NOT NULL DEFAULT '{"hn":true,"devto":true,"blogs":true,"youtube":true,"github":true}'::jsonb,
   system_instruction        text         NOT NULL DEFAULT 'You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
 
@@ -141,7 +141,7 @@ COMMENT ON TABLE content_config IS 'Content discovery and generation: RSS feeds,
 CREATE TABLE IF NOT EXISTS sponsor_config (
   id                      integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   cooldown_days           integer      NOT NULL DEFAULT 14,
-  rate_card_tiers         jsonb        NOT NULL DEFAULT '[{"name":"starter","price":500,"impressions":"5k-10k"},{"name":"growth","price":1500,"impressions":"10k-50k"},{"name":"premium","price":3000,"impressions":"50k+"}]'::jsonb,
+  rate_card_tiers         jsonb        NOT NULL DEFAULT '[{"name":"starter","description":"5k-10k impressions","price":500},{"name":"growth","description":"10k-50k impressions","price":1500},{"name":"premium","description":"50k+ impressions","price":3000}]'::jsonb,
   outreach_email_template text         NOT NULL DEFAULT 'Hi {{companyName}},
 
 I run CodingCat.dev, a web development education channel. We''d love to explore a sponsorship opportunity with you.
