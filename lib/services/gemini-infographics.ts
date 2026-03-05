@@ -198,3 +198,86 @@ export function buildInfographicPrompt(
     `No watermarks. High information density. Developer audience.`
   );
 }
+
+// ---------------------------------------------------------------------------
+// Default instructions (blueprint style from spec)
+// ---------------------------------------------------------------------------
+
+/** Default infographic instructions if Sanity contentConfig is not set up */
+const DEFAULT_INSTRUCTIONS: string[] = [
+  'Create a technical architecture sketch using white "hand-drawn" ink lines on a deep navy blue background (#003366). Use rough-sketched server and database icons with visible "marker" strokes, handwritten labels in a casual font, and a subtle grid pattern. Style: blueprint meets whiteboard doodle.',
+  'Create a comparison chart on a vibrant blue background (#004080) with hand-inked white headers and uneven, sketchy borders. Use white cross-hatching and doodle-style checkmarks to highlight feature differences. Include hand-drawn arrows and annotations. Style: technical chalkboard.',
+  'Create a step-by-step workflow "blueprint" on a dark blue canvas (#003366). Use hand-drawn white arrows connecting rough-sketched boxes, simple "stick-figure" style worker avatars, and handwritten-style labels with a slight chalk texture. Add a subtle grid background. Style: engineering whiteboard.',
+  'Create a hand-sketched timeline using a jagged white line on a royal blue background. Represent milestones with simple, iconic white doodles that look like they were quickly sketched during a brainstorming session. Use handwritten dates and labels. Style: notebook sketch on blue paper.',
+  'Create a pros and cons summary with a "lo-fi" aesthetic. Use hand-drawn white thumbs-up/down icons and rough-sketched containers on a deep blue background (#003366). Add hand-drawn underlines and circled keywords. Style: high-contrast ink-on-blueprint with cyan accent highlights.',
+];
+
+// ---------------------------------------------------------------------------
+// High-level API: generate all infographics for a topic
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate a deterministic seed from a topic + instruction index.
+ * Ensures the same topic always produces the same seed per instruction,
+ * enabling brand-consistent regeneration.
+ */
+function generateSeed(topic: string, index: number): number {
+  let hash = 0;
+  const str = `${topic}-infographic-${index}`;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash) % 2147483647;
+}
+
+/**
+ * Generate all infographics for a research topic using instructions
+ * from Sanity contentConfig.
+ *
+ * This is the main entry point for the check-research cron route.
+ * Reads infographic instructions from contentConfig.infographicInstructions,
+ * appends topic context to each, and generates images with deterministic
+ * seeds for brand consistency.
+ *
+ * @param topic - The research topic (e.g. "React Server Components")
+ * @param briefing - Optional research briefing text for additional context
+ * @returns InfographicBatchResult with generated images and any errors
+ */
+export async function generateInfographicsForTopic(
+  topic: string,
+  briefing?: string,
+): Promise<InfographicBatchResult> {
+  const instructions = await getConfigValue(
+    "content_config", "infographicInstructions", DEFAULT_INSTRUCTIONS
+  );
+
+  const model = await getConfigValue(
+    "pipeline_config", "infographicModel", "imagen-4-fast"
+  );
+
+  const contextSuffix = briefing
+    ? `\n\nTopic: ${topic}\nContext: ${briefing.slice(0, 500)}`
+    : `\n\nTopic: ${topic}`;
+
+  const requests: InfographicRequest[] = instructions.map(
+    (instruction, index) => ({
+      prompt: `${instruction}${contextSuffix}`,
+      seed: generateSeed(topic, index),
+      aspectRatio: "16:9" as const,
+    })
+  );
+
+  console.log(
+    `[infographics] Generating ${requests.length} infographics for "${topic}" with ${model}`
+  );
+
+  const result = await generateInfographicBatch(requests, { model });
+
+  console.log(
+    `[infographics] Complete: ${result.results.length} generated, ${result.errors.length} failed`
+  );
+
+  return result;
+}
