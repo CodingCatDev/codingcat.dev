@@ -137,7 +137,7 @@ async function flagStuckDocs(
   const now = Date.now();
 
   for (const doc of docs) {
-    const threshold = STUCK_THRESHOLDS[doc.status];
+    const threshold = stuckThresholds[doc.status];
     if (!threshold) continue;
 
     const docAge = now - new Date(doc._updatedAt).getTime();
@@ -434,7 +434,8 @@ async function stepEnriching(
     const criticScore = criticResult.score;
     console.log(`[check-research] Critic score: ${criticScore}/100 — ${criticResult.summary}`);
 
-    const isFlagged = criticScore < 50;
+    const qualityThreshold = await getConfigValue('pipeline_config', 'qualityThreshold', 50);
+    const isFlagged = criticScore < qualityThreshold;
 
     await sanity
       .patch(doc._id)
@@ -481,7 +482,9 @@ async function stepEnriching(
 // Gemini Script Enrichment
 // ---------------------------------------------------------------------------
 
-const SYSTEM_INSTRUCTION = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
+// SYSTEM_INSTRUCTION fallback — used when content_config singleton does not exist yet in Sanity.
+// The live value is fetched from getConfigValue() inside stepEnriching().
+const SYSTEM_INSTRUCTION_FALLBACK = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
 
 Your style is inspired by Cleo Abram's "Huge If True" — you make complex technical topics feel exciting, accessible, and important. Key principles:
 - Start with a BOLD claim or surprising fact that makes people stop scrolling
