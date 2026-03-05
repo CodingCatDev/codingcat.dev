@@ -8,6 +8,7 @@ import { NotebookLMClient } from '@/lib/services/notebooklm/client';
 import { initAuth } from '@/lib/services/notebooklm/auth';
 import { ArtifactTypeCode, ArtifactStatus } from '@/lib/services/notebooklm/types';
 import { generateWithGemini, stripCodeFences } from '@/lib/gemini';
+import { getConfigValue } from '@/lib/config';
 import type { ResearchPayload } from '@/lib/services/research';
 
 // ---------------------------------------------------------------------------
@@ -94,12 +95,15 @@ interface StepResult {
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Stuck thresholds per status (ms) */
-const STUCK_THRESHOLDS: Record<string, number> = {
-  researching: 30 * 60 * 1000,           // 30 minutes
-  infographics_generating: 15 * 60 * 1000, // 15 minutes
-  enriching: 10 * 60 * 1000,              // 10 minutes
-};
+/** Build stuck thresholds from config (with fallbacks) */
+async function buildStuckThresholds(): Promise<Record<string, number>> {
+  const stuckMinutes = await getConfigValue('pipeline_config', 'stuckTimeoutMinutes', 30);
+  return {
+    researching: stuckMinutes * 60 * 1000,
+    infographics_generating: Math.round(stuckMinutes * 0.5) * 60 * 1000, // half the main timeout
+    enriching: Math.round(stuckMinutes * 0.33) * 60 * 1000, // third of main timeout
+  };
+}
 
 /** Max docs to process per status per run — keeps total time well under 60s */
 const MAX_DOCS_PER_STATUS = 2;
@@ -132,12 +136,13 @@ function getSanityWriteClient(): SanityClient {
 async function flagStuckDocs(
   docs: PipelineDoc[],
   sanity: SanityClient,
+  stuckThresholds: Record<string, number>,
 ): Promise<StepResult[]> {
   const results: StepResult[] = [];
   const now = Date.now();
 
   for (const doc of docs) {
-    const threshold = STUCK_THRESHOLDS[doc.status];
+    const threshold = stuckThresholds[doc.status];
     if (!threshold) continue;
 
     const docAge = now - new Date(doc._updatedAt).getTime();
@@ -419,6 +424,11 @@ async function stepEnriching(
   // Generate enriched script with Gemini
   let enrichedScript: EnrichedScript | null = null;
   try {
+    const SYSTEM_INSTRUCTION = await getConfigValue(
+      'content_config',
+      'systemInstruction',
+      SYSTEM_INSTRUCTION_FALLBACK,
+    );
     const prompt = buildEnrichmentPrompt(doc, researchPayload);
     const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
     const cleaned = stripCodeFences(rawResponse);
@@ -434,7 +444,8 @@ async function stepEnriching(
     const criticScore = criticResult.score;
     console.log(`[check-research] Critic score: ${criticScore}/100 — ${criticResult.summary}`);
 
-    const isFlagged = criticScore < 50;
+    const qualityThreshold = await getConfigValue('pipeline_config', 'qualityThreshold', 50);
+    const isFlagged = criticScore < qualityThreshold;
 
     await sanity
       .patch(doc._id)
@@ -481,7 +492,9 @@ async function stepEnriching(
 // Gemini Script Enrichment
 // ---------------------------------------------------------------------------
 
-const SYSTEM_INSTRUCTION = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
+// SYSTEM_INSTRUCTION is now fetched from content_config singleton via getConfigValue().
+// Fallback value preserved below for graceful degradation if the Sanity document doesn't exist yet.
+const SYSTEM_INSTRUCTION_FALLBACK = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
 
 Your style is inspired by Cleo Abram's "Huge If True" — you make complex technical topics feel exciting, accessible, and important. Key principles:
 - Start with a BOLD claim or surprising fact that makes people stop scrolling
@@ -813,7 +826,8 @@ export async function GET(request: NextRequest) {
     const results: StepResult[] = [];
 
     // Phase 1: Stuck detection — runs FIRST, no external API calls
-    const stuckResults = await flagStuckDocs(docs, sanity);
+    const stuckThresholds = await buildStuckThresholds();
+    const stuckResults = await flagStuckDocs(docs, sanity, stuckThresholds);
     results.push(...stuckResults);
 
     // Remove flagged docs from further processing

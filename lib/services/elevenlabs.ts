@@ -12,6 +12,7 @@ import {
   type WordTimestamp,
   type SceneAudioResult,
 } from "@/lib/utils/audio-timestamps";
+import { getConfigValue } from "@/lib/config";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";
 
@@ -57,14 +58,14 @@ interface TTSWithTimestampsResponse {
 }
 
 /**
- * Reads the ElevenLabs configuration from environment variables.
+ * Reads the ElevenLabs configuration from Sanity config + environment variables.
+ * API key (secret) stays as process.env. Voice ID comes from Sanity config with env fallback.
  *
  * @returns The resolved {@link ElevenLabsConfig}.
- * @throws {Error} If required environment variables are missing.
+ * @throws {Error} If the API key is missing.
  */
-function getConfig(): ElevenLabsConfig {
+async function getElevenLabsConfig(): Promise<ElevenLabsConfig> {
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  const voiceId = process.env.ELEVENLABS_VOICE_ID;
 
   if (!apiKey) {
     throw new Error(
@@ -73,12 +74,10 @@ function getConfig(): ElevenLabsConfig {
     );
   }
 
-  if (!voiceId) {
-    throw new Error(
-      "Missing ELEVENLABS_VOICE_ID environment variable. " +
-        "Set it in your .env.local or deployment environment."
-    );
-  }
+  const voiceId = await getConfigValue(
+    "pipeline_config", "elevenLabsVoiceId",
+    process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"
+  );
 
   return { apiKey, voiceId };
 }
@@ -106,7 +105,7 @@ export async function generateSpeech(text: string): Promise<Buffer> {
     throw new Error("Cannot generate speech from empty text.");
   }
 
-  const { apiKey, voiceId } = getConfig();
+  const { apiKey, voiceId } = await getElevenLabsConfig();
 
   const url = `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}`;
 
@@ -244,7 +243,7 @@ export async function generateSpeechWithTimestamps(
     throw new Error("Cannot generate speech from empty text.");
   }
 
-  const { apiKey, voiceId } = getConfig();
+  const { apiKey, voiceId } = await getElevenLabsConfig();
 
   const url = `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}/with-timestamps`;
 

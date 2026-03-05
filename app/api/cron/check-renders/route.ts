@@ -1,3 +1,6 @@
+// Config migration: audited — no tweakable config in this route.
+// Remotion/ElevenLabs config is in the service layer (owned by @videopipe).
+// YouTube SEO prompt is specific to this route, not the shared system instruction.
 export const fetchCache = 'force-no-store';
 export const maxDuration = 60;
 

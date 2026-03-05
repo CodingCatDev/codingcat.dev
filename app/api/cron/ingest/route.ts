@@ -330,10 +330,11 @@ async function createSanityDocuments(
 	script: GeneratedScript,
 	criticResult: CriticResult,
 	trends: TrendResult[],
+	qualityThreshold: number,
 	research?: ResearchPayload,
 	researchMeta?: { notebookId: string; taskId: string },
 ) {
-	const isFlagged = criticResult.score < 50;
+	const isFlagged = criticResult.score < qualityThreshold;
 	// When research is in-flight, status is "researching" (check-research cron will transition to script_ready)
 	const isResearching = !!researchMeta?.notebookId;
 	const status = isFlagged ? "flagged" : isResearching ? "researching" : "script_ready";
@@ -494,7 +495,7 @@ export async function GET(request: NextRequest) {
 		);
 
 		console.log("[CRON/ingest] Creating Sanity documents...");
-		const result = await createSanityDocuments(script, criticResult, trends, undefined, researchMeta);
+		const result = await createSanityDocuments(script, criticResult, trends, qualityThreshold, undefined, researchMeta);
 
 		console.log("[CRON/ingest] Done!", result);
 

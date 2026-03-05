@@ -7,6 +7,8 @@ export async function notifySubscribers(opts: {
 	videoTitle: string;
 	videoUrl: string;
 	description: string;
+	fromEmail?: string;
+	notificationEmails?: string[];
 }): Promise<{ sent: boolean; error?: string }> {
 	const apiKey = process.env.RESEND_API_KEY;
 	if (!apiKey) {
@@ -19,8 +21,8 @@ export async function notifySubscribers(opts: {
 		const resend = new Resend(apiKey);
 
 		await resend.emails.send({
-			from: "CodingCat.dev <noreply@codingcat.dev>",
-			to: ["subscribers@codingcat.dev"], // TODO: fetch subscriber list
+			from: `CodingCat.dev <${opts.fromEmail || "noreply@codingcat.dev"}>`,
+			to: opts.notificationEmails || ["subscribers@codingcat.dev"],
 			subject: opts.subject,
 			html: `
 				<h1>${opts.videoTitle}</h1>
