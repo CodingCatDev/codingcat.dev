@@ -94,7 +94,12 @@ export async function getConfigValue<
 ): Promise<ConfigTypeMap[T][K]> {
   try {
     const config = await getConfig(table);
-    return config[key];
+    const value = config[key];
+    // Use fallback when field is undefined/null (not yet set in Sanity)
+    if (value === undefined || value === null) {
+      if (fallback !== undefined) return fallback;
+    }
+    return value;
   } catch {
     if (fallback !== undefined) return fallback;
     throw new Error(`Config value ${String(key)} not found in ${table}`);
