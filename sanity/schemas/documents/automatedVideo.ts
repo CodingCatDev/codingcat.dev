@@ -289,6 +289,32 @@ export default defineType({
       description: 'Direct URL to the short video (auto-populated from video asset)',
     }),
     defineField({
+      name: 'infographics',
+      title: 'Infographics',
+      type: 'array',
+      description: 'Research infographics from NotebookLM — reusable for blog posts and video b-roll',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Alt Text',
+              type: 'string',
+              description: 'Describe the infographic for accessibility',
+            }),
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+              description: 'Optional caption for display',
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: 'renderData',
       title: 'Render Data',
       type: 'object',
