@@ -2,11 +2,15 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import type { PodcastQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { podcastQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import Podcast from "../Podcast";
+import { groq } from "next-sanity";
 
 type Params = Promise<{ slug: string }>;
+
+export const revalidate = 3600;
 
 export async function generateMetadata(
 	{ params }: { params: Params },
@@ -35,6 +39,13 @@ export async function generateMetadata(
 			images: ogImage ? ogImage : previousImages,
 		},
 	} satisfies Metadata;
+}
+
+export async function generateStaticParams() {
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "podcast" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function PodcastPage({ params }: { params: Params }) {

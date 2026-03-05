@@ -73,14 +73,6 @@ const podcastFields = `
   spotify
 `;
 
-const courseFields = `
-  stripeProduct
-`;
-
-const lessonFields = `
-  locked,
-  videoCloudinary
-`;
 
 const userFields = `
   socials,
@@ -89,9 +81,6 @@ const userFields = `
 
 const userRelated = `
   "related":{
-    "course": *[_type == "course" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
-      ${baseFieldsNoContent}
-    },
     "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
       ${baseFieldsNoContent}
     },
@@ -103,9 +92,6 @@ const userRelated = `
 
 const sponsorRelated = `
   "related":{
-    "course": *[_type == "course" && ^._id in sponsor[]._ref] | order(date desc) [] {
-      ${baseFieldsNoContent}
-    },
     "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {
       ${baseFieldsNoContent}
     },
@@ -201,56 +187,6 @@ export const podcastQuery = groq`*[_type == "podcast" && slug.current == $slug] 
   ${contentFields},
   ${podcastFields}
 }`;
-
-// Courses
-
-export const coursesQuery = groq`*[_type == "course" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {
-  ${baseFieldsNoContent},
-  ${courseFields},
-  author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
-  }
-}`;
-
-export const moreCourseQuery = groq`*[_type == "course" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
-  ${baseFieldsNoContent},
-  ${courseFields},
-  author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
-  }
-}`;
-
-export const courseQuery = groq`*[_type == "course" && slug.current == $courseSlug] [0] {
-  ${baseFieldsNoContent},
-  ${courseFields},
-  ${contentFields},
-  ${podcastFields}
-}`;
-
-// Lessons
-
-export const lessonsInCourseQuery = groq`*[_type == "course" && slug.current == $courseSlug] [0] {
-  ${baseFieldsNoContent},
-  ${courseFields},
-  sections[]{
-    title,
-    lesson[]->{
-      ${baseFieldsNoContent},
-      ${lessonFields}
-    }
-  }
-}`;
-
-export const lessonQuery = groq`*[_type == "lesson" && slug.current == $lessonSlug] [0] {
-  ${baseFieldsNoContent},
-  ${contentFields},
-  ${lessonFields}
-}`;
-
 // Author
 
 export const moreAuthorQuery = groq`*[_type == "author" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {
@@ -322,15 +258,8 @@ export const rssPodcastQuery = groq`*[_type == "podcast" && _id != $skip && defi
 }`;
 
 // Sitemaps
-export const sitemapQuery = groq`*[_type in ["author", "course", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {
+export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {
   _type,
   _updatedAt,
   "slug": slug.current,
-  sections[]{
-    lesson[]->{
-      _type,
-      _updatedAt,
-      "slug": slug.current,
-    }
-  }
 }`;

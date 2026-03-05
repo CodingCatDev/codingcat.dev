@@ -35,8 +35,6 @@ import { sharePreviewAction } from "@/sanity/components/documentActions/sharePre
 import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
 import previewSession from "@/sanity/schemas/previewSession";
-import course from "@/sanity/schemas/documents/course";
-import lesson from "@/sanity/schemas/documents/lesson";
 import guest from "@/sanity/schemas/documents/guest";
 import page from "@/sanity/schemas/documents/page";
 import podcast from "@/sanity/schemas/documents/podcast";
@@ -154,8 +152,6 @@ export default defineConfig({
 			gcsConfig,
 			// Documents
 			author,
-			course,
-			lesson,
 			guest,
 			page,
 			podcast,

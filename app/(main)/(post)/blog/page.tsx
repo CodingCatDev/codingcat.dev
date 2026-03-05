@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 
 import MoreHeader from "@/components/more-header";
 
+export const revalidate = 60;
 function HeroPost({
 	title,
 	slug,

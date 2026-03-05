@@ -17,8 +17,6 @@ function typePath(type: string): string {
 			return "blog";
 		case "podcast":
 			return "podcasts";
-		case "course":
-			return "courses";
 		default:
 			return type + "s";
 	}
@@ -42,6 +40,7 @@ export async function buildFeed(params: {
 				limit: params.limit || 10000,
 				offset: params.offset || 0,
 			},
+			tags: isPodcast ? ["podcast-rss", "podcast"] : [params.type + "-rss", params.type],
 		})
 	).data as RssQueryResult;
 

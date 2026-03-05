@@ -47,7 +47,7 @@ export default function ProBenefits({
 								</h1>
 								<p className="max-w-[600px] text-muted-foreground md:text-xl">
 									Unlock premium benefits with our CodingCat.dev Pro plan,
-									including advanced courses, lifetime access, and personalized
+									including premium content, lifetime access, and personalized
 									support.
 								</p>
 							</div>
@@ -80,15 +80,15 @@ export default function ProBenefits({
 							</h2>
 							<p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed">
 								As a CodingCat.dev Pro member, you&apos;ll gain access to our
-								advanced course library, covering topics like machine learning,
-								data science, and cloud architecture.
+								premium content library, covering topics like web development,
+								cloud architecture, and modern frameworks.
 							</p>
 							<Link
-								href="/courses"
+								href="/blog"
 								className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
 								prefetch={false}
 							>
-								Explore Courses
+								Explore Content
 							</Link>
 						</div>
 						<div className="flex flex-col items-start space-y-4">

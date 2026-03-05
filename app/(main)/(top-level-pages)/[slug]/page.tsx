@@ -1,11 +1,12 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import type { PortableTextBlock } from "next-sanity";
+import { groq, type PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";
 
 import type { PageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
@@ -13,6 +14,8 @@ type Props = {
 	params: Promise<{ slug: string }>;
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
+
+export const revalidate = 86400;
 
 export async function generateMetadata(
 	{ params, searchParams }: Props,
@@ -37,6 +40,13 @@ export async function generateMetadata(
 			images: ogImage ? ogImage : previousImages,
 		},
 	} satisfies Metadata;
+}
+
+export async function generateStaticParams() {
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "page" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function PagePage({ params, searchParams }: Props) {
