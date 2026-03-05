@@ -21,7 +21,7 @@ import {
   renderMediaOnLambda,
   getRenderProgress,
   type AwsRegion,
-} from "@remotion/lambda";
+} from "@remotion/lambda/client";
 
 // ---------------------------------------------------------------------------
 // Types
