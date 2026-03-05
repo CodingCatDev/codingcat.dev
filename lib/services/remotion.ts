@@ -22,12 +22,13 @@ import {
   getRenderProgress,
   type AwsRegion,
 } from "@remotion/lambda/client";
+import { getConfigValue } from "@/lib/config";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface RemotionConfig {
+export interface RemotionLambdaConfig {
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
   region: string;
@@ -130,11 +131,11 @@ function mapInputProps(input: RenderInput): Record<string, unknown> {
  * Get Remotion Lambda configuration from environment variables.
  * Throws if any required env var is missing.
  */
-export function getRemotionConfig(): RemotionConfig {
+export async function getRemotionConfig(): Promise<RemotionLambdaConfig> {
   const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
   const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-  const region = process.env.REMOTION_AWS_REGION;
-  const serveUrl = process.env.REMOTION_SERVE_URL;
+  const region = await getConfigValue("remotion_config", "awsRegion", process.env.REMOTION_AWS_REGION);
+  const serveUrl = await getConfigValue("remotion_config", "serveUrl", process.env.REMOTION_SERVE_URL);
 
   const missing: string[] = [];
   if (!awsAccessKeyId) missing.push("AWS_ACCESS_KEY_ID");
@@ -161,8 +162,8 @@ export function getRemotionConfig(): RemotionConfig {
 /**
  * Get the Lambda function name from env or use the default.
  */
-function getFunctionName(): string {
-  return process.env.REMOTION_FUNCTION_NAME || DEFAULT_FUNCTION_NAME;
+async function getFunctionName(): Promise<string> {
+  return getConfigValue("remotion_config", "functionName", process.env.REMOTION_FUNCTION_NAME || DEFAULT_FUNCTION_NAME);
 }
 
 // ---------------------------------------------------------------------------
@@ -202,8 +203,8 @@ async function startRender(
   composition: string,
   input: RenderInput
 ): Promise<{ renderId: string; bucketName: string }> {
-  const config = getRemotionConfig();
-  const functionName = getFunctionName();
+  const config = await getRemotionConfig();
+  const functionName = await getFunctionName();
   const region = config.region as AwsRegion;
 
   log(`Starting render for composition "${composition}"`, {
@@ -291,8 +292,8 @@ export async function checkRenderProgress(
   renderId: string,
   bucketName: string
 ): Promise<RenderProgressResult> {
-  const config = getRemotionConfig();
-  const functionName = getFunctionName();
+  const config = await getRemotionConfig();
+  const functionName = await getFunctionName();
   const region = config.region as AwsRegion;
 
   const progress = await getRenderProgress({
