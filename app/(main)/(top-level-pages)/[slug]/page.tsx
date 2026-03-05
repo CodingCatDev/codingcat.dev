@@ -6,6 +6,7 @@ import PortableText from "@/components/portable-text";
 
 import type { PageQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
@@ -27,7 +28,6 @@ export async function generateMetadata(
 			query: pageQuery,
 			params: { slug },
 			stega: false,
-			tags: ["page", `page:${slug}`],
 		})
 	).data as PageQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -43,12 +43,10 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`*[_type == "page" && defined(slug.current)].slug.current`,
-		tags: ["page-list"],
-		stega: false,
-	});
-	return (data as string[]).map((slug) => ({ slug }));
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "page" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function PagePage({ params, searchParams }: Props) {
@@ -60,7 +58,6 @@ export default async function PagePage({ params, searchParams }: Props) {
 				query: pageQuery,
 				params: { slug },
 				stega: false,
-				tags: ["page", `page:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [PageQueryResult];

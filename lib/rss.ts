@@ -141,7 +141,6 @@ export async function buildPodcastFeed(params: {
 				limit: params.limit || 10000,
 				offset: params.offset || 0,
 			},
-			tags: ["podcast-rss", "podcast"],
 		})
 	).data as RssQueryResult;
 

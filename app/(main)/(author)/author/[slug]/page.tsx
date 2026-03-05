@@ -9,6 +9,7 @@ import type {
 	AuthorQueryWithRelatedResult,
 } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { authorQuery, authorQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
@@ -32,7 +33,6 @@ export async function generateMetadata(
 			query: authorQuery,
 			params: { slug },
 			stega: false,
-			tags: ["author", `author:${slug}`],
 		})
 	).data as AuthorQueryResult;
 
@@ -49,12 +49,10 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`*[_type == "author" && defined(slug.current)].slug.current`,
-		tags: ["author-list"],
-		stega: false,
-	});
-	return (data as string[]).map((slug) => ({ slug }));
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "author" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function AuthorPage({ params }: { params: Params }) {
@@ -64,7 +62,6 @@ export default async function AuthorPage({ params }: { params: Params }) {
 		sanityFetch({
 			query: authorQueryWithRelated,
 			params: { slug },
-			tags: ["author", `author:${slug}`],
 		}),
 	]);
 

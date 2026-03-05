@@ -10,6 +10,7 @@ import PortableText from "@/components/portable-text";
 
 import type { PostQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { postQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
@@ -32,7 +33,6 @@ export async function generateMetadata(
 			query: postQuery,
 			params: { slug },
 			stega: false,
-			tags: ["post", `post:${slug}`],
 		})
 	).data as PostQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -52,12 +52,10 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`*[_type == "post" && defined(slug.current)].slug.current`,
-		tags: ["post-list"],
-		stega: false,
-	});
-	return (data as string[]).map((slug) => ({ slug }));
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "post" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function PostPage({ params }: { params: Params }) {
@@ -68,7 +66,6 @@ export default async function PostPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: postQuery,
 				params: { slug },
-				tags: ["post", `post:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [PostQueryResult];

@@ -16,7 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const content = (
 		await sanityFetch({
 			query: sitemapQuery,
-			tags: ["sitemap"],
 		})
 	).data as SitemapQueryResult;
 

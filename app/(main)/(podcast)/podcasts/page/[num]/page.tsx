@@ -1,6 +1,7 @@
 import MoreContent from "@/components/more-content";
 import type { DocCountResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 
 import PaginateList from "@/components/paginate-list";
 import { docCount } from "@/sanity/lib/queries";
@@ -13,12 +14,9 @@ type Params = Promise<{ num: string }>;
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`count(*[_type == "podcast" && defined(slug.current)])`,
-		tags: ["podcast-list"],
-		stega: false,
-	});
-	const count = data as number;
+	const count = await client.fetch<number>(
+		groq`count(*[_type == "podcast" && defined(slug.current)])`,
+	);
 	const perPage = LIMIT;
 	const pages = Math.ceil(count / perPage);
 	return Array.from({ length: pages }, (_, i) => ({ num: String(i + 1) }));
@@ -32,7 +30,6 @@ export default async function Page({ params }: { params: Params }) {
 				params: {
 					type: "podcast",
 				},
-				tags: ["podcast-list", "podcast"],
 			}),
 		])
 	).map((res) => res.data) as [DocCountResult];

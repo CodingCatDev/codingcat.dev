@@ -9,6 +9,7 @@ import type {
 	SponsorQueryWithRelatedResult,
 } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { sponsorQuery, sponsorQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
@@ -32,7 +33,6 @@ export async function generateMetadata(
 			query: sponsorQuery,
 			params: { slug },
 			stega: false,
-			tags: ["sponsor", `sponsor:${slug}`],
 		})
 	).data as SponsorQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -48,12 +48,10 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`*[_type == "sponsor" && defined(slug.current)].slug.current`,
-		tags: ["sponsor-list"],
-		stega: false,
-	});
-	return (data as string[]).map((slug) => ({ slug }));
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "sponsor" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function SponsorPage({ params }: { params: Params }) {
@@ -64,7 +62,6 @@ export default async function SponsorPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: sponsorQueryWithRelated,
 				params: { slug },
-				tags: ["sponsor", `sponsor:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [SponsorQueryWithRelatedResult];

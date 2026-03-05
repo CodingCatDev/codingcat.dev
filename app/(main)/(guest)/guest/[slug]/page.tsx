@@ -9,6 +9,7 @@ import type {
 	GuestQueryWithRelatedResult,
 } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { guestQuery, guestQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
@@ -33,7 +34,6 @@ export async function generateMetadata(
 			query: guestQuery,
 			params: { slug },
 			stega: false,
-			tags: ["guest", `guest:${slug}`],
 		})
 	).data as GuestQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -49,12 +49,10 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`*[_type == "guest" && defined(slug.current)].slug.current`,
-		tags: ["guest-list"],
-		stega: false,
-	});
-	return (data as string[]).map((slug) => ({ slug }));
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "guest" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function GuestPage({ params }: { params: Params }) {
@@ -65,7 +63,6 @@ export default async function GuestPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: guestQueryWithRelated,
 				params: { slug },
-				tags: ["guest", `guest:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [GuestQueryWithRelatedResult];

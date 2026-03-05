@@ -69,7 +69,7 @@ function HeroPost({
 
 export default async function Page() {
 	const [heroPost] = (
-		await Promise.all([sanityFetch({ query: blogQuery, tags: ["post-list", "post"] })])
+		await Promise.all([sanityFetch({ query: blogQuery })])
 	).map((res) => res.data) as [BlogQueryResult];
 	return (
 		<div className="container px-5 mx-auto">

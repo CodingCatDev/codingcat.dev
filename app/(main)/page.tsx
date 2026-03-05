@@ -14,7 +14,6 @@ export default async function HomePage() {
 	const [homePageFetch] = await Promise.all([
 		sanityFetch({
 			query: homePageQuery,
-			tags: ["home", "post", "podcast"],
 		}),
 	]);
 

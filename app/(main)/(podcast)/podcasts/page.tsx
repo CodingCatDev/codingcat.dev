@@ -82,7 +82,6 @@ export default async function Page() {
 		await Promise.all([
 			sanityFetch({
 				query: podcastsQuery,
-				tags: ["podcast-list", "podcast"],
 			}),
 		])
 	).map((res) => res.data) as [PodcastsQueryResult];

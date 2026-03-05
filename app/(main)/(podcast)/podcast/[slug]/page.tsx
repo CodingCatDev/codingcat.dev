@@ -2,6 +2,7 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import type { PodcastQueryResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { podcastQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import Podcast from "../Podcast";
@@ -22,7 +23,6 @@ export async function generateMetadata(
 			query: podcastQuery,
 			params: { slug },
 			stega: false,
-			tags: ["podcast", `podcast:${slug}`],
 		})
 	).data as PodcastQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -42,12 +42,10 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-	const { data } = await sanityFetch({
-		query: groq`*[_type == "podcast" && defined(slug.current)].slug.current`,
-		tags: ["podcast-list"],
-		stega: false,
-	});
-	return (data as string[]).map((slug) => ({ slug }));
+	const slugs = await client.fetch<string[]>(
+		groq`*[_type == "podcast" && defined(slug.current)].slug.current`,
+	);
+	return slugs.map((slug) => ({ slug }));
 }
 
 export default async function PodcastPage({ params }: { params: Params }) {
@@ -58,7 +56,6 @@ export default async function PodcastPage({ params }: { params: Params }) {
 			sanityFetch({
 				query: podcastQuery,
 				params: { slug },
-				tags: ["podcast", `podcast:${slug}`],
 			}),
 		])
 	).map((res) => res.data) as [PodcastQueryResult];

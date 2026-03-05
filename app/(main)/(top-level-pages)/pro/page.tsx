@@ -29,7 +29,6 @@ export async function generateMetadata(
 				slug: "pro",
 			},
 			stega: false,
-			tags: ["page", "pro"],
 		})
 	).data as PageQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -52,7 +51,6 @@ export default async function ProPage({ params, searchParams }: Props) {
 				params: {
 					slug: "pro",
 				},
-				tags: ["page", "pro"],
 			}),
 		])
 	).map((res) => res.data) as [PageQueryResult];

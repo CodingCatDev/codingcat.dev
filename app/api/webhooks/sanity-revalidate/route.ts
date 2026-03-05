@@ -23,19 +23,9 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Revalidate by content type
-		revalidateTag(body._type);
-
-		// Revalidate specific slug
-		if (body.slug) {
-			revalidateTag(`${body._type}:${body.slug}`);
-		}
-
-		// Always revalidate home page and settings when any content changes
-		revalidateTag("home");
-
-		// Revalidate listing pages
-		revalidateTag(`${body._type}-list`);
+		// Revalidate all sanity-tagged caches (the "heavy hammer" approach)
+		// This is a backup for when no visitors are active to trigger SanityLive revalidation
+		revalidateTag("sanity");
 
 		return NextResponse.json({
 			revalidated: true,

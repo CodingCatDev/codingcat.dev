@@ -54,7 +54,6 @@ export async function generateMetadata(
 		await sanityFetch({
 			query: pageQuery,
 			params: { slug: "sponsorships" },
-			tags: ["page", "sponsorships"],
 		})
 	).data as PageQueryResult;
 
