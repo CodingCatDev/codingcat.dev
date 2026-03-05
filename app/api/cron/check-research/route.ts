@@ -1,5 +1,5 @@
 export const fetchCache = 'force-no-store';
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 import { type NextRequest } from 'next/server';
 import { after } from 'next/server';
