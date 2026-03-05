@@ -14,6 +14,7 @@
  */
 
 import * as crypto from "crypto";
+import { getConfigValue } from "@/lib/config";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -63,9 +64,9 @@ const TOKEN_REFRESH_MARGIN_MS = 5 * 60 * 1000; // 5 minutes
  * The private key may contain literal `\\n` sequences from the env var;
  * these are converted to real newline characters.
  */
-export function getGCSConfig(): GCSConfig {
-  const bucket = process.env.GCS_BUCKET;
-  const projectId = process.env.GCS_PROJECT_ID;
+export async function getGCSConfig(): Promise<GCSConfig> {
+  const bucket = await getConfigValue("gcs_config", "bucketName", process.env.GCS_BUCKET);
+  const projectId = await getConfigValue("gcs_config", "projectId", process.env.GCS_PROJECT_ID);
   const clientEmail = process.env.GCS_CLIENT_EMAIL;
   let privateKey = process.env.GCS_PRIVATE_KEY;
 
@@ -205,7 +206,7 @@ async function getAccessToken(): Promise<string> {
     return cachedToken.accessToken;
   }
 
-  const config = getGCSConfig();
+  const config = await getGCSConfig();
   const jwt = createServiceAccountJWT(config);
   cachedToken = await exchangeJWTForToken(jwt);
   return cachedToken.accessToken;
@@ -231,7 +232,7 @@ export async function uploadToGCS(
   path: string,
   contentType: string
 ): Promise<UploadResult> {
-  const config = getGCSConfig();
+  const config = await getGCSConfig();
   const token = await getAccessToken();
 
   const encodedPath = encodeURIComponent(path);
@@ -338,7 +339,7 @@ export async function getSignedUrl(
   expiresInMinutes = 60
 ): Promise<string> {
   // We still validate config to fail fast if env vars are missing
-  const config = getGCSConfig();
+  const config = await getGCSConfig();
 
   // For public objects, the public URL is sufficient
   void expiresInMinutes; // acknowledged but unused for public objects

@@ -5,9 +5,7 @@ import { sanityWriteClient } from '@/lib/sanity-write-client'
 import { generateOutreachEmail } from '@/lib/sponsor/gemini-outreach'
 import { sendSponsorEmail } from '@/lib/sponsor/email-service'
 import type { SponsorPoolEntry } from '@/lib/sponsor/gemini-outreach'
-
-const MAX_PER_RUN = 5
-const COOLDOWN_DAYS = 14
+import { getConfig } from '@/lib/config'
 
 export async function POST(request: Request) {
   // Auth: Bearer token check against CRON_SECRET
@@ -25,9 +23,19 @@ export async function POST(request: Request) {
   try {
     console.log('[SPONSOR] Starting outbound sponsor outreach cron...')
 
+    // Fetch config from Sanity singleton
+    const sponsorCfg = await getConfig("sponsor_config");
+    const maxPerRun = sponsorCfg.maxOutreachPerRun;
+    const cooldownDays = sponsorCfg.cooldownDays;
+
+    // Build rate card string from config tiers
+    const rateCard = sponsorCfg.rateCardTiers
+      .map((t) => `- ${t.name} ($${t.price}) — ${t.description}`)
+      .join('\n');
+
     // Calculate the cutoff date for cooldown
     const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - COOLDOWN_DAYS)
+    cutoffDate.setDate(cutoffDate.getDate() - cooldownDays)
     const cutoffISO = cutoffDate.toISOString()
 
     // Query Sanity for eligible sponsor pool entries
@@ -38,7 +46,7 @@ export async function POST(request: Request) {
         !defined(lastContactedAt)
         || lastContactedAt < $cutoffDate
       )
-    ] | order(relevanceScore desc) [0...${MAX_PER_RUN - 1}] {
+    ] | order(relevanceScore desc) [0...${maxPerRun - 1}] {
       _id,
       companyName,
       contactName,
@@ -67,8 +75,8 @@ export async function POST(request: Request) {
 
     for (const sponsor of sponsors) {
       try {
-        // Generate personalized outreach email
-        const email = await generateOutreachEmail(sponsor)
+        // Generate personalized outreach email with config rate card
+        const email = await generateOutreachEmail(sponsor, rateCard)
 
         // Send the email (stubbed)
         const sendResult = await sendSponsorEmail(
