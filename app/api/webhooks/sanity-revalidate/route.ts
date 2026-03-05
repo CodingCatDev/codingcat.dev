@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 		const { isValidSignature, body } = await parseBody<{
 			_type: string;
 			slug?: string;
-		}>(request, process.env.SANITY_REVALIDATE_SECRET);
+		}>(request, process.env.SANITY_WEBHOOK_SECRET);
 
 		if (!isValidSignature) {
 			return NextResponse.json(
