@@ -533,6 +533,47 @@ export class NotebookLMClient {
   // -------------------------------------------------------------------------
 
   /**
+   * Get all source IDs from a notebook.
+   * Required for artifact generation (infographics, reports, etc.)
+   */
+  async getSourceIds(notebookId: string): Promise<string[]> {
+    try {
+      const result = await this.rpcCall(
+        RPCMethod.GET_NOTEBOOK,
+        [notebookId, null, [2], null, 0],
+        `/notebook/${notebookId}`
+      );
+
+      const resultArr = result as unknown[];
+      if (!Array.isArray(resultArr) || !Array.isArray(resultArr[0])) {
+        return [];
+      }
+
+      const notebookInfo = resultArr[0] as unknown[];
+      if (!Array.isArray(notebookInfo[1])) {
+        return [];
+      }
+
+      const sources = notebookInfo[1] as unknown[][];
+      const sourceIds: string[] = [];
+      for (const source of sources) {
+        if (!Array.isArray(source) || source.length === 0) continue;
+        const first = source[0];
+        if (Array.isArray(first) && first.length > 0 && typeof first[0] === 'string') {
+          sourceIds.push(first[0]);
+        }
+      }
+      return sourceIds;
+    } catch (error: unknown) {
+      console.warn(
+        '[NotebookLM] Failed to get source IDs:',
+        error instanceof Error ? error.message : String(error)
+      );
+      return [];
+    }
+  }
+
+  /**
    * Generate an infographic for a notebook.
    */
   async generateInfographic(
@@ -549,9 +590,14 @@ export class NotebookLMClient {
       `[NotebookLM] Generating infographic for notebook ${notebookId}`
     );
 
-    const sourceIdsTriple = (options?.sourceIds ?? []).map((sid) => [
-      [[sid]],
-    ]);
+    // Auto-fetch source IDs if not provided
+    const sourceIds = options?.sourceIds ?? await this.getSourceIds(notebookId);
+    if (sourceIds.length === 0) {
+      console.warn('[NotebookLM] No source IDs found — infographic generation may fail');
+    }
+
+    // Python format: [[[sid]] for sid in source_ids] → [[[sid1]], [[sid2]], ...]
+    const sourceIdsTriple = sourceIds.map((sid) => [[sid]]);
     const instructions = options?.instructions ?? null;
     const language = options?.language ?? null;
     const orientation = options?.orientation ?? null;
@@ -608,9 +654,14 @@ export class NotebookLMClient {
   ): Promise<GenerationStatus> {
     console.log(`[NotebookLM] Generating report for notebook ${notebookId}`);
 
-    const sourceIdsTriple = (options?.sourceIds ?? []).map((sid) => [
-      [[sid]],
-    ]);
+    // Auto-fetch source IDs if not provided
+    const sourceIds = options?.sourceIds ?? await this.getSourceIds(notebookId);
+    if (sourceIds.length === 0) {
+      console.warn('[NotebookLM] No source IDs found — report generation may fail');
+    }
+
+    // Python format: [[[sid]] for sid in source_ids] → [[[sid1]], [[sid2]], ...]
+    const sourceIdsTriple = sourceIds.map((sid) => [[sid]]);
     const instructions = options?.instructions ?? null;
     const language = options?.language ?? null;
 
