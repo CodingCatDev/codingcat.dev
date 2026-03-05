@@ -75,6 +75,14 @@ export default defineType({
       to: [{type: 'automatedVideo'}],
     }),
     defineField({
+      name: 'sponsorDocId',
+      title: 'Linked Sponsor',
+      type: 'reference',
+      to: [{type: 'sponsor'}],
+      description: 'Public sponsor document created when lead converts to paid',
+      readOnly: true,
+    }),
+    defineField({
       name: 'threadId',
       title: 'Thread ID',
       type: 'string',
