@@ -4,12 +4,9 @@
 --
 -- Prerequisites:
 --   Prerequisites:
---     1. Set the site URL config var:
---        ALTER DATABASE postgres SET app.site_url = 'https://codingcat.dev';
---
---     2. CRON_SECRET must exist in Supabase Vault (vault.decrypted_secrets).
---        Add it via Supabase Dashboard → Settings → Vault, or:
---        SELECT vault.create_secret('your-cron-secret-here', 'CRON_SECRET');
+--     CRON_SECRET must exist in Supabase Vault (vault.decrypted_secrets).
+--     Add it via Supabase Dashboard → Settings → Vault, or:
+--       SELECT vault.create_secret('your-cron-secret-here', 'CRON_SECRET');
 --
 -- Pipeline flow:
 --   1. youtube-stats    → daily YouTube analytics sync (renamed from daily-cron)
@@ -87,7 +84,7 @@ SELECT cron.schedule(
   'youtube-stats',
   '0 0 * * *',
   $$SELECT net.http_get(
-    url := current_setting('app.site_url') || '/api/cron',
+    url := 'https://codingcat.dev/api/cron',
     headers := jsonb_build_object('Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1))
   )$$
 );
@@ -100,7 +97,7 @@ SELECT cron.schedule(
   'ingest-daily',
   '0 10 * * *',
   $$SELECT net.http_get(
-    url := current_setting('app.site_url') || '/api/cron/ingest',
+    url := 'https://codingcat.dev/api/cron/ingest',
     headers := jsonb_build_object('Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1))
   )$$
 );
@@ -113,7 +110,7 @@ SELECT cron.schedule(
   'check-research',
   '*/5 * * * *',
   $$SELECT net.http_get(
-    url := current_setting('app.site_url') || '/api/cron/check-research',
+    url := 'https://codingcat.dev/api/cron/check-research',
     headers := jsonb_build_object('Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1))
   )$$
 );
@@ -126,7 +123,7 @@ SELECT cron.schedule(
   'check-renders',
   '*/5 * * * *',
   $$SELECT net.http_get(
-    url := current_setting('app.site_url') || '/api/cron/check-renders',
+    url := 'https://codingcat.dev/api/cron/check-renders',
     headers := jsonb_build_object('Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1))
   )$$
 );
@@ -138,7 +135,7 @@ SELECT cron.schedule(
   'sponsor-outreach',
   '0 9 * * 1,4',
   $$SELECT net.http_get(
-    url := current_setting('app.site_url') || '/api/cron/sponsor-outreach',
+    url := 'https://codingcat.dev/api/cron/sponsor-outreach',
     headers := jsonb_build_object('Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1))
   )$$
 );
