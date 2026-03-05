@@ -177,13 +177,10 @@ export class NotebookLMClient {
       const items = resultArr[0] as unknown[][];
       for (const item of items) {
         if (!Array.isArray(item)) continue;
-        // Notebook ID is at [0][0] or [0], title at [2]
-        const idContainer = item[0];
-        const id =
-          Array.isArray(idContainer) && idContainer.length > 0
-            ? String(idContainer[0])
-            : String(idContainer ?? '');
-        const title = typeof item[2] === 'string' ? item[2] : '';
+        // Response format per notebook: [title, null, notebookId, ...]
+        // Index 0 = title string, Index 2 = UUID string
+        const title = typeof item[0] === 'string' ? item[0] : '';
+        const id = typeof item[2] === 'string' ? item[2] : '';
         if (id) {
           notebooks.push({ id, title });
         }
@@ -220,18 +217,16 @@ export class NotebookLMClient {
       );
     }
 
-    // Extract notebook ID — typically at [0] or [0][0]
-    const idContainer = resultArr[0];
-    const id =
-      Array.isArray(idContainer) && idContainer.length > 0
-        ? String(idContainer[0])
-        : String(idContainer ?? '');
+    // Response format: [title, null, notebookId, ...]
+    // Index 0 = title string, Index 2 = UUID string
     const notebookTitle =
-      typeof resultArr[2] === 'string' ? resultArr[2] : title;
+      typeof resultArr[0] === 'string' ? resultArr[0] : title;
+    const id =
+      typeof resultArr[2] === 'string' ? resultArr[2] : '';
 
     if (!id) {
       throw new NotebookLMRPCError(
-        'No notebook ID returned from createNotebook',
+        'No notebook ID returned from createNotebook — expected UUID at index 2',
         { methodId: RPCMethod.CREATE_NOTEBOOK }
       );
     }
