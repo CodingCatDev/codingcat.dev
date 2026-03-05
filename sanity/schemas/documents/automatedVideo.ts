@@ -223,7 +223,7 @@ export default defineType({
       name: 'status',
       title: 'Pipeline Status',
       type: 'string',
-      description: 'Current stage in the automated video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] pipeline',
+      description: 'Current stage in the automated video production pipeline',
       options: {
         list: [
           {title: '1 - Draft', value: 'draft'},

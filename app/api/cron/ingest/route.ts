@@ -102,7 +102,7 @@ const FALLBACK_TRENDS: TrendResult[] = [
 		slug: "webassembly-web-apps",
 		score: 60,
 		signals: [{ source: "blog", title: "WebAssembly", url: "https://webassembly.org/", score: 60 }],
-		whyTrending: "WASM adoption growing in [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] apps",
+		whyTrending: "WASM adoption growing in production apps",
 		suggestedAngle: "Real-world use cases where WASM outperforms JS",
 	},
 ];
