@@ -152,8 +152,8 @@ function buildPrompt(trends: TrendResult[], research?: ResearchPayload): string 
 			}
 		}
 
-		if (research.infographicUrl) {
-			researchContext += `\n### Infographic Available\nAn infographic has been generated for this topic. Use sceneType "narration" with bRollUrl pointing to the infographic for at least one scene.\n`;
+		if (research.infographicUrls && research.infographicUrls.length > 0) {
+			researchContext += `\n### Infographics Available (${research.infographicUrls.length})\nMultiple infographics have been generated for this topic. Use sceneType "narration" with bRollUrl pointing to an infographic for visual scenes.\n`;
 		}
 	}
 
