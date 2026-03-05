@@ -1,7 +1,16 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { getConfigValue } from "@/lib/config";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+let _ai: GoogleGenAI | null = null;
+
+/** Lazy-initialize the GoogleGenAI client (avoids crash at import time if GEMINI_API_KEY is missing). */
+function getAI(): GoogleGenAI {
+	if (!_ai) {
+		const apiKey = process.env.GEMINI_API_KEY || "";
+		_ai = new GoogleGenAI({ apiKey });
+	}
+	return _ai;
+}
 
 /**
  * Generate text content using Gemini Flash.
@@ -14,13 +23,13 @@ export async function generateWithGemini(
 	systemInstruction?: string,
 ): Promise<string> {
 	const geminiModel = await getConfigValue("pipeline_config", "geminiModel", "gemini-2.0-flash");
-	const model = genAI.getGenerativeModel({
+	const ai = getAI();
+	const response = await ai.models.generateContent({
 		model: geminiModel,
-		...(systemInstruction && { systemInstruction }),
+		contents: prompt,
+		...(systemInstruction && { config: { systemInstruction } }),
 	});
-	const result = await model.generateContent(prompt);
-	const response = result.response;
-	return response.text();
+	return response.text ?? "";
 }
 
 /**

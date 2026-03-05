@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { getConfigValue } from '@/lib/config'
 
 const SPONSORSHIP_TIERS = [
@@ -17,10 +17,6 @@ export interface SponsorIntent {
   urgency: 'low' | 'medium' | 'high'
 }
 
-/**
- * Uses Gemini Flash to parse inbound sponsor emails/messages
- * and extract structured data for creating a sponsorLead.
- */
 export async function extractSponsorIntent(message: string): Promise<SponsorIntent> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
@@ -35,8 +31,7 @@ export async function extractSponsorIntent(message: string): Promise<SponsorInte
   }
 
   const geminiModel = await getConfigValue('pipeline_config', 'geminiModel', 'gemini-2.0-flash')
-  const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: geminiModel })
+  const ai = new GoogleGenAI({ apiKey })
 
   const prompt = `You are analyzing an inbound sponsorship inquiry for CodingCat.dev, a developer education platform with YouTube videos, podcasts, blog posts, and newsletters.
 
@@ -61,9 +56,11 @@ Message to analyze:
 ${message}`
 
   try {
-    const result = await model.generateContent(prompt)
-    const response = result.response
-    const text = response.text().trim()
+    const response = await ai.models.generateContent({
+      model: geminiModel,
+      contents: prompt,
+    })
+    const text = (response.text ?? '').trim()
 
     // Strip any markdown code fences if present
     const jsonStr = text.replace(/^```json?\n?/i, '').replace(/\n?```$/i, '').trim()

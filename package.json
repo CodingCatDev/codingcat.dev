@@ -12,7 +12,7 @@
 	},
 	"dependencies": {
 		"@codingcatdev/sanity-plugin-podcast-rss": "^1.0.0",
-		"@google/generative-ai": "^0.24.1",
+		"@google/genai": "^1.0.0",
 		"@hookform/resolvers": "^5.2.2",
 		"@marsidev/react-turnstile": "^1.4.2",
 		"@portabletext/block-tools": "^5.0.5",
