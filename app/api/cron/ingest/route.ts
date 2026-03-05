@@ -100,7 +100,7 @@ const FALLBACK_TRENDS: TrendResult[] = [
 		slug: "webassembly-web-apps",
 		score: 60,
 		signals: [{ source: "blog", title: "WebAssembly", url: "https://webassembly.org/", score: 60 }],
-		whyTrending: "WASM adoption growing in production apps",
+		whyTrending: "WASM adoption growing in [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] apps",
 		suggestedAngle: "Real-world use cases where WASM outperforms JS",
 	},
 ];
@@ -109,8 +109,19 @@ const FALLBACK_TRENDS: TrendResult[] = [
 // Gemini Script Generation
 // ---------------------------------------------------------------------------
 
-const SYSTEM_INSTRUCTION =
-	"You are a content strategist for CodingCat.dev, a web development education channel. You create engaging, Cleo Abram-style explainer video scripts that are educational, energetic, and concise (60-90 seconds).";
+const SYSTEM_INSTRUCTION = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
+
+Your style is inspired by Cleo Abram's "Huge If True" — you make complex technical topics feel exciting, accessible, and important. Key principles:
+- Start with a BOLD claim or surprising fact that makes people stop scrolling
+- Use analogies and real-world comparisons to explain technical concepts
+- Build tension: "Here's the problem... here's why it matters... here's the breakthrough"
+- Keep energy HIGH — short sentences, active voice, conversational tone
+- End with a clear takeaway that makes the viewer feel smarter
+- Target audience: developers who want to stay current but don't have time to read everything
+
+Script format: 60-90 second explainer videos. Think TikTok/YouTube Shorts energy with real educational depth.
+
+CodingCat.dev covers: React, Next.js, TypeScript, Svelte, web APIs, CSS, Node.js, cloud services, AI/ML for developers, and web platform updates.`;
 
 function buildPrompt(trends: TrendResult[], research?: ResearchPayload): string {
 	const topicList = trends
@@ -152,8 +163,8 @@ function buildPrompt(trends: TrendResult[], research?: ResearchPayload): string 
 			}
 		}
 
-		if (research.infographicUrl) {
-			researchContext += `\n### Infographic Available\nAn infographic has been generated for this topic. Use sceneType "narration" with bRollUrl pointing to the infographic for at least one scene.\n`;
+		if (research.infographicUrls && research.infographicUrls.length > 0) {
+			researchContext += `\n### Infographics Available (${research.infographicUrls.length})\nMultiple infographics have been generated for this topic. Use sceneType "narration" with bRollUrl pointing to an infographic for visual scenes.\n`;
 		}
 	}
 
@@ -403,7 +414,12 @@ export async function GET(request: NextRequest) {
 		if (process.env.ENABLE_NOTEBOOKLM_RESEARCH === "true") {
 			console.log(`[CRON/ingest] Conducting research on: "${trends[0].topic}"...`);
 			try {
-				research = await conductResearch(trends[0].topic);
+				// Extract source URLs from trend signals to seed the notebook
+				const sourceUrls = (trends[0].signals ?? [])
+					.map((s: { url?: string }) => s.url)
+					.filter((u): u is string => !!u && u.startsWith("http"))
+					.slice(0, 5);
+				research = await conductResearch(trends[0].topic, { sourceUrls });
 				console.log(`[CRON/ingest] Research complete: ${research.sources.length} sources, ${research.sceneHints.length} scene hints`);
 			} catch (err) {
 				console.warn("[CRON/ingest] Research failed, continuing without:", err);

@@ -123,6 +123,8 @@ export class NotebookLMClient {
       this.auth.sessionId
     );
 
+    console.log(`[NotebookLM] RPC ${methodId} URL: ${url}`);
+    console.log(`[NotebookLM] RPC ${methodId} body length: ${body.length}`);
     const response = await fetchWithTimeout(
       url,
       {
@@ -132,6 +134,7 @@ export class NotebookLMClient {
           Cookie: this.auth.cookieHeader,
         },
         body,
+        cache: 'no-store' as RequestCache,
       },
       timeoutMs ?? DEFAULT_FETCH_TIMEOUT_MS
     );
@@ -174,13 +177,10 @@ export class NotebookLMClient {
       const items = resultArr[0] as unknown[][];
       for (const item of items) {
         if (!Array.isArray(item)) continue;
-        // Notebook ID is at [0][0] or [0], title at [2]
-        const idContainer = item[0];
-        const id =
-          Array.isArray(idContainer) && idContainer.length > 0
-            ? String(idContainer[0])
-            : String(idContainer ?? '');
-        const title = typeof item[2] === 'string' ? item[2] : '';
+        // Response format per notebook: [title, null, notebookId, ...]
+        // Index 0 = title string, Index 2 = UUID string
+        const title = typeof item[0] === 'string' ? item[0] : '';
+        const id = typeof item[2] === 'string' ? item[2] : '';
         if (id) {
           notebooks.push({ id, title });
         }
@@ -217,18 +217,16 @@ export class NotebookLMClient {
       );
     }
 
-    // Extract notebook ID — typically at [0] or [0][0]
-    const idContainer = resultArr[0];
-    const id =
-      Array.isArray(idContainer) && idContainer.length > 0
-        ? String(idContainer[0])
-        : String(idContainer ?? '');
+    // Response format: [title, null, notebookId, ...]
+    // Index 0 = title string, Index 2 = UUID string
     const notebookTitle =
-      typeof resultArr[2] === 'string' ? resultArr[2] : title;
+      typeof resultArr[0] === 'string' ? resultArr[0] : title;
+    const id =
+      typeof resultArr[2] === 'string' ? resultArr[2] : '';
 
     if (!id) {
       throw new NotebookLMRPCError(
-        'No notebook ID returned from createNotebook',
+        'No notebook ID returned from createNotebook — expected UUID at index 2',
         { methodId: RPCMethod.CREATE_NOTEBOOK }
       );
     }
@@ -288,7 +286,7 @@ export class NotebookLMClient {
       ];
     }
 
-    const result = await this.rpcCall(RPCMethod.ADD_SOURCE, params);
+    const result = await this.rpcCall(RPCMethod.ADD_SOURCE, params, `/notebook/${notebookId}`);
 
     // Extract source ID from response
     const resultArr = result as unknown[];
@@ -341,7 +339,7 @@ export class NotebookLMClient {
       params = [[query, 1], null, 1, notebookId];
     }
 
-    const result = await this.rpcCall(methodId, params);
+    const result = await this.rpcCall(methodId, params, `/notebook/${notebookId}`);
     console.log(`[NotebookLM] startResearch raw result:`, JSON.stringify(result));
     const resultArr = result as unknown[];
 
@@ -378,7 +376,7 @@ export class NotebookLMClient {
     const result = await this.rpcCall(
       RPCMethod.POLL_RESEARCH,
       [null, null, notebookId],
-      undefined,
+      `/notebook/${notebookId}`,
       EXTENDED_FETCH_TIMEOUT_MS
     );
 
@@ -397,87 +395,100 @@ export class NotebookLMClient {
       return emptyResult;
     }
 
-    // Response format (from notebooklm-py _research.py):
-    // result = [[task_data, ...], ...]  or  [task_data, ...]
-    // task_data = [task_id, task_info]
-    // task_info = [?, query_info, ?, sources_and_summary, status_code]
-    // query_info = [query_text, ...]
-    // sources_and_summary = [sources_array, summary_text]
-    // Research status: 1=in_progress, 2=completed
+    // Response format (from live API debugging):
+    // result = [[[reportId, taskInfo, startTimestamp, updateTimestamp]]]
+    // taskInfo = [notebookId, [query, sourceType], mode, null, statusCode, researchMeta]
+    // researchMeta = [taskId, null, ?, null, "deep_research.v3p1s.prod"]
+    // statusCode: 1=in_progress, 2=completed
+    //
+    // When completed, taskInfo has additional data:
+    // taskInfo = [notebookId, [query, sourceType], mode, sourcesAndSummary, statusCode, researchMeta]
+    // sourcesAndSummary = [sourcesArray, summaryText]
 
-    // Unwrap if double-nested
-    let tasks = resultArr;
+    // Unwrap the triple-nesting to get to the task array
+    // result = [[[...]]] → task = result[0][0]
+    let task: unknown[] | null = null;
+
     if (
-      Array.isArray(tasks[0]) &&
-      tasks[0].length > 0 &&
-      Array.isArray(tasks[0][0]) &&
-      tasks[0][0].length > 0 &&
-      Array.isArray(tasks[0][0][0])
+      Array.isArray(resultArr[0]) &&
+      Array.isArray((resultArr[0] as unknown[])[0])
     ) {
-      tasks = tasks[0] as unknown[];
-    } else if (
-      Array.isArray(tasks[0]) &&
-      tasks[0].length > 0 &&
-      typeof tasks[0][0] === 'string'
-    ) {
-      // Already at task level: [[taskId, taskInfo], ...]
-      // wrap in array for uniform processing
-      tasks = [tasks];
+      const inner = (resultArr[0] as unknown[])[0] as unknown[];
+      if (inner.length >= 2 && typeof inner[0] === 'string') {
+        task = inner;
+      }
     }
 
-    // Find the most recent task
-    for (const taskData of tasks) {
-      if (!Array.isArray(taskData) || taskData.length < 2) continue;
+    if (!task) {
+      // Try single-nested: result = [[taskId, taskInfo, ...]]
+      if (
+        Array.isArray(resultArr[0]) &&
+        typeof (resultArr[0] as unknown[])[0] === 'string'
+      ) {
+        task = resultArr[0] as unknown[];
+      }
+    }
 
-      const taskId = taskData[0];
-      const taskInfo = taskData[1];
+    if (!task || task.length < 2) {
+      return emptyResult;
+    }
 
-      if (typeof taskId !== 'string' || !Array.isArray(taskInfo)) continue;
+    const reportId = task[0] as string;
+    const taskInfo = task[1] as unknown[];
 
-      const queryInfo = taskInfo[1];
-      const sourcesAndSummary = taskInfo[3];
-      const statusCode = taskInfo[4];
+    if (!Array.isArray(taskInfo) || taskInfo.length < 5) {
+      return emptyResult;
+    }
 
-      const queryText =
-        Array.isArray(queryInfo) && typeof queryInfo[0] === 'string'
-          ? queryInfo[0]
-          : '';
+    // taskInfo = [notebookId, [query, sourceType], mode, sourcesAndSummary, statusCode, researchMeta]
+    const queryInfo = taskInfo[1];
+    const sourcesAndSummary = taskInfo[3];
+    const statusCode = taskInfo[4];
+    const researchMeta = taskInfo[5];
 
-      // Parse sources
-      const sources: Array<{ url: string; title: string }> = [];
-      let summary = '';
+    const queryText =
+      Array.isArray(queryInfo) && typeof queryInfo[0] === 'string'
+        ? queryInfo[0]
+        : '';
 
-      if (Array.isArray(sourcesAndSummary) && sourcesAndSummary.length >= 1) {
-        const sourcesData = Array.isArray(sourcesAndSummary[0])
-          ? sourcesAndSummary[0]
-          : [];
-        if (
-          sourcesAndSummary.length >= 2 &&
-          typeof sourcesAndSummary[1] === 'string'
-        ) {
-          summary = sourcesAndSummary[1];
-        }
+    // Extract the research task ID from researchMeta
+    let taskId = reportId; // fallback to reportId
+    if (Array.isArray(researchMeta) && typeof researchMeta[0] === 'string') {
+      taskId = researchMeta[0];
+    }
 
-        for (const src of sourcesData) {
-          if (!Array.isArray(src) || src.length < 2) continue;
-          const url =
-            typeof src[0] === 'string' ? src[0] : '';
-          const title =
-            typeof src[1] === 'string' ? src[1] : '';
-          if (title || url) {
-            sources.push({ url, title });
-          }
-        }
+    // Parse sources
+    const sources: Array<{ url: string; title: string }> = [];
+    let summary = '';
+
+    if (Array.isArray(sourcesAndSummary) && sourcesAndSummary.length >= 1) {
+      const sourcesData = Array.isArray(sourcesAndSummary[0])
+        ? sourcesAndSummary[0]
+        : [];
+      if (
+        sourcesAndSummary.length >= 2 &&
+        typeof sourcesAndSummary[1] === 'string'
+      ) {
+        summary = sourcesAndSummary[1];
       }
 
-      // Research status: 1=in_progress, 2=completed
-      const status: ResearchResult['status'] =
-        statusCode === 2 ? 'completed' : 'in_progress';
-
-      return { taskId, status, query: queryText, sources, summary };
+      for (const src of sourcesData) {
+        if (!Array.isArray(src) || src.length < 2) continue;
+        const url =
+          typeof src[0] === 'string' ? src[0] : '';
+        const title =
+          typeof src[1] === 'string' ? src[1] : '';
+        if (title || url) {
+          sources.push({ url, title });
+        }
+      }
     }
 
-    return emptyResult;
+    // Research status: 1=in_progress, 2=completed
+    const status: ResearchResult['status'] =
+      statusCode === 2 ? 'completed' : 'in_progress';
+
+    return { taskId, status, query: queryText, sources, summary };
   }
 
   /**
@@ -512,7 +523,7 @@ export class NotebookLMClient {
       taskId,
       notebookId,
       sourceArray,
-    ]);
+    ], `/notebook/${notebookId}`);
 
     console.log('[NotebookLM] Research sources imported');
   }
@@ -520,6 +531,47 @@ export class NotebookLMClient {
   // -------------------------------------------------------------------------
   // Artifact generation
   // -------------------------------------------------------------------------
+
+  /**
+   * Get all source IDs from a notebook.
+   * Required for artifact generation (infographics, reports, etc.)
+   */
+  async getSourceIds(notebookId: string): Promise<string[]> {
+    try {
+      const result = await this.rpcCall(
+        RPCMethod.GET_NOTEBOOK,
+        [notebookId, null, [2], null, 0],
+        `/notebook/${notebookId}`
+      );
+
+      const resultArr = result as unknown[];
+      if (!Array.isArray(resultArr) || !Array.isArray(resultArr[0])) {
+        return [];
+      }
+
+      const notebookInfo = resultArr[0] as unknown[];
+      if (!Array.isArray(notebookInfo[1])) {
+        return [];
+      }
+
+      const sources = notebookInfo[1] as unknown[][];
+      const sourceIds: string[] = [];
+      for (const source of sources) {
+        if (!Array.isArray(source) || source.length === 0) continue;
+        const first = source[0];
+        if (Array.isArray(first) && first.length > 0 && typeof first[0] === 'string') {
+          sourceIds.push(first[0]);
+        }
+      }
+      return sourceIds;
+    } catch (error: unknown) {
+      console.warn(
+        '[NotebookLM] Failed to get source IDs:',
+        error instanceof Error ? error.message : String(error)
+      );
+      return [];
+    }
+  }
 
   /**
    * Generate an infographic for a notebook.
@@ -538,9 +590,14 @@ export class NotebookLMClient {
       `[NotebookLM] Generating infographic for notebook ${notebookId}`
     );
 
-    const sourceIdsTriple = (options?.sourceIds ?? []).map((sid) => [
-      [[sid]],
-    ]);
+    // Auto-fetch source IDs if not provided
+    const sourceIds = options?.sourceIds ?? await this.getSourceIds(notebookId);
+    if (sourceIds.length === 0) {
+      console.warn('[NotebookLM] No source IDs found — infographic generation may fail');
+    }
+
+    // Python format: [[[sid]] for sid in source_ids] → [[[sid1]], [[sid2]], ...]
+    const sourceIdsTriple = sourceIds.map((sid) => [[sid]]);
     const instructions = options?.instructions ?? null;
     const language = options?.language ?? null;
     const orientation = options?.orientation ?? null;
@@ -569,7 +626,7 @@ export class NotebookLMClient {
     ];
 
     try {
-      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params);
+      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params, `/notebook/${notebookId}`);
       return this.parseGenerationResult(result);
     } catch (error: unknown) {
       console.error(
@@ -597,9 +654,14 @@ export class NotebookLMClient {
   ): Promise<GenerationStatus> {
     console.log(`[NotebookLM] Generating report for notebook ${notebookId}`);
 
-    const sourceIdsTriple = (options?.sourceIds ?? []).map((sid) => [
-      [[sid]],
-    ]);
+    // Auto-fetch source IDs if not provided
+    const sourceIds = options?.sourceIds ?? await this.getSourceIds(notebookId);
+    if (sourceIds.length === 0) {
+      console.warn('[NotebookLM] No source IDs found — report generation may fail');
+    }
+
+    // Python format: [[[sid]] for sid in source_ids] → [[[sid1]], [[sid2]], ...]
+    const sourceIdsTriple = sourceIds.map((sid) => [[sid]]);
     const instructions = options?.instructions ?? null;
     const language = options?.language ?? null;
 
@@ -626,7 +688,7 @@ export class NotebookLMClient {
     ];
 
     try {
-      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params);
+      const result = await this.rpcCall(RPCMethod.CREATE_ARTIFACT, params, `/notebook/${notebookId}`);
       return this.parseGenerationResult(result);
     } catch (error: unknown) {
       console.error(
@@ -675,7 +737,7 @@ export class NotebookLMClient {
         [2],
         notebookId,
         'NOT artifact.status = "ARTIFACT_STATUS_SUGGESTED"',
-      ]);
+      ], `/notebook/${notebookId}`);
 
       const resultArr = result as unknown[];
       if (!Array.isArray(resultArr) || !Array.isArray(resultArr[0])) {
@@ -725,7 +787,7 @@ export class NotebookLMClient {
       const result = await this.rpcCall(RPCMethod.SUMMARIZE, [
         notebookId,
         [2],
-      ]);
+      ], `/notebook/${notebookId}`);
 
       const resultArr = result as unknown[];
       if (!Array.isArray(resultArr)) {

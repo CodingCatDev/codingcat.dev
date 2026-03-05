@@ -9,7 +9,7 @@ export async function GET() {
 	});
 	return new Response(feed.rss2(), {
 		headers: {
-			"content-type": "text/xml",
+			"content-type": "application/rss+xml; charset=utf-8",
 			"cache-control": "max-age=0, s-maxage=3600",
 		},
 	});
