@@ -38,6 +38,8 @@ export interface ContentConfig {
   targetVideoDurationSec: number;
   sceneCountMin: number;
   sceneCountMax: number;
+  dedupWindowDays: number;
+  infographicInstructions: string[];
   _updatedAt: string;
 }
 
