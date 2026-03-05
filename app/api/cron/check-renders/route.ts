@@ -1,3 +1,6 @@
+// Config migration: audited — no tweakable config in this route.
+// Remotion/ElevenLabs config is in the service layer (owned by @videopipe).
+// YouTube SEO prompt is specific to this route, not the shared system instruction.
 export const fetchCache = 'force-no-store';
 export const maxDuration = 60;
 
@@ -253,21 +256,21 @@ async function handleScriptReady(client: SanityClient): Promise<{ claimed: numbe
       await client.patch(doc._id).set({ status: 'audio_gen' }).commit();
       claimedIds.push(doc._id);
 
-      // WORK: run video production in background via after()
+      // WORK: run video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] in background via after()
       after(async () => {
         try {
-          console.log(`[PIPELINE] Starting video production for ${doc._id}`);
+          console.log(`[PIPELINE] Starting video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] for ${doc._id}`);
           await processVideoProduction(doc._id);
-          console.log(`[PIPELINE] ✅ Video production complete for ${doc._id}`);
+          console.log(`[PIPELINE] ✅ Video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] complete for ${doc._id}`);
         } catch (error) {
           const msg = error instanceof Error ? error.message : String(error);
-          console.error(`[PIPELINE] ❌ Video production failed for ${doc._id}: ${msg}`);
+          console.error(`[PIPELINE] ❌ Video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] failed for ${doc._id}: ${msg}`);
           // processVideoProduction already sets flagged on error, but just in case:
           try {
             const c = getSanityWriteClient();
             await c.patch(doc._id).set({
               status: 'flagged',
-              flaggedReason: `Video production error: ${msg}`,
+              flaggedReason: `Video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] error: ${msg}`,
             }).commit();
           } catch { /* best-effort */ }
         }
