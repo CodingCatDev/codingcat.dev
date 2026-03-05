@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaX } from "react-icons/fa6";
 
-import { GiTeacher } from "react-icons/gi"; // Course
-import { PiStudentBold } from "react-icons/pi"; // Lesson
 import { FaPodcast } from "react-icons/fa"; // Podcast
 import { HiOutlinePencilAlt } from "react-icons/hi"; //Post
 import { FaCat } from "react-icons/fa"; // Author
@@ -76,12 +74,8 @@ export default function AlgoliaSearch({
 		switch (type) {
 			case ContentType.author:
 				return <FaCat />;
-			case ContentType.course:
-				return <GiTeacher />;
 			case ContentType.guest:
 				return <FaRegUser />;
-			case ContentType.lesson:
-				return <PiStudentBold />;
 			case ContentType.podcast:
 				return <FaPodcast />;
 			case ContentType.post:

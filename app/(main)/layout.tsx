@@ -74,7 +74,6 @@ export async function generateMetadata(): Promise<Metadata> {
 			types: {
 				"application/rss+xml": [
 					{ url: "/blog/rss.xml", title: "Blog" },
-					{ url: "/courses/rss.xml", title: "Courses" },
 					{ url: "/podcasts/rss.xml", title: "Podcasts" },
 				],
 			},

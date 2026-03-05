@@ -12,7 +12,6 @@ export default async function UserRelated(
 	related: NonNullable<AuthorQueryWithRelatedResult>["related"],
 ) {
 	if (
-		!related?.course?.length &&
 		!related?.podcast?.length &&
 		!related?.post?.length
 	) {

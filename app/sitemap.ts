@@ -39,17 +39,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			url: `${site}${c._type === ContentType.page ? `/${c.slug}` : `/${c._type}/${c.slug}`}`,
 			lastModified: new Date(),
 			changeFrequency: "monthly",
-			priority: c._type === ContentType.course ? 0.8 : 0.5,
+			priority: 0.5,
 		});
-		c?.sections?.map((s) =>
-			s?.lesson?.map((l) => {
-				sitemap.push({
-					url: `${site}/course/${c.slug}/lesson/${l.slug}`,
-					lastModified: new Date(),
-					changeFrequency: "monthly",
-				});
-			}),
-		);
 	}
 
 	return sitemap;

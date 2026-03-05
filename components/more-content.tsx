@@ -13,7 +13,6 @@ import { sanityFetch } from "@/sanity/lib/live";
 import {
 	morePodcastQuery,
 	morePostQuery,
-	moreCourseQuery,
 	moreAuthorQuery,
 	moreGuestQuery,
 	moreSponsorQuery,
@@ -32,8 +31,6 @@ export default async function MoreContent(params: {
 		switch (params.type) {
 			case ContentType.author:
 				return moreAuthorQuery;
-			case ContentType.course:
-				return moreCourseQuery;
 			case ContentType.guest:
 				return moreGuestQuery;
 			case ContentType.podcast:
