@@ -11,6 +11,7 @@
  */
 
 import { NotebookLMClient } from './notebooklm/client';
+import type { GenerationStatus } from './notebooklm/types';
 import { sleep } from './notebooklm/rpc';
 
 // ---------------------------------------------------------------------------
@@ -33,7 +34,7 @@ export interface ResearchPayload {
   prosCons?: Record<string, string[]>;
   commonMistakes?: string[];
   sceneHints: SceneHint[];
-  infographicUrl?: string;
+  infographicUrls?: string[];
 }
 
 export interface ResearchSource {
@@ -383,25 +384,54 @@ export async function conductResearch(
   }
 
   // -----------------------------------------------------------------------
-  // Step 6 & 7: Generate artifacts in parallel
+  // Step 6 & 7: Generate multiple infographics + report in parallel
   // -----------------------------------------------------------------------
-  console.log('[research] Step 6-7/10: Generating artifacts...');
+  const infographicInstructions = [
+    'Create a high-level architecture overview diagram',
+    'Create a comparison chart of key features and alternatives',
+    'Create a step-by-step workflow diagram',
+    'Create a timeline of key developments and milestones',
+    'Create a pros and cons visual summary',
+  ];
 
-  const [infographicResult, reportResult] = await Promise.allSettled([
-    safeStep('generate-infographic', () =>
-      client.generateInfographic(notebookId)
-    ),
-    safeStep('generate-report', () => client.generateReport(notebookId)),
-  ]);
+  console.log(`[research] Step 6-7/10: Generating ${infographicInstructions.length} infographics + report...`);
 
-  const infographicTaskId =
-    infographicResult.status === 'fulfilled' && infographicResult.value
-      ? infographicResult.value.taskId
-      : '';
-  const reportTaskId =
-    reportResult.status === 'fulfilled' && reportResult.value
-      ? reportResult.value.taskId
-      : '';
+  const artifactPromises: Promise<GenerationStatus | undefined>[] = infographicInstructions.map(
+    (instruction, i) =>
+      safeStep(`generate-infographic-${i}`, () =>
+        client.generateInfographic(notebookId, {
+          instructions: instruction,
+          language: 'en',
+          orientation: 1, // landscape
+          detailLevel: 2, // detailed
+        })
+      )
+  );
+  artifactPromises.push(
+    safeStep('generate-report', () => client.generateReport(notebookId))
+  );
+
+  const artifactResults = await Promise.allSettled(artifactPromises);
+
+  // Collect task IDs for all generated artifacts
+  const infographicTaskIds: string[] = [];
+  let reportTaskId = '';
+
+  for (let i = 0; i < artifactResults.length; i++) {
+    const result = artifactResults[i];
+    if (result.status !== 'fulfilled' || !result.value?.taskId) continue;
+
+    if (i < infographicInstructions.length) {
+      infographicTaskIds.push(result.value.taskId);
+    } else {
+      reportTaskId = result.value.taskId;
+    }
+  }
+
+  console.log(
+    `[research] Artifact generation started: ${infographicTaskIds.length} infographics, ` +
+      `report: ${reportTaskId ? 'yes' : 'no'}`
+  );
 
   // -----------------------------------------------------------------------
   // Step 8: Wait for artifacts to complete
@@ -409,10 +439,10 @@ export async function conductResearch(
   console.log('[research] Step 8/10: Waiting for artifacts...');
 
   const waitPromises: Promise<unknown>[] = [];
-  if (infographicTaskId) {
+  for (const taskId of infographicTaskIds) {
     waitPromises.push(
-      safeStep('wait-infographic', () =>
-        client.waitForArtifact(notebookId, infographicTaskId, {
+      safeStep(`wait-infographic-${taskId.substring(0, 8)}`, () =>
+        client.waitForArtifact(notebookId, taskId, {
           timeoutMs: artifactTimeout,
           pollIntervalMs: pollInterval,
         })
@@ -444,12 +474,22 @@ export async function conductResearch(
   const briefing = summary ?? '';
 
   // -----------------------------------------------------------------------
-  // Step 10: Get infographic URL
+  // Step 10: Get infographic URLs
   // -----------------------------------------------------------------------
-  console.log('[research] Step 10/10: Getting infographic URL...');
-  const infographicUrl = await safeStep('get-infographic-url', () =>
-    client.getInfographicUrl(notebookId)
-  );
+  console.log('[research] Step 10/10: Getting infographic URLs...');
+  const infographicUrls: string[] = [];
+
+  // Collect URLs for each completed infographic
+  for (const taskId of infographicTaskIds) {
+    const url = await safeStep(`get-infographic-url-${taskId.substring(0, 8)}`, () =>
+      client.getInfographicUrl(notebookId, taskId)
+    );
+    if (url) {
+      infographicUrls.push(url);
+    }
+  }
+
+  console.log(`[research] Found ${infographicUrls.length} infographic URLs`);
 
   // -----------------------------------------------------------------------
   // Build the research payload
@@ -483,12 +523,13 @@ export async function conductResearch(
     talkingPoints,
     codeExamples,
     sceneHints,
-    infographicUrl: infographicUrl ?? undefined,
+    infographicUrls: infographicUrls.length > 0 ? infographicUrls : undefined,
   };
 
   console.log(
     `[research] Pipeline complete: ${classifiedSources.length} sources, ` +
-      `${talkingPoints.length} talking points, ${sceneHints.length} scene hints`
+      `${talkingPoints.length} talking points, ${sceneHints.length} scene hints, ` +
+      `${infographicUrls.length} infographics`
   );
 
   return payload;
