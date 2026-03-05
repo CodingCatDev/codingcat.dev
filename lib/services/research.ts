@@ -61,10 +61,12 @@ export interface SceneHint {
 }
 
 export interface ResearchConfig {
-  /** Timeout for research polling in ms (default: 300000 = 5 min) */
+  /** Timeout for research polling in ms (default: 600000 = 10 min) */
   researchTimeout?: number;
   /** Timeout for artifact generation in ms (default: 300000 = 5 min) */
   artifactTimeout?: number;
+  /** Source URLs to add to the notebook before research (from trend discovery) */
+  sourceUrls?: string[];
   /** Polling interval for research status in ms (default: 15000 = 15s) */
   pollInterval?: number;
 }
@@ -263,7 +265,7 @@ export async function conductResearch(
   topic: string,
   configOverrides?: ResearchConfig
 ): Promise<ResearchPayload> {
-  const researchTimeout = configOverrides?.researchTimeout ?? 300_000;
+  const researchTimeout = configOverrides?.researchTimeout ?? 600_000;
   const artifactTimeout = configOverrides?.artifactTimeout ?? 300_000;
   const pollInterval = configOverrides?.pollInterval ?? 15_000;
   const createdAt = new Date().toISOString();
@@ -290,6 +292,27 @@ export async function conductResearch(
   }
 
   console.log(`[research] Notebook created: ${notebookId}`);
+
+  // -----------------------------------------------------------------------
+  // Step 2b: Add source URLs from trend discovery (if provided)
+  // -----------------------------------------------------------------------
+  const sourceUrls = configOverrides?.sourceUrls ?? [];
+  if (sourceUrls.length > 0) {
+    console.log(`[research] Adding ${sourceUrls.length} source URLs to notebook...`);
+    const addResults = await Promise.allSettled(
+      sourceUrls.slice(0, 10).map((url) =>
+        safeStep(`add-source-${url.substring(0, 40)}`, () =>
+          client.addSource(notebookId, url)
+        )
+      )
+    );
+    const added = addResults.filter((r) => r.status === 'fulfilled' && r.value).length;
+    console.log(`[research] Added ${added}/${sourceUrls.length} sources to notebook`);
+    // Give NotebookLM a moment to process the sources
+    if (added > 0) {
+      await sleep(5000);
+    }
+  }
 
   // -----------------------------------------------------------------------
   // Step 3: Start deep web research
