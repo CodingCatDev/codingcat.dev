@@ -105,6 +105,14 @@ export default defineType({
       description: "Maximum number of scenes per video. Keeps videos focused and within duration targets",
       initialValue: 5,
     }),
+    defineField({
+      name: "dedupWindowDays",
+      title: "Dedup Window (days)",
+      type: "number",
+      description: "Number of days to look back when checking for duplicate topics. Topics covered within this window will be skipped during daily ingestion. Set to 0 to disable dedup.",
+      initialValue: 90,
+      validation: (Rule) => Rule.min(0).max(365),
+    }),
   ],
   preview: {
     prepare() {

@@ -109,6 +109,140 @@ const FALLBACK_TRENDS: TrendResult[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Common stop words stripped when extracting search terms for dedup
+// ---------------------------------------------------------------------------
+
+const STOP_WORDS = new Set([
+	"the", "a", "an", "is", "of", "in", "for", "and", "to", "how", "why",
+	"what", "with", "new", "your", "are", "was", "be", "been", "being",
+	"have", "has", "had", "do", "does", "did", "will", "would", "could",
+	"should", "may", "might", "must", "shall", "can", "need", "dare",
+	"ought", "used", "every", "all", "both", "few", "more", "most",
+	"other", "some", "such", "no", "nor", "not", "only", "own", "same",
+	"so", "than", "too", "very", "just", "because", "as", "until",
+	"while", "about", "between", "through", "during", "before", "after",
+	"above", "below", "from", "up", "down", "out", "on", "off", "over",
+	"under", "again", "further", "then", "once", "that", "this", "these",
+	"those", "it", "its", "we", "you", "they", "them", "their", "our",
+	"my", "he", "she", "him", "her", "his", "who", "which", "when",
+	"where", "there", "here",
+]);
+
+// ---------------------------------------------------------------------------
+// Topic Dedup — check if a topic has already been covered recently
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract 2-3 meaningful search terms from a topic title.
+ * Strips stop words and short tokens, returns lowercase terms.
+ */
+function extractSearchTerms(title: string): string[] {
+	const words = title
+		.toLowerCase()
+		.replace(/[^a-z0-9\s.-]/g, " ")
+		.split(/\s+/)
+		.filter((w) => w.length > 2 && !STOP_WORDS.has(w));
+
+	// Return up to 3 most meaningful terms (first terms tend to be most specific)
+	return words.slice(0, 3);
+}
+
+/**
+ * Check whether a topic (by title + slug) has already been covered within
+ * the configured dedup window. Queries both `contentIdea` and `automatedVideo`
+ * documents in Sanity.
+ *
+ * Returns `true` if the topic should be skipped (already covered).
+ */
+async function isTopicAlreadyCovered(topic: string, topics: string[]): Promise<boolean> {
+	const dedupWindowDays = await getConfigValue("content_config", "dedupWindowDays", 90);
+
+	// Dedup disabled when window is 0
+	if (dedupWindowDays <= 0) {
+		return false;
+	}
+
+	const cutoff = new Date();
+	cutoff.setDate(cutoff.getDate() - dedupWindowDays);
+	const cutoffISO = cutoff.toISOString();
+
+	const searchTerms = extractSearchTerms(topic);
+	if (searchTerms.length === 0) {
+		return false;
+	}
+
+	// Build a GROQ match pattern — each term becomes a wildcard prefix match
+	// GROQ `match` supports patterns like "react*" and works with ||
+	const matchPatterns = searchTerms.map((t) => `${t}*`);
+
+	// Query 1: Title-based match on contentIdea and automatedVideo
+	// The `match` operator in GROQ does case-insensitive prefix matching
+	const titleQuery = `{
+		"ideas": *[_type == "contentIdea" && _createdAt > $cutoff && title match $patterns] { _id, title, topics },
+		"videos": *[_type == "automatedVideo" && _createdAt > $cutoff && title match $patterns] { _id, title }
+	}`;
+
+	try {
+		const titleResults = await writeClient.fetch(titleQuery, {
+			cutoff: cutoffISO,
+			patterns: matchPatterns,
+		});
+
+		const ideaMatches: Array<{ _id: string; title: string; topics?: string[] }> = titleResults.ideas ?? [];
+		const videoMatches: Array<{ _id: string; title: string }> = titleResults.videos ?? [];
+
+		// If any title match is found, topic is covered
+		if (ideaMatches.length > 0 || videoMatches.length > 0) {
+			console.log(
+				`[CRON/ingest] Dedup: title match found for "${topic}" — ${ideaMatches.length} ideas, ${videoMatches.length} videos`,
+			);
+			return true;
+		}
+
+		// Query 2: Check topic tag overlap on contentIdea documents
+		// We consider a topic covered if 2+ tags overlap
+		if (topics.length > 0) {
+			const topicLower = topics.map((t) => t.toLowerCase());
+			const overlapQuery = `*[_type == "contentIdea" && _createdAt > $cutoff && count((topics[])[@ in $topicTags]) >= 2] { _id, title, topics }`;
+
+			const overlapResults = await writeClient.fetch(overlapQuery, {
+				cutoff: cutoffISO,
+				topicTags: topicLower,
+			});
+
+			if (overlapResults.length > 0) {
+				console.log(
+					`[CRON/ingest] Dedup: topic overlap found for "${topic}" — ${overlapResults.length} matching ideas`,
+				);
+				return true;
+			}
+		}
+
+		return false;
+	} catch (err) {
+		// If dedup query fails, don't block the pipeline — log and continue
+		console.warn("[CRON/ingest] Dedup query failed, allowing topic:", err);
+		return false;
+	}
+}
+
+/**
+ * Check if a slug already exists on an automatedVideo document.
+ */
+async function isSlugTaken(slug: string): Promise<boolean> {
+	try {
+		const results = await writeClient.fetch(
+			`*[_type == "automatedVideo" && slug.current == $slug][0..0] { _id }`,
+			{ slug },
+		);
+		return results.length > 0;
+	} catch (err) {
+		console.warn("[CRON/ingest] Slug check failed, allowing:", err);
+		return false;
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Gemini Script Generation
 // ---------------------------------------------------------------------------
 
@@ -332,7 +466,7 @@ Respond with ONLY the JSON object.`,
 async function createSanityDocuments(
 	script: GeneratedScript,
 	criticResult: CriticResult,
-	trends: TrendResult[],
+	selectedTrend: TrendResult,
 	qualityThreshold: number,
 	research?: ResearchPayload,
 	researchMeta?: { notebookId: string; taskId: string },
@@ -374,8 +508,8 @@ async function createSanityDocuments(
 		...(isFlagged && {
 			flaggedReason: `Quality score ${criticResult.score}/100. Issues: ${criticResult.issues.join("; ") || "Low quality score"}`,
 		}),
-		trendScore: trends[0]?.score,
-		trendSources: trends[0]?.signals.map(s => s.source).join(", "),
+		trendScore: selectedTrend.score,
+		trendSources: selectedTrend.signals.map(s => s.source).join(", "),
 		researchNotebookId: researchMeta?.notebookId ?? research?.notebookId,
 		...(researchMeta?.taskId && { researchTaskId: researchMeta.taskId }),
 	});
@@ -442,23 +576,66 @@ export async function GET(request: NextRequest) {
 			trends = FALLBACK_TRENDS;
 		}
 
-		// Step 2: Optional deep research on top topic (fire-and-forget)
+		// Step 1.5: Dedup — walk trends list, skip already-covered topics
+		console.log("[CRON/ingest] Dedup: checking trends for already-covered topics...");
+		let selectedTrend: TrendResult | undefined;
+		let skippedCount = 0;
+
+		for (const trend of trends) {
+			// Extract keyword-style topics from the trend title for tag overlap check
+			const topicKeywords = extractSearchTerms(trend.topic);
+
+			const covered = await isTopicAlreadyCovered(trend.topic, topicKeywords);
+			if (covered) {
+				console.log(`[CRON/ingest] Dedup: skipping "${trend.topic}" (score: ${trend.score}) — already covered`);
+				skippedCount++;
+				continue;
+			}
+
+			// Also check for slug collision
+			if (trend.slug) {
+				const slugTaken = await isSlugTaken(trend.slug);
+				if (slugTaken) {
+					console.log(`[CRON/ingest] Dedup: skipping "${trend.topic}" — slug "${trend.slug}" already exists`);
+					skippedCount++;
+					continue;
+				}
+			}
+
+			selectedTrend = trend;
+			break;
+		}
+
+		if (!selectedTrend) {
+			console.log(`[CRON/ingest] Dedup: all ${trends.length} trending topics already covered. Skipping ingestion.`);
+			return Response.json({
+				success: true,
+				skipped: true,
+				message: "All trending topics already covered",
+				trendCount: trends.length,
+				skippedCount,
+			});
+		}
+
+		console.log(`[CRON/ingest] Dedup: selected "${selectedTrend.topic}" (score: ${selectedTrend.score}, skipped ${skippedCount} topics)`);
+
+		// Step 2: Optional deep research on selected topic (fire-and-forget)
 		// When research is enabled, we create a notebook and start research
 		// but DON'T wait for it — the check-research cron will poll and enrich later
 		let researchMeta: { notebookId: string; taskId: string } | undefined;
 		if (enableNotebookLmResearch) {
-			console.log(`[CRON/ingest] Starting fire-and-forget research on: "${trends[0].topic}"...`);
+			console.log(`[CRON/ingest] Starting fire-and-forget research on: "${selectedTrend.topic}"...`);
 			try {
 				const auth = await initAuth();
 				const nbClient = new NotebookLMClient(auth);
 
 				// Create notebook
-				const notebook = await nbClient.createNotebook(trends[0].topic);
+				const notebook = await nbClient.createNotebook(selectedTrend.topic);
 				const notebookId = notebook.id;
 				console.log(`[CRON/ingest] Created notebook: ${notebookId}`);
 
 				// Add source URLs from trend signals
-				const sourceUrls = (trends[0].signals ?? [])
+				const sourceUrls = (selectedTrend.signals ?? [])
 					.map((s: { url?: string }) => s.url)
 					.filter((u): u is string => !!u && u.startsWith("http"))
 					.slice(0, 5);
@@ -471,7 +648,7 @@ export async function GET(request: NextRequest) {
 				console.log(`[CRON/ingest] Added ${sourceUrls.length} source URLs to notebook`);
 
 				// Start deep research (fire-and-forget — don't poll!)
-				const researchTask = await nbClient.startResearch(notebookId, trends[0].topic, "deep");
+				const researchTask = await nbClient.startResearch(notebookId, selectedTrend.topic, "deep");
 				const researchTaskId = researchTask?.taskId ?? "";
 				console.log(`[CRON/ingest] Research started — taskId: ${researchTaskId}. check-research cron will poll.`);
 
@@ -484,7 +661,7 @@ export async function GET(request: NextRequest) {
 		// Step 3: Generate script with Gemini (basic — without research data)
 		// When research is enabled, check-research will re-generate an enriched script later
 		console.log("[CRON/ingest] Generating script with Gemini...");
-		const prompt = buildPrompt(trends);
+		const prompt = buildPrompt([selectedTrend]);
 		const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
 
 		let script: GeneratedScript;
@@ -515,7 +692,7 @@ export async function GET(request: NextRequest) {
 		);
 
 		console.log("[CRON/ingest] Creating Sanity documents...");
-		const result = await createSanityDocuments(script, criticResult, trends, qualityThreshold, undefined, researchMeta);
+		const result = await createSanityDocuments(script, criticResult, selectedTrend, qualityThreshold, undefined, researchMeta);
 
 		console.log("[CRON/ingest] Done!", result);
 
@@ -525,7 +702,8 @@ export async function GET(request: NextRequest) {
 			title: script.title,
 			criticScore: criticResult.score,
 			trendCount: trends.length,
-			trendScore: trends[0]?.score,
+			trendScore: selectedTrend.score,
+			skippedCount,
 			researchStarted: !!researchMeta,
 			researchNotebookId: researchMeta?.notebookId,
 		});
