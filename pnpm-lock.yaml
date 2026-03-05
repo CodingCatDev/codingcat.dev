@@ -14,9 +14,9 @@ importers:
       '@codingcatdev/sanity-plugin-podcast-rss':
         specifier: ^1.0.0
         version: 1.0.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react-is@19.2.4)(react@19.2.4)(sanity@5.12.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.0.1)(@types/node@24.11.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(babel-plugin-react-compiler@1.0.0)(immer@11.1.4)(jiti@2.6.1)(lightningcss@1.31.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.2)(yaml@2.8.2))(styled-components@6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
-      '@google/generative-ai':
-        specifier: ^0.24.1
-        version: 0.24.1
+      '@google/genai':
+        specifier: ^1.0.0
+        version: 1.44.0
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.2(react@19.2.4))
@@ -1858,9 +1858,14 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@google/generative-ai@0.24.1':
-    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
-    engines: {node: '>=18.0.0'}
+  '@google/genai@1.44.0':
+    resolution: {integrity: sha512-kRt9ZtuXmz+tLlcNntN/VV4LRdpl6ZOu5B1KbfNgfR65db15O6sUQcwnwLka8sT/V6qysD93fWrgJHF2L7dA9A==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@modelcontextprotocol/sdk': ^1.25.2
+    peerDependenciesMeta:
+      '@modelcontextprotocol/sdk':
+        optional: true
 
   '@hookform/resolvers@3.10.0':
     resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
@@ -2494,6 +2499,36 @@ packages:
   '@portabletext/types@4.0.1':
     resolution: {integrity: sha512-L8PZjVjmdKpW+82c1oNqGMqCOtQD2xORqJfr6Is7X5XXbz38eLYY79IM/1ok+Esf/iGOPtEYORdcf0ETmsWYew==}
     engines: {node: '>=20.19 <22 || >=22.12'}
+
+  '@protobufjs/aspromise@1.1.2':
+    resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
+
+  '@protobufjs/base64@1.1.2':
+    resolution: {integrity: sha512-AZkcAA5vnN/v4PDqKyMR5lx7hZttPDgClv83E//FMNhR2TMcLUhfRUBHCmSl0oi9zMgDDqRUJkSxO3wm85+XLg==}
+
+  '@protobufjs/codegen@2.0.4':
+    resolution: {integrity: sha512-YyFaikqM5sH0ziFZCN3xDC7zeGaB/d0IUb9CATugHWbd1FRFwWwt4ld4OYMPWu5a3Xe01mGAULCdqhMlPl29Jg==}
+
+  '@protobufjs/eventemitter@1.1.0':
+    resolution: {integrity: sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q==}
+
+  '@protobufjs/fetch@1.1.0':
+    resolution: {integrity: sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ==}
+
+  '@protobufjs/float@1.0.2':
+    resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
+
+  '@protobufjs/inquire@1.1.0':
+    resolution: {integrity: sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q==}
+
+  '@protobufjs/path@1.1.2':
+    resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
+
+  '@protobufjs/pool@1.1.0':
+    resolution: {integrity: sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==}
+
+  '@protobufjs/utf8@1.1.0':
+    resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
   '@radix-ui/number@1.1.1':
     resolution: {integrity: sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g==}
@@ -4420,6 +4455,9 @@ packages:
 
   '@types/react@19.2.14':
     resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
+
+  '@types/retry@0.12.0':
+    resolution: {integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==}
 
   '@types/shallow-equals@1.0.3':
     resolution: {integrity: sha512-xZx/hZsf1p9J5lGN/nGTsuW/chJCdlyGxilwg1TS78rygBCU5bpY50zZiFcIimlnl0p41kAyaASsy0bqU7WyBA==}
@@ -6528,6 +6566,9 @@ packages:
     resolution: {integrity: sha512-ja1E3yCr9i/0hmBVaM0bfwDjnGy8I/s6PP4DFp+yP+a+mrHO4Rm7DtmnqROTUkHIkqffC84YY7AeqX6oFk0WFg==}
     engines: {node: '>=18'}
 
+  long@5.3.2:
+    resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
+
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
 
@@ -7000,6 +7041,10 @@ packages:
     resolution: {integrity: sha512-O/ZPaXuQV29uSLbxWBGGZO1mCQXV2BLIwUr59JUU9SoH76mnYvtms7aafH/isNSNGwuEfP6W/4xD0/TJXxrizw==}
     engines: {node: '>=20'}
 
+  p-retry@4.6.2:
+    resolution: {integrity: sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==}
+    engines: {node: '>=8'}
+
   p-timeout@7.0.1:
     resolution: {integrity: sha512-AxTM2wDGORHGEkPCt8yqxOTMgpfbEHqF51f/5fJCmwFC3C/zNcGT63SymH2ttOAaiIws2zVg4+izQCjrakcwHg==}
     engines: {node: '>=20'}
@@ -7249,6 +7294,10 @@ packages:
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+
+  protobufjs@7.5.4:
+    resolution: {integrity: sha512-CvexbZtbov6jW2eXAvLukXjXUW1TzFaivC46BpWc/3BpcCysb5Vffu+B3XHMm8lVEuy2Mm4XGex8hBSg1yapPg==}
+    engines: {node: '>=12.0.0'}
 
   pump@2.0.1:
     resolution: {integrity: sha512-ruPMNRkN3MHP1cWJc9OWr+T/xDP0jhXYCLfJcBuX54hhfIBnaQmAUMfDcG4DM5UMWByBbJY69QSphm3jtDKIkA==}
@@ -7676,6 +7725,10 @@ packages:
   restore-cursor@5.1.0:
     resolution: {integrity: sha512-oMA2dcrw6u0YfxJQXm342bFKX/E4sG9rbTzO9ptUcR/e8A33cHuvStiYOwH7fszkZlZ1z/ta9AAoPk2F4qIOHA==}
     engines: {node: '>=18'}
+
+  retry@0.13.1:
+    resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
+    engines: {node: '>= 4'}
 
   reusify@1.1.0:
     resolution: {integrity: sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==}
@@ -10905,7 +10958,16 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@google/generative-ai@0.24.1': {}
+  '@google/genai@1.44.0':
+    dependencies:
+      google-auth-library: 10.6.1
+      p-retry: 4.6.2
+      protobufjs: 7.5.4
+      ws: 8.19.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   '@hookform/resolvers@3.10.0(react-hook-form@7.71.2(react@19.2.4))':
     dependencies:
@@ -11557,6 +11619,29 @@ snapshots:
       '@portabletext/types': 4.0.1
 
   '@portabletext/types@4.0.1': {}
+
+  '@protobufjs/aspromise@1.1.2': {}
+
+  '@protobufjs/base64@1.1.2': {}
+
+  '@protobufjs/codegen@2.0.4': {}
+
+  '@protobufjs/eventemitter@1.1.0': {}
+
+  '@protobufjs/fetch@1.1.0':
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/inquire': 1.1.0
+
+  '@protobufjs/float@1.0.2': {}
+
+  '@protobufjs/inquire@1.1.0': {}
+
+  '@protobufjs/path@1.1.2': {}
+
+  '@protobufjs/pool@1.1.0': {}
+
+  '@protobufjs/utf8@1.1.0': {}
 
   '@radix-ui/number@1.1.1': {}
 
@@ -14128,6 +14213,8 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
+  '@types/retry@0.12.0': {}
+
   '@types/shallow-equals@1.0.3': {}
 
   '@types/speakingurl@13.0.6': {}
@@ -15538,7 +15625,7 @@ snapshots:
 
   gcp-metadata@8.1.2:
     dependencies:
-      gaxios: 7.1.3
+      gaxios: 7.1.4
       google-logging-utils: 1.1.3
       json-bigint: 1.0.0
     transitivePeerDependencies:
@@ -16298,6 +16385,8 @@ snapshots:
       is-unicode-supported: 2.1.0
       yoctocolors: 2.1.2
 
+  long@5.3.2: {}
+
   longest-streak@3.1.0: {}
 
   loose-envify@1.4.0:
@@ -16898,6 +16987,11 @@ snapshots:
       eventemitter3: 5.0.4
       p-timeout: 7.0.1
 
+  p-retry@4.6.2:
+    dependencies:
+      '@types/retry': 0.12.0
+      retry: 0.13.1
+
   p-timeout@7.0.1: {}
 
   p-try@2.2.0: {}
@@ -17137,6 +17231,21 @@ snapshots:
   property-information@7.1.0: {}
 
   proto-list@1.2.4: {}
+
+  protobufjs@7.5.4:
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/base64': 1.1.2
+      '@protobufjs/codegen': 2.0.4
+      '@protobufjs/eventemitter': 1.1.0
+      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.0
+      '@protobufjs/path': 1.1.2
+      '@protobufjs/pool': 1.1.0
+      '@protobufjs/utf8': 1.1.0
+      '@types/node': 24.11.0
+      long: 5.3.2
 
   pump@2.0.1:
     dependencies:
@@ -17640,6 +17749,8 @@ snapshots:
     dependencies:
       onetime: 7.0.0
       signal-exit: 4.1.0
+
+  retry@0.13.1: {}
 
   reusify@1.1.0: {}
 
