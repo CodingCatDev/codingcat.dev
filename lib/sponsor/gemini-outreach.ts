@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { getConfigValue } from '@/lib/config'
 
 export interface SponsorPoolEntry {
@@ -28,10 +28,6 @@ CodingCat.dev Sponsorship Tiers:
 Our audience: 50K+ developers interested in web development, JavaScript/TypeScript, React, Next.js, and modern dev tools.
 `.trim()
 
-/**
- * Uses Gemini to generate a personalized cold outreach email
- * for a potential sponsor from the sponsor pool.
- */
 export async function generateOutreachEmail(
   sponsor: SponsorPoolEntry,
   rateCard: string = DEFAULT_RATE_CARD
@@ -42,9 +38,8 @@ export async function generateOutreachEmail(
     return getTemplateEmail(sponsor, rateCard)
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey)
+  const ai = new GoogleGenAI({ apiKey })
   const geminiModel = await getConfigValue("pipeline_config", "geminiModel", "gemini-2.0-flash");
-  const model = genAI.getGenerativeModel({ model: geminiModel })
 
   const optOutUrl = sponsor.optOutToken
     ? `${process.env.NEXT_PUBLIC_URL || 'https://codingcat.dev'}/api/sponsor/opt-out?token=${sponsor.optOutToken}`
@@ -74,9 +69,11 @@ Respond ONLY with valid JSON, no markdown formatting:
 {"subject": "...", "body": "..."}`
 
   try {
-    const result = await model.generateContent(prompt)
-    const response = result.response
-    const text = response.text().trim()
+    const response = await ai.models.generateContent({
+      model: geminiModel,
+      contents: prompt,
+    })
+    const text = (response.text ?? '').trim()
 
     const jsonStr = text.replace(/^```json?\n?/i, '').replace(/\n?```$/i, '').trim()
     const parsed = JSON.parse(jsonStr) as OutreachEmail

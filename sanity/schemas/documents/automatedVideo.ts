@@ -363,6 +363,13 @@ export default defineType({
       hidden: true,
     }),
     defineField({
+      name: 'researchInteractionId',
+      title: 'Research Interaction ID',
+      type: 'string',
+      description: 'Gemini Deep Research interaction ID for polling via the Interactions API',
+      hidden: true,
+    }),
+    defineField({
       name: 'researchData',
       title: 'Research Data',
       type: 'text',
