@@ -5,7 +5,6 @@ import { generateWithGemini } from "@/lib/gemini";
 import { uploadVideo, uploadShort, generateShortsMetadata } from "@/lib/youtube-upload";
 import { notifySubscribers } from "@/lib/resend-notify";
 import { postVideoAnnouncement } from "@/lib/x-social";
-import { getConfig } from "@/lib/config";
 
 const WEBHOOK_SECRET = process.env.SANITY_WEBHOOK_SECRET;
 
@@ -141,9 +140,6 @@ async function appendDistributionLog(docId: string, entries: DistributionLogEntr
 async function runDistribution(docId: string, doc: AutomatedVideoDoc): Promise<void> {
   const log: DistributionLogEntry[] = [];
 
-  // Fetch distribution config from Sanity singleton
-  const distConfig = await getConfig("distribution_config");
-
   try {
     await updateStatus(docId, "uploading");
 
@@ -210,8 +206,6 @@ async function runDistribution(docId: string, doc: AutomatedVideoDoc): Promise<v
         videoTitle: metadata.title,
         videoUrl: ytUrl,
         description: metadata.description.slice(0, 280),
-        fromEmail: distConfig.resendFromEmail,
-        notificationEmails: distConfig.notificationEmails,
       });
       log.push(logEntry("email", "success"));
     } catch (e) {

@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { getConfigValue } from '@/lib/config'
 
 export interface SponsorPoolEntry {
   _id: string
@@ -17,7 +16,7 @@ export interface OutreachEmail {
   body: string
 }
 
-const DEFAULT_RATE_CARD = `
+const RATE_CARD = `
 CodingCat.dev Sponsorship Tiers:
 - Dedicated Video ($4,000) — Full dedicated video about your product
 - Integrated Mid-Roll Ad ($1,800) — Mid-roll advertisement in our videos
@@ -34,7 +33,7 @@ Our audience: 50K+ developers interested in web development, JavaScript/TypeScri
  */
 export async function generateOutreachEmail(
   sponsor: SponsorPoolEntry,
-  rateCard: string = DEFAULT_RATE_CARD
+  rateCard: string = RATE_CARD
 ): Promise<OutreachEmail> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
@@ -43,8 +42,7 @@ export async function generateOutreachEmail(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const geminiModel = await getConfigValue("pipeline_config", "geminiModel", "gemini-2.0-flash");
-  const model = genAI.getGenerativeModel({ model: geminiModel })
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-flash' })
 
   const optOutUrl = sponsor.optOutToken
     ? `${process.env.NEXT_PUBLIC_URL || 'https://codingcat.dev'}/api/sponsor/opt-out?token=${sponsor.optOutToken}`
