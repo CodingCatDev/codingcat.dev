@@ -113,6 +113,20 @@ export default defineType({
       initialValue: 90,
       validation: (Rule) => Rule.min(0).max(365),
     }),
+    defineField({
+      name: "infographicInstructions",
+      title: "Infographic Instructions",
+      type: "array",
+      description: "Prompts sent to NotebookLM for infographic generation. Each instruction produces one infographic per research run. Reorder, add, or remove to control visual output.",
+      of: [{ type: "string" }],
+      initialValue: [
+        "Create a high-level architecture overview diagram",
+        "Create a comparison chart of key features and alternatives",
+        "Create a step-by-step workflow diagram",
+        "Create a timeline of key developments and milestones",
+        "Create a pros and cons visual summary",
+      ],
+    }),
   ],
   preview: {
     prepare() {
