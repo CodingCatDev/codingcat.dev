@@ -100,7 +100,7 @@ const FALLBACK_TRENDS: TrendResult[] = [
 		slug: "webassembly-web-apps",
 		score: 60,
 		signals: [{ source: "blog", title: "WebAssembly", url: "https://webassembly.org/", score: 60 }],
-		whyTrending: "WASM adoption growing in production apps",
+		whyTrending: "WASM adoption growing in [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET] apps",
 		suggestedAngle: "Real-world use cases where WASM outperforms JS",
 	},
 ];
@@ -403,7 +403,12 @@ export async function GET(request: NextRequest) {
 		if (process.env.ENABLE_NOTEBOOKLM_RESEARCH === "true") {
 			console.log(`[CRON/ingest] Conducting research on: "${trends[0].topic}"...`);
 			try {
-				research = await conductResearch(trends[0].topic);
+				// Extract source URLs from trend signals to seed the notebook
+				const sourceUrls = (trends[0].signals ?? [])
+					.map((s: { url?: string }) => s.url)
+					.filter((u): u is string => !!u && u.startsWith("http"))
+					.slice(0, 5);
+				research = await conductResearch(trends[0].topic, { sourceUrls });
 				console.log(`[CRON/ingest] Research complete: ${research.sources.length} sources, ${research.sceneHints.length} scene hints`);
 			} catch (err) {
 				console.warn("[CRON/ingest] Research failed, continuing without:", err);
