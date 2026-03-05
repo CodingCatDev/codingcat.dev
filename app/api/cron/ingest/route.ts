@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 
 import { generateWithGemini, stripCodeFences } from "@/lib/gemini";
 import { writeClient } from "@/lib/sanity-write-client";
+import { getConfigValue } from "@/lib/config";
 import { discoverTrends, type TrendResult } from "@/lib/services/trend-discovery";
 import type { ResearchPayload } from "@/lib/services/research";
 import { NotebookLMClient } from "@/lib/services/notebooklm/client";
@@ -111,7 +112,9 @@ const FALLBACK_TRENDS: TrendResult[] = [
 // Gemini Script Generation
 // ---------------------------------------------------------------------------
 
-const SYSTEM_INSTRUCTION = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
+// SYSTEM_INSTRUCTION fallback — used when content_config singleton doesn't exist yet in Sanity.
+// The live value is fetched from getConfigValue() inside the GET handler.
+const SYSTEM_INSTRUCTION_FALLBACK = `You are a content strategist and scriptwriter for CodingCat.dev, a web development education channel run by Alex Patterson.
 
 Your style is inspired by Cleo Abram's "Huge If True" — you make complex technical topics feel exciting, accessible, and important. Key principles:
 - Start with a BOLD claim or surprising fact that makes people stop scrolling
@@ -330,10 +333,11 @@ async function createSanityDocuments(
 	script: GeneratedScript,
 	criticResult: CriticResult,
 	trends: TrendResult[],
+	qualityThreshold: number,
 	research?: ResearchPayload,
 	researchMeta?: { notebookId: string; taskId: string },
 ) {
-	const isFlagged = criticResult.score < 50;
+	const isFlagged = criticResult.score < qualityThreshold;
 	// When research is in-flight, status is "researching" (check-research cron will transition to script_ready)
 	const isResearching = !!researchMeta?.notebookId;
 	const status = isFlagged ? "flagged" : isResearching ? "researching" : "script_ready";
@@ -404,6 +408,23 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
+		// Fetch config values once per invocation (5-min in-memory cache)
+		const SYSTEM_INSTRUCTION = await getConfigValue(
+			"content_config",
+			"systemInstruction",
+			SYSTEM_INSTRUCTION_FALLBACK,
+		);
+		const enableNotebookLmResearch = await getConfigValue(
+			"pipeline_config",
+			"enableNotebookLmResearch",
+			false,
+		);
+		const qualityThreshold = await getConfigValue(
+			"pipeline_config",
+			"qualityThreshold",
+			50,
+		);
+
 		// Step 1: Discover trending topics (replaces fetchTrendingTopics)
 		console.log("[CRON/ingest] Discovering trending topics...");
 		let trends: TrendResult[];
@@ -425,7 +446,7 @@ export async function GET(request: NextRequest) {
 		// When research is enabled, we create a notebook and start research
 		// but DON'T wait for it — the check-research cron will poll and enrich later
 		let researchMeta: { notebookId: string; taskId: string } | undefined;
-		if (process.env.ENABLE_NOTEBOOKLM_RESEARCH === "true") {
+		if (enableNotebookLmResearch) {
 			console.log(`[CRON/ingest] Starting fire-and-forget research on: "${trends[0].topic}"...`);
 			try {
 				const auth = await initAuth();
@@ -494,7 +515,7 @@ export async function GET(request: NextRequest) {
 		);
 
 		console.log("[CRON/ingest] Creating Sanity documents...");
-		const result = await createSanityDocuments(script, criticResult, trends, undefined, researchMeta);
+		const result = await createSanityDocuments(script, criticResult, trends, qualityThreshold, undefined, researchMeta);
 
 		console.log("[CRON/ingest] Done!", result);
 
