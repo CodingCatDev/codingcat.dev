@@ -395,87 +395,100 @@ export class NotebookLMClient {
       return emptyResult;
     }
 
-    // Response format (from notebooklm-py _research.py):
-    // result = [[task_data, ...], ...]  or  [task_data, ...]
-    // task_data = [task_id, task_info]
-    // task_info = [?, query_info, ?, sources_and_summary, status_code]
-    // query_info = [query_text, ...]
-    // sources_and_summary = [sources_array, summary_text]
-    // Research status: 1=in_progress, 2=completed
+    // Response format (from live API debugging):
+    // result = [[[reportId, taskInfo, startTimestamp, updateTimestamp]]]
+    // taskInfo = [notebookId, [query, sourceType], mode, null, statusCode, researchMeta]
+    // researchMeta = [taskId, null, ?, null, "deep_research.v3p1s.prod"]
+    // statusCode: 1=in_progress, 2=completed
+    //
+    // When completed, taskInfo has additional data:
+    // taskInfo = [notebookId, [query, sourceType], mode, sourcesAndSummary, statusCode, researchMeta]
+    // sourcesAndSummary = [sourcesArray, summaryText]
 
-    // Unwrap if double-nested
-    let tasks = resultArr;
+    // Unwrap the triple-nesting to get to the task array
+    // result = [[[...]]] → task = result[0][0]
+    let task: unknown[] | null = null;
+
     if (
-      Array.isArray(tasks[0]) &&
-      tasks[0].length > 0 &&
-      Array.isArray(tasks[0][0]) &&
-      tasks[0][0].length > 0 &&
-      Array.isArray(tasks[0][0][0])
+      Array.isArray(resultArr[0]) &&
+      Array.isArray((resultArr[0] as unknown[])[0])
     ) {
-      tasks = tasks[0] as unknown[];
-    } else if (
-      Array.isArray(tasks[0]) &&
-      tasks[0].length > 0 &&
-      typeof tasks[0][0] === 'string'
-    ) {
-      // Already at task level: [[taskId, taskInfo], ...]
-      // wrap in array for uniform processing
-      tasks = [tasks];
+      const inner = (resultArr[0] as unknown[])[0] as unknown[];
+      if (inner.length >= 2 && typeof inner[0] === 'string') {
+        task = inner;
+      }
     }
 
-    // Find the most recent task
-    for (const taskData of tasks) {
-      if (!Array.isArray(taskData) || taskData.length < 2) continue;
+    if (!task) {
+      // Try single-nested: result = [[taskId, taskInfo, ...]]
+      if (
+        Array.isArray(resultArr[0]) &&
+        typeof (resultArr[0] as unknown[])[0] === 'string'
+      ) {
+        task = resultArr[0] as unknown[];
+      }
+    }
 
-      const taskId = taskData[0];
-      const taskInfo = taskData[1];
+    if (!task || task.length < 2) {
+      return emptyResult;
+    }
 
-      if (typeof taskId !== 'string' || !Array.isArray(taskInfo)) continue;
+    const reportId = task[0] as string;
+    const taskInfo = task[1] as unknown[];
 
-      const queryInfo = taskInfo[1];
-      const sourcesAndSummary = taskInfo[3];
-      const statusCode = taskInfo[4];
+    if (!Array.isArray(taskInfo) || taskInfo.length < 5) {
+      return emptyResult;
+    }
 
-      const queryText =
-        Array.isArray(queryInfo) && typeof queryInfo[0] === 'string'
-          ? queryInfo[0]
-          : '';
+    // taskInfo = [notebookId, [query, sourceType], mode, sourcesAndSummary, statusCode, researchMeta]
+    const queryInfo = taskInfo[1];
+    const sourcesAndSummary = taskInfo[3];
+    const statusCode = taskInfo[4];
+    const researchMeta = taskInfo[5];
 
-      // Parse sources
-      const sources: Array<{ url: string; title: string }> = [];
-      let summary = '';
+    const queryText =
+      Array.isArray(queryInfo) && typeof queryInfo[0] === 'string'
+        ? queryInfo[0]
+        : '';
 
-      if (Array.isArray(sourcesAndSummary) && sourcesAndSummary.length >= 1) {
-        const sourcesData = Array.isArray(sourcesAndSummary[0])
-          ? sourcesAndSummary[0]
-          : [];
-        if (
-          sourcesAndSummary.length >= 2 &&
-          typeof sourcesAndSummary[1] === 'string'
-        ) {
-          summary = sourcesAndSummary[1];
-        }
+    // Extract the research task ID from researchMeta
+    let taskId = reportId; // fallback to reportId
+    if (Array.isArray(researchMeta) && typeof researchMeta[0] === 'string') {
+      taskId = researchMeta[0];
+    }
 
-        for (const src of sourcesData) {
-          if (!Array.isArray(src) || src.length < 2) continue;
-          const url =
-            typeof src[0] === 'string' ? src[0] : '';
-          const title =
-            typeof src[1] === 'string' ? src[1] : '';
-          if (title || url) {
-            sources.push({ url, title });
-          }
-        }
+    // Parse sources
+    const sources: Array<{ url: string; title: string }> = [];
+    let summary = '';
+
+    if (Array.isArray(sourcesAndSummary) && sourcesAndSummary.length >= 1) {
+      const sourcesData = Array.isArray(sourcesAndSummary[0])
+        ? sourcesAndSummary[0]
+        : [];
+      if (
+        sourcesAndSummary.length >= 2 &&
+        typeof sourcesAndSummary[1] === 'string'
+      ) {
+        summary = sourcesAndSummary[1];
       }
 
-      // Research status: 1=in_progress, 2=completed
-      const status: ResearchResult['status'] =
-        statusCode === 2 ? 'completed' : 'in_progress';
-
-      return { taskId, status, query: queryText, sources, summary };
+      for (const src of sourcesData) {
+        if (!Array.isArray(src) || src.length < 2) continue;
+        const url =
+          typeof src[0] === 'string' ? src[0] : '';
+        const title =
+          typeof src[1] === 'string' ? src[1] : '';
+        if (title || url) {
+          sources.push({ url, title });
+        }
+      }
     }
 
-    return emptyResult;
+    // Research status: 1=in_progress, 2=completed
+    const status: ResearchResult['status'] =
+      statusCode === 2 ? 'completed' : 'in_progress';
+
+    return { taskId, status, query: queryText, sources, summary };
   }
 
   /**
