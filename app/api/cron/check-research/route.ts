@@ -2,12 +2,11 @@ export const fetchCache = 'force-no-store';
 export const maxDuration = 60;
 
 import { type NextRequest } from 'next/server';
-import { after } from 'next/server';
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
 import { NotebookLMClient } from '@/lib/services/notebooklm/client';
 import { initAuth } from '@/lib/services/notebooklm/auth';
-import { sleep } from '@/lib/services/notebooklm/rpc';
+import { ArtifactTypeCode, ArtifactStatus } from '@/lib/services/notebooklm/types';
 import { generateWithGemini, stripCodeFences } from '@/lib/gemini';
 import type { ResearchPayload } from '@/lib/services/research';
 
@@ -15,7 +14,7 @@ import type { ResearchPayload } from '@/lib/services/research';
 // Types
 // ---------------------------------------------------------------------------
 
-interface ResearchingDoc {
+interface PipelineDoc {
   _id: string;
   title: string;
   status: string;
@@ -44,6 +43,8 @@ interface ResearchingDoc {
     }>;
     cta: string;
   };
+  researchData?: string;
+  infographicArtifactIds?: string[];
   _updatedAt: string;
 }
 
@@ -81,10 +82,11 @@ interface CriticResult {
   summary: string;
 }
 
-interface ProcessResult {
+interface StepResult {
   id: string;
   title: string;
-  status: 'script_ready' | 'researching' | 'flagged' | 'error';
+  step: string;
+  outcome: string;
   error?: string;
 }
 
@@ -92,11 +94,15 @@ interface ProcessResult {
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Docs stuck in "researching" longer than this are flagged (ms) */
-const STUCK_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
+/** Stuck thresholds per status (ms) */
+const STUCK_THRESHOLDS: Record<string, number> = {
+  researching: 30 * 60 * 1000,           // 30 minutes
+  infographics_generating: 15 * 60 * 1000, // 15 minutes
+  enriching: 10 * 60 * 1000,              // 10 minutes
+};
 
-/** Max infographic wait time per artifact (ms) */
-const INFOGRAPHIC_WAIT_MS = 120_000; // 2 minutes
+/** Max docs to process per status per run — keeps total time well under 60s */
+const MAX_DOCS_PER_STATUS = 2;
 
 /** Infographic instructions for visual variety */
 const INFOGRAPHIC_INSTRUCTIONS = [
@@ -120,6 +126,358 @@ function getSanityWriteClient(): SanityClient {
 }
 
 // ---------------------------------------------------------------------------
+// Stuck detection — runs FIRST, no external API calls needed
+// ---------------------------------------------------------------------------
+
+async function flagStuckDocs(
+  docs: PipelineDoc[],
+  sanity: SanityClient,
+): Promise<StepResult[]> {
+  const results: StepResult[] = [];
+  const now = Date.now();
+
+  for (const doc of docs) {
+    const threshold = STUCK_THRESHOLDS[doc.status];
+    if (!threshold) continue;
+
+    const docAge = now - new Date(doc._updatedAt).getTime();
+    if (docAge > threshold) {
+      const ageMin = Math.round(docAge / 60_000);
+      console.warn(
+        `[check-research] Doc ${doc._id} ("${doc.title}") stuck in "${doc.status}" for ${ageMin}min — flagging`,
+      );
+      try {
+        await sanity
+          .patch(doc._id)
+          .set({
+            status: 'flagged',
+            flaggedReason: `Stuck in "${doc.status}" for ${ageMin} minutes (threshold: ${Math.round(threshold / 60_000)}min). May need manual intervention.`,
+          })
+          .commit();
+        results.push({
+          id: doc._id,
+          title: doc.title,
+          step: 'stuck-detection',
+          outcome: 'flagged',
+          error: `Stuck in "${doc.status}" for ${ageMin}min`,
+        });
+      } catch (err) {
+        console.error(`[check-research] Failed to flag stuck doc ${doc._id}:`, err);
+      }
+    }
+  }
+
+  return results;
+}
+
+// ---------------------------------------------------------------------------
+// Step 1: researching → research_complete
+// ---------------------------------------------------------------------------
+
+async function stepResearching(
+  doc: PipelineDoc,
+  nbClient: NotebookLMClient,
+  sanity: SanityClient,
+): Promise<StepResult> {
+  const notebookId = doc.researchNotebookId;
+  console.log(`[check-research] Step 1: Polling research for "${doc.title}" (notebook: ${notebookId})`);
+
+  const pollResult = await nbClient.pollResearch(notebookId);
+  console.log(`[check-research] Research status: ${pollResult.status} (${pollResult.sources.length} sources)`);
+
+  if (pollResult.status === 'in_progress') {
+    return { id: doc._id, title: doc.title, step: 'researching', outcome: 'still_in_progress' };
+  }
+
+  if (pollResult.status === 'no_research') {
+    console.warn(`[check-research] No research found for "${doc.title}" — moving to script_ready with existing script`);
+    await sanity.patch(doc._id).set({ status: 'script_ready' }).commit();
+    return { id: doc._id, title: doc.title, step: 'researching', outcome: 'no_research_skip_to_script_ready' };
+  }
+
+  // Research completed — import sources and save research data
+  const researchTaskId = pollResult.taskId || doc.researchTaskId || '';
+  const researchSources = pollResult.sources;
+
+  if (researchSources.length > 0 && researchTaskId) {
+    console.log(`[check-research] Importing ${researchSources.length} research sources...`);
+    try {
+      await nbClient.importResearchSources(notebookId, researchTaskId, researchSources);
+    } catch (err) {
+      console.warn(`[check-research] Failed to import sources (non-fatal):`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  // Get summary/briefing
+  let briefing = pollResult.summary || '';
+  if (!briefing) {
+    try {
+      briefing = await nbClient.getSummary(notebookId);
+    } catch (err) {
+      console.warn(`[check-research] Failed to get summary (non-fatal):`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  // Save research data to Sanity for later steps
+  const researchData = {
+    briefing,
+    sources: researchSources,
+    taskId: researchTaskId,
+    completedAt: new Date().toISOString(),
+  };
+
+  await sanity
+    .patch(doc._id)
+    .set({
+      status: 'research_complete',
+      researchTaskId,
+      researchData: JSON.stringify(researchData),
+    })
+    .commit();
+
+  console.log(`[check-research] "${doc.title}" → research_complete`);
+  return { id: doc._id, title: doc.title, step: 'researching', outcome: 'research_complete' };
+}
+
+// ---------------------------------------------------------------------------
+// Step 2: research_complete → infographics_generating
+// ---------------------------------------------------------------------------
+
+async function stepResearchComplete(
+  doc: PipelineDoc,
+  nbClient: NotebookLMClient,
+  sanity: SanityClient,
+): Promise<StepResult> {
+  const notebookId = doc.researchNotebookId;
+  console.log(`[check-research] Step 2: Starting infographics for "${doc.title}"`);
+
+  // Get source IDs for infographic generation
+  const sourceIds = await nbClient.getSourceIds(notebookId);
+  console.log(`[check-research] Found ${sourceIds.length} source IDs`);
+
+  // Start all 5 infographic generations
+  const artifactIds: string[] = [];
+  for (const instruction of INFOGRAPHIC_INSTRUCTIONS) {
+    try {
+      const result = await nbClient.generateInfographic(notebookId, {
+        sourceIds,
+        instructions: instruction,
+        language: 'en',
+        orientation: 1,  // landscape
+        detailLevel: 2,  // detailed
+      });
+      if (result.taskId) {
+        artifactIds.push(result.taskId);
+      }
+    } catch (err) {
+      console.warn(`[check-research] Failed to start infographic (non-fatal):`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  console.log(`[check-research] Started ${artifactIds.length} infographic generations`);
+
+  if (artifactIds.length === 0) {
+    // No infographics started — skip to enriching
+    console.warn(`[check-research] No infographics started — skipping to enriching`);
+    await sanity
+      .patch(doc._id)
+      .set({
+        status: 'enriching',
+        infographicArtifactIds: [],
+      })
+      .commit();
+    return { id: doc._id, title: doc.title, step: 'research_complete', outcome: 'skip_to_enriching_no_infographics' };
+  }
+
+  // Save artifact IDs and transition status
+  await sanity
+    .patch(doc._id)
+    .set({
+      status: 'infographics_generating',
+      infographicArtifactIds: artifactIds,
+    })
+    .commit();
+
+  console.log(`[check-research] "${doc.title}" → infographics_generating (${artifactIds.length} artifacts)`);
+  return { id: doc._id, title: doc.title, step: 'research_complete', outcome: 'infographics_generating' };
+}
+
+// ---------------------------------------------------------------------------
+// Step 3: infographics_generating → enriching
+// ---------------------------------------------------------------------------
+
+async function stepInfographicsGenerating(
+  doc: PipelineDoc,
+  nbClient: NotebookLMClient,
+  sanity: SanityClient,
+): Promise<StepResult> {
+  const notebookId = doc.researchNotebookId;
+  const artifactIds = doc.infographicArtifactIds ?? [];
+  console.log(`[check-research] Step 3: Checking ${artifactIds.length} infographics for "${doc.title}"`);
+
+  if (artifactIds.length === 0) {
+    // No artifacts to wait for — skip to enriching
+    await sanity.patch(doc._id).set({ status: 'enriching' }).commit();
+    return { id: doc._id, title: doc.title, step: 'infographics_generating', outcome: 'skip_to_enriching_no_artifacts' };
+  }
+
+  // List all artifacts ONCE (not per artifact)
+  const allArtifacts = await nbClient.listArtifacts(notebookId);
+  console.log(`[check-research] Found ${allArtifacts.length} total artifacts in notebook`);
+
+  // Check if ALL our artifacts are completed
+  const ourArtifacts = allArtifacts.filter((a) => artifactIds.includes(a.id));
+  const completed = ourArtifacts.filter((a) => a.statusCode === ArtifactStatus.COMPLETED);
+  const failed = ourArtifacts.filter(
+    (a) => a.statusCode !== ArtifactStatus.COMPLETED && a.statusCode !== 1 && a.statusCode !== 2,
+  );
+
+  console.log(
+    `[check-research] Infographic status: ${completed.length} completed, ${failed.length} failed, ${artifactIds.length - ourArtifacts.length} not found, ${ourArtifacts.length - completed.length - failed.length} still generating`,
+  );
+
+  // All done (completed or failed) — move to enriching
+  const allDone = completed.length + failed.length >= artifactIds.length ||
+    ourArtifacts.length >= artifactIds.length &&
+    ourArtifacts.every((a) => a.statusCode === ArtifactStatus.COMPLETED || a.statusCode >= 4);
+
+  if (!allDone) {
+    // Still generating — wait for next run
+    return { id: doc._id, title: doc.title, step: 'infographics_generating', outcome: 'still_generating' };
+  }
+
+  // Collect infographic URLs from completed artifacts
+  const infographicUrls: string[] = [];
+  for (const artifactId of artifactIds) {
+    try {
+      const url = await nbClient.getInfographicUrl(notebookId, artifactId);
+      if (url) {
+        infographicUrls.push(url);
+      }
+    } catch (err) {
+      console.warn(`[check-research] Failed to get infographic URL for ${artifactId}:`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  console.log(`[check-research] Collected ${infographicUrls.length} infographic URLs`);
+
+  // Parse existing research data and add infographic URLs
+  let researchData: Record<string, unknown> = {};
+  if (doc.researchData) {
+    try {
+      researchData = JSON.parse(doc.researchData) as Record<string, unknown>;
+    } catch {
+      console.warn(`[check-research] Failed to parse existing researchData`);
+    }
+  }
+  researchData.infographicUrls = infographicUrls;
+
+  await sanity
+    .patch(doc._id)
+    .set({
+      status: 'enriching',
+      researchData: JSON.stringify(researchData),
+    })
+    .commit();
+
+  console.log(`[check-research] "${doc.title}" → enriching (${infographicUrls.length} infographic URLs)`);
+  return { id: doc._id, title: doc.title, step: 'infographics_generating', outcome: 'enriching' };
+}
+
+// ---------------------------------------------------------------------------
+// Step 4: enriching → script_ready
+// ---------------------------------------------------------------------------
+
+async function stepEnriching(
+  doc: PipelineDoc,
+  sanity: SanityClient,
+): Promise<StepResult> {
+  console.log(`[check-research] Step 4: Enriching script for "${doc.title}"`);
+
+  // Parse research data from Sanity
+  let researchData: {
+    briefing?: string;
+    sources?: Array<{ url: string; title: string }>;
+    infographicUrls?: string[];
+  } = {};
+
+  if (doc.researchData) {
+    try {
+      researchData = JSON.parse(doc.researchData) as typeof researchData;
+    } catch {
+      console.warn(`[check-research] Failed to parse researchData for "${doc.title}"`);
+    }
+  }
+
+  const briefing = researchData.briefing ?? '';
+  const sources = researchData.sources ?? [];
+  const infographicUrls = researchData.infographicUrls ?? [];
+
+  // Build full research payload
+  const researchPayload = buildResearchPayload(doc, briefing, sources, infographicUrls);
+
+  // Generate enriched script with Gemini
+  let enrichedScript: EnrichedScript | null = null;
+  try {
+    const prompt = buildEnrichmentPrompt(doc, researchPayload);
+    const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
+    const cleaned = stripCodeFences(rawResponse);
+    enrichedScript = JSON.parse(cleaned) as EnrichedScript;
+    console.log(`[check-research] Enriched script generated: "${enrichedScript.title}"`);
+  } catch (err) {
+    console.error('[check-research] Failed to generate enriched script:', err);
+  }
+
+  if (enrichedScript) {
+    // Run critic pass
+    const criticResult = await claudeCritic(enrichedScript);
+    const criticScore = criticResult.score;
+    console.log(`[check-research] Critic score: ${criticScore}/100 — ${criticResult.summary}`);
+
+    const isFlagged = criticScore < 50;
+
+    await sanity
+      .patch(doc._id)
+      .set({
+        script: {
+          ...enrichedScript.script,
+          scenes: enrichedScript.script.scenes.map((scene, i) => ({
+            ...scene,
+            _key: `scene-${i + 1}`,
+          })),
+        },
+        scriptQualityScore: criticScore,
+        status: isFlagged ? 'flagged' : 'script_ready',
+        researchData: JSON.stringify(researchPayload),
+        ...(isFlagged && {
+          flaggedReason: `Quality score ${criticScore}/100. Issues: ${(criticResult.issues ?? []).join('; ') || 'Low quality score'}`,
+        }),
+      })
+      .commit();
+
+    console.log(`[check-research] "${doc.title}" → ${isFlagged ? 'flagged' : 'script_ready'} (score: ${criticScore})`);
+    return {
+      id: doc._id,
+      title: doc.title,
+      step: 'enriching',
+      outcome: isFlagged ? 'flagged' : 'script_ready',
+    };
+  }
+
+  // Fallback: no enriched script — transition with existing script
+  console.warn(`[check-research] No enriched script — transitioning "${doc.title}" to script_ready with existing script`);
+  await sanity
+    .patch(doc._id)
+    .set({
+      status: 'script_ready',
+      researchData: JSON.stringify(researchPayload),
+    })
+    .commit();
+
+  return { id: doc._id, title: doc.title, step: 'enriching', outcome: 'script_ready_fallback' };
+}
+
+// ---------------------------------------------------------------------------
 // Gemini Script Enrichment
 // ---------------------------------------------------------------------------
 
@@ -138,7 +496,7 @@ Script format: 60-90 second explainer videos. Think TikTok/YouTube Shorts energy
 CodingCat.dev covers: React, Next.js, TypeScript, Svelte, web APIs, CSS, Node.js, cloud services, AI/ML for developers, and web platform updates.`;
 
 function buildEnrichmentPrompt(
-  doc: ResearchingDoc,
+  doc: PipelineDoc,
   research: ResearchPayload,
 ): string {
   const existingScript = doc.script
@@ -237,7 +595,7 @@ Requirements:
 }
 
 // ---------------------------------------------------------------------------
-// Claude Critic (same as ingest route)
+// Claude Critic (optional — degrades gracefully without ANTHROPIC_API_KEY)
 // ---------------------------------------------------------------------------
 
 async function claudeCritic(script: EnrichedScript): Promise<CriticResult> {
@@ -309,7 +667,7 @@ Respond with ONLY the JSON object.`,
 }
 
 // ---------------------------------------------------------------------------
-// Research payload builder (mirrors research.ts logic)
+// Research payload builder
 // ---------------------------------------------------------------------------
 
 function extractTalkingPoints(text: string): string[] {
@@ -383,7 +741,7 @@ function classifySourceType(url: string): 'youtube' | 'article' | 'docs' | 'unkn
 }
 
 function buildResearchPayload(
-  doc: ResearchingDoc,
+  doc: PipelineDoc,
   briefing: string,
   sources: Array<{ url: string; title: string }>,
   infographicUrls: string[],
@@ -397,7 +755,7 @@ function buildResearchPayload(
   const sceneHints = sections.map((section) => ({
     content: section.slice(0, 500),
     suggestedSceneType: classifyScene(section),
-    reason: `Classified from research content`,
+    reason: 'Classified from research content',
   }));
 
   return {
@@ -419,188 +777,11 @@ function buildResearchPayload(
 }
 
 // ---------------------------------------------------------------------------
-// Safe step wrapper
-// ---------------------------------------------------------------------------
-
-async function safeStep<T>(
-  label: string,
-  fn: () => Promise<T>,
-): Promise<T | undefined> {
-  try {
-    return await fn();
-  } catch (error) {
-    console.error(
-      `[check-research] Step "${label}" failed:`,
-      error instanceof Error ? error.message : error,
-    );
-    return undefined;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Process a single researching doc
-// ---------------------------------------------------------------------------
-
-async function processResearchingDoc(
-  doc: ResearchingDoc,
-  nbClient: NotebookLMClient,
-  sanityClient: SanityClient,
-): Promise<ProcessResult> {
-  const notebookId = doc.researchNotebookId;
-  console.log(`[check-research] Processing doc ${doc._id} ("${doc.title}") — notebook: ${notebookId}`);
-
-  // Step 1: Poll research status
-  console.log(`[check-research] Polling research status for notebook ${notebookId}...`);
-  const pollResult = await nbClient.pollResearch(notebookId);
-  console.log(`[check-research] Research status: ${pollResult.status} (${pollResult.sources.length} sources)`);
-
-  if (pollResult.status === 'in_progress') {
-    console.log(`[check-research] Research still in progress for "${doc.title}" — will retry next run`);
-    return { id: doc._id, title: doc.title, status: 'researching' };
-  }
-
-  if (pollResult.status === 'no_research') {
-    console.warn(`[check-research] No research found for "${doc.title}" — marking as script_ready with existing script`);
-    await sanityClient.patch(doc._id).set({ status: 'script_ready' }).commit();
-    return { id: doc._id, title: doc.title, status: 'script_ready' };
-  }
-
-  // Research is completed — proceed with enrichment pipeline
-  console.log(`[check-research] Research completed for "${doc.title}" — starting enrichment pipeline`);
-
-  const researchTaskId = pollResult.taskId || doc.researchTaskId || '';
-  const researchSources = pollResult.sources;
-
-  // Step 2: Import research sources
-  if (researchSources.length > 0 && researchTaskId) {
-    console.log(`[check-research] Importing ${researchSources.length} research sources...`);
-    await safeStep('import-sources', () =>
-      nbClient.importResearchSources(notebookId, researchTaskId, researchSources),
-    );
-  }
-
-  // Step 3: Generate infographics
-  console.log(`[check-research] Generating ${INFOGRAPHIC_INSTRUCTIONS.length} infographics...`);
-  const infographicTaskIds: string[] = [];
-
-  for (const instruction of INFOGRAPHIC_INSTRUCTIONS) {
-    const result = await safeStep(`generate-infographic`, () =>
-      nbClient.generateInfographic(notebookId, {
-        instructions: instruction,
-        language: 'en',
-        orientation: 1, // landscape
-        detailLevel: 2, // detailed
-      }),
-    );
-    if (result?.taskId) {
-      infographicTaskIds.push(result.taskId);
-    }
-  }
-
-  console.log(`[check-research] Started ${infographicTaskIds.length} infographic generations`);
-
-  // Step 4: Wait for infographics to complete
-  if (infographicTaskIds.length > 0) {
-    console.log(`[check-research] Waiting for infographics to complete...`);
-    const waitPromises = infographicTaskIds.map((taskId) =>
-      safeStep(`wait-infographic-${taskId.substring(0, 8)}`, () =>
-        nbClient.waitForArtifact(notebookId, taskId, {
-          timeoutMs: INFOGRAPHIC_WAIT_MS,
-          pollIntervalMs: 10_000,
-        }),
-      ),
-    );
-    await Promise.allSettled(waitPromises);
-  }
-
-  // Step 5: Get notebook summary
-  console.log(`[check-research] Getting notebook summary...`);
-  const briefing = (await safeStep('get-summary', () => nbClient.getSummary(notebookId))) ?? '';
-
-  // Step 6: Collect infographic URLs
-  console.log(`[check-research] Collecting infographic URLs...`);
-  const infographicUrls: string[] = [];
-  for (const taskId of infographicTaskIds) {
-    const url = await safeStep(`get-infographic-url-${taskId.substring(0, 8)}`, () =>
-      nbClient.getInfographicUrl(notebookId, taskId),
-    );
-    if (url) {
-      infographicUrls.push(url);
-    }
-  }
-  console.log(`[check-research] Found ${infographicUrls.length} infographic URLs`);
-
-  // Step 7: Build research payload
-  const researchPayload = buildResearchPayload(doc, briefing, researchSources, infographicUrls);
-
-  // Step 8: Re-generate enriched script with Gemini
-  console.log(`[check-research] Re-generating enriched script with Gemini...`);
-  let enrichedScript: EnrichedScript | null = null;
-
-  try {
-    const prompt = buildEnrichmentPrompt(doc, researchPayload);
-    const rawResponse = await generateWithGemini(prompt, SYSTEM_INSTRUCTION);
-    const cleaned = stripCodeFences(rawResponse);
-    enrichedScript = JSON.parse(cleaned) as EnrichedScript;
-    console.log(`[check-research] Enriched script generated: "${enrichedScript.title}"`);
-  } catch (err) {
-    console.error('[check-research] Failed to generate enriched script:', err);
-    // Fall through — we'll use the existing script
-  }
-
-  // Step 9: Run critic pass
-  let criticScore = 0;
-  if (enrichedScript) {
-    console.log(`[check-research] Running critic pass...`);
-    const criticResult = await claudeCritic(enrichedScript);
-    criticScore = criticResult.score;
-    console.log(`[check-research] Critic score: ${criticScore}/100 — ${criticResult.summary}`);
-
-    const isFlagged = criticScore < 50;
-
-    // Step 10: Update Sanity doc with enriched data
-    console.log(`[check-research] Updating Sanity doc ${doc._id}...`);
-    await sanityClient
-      .patch(doc._id)
-      .set({
-        script: {
-          ...enrichedScript.script,
-          scenes: enrichedScript.script.scenes.map((scene, i) => ({
-            ...scene,
-            _key: `scene-${i + 1}`,
-          })),
-        },
-        scriptQualityScore: criticScore,
-        status: isFlagged ? 'flagged' : 'script_ready',
-        researchData: JSON.stringify(researchPayload),
-        ...(isFlagged && {
-          flaggedReason: `Quality score ${criticScore}/100. Issues: ${(criticResult.issues ?? []).join('; ') || 'Low quality score'}`,
-        }),
-      })
-      .commit();
-
-    console.log(`[check-research] Doc ${doc._id} updated to "${isFlagged ? 'flagged' : 'script_ready'}"`);
-    return { id: doc._id, title: doc.title, status: isFlagged ? 'flagged' : 'script_ready' };
-  }
-
-  // Fallback: no enriched script, just transition to script_ready with existing script
-  console.warn(`[check-research] No enriched script — transitioning ${doc._id} to script_ready with existing script`);
-  await sanityClient
-    .patch(doc._id)
-    .set({
-      status: 'script_ready',
-      researchData: JSON.stringify(researchPayload),
-    })
-    .commit();
-
-  return { id: doc._id, title: doc.title, status: 'script_ready' };
-}
-
-// ---------------------------------------------------------------------------
 // Route Handler
 // ---------------------------------------------------------------------------
 
 export async function GET(request: NextRequest) {
+  // Auth: fail-closed — if CRON_SECRET is not set, reject
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) {
     console.error('[check-research] CRON_SECRET not configured');
@@ -608,82 +789,129 @@ export async function GET(request: NextRequest) {
   }
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${cronSecret}`) {
-    console.error('[check-research] Unauthorized request: invalid authorization header');
+    console.error('[check-research] Unauthorized request');
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const sanity = getSanityWriteClient();
 
-    // Phase 1: Query all researching docs
-    const docs = await sanity.fetch<ResearchingDoc[]>(
-      `*[_type == "automatedVideo" && status == "researching" && defined(researchNotebookId)] {
-        _id,
-        title,
-        status,
-        researchNotebookId,
-        researchTaskId,
-        trendScore,
-        trendSources,
-        script,
-        _updatedAt
+    // Single query for all active pipeline statuses
+    const docs = await sanity.fetch<PipelineDoc[]>(
+      `*[_type == "automatedVideo" && status in ["researching", "research_complete", "infographics_generating", "enriching"] && defined(researchNotebookId)] {
+        _id, title, status, researchNotebookId, researchTaskId, trendScore, trendSources,
+        script, researchData, infographicArtifactIds, _updatedAt
       }`,
     );
 
-    console.log(`[check-research] Found ${docs.length} docs in "researching" status`);
+    console.log(`[check-research] Found ${docs.length} docs in pipeline`);
 
     if (docs.length === 0) {
-      return Response.json({ success: true, message: 'No docs to process', processed: 0 });
+      return Response.json({ success: true, message: 'No docs to process', results: [] });
     }
 
-    // Phase 2: Separate stuck from active (no NotebookLM needed)
-    const stuckResults: ProcessResult[] = [];
-    const activeDocs: ResearchingDoc[] = [];
-    const now = Date.now();
+    const results: StepResult[] = [];
 
-    for (const doc of docs) {
-      const docAge = now - new Date(doc._updatedAt).getTime();
-      if (docAge > STUCK_THRESHOLD_MS) {
-        console.warn(
-          `[check-research] Doc ${doc._id} ("${doc.title}") stuck in "researching" for ${Math.round(docAge / 60_000)}min — flagging`,
-        );
-        await sanity
-          .patch(doc._id)
-          .set({
-            status: 'flagged',
-            flaggedReason: `Stuck in "researching" for ${Math.round(docAge / 60_000)} minutes (threshold: ${STUCK_THRESHOLD_MS / 60_000}min). Research may have failed.`,
-          })
-          .commit();
-        stuckResults.push({ id: doc._id, title: doc.title, status: 'flagged', error: 'Stuck in researching' });
-      } else {
-        activeDocs.push(doc);
-      }
-    }
+    // Phase 1: Stuck detection — runs FIRST, no external API calls
+    const stuckResults = await flagStuckDocs(docs, sanity);
+    results.push(...stuckResults);
 
-    // Phase 3: Process active docs (needs NotebookLM)
-    if (activeDocs.length > 0) {
+    // Remove flagged docs from further processing
+    const stuckIds = new Set(stuckResults.map((r) => r.id));
+    const activeDocs = docs.filter((d) => !stuckIds.has(d._id));
+
+    // Group by status
+    const researching = activeDocs.filter((d) => d.status === 'researching');
+    const researchComplete = activeDocs.filter((d) => d.status === 'research_complete');
+    const infographicsGenerating = activeDocs.filter((d) => d.status === 'infographics_generating');
+    const enriching = activeDocs.filter((d) => d.status === 'enriching');
+
+    console.log(
+      `[check-research] Pipeline: ${researching.length} researching, ${researchComplete.length} research_complete, ${infographicsGenerating.length} infographics_generating, ${enriching.length} enriching`,
+    );
+
+    // Phase 2: Only init NotebookLM if needed
+    const needsNotebookLM = researching.length > 0 || researchComplete.length > 0 || infographicsGenerating.length > 0;
+    let nbClient: NotebookLMClient | null = null;
+
+    if (needsNotebookLM) {
       console.log('[check-research] Initializing NotebookLM client...');
       const auth = await initAuth();
-      const nbClient = new NotebookLMClient(auth);
+      nbClient = new NotebookLMClient(auth);
+    }
 
-      for (const doc of activeDocs) {
-        after(async () => {
-          try {
-            await processResearchingDoc(doc, nbClient, sanity);
-          } catch (err) {
-            console.error(`[check-research] after() error for ${doc._id}:`, err);
-            try {
-              await sanity.patch(doc._id).set({
-                status: 'flagged',
-                flaggedReason: `Research processing error: ${err instanceof Error ? err.message : String(err)}`,
-              }).commit();
-            } catch { /* best-effort */ }
-          }
+    // Phase 3: Process each status group (max MAX_DOCS_PER_STATUS per group)
+
+    // Step 1: researching → research_complete
+    for (const doc of researching.slice(0, MAX_DOCS_PER_STATUS)) {
+      try {
+        const result = await stepResearching(doc, nbClient!, sanity);
+        results.push(result);
+      } catch (err) {
+        console.error(`[check-research] Error in stepResearching for ${doc._id}:`, err);
+        results.push({
+          id: doc._id,
+          title: doc.title,
+          step: 'researching',
+          outcome: 'error',
+          error: err instanceof Error ? err.message : String(err),
         });
       }
     }
 
-    return Response.json({ success: true, processing: activeDocs.length, flagged: stuckResults.length });
+    // Step 2: research_complete → infographics_generating
+    for (const doc of researchComplete.slice(0, MAX_DOCS_PER_STATUS)) {
+      try {
+        const result = await stepResearchComplete(doc, nbClient!, sanity);
+        results.push(result);
+      } catch (err) {
+        console.error(`[check-research] Error in stepResearchComplete for ${doc._id}:`, err);
+        results.push({
+          id: doc._id,
+          title: doc.title,
+          step: 'research_complete',
+          outcome: 'error',
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
+    // Step 3: infographics_generating → enriching
+    for (const doc of infographicsGenerating.slice(0, MAX_DOCS_PER_STATUS)) {
+      try {
+        const result = await stepInfographicsGenerating(doc, nbClient!, sanity);
+        results.push(result);
+      } catch (err) {
+        console.error(`[check-research] Error in stepInfographicsGenerating for ${doc._id}:`, err);
+        results.push({
+          id: doc._id,
+          title: doc.title,
+          step: 'infographics_generating',
+          outcome: 'error',
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
+    // Step 4: enriching → script_ready (no NotebookLM needed)
+    for (const doc of enriching.slice(0, MAX_DOCS_PER_STATUS)) {
+      try {
+        const result = await stepEnriching(doc, sanity);
+        results.push(result);
+      } catch (err) {
+        console.error(`[check-research] Error in stepEnriching for ${doc._id}:`, err);
+        results.push({
+          id: doc._id,
+          title: doc.title,
+          step: 'enriching',
+          outcome: 'error',
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
+    console.log(`[check-research] Run complete: ${results.length} results`);
+    return Response.json({ success: true, results });
   } catch (err) {
     console.error('[check-research] Unexpected error:', err);
     return Response.json(
