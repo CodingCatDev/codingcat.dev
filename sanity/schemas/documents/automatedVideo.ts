@@ -74,6 +74,134 @@ export default defineType({
                   title: 'Duration Estimate',
                   type: 'number',
                 }),
+                defineField({
+                  name: 'sceneType',
+                  title: 'Scene Type',
+                  type: 'string',
+                  options: {
+                    list: [
+                      {title: 'Narration', value: 'narration'},
+                      {title: 'Code', value: 'code'},
+                      {title: 'List', value: 'list'},
+                      {title: 'Comparison', value: 'comparison'},
+                      {title: 'Mockup', value: 'mockup'},
+                    ],
+                  },
+                  initialValue: 'narration',
+                }),
+                defineField({
+                  name: 'code',
+                  title: 'Code',
+                  type: 'object',
+                  hidden: ({parent}) => parent?.sceneType !== 'code',
+                  fields: [
+                    defineField({
+                      name: 'snippet',
+                      title: 'Code Snippet',
+                      type: 'text',
+                    }),
+                    defineField({
+                      name: 'language',
+                      title: 'Language',
+                      type: 'string',
+                      options: {
+                        list: [
+                          {title: 'TypeScript', value: 'typescript'},
+                          {title: 'JavaScript', value: 'javascript'},
+                          {title: 'JSX', value: 'jsx'},
+                          {title: 'TSX', value: 'tsx'},
+                          {title: 'CSS', value: 'css'},
+                          {title: 'HTML', value: 'html'},
+                          {title: 'JSON', value: 'json'},
+                          {title: 'Bash', value: 'bash'},
+                        ],
+                      },
+                    }),
+                    defineField({
+                      name: 'highlightLines',
+                      title: 'Highlight Lines',
+                      type: 'array',
+                      of: [{type: 'number'}],
+                    }),
+                  ],
+                }),
+                defineField({
+                  name: 'list',
+                  title: 'List',
+                  type: 'object',
+                  hidden: ({parent}) => parent?.sceneType !== 'list',
+                  fields: [
+                    defineField({
+                      name: 'items',
+                      title: 'Items',
+                      type: 'array',
+                      of: [{type: 'string'}],
+                      validation: (Rule) => Rule.min(1),
+                    }),
+                    defineField({
+                      name: 'icon',
+                      title: 'Icon',
+                      type: 'string',
+                      description: 'Optional emoji icon, e.g. 🚀',
+                    }),
+                  ],
+                }),
+                defineField({
+                  name: 'comparison',
+                  title: 'Comparison',
+                  type: 'object',
+                  hidden: ({parent}) => parent?.sceneType !== 'comparison',
+                  fields: [
+                    defineField({
+                      name: 'leftLabel',
+                      title: 'Left Label',
+                      type: 'string',
+                    }),
+                    defineField({
+                      name: 'rightLabel',
+                      title: 'Right Label',
+                      type: 'string',
+                    }),
+                    defineField({
+                      name: 'rows',
+                      title: 'Rows',
+                      type: 'array',
+                      of: [{
+                        type: 'object',
+                        fields: [
+                          defineField({name: 'left', title: 'Left', type: 'string'}),
+                          defineField({name: 'right', title: 'Right', type: 'string'}),
+                        ],
+                      }],
+                    }),
+                  ],
+                }),
+                defineField({
+                  name: 'mockup',
+                  title: 'Mockup',
+                  type: 'object',
+                  hidden: ({parent}) => parent?.sceneType !== 'mockup',
+                  fields: [
+                    defineField({
+                      name: 'deviceType',
+                      title: 'Device Type',
+                      type: 'string',
+                      options: {
+                        list: [
+                          {title: 'Browser', value: 'browser'},
+                          {title: 'Phone', value: 'phone'},
+                          {title: 'Terminal', value: 'terminal'},
+                        ],
+                      },
+                    }),
+                    defineField({
+                      name: 'screenContent',
+                      title: 'Screen Content',
+                      type: 'text',
+                      description: 'Description of what appears on screen',
+                    }),
+                  ],
+                }),
               ],
             },
           ],
