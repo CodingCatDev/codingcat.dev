@@ -139,13 +139,6 @@ export default function AlgoliaSearch({
 						future={{
 							preserveSharedStateOnUnmount: true,
 						}}
-						// initialUiState={{
-						//   [indexName]: {
-						//     refinementList: {
-						//       _type: ["course"],
-						//     },
-						//   },
-						// }}
 					>
 						<div className="flex gap-8 p-2 sm:p-4">
 							{showFacets && (

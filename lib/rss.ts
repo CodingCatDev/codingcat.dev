@@ -17,8 +17,6 @@ function typePath(type: string): string {
 			return "blog";
 		case "podcast":
 			return "podcasts";
-		case "course":
-			return "courses";
 		default:
 			return type + "s";
 	}
