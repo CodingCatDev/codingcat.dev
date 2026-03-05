@@ -149,7 +149,8 @@ function sleep(ms: number): Promise<void> {
  * orientation.
  *
  * Prefers HD resolution (1920×1080 for landscape, 1080×1920 for portrait).
- * Falls back to the file with the highest total pixel count.
+ * Falls back to the closest resolution at or below the target to avoid
+ * sending massive 4K files to Lambda (which has limited disk space).
  *
  * @param video       - The Pexels video to pick a file from.
  * @param orientation - Desired orientation.
@@ -179,11 +180,25 @@ function selectBestFile(
   const hdWidthMatch = files.find((f) => f.width === targetWidth);
   if (hdWidthMatch) return hdWidthMatch;
 
-  // Fall back to the highest resolution file available
+  // Fall back to the best file at or below target resolution.
+  // This avoids selecting 4K UHD files (4096×2160, 100-500MB) that
+  // exceed Lambda's 2GB disk limit.
+  const atOrBelowTarget = files.filter((f) => f.width <= targetWidth);
+
+  if (atOrBelowTarget.length > 0) {
+    // Pick the highest resolution that's still at or below target
+    return atOrBelowTarget.reduce((best, current) => {
+      const bestPixels = best.width * best.height;
+      const currentPixels = current.width * current.height;
+      return currentPixels > bestPixels ? current : best;
+    });
+  }
+
+  // All files exceed target resolution — pick the smallest one
   return files.reduce((best, current) => {
     const bestPixels = best.width * best.height;
     const currentPixels = current.width * current.height;
-    return currentPixels > bestPixels ? current : best;
+    return currentPixels < bestPixels ? current : best;
   });
 }
 
