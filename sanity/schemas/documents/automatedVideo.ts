@@ -228,6 +228,9 @@ export default defineType({
         list: [
           {title: '1 - Draft', value: 'draft'},
           {title: '1.5 - Researching', value: 'researching'},
+          {title: '1.6 - Research Complete', value: 'research_complete'},
+          {title: '1.7 - Infographics Generating', value: 'infographics_generating'},
+          {title: '1.8 - Enriching', value: 'enriching'},
           {title: '2 - Script Ready', value: 'script_ready'},
           {title: '3 - Audio Generation', value: 'audio_gen'},
           {title: '4 - Rendering', value: 'rendering'},
@@ -338,6 +341,14 @@ export default defineType({
       title: 'Research Data',
       type: 'text',
       description: 'JSON-serialized research payload from NotebookLM',
+      hidden: true,
+    }),
+    defineField({
+      name: 'infographicArtifactIds',
+      title: 'Infographic Artifact IDs',
+      type: 'array',
+      of: [{type: 'string'}],
+      description: 'NotebookLM artifact IDs for generated infographics',
       hidden: true,
     }),
     defineField({
