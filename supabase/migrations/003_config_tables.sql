@@ -19,7 +19,7 @@ $$ LANGUAGE plpgsql;
 -- =========================================================================
 -- 1. pipeline_config
 -- =========================================================================
-CREATE TABLE pipeline_config (
+CREATE TABLE IF NOT EXISTS pipeline_config (
   id                        integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   gemini_model              text         NOT NULL DEFAULT 'gemini-2.0-flash',
   elevenlabs_voice_id       text         NOT NULL DEFAULT 'pNInz6obpgDQGcFmaJgB',
@@ -45,16 +45,18 @@ CREATE POLICY "service_role can update pipeline_config"
   USING (true)
   WITH CHECK (true);
 
-INSERT INTO pipeline_config (id) VALUES (1);
+INSERT INTO pipeline_config (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TRIGGER trg_pipeline_config_updated_at
   BEFORE UPDATE ON pipeline_config
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+COMMENT ON TABLE pipeline_config IS 'Core video pipeline settings: Gemini model, voice, YouTube visibility, quality thresholds';
+
 -- =========================================================================
 -- 2. remotion_config
 -- =========================================================================
-CREATE TABLE remotion_config (
+CREATE TABLE IF NOT EXISTS remotion_config (
   id                      integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   aws_region              text         NOT NULL DEFAULT 'us-east-1',
   function_name           text         NOT NULL DEFAULT '',
@@ -78,16 +80,18 @@ CREATE POLICY "service_role can update remotion_config"
   USING (true)
   WITH CHECK (true);
 
-INSERT INTO remotion_config (id) VALUES (1);
+INSERT INTO remotion_config (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TRIGGER trg_remotion_config_updated_at
   BEFORE UPDATE ON remotion_config
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+COMMENT ON TABLE remotion_config IS 'Remotion Lambda rendering: AWS region, function name, serve URL, resource limits';
+
 -- =========================================================================
 -- 3. content_config
 -- =========================================================================
-CREATE TABLE content_config (
+CREATE TABLE IF NOT EXISTS content_config (
   id                        integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   rss_feeds                 jsonb        NOT NULL DEFAULT '["https://hnrss.org/newest?points=100&count=20","https://dev.to/feed/tag/javascript","https://dev.to/feed/tag/webdev","https://css-tricks.com/feed/","https://blog.chromium.org/feeds/posts/default","https://web.dev/feed.xml","https://www.smashingmagazine.com/feed/","https://javascriptweekly.com/rss/"]'::jsonb,
   trend_sources_enabled     jsonb        NOT NULL DEFAULT '{"hn":true,"devto":true,"blogs":true,"youtube":true,"github":true}'::jsonb,
@@ -123,16 +127,18 @@ CREATE POLICY "service_role can update content_config"
   USING (true)
   WITH CHECK (true);
 
-INSERT INTO content_config (id) VALUES (1);
+INSERT INTO content_config (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TRIGGER trg_content_config_updated_at
   BEFORE UPDATE ON content_config
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+COMMENT ON TABLE content_config IS 'Content discovery and generation: RSS feeds, trend sources, system prompt, video duration';
+
 -- =========================================================================
 -- 4. sponsor_config
 -- =========================================================================
-CREATE TABLE sponsor_config (
+CREATE TABLE IF NOT EXISTS sponsor_config (
   id                      integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   cooldown_days           integer      NOT NULL DEFAULT 14,
   rate_card_tiers         jsonb        NOT NULL DEFAULT '[{"name":"starter","price":500,"impressions":"5k-10k"},{"name":"growth","price":1500,"impressions":"10k-50k"},{"name":"premium","price":3000,"impressions":"50k+"}]'::jsonb,
@@ -159,16 +165,18 @@ CREATE POLICY "service_role can update sponsor_config"
   USING (true)
   WITH CHECK (true);
 
-INSERT INTO sponsor_config (id) VALUES (1);
+INSERT INTO sponsor_config (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TRIGGER trg_sponsor_config_updated_at
   BEFORE UPDATE ON sponsor_config
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+COMMENT ON TABLE sponsor_config IS 'Sponsor pipeline: cooldown periods, rate card tiers, outreach templates';
+
 -- =========================================================================
 -- 5. distribution_config
 -- =========================================================================
-CREATE TABLE distribution_config (
+CREATE TABLE IF NOT EXISTS distribution_config (
   id                            integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   notification_emails           jsonb        NOT NULL DEFAULT '["alex@codingcat.dev"]'::jsonb,
   youtube_description_template  text         NOT NULL DEFAULT '{{title}}
@@ -196,16 +204,18 @@ CREATE POLICY "service_role can update distribution_config"
   USING (true)
   WITH CHECK (true);
 
-INSERT INTO distribution_config (id) VALUES (1);
+INSERT INTO distribution_config (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TRIGGER trg_distribution_config_updated_at
   BEFORE UPDATE ON distribution_config
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+COMMENT ON TABLE distribution_config IS 'Distribution: notification emails, YouTube templates, default tags';
+
 -- =========================================================================
 -- 6. gcs_config
 -- =========================================================================
-CREATE TABLE gcs_config (
+CREATE TABLE IF NOT EXISTS gcs_config (
   id            integer      PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   bucket_name   text         NOT NULL DEFAULT 'codingcatdev-content-engine',
   project_id    text         NOT NULL DEFAULT 'codingcatdev',
@@ -225,8 +235,10 @@ CREATE POLICY "service_role can update gcs_config"
   USING (true)
   WITH CHECK (true);
 
-INSERT INTO gcs_config (id) VALUES (1);
+INSERT INTO gcs_config (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TRIGGER trg_gcs_config_updated_at
   BEFORE UPDATE ON gcs_config
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+COMMENT ON TABLE gcs_config IS 'Google Cloud Storage: bucket name and project ID';
