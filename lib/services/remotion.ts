@@ -1,7 +1,7 @@
 /**
  * Remotion Lambda rendering service — runtime only.
  *
- * Handles triggering and polling Remotion Lambda renders for video production.
+ * Handles triggering and polling Remotion Lambda renders for video [REDACTED SECRET: NEXT_PUBLIC_SANITY_DATASET].
  * Produces both 16:9 (main) and 9:16 (short) video formats.
  *
  * Deploy functions (deploySite, deployFunction, getOrCreateBucket) live in
@@ -22,13 +22,12 @@ import {
   getRenderProgress,
   type AwsRegion,
 } from "@remotion/lambda/client";
-import { getConfigValue } from "@/lib/config";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface RemotionLambdaConfig {
+export interface RemotionConfig {
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
   region: string;
@@ -131,11 +130,11 @@ function mapInputProps(input: RenderInput): Record<string, unknown> {
  * Get Remotion Lambda configuration from environment variables.
  * Throws if any required env var is missing.
  */
-export async function getRemotionConfig(): Promise<RemotionLambdaConfig> {
+export function getRemotionConfig(): RemotionConfig {
   const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
   const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-  const region = await getConfigValue("remotion_config", "awsRegion", process.env.REMOTION_AWS_REGION);
-  const serveUrl = await getConfigValue("remotion_config", "serveUrl", process.env.REMOTION_SERVE_URL);
+  const region = process.env.REMOTION_AWS_REGION;
+  const serveUrl = process.env.REMOTION_SERVE_URL;
 
   const missing: string[] = [];
   if (!awsAccessKeyId) missing.push("AWS_ACCESS_KEY_ID");
@@ -162,8 +161,8 @@ export async function getRemotionConfig(): Promise<RemotionLambdaConfig> {
 /**
  * Get the Lambda function name from env or use the default.
  */
-async function getFunctionName(): Promise<string> {
-  return getConfigValue("remotion_config", "functionName", process.env.REMOTION_FUNCTION_NAME || DEFAULT_FUNCTION_NAME);
+function getFunctionName(): string {
+  return process.env.REMOTION_FUNCTION_NAME || DEFAULT_FUNCTION_NAME;
 }
 
 // ---------------------------------------------------------------------------
@@ -203,8 +202,8 @@ async function startRender(
   composition: string,
   input: RenderInput
 ): Promise<{ renderId: string; bucketName: string }> {
-  const config = await getRemotionConfig();
-  const functionName = await getFunctionName();
+  const config = getRemotionConfig();
+  const functionName = getFunctionName();
   const region = config.region as AwsRegion;
 
   log(`Starting render for composition "${composition}"`, {
@@ -292,8 +291,8 @@ export async function checkRenderProgress(
   renderId: string,
   bucketName: string
 ): Promise<RenderProgressResult> {
-  const config = await getRemotionConfig();
-  const functionName = await getFunctionName();
+  const config = getRemotionConfig();
+  const functionName = getFunctionName();
   const region = config.region as AwsRegion;
 
   const progress = await getRenderProgress({

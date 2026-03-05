@@ -12,7 +12,6 @@ import {
   type WordTimestamp,
   type SceneAudioResult,
 } from "@/lib/utils/audio-timestamps";
-import { getConfigValue } from "@/lib/config";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";
 
@@ -63,16 +62,20 @@ interface TTSWithTimestampsResponse {
  * @returns The resolved {@link ElevenLabsConfig}.
  * @throws {Error} If required environment variables are missing.
  */
-async function getElevenLabsConfig(): Promise<ElevenLabsConfig> {
+function getConfig(): ElevenLabsConfig {
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  const voiceId = await getConfigValue(
-    "pipeline_config", "elevenLabsVoiceId",
-    process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"
-  );
+  const voiceId = process.env.ELEVENLABS_VOICE_ID;
 
   if (!apiKey) {
     throw new Error(
       "Missing ELEVENLABS_API_KEY environment variable. " +
+        "Set it in your .env.local or deployment environment."
+    );
+  }
+
+  if (!voiceId) {
+    throw new Error(
+      "Missing ELEVENLABS_VOICE_ID environment variable. " +
         "Set it in your .env.local or deployment environment."
     );
   }
@@ -103,7 +106,7 @@ export async function generateSpeech(text: string): Promise<Buffer> {
     throw new Error("Cannot generate speech from empty text.");
   }
 
-  const { apiKey, voiceId } = await getElevenLabsConfig();
+  const { apiKey, voiceId } = getConfig();
 
   const url = `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}`;
 
@@ -241,7 +244,7 @@ export async function generateSpeechWithTimestamps(
     throw new Error("Cannot generate speech from empty text.");
   }
 
-  const { apiKey, voiceId } = await getElevenLabsConfig();
+  const { apiKey, voiceId } = getConfig();
 
   const url = `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}/with-timestamps`;
 
