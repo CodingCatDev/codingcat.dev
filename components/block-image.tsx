@@ -29,6 +29,7 @@ export default function BlockImage(props: BlockImageProps) {
                 sizes="100vw"
                 alt={image?.alt || ""}
                 src={imageUrl}
+                unoptimized
             />
         </div>
     );

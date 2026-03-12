@@ -40,6 +40,7 @@ export default function CoverImage(props: CoverImageProps) {
                 sizes="(max-width: 768px) 100vw,(max-width: 1200px) 50vw, 33vw"
                 alt={image?.alt || ""}
                 src={imageUrl}
+                unoptimized
             />
         </div>
     );

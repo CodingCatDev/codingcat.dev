@@ -36,6 +36,7 @@ export default function Avatar({
                 height={height || 48}
                 alt={name || ""}
                 src={imageUrl}
+                unoptimized
             />
         </div>
     );
