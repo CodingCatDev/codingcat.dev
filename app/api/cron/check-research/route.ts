@@ -314,7 +314,10 @@ async function stepInfographicsGenerating(
   }
 
   // Determine which prompts to process this cycle
-  const completedPrompts = Math.floor(progress.completed / 2); // each prompt = 2 images
+  // Divisor matches multiplier from stepResearchComplete: 2 for both orientations, 1 for vertical-only
+  const enableHorizontalForCompletion = await getConfigValue('pipeline_config', 'enableHorizontalInfographics', false);
+  const divisor = enableHorizontalForCompletion ? 2 : 1;
+  const completedPrompts = Math.floor(progress.completed / divisor);
   const useScenePrompts = sceneImagePrompts.length > 0;
 
   let batchPrompts: string[];
