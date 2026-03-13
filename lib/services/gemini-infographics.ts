@@ -106,9 +106,12 @@ async function generateWithGeminiContent(
 ): Promise<{ imageBase64: string; mimeType: string }> {
   const ai = getAI();
 
+  // Enforce brand colors by prepending strict color instruction
+  const colorEnforcedPrompt = `CRITICAL COLOR RULE: Use ONLY purple (#7c3aed) for all highlighted elements, fills, accents, and glows. Use ONLY white (#FFFFFF) for text, arrows, and lines. Use ONLY black (#000000) for background. NEVER use teal, cyan, green, blue, or any other accent color.\n\n${prompt}`;
+
   const response = await ai.models.generateContent({
     model,
-    contents: prompt,
+    contents: colorEnforcedPrompt,
     config: {
       responseModalities: ['IMAGE', 'TEXT'],
       thinkingConfig: {
@@ -277,8 +280,8 @@ export function buildInfographicPrompt(
 ): string {
   return (
     `Create a professional, visually striking infographic about: ${topic}. ` +
-    `Style: ${style}, purple and teal accent colors, clean sans-serif typography, ` +
-    `CodingCat.dev brand aesthetic. ` +
+    `Style: ${style}, purple (#7c3aed) accent colors ONLY on black (#000000) background, clean sans-serif typography, ` +
+    `CodingCat.dev brand aesthetic. NO teal, NO cyan, NO green accents. ` +
     `Layout: structured sections with icons, data visualizations, and clear hierarchy. ` +
     `No watermarks. High information density. Developer audience.`
   );
