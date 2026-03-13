@@ -12,7 +12,7 @@
  * @module lib/services/gemini-infographics
  */
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { getConfigValue } from "@/lib/config";
 
 // ---------------------------------------------------------------------------
@@ -110,10 +110,19 @@ async function generateWithGeminiContent(
     model,
     contents: prompt,
     config: {
-      responseModalities: ['IMAGE'],
+      responseModalities: ['IMAGE', 'TEXT'],
+      thinkingConfig: {
+        thinkingLevel: ThinkingLevel.MINIMAL,
+      },
       imageConfig: {
         aspectRatio: aspectRatio as '1:1' | '3:4' | '4:3' | '9:16' | '16:9',
+        imageSize: '1K',
       },
+      tools: [
+        {
+          googleSearch: {},
+        },
+      ],
     },
   });
 
