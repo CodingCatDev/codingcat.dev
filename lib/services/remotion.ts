@@ -48,7 +48,13 @@ export interface RenderInput {
       bRollKeywords?: string[];
       sceneNumber?: number;
       durationEstimate?: number;
+      sceneType?: string;
+      code?: { snippet: string; language: string; highlightLines?: number[] };
+      list?: { items: string[]; icon?: string };
+      comparison?: { leftLabel: string; rightLabel: string; rows: { left: string; right: string }[] };
+      mockup?: { deviceType: string; screenContent: string };
       infographicUrl?: string;
+      wordTimestamps?: Array<{ text: string; startMs: number; endMs: number }>;
     }>;
     cta: string;
   };
@@ -112,13 +118,8 @@ function mapInputProps(input: RenderInput): Record<string, unknown> {
     audioDurationInSeconds: input.audioDurationSeconds,
     hook: input.script.hook,
     scenes: input.script.scenes.map((s, i) => ({
-      narration: s.narration,
-      visualDescription: s.visualDescription,
-      bRollKeywords: s.bRollKeywords,
-      sceneNumber: s.sceneNumber,
-      durationEstimate: s.durationEstimate,
+      ...s,
       bRollUrl: input.bRollUrls[i],
-      ...(s.infographicUrl ? { infographicUrl: s.infographicUrl } : {}),
     })),
     cta: input.script.cta,
     sponsor: input.sponsor,
