@@ -1,5 +1,5 @@
 export const fetchCache = 'force-no-store';
-export const maxDuration = 300; // Fluid Compute enabled
+export const maxDuration = 60;
 
 import { type NextRequest } from 'next/server';
 import { createClient, type SanityClient } from 'next-sanity';
@@ -118,7 +118,8 @@ async function buildStuckThresholds(): Promise<Record<string, number>> {
 const MAX_DOCS_PER_STATUS = 2;
 
 /** Max prompts to process per cron cycle (each prompt = 2 Imagen calls) */
-const INFOGRAPHIC_BATCH_SIZE = 5; // Fluid Compute enabled (300s limit)
+const INFOGRAPHIC_BATCH_SIZE = 1; // MVP: 1 prompt per cycle (2 Gemini calls ~24s, fits in 60s Hobby)
+const MAX_INFOGRAPHIC_PROMPTS = 4; // MVP: limit total infographics (4 prompts × 2 orientations = 8 images)
 
 // ---------------------------------------------------------------------------
 // Sanity Write Client
@@ -251,6 +252,10 @@ async function stepResearchComplete(
     }
   }
 
+  // MVP: cap total prompts
+  if (sceneImagePrompts.length > MAX_INFOGRAPHIC_PROMPTS) {
+    sceneImagePrompts.length = MAX_INFOGRAPHIC_PROMPTS;
+  }
   const total = sceneImagePrompts.length > 0
     ? sceneImagePrompts.length * 2  // both orientations
     : 10;  // fallback: 5 topic-level x 2
@@ -299,6 +304,10 @@ async function stepInfographicsGenerating(
         sceneImagePrompts.push(...scene.imagePrompts);
       }
     }
+  }
+  // MVP: cap total prompts
+  if (sceneImagePrompts.length > MAX_INFOGRAPHIC_PROMPTS) {
+    sceneImagePrompts.length = MAX_INFOGRAPHIC_PROMPTS;
   }
 
   // Determine which prompts to process this cycle
