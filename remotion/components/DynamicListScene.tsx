@@ -11,7 +11,6 @@ import { ANIMATION, COLORS, LIST_COLORS, FONT_SIZES } from "../constants";
 import { getActiveSegmentAtFrame } from "../../lib/utils/audio-timestamps";
 
 export const DynamicListScene: React.FC<DynamicListSceneProps> = ({
-  narration,
   sceneIndex,
   durationInFrames,
   isVertical = false,
@@ -42,18 +41,6 @@ export const DynamicListScene: React.FC<DynamicListSceneProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-  // --- Narration text fade ---
-  const textOpacity = interpolate(
-    frame,
-    [
-      0,
-      ANIMATION.fadeIn,
-      durationInFrames - ANIMATION.fadeOut,
-      durationInFrames,
-    ],
-    [0, 1, 1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
 
   // --- Entrance timing ---
   const entranceWindow = durationInFrames * 0.6;
@@ -178,7 +165,7 @@ export const DynamicListScene: React.FC<DynamicListSceneProps> = ({
                 {/* Icon / bullet */}
                 <div
                   style={{
-                    fontSize: isVertical ? 32 : 28,
+                    fontSize: isVertical ? 40 : 35,
                     transform: `scale(${iconSpring})`,
                     flexShrink: 0,
                     color: icon ? undefined : LIST_COLORS.bulletColor,
@@ -191,7 +178,7 @@ export const DynamicListScene: React.FC<DynamicListSceneProps> = ({
                 {/* Item text */}
                 <div
                   style={{
-                    fontSize: fonts.listItem,
+                    fontSize: Math.round(fonts.listItem * 1.25),
                     color: COLORS.textWhite,
                     fontFamily: "sans-serif",
                     fontWeight: 500,
@@ -206,39 +193,6 @@ export const DynamicListScene: React.FC<DynamicListSceneProps> = ({
         </div>
       </AbsoluteFill>
 
-      {/* Layer 3: Narration text overlay (bottom) */}
-      <AbsoluteFill
-        style={{
-          justifyContent: "flex-end",
-          alignItems: "center",
-          padding: isVertical ? "60px 40px" : "80px 120px",
-        }}
-      >
-        <div
-          style={{
-            opacity: textOpacity,
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            borderRadius: 16,
-            padding: isVertical ? "28px 24px" : "32px 48px",
-            maxWidth: isVertical ? "95%" : "80%",
-            backdropFilter: "blur(8px)",
-            borderLeft: `4px solid ${COLORS.primary}`,
-          }}
-        >
-          <div
-            style={{
-              fontSize: fonts.narration,
-              color: COLORS.textWhite,
-              fontFamily: "sans-serif",
-              fontWeight: 500,
-              lineHeight: 1.5,
-              textAlign: isVertical ? "center" : "left",
-            }}
-          >
-            {narration}
-          </div>
-        </div>
-      </AbsoluteFill>
 
       {/* Layer 4: CodingCat.dev watermark */}
       <div

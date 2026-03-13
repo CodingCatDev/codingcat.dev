@@ -11,7 +11,6 @@ import { ANIMATION, COLORS, COMPARISON_COLORS, FONT_SIZES } from "../constants";
 import { getActiveSegmentAtFrame } from "../../lib/utils/audio-timestamps";
 
 export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
-  narration,
   sceneIndex,
   durationInFrames,
   isVertical = false,
@@ -43,18 +42,6 @@ export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-  // --- Narration text fade ---
-  const textOpacity = interpolate(
-    frame,
-    [
-      0,
-      ANIMATION.fadeIn,
-      durationInFrames - ANIMATION.fadeOut,
-      durationInFrames,
-    ],
-    [0, 1, 1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
 
   // --- Active segment (focus/dimming) ---
   const activeSegment =
@@ -205,7 +192,7 @@ export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
               style={{
                 flex: 1,
                 padding: isVertical ? "16px 20px" : "20px 24px",
-                fontSize: fonts.comparisonHeader,
+                fontSize: Math.round(fonts.comparisonHeader * 1.25),
                 fontFamily: "sans-serif",
                 fontWeight: 700,
                 color: COMPARISON_COLORS.leftAccent,
@@ -223,7 +210,7 @@ export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
               style={{
                 flex: 1,
                 padding: isVertical ? "16px 20px" : "20px 24px",
-                fontSize: fonts.comparisonHeader,
+                fontSize: Math.round(fonts.comparisonHeader * 1.25),
                 fontFamily: "sans-serif",
                 fontWeight: 700,
                 color: COMPARISON_COLORS.rightAccent,
@@ -306,7 +293,7 @@ export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
                   style={{
                     flex: 1,
                     padding: isVertical ? "14px 20px" : "18px 24px",
-                    fontSize: fonts.comparisonCell,
+                    fontSize: Math.round(fonts.comparisonCell * 1.25),
                     fontFamily: "sans-serif",
                     fontWeight: 500,
                     color: COLORS.textWhite,
@@ -326,7 +313,7 @@ export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
                   style={{
                     flex: 1,
                     padding: isVertical ? "14px 20px" : "18px 24px",
-                    fontSize: fonts.comparisonCell,
+                    fontSize: Math.round(fonts.comparisonCell * 1.25),
                     fontFamily: "sans-serif",
                     fontWeight: 500,
                     color: COLORS.textWhite,
@@ -343,39 +330,6 @@ export const ComparisonGridScene: React.FC<ComparisonGridSceneProps> = ({
         </div>
       </AbsoluteFill>
 
-      {/* Layer 3: Narration text overlay (bottom) */}
-      <AbsoluteFill
-        style={{
-          justifyContent: "flex-end",
-          alignItems: "center",
-          padding: isVertical ? "60px 40px" : "80px 120px",
-        }}
-      >
-        <div
-          style={{
-            opacity: textOpacity,
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            borderRadius: 16,
-            padding: isVertical ? "28px 24px" : "32px 48px",
-            maxWidth: isVertical ? "95%" : "80%",
-            backdropFilter: "blur(8px)",
-            borderLeft: `4px solid ${COLORS.primary}`,
-          }}
-        >
-          <div
-            style={{
-              fontSize: fonts.narration,
-              color: COLORS.textWhite,
-              fontFamily: "sans-serif",
-              fontWeight: 500,
-              lineHeight: 1.5,
-              textAlign: isVertical ? "center" : "left",
-            }}
-          >
-            {narration}
-          </div>
-        </div>
-      </AbsoluteFill>
 
       {/* Layer 4: CodingCat.dev watermark */}
       <div
