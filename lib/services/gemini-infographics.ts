@@ -381,10 +381,13 @@ export async function generateInfographicsForTopic(
 export async function generateFromScenePrompts(
   prompts: string[],
   topic: string,
+  options?: { skipHorizontal?: boolean },
 ): Promise<DualOrientationResult> {
   const model = await getConfigValue(
     "pipeline_config", "infographicModel", "imagen-4.0-fast-generate-001"
   );
+
+  const skipHorizontal = options?.skipHorizontal ?? false;
 
   const horizontal: InfographicResult[] = [];
   const vertical: InfographicResult[] = [];
@@ -395,16 +398,18 @@ export async function generateFromScenePrompts(
   for (let i = 0; i < prompts.length; i++) {
     const prompt = prompts[i];
 
-    // Generate horizontal (16:9)
-    try {
-      const hResult = await generateInfographic(
-        { prompt, aspectRatio: "16:9" },
-        model,
-      );
-      horizontal.push(hResult);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      errors.push({ prompt: `[16:9] ${prompt}`, error: message });
+    // Generate horizontal (16:9) — skip if vertical-only mode
+    if (!skipHorizontal) {
+      try {
+        const hResult = await generateInfographic(
+          { prompt, aspectRatio: "16:9" },
+          model,
+        );
+        horizontal.push(hResult);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        errors.push({ prompt: `[16:9] ${prompt}`, error: message });
+      }
     }
 
     // Generate vertical (9:16)

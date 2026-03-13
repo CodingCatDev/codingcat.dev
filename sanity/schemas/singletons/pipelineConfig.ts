@@ -66,6 +66,13 @@ export default defineType({
       initialValue: "Research comprehensively: \"{topic}\"\n\nFocus areas:\n- What is it and why does it matter?\n- How does it work technically?\n- Key features and capabilities\n- Comparison with alternatives\n- Getting started guide\n- Common pitfalls and best practices\n\nTarget audience: Web developers learning new tech.\nTone: Educational, accessible, engaging.",
     }),
     defineField({
+      name: "enableHorizontalInfographics",
+      title: "Enable Horizontal Infographics",
+      type: "boolean",
+      description: "Generate 16:9 horizontal infographics in addition to 9:16 vertical. Doubles Imagen API calls and generation time. Disable for vertical-only (Shorts/Reels)",
+      initialValue: false,
+    }),
+    defineField({
       name: "infographicModel",
       title: "Infographic Model",
       type: "string",
