@@ -935,9 +935,10 @@ export async function GET(request: NextRequest) {
     const sanity = getSanityWriteClient();
 
     // Single query for all active pipeline statuses
-    // Include both researchInteractionId (new Gemini) and researchNotebookId (legacy)
+    // Docs may reach research_complete without researchInteractionId when deep research
+    // is disabled or fails — the ID filter only applies to "researching" status
     const docs = await sanity.fetch<PipelineDoc[]>(
-      `*[_type == "automatedVideo" && status in ["researching", "research_complete", "infographics_generating", "enriching"] && (defined(researchInteractionId) || defined(researchNotebookId))] {
+      `*[_type == "automatedVideo" && status in ["researching", "research_complete", "infographics_generating", "enriching"] && (status != "researching" || defined(researchInteractionId) || defined(researchNotebookId))] {
         _id, title, status, researchInteractionId, researchNotebookId, trendScore, trendSources,
         script, researchData, infographicProgress, _updatedAt
       }`,
