@@ -6,6 +6,7 @@ import { CodeMorphScene } from "./CodeMorphScene";
 import { DynamicListScene } from "./DynamicListScene";
 import { ComparisonGridScene } from "./ComparisonGridScene";
 import { IsometricMockupScene } from "./IsometricMockupScene";
+import { InfographicScene } from "./InfographicScene";
 
 interface SceneRouterProps {
   scene: SceneData;
@@ -57,9 +58,21 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
       }
       break;
 
+    case "infographic":
+      if (scene.infographicUrl) {
+        return <InfographicScene {...baseProps} infographicUrl={scene.infographicUrl} />;
+      }
+      break;
+
     case "narration":
     default:
       break;
+  }
+
+  // If scene has an infographic URL but no specific sceneType, prefer InfographicScene
+  // This makes infographics the primary visual when available
+  if (scene.infographicUrl) {
+    return <InfographicScene {...baseProps} infographicUrl={scene.infographicUrl} />;
   }
 
   // Fallback: use the existing Scene component
