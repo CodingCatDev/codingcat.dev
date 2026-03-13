@@ -20,6 +20,7 @@ interface ScriptScene {
 	visualDescription: string;
 	bRollKeywords: string[];
 	durationEstimate: number;
+	imagePrompts?: string[];
 	// Scene-type-specific data
 	code?: {
 		snippet: string;
@@ -330,6 +331,25 @@ Each scene MUST have a "sceneType" that determines its visual treatment. Choose 
 - For "list" scenes, provide 3-6 concise items
 - For "comparison" scenes, provide 2-4 rows
 
+## Infographic Image Prompts
+
+CRITICAL: This video will be a visual infographic explainer. There will be NO text, titles, or script words shown on screen — the narration audio carries all words. The visuals are entirely infographic images.
+
+For EACH scene, generate an "imagePrompts" array with 2-5 image generation prompts. Each prompt should follow this exact template:
+
+"Infographic 2D architecture style, black background. [SPECIFIC VISUAL FOR THIS SCENE]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+
+Replace [SPECIFIC VISUAL FOR THIS SCENE] with a detailed description of what the infographic should show for that particular scene. Be specific — reference the actual technical concepts, comparisons, or workflows being discussed.
+
+Guidelines for image prompts:
+- Each scene needs Math.ceil(durationEstimate / 4) prompts (one image every ~4 seconds)
+- A 15-second scene needs 4 prompts, a 20-second scene needs 5
+- Each prompt should show a DIFFERENT aspect or angle of the scene's content
+- For code scenes: show architecture diagrams, data flow, or system diagrams (NOT the code itself)
+- For comparison scenes: show side-by-side comparison charts or feature matrices
+- For list scenes: show each item as a distinct visual element in the infographic
+- Make prompts visually varied — don't repeat the same layout
+
 ## JSON Schema
 
 Return ONLY a JSON object matching this exact schema:
@@ -349,6 +369,7 @@ Return ONLY a JSON object matching this exact schema:
         "visualDescription": "string - what to show on screen (fallback for all types)",
         "bRollKeywords": ["keyword1", "keyword2"],
         "durationEstimate": 15,
+        "imagePrompts": ["Infographic 2D architecture style, black background. [specific visual]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."],
         "code": {
           "snippet": "string - actual code to display (only for sceneType: code)",
           "language": "typescript | javascript | jsx | tsx | css | html | json | bash",
@@ -383,6 +404,10 @@ Requirements:
 - Only include the type-specific field that matches the sceneType (e.g., only include "code" when sceneType is "code")
 - For "code" scenes, provide real, syntactically correct code
 - The qualityScore should be your honest self-assessment (0-100)
+- Each scene MUST include an "imagePrompts" array with 2-5 image generation prompts
+- Image prompts must follow the template: "Infographic 2D architecture style, black background. [specific]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+- Do NOT include any text overlays, titles, or script words in the video — narration audio carries all words
+- Calculate prompt count per scene: Math.ceil(durationEstimate / 4)
 - Return ONLY the JSON object, no markdown or extra text`;
 }
 
