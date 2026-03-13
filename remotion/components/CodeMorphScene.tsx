@@ -61,7 +61,6 @@ function getFilenameForLanguage(language: string): string {
 }
 
 export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
-  narration,
   sceneIndex,
   durationInFrames,
   isVertical = false,
@@ -161,21 +160,13 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
     );
   }
 
-  // --- Narration text animation ---
-  const narrationOpacity = interpolate(
-    frame,
-    [ANIMATION.fadeIn, ANIMATION.fadeIn + 10],
-    [0, 1],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
-
   // --- Gradient background angle (alternating per scene) ---
   const gradientAngle = (sceneIndex % 4) * 90;
 
   // --- Layout dimensions ---
   const codeFontSize = fonts.code;
-  const lineHeight = codeFontSize * 1.7;
-  const lineNumberWidth = 48;
+  const lineHeight = codeFontSize * 2.1;
+  const lineNumberWidth = 60;
 
   return (
     <AbsoluteFill style={{ opacity: sceneOpacity }}>
@@ -252,7 +243,7 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
               style={{
                 flex: 1,
                 textAlign: "center",
-                fontSize: codeFontSize * 0.75,
+                fontSize: codeFontSize * 0.95,
                 color: COLORS.textMuted,
                 fontFamily: CODE_FONT_FAMILY,
                 fontWeight: 500,
@@ -331,7 +322,7 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
                       width: lineNumberWidth,
                       textAlign: "right",
                       paddingRight: 16,
-                      fontSize: codeFontSize * 0.85,
+                      fontSize: codeFontSize * 1.05,
                       color: CODE_COLORS.lineNumber,
                       fontFamily: CODE_FONT_FAMILY,
                       userSelect: "none",
@@ -351,7 +342,7 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
                   <div
                     style={{
                       flex: 1,
-                      fontSize: codeFontSize,
+                      fontSize: codeFontSize * 1.25,
                       color: COLORS.textWhite,
                       fontFamily: CODE_FONT_FAMILY,
                       whiteSpace: "pre",
@@ -378,43 +369,6 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
         </div>
       </AbsoluteFill>
 
-      {/* Layer 3: Narration text overlay */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: isVertical ? 100 : 60,
-          left: 0,
-          right: 0,
-          display: "flex",
-          justifyContent: "center",
-          padding: isVertical ? "0 32px" : "0 120px",
-          opacity: narrationOpacity,
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            borderRadius: 12,
-            padding: isVertical ? "16px 20px" : "16px 32px",
-            maxWidth: isVertical ? "95%" : "75%",
-            backdropFilter: "blur(8px)",
-            borderLeft: `3px solid ${COLORS.primary}`,
-          }}
-        >
-          <div
-            style={{
-              fontSize: fonts.narration * 0.7,
-              color: COLORS.textWhite,
-              fontFamily: "sans-serif",
-              fontWeight: 400,
-              lineHeight: 1.4,
-              textAlign: isVertical ? "center" : "left",
-            }}
-          >
-            {narration}
-          </div>
-        </div>
-      </div>
 
       {/* Layer 4: CodingCat.dev watermark */}
       <div
