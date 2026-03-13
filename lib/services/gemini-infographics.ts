@@ -107,7 +107,13 @@ async function generateWithGeminiContent(
   const ai = getAI();
 
   // Enforce brand colors by prepending strict color instruction
-  const colorEnforcedPrompt = `CRITICAL COLOR RULE: Use ONLY purple (#7c3aed) for all highlighted elements, fills, accents, and glows. Use ONLY white (#FFFFFF) for text, arrows, and lines. Use ONLY black (#000000) for background. NEVER use teal, cyan, green, blue, or any other accent color.\n\n${prompt}`;
+  const colorEnforcedPrompt = `STRICT RULES — FOLLOW EXACTLY:
+1. BACKGROUND: Pure black (#000000) only. NO gray, NO white, NO gradients, NO off-white. The entire background MUST be solid black.
+2. ACCENTS: Purple (#7c3aed) only for all boxes, fills, highlights, and glows. NO teal, NO cyan, NO green, NO blue.
+3. TEXT & LINES: White (#FFFFFF) only for all text labels, arrows, and connecting lines.
+4. VIOLATION: Any color other than black background, purple accents, and white text is REJECTED.
+
+${prompt}`;
 
   const response = await ai.models.generateContent({
     model,
