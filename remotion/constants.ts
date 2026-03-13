@@ -162,10 +162,8 @@ export const COMPARISON_COLORS = {
 
 // --- Infographic Scene Constants ---
 export const INFOGRAPHIC_COLORS = {
-  /** Glow overlay for active focus region */
-  focusGlow: "rgba(109, 40, 217, 0.15)",
-  /** Vignette edge color */
-  vignette: "rgba(0, 0, 0, 0.4)",
-  /** Caption bar background */
-  captionBg: "rgba(0, 0, 0, 0.7)",
+  /** Crossfade overlay background */
+  crossfadeBg: "rgba(0, 0, 0, 1)",
+  /** Subtle vignette for depth */
+  vignette: "rgba(0, 0, 0, 0.3)",
 } as const;

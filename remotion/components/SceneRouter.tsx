@@ -1,7 +1,6 @@
 import React from "react";
 import type { SceneData } from "../types";
 import { Scene } from "./Scene";
-// Scene component imports (uncomment as components are built):
 import { CodeMorphScene } from "./CodeMorphScene";
 import { DynamicListScene } from "./DynamicListScene";
 import { ComparisonGridScene } from "./ComparisonGridScene";
@@ -16,8 +15,13 @@ interface SceneRouterProps {
 }
 
 /**
- * Routes a scene to the appropriate component based on its sceneType.
- * Falls back to the generic Scene component for unimplemented types.
+ * Routes a scene to the appropriate component based on its sceneType and data.
+ *
+ * Priority order:
+ * 1. Explicit sceneType with matching data (code/list/comparison/mockup)
+ * 2. infographicUrls array → InfographicScene (multi-image cycling)
+ * 3. infographicUrl single → InfographicScene (wrapped in array)
+ * 4. Fallback → Scene (Pexels b-roll, no text overlay)
  */
 export const SceneRouter: React.FC<SceneRouterProps> = ({
   scene,
@@ -33,6 +37,7 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
     wordTimestamps: scene.wordTimestamps,
   };
 
+  // --- 1. Specialized scene types (code/list/comparison/mockup) ---
   switch (scene.sceneType) {
     case "code":
       if (scene.code) {
@@ -42,7 +47,13 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
 
     case "list":
       if (scene.list) {
-        return <DynamicListScene {...baseProps} items={scene.list.items} icon={scene.list.icon} />;
+        return (
+          <DynamicListScene
+            {...baseProps}
+            items={scene.list.items}
+            icon={scene.list.icon}
+          />
+        );
       }
       break;
 
@@ -58,24 +69,31 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
       }
       break;
 
-    case "infographic":
-      if (scene.infographicUrl) {
-        return <InfographicScene {...baseProps} infographicUrl={scene.infographicUrl} />;
-      }
-      break;
-
-    case "narration":
     default:
       break;
   }
 
-  // If scene has an infographic URL but no specific sceneType, prefer InfographicScene
-  // This makes infographics the primary visual when available
-  if (scene.infographicUrl) {
-    return <InfographicScene {...baseProps} infographicUrl={scene.infographicUrl} />;
+  // --- 2. Infographic URLs array (multi-image cycling) ---
+  if (scene.infographicUrls && scene.infographicUrls.length > 0) {
+    return (
+      <InfographicScene
+        {...baseProps}
+        infographicUrls={scene.infographicUrls}
+      />
+    );
   }
 
-  // Fallback: use the existing Scene component
+  // --- 3. Legacy single infographic URL (wrap in array) ---
+  if (scene.infographicUrl) {
+    return (
+      <InfographicScene
+        {...baseProps}
+        infographicUrls={[scene.infographicUrl]}
+      />
+    );
+  }
+
+  // --- 4. Fallback: Pexels b-roll scene (no text overlay) ---
   return (
     <Scene
       narration={scene.narration}
