@@ -176,7 +176,6 @@ export async function generateInfographic(
     config: {
       numberOfImages: 1,
       aspectRatio: aspectRatio,
-      ...(request.seed !== undefined && { seed: request.seed }),
       ...(request.negativePrompt && { negativePrompt: request.negativePrompt }),
     },
   });
@@ -199,7 +198,6 @@ export async function generateInfographic(
     imageBase64,
     mimeType: "image/png",
     prompt: request.prompt,
-    ...(request.seed !== undefined && { seed: request.seed }),
   };
 }
 
