@@ -686,7 +686,7 @@ Return ONLY a JSON object:
         "list": { "items": ["Item 1", "Item 2"], "icon": "🚀" },
         "comparison": { "leftLabel": "A", "rightLabel": "B", "rows": [{ "left": "...", "right": "..." }] },
         "mockup": { "deviceType": "browser | phone | terminal", "screenContent": "..." },
-        "imagePrompts": ["Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. [specific visual for this scene]. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable labels."]
+        "imagePrompts": ["Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. [specific visual for this scene]. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable labels."]
       }
     ],
     "cta": "string - call to action"
@@ -697,8 +697,9 @@ Return ONLY a JSON object:
 Requirements:
 - 3-5 scenes totaling 60-90 seconds
 - Use at least 2 different scene types
-- Each scene MUST include 2-5 imagePrompts following this exact template: "Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. [specific visual]. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable labels."
+- Each scene MUST include 2-5 imagePrompts following this exact template: "Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. [specific visual]. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable labels."
 - imagePrompts should describe specific 2D infographic visuals that illustrate the narration content
+- The FIRST scene's imagePrompts must be purely visual and eye-catching — no text labels, no annotations, no words. This is the thumbnail/hook frame.
 - Do NOT include any script text, titles, or word overlays in the video. The narration audio carries all words.
 - Think of each imagePrompt as a frame that will be shown for 3-5 seconds while the narration plays
 - Include REAL code snippets from the research where applicable

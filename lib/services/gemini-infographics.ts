@@ -85,10 +85,65 @@ function getAI(): GoogleGenAI {
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a single infographic image using Imagen 4 Fast.
+ * Detect if a model uses the Gemini generateContent API (for image generation)
+ * vs the Imagen generateImages API.
+ *
+ * Gemini image models: gemini-*-image-*, gemini-*-flash-image-*
+ * Imagen models: imagen-*
+ */
+function isGeminiImageModel(model: string): boolean {
+  return model.startsWith('gemini-');
+}
+
+/**
+ * Generate a single image using Gemini's generateContent API.
+ * Used for models like gemini-3.1-flash-image-preview.
+ */
+async function generateWithGeminiContent(
+  prompt: string,
+  model: string,
+  aspectRatio: string,
+): Promise<{ imageBase64: string; mimeType: string }> {
+  const ai = getAI();
+
+  const response = await ai.models.generateContent({
+    model,
+    contents: prompt,
+    config: {
+      responseModalities: ['IMAGE'],
+      imageConfig: {
+        aspectRatio: aspectRatio as '1:1' | '3:4' | '4:3' | '9:16' | '16:9',
+      },
+    },
+  });
+
+  // Extract image from response
+  const parts = response.candidates?.[0]?.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new Error(`Gemini returned no parts for prompt "${prompt.slice(0, 80)}…"`);
+  }
+
+  // Find the image part
+  for (const part of parts) {
+    if (part.inlineData?.data) {
+      return {
+        imageBase64: part.inlineData.data,
+        mimeType: part.inlineData.mimeType || 'image/png',
+      };
+    }
+  }
+
+  throw new Error(`Gemini returned no image data for prompt "${prompt.slice(0, 80)}…"`);
+}
+
+/**
+ * Generate a single infographic image.
+ *
+ * Automatically detects whether to use Gemini generateContent (for gemini-*
+ * models) or Imagen generateImages (for imagen-* models).
  *
  * @param request - Prompt and generation options.
- * @param model - Imagen model ID (e.g. "imagen-4.0-fast-generate-001").
+ * @param model - Model ID (e.g. "gemini-3.1-flash-image-preview" or "imagen-4.0-fast-generate-001").
  * @returns InfographicResult with base64 image bytes.
  * @throws If the API call fails or no image is returned.
  */
@@ -96,6 +151,23 @@ export async function generateInfographic(
   request: InfographicRequest,
   model: string = "imagen-4.0-fast-generate-001",
 ): Promise<InfographicResult> {
+  const aspectRatio = request.aspectRatio ?? "16:9";
+
+  if (isGeminiImageModel(model)) {
+    // Gemini path: generateContent with responseModalities: ["IMAGE"]
+    const result = await generateWithGeminiContent(
+      request.prompt,
+      model,
+      aspectRatio,
+    );
+    return {
+      imageBase64: result.imageBase64,
+      mimeType: result.mimeType,
+      prompt: request.prompt,
+    };
+  }
+
+  // Imagen path: generateImages (existing code)
   const ai = getAI();
 
   const response = await ai.models.generateImages({
@@ -103,7 +175,7 @@ export async function generateInfographic(
     prompt: request.prompt,
     config: {
       numberOfImages: 1,
-      aspectRatio: request.aspectRatio ?? "16:9",
+      aspectRatio: aspectRatio,
       ...(request.negativePrompt && { negativePrompt: request.negativePrompt }),
     },
   });
@@ -117,7 +189,6 @@ export async function generateInfographic(
   }
 
   const imageBytes = generated.image.imageBytes;
-  // imageBytes may be a Uint8Array or base64 string depending on SDK version
   const imageBase64 =
     typeof imageBytes === "string"
       ? imageBytes
@@ -210,11 +281,11 @@ export function buildInfographicPrompt(
 
 /** Default infographic instructions if Sanity contentConfig is not set up */
 const DEFAULT_INSTRUCTIONS: string[] = [
-  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A high-level technical architecture overview showing system components and data flow. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
-  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A comparison chart showing key features and alternatives side by side. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
-  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A step-by-step workflow diagram showing the process from start to finish. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
-  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A timeline of key developments, milestones, and version releases. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
-  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A pros and cons visual summary with clear icons and labels. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. A high-level technical architecture overview showing system components and data flow. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. A comparison chart showing key features and alternatives side by side. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. A step-by-step workflow diagram showing the process from start to finish. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. A timeline of key developments, milestones, and version releases. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. A pros and cons visual summary with clear icons and labels. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
 ];
 
 // ---------------------------------------------------------------------------
@@ -318,7 +389,7 @@ export async function generateFromScenePrompts(
     // Generate horizontal (16:9)
     try {
       const hResult = await generateInfographic(
-        { prompt, aspectRatio: "16:9", negativePrompt: "purple background, blue gradient, watermark, blurry text, small text" },
+        { prompt, aspectRatio: "16:9" },
         model,
       );
       horizontal.push(hResult);
@@ -330,7 +401,7 @@ export async function generateFromScenePrompts(
     // Generate vertical (9:16)
     try {
       const vResult = await generateInfographic(
-        { prompt, aspectRatio: "9:16", negativePrompt: "purple background, blue gradient, watermark, blurry text, small text" },
+        { prompt, aspectRatio: "9:16" },
         model,
       );
       vertical.push(vResult);
