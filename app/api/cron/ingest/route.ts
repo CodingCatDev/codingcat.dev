@@ -258,7 +258,7 @@ Your style is inspired by Cleo Abram's "Huge If True" — you make complex techn
 - End with a clear takeaway that makes the viewer feel smarter
 - Target audience: developers who want to stay current but don't have time to read everything
 
-Script format: 60-90 second explainer videos. Think TikTok/YouTube Shorts energy with real educational depth.
+Script format: 2-4 minute explainer videos for horizontal YouTube, 60-90 seconds for Shorts. Think Cleo Abram energy with real educational depth.
 
 CodingCat.dev covers: React, Next.js, TypeScript, Svelte, web APIs, CSS, Node.js, cloud services, AI/ML for developers, and web platform updates.`;
 
@@ -311,7 +311,7 @@ function buildPrompt(trends: TrendResult[], research?: ResearchPayload): string 
 
 ${topicList}${researchContext}
 
-Pick the MOST interesting and timely topic for a short explainer video (60-90 seconds). Then generate a complete video script as JSON.
+Pick the MOST interesting and timely topic for an explainer video (2-4 minutes for horizontal YouTube). Then generate a complete video script as JSON.
 
 ## Scene Types
 
@@ -337,7 +337,7 @@ CRITICAL: This video will be a visual infographic explainer. There will be NO te
 
 For EACH scene, generate an "imagePrompts" array with 2-5 image generation prompts. Each prompt should follow this exact template:
 
-"Infographic 2D architecture style, black background. [SPECIFIC VISUAL FOR THIS SCENE]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+"Infographic 2D architecture style, pure black background. [SPECIFIC VISUAL FOR THIS SCENE]. Highlighted elements filled with vivid purple (#7c3aed). White lines connecting components and white text annotations. Color palette: ONLY black, purple (#7c3aed), and white — no blue, no green, no gradients."
 
 Replace [SPECIFIC VISUAL FOR THIS SCENE] with a detailed description of what the infographic should show for that particular scene. Be specific — reference the actual technical concepts, comparisons, or workflows being discussed.
 
@@ -349,6 +349,8 @@ Guidelines for image prompts:
 - For comparison scenes: show side-by-side comparison charts or feature matrices
 - For list scenes: show each item as a distinct visual element in the infographic
 - Make prompts visually varied — don't repeat the same layout
+- STRICT color palette: pure black background (#000000), vivid purple (#7c3aed) for highlighted elements, white for lines and text annotations. Do NOT use blue, green, orange, red, or gradient backgrounds
+- FIRST SCENE image prompts must be purely visual and eye-catching — NO text labels, NO annotations, NO words. This is the thumbnail/hook frame that needs to stop the scroll. Show a striking visual metaphor for the topic
 
 ## JSON Schema
 
@@ -369,7 +371,7 @@ Return ONLY a JSON object matching this exact schema:
         "visualDescription": "string - what to show on screen (fallback for all types)",
         "bRollKeywords": ["keyword1", "keyword2"],
         "durationEstimate": 15,
-        "imagePrompts": ["Infographic 2D architecture style, black background. [specific visual]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."],
+        "imagePrompts": ["Infographic 2D architecture style, pure black background. [specific visual]. Highlighted elements filled with vivid purple (#7c3aed). White lines and text annotations. ONLY black, purple, white colors."],
         "code": {
           "snippet": "string - actual code to display (only for sceneType: code)",
           "language": "typescript | javascript | jsx | tsx | css | html | json | bash",
@@ -398,14 +400,14 @@ Return ONLY a JSON object matching this exact schema:
 }
 
 Requirements:
-- The script should have 3-5 scenes totaling 60-90 seconds
+- The script should have 8-15 scenes totaling 2-4 minutes (120-240 seconds)
 - The hook should be punchy and curiosity-driven
 - Use at least 2 different scene types for visual variety
 - Only include the type-specific field that matches the sceneType (e.g., only include "code" when sceneType is "code")
 - For "code" scenes, provide real, syntactically correct code
 - The qualityScore should be your honest self-assessment (0-100)
 - Each scene MUST include an "imagePrompts" array with 2-5 image generation prompts
-- Image prompts must follow the template: "Infographic 2D architecture style, black background. [specific]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+- Image prompts must follow the template: "Infographic 2D architecture style, pure black background. [specific]. Highlighted elements filled with vivid purple (#7c3aed). White lines connecting components and white text annotations. Color palette: ONLY black, purple (#7c3aed), and white."
 - Do NOT include any text overlays, titles, or script words in the video — narration audio carries all words
 - Calculate prompt count per scene: Math.ceil(durationEstimate / 4)
 - Return ONLY the JSON object, no markdown or extra text`;
