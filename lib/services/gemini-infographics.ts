@@ -104,7 +104,6 @@ export async function generateInfographic(
     config: {
       numberOfImages: 1,
       aspectRatio: request.aspectRatio ?? "16:9",
-      ...(request.seed !== undefined && { seed: request.seed }),
       ...(request.negativePrompt && { negativePrompt: request.negativePrompt }),
     },
   });
@@ -128,7 +127,6 @@ export async function generateInfographic(
     imageBase64,
     mimeType: "image/png",
     prompt: request.prompt,
-    ...(request.seed !== undefined && { seed: request.seed }),
   };
 }
 
@@ -271,7 +269,6 @@ export async function generateInfographicsForTopic(
   const requests: InfographicRequest[] = instructions.map(
     (instruction, index) => ({
       prompt: `${instruction}${contextSuffix}`,
-      seed: generateSeed(topic, index),
       aspectRatio: "16:9" as const,
     })
   );
@@ -317,12 +314,11 @@ export async function generateFromScenePrompts(
 
   for (let i = 0; i < prompts.length; i++) {
     const prompt = prompts[i];
-    const seed = generateSeed(topic, i);
 
     // Generate horizontal (16:9)
     try {
       const hResult = await generateInfographic(
-        { prompt, aspectRatio: "16:9", seed },
+        { prompt, aspectRatio: "16:9" },
         model,
       );
       horizontal.push(hResult);
@@ -334,7 +330,7 @@ export async function generateFromScenePrompts(
     // Generate vertical (9:16)
     try {
       const vResult = await generateInfographic(
-        { prompt, aspectRatio: "9:16", seed },
+        { prompt, aspectRatio: "9:16" },
         model,
       );
       vertical.push(vResult);
