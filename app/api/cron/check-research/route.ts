@@ -483,18 +483,23 @@ async function finalizeInfographics(
   if (verticalRefs.length > 0) {
     patchData.infographicsVertical = verticalRefs;
   }
-  // Backward compat
+  // Backward compat — 'infographics' is the primary field video-pipeline reads
+  // Use horizontal if available, otherwise fall back to vertical
   if (horizontalRefs.length > 0) {
     patchData.infographics = horizontalRefs;
+  } else if (verticalRefs.length > 0) {
+    patchData.infographics = verticalRefs;
   }
 
   // Distribute infographic URLs back to scene-level for Remotion
-  if (doc.script?.scenes && infographicUrls.length > 0) {
+  // Use horizontal URLs if available, otherwise fall back to vertical
+  const availableUrls = infographicUrls.length > 0 ? infographicUrls : verticalUrls;
+  if (doc.script?.scenes && availableUrls.length > 0) {
     let urlIndex = 0;
     const updatedScenes = doc.script.scenes.map((scene) => {
       const mapping = scenePromptMap.find(m => m.sceneNumber === scene.sceneNumber);
       if (mapping && mapping.promptCount > 0) {
-        const sceneUrls = infographicUrls.slice(urlIndex, urlIndex + mapping.promptCount);
+        const sceneUrls = availableUrls.slice(urlIndex, urlIndex + mapping.promptCount);
         urlIndex += mapping.promptCount;
         return { ...scene, infographicUrls: sceneUrls };
       }
