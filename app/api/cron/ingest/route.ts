@@ -337,7 +337,7 @@ CRITICAL: This video will be a visual infographic explainer. There will be NO te
 
 For EACH scene, generate an "imagePrompts" array with 2-5 image generation prompts. Each prompt should follow this exact template:
 
-"Infographic 2D architecture style, black background. [SPECIFIC VISUAL FOR THIS SCENE]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+"Infographic 2D architecture style, pure black background. [SPECIFIC VISUAL FOR THIS SCENE]. Highlighted elements filled with bright emerald green (#15b27b). White lines connecting components and white text annotations. Color palette: ONLY black, emerald green, and white — no purple, no blue, no gradients."
 
 Replace [SPECIFIC VISUAL FOR THIS SCENE] with a detailed description of what the infographic should show for that particular scene. Be specific — reference the actual technical concepts, comparisons, or workflows being discussed.
 
@@ -349,6 +349,7 @@ Guidelines for image prompts:
 - For comparison scenes: show side-by-side comparison charts or feature matrices
 - For list scenes: show each item as a distinct visual element in the infographic
 - Make prompts visually varied — don't repeat the same layout
+- STRICT color palette: pure black background (#000000), bright emerald green (#15b27b) for highlighted elements, white for lines and text annotations. Do NOT use purple, blue, orange, red, or gradient backgrounds
 
 ## JSON Schema
 
@@ -369,7 +370,7 @@ Return ONLY a JSON object matching this exact schema:
         "visualDescription": "string - what to show on screen (fallback for all types)",
         "bRollKeywords": ["keyword1", "keyword2"],
         "durationEstimate": 15,
-        "imagePrompts": ["Infographic 2D architecture style, black background. [specific visual]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."],
+        "imagePrompts": ["Infographic 2D architecture style, pure black background. [specific visual]. Highlighted elements filled with bright emerald green (#15b27b). White lines and text annotations. ONLY black, green, white colors."],
         "code": {
           "snippet": "string - actual code to display (only for sceneType: code)",
           "language": "typescript | javascript | jsx | tsx | css | html | json | bash",
@@ -405,7 +406,7 @@ Requirements:
 - For "code" scenes, provide real, syntactically correct code
 - The qualityScore should be your honest self-assessment (0-100)
 - Each scene MUST include an "imagePrompts" array with 2-5 image generation prompts
-- Image prompts must follow the template: "Infographic 2D architecture style, black background. [specific]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+- Image prompts must follow the template: "Infographic 2D architecture style, pure black background. [specific]. Highlighted elements filled with bright emerald green (#15b27b). White lines connecting components and white text annotations. Color palette: ONLY black, emerald green, and white."
 - Do NOT include any text overlays, titles, or script words in the video — narration audio carries all words
 - Calculate prompt count per scene: Math.ceil(durationEstimate / 4)
 - Return ONLY the JSON object, no markdown or extra text`;
