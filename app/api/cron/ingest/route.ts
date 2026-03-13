@@ -337,7 +337,7 @@ CRITICAL: This video will be a visual infographic explainer. There will be NO te
 
 For EACH scene, generate an "imagePrompts" array with 2-5 image generation prompts. Each prompt should follow this exact template:
 
-"Infographic 2D architecture style, pure black background. [SPECIFIC VISUAL FOR THIS SCENE]. Highlighted elements filled with vivid purple (#7c3aed). White lines connecting components and white text annotations. Color palette: ONLY black, purple (#7c3aed), and white — no blue, no green, no gradients."
+"Infographic 2D architecture diagram, black (#000000) background. Labeled diagram showing [SPECIFIC NAMED COMPONENTS FROM THIS SCENE]: [Component A] → [Component B] → [Component C] with data flow arrows. Each component is a labeled box filled with purple (#7c3aed). White arrows connecting components, white text labels on every element. NO abstract art, NO geometric shapes, NO glowing orbs."
 
 Replace [SPECIFIC VISUAL FOR THIS SCENE] with a detailed description of what the infographic should show for that particular scene. Be specific — reference the actual technical concepts, comparisons, or workflows being discussed.
 
@@ -345,12 +345,14 @@ Guidelines for image prompts:
 - Each scene needs Math.ceil(durationEstimate / 4) prompts (one image every ~4 seconds)
 - A 15-second scene needs 4 prompts, a 20-second scene needs 5
 - Each prompt should show a DIFFERENT aspect or angle of the scene's content
-- For code scenes: show architecture diagrams, data flow, or system diagrams (NOT the code itself)
-- For comparison scenes: show side-by-side comparison charts or feature matrices
-- For list scenes: show each item as a distinct visual element in the infographic
+- For code scenes: show labeled architecture diagrams with named components, data flow arrows, and text annotations (NOT the code itself, NOT abstract art)
+- For comparison scenes: show labeled side-by-side comparison diagrams with named components and feature annotations
+- For list scenes: show each item as a labeled box/node in a diagram layout with connecting arrows
 - Make prompts visually varied — don't repeat the same layout
-- STRICT color palette: pure black background (#000000), vivid purple (#7c3aed) for highlighted elements, white for lines and text annotations. Do NOT use blue, green, orange, red, or gradient backgrounds
-- FIRST SCENE image prompts must be purely visual and eye-catching — NO text labels, NO annotations, NO words. This is the thumbnail/hook frame that needs to stop the scroll. Show a striking visual metaphor for the topic
+- STRICT color palette: pure black background (#000000), vivid purple (#7c3aed) for highlighted elements, white for lines, arrows, and text annotations. Do NOT use blue, green, orange, red, or gradient backgrounds
+- BANNED in imagePrompts: spheres, orbs, waves, particles, abstract shapes, geometric patterns, glowing effects without labels, artistic metaphors. Every visual element MUST have a text label identifying what it represents
+- Each imagePrompt must reference SPECIFIC technologies, APIs, functions, or concepts mentioned in that scene's narration. Generic visuals are rejected
+- FIRST SCENE imagePrompts should be a striking architectural overview diagram of the main topic — labeled components showing the system/concept at a high level. This is the thumbnail/hook frame
 
 ## JSON Schema
 
@@ -371,7 +373,7 @@ Return ONLY a JSON object matching this exact schema:
         "visualDescription": "string - what to show on screen (fallback for all types)",
         "bRollKeywords": ["keyword1", "keyword2"],
         "durationEstimate": 15,
-        "imagePrompts": ["Infographic 2D architecture style, pure black background. [specific visual]. Highlighted elements filled with vivid purple (#7c3aed). White lines and text annotations. ONLY black, purple, white colors."],
+        "imagePrompts": ["Infographic 2D architecture diagram, black (#000000) background. Labeled diagram showing [Component A] → [Component B] → [Component C] with data flow arrows. Each component is a labeled box filled with purple (#7c3aed). White arrows and white text labels. NO abstract art, NO glowing orbs."],
         "code": {
           "snippet": "string - actual code to display (only for sceneType: code)",
           "language": "typescript | javascript | jsx | tsx | css | html | json | bash",
@@ -406,8 +408,8 @@ Requirements:
 - Only include the type-specific field that matches the sceneType (e.g., only include "code" when sceneType is "code")
 - For "code" scenes, provide real, syntactically correct code
 - The qualityScore should be your honest self-assessment (0-100)
-- Each scene MUST include an "imagePrompts" array with 2-5 image generation prompts
-- Image prompts must follow the template: "Infographic 2D architecture style, pure black background. [specific]. Highlighted elements filled with vivid purple (#7c3aed). White lines connecting components and white text annotations. Color palette: ONLY black, purple (#7c3aed), and white."
+- Each scene MUST include an "imagePrompts" array with 2-5 image generation prompts. Every prompt MUST describe a LABELED ARCHITECTURAL DIAGRAM with named components, arrows, and text annotations
+- Follow this structure for every imagePrompt: "Infographic 2D architecture diagram, black (#000000) background. Labeled diagram showing [specific named components from the narration]: [Component A] → [Component B] → [Component C]. Each component is a labeled box/node filled with purple (#7c3aed). White directional arrows showing data/control flow. White text labels on every element. NO abstract art, NO geometric shapes, NO glowing orbs, NO artistic metaphors."
 - Do NOT include any text overlays, titles, or script words in the video — narration audio carries all words
 - Calculate prompt count per scene: Math.ceil(durationEstimate / 4)
 - Return ONLY the JSON object, no markdown or extra text`;
