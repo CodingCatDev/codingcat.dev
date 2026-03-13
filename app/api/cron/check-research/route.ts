@@ -1,5 +1,5 @@
 export const fetchCache = 'force-no-store';
-export const maxDuration = 60;
+export const maxDuration = 300; // Fluid Compute enabled
 
 import { type NextRequest } from 'next/server';
 import { createClient, type SanityClient } from 'next-sanity';
