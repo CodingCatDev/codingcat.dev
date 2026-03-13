@@ -121,6 +121,8 @@ export interface HookSceneProps {
   hook: string;
   durationInFrames: number;
   isVertical?: boolean;
+  /** Optional infographic URL to use as background */
+  infographicUrl?: string;
 }
 
 export interface CTASceneProps {

@@ -10,8 +10,8 @@ import { FONT_SIZES } from "../constants";
 
 /**
  * InfographicScene — cycles through multiple infographic images with
- * crossfade transitions and subtle Ken Burns zoom. NO text overlays.
- * Audio narration carries all words.
+ * crossfade transitions and aggressive Ken Burns zoom + pan.
+ * NO text overlays. Audio narration carries all words.
  *
  * Accepts both:
  * - `infographicUrls: string[]` (new multi-image cycling)
@@ -112,7 +112,7 @@ export const InfographicScene: React.FC<InfographicSceneProps> = ({
     );
   };
 
-  // Ken Burns: subtle zoom from 1.0 → 1.05 over the image's display duration
+  // Ken Burns: aggressive zoom — vertical gets 1.0→1.15, landscape 1.0→1.08
   const getImageScale = (index: number): number => {
     const startFrame = index * framesPerImage;
     const endFrame = Math.min(
@@ -120,12 +120,41 @@ export const InfographicScene: React.FC<InfographicSceneProps> = ({
       durationInFrames,
     );
 
+    const zoomEnd = isVertical ? 1.15 : 1.08;
+
     return interpolate(
       frame,
       [startFrame, endFrame],
-      [1.0, 1.05],
+      [1.0, zoomEnd],
       { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
     );
+  };
+
+  // Pan movement for variety — even scenes pan X, odd scenes pan Y
+  const getImagePan = (index: number): { translateX: number; translateY: number } => {
+    const startFrame = index * framesPerImage;
+    const endFrame = Math.min(
+      startFrame + framesPerImage + crossfadeDuration,
+      durationInFrames,
+    );
+
+    const panRange = isVertical ? 6 : 3; // vertical gets double pan range
+    const isEvenScene = sceneIndex % 2 === 0;
+
+    const panProgress = interpolate(
+      frame,
+      [startFrame, endFrame],
+      [-panRange, panRange],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    );
+
+    if (isEvenScene) {
+      // Even scenes: pan left-to-right
+      return { translateX: panProgress, translateY: 0 };
+    } else {
+      // Odd scenes: pan top-to-bottom
+      return { translateX: 0, translateY: panProgress };
+    }
   };
 
   return (
@@ -140,6 +169,7 @@ export const InfographicScene: React.FC<InfographicSceneProps> = ({
         images.map((url, index) => {
           const opacity = getImageOpacity(index);
           const scale = getImageScale(index);
+          const pan = getImagePan(index);
 
           // Skip rendering images that are fully transparent
           if (opacity <= 0) {
@@ -160,7 +190,7 @@ export const InfographicScene: React.FC<InfographicSceneProps> = ({
                   width: "100%",
                   height: "100%",
                   objectFit: "contain",
-                  transform: `scale(${scale})`,
+                  transform: `scale(${scale}) translate(${pan.translateX}%, ${pan.translateY}%)`,
                   transformOrigin: "center center",
                 }}
               />
@@ -168,10 +198,10 @@ export const InfographicScene: React.FC<InfographicSceneProps> = ({
           );
         })
       ) : (
-        /* Fallback: dark gradient when no images available */
+        /* Fallback: dark background when no images available */
         <AbsoluteFill
           style={{
-            background: `linear-gradient(${(sceneIndex % 4) * 90}deg, #6D28D9, #0F0F23, #1A1A2E)`,
+            background: "#000000",
           }}
         />
       )}

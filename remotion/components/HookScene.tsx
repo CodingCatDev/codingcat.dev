@@ -1,6 +1,7 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Img,
   interpolate,
   spring,
   useCurrentFrame,
@@ -13,12 +14,23 @@ export const HookScene: React.FC<HookSceneProps> = ({
   hook,
   durationInFrames,
   isVertical = false,
+  infographicUrl,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const fonts = isVertical ? FONT_SIZES.portrait : FONT_SIZES.landscape;
 
-  // --- Background pulse animation ---
+  const hasInfographic = !!infographicUrl;
+
+  // --- Ken Burns zoom for infographic background ---
+  const infographicScale = interpolate(
+    frame,
+    [0, durationInFrames],
+    [1.0, isVertical ? 1.12 : 1.06],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+
+  // --- Background pulse animation (only used when no infographic) ---
   const bgPulse = interpolate(
     frame,
     [0, durationInFrames],
@@ -75,38 +87,62 @@ export const HookScene: React.FC<HookSceneProps> = ({
 
   return (
     <AbsoluteFill style={{ opacity: fadeOut }}>
-      {/* Animated gradient background */}
-      <AbsoluteFill
-        style={{
-          background: `linear-gradient(${bgPulse}deg, ${COLORS.gradientStart}, ${COLORS.backgroundDark}, ${COLORS.primary})`,
-        }}
-      />
+      {/* Background: infographic or animated gradient */}
+      {hasInfographic ? (
+        <AbsoluteFill style={{ overflow: "hidden" }}>
+          <Img
+            src={infographicUrl}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: `scale(${infographicScale})`,
+              transformOrigin: "center center",
+            }}
+          />
+          {/* Dark overlay for text readability */}
+          <AbsoluteFill
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          />
+        </AbsoluteFill>
+      ) : (
+        <>
+          {/* Animated gradient background */}
+          <AbsoluteFill
+            style={{
+              background: `linear-gradient(${bgPulse}deg, ${COLORS.gradientStart}, ${COLORS.backgroundDark}, ${COLORS.primary})`,
+            }}
+          />
 
-      {/* Decorative circles */}
-      <div
-        style={{
-          position: "absolute",
-          top: isVertical ? "15%" : "10%",
-          right: isVertical ? "-10%" : "-5%",
-          width: isVertical ? 300 : 500,
-          height: isVertical ? 300 : 500,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, ${COLORS.secondary}33, transparent)`,
-          transform: `scale(${interpolate(frame, [0, 60], [0.5, 1.2], { extrapolateRight: "clamp" })})`,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: isVertical ? "20%" : "15%",
-          left: isVertical ? "-15%" : "-8%",
-          width: isVertical ? 250 : 400,
-          height: isVertical ? 250 : 400,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, ${COLORS.accent}22, transparent)`,
-          transform: `scale(${interpolate(frame, [10, 70], [0.3, 1], { extrapolateRight: "clamp" })})`,
-        }}
-      />
+          {/* Decorative circles */}
+          <div
+            style={{
+              position: "absolute",
+              top: isVertical ? "15%" : "10%",
+              right: isVertical ? "-10%" : "-5%",
+              width: isVertical ? 300 : 500,
+              height: isVertical ? 300 : 500,
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${COLORS.secondary}33, transparent)`,
+              transform: `scale(${interpolate(frame, [0, 60], [0.5, 1.2], { extrapolateRight: "clamp" })})`,
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: isVertical ? "20%" : "15%",
+              left: isVertical ? "-15%" : "-8%",
+              width: isVertical ? 250 : 400,
+              height: isVertical ? 250 : 400,
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${COLORS.accent}22, transparent)`,
+              transform: `scale(${interpolate(frame, [10, 70], [0.3, 1], { extrapolateRight: "clamp" })})`,
+            }}
+          />
+        </>
+      )}
 
       {/* Content container */}
       <AbsoluteFill
