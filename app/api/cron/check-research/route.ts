@@ -118,7 +118,7 @@ async function buildStuckThresholds(): Promise<Record<string, number>> {
 const MAX_DOCS_PER_STATUS = 2;
 
 /** Max prompts to process per cron cycle (each prompt = 2 Imagen calls) */
-const INFOGRAPHIC_BATCH_SIZE = 5;
+const INFOGRAPHIC_BATCH_SIZE = 4;
 
 // ---------------------------------------------------------------------------
 // Sanity Write Client
