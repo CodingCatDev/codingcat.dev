@@ -70,7 +70,7 @@ export default defineType({
       title: "Infographic Model",
       type: "string",
       description: "Model used for generating brand-consistent infographics from research data. Imagen 4 Fast ($0.02/image) supports seed-based reproducibility",
-      initialValue: "imagen-4-fast",
+      initialValue: "imagen-4.0-fast-generate-001",
     }),
     defineField({
       name: "qualityThreshold",

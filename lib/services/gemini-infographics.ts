@@ -52,7 +52,7 @@ export interface DualOrientationResult {
 
 /** Options for batch infographic generation. */
 export interface InfographicBatchOptions {
-  /** Override the Imagen model (defaults to pipeline_config.infographicModel or "imagen-4-fast"). */
+  /** Override the Imagen model (defaults to pipeline_config.infographicModel or "imagen-4.0-fast-generate-001"). */
   model?: string;
   /** Number of images per prompt (1–4). Defaults to 1. */
   numberOfImages?: number;
@@ -88,13 +88,13 @@ function getAI(): GoogleGenAI {
  * Generate a single infographic image using Imagen 4 Fast.
  *
  * @param request - Prompt and generation options.
- * @param model - Imagen model ID (e.g. "imagen-4-fast").
+ * @param model - Imagen model ID (e.g. "imagen-4.0-fast-generate-001").
  * @returns InfographicResult with base64 image bytes.
  * @throws If the API call fails or no image is returned.
  */
 export async function generateInfographic(
   request: InfographicRequest,
-  model: string = "imagen-4-fast",
+  model: string = "imagen-4.0-fast-generate-001",
 ): Promise<InfographicResult> {
   const ai = getAI();
 
@@ -161,7 +161,7 @@ export async function generateInfographicBatch(
 ): Promise<InfographicBatchResult> {
   const model =
     options.model ??
-    (await getConfigValue("pipeline_config", "infographicModel", "imagen-4-fast"));
+    (await getConfigValue("pipeline_config", "infographicModel", "imagen-4.0-fast-generate-001"));
 
   const results: InfographicResult[] = [];
   const errors: Array<{ prompt: string; error: string }> = [];
@@ -261,7 +261,7 @@ export async function generateInfographicsForTopic(
   );
 
   const model = await getConfigValue(
-    "pipeline_config", "infographicModel", "imagen-4-fast"
+    "pipeline_config", "infographicModel", "imagen-4.0-fast-generate-001"
   );
 
   const contextSuffix = briefing
@@ -306,7 +306,7 @@ export async function generateFromScenePrompts(
   topic: string,
 ): Promise<DualOrientationResult> {
   const model = await getConfigValue(
-    "pipeline_config", "infographicModel", "imagen-4-fast"
+    "pipeline_config", "infographicModel", "imagen-4.0-fast-generate-001"
   );
 
   const horizontal: InfographicResult[] = [];
