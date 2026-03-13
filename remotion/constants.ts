@@ -36,9 +36,9 @@ export const COLORS = {
   /** CodingCat.dev secondary / accent */
   secondary: "#A78BFA",
   /** Dark background */
-  backgroundDark: "#0F0F23",
+  backgroundDark: "#000000",
   /** Slightly lighter dark */
-  backgroundMedium: "#1A1A2E",
+  backgroundMedium: "#000000",
   /** Text white */
   textWhite: "#FFFFFF",
   /** Text muted */
@@ -54,7 +54,7 @@ export const COLORS = {
   /** Gradient start */
   gradientStart: "#7c3aed",
   /** Gradient end */
-  gradientEnd: "#1A1A2E",
+  gradientEnd: "#000000",
 } as const;
 
 // --- Font Sizes ---
