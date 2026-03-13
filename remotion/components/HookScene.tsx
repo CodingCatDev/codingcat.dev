@@ -30,15 +30,7 @@ export const HookScene: React.FC<HookSceneProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-  // --- Background pulse animation (only used when no infographic) ---
-  const bgPulse = interpolate(
-    frame,
-    [0, durationInFrames],
-    [0, 360],
-    { extrapolateRight: "clamp" }
-  );
-
-  // --- Logo / brand fade in ---
+  // --- Logo / brand fade in (only used when no infographic) ---
   const brandOpacity = interpolate(
     frame,
     [0, 15],
@@ -56,7 +48,7 @@ export const HookScene: React.FC<HookSceneProps> = ({
     },
   });
 
-  // --- Hook text animation: spring pop-in after brand ---
+  // --- Hook text animation: spring pop-in after brand (only used when no infographic) ---
   const hookSpring = spring({
     frame: frame - 20, // delay 20 frames after start
     fps,
@@ -87,7 +79,7 @@ export const HookScene: React.FC<HookSceneProps> = ({
 
   return (
     <AbsoluteFill style={{ opacity: fadeOut }}>
-      {/* Background: infographic or animated gradient */}
+      {/* Background: infographic or pure black */}
       {hasInfographic ? (
         <AbsoluteFill style={{ overflow: "hidden" }}>
           <Img
@@ -100,7 +92,7 @@ export const HookScene: React.FC<HookSceneProps> = ({
               transformOrigin: "center center",
             }}
           />
-          {/* Dark overlay for text readability */}
+          {/* Dark overlay for readability */}
           <AbsoluteFill
             style={{
               backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -109,10 +101,10 @@ export const HookScene: React.FC<HookSceneProps> = ({
         </AbsoluteFill>
       ) : (
         <>
-          {/* Animated gradient background */}
+          {/* Pure black background fallback */}
           <AbsoluteFill
             style={{
-              background: `linear-gradient(${bgPulse}deg, ${COLORS.gradientStart}, ${COLORS.backgroundDark}, ${COLORS.primary})`,
+              backgroundColor: "#000000",
             }}
           />
 
@@ -144,72 +136,92 @@ export const HookScene: React.FC<HookSceneProps> = ({
         </>
       )}
 
-      {/* Content container */}
-      <AbsoluteFill
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          padding: isVertical ? 40 : 80,
-          gap: isVertical ? 40 : 50,
-          flexDirection: "column",
-        }}
-      >
-        {/* Brand name */}
-        <div
+      {/* Content container — only shown when NO infographic (narration carries the hook) */}
+      {!hasInfographic && (
+        <AbsoluteFill
           style={{
-            opacity: brandOpacity,
-            transform: `scale(${brandScale})`,
-            display: "flex",
-            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            gap: 8,
+            padding: isVertical ? 40 : 80,
+            gap: isVertical ? 40 : 50,
+            flexDirection: "column",
           }}
         >
+          {/* Brand name */}
           <div
             style={{
-              fontSize: isVertical ? 28 : 32,
-              color: COLORS.secondary,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: 4,
-              textTransform: "uppercase",
+              opacity: brandOpacity,
+              transform: `scale(${brandScale})`,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 8,
             }}
           >
-            {BRAND.name}
+            <div
+              style={{
+                fontSize: isVertical ? 28 : 32,
+                color: COLORS.secondary,
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: 4,
+                textTransform: "uppercase",
+              }}
+            >
+              {BRAND.name}
+            </div>
+            <div
+              style={{
+                width: 60,
+                height: 3,
+                backgroundColor: COLORS.accent,
+                borderRadius: 2,
+              }}
+            />
           </div>
+
+          {/* Hook text */}
           <div
             style={{
-              width: 60,
-              height: 3,
-              backgroundColor: COLORS.accent,
-              borderRadius: 2,
+              opacity: hookOpacity,
+              transform: `scale(${hookScale})`,
+              maxWidth: isVertical ? "95%" : "80%",
             }}
-          />
-        </div>
+          >
+            <div
+              style={{
+                fontSize: fonts.hook,
+                color: COLORS.textWhite,
+                fontFamily: "sans-serif",
+                fontWeight: 800,
+                textAlign: "center",
+                lineHeight: 1.3,
+                textShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
+              }}
+            >
+              {hook}
+            </div>
+          </div>
+        </AbsoluteFill>
+      )}
 
-        {/* Hook text */}
+      {/* Watermark — always visible */}
+      {hasInfographic && (
         <div
           style={{
-            opacity: hookOpacity,
-            transform: `scale(${hookScale})`,
-            maxWidth: isVertical ? "95%" : "80%",
+            position: "absolute",
+            bottom: isVertical ? 30 : 20,
+            right: isVertical ? 30 : 30,
+            fontSize: fonts.watermark,
+            color: "rgba(255, 255, 255, 0.35)",
+            fontFamily: "monospace",
+            fontWeight: 600,
+            letterSpacing: 1,
           }}
         >
-          <div
-            style={{
-              fontSize: fonts.hook,
-              color: COLORS.textWhite,
-              fontFamily: "sans-serif",
-              fontWeight: 800,
-              textAlign: "center",
-              lineHeight: 1.3,
-              textShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            {hook}
-          </div>
+          codingcat.dev
         </div>
-      </AbsoluteFill>
+      )}
     </AbsoluteFill>
   );
 };
