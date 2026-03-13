@@ -118,7 +118,7 @@ async function buildStuckThresholds(): Promise<Record<string, number>> {
 const MAX_DOCS_PER_STATUS = 2;
 
 /** Max prompts to process per cron cycle (each prompt = 2 Imagen calls) */
-const INFOGRAPHIC_BATCH_SIZE = 2; // Gemini generateContent with thinking+search takes ~12s/call
+const INFOGRAPHIC_BATCH_SIZE = 5; // Fluid Compute enabled (300s limit)
 
 // ---------------------------------------------------------------------------
 // Sanity Write Client
