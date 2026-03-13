@@ -26,19 +26,9 @@ export const CTAScene: React.FC<CTASceneProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
-  // --- CTA text spring ---
-  const ctaSpring = spring({
-    frame: frame - 10,
-    fps,
-    config: { damping: 12, mass: 0.5, stiffness: 90 },
-  });
-
-  const ctaScale = interpolate(ctaSpring, [0, 1], [0.8, 1]);
-  const ctaOpacity = interpolate(ctaSpring, [0, 1], [0, 1]);
-
   // --- Subscribe button animation ---
   const buttonSpring = spring({
-    frame: frame - 30,
+    frame: frame - 20,
     fps,
     config: { damping: 10, mass: 0.4, stiffness: 100 },
   });
@@ -59,12 +49,19 @@ export const CTAScene: React.FC<CTASceneProps> = ({
     { extrapolateRight: "clamp" }
   );
 
+  // --- Brand name animation ---
+  const brandSpring = spring({
+    frame,
+    fps,
+    config: { damping: 12, mass: 0.5, stiffness: 90 },
+  });
+
   return (
     <AbsoluteFill style={{ opacity: fadeIn }}>
-      {/* Background gradient */}
+      {/* Pure black background */}
       <AbsoluteFill
         style={{
-          background: `linear-gradient(135deg, ${COLORS.backgroundDark}, ${COLORS.primary}, ${COLORS.gradientEnd})`,
+          backgroundColor: "#000000",
         }}
       />
 
@@ -87,32 +84,11 @@ export const CTAScene: React.FC<CTASceneProps> = ({
             fontWeight: 700,
             letterSpacing: 3,
             textTransform: "uppercase",
+            opacity: brandSpring,
+            transform: `scale(${brandSpring})`,
           }}
         >
           {BRAND.name}
-        </div>
-
-        {/* CTA Text */}
-        <div
-          style={{
-            opacity: ctaOpacity,
-            transform: `scale(${ctaScale})`,
-            maxWidth: isVertical ? "95%" : "75%",
-          }}
-        >
-          <div
-            style={{
-              fontSize: fonts.cta,
-              color: COLORS.textWhite,
-              fontFamily: "sans-serif",
-              fontWeight: 700,
-              textAlign: "center",
-              lineHeight: 1.4,
-              textShadow: "0 2px 20px rgba(0, 0, 0, 0.4)",
-            }}
-          >
-            {cta}
-          </div>
         </div>
 
         {/* Subscribe Button */}
@@ -152,7 +128,7 @@ export const CTAScene: React.FC<CTASceneProps> = ({
         >
           {socialLinks.map((link, i) => {
             const linkSpring = spring({
-              frame: frame - 45 - i * 8,
+              frame: frame - 35 - i * 8,
               fps,
               config: { damping: 12, mass: 0.4, stiffness: 100 },
             });
