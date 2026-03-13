@@ -160,8 +160,6 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
     );
   }
 
-  // --- Gradient background angle (alternating per scene) ---
-  const gradientAngle = (sceneIndex % 4) * 90;
 
   // --- Layout dimensions ---
   const codeFontSize = fonts.code;
@@ -173,7 +171,7 @@ export const CodeMorphScene: React.FC<CodeMorphSceneProps> = ({
       {/* Layer 1: Dark gradient background */}
       <AbsoluteFill
         style={{
-          background: `linear-gradient(${gradientAngle}deg, ${COLORS.gradientStart}, ${COLORS.backgroundDark}, ${COLORS.backgroundMedium})`,
+          backgroundColor: "#000000",
         }}
       />
 
