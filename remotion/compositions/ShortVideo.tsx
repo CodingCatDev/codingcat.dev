@@ -51,7 +51,12 @@ export const ShortVideo: React.FC<VideoInputProps> = ({
 
       {/* Hook Scene — vertical format */}
       <Sequence from={0} durationInFrames={hookDuration} name="Hook">
-        <HookScene hook={hook} durationInFrames={hookDuration} isVertical />
+        <HookScene
+          hook={hook}
+          durationInFrames={hookDuration}
+          isVertical
+          infographicUrl={scenes?.[0]?.infographicUrls?.[0] || scenes?.[0]?.infographicUrl}
+        />
       </Sequence>
 
       {/* Content Scenes — vertical format with larger text */}

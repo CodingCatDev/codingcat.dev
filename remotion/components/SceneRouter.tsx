@@ -17,10 +17,10 @@ interface SceneRouterProps {
 /**
  * Routes a scene to the appropriate component based on its sceneType and data.
  *
- * Priority order:
- * 1. Explicit sceneType with matching data (code/list/comparison/mockup)
- * 2. infographicUrls array → InfographicScene (multi-image cycling)
- * 3. infographicUrl single → InfographicScene (wrapped in array)
+ * Priority order (infographics ALWAYS win when present):
+ * 1. infographicUrls array → InfographicScene (ALWAYS wins when present)
+ * 2. infographicUrl single → InfographicScene (wrapped in array)
+ * 3. Explicit sceneType with matching data (code/list/comparison/mockup) — ONLY when no infographics
  * 4. Fallback → Scene (Pexels b-roll, no text overlay)
  */
 export const SceneRouter: React.FC<SceneRouterProps> = ({
@@ -37,7 +37,27 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
     wordTimestamps: scene.wordTimestamps,
   };
 
-  // --- 1. Specialized scene types (code/list/comparison/mockup) ---
+  // --- 1. Infographic URLs array (ALWAYS wins when present) ---
+  if (scene.infographicUrls && scene.infographicUrls.length > 0) {
+    return (
+      <InfographicScene
+        {...baseProps}
+        infographicUrls={scene.infographicUrls}
+      />
+    );
+  }
+
+  // --- 2. Legacy single infographic URL (wrap in array) ---
+  if (scene.infographicUrl) {
+    return (
+      <InfographicScene
+        {...baseProps}
+        infographicUrls={[scene.infographicUrl]}
+      />
+    );
+  }
+
+  // --- 3. Specialized scene types (code/list/comparison/mockup) — fallback only ---
   switch (scene.sceneType) {
     case "code":
       if (scene.code) {
@@ -71,26 +91,6 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
 
     default:
       break;
-  }
-
-  // --- 2. Infographic URLs array (multi-image cycling) ---
-  if (scene.infographicUrls && scene.infographicUrls.length > 0) {
-    return (
-      <InfographicScene
-        {...baseProps}
-        infographicUrls={scene.infographicUrls}
-      />
-    );
-  }
-
-  // --- 3. Legacy single infographic URL (wrap in array) ---
-  if (scene.infographicUrl) {
-    return (
-      <InfographicScene
-        {...baseProps}
-        infographicUrls={[scene.infographicUrl]}
-      />
-    );
   }
 
   // --- 4. Fallback: Pexels b-roll scene (no text overlay) ---

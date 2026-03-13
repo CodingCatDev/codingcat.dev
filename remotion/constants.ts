@@ -35,10 +35,10 @@ export const COLORS = {
   primary: "#6D28D9",
   /** CodingCat.dev secondary / accent */
   secondary: "#A78BFA",
-  /** Dark background */
-  backgroundDark: "#0F0F23",
+  /** Dark background — pure black */
+  backgroundDark: "#000000",
   /** Slightly lighter dark */
-  backgroundMedium: "#1A1A2E",
+  backgroundMedium: "#0A0A0A",
   /** Text white */
   textWhite: "#FFFFFF",
   /** Text muted */
@@ -51,10 +51,10 @@ export const COLORS = {
   sponsorBg: "rgba(109, 40, 217, 0.85)",
   /** Overlay for text readability */
   overlay: "rgba(0, 0, 0, 0.55)",
-  /** Gradient start */
-  gradientStart: "#6D28D9",
-  /** Gradient end */
-  gradientEnd: "#1A1A2E",
+  /** Gradient start — black */
+  gradientStart: "#000000",
+  /** Gradient end — black */
+  gradientEnd: "#000000",
 } as const;
 
 // --- Font Sizes ---
@@ -118,12 +118,12 @@ export const BRAND = {
 
 // --- Code Scene Colors ---
 export const CODE_COLORS = {
-  /** Glassmorphism window background */
-  windowBg: "rgba(15, 15, 35, 0.85)",
+  /** Glassmorphism window background — near-black */
+  windowBg: "rgba(0, 0, 0, 0.9)",
   /** Window border */
   windowBorder: "rgba(167, 139, 250, 0.3)",
-  /** Window title bar */
-  titleBar: "rgba(30, 30, 60, 0.9)",
+  /** Window title bar — near-black */
+  titleBar: "rgba(10, 10, 10, 0.95)",
   /** Traffic light dots */
   dotRed: "#FF5F57",
   dotYellow: "#FEBC2E",

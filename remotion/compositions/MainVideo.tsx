@@ -54,7 +54,12 @@ export const MainVideo: React.FC<VideoInputProps> = ({
 
       {/* Hook Scene */}
       <Sequence from={currentFrame} durationInFrames={hookDuration} name="Hook">
-        <HookScene hook={hook} durationInFrames={hookDuration} isVertical={false} />
+        <HookScene
+          hook={hook}
+          durationInFrames={hookDuration}
+          isVertical={false}
+          infographicUrl={scenes?.[0]?.infographicUrls?.[0] || scenes?.[0]?.infographicUrl}
+        />
       </Sequence>
       {(() => {
         currentFrame += hookDuration;
