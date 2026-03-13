@@ -238,10 +238,13 @@ async function stepResearchComplete(
   }
 
   // Collect imagePrompts from the script scenes (if available)
+  // Collect imagePrompts from script scenes, tracking which scene each belongs to
+  const scenePromptMap: Array<{ sceneNumber: number; promptCount: number }> = [];
   const sceneImagePrompts: string[] = [];
   if (doc.script?.scenes) {
     for (const scene of doc.script.scenes) {
       if (scene.imagePrompts && Array.isArray(scene.imagePrompts)) {
+        scenePromptMap.push({ sceneNumber: scene.sceneNumber, promptCount: scene.imagePrompts.length });
         sceneImagePrompts.push(...scene.imagePrompts);
       }
     }
@@ -360,6 +363,21 @@ async function stepResearchComplete(
     // Keep backward compat with old infographics field
     if (horizontalRefs.length > 0) {
       patchData.infographics = horizontalRefs;
+    }
+
+    // Distribute infographic URLs back to scene-level for Remotion mapInputProps()
+    if (doc.script?.scenes && infographicUrls.length > 0) {
+      let urlIndex = 0;
+      const updatedScenes = doc.script.scenes.map((scene) => {
+        const mapping = scenePromptMap.find(m => m.sceneNumber === scene.sceneNumber);
+        if (mapping && mapping.promptCount > 0) {
+          const sceneUrls = infographicUrls.slice(urlIndex, urlIndex + mapping.promptCount);
+          urlIndex += mapping.promptCount;
+          return { ...scene, infographicUrls: sceneUrls };
+        }
+        return scene;
+      });
+      patchData['script'] = { ...doc.script, scenes: updatedScenes };
     }
 
     await sanity.patch(doc._id).set(patchData).commit();
