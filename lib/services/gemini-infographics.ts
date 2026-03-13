@@ -210,11 +210,11 @@ export function buildInfographicPrompt(
 
 /** Default infographic instructions if Sanity contentConfig is not set up */
 const DEFAULT_INSTRUCTIONS: string[] = [
-  'Infographic 2D architecture style, black background. A high-level technical architecture overview showing system components and data flow. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
-  'Infographic 2D architecture style, black background. A comparison chart showing key features and alternatives side by side. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
-  'Infographic 2D architecture style, black background. A step-by-step workflow diagram showing the process from start to finish. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
-  'Infographic 2D architecture style, black background. A timeline of key developments, milestones, and version releases. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
-  'Infographic 2D architecture style, black background. A pros and cons visual summary with clear icons and labels. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A high-level technical architecture overview showing system components and data flow. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A comparison chart showing key features and alternatives side by side. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A step-by-step workflow diagram showing the process from start to finish. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A timeline of key developments, milestones, and version releases. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
+  'Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no purple, no blue. A pros and cons visual summary with clear icons and labels. Highlighted elements filled with bright green (#15b27b) only. White lines connecting components and white text annotations. Large, readable text labels suitable for mobile viewing at 360px width. No watermarks.',
 ];
 
 // ---------------------------------------------------------------------------
@@ -318,7 +318,7 @@ export async function generateFromScenePrompts(
     // Generate horizontal (16:9)
     try {
       const hResult = await generateInfographic(
-        { prompt, aspectRatio: "16:9" },
+        { prompt, aspectRatio: "16:9", negativePrompt: "purple background, blue gradient, watermark, blurry text, small text" },
         model,
       );
       horizontal.push(hResult);
@@ -330,7 +330,7 @@ export async function generateFromScenePrompts(
     // Generate vertical (9:16)
     try {
       const vResult = await generateInfographic(
-        { prompt, aspectRatio: "9:16" },
+        { prompt, aspectRatio: "9:16", negativePrompt: "purple background, blue gradient, watermark, blurry text, small text" },
         model,
       );
       vertical.push(vResult);
