@@ -695,7 +695,7 @@ Return ONLY a JSON object:
         "list": { "items": ["Item 1", "Item 2"], "icon": "🚀" },
         "comparison": { "leftLabel": "A", "rightLabel": "B", "rows": [{ "left": "...", "right": "..." }] },
         "mockup": { "deviceType": "browser | phone | terminal", "screenContent": "..." },
-        "imagePrompts": ["Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. [specific visual for this scene]. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable labels."]
+        "imagePrompts": ["Infographic 2D architecture diagram, black (#000000) background. Labeled diagram showing [Component A] \u2192 [Component B] \u2192 [Component C] with data flow arrows. Each component is a labeled box filled with purple (#7c3aed). White arrows connecting components, white text labels on every element. NO abstract art, NO geometric shapes, NO glowing orbs."]
       }
     ],
     "cta": "string - call to action"
@@ -706,11 +706,13 @@ Return ONLY a JSON object:
 Requirements:
 - 3-5 scenes totaling 60-90 seconds
 - Use at least 2 different scene types
-- Each scene MUST include 2-5 imagePrompts following this exact template: "Infographic 2D architecture style. STRICTLY black (#000000) background only \u2014 no gradients, no blue. [specific visual]. Highlighted elements filled with vivid purple (#7c3aed) only. White lines connecting components and white text annotations. Large, readable labels."
-- imagePrompts should describe specific 2D infographic visuals that illustrate the narration content
-- The FIRST scene's imagePrompts must be purely visual and eye-catching — no text labels, no annotations, no words. This is the thumbnail/hook frame.
+- Each scene MUST include 2-5 imagePrompts. Every prompt MUST describe a LABELED ARCHITECTURAL DIAGRAM with named components, arrows, and text annotations.
+- Follow this structure for every imagePrompt: "Infographic 2D architecture diagram, black (#000000) background. Labeled diagram showing [specific named components from the narration]: [Component A] \u2192 [Component B] \u2192 [Component C]. Each component is a labeled box/node filled with purple (#7c3aed). White directional arrows showing data/control flow between components. White text labels on every element. NO abstract art, NO geometric shapes, NO glowing orbs, NO artistic metaphors."
+- BANNED in imagePrompts: spheres, orbs, waves, particles, abstract shapes, geometric patterns, glowing effects without labels, artistic metaphors. Every visual element MUST have a text label identifying what it represents.
+- Each imagePrompt must reference SPECIFIC technologies, APIs, functions, or concepts mentioned in that scene's narration. Generic visuals are rejected.
+- The FIRST scene's imagePrompts should be a striking architectural overview diagram of the main topic — labeled components showing the system/concept at a high level. This is the thumbnail/hook frame.
 - Do NOT include any script text, titles, or word overlays in the video. The narration audio carries all words.
-- Think of each imagePrompt as a frame that will be shown for 3-5 seconds while the narration plays
+- Think of each imagePrompt as a technical diagram frame shown for 3-5 seconds while narration plays
 - Include REAL code snippets from the research where applicable
 - The qualityScore should be your honest self-assessment (0-100)
 - Return ONLY the JSON object, no markdown or extra text`;
