@@ -256,9 +256,12 @@ async function stepResearchComplete(
   if (sceneImagePrompts.length > MAX_INFOGRAPHIC_PROMPTS) {
     sceneImagePrompts.length = MAX_INFOGRAPHIC_PROMPTS;
   }
+
+  const enableHorizontal = await getConfigValue('pipeline_config', 'enableHorizontalInfographics', false);
+  const multiplier = enableHorizontal ? 2 : 1; // 2 orientations or vertical only
   const total = sceneImagePrompts.length > 0
-    ? sceneImagePrompts.length * 2  // both orientations
-    : 10;  // fallback: 5 topic-level x 2
+    ? sceneImagePrompts.length * multiplier
+    : 5 * multiplier;  // fallback: 5 topic-level
 
   await sanity.patch(doc._id).set({
     status: 'infographics_generating',
@@ -365,8 +368,11 @@ async function stepInfographicsGenerating(
 
   console.log(`[check-research] Generating batch: prompts ${completedPrompts + 1}-${completedPrompts + batchPrompts.length} of ${sceneImagePrompts.length} for "${doc.title}"`);
 
+  // Check if horizontal infographics are enabled
+  const enableHorizontal = await getConfigValue('pipeline_config', 'enableHorizontalInfographics', false);
+
   // Generate this batch using the existing function (but only for the batch)
-  const batchResult = await generateFromScenePrompts(batchPrompts, doc.title);
+  const batchResult = await generateFromScenePrompts(batchPrompts, doc.title, { skipHorizontal: !enableHorizontal });
 
   // Accumulate refs from previous cycles
   const horizontalRefs = [...(progress.horizontalRefs || [])];

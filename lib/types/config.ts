@@ -15,6 +15,7 @@ export interface PipelineConfig {
   deepResearchAgent: string;
   deepResearchPromptTemplate: string;
   infographicModel: string;
+  enableHorizontalInfographics?: boolean;
   qualityThreshold: number;
   stuckTimeoutMinutes: number;
   maxIdeasPerRun: number;
