@@ -8,7 +8,6 @@ import Podcast from "../Podcast";
 
 type Params = Promise<{ slug: string }>;
 
-export const revalidate = 3600;
 
 export async function generateMetadata(
 	{ params }: { params: Params },

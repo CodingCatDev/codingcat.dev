@@ -7,7 +7,6 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SponsorshipForm } from "./sponsorship-form";
 
-export const revalidate = 86400;
 const sponsorshipTiers = [
 	{
 		name: "Dedicated Video",

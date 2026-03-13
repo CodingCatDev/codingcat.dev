@@ -20,7 +20,6 @@ import Avatar from "@/components/avatar";
 
 type Params = Promise<{ slug: string }>;
 
-export const revalidate = 3600;
 
 export async function generateMetadata(
 	{ params }: { params: Params },

@@ -14,7 +14,6 @@ type Props = {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export const revalidate = 86400;
 
 export async function generateMetadata(
 	{ params, searchParams }: Props,

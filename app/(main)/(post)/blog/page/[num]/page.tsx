@@ -9,7 +9,6 @@ const LIMIT = 10;
 
 type Params = Promise<{ num: string }>;
 
-export const revalidate = 60;
 
 export async function generateStaticParams() {
 	const count = await client.fetch<number>(
