@@ -308,13 +308,31 @@ export async function processVideoProduction(documentId: string): Promise<void> 
       audioUrl,
       script: {
         hook: script.hook,
-        scenes: script.scenes.map((s, i) => ({
-          ...s,
-          wordTimestamps: sceneWordTimestamps[i],
-          ...(infographicUrls.length > 0
-            ? { infographicUrl: infographicUrls[i % infographicUrls.length] }
-            : {}),
-        })),
+        scenes: script.scenes.map((s, i) => {
+          // Distribute infographic URLs across scenes as arrays
+          // Each scene gets a chunk of images to cycle through (crossfade at ~4s intervals)
+          let sceneInfographics: Record<string, unknown> = {};
+          if (infographicUrls.length > 0) {
+            const sceneCount = script.scenes.length;
+            const urlsPerScene = Math.max(1, Math.floor(infographicUrls.length / sceneCount));
+            const startIdx = i * urlsPerScene;
+            // Last scene gets all remaining URLs
+            const endIdx = i === sceneCount - 1
+              ? infographicUrls.length
+              : Math.min(startIdx + urlsPerScene, infographicUrls.length);
+            const sceneUrls = infographicUrls.slice(startIdx, endIdx);
+            sceneInfographics = {
+              infographicUrls: sceneUrls,
+              // Keep single URL for backward compat (first image in the set)
+              infographicUrl: sceneUrls[0],
+            };
+          }
+          return {
+            ...s,
+            wordTimestamps: sceneWordTimestamps[i],
+            ...sceneInfographics,
+          };
+        }),
         cta: script.cta,
       },
       bRollUrls,
