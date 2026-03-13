@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import { groq, type PortableTextBlock } from "next-sanity";
+import { type PortableTextBlock } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import PortableText from "@/components/portable-text";
@@ -9,7 +9,6 @@ import type {
 	GuestQueryWithRelatedResult,
 } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
-import { client } from "@/sanity/lib/client";
 import { guestQuery, guestQueryWithRelated } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
@@ -21,7 +20,6 @@ import Avatar from "@/components/avatar";
 
 type Params = Promise<{ slug: string }>;
 
-export const revalidate = 3600;
 
 export async function generateMetadata(
 	{ params }: { params: Params },
@@ -48,12 +46,6 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch<string[]>(
-		groq`*[_type == "guest" && defined(slug.current)].slug.current`,
-	);
-	return slugs.map((slug) => ({ slug }));
-}
 
 export default async function GuestPage({ params }: { params: Params }) {
 	const { slug } = await params;
