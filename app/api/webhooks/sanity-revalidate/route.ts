@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
 
 		// For public content types, revalidate the sanity tag as a fallback.
 		// This only affects pages that still use Next.js cache tags (e.g., sitemap).
-		revalidateTag("sanity");
+		// Next.js 16 requires a second argument — { expire: 0 } for immediate invalidation
+		revalidateTag("sanity", { expire: 0 });
 
 		return NextResponse.json({
 			revalidated: true,
