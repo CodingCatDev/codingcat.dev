@@ -63,8 +63,12 @@ export const sceneDataSchema = z.object({
   audioUrl: z.string().url().optional(),
   // Per-scene audio duration in ms
   audioDurationMs: z.number().optional(),
-  // Infographic image URL (Gemini Imagen 4 / Sanity CDN)
+  // Infographic image URL (Gemini Imagen 4 / Sanity CDN) — legacy single URL
   infographicUrl: z.string().url().optional(),
+  // Infographic image URLs — array for multi-image cycling
+  infographicUrls: z.array(z.string().url()).optional(),
+  // Image generation prompts (metadata, not rendered)
+  imagePrompts: z.array(z.string()).optional(),
 });
 
 export const sponsorDataSchema = z.object({
@@ -170,8 +174,15 @@ export interface IsometricMockupSceneProps extends BaseSceneProps {
   screenContent: string;
 }
 
-// InfographicScene props
+// InfographicScene props (legacy single-image — kept for backward compat)
 export interface InfographicSceneProps extends BaseSceneProps {
   infographicUrl: string;
   focusRegions?: Array<{ x: number; y: number; zoom: number }>; // 0-1 normalized coordinates
+}
+
+// InfographicCycleScene props (new multi-image cycling)
+export interface InfographicCycleSceneProps extends BaseSceneProps {
+  infographicUrls: string[];
+  /** Seconds per image (default 4) */
+  secondsPerImage?: number;
 }
