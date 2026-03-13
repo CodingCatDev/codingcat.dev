@@ -32,13 +32,13 @@ export const TRANSITION_DURATION = Math.round(FPS * 0.5); // 0.5s
 
 export const COLORS = {
   /** CodingCat.dev primary purple */
-  primary: "#6D28D9",
+  primary: "#7c3aed",
   /** CodingCat.dev secondary / accent */
   secondary: "#A78BFA",
-  /** Dark background — pure black */
-  backgroundDark: "#000000",
+  /** Dark background */
+  backgroundDark: "#0F0F23",
   /** Slightly lighter dark */
-  backgroundMedium: "#0A0A0A",
+  backgroundMedium: "#1A1A2E",
   /** Text white */
   textWhite: "#FFFFFF",
   /** Text muted */
@@ -48,13 +48,13 @@ export const COLORS = {
   /** CTA green */
   ctaGreen: "#10B981",
   /** Sponsor card background */
-  sponsorBg: "rgba(109, 40, 217, 0.85)",
+  sponsorBg: "rgba(124, 58, 237, 0.85)",
   /** Overlay for text readability */
   overlay: "rgba(0, 0, 0, 0.55)",
-  /** Gradient start — black */
-  gradientStart: "#000000",
-  /** Gradient end — black */
-  gradientEnd: "#000000",
+  /** Gradient start */
+  gradientStart: "#7c3aed",
+  /** Gradient end */
+  gradientEnd: "#1A1A2E",
 } as const;
 
 // --- Font Sizes ---
@@ -118,18 +118,18 @@ export const BRAND = {
 
 // --- Code Scene Colors ---
 export const CODE_COLORS = {
-  /** Glassmorphism window background — near-black */
-  windowBg: "rgba(0, 0, 0, 0.9)",
+  /** Glassmorphism window background */
+  windowBg: "rgba(15, 15, 35, 0.85)",
   /** Window border */
   windowBorder: "rgba(167, 139, 250, 0.3)",
-  /** Window title bar — near-black */
-  titleBar: "rgba(10, 10, 10, 0.95)",
+  /** Window title bar */
+  titleBar: "rgba(30, 30, 60, 0.9)",
   /** Traffic light dots */
   dotRed: "#FF5F57",
   dotYellow: "#FEBC2E",
   dotGreen: "#28C840",
   /** Line highlight */
-  lineHighlight: "rgba(109, 40, 217, 0.25)",
+  lineHighlight: "rgba(124, 58, 237, 0.25)",
   /** Line number color */
   lineNumber: "rgba(255, 255, 255, 0.3)",
 } as const;
@@ -137,7 +137,7 @@ export const CODE_COLORS = {
 // --- List Scene Constants ---
 export const LIST_COLORS = {
   /** Active item background */
-  activeBg: "rgba(109, 40, 217, 0.3)",
+  activeBg: "rgba(124, 58, 237, 0.3)",
   /** Active item border */
   activeBorder: "#A78BFA",
   /** Inactive item opacity */
@@ -151,9 +151,9 @@ export const COMPARISON_COLORS = {
   /** Grid line color */
   gridLine: "rgba(167, 139, 250, 0.4)",
   /** Header background */
-  headerBg: "rgba(109, 40, 217, 0.5)",
+  headerBg: "rgba(124, 58, 237, 0.5)",
   /** Active row highlight */
-  activeRow: "rgba(109, 40, 217, 0.2)",
+  activeRow: "rgba(124, 58, 237, 0.2)",
   /** Left column accent */
   leftAccent: "#A78BFA",
   /** Right column accent */
