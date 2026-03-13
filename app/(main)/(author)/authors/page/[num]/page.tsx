@@ -1,11 +1,9 @@
 import MoreContent from "@/components/more-content";
 import type { DocCountResult } from "@/sanity/types";
 import { sanityFetch } from "@/sanity/lib/live";
-import { client } from "@/sanity/lib/client";
 
 import PaginateList from "@/components/paginate-list";
 import { docCount } from "@/sanity/lib/queries";
-import { groq } from "next-sanity";
 
 const LIMIT = 10;
 
