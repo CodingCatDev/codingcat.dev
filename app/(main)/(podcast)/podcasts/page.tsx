@@ -16,7 +16,6 @@ import MoreHeader from "@/components/more-header";
 
 import PodmatchBadge from "@/components/podmatch-badge";
 
-export const revalidate = 60;
 function HeroPodcast({
 	title,
 	slug,

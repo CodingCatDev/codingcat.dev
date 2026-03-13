@@ -23,8 +23,31 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Revalidate all sanity-tagged caches (the "heavy hammer" approach)
-		// This is a backup for when no visitors are active to trigger SanityLive revalidation
+		// With defineLive + <SanityLive />, content pages get real-time updates
+		// without ISR revalidation. We only keep revalidateTag("sanity") as a
+		// fallback for when no active visitors are triggering live updates.
+		//
+		// IMPORTANT: Skip pipeline/internal document types that don't have
+		// public-facing pages. These fire frequently (every cron run) and
+		// were the primary cause of ISR write exhaustion.
+		const SKIP_TYPES = new Set([
+			"automatedVideo",
+			"contentIdea",
+			"sponsorLead",
+			"pipeline_config",
+			"content_config",
+		]);
+
+		if (SKIP_TYPES.has(body._type)) {
+			return NextResponse.json({
+				skipped: true,
+				type: body._type,
+				reason: "Internal document type — no revalidation needed",
+			});
+		}
+
+		// For public content types, revalidate the sanity tag as a fallback.
+		// This only affects pages that still use Next.js cache tags (e.g., sitemap).
 		// Next.js 16 requires a second argument — { expire: 0 } for immediate invalidation
 		revalidateTag("sanity", { expire: 0 });
 

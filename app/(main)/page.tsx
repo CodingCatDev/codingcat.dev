@@ -8,7 +8,6 @@ import { homePageQuery } from "@/sanity/lib/queries";
 import Link from "next/link";
 import CoverMedia from "@/components/cover-media";
 
-export const revalidate = 60;
 
 export default async function HomePage() {
 	const [homePageFetch] = await Promise.all([
