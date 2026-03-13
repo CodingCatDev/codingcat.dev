@@ -502,7 +502,8 @@ async function createSanityDocuments(
 	const isFlagged = criticResult.score < qualityThreshold;
 	// When research is in-flight, status is "researching" (check-research cron will transition to script_ready)
 	const isResearching = !!researchInteractionId;
-	const status = isFlagged ? "flagged" : isResearching ? "researching" : "script_ready";
+	// Route through research_complete so check-research generates infographics before enrichment
+	const status = isFlagged ? "flagged" : isResearching ? "researching" : "research_complete";
 
 	const contentIdea = await writeClient.create({
 		_type: "contentIdea",
