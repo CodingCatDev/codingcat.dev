@@ -4,11 +4,15 @@ import {
   OffthreadVideo,
   interpolate,
   useCurrentFrame,
-  useVideoConfig,
 } from "remotion";
 import type { SceneProps } from "../types";
-import { ANIMATION, COLORS, FONT_SIZES } from "../constants";
+import { COLORS, FONT_SIZES } from "../constants";
 
+/**
+ * Scene — fallback scene component for Pexels b-roll backgrounds.
+ * NO text overlays — audio narration carries all words.
+ * Used only when no infographic data is available.
+ */
 export const Scene: React.FC<SceneProps> = ({
   narration,
   bRollUrl,
@@ -18,31 +22,14 @@ export const Scene: React.FC<SceneProps> = ({
   isVertical = false,
 }) => {
   const frame = useCurrentFrame();
-  const { width, height } = useVideoConfig();
   const fonts = isVertical ? FONT_SIZES.portrait : FONT_SIZES.landscape;
-
-  // --- Text animation: fade in → stay → fade out ---
-  const textOpacity = interpolate(
-    frame,
-    [0, ANIMATION.fadeIn, durationInFrames - ANIMATION.fadeOut, durationInFrames],
-    [0, 1, 1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-  );
-
-  // Subtle slide-up for text
-  const textTranslateY = interpolate(
-    frame,
-    [0, ANIMATION.fadeIn],
-    [30, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-  );
 
   // Scene transition: fade in at start
   const sceneOpacity = interpolate(
     frame,
     [0, 15],
     [0, 1],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
   // Alternating gradient directions for visual variety
@@ -58,11 +45,11 @@ export const Scene: React.FC<SceneProps> = ({
             style={{
               width: "100%",
               height: "100%",
-              objectFit: isVertical ? "cover" : "cover",
+              objectFit: "cover",
             }}
             muted
           />
-          {/* Dark overlay for text readability */}
+          {/* Dark overlay for visual depth */}
           <AbsoluteFill
             style={{
               backgroundColor: COLORS.overlay,
@@ -77,59 +64,7 @@ export const Scene: React.FC<SceneProps> = ({
         />
       )}
 
-      {/* Layer 2: Visual note (small debug/direction text, top-left) */}
-      {visualDescription && (
-        <div
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 20,
-            fontSize: 14,
-            color: "rgba(255,255,255,0.3)",
-            fontFamily: "monospace",
-            maxWidth: 300,
-          }}
-        >
-          [{visualDescription}]
-        </div>
-      )}
-
-      {/* Layer 3: Narration text overlay */}
-      <AbsoluteFill
-        style={{
-          justifyContent: isVertical ? "center" : "flex-end",
-          alignItems: "center",
-          padding: isVertical ? "60px 40px" : "80px 120px",
-        }}
-      >
-        <div
-          style={{
-            opacity: textOpacity,
-            transform: `translateY(${textTranslateY}px)`,
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            borderRadius: 16,
-            padding: isVertical ? "28px 24px" : "32px 48px",
-            maxWidth: isVertical ? "95%" : "80%",
-            backdropFilter: "blur(8px)",
-            borderLeft: `4px solid ${COLORS.primary}`,
-          }}
-        >
-          <div
-            style={{
-              fontSize: fonts.narration,
-              color: COLORS.textWhite,
-              fontFamily: "sans-serif",
-              fontWeight: 500,
-              lineHeight: 1.5,
-              textAlign: isVertical ? "center" : "left",
-            }}
-          >
-            {narration}
-          </div>
-        </div>
-      </AbsoluteFill>
-
-      {/* Layer 4: CodingCat.dev watermark */}
+      {/* Layer 2: CodingCat.dev watermark */}
       <div
         style={{
           position: "absolute",
