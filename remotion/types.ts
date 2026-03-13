@@ -3,7 +3,7 @@ import { z } from "zod";
 // --- Zod Schemas (used for Remotion input props validation) ---
 
 // Scene type discriminator — Gemini picks this per scene
-export const SCENE_TYPES = ["narration", "code", "list", "comparison", "mockup"] as const;
+export const SCENE_TYPES = ["narration", "code", "list", "comparison", "mockup", "infographic"] as const;
 export type SceneType = typeof SCENE_TYPES[number];
 
 // Word-level timestamp from ElevenLabs
@@ -63,6 +63,8 @@ export const sceneDataSchema = z.object({
   audioUrl: z.string().url().optional(),
   // Per-scene audio duration in ms
   audioDurationMs: z.number().optional(),
+  // Infographic image URL (Gemini Imagen 4 / Sanity CDN)
+  infographicUrl: z.string().url().optional(),
 });
 
 export const sponsorDataSchema = z.object({
@@ -166,4 +168,10 @@ export interface ComparisonGridSceneProps extends BaseSceneProps {
 export interface IsometricMockupSceneProps extends BaseSceneProps {
   deviceType: "browser" | "phone" | "terminal";
   screenContent: string;
+}
+
+// InfographicScene props
+export interface InfographicSceneProps extends BaseSceneProps {
+  infographicUrl: string;
+  focusRegions?: Array<{ x: number; y: number; zoom: number }>; // 0-1 normalized coordinates
 }
