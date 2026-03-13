@@ -5,7 +5,7 @@ import { type NextRequest } from 'next/server';
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
 import { pollResearch, parseResearchReport } from '@/lib/services/gemini-research';
-import { generateInfographicsForTopic } from '@/lib/services/gemini-infographics';
+import { generateInfographicsForTopic, generateFromScenePrompts } from '@/lib/services/gemini-infographics';
 import { generateWithGemini, stripCodeFences } from '@/lib/gemini';
 import { getConfigValue } from '@/lib/config';
 import type { ResearchPayload } from '@/lib/services/research';
@@ -33,6 +33,7 @@ interface PipelineDoc {
       visualDescription: string;
       bRollKeywords: string[];
       durationEstimate: number;
+      imagePrompts?: string[];
       code?: { snippet: string; language: string; highlightLines?: number[] };
       list?: { items: string[]; icon?: string };
       comparison?: {
@@ -62,6 +63,7 @@ interface EnrichedScript {
       visualDescription: string;
       bRollKeywords: string[];
       durationEstimate: number;
+      imagePrompts?: string[];
       code?: { snippet: string; language: string; highlightLines?: number[] };
       list?: { items: string[]; icon?: string };
       comparison?: {
@@ -235,46 +237,106 @@ async function stepResearchComplete(
     } catch { /* ignore */ }
   }
 
+  // Collect imagePrompts from the script scenes (if available)
+  // Collect imagePrompts from script scenes, tracking which scene each belongs to
+  const scenePromptMap: Array<{ sceneNumber: number; promptCount: number }> = [];
+  const sceneImagePrompts: string[] = [];
+  if (doc.script?.scenes) {
+    for (const scene of doc.script.scenes) {
+      if (scene.imagePrompts && Array.isArray(scene.imagePrompts)) {
+        scenePromptMap.push({ sceneNumber: scene.sceneNumber, promptCount: scene.imagePrompts.length });
+        sceneImagePrompts.push(...scene.imagePrompts);
+      }
+    }
+  }
+
   try {
-    // Generate all infographics using Imagen 4 Fast
-    const batchResult = await generateInfographicsForTopic(doc.title, briefing);
-
-    console.log(`[check-research] Generated ${batchResult.results.length} infographics, ${batchResult.errors.length} failed`);
-
-    // Upload each generated image to Sanity
-    const infographicRefs: Array<{
-      _type: 'image';
-      _key: string;
-      alt?: string;
+    let horizontalRefs: Array<{
+      _type: 'image'; _key: string; alt?: string;
       asset: { _type: 'reference'; _ref: string };
     }> = [];
-    const infographicUrls: string[] = [];
+    let verticalRefs: Array<{
+      _type: 'image'; _key: string; alt?: string;
+      asset: { _type: 'reference'; _ref: string };
+    }> = [];
+    let infographicUrls: string[] = [];
+    let verticalUrls: string[] = [];
 
-    for (let i = 0; i < batchResult.results.length; i++) {
-      const imgResult = batchResult.results[i];
-      try {
-        const buffer = Buffer.from(imgResult.imageBase64, 'base64');
-        const filename = `infographic-${doc._id}-${i}.png`;
+    if (sceneImagePrompts.length > 0) {
+      // NEW PATH: Generate from per-scene prompts in both orientations
+      console.log(`[check-research] Generating ${sceneImagePrompts.length} scene-specific infographics \u00d7 2 orientations`);
+      const dualResult = await generateFromScenePrompts(sceneImagePrompts, doc.title);
 
-        const asset = await writeClient.assets.upload('image', buffer, {
-          filename,
-          contentType: imgResult.mimeType,
-        });
+      // Upload horizontal images to Sanity
+      for (let i = 0; i < dualResult.horizontal.length; i++) {
+        const imgResult = dualResult.horizontal[i];
+        try {
+          const buffer = Buffer.from(imgResult.imageBase64, 'base64');
+          const filename = `infographic-h-${doc._id}-${i}.png`;
+          const asset = await writeClient.assets.upload('image', buffer, {
+            filename, contentType: imgResult.mimeType,
+          });
+          horizontalRefs.push({
+            _type: 'image', _key: `h-${i}`,
+            alt: `Infographic ${i + 1} for ${doc.title}`,
+            asset: { _type: 'reference', _ref: asset._id },
+          });
+          const cdnUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${asset._id.replace('image-', '').replace('-png', '.png').replace('-jpg', '.jpg')}`;
+          infographicUrls.push(cdnUrl);
+        } catch (err) {
+          console.warn(`[check-research] Failed to upload horizontal infographic ${i}:`, err instanceof Error ? err.message : err);
+        }
+      }
 
-        console.log(`[check-research] Uploaded infographic ${i + 1}: ${asset._id}`);
+      // Upload vertical images to Sanity
+      for (let i = 0; i < dualResult.vertical.length; i++) {
+        const imgResult = dualResult.vertical[i];
+        try {
+          const buffer = Buffer.from(imgResult.imageBase64, 'base64');
+          const filename = `infographic-v-${doc._id}-${i}.png`;
+          const asset = await writeClient.assets.upload('image', buffer, {
+            filename, contentType: imgResult.mimeType,
+          });
+          verticalRefs.push({
+            _type: 'image', _key: `v-${i}`,
+            alt: `Infographic vertical ${i + 1} for ${doc.title}`,
+            asset: { _type: 'reference', _ref: asset._id },
+          });
+          const cdnUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${asset._id.replace('image-', '').replace('-png', '.png').replace('-jpg', '.jpg')}`;
+          verticalUrls.push(cdnUrl);
+        } catch (err) {
+          console.warn(`[check-research] Failed to upload vertical infographic ${i}:`, err instanceof Error ? err.message : err);
+        }
+      }
 
-        infographicRefs.push({
-          _type: 'image',
-          _key: `infographic-${i}`,
-          alt: `Research infographic ${i + 1} for ${doc.title}`,
-          asset: { _type: 'reference', _ref: asset._id },
-        });
+      if (dualResult.errors.length > 0) {
+        console.warn(`[check-research] ${dualResult.errors.length} infographic generation errors`);
+      }
+    } else {
+      // FALLBACK: Use topic-level generation (existing behavior)
+      console.log(`[check-research] No scene imagePrompts \u2014 falling back to topic-level generation`);
+      const batchResult = await generateInfographicsForTopic(doc.title, briefing);
 
-        // Build CDN URL for backward compat
-        const cdnUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${asset._id.replace('image-', '').replace('-png', '.png').replace('-jpg', '.jpg')}`;
-        infographicUrls.push(cdnUrl);
-      } catch (err) {
-        console.warn(`[check-research] Failed to upload infographic ${i}:`, err instanceof Error ? err.message : err);
+      console.log(`[check-research] Generated ${batchResult.results.length} infographics, ${batchResult.errors.length} failed`);
+
+      for (let i = 0; i < batchResult.results.length; i++) {
+        const imgResult = batchResult.results[i];
+        try {
+          const buffer = Buffer.from(imgResult.imageBase64, 'base64');
+          const filename = `infographic-${doc._id}-${i}.png`;
+          const asset = await writeClient.assets.upload('image', buffer, {
+            filename, contentType: imgResult.mimeType,
+          });
+          horizontalRefs.push({
+            _type: 'image', _key: `infographic-${i}`,
+            alt: `Research infographic ${i + 1} for ${doc.title}`,
+            asset: { _type: 'reference', _ref: asset._id },
+          });
+          const cdnUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${asset._id.replace('image-', '').replace('-png', '.png').replace('-jpg', '.jpg')}`;
+          infographicUrls.push(cdnUrl);
+        } catch (err) {
+          console.warn(`[check-research] Failed to upload infographic ${i}:`, err instanceof Error ? err.message : err);
+        }
       }
     }
 
@@ -284,21 +346,45 @@ async function stepResearchComplete(
       try { researchData = JSON.parse(doc.researchData); } catch { /* ignore */ }
     }
     researchData.infographicUrls = infographicUrls;
+    if (verticalUrls.length > 0) {
+      researchData.infographicVerticalUrls = verticalUrls;
+    }
 
     const patchData: Record<string, unknown> = {
       status: 'enriching',
       researchData: JSON.stringify(researchData),
     };
-    if (infographicRefs.length > 0) {
-      patchData.infographics = infographicRefs;
+    if (horizontalRefs.length > 0) {
+      patchData.infographicsHorizontal = horizontalRefs;
+    }
+    if (verticalRefs.length > 0) {
+      patchData.infographicsVertical = verticalRefs;
+    }
+    // Keep backward compat with old infographics field
+    if (horizontalRefs.length > 0) {
+      patchData.infographics = horizontalRefs;
+    }
+
+    // Distribute infographic URLs back to scene-level for Remotion mapInputProps()
+    if (doc.script?.scenes && infographicUrls.length > 0) {
+      let urlIndex = 0;
+      const updatedScenes = doc.script.scenes.map((scene) => {
+        const mapping = scenePromptMap.find(m => m.sceneNumber === scene.sceneNumber);
+        if (mapping && mapping.promptCount > 0) {
+          const sceneUrls = infographicUrls.slice(urlIndex, urlIndex + mapping.promptCount);
+          urlIndex += mapping.promptCount;
+          return { ...scene, infographicUrls: sceneUrls };
+        }
+        return scene;
+      });
+      patchData['script'] = { ...doc.script, scenes: updatedScenes };
     }
 
     await sanity.patch(doc._id).set(patchData).commit();
 
-    console.log(`[check-research] "${doc.title}" → enriching (${infographicRefs.length} infographics)`);
+    console.log(`[check-research] "${doc.title}" \u2192 enriching (${horizontalRefs.length}H + ${verticalRefs.length}V infographics)`);
     return { id: doc._id, title: doc.title, step: 'research_complete', outcome: 'enriching' };
   } catch (err) {
-    // Infographic generation failed — skip to enriching without infographics
     console.error(`[check-research] Infographic generation failed for "${doc.title}":`, err);
     await sanity.patch(doc._id).set({ status: 'enriching' }).commit();
     return { id: doc._id, title: doc.title, step: 'research_complete', outcome: 'enriching_no_infographics', error: err instanceof Error ? err.message : String(err) };
@@ -514,7 +600,8 @@ Return ONLY a JSON object:
         "code": { "snippet": "string", "language": "string", "highlightLines": [1, 3] },
         "list": { "items": ["Item 1", "Item 2"], "icon": "🚀" },
         "comparison": { "leftLabel": "A", "rightLabel": "B", "rows": [{ "left": "...", "right": "..." }] },
-        "mockup": { "deviceType": "browser | phone | terminal", "screenContent": "..." }
+        "mockup": { "deviceType": "browser | phone | terminal", "screenContent": "..." },
+        "imagePrompts": ["Infographic 2D architecture style, black background. [specific visual for this scene]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."]
       }
     ],
     "cta": "string - call to action"
@@ -525,6 +612,10 @@ Return ONLY a JSON object:
 Requirements:
 - 3-5 scenes totaling 60-90 seconds
 - Use at least 2 different scene types
+- Each scene MUST include 2-5 imagePrompts following this exact template: "Infographic 2D architecture style, black background. [specific visual]. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations."
+- imagePrompts should describe specific 2D infographic visuals that illustrate the narration content
+- Do NOT include any script text, titles, or word overlays in the video. The narration audio carries all words.
+- Think of each imagePrompt as a frame that will be shown for 3-5 seconds while the narration plays
 - Include REAL code snippets from the research where applicable
 - The qualityScore should be your honest self-assessment (0-100)
 - Return ONLY the JSON object, no markdown or extra text`;

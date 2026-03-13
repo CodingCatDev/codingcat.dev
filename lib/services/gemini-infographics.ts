@@ -43,6 +43,13 @@ export interface InfographicRequest {
   negativePrompt?: string;
 }
 
+/** Result for dual-orientation generation */
+export interface DualOrientationResult {
+  horizontal: InfographicResult[];
+  vertical: InfographicResult[];
+  errors: Array<{ prompt: string; error: string }>;
+}
+
 /** Options for batch infographic generation. */
 export interface InfographicBatchOptions {
   /** Override the Imagen model (defaults to pipeline_config.infographicModel or "imagen-4-fast"). */
@@ -205,11 +212,11 @@ export function buildInfographicPrompt(
 
 /** Default infographic instructions if Sanity contentConfig is not set up */
 const DEFAULT_INSTRUCTIONS: string[] = [
-  'Create a technical architecture sketch using white "hand-drawn" ink lines on a deep navy blue background (#003366). Use rough-sketched server and database icons with visible "marker" strokes, handwritten labels in a casual font, and a subtle grid pattern. Style: blueprint meets whiteboard doodle.',
-  'Create a comparison chart on a vibrant blue background (#004080) with hand-inked white headers and uneven, sketchy borders. Use white cross-hatching and doodle-style checkmarks to highlight feature differences. Include hand-drawn arrows and annotations. Style: technical chalkboard.',
-  'Create a step-by-step workflow "blueprint" on a dark blue canvas (#003366). Use hand-drawn white arrows connecting rough-sketched boxes, simple "stick-figure" style worker avatars, and handwritten-style labels with a slight chalk texture. Add a subtle grid background. Style: engineering whiteboard.',
-  'Create a hand-sketched timeline using a jagged white line on a royal blue background. Represent milestones with simple, iconic white doodles that look like they were quickly sketched during a brainstorming session. Use handwritten dates and labels. Style: notebook sketch on blue paper.',
-  'Create a pros and cons summary with a "lo-fi" aesthetic. Use hand-drawn white thumbs-up/down icons and rough-sketched containers on a deep blue background (#003366). Add hand-drawn underlines and circled keywords. Style: high-contrast ink-on-blueprint with cyan accent highlights.',
+  'Infographic 2D architecture style, black background. A high-level technical architecture overview showing system components and data flow. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
+  'Infographic 2D architecture style, black background. A comparison chart showing key features and alternatives side by side. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
+  'Infographic 2D architecture style, black background. A step-by-step workflow diagram showing the process from start to finish. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
+  'Infographic 2D architecture style, black background. A timeline of key developments, milestones, and version releases. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
+  'Infographic 2D architecture style, black background. A pros and cons visual summary with clear icons and labels. Highlighted elements filled with #15b27b. White lines connecting components and white text annotations.',
 ];
 
 // ---------------------------------------------------------------------------
@@ -280,4 +287,72 @@ export async function generateInfographicsForTopic(
   );
 
   return result;
+}
+
+// ---------------------------------------------------------------------------
+// Dual-orientation generation from per-scene prompts
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate infographics from per-scene image prompts in both orientations.
+ * This is the new main entry point for the check-research cron.
+ *
+ * @param prompts - Array of image prompt strings from the enriched script
+ * @param topic - Topic name for seed generation
+ * @returns DualOrientationResult with horizontal (16:9) and vertical (9:16) images
+ */
+export async function generateFromScenePrompts(
+  prompts: string[],
+  topic: string,
+): Promise<DualOrientationResult> {
+  const model = await getConfigValue(
+    "pipeline_config", "infographicModel", "imagen-4-fast"
+  );
+
+  const horizontal: InfographicResult[] = [];
+  const vertical: InfographicResult[] = [];
+  const errors: Array<{ prompt: string; error: string }> = [];
+
+  console.log(`[infographics] Generating ${prompts.length} prompts \u00d7 2 orientations (${prompts.length * 2} total) for "${topic}"`);
+
+  for (let i = 0; i < prompts.length; i++) {
+    const prompt = prompts[i];
+    const seed = generateSeed(topic, i);
+
+    // Generate horizontal (16:9)
+    try {
+      const hResult = await generateInfographic(
+        { prompt, aspectRatio: "16:9", seed },
+        model,
+      );
+      horizontal.push(hResult);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      errors.push({ prompt: `[16:9] ${prompt}`, error: message });
+    }
+
+    // Generate vertical (9:16)
+    try {
+      const vResult = await generateInfographic(
+        { prompt, aspectRatio: "9:16", seed },
+        model,
+      );
+      vertical.push(vResult);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      errors.push({ prompt: `[9:16] ${prompt}`, error: message });
+    }
+
+    // Rate limit: pause every 5 images to avoid Imagen API throttling
+    if (i > 0 && i % 5 === 0) {
+      console.log(`[infographics] Progress: ${i}/${prompts.length} prompts processed, pausing for rate limit...`);
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+
+  console.log(
+    `[infographics] Complete: ${horizontal.length} horizontal, ${vertical.length} vertical, ${errors.length} errors`
+  );
+
+  return { horizontal, vertical, errors };
 }
