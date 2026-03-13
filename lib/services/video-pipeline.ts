@@ -11,6 +11,7 @@
 
 import { createClient, type SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/api';
+import imageUrlBuilder from '@sanity/image-url';
 import { generateSpeechFromScript } from '@/lib/services/elevenlabs';
 import { generatePerSceneAudio } from '@/lib/services/elevenlabs';
 import type { WordTimestamp } from '@/lib/utils/audio-timestamps';
@@ -50,12 +51,73 @@ interface AutomatedVideoDocument {
   videoUrl?: string;
   shortUrl?: string;
   flaggedReason?: string;
+  infographics?: Array<{
+    asset: { _ref: string; _type: string };
+    alt?: string;
+    caption?: string;
+  }>;
+  researchData?: string; // JSON string
 }
 
 interface SponsorLeadDocument {
   _id: string;
   companyName: string;
   contactName?: string;
+}
+
+// --- Infographic URL Extraction ---
+
+/**
+ * Extract infographic CDN URLs from the Sanity document.
+ *
+ * Priority:
+ * 1. `doc.infographics[]` — Sanity image assets resolved via @sanity/image-url
+ * 2. `doc.researchData` — JSON string with `infographicUrls: string[]` (backward compat)
+ *
+ * Never throws — returns empty array on failure so the pipeline continues
+ * with Pexels B-roll fallback.
+ */
+function getInfographicUrls(doc: AutomatedVideoDocument): string[] {
+  try {
+    // Primary: resolve Sanity image assets to CDN URLs
+    if (doc.infographics?.length) {
+      const builder = imageUrlBuilder({ projectId, dataset });
+      const urls = doc.infographics
+        .map((img) => {
+          try {
+            return builder.image(img.asset).url();
+          } catch {
+            return null;
+          }
+        })
+        .filter((url): url is string => !!url);
+
+      if (urls.length > 0) {
+        console.log(`[VIDEO-PIPELINE] Resolved ${urls.length} infographic URL(s) from Sanity image assets`);
+        return urls;
+      }
+    }
+
+    // Fallback: parse researchData JSON for infographicUrls
+    if (doc.researchData) {
+      const parsed = JSON.parse(doc.researchData);
+      if (Array.isArray(parsed?.infographicUrls) && parsed.infographicUrls.length > 0) {
+        const urls = parsed.infographicUrls.filter(
+          (u: unknown): u is string => typeof u === 'string' && u.length > 0
+        );
+        if (urls.length > 0) {
+          console.log(`[VIDEO-PIPELINE] Resolved ${urls.length} infographic URL(s) from researchData fallback`);
+          return urls;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(
+      `[VIDEO-PIPELINE] Failed to extract infographic URLs (non-fatal): ${err instanceof Error ? err.message : String(err)}`
+    );
+  }
+
+  return [];
 }
 
 // --- Sanity Write Client ---
@@ -131,6 +193,12 @@ export async function processVideoProduction(documentId: string): Promise<void> 
     console.log(
       `[VIDEO-PIPELINE] Script validated: ${script.scenes.length} scenes, hook="${script.hook.substring(0, 50)}..."`
     );
+
+    // Step 2.5: Extract infographic URLs from Sanity doc
+    const infographicUrls = getInfographicUrls(doc);
+    if (infographicUrls.length > 0) {
+      console.log(`[VIDEO-PIPELINE] ${infographicUrls.length} infographic URL(s) will be distributed across scenes`);
+    }
 
     // Step 3: Update status to audio_gen
     console.log(`[VIDEO-PIPELINE] Updating status to "audio_gen"`);
@@ -243,6 +311,9 @@ export async function processVideoProduction(documentId: string): Promise<void> 
         scenes: script.scenes.map((s, i) => ({
           ...s,
           wordTimestamps: sceneWordTimestamps[i],
+          ...(infographicUrls.length > 0
+            ? { infographicUrl: infographicUrls[i % infographicUrls.length] }
+            : {}),
         })),
         cta: script.cta,
       },

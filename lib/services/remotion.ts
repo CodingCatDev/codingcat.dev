@@ -48,6 +48,7 @@ export interface RenderInput {
       bRollKeywords?: string[];
       sceneNumber?: number;
       durationEstimate?: number;
+      infographicUrl?: string;
     }>;
     cta: string;
   };
@@ -117,6 +118,7 @@ function mapInputProps(input: RenderInput): Record<string, unknown> {
       sceneNumber: s.sceneNumber,
       durationEstimate: s.durationEstimate,
       bRollUrl: input.bRollUrls[i],
+      ...(s.infographicUrl ? { infographicUrl: s.infographicUrl } : {}),
     })),
     cta: input.script.cta,
     sponsor: input.sponsor,
