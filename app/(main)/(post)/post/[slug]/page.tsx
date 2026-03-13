@@ -49,12 +49,6 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch<string[]>(
-		groq`*[_type == "post" && defined(slug.current)].slug.current`,
-	);
-	return slugs.map((slug) => ({ slug }));
-}
 
 export default async function PostPage({ params }: { params: Params }) {
 	const { slug } = await params;

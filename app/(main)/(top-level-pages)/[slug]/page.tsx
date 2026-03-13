@@ -40,12 +40,6 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch<string[]>(
-		groq`*[_type == "page" && defined(slug.current)].slug.current`,
-	);
-	return slugs.map((slug) => ({ slug }));
-}
 
 export default async function PagePage({ params, searchParams }: Props) {
 	const { slug } = await params;

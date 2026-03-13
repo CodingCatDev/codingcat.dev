@@ -38,12 +38,6 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export async function generateStaticParams() {
-	const slugs = await client.fetch<string[]>(
-		groq`*[_type == "podcast" && defined(slug.current)].slug.current`,
-	);
-	return slugs.map((slug) => ({ slug }));
-}
 
 export default async function PodcastPage({ params }: { params: Params }) {
 	const { slug } = await params;

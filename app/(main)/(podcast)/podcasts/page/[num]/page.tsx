@@ -10,14 +10,6 @@ const LIMIT = 10;
 type Params = Promise<{ num: string }>;
 
 
-export async function generateStaticParams() {
-	const count = await client.fetch<number>(
-		groq`count(*[_type == "podcast" && defined(slug.current)])`,
-	);
-	const perPage = LIMIT;
-	const pages = Math.ceil(count / perPage);
-	return Array.from({ length: pages }, (_, i) => ({ num: String(i + 1) }));
-}
 
 export default async function Page({ params }: { params: Params }) {
 	const [count] = (
