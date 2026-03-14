@@ -7,6 +7,9 @@ import {
 	FileVideo,
 	Handshake,
 	Settings,
+	ClipboardCheck,
+	Activity,
+	Cog,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -30,6 +33,16 @@ const navItems = [
 		icon: LayoutDashboard,
 	},
 	{
+		title: "Review Queue",
+		url: "/dashboard/review",
+		icon: ClipboardCheck,
+	},
+	{
+		title: "Pipeline",
+		url: "/dashboard/pipeline",
+		icon: Activity,
+	},
+	{
 		title: "Content",
 		url: "/dashboard/content",
 		icon: Lightbulb,
@@ -43,6 +56,11 @@ const navItems = [
 		title: "Sponsors",
 		url: "/dashboard/sponsors",
 		icon: Handshake,
+	},
+	{
+		title: "Config",
+		url: "/dashboard/config",
+		icon: Cog,
 	},
 	{
 		title: "Settings",
