@@ -56,7 +56,21 @@ export function invalidateEngineConfig() {
   cache = null;
 }
 
-// Backward compatibility — maps old table names to engineConfig fields
-// This lets existing code using getConfig('pipeline_config') still work
-// during migration. Remove after all callers are updated.
-export { getEngineConfig as getConfig };
+// Backward compatibility wrapper — old code calls getConfig('pipeline_config').
+// Ignores the table name and returns the unified engineConfig.
+// Remove after all callers are migrated to getEngineConfig() (Task 1F).
+export async function getConfig(_tableName?: string): Promise<EngineConfig> {
+  return getEngineConfig();
+}
+
+// Backward compatibility wrapper — old code calls getConfigValue('pipeline_config', 'geminiModel').
+// Ignores the table name and reads from the unified engineConfig.
+// Remove after all callers are migrated (Task 1F).
+export async function getConfigValue<K extends keyof EngineConfig>(
+  _tableName: string,
+  key: K,
+  fallback?: EngineConfig[K],
+): Promise<EngineConfig[K]> {
+  const config = await getEngineConfig();
+  return getEngineConfigValue(config, key, fallback);
+}

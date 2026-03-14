@@ -248,6 +248,15 @@ export default defineType({
           { title: '11 - Published', value: 'published' },
           { title: 'Rejected', value: 'rejected' },
           { title: 'Archived', value: 'archived' },
+          // Legacy v1 statuses — kept for existing documents. Remove in Task 1F.
+          { title: 'Legacy: Script Ready', value: 'script_ready' },
+          { title: 'Legacy: Audio Gen', value: 'audio_gen' },
+          { title: 'Legacy: Video Gen', value: 'video_gen' },
+          { title: 'Legacy: Rendering', value: 'rendering' },
+          { title: 'Legacy: Uploading', value: 'uploading' },
+          { title: 'Legacy: Flagged', value: 'flagged' },
+          { title: 'Legacy: Infographics Generating', value: 'infographics_generating' },
+          { title: 'Legacy: Enriching', value: 'enriching' },
         ],
       },
       initialValue: 'draft',
@@ -445,7 +454,7 @@ export default defineType({
     defineField({
       name: 'audioUrl',
       title: 'Audio URL',
-      type: 'string',
+      type: 'string', // string not url — R2/CDN paths may include query params that Sanity url validator rejects
       description: 'Direct URL to the audio file (auto-populated from audio asset)',
     }),
     defineField({
@@ -460,7 +469,7 @@ export default defineType({
     defineField({
       name: 'videoUrl',
       title: 'Video URL',
-      type: 'string',
+      type: 'string', // string not url — R2/CDN paths may include query params
       description: 'Direct URL to the main video (auto-populated from video asset)',
     }),
     defineField({
@@ -475,7 +484,7 @@ export default defineType({
     defineField({
       name: 'shortUrl',
       title: 'Short URL',
-      type: 'string',
+      type: 'string', // string not url — R2/CDN paths may include query params
       description: 'Direct URL to the short video (auto-populated from video asset)',
     }),
     defineField({
