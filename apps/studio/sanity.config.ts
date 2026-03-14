@@ -199,8 +199,8 @@ export default defineConfig({
       },
       previewUrl: {
         previewMode: {
-          enable: "/api/draft-mode/enable",
-          disable: "/api/draft-mode/disable",
+          enable: `${process.env.SANITY_STUDIO_PREVIEW_URL || "http://localhost:3000"}/api/draft-mode/enable`,
+          disable: `${process.env.SANITY_STUDIO_PREVIEW_URL || "http://localhost:3000"}/api/draft-mode/disable`,
         },
       },
     }),
