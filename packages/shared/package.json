@@ -1,0 +1,13 @@
+{
+	"name": "@codingcatdev/shared",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./sanity/schemas/*": "./sanity/schemas/*.ts",
+		"./sanity/lib/*": "./sanity/lib/*.ts"
+	},
+	"devDependencies": {
+		"typescript": "^5"
+	}
+}
