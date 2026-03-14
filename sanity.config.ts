@@ -41,18 +41,13 @@ import podcast from "@/sanity/schemas/documents/podcast";
 import podcastType from "@/sanity/schemas/documents/podcastType";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
-import dashboardSettings from "@/sanity/schemas/singletons/dashboardSettings";
-import pipelineConfig from "@/sanity/schemas/singletons/pipelineConfig";
-import remotionConfig from "@/sanity/schemas/singletons/remotionConfig";
-import contentConfig from "@/sanity/schemas/singletons/contentConfig";
-import sponsorConfig from "@/sanity/schemas/singletons/sponsorConfig";
-import distributionConfig from "@/sanity/schemas/singletons/distributionConfig";
-import gcsConfig from "@/sanity/schemas/singletons/gcsConfig";
+import engineConfig from "@/sanity/schemas/singletons/engineConfig";
 import sponsor from "@/sanity/schemas/documents/sponsor";
 
 import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import contentIdea from "@/sanity/schemas/documents/contentIdea";
 import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
+import mediaAsset from "@/sanity/schemas/documents/mediaAsset";
 import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
 import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
 import tableSchema, { rowType } from "@/sanity/schemas/custom/table";
@@ -143,13 +138,7 @@ export default defineConfig({
       rowType,
       // Singletons
       settings,
-      dashboardSettings,
-      pipelineConfig,
-      remotionConfig,
-      contentConfig,
-      sponsorConfig,
-      distributionConfig,
-      gcsConfig,
+      engineConfig,
       // Documents
       author,
       guest,
@@ -162,6 +151,7 @@ export default defineConfig({
       sponsorshipRequest,
       contentIdea,
       automatedVideo,
+      mediaAsset,
       sponsorLead,
       sponsorPool,
     ],
@@ -218,13 +208,7 @@ export default defineConfig({
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([
       settings.name,
-      dashboardSettings.name,
-      pipelineConfig.name,
-      remotionConfig.name,
-      contentConfig.name,
-      sponsorConfig.name,
-      distributionConfig.name,
-      gcsConfig.name,
+      engineConfig.name,
     ]),
     // Sets up AI Assist with preset prompts
     // https://www.sanity.io/docs/ai-assistPcli
