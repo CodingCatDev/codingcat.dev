@@ -32,7 +32,7 @@ function QualityBadge({ score }: { score: number | null }) {
 
 export default async function ReviewQueuePage() {
   const videos = await dashboardQuery<ReviewVideo[]>(
-    `*[_type == "automatedVideo" && status == "pending_review"] | order(_updatedAt desc) {
+    `*[_type == "automatedVideo" && status == "pending_review"] | order(_updatedAt desc) [0..49] {
       _id, title, qualityScore, qualityIssues, status, _updatedAt,
       "thumbnailUrl": thumbnailHorizontal.asset->url,
       scriptQualityScore
