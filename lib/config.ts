@@ -1,118 +1,76 @@
 import { writeClient } from "@/lib/sanity-write-client";
-import type { ConfigTable, ConfigTypeMap } from "@/lib/types/config";
+import type { EngineConfig } from "@/lib/types/engine-config";
 
-/**
- * Sanity config module with in-memory caching.
- *
- * Each config "table" maps to a Sanity singleton document type.
- * Uses writeClient.fetch for server-side reads.
- *
- * Caching: 5-minute TTL with stale-while-revalidate.
- * Sanity changes propagate on next cache miss.
- */
+const DEFAULT_TTL_MS = 5 * 60 * 1000;
 
-const DEFAULT_TTL_MS = 5 * 60 * 1000; // 5 minutes
-
-interface CacheEntry<T> {
-  data: T;
+interface CacheEntry {
+  data: EngineConfig;
   fetchedAt: number;
   refreshing: boolean;
 }
 
-const cache = new Map<string, CacheEntry<unknown>>();
+let cache: CacheEntry | null = null;
 
-// Map config table names to Sanity document type names
-const TABLE_TO_TYPE: Record<ConfigTable, string> = {
-  pipeline_config: "pipelineConfig",
-  remotion_config: "remotionConfig",
-  content_config: "contentConfig",
-  sponsor_config: "sponsorConfig",
-  distribution_config: "distributionConfig",
-  gcs_config: "gcsConfig",
-};
-
-async function refreshConfig<T extends ConfigTable>(
-  table: T,
-): Promise<ConfigTypeMap[T]> {
-  const sanityType = TABLE_TO_TYPE[table];
-  const data = await writeClient.fetch(
-    `*[_type == $type][0]`,
-    { type: sanityType } as Record<string, unknown>,
+async function refreshConfig(): Promise<EngineConfig> {
+  const data = await writeClient.fetch<EngineConfig>(
+    `*[_type == "engineConfig"][0]`
   );
-
   if (!data) {
-    throw new Error(`Config not found for ${sanityType} — create the singleton document in Sanity Studio`);
+    throw new Error(
+      "engineConfig singleton not found — create it in Sanity Studio"
+    );
   }
-
-  cache.set(table, {
-    data,
-    fetchedAt: Date.now(),
-    refreshing: false,
-  });
-
-  return data as ConfigTypeMap[T];
+  cache = { data, fetchedAt: Date.now(), refreshing: false };
+  return data;
 }
 
-export async function getConfig<T extends ConfigTable>(
-  table: T,
-  ttlMs = DEFAULT_TTL_MS,
-): Promise<ConfigTypeMap[T]> {
-  const cached = cache.get(table) as CacheEntry<ConfigTypeMap[T]> | undefined;
+export async function getEngineConfig(
+  ttlMs = DEFAULT_TTL_MS
+): Promise<EngineConfig> {
   const now = Date.now();
-
-  // Fresh cache — return immediately
-  if (cached && now - cached.fetchedAt < ttlMs) {
-    return cached.data;
-  }
-
-  // Stale cache — return stale, refresh in background
-  if (cached && !cached.refreshing) {
-    cached.refreshing = true;
-    refreshConfig(table).catch((err) => {
-      console.error(`[config] Background refresh failed for ${table}:`, err);
-      const entry = cache.get(table) as CacheEntry<unknown> | undefined;
-      if (entry) entry.refreshing = false;
+  if (cache && now - cache.fetchedAt < ttlMs) return cache.data;
+  if (cache && !cache.refreshing) {
+    cache.refreshing = true;
+    refreshConfig().catch((err) => {
+      console.error("[config] Background refresh failed:", err);
+      if (cache) cache.refreshing = false;
     });
-    return cached.data;
+    return cache.data;
   }
-
-  // No cache — must fetch synchronously
-  return refreshConfig(table);
+  return refreshConfig();
 }
 
-/**
- * Get a single config value with optional env var fallback.
- * Useful during migration period.
- */
-export async function getConfigValue<
-  T extends ConfigTable,
-  K extends keyof ConfigTypeMap[T],
->(
-  table: T,
+export function getEngineConfigValue<K extends keyof EngineConfig>(
+  config: EngineConfig,
   key: K,
-  fallback?: ConfigTypeMap[T][K],
-): Promise<ConfigTypeMap[T][K]> {
-  try {
-    const config = await getConfig(table);
-    const value = config[key];
-    // Use fallback when field is undefined/null (not yet set in Sanity)
-    if (value === undefined || value === null) {
-      if (fallback !== undefined) return fallback;
-    }
-    return value;
-  } catch {
+  fallback?: EngineConfig[K]
+): EngineConfig[K] {
+  const value = config[key];
+  if (value === undefined || value === null) {
     if (fallback !== undefined) return fallback;
-    throw new Error(`Config value ${String(key)} not found in ${table}`);
   }
+  return value;
 }
 
-/**
- * Force-clear cached config. Called when config is known to have changed.
- */
-export function invalidateConfig(table?: ConfigTable) {
-  if (table) {
-    cache.delete(table);
-  } else {
-    cache.clear();
-  }
+export function invalidateEngineConfig() {
+  cache = null;
+}
+
+// Backward compatibility wrapper — old code calls getConfig('pipeline_config').
+// Ignores the table name and returns the unified engineConfig.
+// Remove after all callers are migrated to getEngineConfig() (Task 1F).
+export async function getConfig(_tableName?: string): Promise<EngineConfig> {
+  return getEngineConfig();
+}
+
+// Backward compatibility wrapper — old code calls getConfigValue('pipeline_config', 'geminiModel').
+// Ignores the table name and reads from the unified engineConfig.
+// Remove after all callers are migrated (Task 1F).
+export async function getConfigValue<K extends keyof EngineConfig>(
+  _tableName: string,
+  key: K,
+  fallback?: EngineConfig[K],
+): Promise<EngineConfig[K]> {
+  const config = await getEngineConfig();
+  return getEngineConfigValue(config, key, fallback);
 }
