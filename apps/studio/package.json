@@ -2,6 +2,7 @@
 	"name": "@codingcatdev/studio",
 	"version": "0.0.0",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"dev": "sanity dev",
 		"build": "sanity build",
@@ -13,6 +14,10 @@
 		"@sanity/assist": "^5.0.4",
 		"@sanity/code-input": "^7.0.8",
 		"@sanity/icons": "^3.7.4",
+		"@sanity/image-url": "^2.0.3",
+		"@sanity/preview-url-secret": "^4.0.3",
+		"@sanity/studio-secrets": "^4.0.1",
+		"@sanity/table": "^2.0.1",
 		"@sanity/ui": "^3.1.13",
 		"@sanity/vision": "^5.12.0",
 		"react": "^19.2.4",

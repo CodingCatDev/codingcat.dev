@@ -4,8 +4,15 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		"./sanity/schemas/*": "./sanity/schemas/*.ts",
-		"./sanity/lib/*": "./sanity/lib/*.ts"
+		"./sanity/schemas/*": {
+			"default": "./sanity/schemas/*.ts"
+		},
+		"./sanity/schemas/singletons/settings": {
+			"default": "./sanity/schemas/singletons/settings.tsx"
+		},
+		"./sanity/lib/*": {
+			"default": "./sanity/lib/*.ts"
+		}
 	},
 	"devDependencies": {
 		"typescript": "^5"
