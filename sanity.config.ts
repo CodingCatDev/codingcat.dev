@@ -48,6 +48,7 @@ import sponsorshipRequest from "@/sanity/schemas/documents/sponsorshipRequest";
 import contentIdea from "@/sanity/schemas/documents/contentIdea";
 import automatedVideo from "@/sanity/schemas/documents/automatedVideo";
 import mediaAsset from "@/sanity/schemas/documents/mediaAsset";
+import videoAnalytics from "@/sanity/schemas/documents/videoAnalytics";
 import sponsorLead from "@/sanity/schemas/documents/sponsorLead";
 import sponsorPool from "@/sanity/schemas/documents/sponsorPool";
 import tableSchema, { rowType } from "@/sanity/schemas/custom/table";
@@ -152,6 +153,7 @@ export default defineConfig({
       contentIdea,
       automatedVideo,
       mediaAsset,
+      videoAnalytics,
       sponsorLead,
       sponsorPool,
     ],
