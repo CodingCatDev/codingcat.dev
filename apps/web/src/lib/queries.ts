@@ -7,7 +7,9 @@ const baseFields = `
   "slug": slug.current,
   excerpt,
   coverImage,
-  "date": coalesce(date, _createdAt)
+  "date": coalesce(date, _createdAt),
+  "authorName": author[0]->title,
+  "authorImage": author[0]->coverImage
 `;
 
 const contentFields = `
@@ -57,12 +59,20 @@ const podcastFields = `
     name,
     site
   },
-  spotify
+  spotify,
+  chapters[]{
+    title,
+    timestamp,
+    seconds
+  },
+  "series": series->{ _id, "title": coalesce(title, "Unknown Series"), "slug": slug.current, description },
+  listenLinks
 `;
 
 export const homePageQuery = groq`*[_type == "settings"][0]{
   "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{
     ${baseFields},
+    excerpt,
     youtube,
   },
   "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{
@@ -84,18 +94,25 @@ export const postListQuery = groq`*[_type == "post" && defined(slug.current)] | 
   author[]->{
     "title": coalesce(title, "Anonymous"),
     "slug": slug.current,
-  }
+  },
+  categories[]->{ _id, "title": coalesce(title, "Uncategorized"), "slug": slug.current }
 }`;
 
 export const postQuery = groq`*[_type == "post" && slug.current == $slug][0] {
   ${baseFields},
-  ${contentFields}
+  ${contentFields},
+  categories[]->{ _id, "title": coalesce(title, "Uncategorized"), "slug": slug.current },
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage
 }`;
 
 export const postCountQuery = groq`count(*[_type == "post" && defined(slug.current)])`;
 
 export const podcastListQuery = groq`*[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$end] {
   ${baseFields},
+  episode,
+  season,
   author[]->{
     "title": coalesce(title, "Anonymous"),
     "slug": slug.current,
@@ -109,7 +126,10 @@ export const podcastListQuery = groq`*[_type == "podcast" && defined(slug.curren
 export const podcastQuery = groq`*[_type == "podcast" && slug.current == $slug][0] {
   ${baseFields},
   ${contentFields},
-  ${podcastFields}
+  ${podcastFields},
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage
 }`;
 
 export const podcastCountQuery = groq`count(*[_type == "podcast" && defined(slug.current)])`;
@@ -131,6 +151,11 @@ export const authorQuery = groq`*[_type == "author" && slug.current == $slug][0]
   ${contentFields},
   socials,
   websites,
+  company,
+  role,
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage,
   "related": {
     "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
       ${baseFields}
@@ -153,6 +178,11 @@ export const guestQuery = groq`*[_type == "guest" && slug.current == $slug][0] {
   ${contentFields},
   socials,
   websites,
+  company,
+  role,
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage,
   "related": {
     "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
       ${baseFields}
@@ -175,6 +205,9 @@ export const sponsorQuery = groq`*[_type == "sponsor" && slug.current == $slug][
   ${contentFields},
   socials,
   websites,
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage,
   "related": {
     "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [0...4] {
       ${baseFields}
@@ -196,7 +229,10 @@ export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast
 // Generic pages (Sanity "page" type)
 export const pageQuery = groq`*[_type == "page" && slug.current == $slug][0] {
   ${baseFields},
-  ${contentFields}
+  ${contentFields},
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage
 }`;
 
 // RSS feeds

@@ -1,20 +1,27 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import Button from "@/components/Button.astro";
 ---
 
 <BaseLayout title="Page Not Found — CodingCat.dev">
-  <main class="container mx-auto px-4 py-16 text-center">
-    <h1 class="text-6xl font-bold mb-4">404</h1>
-    <p class="text-xl text-gray-600 mb-8">
-      This page has gone on a catnap. 😸
-    </p>
-    <div class="space-x-4">
-      <a href="/" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-        Go Home
-      </a>
-      <a href="/blog" class="px-6 py-3 border rounded-lg hover:bg-gray-50 transition-colors">
-        Browse Blog
-      </a>
-    </div>
+  <main class="py-20 md:py-32">
+    <Container>
+      <div class="text-center max-w-lg mx-auto">
+        <p class="text-8xl md:text-9xl font-extrabold bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent mb-6">
+          404
+        </p>
+        <h1 class="text-2xl md:text-3xl font-bold text-[--text] mb-3">
+          Page Not Found
+        </h1>
+        <p class="text-lg text-[--text-secondary] mb-8">
+          This page has gone on a catnap. 😸 Maybe it's chasing a laser pointer somewhere else.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <Button href="/" variant="primary" size="lg">Go Home</Button>
+          <Button href="/blog" variant="secondary" size="lg">Browse Blog</Button>
+        </div>
+      </div>
+    </Container>
   </main>
 </BaseLayout>

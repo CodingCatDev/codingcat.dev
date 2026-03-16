@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
 import ContentCard from "@/components/ContentCard.astro";
 import Pagination from "@/components/Pagination.astro";
 import { loadQuery, sanityFetch } from "@/utils/sanity";
@@ -24,27 +25,34 @@ const totalPages = Math.ceil(totalCount / perPage);
 if (page > totalPages && totalPages > 0) {
   return Astro.redirect(`/guests?page=${totalPages}`);
 }
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("Guests")}&subtitle=${encodeURIComponent("Industry Experts on CodingCat.dev")}`;
 ---
 
-<BaseLayout title="Guests — CodingCat.dev">
-  <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-2">Guests</h1>
-    <p class="text-gray-600 mb-8">The people behind CodingCat.dev content.</p>
+<BaseLayout title="Guests — CodingCat.dev" ogImage={ogImage}>
+  <main class="py-12">
+    <Container>
+      <div class="mb-8">
+        <h1 class="text-4xl font-bold text-[--text] mb-2">Guests</h1>
+        <p class="text-[--text-secondary] text-lg">Industry experts who have joined us on the podcast.</p>
+      </div>
 
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {items?.map((item) => (
-        <ContentCard
-          title={item.title}
-          slug={`/guest/${item.slug}`}
-          coverImage={item.coverImage}
-          excerpt={item.excerpt}
-          date={item.date}
-        />
-      ))}
-    </div>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items?.map((item: any) => (
+          <ContentCard
+            title={item.title}
+            url={`/guest/${item.slug}`}
+            type="podcast"
+            thumbnail={item.coverImage}
+            metadata={item.date ? new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : undefined}
+          />
+        ))}
+      </div>
 
-    {totalPages > 1 && (
-      <Pagination currentPage={page} totalPages={totalPages} basePath="/guests" />
-    )}
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} basePath="/guests" />
+      )}
+    </Container>
   </main>
 </BaseLayout>

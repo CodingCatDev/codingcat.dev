@@ -1,13 +1,15 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
 import ContentCard from "@/components/ContentCard.astro";
+import Badge from "@/components/Badge.astro";
 import Pagination from "@/components/Pagination.astro";
 import { loadQuery, sanityFetch } from "@/utils/sanity";
 import { podcastListQuery, podcastCountQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-// B1: Validate page number — clamp to positive integer
+// Validate page number — clamp to positive integer
 const rawPage = Number(Astro.url.searchParams.get("page") || "1");
 const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
 const perPage = 12;
@@ -26,27 +28,57 @@ const totalPages = Math.ceil(totalCount / perPage);
 if (page > totalPages && totalPages > 0) {
   return Astro.redirect(`/podcasts?page=${totalPages}`);
 }
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("Podcasts")}&subtitle=${encodeURIComponent("Web Development Conversations")}`;
+
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function formatMetadata(podcast: any): string {
+  const parts: string[] = [];
+  if (podcast.season && podcast.episode) {
+    parts.push(`S${podcast.season}E${podcast.episode}`);
+  }
+  if (podcast.date) {
+    parts.push(formatDate(podcast.date));
+  }
+  return parts.join(" · ");
+}
 ---
 
-<BaseLayout title="Podcasts — CodingCat.dev">
-  <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-2">Podcasts</h1>
-    <p class="text-gray-600 mb-8">Web development conversations with industry experts.</p>
+<BaseLayout title="Podcasts — CodingCat.dev" ogImage={ogImage}>
+  <main class="py-12">
+    <Container>
+      {/* Header */}
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <Badge type="podcast" />
+          <span class="text-sm text-[--text-tertiary]">{totalCount} episodes</span>
+        </div>
+        <h1 class="text-4xl font-bold text-[--text] mb-2">Podcasts</h1>
+        <p class="text-[--text-secondary] text-lg">Web development conversations with industry experts.</p>
+      </div>
 
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {podcasts?.map((podcast) => (
-        <ContentCard
-          title={podcast.title}
-          slug={`/podcast/${podcast.slug}`}
-          coverImage={podcast.coverImage}
-          excerpt={podcast.excerpt}
-          date={podcast.date}
-        />
-      ))}
-    </div>
+      {/* Podcast Grid */}
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {podcasts?.map((podcast: any) => (
+          <ContentCard
+            title={podcast.title}
+            url={`/podcast/${podcast.slug}`}
+            type="podcast"
+            thumbnail={podcast.coverImage}
+            authorName={podcast.authorName}
+            authorImage={podcast.authorImage}
+            metadata={formatMetadata(podcast)}
+          />
+        ))}
+      </div>
 
-    {totalPages > 1 && (
-      <Pagination currentPage={page} totalPages={totalPages} basePath="/podcasts" />
-    )}
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} basePath="/podcasts" />
+      )}
+    </Container>
   </main>
 </BaseLayout>

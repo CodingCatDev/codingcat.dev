@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
 import PersonDetail from "@/components/PersonDetail.astro";
-import { loadQuery } from "@/utils/sanity";
+import { loadQuery, urlForImage } from "@/utils/sanity";
 import { sponsorQuery } from "@/lib/queries";
 
 export const prerender = false;
@@ -13,10 +14,19 @@ const { data: sponsor } = await loadQuery<any>({ query: sponsorQuery, params: { 
 if (!sponsor) {
   return Astro.redirect("/404");
 }
+
+const siteUrl = Astro.url.origin;
+const displayTitle = sponsor.ogTitle || sponsor.title;
+const displayDescription = sponsor.ogDescription || sponsor.excerpt;
+const ogImage = sponsor.ogImage
+  ? urlForImage(sponsor.ogImage).width(1200).height(630).url()
+  : `${siteUrl}/api/og/default.png?title=${encodeURIComponent(sponsor.title)}&subtitle=${encodeURIComponent("Sponsor of CodingCat.dev")}`;
 ---
 
-<BaseLayout title={`${sponsor.title} — CodingCat.dev`} description={sponsor.excerpt}>
-  <main class="container mx-auto px-4 py-8 max-w-4xl">
-    <PersonDetail person={sponsor} type="sponsor" />
+<BaseLayout title={`${displayTitle} — CodingCat.dev`} description={displayDescription} ogImage={ogImage}>
+  <main class="py-12">
+    <Container>
+      <PersonDetail person={sponsor} type="sponsor" />
+    </Container>
   </main>
 </BaseLayout>

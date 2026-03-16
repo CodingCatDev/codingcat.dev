@@ -1,13 +1,16 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
 import ContentCard from "@/components/ContentCard.astro";
+import Badge from "@/components/Badge.astro";
+import Tag from "@/components/Tag.astro";
 import Pagination from "@/components/Pagination.astro";
 import { loadQuery, sanityFetch } from "@/utils/sanity";
 import { postListQuery, postCountQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-// B1: Validate page number — clamp to positive integer
+// Validate page number — clamp to positive integer
 const rawPage = Number(Astro.url.searchParams.get("page") || "1");
 const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
 const perPage = 12;
@@ -26,27 +29,55 @@ const totalPages = Math.ceil(totalCount / perPage);
 if (page > totalPages && totalPages > 0) {
   return Astro.redirect(`/blog?page=${totalPages}`);
 }
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("Blog")}&subtitle=${encodeURIComponent("Web Development Tutorials")}`;
+
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 ---
 
-<BaseLayout title="Blog — CodingCat.dev">
-  <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-2">Blog</h1>
-    <p class="text-gray-600 mb-8">Web development tutorials, tips, and insights.</p>
+<BaseLayout title="Blog — CodingCat.dev" ogImage={ogImage}>
+  <main class="py-12">
+    <Container>
+      {/* Header */}
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <Badge type="blog" />
+          <span class="text-sm text-[--text-tertiary]">{totalCount} posts</span>
+        </div>
+        <h1 class="text-4xl font-bold text-[--text] mb-2">Blog</h1>
+        <p class="text-[--text-secondary] text-lg">Web development tutorials, tips, and insights.</p>
+      </div>
 
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {posts?.map((post) => (
-        <ContentCard
-          title={post.title}
-          slug={`/post/${post.slug}`}
-          coverImage={post.coverImage}
-          excerpt={post.excerpt}
-          date={post.date}
-        />
-      ))}
-    </div>
+      {/* Post Grid */}
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {posts?.map((post: any) => (
+          <div>
+            <ContentCard
+              title={post.title}
+              url={`/post/${post.slug}`}
+              type="blog"
+              thumbnail={post.coverImage}
+              authorName={post.authorName}
+              authorImage={post.authorImage}
+              metadata={post.date ? formatDate(post.date) : undefined}
+            />
+            {post.categories && post.categories.length > 0 && (
+              <div class="flex flex-wrap gap-1.5 mt-2 px-1">
+                {post.categories.map((cat: any) => (
+                  <Tag label={cat.title} href={`/topic/${cat.slug}`} />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
 
-    {totalPages > 1 && (
-      <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" />
-    )}
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" />
+      )}
+    </Container>
   </main>
 </BaseLayout>
