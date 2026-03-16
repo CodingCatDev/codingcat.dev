@@ -48,6 +48,9 @@ const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const studioUrl = "/";
+// Set SANITY_STUDIO_DISABLE_PRESENTATION=true if you get network errors to api.sanity.io (e.g. firewall/VPN)
+const presentationEnabled =
+	process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
 function resolveHref(type: string, slug?: string): string | undefined {
   switch (type) {
@@ -171,45 +174,49 @@ export default defineConfig({
     },
   },
   plugins: [
-    presentationTool({
-      resolve: {
-        mainDocuments: defineDocuments([
-          {
-            route: "/post/:slug",
-            filter: `_type == "post" && slug.current == $slug`,
-          },
-        ]),
-        locations: {
-          settings: defineLocations({
-            locations: [homeLocation],
-            message: "This document is used on all pages",
-            tone: "caution",
-          }),
-          post: defineLocations({
-            select: {
-              title: "title",
-              slug: "slug.current",
-            },
-            resolve: (doc) => ({
-              locations: [
+    ...(presentationEnabled
+      ? [
+          presentationTool({
+            resolve: {
+              mainDocuments: defineDocuments([
                 {
-                  title: doc?.title || "Untitled",
-                  // biome-ignore lint/style/noNonNullAssertion: resolveHref returns string for known types
-                  href: resolveHref("post", doc?.slug)!,
+                  route: "/post/:slug",
+                  filter: `_type == "post" && slug.current == $slug`,
                 },
-                homeLocation,
-              ],
-            }),
+              ]),
+              locations: {
+                settings: defineLocations({
+                  locations: [homeLocation],
+                  message: "This document is used on all pages",
+                  tone: "caution",
+                }),
+                post: defineLocations({
+                  select: {
+                    title: "title",
+                    slug: "slug.current",
+                  },
+                  resolve: (doc) => ({
+                    locations: [
+                      {
+                        title: doc?.title || "Untitled",
+                        // biome-ignore lint/style/noNonNullAssertion: resolveHref returns string for known types
+                        href: resolveHref("post", doc?.slug)!,
+                      },
+                      homeLocation,
+                    ],
+                  }),
+                }),
+              },
+            },
+            previewUrl: {
+              previewMode: {
+                enable: "/api/draft-mode/enable",
+                disable: "/api/draft-mode/disable",
+              },
+            },
           }),
-        },
-      },
-      previewUrl: {
-        previewMode: {
-          enable: "/api/draft-mode/enable",
-          disable: "/api/draft-mode/disable",
-        },
-      },
-    }),
+        ]
+      : []),
     structureTool({ structure: podcastStructure() }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([
