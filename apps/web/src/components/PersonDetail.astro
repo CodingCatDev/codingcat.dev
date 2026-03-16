@@ -1,0 +1,106 @@
+---
+import { PortableText } from "astro-portabletext";
+import { urlForImage } from "@/utils/sanity";
+import ContentCard from "./ContentCard.astro";
+
+interface Props {
+  person: any;
+  type: "author" | "guest" | "sponsor";
+}
+
+const { person, type } = Astro.props;
+
+const coverUrl = person.coverImage
+  ? urlForImage(person.coverImage).width(400).height(400).format("webp").url()
+  : null;
+---
+
+<div class="flex flex-col md:flex-row gap-8 mb-12">
+  {coverUrl && (
+    <img
+      src={coverUrl}
+      alt={person.title}
+      width={400}
+      height={400}
+      class="w-48 h-48 rounded-full object-cover flex-shrink-0"
+    />
+  )}
+  <div>
+    <h1 class="text-4xl font-bold mb-4">{person.title}</h1>
+    {person.excerpt && (
+      <p class="text-gray-600 text-lg mb-4">{person.excerpt}</p>
+    )}
+    {person.socials && (
+      <div class="flex flex-wrap gap-3">
+        {person.socials.twitter && (
+          <a href={`https://twitter.com/${person.socials.twitter}`} target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">
+            Twitter
+          </a>
+        )}
+        {person.socials.github && (
+          <a href={`https://github.com/${person.socials.github}`} target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline">
+            GitHub
+          </a>
+        )}
+        {person.socials.linkedin && (
+          <a href={person.socials.linkedin} target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:underline">
+            LinkedIn
+          </a>
+        )}
+      </div>
+    )}
+    {person.websites && person.websites.length > 0 && (
+      <div class="flex flex-wrap gap-3 mt-2">
+        {person.websites.map((site: string) => (
+          <a href={site} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm">
+            {new URL(site).hostname}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
+{person.content && (
+  <div class="prose prose-lg max-w-none mb-12">
+    <PortableText value={person.content} />
+  </div>
+)}
+
+{person.related && (
+  <>
+    {person.related.podcast && person.related.podcast.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Related Podcasts</h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {person.related.podcast.map((p: any) => (
+            <ContentCard
+              title={p.title}
+              slug={`/podcast/${p.slug}`}
+              coverImage={p.coverImage}
+              excerpt={p.excerpt}
+              date={p.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {person.related.post && person.related.post.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Related Posts</h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {person.related.post.map((p: any) => (
+            <ContentCard
+              title={p.title}
+              slug={`/post/${p.slug}`}
+              coverImage={p.coverImage}
+              excerpt={p.excerpt}
+              date={p.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+  </>
+)}

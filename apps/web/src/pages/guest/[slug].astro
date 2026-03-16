@@ -1,0 +1,21 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PersonDetail from "@/components/PersonDetail.astro";
+import { sanityFetch } from "@/utils/sanity";
+import { guestQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const guest = await sanityFetch<any>(guestQuery, { slug });
+
+if (!guest) {
+  return Astro.redirect("/404");
+}
+---
+
+<BaseLayout title={`${guest.title} — CodingCat.dev`} description={guest.excerpt}>
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <PersonDetail person={guest} type="guest" />
+  </main>
+</BaseLayout>
