@@ -69,8 +69,8 @@ scripts/migration/.env
 # Astro
 .astro/
 # Astro app
-astro-app/node_modules/
-astro-app/dist/
-astro-app/.astro/
-astro-app/.wrangler/
-astro-app/.dev.vars
+apps/*/node_modules/
+apps/*/dist/
+apps/*/.astro/
+apps/*/.wrangler/
+apps/*/.dev.vars
