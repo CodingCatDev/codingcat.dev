@@ -1,0 +1,50 @@
+name: Deploy CodingCat.dev
+
+on:
+  push:
+    branches: [dev, main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (dev)
+        if: github.ref == 'refs/heads/dev'
+        run: npx astro build
+        env:
+          SANITY_PROJECT_ID: hfh83o0w
+          SANITY_DATASET: dev
+
+      - name: Build (production)
+        if: github.ref == 'refs/heads/main'
+        run: npx astro build
+        env:
+          SANITY_PROJECT_ID: hfh83o0w
+          SANITY_DATASET: production
+
+      - name: Deploy to dev
+        if: github.ref == 'refs/heads/dev'
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: npx wrangler deploy --env production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
