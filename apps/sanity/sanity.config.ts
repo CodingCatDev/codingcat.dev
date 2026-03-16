@@ -38,6 +38,7 @@ import sponsorshipRequest from "./schemas/documents/sponsorshipRequest";
 import contentIdea from "./schemas/documents/contentIdea";
 import automatedVideo from "./schemas/documents/automatedVideo";
 import mediaAsset from "./schemas/documents/mediaAsset";
+import videoAnalytics from "./schemas/documents/videoAnalytics";
 import sponsorLead from "./schemas/documents/sponsorLead";
 import sponsorPool from "./schemas/documents/sponsorPool";
 import tableSchema, { rowType } from "./schemas/custom/table";
@@ -156,6 +157,7 @@ export default defineConfig({
       contentIdea,
       automatedVideo,
       mediaAsset,
+      videoAnalytics,
       sponsorLead,
       sponsorPool,
     ],
