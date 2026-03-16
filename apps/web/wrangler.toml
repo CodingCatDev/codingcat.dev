@@ -30,7 +30,7 @@ directory = "./dist/client"
 [[d1_databases]]
 binding = "DB"
 database_name = "codingcat-auth-dev"
-database_id = "placeholder-dev-create-via-wrangler"
+database_id = "802a4e11-fa76-4e19-aef2-3bd8e6c214df"
 
 # --- Production Environment ---
 
@@ -50,4 +50,4 @@ directory = "./dist/client"
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "codingcat-auth"
-database_id = "placeholder-prod-create-via-wrangler"
+database_id = "a2f53117-5919-4224-95a2-dc3847bea540"
