@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PortableText } from "astro-portabletext";
-import { sanityFetch, urlForImage } from "@/utils/sanity";
+import { loadQuery, urlForImage } from "@/utils/sanity";
 import { pageQuery } from "@/lib/queries";
 
 export const prerender = false;
@@ -14,7 +14,7 @@ if (reservedSlugs.includes(slug!)) {
   return Astro.redirect(`/${slug}`);
 }
 
-const page = await sanityFetch<any>(pageQuery, { slug });
+const { data: page } = await loadQuery<any>({ query: pageQuery, params: { slug } });
 
 if (!page) {
   return new Response(null, { status: 404 });

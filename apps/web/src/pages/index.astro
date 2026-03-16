@@ -1,12 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContentCard from "@/components/ContentCard.astro";
-import { sanityFetch } from "@/utils/sanity";
+import { loadQuery } from "@/utils/sanity";
 import { homePageQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-const homePage = await sanityFetch<any>(homePageQuery);
+const { data: homePage } = await loadQuery<any>({ query: homePageQuery });
 ---
 
 <BaseLayout title="CodingCat.dev — Purrfect Web Tutorials">

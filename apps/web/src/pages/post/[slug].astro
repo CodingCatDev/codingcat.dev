@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PortableText } from "astro-portabletext";
-import { sanityFetch, urlForImage } from "@/utils/sanity";
+import { loadQuery, urlForImage } from "@/utils/sanity";
 import { postQuery } from "@/lib/queries";
 
 export const prerender = false;
 
 const { slug } = Astro.params;
-const post = await sanityFetch<any>(postQuery, { slug });
+const { data: post } = await loadQuery<any>({ query: postQuery, params: { slug } });
 
 if (!post) {
   return Astro.redirect("/404");

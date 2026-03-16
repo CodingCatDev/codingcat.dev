@@ -2,7 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContentCard from "@/components/ContentCard.astro";
 import Pagination from "@/components/Pagination.astro";
-import { sanityFetch } from "@/utils/sanity";
+import { loadQuery, sanityFetch } from "@/utils/sanity";
 import { authorListQuery, authorCountQuery } from "@/lib/queries";
 
 export const prerender = false;
@@ -12,10 +12,11 @@ const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
 const perPage = 12;
 const offset = (page - 1) * perPage;
 
-const [items, totalCount] = await Promise.all([
-  sanityFetch<any[]>(authorListQuery, { offset, end: offset + perPage }),
+const [itemsResult, totalCount] = await Promise.all([
+  loadQuery<any[]>({ query: authorListQuery, params: { offset, end: offset + perPage } }),
   sanityFetch<number>(authorCountQuery),
 ]);
+const items = itemsResult.data;
 
 const totalPages = Math.ceil(totalCount / perPage);
 
