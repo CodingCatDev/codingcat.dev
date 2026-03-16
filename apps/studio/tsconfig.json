@@ -7,12 +7,7 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"paths": {
-			"@codingcatdev/shared/*": [
-				"../../packages/shared/*"
-			]
-		}
+		"forceConsistentCasingInFileNames": true
 	},
 	"include": [
 		"**/*.ts",

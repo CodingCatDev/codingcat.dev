@@ -1,0 +1,1 @@
+import{r as m,c as u,dc as i}from"./sanity-BZuh2pfi.js";const g=c=>{const e=u.c(4),{comlink:s}=c,t=i();let o,l;return e[0]!==s||e[1]!==t?(o=()=>s.on("visual-editing/telemetry-log",n=>{const{event:r,data:a}=n;a?t.log(r,a):t.log(r)}),l=[s,t],e[0]=s,e[1]=t,e[2]=o,e[3]=l):(o=e[2],l=e[3]),m.useEffect(o,l),null};var f=m.memo(g);export{f as default};

@@ -3,7 +3,7 @@ import { useClient } from "sanity";
 import { CopyIcon } from "@sanity/icons";
 import { Button, Dialog, Text, Stack, Card } from "@sanity/ui";
 import { RecycleIcon } from "lucide-react";
-import { apiVersion, dataset, projectId, studioUrl } from "@codingcatdev/shared/sanity/lib/api";
+import { apiVersion, dataset, projectId, studioUrl } from "../../lib/api";
 
 interface SharePreviewActionButtonProps {
 	id: string;

@@ -4,7 +4,7 @@
 
 import { assist } from "@sanity/assist";
 
-import postType from "@codingcatdev/shared/sanity/schemas/documents/post";
+import postType from "../schemas/documents/post";
 
 export const assistWithPresets = () =>
 	assist({

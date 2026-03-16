@@ -29,28 +29,28 @@ import {
   structureTool,
 } from "sanity/structure";
 
-import { apiVersion, dataset, projectId, studioUrl } from "@codingcatdev/shared/sanity/lib/api";
+import { apiVersion, dataset, projectId, studioUrl } from "./sanity/lib/api";
 import { pageStructure, singletonPlugin } from "./sanity/plugins/settings";
 import { sharePreviewAction } from "./sanity/components/documentActions/sharePreviewAction";
 import { assistWithPresets } from "./sanity/plugins/assist";
-import author from "@codingcatdev/shared/sanity/schemas/documents/author";
-import previewSession from "@codingcatdev/shared/sanity/schemas/previewSession";
-import guest from "@codingcatdev/shared/sanity/schemas/documents/guest";
-import page from "@codingcatdev/shared/sanity/schemas/documents/page";
-import podcast from "@codingcatdev/shared/sanity/schemas/documents/podcast";
-import podcastType from "@codingcatdev/shared/sanity/schemas/documents/podcastType";
-import post from "@codingcatdev/shared/sanity/schemas/documents/post";
-import settings from "@codingcatdev/shared/sanity/schemas/singletons/settings";
-import engineConfig from "@codingcatdev/shared/sanity/schemas/singletons/engineConfig";
-import sponsor from "@codingcatdev/shared/sanity/schemas/documents/sponsor";
+import author from "./sanity/schemas/documents/author";
+import previewSession from "./sanity/schemas/previewSession";
+import guest from "./sanity/schemas/documents/guest";
+import page from "./sanity/schemas/documents/page";
+import podcast from "./sanity/schemas/documents/podcast";
+import podcastType from "./sanity/schemas/documents/podcastType";
+import post from "./sanity/schemas/documents/post";
+import settings from "./sanity/schemas/singletons/settings";
+import engineConfig from "./sanity/schemas/singletons/engineConfig";
+import sponsor from "./sanity/schemas/documents/sponsor";
 
-import sponsorshipRequest from "@codingcatdev/shared/sanity/schemas/documents/sponsorshipRequest";
-import contentIdea from "@codingcatdev/shared/sanity/schemas/documents/contentIdea";
-import automatedVideo from "@codingcatdev/shared/sanity/schemas/documents/automatedVideo";
-import mediaAsset from "@codingcatdev/shared/sanity/schemas/documents/mediaAsset";
-import sponsorLead from "@codingcatdev/shared/sanity/schemas/documents/sponsorLead";
-import sponsorPool from "@codingcatdev/shared/sanity/schemas/documents/sponsorPool";
-import tableSchema, { rowType } from "@codingcatdev/shared/sanity/schemas/custom/table";
+import sponsorshipRequest from "./sanity/schemas/documents/sponsorshipRequest";
+import contentIdea from "./sanity/schemas/documents/contentIdea";
+import automatedVideo from "./sanity/schemas/documents/automatedVideo";
+import mediaAsset from "./sanity/schemas/documents/mediaAsset";
+import sponsorLead from "./sanity/schemas/documents/sponsorLead";
+import sponsorPool from "./sanity/schemas/documents/sponsorPool";
+import tableSchema, { rowType } from "./sanity/schemas/custom/table";
 import { resolveHref } from "./sanity/lib/resolveHref";
 
 const homeLocation = {

@@ -5,15 +5,14 @@
     "build": "vinext build",
     "start": "vinext start",
     "lint": "biome check .",
-    "predev": "npm run typegen",
-    "prebuild": "npx sanity schema extract --path=./sanity/extract.json && npx sanity typegen generate || echo 'Sanity typegen skipped (env vars not available)'",
-    "typegen": "dotenv -e .env.local -- sanity schema extract --path=./sanity/extract.json && dotenv -e .env.local -- sanity typegen generate",
+    "predev": "pnpm run typegen",
+    "prebuild": "npx sanity typegen generate",
+    "typegen": "npx sanity typegen generate",
     "format": "biome format . --write",
     "deploy": "vinext deploy"
   },
   "dependencies": {
     "@codingcatdev/sanity-plugin-podcast-rss": "^1.0.0",
-    "@codingcatdev/shared": "workspace:*",
     "@google/genai": "^1.0.0",
     "@hookform/resolvers": "^5.2.2",
     "@marsidev/react-turnstile": "^1.4.2",

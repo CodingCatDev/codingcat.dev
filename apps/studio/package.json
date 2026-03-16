@@ -9,8 +9,16 @@
 		"deploy": "sanity deploy"
 	},
 	"dependencies": {
-		"@codingcatdev/shared": "workspace:*",
 		"@codingcatdev/sanity-plugin-podcast-rss": "^1.0.0",
+		"@portabletext/block-tools": "^5.0.5",
+		"@portabletext/react": "^6.0.2",
+		"date-fns": "^4.1.0",
+		"lucide-react": "^0.576.0",
+		"micromark": "^4.0.2",
+		"micromark-extension-gfm-table": "^2.0.0",
+		"react-icons": "^5.5.0",
+		"react-inlinesvg": "^4.2.0",
+		"react-twitter-embed": "^4.0.4",
 		"@sanity/assist": "^5.0.4",
 		"@sanity/code-input": "^7.0.8",
 		"@sanity/icons": "^3.7.4",
