@@ -1,0 +1,39 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { sanityFetch } from "@/utils/sanity";
+
+export const prerender = false;
+
+const posts = await sanityFetch<Array<{
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt?: string;
+  _createdAt: string;
+}>>(
+  `*[_type == "post" && defined(slug.current)] | order(_createdAt desc) {
+    _id, title, slug, excerpt, _createdAt
+  }`
+);
+---
+
+<BaseLayout title="Blog">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">Blog</h1>
+    <div class="space-y-6">
+      {posts.map((post) => (
+        <a href={`/post/${post.slug.current}`} class="block p-6 rounded-lg border hover:border-primary transition-colors">
+          <h2 class="text-2xl font-medium mb-2">{post.title}</h2>
+          {post.excerpt && <p class="text-muted-foreground mb-2">{post.excerpt}</p>}
+          <time class="text-sm text-muted-foreground">
+            {new Date(post._createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

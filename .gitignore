@@ -61,3 +61,16 @@ scripts/migration/node_modules/
 scripts/migration/.env
 
 *.tar.gz
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Astro
+.astro/
+# Astro app
+astro-app/node_modules/
+astro-app/dist/
+astro-app/.astro/
+astro-app/.wrangler/
+astro-app/.dev.vars
