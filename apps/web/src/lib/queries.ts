@@ -184,3 +184,28 @@ export const sponsorQuery = groq`*[_type == "sponsor" && slug.current == $slug][
     },
   }
 }`;
+
+
+// Sitemap
+export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) {
+  _type,
+  _updatedAt,
+  "slug": slug.current,
+}`;
+
+// Generic pages (Sanity "page" type)
+export const pageQuery = groq`*[_type == "page" && slug.current == $slug][0] {
+  ${baseFields},
+  ${contentFields}
+}`;
+
+// RSS feeds
+export const rssPostsQuery = groq`*[_type == "post" && defined(slug.current)] | order(date desc) [0...20] {
+  ${baseFields},
+  ${contentFields}
+}`;
+
+export const rssPodcastsQuery = groq`*[_type == "podcast" && defined(slug.current)] | order(date desc) [0...20] {
+  ${baseFields},
+  ${contentFields}
+}`;

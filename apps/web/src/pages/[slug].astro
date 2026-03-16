@@ -1,0 +1,46 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { PortableText } from "astro-portabletext";
+import { sanityFetch, urlForImage } from "@/utils/sanity";
+import { pageQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Don't catch known routes — let them fall through to their own handlers
+const reservedSlugs = ["blog", "podcasts", "authors", "guests", "sponsors", "login", "dashboard", "rss.xml", "sitemap.xml"];
+if (reservedSlugs.includes(slug!)) {
+  return Astro.redirect(`/${slug}`);
+}
+
+const page = await sanityFetch<any>(pageQuery, { slug });
+
+if (!page) {
+  return new Response(null, { status: 404 });
+}
+
+const coverUrl = page.coverImage
+  ? urlForImage(page.coverImage).width(1200).height(630).format("webp").url()
+  : null;
+---
+
+<BaseLayout title={`${page.title} — CodingCat.dev`} description={page.excerpt}>
+  <article class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-4xl font-bold mb-8">{page.title}</h1>
+
+    {coverUrl && (
+      <img
+        src={coverUrl}
+        alt={page.title}
+        width={1200}
+        height={630}
+        class="w-full rounded-lg mb-8"
+      />
+    )}
+
+    <div class="prose prose-lg max-w-none">
+      {page.content && <PortableText value={page.content} />}
+    </div>
+  </article>
+</BaseLayout>
