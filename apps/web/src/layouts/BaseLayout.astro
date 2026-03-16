@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "CodingCat.dev - Purrfect Web Tutorials" } = Astro.props;
+const { title, description = "CodingCat.dev — Purrfect Web Tutorials" } = Astro.props;
 ---
 
 <!doctype html>
@@ -15,10 +15,29 @@ const { title, description = "CodingCat.dev - Purrfect Web Tutorials" } = Astro.
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <title>{title} | CodingCat.dev</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-background text-foreground">
-    <slot />
+  <body class="min-h-screen flex flex-col">
+    <header class="border-b">
+      <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold">🐱 CodingCat.dev</a>
+        <div class="flex items-center gap-6">
+          <a href="/blog" class="hover:text-blue-600 transition-colors">Blog</a>
+          <a href="/podcasts" class="hover:text-blue-600 transition-colors">Podcasts</a>
+          <a href="/dashboard" class="hover:text-blue-600 transition-colors">Dashboard</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="flex-1">
+      <slot />
+    </div>
+
+    <footer class="border-t mt-16">
+      <div class="container mx-auto px-4 py-8 text-center text-gray-500">
+        <p>&copy; {new Date().getFullYear()} CodingCat.dev. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

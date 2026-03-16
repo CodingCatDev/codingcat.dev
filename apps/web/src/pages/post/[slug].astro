@@ -1,45 +1,74 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { sanityFetch } from "@/utils/sanity";
 import { PortableText } from "astro-portabletext";
+import { sanityFetch, urlForImage } from "@/utils/sanity";
+import { postQuery } from "@/lib/queries";
 
 export const prerender = false;
 
 const { slug } = Astro.params;
-
-const post = await sanityFetch<{
-  _id: string;
-  title: string;
-  slug: { current: string };
-  body: any[];
-  excerpt?: string;
-  _createdAt: string;
-} | null>(
-  `*[_type == "post" && slug.current == $slug][0] {
-    _id, title, slug, body, excerpt, _createdAt
-  }`,
-  { slug }
-);
+const post = await sanityFetch<any>(postQuery, { slug });
 
 if (!post) {
   return Astro.redirect("/404");
 }
+
+const coverUrl = post.coverImage
+  ? urlForImage(post.coverImage).width(1200).height(630).format("webp").url()
+  : null;
+
+const formattedDate = post.date
+  ? new Date(post.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : null;
 ---
 
-<BaseLayout title={post.title} description={post.excerpt}>
-  <main class="container mx-auto px-4 py-8 max-w-3xl">
-    <article>
+<BaseLayout title={`${post.title} — CodingCat.dev`} description={post.excerpt}>
+  <article class="container mx-auto px-4 py-8 max-w-4xl">
+    <header class="mb-8">
       <h1 class="text-4xl font-bold mb-4">{post.title}</h1>
-      <time class="text-muted-foreground mb-8 block">
-        {new Date(post._createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-      </time>
-      <div class="prose prose-lg max-w-none">
-        <PortableText value={post.body} />
+      <div class="flex items-center gap-4 text-gray-600">
+        {formattedDate && <time datetime={post.date}>{formattedDate}</time>}
+        {post.author?.map((a: any) => (
+          <a href={`/author/${a.slug}`} class="hover:text-blue-600">{a.title}</a>
+        ))}
       </div>
-    </article>
-  </main>
+    </header>
+
+    {coverUrl && (
+      <img
+        src={coverUrl}
+        alt={post.title}
+        width={1200}
+        height={630}
+        class="w-full rounded-lg mb-8"
+      />
+    )}
+
+    {post.youtube && (
+      <div class="aspect-video mb-8">
+        <iframe
+          src={`https://www.youtube.com/embed/${post.youtube}`}
+          class="w-full h-full rounded-lg"
+          allowfullscreen
+          loading="lazy"
+        />
+      </div>
+    )}
+
+    <div class="prose prose-lg max-w-none">
+      {post.content && <PortableText value={post.content} />}
+    </div>
+
+    {post.tags && post.tags.length > 0 && (
+      <div class="mt-8 flex flex-wrap gap-2">
+        {post.tags.map((tag: string) => (
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">{tag}</span>
+        ))}
+      </div>
+    )}
+  </article>
 </BaseLayout>

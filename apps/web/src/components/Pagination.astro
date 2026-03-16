@@ -1,0 +1,55 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+const showPages = pages.filter(
+  (p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2
+);
+---
+
+<nav class="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
+  {currentPage > 1 && (
+    <a
+      href={currentPage === 2 ? basePath : `${basePath}?page=${currentPage - 1}`}
+      class="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
+    >
+      &larr; Previous
+    </a>
+  )}
+
+  {showPages.map((p, i) => {
+    const prev = showPages[i - 1];
+    const showEllipsis = prev && p - prev > 1;
+    return (
+      <>
+        {showEllipsis && <span class="px-2">&hellip;</span>}
+        <a
+          href={p === 1 ? basePath : `${basePath}?page=${p}`}
+          class:list={[
+            "px-4 py-2 rounded-lg transition-colors",
+            p === currentPage
+              ? "bg-blue-600 text-white"
+              : "border hover:bg-gray-50",
+          ]}
+        >
+          {p}
+        </a>
+      </>
+    );
+  })}
+
+  {currentPage < totalPages && (
+    <a
+      href={`${basePath}?page=${currentPage + 1}`}
+      class="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
+    >
+      Next &rarr;
+    </a>
+  )}
+</nav>

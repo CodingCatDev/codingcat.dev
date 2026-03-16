@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContentCard from "@/components/ContentCard.astro";
 import Pagination from "@/components/Pagination.astro";
 import { sanityFetch } from "@/utils/sanity";
-import { postListQuery, postCountQuery } from "@/lib/queries";
+import { podcastListQuery, podcastCountQuery } from "@/lib/queries";
 
 export const prerender = false;
 
@@ -13,38 +13,38 @@ const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
 const perPage = 12;
 const offset = (page - 1) * perPage;
 
-const [posts, totalCount] = await Promise.all([
-  sanityFetch<any[]>(postListQuery, { offset, end: offset + perPage }),
-  sanityFetch<number>(postCountQuery),
+const [podcasts, totalCount] = await Promise.all([
+  sanityFetch<any[]>(podcastListQuery, { offset, end: offset + perPage }),
+  sanityFetch<number>(podcastCountQuery),
 ]);
 
 const totalPages = Math.ceil(totalCount / perPage);
 
 // Redirect if page exceeds total
 if (page > totalPages && totalPages > 0) {
-  return Astro.redirect(`/blog?page=${totalPages}`);
+  return Astro.redirect(`/podcasts?page=${totalPages}`);
 }
 ---
 
-<BaseLayout title="Blog — CodingCat.dev">
+<BaseLayout title="Podcasts — CodingCat.dev">
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-2">Blog</h1>
-    <p class="text-gray-600 mb-8">Web development tutorials, tips, and insights.</p>
+    <h1 class="text-4xl font-bold mb-2">Podcasts</h1>
+    <p class="text-gray-600 mb-8">Web development conversations with industry experts.</p>
 
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {posts?.map((post) => (
+      {podcasts?.map((podcast) => (
         <ContentCard
-          title={post.title}
-          slug={`/post/${post.slug}`}
-          coverImage={post.coverImage}
-          excerpt={post.excerpt}
-          date={post.date}
+          title={podcast.title}
+          slug={`/podcast/${podcast.slug}`}
+          coverImage={podcast.coverImage}
+          excerpt={podcast.excerpt}
+          date={podcast.date}
         />
       ))}
     </div>
 
     {totalPages > 1 && (
-      <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" />
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/podcasts" />
     )}
   </main>
 </BaseLayout>

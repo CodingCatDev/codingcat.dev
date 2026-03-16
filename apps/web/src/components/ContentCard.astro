@@ -1,0 +1,49 @@
+---
+import { urlForImage } from "@/utils/sanity";
+
+interface Props {
+  title: string;
+  slug: string;
+  coverImage?: any;
+  excerpt?: string;
+  date?: string;
+}
+
+const { title, slug, coverImage, excerpt, date } = Astro.props;
+
+const imageUrl = coverImage
+  ? urlForImage(coverImage).width(640).height(360).format("webp").url()
+  : null;
+
+const formattedDate = date
+  ? new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  : null;
+---
+
+<a href={slug} class="group block rounded-lg border hover:border-blue-500 transition-colors overflow-hidden">
+  {imageUrl && (
+    <img
+      src={imageUrl}
+      alt={title}
+      width={640}
+      height={360}
+      class="w-full aspect-video object-cover"
+      loading="lazy"
+    />
+  )}
+  <div class="p-4">
+    <h3 class="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
+      {title}
+    </h3>
+    {excerpt && (
+      <p class="text-gray-600 text-sm mt-2 line-clamp-2">{excerpt}</p>
+    )}
+    {formattedDate && (
+      <time datetime={date} class="text-gray-400 text-xs mt-2 block">{formattedDate}</time>
+    )}
+  </div>
+</a>

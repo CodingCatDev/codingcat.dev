@@ -1,45 +1,123 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { sanityFetch } from "@/utils/sanity";
 import { PortableText } from "astro-portabletext";
+import { sanityFetch, urlForImage } from "@/utils/sanity";
+import { podcastQuery } from "@/lib/queries";
 
 export const prerender = false;
 
 const { slug } = Astro.params;
-
-const podcast = await sanityFetch<{
-  _id: string;
-  title: string;
-  slug: { current: string };
-  body: any[];
-  excerpt?: string;
-  _createdAt: string;
-} | null>(
-  `*[_type == "podcast" && slug.current == $slug][0] {
-    _id, title, slug, body, excerpt, _createdAt
-  }`,
-  { slug }
-);
+const podcast = await sanityFetch<any>(podcastQuery, { slug });
 
 if (!podcast) {
   return Astro.redirect("/404");
 }
+
+const coverUrl = podcast.coverImage
+  ? urlForImage(podcast.coverImage).width(1200).height(630).format("webp").url()
+  : null;
+
+const formattedDate = podcast.date
+  ? new Date(podcast.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : null;
 ---
 
-<BaseLayout title={podcast.title} description={podcast.excerpt}>
-  <main class="container mx-auto px-4 py-8 max-w-3xl">
-    <article>
+<BaseLayout title={`${podcast.title} — CodingCat.dev`} description={podcast.excerpt}>
+  <article class="container mx-auto px-4 py-8 max-w-4xl">
+    <header class="mb-8">
       <h1 class="text-4xl font-bold mb-4">{podcast.title}</h1>
-      <time class="text-muted-foreground mb-8 block">
-        {new Date(podcast._createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-      </time>
-      <div class="prose prose-lg max-w-none">
-        <PortableText value={podcast.body} />
+      <div class="flex items-center gap-4 text-gray-600 flex-wrap">
+        {formattedDate && <time datetime={podcast.date}>{formattedDate}</time>}
+        {podcast.season && podcast.episode && (
+          <span>S{podcast.season}E{podcast.episode}</span>
+        )}
+        {podcast.author?.map((a: any) => (
+          <a href={`/author/${a.slug}`} class="hover:text-blue-600">{a.title}</a>
+        ))}
       </div>
-    </article>
-  </main>
+    </header>
+
+    {coverUrl && (
+      <img
+        src={coverUrl}
+        alt={podcast.title}
+        width={1200}
+        height={630}
+        class="w-full rounded-lg mb-8"
+      />
+    )}
+
+    {podcast.youtube && (
+      <div class="aspect-video mb-8">
+        <iframe
+          src={`https://www.youtube.com/embed/${podcast.youtube}`}
+          class="w-full h-full rounded-lg"
+          allowfullscreen
+          loading="lazy"
+        />
+      </div>
+    )}
+
+    {podcast.spotify && (
+      <div class="mb-8">
+        <iframe
+          src={`https://open.spotify.com/embed/episode/${podcast.spotify}`}
+          width="100%"
+          height="152"
+          allow="encrypted-media"
+          loading="lazy"
+          class="rounded-lg"
+        />
+      </div>
+    )}
+
+    {podcast.guest && podcast.guest.length > 0 && (
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Guests</h2>
+        <div class="flex flex-wrap gap-4">
+          {podcast.guest.map((g: any) => (
+            <a href={`/guest/${g.slug}`} class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+              {g.title}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="prose prose-lg max-w-none">
+      {podcast.content && <PortableText value={podcast.content} />}
+    </div>
+
+    {podcast.pick && podcast.pick.length > 0 && (
+      <div class="mt-8">
+        <h2 class="text-xl font-semibold mb-4">Picks</h2>
+        <ul class="space-y-2">
+          {podcast.pick.map((p: any) => (
+            <li>
+              <strong>{p.user?.title || "Unknown"}:</strong>{" "}
+              {p.site ? (
+                <a href={p.site} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                  {p.name}
+                </a>
+              ) : (
+                <span>{p.name}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {podcast.tags && podcast.tags.length > 0 && (
+      <div class="mt-8 flex flex-wrap gap-2">
+        {podcast.tags.map((tag: string) => (
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">{tag}</span>
+        ))}
+      </div>
+    )}
+  </article>
 </BaseLayout>

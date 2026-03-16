@@ -1,36 +1,98 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContentCard from "@/components/ContentCard.astro";
 import { sanityFetch } from "@/utils/sanity";
+import { homePageQuery } from "@/lib/queries";
 
-// Fetch latest posts from Sanity
-const posts = await sanityFetch<Array<{
-  _id: string;
-  title: string;
-  slug: { current: string };
-  _type: string;
-  excerpt?: string;
-}>>(
-  `*[_type == "post" && defined(slug.current)] | order(_createdAt desc)[0...10] {
-    _id, title, slug, _type, excerpt
-  }`
-);
+export const prerender = false;
+
+const homePage = await sanityFetch<any>(homePageQuery);
 ---
 
-<BaseLayout title="Home">
+<BaseLayout title="CodingCat.dev — Purrfect Web Tutorials">
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8">CodingCat.dev</h1>
-    <p class="text-lg text-muted-foreground mb-8">Purrfect Web Tutorials</p>
-    
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">Latest Posts</h2>
-      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <a href={`/post/${post.slug.current}`} class="block p-6 rounded-lg border hover:border-primary transition-colors">
-            <h3 class="text-xl font-medium mb-2">{post.title}</h3>
-            {post.excerpt && <p class="text-muted-foreground">{post.excerpt}</p>}
-          </a>
-        ))}
-      </div>
+    <!-- Hero -->
+    <section class="text-center py-16">
+      <h1 class="text-5xl font-bold mb-4">CodingCat.dev</h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Purrfect Web Development Tutorials — Podcasts, Blog Posts, and Courses
+      </p>
     </section>
+
+    <!-- Latest Podcasts -->
+    {homePage?.latestPodcasts && homePage.latestPodcasts.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2">Latest Podcasts</h2>
+        <p class="text-gray-600 mb-8">Check out our latest podcasts.</p>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {homePage.latestPodcasts.map((podcast: any) => (
+            <ContentCard
+              title={podcast.title}
+              slug={`/podcast/${podcast.slug}`}
+              coverImage={podcast.coverImage}
+              excerpt={podcast.excerpt}
+              date={podcast.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Top Podcasts -->
+    {homePage?.topPodcasts && homePage.topPodcasts.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2">Top Podcasts</h2>
+        <p class="text-gray-600 mb-8">Our most popular episodes by views.</p>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {homePage.topPodcasts.map((podcast: any) => (
+            <ContentCard
+              title={podcast.title}
+              slug={`/podcast/${podcast.slug}`}
+              coverImage={podcast.coverImage}
+              excerpt={podcast.excerpt}
+              date={podcast.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Latest Posts -->
+    {homePage?.latestPosts && homePage.latestPosts.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2">From the Blog</h2>
+        <p class="text-gray-600 mb-8">Latest blog posts on web development.</p>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {homePage.latestPosts.map((post: any) => (
+            <ContentCard
+              title={post.title}
+              slug={`/post/${post.slug}`}
+              coverImage={post.coverImage}
+              excerpt={post.excerpt}
+              date={post.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Top Posts -->
+    {homePage?.topPosts && homePage.topPosts.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2">Top Posts</h2>
+        <p class="text-gray-600 mb-8">Most viewed blog posts.</p>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {homePage.topPosts.map((post: any) => (
+            <ContentCard
+              title={post.title}
+              slug={`/post/${post.slug}`}
+              coverImage={post.coverImage}
+              excerpt={post.excerpt}
+              date={post.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
   </main>
 </BaseLayout>
