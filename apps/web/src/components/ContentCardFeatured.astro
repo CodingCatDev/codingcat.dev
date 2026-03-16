@@ -1,0 +1,77 @@
+---
+import Badge from "./Badge.astro";
+import Avatar from "./Avatar.astro";
+import { urlForImage } from "@/utils/sanity";
+
+interface Props {
+  title: string;
+  url: string;
+  type: "blog" | "podcast" | "course" | "video" | "short";
+  thumbnail?: any;
+  duration?: string;
+  metadata?: string;
+  excerpt?: string;
+  authorName?: string;
+  authorImage?: any;
+  guestName?: string;
+  guestImage?: any;
+}
+
+const {
+  title, url, type, thumbnail, duration, metadata, excerpt,
+  authorName, authorImage, guestName, guestImage,
+} = Astro.props;
+
+const thumbnailUrl = thumbnail ? urlForImage(thumbnail).width(800).height(450).url() : undefined;
+const authorImageUrl = authorImage ? urlForImage(authorImage).width(64).height(64).url() : undefined;
+const guestImageUrl = guestImage ? urlForImage(guestImage).width(64).height(64).url() : undefined;
+---
+
+<a href={url} class="group block rounded-xl border border-[--border] bg-[--surface] overflow-hidden transition-all duration-200 hover:border-primary/50 hover:shadow-[--shadow-glow] md:flex md:gap-6 p-4 md:p-6">
+  {/* Thumbnail */}
+  {thumbnailUrl && (
+    <div class="relative aspect-video md:w-1/2 rounded-lg overflow-hidden flex-shrink-0">
+      <img
+        src={thumbnailUrl}
+        alt={title}
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+      {duration && (
+        <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-mono px-2 py-1 rounded-sm">
+          {duration}
+        </span>
+      )}
+    </div>
+  )}
+
+  {/* Content */}
+  <div class="mt-4 md:mt-0 flex flex-col justify-center space-y-3">
+    <div class="flex items-center gap-2 text-sm">
+      <Badge type={type} />
+      {metadata && <span class="text-[--text-tertiary]">{metadata}</span>}
+    </div>
+
+    <h2 class="text-2xl md:text-3xl font-bold text-[--text] group-hover:text-primary transition-colors">
+      {title}
+    </h2>
+
+    {excerpt && (
+      <p class="text-[--text-secondary] line-clamp-2 md:line-clamp-3">{excerpt}</p>
+    )}
+
+    <div class="flex items-center gap-3">
+      {authorName && (
+        <>
+          <Avatar src={authorImageUrl} name={authorName} size="sm" />
+          <span class="text-sm text-[--text-secondary]">{authorName}</span>
+        </>
+      )}
+      {guestName && (
+        <>
+          <Avatar src={guestImageUrl} name={guestName} size="sm" />
+          <span class="text-sm text-[--text-secondary]">{guestName}</span>
+        </>
+      )}
+    </div>
+  </div>
+</a>

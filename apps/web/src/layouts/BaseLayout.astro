@@ -1,5 +1,8 @@
 ---
 import "../styles/global.css";
+import ThemeScript from "../components/ThemeScript.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 import { VisualEditing } from "@sanity/astro/visual-editing";
 
 interface Props {
@@ -23,30 +26,28 @@ const visualEditingEnabled =
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="CodingCat.dev Blog" href="/rss.xml" />
     <link rel="alternate" type="application/rss+xml" title="CodingCat.dev Podcast" href="/podcast/rss.xml" />
+
+    {/* Dark mode script — MUST be before CSS to prevent FOUC */}
+    <ThemeScript />
+
+    {/* Fonts — Inter (body) + JetBrains Mono (code) */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
     <title>{title}</title>
   </head>
-  <body class="min-h-screen flex flex-col">
-    <header class="border-b">
-      <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <a href="/" class="text-xl font-bold">🐱 CodingCat.dev</a>
-        <div class="flex items-center gap-6">
-          <a href="/blog" class="hover:text-blue-600 transition-colors">Blog</a>
-          <a href="/podcasts" class="hover:text-blue-600 transition-colors">Podcasts</a>
-          <a href="/authors" class="hover:text-blue-600 transition-colors">Authors</a>
-          <a href="/dashboard" class="hover:text-blue-600 transition-colors">Dashboard</a>
-        </div>
-      </nav>
-    </header>
+  <body class="min-h-screen flex flex-col bg-[--bg] text-[--text]">
+    <Header />
 
     <div class="flex-1">
       <slot />
     </div>
 
-    <footer class="border-t mt-16">
-      <div class="container mx-auto px-4 py-8 text-center text-gray-500">
-        <p>&copy; {new Date().getFullYear()} CodingCat.dev. All rights reserved.</p>
-      </div>
-    </footer>
+    <Footer />
 
     <VisualEditing enabled={visualEditingEnabled} />
   </body>

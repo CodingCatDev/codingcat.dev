@@ -1,0 +1,46 @@
+---
+import Badge from "./Badge.astro";
+import Avatar from "./Avatar.astro";
+import { urlForImage } from "@/utils/sanity";
+
+interface Props {
+  title: string;
+  url: string;
+  type: "blog" | "podcast" | "course" | "video" | "short";
+  thumbnail?: any;
+  metadata?: string;
+  authorName?: string;
+  authorImage?: any;
+}
+
+const { title, url, type, thumbnail, metadata, authorName, authorImage } = Astro.props;
+
+const thumbnailUrl = thumbnail ? urlForImage(thumbnail).width(192).height(128).url() : undefined;
+const authorImageUrl = authorImage ? urlForImage(authorImage).width(32).height(32).url() : undefined;
+---
+
+<a href={url} class="group flex gap-3 p-3 rounded-lg border border-[--border] bg-[--surface] transition-all duration-200 hover:border-[--border-hover] hover:bg-[--surface-hover]">
+  {thumbnailUrl && (
+    <div class="relative w-24 h-16 rounded-md overflow-hidden flex-shrink-0">
+      <img src={thumbnailUrl} alt={title} class="w-full h-full object-cover" loading="lazy" />
+    </div>
+  )}
+
+  <div class="flex-1 min-w-0 space-y-1">
+    <div class="flex items-center gap-2 text-xs">
+      <Badge type={type} size="sm" />
+      {metadata && <span class="text-[--text-tertiary]">{metadata}</span>}
+    </div>
+
+    <h4 class="font-medium text-sm text-[--text] line-clamp-1 group-hover:text-primary transition-colors">
+      {title}
+    </h4>
+
+    {authorName && (
+      <div class="flex items-center gap-1.5">
+        <Avatar src={authorImageUrl} name={authorName} size="xs" />
+        <span class="text-xs text-[--text-tertiary]">{authorName}</span>
+      </div>
+    )}
+  </div>
+</a>

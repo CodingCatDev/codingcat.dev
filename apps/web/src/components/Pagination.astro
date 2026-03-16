@@ -9,7 +9,7 @@ const { currentPage, totalPages, basePath } = Astro.props;
 
 const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 const showPages = pages.filter(
-  (p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2
+  (p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2,
 );
 ---
 
@@ -17,7 +17,7 @@ const showPages = pages.filter(
   {currentPage > 1 && (
     <a
       href={currentPage === 2 ? basePath : `${basePath}?page=${currentPage - 1}`}
-      class="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
+      class="px-4 py-2 border border-[--border] rounded-lg text-[--text-secondary] hover:text-[--text] hover:bg-[--surface-hover] hover:border-[--border-hover] transition-colors"
     >
       &larr; Previous
     </a>
@@ -28,15 +28,16 @@ const showPages = pages.filter(
     const showEllipsis = prev && p - prev > 1;
     return (
       <>
-        {showEllipsis && <span class="px-2">&hellip;</span>}
+        {showEllipsis && <span class="px-2 text-[--text-tertiary]">&hellip;</span>}
         <a
           href={p === 1 ? basePath : `${basePath}?page=${p}`}
           class:list={[
             "px-4 py-2 rounded-lg transition-colors",
             p === currentPage
-              ? "bg-blue-600 text-white"
-              : "border hover:bg-gray-50",
+              ? "bg-primary text-white"
+              : "border border-[--border] text-[--text-secondary] hover:text-[--text] hover:bg-[--surface-hover] hover:border-[--border-hover]",
           ]}
+          aria-current={p === currentPage ? "page" : undefined}
         >
           {p}
         </a>
@@ -47,7 +48,7 @@ const showPages = pages.filter(
   {currentPage < totalPages && (
     <a
       href={`${basePath}?page=${currentPage + 1}`}
-      class="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
+      class="px-4 py-2 border border-[--border] rounded-lg text-[--text-secondary] hover:text-[--text] hover:bg-[--surface-hover] hover:border-[--border-hover] transition-colors"
     >
       Next &rarr;
     </a>
