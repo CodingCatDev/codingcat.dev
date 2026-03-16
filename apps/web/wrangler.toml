@@ -1,0 +1,53 @@
+# ============================================================
+# CodingCat.dev — Astro on Cloudflare Workers
+# ============================================================
+# Top-level = dev environment (deployed from `dev` branch)
+# [env.production] = production (deployed from `main` branch)
+#
+# IMPORTANT: Bindings are NON-INHERITABLE in Cloudflare.
+# Every binding must be declared in BOTH top-level AND [env.production].
+# ============================================================
+
+name = "codingcatdev"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[observability]
+enabled = true
+
+# --- Dev Environment (top-level = default) ---
+
+[vars]
+ENVIRONMENT = "dev"
+SANITY_DATASET = "dev"
+SANITY_PROJECT_ID = "hfh83o0w"
+SITE_URL = "https://codingcatdev.workers.dev"
+
+[assets]
+binding = "ASSETS"
+directory = "./dist/client"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "codingcat-auth-dev"
+database_id = "placeholder-dev-create-via-wrangler"
+
+# --- Production Environment ---
+
+[env.production]
+name = "codingcatdev-production"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+SANITY_DATASET = "production"
+SANITY_PROJECT_ID = "hfh83o0w"
+SITE_URL = "https://codingcat.dev"
+
+[env.production.assets]
+binding = "ASSETS"
+directory = "./dist/client"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "codingcat-auth"
+database_id = "placeholder-prod-create-via-wrangler"

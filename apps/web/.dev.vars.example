@@ -1,0 +1,14 @@
+# Local development secrets — NOT committed to git
+# Copy to .dev.vars and fill in values
+
+# better-auth
+BETTER_AUTH_SECRET=your-dev-secret-here
+BETTER_AUTH_URL=http://localhost:4321
+
+# Google OAuth (for better-auth social login)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Sanity (for preview/draft mode — read queries use public API)
+SANITY_API_TOKEN=your-sanity-api-token
+SANITY_PREVIEW_SECRET=your-preview-secret
