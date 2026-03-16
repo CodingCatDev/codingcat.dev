@@ -1,0 +1,51 @@
+---
+/**
+ * SocialMeta.astro — generates Open Graph and Twitter Card meta tags.
+ *
+ * Drop this into your <head> to get proper social sharing previews.
+ * Works with the OG image endpoints at /api/og/*.png.
+ */
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  type?: 'website' | 'article';
+  publishedAt?: string;
+  author?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  type = 'website',
+  publishedAt,
+  author,
+  canonicalUrl,
+} = Astro.props;
+---
+
+{/* Open Graph */}
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta property="og:type" content={type} />
+{canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+
+{/* Twitter Card */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+{description && <meta name="twitter:description" content={description} />}
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+
+{/* Article metadata */}
+{type === 'article' && publishedAt && (
+  <meta property="article:published_time" content={publishedAt} />
+)}
+{type === 'article' && author && (
+  <meta property="article:author" content={author} />
+)}
+
+{/* Canonical URL */}
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
