@@ -7,7 +7,8 @@ import { podcastQuery } from "@/lib/queries";
 export const prerender = false;
 
 const { slug } = Astro.params;
-const { data: podcast } = await loadQuery<any>({ query: podcastQuery, params: { slug } });
+const draftMode = Astro.cookies.has("__sanity_preview");
+const { data: podcast } = await loadQuery<any>({ query: podcastQuery, params: { slug }, draftMode });
 
 if (!podcast) {
   return Astro.redirect("/404");

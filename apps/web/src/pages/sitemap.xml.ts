@@ -19,13 +19,21 @@ export const GET: APIRoute = async () => {
   const site = "https://codingcat.dev";
   const items = await sanityFetch<SitemapItem[]>(sitemapQuery);
 
+  // Use the most recent content update for static page lastmod
+  // (instead of current time which changes on every request)
+  const latestUpdate = items.length > 0
+    ? items.reduce((latest, item) =>
+        item._updatedAt > latest ? item._updatedAt : latest,
+      items[0]._updatedAt)
+    : new Date().toISOString();
+
   const staticPages = [
-    { url: site, lastmod: new Date().toISOString(), priority: "1.0" },
-    { url: `${site}/blog`, lastmod: new Date().toISOString(), priority: "0.8" },
-    { url: `${site}/podcasts`, lastmod: new Date().toISOString(), priority: "0.8" },
-    { url: `${site}/authors`, lastmod: new Date().toISOString(), priority: "0.5" },
-    { url: `${site}/guests`, lastmod: new Date().toISOString(), priority: "0.5" },
-    { url: `${site}/sponsors`, lastmod: new Date().toISOString(), priority: "0.5" },
+    { url: site, lastmod: latestUpdate, priority: "1.0" },
+    { url: `${site}/blog`, lastmod: latestUpdate, priority: "0.8" },
+    { url: `${site}/podcasts`, lastmod: latestUpdate, priority: "0.8" },
+    { url: `${site}/authors`, lastmod: latestUpdate, priority: "0.5" },
+    { url: `${site}/guests`, lastmod: latestUpdate, priority: "0.5" },
+    { url: `${site}/sponsors`, lastmod: latestUpdate, priority: "0.5" },
   ];
 
   const dynamicPages = items.map((item) => ({
