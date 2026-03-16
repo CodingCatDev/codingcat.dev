@@ -1,39 +1,43 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContentCard from "@/components/ContentCard.astro";
+import Pagination from "@/components/Pagination.astro";
 import { sanityFetch } from "@/utils/sanity";
+import { postListQuery, postCountQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-const posts = await sanityFetch<Array<{
-  _id: string;
-  title: string;
-  slug: { current: string };
-  excerpt?: string;
-  _createdAt: string;
-}>>(
-  `*[_type == "post" && defined(slug.current)] | order(_createdAt desc) {
-    _id, title, slug, excerpt, _createdAt
-  }`
-);
+const page = Number(Astro.url.searchParams.get("page") || "1");
+const perPage = 12;
+const offset = (page - 1) * perPage;
+
+const [posts, totalCount] = await Promise.all([
+  sanityFetch<any[]>(postListQuery, { offset, limit: offset + perPage }),
+  sanityFetch<number>(postCountQuery),
+]);
+
+const totalPages = Math.ceil(totalCount / perPage);
 ---
 
-<BaseLayout title="Blog">
+<BaseLayout title="Blog — CodingCat.dev">
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8">Blog</h1>
-    <div class="space-y-6">
-      {posts.map((post) => (
-        <a href={`/post/${post.slug.current}`} class="block p-6 rounded-lg border hover:border-primary transition-colors">
-          <h2 class="text-2xl font-medium mb-2">{post.title}</h2>
-          {post.excerpt && <p class="text-muted-foreground mb-2">{post.excerpt}</p>}
-          <time class="text-sm text-muted-foreground">
-            {new Date(post._createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
-        </a>
+    <h1 class="text-4xl font-bold mb-2">Blog</h1>
+    <p class="text-gray-600 mb-8">Web development tutorials, tips, and insights.</p>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {posts?.map((post) => (
+        <ContentCard
+          title={post.title}
+          slug={`/post/${post.slug}`}
+          coverImage={post.coverImage}
+          excerpt={post.excerpt}
+          date={post.date}
+        />
       ))}
     </div>
+
+    {totalPages > 1 && (
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" />
+    )}
   </main>
 </BaseLayout>

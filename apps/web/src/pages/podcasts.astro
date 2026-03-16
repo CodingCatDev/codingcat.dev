@@ -1,0 +1,43 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContentCard from "@/components/ContentCard.astro";
+import Pagination from "@/components/Pagination.astro";
+import { sanityFetch } from "@/utils/sanity";
+import { podcastListQuery, podcastCountQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const page = Number(Astro.url.searchParams.get("page") || "1");
+const perPage = 12;
+const offset = (page - 1) * perPage;
+
+const [podcasts, totalCount] = await Promise.all([
+  sanityFetch<any[]>(podcastListQuery, { offset, limit: offset + perPage }),
+  sanityFetch<number>(podcastCountQuery),
+]);
+
+const totalPages = Math.ceil(totalCount / perPage);
+---
+
+<BaseLayout title="Podcasts — CodingCat.dev">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-2">Podcasts</h1>
+    <p class="text-gray-600 mb-8">Web development conversations with industry experts.</p>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {podcasts?.map((podcast) => (
+        <ContentCard
+          title={podcast.title}
+          slug={`/podcast/${podcast.slug}`}
+          coverImage={podcast.coverImage}
+          excerpt={podcast.excerpt}
+          date={podcast.date}
+        />
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/podcasts" />
+    )}
+  </main>
+</BaseLayout>
