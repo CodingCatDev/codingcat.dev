@@ -1,26 +1,23 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/studio/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+node_modules/
 
-# testing
-/coverage
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
+# build output
+dist/
 
-# next.js
-/.next/
-/out/
+# astro
+.astro/
+
+# cloudflare
+.wrangler/
+.dev.vars
 
 # sanity
-/.sanity/
-/dist/
+.sanity/
+
+# env files
+.env
+.env.local
+.env*.local
 
 # misc
 .DS_Store
@@ -31,46 +28,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
-# Env files created by scripts for working locally
-.env
-.env.local
-# Sentry Config File
-.env.sentry-build-plugin
-
-.genkit/
-# Firebase debug files
-firebase-debug.log
-firebase-debug.*.logpackage-lock.json
-
-# Migration tool generated files
-scripts/migration/discovered-references.json
-scripts/migration/unique-cloudinary-urls.json
-scripts/migration/asset-mapping.json
-scripts/migration/migration-report.json
-scripts/migration/node_modules/
-scripts/migration/.env
-
-*.tar.gz
-
-# Cloudflare
-.wrangler/
-.dev.vars
-
-# Astro
-.astro/
-# Astro app
-apps/*/node_modules/
-apps/*/dist/
-apps/*/.astro/
-apps/*/.wrangler/
-apps/*/.dev.vars
+# editor
+.vscode/*
+!.vscode/launch.json
+!.vscode/mcp.json
