@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
 import PersonDetail from "@/components/PersonDetail.astro";
-import { loadQuery } from "@/utils/sanity";
+import { loadQuery, urlForImage } from "@/utils/sanity";
 import { authorQuery } from "@/lib/queries";
 
 export const prerender = false;
@@ -13,10 +14,19 @@ const { data: author } = await loadQuery<any>({ query: authorQuery, params: { sl
 if (!author) {
   return Astro.redirect("/404");
 }
+
+const siteUrl = Astro.url.origin;
+const displayTitle = author.ogTitle || author.title;
+const displayDescription = author.ogDescription || author.excerpt;
+const ogImage = author.ogImage
+  ? urlForImage(author.ogImage).width(1200).height(630).url()
+  : `${siteUrl}/api/og/default.png?title=${encodeURIComponent(author.title)}&subtitle=${encodeURIComponent("Author at CodingCat.dev")}`;
 ---
 
-<BaseLayout title={`${author.title} — CodingCat.dev`} description={author.excerpt}>
-  <main class="container mx-auto px-4 py-8 max-w-4xl">
-    <PersonDetail person={author} type="author" />
+<BaseLayout title={`${displayTitle} — CodingCat.dev`} description={displayDescription} ogImage={ogImage}>
+  <main class="py-12">
+    <Container>
+      <PersonDetail person={author} type="author" />
+    </Container>
   </main>
 </BaseLayout>

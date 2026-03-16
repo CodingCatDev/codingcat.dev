@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
 import { PortableText } from "astro-portabletext";
 import { loadQuery, urlForImage } from "@/utils/sanity";
 import { pageQuery } from "@/lib/queries";
@@ -24,24 +25,39 @@ if (!page) {
 const coverUrl = page.coverImage
   ? urlForImage(page.coverImage).width(1200).height(630).format("webp").url()
   : null;
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent(page.title)}`;
 ---
 
-<BaseLayout title={`${page.title} — CodingCat.dev`} description={page.excerpt}>
-  <article class="container mx-auto px-4 py-8 max-w-4xl">
-    <h1 class="text-4xl font-bold mb-8">{page.title}</h1>
+<BaseLayout title={`${page.title} — CodingCat.dev`} description={page.excerpt} ogImage={ogImage}>
+  <article class="py-12">
+    <Container size="narrow">
+      <h1 class="text-4xl font-bold text-[--text] mb-8">{page.title}</h1>
 
-    {coverUrl && (
-      <img
-        src={coverUrl}
-        alt={page.title}
-        width={1200}
-        height={630}
-        class="w-full rounded-lg mb-8"
-      />
-    )}
+      {coverUrl && (
+        <img
+          src={coverUrl}
+          alt={page.title}
+          width={1200}
+          height={630}
+          class="w-full rounded-xl mb-8"
+        />
+      )}
 
-    <div class="prose prose-lg max-w-none">
-      {page.content && <PortableText value={page.content} />}
-    </div>
+      <div class="prose prose-lg prose-invert max-w-none
+        prose-headings:text-[--text] prose-headings:font-bold
+        prose-p:text-[--text-secondary]
+        prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-[--text]
+        prose-code:text-primary prose-code:bg-[--surface] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+        prose-pre:bg-[--surface] prose-pre:border prose-pre:border-[--border] prose-pre:rounded-xl
+        prose-blockquote:border-primary prose-blockquote:text-[--text-secondary]
+        prose-li:text-[--text-secondary]
+        prose-img:rounded-xl
+      ">
+        {page.content && <PortableText value={page.content} />}
+      </div>
+    </Container>
   </article>
 </BaseLayout>

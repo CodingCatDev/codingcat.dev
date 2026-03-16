@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  type?: 'website' | 'article';
+  publishedAt?: string;
+  author?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title,
+  description = "CodingCat.dev — Purrfect Web Tutorials",
+  ogImage,
+  type = "website",
+  publishedAt,
+  author,
+  canonicalUrl,
+} = Astro.props;
+
+const siteUrl = Astro.url.origin;
+const resolvedUrl = canonicalUrl || Astro.url.href;
+const resolvedImage = ogImage || `${siteUrl}/api/og/default.png?title=${encodeURIComponent(title)}`;
+---
+
+{/* Primary Meta Tags */}
+<meta name="description" content={description} />
+
+{/* Canonical */}
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+
+{/* Open Graph */}
+<meta property="og:type" content={type} />
+<meta property="og:url" content={resolvedUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={resolvedImage} />
+<meta property="og:site_name" content="CodingCat.dev" />
+
+{/* Twitter Card */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@codingcatdev" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={resolvedImage} />
+
+{/* Article-specific */}
+{type === "article" && publishedAt && (
+  <meta property="article:published_time" content={publishedAt} />
+)}
+{type === "article" && author && (
+  <meta property="article:author" content={author} />
+)}
