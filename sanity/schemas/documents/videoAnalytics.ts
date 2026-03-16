@@ -1,6 +1,10 @@
 import { defineField, defineType } from 'sanity';
 import { HiOutlineChartBar } from 'react-icons/hi';
 
+// One videoAnalytics document per content document (1:1 relationship).
+// Sanity cannot enforce uniqueness at schema level — the CF Worker cron
+// that creates these docs must check for existing docs before creating:
+//   *[_type == "videoAnalytics" && contentRef._ref == $docId][0]
 export default defineType({
   name: 'videoAnalytics',
   title: 'Video Analytics',
@@ -32,6 +36,7 @@ export default defineType({
         ],
       },
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
     defineField({
       name: 'youtubeId',
@@ -39,6 +44,7 @@ export default defineType({
       type: 'string',
       description: 'YouTube video ID (e.g., dQw4w9WgXcQ)',
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
     defineField({
       name: 'youtubeShortId',
