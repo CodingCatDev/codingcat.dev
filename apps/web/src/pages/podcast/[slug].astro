@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { PortableText } from "astro-portabletext";
-import { sanityFetch, urlForImage } from "@/utils/sanity";
+import { loadQuery, urlForImage } from "@/utils/sanity";
 import { podcastQuery } from "@/lib/queries";
 
 export const prerender = false;
 
 const { slug } = Astro.params;
-const podcast = await sanityFetch<any>(podcastQuery, { slug });
+const { data: podcast } = await loadQuery<any>({ query: podcastQuery, params: { slug } });
 
 if (!podcast) {
   return Astro.redirect("/404");

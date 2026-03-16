@@ -22,6 +22,11 @@ export default defineConfig({
       dataset: sanityDataset,
       useCdn: false,
       apiVersion: "2024-01-01",
+      // Visual Editing: stega encodes edit markers in strings
+      // Studio is standalone (apps/sanity), not embedded — no studioBasePath
+      stega: {
+        studioUrl: "https://codingcat.dev.sanity.studio",
+      },
     }),
     react(),
   ],

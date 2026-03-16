@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PersonDetail from "@/components/PersonDetail.astro";
-import { sanityFetch } from "@/utils/sanity";
+import { loadQuery } from "@/utils/sanity";
 import { guestQuery } from "@/lib/queries";
 
 export const prerender = false;
 
 const { slug } = Astro.params;
-const guest = await sanityFetch<any>(guestQuery, { slug });
+const { data: guest } = await loadQuery<any>({ query: guestQuery, params: { slug } });
 
 if (!guest) {
   return Astro.redirect("/404");

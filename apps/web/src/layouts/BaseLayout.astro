@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { VisualEditing } from "@sanity/astro/visual-editing";
 
 interface Props {
   title: string;
@@ -7,6 +8,9 @@ interface Props {
 }
 
 const { title, description = "CodingCat.dev — Purrfect Web Tutorials" } = Astro.props;
+
+const visualEditingEnabled =
+  import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true";
 ---
 
 <!doctype html>
@@ -42,5 +46,7 @@ const { title, description = "CodingCat.dev — Purrfect Web Tutorials" } = Astr
         <p>&copy; {new Date().getFullYear()} CodingCat.dev. All rights reserved.</p>
       </div>
     </footer>
+
+    <VisualEditing enabled={visualEditingEnabled} />
   </body>
 </html>
