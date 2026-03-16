@@ -7,16 +7,23 @@ import { postListQuery, postCountQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-const page = Number(Astro.url.searchParams.get("page") || "1");
+// B1: Validate page number — clamp to positive integer
+const rawPage = Number(Astro.url.searchParams.get("page") || "1");
+const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
 const perPage = 12;
 const offset = (page - 1) * perPage;
 
 const [posts, totalCount] = await Promise.all([
-  sanityFetch<any[]>(postListQuery, { offset, limit: offset + perPage }),
+  sanityFetch<any[]>(postListQuery, { offset, end: offset + perPage }),
   sanityFetch<number>(postCountQuery),
 ]);
 
 const totalPages = Math.ceil(totalCount / perPage);
+
+// Redirect if page exceeds total
+if (page > totalPages && totalPages > 0) {
+  return Astro.redirect(`/blog?page=${totalPages}`);
+}
 ---
 
 <BaseLayout title="Blog — CodingCat.dev">

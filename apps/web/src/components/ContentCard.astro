@@ -43,7 +43,7 @@ const formattedDate = date
       <p class="text-gray-600 text-sm mt-2 line-clamp-2">{excerpt}</p>
     )}
     {formattedDate && (
-      <time class="text-gray-400 text-xs mt-2 block">{formattedDate}</time>
+      <time datetime={date} class="text-gray-400 text-xs mt-2 block">{formattedDate}</time>
     )}
   </div>
 </a>

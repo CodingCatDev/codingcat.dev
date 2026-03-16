@@ -26,12 +26,12 @@ const formattedDate = post.date
   : null;
 ---
 
-<BaseLayout title={`${post.title} — CodingCat.dev`}>
+<BaseLayout title={`${post.title} — CodingCat.dev`} description={post.excerpt}>
   <article class="container mx-auto px-4 py-8 max-w-4xl">
     <header class="mb-8">
       <h1 class="text-4xl font-bold mb-4">{post.title}</h1>
       <div class="flex items-center gap-4 text-gray-600">
-        {formattedDate && <time>{formattedDate}</time>}
+        {formattedDate && <time datetime={post.date}>{formattedDate}</time>}
         {post.author?.map((a: any) => (
           <a href={`/author/${a.slug}`} class="hover:text-blue-600">{a.title}</a>
         ))}

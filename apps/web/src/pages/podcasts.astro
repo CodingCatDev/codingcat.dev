@@ -7,16 +7,23 @@ import { podcastListQuery, podcastCountQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-const page = Number(Astro.url.searchParams.get("page") || "1");
+// B1: Validate page number — clamp to positive integer
+const rawPage = Number(Astro.url.searchParams.get("page") || "1");
+const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
 const perPage = 12;
 const offset = (page - 1) * perPage;
 
 const [podcasts, totalCount] = await Promise.all([
-  sanityFetch<any[]>(podcastListQuery, { offset, limit: offset + perPage }),
+  sanityFetch<any[]>(podcastListQuery, { offset, end: offset + perPage }),
   sanityFetch<number>(podcastCountQuery),
 ]);
 
 const totalPages = Math.ceil(totalCount / perPage);
+
+// Redirect if page exceeds total
+if (page > totalPages && totalPages > 0) {
+  return Astro.redirect(`/podcasts?page=${totalPages}`);
+}
 ---
 
 <BaseLayout title="Podcasts — CodingCat.dev">

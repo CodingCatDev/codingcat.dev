@@ -26,12 +26,12 @@ const formattedDate = podcast.date
   : null;
 ---
 
-<BaseLayout title={`${podcast.title} — CodingCat.dev`}>
+<BaseLayout title={`${podcast.title} — CodingCat.dev`} description={podcast.excerpt}>
   <article class="container mx-auto px-4 py-8 max-w-4xl">
     <header class="mb-8">
       <h1 class="text-4xl font-bold mb-4">{podcast.title}</h1>
       <div class="flex items-center gap-4 text-gray-600 flex-wrap">
-        {formattedDate && <time>{formattedDate}</time>}
+        {formattedDate && <time datetime={podcast.date}>{formattedDate}</time>}
         {podcast.season && podcast.episode && (
           <span>S{podcast.season}E{podcast.episode}</span>
         )}

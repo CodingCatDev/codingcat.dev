@@ -79,7 +79,7 @@ export const homePageQuery = groq`*[_type == "settings"][0]{
   },
 }`;
 
-export const postListQuery = groq`*[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
+export const postListQuery = groq`*[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$end] {
   ${baseFields},
   author[]->{
     "title": coalesce(title, "Anonymous"),
@@ -94,7 +94,7 @@ export const postQuery = groq`*[_type == "post" && slug.current == $slug][0] {
 
 export const postCountQuery = groq`count(*[_type == "post" && defined(slug.current)])`;
 
-export const podcastListQuery = groq`*[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
+export const podcastListQuery = groq`*[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$end] {
   ${baseFields},
   author[]->{
     "title": coalesce(title, "Anonymous"),
