@@ -1,0 +1,26 @@
+{
+  "name": "@codingcatdev/sanity",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "typegen": "sanity schema extract --path=./extract.json && sanity typegen generate"
+  },
+  "dependencies": {
+    "@codingcatdev/sanity-plugin-podcast-rss": "^1.0.0",
+    "@sanity/code-input": "^5.0.0",
+    "@sanity/vision": "^3.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sanity": "^3.0.0",
+    "sanity-plugin-media": "^2.0.0",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

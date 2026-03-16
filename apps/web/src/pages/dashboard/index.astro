@@ -1,0 +1,40 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export const prerender = false;
+
+// Middleware handles redirect if not authenticated
+const user = Astro.locals.user;
+---
+
+<BaseLayout title="Dashboard">
+  <main class="container mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold">Dashboard</h1>
+      <div class="flex items-center gap-4">
+        <span class="text-gray-500">{user?.email}</span>
+        <a
+          href="/api/auth/sign-out"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Sign Out
+        </a>
+      </div>
+    </div>
+    
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <a href="/dashboard/content" class="block p-6 rounded-lg border hover:border-blue-500 transition-colors">
+        <h2 class="text-xl font-medium mb-2">Content</h2>
+        <p class="text-gray-500">Manage posts, podcasts, and videos</p>
+      </a>
+      <a href="/dashboard/videos" class="block p-6 rounded-lg border hover:border-blue-500 transition-colors">
+        <h2 class="text-xl font-medium mb-2">Videos</h2>
+        <p class="text-gray-500">YouTube video management</p>
+      </a>
+      <a href="/dashboard/settings" class="block p-6 rounded-lg border hover:border-blue-500 transition-colors">
+        <h2 class="text-xl font-medium mb-2">Settings</h2>
+        <p class="text-gray-500">App configuration</p>
+      </a>
+    </div>
+  </main>
+</BaseLayout>
