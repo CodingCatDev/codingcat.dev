@@ -1,0 +1,80 @@
+---
+import Container from "./Container.astro";
+
+/**
+ * Site footer with brand column, content links, connect links, legal links,
+ * and compact newsletter signup.
+ */
+---
+
+<footer class="border-t border-[--border] bg-[--bg-secondary] mt-16">
+  <Container>
+    <div class="py-12 md:py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Brand Column */}
+        <div class="lg:col-span-1 space-y-4">
+          <a href="/" class="flex items-center gap-2 font-bold text-lg text-[--text]">
+            <span class="text-2xl">🐱</span>
+            CodingCat<span class="text-primary">.dev</span>
+          </a>
+          <p class="text-sm text-[--text-secondary]">
+            Purrfect Web Development Tutorials — blog posts, podcasts, courses, and videos.
+          </p>
+          {/* Compact newsletter */}
+          <form class="flex gap-2">
+            <input
+              type="email"
+              placeholder="you@example.com"
+              class="flex-1 px-3 py-2 text-sm rounded-lg border border-[--border] bg-[--bg] text-[--text] placeholder:text-[--text-tertiary] focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+            <button
+              type="submit"
+              class="px-3 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-hover transition-colors"
+            >
+              →
+            </button>
+          </form>
+        </div>
+
+        {/* Content Links */}
+        <div>
+          <h4 class="font-semibold text-sm text-[--text] mb-3">Content</h4>
+          <ul class="space-y-2">
+            <li><a href="/blog" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Blog</a></li>
+            <li><a href="/podcasts" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Podcast</a></li>
+            <li><a href="/authors" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Authors</a></li>
+            <li><a href="/guests" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Guests</a></li>
+          </ul>
+        </div>
+
+        {/* Connect Links */}
+        <div>
+          <h4 class="font-semibold text-sm text-[--text] mb-3">Connect</h4>
+          <ul class="space-y-2">
+            <li><a href="https://youtube.com/@codingcatdev" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors" target="_blank" rel="noopener">YouTube</a></li>
+            <li><a href="https://twitter.com/codingcatdev" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors" target="_blank" rel="noopener">Twitter / X</a></li>
+            <li><a href="https://github.com/codingcatdev" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="/rss.xml" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">RSS Feed</a></li>
+          </ul>
+        </div>
+
+        {/* Legal Links */}
+        <div>
+          <h4 class="font-semibold text-sm text-[--text] mb-3">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="/privacy" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Privacy Policy</a></li>
+            <li><a href="/terms" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Terms of Service</a></li>
+            <li><a href="/sponsors" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Sponsors</a></li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Copyright */}
+      <div class="mt-12 pt-6 border-t border-[--border] text-center">
+        <p class="text-sm text-[--text-tertiary]">
+          &copy; {new Date().getFullYear()} CodingCat.dev. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </Container>
+</footer>

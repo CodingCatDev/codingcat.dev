@@ -1,0 +1,37 @@
+---
+interface Props {
+  type: "blog" | "podcast" | "course" | "video" | "short";
+  size?: "sm" | "md";
+}
+
+const { type, size = "md" } = Astro.props;
+
+const colors: Record<string, string> = {
+  blog: "bg-[--color-type-blog]/15 text-[--color-type-blog] border-[--color-type-blog]/25",
+  podcast: "bg-[--color-type-podcast]/15 text-[--color-type-podcast] border-[--color-type-podcast]/25",
+  course: "bg-[--color-type-course]/15 text-[--color-type-course] border-[--color-type-course]/25",
+  video: "bg-[--color-type-video]/15 text-[--color-type-video] border-[--color-type-video]/25",
+  short: "bg-[--color-type-short]/15 text-[--color-type-short] border-[--color-type-short]/25",
+};
+
+const labels: Record<string, string> = {
+  blog: "Blog",
+  podcast: "Podcast",
+  course: "Course",
+  video: "Video",
+  short: "Short",
+};
+
+const sizes: Record<string, string> = {
+  sm: "px-1.5 py-0.5 text-[10px]",
+  md: "px-2 py-0.5 text-xs",
+};
+---
+
+<span class:list={[
+  "inline-flex items-center font-semibold uppercase tracking-wider rounded-sm border",
+  colors[type],
+  sizes[size],
+]}>
+  {labels[type]}
+</span>

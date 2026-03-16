@@ -1,49 +1,62 @@
 ---
+import Badge from "./Badge.astro";
+import Avatar from "./Avatar.astro";
 import { urlForImage } from "@/utils/sanity";
 
 interface Props {
   title: string;
-  slug: string;
-  coverImage?: any;
-  excerpt?: string;
-  date?: string;
+  url: string;
+  type: "blog" | "podcast" | "course" | "video" | "short";
+  thumbnail?: any;
+  duration?: string;
+  metadata?: string;
+  authorName?: string;
+  authorImage?: any;
 }
 
-const { title, slug, coverImage, excerpt, date } = Astro.props;
+const { title, url, type, thumbnail, duration, metadata, authorName, authorImage } = Astro.props;
 
-const imageUrl = coverImage
-  ? urlForImage(coverImage).width(640).height(360).format("webp").url()
-  : null;
-
-const formattedDate = date
-  ? new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  : null;
+const thumbnailUrl = thumbnail ? urlForImage(thumbnail).width(640).height(360).url() : undefined;
+const authorImageUrl = authorImage ? urlForImage(authorImage).width(48).height(48).url() : undefined;
 ---
 
-<a href={slug} class="group block rounded-lg border hover:border-blue-500 transition-colors overflow-hidden">
-  {imageUrl && (
-    <img
-      src={imageUrl}
-      alt={title}
-      width={640}
-      height={360}
-      class="w-full aspect-video object-cover"
-      loading="lazy"
-    />
+<a href={url} class="group block rounded-xl border border-[--border] bg-[--surface] overflow-hidden transition-all duration-200 hover:border-[--border-hover] hover:shadow-[--shadow-glow] hover:-translate-y-0.5">
+  {/* Thumbnail */}
+  {thumbnailUrl && (
+    <div class="relative aspect-video overflow-hidden">
+      <img
+        src={thumbnailUrl}
+        alt={title}
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        loading="lazy"
+      />
+      {duration && (
+        <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-mono px-1.5 py-0.5 rounded-sm">
+          {duration}
+        </span>
+      )}
+    </div>
   )}
-  <div class="p-4">
-    <h3 class="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
+
+  {/* Content */}
+  <div class="p-4 space-y-2">
+    {/* Badge + Metadata Row */}
+    <div class="flex items-center gap-2 text-xs">
+      <Badge type={type} />
+      {metadata && <span class="text-[--text-tertiary]">{metadata}</span>}
+    </div>
+
+    {/* Title */}
+    <h3 class="font-semibold text-[--text] line-clamp-2 group-hover:text-primary transition-colors">
       {title}
     </h3>
-    {excerpt && (
-      <p class="text-gray-600 text-sm mt-2 line-clamp-2">{excerpt}</p>
-    )}
-    {formattedDate && (
-      <time datetime={date} class="text-gray-400 text-xs mt-2 block">{formattedDate}</time>
+
+    {/* Author */}
+    {authorName && (
+      <div class="flex items-center gap-2">
+        <Avatar src={authorImageUrl} name={authorName} size="xs" />
+        <span class="text-sm text-[--text-secondary]">{authorName}</span>
+      </div>
     )}
   </div>
 </a>

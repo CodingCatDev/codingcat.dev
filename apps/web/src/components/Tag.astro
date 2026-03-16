@@ -1,0 +1,23 @@
+---
+interface Props {
+  label: string;
+  href?: string;
+  active?: boolean;
+}
+
+const { label, href, active = false } = Astro.props;
+const resolvedHref = href ?? `/topic/${label.toLowerCase()}`;
+---
+
+<a
+  href={resolvedHref}
+  class:list={[
+    "inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium",
+    "transition-colors duration-150 border",
+    active
+      ? "bg-primary text-white border-primary"
+      : "bg-[--surface] text-[--text-secondary] border-[--border] hover:border-primary/50 hover:text-primary",
+  ]}
+>
+  {label}
+</a>

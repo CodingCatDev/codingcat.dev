@@ -1,0 +1,21 @@
+---
+/**
+ * Inline dark mode script — runs BEFORE CSS loads to prevent FOUC.
+ * Reads from localStorage, falls back to system preference, defaults to dark.
+ * Must be in <head> before any stylesheets.
+ */
+---
+
+<script is:inline>
+(function() {
+  const stored = localStorage.getItem('theme');
+  if (stored === 'light') {
+    document.documentElement.classList.add('light');
+  } else if (stored === 'dark') {
+    document.documentElement.classList.remove('light');
+  } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.classList.add('light');
+  }
+  // Default: no class = dark mode (the default)
+})();
+</script>

@@ -1,0 +1,35 @@
+---
+interface Props {
+  src?: string;
+  name: string;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+}
+
+const { src, name, size = "md" } = Astro.props;
+
+const sizeMap: Record<string, string> = {
+  xs: "w-6 h-6 text-[10px]",
+  sm: "w-8 h-8 text-xs",
+  md: "w-10 h-10 text-sm",
+  lg: "w-16 h-16 text-xl",
+  xl: "w-24 h-24 text-3xl",
+};
+
+const initials = name
+  .split(" ")
+  .map((n) => n[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+---
+
+<div class:list={[
+  "relative rounded-full overflow-hidden bg-primary/20 flex items-center justify-center flex-shrink-0",
+  sizeMap[size],
+]}>
+  {src ? (
+    <img src={src} alt={name} class="w-full h-full object-cover" loading="lazy" />
+  ) : (
+    <span class="font-semibold text-primary">{initials}</span>
+  )}
+</div>
