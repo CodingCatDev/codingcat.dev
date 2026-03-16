@@ -13,6 +13,11 @@ const { person, type } = Astro.props;
 const coverUrl = person.coverImage
   ? urlForImage(person.coverImage).width(400).height(400).format("webp").url()
   : null;
+
+function getHostname(url: string): string {
+  try { return new URL(url).hostname; }
+  catch { return url; }
+}
 ---
 
 <div class="flex flex-col md:flex-row gap-8 mb-12">
@@ -53,7 +58,7 @@ const coverUrl = person.coverImage
       <div class="flex flex-wrap gap-3 mt-2">
         {person.websites.map((site: string) => (
           <a href={site} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm">
-            {new URL(site).hostname}
+            {getHostname(site)}
           </a>
         ))}
       </div>
