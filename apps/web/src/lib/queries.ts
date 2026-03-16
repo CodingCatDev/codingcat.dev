@@ -118,3 +118,69 @@ export const settingsQuery = groq`*[_type == "settings"][0]{
   ...,
   ogImage
 }`;
+
+// Author queries
+export const authorListQuery = groq`*[_type == "author" && defined(slug.current)] | order(title) [$offset...$end] {
+  ${baseFields}
+}`;
+
+export const authorCountQuery = groq`count(*[_type == "author" && defined(slug.current)])`;
+
+export const authorQuery = groq`*[_type == "author" && slug.current == $slug][0] {
+  ${baseFields},
+  ${contentFields},
+  socials,
+  websites,
+  "related": {
+    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
+      ${baseFields}
+    },
+    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
+      ${baseFields}
+    },
+  }
+}`;
+
+// Guest queries
+export const guestListQuery = groq`*[_type == "guest" && defined(slug.current)] | order(title) [$offset...$end] {
+  ${baseFields}
+}`;
+
+export const guestCountQuery = groq`count(*[_type == "guest" && defined(slug.current)])`;
+
+export const guestQuery = groq`*[_type == "guest" && slug.current == $slug][0] {
+  ${baseFields},
+  ${contentFields},
+  socials,
+  websites,
+  "related": {
+    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
+      ${baseFields}
+    },
+    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
+      ${baseFields}
+    },
+  }
+}`;
+
+// Sponsor queries
+export const sponsorListQuery = groq`*[_type == "sponsor" && defined(slug.current)] | order(date desc) [$offset...$end] {
+  ${baseFields}
+}`;
+
+export const sponsorCountQuery = groq`count(*[_type == "sponsor" && defined(slug.current)])`;
+
+export const sponsorQuery = groq`*[_type == "sponsor" && slug.current == $slug][0] {
+  ${baseFields},
+  ${contentFields},
+  socials,
+  websites,
+  "related": {
+    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [0...4] {
+      ${baseFields}
+    },
+    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [0...4] {
+      ${baseFields}
+    },
+  }
+}`;

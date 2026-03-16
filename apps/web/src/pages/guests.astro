@@ -1,0 +1,48 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContentCard from "@/components/ContentCard.astro";
+import Pagination from "@/components/Pagination.astro";
+import { sanityFetch } from "@/utils/sanity";
+import { guestListQuery, guestCountQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const rawPage = Number(Astro.url.searchParams.get("page") || "1");
+const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
+const perPage = 12;
+const offset = (page - 1) * perPage;
+
+const [items, totalCount] = await Promise.all([
+  sanityFetch<any[]>(guestListQuery, { offset, end: offset + perPage }),
+  sanityFetch<number>(guestCountQuery),
+]);
+
+const totalPages = Math.ceil(totalCount / perPage);
+
+if (page > totalPages && totalPages > 0) {
+  return Astro.redirect(`/guests?page=${totalPages}`);
+}
+---
+
+<BaseLayout title="Guests — CodingCat.dev">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-2">Guests</h1>
+    <p class="text-gray-600 mb-8">The people behind CodingCat.dev content.</p>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {items?.map((item) => (
+        <ContentCard
+          title={item.title}
+          slug={`/guest/${item.slug}`}
+          coverImage={item.coverImage}
+          excerpt={item.excerpt}
+          date={item.date}
+        />
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/guests" />
+    )}
+  </main>
+</BaseLayout>

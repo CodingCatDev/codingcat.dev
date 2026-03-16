@@ -1,0 +1,21 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PersonDetail from "@/components/PersonDetail.astro";
+import { sanityFetch } from "@/utils/sanity";
+import { authorQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const author = await sanityFetch<any>(authorQuery, { slug });
+
+if (!author) {
+  return Astro.redirect("/404");
+}
+---
+
+<BaseLayout title={`${author.title} — CodingCat.dev`} description={author.excerpt}>
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <PersonDetail person={author} type="author" />
+  </main>
+</BaseLayout>
