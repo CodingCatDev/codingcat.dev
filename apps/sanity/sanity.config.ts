@@ -42,9 +42,12 @@ import videoAnalytics from "./schemas/documents/videoAnalytics";
 import sponsorLead from "./schemas/documents/sponsorLead";
 import sponsorPool from "./schemas/documents/sponsorPool";
 import tableSchema, { rowType } from "./schemas/custom/table";
+import podcastSeries from "./schemas/documents/podcastSeries";
+import category from "./schemas/documents/category";
+import short from "./schemas/documents/short";
 
 // Sanity Studio env vars (SANITY_STUDIO_ prefix is auto-exposed by Sanity CLI)
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "kc0imnra";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const studioUrl = "/";
@@ -163,6 +166,10 @@ export default defineConfig({
       videoAnalytics,
       sponsorLead,
       sponsorPool,
+      // New document types
+      podcastSeries,
+      category,
+      short,
     ],
   },
   document: {
