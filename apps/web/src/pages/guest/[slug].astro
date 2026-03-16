@@ -7,7 +7,8 @@ import { guestQuery } from "@/lib/queries";
 export const prerender = false;
 
 const { slug } = Astro.params;
-const { data: guest } = await loadQuery<any>({ query: guestQuery, params: { slug } });
+const draftMode = Astro.cookies.has("__sanity_preview");
+const { data: guest } = await loadQuery<any>({ query: guestQuery, params: { slug }, draftMode });
 
 if (!guest) {
   return Astro.redirect("/404");

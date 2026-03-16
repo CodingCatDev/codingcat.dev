@@ -1,7 +1,11 @@
 /**
  * Draft-aware Sanity query helper with Visual Editing support.
  *
- * When Visual Editing is enabled (PUBLIC_SANITY_VISUAL_EDITING_ENABLED=true):
+ * Draft mode is enabled when EITHER:
+ * 1. PUBLIC_SANITY_VISUAL_EDITING_ENABLED=true (site-wide, for dev environments)
+ * 2. The __sanity_preview cookie is set (per-session, via /api/draft-mode/enable)
+ *
+ * When draft mode is active:
  * - Fetches with perspective: "drafts" (shows unpublished content)
  * - Enables stega encoding (invisible edit markers for click-to-edit overlays)
  * - Uses SANITY_API_READ_TOKEN for authenticated requests
@@ -23,28 +27,46 @@ export function urlForImage(source: SanityImageSource) {
   return builder.image(source);
 }
 
-const visualEditingEnabled =
+/** Site-wide Visual Editing toggle (for dev/preview environments) */
+const siteWideVisualEditing =
   import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true";
 const token = import.meta.env.SANITY_API_READ_TOKEN;
 
+interface LoadQueryOptions {
+  query: string;
+  params?: QueryParams;
+  /** Per-request draft mode — set from Astro.cookies in page frontmatter */
+  draftMode?: boolean;
+}
+
+/**
+ * Check if Visual Editing / draft mode is active.
+ * True when site-wide toggle is on OR per-request draft cookie is set.
+ */
+function isDraftMode(draftMode?: boolean): boolean {
+  return siteWideVisualEditing || draftMode === true;
+}
+
 /**
  * Fetch from Sanity with Visual Editing support.
- * Use this instead of sanityClient.fetch() directly.
+ *
+ * For pages: pass `draftMode: Astro.cookies.has('__sanity_preview')`
+ * to enable per-request draft mode from the preview cookie.
  */
 export async function loadQuery<T>({
   query,
   params,
-}: {
-  query: string;
-  params?: QueryParams;
-}): Promise<{ data: T }> {
-  if (visualEditingEnabled && !token) {
+  draftMode,
+}: LoadQueryOptions): Promise<{ data: T }> {
+  const drafts = isDraftMode(draftMode);
+
+  if (drafts && !token) {
     throw new Error(
       "The `SANITY_API_READ_TOKEN` environment variable is required during Visual Editing.",
     );
   }
 
-  const perspective = visualEditingEnabled ? "drafts" : "published";
+  const perspective = drafts ? "drafts" : "published";
 
   const { result, resultSourceMap } = await sanityClient.fetch<T>(
     query,
@@ -52,10 +74,10 @@ export async function loadQuery<T>({
     {
       filterResponse: false,
       perspective,
-      resultSourceMap: visualEditingEnabled ? "withKeyArraySelector" : false,
-      stega: visualEditingEnabled,
-      ...(visualEditingEnabled ? { token } : {}),
-      useCdn: !visualEditingEnabled,
+      resultSourceMap: drafts ? "withKeyArraySelector" : false,
+      stega: drafts,
+      ...(drafts ? { token } : {}),
+      useCdn: !drafts,
     },
   );
 
