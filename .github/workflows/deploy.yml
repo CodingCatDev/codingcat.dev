@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install wrangler
+        run: pnpm add -Dw wrangler
+
       - name: Build (dev)
         if: github.ref == 'refs/heads/dev'
         run: pnpm --filter @codingcatdev/web build
@@ -37,7 +40,7 @@ jobs:
 
       - name: Deploy to dev
         if: github.ref == 'refs/heads/dev'
-        run: npx wrangler deploy
+        run: pnpm exec wrangler deploy
         working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -45,7 +48,7 @@ jobs:
 
       - name: Deploy to production
         if: github.ref == 'refs/heads/main'
-        run: npx wrangler deploy --env production
+        run: pnpm exec wrangler deploy --env production
         working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
