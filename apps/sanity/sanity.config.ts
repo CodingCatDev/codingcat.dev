@@ -47,7 +47,7 @@ import category from "./schemas/documents/category";
 import short from "./schemas/documents/short";
 
 // Sanity Studio env vars (SANITY_STUDIO_ prefix is auto-exposed by Sanity CLI)
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "kc0imnra";
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const studioUrl = "/";
