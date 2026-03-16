@@ -14,7 +14,8 @@ if (reservedSlugs.includes(slug!)) {
   return Astro.redirect(`/${slug}`);
 }
 
-const { data: page } = await loadQuery<any>({ query: pageQuery, params: { slug } });
+const draftMode = Astro.cookies.has("__sanity_preview");
+const { data: page } = await loadQuery<any>({ query: pageQuery, params: { slug }, draftMode });
 
 if (!page) {
   return new Response(null, { status: 404 });

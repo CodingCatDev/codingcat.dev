@@ -1,17 +1,9 @@
 import type { APIRoute } from "astro";
 import { sanityFetch } from "@/utils/sanity";
 import { rssPostsQuery } from "@/lib/queries";
+import { escapeXml } from "@/utils/xml";
 
 export const prerender = false;
-
-function escapeXml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
 
 export const GET: APIRoute = async () => {
   const site = "https://codingcat.dev";

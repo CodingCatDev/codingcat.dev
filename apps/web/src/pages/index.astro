@@ -6,7 +6,8 @@ import { homePageQuery } from "@/lib/queries";
 
 export const prerender = false;
 
-const { data: homePage } = await loadQuery<any>({ query: homePageQuery });
+const draftMode = Astro.cookies.has("__sanity_preview");
+const { data: homePage } = await loadQuery<any>({ query: homePageQuery, draftMode });
 ---
 
 <BaseLayout title="CodingCat.dev — Purrfect Web Tutorials">

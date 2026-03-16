@@ -7,7 +7,8 @@ import { postQuery } from "@/lib/queries";
 export const prerender = false;
 
 const { slug } = Astro.params;
-const { data: post } = await loadQuery<any>({ query: postQuery, params: { slug } });
+const draftMode = Astro.cookies.has("__sanity_preview");
+const { data: post } = await loadQuery<any>({ query: postQuery, params: { slug }, draftMode });
 
 if (!post) {
   return Astro.redirect("/404");
