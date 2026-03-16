@@ -3,9 +3,16 @@ import { format, parseISO } from "date-fns";
 import { defineField, defineType } from "sanity";
 
 import contentType from "../partials/content";
+import {
+	socialPreviewFields,
+	socialPreviewGroup,
+} from "../partials/socialPreview";
 import podcastType from "./podcastType";
 import guestType from "./guest";
 import authorType from "./author";
+import podcastSeriesType from "./podcastSeries";
+import shortType from "./short";
+import postType from "./post";
 
 export default defineType({
 	...contentType,
@@ -15,6 +22,7 @@ export default defineType({
 	type: "document",
 	groups: [
 		...(contentType.groups || []),
+		socialPreviewGroup,
 		{
 			name: "podcast",
 			title: "Podcast Details",
@@ -22,6 +30,8 @@ export default defineType({
 	],
 	fields: [
 		...contentType.fields,
+		...socialPreviewFields,
+		// --- Existing podcast-specific fields ---
 		defineField({
 			name: "podcastType",
 			title: "Podcast Type",
@@ -124,6 +134,153 @@ export default defineType({
 			title: "Spotify",
 			type: "podcastRssEpisode",
 			// validation: (rule) => [rule.required()],
+		}),
+		// --- New fields ---
+		defineField({
+			name: "thumbnail",
+			title: "Thumbnail",
+			type: "image",
+			options: {
+				hotspot: true,
+			},
+			group: "podcast",
+			description:
+				"YouTube-optimized thumbnail (1280×720). Falls back to coverImage.",
+		}),
+		defineField({
+			name: "duration",
+			title: "Duration",
+			type: "number",
+			group: "podcast",
+			description: "Episode duration in seconds",
+		}),
+		defineField({
+			name: "chapters",
+			title: "Chapters",
+			type: "array",
+			group: "podcast",
+			of: [
+				{
+					type: "object",
+					fields: [
+						defineField({
+							name: "title",
+							title: "Title",
+							type: "string",
+							validation: (rule) => rule.required(),
+						}),
+						defineField({
+							name: "timestamp",
+							title: "Timestamp",
+							type: "string",
+							validation: (rule) => rule.required(),
+							description: "Display format e.g. 02:34",
+						}),
+						defineField({
+							name: "seconds",
+							title: "Seconds",
+							type: "number",
+							validation: (rule) => rule.required(),
+							description: "Timestamp in seconds for seeking",
+						}),
+					],
+					preview: {
+						select: {
+							title: "title",
+							subtitle: "timestamp",
+						},
+					},
+				},
+			],
+		}),
+		defineField({
+			name: "series",
+			title: "Series",
+			type: "reference",
+			to: [{ type: podcastSeriesType.name }],
+			group: "podcast",
+		}),
+		defineField({
+			name: "seriesOrder",
+			title: "Series Order",
+			type: "number",
+			group: "podcast",
+			description: "Position within the series",
+		}),
+		defineField({
+			name: "listenLinks",
+			title: "Listen Links",
+			type: "object",
+			group: "podcast",
+			description: "Multi-platform listen links",
+			fields: [
+				defineField({
+					name: "youtube",
+					title: "YouTube",
+					type: "string",
+				}),
+				defineField({
+					name: "spotify",
+					title: "Spotify",
+					type: "string",
+				}),
+				defineField({
+					name: "apple",
+					title: "Apple Podcasts",
+					type: "string",
+				}),
+				defineField({
+					name: "overcast",
+					title: "Overcast",
+					type: "string",
+				}),
+				defineField({
+					name: "pocketCasts",
+					title: "Pocket Casts",
+					type: "string",
+				}),
+				defineField({
+					name: "rss",
+					title: "RSS",
+					type: "string",
+				}),
+			],
+		}),
+		defineField({
+			name: "transcript",
+			title: "Transcript",
+			type: "text",
+			group: "podcast",
+			description: "Full episode transcript",
+		}),
+		defineField({
+			name: "contentType",
+			title: "Content Type",
+			type: "string",
+			group: "podcast",
+			description: "Episode format",
+			options: {
+				list: ["interview", "solo", "tutorial", "news", "review"],
+			},
+		}),
+		defineField({
+			name: "relatedShorts",
+			title: "Related Shorts",
+			type: "array",
+			group: "podcast",
+			of: [
+				{
+					type: "reference",
+					to: [{ type: shortType.name }],
+				},
+			],
+		}),
+		defineField({
+			name: "relatedBlogPost",
+			title: "Related Blog Post",
+			type: "reference",
+			group: "podcast",
+			to: [{ type: postType.name }],
 		}),
 	],
 	orderings: [
