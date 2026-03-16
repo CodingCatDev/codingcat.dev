@@ -63,13 +63,10 @@ const podcastFields = `
   chapters[]{
     title,
     timestamp,
-    description
+    seconds
   },
   "series": series->{ _id, "title": coalesce(title, "Unknown Series"), "slug": slug.current, description },
-  listenLinks[]{
-    platform,
-    url
-  }
+  listenLinks
 `;
 
 export const homePageQuery = groq`*[_type == "settings"][0]{
@@ -232,7 +229,10 @@ export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast
 // Generic pages (Sanity "page" type)
 export const pageQuery = groq`*[_type == "page" && slug.current == $slug][0] {
   ${baseFields},
-  ${contentFields}
+  ${contentFields},
+  "ogTitle": socialPreview.ogTitle,
+  "ogDescription": socialPreview.ogDescription,
+  "ogImage": socialPreview.ogImage
 }`;
 
 // RSS feeds

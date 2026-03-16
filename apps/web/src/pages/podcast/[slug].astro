@@ -35,13 +35,14 @@ const firstAuthor = podcast.author?.[0];
 const authorImageUrl = firstAuthor?.coverImage
   ? urlForImage(firstAuthor.coverImage).width(96).height(96).url()
   : undefined;
+const firstGuest = podcast.guest?.[0];
 
 const siteUrl = Astro.url.origin;
 const displayTitle = podcast.ogTitle || podcast.title;
 const displayDescription = podcast.ogDescription || podcast.excerpt;
 const ogImage = podcast.ogImage
   ? urlForImage(podcast.ogImage).width(1200).height(630).url()
-  : `${siteUrl}/api/og/podcast.png?title=${encodeURIComponent(podcast.title)}&author=${encodeURIComponent(firstAuthor?.title || "")}&episodeNumber=${podcast.episode || ""}`;
+  : `${siteUrl}/api/og/podcast.png?title=${encodeURIComponent(podcast.title)}&author=${encodeURIComponent(firstAuthor?.title || "")}&episodeNumber=${podcast.episode || ""}&guest=${encodeURIComponent(firstGuest?.title || "")}`;
 
 const episodeLabel = podcast.season && podcast.episode
   ? `Season ${podcast.season} · Episode ${podcast.episode}`
@@ -49,15 +50,18 @@ const episodeLabel = podcast.season && podcast.episode
     ? `Episode ${podcast.episode}`
     : null;
 
-// Platform icons for listen links
+// Platform labels for listen links (keys match Sanity schema field names)
 const platformLabels: Record<string, string> = {
+  youtube: "▶️ YouTube",
   spotify: "🎵 Spotify",
   apple: "🍎 Apple Podcasts",
-  google: "🎧 Google Podcasts",
-  youtube: "▶️ YouTube",
   overcast: "🔊 Overcast",
-  pocketcasts: "📻 Pocket Casts",
+  pocketCasts: "📻 Pocket Casts",
+  rss: "📡 RSS Feed",
 };
+
+// Convert flat listenLinks object to array of [key, url] pairs
+const listenLinksEntries = Object.entries(podcast.listenLinks || {}).filter(([_, url]) => url) as [string, string][];
 ---
 
 <BaseLayout
@@ -151,18 +155,18 @@ const platformLabels: Record<string, string> = {
       )}
 
       {/* Listen Links */}
-      {podcast.listenLinks && podcast.listenLinks.length > 0 && (
+      {listenLinksEntries.length > 0 && (
         <div class="mb-8">
           <h2 class="text-lg font-semibold text-[--text] mb-3">Listen On</h2>
           <div class="flex flex-wrap gap-2">
-            {podcast.listenLinks.map((link: any) => (
+            {listenLinksEntries.map(([platform, url]) => (
               <a
-                href={link.url}
+                href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="inline-flex items-center px-4 py-2 rounded-lg bg-[--surface] border border-[--border] text-sm font-medium text-[--text-secondary] hover:text-[--text] hover:border-[--border-hover] transition-colors"
               >
-                {platformLabels[link.platform] || link.platform}
+                {platformLabels[platform] || platform}
               </a>
             ))}
           </div>
@@ -209,8 +213,8 @@ const platformLabels: Record<string, string> = {
                 </span>
                 <div>
                   <p class="font-medium text-[--text]">{chapter.title}</p>
-                  {chapter.description && (
-                    <p class="text-sm text-[--text-tertiary] mt-0.5">{chapter.description}</p>
+                  {chapter.seconds != null && (
+                    <span class="text-xs text-[--text-tertiary] mt-0.5">{Math.floor(chapter.seconds / 60)}m {chapter.seconds % 60}s</span>
                   )}
                 </div>
               </div>

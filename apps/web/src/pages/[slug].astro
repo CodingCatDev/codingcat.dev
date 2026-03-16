@@ -27,10 +27,14 @@ const coverUrl = page.coverImage
   : null;
 
 const siteUrl = Astro.url.origin;
-const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent(page.title)}`;
+const displayTitle = page.ogTitle || page.title;
+const displayDescription = page.ogDescription || page.excerpt;
+const ogImage = page.ogImage
+  ? urlForImage(page.ogImage).width(1200).height(630).url()
+  : `${siteUrl}/api/og/default.png?title=${encodeURIComponent(page.title)}`;
 ---
 
-<BaseLayout title={`${page.title} — CodingCat.dev`} description={page.excerpt} ogImage={ogImage}>
+<BaseLayout title={`${displayTitle} — CodingCat.dev`} description={displayDescription} ogImage={ogImage}>
   <article class="py-12">
     <Container size="narrow">
       <h1 class="text-4xl font-bold text-[--text] mb-8">{page.title}</h1>
