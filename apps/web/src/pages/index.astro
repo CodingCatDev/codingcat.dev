@@ -1,6 +1,10 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import ContentCardFeatured from "@/components/ContentCardFeatured.astro";
 import ContentCard from "@/components/ContentCard.astro";
+import Badge from "@/components/Badge.astro";
+import Button from "@/components/Button.astro";
 import { loadQuery } from "@/utils/sanity";
 import { homePageQuery } from "@/lib/queries";
 
@@ -8,91 +12,166 @@ export const prerender = false;
 
 const draftMode = Astro.cookies.has("__sanity_preview");
 const { data: homePage } = await loadQuery<any>({ query: homePageQuery, draftMode });
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("CodingCat.dev")}&subtitle=${encodeURIComponent("Purrfect Web Development Tutorials")}`;
+
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 ---
 
-<BaseLayout title="CodingCat.dev — Purrfect Web Tutorials">
-  <main class="container mx-auto px-4 py-8">
-    <!-- Hero -->
-    <section class="text-center py-16">
-      <h1 class="text-5xl font-bold mb-4">CodingCat.dev</h1>
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-        Purrfect Web Development Tutorials — Podcasts, Blog Posts, and Courses
-      </p>
+<BaseLayout title="CodingCat.dev — Purrfect Web Tutorials" ogImage={ogImage}>
+  <main>
+    {/* Hero Section */}
+    <section class="bg-gradient-to-b from-primary/10 to-transparent py-20 md:py-28">
+      <Container size="wide">
+        <div class="text-center max-w-3xl mx-auto">
+          <h1 class="text-5xl md:text-6xl font-extrabold text-[--text] mb-6">
+            CodingCat<span class="text-primary">.dev</span>
+          </h1>
+          <p class="text-xl md:text-2xl text-[--text-secondary] mb-8">
+            Purrfect Web Development Tutorials — Podcasts, Blog Posts, and Courses
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <Button href="/podcasts" variant="primary" size="lg">Latest Podcasts</Button>
+            <Button href="/blog" variant="secondary" size="lg">Browse Blog</Button>
+          </div>
+        </div>
+      </Container>
     </section>
 
-    <!-- Latest Podcasts -->
+    {/* Featured Latest Podcast */}
+    {homePage?.latestPodcast && (
+      <section class="py-12">
+        <Container size="wide">
+          <div class="flex items-center gap-3 mb-6">
+            <Badge type="podcast" />
+            <h2 class="text-2xl font-bold text-[--text]">Latest Episode</h2>
+          </div>
+          <ContentCardFeatured
+            title={homePage.latestPodcast.title}
+            url={`/podcast/${homePage.latestPodcast.slug}`}
+            type="podcast"
+            thumbnail={homePage.latestPodcast.coverImage}
+            authorName={homePage.latestPodcast.authorName}
+            authorImage={homePage.latestPodcast.authorImage}
+            excerpt={homePage.latestPodcast.excerpt}
+            metadata={homePage.latestPodcast.date ? formatDate(homePage.latestPodcast.date) : undefined}
+          />
+        </Container>
+      </section>
+    )}
+
+    {/* Latest Podcasts */}
     {homePage?.latestPodcasts && homePage.latestPodcasts.length > 0 && (
-      <section class="mb-16">
-        <h2 class="text-3xl font-bold mb-2">Latest Podcasts</h2>
-        <p class="text-gray-600 mb-8">Check out our latest podcasts.</p>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {homePage.latestPodcasts.map((podcast: any) => (
-            <ContentCard
-              title={podcast.title}
-              slug={`/podcast/${podcast.slug}`}
-              coverImage={podcast.coverImage}
-              excerpt={podcast.excerpt}
-              date={podcast.date}
-            />
-          ))}
-        </div>
+      <section class="py-12">
+        <Container size="wide">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <Badge type="podcast" />
+              <h2 class="text-2xl font-bold text-[--text]">Latest Podcasts</h2>
+            </div>
+            <a href="/podcasts" class="text-sm font-medium text-primary hover:underline">View All →</a>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {homePage.latestPodcasts.map((podcast: any) => (
+              <ContentCard
+                title={podcast.title}
+                url={`/podcast/${podcast.slug}`}
+                type="podcast"
+                thumbnail={podcast.coverImage}
+                authorName={podcast.authorName}
+                authorImage={podcast.authorImage}
+                metadata={podcast.date ? formatDate(podcast.date) : undefined}
+              />
+            ))}
+          </div>
+        </Container>
       </section>
     )}
 
-    <!-- Top Podcasts -->
+    {/* Top Podcasts */}
     {homePage?.topPodcasts && homePage.topPodcasts.length > 0 && (
-      <section class="mb-16">
-        <h2 class="text-3xl font-bold mb-2">Top Podcasts</h2>
-        <p class="text-gray-600 mb-8">Our most popular episodes by views.</p>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {homePage.topPodcasts.map((podcast: any) => (
-            <ContentCard
-              title={podcast.title}
-              slug={`/podcast/${podcast.slug}`}
-              coverImage={podcast.coverImage}
-              excerpt={podcast.excerpt}
-              date={podcast.date}
-            />
-          ))}
-        </div>
+      <section class="py-12">
+        <Container size="wide">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <Badge type="podcast" />
+              <h2 class="text-2xl font-bold text-[--text]">Top Podcasts</h2>
+            </div>
+            <a href="/podcasts" class="text-sm font-medium text-primary hover:underline">View All →</a>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {homePage.topPodcasts.map((podcast: any) => (
+              <ContentCard
+                title={podcast.title}
+                url={`/podcast/${podcast.slug}`}
+                type="podcast"
+                thumbnail={podcast.coverImage}
+                authorName={podcast.authorName}
+                authorImage={podcast.authorImage}
+                metadata={podcast.date ? formatDate(podcast.date) : undefined}
+              />
+            ))}
+          </div>
+        </Container>
       </section>
     )}
 
-    <!-- Latest Posts -->
+    {/* Latest Posts */}
     {homePage?.latestPosts && homePage.latestPosts.length > 0 && (
-      <section class="mb-16">
-        <h2 class="text-3xl font-bold mb-2">From the Blog</h2>
-        <p class="text-gray-600 mb-8">Latest blog posts on web development.</p>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {homePage.latestPosts.map((post: any) => (
-            <ContentCard
-              title={post.title}
-              slug={`/post/${post.slug}`}
-              coverImage={post.coverImage}
-              excerpt={post.excerpt}
-              date={post.date}
-            />
-          ))}
-        </div>
+      <section class="py-12">
+        <Container size="wide">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <Badge type="blog" />
+              <h2 class="text-2xl font-bold text-[--text]">From the Blog</h2>
+            </div>
+            <a href="/blog" class="text-sm font-medium text-primary hover:underline">View All →</a>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {homePage.latestPosts.map((post: any) => (
+              <ContentCard
+                title={post.title}
+                url={`/post/${post.slug}`}
+                type="blog"
+                thumbnail={post.coverImage}
+                authorName={post.authorName}
+                authorImage={post.authorImage}
+                metadata={post.date ? formatDate(post.date) : undefined}
+              />
+            ))}
+          </div>
+        </Container>
       </section>
     )}
 
-    <!-- Top Posts -->
+    {/* Top Posts */}
     {homePage?.topPosts && homePage.topPosts.length > 0 && (
-      <section class="mb-16">
-        <h2 class="text-3xl font-bold mb-2">Top Posts</h2>
-        <p class="text-gray-600 mb-8">Most viewed blog posts.</p>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {homePage.topPosts.map((post: any) => (
-            <ContentCard
-              title={post.title}
-              slug={`/post/${post.slug}`}
-              coverImage={post.coverImage}
-              excerpt={post.excerpt}
-              date={post.date}
-            />
-          ))}
-        </div>
+      <section class="py-12">
+        <Container size="wide">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <Badge type="blog" />
+              <h2 class="text-2xl font-bold text-[--text]">Top Posts</h2>
+            </div>
+            <a href="/blog" class="text-sm font-medium text-primary hover:underline">View All →</a>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {homePage.topPosts.map((post: any) => (
+              <ContentCard
+                title={post.title}
+                url={`/post/${post.slug}`}
+                type="blog"
+                thumbnail={post.coverImage}
+                authorName={post.authorName}
+                authorImage={post.authorImage}
+                metadata={post.date ? formatDate(post.date) : undefined}
+              />
+            ))}
+          </div>
+        </Container>
       </section>
     )}
   </main>

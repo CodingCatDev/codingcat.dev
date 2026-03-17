@@ -1,5 +1,10 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import Badge from "@/components/Badge.astro";
+import Tag from "@/components/Tag.astro";
+import Avatar from "@/components/Avatar.astro";
+import Button from "@/components/Button.astro";
 import { PortableText } from "astro-portabletext";
 import { loadQuery, urlForImage } from "@/utils/sanity";
 import { podcastQuery } from "@/lib/queries";
@@ -25,100 +30,259 @@ const formattedDate = podcast.date
       day: "numeric",
     })
   : null;
+
+const firstAuthor = podcast.author?.[0];
+const authorImageUrl = firstAuthor?.coverImage
+  ? urlForImage(firstAuthor.coverImage).width(96).height(96).url()
+  : undefined;
+const firstGuest = podcast.guest?.[0];
+
+const siteUrl = Astro.url.origin;
+const displayTitle = podcast.ogTitle || podcast.title;
+const displayDescription = podcast.ogDescription || podcast.excerpt;
+const ogImage = podcast.ogImage
+  ? urlForImage(podcast.ogImage).width(1200).height(630).url()
+  : `${siteUrl}/api/og/podcast.png?title=${encodeURIComponent(podcast.title)}&author=${encodeURIComponent(firstAuthor?.title || "")}&episodeNumber=${podcast.episode || ""}&guest=${encodeURIComponent(firstGuest?.title || "")}`;
+
+const episodeLabel = podcast.season && podcast.episode
+  ? `Season ${podcast.season} · Episode ${podcast.episode}`
+  : podcast.episode
+    ? `Episode ${podcast.episode}`
+    : null;
+
+// Platform labels for listen links (keys match Sanity schema field names)
+const platformLabels: Record<string, string> = {
+  youtube: "▶️ YouTube",
+  spotify: "🎵 Spotify",
+  apple: "🍎 Apple Podcasts",
+  overcast: "🔊 Overcast",
+  pocketCasts: "📻 Pocket Casts",
+  rss: "📡 RSS Feed",
+};
+
+// Convert flat listenLinks object to array of [key, url] pairs
+const listenLinksEntries = Object.entries(podcast.listenLinks || {}).filter(([_, url]) => url) as [string, string][];
 ---
 
-<BaseLayout title={`${podcast.title} — CodingCat.dev`} description={podcast.excerpt}>
-  <article class="container mx-auto px-4 py-8 max-w-4xl">
-    <header class="mb-8">
-      <h1 class="text-4xl font-bold mb-4">{podcast.title}</h1>
-      <div class="flex items-center gap-4 text-gray-600 flex-wrap">
-        {formattedDate && <time datetime={podcast.date}>{formattedDate}</time>}
-        {podcast.season && podcast.episode && (
-          <span>S{podcast.season}E{podcast.episode}</span>
-        )}
-        {podcast.author?.map((a: any) => (
-          <a href={`/author/${a.slug}`} class="hover:text-blue-600">{a.title}</a>
-        ))}
-      </div>
-    </header>
-
-    {coverUrl && (
-      <img
-        src={coverUrl}
-        alt={podcast.title}
-        width={1200}
-        height={630}
-        class="w-full rounded-lg mb-8"
-      />
-    )}
-
-    {podcast.youtube && (
-      <div class="aspect-video mb-8">
-        <iframe
-          src={`https://www.youtube.com/embed/${podcast.youtube}`}
-          class="w-full h-full rounded-lg"
-          allowfullscreen
-          loading="lazy"
-        />
-      </div>
-    )}
-
-    {podcast.spotify && (
-      <div class="mb-8">
-        <iframe
-          src={`https://open.spotify.com/embed/episode/${podcast.spotify}`}
-          width="100%"
-          height="152"
-          allow="encrypted-media"
-          loading="lazy"
-          class="rounded-lg"
-        />
-      </div>
-    )}
-
-    {podcast.guest && podcast.guest.length > 0 && (
-      <div class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">Guests</h2>
-        <div class="flex flex-wrap gap-4">
-          {podcast.guest.map((g: any) => (
-            <a href={`/guest/${g.slug}`} class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-              {g.title}
-            </a>
-          ))}
+<BaseLayout
+  title={`${displayTitle} — CodingCat.dev`}
+  description={displayDescription}
+  ogImage={ogImage}
+  ogType="article"
+  publishedAt={podcast.date}
+  author={firstAuthor?.title}
+>
+  <article class="py-12">
+    <Container size="narrow">
+      {/* Header */}
+      <header class="mb-8">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <Badge type="podcast" />
+          {episodeLabel && (
+            <span class="text-sm font-medium text-[--color-type-podcast]">{episodeLabel}</span>
+          )}
+          {formattedDate && (
+            <time datetime={podcast.date} class="text-sm text-[--text-tertiary]">{formattedDate}</time>
+          )}
         </div>
-      </div>
-    )}
 
-    <div class="prose prose-lg max-w-none">
-      {podcast.content && <PortableText value={podcast.content} />}
-    </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-[--text] mb-4">{podcast.title}</h1>
 
-    {podcast.pick && podcast.pick.length > 0 && (
-      <div class="mt-8">
-        <h2 class="text-xl font-semibold mb-4">Picks</h2>
-        <ul class="space-y-2">
-          {podcast.pick.map((p: any) => (
-            <li>
-              <strong>{p.user?.title || "Unknown"}:</strong>{" "}
-              {p.site ? (
-                <a href={p.site} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
-                  {p.name}
+        {podcast.excerpt && (
+          <p class="text-lg text-[--text-secondary] mb-6">{podcast.excerpt}</p>
+        )}
+
+        {/* Author */}
+        <div class="flex flex-wrap items-center gap-4">
+          {podcast.author?.map((a: any) => {
+            const aImg = a.coverImage ? urlForImage(a.coverImage).width(48).height(48).url() : undefined;
+            return (
+              <a href={`/author/${a.slug}`} class="flex items-center gap-2 hover:text-primary transition-colors">
+                <Avatar src={aImg} name={a.title} size="sm" />
+                <span class="text-sm font-medium text-[--text-secondary]">{a.title}</span>
+              </a>
+            );
+          })}
+        </div>
+      </header>
+
+      {/* Series Info */}
+      {podcast.series && (
+        <div class="mb-8 p-4 rounded-xl bg-[--surface] border border-[--border]">
+          <p class="text-sm text-[--text-tertiary] mb-1">Part of series</p>
+          <p class="font-semibold text-[--text]">{podcast.series.title}</p>
+          {podcast.series.description && (
+            <p class="text-sm text-[--text-secondary] mt-1">{podcast.series.description}</p>
+          )}
+        </div>
+      )}
+
+      {/* Cover Image */}
+      {coverUrl && (
+        <img
+          src={coverUrl}
+          alt={podcast.title}
+          width={1200}
+          height={630}
+          class="w-full rounded-xl mb-8 aspect-video object-cover"
+        />
+      )}
+
+      {/* YouTube Embed */}
+      {podcast.youtube && (
+        <div class="aspect-video mb-8 rounded-xl overflow-hidden">
+          <iframe
+            src={`https://www.youtube.com/embed/${podcast.youtube}`}
+            class="w-full h-full"
+            allowfullscreen
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      {/* Spotify Embed */}
+      {podcast.spotify && (
+        <div class="mb-8">
+          <iframe
+            src={`https://open.spotify.com/embed/episode/${podcast.spotify}`}
+            width="100%"
+            height="152"
+            allow="encrypted-media"
+            loading="lazy"
+            class="rounded-xl"
+          />
+        </div>
+      )}
+
+      {/* Listen Links */}
+      {listenLinksEntries.length > 0 && (
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-[--text] mb-3">Listen On</h2>
+          <div class="flex flex-wrap gap-2">
+            {listenLinksEntries.map(([platform, url]) => (
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-4 py-2 rounded-lg bg-[--surface] border border-[--border] text-sm font-medium text-[--text-secondary] hover:text-[--text] hover:border-[--border-hover] transition-colors"
+              >
+                {platformLabels[platform] || platform}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Guest Cards */}
+      {podcast.guest && podcast.guest.length > 0 && (
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-[--text] mb-3">Guests</h2>
+          <div class="grid gap-3 sm:grid-cols-2">
+            {podcast.guest.map((g: any) => {
+              const gImg = g.coverImage ? urlForImage(g.coverImage).width(96).height(96).url() : undefined;
+              return (
+                <a
+                  href={`/guest/${g.slug}`}
+                  class="flex items-center gap-3 p-4 rounded-xl bg-[--surface] border border-[--border] hover:border-[--border-hover] transition-colors"
+                >
+                  <Avatar src={gImg} name={g.title} size="md" />
+                  <div>
+                    <p class="font-medium text-[--text]">{g.title}</p>
+                    {(g.company || g.role) && (
+                      <p class="text-sm text-[--text-tertiary]">
+                        {[g.role, g.company].filter(Boolean).join(" at ")}
+                      </p>
+                    )}
+                  </div>
                 </a>
-              ) : (
-                <span>{p.name}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+              );
+            })}
+          </div>
+        </div>
+      )}
 
-    {podcast.tags && podcast.tags.length > 0 && (
-      <div class="mt-8 flex flex-wrap gap-2">
-        {podcast.tags.map((tag: string) => (
-          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">{tag}</span>
-        ))}
+      {/* Chapters */}
+      {podcast.chapters && podcast.chapters.length > 0 && (
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-[--text] mb-3">Chapters</h2>
+          <div class="space-y-1">
+            {podcast.chapters.map((chapter: any, index: number) => (
+              <div class="flex gap-3 p-3 rounded-lg hover:bg-[--surface] transition-colors">
+                <span class="text-sm font-mono text-primary flex-shrink-0 pt-0.5">
+                  {chapter.timestamp || `${String(index + 1).padStart(2, "0")}:00`}
+                </span>
+                <div>
+                  <p class="font-medium text-[--text]">{chapter.title}</p>
+                  {chapter.seconds != null && (
+                    <span class="text-xs text-[--text-tertiary] mt-0.5">{Math.floor(chapter.seconds / 60)}m {chapter.seconds % 60}s</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Content */}
+      <div class="prose prose-lg prose-invert max-w-none
+        prose-headings:text-[--text] prose-headings:font-bold
+        prose-p:text-[--text-secondary]
+        prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-[--text]
+        prose-code:text-primary prose-code:bg-[--surface] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+        prose-pre:bg-[--surface] prose-pre:border prose-pre:border-[--border] prose-pre:rounded-xl
+        prose-blockquote:border-primary prose-blockquote:text-[--text-secondary]
+        prose-li:text-[--text-secondary]
+        prose-img:rounded-xl
+      ">
+        {podcast.content && <PortableText value={podcast.content} />}
       </div>
-    )}
+
+      {/* Picks */}
+      {podcast.pick && podcast.pick.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-[--border]">
+          <h2 class="text-lg font-semibold text-[--text] mb-4">Picks</h2>
+          <div class="space-y-3">
+            {podcast.pick.map((p: any) => (
+              <div class="flex items-start gap-3 p-3 rounded-lg bg-[--surface] border border-[--border]">
+                <span class="font-medium text-[--text] flex-shrink-0">{p.user?.title || "Unknown"}:</span>
+                {p.site ? (
+                  <a href={p.site} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">
+                    {p.name}
+                  </a>
+                ) : (
+                  <span class="text-[--text-secondary]">{p.name}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tags */}
+      {podcast.tags && podcast.tags.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-[--border]">
+          <h3 class="text-sm font-semibold text-[--text-tertiary] uppercase tracking-wider mb-3">Tags</h3>
+          <div class="flex flex-wrap gap-2">
+            {podcast.tags.map((tag: string) => (
+              <Tag label={tag} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Author Card */}
+      {firstAuthor && (
+        <div class="mt-12 pt-8 border-t border-[--border]">
+          <a href={`/author/${firstAuthor.slug}`} class="flex items-center gap-4 p-4 rounded-xl bg-[--surface] border border-[--border] hover:border-[--border-hover] transition-colors">
+            <Avatar src={authorImageUrl} name={firstAuthor.title} size="lg" />
+            <div>
+              <p class="font-semibold text-[--text]">{firstAuthor.title}</p>
+              <p class="text-sm text-[--text-secondary]">View all episodes →</p>
+            </div>
+          </a>
+        </div>
+      )}
+    </Container>
   </article>
 </BaseLayout>

@@ -4,13 +4,19 @@ import ThemeScript from "../components/ThemeScript.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { VisualEditing } from "@sanity/astro/visual-editing";
+import SocialMeta from "../components/SocialMeta.astro";
 
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  publishedAt?: string;
+  author?: string;
+  canonicalUrl?: string;
 }
 
-const { title, description = "CodingCat.dev — Purrfect Web Tutorials" } = Astro.props;
+const { title, description = "CodingCat.dev — Purrfect Web Tutorials", ogImage, ogType, publishedAt, author, canonicalUrl } = Astro.props;
 
 const visualEditingEnabled =
   import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true" ||
@@ -22,7 +28,15 @@ const visualEditingEnabled =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    <SocialMeta
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      type={ogType}
+      publishedAt={publishedAt}
+      author={author}
+      canonicalUrl={canonicalUrl}
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="CodingCat.dev Blog" href="/rss.xml" />
     <link rel="alternate" type="application/rss+xml" title="CodingCat.dev Podcast" href="/podcast/rss.xml" />

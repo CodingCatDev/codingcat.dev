@@ -2,6 +2,8 @@
 import { PortableText } from "astro-portabletext";
 import { urlForImage } from "@/utils/sanity";
 import ContentCard from "./ContentCard.astro";
+import Avatar from "./Avatar.astro";
+import Badge from "./Badge.astro";
 
 interface Props {
   person: any;
@@ -21,7 +23,7 @@ function getHostname(url: string): string {
 ---
 
 <div class="flex flex-col md:flex-row gap-8 mb-12">
-  {coverUrl && (
+  {coverUrl ? (
     <img
       src={coverUrl}
       alt={person.title}
@@ -29,26 +31,37 @@ function getHostname(url: string): string {
       height={400}
       class="w-48 h-48 rounded-full object-cover flex-shrink-0"
     />
+  ) : (
+    <Avatar name={person.title} size="xl" />
   )}
   <div>
-    <h1 class="text-4xl font-bold mb-4">{person.title}</h1>
-    {person.excerpt && (
-      <p class="text-gray-600 text-lg mb-4">{person.excerpt}</p>
+    <h1 class="text-4xl font-bold text-[--text] mb-2">{person.title}</h1>
+
+    {/* Company & Role for guests */}
+    {(person.company || person.role) && (
+      <p class="text-lg text-[--text-secondary] mb-2">
+        {[person.role, person.company].filter(Boolean).join(" at ")}
+      </p>
     )}
+
+    {person.excerpt && (
+      <p class="text-[--text-secondary] text-lg mb-4">{person.excerpt}</p>
+    )}
+
     {person.socials && (
       <div class="flex flex-wrap gap-3">
         {person.socials.twitter && (
-          <a href={`https://twitter.com/${person.socials.twitter}`} target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">
+          <a href={`https://twitter.com/${person.socials.twitter}`} target="_blank" rel="noopener noreferrer" class="text-[--text-secondary] hover:text-primary transition-colors">
             Twitter
           </a>
         )}
         {person.socials.github && (
-          <a href={`https://github.com/${person.socials.github}`} target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline">
+          <a href={`https://github.com/${person.socials.github}`} target="_blank" rel="noopener noreferrer" class="text-[--text-secondary] hover:text-primary transition-colors">
             GitHub
           </a>
         )}
         {person.socials.linkedin && (
-          <a href={person.socials.linkedin} target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:underline">
+          <a href={person.socials.linkedin} target="_blank" rel="noopener noreferrer" class="text-[--text-secondary] hover:text-primary transition-colors">
             LinkedIn
           </a>
         )}
@@ -57,7 +70,7 @@ function getHostname(url: string): string {
     {person.websites && person.websites.length > 0 && (
       <div class="flex flex-wrap gap-3 mt-2">
         {person.websites.map((site: string) => (
-          <a href={site} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm">
+          <a href={site} target="_blank" rel="noopener noreferrer" class="text-sm text-[--text-secondary] hover:text-primary transition-colors">
             {getHostname(site)}
           </a>
         ))}
@@ -67,7 +80,16 @@ function getHostname(url: string): string {
 </div>
 
 {person.content && (
-  <div class="prose prose-lg max-w-none mb-12">
+  <div class="prose prose-lg prose-invert max-w-none mb-12
+    prose-headings:text-[--text] prose-headings:font-bold
+    prose-p:text-[--text-secondary]
+    prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+    prose-strong:text-[--text]
+    prose-code:text-primary prose-code:bg-[--surface] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+    prose-pre:bg-[--surface] prose-pre:border prose-pre:border-[--border] prose-pre:rounded-xl
+    prose-blockquote:border-primary prose-blockquote:text-[--text-secondary]
+    prose-li:text-[--text-secondary]
+  ">
     <PortableText value={person.content} />
   </div>
 )}
@@ -76,15 +98,20 @@ function getHostname(url: string): string {
   <>
     {person.related.podcast && person.related.podcast.length > 0 && (
       <section class="mb-12">
-        <h2 class="text-2xl font-bold mb-6">Related Podcasts</h2>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex items-center gap-3 mb-6">
+          <Badge type="podcast" />
+          <h2 class="text-2xl font-bold text-[--text]">Related Podcasts</h2>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {person.related.podcast.map((p: any) => (
             <ContentCard
               title={p.title}
-              slug={`/podcast/${p.slug}`}
-              coverImage={p.coverImage}
-              excerpt={p.excerpt}
-              date={p.date}
+              url={`/podcast/${p.slug}`}
+              type="podcast"
+              thumbnail={p.coverImage}
+              authorName={p.authorName}
+              authorImage={p.authorImage}
+              metadata={p.date ? new Date(p.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : undefined}
             />
           ))}
         </div>
@@ -93,15 +120,20 @@ function getHostname(url: string): string {
 
     {person.related.post && person.related.post.length > 0 && (
       <section class="mb-12">
-        <h2 class="text-2xl font-bold mb-6">Related Posts</h2>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="flex items-center gap-3 mb-6">
+          <Badge type="blog" />
+          <h2 class="text-2xl font-bold text-[--text]">Related Posts</h2>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {person.related.post.map((p: any) => (
             <ContentCard
               title={p.title}
-              slug={`/post/${p.slug}`}
-              coverImage={p.coverImage}
-              excerpt={p.excerpt}
-              date={p.date}
+              url={`/post/${p.slug}`}
+              type="blog"
+              thumbnail={p.coverImage}
+              authorName={p.authorName}
+              authorImage={p.authorImage}
+              metadata={p.date ? new Date(p.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : undefined}
             />
           ))}
         </div>

@@ -1,5 +1,9 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import Badge from "@/components/Badge.astro";
+import Tag from "@/components/Tag.astro";
+import Avatar from "@/components/Avatar.astro";
 import { PortableText } from "astro-portabletext";
 import { loadQuery, urlForImage } from "@/utils/sanity";
 import { postQuery } from "@/lib/queries";
@@ -25,51 +29,129 @@ const formattedDate = post.date
       day: "numeric",
     })
   : null;
+
+const firstAuthor = post.author?.[0];
+const authorImageUrl = firstAuthor?.coverImage
+  ? urlForImage(firstAuthor.coverImage).width(96).height(96).url()
+  : undefined;
+
+const siteUrl = Astro.url.origin;
+const displayTitle = post.ogTitle || post.title;
+const displayDescription = post.ogDescription || post.excerpt;
+const ogImage = post.ogImage
+  ? urlForImage(post.ogImage).width(1200).height(630).url()
+  : `${siteUrl}/api/og/blog.png?title=${encodeURIComponent(post.title)}&author=${encodeURIComponent(firstAuthor?.title || "")}`;
 ---
 
-<BaseLayout title={`${post.title} — CodingCat.dev`} description={post.excerpt}>
-  <article class="container mx-auto px-4 py-8 max-w-4xl">
-    <header class="mb-8">
-      <h1 class="text-4xl font-bold mb-4">{post.title}</h1>
-      <div class="flex items-center gap-4 text-gray-600">
-        {formattedDate && <time datetime={post.date}>{formattedDate}</time>}
-        {post.author?.map((a: any) => (
-          <a href={`/author/${a.slug}`} class="hover:text-blue-600">{a.title}</a>
-        ))}
-      </div>
-    </header>
+<BaseLayout
+  title={`${displayTitle} — CodingCat.dev`}
+  description={displayDescription}
+  ogImage={ogImage}
+  ogType="article"
+  publishedAt={post.date}
+  author={firstAuthor?.title}
+>
+  <article class="py-12">
+    <Container size="narrow">
+      {/* Header */}
+      <header class="mb-8">
+        <div class="flex items-center gap-3 mb-4">
+          <Badge type="blog" />
+          {formattedDate && (
+            <time datetime={post.date} class="text-sm text-[--text-tertiary]">{formattedDate}</time>
+          )}
+        </div>
 
-    {coverUrl && (
-      <img
-        src={coverUrl}
-        alt={post.title}
-        width={1200}
-        height={630}
-        class="w-full rounded-lg mb-8"
-      />
-    )}
+        <h1 class="text-4xl md:text-5xl font-bold text-[--text] mb-4">{post.title}</h1>
 
-    {post.youtube && (
-      <div class="aspect-video mb-8">
-        <iframe
-          src={`https://www.youtube.com/embed/${post.youtube}`}
-          class="w-full h-full rounded-lg"
-          allowfullscreen
-          loading="lazy"
+        {post.excerpt && (
+          <p class="text-lg text-[--text-secondary] mb-6">{post.excerpt}</p>
+        )}
+
+        {/* Author + Categories */}
+        <div class="flex flex-wrap items-center gap-4">
+          {post.author?.map((a: any) => {
+            const aImg = a.coverImage ? urlForImage(a.coverImage).width(48).height(48).url() : undefined;
+            return (
+              <a href={`/author/${a.slug}`} class="flex items-center gap-2 hover:text-primary transition-colors">
+                <Avatar src={aImg} name={a.title} size="sm" />
+                <span class="text-sm font-medium text-[--text-secondary]">{a.title}</span>
+              </a>
+            );
+          })}
+
+          {post.categories && post.categories.length > 0 && (
+            <div class="flex flex-wrap gap-1.5">
+              {post.categories.map((cat: any) => (
+                <Tag label={cat.title} href={`/topic/${cat.slug}`} />
+              ))}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Cover Image */}
+      {coverUrl && (
+        <img
+          src={coverUrl}
+          alt={post.title}
+          width={1200}
+          height={630}
+          class="w-full rounded-xl mb-8 aspect-video object-cover"
         />
-      </div>
-    )}
+      )}
 
-    <div class="prose prose-lg max-w-none">
-      {post.content && <PortableText value={post.content} />}
-    </div>
+      {/* YouTube Embed */}
+      {post.youtube && (
+        <div class="aspect-video mb-8 rounded-xl overflow-hidden">
+          <iframe
+            src={`https://www.youtube.com/embed/${post.youtube}`}
+            class="w-full h-full"
+            allowfullscreen
+            loading="lazy"
+          />
+        </div>
+      )}
 
-    {post.tags && post.tags.length > 0 && (
-      <div class="mt-8 flex flex-wrap gap-2">
-        {post.tags.map((tag: string) => (
-          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">{tag}</span>
-        ))}
+      {/* Content */}
+      <div class="prose prose-lg prose-invert max-w-none
+        prose-headings:text-[--text] prose-headings:font-bold
+        prose-p:text-[--text-secondary]
+        prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-[--text]
+        prose-code:text-primary prose-code:bg-[--surface] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+        prose-pre:bg-[--surface] prose-pre:border prose-pre:border-[--border] prose-pre:rounded-xl
+        prose-blockquote:border-primary prose-blockquote:text-[--text-secondary]
+        prose-li:text-[--text-secondary]
+        prose-img:rounded-xl
+      ">
+        {post.content && <PortableText value={post.content} />}
       </div>
-    )}
+
+      {/* Tags */}
+      {post.tags && post.tags.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-[--border]">
+          <h3 class="text-sm font-semibold text-[--text-tertiary] uppercase tracking-wider mb-3">Tags</h3>
+          <div class="flex flex-wrap gap-2">
+            {post.tags.map((tag: string) => (
+              <Tag label={tag} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Author Card */}
+      {firstAuthor && (
+        <div class="mt-12 pt-8 border-t border-[--border]">
+          <a href={`/author/${firstAuthor.slug}`} class="flex items-center gap-4 p-4 rounded-xl bg-[--surface] border border-[--border] hover:border-[--border-hover] transition-colors">
+            <Avatar src={authorImageUrl} name={firstAuthor.title} size="lg" />
+            <div>
+              <p class="font-semibold text-[--text]">{firstAuthor.title}</p>
+              <p class="text-sm text-[--text-secondary]">View all posts →</p>
+            </div>
+          </a>
+        </div>
+      )}
+    </Container>
   </article>
 </BaseLayout>
