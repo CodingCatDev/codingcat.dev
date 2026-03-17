@@ -70,7 +70,10 @@ export function loadFonts() {
 // elements as text nodes. Template literal formatting creates phantom
 // text nodes that violate Satori's strict "display: flex" requirement.
 function minifyHtml(html: string): string {
-  return html.replace(/>\s+</g, "><").trim();
+  return html
+    .replace(/>\s+</g, "><")  // Remove whitespace between tags
+    .replace(/\s+/g, " ")     // Collapse all remaining whitespace (including inside style attrs)
+    .trim();
 }
 
 // ── Adaptive title font size ─────────────────────────────────────────
