@@ -6,6 +6,8 @@
  * the Sanity dataset). Sets a __sanity_preview cookie and redirects.
  *
  * Requires SANITY_API_READ_TOKEN (viewer rights). No SANITY_PREVIEW_SECRET needed.
+ * With Cloudflare: set in .dev.vars (local) or Wrangler secrets (production).
+ * Astro v6: use only 'import { env } from "cloudflare:workers"' (locals.runtime.env was removed).
  */
 import type { APIRoute } from "astro";
 import { createClient } from "@sanity/client";

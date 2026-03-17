@@ -59,7 +59,9 @@ const presentationEnabled =
 	process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
 // Use local Astro dev server for presentation preview when running Studio locally
-const isLocal = typeof import.meta !== "undefined" && import.meta.env?.DEV;
+const isLocal =
+  typeof import.meta !== "undefined" &&
+  (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
 const localPreviewOrigin = "http://localhost:4321";
 
 // ── Shared helpers ───────────────────────────────────────────────────
@@ -223,12 +225,14 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
               },
             },
             previewUrl: {
-              origin: previewUrl,
+              initial: previewUrl,
               previewMode: {
                 enable: "/api/draft-mode/enable",
                 disable: "/api/draft-mode/disable",
               },
             },
+            // Required: allow preview iframe origin to send postMessage to Studio (visual editing)
+            allowOrigins: [previewUrl],
           }),
         ]
       : []),
