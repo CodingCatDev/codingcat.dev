@@ -17,9 +17,26 @@
  * - No token needed (public API)
  */
 import type { QueryParams } from "sanity";
-import { sanityClient } from "sanity:client";
+import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+
+// Studio URL required for stega encoding (click-to-edit overlays in Presentation tool).
+// Set PUBLIC_SANITY_STUDIO_URL to http://localhost:3333 when running Studio locally.
+const studioUrl =
+  import.meta.env.PUBLIC_SANITY_STUDIO_URL || "https://codingcat.dev.sanity.studio";
+
+// Create client explicitly so we don't rely on the "sanity:client" virtual module,
+// which can fail to resolve in some Vite/Astro contexts (e.g. config loading).
+const sanityClient = createClient({
+  projectId: import.meta.env.SANITY_PROJECT_ID || "hfh83o0w",
+  dataset: import.meta.env.SANITY_DATASET || "production",
+  apiVersion: "2026-03-17",
+  useCdn: false,
+  stega: {
+    studioUrl,
+  },
+});
 
 const builder = imageUrlBuilder(sanityClient);
 

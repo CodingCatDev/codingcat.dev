@@ -58,6 +58,10 @@ const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const presentationEnabled =
 	process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
+// Use local Astro dev server for presentation preview when running Studio locally
+const isLocal = typeof import.meta !== "undefined" && import.meta.env?.DEV;
+const localPreviewOrigin = "http://localhost:4321";
+
 // ── Shared helpers ───────────────────────────────────────────────────
 function resolveHref(type: string, slug?: string): string | undefined {
   switch (type) {
@@ -258,7 +262,9 @@ export default defineConfig([
     basePath: "/production",
     schema: { types: schemaTypes },
     document: { actions: documentActions },
-    plugins: buildPlugins("https://codingcat.dev"),
+    plugins: buildPlugins(
+      isLocal ? localPreviewOrigin : "https://codingcat.dev",
+    ),
   },
   {
     name: "dev",
@@ -268,6 +274,8 @@ export default defineConfig([
     basePath: "/dev",
     schema: { types: schemaTypes },
     document: { actions: documentActions },
-    plugins: buildPlugins("https://dev.codingcat.dev"),
+    plugins: buildPlugins(
+      isLocal ? localPreviewOrigin : "https://dev.codingcat.dev",
+    ),
   },
 ]);

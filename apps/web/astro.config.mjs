@@ -6,8 +6,31 @@ import tailwindcss from "@tailwindcss/vite";
 import fs from "node:fs";
 import path from "node:path";
 
-// Sanity config — dataset comes from env var (set by wrangler vars or .env)
-// In astro.config.mjs, .env files are NOT loaded — use process.env
+// Load .env and .env.local into process.env before config runs.
+// (Using a function config with loadEnv broke virtual module resolution.)
+function loadEnvIntoProcess(dir) {
+  for (const name of [".env", ".env.local"]) {
+    const file = path.join(dir, name);
+    try {
+      const raw = fs.readFileSync(file, "utf8");
+      for (const line of raw.split("\n")) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
+        const eq = trimmed.indexOf("=");
+        if (eq === -1) continue;
+        const key = trimmed.slice(0, eq).trim();
+        let value = trimmed.slice(eq + 1).trim();
+        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'")))
+          value = value.slice(1, -1).replace(/\\(.)/g, "$1");
+        if (!Object.prototype.hasOwnProperty.call(process.env, key)) process.env[key] = value;
+      }
+    } catch {
+      // ignore missing file
+    }
+  }
+}
+loadEnvIntoProcess(process.cwd());
+
 const sanityProjectId = process.env.SANITY_PROJECT_ID || "hfh83o0w";
 const sanityDataset = process.env.SANITY_DATASET || "production";
 
@@ -48,7 +71,7 @@ export default defineConfig({
       projectId: sanityProjectId,
       dataset: sanityDataset,
       useCdn: false,
-      apiVersion: "2024-01-01",
+      apiVersion: "2026-03-17",
       // Visual Editing: stega encodes edit markers in strings
       // Studio is standalone (apps/sanity), not embedded — no studioBasePath
       stega: {
@@ -61,6 +84,23 @@ export default defineConfig({
     plugins: [tailwindcss(), rawFonts([".ttf", ".otf"])],
     assetsInclude: ["**/*.wasm"],
     assetsExclude: ["**/*.ttf", "**/*.otf"],
+    resolve: {
+      alias: {
+        // Sanity/visual-editing deps pull Node built-ins into client bundle; polyfill for browser
+        stream: "stream-browserify",
+        timers: "timers-browserify",
+      },
+      dedupe: ["react", "react-dom", "react-is", "react-compiler-runtime"],
+    },
+    optimizeDeps: {
+      // Force pre-bundle CJS deps so ESM default/named exports work in client (Sanity visual-editing chain)
+      include: [
+        "react-is",
+        "react-compiler-runtime",
+        "lodash",
+        "lodash/isObject",
+      ],
+    },
     ssr: {
       external: ["buffer", "path", "fs"].map((i) => `node:${i}`),
     },

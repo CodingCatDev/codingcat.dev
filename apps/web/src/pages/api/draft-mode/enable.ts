@@ -2,43 +2,60 @@
  * Enable draft mode for Sanity Visual Editing.
  *
  * Called by the Studio's Presentation Tool when loading the preview iframe.
- * Validates SANITY_PREVIEW_SECRET, sets a __sanity_preview cookie, and
- * redirects to the requested page.
+ * Validates the request URL with @sanity/preview-url-secret (secrets live in
+ * the Sanity dataset). Sets a __sanity_preview cookie and redirects.
  *
- * Usage: /api/draft-mode/enable?secret=<value>&slug=/post/my-post
+ * Requires SANITY_API_READ_TOKEN (viewer rights). No SANITY_PREVIEW_SECRET needed.
  */
 import type { APIRoute } from "astro";
+import { createClient } from "@sanity/client";
+import { validatePreviewUrl } from "@sanity/preview-url-secret";
 import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url, cookies, redirect }) => {
-  const secret = url.searchParams.get("secret");
-  const slug = url.searchParams.get("slug") || "/";
+const PROJECT_ID = "hfh83o0w";
+const DATASETS = ["production", "dev"] as const;
 
-  // Fail-closed: require SANITY_PREVIEW_SECRET to be configured
-  const expectedSecret = (env as Record<string, string>).SANITY_PREVIEW_SECRET;
-  if (!expectedSecret) {
-    return new Response("Draft mode not configured — SANITY_PREVIEW_SECRET is missing", {
-      status: 503,
+export const GET: APIRoute = async ({ url, cookies, redirect, request }) => {
+  const token = (env as Record<string, string>).SANITY_API_READ_TOKEN;
+  if (!token) {
+    return new Response(
+      "Draft mode not configured — SANITY_API_READ_TOKEN is missing",
+      { status: 503 },
+    );
+  }
+
+  const requestUrl = request.url;
+
+  for (const dataset of DATASETS) {
+    const client = createClient({
+      projectId: (env as Record<string, string>).SANITY_PROJECT_ID || PROJECT_ID,
+      dataset,
+      apiVersion: "2026-03-17",
+      useCdn: false,
+      token,
     });
+
+    const { isValid, redirectTo = "/" } = await validatePreviewUrl(
+      client,
+      requestUrl,
+    );
+
+    if (isValid) {
+      const isLocal = url.hostname === "localhost";
+
+      cookies.set("__sanity_preview", "1", {
+        path: "/",
+        httpOnly: true,
+        sameSite: isLocal ? "lax" : "none",
+        secure: !isLocal,
+        maxAge: 60 * 60,
+      });
+
+      return redirect(redirectTo, 307);
+    }
   }
 
-  // Validate the secret
-  if (!secret || secret !== expectedSecret) {
-    return new Response("Invalid preview secret", { status: 401 });
-  }
-
-  // Set the preview cookie — httpOnly so client JS can't tamper with it
-  cookies.set("__sanity_preview", "1", {
-    path: "/",
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-    // 1 hour — long enough for an editing session
-    maxAge: 60 * 60,
-  });
-
-  // Redirect to the requested page
-  return redirect(slug, 307);
+  return new Response("Invalid preview secret", { status: 401 });
 };
