@@ -35,3 +35,5 @@ yarn-error.log*
 .vscode/*
 !.vscode/launch.json
 !.vscode/mcp.json
+# pnpm workspace — root pnpm-lock.yaml is the lockfile
+package-lock.json
