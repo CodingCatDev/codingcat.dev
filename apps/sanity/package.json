@@ -13,25 +13,25 @@
     "@portabletext/block-tools": "^5.1.0",
     "@portabletext/react": "^6.0.3",
     "@sanity/assist": "^6.0.3",
-    "@sanity/code-input": "^5.0.0",
+    "@sanity/code-input": "^7.0.11",
     "@sanity/icons": "^3.7.4",
     "@sanity/ui": "^3.1.14",
-    "@sanity/vision": "^3.0.0",
+    "@sanity/vision": "^5.17.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.577.0",
     "micromark": "^4.0.2",
     "micromark-extension-gfm-table": "^2.1.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "react-icons": "^5.6.0",
     "react-twitter-embed": "^4.0.4",
-    "sanity": "^3.0.0",
-    "sanity-plugin-media": "^2.0.0",
-    "styled-components": "^6.1.15"
+    "sanity": "^5.17.1",
+    "sanity-plugin-media": "^4.1.1",
+    "styled-components": "^6.3.11"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "typescript": "^5.7.0"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
   }
 }
