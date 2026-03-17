@@ -18,18 +18,32 @@ import { generateDefaultOgHtml, loadFonts, OG_CACHE_HEADER } from "../../../lib/
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url }) => {
-  const title = url.searchParams.get("title") || "CodingCat.dev";
-  const subtitle = url.searchParams.get("subtitle") || undefined;
+  try {
+    const title = url.searchParams.get("title") || "CodingCat.dev";
+    const subtitle = url.searchParams.get("subtitle") || undefined;
 
-  const html = generateDefaultOgHtml({ title, subtitle });
+    const html = generateDefaultOgHtml({ title, subtitle });
 
-  const response = new ImageResponse(html, {
-    width: 1200,
-    height: 630,
-    fonts: loadFonts(),
-  });
+    const response = new ImageResponse(html, {
+      width: 1200,
+      height: 630,
+      fonts: loadFonts(),
+    });
 
-  response.headers.set("Cache-Control", OG_CACHE_HEADER);
+    response.headers.set("Cache-Control", OG_CACHE_HEADER);
 
-  return response;
+    return response;
+  } catch (error: any) {
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 };

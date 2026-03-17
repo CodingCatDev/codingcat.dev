@@ -18,19 +18,34 @@ import { generateOgHtml, loadFonts, OG_CACHE_HEADER } from "../../../lib/og-util
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url }) => {
-  const title = url.searchParams.get("title") || "CodingCat.dev";
-  const author = url.searchParams.get("author") || "CodingCat.dev";
-  const type = url.searchParams.get("type") || "Blog";
+  try {
+    const title = url.searchParams.get("title") || "CodingCat.dev";
+    const author = url.searchParams.get("author") || "CodingCat.dev";
+    const type = url.searchParams.get("type") || "Blog";
 
-  const html = generateOgHtml({ title, author, type });
+    const html = generateOgHtml({ title, author, type });
+    const fonts = loadFonts();
 
-  const response = new ImageResponse(html, {
-    width: 1200,
-    height: 630,
-    fonts: loadFonts(),
-  });
+    const response = new ImageResponse(html, {
+      width: 1200,
+      height: 630,
+      fonts,
+    });
 
-  response.headers.set("Cache-Control", OG_CACHE_HEADER);
+    response.headers.set("Cache-Control", OG_CACHE_HEADER);
 
-  return response;
+    return response;
+  } catch (error: any) {
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 };
