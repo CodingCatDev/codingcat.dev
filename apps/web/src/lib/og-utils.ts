@@ -65,6 +65,14 @@ export function loadFonts() {
   ];
 }
 
+// ── Minify HTML for Satori ───────────────────────────────────────────
+// Satori's HTML parser (via HTMLRewriter) treats whitespace between
+// elements as text nodes. Template literal formatting creates phantom
+// text nodes that violate Satori's strict "display: flex" requirement.
+function minifyHtml(html: string): string {
+  return html.replace(/>\s+</g, "><").trim();
+}
+
 // ── Adaptive title font size ─────────────────────────────────────────
 export function titleFontSize(title: string): number {
   if (title.length > 60) return 42;
@@ -133,7 +141,7 @@ export function generateOgHtml({
     </div>
   `;
 
-  return `
+  return minifyHtml(`
     <div style="
       display: flex;
       width: 1200px;
@@ -206,7 +214,7 @@ export function generateOgHtml({
         </div>
       </div>
     </div>
-  `;
+  `);
 }
 
 /**
@@ -232,7 +240,7 @@ export function generateDefaultOgHtml({
       ">${subtitle}</div>`
     : "";
 
-  return `
+  return minifyHtml(`
     <div style="
       display: flex;
       width: 1200px;
@@ -285,5 +293,5 @@ export function generateDefaultOgHtml({
         </div>
       </div>
     </div>
-  `;
+  `);
 }
