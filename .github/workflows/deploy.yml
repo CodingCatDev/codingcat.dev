@@ -57,7 +57,7 @@ jobs:
 
       - name: Deploy Sanity Studio (dev)
         if: github.ref == 'refs/heads/dev'
-        run: npx sanity deploy --no-login
+        run: npx sanity deploy -y
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
 
       - name: Deploy Sanity Studio (production)
         if: github.ref == 'refs/heads/main'
-        run: npx sanity deploy --no-login
+        run: npx sanity deploy -y
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
