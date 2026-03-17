@@ -1,15 +1,8 @@
 /**
  * Default OG image generation for generic pages.
- *
- * Uses workers-og (Satori + resvg-wasm) to generate 1200x630 PNG images
- * on Cloudflare Workers. Simpler layout — just branding + title + optional subtitle.
- * Used for homepage, author pages, and other generic pages.
- *
- * Usage: /api/og/default.png?title=About+Us&subtitle=Learn+more+about+CodingCat.dev
- *
- * Query params:
- * - title (required): Page title
- * - subtitle (optional): Subtitle text
+ * 
+ * Debug version: bypasses ImageResponse's ReadableStream to surface errors.
+ * Uses workers-og's ImageResponse but reads the body to catch stream errors.
  */
 import type { APIRoute } from "astro";
 import { ImageResponse } from "workers-og";
@@ -23,16 +16,54 @@ export const GET: APIRoute = async ({ url }) => {
     const subtitle = url.searchParams.get("subtitle") || undefined;
 
     const html = generateDefaultOgHtml({ title, subtitle });
+    const fonts = loadFonts();
 
-    const response = new ImageResponse(html, {
+    // Debug: log font data types to understand what rawFonts plugin produces
+    const fontDebug = fonts.map((f: any) => ({
+      name: f.name,
+      weight: f.weight,
+      dataType: typeof f.data,
+      isArrayBuffer: f.data instanceof ArrayBuffer,
+      isUint8Array: f.data instanceof Uint8Array,
+      dataLength: f.data?.byteLength || f.data?.length || 0,
+      constructor: f.data?.constructor?.name,
+    }));
+
+    // Create ImageResponse — this returns immediately with a ReadableStream body
+    const ogResponse = new ImageResponse(html, {
       width: 1200,
       height: 630,
-      fonts: loadFonts(),
+      fonts,
     });
 
-    response.headers.set("Cache-Control", OG_CACHE_HEADER);
+    // Read the body to force the stream to execute (and catch errors)
+    const body = await ogResponse.arrayBuffer();
 
-    return response;
+    if (body.byteLength === 0) {
+      // Stream produced no data — WASM or font error was swallowed
+      return new Response(
+        JSON.stringify({
+          error: "ImageResponse produced empty body",
+          fontDebug,
+          htmlLength: html.length,
+          hint: "WASM init or font loading likely failed silently inside ReadableStream",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Success — return the PNG with proper headers
+    return new Response(body, {
+      status: 200,
+      headers: {
+        "Content-Type": "image/png",
+        "Content-Length": body.byteLength.toString(),
+        "Cache-Control": OG_CACHE_HEADER,
+      },
+    });
   } catch (error: any) {
     return new Response(
       JSON.stringify({
