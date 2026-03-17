@@ -157,7 +157,8 @@ export function generateOgHtml({
               font-size: 24px;
               font-weight: 700;
               color: ${BRAND.text};
-            ">CodingCat<span style="color: ${BRAND.primary};">.dev</span></div>
+            display: flex;
+            "><span>CodingCat</span><span style="color: ${BRAND.primary};">.dev</span></div>
           </div>
           ${badgeBlock}
         </div>
@@ -254,7 +255,8 @@ export function generateDefaultOgHtml({
             font-size: 24px;
             font-weight: 700;
             color: ${BRAND.text};
-          ">CodingCat<span style="color: ${BRAND.primary};">.dev</span></div>
+          display: flex;
+          "><span>CodingCat</span><span style="color: ${BRAND.primary};">.dev</span></div>
         </div>
 
         <div style="
