@@ -1,6 +1,10 @@
 /**
- * Sanity Studio configuration for standalone deployment
- * Migrated from Next.js embedded studio to standalone Sanity Studio app
+ * Sanity Studio configuration with dev/production workspaces.
+ *
+ * Both workspaces share the same schemas, plugins, and structure.
+ * They differ only in dataset and presentation tool preview URL.
+ *
+ * Workspace switcher appears in the Studio top-left corner.
  */
 import { visionTool } from "@sanity/vision";
 import { type PluginOptions, defineConfig } from "sanity";
@@ -46,15 +50,15 @@ import podcastSeries from "./schemas/documents/podcastSeries";
 import category from "./schemas/documents/category";
 import short from "./schemas/documents/short";
 
-// Sanity Studio env vars (SANITY_STUDIO_ prefix is auto-exposed by Sanity CLI)
+// ── Shared constants ─────────────────────────────────────────────────
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
-const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
-const studioUrl = "/";
+
 // Set SANITY_STUDIO_DISABLE_PRESENTATION=true if you get network errors to api.sanity.io (e.g. firewall/VPN)
 const presentationEnabled =
 	process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
+// ── Shared helpers ───────────────────────────────────────────────────
 function resolveHref(type: string, slug?: string): string | undefined {
   switch (type) {
     case "post":
@@ -71,6 +75,45 @@ const homeLocation = {
   href: "/",
 } satisfies DocumentLocation;
 
+// ── Shared schema types ──────────────────────────────────────────────
+const schemaTypes = [
+  // Portable text block types (table)
+  tableSchema,
+  rowType,
+  // Singletons
+  settings,
+  engineConfig,
+  // Documents
+  author,
+  guest,
+  page,
+  podcast,
+  podcastType,
+  post,
+  sponsor,
+  previewSession,
+  sponsorshipRequest,
+  contentIdea,
+  automatedVideo,
+  mediaAsset,
+  videoAnalytics,
+  sponsorLead,
+  sponsorPool,
+  // New document types
+  podcastSeries,
+  category,
+  short,
+];
+
+// ── Shared document actions ──────────────────────────────────────────
+const documentActions = (prev: any[], context: { schemaType: string }) => {
+  if (context.schemaType === "post" || context.schemaType === "podcast") {
+    return [sharePreviewAction, ...prev];
+  }
+  return prev;
+};
+
+// ── Shared podcast structure ─────────────────────────────────────────
 export const podcastStructure = (): StructureResolver => {
   return (S) => {
     return S.list()
@@ -138,49 +181,9 @@ export const podcastStructure = (): StructureResolver => {
   };
 };
 
-export default defineConfig({
-  basePath: studioUrl,
-  projectId,
-  dataset,
-  schema: {
-    types: [
-      // Portable text block types (table)
-      tableSchema,
-      rowType,
-      // Singletons
-      settings,
-      engineConfig,
-      // Documents
-      author,
-      guest,
-      page,
-      podcast,
-      podcastType,
-      post,
-      sponsor,
-      previewSession,
-      sponsorshipRequest,
-      contentIdea,
-      automatedVideo,
-      mediaAsset,
-      videoAnalytics,
-      sponsorLead,
-      sponsorPool,
-      // New document types
-      podcastSeries,
-      category,
-      short,
-    ],
-  },
-  document: {
-    actions: (prev, context) => {
-      if (context.schemaType === "post" || context.schemaType === "podcast") {
-        return [sharePreviewAction, ...prev];
-      }
-      return prev;
-    },
-  },
-  plugins: [
+// ── Build plugins for a given preview URL ────────────────────────────
+function buildPlugins(previewUrl: string): PluginOptions[] {
+  return [
     ...(presentationEnabled
       ? [
           presentationTool({
@@ -216,6 +219,7 @@ export default defineConfig({
               },
             },
             previewUrl: {
+              origin: previewUrl,
               previewMode: {
                 enable: "/api/draft-mode/enable",
                 disable: "/api/draft-mode/disable",
@@ -225,12 +229,10 @@ export default defineConfig({
         ]
       : []),
     structureTool({ structure: podcastStructure() }),
-    // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([
       settings.name,
       engineConfig.name,
     ]),
-    // Sets up AI Assist with preset prompts
     assistWithPresets(),
     media(),
     codeInput(),
@@ -242,7 +244,30 @@ export default defineConfig({
         },
       ],
     }),
-    // Vision lets you query your content with GROQ in the studio
     visionTool({ defaultApiVersion: apiVersion }),
-  ].filter(Boolean) as PluginOptions[],
-});
+  ].filter(Boolean) as PluginOptions[];
+}
+
+// ── Workspace definitions ────────────────────────────────────────────
+export default defineConfig([
+  {
+    name: "production",
+    title: "CodingCat.dev (Production)",
+    projectId,
+    dataset: "production",
+    basePath: "/production",
+    schema: { types: schemaTypes },
+    document: { actions: documentActions },
+    plugins: buildPlugins("https://codingcat.dev"),
+  },
+  {
+    name: "dev",
+    title: "CodingCat.dev (Dev)",
+    projectId,
+    dataset: "dev",
+    basePath: "/dev",
+    schema: { types: schemaTypes },
+    document: { actions: documentActions },
+    plugins: buildPlugins("https://dev.codingcat.dev"),
+  },
+]);
