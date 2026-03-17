@@ -150,7 +150,6 @@ export function generateOgHtml({
         height: 100%;
         justify-content: space-between;
       ">
-        <!-- Top: Logo + Badge -->
         <div style="display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <div style="font-size: 40px;">🐱</div>
@@ -163,7 +162,6 @@ export function generateOgHtml({
           ${badgeBlock}
         </div>
 
-        <!-- Middle: Title -->
         <div style="
           display: flex;
           flex: 1;
@@ -180,7 +178,6 @@ export function generateOgHtml({
           ">${title}</div>
         </div>
 
-        <!-- Bottom: Author + URL -->
         <div style="display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <div style="
@@ -251,7 +248,6 @@ export function generateDefaultOgHtml({
         height: 100%;
         justify-content: space-between;
       ">
-        <!-- Top: Logo -->
         <div style="display: flex; align-items: center; gap: 12px;">
           <div style="font-size: 40px;">🐱</div>
           <div style="
@@ -261,7 +257,6 @@ export function generateDefaultOgHtml({
           ">CodingCat<span style="color: ${BRAND.primary};">.dev</span></div>
         </div>
 
-        <!-- Middle: Title + Subtitle -->
         <div style="
           display: flex;
           flex-direction: column;
@@ -280,7 +275,6 @@ export function generateDefaultOgHtml({
           ${subtitleBlock}
         </div>
 
-        <!-- Bottom: URL -->
         <div style="display: flex; align-items: center; justify-content: flex-end;">
           <div style="
             font-size: 16px;

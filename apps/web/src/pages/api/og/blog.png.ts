@@ -24,12 +24,11 @@ export const GET: APIRoute = async ({ url }) => {
     const type = url.searchParams.get("type") || "Blog";
 
     const html = generateOgHtml({ title, author, type });
-    const fonts = loadFonts();
 
     const response = new ImageResponse(html, {
       width: 1200,
       height: 630,
-      fonts,
+      fonts: loadFonts(),
     });
 
     response.headers.set("Cache-Control", OG_CACHE_HEADER);
@@ -37,15 +36,8 @@ export const GET: APIRoute = async ({ url }) => {
     return response;
   } catch (error: any) {
     return new Response(
-      JSON.stringify({
-        error: error.message,
-        stack: error.stack,
-        name: error.name,
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ error: error.message, stack: error.stack }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 };
