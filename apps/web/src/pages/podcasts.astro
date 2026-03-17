@@ -16,8 +16,9 @@ const perPage = 12;
 const offset = (page - 1) * perPage;
 
 const draftMode = Astro.cookies.has("__sanity_preview");
+const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
 const [podcastsResult, totalCount] = await Promise.all([
-  loadQuery<any[]>({ query: podcastListQuery, params: { offset, end: offset + perPage }, draftMode }),
+  loadQuery<any[]>({ query: podcastListQuery, params: { offset, end: offset + perPage }, draftMode, perspective }),
   sanityFetch<number>(podcastCountQuery),
 ]);
 const podcasts = podcastsResult.data;

@@ -9,7 +9,8 @@ export const prerender = false;
 
 const { slug } = Astro.params;
 const draftMode = Astro.cookies.has("__sanity_preview");
-const { data: guest } = await loadQuery<any>({ query: guestQuery, params: { slug }, draftMode });
+const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
+const { data: guest } = await loadQuery<any>({ query: guestQuery, params: { slug }, draftMode, perspective });
 
 if (!guest) {
   return Astro.redirect("/404");

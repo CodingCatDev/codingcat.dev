@@ -54,6 +54,12 @@ interface LoadQueryOptions {
   params?: QueryParams;
   /** Per-request draft mode — set from Astro.cookies in page frontmatter */
   draftMode?: boolean;
+  /**
+   * Perspective for preview: "published" | "drafts" | release ID.
+   * Pass Astro.url.searchParams.get("sanity-preview-perspective") when in visual editing
+   * so switching perspective in Studio shows the correct content.
+   */
+  perspective?: string;
 }
 
 /**
@@ -65,39 +71,49 @@ function isDraftMode(draftMode?: boolean): boolean {
 }
 
 /**
+ * Resolve perspective for fetch: use URL param when in preview, else "published".
+ */
+function resolvePerspective(inPreview: boolean, perspectiveParam?: string): string {
+  if (!inPreview) return "published";
+  if (perspectiveParam === "published") return "published";
+  if (perspectiveParam === "drafts" || !perspectiveParam) return "drafts";
+  // Release ID(s) or other perspective
+  return perspectiveParam;
+}
+
+/**
  * Fetch from Sanity with Visual Editing support.
  *
  * For pages: pass `draftMode: Astro.cookies.has('__sanity_preview')`
- * to enable per-request draft mode from the preview cookie.
+ * and `perspective: Astro.url.searchParams.get('sanity-preview-perspective') ?? undefined`
+ * so perspective switches in Studio (published/drafts/releases) show the correct content.
  */
 export async function loadQuery<T>({
   query,
   params,
   draftMode,
+  perspective: perspectiveParam,
 }: LoadQueryOptions): Promise<{ data: T }> {
-  const drafts = isDraftMode(draftMode);
+  const inPreview = isDraftMode(draftMode);
+  const perspective = resolvePerspective(inPreview, perspectiveParam);
 
-  if (drafts && !token) {
+  const needsToken = inPreview && perspective !== "published";
+  if (needsToken && !token) {
     throw new Error(
       "The `SANITY_API_READ_TOKEN` environment variable is required during Visual Editing.",
     );
   }
 
-  const perspective = drafts ? "drafts" : "published";
-
-  const { result, resultSourceMap } = await sanityClient.fetch<T>(
-    query,
-    params ?? {},
-    {
-      filterResponse: false,
-      perspective,
-      resultSourceMap: drafts ? "withKeyArraySelector" : false,
-      stega: drafts,
-      ...(drafts ? { token } : {}),
-      useCdn: !drafts,
-    },
-  );
-
+  const fetchOptions = {
+    filterResponse: false,
+    perspective,
+    resultSourceMap: inPreview ? "withKeyArraySelector" : false,
+    stega: inPreview,
+    ...(needsToken ? { token } : {}),
+    useCdn: perspective === "published",
+  };
+  const response = await sanityClient.fetch<T>(query, params ?? {}, fetchOptions as Parameters<typeof sanityClient.fetch>[2]);
+  const result = (response as { result: T }).result ?? (response as T);
   return { data: result };
 }
 

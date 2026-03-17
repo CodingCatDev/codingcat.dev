@@ -11,7 +11,8 @@ import { homePageQuery } from "@/lib/queries";
 export const prerender = false;
 
 const draftMode = Astro.cookies.has("__sanity_preview");
-const { data: homePage } = await loadQuery<any>({ query: homePageQuery, draftMode });
+const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
+const { data: homePage } = await loadQuery<any>({ query: homePageQuery, draftMode, perspective });
 
 const siteUrl = Astro.url.origin;
 const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("CodingCat.dev")}&subtitle=${encodeURIComponent("Purrfect Web Development Tutorials")}`;
