@@ -1,13 +1,15 @@
-# Local development secrets — NOT committed to git
-# Copy to .dev.vars and fill in values
+# Runtime secrets for Cloudflare Worker (wrangler dev / preview).
+# Copy to .dev.vars and fill in. In production, set via: wrangler secret put <NAME>
+
+# Sanity — viewer token for draft mode / Presentation tool
+SANITY_API_READ_TOKEN=
+# Optional: set to enable "Turn on draft mode" from site (visit /api/draft-mode/allow-enable?secret=THIS once per session)
+# SANITY_PREVIEW_DEV_SECRET=
 
 # better-auth
-BETTER_AUTH_SECRET=your-dev-secret-here
+BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=http://localhost:4321
 
-# Google OAuth (for better-auth social login)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-# Sanity (viewer token for draft mode / Visual Editing — Presentation tool validates via API)
-SANITY_API_READ_TOKEN=your-sanity-viewer-token
+# Google OAuth (better-auth social login)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

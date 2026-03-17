@@ -26,11 +26,14 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 const studioUrl =
   import.meta.env.PUBLIC_SANITY_STUDIO_URL || "https://codingcat.dev.sanity.studio";
 
+const projectId = import.meta.env.SANITY_PROJECT_ID || "hfh83o0w";
+const defaultDataset = import.meta.env.SANITY_DATASET || "production";
+
 // Create client explicitly so we don't rely on the "sanity:client" virtual module,
 // which can fail to resolve in some Vite/Astro contexts (e.g. config loading).
 const sanityClient = createClient({
-  projectId: import.meta.env.SANITY_PROJECT_ID || "hfh83o0w",
-  dataset: import.meta.env.SANITY_DATASET || "production",
+  projectId,
+  dataset: defaultDataset,
   apiVersion: "2026-03-17",
   useCdn: false,
   stega: {
@@ -39,6 +42,24 @@ const sanityClient = createClient({
 });
 
 const builder = imageUrlBuilder(sanityClient);
+
+// Per-dataset clients for preview (workspace-driven dataset from Studio)
+const datasetClients = new Map<string, ReturnType<typeof createClient>>();
+
+function getClientForDataset(dataset: string) {
+  let client = datasetClients.get(dataset);
+  if (!client) {
+    client = createClient({
+      projectId,
+      dataset,
+      apiVersion: "2026-03-17",
+      useCdn: false,
+      stega: { studioUrl },
+    });
+    datasetClients.set(dataset, client);
+  }
+  return client;
+}
 
 export function urlForImage(source: SanityImageSource) {
   return builder.image(source);
@@ -60,6 +81,11 @@ interface LoadQueryOptions {
    * so switching perspective in Studio shows the correct content.
    */
   perspective?: string;
+  /**
+   * Dataset for preview — set from __sanity_preview_dataset cookie so the live preview
+   * shows content from the Studio workspace (production vs dev) that opened it.
+   */
+  dataset?: string;
 }
 
 /**
@@ -93,6 +119,7 @@ export async function loadQuery<T>({
   params,
   draftMode,
   perspective: perspectiveParam,
+  dataset: datasetOverride,
 }: LoadQueryOptions): Promise<{ data: T }> {
   const inPreview = isDraftMode(draftMode);
   const perspective = resolvePerspective(inPreview, perspectiveParam);
@@ -104,6 +131,11 @@ export async function loadQuery<T>({
     );
   }
 
+  const client =
+    inPreview && datasetOverride
+      ? getClientForDataset(datasetOverride)
+      : sanityClient;
+
   const fetchOptions = {
     filterResponse: false,
     perspective,
@@ -112,7 +144,7 @@ export async function loadQuery<T>({
     ...(needsToken ? { token } : {}),
     useCdn: perspective === "published",
   };
-  const response = await sanityClient.fetch<T>(query, params ?? {}, fetchOptions as Parameters<typeof sanityClient.fetch>[2]);
+  const response = await client.fetch<T>(query, params ?? {}, fetchOptions as Parameters<typeof client.fetch>[2]);
   const result = (response as { result: T }).result ?? (response as T);
   return { data: result };
 }
@@ -120,10 +152,13 @@ export async function loadQuery<T>({
 /**
  * Simple fetch for non-visual-editing contexts (RSS, sitemap, etc.)
  * where stega encoding would corrupt output.
+ * Optional dataset uses the same per-dataset client as loadQuery when in preview.
  */
 export async function sanityFetch<T>(
   query: string,
   params?: Record<string, unknown>,
+  dataset?: string,
 ): Promise<T> {
-  return sanityClient.fetch<T>(query, params ?? {});
+  const client = dataset ? getClientForDataset(dataset) : sanityClient;
+  return client.fetch<T>(query, params ?? {});
 }

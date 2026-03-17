@@ -1,0 +1,51 @@
+---
+interface Props {
+  draftMode: boolean;
+  currentPath: string;
+}
+
+const { draftMode, currentPath } = Astro.props;
+const disableUrl = `/api/draft-mode/disable?slug=${encodeURIComponent(currentPath)}`;
+const enableUrl = `/api/draft-mode/enable?redirect=${encodeURIComponent(currentPath)}`;
+---
+
+<div class="draft-toggle" aria-label="Draft mode">
+  <span class="draft-toggle__label">
+    Draft {draftMode ? "on" : "off"}
+  </span>
+  {draftMode ? (
+    <a href={disableUrl} class="draft-toggle__btn">Turn off</a>
+  ) : (
+    <a href={enableUrl} class="draft-toggle__btn">Turn on</a>
+  )}
+</div>
+
+<style>
+  .draft-toggle {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border, rgba(128, 128, 128, 0.3));
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  .draft-toggle__label {
+    opacity: 0.85;
+  }
+  .draft-toggle__btn {
+    font-weight: 500;
+    color: var(--accent, #0ea5e9);
+    text-decoration: none;
+  }
+  .draft-toggle__btn:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -14,7 +14,8 @@ export const prerender = false;
 const { slug } = Astro.params;
 const draftMode = Astro.cookies.has("__sanity_preview");
 const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
-const { data: podcast } = await loadQuery<any>({ query: podcastQuery, params: { slug }, draftMode, perspective });
+const previewDataset = Astro.cookies.get("__sanity_preview_dataset")?.value ?? undefined;
+const { data: podcast } = await loadQuery<any>({ query: podcastQuery, params: { slug }, draftMode, perspective, dataset: previewDataset });
 
 if (!podcast) {
   return Astro.redirect("/404");

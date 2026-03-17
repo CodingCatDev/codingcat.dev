@@ -17,7 +17,8 @@ if (reservedSlugs.includes(slug!)) {
 
 const draftMode = Astro.cookies.has("__sanity_preview");
 const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
-const { data: page } = await loadQuery<any>({ query: pageQuery, params: { slug }, draftMode, perspective });
+const previewDataset = Astro.cookies.get("__sanity_preview_dataset")?.value ?? undefined;
+const { data: page } = await loadQuery<any>({ query: pageQuery, params: { slug }, draftMode, perspective, dataset: previewDataset });
 
 if (!page) {
   return new Response(null, { status: 404 });

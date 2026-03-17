@@ -14,22 +14,25 @@ Fresh Astro 6 project replacing the Next.js site. Deployed to Cloudflare Workers
 
 ## Getting Started
 
+From repo root:
+
 ```bash
-cd astro-app
-npm install
-npm run dev
+pnpm install
+pnpm --filter @codingcatdev/web dev
 ```
 
-For Cloudflare Workers preview:
+Or from `apps/web`:
+
 ```bash
-npm run preview
+pnpm install && pnpm dev
 ```
+
+For Cloudflare Workers preview: `pnpm preview` (from `apps/web`).
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in values. For Cloudflare secrets, use `.dev.vars` locally.
-
-See `.env.example` for all required variables.
+- **Build:** Copy `.env.example` to `.env` or `.env.local`. Sanity project/dataset have defaults; optional vars are commented.
+- **Runtime (local):** Copy `.dev.vars.example` to `.dev.vars` and set secrets (Sanity token, better-auth, Google OAuth). In production, set these via `wrangler secret put <NAME>`.
 
 ## Deployment
 

@@ -12,8 +12,9 @@ export const prerender = false;
 export const GET: APIRoute = async ({ url, cookies, redirect }) => {
   const slug = url.searchParams.get("slug") || "/";
 
-  // Delete the preview cookie
+  // Delete the preview cookies
   cookies.delete("__sanity_preview", { path: "/" });
+  cookies.delete("__sanity_preview_dataset", { path: "/" });
 
   // Redirect back to the page (now showing published content)
   return redirect(slug, 307);

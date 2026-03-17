@@ -12,7 +12,8 @@ export const prerender = false;
 
 const draftMode = Astro.cookies.has("__sanity_preview");
 const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
-const { data: homePage } = await loadQuery<any>({ query: homePageQuery, draftMode, perspective });
+const previewDataset = Astro.cookies.get("__sanity_preview_dataset")?.value ?? undefined;
+const { data: homePage } = await loadQuery<any>({ query: homePageQuery, draftMode, perspective, dataset: previewDataset });
 
 const siteUrl = Astro.url.origin;
 const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("CodingCat.dev")}&subtitle=${encodeURIComponent("Purrfect Web Development Tutorials")}`;
