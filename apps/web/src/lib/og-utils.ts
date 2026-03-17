@@ -3,6 +3,14 @@
  *
  * Extracts brand tokens, type colors, font loading, and HTML generation
  * into a single module so all OG endpoints stay DRY.
+ *
+ * IMPORTANT: Satori (via workers-og's HTMLRewriter parser) is extremely
+ * strict about HTML structure:
+ * - Every element with multiple children MUST have display:flex
+ * - No HTML comments
+ * - No whitespace between elements (parsed as text nodes)
+ * - No mixed text + element content (wrap text in <span>)
+ * All HTML must be fully minified — no newlines, no indentation.
  */
 
 // @ts-ignore — loaded by rawFonts vite plugin as Uint8Array
@@ -65,17 +73,6 @@ export function loadFonts() {
   ];
 }
 
-// ── Minify HTML for Satori ───────────────────────────────────────────
-// Satori's HTML parser (via HTMLRewriter) treats whitespace between
-// elements as text nodes. Template literal formatting creates phantom
-// text nodes that violate Satori's strict "display: flex" requirement.
-function minifyHtml(html: string): string {
-  return html
-    .replace(/>\s+</g, "><")  // Remove whitespace between tags
-    .replace(/\s+/g, " ")     // Collapse all remaining whitespace (including inside style attrs)
-    .trim();
-}
-
 // ── Adaptive title font size ─────────────────────────────────────────
 export function titleFontSize(title: string): number {
   if (title.length > 60) return 42;
@@ -94,6 +91,8 @@ function authorInitials(author: string): string {
 }
 
 // ── HTML generators ──────────────────────────────────────────────────
+// All HTML is built as single-line strings with NO whitespace between tags.
+// This prevents HTMLRewriter from creating phantom text nodes.
 
 export interface OgHtmlOptions {
   title: string;
@@ -103,126 +102,39 @@ export interface OgHtmlOptions {
   episodeNumber?: string;
 }
 
+// Shared building blocks
+const logo = `<div style="display:flex;align-items:center;gap:12px"><div style="font-size:40px">🐱</div><div style="display:flex;font-size:24px;font-weight:700;color:${BRAND.text}"><span>CodingCat</span><span style="color:${BRAND.primary}">.dev</span></div></div>`;
+
+function badge(type: string, typeColor: string, episodeNumber?: string): string {
+  const ep = episodeNumber ? `<div style="display:flex;font-size:14px;font-weight:600;color:${typeColor};margin-top:4px">Episode ${episodeNumber}</div>` : "";
+  return `<div style="display:flex;flex-direction:column;align-items:flex-end"><div style="display:flex;padding:6px 16px;border-radius:6px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:${typeColor};background:${typeColor}26;border:1px solid ${typeColor}40">${type}</div>${ep}</div>`;
+}
+
+function authorBlock(author: string): string {
+  return `<div style="display:flex;align-items:center;gap:12px"><div style="display:flex;width:44px;height:44px;background:linear-gradient(135deg,${BRAND.primary},${BRAND.primaryLight});border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:white">${authorInitials(author)}</div><div style="font-size:18px;font-weight:500;color:${BRAND.textSecondary}">${author}</div></div>`;
+}
+
+function urlBlock(): string {
+  return `<div style="font-size:16px;color:${BRAND.textTertiary}">codingcat.dev</div>`;
+}
+
 /**
  * Generates the full-featured OG HTML (blog, podcast, course).
- * Includes logo, type badge, title, author avatar, and optional episode number.
  */
 export function generateOgHtml({
   title,
   author = "CodingCat.dev",
   type = "Blog",
-  subtitle,
   episodeNumber,
 }: OgHtmlOptions): string {
   const typeColor = TYPE_COLORS[type] || BRAND.typeBlog;
   const fontSize = titleFontSize(title);
 
-  const episodeLine = episodeNumber
-    ? `<div style="
-        font-size: 14px;
-        font-weight: 600;
-        color: ${typeColor};
-        margin-top: 4px;
-      ">Episode ${episodeNumber}</div>`
-    : "";
-
-  const badgeBlock = `
-    <div style="display: flex; flex-direction: column; align-items: flex-end;">
-      <div style="
-        display: flex;
-        padding: 6px 16px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: ${typeColor};
-        background: ${typeColor}26;
-        border: 1px solid ${typeColor}40;
-      ">${type}</div>
-      ${episodeLine}
-    </div>
-  `;
-
-  return minifyHtml(`
-    <div style="
-      display: flex;
-      width: 1200px;
-      height: 630px;
-      background: ${BRAND.bgGradient};
-      padding: 60px;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    ">
-      <div style="
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        justify-content: space-between;
-      ">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-size: 40px;">🐱</div>
-            <div style="
-              font-size: 24px;
-              font-weight: 700;
-              color: ${BRAND.text};
-            display: flex;
-            "><span>CodingCat</span><span style="color: ${BRAND.primary};">.dev</span></div>
-          </div>
-          ${badgeBlock}
-        </div>
-
-        <div style="
-          display: flex;
-          flex: 1;
-          align-items: center;
-          padding: 20px 0;
-        ">
-          <div style="
-            font-size: ${fontSize}px;
-            font-weight: 700;
-            line-height: 1.15;
-            color: ${BRAND.text};
-            max-width: 100%;
-            overflow: hidden;
-          ">${title}</div>
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="
-              display: flex;
-              width: 44px;
-              height: 44px;
-              background: linear-gradient(135deg, ${BRAND.primary}, ${BRAND.primaryLight});
-              border-radius: 50%;
-              align-items: center;
-              justify-content: center;
-              font-weight: 700;
-              font-size: 16px;
-              color: white;
-            ">${authorInitials(author)}</div>
-            <div style="
-              font-size: 18px;
-              font-weight: 500;
-              color: ${BRAND.textSecondary};
-            ">${author}</div>
-          </div>
-          <div style="
-            font-size: 16px;
-            color: ${BRAND.textTertiary};
-          ">codingcat.dev</div>
-        </div>
-      </div>
-    </div>
-  `);
+  return `<div style="display:flex;width:1200px;height:630px;background:${BRAND.bgGradient};padding:60px;box-sizing:border-box;font-family:'Inter',sans-serif"><div style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:space-between"><div style="display:flex;align-items:center;justify-content:space-between">${logo}${badge(type, typeColor, episodeNumber)}</div><div style="display:flex;flex:1;align-items:center;padding:20px 0"><div style="font-size:${fontSize}px;font-weight:700;line-height:1.15;color:${BRAND.text};max-width:100%;overflow:hidden">${title}</div></div><div style="display:flex;align-items:center;justify-content:space-between">${authorBlock(author)}${urlBlock()}</div></div></div>`;
 }
 
 /**
  * Generates a simpler OG HTML for default/generic pages.
- * No author avatar, no type badge — just branding + title + optional subtitle.
  */
 export function generateDefaultOgHtml({
   title,
@@ -232,69 +144,9 @@ export function generateDefaultOgHtml({
   subtitle?: string;
 }): string {
   const fontSize = titleFontSize(title);
-
-  const subtitleBlock = subtitle
-    ? `<div style="
-        font-size: 24px;
-        font-weight: 400;
-        color: ${BRAND.textSecondary};
-        margin-top: 16px;
-        line-height: 1.4;
-      ">${subtitle}</div>`
+  const subtitleHtml = subtitle
+    ? `<div style="font-size:24px;font-weight:400;color:${BRAND.textSecondary};margin-top:16px;line-height:1.4">${subtitle}</div>`
     : "";
 
-  return minifyHtml(`
-    <div style="
-      display: flex;
-      width: 1200px;
-      height: 630px;
-      background: ${BRAND.bgGradient};
-      padding: 60px;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    ">
-      <div style="
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        justify-content: space-between;
-      ">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="font-size: 40px;">🐱</div>
-          <div style="
-            font-size: 24px;
-            font-weight: 700;
-            color: ${BRAND.text};
-          display: flex;
-          "><span>CodingCat</span><span style="color: ${BRAND.primary};">.dev</span></div>
-        </div>
-
-        <div style="
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-          justify-content: center;
-          padding: 20px 0;
-        ">
-          <div style="
-            font-size: ${fontSize}px;
-            font-weight: 700;
-            line-height: 1.15;
-            color: ${BRAND.text};
-            max-width: 100%;
-            overflow: hidden;
-          ">${title}</div>
-          ${subtitleBlock}
-        </div>
-
-        <div style="display: flex; align-items: center; justify-content: flex-end;">
-          <div style="
-            font-size: 16px;
-            color: ${BRAND.textTertiary};
-          ">codingcat.dev</div>
-        </div>
-      </div>
-    </div>
-  `);
+  return `<div style="display:flex;width:1200px;height:630px;background:${BRAND.bgGradient};padding:60px;box-sizing:border-box;font-family:'Inter',sans-serif"><div style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:space-between">${logo}<div style="display:flex;flex-direction:column;flex:1;justify-content:center;padding:20px 0"><div style="font-size:${fontSize}px;font-weight:700;line-height:1.15;color:${BRAND.text};max-width:100%;overflow:hidden">${title}</div>${subtitleHtml}</div><div style="display:flex;align-items:center;justify-content:flex-end">${urlBlock()}</div></div></div>`;
 }
