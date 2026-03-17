@@ -1,16 +1,11 @@
 /**
  * Shared OG image generation utilities.
  *
- * Extracts brand tokens, type colors, font loading, and HTML generation
- * into a single module so all OG endpoints stay DRY.
- *
- * IMPORTANT: Satori (via workers-og's HTMLRewriter parser) is extremely
- * strict about HTML structure:
- * - Every element with multiple children MUST have display:flex
- * - No HTML comments
- * - No whitespace between elements (parsed as text nodes)
- * - No mixed text + element content (wrap text in <span>)
- * All HTML must be fully minified — no newlines, no indentation.
+ * Uses React element objects (plain VDOM) instead of HTML strings.
+ * workers-og's HTMLRewriter-based parseHtml corrupts HTML→VDOM on
+ * Cloudflare Workers (text chunking, phantom child nodes). Passing
+ * React element objects directly to ImageResponse bypasses parseHtml
+ * entirely and works reliably.
  */
 
 // @ts-ignore — loaded by rawFonts vite plugin as Uint8Array
@@ -80,6 +75,25 @@ export function titleFontSize(title: string): number {
   return 56;
 }
 
+// ── React element helper (plain VDOM objects) ────────────────────────
+// workers-og's ImageResponse accepts React.ReactNode. These plain objects
+// match the { type, props: { style, children } } shape that Satori expects.
+
+function h(
+  type: string,
+  props: Record<string, any>,
+  ...children: any[]
+): any {
+  const flatChildren = children.flat().filter((c) => c != null);
+  return {
+    type,
+    props: {
+      ...props,
+      children: flatChildren.length === 1 ? flatChildren[0] : flatChildren.length === 0 ? undefined : flatChildren,
+    },
+  };
+}
+
 // ── Author initials helper ───────────────────────────────────────────
 function authorInitials(author: string): string {
   return author
@@ -90,63 +104,326 @@ function authorInitials(author: string): string {
     .toUpperCase();
 }
 
-// ── HTML generators ──────────────────────────────────────────────────
-// All HTML is built as single-line strings with NO whitespace between tags.
-// This prevents HTMLRewriter from creating phantom text nodes.
+// ── Shared element builders ──────────────────────────────────────────
 
-export interface OgHtmlOptions {
+function logoElement() {
+  return h(
+    "div",
+    { style: { display: "flex", alignItems: "center", gap: "12px" } },
+    h("div", { style: { fontSize: "40px" } }, "🐱"),
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          fontSize: "24px",
+          fontWeight: 700,
+          color: BRAND.text,
+        },
+      },
+      h("span", { style: {} }, "CodingCat"),
+      h("span", { style: { color: BRAND.primary } }, ".dev"),
+    ),
+  );
+}
+
+function badgeElement(type: string, typeColor: string, episodeNumber?: string) {
+  const children: any[] = [
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          padding: "6px 16px",
+          borderRadius: "6px",
+          fontSize: "14px",
+          fontWeight: 600,
+          textTransform: "uppercase" as any,
+          letterSpacing: "0.05em",
+          color: typeColor,
+          background: typeColor + "26",
+          border: `1px solid ${typeColor}40`,
+        },
+      },
+      type,
+    ),
+  ];
+
+  if (episodeNumber) {
+    children.push(
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: typeColor,
+            marginTop: "4px",
+          },
+        },
+        `Episode ${episodeNumber}`,
+      ),
+    );
+  }
+
+  return h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+      },
+    },
+    ...children,
+  );
+}
+
+function authorElement(author: string) {
+  return h(
+    "div",
+    { style: { display: "flex", alignItems: "center", gap: "12px" } },
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          width: "44px",
+          height: "44px",
+          background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.primaryLight})`,
+          borderRadius: "50%",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 700,
+          fontSize: "16px",
+          color: "white",
+        },
+      },
+      authorInitials(author),
+    ),
+    h(
+      "div",
+      {
+        style: {
+          fontSize: "18px",
+          fontWeight: 500,
+          color: BRAND.textSecondary,
+        },
+      },
+      author,
+    ),
+  );
+}
+
+function urlElement() {
+  return h(
+    "div",
+    { style: { fontSize: "16px", color: BRAND.textTertiary } },
+    "codingcat.dev",
+  );
+}
+
+// ── Public element generators ────────────────────────────────────────
+
+export interface OgElementOptions {
   title: string;
   author?: string;
   type?: string;
-  subtitle?: string;
   episodeNumber?: string;
 }
 
-// Shared building blocks
-const logo = `<div style="display:flex;align-items:center;gap:12px"><div style="font-size:40px">🐱</div><div style="display:flex;font-size:24px;font-weight:700;color:${BRAND.text}"><span>CodingCat</span><span style="color:${BRAND.primary}">.dev</span></div></div>`;
-
-function badge(type: string, typeColor: string, episodeNumber?: string): string {
-  const ep = episodeNumber ? `<div style="display:flex;font-size:14px;font-weight:600;color:${typeColor};margin-top:4px">Episode ${episodeNumber}</div>` : "";
-  return `<div style="display:flex;flex-direction:column;align-items:flex-end"><div style="display:flex;padding:6px 16px;border-radius:6px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:${typeColor};background:${typeColor}26;border:1px solid ${typeColor}40">${type}</div>${ep}</div>`;
-}
-
-function authorBlock(author: string): string {
-  return `<div style="display:flex;align-items:center;gap:12px"><div style="display:flex;width:44px;height:44px;background:linear-gradient(135deg,${BRAND.primary},${BRAND.primaryLight});border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:white">${authorInitials(author)}</div><div style="font-size:18px;font-weight:500;color:${BRAND.textSecondary}">${author}</div></div>`;
-}
-
-function urlBlock(): string {
-  return `<div style="font-size:16px;color:${BRAND.textTertiary}">codingcat.dev</div>`;
-}
-
 /**
- * Generates the full-featured OG HTML (blog, podcast, course).
+ * Builds the full-featured OG element (blog, podcast, course).
+ * Returns a React element object for ImageResponse.
  */
-export function generateOgHtml({
+export function buildOgElement({
   title,
   author = "CodingCat.dev",
   type = "Blog",
   episodeNumber,
-}: OgHtmlOptions): string {
+}: OgElementOptions): any {
   const typeColor = TYPE_COLORS[type] || BRAND.typeBlog;
   const fontSize = titleFontSize(title);
 
-  return `<div style="display:flex;width:1200px;height:630px;background:${BRAND.bgGradient};padding:60px;box-sizing:border-box;font-family:'Inter',sans-serif"><div style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:space-between"><div style="display:flex;align-items:center;justify-content:space-between">${logo}${badge(type, typeColor, episodeNumber)}</div><div style="display:flex;flex:1;align-items:center;padding:20px 0"><div style="font-size:${fontSize}px;font-weight:700;line-height:1.15;color:${BRAND.text};max-width:100%;overflow:hidden">${title}</div></div><div style="display:flex;align-items:center;justify-content:space-between">${authorBlock(author)}${urlBlock()}</div></div></div>`;
+  return h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        width: "1200px",
+        height: "630px",
+        background: BRAND.bgGradient,
+        padding: "60px",
+        fontFamily: "'Inter', sans-serif",
+      },
+    },
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+          justifyContent: "space-between",
+        },
+      },
+      // Top row: logo + badge
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          },
+        },
+        logoElement(),
+        badgeElement(type, typeColor, episodeNumber),
+      ),
+      // Middle: title
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            padding: "20px 0",
+          },
+        },
+        h(
+          "div",
+          {
+            style: {
+              fontSize: `${fontSize}px`,
+              fontWeight: 700,
+              lineHeight: 1.15,
+              color: BRAND.text,
+              maxWidth: "100%",
+              overflow: "hidden",
+            },
+          },
+          title,
+        ),
+      ),
+      // Bottom row: author + URL
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          },
+        },
+        authorElement(author),
+        urlElement(),
+      ),
+    ),
+  );
 }
 
 /**
- * Generates a simpler OG HTML for default/generic pages.
+ * Builds a simpler OG element for default/generic pages.
+ * Returns a React element object for ImageResponse.
  */
-export function generateDefaultOgHtml({
+export function buildDefaultOgElement({
   title,
   subtitle,
 }: {
   title: string;
   subtitle?: string;
-}): string {
+}): any {
   const fontSize = titleFontSize(title);
-  const subtitleHtml = subtitle
-    ? `<div style="font-size:24px;font-weight:400;color:${BRAND.textSecondary};margin-top:16px;line-height:1.4">${subtitle}</div>`
-    : "";
 
-  return `<div style="display:flex;width:1200px;height:630px;background:${BRAND.bgGradient};padding:60px;box-sizing:border-box;font-family:'Inter',sans-serif"><div style="display:flex;flex-direction:column;width:100%;height:100%;justify-content:space-between">${logo}<div style="display:flex;flex-direction:column;flex:1;justify-content:center;padding:20px 0"><div style="font-size:${fontSize}px;font-weight:700;line-height:1.15;color:${BRAND.text};max-width:100%;overflow:hidden">${title}</div>${subtitleHtml}</div><div style="display:flex;align-items:center;justify-content:flex-end">${urlBlock()}</div></div></div>`;
+  const titleChildren: any[] = [
+    h(
+      "div",
+      {
+        style: {
+          fontSize: `${fontSize}px`,
+          fontWeight: 700,
+          lineHeight: 1.15,
+          color: BRAND.text,
+          maxWidth: "100%",
+          overflow: "hidden",
+        },
+      },
+      title,
+    ),
+  ];
+
+  if (subtitle) {
+    titleChildren.push(
+      h(
+        "div",
+        {
+          style: {
+            fontSize: "24px",
+            fontWeight: 400,
+            color: BRAND.textSecondary,
+            marginTop: "16px",
+            lineHeight: 1.4,
+          },
+        },
+        subtitle,
+      ),
+    );
+  }
+
+  return h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        width: "1200px",
+        height: "630px",
+        background: BRAND.bgGradient,
+        padding: "60px",
+        fontFamily: "'Inter', sans-serif",
+      },
+    },
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+          justifyContent: "space-between",
+        },
+      },
+      // Top: logo
+      logoElement(),
+      // Middle: title + optional subtitle
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            justifyContent: "center",
+            padding: "20px 0",
+          },
+        },
+        ...titleChildren,
+      ),
+      // Bottom: URL (right-aligned)
+      h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          },
+        },
+        urlElement(),
+      ),
+    ),
+  );
 }
