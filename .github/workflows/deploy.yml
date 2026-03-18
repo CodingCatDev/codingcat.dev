@@ -5,8 +5,10 @@ on:
     branches: [dev, main]
 
 jobs:
-  deploy:
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
+    environment: dev
 
     steps:
       - uses: actions/checkout@v4
@@ -24,49 +26,64 @@ jobs:
       - name: Install wrangler
         run: pnpm add -Dw wrangler
 
-      - name: Build (dev)
-        if: github.ref == 'refs/heads/dev'
+      - name: Build
         run: pnpm --filter @codingcatdev/web build
         env:
-          SANITY_PROJECT_ID: hfh83o0w
-          SANITY_DATASET: dev
-          PUBLIC_SANITY_STUDIO_URL: https://codingcat-dev.sanity.studio
+          SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          PUBLIC_SANITY_STUDIO_URL: https://${{ vars.SANITY_STUDIO_HOSTNAME }}.sanity.studio
 
-      - name: Build (production)
-        if: github.ref == 'refs/heads/main'
-        run: pnpm --filter @codingcatdev/web build
-        env:
-          SANITY_PROJECT_ID: hfh83o0w
-          SANITY_DATASET: production
-
-      - name: Deploy to dev
-        if: github.ref == 'refs/heads/dev'
+      - name: Deploy to Cloudflare
         run: pnpm exec wrangler deploy
         working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Deploy to production
-        if: github.ref == 'refs/heads/main'
+      - name: Deploy Sanity Studio
+        run: npx sanity deploy -y
+        working-directory: apps/sanity
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_STUDIO_HOSTNAME: ${{ vars.SANITY_STUDIO_HOSTNAME }}
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install wrangler
+        run: pnpm add -Dw wrangler
+
+      - name: Build
+        run: pnpm --filter @codingcatdev/web build
+        env:
+          SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+
+      - name: Deploy to Cloudflare
         run: pnpm exec wrangler deploy --env production
         working-directory: apps/web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Deploy Sanity Studio (dev)
-        if: github.ref == 'refs/heads/dev'
+      - name: Deploy Sanity Studio
         run: npx sanity deploy -y
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SANITY_STUDIO_HOSTNAME: codingcat-dev
-
-      - name: Deploy Sanity Studio (production)
-        if: github.ref == 'refs/heads/main'
-        run: npx sanity deploy -y
-        working-directory: apps/sanity
-        env:
-          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SANITY_STUDIO_HOSTNAME: codingcat.dev
+          SANITY_STUDIO_HOSTNAME: ${{ vars.SANITY_STUDIO_HOSTNAME }}
