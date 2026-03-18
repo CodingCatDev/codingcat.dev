@@ -56,7 +56,7 @@ const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 
 // Set SANITY_STUDIO_DISABLE_PRESENTATION=true if you get network errors to api.sanity.io (e.g. firewall/VPN)
 const presentationEnabled =
-	process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
+  process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
 // Use local Astro dev server for presentation preview when running Studio locally
 const isLocal =
@@ -69,6 +69,8 @@ function resolveHref(type: string, slug?: string): string | undefined {
   switch (type) {
     case "post":
       return slug ? `/post/${slug}` : undefined;
+    case "podcast":
+      return slug ? `/podcast/${slug}` : undefined;
     case "page":
       return slug ? `/${slug}` : undefined;
     default:
@@ -222,6 +224,22 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
                     ],
                   }),
                 }),
+                podcast: defineLocations({
+                  select: {
+                    title: "title",
+                    slug: "slug.current",
+                  },
+                  resolve: (doc) => ({
+                    locations: [
+                      {
+                        title: doc?.title || "Untitled",
+                        // biome-ignore lint/style/noNonNullAssertion: resolveHref returns string for known types
+                        href: resolveHref("podcast", doc?.slug)!,
+                      },
+                      homeLocation,
+                    ],
+                  }),
+                }),
               },
             },
             previewUrl: {
@@ -237,10 +255,7 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
         ]
       : []),
     structureTool({ structure: podcastStructure() }),
-    singletonPlugin([
-      settings.name,
-      engineConfig.name,
-    ]),
+    singletonPlugin([settings.name, engineConfig.name]),
     assistWithPresets(),
     media(),
     codeInput(),

@@ -1,9 +1,10 @@
 /**
- * Sanity Visual Editing (Plain JS).
- * Loaded only when visual editing is enabled; integrates with History API for Presentation tool.
- * Listens for presentation/perspective postMessages so switching perspective in Studio reloads
- * the preview with the correct sanity-preview-perspective URL param (outer context URL change
- * is not reflected in the iframe, so we must handle the message).
+ * Sanity Visual Editing (Plain JS) — minimal integration per official docs.
+ * https://reference.sanity.io/_sanity/visual-editing/
+ *
+ * History update uses pushState/replaceState only so the Studio can drive
+ * iframe navigation (e.g. by loading the preview URL when you click locations).
+ * We only handle presentation/perspective so perspective switches reload with the right param.
  */
 import { enableVisualEditing } from "@sanity/visual-editing";
 
@@ -57,15 +58,12 @@ export function run(): () => void {
         switch (update.type) {
           case "push":
             window.history.pushState(null, "", update.url);
-            // Reload so the new URL (e.g. perspective param) is loaded and server fetches correct data
-            window.location.reload();
             break;
           case "pop":
             window.history.back();
             break;
           case "replace":
             window.history.replaceState(null, "", update.url);
-            window.location.reload();
             break;
           default:
             throw new Error(`Unknown update type: ${(update as { type: string }).type}`);
@@ -73,11 +71,12 @@ export function run(): () => void {
       },
     },
     zIndex: 1000,
+    // Let default behavior apply: manual = reload, mutation = no default for Plain JS
     refresh: async (payload) => {
-      // Reload preview when user clicks Refresh or when a document is saved in Studio
-      if (payload.source === "manual" || payload.source === "mutation") {
+      if (payload.source === "manual") {
         window.location.reload();
       }
+      // source === 'mutation': no default for Plain JS per docs; don't reload unless you want to
     },
   });
 

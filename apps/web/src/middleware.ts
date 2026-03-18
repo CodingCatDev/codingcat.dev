@@ -77,5 +77,23 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect("/login");
   }
 
-  return next();
+  const response = await next();
+
+  // Prevent caching when in Sanity draft/preview mode so iframe refresh always shows current content
+  const cookieHeader = context.request.headers.get("Cookie") ?? "";
+  if (cookieHeader.includes("__sanity_preview=")) {
+    const headers = new Headers(response.headers);
+    headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate",
+    );
+    headers.set("Pragma", "no-cache");
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+
+  return response;
 });

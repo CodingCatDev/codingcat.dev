@@ -79,7 +79,9 @@ export const GET: APIRoute = async ({ url, cookies, request }) => {
 
     if (isValid) {
       const isLocal = url.hostname === "localhost";
-      const redirectPath = safeRedirectPath(redirectTo ?? "/", origin);
+      // redirectTo comes from validatePreviewUrl (sanity-preview-pathname param); fallback to param directly
+      const pathFromParam = url.searchParams.get("sanity-preview-pathname") ?? undefined;
+      const redirectPath = safeRedirectPath(redirectTo ?? pathFromParam ?? "/", origin);
       const location = `${origin}${redirectPath}`;
 
       cookies.set("__sanity_preview", "1", {
