@@ -75,6 +75,7 @@ export function VideoPreview(props: { youtube: string }) {
 				<iframe
 					style={{ height: "100%", width: "100%", border: 0 }}
 					src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&fs=0`}
+					referrerPolicy="strict-origin-when-cross-origin"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					allowFullScreen
 					title="YouTube video player"

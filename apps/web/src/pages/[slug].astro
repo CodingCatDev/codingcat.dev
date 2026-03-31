@@ -10,7 +10,7 @@ export const prerender = false;
 const { slug } = Astro.params;
 
 // Don't catch known routes — let them fall through to their own handlers
-const reservedSlugs = ["blog", "courses", "podcasts", "authors", "guests", "sponsors", "login", "dashboard", "rss.xml", "sitemap.xml", "course"];
+const reservedSlugs = ["blog", "courses", "feeds", "podcasts", "authors", "guests", "sponsors", "login", "dashboard", "rss.xml", "sitemap.xml", "course"];
 if (reservedSlugs.includes(slug!)) {
   return Astro.redirect(`/${slug}`);
 }

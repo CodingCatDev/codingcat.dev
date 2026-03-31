@@ -1,0 +1,72 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import { loadQuery } from "@/utils/sanity";
+import { podcastTypesListQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const draftMode = Astro.cookies.has("__sanity_preview");
+const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
+const previewDataset = Astro.cookies.get("__sanity_preview_dataset")?.value ?? undefined;
+
+const { data: podcastTypes } = await loadQuery<
+  { _id: string; title: string; slug: string }[]
+>({
+  query: podcastTypesListQuery,
+  draftMode,
+  perspective,
+  dataset: previewDataset,
+});
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("RSS Feeds")}&subtitle=${encodeURIComponent("CodingCat.dev")}`;
+---
+
+<BaseLayout
+  title="RSS Feeds — CodingCat.dev"
+  description="Subscribe to the blog, courses, or individual podcast shows."
+  ogImage={ogImage}
+>
+  <main class="py-12">
+    <Container size="narrow">
+      <h1 class="text-3xl font-bold text-[--text] mb-2">RSS feeds</h1>
+      <p class="text-[--text-secondary] mb-8">
+        Subscribe in your podcast app or feed reader.
+      </p>
+
+      <ul class="space-y-6">
+        <li>
+          <h2 class="text-lg font-semibold text-[--text] mb-1">Blog</h2>
+          <p class="text-sm text-[--text-secondary] mb-2">Latest posts and tutorials.</p>
+          <a href="/rss.xml" class="text-primary font-mono text-sm break-all hover:underline">/rss.xml</a>
+        </li>
+        <li>
+          <h2 class="text-lg font-semibold text-[--text] mb-1">Courses</h2>
+          <p class="text-sm text-[--text-secondary] mb-2">New and updated courses.</p>
+          <a href="/courses/rss.xml" class="text-primary font-mono text-sm break-all hover:underline">/courses/rss.xml</a>
+        </li>
+        <li>
+          <h2 class="text-lg font-semibold text-[--text] mb-2">Podcasts by show</h2>
+          {podcastTypes && podcastTypes.length > 0 ? (
+            <ul class="space-y-3">
+              {podcastTypes.map((pt) => (
+                <li class="border border-[--border] rounded-lg p-4 bg-[--surface]">
+                  <div class="font-medium text-[--text] mb-1">{pt.title}</div>
+                  <a
+                    href={`/podcast/${pt.slug}/rss.xml`}
+                    class="text-primary font-mono text-sm break-all hover:underline"
+                  >
+                    /podcast/{pt.slug}/rss.xml
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-sm text-[--text-tertiary]">No podcast types configured yet.</p>
+          )}
+        </li>
+      </ul>
+    </Container>
+  </main>
+</BaseLayout>

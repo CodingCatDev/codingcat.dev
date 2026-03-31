@@ -7,6 +7,7 @@ import ContentCard from "@/components/ContentCard.astro";
 import { PortableText } from "astro-portabletext";
 import { loadQuery, urlForImage } from "@/utils/sanity";
 import { courseQuery, lessonsInCourseQuery } from "@/lib/queries";
+import { parseYoutubeVideoId, youtubeEmbedSrc } from "@/lib/youtube";
 
 export const prerender = false;
 
@@ -54,6 +55,8 @@ const displayDescription = course.excerpt;
 const ogImage = coverUrl ?? `${siteUrl}/api/og/default.png?title=${encodeURIComponent(course.title)}`;
 
 const showLockedHint = Astro.url.searchParams.has("locked");
+
+const courseYoutubeId = parseYoutubeVideoId(course.youtube);
 ---
 
 <BaseLayout title={`${displayTitle} — CodingCat.dev`} description={displayDescription} ogImage={ogImage}>
@@ -109,11 +112,13 @@ const showLockedHint = Astro.url.searchParams.has("locked");
           />
         )}
 
-        {course.youtube && (
+        {courseYoutubeId && (
           <div class="aspect-video mb-8 rounded-xl overflow-hidden">
             <iframe
-              src={`https://www.youtube.com/embed/${course.youtube}`}
+              src={youtubeEmbedSrc(courseYoutubeId)}
               class="w-full h-full"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen
               loading="lazy"
               title="Course video"

@@ -1,12 +1,21 @@
 import { useMemo } from "react";
 
+import { parseYoutubeVideoId, youtubeEmbedSrc } from "@/lib/youtube";
+
+type SanityFileAsset = {
+  url?: string | null;
+  mimeType?: string | null;
+};
+
 type LessonRef = {
   _id: string;
   title: string;
   slug: string;
   locked?: boolean;
   coverImage?: unknown;
+  /** Raw string from CMS: may be URL or 11-char id */
   youtube?: string | null;
+  videoCloudinary?: { asset?: SanityFileAsset | null } | null;
 };
 
 type Section = {
@@ -85,6 +94,7 @@ export default function LessonPlayer({
   const next = index >= 0 && index < lessons.length - 1 ? lessons[index + 1] : null;
 
   const base = `/course/${courseSlug}/lesson`;
+  const youtubeId = parseYoutubeVideoId(lesson.youtube ?? undefined);
 
   return (
     <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(240px,280px)_1fr] lg:items-start lg:gap-8">
@@ -137,14 +147,31 @@ export default function LessonPlayer({
             <LockBadge locked={lesson.locked} />
           </header>
 
-          {lesson.youtube ? (
+          {youtubeId ? (
             <div className="aspect-video w-full bg-black">
               <iframe
-                src={`https://www.youtube.com/embed/${lesson.youtube}`}
+                src={youtubeEmbedSrc(youtubeId)}
                 className="h-full w-full"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 title={lesson.title}
               />
+            </div>
+          ) : lesson.videoCloudinary?.asset?.url ? (
+            <div className="aspect-video w-full bg-black">
+              <video
+                className="h-full w-full"
+                controls
+                playsInline
+                preload="metadata"
+                title={lesson.title}
+              >
+                <source
+                  src={lesson.videoCloudinary.asset.url}
+                  type={lesson.videoCloudinary.asset.mimeType ?? undefined}
+                />
+              </video>
             </div>
           ) : (
             <div className="flex aspect-video w-full items-center justify-center bg-[--surface-hover] text-[--text-tertiary]">

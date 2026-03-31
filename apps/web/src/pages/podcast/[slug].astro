@@ -8,6 +8,7 @@ import Button from "@/components/Button.astro";
 import { PortableText } from "astro-portabletext";
 import { loadQuery, urlForImage } from "@/utils/sanity";
 import { podcastQuery } from "@/lib/queries";
+import { parseYoutubeVideoId, youtubeEmbedSrc } from "@/lib/youtube";
 
 export const prerender = false;
 
@@ -64,6 +65,8 @@ const platformLabels: Record<string, string> = {
 
 // Convert flat listenLinks object to array of [key, url] pairs
 const listenLinksEntries = Object.entries(podcast.listenLinks || {}).filter(([_, url]) => url) as [string, string][];
+
+const podcastYoutubeId = parseYoutubeVideoId(podcast.youtube);
 ---
 
 <BaseLayout
@@ -130,14 +133,17 @@ const listenLinksEntries = Object.entries(podcast.listenLinks || {}).filter(([_,
         />
       )}
 
-      {/* YouTube Embed */}
-      {podcast.youtube && (
+      {/* YouTube Embed — referrerpolicy avoids YouTube error 153 when Referer would be stripped */}
+      {podcastYoutubeId && (
         <div class="aspect-video mb-8 rounded-xl overflow-hidden">
           <iframe
-            src={`https://www.youtube.com/embed/${podcast.youtube}`}
+            src={youtubeEmbedSrc(podcastYoutubeId)}
             class="w-full h-full"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
             loading="lazy"
+            title="YouTube video"
           />
         </div>
       )}

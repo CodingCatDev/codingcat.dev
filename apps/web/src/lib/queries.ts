@@ -42,9 +42,10 @@ const contentFields = `
 `;
 
 const podcastFields = `
-  podcastType[]->{
+  podcastType->{
     ...,
     "title": coalesce(title, "Missing Podcast Title"),
+    "slug": slug.current,
   },
   season,
   episode,
@@ -225,7 +226,12 @@ const courseFields = `
 
 const lessonFields = `
   locked,
-  videoCloudinary
+  videoCloudinary{
+    asset->{
+      url,
+      mimeType
+    }
+  }
 `;
 
 export const courseListQuery = groq`*[_type == "course" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$end] {
@@ -297,7 +303,26 @@ export const rssPostsQuery = groq`*[_type == "post" && defined(slug.current)] | 
   ${contentFields}
 }`;
 
-export const rssPodcastsQuery = groq`*[_type == "podcast" && defined(slug.current)] | order(date desc) [0...20] {
+export const rssCoursesQuery = groq`*[_type == "course" && defined(slug.current)] | order(date desc) [0...20] {
   ${baseFields},
-  ${contentFields}
+  ${courseFields}
+}`;
+
+/** Full episode archive for this show (podcast apps expect the complete feed). */
+export const rssPodcastsByTypeQuery = groq`*[_type == "podcast" && defined(slug.current) && podcastType->slug.current == $podcastTypeSlug] | order(date desc) {
+  ${baseFields},
+  ${contentFields},
+  ${podcastFields}
+}`;
+
+export const podcastTypeBySlugQuery = groq`*[_type == "podcastType" && slug.current == $podcastTypeSlug][0] {
+  _id,
+  "title": coalesce(title, "Untitled"),
+  "slug": slug.current
+}`;
+
+export const podcastTypesListQuery = groq`*[_type == "podcastType" && defined(slug.current)] | order(title asc) {
+  _id,
+  "title": coalesce(title, "Untitled"),
+  "slug": slug.current
 }`;

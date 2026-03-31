@@ -7,6 +7,7 @@ import Avatar from "@/components/Avatar.astro";
 import { PortableText } from "astro-portabletext";
 import { loadQuery, urlForImage } from "@/utils/sanity";
 import { postQuery } from "@/lib/queries";
+import { parseYoutubeVideoId, youtubeEmbedSrc } from "@/lib/youtube";
 
 export const prerender = false;
 
@@ -43,6 +44,8 @@ const displayDescription = post.ogDescription || post.excerpt;
 const ogImage = post.ogImage
   ? urlForImage(post.ogImage).width(1200).height(630).url()
   : `${siteUrl}/api/og/blog.png?title=${encodeURIComponent(post.title)}&author=${encodeURIComponent(firstAuthor?.title || "")}`;
+
+const postYoutubeId = parseYoutubeVideoId(post.youtube);
 ---
 
 <BaseLayout
@@ -103,14 +106,17 @@ const ogImage = post.ogImage
         />
       )}
 
-      {/* YouTube Embed */}
-      {post.youtube && (
+      {/* YouTube Embed — referrerpolicy avoids YouTube error 153 when Referer would be stripped */}
+      {postYoutubeId && (
         <div class="aspect-video mb-8 rounded-xl overflow-hidden">
           <iframe
-            src={`https://www.youtube.com/embed/${post.youtube}`}
+            src={youtubeEmbedSrc(postYoutubeId)}
             class="w-full h-full"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
             loading="lazy"
+            title="YouTube video"
           />
         </div>
       )}

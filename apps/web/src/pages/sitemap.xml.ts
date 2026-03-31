@@ -32,6 +32,7 @@ export const GET: APIRoute = async () => {
     { url: `${site}/blog`, lastmod: latestUpdate, priority: "0.8" },
     { url: `${site}/podcasts`, lastmod: latestUpdate, priority: "0.8" },
     { url: `${site}/courses`, lastmod: latestUpdate, priority: "0.8" },
+    { url: `${site}/feeds`, lastmod: latestUpdate, priority: "0.5" },
     { url: `${site}/authors`, lastmod: latestUpdate, priority: "0.5" },
     { url: `${site}/guests`, lastmod: latestUpdate, priority: "0.5" },
     { url: `${site}/sponsors`, lastmod: latestUpdate, priority: "0.5" },
