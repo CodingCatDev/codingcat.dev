@@ -218,9 +218,65 @@ export const sponsorQuery = groq`*[_type == "sponsor" && slug.current == $slug][
   }
 }`;
 
+// Courses & lessons
+const courseFields = `
+  stripeProduct
+`;
+
+const lessonFields = `
+  locked,
+  videoCloudinary
+`;
+
+export const courseListQuery = groq`*[_type == "course" && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$end] {
+  ${baseFields},
+  ${courseFields},
+  author[]->{
+    "title": coalesce(title, "Anonymous"),
+    "slug": slug.current,
+    coverImage
+  }
+}`;
+
+export const courseCountQuery = groq`count(*[_type == "course" && defined(slug.current)])`;
+
+export const courseQuery = groq`*[_type == "course" && slug.current == $courseSlug][0] {
+  ${baseFields},
+  ${contentFields},
+  ${courseFields}
+}`;
+
+export const lessonsInCourseQuery = groq`*[_type == "course" && slug.current == $courseSlug][0] {
+  ${baseFields},
+  ${courseFields},
+  sections[]{
+    title,
+    lesson[]->{
+      ${baseFields},
+      ${lessonFields}
+    }
+  }
+}`;
+
+export const lessonQuery = groq`*[_type == "lesson" && slug.current == $lessonSlug][0] {
+  ${baseFields},
+  ${contentFields},
+  ${lessonFields}
+}`;
+
+/** Course slug + nested lesson slugs for sitemap generation */
+export const sitemapCourseLessonsQuery = groq`*[_type == "course" && defined(slug.current)]{
+  "courseSlug": slug.current,
+  sections[]{
+    lesson[]->defined(slug.current){
+      "lessonSlug": slug.current,
+      _updatedAt
+    }
+  }
+}`;
 
 // Sitemap
-export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) {
+export const sitemapQuery = groq`*[_type in ["author", "course", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) {
   _type,
   _updatedAt,
   "slug": slug.current,

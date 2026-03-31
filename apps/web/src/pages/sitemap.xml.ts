@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { sanityFetch } from "@/utils/sanity";
-import { sitemapQuery } from "@/lib/queries";
+import { sitemapCourseLessonsQuery, sitemapQuery } from "@/lib/queries";
 
 export const prerender = false;
 
@@ -31,10 +31,26 @@ export const GET: APIRoute = async () => {
     { url: site, lastmod: latestUpdate, priority: "1.0" },
     { url: `${site}/blog`, lastmod: latestUpdate, priority: "0.8" },
     { url: `${site}/podcasts`, lastmod: latestUpdate, priority: "0.8" },
+    { url: `${site}/courses`, lastmod: latestUpdate, priority: "0.8" },
     { url: `${site}/authors`, lastmod: latestUpdate, priority: "0.5" },
     { url: `${site}/guests`, lastmod: latestUpdate, priority: "0.5" },
     { url: `${site}/sponsors`, lastmod: latestUpdate, priority: "0.5" },
   ];
+
+  type CourseLessonRow = {
+    courseSlug: string;
+    sections?: { lesson?: { lessonSlug: string; _updatedAt: string }[] | null }[] | null;
+  };
+  const courseLessonRows = await sanityFetch<CourseLessonRow[]>(sitemapCourseLessonsQuery);
+  const lessonPages = courseLessonRows.flatMap((row) => {
+    const lessons =
+      row.sections?.flatMap((s) => s.lesson?.filter(Boolean) ?? []) ?? [];
+    return lessons.map((l) => ({
+      url: `${site}/course/${row.courseSlug}/lesson/${l.lessonSlug}`,
+      lastmod: l._updatedAt || new Date().toISOString(),
+      priority: "0.6",
+    }));
+  });
 
   const dynamicPages = items.map((item) => ({
     url: `${site}${getPath(item)}`,
@@ -42,7 +58,7 @@ export const GET: APIRoute = async () => {
     priority: item._type === "post" || item._type === "podcast" ? "0.7" : "0.5",
   }));
 
-  const allPages = [...staticPages, ...dynamicPages];
+  const allPages = [...staticPages, ...dynamicPages, ...lessonPages];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

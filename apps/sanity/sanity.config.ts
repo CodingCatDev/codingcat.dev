@@ -49,6 +49,8 @@ import tableSchema, { rowType } from "./schemas/custom/table";
 import podcastSeries from "./schemas/documents/podcastSeries";
 import category from "./schemas/documents/category";
 import short from "./schemas/documents/short";
+import lesson from "./schemas/documents/lesson";
+import course from "./schemas/documents/course";
 
 // ── Shared constants ─────────────────────────────────────────────────
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
@@ -111,6 +113,8 @@ const schemaTypes = [
   podcastSeries,
   category,
   short,
+  lesson,
+  course,
 ];
 
 // ── Shared document actions ──────────────────────────────────────────

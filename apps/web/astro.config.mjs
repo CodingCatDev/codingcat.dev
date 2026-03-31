@@ -100,8 +100,13 @@ export default defineConfig({
         "lodash",
         "lodash/isObject",
       ],
+      // Pre-bundling breaks under Cloudflare Workers SSR (missing deps_ssr chunk); load package as-is
+      exclude: ["@sanity/preview-url-secret"],
     },
     ssr: {
+      optimizeDeps: {
+        exclude: ["@sanity/preview-url-secret"],
+      },
       external: ["buffer", "path", "fs"].map((i) => `node:${i}`),
     },
   },

@@ -13,12 +13,16 @@ import Container from "./Container.astro";
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Brand Column */}
         <div class="lg:col-span-1 space-y-4">
-          <a href="/" class="flex items-center gap-2 font-bold text-lg text-[--text]">
+          <a
+            href="/"
+            class="flex items-center gap-2 font-bold text-lg text-[--text]"
+          >
             <span class="text-2xl">🐱</span>
             CodingCat<span class="text-primary">.dev</span>
           </a>
           <p class="text-sm text-[--text-secondary]">
-            Purrfect Web Development Tutorials — blog posts, podcasts, courses, and videos.
+            Purrfect Web Development Tutorials — blog posts, podcasts, courses,
+            and videos.
           </p>
           {/* Compact newsletter */}
           <form class="flex gap-2">
@@ -40,10 +44,36 @@ import Container from "./Container.astro";
         <div>
           <h4 class="font-semibold text-sm text-[--text] mb-3">Content</h4>
           <ul class="space-y-2">
-            <li><a href="/blog" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Blog</a></li>
-            <li><a href="/podcasts" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Podcast</a></li>
-            <li><a href="/authors" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Authors</a></li>
-            <li><a href="/guests" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Guests</a></li>
+            <li>
+              <a
+                href="/blog"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Blog</a>
+            </li>
+            <li>
+              <a
+                href="/podcasts"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Podcast</a>
+            </li>
+            <li>
+              <a
+                href="/courses"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Courses</a>
+            </li>
+            <li>
+              <a
+                href="/authors"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Authors</a>
+            </li>
+            <li>
+              <a
+                href="/guests"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Guests</a>
+            </li>
           </ul>
         </div>
 
@@ -51,10 +81,33 @@ import Container from "./Container.astro";
         <div>
           <h4 class="font-semibold text-sm text-[--text] mb-3">Connect</h4>
           <ul class="space-y-2">
-            <li><a href="https://youtube.com/@codingcatdev" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors" target="_blank" rel="noopener">YouTube</a></li>
-            <li><a href="https://twitter.com/codingcatdev" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors" target="_blank" rel="noopener">Twitter / X</a></li>
-            <li><a href="https://github.com/codingcatdev" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors" target="_blank" rel="noopener">GitHub</a></li>
-            <li><a href="/rss.xml" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">RSS Feed</a></li>
+            <li>
+              <a
+                href="https://youtube.com/@codingcatdev"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                target="_blank"
+                rel="noopener">YouTube</a>
+            </li>
+            <li>
+              <a
+                href="https://twitter.com/codingcatdev"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                target="_blank"
+                rel="noopener">Twitter / X</a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/codingcatdev"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                target="_blank"
+                rel="noopener">GitHub</a>
+            </li>
+            <li>
+              <a
+                href="/rss.xml"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >RSS Feed</a>
+            </li>
           </ul>
         </div>
 
@@ -62,9 +115,24 @@ import Container from "./Container.astro";
         <div>
           <h4 class="font-semibold text-sm text-[--text] mb-3">Legal</h4>
           <ul class="space-y-2">
-            <li><a href="/privacy" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Privacy Policy</a></li>
-            <li><a href="/terms" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Terms of Service</a></li>
-            <li><a href="/sponsors" class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors">Sponsors</a></li>
+            <li>
+              <a
+                href="/privacy"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Privacy Policy</a>
+            </li>
+            <li>
+              <a
+                href="/terms"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Terms of Service</a>
+            </li>
+            <li>
+              <a
+                href="/sponsors"
+                class="text-sm text-[--text-secondary] hover:text-[--text] transition-colors"
+                >Sponsors</a>
+            </li>
           </ul>
         </div>
       </div>

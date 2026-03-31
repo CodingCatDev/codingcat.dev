@@ -1,0 +1,94 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import { PortableText } from "astro-portabletext";
+import { loadQuery, urlForImage } from "@/utils/sanity";
+import { lessonQuery, lessonsInCourseQuery } from "@/lib/queries";
+import LessonPlayer from "@/components/course/LessonPlayer";
+
+export const prerender = false;
+
+const { slug: courseSlug, lessonSlug } = Astro.params;
+const draftMode = Astro.cookies.has("__sanity_preview");
+const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
+const previewDataset = Astro.cookies.get("__sanity_preview_dataset")?.value ?? undefined;
+
+const [{ data: lesson }, { data: course }] = await Promise.all([
+  loadQuery<any>({
+    query: lessonQuery,
+    params: { lessonSlug },
+    draftMode,
+    perspective,
+    dataset: previewDataset,
+  }),
+  loadQuery<any>({
+    query: lessonsInCourseQuery,
+    params: { courseSlug },
+    draftMode,
+    perspective,
+    dataset: previewDataset,
+  }),
+]);
+
+if (!lesson?._id || !course?._id) {
+  return Astro.redirect("/404");
+}
+
+const lessonIds = new Set<string>();
+for (const section of course.sections ?? []) {
+  for (const l of section?.lesson ?? []) {
+    if (l?._id) lessonIds.add(l._id);
+  }
+}
+if (!lessonIds.has(lesson._id)) {
+  return Astro.redirect("/404");
+}
+
+const user = Astro.locals.user;
+if (course.stripeProduct && lesson.locked && !user) {
+  return Astro.redirect(`/course/${courseSlug}?locked=1`);
+}
+
+const coverUrl = lesson.coverImage
+  ? urlForImage(lesson.coverImage).width(1200).height(630).format("webp").url()
+  : null;
+
+const siteUrl = Astro.url.origin;
+const displayTitle = lesson.title;
+const displayDescription = lesson.excerpt;
+const ogImage =
+  coverUrl ?? `${siteUrl}/api/og/default.png?title=${encodeURIComponent(lesson.title)}`;
+---
+
+<BaseLayout title={`${displayTitle} — ${course.title}`} description={displayDescription} ogImage={ogImage}>
+  <main class="py-8 md:py-12">
+    <Container>
+      <nav class="text-sm text-[--text-tertiary] mb-6">
+        <a href="/courses" class="hover:text-primary transition-colors">Courses</a>
+        <span class="mx-2">/</span>
+        <a href={`/course/${courseSlug}`} class="hover:text-primary transition-colors">{course.title}</a>
+        <span class="mx-2">/</span>
+        <span class="text-[--text-secondary]">{lesson.title}</span>
+      </nav>
+
+      <LessonPlayer client:load lesson={lesson} course={course} courseSlug={courseSlug!} />
+
+      {lesson.content?.length > 0 && (
+        <div
+          class="prose prose-lg prose-invert max-w-none mt-10
+          prose-headings:text-[--text] prose-headings:font-bold
+          prose-p:text-[--text-secondary]
+          prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+          prose-strong:text-[--text]
+          prose-code:text-primary prose-code:bg-[--surface] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+          prose-pre:bg-[--surface] prose-pre:border prose-pre:border-[--border] prose-pre:rounded-xl
+          prose-blockquote:border-primary prose-blockquote:text-[--text-secondary]
+          prose-li:text-[--text-secondary]
+          prose-img:rounded-xl"
+        >
+          <PortableText value={lesson.content} />
+        </div>
+      )}
+    </Container>
+  </main>
+</BaseLayout>

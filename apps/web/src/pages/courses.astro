@@ -1,0 +1,82 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/Container.astro";
+import ContentCard from "@/components/ContentCard.astro";
+import Badge from "@/components/Badge.astro";
+import Pagination from "@/components/Pagination.astro";
+import { loadQuery, sanityFetch } from "@/utils/sanity";
+import { courseListQuery, courseCountQuery } from "@/lib/queries";
+
+export const prerender = false;
+
+const rawPage = Number(Astro.url.searchParams.get("page") || "1");
+const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : Math.floor(rawPage);
+const perPage = 12;
+const offset = (page - 1) * perPage;
+
+const draftMode = Astro.cookies.has("__sanity_preview");
+const perspective = Astro.url.searchParams.get("sanity-preview-perspective") ?? undefined;
+const previewDataset = Astro.cookies.get("__sanity_preview_dataset")?.value ?? undefined;
+const [coursesResult, totalCount] = await Promise.all([
+  loadQuery<any[]>({
+    query: courseListQuery,
+    params: { offset, end: offset + perPage },
+    draftMode,
+    perspective,
+    dataset: previewDataset,
+  }),
+  sanityFetch<number>(courseCountQuery, undefined, previewDataset),
+]);
+const courses = coursesResult.data;
+
+const totalPages = Math.ceil(totalCount / perPage);
+
+if (page > totalPages && totalPages > 0) {
+  return Astro.redirect(`/courses?page=${totalPages}`);
+}
+
+const siteUrl = Astro.url.origin;
+const ogImage = `${siteUrl}/api/og/default.png?title=${encodeURIComponent("Courses")}&subtitle=${encodeURIComponent("Structured learning paths")}`;
+
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+---
+
+<BaseLayout title="Courses — CodingCat.dev" ogImage={ogImage}>
+  <main class="py-12">
+    <Container>
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <Badge type="course" />
+          <span class="text-sm text-[--text-tertiary]">{totalCount} courses</span>
+        </div>
+        <h1 class="text-4xl font-bold text-[--text] mb-2">Courses</h1>
+        <p class="text-[--text-secondary] text-lg">
+          Multi-part lessons and structured paths. Open a course to browse lessons and watch in the player.
+        </p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {courses?.map((course: any) => {
+          const firstAuthor = course.author?.[0];
+          return (
+            <ContentCard
+              title={course.title}
+              url={`/course/${course.slug}`}
+              type="course"
+              thumbnail={course.coverImage}
+              authorName={firstAuthor?.title ?? course.authorName}
+              authorImage={firstAuthor?.coverImage ?? course.authorImage}
+              metadata={course.date ? formatDate(course.date) : undefined}
+            />
+          );
+        })}
+      </div>
+
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} basePath="/courses" />
+      )}
+    </Container>
+  </main>
+</BaseLayout>

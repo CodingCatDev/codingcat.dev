@@ -9,37 +9,49 @@ import ThemeToggle from "./ThemeToggle.astro";
 
 const navLinks = [
   { title: "Blog", path: "/blog" },
+  { title: "Courses", path: "/courses" },
   { title: "Podcasts", path: "/podcasts" },
-  { title: "Authors", path: "/authors" },
 ];
 
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 border-b border-[--border] bg-[--bg]/80 backdrop-blur-xl">
+<header
+  class="sticky top-0 z-50 border-b border-[--border] bg-[--bg]/80 backdrop-blur-xl"
+>
   <Container>
-    <nav class="flex items-center justify-between h-16" aria-label="Main navigation">
+    <nav
+      class="flex items-center justify-between h-16"
+      aria-label="Main navigation"
+    >
       {/* Logo */}
-      <a href="/" class="flex items-center gap-2 font-bold text-lg text-[--text]">
+      <a
+        href="/"
+        class="flex items-center gap-2 font-bold text-lg text-[--text]"
+      >
         <span class="text-2xl">🐱</span>
-        <span class="hidden sm:inline">CodingCat<span class="text-primary">.dev</span></span>
+        <span class="hidden sm:inline"
+          >CodingCat<span class="text-primary">.dev</span></span
+        >
       </a>
 
       {/* Desktop Nav Links */}
       <div class="hidden md:flex items-center gap-1">
-        {navLinks.map((link) => (
-          <a
-            href={link.path}
-            class:list={[
-              "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-              currentPath.startsWith(link.path)
-                ? "text-[--text] bg-[--surface-hover]"
-                : "text-[--text-secondary] hover:text-[--text] hover:bg-[--surface-hover]",
-            ]}
-          >
-            {link.title}
-          </a>
-        ))}
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.path}
+              class:list={[
+                "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                currentPath.startsWith(link.path)
+                  ? "text-[--text] bg-[--surface-hover]"
+                  : "text-[--text-secondary] hover:text-[--text] hover:bg-[--surface-hover]",
+              ]}
+            >
+              {link.title}
+            </a>
+          ))
+        }
       </div>
 
       {/* Right Actions */}
@@ -50,8 +62,19 @@ const currentPath = Astro.url.pathname;
           data-search-trigger
           aria-label="Search"
         >
-          <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            ></path>
           </svg>
         </button>
 
@@ -65,8 +88,18 @@ const currentPath = Astro.url.pathname;
           aria-label="Open menu"
           aria-expanded="false"
         >
-          <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
           </svg>
         </button>
       </div>
@@ -75,42 +108,65 @@ const currentPath = Astro.url.pathname;
 </header>
 
 {/* Mobile Nav Drawer */}
-<div id="mobile-nav" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+<div
+  id="mobile-nav"
+  class="fixed inset-0 z-50 hidden"
+  role="dialog"
+  aria-modal="true"
+>
   {/* Backdrop */}
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-mobile-nav-close></div>
+  <div
+    class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+    data-mobile-nav-close
+  >
+  </div>
 
   {/* Drawer */}
   <div
     class="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-[--bg] border-l border-[--border] transform translate-x-full transition-transform duration-300"
     id="mobile-nav-drawer"
   >
-    <div class="flex items-center justify-between p-4 border-b border-[--border]">
+    <div
+      class="flex items-center justify-between p-4 border-b border-[--border]"
+    >
       <span class="font-bold text-[--text]">🐱 Menu</span>
       <button
         class="p-2 rounded-lg hover:bg-[--surface-hover] text-[--text-secondary]"
         data-mobile-nav-close
         aria-label="Close menu"
       >
-        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        <svg
+          class="w-5 h-5"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18 18 6M6 6l12 12"></path>
         </svg>
       </button>
     </div>
 
     <nav class="p-4 space-y-1" aria-label="Mobile navigation">
-      {navLinks.map((link) => (
-        <a
-          href={link.path}
-          class:list={[
-            "block px-4 py-3 rounded-lg font-medium transition-colors",
-            currentPath.startsWith(link.path)
-              ? "text-[--text] bg-[--surface-hover]"
-              : "text-[--text] hover:bg-[--surface-hover]",
-          ]}
-        >
-          {link.title}
-        </a>
-      ))}
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.path}
+            class:list={[
+              "block px-4 py-3 rounded-lg font-medium transition-colors",
+              currentPath.startsWith(link.path)
+                ? "text-[--text] bg-[--surface-hover]"
+                : "text-[--text] hover:bg-[--surface-hover]",
+            ]}
+          >
+            {link.title}
+          </a>
+        ))
+      }
       <a
         href="/dashboard"
         class="block px-4 py-3 rounded-lg text-[--text] font-medium hover:bg-[--surface-hover] transition-colors"
@@ -120,16 +176,48 @@ const currentPath = Astro.url.pathname;
     </nav>
 
     {/* Social links at bottom */}
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-[--border]">
+    <div
+      class="absolute bottom-0 left-0 right-0 p-4 border-t border-[--border]"
+    >
       <div class="flex justify-center gap-4">
-        <a href="https://youtube.com/@codingcatdev" aria-label="YouTube" class="p-2 text-[--text-tertiary] hover:text-[--text]" target="_blank" rel="noopener">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        <a
+          href="https://youtube.com/@codingcatdev"
+          aria-label="YouTube"
+          class="p-2 text-[--text-tertiary] hover:text-[--text]"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"
+            ><path
+              d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+            ></path></svg
+          >
         </a>
-        <a href="https://twitter.com/codingcatdev" aria-label="Twitter" class="p-2 text-[--text-tertiary] hover:text-[--text]" target="_blank" rel="noopener">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <a
+          href="https://twitter.com/codingcatdev"
+          aria-label="Twitter"
+          class="p-2 text-[--text-tertiary] hover:text-[--text]"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"
+            ><path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+            ></path></svg
+          >
         </a>
-        <a href="https://github.com/codingcatdev" aria-label="GitHub" class="p-2 text-[--text-tertiary] hover:text-[--text]" target="_blank" rel="noopener">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <a
+          href="https://github.com/codingcatdev"
+          aria-label="GitHub"
+          class="p-2 text-[--text-tertiary] hover:text-[--text]"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"
+            ><path
+              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+            ></path></svg
+          >
         </a>
       </div>
     </div>
@@ -137,34 +225,34 @@ const currentPath = Astro.url.pathname;
 </div>
 
 <script is:inline>
-(function() {
-  const trigger = document.getElementById('mobile-nav-trigger');
-  const nav = document.getElementById('mobile-nav');
-  const drawer = document.getElementById('mobile-nav-drawer');
-  const closeBtns = document.querySelectorAll('[data-mobile-nav-close]');
+  (function () {
+    const trigger = document.getElementById("mobile-nav-trigger");
+    const nav = document.getElementById("mobile-nav");
+    const drawer = document.getElementById("mobile-nav-drawer");
+    const closeBtns = document.querySelectorAll("[data-mobile-nav-close]");
 
-  function open() {
-    nav?.classList.remove('hidden');
-    requestAnimationFrame(() => {
-      drawer?.classList.remove('translate-x-full');
-      trigger?.setAttribute('aria-expanded', 'true');
+    function open() {
+      nav?.classList.remove("hidden");
+      requestAnimationFrame(() => {
+        drawer?.classList.remove("translate-x-full");
+        trigger?.setAttribute("aria-expanded", "true");
+      });
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      drawer?.classList.add("translate-x-full");
+      trigger?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      setTimeout(() => nav?.classList.add("hidden"), 300);
+    }
+
+    trigger?.addEventListener("click", open);
+    closeBtns.forEach((btn) => btn.addEventListener("click", close));
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !nav?.classList.contains("hidden")) close();
     });
-    document.body.style.overflow = 'hidden';
-  }
-
-  function close() {
-    drawer?.classList.add('translate-x-full');
-    trigger?.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-    setTimeout(() => nav?.classList.add('hidden'), 300);
-  }
-
-  trigger?.addEventListener('click', open);
-  closeBtns.forEach(btn => btn.addEventListener('click', close));
-
-  // Close on Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !nav?.classList.contains('hidden')) close();
-  });
-})();
+  })();
 </script>
