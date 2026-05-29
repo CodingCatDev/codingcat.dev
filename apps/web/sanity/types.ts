@@ -2532,11 +2532,12 @@ export type SettingsQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: homePageQuery
-// Query: *[_type == "settings" ][0]{  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),      youtube,      videoCloudinary,  },  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{       _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },}
+// Query: *[_type == "settings" ][0]{  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),      youtube,      videoCloudinary,  },  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{       _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{      _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  },}
 export type HomePageQueryResult = {
   latestPodcast: {
     _id: string;
     _type: "podcast";
+    _updatedAt: string;
     status: "draft" | "published";
     title: string | "Untitled";
     slug: string | null;
@@ -2549,6 +2550,7 @@ export type HomePageQueryResult = {
   latestPodcasts: Array<{
     _id: string;
     _type: "podcast";
+    _updatedAt: string;
     status: "draft" | "published";
     title: string | "Untitled";
     slug: string | null;
@@ -2559,6 +2561,7 @@ export type HomePageQueryResult = {
   topPodcasts: Array<{
     _id: string;
     _type: "podcast";
+    _updatedAt: string;
     status: "draft" | "published";
     title: string | "Untitled";
     slug: string | null;
@@ -2569,6 +2572,7 @@ export type HomePageQueryResult = {
   latestPosts: Array<{
     _id: string;
     _type: "post";
+    _updatedAt: string;
     status: "draft" | "published";
     title: string | "Untitled";
     slug: string | null;
@@ -2579,6 +2583,7 @@ export type HomePageQueryResult = {
   topPosts: Array<{
     _id: string;
     _type: "post";
+    _updatedAt: string;
     status: "draft" | "published";
     title: string | "Untitled";
     slug: string | null;
@@ -2590,10 +2595,11 @@ export type HomePageQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: pageQuery
-// Query: *[_type == "page" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube}
+// Query: *[_type == "page" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube}
 export type PageQueryResult = {
   _id: string;
   _type: "page";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -3038,10 +3044,11 @@ export type PageQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: blogQuery
-// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
+// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
 export type BlogQueryResult = {
   _id: string;
   _type: "post";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -3191,10 +3198,11 @@ export type BlogQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: morePostQuery
-// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
+// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
 export type MorePostQueryResult = Array<{
   _id: string;
   _type: "post";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -3344,10 +3352,11 @@ export type MorePostQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: postQuery
-// Query: *[_type == "post" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube}
+// Query: *[_type == "post" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube}
 export type PostQueryResult = {
   _id: string;
   _type: "post";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -3792,10 +3801,11 @@ export type PostQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: podcastsQuery
-// Query: *[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
+// Query: *[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
 export type PodcastsQueryResult = {
   _id: string;
   _type: "podcast";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -4086,10 +4096,11 @@ export type PodcastsQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: morePodcastQuery
-// Query: *[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
+// Query: *[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  }}
 export type MorePodcastQueryResult = Array<{
   _id: string;
   _type: "podcast";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -4380,10 +4391,11 @@ export type MorePodcastQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: podcastQuery
-// Query: *[_type == "podcast" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify}
+// Query: *[_type == "podcast" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify}
 export type PodcastQueryResult = {
   _id: string;
   _type: "podcast";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -5272,10 +5284,11 @@ export type PodcastQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: moreAuthorQuery
-// Query: *[_type == "author" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)}
+// Query: *[_type == "author" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)}
 export type MoreAuthorQueryResult = Array<{
   _id: string;
   _type: "author";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -5286,10 +5299,11 @@ export type MoreAuthorQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: authorQuery
-// Query: *[_type == "author" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites}
+// Query: *[_type == "author" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites}
 export type AuthorQueryResult = {
   _id: string;
   _type: "author";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -5466,10 +5480,11 @@ export type AuthorQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: authorQueryWithRelated
-// Query: *[_type == "author" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites,    "related":{    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },  }}
+// Query: *[_type == "author" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites,    "related":{    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },  }}
 export type AuthorQueryWithRelatedResult = {
   _id: string;
   _type: "author";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -5646,6 +5661,7 @@ export type AuthorQueryWithRelatedResult = {
     podcast: Array<{
       _id: string;
       _type: "podcast";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -5656,6 +5672,7 @@ export type AuthorQueryWithRelatedResult = {
     post: Array<{
       _id: string;
       _type: "post";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -5668,10 +5685,11 @@ export type AuthorQueryWithRelatedResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: moreGuestQuery
-// Query: *[_type == "guest" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)}
+// Query: *[_type == "guest" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)}
 export type MoreGuestQueryResult = Array<{
   _id: string;
   _type: "guest";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -5682,10 +5700,11 @@ export type MoreGuestQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: guestQuery
-// Query: *[_type == "guest" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites}
+// Query: *[_type == "guest" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites}
 export type GuestQueryResult = {
   _id: string;
   _type: "guest";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -5862,10 +5881,11 @@ export type GuestQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: guestQueryWithRelated
-// Query: *[_type == "guest" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites,    "related":{    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },  }}
+// Query: *[_type == "guest" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites,    "related":{    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },  }}
 export type GuestQueryWithRelatedResult = {
   _id: string;
   _type: "guest";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -6042,6 +6062,7 @@ export type GuestQueryWithRelatedResult = {
     podcast: Array<{
       _id: string;
       _type: "podcast";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6052,6 +6073,7 @@ export type GuestQueryWithRelatedResult = {
     post: Array<{
       _id: string;
       _type: "post";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6064,10 +6086,11 @@ export type GuestQueryWithRelatedResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: moreSponsorQuery
-// Query: *[_type == "sponsor" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)}
+// Query: *[_type == "sponsor" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)}
 export type MoreSponsorQueryResult = Array<{
   _id: string;
   _type: "sponsor";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -6078,10 +6101,11 @@ export type MoreSponsorQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: sponsorQuery
-// Query: *[_type == "sponsor" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites}
+// Query: *[_type == "sponsor" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites}
 export type SponsorQueryResult = {
   _id: string;
   _type: "sponsor";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -6253,10 +6277,11 @@ export type SponsorQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: sponsorQueryWithRelated
-// Query: *[_type == "sponsor" && slug.current == $slug] [0] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites,    "related":{    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },  }}
+// Query: *[_type == "sponsor" && slug.current == $slug] [0] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    socials,  websites,    "related":{    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [] {        _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt)    },  }}
 export type SponsorQueryWithRelatedResult = {
   _id: string;
   _type: "sponsor";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -6428,6 +6453,7 @@ export type SponsorQueryWithRelatedResult = {
     podcast: Array<{
       _id: string;
       _type: "podcast";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6438,6 +6464,7 @@ export type SponsorQueryWithRelatedResult = {
     post: Array<{
       _id: string;
       _type: "post";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6450,11 +6477,12 @@ export type SponsorQueryWithRelatedResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: rssQuery
-// Query: *[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,}
+// Query: *[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,}
 export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "author";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6627,6 +6655,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "automatedVideo";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6645,6 +6674,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "category";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -6663,6 +6693,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "course";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -7122,6 +7153,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "guest";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -7294,6 +7326,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "lesson";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -7753,6 +7786,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "page";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -8212,6 +8246,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "podcast";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -8671,6 +8706,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "podcastSeries";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -8695,6 +8731,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "podcastType";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -8867,6 +8904,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "post";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -9326,6 +9364,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "short";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -9344,6 +9383,7 @@ export type RssQueryResult = Array<
   | {
       _id: string;
       _type: "sponsor";
+      _updatedAt: string;
       status: "draft" | "published";
       title: string | "Untitled";
       slug: string | null;
@@ -9517,10 +9557,11 @@ export type RssQueryResult = Array<
 
 // Source: sanity/lib/queries.ts
 // Variable: rssPodcastQuery
-// Query: *[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify,}
+// Query: *[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {    _id,  _type,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),    content[]{    ...,    markDefs[]{      ...,      _type == "internalLink" => {        @.reference->_type == "page" => {          "href": "/" + @.reference->slug.current        },        @.reference->_type != "page" => {          "href": "/" + @.reference->_type + "/" + @.reference->slug.current        }      },    }  },  author[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  devto,  hashnode,  sponsor[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  tags,  videoCloudinary,  youtube,    podcastType[]->{    ...,    "title": coalesce(title, "Missing Podcast Title"),  },  season,  episode,  recordingDate,  guest[]->{    ...,    "title": coalesce(title, "Anonymous"),    "slug": slug.current,  },  pick[]{    user->,    name,    site  },  spotify,}
 export type RssPodcastQueryResult = Array<{
   _id: string;
   _type: "podcast";
+  _updatedAt: string;
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
@@ -10409,7 +10450,7 @@ export type RssPodcastQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: sitemapQuery
-// Query: *[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {  _type,  _updatedAt,  "slug": slug.current,}
+// Query: *[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updatedAt desc) {  _type,  _updatedAt,  "slug": slug.current,}
 export type SitemapQueryResult = Array<
   | {
       _type: "author";
@@ -10491,26 +10532,26 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "count(*[_type == $type])": DocCountResult;
     '*[_type == "settings"][0]{\n  ...,\n  ogImage\n}': SettingsQueryResult;
-    '*[_type == "settings" ][0]{\n  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n      youtube,\n      videoCloudinary,\n  },\n  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{\n     \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n}': HomePageQueryResult;
-    '*[_type == "page" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}': PageQueryResult;
-    '*[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': BlogQueryResult;
-    '*[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': MorePostQueryResult;
-    '*[_type == "post" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}': PostQueryResult;
-    '*[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': PodcastsQueryResult;
-    '*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': MorePodcastQueryResult;
-    '*[_type == "podcast" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    "title": coalesce(title, "Missing Podcast Title"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n\n}': PodcastQueryResult;
-    '*[_type == "author" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n}': MoreAuthorQueryResult;
-    '*[_type == "author" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': AuthorQueryResult;
-    '*[_type == "author" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': AuthorQueryWithRelatedResult;
-    '*[_type == "guest" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n}': MoreGuestQueryResult;
-    '*[_type == "guest" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': GuestQueryResult;
-    '*[_type == "guest" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': GuestQueryWithRelatedResult;
-    '*[_type == "sponsor" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n}': MoreSponsorQueryResult;
-    '*[_type == "sponsor" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': SponsorQueryResult;
-    '*[_type == "sponsor" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': SponsorQueryWithRelatedResult;
-    '*[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n}': RssQueryResult;
-    '*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    "title": coalesce(title, "Missing Podcast Title"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n,\n}': RssPodcastQueryResult;
-    '*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {\n  _type,\n  _updatedAt,\n  "slug": slug.current,\n}': SitemapQueryResult;
+    '*[_type == "settings" ][0]{\n  "latestPodcast": *[_type == "podcast"]|order(date desc)[0]{\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n      youtube,\n      videoCloudinary,\n  },\n  "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "latestPosts": *[_type == "post"]|order(date desc)[0...4]{\n     \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{\n    \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  },\n}': HomePageQueryResult;
+    '*[_type == "page" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}': PageQueryResult;
+    '*[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': BlogQueryResult;
+    '*[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': MorePostQueryResult;
+    '*[_type == "post" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n\n}': PostQueryResult;
+    '*[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': PodcastsQueryResult;
+    '*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  }\n}': MorePodcastQueryResult;
+    '*[_type == "podcast" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    "title": coalesce(title, "Missing Podcast Title"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n\n}': PodcastQueryResult;
+    '*[_type == "author" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n}': MoreAuthorQueryResult;
+    '*[_type == "author" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': AuthorQueryResult;
+    '*[_type == "author" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': AuthorQueryWithRelatedResult;
+    '*[_type == "guest" && _id != $skip && defined(slug.current)] | order(title) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n}': MoreGuestQueryResult;
+    '*[_type == "guest" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': GuestQueryResult;
+    '*[_type == "guest" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': GuestQueryWithRelatedResult;
+    '*[_type == "sponsor" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n}': MoreSponsorQueryResult;
+    '*[_type == "sponsor" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n\n}': SponsorQueryResult;
+    '*[_type == "sponsor" && slug.current == $slug] [0] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  socials,\n  websites\n,\n  \n  "related":{\n    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [] {\n      \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n\n    },\n  }\n\n}': SponsorQueryWithRelatedResult;
+    '*[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n}': RssQueryResult;
+    '*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    "title": coalesce(title, "Missing Podcast Title"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n,\n}': RssPodcastQueryResult;
+    '*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updatedAt desc) {\n  _type,\n  _updatedAt,\n  "slug": slug.current,\n}': SitemapQueryResult;
     '*[_type == "post" && defined(slug.current)]{"slug": slug.current}': PostSlugsQueryResult;
     '*[_type == "podcast" && defined(slug.current)]{"slug": slug.current}': PodcastSlugsQueryResult;
     '*[_type == "author" && defined(slug.current)]{"slug": slug.current}': AuthorSlugsQueryResult;

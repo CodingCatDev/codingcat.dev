@@ -13,6 +13,8 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import Podcast from "../Podcast";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
+import { JsonLd } from "@/components/json-ld";
+import { articleSchema, breadcrumbSchema, buildGraph } from "@/lib/structured-data";
 
 type Params = Promise<{ slug: string }>;
 
@@ -47,7 +49,12 @@ export async function generateMetadata(
 			}) || [],
 		title: podcast?.title,
 		description: podcast?.excerpt,
+		alternates: { canonical: `/podcast/${slug}` },
 		openGraph: {
+			type: "article",
+			...(podcast?.date ? { publishedTime: podcast.date } : {}),
+			modifiedTime: podcast?._updatedAt,
+			authors: podcast?.author?.map((a) => a.title) ?? [],
 			images: ogImage ? ogImage : previousImages,
 		},
 	} satisfies Metadata;
@@ -95,5 +102,18 @@ async function CachedPodcastPage({
 		return notFound();
 	}
 
-	return <Podcast podcast={podcast} perspective={perspective} stega={stega} />;
+	return (
+		<>
+			<JsonLd
+				data={buildGraph([
+					articleSchema(podcast, `/podcast/${slug}`),
+					breadcrumbSchema([
+						{ name: "Podcasts", path: "/podcasts/page/1" },
+						{ name: podcast.title, path: `/podcast/${slug}` },
+					]),
+				])}
+			/>
+			<Podcast podcast={podcast} perspective={perspective} stega={stega} />
+		</>
+	);
 }

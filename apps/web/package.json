@@ -121,6 +121,7 @@
 		"dotenv-cli": "^11.0.0",
 		"postcss": "^8",
 		"sanity": "^5.28.0",
+		"schema-dts": "^2.0.0",
 		"tailwindcss": "^4.2.1",
 		"typescript": "^5"
 	}

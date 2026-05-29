@@ -23,6 +23,8 @@ import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
 import { draftMode } from "next/headers";
+import { JsonLd } from "@/components/json-ld";
+import { articleSchema, breadcrumbSchema, buildGraph } from "@/lib/structured-data";
 
 type Params = Promise<{ slug: string }>;
 
@@ -57,7 +59,12 @@ export async function generateMetadata(
 			}) || [],
 		title: post?.title,
 		description: post?.excerpt,
+		alternates: { canonical: `/post/${slug}` },
 		openGraph: {
+			type: "article",
+			...(post?.date ? { publishedTime: post.date } : {}),
+			modifiedTime: post?._updatedAt,
+			authors: post?.author?.map((a) => a.title) ?? [],
 			images: ogImage ? ogImage : previousImages,
 		},
 	} satisfies Metadata;
@@ -100,6 +107,15 @@ async function CachedPostPage({
 
 	return (
 		<div className="container px-5 mx-auto">
+			<JsonLd
+				data={buildGraph([
+					articleSchema(post, `/post/${slug}`),
+					breadcrumbSchema([
+						{ name: "Blog", path: "/blog/page/1" },
+						{ name: post.title, path: `/post/${slug}` },
+					]),
+				])}
+			/>
 			<BreadcrumbLinks links={[{ title: "Blog", href: "/blog/page/1" }]} />
 			<article>
 				<h1 className="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl">

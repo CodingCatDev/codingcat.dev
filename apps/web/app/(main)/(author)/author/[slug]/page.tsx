@@ -28,6 +28,8 @@ import UserSocials from "@/components/user-socials";
 import UserRelated from "@/components/user-related";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, buildGraph, personSchema } from "@/lib/structured-data";
 
 type Params = Promise<{ slug: string }>;
 
@@ -59,7 +61,9 @@ export async function generateMetadata(
 	return {
 		title: author?.title,
 		description: author?.excerpt,
+		alternates: { canonical: `/author/${slug}` },
 		openGraph: {
+			type: "profile",
 			images: ogImage ? ogImage : previousImages,
 		},
 	} satisfies Metadata;
@@ -109,6 +113,15 @@ async function CachedAuthorPage({
 
 	return (
 		<div className="container px-5 mx-auto">
+			<JsonLd
+				data={buildGraph([
+					personSchema(author, `/author/${slug}`),
+					breadcrumbSchema([
+						{ name: "Authors", path: "/authors/page/1" },
+						{ name: author.title, path: `/author/${slug}` },
+					]),
+				])}
+			/>
 			<BreadcrumbLinks
 				links={[{ title: "Authors", href: "/authors/page/1" }]}
 			/>

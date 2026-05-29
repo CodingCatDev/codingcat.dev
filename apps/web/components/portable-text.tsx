@@ -29,6 +29,59 @@ const BlockYoutube = dynamic(() =>
 );
 const YouTubeShorts = dynamic(() => import("./youtube-shorts").then((mod) => mod.YouTubeShorts));
 
+// Defined at module scope so the object identity is stable across renders.
+// Recreating it on every render causes unnecessary re-renders.
+const components: PortableTextComponents = {
+	// TODO: make this more dynamic
+	types: {
+		image: ({ value }) => <BlockImage image={value} />,
+		code: ({ value }) => <BlockCode {...value} />,
+		codepen: ({ value }) => <CodePenEmbed {...value} />,
+		codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
+		youtube: ({ value }) => (
+			<div className="not-prose">
+				<BlockYoutube {...value} />
+			</div>
+		),
+		youtubeShorts: ({ value }) => (
+			<div className="not-prose">
+				<YouTubeShorts {...value} />
+			</div>
+		),
+		twitter: ({ value }) => <TwitterEmbed {...value} />,
+		htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
+		quote: ({ value }) => <QuoteEmbed {...value} />,
+		table: ({ value }) => <BlockTable value={value} />,
+	},
+	block: {
+		h5: ({ children }) => (
+			<h5 className="mb-2 text-sm font-semibold">{children}</h5>
+		),
+		h6: ({ children }) => (
+			<h6 className="mb-1 text-xs font-semibold">{children}</h6>
+		),
+	},
+	marks: {
+		link: ({ children, value }) => {
+			const href = value?.href || "#";
+			// Only treat off-site links as external (new tab + noreferrer).
+			const isExternal = !href.startsWith("/");
+			return (
+				<Link
+					href={href}
+					rel={isExternal ? "noreferrer noopener" : undefined}
+					target={isExternal ? "_blank" : undefined}
+				>
+					{children}
+				</Link>
+			);
+		},
+		internalLink: ({ children, value }) => {
+			return <Link href={value?.href || "#"}>{children}</Link>;
+		},
+	},
+};
+
 export default function CustomPortableText({
 	className,
 	value,
@@ -36,46 +89,6 @@ export default function CustomPortableText({
 	className?: string;
 	value: PortableTextBlock[];
 }) {
-	const components: PortableTextComponents = {
-		// TODO: make this more dynamic
-		types: {
-			image: ({ value }) => <BlockImage image={value} />,
-			code: ({ value }) => <BlockCode {...value} />,
-			codepen: ({ value }) => <CodePenEmbed {...value} />,
-			codesandbox: ({ value }) => <CodeSandboxEmbed {...value} />,
-			youtube: ({ value }) => <div className="not-prose"><BlockYoutube {...value} /></div>,
-			youtubeShorts: ({ value }) => <div className="not-prose"><YouTubeShorts {...value} /></div>,
-			twitter: ({ value }) => <TwitterEmbed {...value} />,
-			htmlBlock: ({ value }) => <HTMLEmbed {...value} />,
-			quote: ({ value }) => <QuoteEmbed {...value} />,
-			table: ({ value }) => <BlockTable value={value} />,
-		},
-		block: {
-			h5: ({ children }) => (
-				<h5 className="mb-2 text-sm font-semibold">{children}</h5>
-			),
-			h6: ({ children }) => (
-				<h6 className="mb-1 text-xs font-semibold">{children}</h6>
-			),
-		},
-		marks: {
-			link: ({ children, value }) => {
-				return (
-					<Link
-						href={value?.href || "#"}
-						rel="noreferrer noopener"
-						target="_blank"
-					>
-						{children}
-					</Link>
-				);
-			},
-			internalLink: ({ children, value }) => {
-				return <Link href={value?.href || "#"}>{children}</Link>;
-			},
-		},
-	};
-
 	return (
 		<div className={["prose", className].filter(Boolean).join(" ")}>
 			<PortableText components={components} value={value} />

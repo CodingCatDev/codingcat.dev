@@ -41,6 +41,13 @@ import { VisualEditing } from "next-sanity/visual-editing";
 import { DisableDraftMode } from "@/components/disable-draft-mode";
 import { ModeToggle } from "@/components/mode-toggle";
 import { SiteAnalytics } from "@/components/analytics";
+import { JsonLd } from "@/components/json-ld";
+import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
+import {
+	buildGraph,
+	organizationSchema,
+	websiteSchema,
+} from "@/lib/structured-data";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -66,6 +73,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 	const ogImage = resolveOpenGraphImage(settings?.ogImage);
 	return {
+		metadataBase: new URL(SITE_URL),
 		title: {
 			template: `%s | ${title}`,
 			default: title,
@@ -73,8 +81,8 @@ export async function generateMetadata(): Promise<Metadata> {
 		description: toPlainText(description),
 		openGraph: {
 			images: ogImage ? [ogImage] : [],
-			siteName: "CodingCat.dev",
-			url: "https://codingcat.dev",
+			siteName: SITE_NAME,
+			url: SITE_URL,
 		},
 		alternates: {
 			types: {
@@ -146,6 +154,12 @@ export default async function RootLayout({
 					inter.variable,
 				)}
 			>
+				<JsonLd
+					data={buildGraph([
+						organizationSchema(absoluteUrl("/icon.svg")),
+						websiteSchema(),
+					])}
+				/>
 				<CookiesProviderClient>
 					{isDraftMode && (
 						<Suspense>

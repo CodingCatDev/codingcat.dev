@@ -29,6 +29,8 @@ import UserRelated from "@/components/user-related";
 import Avatar from "@/components/avatar";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema, buildGraph, personSchema } from "@/lib/structured-data";
 
 type Params = Promise<{ slug: string }>;
 
@@ -59,7 +61,9 @@ export async function generateMetadata(
 	return {
 		title: guest?.title,
 		description: guest?.excerpt,
+		alternates: { canonical: `/guest/${slug}` },
 		openGraph: {
+			type: "profile",
 			images: ogImage ? ogImage : previousImages,
 		},
 	} satisfies Metadata;
@@ -107,6 +111,15 @@ async function CachedGuestPage({
 
 	return (
 		<div className="container px-5 mx-auto">
+			<JsonLd
+				data={buildGraph([
+					personSchema(guest, `/guest/${slug}`),
+					breadcrumbSchema([
+						{ name: "Guests", path: "/guests/page/1" },
+						{ name: guest.title, path: `/guest/${slug}` },
+					]),
+				])}
+			/>
 			<BreadcrumbLinks links={[{ title: "Guests", href: "/guests/page/1" }]} />
 			<div className="w-full flex flex-col gap-4 md:gap-8">
 				<div className="flex gap-2 md:gap-8">

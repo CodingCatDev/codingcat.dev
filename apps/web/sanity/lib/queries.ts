@@ -12,6 +12,7 @@ export const settingsQuery = groq`*[_type == "settings"][0]{
 const baseFieldsNoContent = `
   _id,
   _type,
+  _updatedAt,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
@@ -258,7 +259,7 @@ export const rssPodcastQuery = groq`*[_type == "podcast" && _id != $skip && defi
 }`;
 
 // Sitemaps
-export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {
+export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updatedAt desc) {
   _type,
   _updatedAt,
   "slug": slug.current,
