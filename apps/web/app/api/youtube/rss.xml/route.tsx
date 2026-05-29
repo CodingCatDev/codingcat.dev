@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { Feed } from "feed";
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY as string;
@@ -48,6 +49,10 @@ async function fetchPlaylistItems(
 }
 
 export async function GET() {
+	// Hits the external YouTube API and uses the current time, so this must be
+	// generated per-request rather than prerendered at build under Cache Components.
+	await connection();
+
 	try {
 		const feed = new Feed({
 			title: "YouTube Channel Podcast Feed",

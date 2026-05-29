@@ -1,16 +1,9 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { getEngineConfig } from "@/lib/config";
 import { ConfigForm } from "./config-form";
 
-export default async function ConfigPage() {
-  let config = null;
-  let error = null;
-
-  try {
-    config = await getEngineConfig();
-  } catch (err) {
-    error = err instanceof Error ? err.message : "Failed to load config";
-  }
-
+export default function ConfigPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -20,20 +13,51 @@ export default async function ConfigPage() {
         </p>
       </div>
 
-      {error ? (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
-          <p className="text-sm text-destructive">{error}</p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Make sure the engineConfig singleton exists in Sanity Studio.
-          </p>
-        </div>
-      ) : config ? (
-        <ConfigForm initialConfig={config} />
-      ) : (
-        <div className="rounded-lg border p-6">
-          <p className="text-sm text-muted-foreground">Loading configuration...</p>
-        </div>
-      )}
+      <Suspense
+        fallback={
+          <div className="rounded-lg border p-6">
+            <p className="text-sm text-muted-foreground">Loading configuration...</p>
+          </div>
+        }
+      >
+        <ConfigContent />
+      </Suspense>
+    </div>
+  );
+}
+
+async function ConfigContent() {
+  // The dashboard is auth-gated and renders live config. getEngineConfig uses an
+  // in-memory TTL (Date.now), so this must run dynamically, not at prerender.
+  await connection();
+
+  let config = null;
+  let error = null;
+
+  try {
+    config = await getEngineConfig();
+  } catch (err) {
+    error = err instanceof Error ? err.message : "Failed to load config";
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
+        <p className="text-sm text-destructive">{error}</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Make sure the engineConfig singleton exists in Sanity Studio.
+        </p>
+      </div>
+    );
+  }
+
+  if (config) {
+    return <ConfigForm initialConfig={config} />;
+  }
+
+  return (
+    <div className="rounded-lg border p-6">
+      <p className="text-sm text-muted-foreground">Loading configuration...</p>
     </div>
   );
 }

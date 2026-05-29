@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import {
   Card,
@@ -28,15 +30,7 @@ function QualityBadge({ score }: { score: number | null }) {
   return <Badge variant="destructive">{score}</Badge>;
 }
 
-export default async function ReviewQueuePage() {
-  const videos = await dashboardQuery<ReviewVideo[]>(
-    `*[_type == "automatedVideo" && status == "pending_review"] | order(_updatedAt desc) [0..49] {
-      _id, title, qualityScore, qualityIssues, status, _updatedAt,
-      "thumbnailUrl": thumbnailHorizontal.asset->url,
-      scriptQualityScore
-    }`
-  );
-
+export default function ReviewQueuePage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -46,6 +40,30 @@ export default async function ReviewQueuePage() {
         </p>
       </div>
 
+      <Suspense
+        fallback={
+          <p className="text-sm text-muted-foreground">Loading review queue...</p>
+        }
+      >
+        <ReviewQueueContent />
+      </Suspense>
+    </div>
+  );
+}
+
+async function ReviewQueueContent() {
+  await connection();
+
+  const videos = await dashboardQuery<ReviewVideo[]>(
+    `*[_type == "automatedVideo" && status == "pending_review"] | order(_updatedAt desc) [0..49] {
+      _id, title, qualityScore, qualityIssues, status, _updatedAt,
+      "thumbnailUrl": thumbnailHorizontal.asset->url,
+      scriptQualityScore
+    }`
+  );
+
+  return (
+    <>
       {videos.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
@@ -102,6 +120,6 @@ export default async function ReviewQueuePage() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

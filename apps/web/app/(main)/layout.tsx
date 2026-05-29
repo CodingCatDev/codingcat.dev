@@ -128,14 +128,21 @@ function NavHeaderSlot({
 	sideOnly?: boolean;
 	isDraftMode: boolean;
 }) {
-	if (isDraftMode) {
-		return (
-			<Suspense fallback={null}>
+	// Wrap in Suspense so dynamic routes (e.g. /podcast/preview/[token]) can
+	// produce a static shell — the nav resolves as a streamed/cached hole.
+	return (
+		<Suspense fallback={null}>
+			{isDraftMode ? (
 				<DynamicNavHeader sideOnly={sideOnly} />
-			</Suspense>
-		);
-	}
-	return <CachedNavHeader sideOnly={sideOnly} perspective="published" stega={false} />;
+			) : (
+				<CachedNavHeader
+					sideOnly={sideOnly}
+					perspective="published"
+					stega={false}
+				/>
+			)}
+		</Suspense>
+	);
 }
 
 export default async function RootLayout({
@@ -211,7 +218,11 @@ export default async function RootLayout({
 								</header>
 								<main className="mt-20">{children}</main>
 								<Toaster />
-								<Footer />
+								{/* Footer NavLinks read usePathname (request data); keep it
+								    in a Suspense boundary so dynamic routes can shell-render. */}
+								<Suspense fallback={null}>
+									<Footer />
+								</Suspense>
 							</section>
 							<PlayerFloating />
 							<SanityLive includeDrafts={isDraftMode} />

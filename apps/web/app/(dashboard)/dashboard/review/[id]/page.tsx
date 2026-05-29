@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { dashboardQuery } from "@/lib/sanity/dashboard";
@@ -9,7 +10,29 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-export default async function ReviewDetailPage({ params }: Props) {
+export default function ReviewDetailPage({ params }: Props) {
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <Link href="/dashboard/review">
+          <Button variant="ghost" size="sm" className="min-h-[44px] gap-1">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Review Queue
+          </Button>
+        </Link>
+      </div>
+      <Suspense
+        fallback={
+          <p className="text-sm text-muted-foreground">Loading video...</p>
+        }
+      >
+        <ReviewDetailContent params={params} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function ReviewDetailContent({ params }: Props) {
   const { id } = await params;
 
   const video = await dashboardQuery(
@@ -33,17 +56,6 @@ export default async function ReviewDetailPage({ params }: Props) {
     notFound();
   }
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <Link href="/dashboard/review">
-          <Button variant="ghost" size="sm" className="min-h-[44px] gap-1">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Review Queue
-          </Button>
-        </Link>
-      </div>
-      <ReviewDetailClient video={video as any} />
-    </div>
-  );
+  // biome-ignore lint/suspicious/noExplicitAny: video shape comes from a loose GROQ projection
+  return <ReviewDetailClient video={video as any} />;
 }

@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import {
   Card,
@@ -41,7 +43,26 @@ interface PipelineVideo {
   _updatedAt: string;
 }
 
-export default async function PipelinePage() {
+export default function PipelinePage() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Pipeline Status</h1>
+      </div>
+      <Suspense
+        fallback={
+          <p className="text-sm text-muted-foreground">Loading pipeline...</p>
+        }
+      >
+        <PipelineContent />
+      </Suspense>
+    </div>
+  );
+}
+
+async function PipelineContent() {
+  await connection();
+
   // Fetch counts for all statuses in a single query
   const counts = await dashboardQuery<Record<string, number>>(
     `{
@@ -73,13 +94,10 @@ export default async function PipelinePage() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pipeline Status</h1>
-        <p className="text-muted-foreground">
-          Overview of {totalVideos} videos across all pipeline stages.
-        </p>
-      </div>
+    <>
+      <p className="text-muted-foreground">
+        Overview of {totalVideos} videos across all pipeline stages.
+      </p>
 
       {/* Status Count Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -195,6 +213,6 @@ export default async function PipelinePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

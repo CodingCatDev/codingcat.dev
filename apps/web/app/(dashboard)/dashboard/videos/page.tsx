@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { VideosTable } from "./videos-table";
 import { PageRefreshButton } from "@/components/page-refresh-button";
@@ -31,15 +33,7 @@ const VIDEOS_QUERY = `*[_type == "automatedVideo"] | order(_createdAt desc) {
 	youtubeId
 }`;
 
-export default async function VideosPage() {
-	let videos: AutomatedVideo[] = [];
-
-	try {
-		videos = await dashboardQuery<AutomatedVideo[]>(VIDEOS_QUERY);
-	} catch (error) {
-		console.error("Failed to fetch videos:", error);
-	}
-
+export default function VideosPage() {
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
@@ -55,7 +49,27 @@ export default async function VideosPage() {
 				<PageRefreshButton />
 			</div>
 
-			<VideosTable videos={videos} />
+			<Suspense
+				fallback={
+					<p className="text-sm text-muted-foreground">Loading videos...</p>
+				}
+			>
+				<VideosContent />
+			</Suspense>
 		</div>
 	);
+}
+
+async function VideosContent() {
+	await connection();
+
+	let videos: AutomatedVideo[] = [];
+
+	try {
+		videos = await dashboardQuery<AutomatedVideo[]>(VIDEOS_QUERY);
+	} catch (error) {
+		console.error("Failed to fetch videos:", error);
+	}
+
+	return <VideosTable videos={videos} />;
 }

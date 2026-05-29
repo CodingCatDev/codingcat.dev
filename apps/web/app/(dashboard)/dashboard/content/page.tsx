@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { ContentIdeasTable } from "./content-ideas-table";
 import { PageRefreshButton } from "@/components/page-refresh-button";
@@ -24,15 +26,7 @@ const CONTENT_IDEAS_QUERY = `*[_type == "contentIdea"] | order(_createdAt desc) 
 	collectedAt
 }`;
 
-export default async function ContentPage() {
-	let ideas: ContentIdea[] = [];
-
-	try {
-		ideas = await dashboardQuery<ContentIdea[]>(CONTENT_IDEAS_QUERY);
-	} catch (error) {
-		console.error("Failed to fetch content ideas:", error);
-	}
-
+export default function ContentPage() {
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
@@ -48,7 +42,27 @@ export default async function ContentPage() {
 				<PageRefreshButton />
 			</div>
 
-			<ContentIdeasTable ideas={ideas} />
+			<Suspense
+				fallback={
+					<p className="text-sm text-muted-foreground">Loading content ideas...</p>
+				}
+			>
+				<ContentIdeasContent />
+			</Suspense>
 		</div>
 	);
+}
+
+async function ContentIdeasContent() {
+	await connection();
+
+	let ideas: ContentIdea[] = [];
+
+	try {
+		ideas = await dashboardQuery<ContentIdea[]>(CONTENT_IDEAS_QUERY);
+	} catch (error) {
+		console.error("Failed to fetch content ideas:", error);
+	}
+
+	return <ContentIdeasTable ideas={ideas} />;
 }
