@@ -8,8 +8,13 @@ import MoreContent from "@/components/more-content";
 import Onboarding from "@/components/onboarding";
 
 import type { BlogQueryResult } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import {
+	sanityFetch,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
 import { blogQuery } from "@/sanity/lib/queries";
+import { draftMode } from "next/headers";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -67,9 +72,27 @@ function HeroPost({
 }
 
 export default async function Page() {
-	const [heroPost] = (
-		await Promise.all([sanityFetch({ query: blogQuery })])
-	).map((res) => res.data) as [BlogQueryResult];
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicPage />
+			</Suspense>
+		);
+	}
+	return <CachedPage perspective="published" stega={false} />;
+}
+
+async function DynamicPage() {
+	const { perspective, stega } = await getDynamicFetchOptions();
+	return <CachedPage perspective={perspective} stega={stega} />;
+}
+
+async function CachedPage({ perspective, stega }: DynamicFetchOptions) {
+	"use cache";
+	const heroPost = (
+		await sanityFetch({ query: blogQuery, perspective, stega })
+	).data as BlogQueryResult;
 	return (
 		<div className="container px-5 mx-auto">
 			{heroPost ? (
@@ -89,7 +112,13 @@ export default async function Page() {
 				<aside>
 					<MoreHeader title="View More" href="/blog/page/1" />
 					<Suspense fallback={<p>Loading feed...</p>}>
-						<MoreContent type={heroPost._type} skip={heroPost._id} limit={4} />
+						<MoreContent
+							type={heroPost._type}
+							skip={heroPost._id}
+							limit={4}
+							perspective={perspective}
+							stega={stega}
+						/>
 					</Suspense>
 				</aside>
 			)}

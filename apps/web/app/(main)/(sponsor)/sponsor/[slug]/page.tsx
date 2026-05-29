@@ -8,29 +8,48 @@ import type {
 	SponsorQueryResult,
 	SponsorQueryWithRelatedResult,
 } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
-import { sponsorQuery, sponsorQueryWithRelated } from "@/sanity/lib/queries";
+import {
+	sanityFetch,
+	sanityFetchMetadata,
+	sanityFetchStaticParams,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
+import {
+	sponsorQuery,
+	sponsorQueryWithRelated,
+	sponsorSlugsQuery,
+} from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 
 import UserSocials from "@/components/user-socials";
 import UserRelated from "@/components/user-related";
+import { draftMode } from "next/headers";
+import { Suspense } from "react";
 
 type Params = Promise<{ slug: string }>;
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetchStaticParams({ query: sponsorSlugsQuery });
+	return data as { slug: string }[];
+}
 
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const { slug } = await params;
+	const [{ slug }, { perspective }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
 
 	const sponsor = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: sponsorQuery,
 			params: { slug },
-			stega: false,
+			perspective,
 		})
 	).data as SponsorQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -45,18 +64,45 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-
 export default async function SponsorPage({ params }: { params: Params }) {
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicSponsorPage params={params} />
+			</Suspense>
+		);
+	}
 	const { slug } = await params;
+	return (
+		<CachedSponsorPage slug={slug} perspective="published" stega={false} />
+	);
+}
 
-	const [sponsor] = (
-		await Promise.all([
-			sanityFetch({
-				query: sponsorQueryWithRelated,
-				params: { slug },
-			}),
-		])
-	).map((res) => res.data) as [SponsorQueryWithRelatedResult];
+async function DynamicSponsorPage({ params }: { params: Params }) {
+	const [{ slug }, { perspective, stega }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
+	return (
+		<CachedSponsorPage slug={slug} perspective={perspective} stega={stega} />
+	);
+}
+
+async function CachedSponsorPage({
+	slug,
+	perspective,
+	stega,
+}: { slug: string } & DynamicFetchOptions) {
+	"use cache";
+	const sponsor = (
+		await sanityFetch({
+			query: sponsorQueryWithRelated,
+			params: { slug },
+			perspective,
+			stega,
+		})
+	).data as SponsorQueryWithRelatedResult;
 
 	if (!sponsor?._id) {
 		return notFound();

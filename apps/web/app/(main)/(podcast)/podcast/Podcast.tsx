@@ -6,6 +6,7 @@ import MoreContent from "@/components/more-content";
 import PortableText from "@/components/portable-text";
 
 import type { PodcastQueryResult } from "@/sanity/types";
+import type { DynamicFetchOptions } from "@/sanity/lib/live";
 import CoverMedia from "@/components/cover-media";
 import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
@@ -21,9 +22,11 @@ import PodmatchBadge from "@/components/podmatch-badge";
 
 export default async function Podcast({
 	podcast,
+	perspective,
+	stega,
 }: {
 	podcast: NonNullable<PodcastQueryResult>;
-}) {
+} & DynamicFetchOptions) {
 	const src = podcast?.spotify?.enclosures?.at(0)?.url;
 
 	return (
@@ -134,7 +137,13 @@ export default async function Podcast({
 			<aside>
 				<MoreHeader title="Recent Podcasts" href="/podcasts/page/1" />
 				<Suspense>
-					<MoreContent type={podcast._type} skip={podcast._id} limit={2} />
+					<MoreContent
+						type={podcast._type}
+						skip={podcast._id}
+						limit={2}
+						perspective={perspective}
+						stega={stega}
+					/>
 				</Suspense>
 			</aside>
 		</div>

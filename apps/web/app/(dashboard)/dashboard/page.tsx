@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { SectionCardsLive } from "@/components/section-cards-live";
 import { RecentActivity } from "@/components/recent-activity";
 import { PipelineStatus } from "@/components/pipeline-status";

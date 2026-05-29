@@ -263,3 +263,11 @@ export const sitemapQuery = groq`*[_type in ["author", "guest", "page", "podcast
   _updatedAt,
   "slug": slug.current,
 }`;
+
+// Slug lists for generateStaticParams
+export const postSlugsQuery = groq`*[_type == "post" && defined(slug.current)]{"slug": slug.current}`;
+export const podcastSlugsQuery = groq`*[_type == "podcast" && defined(slug.current)]{"slug": slug.current}`;
+export const authorSlugsQuery = groq`*[_type == "author" && defined(slug.current)]{"slug": slug.current}`;
+export const guestSlugsQuery = groq`*[_type == "guest" && defined(slug.current)]{"slug": slug.current}`;
+export const sponsorSlugsQuery = groq`*[_type == "sponsor" && defined(slug.current)]{"slug": slug.current}`;
+export const pageSlugsQuery = groq`*[_type == "page" && defined(slug.current)]{"slug": slug.current}`;

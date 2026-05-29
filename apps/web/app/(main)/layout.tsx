@@ -1,7 +1,13 @@
 import "../globals.css";
 
 import type { Metadata } from "next";
-import { SanityLive } from "@/sanity/lib/live";
+import {
+	SanityLive,
+	sanityFetch,
+	sanityFetchMetadata,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
 import { Nunito } from "next/font/google";
 import { Inter } from "next/font/google";
 import CookiesProviderClient from "@/components/cookies-provider-client";
@@ -10,7 +16,7 @@ import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
 import type { SettingsQueryResult } from "@/sanity/types";
 import * as demo from "@/sanity/lib/demo";
-import { sanityFetch } from "@/sanity/lib/live";
+import { draftMode } from "next/headers";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { cn } from "@/lib/utils";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
@@ -48,10 +54,10 @@ const inter = Inter({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-	const settingsFetch = await sanityFetch({
+	const { perspective } = await getDynamicFetchOptions();
+	const settingsFetch = await sanityFetchMetadata({
 		query: settingsQuery,
-		// Metadata should never contain stega
-		stega: false,
+		perspective,
 	});
 
 	const settings = settingsFetch.data as SettingsQueryResult;
@@ -81,15 +87,55 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
+async function fetchSettings({
+	perspective,
+	stega,
+}: DynamicFetchOptions): Promise<SettingsQueryResult> {
+	"use cache";
+	const { data } = await sanityFetch({ query: settingsQuery, perspective, stega });
+	return data as SettingsQueryResult;
+}
+
+async function CachedNavHeader({
+	sideOnly,
+	perspective,
+	stega,
+}: { sideOnly?: boolean } & DynamicFetchOptions) {
+	"use cache";
+	const settings = await fetchSettings({ perspective, stega });
+	return <NavHeader navLinks={settings?.navLinks} sideOnly={sideOnly} />;
+}
+
+async function DynamicNavHeader({ sideOnly }: { sideOnly?: boolean }) {
+	const { perspective, stega } = await getDynamicFetchOptions();
+	return (
+		<CachedNavHeader sideOnly={sideOnly} perspective={perspective} stega={stega} />
+	);
+}
+
+function NavHeaderSlot({
+	sideOnly,
+	isDraftMode,
+}: {
+	sideOnly?: boolean;
+	isDraftMode: boolean;
+}) {
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={null}>
+				<DynamicNavHeader sideOnly={sideOnly} />
+			</Suspense>
+		);
+	}
+	return <CachedNavHeader sideOnly={sideOnly} perspective="published" stega={false} />;
+}
+
 export default async function RootLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	const settingsFetch = await sanityFetch({
-		query: settingsQuery,
-	});
-	const settings = settingsFetch.data as SettingsQueryResult;
+	const { isEnabled: isDraftMode } = await draftMode();
 
 	return (
 		<html lang="en" suppressHydrationWarning>
@@ -101,10 +147,12 @@ export default async function RootLayout({
 				)}
 			>
 				<CookiesProviderClient>
-					<Suspense>
-						<DisableDraftMode />
-						<VisualEditing />
-					</Suspense>
+					{isDraftMode && (
+						<Suspense>
+							<DisableDraftMode />
+							<VisualEditing />
+						</Suspense>
+					)}
 					<PlayerProvider>
 						<ThemeProvider
 							attribute="class"
@@ -120,7 +168,7 @@ export default async function RootLayout({
 											CodingCat.dev
 										</Link>
 										<nav className="items-center hidden md:flex gap-6">
-											<NavHeader navLinks={settings?.navLinks} />
+											<NavHeaderSlot isDraftMode={isDraftMode} />
 										</nav>
 									</div>
 									<div className="flex items-center gap-2">
@@ -141,7 +189,7 @@ export default async function RootLayout({
 											</SheetTrigger>
 											<SheetContent side="right">
 												<nav className="py-6 grid gap-2">
-													<NavHeader navLinks={settings?.navLinks} sideOnly />
+													<NavHeaderSlot sideOnly isDraftMode={isDraftMode} />
 												</nav>
 											</SheetContent>
 										</Sheet>
@@ -152,7 +200,7 @@ export default async function RootLayout({
 								<Footer />
 							</section>
 							<PlayerFloating />
-							<SanityLive />
+							<SanityLive includeDrafts={isDraftMode} />
 						</ThemeProvider>
 					</PlayerProvider>
 				</CookiesProviderClient>

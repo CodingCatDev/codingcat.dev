@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import {
   Card,

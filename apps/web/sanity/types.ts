@@ -10443,6 +10443,48 @@ export type SitemapQueryResult = Array<
     }
 >;
 
+// Source: sanity/lib/queries.ts
+// Variable: postSlugsQuery
+// Query: *[_type == "post" && defined(slug.current)]{"slug": slug.current}
+export type PostSlugsQueryResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: sanity/lib/queries.ts
+// Variable: podcastSlugsQuery
+// Query: *[_type == "podcast" && defined(slug.current)]{"slug": slug.current}
+export type PodcastSlugsQueryResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: sanity/lib/queries.ts
+// Variable: authorSlugsQuery
+// Query: *[_type == "author" && defined(slug.current)]{"slug": slug.current}
+export type AuthorSlugsQueryResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: sanity/lib/queries.ts
+// Variable: guestSlugsQuery
+// Query: *[_type == "guest" && defined(slug.current)]{"slug": slug.current}
+export type GuestSlugsQueryResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: sanity/lib/queries.ts
+// Variable: sponsorSlugsQuery
+// Query: *[_type == "sponsor" && defined(slug.current)]{"slug": slug.current}
+export type SponsorSlugsQueryResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: sanity/lib/queries.ts
+// Variable: pageSlugsQuery
+// Query: *[_type == "page" && defined(slug.current)]{"slug": slug.current}
+export type PageSlugsQueryResult = Array<{
+  slug: string | null;
+}>;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
@@ -10469,5 +10511,11 @@ declare module "@sanity/client" {
     '*[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n}': RssQueryResult;
     '*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {\n  \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt)\n,\n  \n  content[]{\n    ...,\n    markDefs[]{\n      ...,\n      _type == "internalLink" => {\n        @.reference->_type == "page" => {\n          "href": "/" + @.reference->slug.current\n        },\n        @.reference->_type != "page" => {\n          "href": "/" + @.reference->_type + "/" + @.reference->slug.current\n        }\n      },\n    }\n  },\n  author[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  devto,\n  hashnode,\n  sponsor[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  tags,\n  videoCloudinary,\n  youtube\n,\n  \n  podcastType[]->{\n    ...,\n    "title": coalesce(title, "Missing Podcast Title"),\n  },\n  season,\n  episode,\n  recordingDate,\n  guest[]->{\n    ...,\n    "title": coalesce(title, "Anonymous"),\n    "slug": slug.current,\n  },\n  pick[]{\n    user->,\n    name,\n    site\n  },\n  spotify\n,\n}': RssPodcastQueryResult;
     '*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updated desc) {\n  _type,\n  _updatedAt,\n  "slug": slug.current,\n}': SitemapQueryResult;
+    '*[_type == "post" && defined(slug.current)]{"slug": slug.current}': PostSlugsQueryResult;
+    '*[_type == "podcast" && defined(slug.current)]{"slug": slug.current}': PodcastSlugsQueryResult;
+    '*[_type == "author" && defined(slug.current)]{"slug": slug.current}': AuthorSlugsQueryResult;
+    '*[_type == "guest" && defined(slug.current)]{"slug": slug.current}': GuestSlugsQueryResult;
+    '*[_type == "sponsor" && defined(slug.current)]{"slug": slug.current}': SponsorSlugsQueryResult;
+    '*[_type == "page" && defined(slug.current)]{"slug": slug.current}': PageSlugsQueryResult;
   }
 }

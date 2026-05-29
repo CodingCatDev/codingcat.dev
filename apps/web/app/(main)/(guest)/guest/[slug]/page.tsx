@@ -8,8 +8,18 @@ import type {
 	GuestQueryResult,
 	GuestQueryWithRelatedResult,
 } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
-import { guestQuery, guestQueryWithRelated } from "@/sanity/lib/queries";
+import {
+	sanityFetch,
+	sanityFetchMetadata,
+	sanityFetchStaticParams,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
+import {
+	guestQuery,
+	guestQueryWithRelated,
+	guestSlugsQuery,
+} from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
@@ -17,21 +27,30 @@ import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import UserSocials from "@/components/user-socials";
 import UserRelated from "@/components/user-related";
 import Avatar from "@/components/avatar";
+import { draftMode } from "next/headers";
+import { Suspense } from "react";
 
 type Params = Promise<{ slug: string }>;
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetchStaticParams({ query: guestSlugsQuery });
+	return data as { slug: string }[];
+}
 
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const { slug } = await params;
+	const [{ slug }, { perspective }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
 
 	const guest = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: guestQuery,
 			params: { slug },
-			stega: false,
+			perspective,
 		})
 	).data as GuestQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -46,18 +65,41 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-
 export default async function GuestPage({ params }: { params: Params }) {
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicGuestPage params={params} />
+			</Suspense>
+		);
+	}
 	const { slug } = await params;
+	return <CachedGuestPage slug={slug} perspective="published" stega={false} />;
+}
 
-	const [guest] = (
-		await Promise.all([
-			sanityFetch({
-				query: guestQueryWithRelated,
-				params: { slug },
-			}),
-		])
-	).map((res) => res.data) as [GuestQueryWithRelatedResult];
+async function DynamicGuestPage({ params }: { params: Params }) {
+	const [{ slug }, { perspective, stega }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
+	return <CachedGuestPage slug={slug} perspective={perspective} stega={stega} />;
+}
+
+async function CachedGuestPage({
+	slug,
+	perspective,
+	stega,
+}: { slug: string } & DynamicFetchOptions) {
+	"use cache";
+	const guest = (
+		await sanityFetch({
+			query: guestQueryWithRelated,
+			params: { slug },
+			perspective,
+			stega,
+		})
+	).data as GuestQueryWithRelatedResult;
 
 	if (!guest?._id) {
 		return notFound();

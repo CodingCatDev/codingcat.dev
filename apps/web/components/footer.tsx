@@ -8,12 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import NavLink from "@/components/nav-link";
 
+// Evaluated once at module load (server start), not during render, so it
+// doesn't trip the Cache Components prerender guard against `new Date()`.
+const CURRENT_YEAR = new Date().getFullYear();
+
 export default function Footer() {
 	return (
 		<footer className="flex flex-col gap-6 lg:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t justify-center">
 			<div className="flex flex-col sm:flex-row items-center gap-4">
 				<p className="text-xs text-gray-500 dark:text-gray-400">
-					&copy; {new Date().getFullYear()} CodingCat.dev. All rights reserved.
+					&copy; {CURRENT_YEAR} CodingCat.dev. All rights reserved.
 				</p>
 				<nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
 					<NavLink

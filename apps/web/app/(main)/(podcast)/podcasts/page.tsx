@@ -8,8 +8,13 @@ import MoreContent from "@/components/more-content";
 import Onboarding from "@/components/onboarding";
 
 import type { PodcastsQueryResult } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import {
+	sanityFetch,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
 import { podcastsQuery } from "@/sanity/lib/queries";
+import { draftMode } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import MoreHeader from "@/components/more-header";
@@ -77,13 +82,27 @@ function HeroPodcast({
 }
 
 export default async function Page() {
-	const [heroPost] = (
-		await Promise.all([
-			sanityFetch({
-				query: podcastsQuery,
-			}),
-		])
-	).map((res) => res.data) as [PodcastsQueryResult];
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicPage />
+			</Suspense>
+		);
+	}
+	return <CachedPage perspective="published" stega={false} />;
+}
+
+async function DynamicPage() {
+	const { perspective, stega } = await getDynamicFetchOptions();
+	return <CachedPage perspective={perspective} stega={stega} />;
+}
+
+async function CachedPage({ perspective, stega }: DynamicFetchOptions) {
+	"use cache";
+	const heroPost = (
+		await sanityFetch({ query: podcastsQuery, perspective, stega })
+	).data as PodcastsQueryResult;
 	return (
 		<div className="container px-5 mx-auto">
 			{heroPost ? (
@@ -107,7 +126,13 @@ export default async function Page() {
 				<aside>
 					<MoreHeader title="Latest Podcasts" href="/podcasts/page/1" />
 					<Suspense fallback={<p>Loading feed...</p>}>
-						<MoreContent type={heroPost._type} skip={heroPost._id} limit={4} />
+						<MoreContent
+							type={heroPost._type}
+							skip={heroPost._id}
+							limit={4}
+							perspective={perspective}
+							stega={stega}
+						/>
 					</Suspense>
 				</aside>
 			)}

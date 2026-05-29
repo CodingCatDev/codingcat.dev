@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { getEngineConfig } from "@/lib/config";
 import { ConfigForm } from "./config-form";
 

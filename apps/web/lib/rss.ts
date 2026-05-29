@@ -1,5 +1,6 @@
 import { Feed, type Author as FeedAuthor, type Item } from "feed";
 import { sanityFetch } from "@/sanity/lib/live";
+import type { LivePerspective } from "next-sanity/live";
 import type { RssQueryResult } from "@/sanity/types";
 import { rssQuery, rssPodcastQuery } from "@/sanity/lib/queries";
 import { toHTML } from "@portabletext/to-html";
@@ -9,6 +10,26 @@ const productionDomain = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const site = productionDomain
 	? `https://${productionDomain}`
 	: "https://codingcat.dev";
+
+/**
+ * `sanityFetch` calls `cacheTag()` internally, which is only allowed inside a
+ * `'use cache'` function — so the data fetch must live in its own cached helper.
+ * Route handlers hardcode `stega: false`; only `perspective` is resolved.
+ */
+async function fetchRssData(
+	query: typeof rssQuery | typeof rssPodcastQuery,
+	queryParams: { type: string; skip: string; limit: number; offset: number },
+	perspective: LivePerspective,
+): Promise<RssQueryResult> {
+	"use cache";
+	const { data } = await sanityFetch({
+		query,
+		params: queryParams,
+		perspective,
+		stega: false,
+	});
+	return data as RssQueryResult;
+}
 
 /** Map Sanity _type to the URL path segment used on the site */
 function typePath(type: string): string {
@@ -27,22 +48,21 @@ export async function buildFeed(params: {
 	skip?: string;
 	limit?: number;
 	offset?: number;
+	perspective: LivePerspective;
 }) {
 	const isPodcast = params.type === "podcast";
 	const query = isPodcast ? rssPodcastQuery : rssQuery;
 
-	const data = (
-		await sanityFetch({
-			query,
-			params: {
-				type: params.type,
-				skip: params.skip || "none",
-				limit: params.limit || 10000,
-				offset: params.offset || 0,
-			},
-			tags: isPodcast ? ["podcast-rss", "podcast"] : [params.type + "-rss", params.type],
-		})
-	).data as RssQueryResult;
+	const data = await fetchRssData(
+		query,
+		{
+			type: params.type,
+			skip: params.skip || "none",
+			limit: params.limit || 10000,
+			offset: params.offset || 0,
+		},
+		params.perspective,
+	);
 
 	const feedPath = typePath(params.type);
 	const currentYear = new Date().getFullYear();
@@ -129,18 +149,18 @@ export async function buildPodcastFeed(params: {
 	skip?: string;
 	limit?: number;
 	offset?: number;
+	perspective: LivePerspective;
 }): Promise<string> {
-	const data = (
-		await sanityFetch({
-			query: rssPodcastQuery,
-			params: {
-				type: "podcast",
-				skip: params.skip || "none",
-				limit: params.limit || 10000,
-				offset: params.offset || 0,
-			},
-		})
-	).data as RssQueryResult;
+	const data = await fetchRssData(
+		rssPodcastQuery,
+		{
+			type: "podcast",
+			skip: params.skip || "none",
+			limit: params.limit || 10000,
+			offset: params.offset || 0,
+		},
+		params.perspective,
+	);
 
 	const currentYear = new Date().getFullYear();
 	const feedUrl = `${site}/podcasts/rss.xml`;

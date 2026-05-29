@@ -3,18 +3,41 @@ import PodmatchBadge from "@/components/podmatch-badge";
 
 import CoverImage from "@/components/cover-image";
 import type { HomePageQueryResult } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import {
+	sanityFetch,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
 import { homePageQuery } from "@/sanity/lib/queries";
 import Link from "next/link";
 import CoverMedia from "@/components/cover-media";
-
+import { draftMode } from "next/headers";
+import { Suspense } from "react";
 
 export default async function HomePage() {
-	const [homePageFetch] = await Promise.all([
-		sanityFetch({
-			query: homePageQuery,
-		}),
-	]);
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicHomePage />
+			</Suspense>
+		);
+	}
+	return <CachedHomePage perspective="published" stega={false} />;
+}
+
+async function DynamicHomePage() {
+	const { perspective, stega } = await getDynamicFetchOptions();
+	return <CachedHomePage perspective={perspective} stega={stega} />;
+}
+
+async function CachedHomePage({ perspective, stega }: DynamicFetchOptions) {
+	"use cache";
+	const homePageFetch = await sanityFetch({
+		query: homePageQuery,
+		perspective,
+		stega,
+	});
 
 	const homePage = homePageFetch.data as HomePageQueryResult;
 

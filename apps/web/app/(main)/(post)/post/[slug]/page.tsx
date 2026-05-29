@@ -9,28 +9,42 @@ import MoreContent from "@/components/more-content";
 import PortableText from "@/components/portable-text";
 
 import type { PostQueryResult } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
-import { postQuery } from "@/sanity/lib/queries";
+import {
+	sanityFetch,
+	sanityFetchMetadata,
+	sanityFetchStaticParams,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
+import { postQuery, postSlugsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
 import MoreHeader from "@/components/more-header";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 import SponsorCard from "@/components/sponsor-card";
+import { draftMode } from "next/headers";
 
 type Params = Promise<{ slug: string }>;
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetchStaticParams({ query: postSlugsQuery });
+	return data as { slug: string }[];
+}
 
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const { slug } = await params;
+	const [{ slug }, { perspective }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
 
 	const post = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: postQuery,
 			params: { slug },
-			stega: false,
+			perspective,
 		})
 	).data as PostQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -49,18 +63,36 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-
 export default async function PostPage({ params }: { params: Params }) {
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicPostPage params={params} />
+			</Suspense>
+		);
+	}
 	const { slug } = await params;
+	return <CachedPostPage slug={slug} perspective="published" stega={false} />;
+}
 
-	const [post] = (
-		await Promise.all([
-			sanityFetch({
-				query: postQuery,
-				params: { slug },
-			}),
-		])
-	).map((res) => res.data) as [PostQueryResult];
+async function DynamicPostPage({ params }: { params: Params }) {
+	const [{ slug }, { perspective, stega }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
+	return <CachedPostPage slug={slug} perspective={perspective} stega={stega} />;
+}
+
+async function CachedPostPage({
+	slug,
+	perspective,
+	stega,
+}: { slug: string } & DynamicFetchOptions) {
+	"use cache";
+	const post = (
+		await sanityFetch({ query: postQuery, params: { slug }, perspective, stega })
+	).data as PostQueryResult;
 
 	if (!post?._id) {
 		return notFound();
@@ -121,7 +153,13 @@ export default async function PostPage({ params }: { params: Params }) {
 			<aside>
 				<MoreHeader title="Recent Posts" href="/blog/page/1" />
 				<Suspense>
-					<MoreContent type={post._type} skip={post._id} limit={2} />
+					<MoreContent
+						type={post._type}
+						skip={post._id}
+						limit={2}
+						perspective={perspective}
+						stega={stega}
+					/>
 				</Suspense>
 			</aside>
 		</div>

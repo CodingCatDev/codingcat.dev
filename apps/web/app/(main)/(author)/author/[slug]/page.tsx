@@ -8,29 +8,48 @@ import type {
 	AuthorQueryResult,
 	AuthorQueryWithRelatedResult,
 } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
-import { authorQuery, authorQueryWithRelated } from "@/sanity/lib/queries";
+import {
+	sanityFetch,
+	sanityFetchMetadata,
+	sanityFetchStaticParams,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
+import {
+	authorQuery,
+	authorQueryWithRelated,
+	authorSlugsQuery,
+} from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import CoverMedia from "@/components/cover-media";
 import { BreadcrumbLinks } from "@/components/breadrumb-links";
 
 import UserSocials from "@/components/user-socials";
 import UserRelated from "@/components/user-related";
+import { draftMode } from "next/headers";
+import { Suspense } from "react";
 
 type Params = Promise<{ slug: string }>;
 
+export async function generateStaticParams() {
+	const { data } = await sanityFetchStaticParams({ query: authorSlugsQuery });
+	return data as { slug: string }[];
+}
 
 export async function generateMetadata(
 	{ params }: { params: Params },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-	const { slug } = await params;
+	const [{ slug }, { perspective }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
 
 	const author = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: authorQuery,
 			params: { slug },
-			stega: false,
+			perspective,
 		})
 	).data as AuthorQueryResult;
 
@@ -46,18 +65,43 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-
 export default async function AuthorPage({ params }: { params: Params }) {
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicAuthorPage params={params} />
+			</Suspense>
+		);
+	}
 	const { slug } = await params;
+	return <CachedAuthorPage slug={slug} perspective="published" stega={false} />;
+}
 
-	const [authorFetch] = await Promise.all([
-		sanityFetch({
+async function DynamicAuthorPage({ params }: { params: Params }) {
+	const [{ slug }, { perspective, stega }] = await Promise.all([
+		params,
+		getDynamicFetchOptions(),
+	]);
+	return (
+		<CachedAuthorPage slug={slug} perspective={perspective} stega={stega} />
+	);
+}
+
+async function CachedAuthorPage({
+	slug,
+	perspective,
+	stega,
+}: { slug: string } & DynamicFetchOptions) {
+	"use cache";
+	const author = (
+		await sanityFetch({
 			query: authorQueryWithRelated,
 			params: { slug },
-		}),
-	]);
-
-	const author = authorFetch.data as AuthorQueryWithRelatedResult;
+			perspective,
+			stega,
+		})
+	).data as AuthorQueryWithRelatedResult;
 
 	if (!author?._id) {
 		return notFound();

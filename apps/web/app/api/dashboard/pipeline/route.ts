@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 
-export const dynamic = "force-dynamic";
-
 export async function GET() {
 	const hasSupabase =
 		(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL) &&

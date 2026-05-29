@@ -1,11 +1,12 @@
-export const dynamic = "force-dynamic"; // defaults to auto
-
 import { buildFeed } from "@/lib/rss";
 import { ContentType } from "@/lib/types";
+import { getDynamicFetchOptions } from "@/sanity/lib/live";
 
 export async function GET() {
+	const { perspective } = await getDynamicFetchOptions();
 	const feed = await buildFeed({
 		type: ContentType.post,
+		perspective,
 	});
 	return new Response(feed.rss2(), {
 		headers: {

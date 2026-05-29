@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { writeClient } from "@/lib/sanity-write-client";
 
-export const dynamic = "force-dynamic";
-
 async function requireAuth() {
   const hasSupabase =
     (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL) &&

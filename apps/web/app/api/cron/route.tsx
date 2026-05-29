@@ -1,5 +1,3 @@
-export const fetchCache = "force-no-store";
-
 import { publicURL } from "@/lib/utils";
 import type { NextRequest } from "next/server";
 

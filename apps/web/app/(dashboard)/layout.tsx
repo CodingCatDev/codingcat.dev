@@ -9,6 +9,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteAnalytics } from "@/components/analytics";
+import { Suspense } from "react";
 
 const nunito = Nunito({
 	subsets: ["latin"],
@@ -29,11 +30,41 @@ export const metadata: Metadata = {
 	description: "Manage your automated content engine",
 };
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body
+				className={cn(
+					"min-h-screen bg-background font-sans antialiased",
+					nunito.variable,
+					inter.variable,
+				)}
+			>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					{/* Reading the Supabase session uses cookies (a dynamic API), so it
+					    must live inside a Suspense boundary under cacheComponents. The
+					    fallback renders children without the authenticated chrome. */}
+					<Suspense fallback={<>{children}</>}>
+						<DashboardChrome>{children}</DashboardChrome>
+					</Suspense>
+					<Toaster />
+				</ThemeProvider>
+				<SiteAnalytics />
+			</body>
+		</html>
+	);
+}
+
+async function DashboardChrome({ children }: { children: React.ReactNode }) {
 	// Try to get user — if Supabase isn't configured or user isn't logged in,
 	// the proxy will have already redirected to login for protected routes.
 	// The login page itself renders without the sidebar chrome.
@@ -54,38 +85,19 @@ export default async function DashboardLayout({
 		// Supabase not available — continue without user
 	}
 
+	if (!user) {
+		return <>{children}</>;
+	}
+
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<body
-				className={cn(
-					"min-h-screen bg-background font-sans antialiased",
-					nunito.variable,
-					inter.variable,
-				)}
-			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					{user ? (
-						<SidebarProvider>
-							<AppSidebar user={user} />
-							<SidebarInset>
-								<SiteHeader />
-								<main className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-									{children}
-								</main>
-							</SidebarInset>
-						</SidebarProvider>
-					) : (
-						<>{children}</>
-					)}
-					<Toaster />
-				</ThemeProvider>
-				<SiteAnalytics />
-			</body>
-		</html>
+		<SidebarProvider>
+			<AppSidebar user={user} />
+			<SidebarInset>
+				<SiteHeader />
+				<main className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+					{children}
+				</main>
+			</SidebarInset>
+		</SidebarProvider>
 	);
 }

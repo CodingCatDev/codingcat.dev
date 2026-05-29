@@ -1,5 +1,3 @@
-export const fetchCache = 'force-no-store'
-
 import { NextResponse } from 'next/server'
 import { sanityWriteClient } from '@/lib/sanity-write-client'
 import { generateOutreachEmail } from '@/lib/sponsor/gemini-outreach'

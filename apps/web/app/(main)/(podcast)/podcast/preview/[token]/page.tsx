@@ -1,8 +1,22 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { Suspense } from "react";
 import Podcast from "../../Podcast";
+import { getDynamicFetchOptions } from "@/sanity/lib/live";
 
-export default async function PreviewPage({
+export default function PreviewPage({
+	params,
+}: {
+	params: Promise<{ token: string }>;
+}) {
+	return (
+		<Suspense fallback={<div className="min-h-dvh" />}>
+			<PreviewContent params={params} />
+		</Suspense>
+	);
+}
+
+async function PreviewContent({
 	params,
 }: {
 	params: Promise<{ token: string }>;
@@ -28,5 +42,8 @@ export default async function PreviewPage({
 
 	if (!data || !data.document) return notFound();
 
-	return <Podcast podcast={data.document} />;
+	const { perspective, stega } = await getDynamicFetchOptions();
+	return (
+		<Podcast podcast={data.document} perspective={perspective} stega={stega} />
+	);
 }

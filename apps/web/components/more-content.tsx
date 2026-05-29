@@ -9,7 +9,7 @@ import type {
 	MorePodcastQueryResult,
 	MorePostQueryResult,
 } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import { sanityFetch, type DynamicFetchOptions } from "@/sanity/lib/live";
 import {
 	morePodcastQuery,
 	morePostQuery,
@@ -20,13 +20,17 @@ import {
 import { ContentType } from "@/lib/types";
 import { pluralize } from "@/lib/utils";
 
-export default async function MoreContent(params: {
-	type: string;
-	skip?: string;
-	limit?: number;
-	offset?: number;
-	showHeader?: boolean;
-}) {
+export default async function MoreContent(
+	params: {
+		type: string;
+		skip?: string;
+		limit?: number;
+		offset?: number;
+		showHeader?: boolean;
+	} & DynamicFetchOptions,
+) {
+	"use cache";
+	const { perspective, stega } = params;
 	const whichQuery = () => {
 		switch (params.type) {
 			case ContentType.author:
@@ -51,6 +55,8 @@ export default async function MoreContent(params: {
 				limit: params.limit || 4,
 				offset: params.offset || 0,
 			},
+			perspective,
+			stega,
 		})
 	).data as MorePodcastQueryResult;
 

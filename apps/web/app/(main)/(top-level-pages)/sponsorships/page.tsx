@@ -1,7 +1,10 @@
 import type { Metadata, ResolvingMetadata } from "next";
 
 import type { PageQueryResult } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import {
+	sanityFetchMetadata,
+	getDynamicFetchOptions,
+} from "@/sanity/lib/live";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,10 +52,12 @@ export async function generateMetadata(
 	{ params }: { params: any },
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
+	const { perspective } = await getDynamicFetchOptions();
 	const page = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: pageQuery,
 			params: { slug: "sponsorships" },
+			perspective,
 		})
 	).data as PageQueryResult;
 

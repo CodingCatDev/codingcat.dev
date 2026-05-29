@@ -1,5 +1,3 @@
-export const fetchCache = "force-no-store";
-
 import type { NextRequest } from "next/server";
 import {
   syncSanityVideosToSupabase,

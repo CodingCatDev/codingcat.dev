@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { sitemapQuery } from "@/sanity/lib/queries";
-import { sanityFetch } from "@/sanity/lib/live";
+import {
+	sanityFetchMetadata,
+	getDynamicFetchOptions,
+} from "@/sanity/lib/live";
 import type { SitemapQueryResult } from "@/sanity/types";
 import { ContentType } from "@/lib/types";
 
@@ -12,9 +15,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		? `https://${productionDomain}`
 		: "https://codingcat.dev";
 
+	const { perspective } = await getDynamicFetchOptions();
 	const content = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: sitemapQuery,
+			perspective,
 		})
 	).data as SitemapQueryResult;
 

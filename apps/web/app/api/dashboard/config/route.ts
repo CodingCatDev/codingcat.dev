@@ -3,8 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { getEngineConfig, invalidateEngineConfig } from "@/lib/config";
 import { writeClient } from "@/lib/sanity-write-client";
 
-export const dynamic = "force-dynamic";
-
 const CONFIG_DOC_ID = "engineConfig";
 
 // Whitelist of fields that can be updated via the API

@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { dashboardQuery } from "@/lib/sanity/dashboard";
 import { ContentIdeasTable } from "./content-ideas-table";
 import { PageRefreshButton } from "@/components/page-refresh-button";

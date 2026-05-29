@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { dashboardQuery, dashboardClient } from "@/lib/sanity/dashboard";
 
-export const dynamic = "force-dynamic";
-
 const SETTINGS_DOC_ID = "dashboardSettings";
 
 const DEFAULT_SETTINGS = {

@@ -5,29 +5,33 @@ import { notFound } from "next/navigation";
 import PortableText from "@/components/portable-text";
 
 import type { PageQueryResult } from "@/sanity/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import {
+	sanityFetch,
+	sanityFetchMetadata,
+	getDynamicFetchOptions,
+	type DynamicFetchOptions,
+} from "@/sanity/lib/live";
 import { pageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import ProBenefits from "@/components/pro-benefits";
 import { Suspense } from "react";
+import { draftMode } from "next/headers";
 
 type Props = {
 	params: Promise<{ slug: string }>;
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-
 export async function generateMetadata(
-	{ params, searchParams }: Props,
+	_props: Props,
 	parent: ResolvingMetadata,
 ): Promise<Metadata> {
+	const { perspective } = await getDynamicFetchOptions();
 	const page = (
-		await sanityFetch({
+		await sanityFetchMetadata({
 			query: pageQuery,
-			params: {
-				slug: "pro",
-			},
-			stega: false,
+			params: { slug: "pro" },
+			perspective,
 		})
 	).data as PageQueryResult;
 	const previousImages = (await parent).openGraph?.images || [];
@@ -42,17 +46,33 @@ export async function generateMetadata(
 	} satisfies Metadata;
 }
 
-export default async function ProPage({ params, searchParams }: Props) {
-	const [page] = (
-		await Promise.all([
-			sanityFetch({
-				query: pageQuery,
-				params: {
-					slug: "pro",
-				},
-			}),
-		])
-	).map((res) => res.data) as [PageQueryResult];
+export default async function ProPage() {
+	const { isEnabled: isDraftMode } = await draftMode();
+	if (isDraftMode) {
+		return (
+			<Suspense fallback={<div className="min-h-dvh" />}>
+				<DynamicProPage />
+			</Suspense>
+		);
+	}
+	return <CachedProPage perspective="published" stega={false} />;
+}
+
+async function DynamicProPage() {
+	const { perspective, stega } = await getDynamicFetchOptions();
+	return <CachedProPage perspective={perspective} stega={stega} />;
+}
+
+async function CachedProPage({ perspective, stega }: DynamicFetchOptions) {
+	"use cache";
+	const page = (
+		await sanityFetch({
+			query: pageQuery,
+			params: { slug: "pro" },
+			perspective,
+			stega,
+		})
+	).data as PageQueryResult;
 
 	if (!page?._id) {
 		return notFound();
