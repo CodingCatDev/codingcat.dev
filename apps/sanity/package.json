@@ -1,0 +1,38 @@
+{
+  "name": "@codingcatdev/sanity",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "typegen:extract": "sanity schema extract --path=./extract.json --workspace production",
+    "typegen": "pnpm run typegen:extract"
+  },
+  "dependencies": {
+    "@codingcatdev/sanity-plugin-podcast-rss": "^1.0.0",
+    "@portabletext/block-tools": "^5.1.0",
+    "@portabletext/react": "^6.0.3",
+    "@sanity/assist": "^6.0.3",
+    "@sanity/code-input": "^7.0.11",
+    "@sanity/icons": "^3.7.4",
+    "@sanity/ui": "^3.1.14",
+    "@sanity/vision": "^5.17.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.577.0",
+    "micromark": "^4.0.2",
+    "micromark-extension-gfm-table": "^2.1.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-icons": "^5.6.0",
+    "react-twitter-embed": "^4.0.4",
+    "sanity": "^5.17.1",
+    "sanity-plugin-media": "^4.1.1",
+    "styled-components": "^6.3.11"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}
