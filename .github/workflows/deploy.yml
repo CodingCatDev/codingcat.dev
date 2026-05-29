@@ -1,4 +1,4 @@
-name: Deploy CodingCat.dev
+name: Deploy Sanity Studio
 
 on:
   push:
@@ -22,23 +22,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Install wrangler
-        run: pnpm add -Dw wrangler
-
-      - name: Build
-        run: pnpm --filter @codingcatdev/web build
-        env:
-          SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
-          SANITY_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
-          PUBLIC_SANITY_STUDIO_URL: https://${{ vars.SANITY_STUDIO_HOSTNAME }}.sanity.studio
-
-      - name: Deploy to Cloudflare
-        run: pnpm exec wrangler deploy
-        working-directory: apps/web
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
@@ -64,22 +47,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Install wrangler
-        run: pnpm add -Dw wrangler
-
-      - name: Build
-        run: pnpm --filter @codingcatdev/web build
-        env:
-          SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
-          SANITY_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
-
-      - name: Deploy to Cloudflare
-        run: pnpm exec wrangler deploy --env production
-        working-directory: apps/web
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y

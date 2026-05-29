@@ -5,8 +5,8 @@
     "dev:studio": "pnpm --filter @codingcatdev/sanity dev",
     "build": "pnpm --filter @codingcatdev/web build",
     "build:studio": "pnpm --filter @codingcatdev/sanity build",
-    "deploy": "pnpm --filter @codingcatdev/web deploy",
-    "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy"
+    "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
+    "typegen": "pnpm --filter @codingcatdev/sanity typegen:extract && pnpm --filter @codingcatdev/web typegen"
   },
   "packageManager": "pnpm@10.33.0"
 }

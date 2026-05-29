@@ -104,6 +104,16 @@ export default defineType({
       initialValue: 1,
       validation: (rule) => rule.min(1).max(10),
     }),
+    defineField({
+      name: 'stuckTimeoutMinutes',
+      title: 'Stuck Timeout Minutes',
+      type: 'number',
+      fieldset: 'pipelineControl',
+      description:
+        'Minutes before a pipeline document is considered stuck and auto-flagged',
+      initialValue: 30,
+      validation: (rule) => rule.min(5).max(120),
+    }),
 
     // ─── Content Cadence ─────────────────────────────────────────────────
     defineField({
