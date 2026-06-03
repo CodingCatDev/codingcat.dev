@@ -1,14 +1,11 @@
-import { buildFeed } from "@/lib/rss";
+import { getFeedJson } from "@/lib/rss";
 import { ContentType } from "@/lib/types";
 import { getDynamicFetchOptions } from "@/sanity/lib/live";
 
 export async function GET() {
 	const { perspective } = await getDynamicFetchOptions();
-	const feed = await buildFeed({
-		type: ContentType.post,
-		perspective,
-	});
-	return new Response(feed.json1(), {
+	const json = await getFeedJson({ type: ContentType.post, perspective });
+	return new Response(json, {
 		headers: {
 			"content-type": "application/json",
 			"cache-control": "max-age=0, s-maxage=3600",

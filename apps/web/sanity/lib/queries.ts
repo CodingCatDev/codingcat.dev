@@ -247,15 +247,41 @@ export const sponsorQueryWithRelated = groq`*[_type == "sponsor" && slug.current
 
 // RSS
 
+// Trimmed field set for feeds. Only the fields actually serialized into RSS/JSON
+// feeds — keeps the cached payload small and avoids dereferencing data (sponsors,
+// tags, related video metadata) that never appears in a feed.
+const rssContentFields = `
+  content[]{
+    ...,
+    markDefs[]{
+      ...,
+      _type == "internalLink" => {
+        @.reference->_type == "page" => {
+          "href": "/" + @.reference->slug.current
+        },
+        @.reference->_type != "page" => {
+          "href": "/" + @.reference->_type + "/" + @.reference->slug.current
+        }
+      },
+    }
+  },
+  author[]->{
+    "title": coalesce(title, "Anonymous"),
+    "slug": slug.current,
+  }
+`;
+
 export const rssQuery = groq`*[_type == $type && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {
   ${baseFieldsNoContent},
-  ${contentFields},
+  ${rssContentFields},
 }`;
 
 export const rssPodcastQuery = groq`*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {
   ${baseFieldsNoContent},
-  ${contentFields},
-  ${podcastFields},
+  ${rssContentFields},
+  season,
+  episode,
+  spotify,
 }`;
 
 // Sitemaps

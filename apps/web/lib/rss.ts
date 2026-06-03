@@ -1,4 +1,4 @@
-import { Feed, type Author as FeedAuthor, type Item } from "feed";
+import { Feed, type Item } from "feed";
 import { sanityFetch } from "@/sanity/lib/live";
 import type { LivePerspective } from "next-sanity/live";
 import type { RssQueryResult } from "@/sanity/types";
@@ -12,24 +12,11 @@ const site = productionDomain
 	: "https://codingcat.dev";
 
 /**
- * `sanityFetch` calls `cacheTag()` internally, which is only allowed inside a
- * `'use cache'` function — so the data fetch must live in its own cached helper.
- * Route handlers hardcode `stega: false`; only `perspective` is resolved.
+ * Feeds only ever surface the most recent entries. Pulling the entire archive
+ * (the previous `10000`) meant every cache miss fetched and serialized every
+ * post/podcast — expensive on both the Sanity side and in `toHTML`.
  */
-async function fetchRssData(
-	query: typeof rssQuery | typeof rssPodcastQuery,
-	queryParams: { type: string; skip: string; limit: number; offset: number },
-	perspective: LivePerspective,
-): Promise<RssQueryResult> {
-	"use cache";
-	const { data } = await sanityFetch({
-		query,
-		params: queryParams,
-		perspective,
-		stega: false,
-	});
-	return data as RssQueryResult;
-}
+const DEFAULT_FEED_LIMIT = 50;
 
 /** Map Sanity _type to the URL path segment used on the site */
 function typePath(type: string): string {
@@ -43,33 +30,40 @@ function typePath(type: string): string {
 	}
 }
 
-export async function buildFeed(params: {
-	type: string;
-	skip?: string;
-	limit?: number;
-	offset?: number;
-	perspective: LivePerspective;
-}) {
-	const isPodcast = params.type === "podcast";
-	const query = isPodcast ? rssPodcastQuery : rssQuery;
-
-	const data = await fetchRssData(
+/**
+ * Fetches feed data. Called only from within a `'use cache'` boundary so the
+ * sync tags `sanityFetch` attaches propagate to the surrounding cache entry —
+ * the serialized feed below is then cached and revalidated by Sanity Live when
+ * the underlying content changes, instead of being re-serialized per request.
+ */
+async function fetchFeedData(
+	type: string,
+	perspective: LivePerspective,
+): Promise<RssQueryResult> {
+	const query = type === "podcast" ? rssPodcastQuery : rssQuery;
+	const { data } = await sanityFetch({
 		query,
-		{
-			type: params.type,
-			skip: params.skip || "none",
-			limit: params.limit || 10000,
-			offset: params.offset || 0,
+		params: {
+			type,
+			skip: "none",
+			limit: DEFAULT_FEED_LIMIT,
+			offset: 0,
 		},
-		params.perspective,
-	);
+		perspective,
+		stega: false,
+	});
+	return data as RssQueryResult;
+}
 
-	const feedPath = typePath(params.type);
+/** Build a `feed` library `Feed` from already-fetched data (no I/O). */
+function createFeed(data: RssQueryResult, type: string): Feed {
+	const feedPath = typePath(type);
 	const currentYear = new Date().getFullYear();
+	const isPodcast = type === "podcast";
 
 	const feed = new Feed({
-		title: `CodingCat.dev - ${params.type} feed`,
-		description: `CodingCat.dev - ${params.type} feed`,
+		title: `CodingCat.dev - ${type} feed`,
+		description: `CodingCat.dev - ${type} feed`,
 		id: `${site}`,
 		link: `${site}/${feedPath}`,
 		language: "en",
@@ -142,40 +136,56 @@ export async function buildFeed(params: {
 }
 
 /**
- * Build a podcast-specific RSS feed with iTunes namespace tags.
- * Returns raw XML string with proper iTunes/podcast namespace support.
+ * Cached RSS 2.0 string for the `feed`-library feeds (blog).
+ * The `sanityFetch` runs inside this `'use cache'` scope so the rendered XML is
+ * cached and tagged for on-demand revalidation via Sanity Live.
  */
-export async function buildPodcastFeed(params: {
-	skip?: string;
-	limit?: number;
-	offset?: number;
+export async function getFeedRss2(params: {
+	type: string;
 	perspective: LivePerspective;
 }): Promise<string> {
-	const data = await fetchRssData(
-		rssPodcastQuery,
-		{
-			type: "podcast",
-			skip: params.skip || "none",
-			limit: params.limit || 10000,
-			offset: params.offset || 0,
-		},
-		params.perspective,
-	);
+	"use cache";
+	const data = await fetchFeedData(params.type, params.perspective);
+	return createFeed(data, params.type).rss2();
+}
 
+/** Cached JSON Feed string for the `feed`-library feeds (blog + podcast). */
+export async function getFeedJson(params: {
+	type: string;
+	perspective: LivePerspective;
+}): Promise<string> {
+	"use cache";
+	const data = await fetchFeedData(params.type, params.perspective);
+	return createFeed(data, params.type).json1();
+}
+
+/**
+ * Cached podcast RSS string with the full iTunes namespace. Manually serialized
+ * XML, produced inside `'use cache'` so it isn't rebuilt on every request.
+ */
+export async function getPodcastFeedXml(params: {
+	perspective: LivePerspective;
+}): Promise<string> {
+	"use cache";
+	const data = await fetchFeedData("podcast", params.perspective);
+	return buildPodcastXml(data);
+}
+
+/** Serialize podcast data into RSS 2.0 XML with iTunes namespace tags. */
+function buildPodcastXml(data: RssQueryResult): string {
 	const currentYear = new Date().getFullYear();
 	const feedUrl = `${site}/podcasts/rss.xml`;
 	const feedImage = `${site}/icon.svg`;
 
-	// Build RSS 2.0 XML with iTunes namespace manually for full podcast support
 	const items = data
 		.map((item) => {
 			const imageUrl =
-				urlForImage(item.coverImage)?.width(1400).height(1400).url() || feedImage;
+				urlForImage(item.coverImage)?.width(1400).height(1400).url() ||
+				feedImage;
 			const pubDate = item.date
 				? new Date(item.date).toUTCString()
 				: new Date().toUTCString();
 			const link = `${site}/${item._type}/${item.slug}`;
-			const description = escapeXml(item.excerpt || "");
 			const title = escapeXml(item.title || "");
 
 			let enclosureXml = "";
