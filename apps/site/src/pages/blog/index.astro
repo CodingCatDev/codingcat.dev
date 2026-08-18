@@ -31,6 +31,7 @@ const ogImage = sanity.resolveOpenGraphImage(hero?.coverImage ?? undefined);
 	title="Blog | CodingCat.dev"
 	description="Purrfect web development tutorials, articles, and guides."
 	image={ogImage}
+	ogFallback={{ title: "Blog", subtitle: "Purrfect web development tutorials" }}
 >
 	{
 		hero ? (

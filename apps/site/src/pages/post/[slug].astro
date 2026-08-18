@@ -36,6 +36,7 @@ const authors = post.author ?? [];
 	title={post.title}
 	description={post.excerpt}
 	image={ogImage}
+	ogFallback={{ title: post.title, type: "Blog", author: authors[0]?.title }}
 	type="article"
 	publishedAt={post.date}
 	modifiedAt={post._updatedAt}

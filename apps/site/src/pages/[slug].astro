@@ -28,6 +28,7 @@ const ogImage = sanity.resolveOpenGraphImage(page.coverImage ?? undefined);
 	title={page.title}
 	description={page.excerpt}
 	image={ogImage}
+	ogFallback={{ title: page.title, subtitle: page.excerpt }}
 	canonical={path}
 	schema={[breadcrumbSchema(origin, [{ name: page.title, path }])]}
 >

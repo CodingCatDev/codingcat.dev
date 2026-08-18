@@ -8,6 +8,7 @@ import Header from "@/components/Header.astro";
 import JsonLd from "@/components/JsonLd.astro";
 import SocialMeta from "@/components/SocialMeta.astro";
 import ThemeScript from "@/components/ThemeScript.astro";
+import { fallbackOgImage, type OgFallback } from "@/lib/og";
 import { absoluteUrl } from "@/lib/site";
 import {
 	buildGraph,
@@ -25,6 +26,11 @@ interface Props {
 	authors?: Array<string | null | undefined>;
 	canonical?: string | URL;
 	noindex?: boolean;
+	/**
+	 * Used to generate an OG card when `image` is absent. Documents without a
+	 * cover image previously shipped no og:image at all.
+	 */
+	ogFallback?: OgFallback;
 	/** Extra JSON-LD nodes merged into the site-wide @graph. */
 	schema?: Array<Record<string, unknown> & { "@type": string }>;
 	/** Full-bleed pages opt out of the default container. */
@@ -41,12 +47,16 @@ const {
 	authors,
 	canonical,
 	noindex,
+	ogFallback,
 	schema = [],
 	bare = false,
 } = Astro.props;
 
 const origin = Astro.locals.siteUrl.origin;
 const preview = Astro.locals.sanity.preview.enabled;
+
+const socialImage =
+	image ?? (ogFallback ? fallbackOgImage(origin, ogFallback) : undefined);
 
 const graph = buildGraph([
 	organizationSchema(origin, absoluteUrl("/icon.svg", origin)),
@@ -67,7 +77,7 @@ const graph = buildGraph([
 		<SocialMeta
 			title={title}
 			description={description}
-			image={image}
+			image={socialImage}
 			type={type}
 			publishedAt={publishedAt}
 			modifiedAt={modifiedAt}

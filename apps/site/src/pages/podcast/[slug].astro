@@ -41,6 +41,12 @@ const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
 	title={podcast.title}
 	description={podcast.excerpt}
 	image={ogImage}
+	ogFallback={{
+		title: podcast.title,
+		type: "Podcast",
+		author: authors[0]?.title,
+		episode: podcast.episode,
+	}}
 	type="article"
 	publishedAt={podcast.date}
 	modifiedAt={podcast._updatedAt}

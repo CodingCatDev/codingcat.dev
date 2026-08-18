@@ -34,6 +34,7 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 	title={sponsor.title}
 	description={sponsor.excerpt}
 	image={ogImage}
+	ogFallback={{ title: sponsor.title, type: "Sponsor" }}
 	canonical={path}
 	schema={[
 		breadcrumbSchema(origin, [

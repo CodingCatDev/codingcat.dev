@@ -30,6 +30,7 @@ const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 	title={person.title}
 	description={person.excerpt}
 	image={ogImage}
+	ogFallback={{ title: person.title, type: "Guest" }}
 	canonical={path}
 	schema={[
 		personSchema(origin, {

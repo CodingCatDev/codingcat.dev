@@ -20,7 +20,11 @@ const topPodcasts = (home?.topPodcasts ?? []) as ContentListItem[];
 const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
 ---
 
-<BaseLayout title="CodingCat.dev — Purrfect Web Development" description={SITE_DESCRIPTION} bare>
+<BaseLayout title="CodingCat.dev — Purrfect Web Development"
+	description={SITE_DESCRIPTION}
+	ogFallback={{ title: "CodingCat.dev", subtitle: "Purrfect Web Development" }}
+	bare
+>
 	<AnimatedHero />
 	<div class="flex justify-center -mb-8">
 		<PodmatchBadge />
