@@ -1,5 +1,18 @@
 ---
 import "@/styles/global.css";
+import { homePageQuery } from "@/lib/sanity/queries";
+import type { HomePageQueryResult } from "@/lib/sanity/types.gen";
+
+// No `as` cast: loadQuery preserves the query literal type, and the generated
+// module augmentation maps it to HomePageQueryResult.
+const home = await Astro.locals.sanity.loadQuery(homePageQuery);
+
+// Compile-time proof that the inferred type is the generated one.
+const _typeCheck: HomePageQueryResult = home;
+void _typeCheck;
+
+const latestPosts = home?.latestPosts ?? [];
+const latestPodcasts = home?.latestPodcasts ?? [];
 ---
 <html lang="en">
   <head>
@@ -7,7 +20,15 @@ import "@/styles/global.css";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>codingcat.dev</title>
   </head>
-  <body>
-    <h1 class="text-2xl font-bold">codingcat.dev — Astro scaffold</h1>
+  <body class="p-8">
+    <h1 class="text-2xl font-bold">codingcat.dev</h1>
+    <h2 class="mt-6 text-xl">Latest posts ({latestPosts.length})</h2>
+    <ul>
+      {latestPosts.map((p) => <li><a href={`/post/${p.slug}`}>{p.title}</a></li>)}
+    </ul>
+    <h2 class="mt-6 text-xl">Latest podcasts ({latestPodcasts.length})</h2>
+    <ul>
+      {latestPodcasts.map((p) => <li><a href={`/podcast/${p.slug}`}>{p.title}</a></li>)}
+    </ul>
   </body>
 </html>

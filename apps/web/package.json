@@ -6,9 +6,6 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome check .",
-		"predev": "pnpm -w run typegen",
-		"prebuild": "pnpm -w run typegen || echo 'Sanity typegen skipped (extract.json not available)'",
-		"typegen": "sanity typegen generate",
 		"format": "biome format . --write"
 	},
 	"dependencies": {
@@ -119,7 +116,6 @@
 		"@types/react-syntax-highlighter": "^15.5.13",
 		"dotenv-cli": "^11.0.0",
 		"postcss": "^8",
-		"sanity": "^5.28.0",
 		"schema-dts": "^2.0.0",
 		"tailwindcss": "^4.2.1",
 		"typescript": "^5"

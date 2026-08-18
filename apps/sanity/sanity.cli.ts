@@ -7,4 +7,12 @@ export default defineCliConfig({
   },
   // Set via SANITY_STUDIO_HOSTNAME in CI: e.g. "codingcat.dev" (prod), "codingcat-dev" (dev)
   studioHost: process.env.SANITY_STUDIO_HOSTNAME,
+  typegen: {
+    // Queries must live in .ts files — TypeGen cannot parse .astro frontmatter,
+    // so defineQuery calls inside .astro are silently skipped.
+    path: "../site/src/lib/sanity/queries/**/*.ts",
+    schema: "./extract.json",
+    generates: "../site/src/lib/sanity/types.gen.ts",
+    overloadClientMethods: true,
+  },
 });

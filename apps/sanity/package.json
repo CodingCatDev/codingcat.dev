@@ -7,7 +7,7 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "typegen:extract": "sanity schema extract --path=./extract.json --workspace production --force",
-    "typegen": "pnpm run typegen:extract"
+    "typegen": "pnpm run typegen:extract && sanity typegen generate"
   },
   "dependencies": {
     "@portabletext/block-tools": "^5.2.0",

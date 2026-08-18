@@ -1,6 +1,8 @@
 {
   "private": true,
-  "engines": { "node": ">=22.12" },
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "dev": "pnpm --filter @codingcatdev/site dev",
     "dev:dashboard": "pnpm --filter @codingcatdev/web dev",
@@ -11,7 +13,7 @@
     "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
     "lint": "pnpm --filter @codingcatdev/site lint",
     "typecheck": "pnpm --filter @codingcatdev/site typecheck",
-    "typegen": "pnpm --filter @codingcatdev/sanity typegen:extract && pnpm --filter @codingcatdev/web typegen"
+    "typegen": "pnpm --filter @codingcatdev/sanity typegen"
   },
   "packageManager": "pnpm@10.34.1"
 }

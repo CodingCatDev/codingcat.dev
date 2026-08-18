@@ -27,6 +27,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Generates apps/sanity/extract.json and the site's types.gen.ts, both of
+      # which are derived artifacts and therefore gitignored. Runs before
+      # typecheck because the site imports the generated types.
+      - name: Typegen
+        run: pnpm typegen
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: production
+
       - name: Lint (site)
         run: pnpm --filter @codingcatdev/site lint
 
@@ -45,17 +54,13 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: hfh83o0w
           SANITY_STUDIO_DATASET: production
 
-      # extract.json is the single source of truth for typegen. If it drifts
-      # from the schema, generated types silently go stale — which is how three
-      # divergent copies accumulated before.
+      # extract.json is committed and is the single source of truth for typegen.
+      # The Typegen step above regenerates it; if that changed the file, the
+      # commit is stale. This is what stopped three divergent copies before.
       - name: Verify extract.json is current
         run: |
-          pnpm --filter @codingcatdev/sanity typegen:extract
           if ! git diff --quiet -- apps/sanity/extract.json; then
             echo "::error::apps/sanity/extract.json is stale. Run 'pnpm typegen' and commit the result."
             git diff --stat -- apps/sanity/extract.json
             exit 1
           fi
-        env:
-          SANITY_STUDIO_PROJECT_ID: hfh83o0w
-          SANITY_STUDIO_DATASET: production
