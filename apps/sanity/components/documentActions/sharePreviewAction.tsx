@@ -1,7 +1,7 @@
 import type { DocumentActionComponent, DocumentActionProps } from "sanity";
 import React, { useState } from "react";
 import SharePreviewActionButton from "./SharePreviewActionButton";
-import { ShareIcon } from "@sanity/icons";
+import { ShareIcon } from "@sanity/icons/Share";
 
 export const sharePreviewAction: DocumentActionComponent = (
 	props: DocumentActionProps,

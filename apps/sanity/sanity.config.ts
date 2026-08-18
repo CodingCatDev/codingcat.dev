@@ -9,7 +9,8 @@
 import { visionTool } from "@sanity/vision";
 import { type PluginOptions, defineConfig } from "sanity";
 import { codeInput } from "@sanity/code-input";
-import { podcastRss } from "@codingcatdev/sanity-plugin-podcast-rss";
+// Vendored from @codingcatdev/sanity-plugin-podcast-rss — see ./plugins/podcast-rss/README.md
+import { podcastRss } from "./plugins/podcast-rss";
 import { media } from "sanity-plugin-media";
 
 import {
