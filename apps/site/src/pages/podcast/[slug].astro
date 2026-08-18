@@ -1,0 +1,154 @@
+---
+import Avatar from "@/components/Avatar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
+import CoverMedia from "@/components/CoverMedia.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import PodcastListen from "@/components/PodcastListen.astro";
+import PodcastPicks from "@/components/PodcastPicks.astro";
+import PodmatchBadge from "@/components/PodmatchBadge.astro";
+import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import SponsorCard from "@/components/SponsorCard.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { morePodcastQuery, podcastQuery } from "@/lib/sanity/queries";
+import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
+
+const { sanity } = Astro.locals;
+const { slug } = Astro.params;
+
+const podcast = slug ? await sanity.loadQuery(podcastQuery, { slug }) : null;
+if (!podcast?._id) {
+	return new Response(null, { status: 404 });
+}
+
+const more = await sanity.loadQuery(morePodcastQuery, {
+	skip: podcast._id,
+	offset: 0,
+	limit: 2,
+});
+
+const path = `/podcast/${slug}`;
+const origin = Astro.locals.siteUrl.origin;
+const ogImage = sanity.resolveOpenGraphImage(podcast.coverImage ?? undefined);
+const authors = podcast.author ?? [];
+const guests = podcast.guest ?? [];
+const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
+---
+
+<BaseLayout
+	title={podcast.title}
+	description={podcast.excerpt}
+	image={ogImage}
+	type="article"
+	publishedAt={podcast.date}
+	modifiedAt={podcast._updatedAt}
+	authors={[...authors, ...guests].map((person) => person.title)}
+	canonical={path}
+	schema={[
+		articleSchema(origin, {
+			title: podcast.title,
+			excerpt: podcast.excerpt,
+			date: podcast.date,
+			_updatedAt: podcast._updatedAt,
+			imageUrl: ogImage?.url,
+			authors,
+		}, path),
+		breadcrumbSchema(origin, [
+			{ name: "Podcasts", path: "/podcasts/page/1" },
+			{ name: podcast.title, path },
+		]),
+	]}
+>
+	<Breadcrumbs
+		links={[{ title: "Podcasts", href: "/podcasts/page/1" }, { title: podcast.title }]}
+	/>
+
+	<article>
+		<h1
+			class="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl"
+		>
+			{podcast.title}
+		</h1>
+
+		<div class="mb-8 sm:mx-0 md:mb-16">
+			<CoverMedia
+				image={podcast.coverImage}
+				video={podcast.videoCloudinary}
+				youtube={podcast.youtube}
+			/>
+		</div>
+
+		<div class="max-w-2xl sm:max-w-none">
+			<div class="flex flex-wrap justify-between">
+				<div class="flex-1">
+					<div class="mb-6 flex flex-wrap gap-2">
+						{
+							authors.map((person) => (
+								<Avatar
+									name={person.title}
+									href={person.slug ? `/author/${person.slug}` : undefined}
+									coverImage={person.coverImage}
+								/>
+							))
+						}
+						{
+							guests.map((person) => (
+								<Avatar
+									name={person.title}
+									href={person.slug ? `/guest/${person.slug}` : undefined}
+									coverImage={person.coverImage}
+								/>
+							))
+						}
+					</div>
+					<div class="mb-4 text-lg text-muted-foreground">
+						<FormattedDate dateString={podcast.date} />
+					</div>
+				</div>
+				<div class="m-2 flex justify-center md:m-8">
+					<PodmatchBadge />
+				</div>
+			</div>
+
+			<PodcastListen
+				title={podcast.title}
+				audioUrl={audioUrl}
+				youtube={podcast.youtube}
+			/>
+		</div>
+
+		{
+			podcast.sponsor && podcast.sponsor.length > 0 && (
+				<section class="my-10 flex flex-col">
+					<h2 class="mb-4 text-2xl font-bold">Sponsors</h2>
+					<hr class="border-border" />
+					<div class="my-12">
+						<SponsorCard sponsors={podcast.sponsor} />
+					</div>
+					<hr class="border-border" />
+				</section>
+			)
+		}
+
+		<div class="my-2 md:my-8">
+			<PortableTextContent value={podcast.content} class="mx-auto prose-violet lg:prose-xl" />
+		</div>
+	</article>
+
+	<div class="m-2 flex justify-center md:m-8">
+		<PodmatchBadge />
+	</div>
+
+	<PodcastPicks picks={podcast.pick} />
+
+	{
+		more.length > 0 && (
+			<aside class="mb-32">
+				<SectionHeader title="Recent Podcasts" href="/podcasts/page/1" />
+				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
+			</aside>
+		)
+	}
+</BaseLayout>

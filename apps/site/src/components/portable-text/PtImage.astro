@@ -1,0 +1,46 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+import type { SanityImageSource } from "@sanity/image-url";
+
+type ImageNode = SanityImageSource & {
+	_type: "image";
+	alt?: string;
+	caption?: string;
+};
+
+type Props = PtProps<ImageNode>;
+
+const { node } = Astro.props;
+
+const src = Astro.locals.sanity
+	.urlForImage(node)
+	?.width(1920)
+	.height(1080)
+	.url();
+
+const alt = stegaClean(node.alt) ?? "";
+const caption = node.caption;
+---
+
+{
+	src && (
+		<figure class="not-prose my-8">
+			<img
+				class="w-full h-auto rounded-md shadow-md"
+				src={src}
+				width={1920}
+				height={1080}
+				sizes="100vw"
+				alt={alt}
+				loading="lazy"
+				decoding="async"
+			/>
+			{caption && (
+				<figcaption class="mt-2 text-center text-sm text-muted-foreground">
+					{caption}
+				</figcaption>
+			)}
+		</figure>
+	)
+}

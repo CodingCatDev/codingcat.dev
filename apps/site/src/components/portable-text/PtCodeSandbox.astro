@@ -1,0 +1,49 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+
+type CodeSandboxNode = { _type: "codesandbox"; url?: string };
+
+type Props = PtProps<CodeSandboxNode>;
+
+const { node } = Astro.props;
+
+/**
+ * Sandbox URLs end in `{slug}-{id}`; the id is the trailing segment. The Next
+ * version chained `.at(-1)` twice without a guard, so a URL with no path threw
+ * at render time.
+ */
+function embedUrl(raw?: string | null) {
+	if (!raw) {
+		return undefined;
+	}
+	try {
+		const url = new URL(raw);
+		if (!url.hostname.endsWith("codesandbox.io")) {
+			return undefined;
+		}
+		const last = url.pathname.replace(/\/+$/, "").split("/").at(-1);
+		const id = last?.split("-").at(-1);
+		return id ? `https://codesandbox.io/embed/${id}` : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+const src = embedUrl(stegaClean(node.url));
+---
+
+{
+	src && (
+		<div class="not-prose my-6">
+			<iframe
+				src={src}
+				class="min-h-100 w-full rounded-md border border-border"
+				title="CodeSandbox embed"
+				loading="lazy"
+				allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+				sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+			/>
+		</div>
+	)
+}

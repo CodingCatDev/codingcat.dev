@@ -1,0 +1,113 @@
+---
+import Avatar from "@/components/Avatar.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
+import CoverMedia from "@/components/CoverMedia.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import SponsorCard from "@/components/SponsorCard.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { morePostQuery, postQuery } from "@/lib/sanity/queries";
+import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
+
+const { sanity } = Astro.locals;
+const { slug } = Astro.params;
+
+const post = slug ? await sanity.loadQuery(postQuery, { slug }) : null;
+if (!post?._id) {
+	return new Response(null, { status: 404 });
+}
+
+const more = await sanity.loadQuery(morePostQuery, {
+	skip: post._id,
+	offset: 0,
+	limit: 2,
+});
+
+const path = `/post/${slug}`;
+const origin = Astro.locals.siteUrl.origin;
+const ogImage = sanity.resolveOpenGraphImage(post.coverImage ?? undefined);
+const authors = post.author ?? [];
+---
+
+<BaseLayout
+	title={post.title}
+	description={post.excerpt}
+	image={ogImage}
+	type="article"
+	publishedAt={post.date}
+	modifiedAt={post._updatedAt}
+	authors={authors.map((a) => a.title)}
+	canonical={path}
+	schema={[
+		articleSchema(origin, {
+			title: post.title,
+			excerpt: post.excerpt,
+			date: post.date,
+			_updatedAt: post._updatedAt,
+			imageUrl: ogImage?.url,
+			authors,
+		}, path),
+		breadcrumbSchema(origin, [
+			{ name: "Blog", path: "/blog/page/1" },
+			{ name: post.title, path },
+		]),
+	]}
+>
+	<Breadcrumbs links={[{ title: "Blog", href: "/blog/page/1" }, { title: post.title }]} />
+
+	<article>
+		<h1
+			class="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl"
+		>
+			{post.title}
+		</h1>
+		<div class="mb-8 sm:mx-0 md:mb-16">
+			<CoverMedia
+				image={post.coverImage}
+				video={post.videoCloudinary}
+				youtube={post.youtube}
+			/>
+		</div>
+		<div class="mb-6 flex flex-wrap gap-2">
+			{
+				authors.map((author) => (
+					<Avatar
+						name={author.title}
+						href={author.slug ? `/author/${author.slug}` : undefined}
+						coverImage={author.coverImage}
+					/>
+				))
+			}
+		</div>
+		<div class="mb-4 text-lg text-muted-foreground">
+			<FormattedDate dateString={post.date} />
+		</div>
+
+		{
+			post.sponsor && post.sponsor.length > 0 && (
+				<section class="my-10 flex flex-col">
+					<h2 class="mb-4 text-2xl font-bold">Sponsors</h2>
+					<hr class="border-border" />
+					<div class="my-12">
+						<SponsorCard sponsors={post.sponsor} />
+					</div>
+					<hr class="border-border" />
+				</section>
+			)
+		}
+
+		<PortableTextContent value={post.content} class="mx-auto prose-violet lg:prose-xl" />
+	</article>
+
+	{
+		more.length > 0 && (
+			<aside class="mb-32">
+				<SectionHeader title="Recent Posts" href="/blog/page/1" />
+				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
+			</aside>
+		)
+	}
+</BaseLayout>

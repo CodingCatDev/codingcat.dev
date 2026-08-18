@@ -1,0 +1,26 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { MarkProps } from "astro-portabletext/types";
+
+/**
+ * Mark components receive the mark *definition* on `node.markDef`, not on the
+ * node itself — the node is the span being marked.
+ */
+type Props = MarkProps<{ href?: string; blank?: boolean }>;
+
+const { node } = Astro.props;
+
+// stegaClean: href is an attribute — zero-width characters break the URL.
+const href = stegaClean(node.markDef.href) || "#";
+
+// Matches the Next behaviour: anything not starting with "/" is off-site.
+const isExternal = !href.startsWith("/");
+---
+
+<a
+	href={href}
+	rel={isExternal ? "noreferrer noopener" : undefined}
+	target={isExternal ? "_blank" : undefined}
+>
+	<slot />
+</a>

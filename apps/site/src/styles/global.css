@@ -182,3 +182,32 @@
 		animation: none;
 	}
 }
+
+/*
+ * Shiki dual-theme activation. <Code themes={{light,dark}}> emits the dark
+ * colours as `--shiki-dark*` custom properties and needs a rule to apply them;
+ * without this, code blocks stay light-themed inside dark mode.
+ */
+:root.dark .astro-code,
+:root.dark .astro-code span {
+	color: var(--shiki-dark) !important;
+	background-color: var(--shiki-dark-bg) !important;
+	font-style: var(--shiki-dark-font-style) !important;
+	font-weight: var(--shiki-dark-font-weight) !important;
+	text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* Copy-to-clipboard confirmation, driven by the delegated click handler. */
+.copy-code.copied {
+	color: var(--primary);
+}
+
+.copy-code.copied svg {
+	display: none;
+}
+
+.copy-code.copied::after {
+	content: "✓";
+	font-size: 0.875rem;
+	line-height: 1;
+}

@@ -1,0 +1,42 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import { PortableText } from "astro-portabletext";
+import type { Props as PtProps, TypedObject } from "astro-portabletext/types";
+import PtInternalLink from "./PtInternalLink.astro";
+import PtLink from "./PtLink.astro";
+
+type QuoteNode = {
+	_type: "quote";
+	content?: TypedObject[];
+	url?: string;
+};
+
+type Props = PtProps<QuoteNode>;
+
+const { node } = Astro.props;
+
+/**
+ * A local component map rather than the shared one from PortableTextContent:
+ * quote content is plain blocks with link marks only (see the schema), and
+ * importing the shared map would make PortableTextContent and this component
+ * mutually recursive.
+ */
+const components = {
+	mark: {
+		link: PtLink,
+		internalLink: PtInternalLink,
+	},
+};
+
+const cite = stegaClean(node.url) || undefined;
+---
+
+{
+	node.content && (
+		<figure class="my-6">
+			<blockquote cite={cite} class="mt-6 border-l-2 border-primary pl-6 italic">
+				<PortableText value={node.content} components={components} />
+			</blockquote>
+		</figure>
+	)
+}

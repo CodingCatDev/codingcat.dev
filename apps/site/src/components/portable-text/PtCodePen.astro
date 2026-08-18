@@ -1,0 +1,51 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+
+type CodePenNode = { _type: "codepen"; url?: string };
+
+type Props = PtProps<CodePenNode>;
+
+const { node } = Astro.props;
+
+/**
+ * CodePen pen URLs are `https://codepen.io/{user}/pen/{hash}`. The Next
+ * version destructured the split array positionally and would produce
+ * `undefined` segments on any other shape; this validates instead.
+ */
+function embedUrl(raw?: string | null) {
+	if (!raw) {
+		return undefined;
+	}
+	try {
+		const url = new URL(raw);
+		if (!url.hostname.endsWith("codepen.io")) {
+			return undefined;
+		}
+		const [user, , hash] = url.pathname.replace(/^\//, "").split("/");
+		if (!user || !hash) {
+			return undefined;
+		}
+		return `https://codepen.io/${user}/embed/${hash}?height=370&theme-id=dark&default-tab=result`;
+	} catch {
+		return undefined;
+	}
+}
+
+const src = embedUrl(stegaClean(node.url));
+---
+
+{
+	src && (
+		<div class="not-prose my-6">
+			<iframe
+				src={src}
+				height="370"
+				class="w-full rounded-md border border-border"
+				title="CodePen embed"
+				loading="lazy"
+				allowfullscreen
+			/>
+		</div>
+	)
+}

@@ -1,0 +1,78 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import { SOCIAL_ICONS } from "@/lib/social-icons";
+import type { Socials } from "@/lib/sanity/types.gen";
+
+interface Props {
+	socials?: Socials | null;
+	websites?: Array<{
+		site?: string;
+		link?: { href?: string; blank?: boolean };
+	}> | null;
+}
+
+const { socials, websites } = Astro.props;
+
+/**
+ * Values are stored as full URLs. Anything that is not one is dropped — the
+ * Next version rendered a link for every populated key regardless, so a key
+ * with no matching icon produced an empty clickable target.
+ */
+const links = Object.entries(socials ?? {})
+	.map(([key, value]) => {
+		const href = stegaClean(value);
+		const icon = SOCIAL_ICONS[key];
+		if (!href || !icon) {
+			return null;
+		}
+		const isEmail = key === "email";
+		return {
+			key,
+			icon,
+			href: isEmail && !href.startsWith("mailto:") ? `mailto:${href}` : href,
+			external: !isEmail,
+		};
+	})
+	.filter((link) => link !== null);
+
+const sites = (websites ?? [])
+	.map((entry) => ({
+		label: entry.site,
+		href: stegaClean(entry.link?.href),
+	}))
+	.filter((site): site is { label: string | undefined; href: string } =>
+		Boolean(site.href),
+	);
+---
+
+{
+	(links.length > 0 || sites.length > 0) && (
+		<div class="flex flex-wrap items-center gap-3">
+			{links.map((link) => (
+				<a
+					href={link.href}
+					target={link.external ? "_blank" : undefined}
+					rel={link.external ? "noopener noreferrer" : undefined}
+					class="w-6 transition-colors hover:text-primary md:w-8"
+				>
+					<svg class="w-full" viewBox={link.icon.viewBox} fill="currentColor" aria-hidden="true">
+						{link.icon.paths.map((d) => (
+							<path d={d} />
+						))}
+					</svg>
+					<span class="sr-only">{link.icon.label}</span>
+				</a>
+			))}
+			{sites.map((site) => (
+				<a
+					href={site.href}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-sm underline underline-offset-4 hover:text-primary"
+				>
+					{site.label || site.href}
+				</a>
+			))}
+		</div>
+	)
+}

@@ -1,0 +1,55 @@
+---
+import type { Props as PtProps } from "astro-portabletext/types";
+
+type TableNode = {
+	_type: "table";
+	rows?: Array<{ _key: string; cells?: string[] }>;
+};
+
+type Props = PtProps<TableNode>;
+
+const { node } = Astro.props;
+
+/**
+ * Cells render as plain text. The Next version ran every cell through
+ * `react-markdown`; no table block exists in the production dataset, so that
+ * dependency was never exercised. If authors do start writing markdown in
+ * cells it shows as literal text rather than breaking — a visible prompt to
+ * revisit this, and not an HTML injection point in the meantime.
+ *
+ * The first row becomes the header. The Next version emitted every row as
+ * `<td>` inside a bare `<tbody>`, leaving the table without column headers
+ * for screen readers.
+ */
+const rows = node.rows ?? [];
+const [head, ...body] = rows;
+---
+
+{
+	rows.length > 0 && (
+		<div class="not-prose my-6 overflow-x-auto">
+			<table class="w-full border-collapse text-left text-sm">
+				{head && (
+					<thead>
+						<tr>
+							{(head.cells ?? []).map((cell) => (
+								<th class="border border-border bg-muted px-4 py-3 font-semibold">
+									{cell}
+								</th>
+							))}
+						</tr>
+					</thead>
+				)}
+				<tbody>
+					{body.map((row) => (
+						<tr>
+							{(row.cells ?? []).map((cell) => (
+								<td class="border border-border px-4 py-3">{cell}</td>
+							))}
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	)
+}

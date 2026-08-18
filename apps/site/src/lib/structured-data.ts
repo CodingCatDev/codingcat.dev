@@ -64,3 +64,98 @@ export function breadcrumbSchema(
 		})),
 	};
 }
+
+interface ArticleInput {
+	title?: string | null;
+	excerpt?: string | null;
+	date?: string | null;
+	_updatedAt?: string | null;
+	imageUrl?: string;
+	authors?: Array<{ title?: string | null; slug?: string | null }> | null;
+}
+
+export function articleSchema(
+	origin: string,
+	content: ArticleInput,
+	path: string,
+): Node {
+	const url = absoluteUrl(path, origin);
+	const authors = (content.authors ?? [])
+		.filter((a): a is { title: string; slug?: string | null } =>
+			Boolean(a?.title),
+		)
+		.map((a) => ({
+			"@type": "Person",
+			name: a.title,
+			...(a.slug ? { url: absoluteUrl(`/author/${a.slug}`, origin) } : {}),
+		}));
+
+	return {
+		"@type": "Article",
+		"@id": `${url}#article`,
+		headline: content.title ?? undefined,
+		description: content.excerpt ?? undefined,
+		...(content.imageUrl ? { image: content.imageUrl } : {}),
+		...(content.date ? { datePublished: content.date } : {}),
+		...(content._updatedAt ? { dateModified: content._updatedAt } : {}),
+		...(authors.length ? { author: authors } : {}),
+		publisher: { "@id": orgId(origin) },
+		mainEntityOfPage: { "@type": "WebPage", "@id": url },
+		url,
+	};
+}
+
+interface PersonInput {
+	title?: string | null;
+	excerpt?: string | null;
+	imageUrl?: string;
+	socials?: Record<string, unknown> | null;
+	websites?: unknown[] | null;
+}
+
+/** Collect URL-like strings from the loosely-typed socials object and websites array. */
+function collectProfileUrls(
+	socials?: Record<string, unknown> | null,
+	websites?: unknown[] | null,
+): string[] {
+	const urls: string[] = [];
+	const pushIfUrl = (value: unknown) => {
+		if (typeof value === "string" && value.startsWith("http")) {
+			urls.push(value);
+		}
+	};
+	if (socials) {
+		for (const value of Object.values(socials)) {
+			pushIfUrl(value);
+		}
+	}
+	if (Array.isArray(websites)) {
+		for (const entry of websites) {
+			if (entry && typeof entry === "object") {
+				for (const value of Object.values(entry)) {
+					pushIfUrl(value);
+				}
+			}
+		}
+	}
+	return Array.from(new Set(urls));
+}
+
+export function personSchema(
+	origin: string,
+	content: PersonInput,
+	path: string,
+): Node {
+	const url = absoluteUrl(path, origin);
+	const sameAs = collectProfileUrls(content.socials, content.websites);
+
+	return {
+		"@type": "Person",
+		"@id": `${url}#person`,
+		name: content.title ?? undefined,
+		description: content.excerpt ?? undefined,
+		...(content.imageUrl ? { image: content.imageUrl } : {}),
+		...(sameAs.length ? { sameAs } : {}),
+		url,
+	};
+}
