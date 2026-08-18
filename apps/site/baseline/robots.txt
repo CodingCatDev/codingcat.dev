@@ -1,0 +1,7 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+Host: https://codingcat.dev
+Sitemap: https://codingcat.dev/sitemap.xml

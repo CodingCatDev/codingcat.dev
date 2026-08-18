@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "codingcatdev",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-08-01",
+  // nodejs_compat: Sanity client + Portable Text pull Node built-ins.
+  // global_fetch_strictly_public: OG endpoints fetch this site's own origin;
+  // without it those loop back into the same Worker and can deadlock.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  "workers_dev": true,
+  "vars": {
+    "ENVIRONMENT": "dev",
+    "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
+    "PUBLIC_SANITY_DATASET": "dev",
+    "PUBLIC_SANITY_API_VERSION": "2025-09-30",
+    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/dev",
+    "SITE_URL": "https://codingcatdev.workers.dev"
+  },
+
+  // NOTE: bindings are NOT inherited into `env.*`. Every binding added to the
+  // top level must be repeated under env.production, or it will 503 in prod.
+  // D1 binding is intentionally absent until the codingcat.dev Cloudflare
+  // account is available to confirm/create the auth databases.
+  "env": {
+    "production": {
+      "name": "codingcatdev-production",
+      "workers_dev": false,
+      "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+      "vars": {
+        "ENVIRONMENT": "production",
+        "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
+        "PUBLIC_SANITY_DATASET": "production",
+        "PUBLIC_SANITY_API_VERSION": "2025-09-30",
+        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat.dev.sanity.studio/production",
+        "SITE_URL": "https://codingcat.dev"
+      }
+    }
+  }
+}

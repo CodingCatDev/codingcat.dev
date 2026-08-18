@@ -1,0 +1,36 @@
+{
+  "name": "@codingcatdev/site",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro build && wrangler dev",
+    "check": "astro check",
+    "typecheck": "astro check",
+    "lint": "biome check .",
+    "format": "biome format . --write",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.2.1",
+    "@astrojs/react": "^6.0.2",
+    "@sanity/client": "^7.26.2",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/visual-editing-standalone": "^2.0.1",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^7.2.2",
+    "astro-portabletext": "^0.13.0",
+    "groq": "^6.9.2",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@tailwindcss/typography": "^0.5.19",
+    "typescript": "^5.9",
+    "wrangler": "^4.123.0"
+  }
+}
