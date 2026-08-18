@@ -1,0 +1,115 @@
+---
+import { Font } from "astro:assets";
+import "@/styles/global.css";
+
+import DraftModeToggle from "@/components/DraftModeToggle.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import SocialMeta from "@/components/SocialMeta.astro";
+import ThemeScript from "@/components/ThemeScript.astro";
+import { absoluteUrl } from "@/lib/site";
+import {
+	buildGraph,
+	organizationSchema,
+	websiteSchema,
+} from "@/lib/structured-data";
+
+interface Props {
+	title: string;
+	description?: string | null;
+	image?: { url: string; alt?: string; width?: number; height?: number } | null;
+	type?: "website" | "article";
+	publishedAt?: string | null;
+	modifiedAt?: string | null;
+	authors?: Array<string | null | undefined>;
+	canonical?: string | URL;
+	noindex?: boolean;
+	/** Extra JSON-LD nodes merged into the site-wide @graph. */
+	schema?: Array<Record<string, unknown> & { "@type": string }>;
+	/** Full-bleed pages opt out of the default container. */
+	bare?: boolean;
+}
+
+const {
+	title,
+	description,
+	image,
+	type,
+	publishedAt,
+	modifiedAt,
+	authors,
+	canonical,
+	noindex,
+	schema = [],
+	bare = false,
+} = Astro.props;
+
+const origin = Astro.locals.siteUrl.origin;
+const preview = Astro.locals.sanity.preview.enabled;
+
+const graph = buildGraph([
+	organizationSchema(origin, absoluteUrl("/icon.svg", origin)),
+	websiteSchema(origin),
+	...schema,
+]);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		{/* Before the stylesheet, so the theme class is applied without a flash. */}
+		<ThemeScript />
+		<Font cssVariable="--font-inter" preload />
+		<Font cssVariable="--font-nunito" />
+		<SocialMeta
+			title={title}
+			description={description}
+			image={image}
+			type={type}
+			publishedAt={publishedAt}
+			modifiedAt={modifiedAt}
+			authors={authors}
+			canonical={canonical}
+			noindex={noindex || preview}
+		/>
+		<link rel="icon" type="image/svg+xml" href="/icon.svg" />
+		<link rel="icon" sizes="any" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="CodingCat.dev Blog"
+			href="/blog/rss.xml"
+		/>
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="CodingCat.dev Podcasts"
+			href="/podcasts/rss.xml"
+		/>
+		<JsonLd data={graph} />
+		{/* Per-page head extras: rel=prev/next, feed alternates, preloads. */}
+		<slot name="head" />
+	</head>
+	<body class="min-h-dvh">
+		<div class="flex flex-col min-h-dvh">
+			<Header />
+			<main class="flex-1 mt-20">
+				{
+					bare ? (
+						<slot />
+					) : (
+						<div class="container px-5 mx-auto">
+							<slot />
+						</div>
+					)
+				}
+			</main>
+			<Footer />
+		</div>
+		{preview && <DraftModeToggle />}
+	</body>
+</html>

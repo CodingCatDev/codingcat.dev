@@ -1,0 +1,22 @@
+---
+import ContentCard from "@/components/ContentCard.astro";
+import type { ContentListItem } from "@/lib/content";
+
+interface Props {
+	items: ContentListItem[];
+	/** First N cards load eagerly; they are typically above the fold. */
+	priorityCount?: number;
+	class?: string;
+}
+
+const { items, priorityCount = 2, class: className } = Astro.props;
+---
+
+<div
+	class:list={[
+		"grid grid-cols-1 gap-y-20 md:grid-cols-2 md:gap-x-16 md:gap-y-32 lg:gap-x-32",
+		className,
+	]}
+>
+	{items.map((item, index) => <ContentCard item={item} priority={index < priorityCount} />)}
+</div>

@@ -1,0 +1,49 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+
+/**
+ * Replaces the Next `nav-link.tsx` client component. Active-path detection
+ * ran through `usePathname()` there, which forced the whole nav to be a
+ * client island; under SSR the pathname is already known at render time, so
+ * this ships zero JS.
+ */
+interface Props {
+	href: string;
+	class?: string;
+	target?: string;
+	rel?: string;
+	/** Match descendant routes too, e.g. /blog marks /blog/page/2 active. */
+	prefix?: boolean;
+}
+
+const {
+	href,
+	class: className = "",
+	target,
+	rel,
+	prefix = true,
+} = Astro.props;
+
+const cleanHref = stegaClean(href) || "/";
+const current = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const normalized = cleanHref.replace(/\/+$/, "") || "/";
+
+const isExternal = /^https?:\/\//.test(cleanHref);
+const isActive =
+	!isExternal &&
+	(normalized === "/"
+		? current === "/"
+		: prefix
+			? current === normalized || current.startsWith(`${normalized}/`)
+			: current === normalized);
+---
+
+<a
+	href={cleanHref}
+	class:list={[className, isActive && "underline decoration-primary"]}
+	target={target}
+	rel={rel ?? (isExternal ? "noopener noreferrer" : undefined)}
+	aria-current={isActive ? "page" : undefined}
+>
+	<slot />
+</a>

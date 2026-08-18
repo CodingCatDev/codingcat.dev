@@ -1,0 +1,129 @@
+---
+import { settingsQuery } from "@/lib/sanity/queries";
+import NavLink from "./NavLink.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const settings = await Astro.locals.sanity.loadQuery(settingsQuery);
+const navLinks = settings?.navLinks ?? [];
+
+// The Next header split these across a desktop <nav> and a mobile Sheet;
+// `sideOnly` links appear only in the drawer.
+const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
+---
+
+<header
+	class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background"
+>
+	<div class="flex items-center gap-4">
+		<a class="text-lg font-bold md:text-2xl" href="/">CodingCat.dev</a>
+		<nav class="items-center hidden md:flex gap-6" aria-label="Main">
+			{
+				desktopLinks.map((link) => (
+					<NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>
+				))
+			}
+		</nav>
+	</div>
+	<div class="flex items-center gap-2">
+		<a
+			href="/search"
+			class="inline-flex items-center justify-center rounded-md size-9 hover:bg-accent hover:text-accent-foreground transition-colors"
+			aria-label="Search"
+		>
+			<svg
+				class="size-5"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<circle cx="11" cy="11" r="8"></circle>
+				<path d="m21 21-4.3-4.3"></path>
+			</svg>
+		</a>
+		<ThemeToggle />
+		<button
+			type="button"
+			id="nav-drawer-toggle"
+			class="md:hidden inline-flex items-center justify-center rounded-md size-9 hover:bg-accent hover:text-accent-foreground transition-colors"
+			aria-controls="nav-drawer"
+			aria-expanded="false"
+		>
+			<svg
+				class="size-6"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M3 6h18M3 12h18M3 18h18"></path>
+			</svg>
+			<span class="sr-only">Toggle navigation menu</span>
+		</button>
+	</div>
+</header>
+
+<div
+	id="nav-drawer"
+	hidden
+	class="fixed inset-0 z-50 md:hidden bg-background/95 backdrop-blur"
+>
+	<div class="flex items-center justify-end px-6 py-4">
+		<button
+			type="button"
+			id="nav-drawer-close"
+			class="inline-flex items-center justify-center rounded-md size-9 hover:bg-accent"
+			aria-label="Close navigation menu"
+		>
+			<svg
+				class="size-6"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M18 6 6 18M6 6l12 12"></path>
+			</svg>
+		</button>
+	</div>
+	<nav class="grid gap-2 px-6 py-6 text-lg" aria-label="Mobile">
+		{navLinks.map((link) => <NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>)}
+	</nav>
+</div>
+
+<script>
+	const drawer = document.getElementById("nav-drawer");
+	const openButton = document.getElementById("nav-drawer-toggle");
+	const closeButton = document.getElementById("nav-drawer-close");
+
+	const setOpen = (open: boolean) => {
+		if (!drawer) {
+			return;
+		}
+		drawer.hidden = !open;
+		openButton?.setAttribute("aria-expanded", String(open));
+		document.body.style.overflow = open ? "hidden" : "";
+	};
+
+	openButton?.addEventListener("click", () => setOpen(true));
+	closeButton?.addEventListener("click", () => setOpen(false));
+	drawer?.addEventListener("click", (event) => {
+		if (event.target instanceof HTMLAnchorElement) {
+			setOpen(false);
+		}
+	});
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape" && drawer && !drawer.hidden) {
+			setOpen(false);
+		}
+	});
+</script>

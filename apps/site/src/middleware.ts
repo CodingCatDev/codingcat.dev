@@ -1,6 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { env } from "cloudflare:workers";
 import { createSanityContext, PREVIEW_COOKIE } from "@/lib/sanity/context";
+import { resolveSiteUrl } from "@/lib/site";
 
 /**
  * Bindings and vars come from `cloudflare:workers`, not `locals.runtime.env`:
@@ -10,6 +11,14 @@ import { createSanityContext, PREVIEW_COOKIE } from "@/lib/sanity/context";
  * Vite inline them into the deployed Worker bundle.
  */
 export const onRequest = defineMiddleware(async (context, next) => {
+	// `Astro.site` is baked in at build time, but SITE_URL is a per-environment
+	// wrangler var and CI builds once for both. Without this, the dev Worker
+	// would emit canonical and og:url values pointing at production.
+	context.locals.siteUrl = resolveSiteUrl(
+		(env as unknown as Record<string, string | undefined>).SITE_URL,
+		context.site,
+	);
+
 	context.locals.sanity = createSanityContext({
 		env: env as unknown as Record<string, string | undefined>,
 		url: context.url,

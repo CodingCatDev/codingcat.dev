@@ -1,0 +1,54 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { SanityImageSource } from "@sanity/image-url";
+
+interface Props {
+	image?: (SanityImageSource & { alt?: string }) | null;
+	width?: number;
+	height?: number;
+	quality?: number;
+	/** Above-the-fold images opt out of lazy loading. */
+	priority?: boolean;
+	class?: string;
+}
+
+const {
+	image,
+	width = 1920,
+	height = 1080,
+	quality = 80,
+	priority = false,
+	class: className = "w-full h-auto aspect-video rounded-md",
+} = Astro.props;
+
+const src = Astro.locals.sanity
+	.urlForImage(image ?? undefined)
+	?.width(width)
+	.height(height)
+	.quality(quality)
+	.url();
+
+// stegaClean: alt lands in an attribute, where stega's zero-width characters
+// would be read out verbatim by screen readers.
+const alt = stegaClean((image as { alt?: string } | null)?.alt) ?? "";
+---
+
+<div class="transition-shadow duration-200 shadow-md group-hover:shadow-lg sm:mx-0">
+	{
+		src ? (
+			<img
+				class={className}
+				src={src}
+				width={width}
+				height={height}
+				alt={alt}
+				loading={priority ? "eager" : "lazy"}
+				fetchpriority={priority ? "high" : "auto"}
+				decoding={priority ? "sync" : "async"}
+				sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+			/>
+		) : (
+			<div class="bg-muted rounded-md" style="padding-top: 50%" />
+		)
+	}
+</div>

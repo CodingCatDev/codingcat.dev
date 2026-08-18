@@ -1,0 +1,76 @@
+---
+/**
+ * Ported from the Next `paginate-list.tsx`, which used the shadcn Pagination
+ * primitives. Same link structure and same `/{base}/page/{n}` URLs — those
+ * are indexed and must not change.
+ */
+interface Props {
+	base: string;
+	page: number;
+	totalPages: number;
+}
+
+const { base, page, totalPages } = Astro.props;
+
+const href = (n: number) => `/${base}/page/${n}`;
+
+const linkClass =
+	"inline-flex items-center justify-center h-9 min-w-9 px-3 rounded-md text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
+const activeClass = "border border-border bg-accent text-accent-foreground";
+---
+
+{
+	totalPages > 1 && (
+		<nav class="flex justify-center mt-12" aria-label="Pagination">
+			<ul class="flex flex-row items-center gap-1">
+				{page > 1 && (
+					<>
+						<li>
+							<a class={linkClass} href={href(page - 1)} rel="prev">
+								&larr; <span class="ml-1">Previous</span>
+							</a>
+						</li>
+						<li>
+							<a class={linkClass} href={href(1)}>
+								1
+							</a>
+						</li>
+					</>
+				)}
+				{page > 2 && (
+					<li aria-hidden="true" class="px-2 text-muted-foreground">
+						&hellip;
+					</li>
+				)}
+				<li>
+					<a
+						class:list={[linkClass, activeClass]}
+						href={href(page)}
+						aria-current="page"
+					>
+						{page}
+					</a>
+				</li>
+				{page < totalPages - 1 && (
+					<li aria-hidden="true" class="px-2 text-muted-foreground">
+						&hellip;
+					</li>
+				)}
+				{page !== totalPages && (
+					<li>
+						<a class={linkClass} href={href(totalPages)}>
+							{totalPages}
+						</a>
+					</li>
+				)}
+				{page < totalPages && (
+					<li>
+						<a class={linkClass} href={href(page + 1)} rel="next">
+							<span class="mr-1">Next</span> &rarr;
+						</a>
+					</li>
+				)}
+			</ul>
+		</nav>
+	)
+}

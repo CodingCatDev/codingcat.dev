@@ -1,0 +1,28 @@
+---
+/**
+ * Replaces `next-themes`. Runs before first paint to avoid a flash of the
+ * wrong theme; `is:inline` keeps it out of the module graph so it is not
+ * deferred behind hydration.
+ */
+---
+
+<script is:inline>
+	(() => {
+		const KEY = "theme";
+		try {
+			const stored = localStorage.getItem(KEY);
+			const prefersDark = window.matchMedia(
+				"(prefers-color-scheme: dark)",
+			).matches;
+			const dark = stored ? stored === "dark" : prefersDark;
+			document.documentElement.classList.toggle("dark", dark);
+			document.documentElement.style.colorScheme = dark ? "dark" : "light";
+		} catch {
+			// localStorage can throw in private mode; fall back to the media query.
+			const prefersDark = window.matchMedia(
+				"(prefers-color-scheme: dark)",
+			).matches;
+			document.documentElement.classList.toggle("dark", prefersDark);
+		}
+	})();
+</script>

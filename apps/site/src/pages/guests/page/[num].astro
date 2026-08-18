@@ -1,0 +1,44 @@
+---
+import ContentGrid from "@/components/ContentGrid.astro";
+import Pagination from "@/components/Pagination.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { resolvePage } from "@/lib/pagination";
+import { moreGuestQuery, guestCountQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+
+const count = await sanity.loadQuery(guestCountQuery);
+const resolved = resolvePage({
+	raw: Astro.params.num,
+	count,
+	base: "guests",
+	redirect: Astro.redirect,
+});
+if (!resolved.ok) {
+	return resolved.response;
+}
+const { page, totalPages, offset, limit } = resolved.bounds;
+
+const items = await sanity.loadQuery(moreGuestQuery, { skip: "none", offset, limit });
+
+const title = page === 1 ? "Guests" : `Guests — Page ${page}`;
+---
+
+<BaseLayout
+	title={`${title} | CodingCat.dev`}
+	description="Guests who have joined us on the Purrfect Web Development podcast."
+	canonical={`/guests/page/${page}`}
+>
+	<Fragment slot="head">
+		{page > 1 && <link rel="prev" href={`/guests/page/${page - 1}`} />}
+		{page < totalPages && <link rel="next" href={`/guests/page/${page + 1}`} />}
+	</Fragment>
+
+	<div class="mb-32">
+		<SectionHeader title="Guests" showHr={false} />
+		<ContentGrid items={items as ContentListItem[]} />
+		<Pagination base="guests" page={page} totalPages={totalPages} />
+	</div>
+</BaseLayout>

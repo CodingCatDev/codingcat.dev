@@ -1,34 +1,45 @@
 ---
-import "@/styles/global.css";
+import AnimatedHero from "@/components/AnimatedHero.astro";
+import HomeSection from "@/components/HomeSection.astro";
+import PodmatchBadge from "@/components/PodmatchBadge.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { SITE_DESCRIPTION } from "@/lib/site";
 import { homePageQuery } from "@/lib/sanity/queries";
-import type { HomePageQueryResult } from "@/lib/sanity/types.gen";
 
-// No `as` cast: loadQuery preserves the query literal type, and the generated
-// module augmentation maps it to HomePageQueryResult.
-const home = await Astro.locals.sanity.loadQuery(homePageQuery);
+const { sanity } = Astro.locals;
 
-// Compile-time proof that the inferred type is the generated one.
-const _typeCheck: HomePageQueryResult = home;
-void _typeCheck;
+const home = await sanity.loadQuery(homePageQuery);
 
-const latestPosts = home?.latestPosts ?? [];
-const latestPodcasts = home?.latestPodcasts ?? [];
+// The Next version grouped these into pairs with `slice(0, length / 2)` and
+// index arithmetic to build a two-column layout. A plain two-column grid is
+// visually identical and does not silently drop the last item when the count
+// is odd, which the original did.
+const latestPodcasts = (home?.latestPodcasts ?? []) as ContentListItem[];
+const topPodcasts = (home?.topPodcasts ?? []) as ContentListItem[];
+const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>codingcat.dev</title>
-  </head>
-  <body class="p-8">
-    <h1 class="text-2xl font-bold">codingcat.dev</h1>
-    <h2 class="mt-6 text-xl">Latest posts ({latestPosts.length})</h2>
-    <ul>
-      {latestPosts.map((p) => <li><a href={`/post/${p.slug}`}>{p.title}</a></li>)}
-    </ul>
-    <h2 class="mt-6 text-xl">Latest podcasts ({latestPodcasts.length})</h2>
-    <ul>
-      {latestPodcasts.map((p) => <li><a href={`/podcast/${p.slug}`}>{p.title}</a></li>)}
-    </ul>
-  </body>
-</html>
+
+<BaseLayout title="CodingCat.dev — Purrfect Web Development" description={SITE_DESCRIPTION} bare>
+	<AnimatedHero />
+	<div class="flex justify-center -mb-8">
+		<PodmatchBadge />
+	</div>
+	<HomeSection
+		title="Latest Podcasts"
+		description="Check out our latest podcasts."
+		items={latestPodcasts}
+		muted
+	/>
+	<HomeSection
+		title="Top Podcasts"
+		description="Check out our latest and greatest podcast episodes covering a wide range of topics in web development."
+		items={topPodcasts}
+	/>
+	<HomeSection
+		title="From the Blog"
+		description="Check out our latest blog posts on a variety of web development topics."
+		items={latestPosts}
+		muted
+	/>
+</BaseLayout>

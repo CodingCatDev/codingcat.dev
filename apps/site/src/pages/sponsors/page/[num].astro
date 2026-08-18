@@ -1,0 +1,44 @@
+---
+import ContentGrid from "@/components/ContentGrid.astro";
+import Pagination from "@/components/Pagination.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { resolvePage } from "@/lib/pagination";
+import { moreSponsorQuery, sponsorCountQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+
+const count = await sanity.loadQuery(sponsorCountQuery);
+const resolved = resolvePage({
+	raw: Astro.params.num,
+	count,
+	base: "sponsors",
+	redirect: Astro.redirect,
+});
+if (!resolved.ok) {
+	return resolved.response;
+}
+const { page, totalPages, offset, limit } = resolved.bounds;
+
+const items = await sanity.loadQuery(moreSponsorQuery, { skip: "none", offset, limit });
+
+const title = page === 1 ? "Sponsors" : `Sponsors — Page ${page}`;
+---
+
+<BaseLayout
+	title={`${title} | CodingCat.dev`}
+	description="The sponsors who make CodingCat.dev possible."
+	canonical={`/sponsors/page/${page}`}
+>
+	<Fragment slot="head">
+		{page > 1 && <link rel="prev" href={`/sponsors/page/${page - 1}`} />}
+		{page < totalPages && <link rel="next" href={`/sponsors/page/${page + 1}`} />}
+	</Fragment>
+
+	<div class="mb-32">
+		<SectionHeader title="Sponsors" showHr={false} />
+		<ContentGrid items={items as ContentListItem[]} />
+		<Pagination base="sponsors" page={page} totalPages={totalPages} />
+	</div>
+</BaseLayout>

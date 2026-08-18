@@ -1,0 +1,90 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import { SITE_NAME } from "@/lib/site";
+
+/**
+ * Every value here lands in a `content` attribute, so all of it is
+ * stegaClean'd. Zero-width characters are invisible in a rendered page and
+ * corrupting in an OG scrape or a canonical URL.
+ */
+interface Props {
+	title: string;
+	description?: string | null;
+	image?: { url: string; alt?: string; width?: number; height?: number } | null;
+	type?: "website" | "article";
+	publishedAt?: string | null;
+	modifiedAt?: string | null;
+	authors?: Array<string | null | undefined>;
+	canonical?: string | URL;
+	noindex?: boolean;
+}
+
+const {
+	title,
+	description,
+	image,
+	type = "website",
+	publishedAt,
+	modifiedAt,
+	authors = [],
+	canonical = Astro.url,
+	noindex = false,
+} = Astro.props;
+
+// Per-request, not `Astro.site`: the origin differs between the dev and
+// production Workers but the build is shared.
+const site = Astro.locals.siteUrl;
+const canonicalUrl = new URL(
+	stegaClean(typeof canonical === "string" ? canonical : canonical.pathname),
+	site,
+).href;
+
+const cleanTitle = stegaClean(title) ?? SITE_NAME;
+const cleanDescription = stegaClean(description) ?? undefined;
+const imageUrl = image?.url ? new URL(stegaClean(image.url), site).href : undefined;
+---
+
+<title>{cleanTitle}</title>
+{cleanDescription && <meta name="description" content={cleanDescription} />}
+<link rel="canonical" href={canonicalUrl} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={cleanTitle} />
+{cleanDescription && <meta property="og:description" content={cleanDescription} />}
+<meta property="og:url" content={canonicalUrl} />
+{
+	imageUrl && (
+		<>
+			<meta property="og:image" content={imageUrl} />
+			{image?.width && <meta property="og:image:width" content={String(image.width)} />}
+			{image?.height && <meta property="og:image:height" content={String(image.height)} />}
+			{image?.alt && <meta property="og:image:alt" content={stegaClean(image.alt)} />}
+		</>
+	)
+}
+
+<meta name="twitter:card" content={imageUrl ? "summary_large_image" : "summary"} />
+<meta name="twitter:site" content="@CodingCatDev" />
+<meta name="twitter:title" content={cleanTitle} />
+{cleanDescription && <meta name="twitter:description" content={cleanDescription} />}
+{imageUrl && <meta name="twitter:image" content={imageUrl} />}
+
+{
+	type === "article" && (
+		<>
+			{publishedAt && (
+				<meta property="article:published_time" content={stegaClean(publishedAt)} />
+			)}
+			{modifiedAt && (
+				<meta property="article:modified_time" content={stegaClean(modifiedAt)} />
+			)}
+			{authors
+				.filter((name): name is string => Boolean(name))
+				.map((name) => (
+					<meta property="article:author" content={stegaClean(name)} />
+				))}
+		</>
+	)
+}
