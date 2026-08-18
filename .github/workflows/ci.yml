@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      # node-version-file (not a bare "22") is what actually enforces the
+      # >=22.12 floor required by sanity 6 / @sanity/ui 4.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint (site)
+        run: pnpm --filter @codingcatdev/site lint
+
+      - name: Typecheck (site)
+        run: pnpm --filter @codingcatdev/site typecheck
+
+      - name: Typecheck (studio)
+        run: pnpm --filter @codingcatdev/sanity exec tsc --noEmit
+
+      - name: Build site
+        run: pnpm --filter @codingcatdev/site build
+
+      - name: Build studio
+        run: pnpm --filter @codingcatdev/sanity build
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: production
+
+      # extract.json is the single source of truth for typegen. If it drifts
+      # from the schema, generated types silently go stale — which is how three
+      # divergent copies accumulated before.
+      - name: Verify extract.json is current
+        run: |
+          pnpm --filter @codingcatdev/sanity typegen:extract
+          if ! git diff --quiet -- apps/sanity/extract.json; then
+            echo "::error::apps/sanity/extract.json is stale. Run 'pnpm typegen' and commit the result."
+            git diff --stat -- apps/sanity/extract.json
+            exit 1
+          fi
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: production

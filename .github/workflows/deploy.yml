@@ -3,6 +3,10 @@ name: Deploy Sanity Studio
 on:
   push:
     branches: [dev, main]
+    paths:
+      - "apps/sanity/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy.yml"
 
 jobs:
   deploy-dev:
@@ -17,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
           cache: "pnpm"
 
       - name: Install dependencies
@@ -42,7 +46,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
           cache: "pnpm"
 
       - name: Install dependencies

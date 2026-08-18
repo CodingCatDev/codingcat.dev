@@ -1,5 +1,26 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"defaultBranch": "main",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.js",
+			"**/*.mjs",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.astro",
+			"!**/.wrangler",
+			"!src/lib/sanity/types.gen.ts",
+			"!worker-configuration.d.ts",
+			"!baseline"
+		]
+	},
 	"formatter": {
 		"enabled": true,
 		"useEditorconfig": true
@@ -20,35 +41,27 @@
 				"noUnusedFunctionParameters": "warn"
 			},
 			"style": {
-				"noUnusedTemplateLiteral": {
-					"level": "error",
-					"fix": "safe"
-				},
+				"noUnusedTemplateLiteral": { "level": "error", "fix": "safe" },
 				"noNonNullAssertion": "warn",
 				"useBlockStatements": "error"
-			},      
+			},
 			"a11y": {
 				"noSvgWithoutTitle": "off"
 			}
 		}
 	},
-	"organizeImports": {
-		"enabled": true
-	},
-	"files": {
-		"ignore": ["node_modules/**", "sanity/types.ts", "supabase/**", "playwright-report/**", "test-results/**"]
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
 	},
 	"javascript": {
-		"jsxRuntime": "automatic",
+		"jsxRuntime": "transparent",
 		"formatter": {
 			"trailingCommas": "all",
 			"semicolons": "always"
 		}
-	},
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"defaultBranch": "main",
-		"useIgnoreFile": true
 	}
 }
