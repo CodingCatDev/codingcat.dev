@@ -31,14 +31,29 @@ never by checking `dev` out over the working tree.
   frontmatter, so `defineQuery` calls in `.astro` files are silently skipped.
 - **Never read secrets from `import.meta.env`.** Vite inlines non-`PUBLIC_` vars
   into the server bundle, baking them into the deployed Worker script. Read them
-  per-request from `locals.runtime.env`.
+  from `import { env } from "cloudflare:workers"` — `@astrojs/cloudflare` v14
+  reduced `Runtime` to `{ cfContext }` and deprecated `locals.runtime`.
 - **Cloudflare bindings are not inherited into `env.production`.** Anything added
   to the top level of `wrangler.jsonc` must be repeated there.
+- **The environment is chosen at BUILD time, via `CLOUDFLARE_ENV`.** The adapter
+  flattens `wrangler.jsonc` into `dist/server/wrangler.json` and writes
+  `.wrangler/deploy/config.json`, which redirects wrangler away from the source
+  config — so `wrangler deploy --env production` on a default build silently
+  ships the *dev* dataset under the *dev* worker name. Use
+  `pnpm --filter @codingcatdev/site build:production`.
+- **`Astro.site` is baked in at build time**, so it cannot carry a per-env
+  origin. Canonicals, `og:url`, feeds and the sitemap read `Astro.locals.siteUrl`,
+  resolved per request from the `SITE_URL` var in middleware.
 - **`stegaClean` anything bound to an attribute**, `<meta>`, JSON-LD, or XML.
   Stega's zero-width characters are harmless in text nodes and corrupting in
   `href`, `src`, and feeds.
 - **`@sanity/icons` v5 has no root-entry icon exports.** Import from subpaths:
   `import {UserIcon} from "@sanity/icons/User"`.
+- **`astro-portabletext` uses singular `type` / `block` / `mark` keys**, and mark
+  components read the mark definition from `node.markDef`, not `node`. Both fail
+  silently — the component simply never runs.
+- **A self-closing `<script />` in an `.astro` file breaks props inference**, so
+  `Astro.props` degrades to `Record<string, any>`. Use paired tags.
 - `apps/sanity/plugins/podcast-rss/` is vendored, not an npm dep — see its README.
 
 ## Agent skills
