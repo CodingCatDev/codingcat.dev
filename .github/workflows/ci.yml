@@ -122,15 +122,16 @@ jobs:
           echo "- **Target Worker**: \`codingcatdev-dev\`" >> $GITHUB_STEP_SUMMARY
 
           if [ -n "$PREVIEW_URL" ]; then
-            gh pr comment ${{ github.event.pull_request.number }} --body "### ⚡ Cloudflare Worker Preview Ready!
-
-| Environment | URL |
-|---|---|
-| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |
-| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |
-
-- **Worker Version ID**: \`${VERSION_ID}\`
-- **Protection**: Restricted to \`@codingcat.dev\` accounts via Cloudflare Zero Trust Access"
+            echo "### ⚡ Cloudflare Worker Preview Ready!" > pr_comment.md
+            echo "" >> pr_comment.md
+            echo "| Environment | URL |" >> pr_comment.md
+            echo "|---|---|" >> pr_comment.md
+            echo "| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |" >> pr_comment.md
+            echo "| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |" >> pr_comment.md
+            echo "" >> pr_comment.md
+            echo "- **Worker Version ID**: \`${VERSION_ID}\`" >> pr_comment.md
+            echo "- **Protection**: Restricted to \`@codingcat.dev\` accounts via Cloudflare Zero Trust Access" >> pr_comment.md
+            gh pr comment ${{ github.event.pull_request.number }} --body-file pr_comment.md
           fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
