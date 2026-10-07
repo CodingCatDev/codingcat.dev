@@ -38,7 +38,7 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
       - name: Deploy Sanity Blueprints
-        run: npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
+        run: npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} || npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --new-stack-name ${{ vars.SANITY_STUDIO_DATASET }}
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -73,7 +73,7 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
       - name: Deploy Sanity Blueprints
-        run: npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
+        run: npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} || npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --new-stack-name ${{ vars.SANITY_STUDIO_DATASET }}
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
