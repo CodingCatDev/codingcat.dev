@@ -9,6 +9,8 @@ export default defineBlueprint({
 				on: ["create", "update"],
 				filter: '_type in ["post", "podcast"] && !(_id in path("drafts.**"))',
 			},
+			runtime: "nodejs22.x",
+			timeout: 30,
 		}),
 	],
 });
