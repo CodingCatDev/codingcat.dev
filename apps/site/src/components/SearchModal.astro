@@ -1,0 +1,421 @@
+---
+// SearchModal.astro — Accessible semantic search modal dialog
+---
+
+<dialog
+	id="search-modal"
+	class="fixed inset-0 m-auto z-50 w-full max-w-2xl rounded-2xl border border-border bg-card p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-xs text-foreground max-h-[85vh] flex-col overflow-hidden transition-all duration-150 open:flex"
+	aria-labelledby="search-modal-title"
+>
+	<!-- Modal Header & Search Bar -->
+	<div class="flex items-center border-b border-border px-4 py-3 gap-3 bg-muted/20">
+		<svg
+			class="size-5 shrink-0 text-muted-foreground"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<circle cx="11" cy="11" r="8"></circle>
+			<path d="m21 21-4.3-4.3"></path>
+		</svg>
+
+		<label for="search-modal-input" id="search-modal-title" class="sr-only">
+			Search CodingCat.dev
+		</label>
+
+		<input
+			type="search"
+			id="search-modal-input"
+			autocomplete="off"
+			placeholder="Search posts, podcasts, authors... (⌘K)"
+			class="w-full bg-transparent text-base md:text-lg placeholder:text-muted-foreground focus:outline-none"
+		/>
+
+		<!-- Loading spinner -->
+		<div
+			id="search-modal-spinner"
+			class="hidden size-4 shrink-0 animate-spin rounded-full border-2 border-primary border-r-transparent"
+			role="status"
+			aria-label="Searching"
+		></div>
+
+		<!-- Clear button -->
+		<button
+			type="button"
+			id="search-modal-clear"
+			class="hidden text-muted-foreground hover:text-foreground size-6 items-center justify-center rounded-md"
+			aria-label="Clear query"
+		>
+			<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="18" y1="6" x2="6" y2="18"></line>
+				<line x1="6" y1="6" x2="18" y2="18"></line>
+			</svg>
+		</button>
+
+		<!-- Close button / ESC badge -->
+		<button
+			type="button"
+			id="search-modal-close"
+			class="rounded-md border border-border px-2 py-0.5 text-xs font-semibold text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+			aria-label="Close search"
+		>
+			ESC
+		</button>
+	</div>
+
+	<!-- Content Type Filter Pills -->
+	<div class="flex items-center gap-1.5 border-b border-border/50 px-4 py-2 text-xs overflow-x-auto bg-muted/10">
+		<span class="text-muted-foreground font-medium uppercase tracking-wider text-[11px] mr-1">Filter:</span>
+		<button
+			type="button"
+			class="modal-filter-pill active-modal-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-primary text-primary-foreground transition-colors cursor-pointer"
+			data-type="all"
+		>
+			All
+		</button>
+		<button
+			type="button"
+			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+			data-type="post"
+		>
+			Posts
+		</button>
+		<button
+			type="button"
+			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+			data-type="podcast"
+		>
+			Podcasts
+		</button>
+		<button
+			type="button"
+			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+			data-type="author"
+		>
+			Authors
+		</button>
+		<button
+			type="button"
+			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+			data-type="guest"
+		>
+			Guests
+		</button>
+	</div>
+
+	<!-- Body: Results or Suggestion States -->
+	<div class="flex-1 overflow-y-auto p-3 min-h-[220px]">
+		<!-- Initial Empty State -->
+		<div id="modal-state-initial" class="flex flex-col items-center justify-center py-10 text-center">
+			<p class="text-sm text-muted-foreground mb-4">
+				Start typing to search tutorials, podcast episodes, authors, and guests.
+			</p>
+			<div class="flex flex-wrap justify-center items-center gap-1.5 max-w-md">
+				<span class="text-xs text-muted-foreground">Try:</span>
+				{
+					["Astro", "Cloudflare", "Sanity", "Next.js", "AI"].map((tag) => (
+						<button
+							type="button"
+							class="modal-tag-suggestion text-xs px-2 py-0.5 rounded-md border border-border bg-muted/40 hover:bg-accent transition-colors cursor-pointer"
+							data-tag={tag}
+						>
+							{tag}
+						</button>
+					))
+				}
+			</div>
+		</div>
+
+		<!-- No Results State -->
+		<div id="modal-state-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
+			<p class="text-sm font-semibold text-foreground mb-1" id="modal-empty-msg">No results found</p>
+			<p class="text-xs text-muted-foreground">Try broader search terms or check spelling.</p>
+		</div>
+
+		<!-- Results List -->
+		<ul
+			id="modal-results-list"
+			class="hidden flex flex-col gap-1.5 list-none m-0 p-0"
+			role="listbox"
+			aria-label="Search suggestions"
+		>
+		</ul>
+	</div>
+
+	<!-- Footer with Keyboard Hints -->
+	<div class="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground bg-muted/20">
+		<div class="flex items-center gap-3">
+			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↑</kbd> <kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↓</kbd> navigate</span>
+			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↵</kbd> select</span>
+			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">esc</kbd> close</span>
+		</div>
+		<span id="modal-results-count" class="font-medium text-xs"></span>
+	</div>
+</dialog>
+
+<script>
+	interface SearchHit {
+		id: string;
+		type: string;
+		title: string;
+		slug: string;
+		href: string;
+		excerpt?: string;
+		date?: string;
+	}
+
+	interface ApiResponse {
+		query: string;
+		type?: string;
+		total: number;
+		hits: SearchHit[];
+		semantic: boolean;
+	}
+
+	const modal = document.getElementById("search-modal") as HTMLDialogElement | null;
+	const input = document.getElementById("search-modal-input") as HTMLInputElement | null;
+	const clearBtn = document.getElementById("search-modal-clear");
+	const closeBtn = document.getElementById("search-modal-close");
+	const spinner = document.getElementById("search-modal-spinner");
+	const resultsList = document.getElementById("modal-results-list");
+	const initialView = document.getElementById("modal-state-initial");
+	const emptyView = document.getElementById("modal-state-empty");
+	const emptyMsg = document.getElementById("modal-empty-msg");
+	const countView = document.getElementById("modal-results-count");
+
+	let currentType = "all";
+	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+	let abortController: AbortController | null = null;
+	let activeIndex = -1;
+	let currentHits: SearchHit[] = [];
+
+	function openModal() {
+		if (!modal) return;
+		if (!modal.open) {
+			modal.showModal();
+			document.body.style.overflow = "hidden";
+			setTimeout(() => input?.focus(), 50);
+		}
+	}
+
+	function closeModal() {
+		if (!modal) return;
+		if (modal.open) {
+			modal.close();
+			document.body.style.overflow = "";
+		}
+	}
+
+	// Expose to window for triggers from header or buttons
+	(window as unknown as { openSearchModal?: () => void }).openSearchModal = openModal;
+
+	// Global keyboard shortcuts (⌘K or Ctrl+K)
+	document.addEventListener("keydown", (e) => {
+		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+			e.preventDefault();
+			if (modal?.open) {
+				closeModal();
+			} else {
+				openModal();
+			}
+		}
+	});
+
+	// Close on backdrop click
+	modal?.addEventListener("click", (e) => {
+		const rect = modal.getBoundingClientRect();
+		const isInDialog =
+			rect.top <= e.clientY &&
+			e.clientY <= rect.top + rect.height &&
+			rect.left <= e.clientX &&
+			e.clientX <= rect.left + rect.width;
+		if (!isInDialog) {
+			closeModal();
+		}
+	});
+
+	closeBtn?.addEventListener("click", closeModal);
+	modal?.addEventListener("close", () => {
+		document.body.style.overflow = "";
+	});
+
+	function getBadgeClasses(type: string): { label: string; badgeClass: string } {
+		switch (type) {
+			case "post":
+				return { label: "Post", badgeClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" };
+			case "podcast":
+				return { label: "Podcast", badgeClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" };
+			case "author":
+				return { label: "Author", badgeClass: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" };
+			case "guest":
+				return { label: "Guest", badgeClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" };
+			default:
+				return { label: type || "Content", badgeClass: "bg-secondary text-secondary-foreground border-border" };
+		}
+	}
+
+	function renderHits(hits: SearchHit[]) {
+		currentHits = hits;
+		activeIndex = -1;
+
+		if (!resultsList) return;
+		resultsList.innerHTML = "";
+
+		hits.forEach((hit, idx) => {
+			const badge = getBadgeClasses(hit.type);
+			const li = document.createElement("li");
+			li.setAttribute("role", "option");
+			li.id = `search-item-${idx}`;
+
+			li.innerHTML = `
+				<a
+					href="${hit.href}"
+					data-index="${idx}"
+					class="search-result-item flex flex-col gap-1 rounded-xl p-3 hover:bg-accent transition-colors focus:bg-accent focus:outline-none cursor-pointer border border-transparent hover:border-border"
+				>
+					<div class="flex items-center justify-between gap-2">
+						<span class="font-semibold text-sm line-clamp-1 text-foreground">${hit.title}</span>
+						<span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${badge.badgeClass}">
+							${badge.label}
+						</span>
+					</div>
+					${hit.excerpt ? `<p class="text-xs text-muted-foreground line-clamp-1">${hit.excerpt}</p>` : ""}
+				</a>
+			`;
+
+			resultsList.appendChild(li);
+		});
+
+		resultsList.classList.remove("hidden");
+		initialView?.classList.add("hidden");
+		emptyView?.classList.add("hidden");
+	}
+
+	function highlightActive(index: number) {
+		const items = document.querySelectorAll(".search-result-item");
+		items.forEach((item, i) => {
+			if (i === index) {
+				item.classList.add("bg-accent", "border-primary/40");
+				item.scrollIntoView({ block: "nearest" });
+			} else {
+				item.classList.remove("bg-accent", "border-primary/40");
+			}
+		});
+	}
+
+	async function performSearch(q: string, type: string) {
+		const trimmed = q.trim();
+		if (!trimmed || trimmed.length < 2) {
+			if (resultsList) resultsList.classList.add("hidden");
+			if (emptyView) emptyView.classList.add("hidden");
+			if (initialView) initialView.classList.remove("hidden");
+			if (countView) countView.textContent = "";
+			if (spinner) spinner.classList.add("hidden");
+			currentHits = [];
+			return;
+		}
+
+		if (abortController) abortController.abort();
+		abortController = new AbortController();
+
+		if (spinner) spinner.classList.remove("hidden");
+
+		try {
+			const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}&type=${encodeURIComponent(type)}`, {
+				signal: abortController.signal,
+			});
+
+			if (!res.ok) throw new Error("Search failed");
+			const data = (await res.json()) as ApiResponse;
+
+			if (spinner) spinner.classList.add("hidden");
+
+			if (data.hits && data.hits.length > 0) {
+				renderHits(data.hits);
+				if (countView) countView.textContent = `${data.total} result${data.total === 1 ? "" : "s"}`;
+			} else {
+				if (resultsList) resultsList.classList.add("hidden");
+				if (initialView) initialView.classList.add("hidden");
+				if (emptyView) {
+					emptyView.classList.remove("hidden");
+					if (emptyMsg) emptyMsg.textContent = `No results found for "${trimmed}"`;
+				}
+				if (countView) countView.textContent = "0 results";
+				currentHits = [];
+			}
+		} catch (err: unknown) {
+			if (err instanceof Error && err.name === "AbortError") return;
+			if (spinner) spinner.classList.add("hidden");
+			console.warn("Search fetch error:", err);
+		}
+	}
+
+	function handleInput() {
+		const val = input?.value ?? "";
+		if (clearBtn) clearBtn.classList.toggle("hidden", !val);
+
+		if (debounceTimer) clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			performSearch(val, currentType);
+		}, 200);
+	}
+
+	input?.addEventListener("input", handleInput);
+
+	clearBtn?.addEventListener("click", () => {
+		if (input) {
+			input.value = "";
+			input.focus();
+			handleInput();
+		}
+	});
+
+	// Arrow key navigation inside input
+	input?.addEventListener("keydown", (e) => {
+		if (currentHits.length === 0) return;
+
+		if (e.key === "ArrowDown") {
+			e.preventDefault();
+			activeIndex = (activeIndex + 1) % currentHits.length;
+			highlightActive(activeIndex);
+		} else if (e.key === "ArrowUp") {
+			e.preventDefault();
+			activeIndex = (activeIndex - 1 + currentHits.length) % currentHits.length;
+			highlightActive(activeIndex);
+		} else if (e.key === "Enter" && activeIndex >= 0 && currentHits[activeIndex]) {
+			e.preventDefault();
+			window.location.href = currentHits[activeIndex].href;
+		}
+	});
+
+	// Filter pill buttons
+	document.querySelectorAll(".modal-filter-pill").forEach((pill) => {
+		pill.addEventListener("click", () => {
+			document.querySelectorAll(".modal-filter-pill").forEach((p) => {
+				p.classList.remove("active-modal-pill", "bg-primary", "text-primary-foreground");
+				p.classList.add("bg-card", "text-foreground");
+			});
+			pill.classList.add("active-modal-pill", "bg-primary", "text-primary-foreground");
+			pill.classList.remove("bg-card", "text-foreground");
+
+			currentType = pill.getAttribute("data-type") || "all";
+			performSearch(input?.value || "", currentType);
+		});
+	});
+
+	// Suggestion tag clicks
+	document.querySelectorAll(".modal-tag-suggestion").forEach((tagBtn) => {
+		tagBtn.addEventListener("click", () => {
+			const tag = tagBtn.getAttribute("data-tag");
+			if (tag && input) {
+				input.value = tag;
+				input.focus();
+				handleInput();
+			}
+		});
+	});
+</script>

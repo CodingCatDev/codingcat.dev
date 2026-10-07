@@ -1,0 +1,48 @@
+---
+import AjHeadphones from "@/components/icons/AjHeadphones.astro";
+import AjPrimaryAlt from "@/components/icons/AjPrimaryAlt.astro";
+import { HERO_ICONS } from "@/lib/hero-icons";
+
+/**
+ * Ported from the Next `animated-hero.tsx`. Its only state was `isHovered`,
+ * driving a transform on the two paw marks — expressed here with
+ * `group-hover:`, so the hero ships no JavaScript at all.
+ */
+---
+
+<div class="relative w-full h-[500px] overflow-hidden">
+	<div class="absolute inset-0 grid grid-cols-4 grid-rows-3 gap-4" aria-hidden="true">
+		{
+			HERO_ICONS.map((icon, index) => (
+				<div
+					class="flex items-center justify-center text-muted-foreground/20 animate-float"
+					style={`animation-delay: ${index * 0.5}s`}
+				>
+					<svg class="size-16" viewBox={icon.viewBox} fill="currentColor">
+						{icon.paths.map((d) => (
+							<path d={d} />
+						))}
+					</svg>
+				</div>
+			))
+		}
+	</div>
+	<div class="relative z-10 flex flex-col items-center justify-center h-full space-y-4">
+		<div class="group relative bg-background/80 p-8 rounded-lg">
+			<h1 class="text-4xl font-bold tracking-tighter text-center sm:text-5xl md:text-6xl">
+				CodingCat.dev Podcast
+			</h1>
+			<p class="max-w-[600px] text-center text-muted-foreground md:text-xl/relaxed">
+				Purrfect Podcast for Web Developers
+			</p>
+			<div class="absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg pointer-events-none">
+				<AjHeadphones
+					cls="absolute w-24 h-24 -top-12 -right-12 transition-transform duration-500 animate-paw-one group-hover:animate-none group-hover:translate-x-32 group-hover:-translate-y-32 group-hover:rotate-45"
+				/>
+				<AjPrimaryAlt
+					cls="absolute w-24 h-24 -bottom-12 -left-12 transition-transform duration-500 animate-paw-two group-hover:animate-none group-hover:-translate-x-32 group-hover:translate-y-32 group-hover:-rotate-45"
+				/>
+			</div>
+		</div>
+	</div>
+</div>

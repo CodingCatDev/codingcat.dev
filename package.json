@@ -1,12 +1,22 @@
 {
   "private": true,
-  "scripts": {
-    "dev": "pnpm --filter @codingcatdev/web dev",
-    "dev:studio": "pnpm --filter @codingcatdev/sanity dev",
-    "build": "pnpm --filter @codingcatdev/web build",
-    "build:studio": "pnpm --filter @codingcatdev/sanity build",
-    "deploy": "pnpm --filter @codingcatdev/web deploy",
-    "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy"
+  "engines": {
+    "node": ">=22.12"
   },
-  "packageManager": "pnpm@10.33.0"
+  "scripts": {
+    "dev": "pnpm --filter @codingcatdev/site dev",
+    "dev:dashboard": "pnpm --filter @codingcatdev/web dev",
+    "dev:studio": "pnpm --filter @codingcatdev/sanity dev",
+    "build": "pnpm --filter @codingcatdev/site build",
+    "build:dashboard": "pnpm --filter @codingcatdev/web build",
+    "build:studio": "pnpm --filter @codingcatdev/sanity build",
+    "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
+    "lint": "pnpm --filter @codingcatdev/site lint",
+    "typecheck": "pnpm --filter @codingcatdev/site typecheck",
+    "typegen": "pnpm --filter @codingcatdev/sanity typegen",
+    "build:production": "pnpm --filter @codingcatdev/site build:production",
+    "preview": "pnpm --filter @codingcatdev/site preview",
+    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e"
+  },
+  "packageManager": "pnpm@10.34.1"
 }

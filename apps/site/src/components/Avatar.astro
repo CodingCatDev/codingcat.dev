@@ -1,0 +1,65 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { SanityImageSource } from "@sanity/image-url";
+
+interface Props {
+	name?: string | null;
+	href?: string | null;
+	coverImage?: SanityImageSource | null;
+	imgSize?: string;
+	width?: number;
+	height?: number;
+}
+
+const {
+	name,
+	href,
+	coverImage,
+	imgSize = "w-12 h-12 mr-4",
+	width = 48,
+	height = 48,
+} = Astro.props;
+
+const src = Astro.locals.sanity
+	.urlForImage(coverImage ?? undefined)
+	?.width(width)
+	.height(height)
+	.url();
+
+// stegaClean: href is an attribute; zero-width characters break the URL.
+const cleanHref = stegaClean(href);
+---
+
+{
+	src &&
+		(cleanHref ? (
+			<a class="flex items-center text-xl" href={cleanHref}>
+				<div class={imgSize}>
+					<img
+						class="w-full h-auto aspect-square rounded-md object-cover"
+						src={src}
+						width={width}
+						height={height}
+						alt={stegaClean(name) ?? ""}
+						loading="lazy"
+						decoding="async"
+					/>
+				</div>
+				{name && (
+					<div class="text-xl font-bold text-pretty hover:underline">{name}</div>
+				)}
+			</a>
+		) : (
+			<div class={imgSize}>
+				<img
+					class="w-full h-auto aspect-square rounded-md object-cover"
+					src={src}
+					width={width}
+					height={height}
+					alt={stegaClean(name) ?? ""}
+					loading="lazy"
+					decoding="async"
+				/>
+			</div>
+		))
+}

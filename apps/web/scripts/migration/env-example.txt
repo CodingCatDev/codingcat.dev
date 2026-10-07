@@ -1,0 +1,14 @@
+# Sanity credentials (required)
+SANITY_PROJECT_ID=your_project_id
+SANITY_DATASET=dev
+SANITY_TOKEN=your_sanity_token_with_write_access
+
+# Cloudinary cloud name (optional, defaults to "ajonp")
+CLOUDINARY_CLOUD_NAME=ajonp
+
+# Migration options (all optional)
+# Max parallel uploads (default: 5)
+CONCURRENCY=5
+
+# Set to "true" to preview changes without writing anything
+DRY_RUN=false

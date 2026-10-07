@@ -1,0 +1,6 @@
+dist/
+.astro/
+.wrangler/
+.dev.vars
+worker-configuration.d.ts
+src/lib/sanity/types.gen.ts

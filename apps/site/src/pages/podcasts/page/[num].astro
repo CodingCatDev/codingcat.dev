@@ -1,0 +1,44 @@
+---
+import ContentGrid from "@/components/ContentGrid.astro";
+import Pagination from "@/components/Pagination.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { resolvePage } from "@/lib/pagination";
+import { morePodcastQuery, podcastCountQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+
+const count = await sanity.loadQuery(podcastCountQuery);
+const resolved = resolvePage({
+	raw: Astro.params.num,
+	count,
+	base: "podcasts",
+	redirect: Astro.redirect,
+});
+if (!resolved.ok) {
+	return resolved.response;
+}
+const { page, totalPages, offset, limit } = resolved.bounds;
+
+const items = await sanity.loadQuery(morePodcastQuery, { skip: "none", offset, limit });
+
+const title = page === 1 ? "Podcasts" : `Podcasts — Page ${page}`;
+---
+
+<BaseLayout
+	title={`${title} | CodingCat.dev`}
+	description="Purrfect Web Development podcast episodes, interviews, and conversations."
+	canonical={`/podcasts/page/${page}`}
+>
+	<Fragment slot="head">
+		{page > 1 && <link rel="prev" href={`/podcasts/page/${page - 1}`} />}
+		{page < totalPages && <link rel="next" href={`/podcasts/page/${page + 1}`} />}
+	</Fragment>
+
+	<div class="mb-32">
+		<SectionHeader title="Podcasts" showHr={false} />
+		<ContentGrid items={items as ContentListItem[]} />
+		<Pagination base="podcasts" page={page} totalPages={totalPages} />
+	</div>
+</BaseLayout>

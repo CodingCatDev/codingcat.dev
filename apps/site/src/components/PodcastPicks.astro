@@ -1,0 +1,86 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+
+interface Pick {
+	name?: string | null;
+	site?: string | null;
+	user?: { title?: string | null } | null;
+}
+
+interface Props {
+	picks?: Array<Pick | null> | null;
+}
+
+const { picks } = Astro.props;
+
+// Group by the picking guest, alphabetically — same as the Next version, but
+// without the shadcn Card/Table primitives it used for what is a list.
+const grouped = new Map<string, Pick[]>();
+for (const pick of picks ?? []) {
+	const author = pick?.user?.title;
+	if (!pick || !author) {
+		continue;
+	}
+	const existing = grouped.get(author);
+	if (existing) {
+		existing.push(pick);
+	} else {
+		grouped.set(author, [pick]);
+	}
+}
+
+const sorted = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b));
+---
+
+{
+	sorted.length > 0 && (
+		<>
+			<hr class="mb-8 mt-8 border-border sm:mb-24 sm:mt-28" />
+			<h2 class="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
+				Picks
+			</h2>
+			<section class="grid gap-4 p-0 sm:gap-8 sm:p-12">
+				{sorted.map(([author, items]) => (
+					<article class="rounded-xl border border-border bg-card">
+						<h3 class="border-b border-border px-6 py-4 text-xl font-bold sm:text-2xl">
+							{author}
+						</h3>
+						<ul>
+							{items.map((pick) => {
+								const site = stegaClean(pick.site);
+								return (
+									<li class="border-b border-border last:border-b-0">
+										{site ? (
+											<a
+												href={site}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="flex items-center justify-between p-4 text-base transition-colors hover:bg-accent sm:text-xl"
+											>
+												<span>{pick.name}</span>
+												<svg
+													class="size-4 shrink-0"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+												</svg>
+											</a>
+										) : (
+											<span class="block p-4 text-base sm:text-xl">{pick.name}</span>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</article>
+				))}
+			</section>
+		</>
+	)
+}

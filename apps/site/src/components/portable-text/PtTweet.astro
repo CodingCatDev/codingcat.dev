@@ -1,0 +1,30 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+
+type TweetNode = { _type: "twitter"; id?: string };
+
+type Props = PtProps<TweetNode>;
+
+const { node } = Astro.props;
+
+/**
+ * Replaces `react-twitter-embed`. X's own widgets.js upgrades this blockquote
+ * in place, so the markup degrades to a readable link if the script is blocked
+ * — which the React version did not.
+ *
+ * The id is validated as digits before interpolation: it lands in an href.
+ */
+const raw = stegaClean(node.id) ?? "";
+const id = /^\d+$/.test(raw) ? raw : undefined;
+---
+
+{
+	id && (
+		<div class="not-prose my-6 flex justify-center">
+			<blockquote class="twitter-tweet" data-dnt="true">
+				<a href={`https://twitter.com/i/status/${id}`}>View post on X</a>
+			</blockquote>
+		</div>
+	)
+}

@@ -1,0 +1,23 @@
+---
+interface Props {
+	data: unknown;
+}
+
+const { data } = Astro.props;
+
+/**
+ * `set:html` is deliberate: the contents of
+ * `<script type="application/ld+json">` must reach the browser unescaped, so
+ * Astro's default HTML escaping would corrupt the payload.
+ *
+ * Escaping `<` guards against a `</script>` sequence inside a string value
+ * closing the element early; JSON parsers read `<` as a plain `<`, so
+ * the structured data is unchanged.
+ *
+ * Values are stegaClean'd at the call sites that build these nodes — zero-width
+ * characters would otherwise end up in structured data.
+ */
+const json = JSON.stringify(data).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" is:inline set:html={json}></script>

@@ -1,0 +1,22 @@
+---
+/**
+ * Only rendered while the preview cookie is set. Posts to the disable
+ * endpoint rather than linking, so the redirect back to the current page
+ * cannot be triggered by a crawler following a GET.
+ */
+const returnTo = Astro.url.pathname + Astro.url.search;
+---
+
+<form
+	method="POST"
+	action="/api/draft-mode/disable"
+	class="fixed bottom-4 right-4 z-50"
+>
+	<input type="hidden" name="returnTo" value={returnTo} />
+	<button
+		type="submit"
+		class="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
+	>
+		Exit draft mode
+	</button>
+</form>

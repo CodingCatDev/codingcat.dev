@@ -1,0 +1,43 @@
+---
+import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { pageQuery } from "@/lib/sanity/queries";
+import { breadcrumbSchema } from "@/lib/structured-data";
+
+/**
+ * Catch-all for `page` documents — /ftc-disclosure, /terms-of-use,
+ * /privacy-policy and the rest. It must stay the lowest-priority route:
+ * Astro matches more specific segments first, so /blog and /podcasts are
+ * unaffected, but any new top-level route added later will shadow a page
+ * document of the same slug.
+ */
+const { sanity } = Astro.locals;
+const { slug } = Astro.params;
+
+const page = slug ? await sanity.loadQuery(pageQuery, { slug }) : null;
+if (!page?._id) {
+	return new Response(null, { status: 404 });
+}
+
+const path = `/${slug}`;
+const origin = Astro.locals.siteUrl.origin;
+const ogImage = sanity.resolveOpenGraphImage(page.coverImage ?? undefined);
+---
+
+<BaseLayout
+	title={page.title}
+	description={page.excerpt}
+	image={ogImage}
+	ogFallback={{ title: page.title, subtitle: page.excerpt }}
+	canonical={path}
+	schema={[breadcrumbSchema(origin, [{ name: page.title, path }])]}
+>
+	<article class="my-10">
+		<h1
+			class="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-6xl md:leading-none"
+		>
+			{page.title}
+		</h1>
+		<PortableTextContent value={page.content} class="mx-auto prose-violet lg:prose-xl" />
+	</article>
+</BaseLayout>

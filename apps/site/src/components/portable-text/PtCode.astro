@@ -1,0 +1,68 @@
+---
+import { Code } from "astro:components";
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+import { normalizeLanguage } from "@/lib/code-languages";
+
+type CodeNode = {
+	_type: "code";
+	code?: string;
+	language?: string;
+	filename?: string;
+	highlightedLines?: number[];
+};
+
+type Props = PtProps<CodeNode>;
+
+const { node } = Astro.props;
+
+/**
+ * Highlighting runs through Astro's bundled Shiki at render time, replacing
+ * react-syntax-highlighter and the hand-maintained Prism language list — the
+ * page ships highlighted markup instead of a highlighter.
+ *
+ * stegaClean: the code text is fed to a tokenizer, where stega's zero-width
+ * characters would corrupt tokens and land in the copy-to-clipboard payload.
+ */
+const code = stegaClean(node.code) ?? "";
+const language = normalizeLanguage(stegaClean(node.language));
+const filename = node.filename;
+---
+
+{
+	code && (
+		<figure class="not-prose group relative my-6">
+			{filename && (
+				<figcaption class="rounded-t-md border border-b-0 border-border bg-muted px-4 py-2 font-mono text-xs text-muted-foreground">
+					{filename}
+				</figcaption>
+			)}
+			<button
+				type="button"
+				class="copy-code absolute right-2 top-2 z-10 inline-flex size-8 items-center justify-center rounded-md border border-border bg-background/80 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
+				data-code={code}
+				aria-label="Copy code"
+			>
+				<svg
+					class="size-4"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<rect x="9" y="9" width="13" height="13" rx="2" />
+					<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+				</svg>
+			</button>
+			<Code
+				code={code}
+				lang={language}
+				themes={{ light: "github-light", dark: "github-dark" }}
+				class:list={["overflow-x-auto p-4 text-sm", filename ? "rounded-b-md" : "rounded-md"]}
+			/>
+		</figure>
+	)
+}

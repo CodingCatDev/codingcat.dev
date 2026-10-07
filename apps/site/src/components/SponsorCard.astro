@@ -1,0 +1,52 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import CoverImage from "@/components/CoverImage.astro";
+import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
+
+interface Sponsor {
+	_id: string;
+	title: string;
+	slug?: string | null;
+	excerpt?: string | null;
+	coverImage?: CoverImageType | null;
+	url?: string | null;
+}
+
+interface Props {
+	sponsors?: Sponsor[] | null;
+}
+
+const { sponsors } = Astro.props;
+const items = sponsors ?? [];
+---
+
+{
+	items.length > 0 && (
+		<div class="grid justify-center gap-6 p-4 md:p-6 lg:auto-cols-[1fr] lg:grid-flow-col">
+			{items.map((sponsor) => {
+				const external = stegaClean(sponsor.url);
+				const href = external || `/sponsor/${sponsor.slug}`;
+				return (
+					<a
+						href={href}
+						target={external ? "_blank" : undefined}
+						rel={external ? "noopener noreferrer sponsored" : undefined}
+						class="flex"
+					>
+						<article class="flex max-w-xl grow flex-col overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all hover:scale-[1.02] hover:shadow-lg">
+							<CoverImage image={sponsor.coverImage} />
+							<div class="grow p-6">
+								<h3 class="mb-3 text-3xl text-balance">{sponsor.title}</h3>
+							</div>
+							{sponsor.excerpt && (
+								<p class="px-6 pb-6 text-lg leading-relaxed text-pretty">
+									{sponsor.excerpt}
+								</p>
+							)}
+						</article>
+					</a>
+				);
+			})}
+		</div>
+	)
+}

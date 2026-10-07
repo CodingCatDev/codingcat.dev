@@ -1,0 +1,119 @@
+---
+import { PortableText } from "astro-portabletext";
+import type { TypedObject } from "astro-portabletext/types";
+import PtCode from "./PtCode.astro";
+import PtCodePen from "./PtCodePen.astro";
+import PtCodeSandbox from "./PtCodeSandbox.astro";
+import PtHeading5 from "./PtHeading5.astro";
+import PtHeading6 from "./PtHeading6.astro";
+import PtHtml from "./PtHtml.astro";
+import PtImage from "./PtImage.astro";
+import PtInternalLink from "./PtInternalLink.astro";
+import PtLink from "./PtLink.astro";
+import PtQuote from "./PtQuote.astro";
+import PtTable from "./PtTable.astro";
+import PtTweet from "./PtTweet.astro";
+import PtYouTube from "./PtYouTube.astro";
+import PtYouTubeShorts from "./PtYouTubeShorts.astro";
+
+interface Props {
+	/**
+	 * Sanity TypeGen emits `children?:` as optional on blocks, while
+	 * `PortableTextBlock` requires it — so the generated content types are not
+	 * assignable to it. `TypedObject` is the library's own minimum contract
+	 * (`{_type: string}`), which the generated types do satisfy, and it is what
+	 * PortableText actually needs to dispatch on.
+	 */
+	value?: TypedObject[] | null;
+	class?: string;
+}
+
+const { value, class: className } = Astro.props;
+
+/**
+ * astro-portabletext uses SINGULAR keys — `type`, `block`, `mark` — where
+ * @portabletext/react uses `types` / `marks`. Getting this wrong fails
+ * silently: the custom components are simply never called and every custom
+ * block renders as nothing, which is exactly what the pre-Next Astro app did.
+ */
+const components = {
+	type: {
+		image: PtImage,
+		code: PtCode,
+		codepen: PtCodePen,
+		codesandbox: PtCodeSandbox,
+		youtube: PtYouTube,
+		youtubeShorts: PtYouTubeShorts,
+		twitter: PtTweet,
+		htmlBlock: PtHtml,
+		quote: PtQuote,
+		table: PtTable,
+	},
+	block: {
+		h5: PtHeading5,
+		h6: PtHeading6,
+	},
+	mark: {
+		link: PtLink,
+		internalLink: PtInternalLink,
+	},
+};
+---
+
+{
+	value && value.length > 0 && (
+		<div class:list={["prose dark:prose-invert max-w-none", className]}>
+			<PortableText value={value} components={components} />
+		</div>
+	)
+}
+
+{/* One delegated listener per page rather than one island per block. */}
+<script>
+	// X's widgets.js upgrades any `.twitter-tweet` blockquote in place. Loaded
+	// only when the page actually contains one, so pages without an embedded
+	// post make no third-party request at all.
+	if (document.querySelector(".twitter-tweet")) {
+		const script = document.createElement("script");
+		script.src = "https://platform.twitter.com/widgets.js";
+		script.async = true;
+		document.head.appendChild(script);
+	}
+
+	document.addEventListener("click", (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		const copy = target.closest<HTMLElement>("button.copy-code");
+		if (copy) {
+			const code = copy.dataset.code ?? "";
+			navigator.clipboard?.writeText(code).then(() => {
+				copy.classList.add("copied");
+				setTimeout(() => copy.classList.remove("copied"), 1500);
+			});
+			return;
+		}
+
+		// Click-to-load keeps YouTube's player (and its cookies) off the page
+		// until a visitor actually asks for it.
+		const play = target.closest("button");
+		const embed = play?.closest<HTMLElement>(".yt-embed");
+		if (!play || !embed) {
+			return;
+		}
+		const id = embed.dataset.yt;
+		if (!id) {
+			return;
+		}
+		const iframe = document.createElement("iframe");
+		iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&fs=0`;
+		iframe.allow =
+			"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+		iframe.allowFullscreen = true;
+		iframe.title = "YouTube video player";
+		iframe.className = "absolute inset-0 size-full border-0";
+		embed.replaceChildren(iframe);
+	});
+</script>

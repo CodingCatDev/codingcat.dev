@@ -1,0 +1,92 @@
+---
+import Avatar from "@/components/Avatar.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
+import CoverImage from "@/components/CoverImage.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { latestPodcastQuery, morePodcastQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+
+const hero = await sanity.loadQuery(latestPodcastQuery);
+
+const more = hero?._id
+	? await sanity.loadQuery(morePodcastQuery, {
+			skip: hero._id,
+			offset: 0,
+			limit: 4,
+		})
+	: [];
+
+const heroHref = hero?.slug ? `/podcast/${hero.slug}` : undefined;
+const ogImage = sanity.resolveOpenGraphImage(hero?.coverImage ?? undefined);
+
+const people = [
+	...(hero?.author ?? []).map((p) => ({ ...p, base: "/author" })),
+	...(hero?.guest ?? []).map((p) => ({ ...p, base: "/guest" })),
+];
+---
+
+<BaseLayout
+	title="Podcasts | CodingCat.dev"
+	description="Purrfect Web Development podcast episodes, interviews, and conversations."
+	image={ogImage}
+	ogFallback={{ title: "Podcasts", subtitle: "Purrfect Web Development" }}
+>
+	{
+		hero ? (
+			<article>
+				{heroHref && (
+					<a class="block mb-8 group md:mb-16" href={heroHref}>
+						<CoverImage image={hero.coverImage} priority />
+					</a>
+				)}
+				<div class="mb-8 md:mb-16 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
+					<div>
+						<h1 class="mb-4 text-4xl leading-tight text-pretty lg:text-6xl">
+							{heroHref ? (
+								<a href={heroHref} class="hover:underline">
+									{hero.title}
+								</a>
+							) : (
+								hero.title
+							)}
+						</h1>
+						<div class="mb-4 text-lg text-muted-foreground md:mb-0">
+							<FormattedDate dateString={hero.date} />
+						</div>
+					</div>
+					<div>
+						{hero.excerpt && (
+							<p class="mb-4 text-lg leading-relaxed text-pretty">{hero.excerpt}</p>
+						)}
+						<div class="flex flex-wrap gap-2">
+							{people.map((p) => (
+								<Avatar
+									name={p.title}
+									href={p.slug ? `${p.base}/${p.slug}` : undefined}
+									coverImage={p.coverImage}
+								/>
+							))}
+						</div>
+					</div>
+				</div>
+			</article>
+		) : (
+			<p class="py-32 text-center text-lg text-muted-foreground">
+				No episodes published yet.
+			</p>
+		)
+	}
+
+	{
+		more.length > 0 && (
+			<aside class="mb-32">
+				<SectionHeader title="Latest Podcasts" href="/podcasts/page/1" />
+				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
+			</aside>
+		)
+	}
+</BaseLayout>

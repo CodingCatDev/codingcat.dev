@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      # node-version-file (not a bare "22") is what actually enforces the
+      # >=22.12 floor required by sanity 6 / @sanity/ui 4.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Generates apps/sanity/extract.json and the site's types.gen.ts, both of
+      # which are derived artifacts and therefore gitignored. Runs before
+      # typecheck because the site imports the generated types.
+      - name: Typegen (Sanity)
+        run: pnpm typegen
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: production
+
+      - name: Typegen (Cloudflare)
+        run: pnpm --filter @codingcatdev/site cf-typegen
+
+      - name: Lint (site)
+        run: pnpm --filter @codingcatdev/site lint
+
+      - name: Typecheck (site)
+        run: pnpm --filter @codingcatdev/site typecheck
+
+      - name: Typecheck (studio)
+        run: pnpm --filter @codingcatdev/sanity exec tsc --noEmit
+
+      - name: Build site
+        run: pnpm --filter @codingcatdev/site build
+
+      - name: Build studio
+        run: pnpm --filter @codingcatdev/sanity build
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: production
+
+      - name: Run E2E Tests
+        run: pnpm --filter @codingcatdev/site test:e2e
+
+      # extract.json is committed and is the single source of truth for typegen.
+      # The Typegen step above regenerates it; if that changed the file, the
+      # commit is stale. This is what stopped three divergent copies before.
+      - name: Verify extract.json is current
+        run: |
+          if ! git diff --quiet -- apps/sanity/extract.json; then
+            echo "::error::apps/sanity/extract.json is stale. Run 'pnpm typegen' and commit the result."
+            git diff --stat -- apps/sanity/extract.json
+            exit 1
+          fi
+
+  preview:
+    needs: verify
+    if: github.event_name == 'pull_request' && github.base_ref == 'dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Sanity Types
+        run: pnpm typegen
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: dev
+
+      - name: Generate Cloudflare Types
+        run: pnpm --filter @codingcatdev/site cf-typegen
+
+      - name: Build site (preview)
+        run: pnpm --filter @codingcatdev/site build
+
+      - name: Upload Cloudflare Worker Preview Version
+        id: upload_preview
+        run: |
+          OUTPUT=$(pnpm --filter @codingcatdev/site exec wrangler versions upload --tag "pr-${PR_NUMBER}" --message "PR #${PR_NUMBER}: ${PR_TITLE}")
+          echo "$OUTPUT"
+
+          PREVIEW_URL=$(echo "$OUTPUT" | grep -i "Version Preview URL:" | awk '{print $NF}' | head -n 1)
+          VERSION_ID=$(echo "$OUTPUT" | grep -i "Worker Version ID:" | awk '{print $NF}' | head -n 1)
+
+          echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+          echo "version_id=$VERSION_ID" >> $GITHUB_OUTPUT
+
+          echo "::notice title=Cloudflare Worker Preview URL::${PREVIEW_URL}"
+
+          echo "### ⚡ Cloudflare Worker Preview Ready" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Preview URL**: [${PREVIEW_URL}](${PREVIEW_URL})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version ID**: \`${VERSION_ID}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Worker**: \`codingcatdev-dev\`" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "$PREVIEW_URL" ]; then
+            {
+              echo "### ⚡ Cloudflare Worker Preview Ready!"
+              echo ""
+              echo "| Environment | URL |"
+              echo "|---|---|"
+              echo "| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |"
+              echo "| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |"
+              echo ""
+              echo "- **Worker Version ID**: \`${VERSION_ID}\`"
+              echo "- **Protection**: Restricted to \`@codingcat.dev\` accounts via Cloudflare Zero Trust Access"
+            } > pr_comment.md
+
+            COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --jq '.[] | select((.user.login=="github-actions[bot]" or .user.login=="app/github-actions") and (.body | contains("Cloudflare Worker Preview Ready"))) | .id' | tail -n 1)
+
+            if [ -n "$COMMENT_ID" ]; then
+              gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${COMMENT_ID}" -f body="$(cat pr_comment.md)"
+            else
+              gh pr comment "$PR_NUMBER" --body-file pr_comment.md
+            fi
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+

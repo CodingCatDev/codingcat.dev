@@ -1,2 +1,14 @@
 packages:
   - "apps/*"
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver
+  - workerd
+  - "@tailwindcss/oxide"
+
+peerDependencyRules:
+  allowAny:
+    - react
+    - react-dom

@@ -1,0 +1,19 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { MarkProps } from "astro-portabletext/types";
+
+/**
+ * `href` is resolved in GROQ (see queries/shared.ts `contentFields`), not from
+ * the reference at render time — that keeps the route map in one place and
+ * avoids a second round trip per link.
+ *
+ * As with PtLink, the value lives on `node.markDef`.
+ */
+type Props = MarkProps<{ href?: string }>;
+
+const { node } = Astro.props;
+
+const href = stegaClean(node.markDef.href) || "#";
+---
+
+<a href={href}><slot /></a>

@@ -1,0 +1,276 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const sponsorshipTiers = [
+	{
+		id: "dedicated-video",
+		name: "Dedicated Video",
+		price: "$4,000",
+		description:
+			"A full video dedicated to your product or service. Includes a permanent logo and link on our sponsors page.",
+	},
+	{
+		id: "mid-roll-ad",
+		name: "Integrated Mid-Roll Ad",
+		price: "$1,800",
+		description:
+			"A 60-second ad integrated into the middle of a video. Includes a permanent logo and link on our sponsors page.",
+	},
+	{
+		id: "shout-out",
+		name: "Quick Shout-Out",
+		price: "$900",
+		description:
+			"A 30-second shout-out at the beginning of a video. Includes a permanent logo and link on our sponsors page.",
+	},
+	{
+		id: "blog-newsletter",
+		name: "Blog Post / Newsletter",
+		price: "$500",
+		description:
+			"Sponsor a blog post or our weekly newsletter. Your logo and a link will be featured.",
+	},
+	{
+		id: "video-series",
+		name: "Video Series",
+		price: "Custom",
+		description:
+			"Sponsor a whole series of videos. Contact us for custom pricing and tailored packages.",
+	},
+];
+---
+
+<BaseLayout
+	title="Sponsor CodingCat.dev"
+	description="Reach a large audience of developers, students, and tech enthusiasts. Explore sponsorship tiers and partner with us."
+>
+	<Breadcrumbs links={[{ title: "Sponsorships" }]} />
+
+	<div class="w-full flex flex-col gap-8 md:gap-12 my-8 md:my-12">
+		<header class="flex flex-col gap-3">
+			<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
+				Sponsor CodingCat.dev
+			</h1>
+			<p class="text-lg text-muted-foreground max-w-2xl">
+				Reach an engaged global audience of developers, creators, and technology leaders. Choose from our standard packages or request custom collaboration.
+			</p>
+		</header>
+
+		<!-- Sponsorship Tiers Grid -->
+		<section aria-labelledby="tiers-heading">
+			<h2 id="tiers-heading" class="sr-only">Sponsorship Tiers</h2>
+			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+				{
+					sponsorshipTiers.map((tier) => (
+						<article class="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs hover:border-primary/50 transition-colors">
+							<div class="flex flex-col gap-3">
+								<h3 class="text-xl font-semibold tracking-tight">
+									{tier.name}
+								</h3>
+								<p class="text-2xl font-bold text-primary">
+									{tier.price}
+								</p>
+								<p class="text-sm text-muted-foreground leading-relaxed">
+									{tier.description}
+								</p>
+							</div>
+							<div class="mt-6 pt-4 border-t border-border/60">
+								<button
+									type="button"
+									class="tier-select-btn text-xs font-semibold uppercase tracking-wider text-primary hover:underline cursor-pointer"
+									data-tier-name={tier.name}
+								>
+									Select {tier.name} &rarr;
+								</button>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<!-- Inquiry Form -->
+		<section class="max-w-2xl rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xs" aria-labelledby="form-heading">
+			<h2 id="form-heading" class="text-2xl font-bold tracking-tight mb-2">
+				Inquire About Sponsorship
+			</h2>
+			<p class="text-sm text-muted-foreground mb-6">
+				Fill out the form below with your sponsorship goals, and our team will get back to you promptly.
+			</p>
+
+			<div
+				id="form-feedback-success"
+				class="hidden mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-700 dark:text-green-300 text-sm"
+				role="status"
+			>
+				<strong>Thank you!</strong> Your inquiry has been received. We will be in touch shortly.
+			</div>
+
+			<div
+				id="form-feedback-error"
+				class="hidden mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300 text-sm"
+				role="alert"
+			>
+			</div>
+
+			<form
+				id="sponsorship-form"
+				method="POST"
+				action="/api/sponsorship"
+				class="flex flex-col gap-4"
+			>
+				<div>
+					<label for="name" class="block text-sm font-medium mb-1">
+						Name <span class="text-red-500">*</span>
+					</label>
+					<input
+						type="text"
+						id="name"
+						name="name"
+						required
+						placeholder="Jane Doe"
+						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</div>
+
+				<div>
+					<label for="email" class="block text-sm font-medium mb-1">
+						Email <span class="text-red-500">*</span>
+					</label>
+					<input
+						type="email"
+						id="email"
+						name="email"
+						required
+						placeholder="jane@company.com"
+						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</div>
+
+				<div>
+					<label for="company" class="block text-sm font-medium mb-1">
+						Company
+					</label>
+					<input
+						type="text"
+						id="company"
+						name="company"
+						placeholder="Acme Inc."
+						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</div>
+
+				<div>
+					<label for="tier" class="block text-sm font-medium mb-1">
+						Sponsorship Tier <span class="text-red-500">*</span>
+					</label>
+					<select
+						id="tier"
+						name="tier"
+						required
+						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+					>
+						<option value="" disabled selected>Select a sponsorship tier</option>
+						{
+							sponsorshipTiers.map((t) => (
+								<option value={t.name}>
+									{t.name} ({t.price})
+								</option>
+							))
+						}
+					</select>
+				</div>
+
+				<div>
+					<label for="message" class="block text-sm font-medium mb-1">
+						Message
+					</label>
+					<textarea
+						id="message"
+						name="message"
+						rows="4"
+						placeholder="Tell us about your brand, timeframe, and goals..."
+						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					></textarea>
+				</div>
+
+				<button
+					type="submit"
+					id="submit-btn"
+					class="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary transition-colors cursor-pointer"
+				>
+					Send Inquiry
+				</button>
+			</form>
+		</section>
+	</div>
+</BaseLayout>
+
+<script>
+	const form = document.getElementById("sponsorship-form") as HTMLFormElement | null;
+	const successEl = document.getElementById("form-feedback-success");
+	const errorEl = document.getElementById("form-feedback-error");
+	const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement | null;
+	const tierSelect = document.getElementById("tier") as HTMLSelectElement | null;
+
+	// Click to auto-select tier from cards above
+	document.querySelectorAll(".tier-select-btn").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const tierName = btn.getAttribute("data-tier-name");
+			if (tierSelect && tierName) {
+				tierSelect.value = tierName;
+				tierSelect.scrollIntoView({ behavior: "smooth", block: "center" });
+				tierSelect.focus();
+			}
+		});
+	});
+
+	if (form && submitBtn) {
+		form.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			if (errorEl) errorEl.classList.add("hidden");
+			if (successEl) successEl.classList.add("hidden");
+
+			const formData = new FormData(form);
+			const payload = {
+				name: formData.get("name"),
+				email: formData.get("email"),
+				company: formData.get("company"),
+				tier: formData.get("tier"),
+				message: formData.get("message"),
+			};
+
+			submitBtn.disabled = true;
+			submitBtn.textContent = "Sending...";
+
+			try {
+				const res = await fetch("/api/sponsorship", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload),
+				});
+
+				const result = (await res.json()) as { success?: boolean; message?: string };
+
+				if (res.ok && result.success) {
+					form.reset();
+					if (successEl) successEl.classList.remove("hidden");
+				} else {
+					if (errorEl) {
+						errorEl.textContent = result.message || "Failed to submit inquiry. Please try again.";
+						errorEl.classList.remove("hidden");
+					}
+				}
+			} catch (err) {
+				if (errorEl) {
+					errorEl.textContent = "A network error occurred. Please try again.";
+					errorEl.classList.remove("hidden");
+				}
+			} finally {
+				submitBtn.disabled = false;
+				submitBtn.textContent = "Send Inquiry";
+			}
+		});
+	}
+</script>

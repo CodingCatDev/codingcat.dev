@@ -1,0 +1,422 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+	title="Search"
+	description="Search CodingCat.dev articles, podcast episodes, authors, and guests with Sanity Semantic Search."
+>
+	<Breadcrumbs links={[{ title: "Search" }]} />
+
+	<div
+		id="search-container"
+		class="w-full flex flex-col gap-6 my-8 md:my-10"
+	>
+		<header class="flex flex-col gap-2">
+			<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
+				Search CodingCat.dev
+			</h1>
+			<p class="text-muted-foreground text-base md:text-lg">
+				Find tutorials, podcast interviews, authors, and expert guests powered by Sanity Content Lake.
+			</p>
+		</header>
+
+		<!-- Search Input Bar -->
+		<div class="relative w-full max-w-3xl">
+			<label for="search-input" class="sr-only">Search</label>
+			<div class="relative flex items-center">
+				<div class="absolute left-3.5 text-muted-foreground pointer-events-none" aria-hidden="true">
+					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="11" cy="11" r="8"></circle>
+						<path d="m21 21-4.3-4.3"></path>
+					</svg>
+				</div>
+				<input
+					type="search"
+					id="search-input"
+					name="q"
+					autocomplete="off"
+					placeholder="Search for your purr-fect thing!"
+					class="w-full rounded-xl border border-input bg-card pl-11 pr-10 py-3.5 text-base md:text-lg shadow-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+				/>
+				<button
+					type="button"
+					id="search-clear-btn"
+					class="hidden absolute right-3 size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+					aria-label="Clear search query"
+				>
+					<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+		</div>
+
+		<!-- Content Type Filters -->
+		<div class="flex flex-wrap items-center gap-2 pt-1" role="toolbar" aria-label="Filter results by content type">
+			<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">
+				Filter:
+			</span>
+			<button
+				type="button"
+				class="filter-pill active-pill rounded-full px-3.5 py-1 text-xs font-medium border border-border bg-primary text-primary-foreground transition-colors cursor-pointer"
+				data-type="all"
+			>
+				All
+			</button>
+			<button
+				type="button"
+				class="filter-pill rounded-full px-3.5 py-1 text-xs font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="post"
+			>
+				Posts
+			</button>
+			<button
+				type="button"
+				class="filter-pill rounded-full px-3.5 py-1 text-xs font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="podcast"
+			>
+				Podcasts
+			</button>
+			<button
+				type="button"
+				class="filter-pill rounded-full px-3.5 py-1 text-xs font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="author"
+			>
+				Authors
+			</button>
+			<button
+				type="button"
+				class="filter-pill rounded-full px-3.5 py-1 text-xs font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="guest"
+			>
+				Guests
+			</button>
+		</div>
+
+		<!-- Status & Summary Line -->
+		<div id="search-status-bar" class="flex items-center justify-between text-xs text-muted-foreground min-h-5">
+			<span id="search-count-text"></span>
+			<span id="search-powered-by" class="text-[11px] opacity-75">Sanity Semantic Search</span>
+		</div>
+
+		<!-- Empty State: Ready to Search (Initial) -->
+		<div id="state-ready" class="flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-dashed border-border/80 bg-card/40 my-4">
+			<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-3">
+				<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.3-4.3"></path>
+				</svg>
+			</div>
+			<h2 class="text-lg font-semibold mb-1">Ready to explore?</h2>
+			<p class="text-sm text-muted-foreground max-w-md mb-6">
+				Type a query above to search articles, podcasts, authors, and guests across the CodingCat.dev catalog.
+			</p>
+			<div class="flex flex-wrap justify-center items-center gap-2 max-w-lg">
+				<span class="text-xs text-muted-foreground">Popular topics:</span>
+				{
+					["Sanity", "Astro", "Cloudflare", "React", "Svelte", "AI"].map((topic) => (
+						<button
+							type="button"
+							class="topic-suggestion-btn text-xs px-2.5 py-1 rounded-md border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+							data-topic={topic}
+						>
+							{topic}
+						</button>
+					))
+				}
+			</div>
+		</div>
+
+		<!-- Loading State -->
+		<div id="state-loading" class="hidden flex flex-col items-center justify-center p-12 text-center my-4">
+			<div class="inline-block size-8 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent mb-3" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+			<p class="text-sm text-muted-foreground">Searching content...</p>
+		</div>
+
+		<!-- State: Error / Unavailable -->
+		<div id="state-error" class="hidden flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-border bg-card my-4">
+			<div class="size-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-3">
+				<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="10"></circle>
+					<line x1="12" y1="8" x2="12" y2="12"></line>
+					<line x1="12" y1="16" x2="12.01" y2="16"></line>
+				</svg>
+			</div>
+			<h2 class="text-lg font-semibold mb-1">Search Service Unavailable</h2>
+			<p class="text-sm text-muted-foreground max-w-md mb-4" id="error-message">
+				The search service encountered an error. You can still browse our latest content directly.
+			</p>
+			<div class="flex flex-wrap justify-center gap-3">
+				<a href="/blog" class="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent transition-colors">
+					Browse Blog Posts
+				</a>
+				<a href="/podcasts" class="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-accent transition-colors">
+					Browse Podcasts
+				</a>
+			</div>
+		</div>
+
+		<!-- State: No Results Found -->
+		<div id="state-no-results" class="hidden flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-border bg-card my-4">
+			<div class="size-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-3">
+				<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="11" cy="11" r="8"></circle>
+					<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					<line x1="8" y1="11" x2="14" y2="11"></line>
+				</svg>
+			</div>
+			<h2 class="text-lg font-semibold mb-1">No results found</h2>
+			<p class="text-sm text-muted-foreground max-w-md" id="no-results-text">
+				We could not find any matches for your query. Try searching for different keywords or checking for spelling errors.
+			</p>
+		</div>
+
+		<!-- Results Container -->
+		<div id="search-results-list" class="hidden flex flex-col gap-3 max-w-4xl" role="region" aria-label="Search Results">
+		</div>
+	</div>
+</BaseLayout>
+
+<script>
+	interface SearchHit {
+		id: string;
+		type: string;
+		title: string;
+		slug: string;
+		href: string;
+		excerpt?: string;
+		date?: string;
+	}
+
+	interface ApiResponse {
+		query: string;
+		type?: string;
+		total: number;
+		hits: SearchHit[];
+		semantic: boolean;
+	}
+
+	const input = document.getElementById("search-input") as HTMLInputElement | null;
+	const clearBtn = document.getElementById("search-clear-btn");
+	const statusCount = document.getElementById("search-count-text");
+
+	const stateReady = document.getElementById("state-ready");
+	const stateLoading = document.getElementById("state-loading");
+	const stateError = document.getElementById("state-error");
+	const stateNoResults = document.getElementById("state-no-results");
+	const noResultsText = document.getElementById("no-results-text");
+	const resultsList = document.getElementById("search-results-list");
+
+	let selectedType: string = "all";
+	let currentQuery: string = "";
+	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+	let currentAbortController: AbortController | null = null;
+
+	function showState(state: "ready" | "loading" | "error" | "no-results" | "results") {
+		if (stateReady) stateReady.classList.toggle("hidden", state !== "ready");
+		if (stateLoading) stateLoading.classList.toggle("hidden", state !== "loading");
+		if (stateError) stateError.classList.toggle("hidden", state !== "error");
+		if (stateNoResults) stateNoResults.classList.toggle("hidden", state !== "no-results");
+		if (resultsList) resultsList.classList.toggle("hidden", state !== "results");
+	}
+
+	function getBadgeInfo(type: string): { label: string; badgeClass: string; iconSvg: string } {
+		switch (type) {
+			case "post":
+				return {
+					label: "Post",
+					badgeClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+					iconSvg: `<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+				};
+			case "podcast":
+				return {
+					label: "Podcast",
+					badgeClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+					iconSvg: `<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>`,
+				};
+			case "author":
+				return {
+					label: "Author",
+					badgeClass: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+					iconSvg: `<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>`,
+				};
+			case "guest":
+				return {
+					label: "Guest",
+					badgeClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+					iconSvg: `<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>`,
+				};
+			default:
+				return {
+					label: type || "Content",
+					badgeClass: "bg-secondary text-secondary-foreground border-border",
+					iconSvg: `<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>`,
+				};
+		}
+	}
+
+	function renderHits(hits: SearchHit[]) {
+		if (!resultsList) return;
+		resultsList.innerHTML = "";
+
+		for (const hit of hits) {
+			const type = hit.type || "post";
+			const href = hit.href || `/${type}/${hit.slug}`;
+			const title = hit.title || "Untitled";
+			const excerpt = hit.excerpt || "";
+			const badge = getBadgeInfo(type);
+
+			const card = document.createElement("article");
+			card.className = "group relative flex flex-col gap-2 rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs hover:border-primary/50 hover:bg-accent/30 transition-all";
+
+			card.innerHTML = `
+				<div class="flex items-center justify-between gap-2">
+					<span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badge.badgeClass}">
+						${badge.iconSvg}
+						${badge.label}
+					</span>
+				</div>
+				<h2 class="text-lg sm:text-xl font-bold tracking-tight group-hover:text-primary transition-colors">
+					<a href="${href}" class="focus:outline-none">
+						${title}
+					</a>
+				</h2>
+				${excerpt ? `<p class="text-sm text-muted-foreground line-clamp-2 leading-relaxed">${excerpt}</p>` : ""}
+			`;
+
+			resultsList.appendChild(card);
+		}
+	}
+
+	async function performSearch(query: string, type: string) {
+		const trimmed = query.trim();
+		if (!trimmed || trimmed.length < 2) {
+			showState("ready");
+			if (statusCount) statusCount.textContent = "";
+			return;
+		}
+
+		if (currentAbortController) {
+			currentAbortController.abort();
+		}
+		currentAbortController = new AbortController();
+
+		showState("loading");
+
+		try {
+			const endpoint = `/api/search?q=${encodeURIComponent(trimmed)}&type=${encodeURIComponent(type)}`;
+			const res = await fetch(endpoint, {
+				signal: currentAbortController.signal,
+			});
+
+			if (!res.ok) {
+				throw new Error(`Search returned HTTP ${res.status}`);
+			}
+
+			const data = (await res.json()) as ApiResponse;
+			const hits = data.hits || [];
+
+			if (hits.length === 0) {
+				if (noResultsText) {
+					noResultsText.textContent = `No matches found for "${trimmed}". Try different keywords or broad search terms.`;
+				}
+				if (statusCount) {
+					statusCount.textContent = "0 results found";
+				}
+				showState("no-results");
+			} else {
+				if (statusCount) {
+					statusCount.textContent = `Found ${data.total} result${data.total === 1 ? "" : "s"}`;
+				}
+				renderHits(hits);
+				showState("results");
+			}
+		} catch (err: unknown) {
+			if (err instanceof Error && err.name === "AbortError") {
+				return;
+			}
+			console.warn("Search error:", err);
+			showState("error");
+			if (statusCount) statusCount.textContent = "Search unavailable";
+		}
+	}
+
+	function handleQueryChange() {
+		const val = input?.value ?? "";
+		currentQuery = val;
+		if (clearBtn) {
+			clearBtn.classList.toggle("hidden", !val);
+		}
+
+		const url = new URL(window.location.href);
+		if (val.trim()) {
+			url.searchParams.set("q", val.trim());
+		} else {
+			url.searchParams.delete("q");
+		}
+		window.history.replaceState({}, "", url.toString());
+
+		if (debounceTimer) clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			performSearch(currentQuery, selectedType);
+		}, 250);
+	}
+
+	if (input) {
+		input.addEventListener("input", handleQueryChange);
+	}
+
+	if (clearBtn) {
+		clearBtn.addEventListener("click", () => {
+			if (input) {
+				input.value = "";
+				input.focus();
+				handleQueryChange();
+			}
+		});
+	}
+
+	// Filter pill buttons
+	document.querySelectorAll(".filter-pill").forEach((pill) => {
+		pill.addEventListener("click", () => {
+			document.querySelectorAll(".filter-pill").forEach((p) => {
+				p.classList.remove("active-pill", "bg-primary", "text-primary-foreground");
+				p.classList.add("bg-card", "text-foreground");
+			});
+			pill.classList.add("active-pill", "bg-primary", "text-primary-foreground");
+			pill.classList.remove("bg-card", "text-foreground");
+
+			selectedType = pill.getAttribute("data-type") || "all";
+			performSearch(currentQuery, selectedType);
+		});
+	});
+
+	// Topic suggestion buttons
+	document.querySelectorAll(".topic-suggestion-btn").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const topic = btn.getAttribute("data-topic");
+			if (topic && input) {
+				input.value = topic;
+				handleQueryChange();
+				input.focus();
+			}
+		});
+	});
+
+	// Check if URL has ?q=
+	const initialParams = new URLSearchParams(window.location.search);
+	const initialQuery = initialParams.get("q");
+	if (initialQuery && input) {
+		input.value = initialQuery;
+		currentQuery = initialQuery;
+		if (clearBtn) clearBtn.classList.remove("hidden");
+		performSearch(initialQuery, selectedType);
+	} else {
+		showState("ready");
+	}
+</script>

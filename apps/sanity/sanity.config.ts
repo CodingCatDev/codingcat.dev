@@ -9,7 +9,8 @@
 import { visionTool } from "@sanity/vision";
 import { type PluginOptions, defineConfig } from "sanity";
 import { codeInput } from "@sanity/code-input";
-import { podcastRss } from "@codingcatdev/sanity-plugin-podcast-rss";
+// Vendored from @codingcatdev/sanity-plugin-podcast-rss — see ./plugins/podcast-rss/README.md
+import { podcastRss } from "./plugins/podcast-rss";
 import { media } from "sanity-plugin-media";
 
 import {
@@ -51,6 +52,7 @@ import category from "./schemas/documents/category";
 import short from "./schemas/documents/short";
 import lesson from "./schemas/documents/lesson";
 import course from "./schemas/documents/course";
+import syndication from "./schemas/documents/syndication";
 
 // ── Shared constants ─────────────────────────────────────────────────
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
@@ -60,11 +62,11 @@ const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const presentationEnabled =
   process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
-// Use local Astro dev server for presentation preview when running Studio locally
+// Use local Next.js dev server for presentation preview when running Studio locally
 const isLocal =
   typeof import.meta !== "undefined" &&
   (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
-const localPreviewOrigin = "http://localhost:4321";
+const localPreviewOrigin = "http://localhost:3000";
 
 // ── Shared helpers ───────────────────────────────────────────────────
 function resolveHref(type: string, slug?: string): string | undefined {
@@ -115,6 +117,7 @@ const schemaTypes = [
   short,
   lesson,
   course,
+  syndication,
 ];
 
 // ── Shared document actions ──────────────────────────────────────────
@@ -276,29 +279,38 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 }
 
 // ── Workspace definitions ────────────────────────────────────────────
-export default defineConfig([
-  {
-    name: "production",
-    title: "CodingCat.dev (Production)",
-    projectId,
-    dataset: "production",
-    basePath: "/production",
-    schema: { types: schemaTypes },
-    document: { actions: documentActions },
-    plugins: buildPlugins(
-      isLocal ? localPreviewOrigin : "https://codingcat.dev",
-    ),
-  },
-  {
-    name: "dev",
-    title: "CodingCat.dev (Dev)",
-    projectId,
-    dataset: "dev",
-    basePath: "/dev",
-    schema: { types: schemaTypes },
-    document: { actions: documentActions },
-    plugins: buildPlugins(
-      isLocal ? localPreviewOrigin : "https://dev.codingcat.dev",
-    ),
-  },
-]);
+const targetDataset = process.env.SANITY_STUDIO_DATASET;
+
+const devWorkspace = {
+  name: "dev",
+  title: "CodingCat.dev (Dev)",
+  projectId,
+  dataset: "dev",
+  basePath: targetDataset === "dev" ? "/" : "/dev",
+  schema: { types: schemaTypes },
+  document: { actions: documentActions },
+  plugins: buildPlugins(
+    isLocal ? localPreviewOrigin : "https://dev.codingcat.dev",
+  ),
+};
+
+const prodWorkspace = {
+  name: "production",
+  title: "CodingCat.dev (Production)",
+  projectId,
+  dataset: "production",
+  basePath: targetDataset === "production" ? "/" : "/production",
+  schema: { types: schemaTypes },
+  document: { actions: documentActions },
+  plugins: buildPlugins(
+    isLocal ? localPreviewOrigin : "https://codingcat.dev",
+  ),
+};
+
+export default defineConfig(
+  targetDataset === "dev"
+    ? [devWorkspace]
+    : targetDataset === "production"
+      ? [prodWorkspace]
+      : [prodWorkspace, devWorkspace],
+);
