@@ -279,29 +279,38 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 }
 
 // ── Workspace definitions ────────────────────────────────────────────
-export default defineConfig([
-  {
-    name: "production",
-    title: "CodingCat.dev (Production)",
-    projectId,
-    dataset: "production",
-    basePath: "/production",
-    schema: { types: schemaTypes },
-    document: { actions: documentActions },
-    plugins: buildPlugins(
-      isLocal ? localPreviewOrigin : "https://codingcat.dev",
-    ),
-  },
-  {
-    name: "dev",
-    title: "CodingCat.dev (Dev)",
-    projectId,
-    dataset: "dev",
-    basePath: "/dev",
-    schema: { types: schemaTypes },
-    document: { actions: documentActions },
-    plugins: buildPlugins(
-      isLocal ? localPreviewOrigin : "https://dev.codingcat.dev",
-    ),
-  },
-]);
+const targetDataset = process.env.SANITY_STUDIO_DATASET;
+
+const devWorkspace = {
+  name: "dev",
+  title: "CodingCat.dev (Dev)",
+  projectId,
+  dataset: "dev",
+  basePath: targetDataset === "dev" ? "/" : "/dev",
+  schema: { types: schemaTypes },
+  document: { actions: documentActions },
+  plugins: buildPlugins(
+    isLocal ? localPreviewOrigin : "https://dev.codingcat.dev",
+  ),
+};
+
+const prodWorkspace = {
+  name: "production",
+  title: "CodingCat.dev (Production)",
+  projectId,
+  dataset: "production",
+  basePath: targetDataset === "production" ? "/" : "/production",
+  schema: { types: schemaTypes },
+  document: { actions: documentActions },
+  plugins: buildPlugins(
+    isLocal ? localPreviewOrigin : "https://codingcat.dev",
+  ),
+};
+
+export default defineConfig(
+  targetDataset === "dev"
+    ? [devWorkspace]
+    : targetDataset === "production"
+      ? [prodWorkspace]
+      : [prodWorkspace, devWorkspace],
+);

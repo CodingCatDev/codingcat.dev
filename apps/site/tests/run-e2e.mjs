@@ -149,7 +149,9 @@ async function main() {
 		for (const f of failureDetails) {
 			console.error(`\n- Test: ${f.name}`);
 			if (f.details?.error) {
-				console.error(f.details.error.stack || f.details.error.message || f.details.error);
+				console.error(
+					f.details.error.stack || f.details.error.message || f.details.error,
+				);
 			}
 		}
 		process.exit(1);
