@@ -34,6 +34,7 @@ function rawFonts(extensions) {
 }
 
 export default defineConfig({
+	session: false,
 	site: process.env.SITE_URL ?? "https://codingcat.dev",
 	output: "server",
 	adapter: cloudflare({
@@ -66,19 +67,13 @@ export default defineConfig({
 			fallbacks: ["system-ui", "sans-serif"],
 		},
 	],
-	// Mirrors the Next app exactly. The bare `/{base}/page` stubs and the
-	// `/authors` `/guests` `/sponsors` index routes were `redirect()` calls in
-	// Server Components, i.e. 307; 302 is the closest config-level equivalent
-	// and keeps them uncacheable, which a 301 would not be.
+	// Legacy RSS feed redirects. Listing stubs (/blog/page, /podcasts/page,
+	// /authors, /guests, /sponsors) are implemented as dedicated SSR redirect
+	// pages to guarantee true HTTP 302 Found status codes.
 	redirects: {
-		"/blog/page": { status: 302, destination: "/blog/page/1" },
-		"/podcasts/page": { status: 302, destination: "/podcasts/page/1" },
-		"/authors": { status: 302, destination: "/authors/page/1" },
-		"/authors/page": { status: 302, destination: "/authors/page/1" },
-		"/guests": { status: 302, destination: "/guests/page/1" },
-		"/guests/page": { status: 302, destination: "/guests/page/1" },
-		"/sponsors": { status: 302, destination: "/sponsors/page/1" },
-		"/sponsors/page": { status: 302, destination: "/sponsors/page/1" },
+		"/rss.xml": { status: 301, destination: "/blog/rss.xml" },
+		"/podcast/rss.xml": { status: 301, destination: "/podcasts/rss.xml" },
+		"/feed.xml": { status: 301, destination: "/blog/rss.xml" },
 	},
 	vite: {
 		plugins: [tailwindcss(), rawFonts([".ttf", ".otf"])],

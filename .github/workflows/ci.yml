@@ -64,3 +64,42 @@ jobs:
             git diff --stat -- apps/sanity/extract.json
             exit 1
           fi
+
+  preview:
+    needs: verify
+    if: github.event_name == 'pull_request' && github.base_ref == 'dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Sanity Types
+        run: pnpm typegen
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: dev
+
+      - name: Build site (preview)
+        run: pnpm --filter @codingcatdev/site build
+
+      - name: Upload Cloudflare Worker Preview Version
+        id: upload_preview
+        run: |
+          OUTPUT=$(pnpm --filter @codingcatdev/site exec wrangler versions upload --tag "pr-${{ github.event.pull_request.number }}" --message "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}")
+          echo "$OUTPUT"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'c46bd0f3b9ed47b8692cca098030edbf' }}
+

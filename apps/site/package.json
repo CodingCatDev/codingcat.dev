@@ -14,7 +14,8 @@
     "typecheck": "astro check",
     "lint": "biome check .",
     "format": "biome format . --write",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "CI=true wrangler types",
+    "test:e2e": "node tests/run-e2e.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.1",

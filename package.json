@@ -13,7 +13,10 @@
     "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
     "lint": "pnpm --filter @codingcatdev/site lint",
     "typecheck": "pnpm --filter @codingcatdev/site typecheck",
-    "typegen": "pnpm --filter @codingcatdev/sanity typegen"
+    "typegen": "pnpm --filter @codingcatdev/sanity typegen",
+    "build:production": "pnpm --filter @codingcatdev/site build:production",
+    "preview": "pnpm --filter @codingcatdev/site preview",
+    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e"
   },
   "packageManager": "pnpm@10.34.1"
 }

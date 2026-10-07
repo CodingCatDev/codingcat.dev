@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "codingcatdev",
+  "name": "codingcatdev-dev",
+  "account_id": "c46bd0f3b9ed47b8692cca098030edbf",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-01",
   // nodejs_compat: Sanity client + Portable Text pull Node built-ins.
@@ -9,13 +10,19 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "dev.codingcat.dev",
+      "custom_domain": true
+    }
+  ],
   "vars": {
     "ENVIRONMENT": "dev",
     "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
     "PUBLIC_SANITY_DATASET": "dev",
     "PUBLIC_SANITY_API_VERSION": "2025-09-30",
     "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/dev",
-    "SITE_URL": "https://codingcatdev.workers.dev"
+    "SITE_URL": "https://dev.codingcat.dev"
   },
 
   // NOTE: bindings are NOT inherited into `env.*`. Every binding added to the
@@ -24,8 +31,15 @@
   // account is available to confirm/create the auth databases.
   "env": {
     "production": {
-      "name": "codingcatdev-production",
+      "name": "codingcatdev-prod",
+      "account_id": "c46bd0f3b9ed47b8692cca098030edbf",
       "workers_dev": false,
+      "routes": [
+        {
+          "pattern": "codingcat.dev",
+          "custom_domain": true
+        }
+      ],
       "observability": { "enabled": true, "head_sampling_rate": 0.1 },
       "vars": {
         "ENVIRONMENT": "production",

@@ -1,0 +1,77 @@
+name: Deploy Site to Cloudflare Workers
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - "apps/site/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-workers.yml"
+
+concurrency:
+  group: deploy-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Sanity Types
+        run: pnpm typegen
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: dev
+
+      - name: Build site (dev)
+        run: pnpm --filter @codingcatdev/site build
+
+      - name: Deploy to Cloudflare Workers (dev.codingcat.dev)
+        run: pnpm --filter @codingcatdev/site exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'c46bd0f3b9ed47b8692cca098030edbf' }}
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Sanity Types
+        run: pnpm typegen
+        env:
+          SANITY_STUDIO_PROJECT_ID: hfh83o0w
+          SANITY_STUDIO_DATASET: production
+
+      - name: Build site (production)
+        run: pnpm --filter @codingcatdev/site build:production
+
+      - name: Deploy to Cloudflare Workers (codingcat.dev)
+        run: pnpm --filter @codingcatdev/site exec wrangler deploy --env production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'c46bd0f3b9ed47b8692cca098030edbf' }}

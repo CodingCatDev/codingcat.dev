@@ -5,7 +5,7 @@ import { escapeXml } from "@/lib/xml";
 /**
  * Hand-built rather than via @astrojs/sitemap: that integration enumerates
  * build-time routes, and every content URL here is resolved at runtime from
- * Sanity — there is no getStaticPaths to read.
+ * Sanity — there is no static route generation to read.
  *
  * URL shape matches the Next `app/sitemap.ts` exactly; apps/site/baseline
  * holds the pre-migration snapshot to diff against.

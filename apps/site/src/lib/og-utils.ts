@@ -171,7 +171,7 @@ function badgeElement(type: string, typeColor: string, episodeNumber?: string) {
 					textTransform: "uppercase" as any,
 					letterSpacing: "0.05em",
 					color: typeColor,
-					background: typeColor + "26",
+					background: `${typeColor}26`,
 					border: `1px solid ${typeColor}40`,
 				},
 			},

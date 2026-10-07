@@ -2,6 +2,7 @@
 import { settingsQuery } from "@/lib/sanity/queries";
 import NavLink from "./NavLink.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import SearchModal from "./SearchModal.astro";
 
 const settings = await Astro.locals.sanity.loadQuery(settingsQuery);
 const navLinks = settings?.navLinks ?? [];
@@ -25,13 +26,14 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 		</nav>
 	</div>
 	<div class="flex items-center gap-2">
-		<a
-			href="/search"
-			class="inline-flex items-center justify-center rounded-md size-9 hover:bg-accent hover:text-accent-foreground transition-colors"
-			aria-label="Search"
+		<button
+			type="button"
+			id="search-header-trigger"
+			class="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/60 cursor-pointer"
+			aria-label="Search CodingCat.dev (⌘K)"
 		>
 			<svg
-				class="size-5"
+				class="size-4"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -43,7 +45,8 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 				<circle cx="11" cy="11" r="8"></circle>
 				<path d="m21 21-4.3-4.3"></path>
 			</svg>
-		</a>
+			<span class="hidden md:inline-flex items-center text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border">⌘K</span>
+		</button>
 		<ThemeToggle />
 		<button
 			type="button"
@@ -100,10 +103,17 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 	</nav>
 </div>
 
+<SearchModal />
+
 <script>
 	const drawer = document.getElementById("nav-drawer");
 	const openButton = document.getElementById("nav-drawer-toggle");
 	const closeButton = document.getElementById("nav-drawer-close");
+	const searchTrigger = document.getElementById("search-header-trigger");
+
+	searchTrigger?.addEventListener("click", () => {
+		(window as unknown as { openSearchModal?: () => void }).openSearchModal?.();
+	});
 
 	const setOpen = (open: boolean) => {
 		if (!drawer) {
