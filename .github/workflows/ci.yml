@@ -30,11 +30,14 @@ jobs:
       # Generates apps/sanity/extract.json and the site's types.gen.ts, both of
       # which are derived artifacts and therefore gitignored. Runs before
       # typecheck because the site imports the generated types.
-      - name: Typegen
+      - name: Typegen (Sanity)
         run: pnpm typegen
         env:
           SANITY_STUDIO_PROJECT_ID: hfh83o0w
           SANITY_STUDIO_DATASET: production
+
+      - name: Typegen (Cloudflare)
+        run: pnpm --filter @codingcatdev/site cf-typegen
 
       - name: Lint (site)
         run: pnpm --filter @codingcatdev/site lint
@@ -53,6 +56,9 @@ jobs:
         env:
           SANITY_STUDIO_PROJECT_ID: hfh83o0w
           SANITY_STUDIO_DATASET: production
+
+      - name: Run E2E Tests
+        run: pnpm --filter @codingcatdev/site test:e2e
 
       # extract.json is committed and is the single source of truth for typegen.
       # The Typegen step above regenerates it; if that changed the file, the
@@ -91,6 +97,9 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: hfh83o0w
           SANITY_STUDIO_DATASET: dev
 
+      - name: Generate Cloudflare Types
+        run: pnpm --filter @codingcatdev/site cf-typegen
+
       - name: Build site (preview)
         run: pnpm --filter @codingcatdev/site build
 
@@ -99,7 +108,32 @@ jobs:
         run: |
           OUTPUT=$(pnpm --filter @codingcatdev/site exec wrangler versions upload --tag "pr-${{ github.event.pull_request.number }}" --message "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}")
           echo "$OUTPUT"
+
+          PREVIEW_URL=$(echo "$OUTPUT" | grep -i "Version Preview URL:" | awk '{print $NF}' | head -n 1)
+          VERSION_ID=$(echo "$OUTPUT" | grep -i "Worker Version ID:" | awk '{print $NF}' | head -n 1)
+
+          echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+          echo "version_id=$VERSION_ID" >> $GITHUB_OUTPUT
+
+          echo "### ⚡ Cloudflare Worker Preview Ready" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Preview URL**: [${PREVIEW_URL}](${PREVIEW_URL})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version ID**: \`${VERSION_ID}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Worker**: \`codingcatdev-dev\`" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "$PREVIEW_URL" ]; then
+            gh pr comment ${{ github.event.pull_request.number }} --body "### ⚡ Cloudflare Worker Preview Ready!
+
+| Environment | URL |
+|---|---|
+| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |
+| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |
+
+- **Worker Version ID**: \`${VERSION_ID}\`
+- **Protection**: Restricted to \`@codingcat.dev\` accounts via Cloudflare Zero Trust Access"
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'c46bd0f3b9ed47b8692cca098030edbf' }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
