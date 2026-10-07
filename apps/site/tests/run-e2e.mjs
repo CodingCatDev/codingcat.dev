@@ -98,6 +98,8 @@ async function main() {
 		files: filesToRun,
 	});
 
+	const failureDetails = [];
+
 	stream.compose(new spec()).pipe(process.stdout);
 
 	stream.on("test:pass", () => {
@@ -105,9 +107,10 @@ async function main() {
 		totalTests++;
 	});
 
-	stream.on("test:fail", () => {
+	stream.on("test:fail", (data) => {
 		failedTests++;
 		totalTests++;
+		failureDetails.push(data);
 	});
 
 	await new Promise((resolve) => stream.on("end", resolve));
@@ -142,7 +145,13 @@ async function main() {
 	);
 
 	if (failedTests > 0) {
-		console.error(`\n❌ TEST SUITE FAILED with ${failedTests} failure(s).`);
+		console.error(`\n❌ TEST SUITE FAILED with ${failedTests} failure(s):`);
+		for (const f of failureDetails) {
+			console.error(`\n- Test: ${f.name}`);
+			if (f.details?.error) {
+				console.error(f.details.error.stack || f.details.error.message || f.details.error);
+			}
+		}
 		process.exit(1);
 	} else {
 		console.log(

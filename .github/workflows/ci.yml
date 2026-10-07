@@ -106,7 +106,7 @@ jobs:
       - name: Upload Cloudflare Worker Preview Version
         id: upload_preview
         run: |
-          OUTPUT=$(pnpm --filter @codingcatdev/site exec wrangler versions upload --tag "pr-${{ github.event.pull_request.number }}" --message "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}")
+          OUTPUT=$(pnpm --filter @codingcatdev/site exec wrangler versions upload --tag "pr-${PR_NUMBER}" --message "PR #${PR_NUMBER}: ${PR_TITLE}")
           echo "$OUTPUT"
 
           PREVIEW_URL=$(echo "$OUTPUT" | grep -i "Version Preview URL:" | awk '{print $NF}' | head -n 1)
@@ -115,6 +115,8 @@ jobs:
           echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
           echo "version_id=$VERSION_ID" >> $GITHUB_OUTPUT
 
+          echo "::notice title=Cloudflare Worker Preview URL::${PREVIEW_URL}"
+
           echo "### ⚡ Cloudflare Worker Preview Ready" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Preview URL**: [${PREVIEW_URL}](${PREVIEW_URL})" >> $GITHUB_STEP_SUMMARY
@@ -122,19 +124,34 @@ jobs:
           echo "- **Target Worker**: \`codingcatdev-dev\`" >> $GITHUB_STEP_SUMMARY
 
           if [ -n "$PREVIEW_URL" ]; then
-            echo "### ⚡ Cloudflare Worker Preview Ready!" > pr_comment.md
-            echo "" >> pr_comment.md
-            echo "| Environment | URL |" >> pr_comment.md
-            echo "|---|---|" >> pr_comment.md
-            echo "| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |" >> pr_comment.md
-            echo "| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |" >> pr_comment.md
-            echo "" >> pr_comment.md
-            echo "- **Worker Version ID**: \`${VERSION_ID}\`" >> pr_comment.md
-            echo "- **Protection**: Restricted to \`@codingcat.dev\` accounts via Cloudflare Zero Trust Access" >> pr_comment.md
-            gh pr comment ${{ github.event.pull_request.number }} --body-file pr_comment.md
+            cat << 'EOF' > pr_comment.md
+### ⚡ Cloudflare Worker Preview Ready!
+
+| Environment | URL |
+|---|---|
+| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |
+| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |
+
+- **Worker Version ID**: `${VERSION_ID}`
+- **Protection**: Restricted to `@codingcat.dev` accounts via Cloudflare Zero Trust Access
+EOF
+            # Replace placeholder variables with actual values in pr_comment.md
+            sed -i "s|\${PREVIEW_URL}|${PREVIEW_URL}|g" pr_comment.md
+            sed -i "s|\${VERSION_ID}|${VERSION_ID}|g" pr_comment.md
+
+            # Check if bot has already posted a preview comment on this PR
+            COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --jq '.[] | select((.user.login=="github-actions[bot]" or .user.login=="app/github-actions") and (.body | contains("Cloudflare Worker Preview Ready"))) | .id' | tail -n 1)
+
+            if [ -n "$COMMENT_ID" ]; then
+              gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${COMMENT_ID}" -f body="$(cat pr_comment.md)"
+            else
+              gh pr comment "$PR_NUMBER" --body-file pr_comment.md
+            fi
           fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'c46bd0f3b9ed47b8692cca098030edbf' }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
 
