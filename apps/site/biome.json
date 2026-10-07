@@ -1,0 +1,67 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"defaultBranch": "main",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.js",
+			"**/*.mjs",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.astro",
+			"!**/.wrangler",
+			"!src/lib/sanity/types.gen.ts",
+			"!worker-configuration.d.ts",
+			"!baseline"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"useEditorconfig": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noArrayIndexKey": "off"
+			},
+			"complexity": {
+				"noForEach": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off",
+				"noUnusedFunctionParameters": "warn"
+			},
+			"style": {
+				"noUnusedTemplateLiteral": { "level": "error", "fix": "safe" },
+				"noNonNullAssertion": "warn",
+				"useBlockStatements": "error"
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "off"
+			}
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"javascript": {
+		"jsxRuntime": "transparent",
+		"formatter": {
+			"trailingCommas": "all",
+			"semicolons": "always"
+		}
+	}
+}

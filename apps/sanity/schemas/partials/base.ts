@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { ImageIcon } from "@sanity/icons";
+import { ImageIcon } from "@sanity/icons/Image";
 
 //Custom Editor for markdown paste
 import input from "../../components/BlockEditor";

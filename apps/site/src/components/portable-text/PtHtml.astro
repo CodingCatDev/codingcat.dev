@@ -1,0 +1,22 @@
+---
+import type { Props as PtProps } from "astro-portabletext/types";
+
+type HtmlNode = { _type: "htmlBlock"; html?: string };
+
+type Props = PtProps<HtmlNode>;
+
+const { node } = Astro.props;
+
+/**
+ * Raw HTML authored in the Studio, rendered unescaped by design — this block
+ * exists so editors can embed markup the other block types do not cover.
+ * It is trusted because only authenticated Studio users can write it.
+ *
+ * Not stegaClean'd: cleaning would strip characters from the author's markup.
+ * Stega is only ever enabled on preview responses, which are `noindex` and
+ * `no-store`, so encoded characters cannot reach a published page.
+ */
+const html = node.html;
+---
+
+{html && <div class="not-prose my-6" set:html={html} />}

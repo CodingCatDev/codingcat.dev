@@ -105,7 +105,7 @@ export function YoutubeInputComponent(props: ObjectInputProps<string>) {
 	);
 
 	return (
-		<Stack space={3}>
+		<Stack gap={3}>
 			<TextInput {...elementProps} onChange={handleChange} value={value} />{" "}
 			{!!props.value && (
 				<Box style={{ position: "relative" }}>

@@ -1,13 +1,12 @@
 packages:
   - "apps/*"
 
-overrides:
-  "@portabletext/sanity-bridge": "^1.2.14"
-
 onlyBuiltDependencies:
   - esbuild
   - sharp
   - unrs-resolver
+  - workerd
+  - "@tailwindcss/oxide"
 
 peerDependencyRules:
   allowAny:

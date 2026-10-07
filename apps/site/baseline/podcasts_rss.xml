@@ -1,0 +1,1418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:itunes="http://www.itunes.apple.com/dtds/podcast-1.0.dtd"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>CodingCat.dev Podcast</title>
+    <link>https://codingcat.dev/podcasts</link>
+    <description>The CodingCat.dev Podcast features conversations about web development, design, and technology with industry experts and community members.</description>
+    <language>en</language>
+    <lastBuildDate>Tue, 18 Aug 2026 13:50:22 GMT</lastBuildDate>
+    <atom:link href="https://codingcat.dev/podcasts/rss.xml" rel="self" type="application/rss+xml" />
+    <copyright>All rights reserved 2026, CodingCat.dev</copyright>
+    <itunes:author>Alex Patterson</itunes:author>
+    <itunes:owner>
+      <itunes:name>Alex Patterson</itunes:name>
+      <itunes:email>alex@codingcat.dev</itunes:email>
+    </itunes:owner>
+    <itunes:image href="https://codingcat.dev/icon.svg" />
+    <itunes:category text="Technology" />
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:type>episodic</itunes:type>
+    <image>
+      <url>https://codingcat.dev/icon.svg</url>
+      <title>CodingCat.dev Podcast</title>
+      <link>https://codingcat.dev/podcasts</link>
+    </image>
+    <item>
+      <title>GenAI for Engineers, What&apos;s Real, What&apos;s Not and What&apos;s Coming</title>
+      <link>https://codingcat.dev/podcast/genai-for-engineers-what-s-real-what-s-not-and-what-s-coming</link>
+      <guid isPermaLink="false">292601cc-5365-4644-9b34-82e67d033e4b</guid>
+      <pubDate>Wed, 19 Nov 2025 13:10:00 GMT</pubDate>
+      <description><![CDATA[Curious about GenAI for engineers? Learn what's real, what's not, and what's next in AI. ]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/111520376/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-21%2F412921321-44100-2-46980ef61a68f.mp3" length="43352397" type="audio/mpeg" />
+      <itunes:title>GenAI for Engineers, What&apos;s Real, What&apos;s Not and What&apos;s Coming</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/3e48f44739be2aabf3aaa805e51b3a6328979153-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>13</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:45:09</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Curious about GenAI for engineers? Learn what&amp;#39;s real, what&amp;#39;s not, and what&amp;#39;s next in AI. Watch for expert insights and share your thoughts below!&lt;a href=&quot;https://codingcat.dev/podcast/genai-for-engineers-what-s-real-what-s-not-and-what-s-coming&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/genai-for-engineers-what-s-real-what-s-not-and-what-s-coming&lt;/a&gt;00:00 Introduction02:21 Startup Journey10:13 GenAI Evolution13:24 Engineering Excellence16:44 AI Job Impact25:11 New Product Launch29:08 Distributed Teams32:20 Future of GenAI43:27 Key Takeaways&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1763746065654-db417e22b5713.jpg" />
+    </item>
+    <item>
+      <title>How OAuth, MCP, and the OpenAI Apps SDK, Power the Next Generation of Interactive AI Experiences (with Stytch &amp; OpenAI)</title>
+      <link>https://codingcat.dev/podcast/how-oauth-mcp-and-the-openai-apps-sdk-power-the-next-generation-of-interactive-ai-experiences</link>
+      <guid isPermaLink="false">ab22f27a-2d5d-4dfa-ad61-b5dd9ef85334</guid>
+      <pubDate>Tue, 04 Nov 2025 18:01:00 GMT</pubDate>
+      <description><![CDATA[Curious about OAuth, MCP servers, and building cool ChatGPT apps? Hear from Max of Stytch as we dive deep, break down the tech, and build a Tamagotchi together! ]]></description>
+      <author>Alex Patterson</author>
+      <itunes:title>How OAuth, MCP, and the OpenAI Apps SDK, Power the Next Generation of Interactive AI Experiences (with Stytch &amp; OpenAI)</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/0beb99900f4c24e284df2dee3e2d740062c6ce96-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>12</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+      <title>Firebase SQL with Data Connect</title>
+      <link>https://codingcat.dev/podcast/firebase-sql-with-data-connect</link>
+      <guid isPermaLink="false">7fffc615-ed5a-491a-a5f3-e1dcf3338612</guid>
+      <pubDate>Tue, 28 Oct 2025 19:48:00 GMT</pubDate>
+      <description><![CDATA[Firebase SQL with Data Connect how to use semantic searches with vector embeddings.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/111519824/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-21%2F412920653-44100-2-038d80486a13b.mp3" length="46648423" type="audio/mpeg" />
+      <itunes:title>Firebase SQL with Data Connect</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/85d81ee02a09ff89d5cbb7b3644e8793d98b5c13-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>11</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:48:35</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Discover Firebase Data Connect with Tyler Crowe! Dive into SQL, GraphQL, AI, and live demos to supercharge your app&amp;#39;s data. Share your thoughts below!&lt;a href=&quot;https://codingcat.dev/podcast/firebase-sql-with-data-connect&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/firebase-sql-with-data-connect&lt;/a&gt;00:00 Data Connect Overview04:29 AI Features &amp;amp; Vertex13:13 SQL Views &amp;amp; Raw SQL15:45 Downloading SDKs24:37 Full Text Search30:32 Vector Search Explained38:20 GraphQL Insights47:43 Firestore vs Data Connect48:32 Conclusion&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1763745460332-9dad9dc048c7c.jpg" />
+    </item>
+    <item>
+      <title>Identity in AI Agents</title>
+      <link>https://codingcat.dev/podcast/identity-access-management-for-agents-with-tobin-south</link>
+      <guid isPermaLink="false">f78ab69a-69a7-4e88-9496-22d1217bbd72</guid>
+      <pubDate>Thu, 23 Oct 2025 23:42:00 GMT</pubDate>
+      <description><![CDATA[Explore AI identity management with expert insights on MCP servers, agent security, OAuth, and future standards in AI. Unlock best practices and industry trends.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/111519529/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-21%2F412920350-44100-2-431a249a501e8.mp3" length="41021021" type="audio/mpeg" />
+      <itunes:title>Identity in AI Agents</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/b6824741d5542b93999d8f9be4ffef11e37dc52b-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>10</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:42:43</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Curious about AI identity and MCP servers? Join us as Tobin South breaks down securing agents, fine-grained access, and the future of AI identity. Share your thoughts below!&lt;a href=&quot;https://codingcat.dev/podcast/identity-access-management-for-agents-with-tobin-south&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://codingcat.dev/podcast/identity-access-management-for-agents-with-tobin-south&lt;/a&gt;00:00 Meet Tobin South06:11 MCP Security Challenges13:28 Agent to Agent Future24:28 MCP Server Setup33:12 Real-World Orchestration40:53 MCP Protocol Updates42:15 Closing Thoughts&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1763745269743-3bd906490c11a.jpg" />
+    </item>
+    <item>
+      <title>Build a Custom No-Code App in 90 Minutes</title>
+      <link>https://codingcat.dev/podcast/build-a-custom-no-code-app-in-90-minutes</link>
+      <guid isPermaLink="false">a3607438-2fa0-4660-be27-0b16bfb22b6c</guid>
+      <pubDate>Sun, 12 Oct 2025 15:27:00 GMT</pubDate>
+      <description><![CDATA[Curious about no-code app building? Dive in as we explore Adalo vs Bubble, micro SaaS ideas, and real talk on launching products without code. Drop your thoughts below and share!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/109559677/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-9-12%2F409114936-44100-2-598dadd38aa8f.mp3" length="50115812" type="audio/mpeg" />
+      <itunes:title>Build a Custom No-Code App in 90 Minutes</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/b7507d2e7862310280e622054777905351d5c214-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>8</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:52:12</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Curious about no-code app building? Dive in as we explore Adalo vs Bubble, micro SaaS ideas, and real talk on launching products without code. Drop your thoughts below and share!&lt;a href=&quot;https://codingcat.dev/podcast/build-a-custom-no-code-app-in-90-minutes&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/build-a-custom-no-code-app-in-90-minutes&lt;/a&gt;00:00 Getting Started01:18 Guest Story07:02 No-Code Tools10:44 Building in Adalo23:23 Database &amp;amp; Response29:24 Scaling &amp;amp; Auth36:14 Platform Comparison50:23 Wrap Up&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1760283467716-1af7bcc68d6cc.jpg" />
+    </item>
+    <item>
+      <title>How to Automate Your Work and Free Your Time</title>
+      <link>https://codingcat.dev/podcast/how-to-automate-your-work-and-free-your-time</link>
+      <guid isPermaLink="false">28b2a0b5-07d1-4b23-a515-2cdc1c1e7731</guid>
+      <pubDate>Wed, 08 Oct 2025 18:00:00 GMT</pubDate>
+      <description><![CDATA[Discover how to automate your tasks and reclaim your time! Join Alex and Joe as they discuss podcasting, automation, and work-life balance strategies. ]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/109558686/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-9-12%2F409113678-44100-2-01cefd43b5f91.mp3" length="52801200" type="audio/mpeg" />
+      <itunes:title>How to Automate Your Work and Free Your Time</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/ab921ffcf80d0ce4ea1dc35d6c24086fd6fb9968-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>7</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:55:00</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Discover how to automate your tasks and reclaim your time! Join Alex and Joe as they discuss podcasting, automation, and work-life balance strategies. https://codingcat.dev/podcast/how-to-automate-your-work-and-free-your-time&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1760281720934-63c4a6039b8c5.jpg" />
+    </item>
+    <item>
+      <title>Running the Cloud on Your Desktop with LocalStack</title>
+      <link>https://codingcat.dev/podcast/running-the-cloud-on-your-desktop-with-localstack</link>
+      <guid isPermaLink="false">d2d147a2-5954-4ee4-9548-222667035923</guid>
+      <pubDate>Mon, 06 Oct 2025 13:06:00 GMT</pubDate>
+      <description><![CDATA[Tired of AWS running in the cloud, how about right on your desktop?]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/109562752/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-9-12%2F409120600-44100-2-79f75a1d3d0aa.mp3" length="49074258" type="audio/mpeg" />
+      <itunes:title>Running the Cloud on Your Desktop with LocalStack</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/6835d7b8549dd59339a6e475e64b8ff079d64ab1-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>9</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:51:07</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Ever wondered how to run AWS locally and save money? Dive into LocalStack with Bryan and Alex for tips, demos, and real dev insights. Comment your thoughts and share!&lt;a href=&quot;https://codingcat.dev/podcast/running-the-cloud-on-your-desktop-with-localstack&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/running-the-cloud-on-your-desktop-with-localstack&lt;/a&gt;00:00 Getting Started06:36 LocalStack Overview12:18 Web App Demo20:17 S3 Bucket Setup28:16 Lambda Functions34:56 API Gateway Integration41:04 Dev Workflows46:20 Final Thoughts&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1760310496396-269367ee64fe6.jpg" />
+    </item>
+    <item>
+      <title>Secure AI Access Control Using: SpiceDB</title>
+      <link>https://codingcat.dev/podcast/secure-ai-access-control-using-spicedb</link>
+      <guid isPermaLink="false">e4aefc68-fdf9-441a-962f-653d10a3f01a</guid>
+      <pubDate>Mon, 21 Jul 2025 17:17:00 GMT</pubDate>
+      <description><![CDATA[Dive into hands-on SpiceDB demos, real-world permission modeling, and AI-powered scenario testing!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/105795779/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-21%2F404289684-44100-2-e433bf263c6e3.mp3" length="44130637" type="audio/mpeg" />
+      <itunes:title>Secure AI Access Control Using: SpiceDB</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/985c915f4445dce1e599ec70fea53b09689aefe2-960x540.png?rect=210,0,540,540&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>6</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:45:58</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Dive into hands-on SpiceDB demos, real-world permission modeling, and AI-powered scenario testing!&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1753118298856-e19d8d5c8957.jpg" />
+    </item>
+    <item>
+      <title>Stop Building Authz, Start Building Value: A Deep Dive into Authorization, REBAC, and SpiceDB</title>
+      <link>https://codingcat.dev/podcast/scaling-permissions-with-spicedb-rebac-explained</link>
+      <guid isPermaLink="false">b9dfe3ba-bd69-4588-97fe-012b3a370f14</guid>
+      <pubDate>Mon, 21 Jul 2025 16:55:00 GMT</pubDate>
+      <description><![CDATA[Dive into AuthZed, SpiceDB, and Permissions.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/105795716/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-21%2F404289580-44100-2-37290e53c3aa8.mp3" length="41094999" type="audio/mpeg" />
+      <itunes:title>Stop Building Authz, Start Building Value: A Deep Dive into Authorization, REBAC, and SpiceDB</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/2d5574e4f3ce25d07898a17bbeeb2bcfd7df8568-960x540.png?rect=210,0,540,540&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>5</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:42:48</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Dive into AuthZed, SpiceDB, and Permissions.&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1753118134699-349dd27b02978.jpg" />
+    </item>
+    <item>
+      <title>Autoshow - Automatic Show Notes for Podcasts and Videos</title>
+      <link>https://codingcat.dev/podcast/automatic-show-notes-for-podcasts-and-videos</link>
+      <guid isPermaLink="false">4628e5fe-28d8-49c4-af37-15904dcf787a</guid>
+      <pubDate>Wed, 05 Mar 2025 21:26:00 GMT</pubDate>
+      <description><![CDATA[Anthony is back, join us for a fun chat on coding, dev tools, and AI!]]></description>
+      <author>Alex Patterson</author>
+      <itunes:title>Autoshow - Automatic Show Notes for Podcasts and Videos</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/7ce952a3cc876ae1616a9b16bf979c195e93c2c7-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>4</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+      <title>AI for Peeps Scared of AI</title>
+      <link>https://codingcat.dev/podcast/ai-for-peeps-scared-of-ai</link>
+      <guid isPermaLink="false">8efab30e-08b7-408d-ac98-c51238069042</guid>
+      <pubDate>Wed, 26 Feb 2025 05:01:00 GMT</pubDate>
+      <description><![CDATA[Explore Ray Camden's tech journey & dive into AI for beginners. Discover the latest in AI, from coding basics to powerful tools like Google's Gemini.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO1688519349.mp3" length="37269420" type="audio/mpeg" />
+      <itunes:title>AI for Peeps Scared of AI</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/a535d004c847fc77dc1c8771c7c482ce65278234-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>3</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:38:49</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Explore Ray Camden&amp;#39;s tech journey &amp;amp; dive into AI for beginners. Discover the latest in AI, from coding basics to powerful tools like Google&amp;#39;s Gemini.&lt;a href=&quot;https://codingcat.dev/podcast/ai-for-peeps-scared-of-ai&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/ai-for-peeps-scared-of-ai&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1740005179555-81e93c6077906.jpg" />
+    </item>
+    <item>
+      <title>AI-Powered Persuasion Engineering with Ben Bressington</title>
+      <link>https://codingcat.dev/podcast/ai-powered-persuasion-engineering-with-ben-bressington</link>
+      <guid isPermaLink="false">59b0c713-79dc-45cc-b7ef-95479932611b</guid>
+      <pubDate>Tue, 18 Feb 2025 19:58:00 GMT</pubDate>
+      <description><![CDATA[Join Ben Bressington for insights into AI-powered persuasion, nomadic lifestyle tips, and how tech reshapes industries.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/98742140/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-1-19%2F395181478-44100-2-e6c13b1f35ab1.mp3" length="52529945" type="audio/mpeg" />
+      <itunes:title>AI-Powered Persuasion Engineering with Ben Bressington</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/849d6e5132ab7428a6aaef0e28b315d717389976-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>2</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:54:43</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Join us for a deep dive into indie hacking with Jonathan Wilke. Discover insights on building SaaS without funding. Share your thoughts in the comments!&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/ai-powered-persuasion-engineering-with-ben-bressington&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://codingcat.dev/podcast/ai-powered-persuasion-engineering-with-ben-bressington&lt;/a&gt;&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1739995632451-61935e97b241a.jpg" />
+    </item>
+    <item>
+      <title>supastarter and Indie Hacking with Jonathan Wilke</title>
+      <link>https://codingcat.dev/podcast/supastarter-and-indie-hacking-with-jonathan-wilke</link>
+      <guid isPermaLink="false">668e776c-0102-416a-9f83-78c024dae636</guid>
+      <pubDate>Thu, 30 Jan 2025 02:01:00 GMT</pubDate>
+      <description><![CDATA[Explore indie hacking, SaaS growth strategies, and innovative developer tools with Jonathan Wilke.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO9227289963.mp3" length="50178925" type="audio/mpeg" />
+      <itunes:title>supastarter and Indie Hacking with Jonathan Wilke</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/6fab5422bfbf71ce8e85063b6c07f331d68c4fa3-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>5</itunes:season>
+        <itunes:episode>1</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:52:16</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Join us for a deep dive into indie hacking with Jonathan Wilke. Discover insights on building SaaS without funding. Share your thoughts in the comments!
+
+&lt;a href=&quot;https://codingcat.dev/podcast/supastarter-and-indie-hacking-with-jonathan-wilke&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://codingcat.dev/podcast/supastarter-and-indie-hacking-with-jonathan-wilke&lt;/a&gt;
+
+Sponsors:
+- Cloudinary &lt;a href=&quot;https://cld.media/codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://cld.media/codingcatdev&lt;/a&gt;
+- Algolia &lt;a href=&quot;https://www.algolia.com/?utm_source=codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://www.algolia.com/?utm_source=codingcatdev&lt;/a&gt;
+
+00:00 Introduction
+00:42 Indie Hacking Insights
+03:16 Superstarter Overview
+10:10 Ad Break
+11:35 Feature Highlights
+17:30 Better Auth Discussion
+22:32 Deployment Challenges
+39:20 Full Control Benefits
+50:14 Closing Thoughts&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1738202992276-e42c3cac24fb6.jpg" />
+    </item>
+    <item>
+      <title>Stop Killing your Largest Contentful Paint score with images!</title>
+      <link>https://codingcat.dev/podcast/stop-killing-your-largest-contentful-paint-score-with-images</link>
+      <guid isPermaLink="false">6c788031-cace-4c70-bcf5-66d0dcda085f</guid>
+      <pubDate>Fri, 24 Jan 2025 12:35:00 GMT</pubDate>
+      <description><![CDATA[Join us as we explore Cloudinary's new components for Next.js! Learn how to optimize images, integrate Cloudinary, and boost performance.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO7527392726.mp3" length="55331526" type="audio/mpeg" />
+      <itunes:title>Stop Killing your Largest Contentful Paint score with images!</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/75dc7459b152687483012f9c2c34cd87ba39c3d1-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>23</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:57:38</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Stop Killing your Largest Contentful Paint score with images!&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p&gt;Join us as we explore Cloudinary&apos;s new components for Next.js! Learn how to optimize images, integrate Cloudinary, and boost performance. Don&apos;t miss out!&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/stop-killing-your-largest-contentful-paint-score-with-images&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://codingcat.dev/podcast/stop-killing-your-largest-contentful-paint-score-with-images&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:- Algolia ⁠&lt;a href=&quot;https://www.algolia.com/?utm_source=codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://www.algolia.com/?utm_source=codingcatdev&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p&gt;00:00 Introduction&lt;/p&gt;
+&lt;p&gt;01:41 Cloudinary Overview&lt;/p&gt;
+&lt;p&gt;05:08 Next.js Integration&lt;/p&gt;
+&lt;p&gt;10:23 Image Transformations&lt;/p&gt;
+&lt;p&gt;36:58 Performance Insights&lt;/p&gt;
+&lt;p&gt;48:42 Additional Cloudinary Features&lt;/p&gt;
+&lt;p&gt;54:47 Closing Thoughts&lt;/p&gt;
+</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1737810802272-a74ac9c0b8697.jpg" />
+    </item>
+    <item>
+      <title>How to add Sentry to Next.js the right way!</title>
+      <link>https://codingcat.dev/podcast/how-to-add-sentry-to-next-js-the-right-way</link>
+      <guid isPermaLink="false">c091d38b-4812-4922-a6f9-2e8ea7aa1dd1</guid>
+      <pubDate>Wed, 16 Oct 2024 19:12:28 GMT</pubDate>
+      <description><![CDATA[Discover how to set up Sentry with Next.js for seamless error monitoring and performance tracking.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/93137514/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-9-16%2F388217775-44100-2-8acfe2edd408e.mp3" length="63319979" type="audio/mpeg" />
+      <itunes:title>How to add Sentry to Next.js the right way!</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/c8bdc4d88604cef005fd18d07d3867597cb4f2f5-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>2</itunes:season>
+        <itunes:episode>6</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:05:57</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Learn how to integrate Sentry with Next.js! Join us as Luca walks through essential steps, troubleshooting tips, and performance optimization. Share your thoughts below!
+
+&lt;a href=&quot;https://codingcat.dev/podcast/how-to-add-sentry-to-next-js-the-right-way&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://codingcat.dev/podcast/how-to-add-sentry-to-next-js-the-right-way&lt;/a&gt;
+
+Sponsors:
+- Algolia ⁠&lt;a href=&quot;https://www.algolia.com/?utm_source=codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;ugc noopener noreferrer&quot;&gt;https://www.algolia.com/?utm_source=codingcatdev&lt;/a&gt;
+
+00:00 Introduction
+01:57 Installation Guide
+03:39 Configuration Details
+06:08 Performance Monitoring
+14:16 Troubleshooting Tips
+24:12 Advanced Features
+40:07 Deployment Insights
+55:02 Performance Optimization&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1729104943053-75b1ffb34d8a7.jpg" />
+    </item>
+    <item>
+      <title>Unlocking your ADHD Superpowers</title>
+      <link>https://codingcat.dev/podcast/unlocking-your-adhd-superpowers</link>
+      <guid isPermaLink="false">94893625-c4bc-4adc-b59b-391fa13f2b5e</guid>
+      <pubDate>Thu, 10 Oct 2024 15:28:00 GMT</pubDate>
+      <description><![CDATA[Discover the unique strengths of ADHD in coding! Join us as we explore superpowers, challenges, and tips for thriving with ADHD. ]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO3858709765.mp3" length="70620473" type="audio/mpeg" />
+      <itunes:title>Unlocking your ADHD Superpowers</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/596981689ce59386426df906fdb94d110fc66db2-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>22</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:13:33</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Discover the unique strengths of ADHD in coding! Join us as we explore superpowers, challenges, and tips for thriving with ADHD. Comment and share your experiences!
+
+https://codingcat.dev/podcast/unlocking-your-adhd-superpowersSponsors:- Cloudinary ⁠https://cld.media/codingcatdev⁠- Algolia ⁠https://www.algolia.com/?utm_source=codingcatdev
+
+00:00 Introduction
+00:18 ADHD and Coding
+05:08 Understanding ADHD
+13:03 Diagnosing ADHD
+20:28 ADHD Hyperfocus
+29:07 Strategies for Success
+37:45 Mental Health Insights
+56:10 Different, Not Worse&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1728587008560-7cf7ad5e4c3fb.jpg" />
+    </item>
+    <item>
+      <title>Building Successful Open Source Projects</title>
+      <link>https://codingcat.dev/podcast/building-successful-open-source-projects</link>
+      <guid isPermaLink="false">c49ed931-7b57-4d27-a659-026d0c5c0e93</guid>
+      <pubDate>Wed, 25 Sep 2024 20:39:00 GMT</pubDate>
+      <description><![CDATA[I chatted with Brian (aka bdougie) about Hacktoberfest, building OpenSauced, and making successful open-source projects.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO6787746498.mp3" length="37435350" type="audio/mpeg" />
+      <itunes:title>Building Successful Open Source Projects</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/136256313ec652e9b5deb0fa9ef68c634300201c-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>21</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:38:59</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;I chatted with Brian (aka bdougie) about Hacktoberfest, building OpenSauced, and making successful open-source projects.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/building-successful-open-source-projects&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/building-successful-open-source-projects&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:
+- Cloudinary &lt;a href=&quot;https://cld.media/codingcatdev&quot;&gt;⁠https://cld.media/codingcatdev⁠&lt;/a&gt;
+- Algolia &lt;a href=&quot;https://www.algolia.com/?utm_source=codingcatdev&quot;&gt;⁠https://www.algolia.com/?utm_source=codingcatdev&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1727297323670-ae9864082b701.jpg" />
+    </item>
+    <item>
+      <title>Infrastructure Driven Development</title>
+      <link>https://codingcat.dev/podcast/infrastructure-driven-development</link>
+      <guid isPermaLink="false">09d69095-4287-4b69-9f02-3d2e873f358e</guid>
+      <pubDate>Fri, 20 Sep 2024 17:48:00 GMT</pubDate>
+      <description><![CDATA[Join us as Sathiesh Veera shares his journey from engineering in India to a career in Java development, DevOps, and founding a tech startup.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/91931438/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-8-19%2F386655445-44100-2-88ddb43e5afaa.mp3" length="44400639" type="audio/mpeg" />
+      <itunes:title>Infrastructure Driven Development</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/9df9ecc7df62eeb57400e08c5e52d109020ced91-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>20</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:46:15</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Join us as Sathiesh Veera shares his journey from engineering in India to a career in Java development, DevOps, and founding a tech startup. Don&amp;#39;t miss out on his insights!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/infrastructure-driven-development&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/infrastructure-driven-development&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:
+- Cloudinary &lt;a href=&quot;https://cld.media/codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://cld.media/codingcatdev&lt;/a&gt;
+- Algolia &lt;a href=&quot;https://www.algolia.com/?utm_source=codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://www.algolia.com/?utm_source=codingcatdev&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1726771680381-7dbafbb902c4.jpg" />
+    </item>
+    <item>
+      <title>WebDev Fundamentals | React, Angular, and Vue</title>
+      <link>https://codingcat.dev/podcast/webdev-fundamentals-or-react-angular-and-vue</link>
+      <guid isPermaLink="false">4edb915d-6b6c-4d9e-9692-0127da16ca1b</guid>
+      <pubDate>Wed, 24 Jul 2024 20:21:00 GMT</pubDate>
+      <description><![CDATA[Dive into web development fundamentals with Corbin. Explore frameworks, APIs, and developer education. Purrfect for new and seasoned developers looking to expand their knowledge.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/89577376/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-6-23%2F383710330-44100-2-6867d08d8693e.mp3" length="50398771" type="audio/mpeg" />
+      <itunes:title>WebDev Fundamentals | React, Angular, and Vue</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/cc72a566723af57a17e0ef0b6e7b1214ffb70c60-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>19</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:52:29</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Join us as we dive into web development fundamentals with Corbin! Learn about his journey, from early education to teaching and contributing to TanStack. Perfect for both new and seasoned devs. Don&amp;#39;t miss insights on frameworks, APIs, and more. Watch, comment, and share!
+
+https://codingcat.dev/podcast/webdev-fundamentals-or-react-angular-and-vue
+
+Sponsors:
+- Cloudinary https://cld.media/codingcatdev
+- Algolia https://www.algolia.com/?utm_source=codingcatdev
+
+00:00 Introduction
+00:18 Welcome Corbin
+00:57 WebDev Fundamentals
+01:28 College Years
+02:20 Overcoming Challenges
+03:50 Technical Projects
+05:11 Early Interests
+10:02 Working at Descript
+11:45 AI in WebDev
+13:00 Sponsor Break
+14:56 Framework Guide
+22:52 Learning Paths
+37:13 Rebuilding Projects
+48:02 Final Thoughts&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1721757674441-ed1b433d1eb13.jpg" />
+    </item>
+    <item>
+      <title>Turning Documentation into a Product: Best Practices for Success</title>
+      <link>https://codingcat.dev/podcast/turning-documentation-into-a-product-best-practices-for-success</link>
+      <guid isPermaLink="false">120b48ee-cd22-429e-b36f-d0a4704565e4</guid>
+      <pubDate>Wed, 17 Jul 2024 16:00:00 GMT</pubDate>
+      <description><![CDATA[Explore best practices for turning documentation into a successful product with real-world insights. Elevate your docs by learning from industry experts!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/89308672/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-6-17%2F383327636-44100-2-3624aa77b8887.mp3" length="45116185" type="audio/mpeg" />
+      <itunes:title>Turning Documentation into a Product: Best Practices for Success</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/0e2c63a5d529dd0faa9c7049f18299afec3b9c15-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>18</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:46:59</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Hey, everyone! Join us on CodingCat.dev as Vincent shares his journey from electrical engineering to tech writing. It&amp;#39;s a fun chat with plenty of laughs and insights into the tech world. Don’t miss out and remember to share it with your friends!
+
+https://codingcat.dev/podcast/turning-documentation-into-a-product-best-practices-for-success
+
+Sponsors:
+- Cloudinary https://cld.media/codingcatdev
+- Algolia https://www.algolia.com/?utm_source=codingcatdev
+
+00:00 Welcome
+01:20 Correct Intro
+03:20 Starting Conversation
+06:50 Career Path
+10:01 Into Tech
+18:13 Docs as Product
+28:33 Continuous Improvement
+41:12 Future of Docs
+43:52 Conclusion&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1721183185708-b13663212f30f.jpg" />
+    </item>
+    <item>
+      <title>AI for System Design and Architecture Documentation</title>
+      <link>https://codingcat.dev/podcast/ai-for-system-design-and-architecture-documentation</link>
+      <guid isPermaLink="false">30be7590-3e6f-412f-bcd9-a5421ed57997</guid>
+      <pubDate>Mon, 08 Jul 2024 16:00:00 GMT</pubDate>
+      <description><![CDATA[Learn how AI transforms system design and architecture with insights from Multiplayer's CTO. Explore new tools and collaborative features for developers.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO1164778711.mp3" length="38267506" type="audio/mpeg" />
+      <itunes:title>AI for System Design and Architecture Documentation</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/b43bd666d412b682acb84db7ec9971753b1edf24-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>17</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:39:51</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Learn how AI transforms system design and architecture with insights from Multiplayer&amp;#39;s CTO. Explore new tools and collaborative features for developers.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;https://codingcat.dev/podcast/ai-for-system-design-and-architecture-documentation&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;00:00 Introduction&lt;/p&gt;
+&lt;p&gt;00:18 Meet Thomas Johnson&lt;/p&gt;
+&lt;p&gt;00:54 What is Multiplayer?&lt;/p&gt;
+&lt;p&gt;02:55 Early Tech Journey&lt;/p&gt;
+&lt;p&gt;05:12 Career Transition&lt;/p&gt;
+&lt;p&gt;07:04 VOIP Industry Insights&lt;/p&gt;
+&lt;p&gt;08:56 System Design Importance&lt;/p&gt;
+&lt;p&gt;12:47 Multiplayer Demo&lt;/p&gt;
+&lt;p&gt;24:53 Collaborative Features&lt;/p&gt;
+&lt;p&gt;26:42 AI in System Design&lt;/p&gt;
+&lt;p&gt;29:36 Consulting Potential&lt;/p&gt;
+&lt;p&gt;35:21 Perfect Picks&lt;/p&gt;
+&lt;p&gt;39:30 Conclusion&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1720445592869-ac5f5e9b5f8a5.jpg" />
+    </item>
+    <item>
+      <title>Google I/O Flutter Updates and Firebase</title>
+      <link>https://codingcat.dev/podcast/google-i-o-flutter-updates-and-firebase</link>
+      <guid isPermaLink="false">796783b3-91df-4657-9db0-316a77cf4cc1</guid>
+      <pubDate>Fri, 05 Jul 2024 16:00:00 GMT</pubDate>
+      <description><![CDATA[Catch the latest updates on Flutter and Firebase from Google I/O 2024. Hear Roman Jacquez's insights and explore the exciting new features.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO3072271736.mp3" length="47374419" type="audio/mpeg" />
+      <itunes:title>Google I/O Flutter Updates and Firebase</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/bfa80d1c7afd30456c4d0d6e9819eda48b6826fa-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>16</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:49:20</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Catch the latest updates on Flutter and Firebase from Google I/O 2023. Hear Roman Jacquez&amp;#39;s insights and explore the exciting new features. Share your thoughts!https://codingcat.dev/podcast/google-i-o-flutter-updates-and-firebase
+
+00:00 Introduction
+00:18 Meet Roman
+00:34 Google I/O Highlights
+01:13 Flutter Moments
+01:35 Roman&amp;#39;s Background
+02:25 Career Journey
+05:55 Philips Health System
+10:49 Fl |wb
+12:25 What&amp;#39;s New in Flutter
+20:46 Firebase Data Connect
+27:59 Firebase Features
+36:17 Multimodal Integration
+41:32 Flame 2D Engine
+47:31 Conclusion&lt;/p&gt;
+
+--- 
+
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719947908765-145bc16c13ea1.jpg" />
+    </item>
+    <item>
+      <title>Using Firebase with Communication APIs</title>
+      <link>https://codingcat.dev/podcast/using-firebase-with-communication-apis</link>
+      <guid isPermaLink="false">ca69fea5-608a-4cee-9eba-8a2d915d7c84</guid>
+      <pubDate>Wed, 03 Jul 2024 16:00:00 GMT</pubDate>
+      <description><![CDATA[Explore how to integrate Firebase with Vonage APIs in our latest developer podcast. Learn about authentication, hosting, and more. ]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO3718553983.mp3" length="57415471" type="audio/mpeg" />
+      <itunes:title>Using Firebase with Communication APIs</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/3e572275c1b33cd918595f9513af587577179bea-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>15</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:59:48</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Jump into &amp;quot;UsingFirebaseWithCommunicationsAPI.mp4&amp;quot; with Amanda and learn how to leverage Firebase and Vonage APIs for building secure, interactive web experiences. Comment and share!
+
+&lt;a href=&quot;https://codingcat.dev/podcast/using-firebase-with-communication-apis&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/using-firebase-with-communication-apis&lt;/a&gt;
+
+00:00 Introduction
+00:20 Meet Amanda
+01:48 Amanda&amp;#39;s Background
+04:10 Dual Language Education
+05:16 In-Person Meetups
+10:28 Developer Advocacy
+16:01 Firebase &amp;amp; Vonage Demo
+27:40 Setting up Firebase
+34:52 Deploying Functions
+46:39 Additional Resources
+58:57 Conclusion&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719799175254-f7e01f54613da.jpg" />
+    </item>
+    <item>
+      <title>What&apos;s A Firebase Developer Advocate</title>
+      <link>https://codingcat.dev/podcast/what-is-a-firebase-developer-advocate</link>
+      <guid isPermaLink="false">ee3176c9-76b8-44cf-9a87-0fcac0aa8e53</guid>
+      <pubDate>Mon, 03 Jun 2024 05:12:56 GMT</pubDate>
+      <description><![CDATA[Discover the latest from Google IO and Firebase with insights from a DevRel engineer. Watch now for developer tips and community highlights to boost your projects!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88668536/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-6-1%2F382091699-44100-2-84c103a4b4e02.mp3" length="31986833" type="audio/mpeg" />
+      <itunes:title>What&apos;s A Firebase Developer Advocate</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/dcb52c808f0cbc2644ae97c1fcfc4c4d841d342f-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>14</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:33:19</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/what-is-a-firebase-developer-advocate&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/what-is-a-firebase-developer-advocate&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719797284591-34433c883eb16.jpg" />
+    </item>
+    <item>
+      <title>Angular Cookbook</title>
+      <link>https://codingcat.dev/podcast/angular-cookbook</link>
+      <guid isPermaLink="false">1bb4346d-eba0-41af-aecf-644bc7bcdefe</guid>
+      <pubDate>Mon, 03 Jun 2024 04:42:37 GMT</pubDate>
+      <description><![CDATA[Discover advanced Angular tips and tricks with Mohammad from the Angular Cookbook 2nd Edition. Watch now and elevate your front-end development skills!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/87542593/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-3%2F379568251-44100-2-4607acd6e4951.mp3" length="44133563" type="audio/mpeg" />
+      <itunes:title>Angular Cookbook</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/41616e585d8fa52a194ff752da8bb35b9eaf778c-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>11</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:45:58</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Discover advanced Angular tips and tricks with Mohammad from the Angular Cookbook 2nd Edition. Watch now and elevate your front-end development skills!&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1717393090441-511c86cbcea88.jpg" />
+    </item>
+    <item>
+      <title>Video Tap: Automate Your Video Marketing with Chris Sev</title>
+      <link>https://codingcat.dev/podcast/video-tap-automate-your-video-marketing-with-chris-sev</link>
+      <guid isPermaLink="false">59b06426-2b94-4b31-ab7a-f18659c121e5</guid>
+      <pubDate>Mon, 03 Jun 2024 04:35:00 GMT</pubDate>
+      <description><![CDATA[Join us as Chris Sev shares his dev journey, insights on building Scotch IO, and his exciting new AI tool, Video Tap. ]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO3703835991.mp3" length="47292917" type="audio/mpeg" />
+      <itunes:title>Video Tap: Automate Your Video Marketing with Chris Sev</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/d1d07eed9126f3861849491374fa6b22662bd16c-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>12</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:49:15</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Join us as Chris Sev shares his dev journey, insights on building Scotch IO, and his exciting new AI tool, Video Tap. &lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1717393177038-d85be3066df51.jpg" />
+    </item>
+    <item>
+      <title>Firebase Security Rules: Effortless control over your app&apos;s data.</title>
+      <link>https://codingcat.dev/podcast/firebase-security-rules-effortless-control-over-your-app-s-data</link>
+      <guid isPermaLink="false">b61bf55d-ab3d-4164-8a35-f5f7eb770536</guid>
+      <pubDate>Sat, 06 Apr 2024 04:00:00 GMT</pubDate>
+      <description><![CDATA[Firebase Security Rules are a powerful feature that allows you to control access to your app's data in Firebase Realtime Database, Cloud Firestore, and Cloud Storage.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO7656568543.mp3" length="50667937" type="audio/mpeg" />
+      <itunes:title>Firebase Security Rules: Effortless control over your app&apos;s data.</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/3d5fa42c489cd7f673ce2c4aa96db4ef5a31aa72-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>13</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:52:46</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Firebase Security Rules are a powerful feature that allows you to control access to your app&amp;#39;s data in Firebase Realtime Database, Cloud Firestore, and Cloud Storage.&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1717393597267-18f3a68ee8ee5.jpg" />
+    </item>
+    <item>
+      <title>Flutter 2024</title>
+      <link>https://codingcat.dev/podcast/4-9-flutter-2024</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPA9U</guid>
+      <pubDate>Wed, 06 Mar 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Build beautiful, native experiences across platforms from a single codebase.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO8414682805.mp3" length="47594266" type="audio/mpeg" />
+      <itunes:title>Flutter 2024</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/9b0c2fdb08ada42536b9bc7c851dd490a3fbbba8-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>9</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:49:34</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Flutter&amp;#39;s position in the app development landscape remains strong in 2024. With its focus on quality, performance, new features, and a thriving community, Flutter empowers developers to build beautiful, cross-platform apps efficiently.
+
+https://codingcat.dev/podcast/4-9-flutter-2024
+
+Sponsors:
+Cloudinary - Build faster with AI powered image and video APIs. 
+https://cld.media/codingcatdev
+
+Recorded: Feb 19, 2024&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1709748183225-288b21dd130f5.jpg" />
+    </item>
+    <item>
+      <title>Not a Designer: Design bites for devs</title>
+      <link>https://codingcat.dev/podcast/not-a-designer-design-bites-for-devs</link>
+      <guid isPermaLink="false">8510028d-dec1-40c7-bdbe-bed50dbc1f3d</guid>
+      <pubDate>Thu, 29 Feb 2024 05:25:00 GMT</pubDate>
+      <description><![CDATA[In the tech world, developers often find themselves stepping into the realm of design, a space that can feel both unfamiliar and daunting. Recognizing this challenge, Saron Yitbarek has crafted "Not a Designer" Design Bites, a series specifically tailored for developers who find themselves in need of design knowledge.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/87542461/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-3%2F379567916-44100-2-e63a6912f1768.mp3" length="45027159" type="audio/mpeg" />
+      <itunes:title>Not a Designer: Design bites for devs</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/91264acdb1751425fa717b1c76958687de9fc8aa-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>10</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:46:54</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;In the tech world, developers often find themselves stepping into the realm of design, a space that can feel both unfamiliar and daunting. Recognizing this challenge, Saron Yitbarek has crafted &amp;quot;Not a Designer&amp;quot; Design Bites, a series specifically tailored for developers who find themselves in need of design knowledge.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1717392715582-3ab950fd019aa.jpg" />
+    </item>
+    <item>
+      <title>Design Systems: From Atomic Design to a Global Solution</title>
+      <link>https://codingcat.dev/podcast/4-8-design-systems-brad-frost</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPARs</guid>
+      <pubDate>Wed, 28 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Dive into the world of creating and maintaining successful design systems, unpack the layer cake approach, and explore the potential future of a global design system.]]></description>
+      <author>Alex Patterson, Brittney Postma</author>
+      <enclosure url="https://traffic.megaphone.fm/APO5937065010.mp3" length="63436591" type="audio/mpeg" />
+      <itunes:title>Design Systems: From Atomic Design to a Global Solution</itunes:title>
+      <itunes:author>Alex Patterson, Brittney Postma</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/e30ed0fae3f33f21034b0235d98ebe493c7e63df-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>8</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:06:04</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Dive into the world of creating and maintaining successful design systems, unpack the layer cake approach, and explore the potential future of a global design system.
+
+https://codingcat.dev/podcast/4-8-design-systems-brad-frost
+
+Sponsors:
+Cloudinary - Build faster with AI powered image and video APIs. 
+https://cld.media/codingcatdev
+
+Recorded: Jan 10, 2024&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1709314232299-b4417c461224b.jpg" />
+    </item>
+    <item>
+      <title>Secure Coding - Beyond the Surface with Snyk</title>
+      <link>https://codingcat.dev/podcast/secure-coding-beyond-the-surface-with-snyk</link>
+      <guid isPermaLink="false">bc72d5c6-0286-4853-a62e-20662ba4ea51</guid>
+      <pubDate>Mon, 26 Feb 2024 17:59:00 GMT</pubDate>
+      <description><![CDATA[Secure your code with Snyk. Explore coding best practices and vulnerabilities in this informative video. Join us for a deep dive. Watch, comment, and share!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88653470/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382059297-44100-2-3bbce82040b98.mp3" length="81015953" type="audio/mpeg" />
+      <itunes:title>Secure Coding - Beyond the Surface with Snyk</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/6127d25fa882d60d49af6fb0a4cc236103b9652d-1280x720.jpg?rect=280,0,720,720&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>2</itunes:season>
+        <itunes:episode>5</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:24:23</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/secure-coding-beyond-the-surface-with-snyk&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/secure-coding-beyond-the-surface-with-snyk&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719767885334-4bf4b400376b2.jpg" />
+    </item>
+    <item>
+      <title>Refine the open-source Retool for Enterprise</title>
+      <link>https://codingcat.dev/podcast/cwcc-1_refine</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCP8ok</guid>
+      <pubDate>Wed, 21 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Build Internal Tools and Web Apps with Blazing Speed.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88652851/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382058056-44100-2-f11066acd86b6.mp3" length="87521070" type="audio/mpeg" />
+      <itunes:title>Refine the open-source Retool for Enterprise</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/bd1ce599334db95c5d1809b6b015624f422ddf2a-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>2</itunes:season>
+        <itunes:episode>4</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:31:10</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/cwcc-1_refine&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/cwcc-1_refine&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719766610211-4c4e73356db33.jpg" />
+    </item>
+    <item>
+      <title>Master Offline AWS Development: Harness the Power of LocalStack!</title>
+      <link>https://codingcat.dev/podcast/4-7-harness-the-power-of-localstack</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPAb4</guid>
+      <pubDate>Tue, 20 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Effortlessly Develop AWS Applications Offline with LocalStack: Your Ultimate Guide!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO5144261687.mp3" length="44485903" type="audio/mpeg" />
+      <itunes:title>Master Offline AWS Development: Harness the Power of LocalStack!</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/080cc7d50b421ea224c29b5e74d82f458b7fd785-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>7</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:46:20</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Effortlessly Develop AWS Applications Offline with LocalStack: Your Ultimate Guide!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/4-7-harness-the-power-of-localstack&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/4-7-harness-the-power-of-localstack&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:
+Cloudinary - Build faster with AI powered image and video APIs. 
+&lt;a href=&quot;https://cld.media/codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://cld.media/codingcatdev&lt;/a&gt;
+
+Recorded: Friday Dec 29, 2023 ⋅ 2:00pm
+
+00:00 - Intro
+00:48 - How Waldemar came to LocalStack&lt;/p&gt;
+&lt;p&gt;04:28 - Waldemar&amp;#39;s academic and research background&lt;/p&gt;
+&lt;p&gt;07:24 - Cloudinary Sponsorship&lt;/p&gt;
+&lt;p&gt;08:00 - LocalStack Demo&lt;/p&gt;
+&lt;p&gt;25:00 - How to move into staging and production&lt;/p&gt;
+&lt;p&gt;27:15 - Cloud Pods&lt;/p&gt;
+&lt;p&gt;32:45 - Fault Injection and Simulation&lt;/p&gt;
+&lt;p&gt;36:01 - IAM Live Policy Generation&lt;/p&gt;
+&lt;p&gt;38:56 - What&amp;#39;s next for LocalStack?&lt;/p&gt;
+&lt;p&gt;41:35 - How is LocalStack funded?&lt;/p&gt;
+&lt;p&gt;42:35 - Purrfect Picks&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1707948595335-5ae296d31d7d3.jpg" />
+    </item>
+    <item>
+      <title>Next.js Amplified: Full-Stack Web Apps on AWS Amplify Gen2</title>
+      <link>https://codingcat.dev/podcast/cwcc-1-2-aws-amplify</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCP9PW</guid>
+      <pubDate>Wed, 14 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[AWS Amplify using Gen2, a code first approach]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88652591/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382057347-44100-2-8025ee556e339.mp3" length="83947937" type="audio/mpeg" />
+      <itunes:title>Next.js Amplified: Full-Stack Web Apps on AWS Amplify Gen2</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/be4ab3b7d1d31d0354fa6889511f4e172adcb40f-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>2</itunes:season>
+        <itunes:episode>3</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:27:26</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/cwcc-1-2-aws-amplify&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/cwcc-1-2-aws-amplify&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719766029663-233a1d7f95798.jpg" />
+    </item>
+    <item>
+      <title>Supabase New Release</title>
+      <link>https://codingcat.dev/podcast/4-6-supabase-release-week-x-new-features</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPAkG</guid>
+      <pubDate>Tue, 13 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Supabase dropped a lot of new features during their X launch, I review these with Jon.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO1095382915.mp3" length="65595350" type="audio/mpeg" />
+      <itunes:title>Supabase New Release</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/2d988a2d4124c96fc9da1c73fd32e6f3f25dacda-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>6</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:08:19</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/4-6-supabase-release-week-x-new-features&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/4-6-supabase-release-week-x-new-features&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:
+Cloudinary - Build faster with AI powered image and video APIs. 
+&lt;a href=&quot;https://cld.media/codingcatdev&quot;&gt;⁠https://cld.media/codingcatdev⁠&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1707861379350-8e1b124a794b1.jpg" />
+    </item>
+    <item>
+      <title>Building docs with Starlight and Astro</title>
+      <link>https://codingcat.dev/podcast/cwcc-1-building-docs-with-starlight-and-astro</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCP978</guid>
+      <pubDate>Wed, 07 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Chris teaches Alex how to use Starlight for docs.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88652484/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382057181-44100-2-4d502fc328ff9.mp3" length="85173811" type="audio/mpeg" />
+      <itunes:title>Building docs with Starlight and Astro</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/098510938a91e58b35d879525fa3171828adbfac-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>2</itunes:season>
+        <itunes:episode>2</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:28:43</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/cwcc-1-building-docs-with-starlight-and-astro&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/cwcc-1-building-docs-with-starlight-and-astro&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719765786558-44e907134b77c.jpg" />
+    </item>
+    <item>
+      <title>Nx - Project Crystal</title>
+      <link>https://codingcat.dev/podcast/4-8-nx-project-crystal</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPAIg</guid>
+      <pubDate>Wed, 07 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Imagine a world where integrating Nx plugins into your workflow is as seamless as adding extensions to VSCode. That's the vision of Nx Project Crystal!]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO9658617923.mp3" length="40286667" type="audio/mpeg" />
+      <itunes:title>Nx - Project Crystal</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/dd397fb605327c30582d305c5e39af48dadcc4b5-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>5</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:41:57</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Katarina joins Alex to discuss Nx and all the of the changes it&amp;#39;s gone through and to explain why you need Project Crystal. 
+
+&lt;a href=&quot;https://codingcat.dev/podcast/4-8-nx-project-crystal&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/4-8-nx-project-crystal&lt;/a&gt;
+
+Sponsors:
+Cloudinary - Build faster with AI powered image and video APIs. 
+&lt;a href=&quot;https://cld.media/codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://cld.media/codingcatdev&lt;/a&gt;
+
+Recorded: January 13 ,2023 2:00 PM
+
+00:00 Welcome Katerina
+10:16 Sponsor: Cloudinary
+11:14 Nx Iterations and Changes
+36: 18 Purfect Picks&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1707345326684-1fcd36cef5cf1.jpg" />
+    </item>
+    <item>
+      <title>Simplyfing SvelteKit View Transitions with Paolo Ricciuti</title>
+      <link>https://codingcat.dev/podcast/cwcc-1-3-svelte-view-transitions</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCP9GK</guid>
+      <pubDate>Mon, 05 Feb 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[sveltekit-view-transitions offers a straightforward approach for implementing these transitions without complexity, aiming to enhance the user interface with smooth and visually appealing changes between views.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88652241/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382056708-44100-2-ab9bc3558fac4.mp3" length="94299950" type="audio/mpeg" />
+      <itunes:title>Simplyfing SvelteKit View Transitions with Paolo Ricciuti</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/34f2211036f7229d80aca4446a3af20e7be99c9a-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>2</itunes:season>
+        <itunes:episode>1</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:38:13</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/podcast-cwcc-1-3-svelte-view-transitions&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/podcast-cwcc-1-3-svelte-view-transitions&lt;/a&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719765644105-c39dae4ff5907.jpg" />
+    </item>
+    <item>
+      <title>Raycast a launcher faster than F1!</title>
+      <link>https://codingcat.dev/podcast/4-4-raycast</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPAtS</guid>
+      <pubDate>Wed, 31 Jan 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Raycast: A lightning-fast launcher that makes your Mac more productive.]]></description>
+      <author>Alex Patterson, Brittney Postma</author>
+      <enclosure url="https://traffic.megaphone.fm/APO1413828047.mp3" length="55224529" type="audio/mpeg" />
+      <itunes:title>Raycast a launcher faster than F1!</itunes:title>
+      <itunes:author>Alex Patterson, Brittney Postma</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/1cf673a085537be26c6ea5e0e0089fe8188bfbe8-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>4</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:57:31</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Pedro joins us to walk through his favorite features of Raycast and expose the secrets of what we didn’t even know Raycast could do!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/4-4-raycast&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://codingcat.dev/podcast/4-4-raycast&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:Cloudinary - Build faster with AI powered image and video APIs. 
+&lt;a href=&quot;https://cld.media/codingcatdev&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferer&quot;&gt;https://cld.media/codingcatdev&lt;/a&gt;
+
+Recorded: December 12, 2023 9:00 AM&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;00:00 Intro and Welcome Pedro&lt;/p&gt;
+&lt;p&gt;03:45 Rainbow to Raycast &lt;/p&gt;
+&lt;p&gt;05:37 Pedros Roll at Raycast&lt;/p&gt;
+&lt;p&gt;07:57 Sponsor: Cloudinary &lt;/p&gt;
+&lt;p&gt;08:42 What is Raycast?&lt;/p&gt;
+&lt;p&gt;11:52 Tech Behind Raycast&lt;/p&gt;
+&lt;p&gt;12:41 Favorite Features &lt;/p&gt;
+&lt;p&gt;28:47 Raycast for Teams&lt;/p&gt;
+&lt;p&gt;32:50 Walkthrough Getting Started&lt;/p&gt;
+&lt;p&gt;36:40 Scheming &lt;/p&gt;
+&lt;p&gt;41:17 Scope and Pricing &lt;/p&gt;
+&lt;p&gt;45:22 Perfect Picks&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1706718883758-6058de2202f91.jpg" />
+    </item>
+    <item>
+      <title>Leveling Up Your Career: Unleashing Your Full Potential!</title>
+      <link>https://codingcat.dev/podcast/4-3-leveling-up-your-career-with-tdesseyn</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPB2e</guid>
+      <pubDate>Wed, 24 Jan 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Embark on a transformative journey of self-discovery and skill enhancement in 'Leveling Up Your Career,' where you'll unlock the secrets to unleashing your full potential and catapulting your professional success to new heights.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO6859286235.mp3" length="49028702" type="audio/mpeg" />
+      <itunes:title>Leveling Up Your Career: Unleashing Your Full Potential!</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/80a9c7f1e7bcd5a2d24c707626afb433eb96f03b-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>3</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:51:04</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Taylor joins the podcast to talk about how recruiters can work better for you and tell his journey to how he recruits differently.  
+
+https://codingcat.dev/podcast/_leveling-up-your-career-with-tdesseyn&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:Cloudinary - Build faster with AI powered image and video APIs. 
+https://cld.media/codingcatdev
+
+Recorded: December 6, 2023 3:00 PM
+
+00:00 Welcome Taylor and Backstory&lt;/p&gt;
+&lt;p&gt;12:57 Sponsor: Cloudinary&lt;/p&gt;
+&lt;p&gt;13:36 Starting as a Recruiter&lt;/p&gt;
+&lt;p&gt;32:30 Finding a Job&lt;/p&gt;
+&lt;p&gt;38:55 Practical Helping&lt;/p&gt;
+&lt;p&gt;46:08 Purfect Picks&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1706121142429-9505f25343ac2.jpg" />
+    </item>
+    <item>
+      <title>Compassionate Coding: Emotional Intelligence for Engineers</title>
+      <link>https://codingcat.dev/podcast/4-2-compassionate-coding</link>
+      <guid isPermaLink="false">LzgcvqoNSwz5R8loykbNx1</guid>
+      <pubDate>Fri, 19 Jan 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Compassionate Coding is an approach to software development that combines compassion, mindfulness, and ethics to empower companies and individuals to create collaborative development environments to deliver more socially conscious products.]]></description>
+      <author>Alex Patterson</author>
+      <itunes:title>Compassionate Coding: Emotional Intelligence for Engineers</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/9dfe1e4e41c08378e929d24032cd4920ae9be1f1-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>2</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+      <title>TypeScript is freaking hard!</title>
+      <link>https://codingcat.dev/podcast/4-1-typescript-is-freaking-hard</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPBBq</guid>
+      <pubDate>Mon, 01 Jan 2024 05:00:00 GMT</pubDate>
+      <description><![CDATA[Join us as we delve into the fundamentals of TypeScript, a superset of JavaScript that elevates code quality and maintainability through static typing, in this comprehensive beginner's course.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO2560048416.mp3" length="38492786" type="audio/mpeg" />
+      <itunes:title>TypeScript is freaking hard!</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/e39b2780e402821b829bfa52d358a0e7e1440080-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>4</itunes:season>
+        <itunes:episode>1</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:40:05</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;April joins the podcast to tell us about her company and to explain what compassion looks like practically in the dev world.  &lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;https://codingcat.dev/podcast/_typescript-is-freaking-hard&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors:&lt;/p&gt;
+&lt;p&gt;Cloudinary - Build faster with AI powered image and video APIs. &lt;/p&gt;
+&lt;p&gt;https://cld.media/codingcatdev&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Recorded: December 5,2023 3:00 PM&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;00:00 Intro and Welcome April&lt;/p&gt;
+&lt;p&gt;10:51 Sponsor: Cloudinary &lt;/p&gt;
+&lt;p&gt;11:30 Compassionate Coding&lt;/p&gt;
+&lt;p&gt;16:08 What is Compassion &lt;/p&gt;
+&lt;p&gt;28:08 Compassionate Coding the Company &lt;/p&gt;
+&lt;p&gt;35:22 Perfect Picks&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1705618681376-703da0f2199ff.jpg" />
+    </item>
+    <item>
+      <title>Building your Own SaaS</title>
+      <link>https://codingcat.dev/podcast/cwcc-2023-12-20-building-your-own-sass</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCP8fY</guid>
+      <pubDate>Mon, 18 Dec 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Tim teaches Alex how to make your own SaaS using Supabase, Algolia and Nuxt.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88651963/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382056093-44100-2-27e719ec1bccd.mp3" length="87634754" type="audio/mpeg" />
+      <itunes:title>Building your Own SaaS</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/722f9b9e39ba3f6fae594361052ea606757ddd82-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>1</itunes:season>
+        <itunes:episode>4</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:31:17</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;https://codingcat.dev/podcast/cwcc-2023-12-20-building-your-own-sass&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719764827061-a139522dc262d.jpg" />
+    </item>
+    <item>
+      <title>Expo from a Web Developers View</title>
+      <link>https://codingcat.dev/podcast/cwcc-1-expo-react-native</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCP8xw</guid>
+      <pubDate>Mon, 18 Dec 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Dive into the seamless world of cross-platform app development as we unravel the magic of React Native with Expo, combining power and simplicity for an unparalleled mobile experience.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88637315/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382022777-44100-2-fff24631f8831.mp3" length="87686581" type="audio/mpeg" />
+      <itunes:title>Expo from a Web Developers View</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/343e2649e927e4e44c23609ae4ebaca2ad2b05d0-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>1</itunes:season>
+        <itunes:episode>3</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:31:20</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;https://codingcat.dev/podcast/podcast-cwcc-1-expo-react-native&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719722402761-7d3cd7103ca2d.jpg" />
+    </item>
+    <item>
+      <title>CodingCat.dev Podcast - Holiday Special Live December 20 9a ET</title>
+      <link>https://codingcat.dev/podcast/3-holiday-special</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPBL2</guid>
+      <pubDate>Sun, 17 Dec 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Reviewing things that happened in 2023 and generally just having a fun holiday episode]]></description>
+      <author>Alex Patterson, Brittney Postma</author>
+      <enclosure url="https://traffic.megaphone.fm/APO3276315781.mp3" length="9350165" type="audio/mpeg" />
+      <itunes:title>CodingCat.dev Podcast - Holiday Special Live December 20 9a ET</itunes:title>
+      <itunes:author>Alex Patterson, Brittney Postma</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/778341ddfe02498b535de1cbad23abcb61fcaef5-960x540.png?rect=210,0,540,540&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>3</itunes:season>
+        <itunes:episode>52</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:12:57</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;This is the Origin story for purrfect.dev and its creators.&lt;/p&gt;
+&lt;p&gt;We are still figuring out what we want purrfect.dev to become, but having fun learning about everyone in the web development community.&lt;/p&gt;
+&lt;p&gt;You can also find the video version at &lt;a href=&quot;https://link.ajonp.com/youtube&quot;&gt;https://link.ajonp.com/youtube&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_nologo/2811847/2811847-1701978180110-7dcfdd1cab984.jpg" />
+    </item>
+    <item>
+      <title>OpenSauced: Your fast track to open source</title>
+      <link>https://codingcat.dev/podcast/3-25-your-fast-track-to-open-source</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPD4I</guid>
+      <pubDate>Wed, 13 Dec 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[OpenSauced is a platform that helps developers find, contribute to, and learn about open source projects.]]></description>
+      <author>Alex Patterson, Brittney Postma</author>
+      <enclosure url="https://traffic.megaphone.fm/APO4886024411.mp3" length="63123539" type="audio/mpeg" />
+      <itunes:title>OpenSauced: Your fast track to open source</itunes:title>
+      <itunes:author>Alex Patterson, Brittney Postma</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/6dad0f7e032c1029f6e94198ec0df9883bae49f4-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>3</itunes:season>
+        <itunes:episode>25</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:05:45</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Bekah joins Brittney and Alex to tell her journey to tech and all about her roll at OpenSauced as well as to do a walkthrough of how to get the most out of OpenSauced. &lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/3-22-fly-io-with-dov-alperin&quot;&gt;⁠⁠https://codingcat.dev/podcast/_opensauced&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors: ⁠⁠Storyblok⁠⁠ Have you already discovered Storyblok? They have an official Svelte SDK! 74,000 + developers &amp;amp; marketers use it to deliver powerful content experiences on any frontend: Websites, eCommerce, mobile apps, AR/VR, or voice content!
+Recorded: November 17, 2023 9:00 PM&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1702479098972-89e2c125c4682.jpg" />
+    </item>
+    <item>
+      <title>Open Source Svelte Magic: Melting Minds through Melt UI!</title>
+      <link>https://codingcat.dev/podcast/cwcc-1-2-meltui</link>
+      <guid isPermaLink="false">LzgcvqoNSwz5R8loykbN6l</guid>
+      <pubDate>Mon, 11 Dec 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Thomas teaches Brittney and Alex how to use Melt and how Runes can be used to improve builders.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://anchor.fm/s/115b203c/podcast/play/88637339/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2024-5-30%2F382022801-44100-2-e80daf8bbc769.mp3" length="86014327" type="audio/mpeg" />
+      <itunes:title>Open Source Svelte Magic: Melting Minds through Melt UI!</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/b54283206d1510a777eee9a02ef2eef0c1731ef2-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>1</itunes:season>
+        <itunes:episode>2</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>01:29:35</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;https://codingcat.dev/podcast/cwcc-1-2-meltui&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1719722965536-f940416e8682.jpg" />
+    </item>
+    <item>
+      <title>Skyflow&apos;s privacy vault for building LLMs</title>
+      <link>https://codingcat.dev/podcast/3-24-skyflow-privacy-vault</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPDDU</guid>
+      <pubDate>Wed, 06 Dec 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Skyflow's Privacy Vault empowers organizations to build and deploy LLMs responsibly, ensuring data privacy and compliance throughout the entire LLM lifecycle.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO5342089178.mp3" length="52366524" type="audio/mpeg" />
+      <itunes:title>Skyflow&apos;s privacy vault for building LLMs</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/13b3650dfe32395065b2e91425e0046e9f1dbb93-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>3</itunes:season>
+        <itunes:episode>24</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:54:32</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Sean shows us Skyflow as we discuss consumer privacy and how to stay on to of data management and safety.  &lt;/p&gt;
+&lt;p&gt;https://codingcat.dev/podcast/_skyflow&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors: ⁠⁠Storyblok⁠⁠ Have you already discovered Storyblok? They have an official Svelte SDK! 74,000 + developers &amp;amp; marketers use it to deliver powerful content experiences on any frontend: Websites, eCommerce, mobile apps, AR/VR, or voice content!
+Recorded: September 14, 2023 1:15 PM&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1701870155623-794ee8683a8b4.jpg" />
+    </item>
+    <item>
+      <title>Angular.dev</title>
+      <link>https://codingcat.dev/podcast/3-23-angular-17</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPDMg</guid>
+      <pubDate>Wed, 29 Nov 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Angular.dev is the future home for Angular developers.]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO8144315657.mp3" length="55033939" type="audio/mpeg" />
+      <itunes:title>Angular.dev</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/54f923647199c5ed4e257a81ddbae1ace404e5ad-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>3</itunes:season>
+        <itunes:episode>23</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:57:19</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Alex joins Emma to pick her brain on the new Angular rebrand and to get an explanation on all of the new updates coming soon!&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/3-22-fly-io-with-dov-alperin&quot;&gt;⁠https://codingcat.dev/podcast/3-23-angular-17&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors: ⁠⁠Storyblok⁠⁠ Have you already discovered Storyblok? They have an official Svelte SDK! 74,000 + developers &amp;amp; marketers use it to deliver powerful content experiences on any frontend: Websites, eCommerce, mobile apps, AR/VR, or voice content!
+Recorded: November 13, 2023 4:00 PM&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1701274102111-c0310dc2da445.jpg" />
+    </item>
+    <item>
+      <title>Speedrun Your App Onto Fly.io</title>
+      <link>https://codingcat.dev/podcast/3-22-fly-io-with-dov-alperin</link>
+      <guid isPermaLink="false">ZKdo3vLUqcb4sYreiCPDf4</guid>
+      <pubDate>Wed, 15 Nov 2023 05:00:00 GMT</pubDate>
+      <description><![CDATA[Fly is a platform for running full stack apps and databases close to your users]]></description>
+      <author>Alex Patterson</author>
+      <enclosure url="https://traffic.megaphone.fm/APO7725310142.mp3" length="49123578" type="audio/mpeg" />
+      <itunes:title>Speedrun Your App Onto Fly.io</itunes:title>
+      <itunes:author>Alex Patterson</itunes:author>
+      <itunes:image href="https://cdn.sanity.io/images/hfh83o0w/production/8a10ce4a328dc24b0b795fb2238d9b81049635a3-1920x1080.png?rect=420,0,1080,1080&amp;w=1400&amp;h=1400&amp;fit=max&amp;auto=format" />
+        <itunes:season>3</itunes:season>
+        <itunes:episode>22</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+        <itunes:duration>00:51:10</itunes:duration>
+        <itunes:explicit>No</itunes:explicit>
+        <itunes:summary>&lt;p&gt;Dov joins Alex to discuss his learning experiences and his path to &lt;a href=&quot;http://Fly.io&quot;&gt;Fly.io&lt;/a&gt; and to talk about all the features it offers.  &lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://codingcat.dev/podcast/3-22-fly-io-with-dov-alperin&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;https://codingcat.dev/podcast/3-22-fly-io-with-dov-alperin&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sponsors: ⁠⁠Storyblok⁠⁠ Have you already discovered Storyblok? They have an official Svelte SDK! 74,000 + developers &amp;amp; marketers use it to deliver powerful content experiences on any frontend: Websites, eCommerce, mobile apps, AR/VR, or voice content!
+Recorded: November 13, 2023 2:00 PM&lt;/p&gt;
+
+--- 
+
+Send in a voice message: https://podcasters.spotify.com/pod/show/codingcatdev/message
+Support this podcast: &lt;a href=&quot;https://podcasters.spotify.com/pod/show/codingcatdev/support&quot; rel=&quot;payment&quot;&gt;https://podcasters.spotify.com/pod/show/codingcatdev/support&lt;/a&gt;</itunes:summary>
+        <itunes:image href="https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/2811847/2811847-1700634072756-aab15172c16cc.jpg" />
+    </item>
+  </channel>
+</rss>

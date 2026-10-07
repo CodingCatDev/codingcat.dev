@@ -1,0 +1,59 @@
+---
+/**
+ * Ported from `podmatch-badge.tsx`. The Next version was a client component
+ * purely for an `onError` fallback on the artwork; `onerror` as an inline
+ * attribute does the same without hydration.
+ */
+---
+
+<div class="min-w-40 max-w-100">
+	<a
+		href="https://www.podmatch.com/member/codingcatdev"
+		target="_blank"
+		rel="noopener noreferrer"
+		class="flex items-center gap-4 overflow-hidden rounded-[10px] border border-border p-4 no-underline text-inherit"
+	>
+		<img
+			id="podmatch-artwork"
+			src="https://img.rephonic.com/artwork/purrfectdev.jpg?width=600&height=600&quality=95"
+			alt="CodingCat.dev Podcast cover art"
+			width="85"
+			height="85"
+			class="size-[85px] shrink-0"
+			loading="lazy"
+			decoding="async"
+		/>
+		<div class="overflow-hidden text-left whitespace-nowrap">
+			<img
+				src="https://podmatch.com/assets/img/PodMatch_Logo.png"
+				alt="PodMatch"
+				width="80"
+				height="18"
+				class="mb-[3px] w-20"
+				loading="lazy"
+				decoding="async"
+			/>
+			<span class="mb-0.5 block overflow-hidden text-ellipsis text-base font-semibold">
+				CodingCat.dev Podcast
+			</span>
+			<span class="mb-0.5 block text-xs">
+				<u>Become a guest</u> on my podcast
+			</span>
+		</div>
+	</a>
+</div>
+
+<script is:inline>
+	// The artwork is hosted third-party; fall back to PodMatch's generic
+	// waveform if it 404s. `is:inline` keeps this out of the bundle graph.
+	document
+		.getElementById("podmatch-artwork")
+		?.addEventListener(
+			"error",
+			(event) => {
+				const img = event.currentTarget;
+				img.src = "https://podmatch.com/assets/img/waveform_img.png";
+			},
+			{ once: true },
+		);
+</script>

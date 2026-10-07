@@ -1,0 +1,95 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
+import CoverMedia from "@/components/CoverMedia.astro";
+import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import UserSocials from "@/components/UserSocials.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { guestQueryWithRelated } from "@/lib/sanity/queries";
+import { breadcrumbSchema, personSchema } from "@/lib/structured-data";
+
+const { sanity } = Astro.locals;
+const { slug } = Astro.params;
+
+const person = slug ? await sanity.loadQuery(guestQueryWithRelated, { slug }) : null;
+if (!person?._id) {
+	return new Response(null, { status: 404 });
+}
+
+const path = `/guest/${slug}`;
+const origin = Astro.locals.siteUrl.origin;
+const ogImage = sanity.resolveOpenGraphImage(person.coverImage ?? undefined);
+
+const relatedPosts = (person.related?.post ?? []) as ContentListItem[];
+const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
+---
+
+<BaseLayout
+	title={person.title}
+	description={person.excerpt}
+	image={ogImage}
+	ogFallback={{ title: person.title, type: "Guest" }}
+	canonical={path}
+	schema={[
+		personSchema(origin, {
+			title: person.title,
+			excerpt: person.excerpt,
+			imageUrl: ogImage?.url,
+			socials: person.socials,
+			websites: person.websites,
+		}, path),
+		breadcrumbSchema(origin, [
+			{ name: "Guests", path: "/guests/page/1" },
+			{ name: person.title, path },
+		]),
+	]}
+>
+	<Breadcrumbs
+		links={[{ title: "Guests", href: "/guests/page/1" }, { title: person.title }]}
+	/>
+
+	<div class="flex w-full flex-col gap-4 md:gap-8">
+		<div class="flex gap-2 md:gap-8">
+			<div class="shrink-0">
+				<CoverMedia
+					image={person.coverImage}
+					video={person.videoCloudinary}
+					youtube={person.youtube}
+					class="size-24 rounded-md object-cover md:size-32"
+				/>
+			</div>
+			<div class="flex flex-col gap-2">
+				<h1
+					class="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl"
+				>
+					{person.title}
+				</h1>
+				<UserSocials socials={person.socials} websites={person.websites} />
+			</div>
+		</div>
+
+		<article>
+			<PortableTextContent value={person.content} class="mx-auto prose-violet lg:prose-xl" />
+		</article>
+
+		{
+			relatedPodcasts.length > 0 && (
+				<aside>
+					<SectionHeader title="Podcasts" href="/podcasts/page/1" />
+					<ContentGrid items={relatedPodcasts} priorityCount={0} />
+				</aside>
+			)
+		}
+
+		{
+			relatedPosts.length > 0 && (
+				<aside class="mb-32">
+					<SectionHeader title="Posts" href="/blog/page/1" />
+					<ContentGrid items={relatedPosts} priorityCount={0} />
+				</aside>
+			)
+		}
+	</div>
+</BaseLayout>

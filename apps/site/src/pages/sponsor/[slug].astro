@@ -1,0 +1,92 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
+import CoverMedia from "@/components/CoverMedia.astro";
+import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import UserSocials from "@/components/UserSocials.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { sponsorQueryWithRelated } from "@/lib/sanity/queries";
+import { breadcrumbSchema } from "@/lib/structured-data";
+
+const { sanity } = Astro.locals;
+const { slug } = Astro.params;
+
+const sponsor = slug
+	? await sanity.loadQuery(sponsorQueryWithRelated, { slug })
+	: null;
+if (!sponsor?._id) {
+	return new Response(null, { status: 404 });
+}
+
+const path = `/sponsor/${slug}`;
+const origin = Astro.locals.siteUrl.origin;
+const ogImage = sanity.resolveOpenGraphImage(sponsor.coverImage ?? undefined);
+
+// Sponsored content is listed in full rather than capped — `sponsorRelated`
+// uses an unbounded slice, unlike the person queries.
+const relatedPosts = (sponsor.related?.post ?? []) as ContentListItem[];
+const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
+---
+
+<BaseLayout
+	title={sponsor.title}
+	description={sponsor.excerpt}
+	image={ogImage}
+	ogFallback={{ title: sponsor.title, type: "Sponsor" }}
+	canonical={path}
+	schema={[
+		breadcrumbSchema(origin, [
+			{ name: "Sponsors", path: "/sponsors/page/1" },
+			{ name: sponsor.title, path },
+		]),
+	]}
+>
+	<Breadcrumbs
+		links={[{ title: "Sponsors", href: "/sponsors/page/1" }, { title: sponsor.title }]}
+	/>
+
+	<div class="flex w-full flex-col gap-4 md:gap-8">
+		<div class="flex gap-2 md:gap-8">
+			<div class="shrink-0">
+				<CoverMedia
+					image={sponsor.coverImage}
+					video={sponsor.videoCloudinary}
+					youtube={sponsor.youtube}
+					class="size-24 rounded-md object-cover md:size-32"
+				/>
+			</div>
+			<div class="flex flex-col gap-2">
+				<h1
+					class="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl"
+				>
+					{sponsor.title}
+				</h1>
+				<UserSocials socials={sponsor.socials} websites={sponsor.websites} />
+			</div>
+		</div>
+
+		<article>
+			<PortableTextContent value={sponsor.content} class="mx-auto prose-violet lg:prose-xl" />
+		</article>
+
+		{
+			relatedPodcasts.length > 0 && (
+				<aside>
+					<SectionHeader title="Sponsored Podcasts" href="/podcasts/page/1" />
+					<ContentGrid items={relatedPodcasts} priorityCount={0} />
+				</aside>
+			)
+		}
+
+		{
+			relatedPosts.length > 0 && (
+				<aside class="mb-32">
+					<SectionHeader title="Sponsored Posts" href="/blog/page/1" />
+					<ContentGrid items={relatedPosts} priorityCount={0} />
+				</aside>
+			)
+		}
+	</div>
+</BaseLayout>

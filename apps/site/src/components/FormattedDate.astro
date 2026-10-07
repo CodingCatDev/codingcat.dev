@@ -1,0 +1,38 @@
+---
+/**
+ * Replaces the Next app's date-fns `format(..., "LLLL d, yyyy")` with
+ * Intl.DateTimeFormat — same output, no dependency, and no locale data
+ * shipped into the Worker bundle.
+ *
+ * The timeZone is pinned to UTC so a Worker in any colo renders the same
+ * date as the `datetime` attribute. Without it, a post dated
+ * 2026-08-18T02:00Z renders as "August 17" from a US-hosted isolate.
+ */
+import { stegaClean } from "@sanity/client/stega";
+
+interface Props {
+	dateString?: string | null;
+	class?: string;
+}
+
+const { dateString, class: className } = Astro.props;
+
+const clean = stegaClean(dateString);
+const parsed = clean ? new Date(clean) : null;
+const valid = parsed && !Number.isNaN(parsed.getTime()) ? parsed : null;
+
+const formatter = new Intl.DateTimeFormat("en-US", {
+	year: "numeric",
+	month: "long",
+	day: "numeric",
+	timeZone: "UTC",
+});
+---
+
+{
+	valid && (
+		<time class={className} datetime={valid.toISOString()}>
+			{formatter.format(valid)}
+		</time>
+	)
+}

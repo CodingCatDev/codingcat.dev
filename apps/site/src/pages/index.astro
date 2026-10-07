@@ -1,0 +1,49 @@
+---
+import AnimatedHero from "@/components/AnimatedHero.astro";
+import HomeSection from "@/components/HomeSection.astro";
+import PodmatchBadge from "@/components/PodmatchBadge.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { SITE_DESCRIPTION } from "@/lib/site";
+import { homePageQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+
+const home = await sanity.loadQuery(homePageQuery);
+
+// The Next version grouped these into pairs with `slice(0, length / 2)` and
+// index arithmetic to build a two-column layout. A plain two-column grid is
+// visually identical and does not silently drop the last item when the count
+// is odd, which the original did.
+const latestPodcasts = (home?.latestPodcasts ?? []) as ContentListItem[];
+const topPodcasts = (home?.topPodcasts ?? []) as ContentListItem[];
+const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
+---
+
+<BaseLayout title="CodingCat.dev — Purrfect Web Development"
+	description={SITE_DESCRIPTION}
+	ogFallback={{ title: "CodingCat.dev", subtitle: "Purrfect Web Development" }}
+	bare
+>
+	<AnimatedHero />
+	<div class="flex justify-center -mb-8">
+		<PodmatchBadge />
+	</div>
+	<HomeSection
+		title="Latest Podcasts"
+		description="Check out our latest podcasts."
+		items={latestPodcasts}
+		muted
+	/>
+	<HomeSection
+		title="Top Podcasts"
+		description="Check out our latest and greatest podcast episodes covering a wide range of topics in web development."
+		items={topPodcasts}
+	/>
+	<HomeSection
+		title="From the Blog"
+		description="Check out our latest blog posts on a variety of web development topics."
+		items={latestPosts}
+		muted
+	/>
+</BaseLayout>

@@ -1,0 +1,2 @@
+# Local secrets for `wrangler dev` / platformProxy. Copy to .dev.vars (gitignored).
+SANITY_API_READ_TOKEN=

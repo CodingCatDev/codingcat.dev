@@ -1,5 +1,4 @@
 import React from "react";
-import { RenderPreviewCallbackProps } from "sanity";
 // TODO: Add stronger typing
 
 const CodePenPreview = (props: any) => {

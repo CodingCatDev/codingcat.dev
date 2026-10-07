@@ -38,3 +38,6 @@ yarn-error.log*
 !.vscode/mcp.json
 # pnpm workspace — root pnpm-lock.yaml is the lockfile
 package-lock.json
+
+# agents teamwork
+.agents/

@@ -1,0 +1,48 @@
+---
+import ContentGrid from "@/components/ContentGrid.astro";
+import Pagination from "@/components/Pagination.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { ContentListItem } from "@/lib/content";
+import { resolvePage } from "@/lib/pagination";
+import { morePostQuery, postCountQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+
+const count = await sanity.loadQuery(postCountQuery);
+const resolved = resolvePage({
+	raw: Astro.params.num,
+	count,
+	base: "blog",
+	redirect: Astro.redirect,
+});
+if (!resolved.ok) {
+	return resolved.response;
+}
+const { page, totalPages, offset, limit } = resolved.bounds;
+
+const posts = await sanity.loadQuery(morePostQuery, {
+	skip: "none",
+	offset,
+	limit,
+});
+
+const title = page === 1 ? "Blog" : `Blog — Page ${page}`;
+---
+
+<BaseLayout
+	title={`${title} | CodingCat.dev`}
+	description="Purrfect web development tutorials, articles, and guides."
+	canonical={`/blog/page/${page}`}
+>
+	<Fragment slot="head">
+		{page > 1 && <link rel="prev" href={`/blog/page/${page - 1}`} />}
+		{page < totalPages && <link rel="next" href={`/blog/page/${page + 1}`} />}
+	</Fragment>
+
+	<div class="mb-32">
+		<SectionHeader title="Posts" showHr={false} />
+		<ContentGrid items={posts as ContentListItem[]} />
+		<Pagination base="blog" page={page} totalPages={totalPages} />
+	</div>
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import Avatar from "@/components/Avatar.astro";
+import CoverImage from "@/components/CoverImage.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import { type ContentListItem, isPerson } from "@/lib/content";
+import { resolveHref } from "@/lib/sanity/resolve-href";
+
+interface Props {
+	item: ContentListItem;
+	priority?: boolean;
+}
+
+const { item, priority = false } = Astro.props;
+
+const href = resolveHref(item._type, item.slug ?? undefined);
+const person = isPerson(item._type);
+const people = [
+	...(item.author ?? []).map((p) => ({ ...p, type: "author" })),
+	...(item.guest ?? []).map((p) => ({ ...p, type: "guest" })),
+];
+---
+
+<article>
+	{
+		href && (
+			<a href={href} class="block mb-5 group">
+				{person ? (
+					<CoverImage
+						image={item.coverImage}
+						width={256}
+						height={256}
+						class="w-full h-auto aspect-square rounded-md object-cover"
+						priority={priority}
+					/>
+				) : (
+					<CoverImage image={item.coverImage} priority={priority} />
+				)}
+			</a>
+		)
+	}
+	<h3 class="mb-3 text-3xl leading-snug text-balance">
+		{
+			href ? (
+				<a href={href} class="hover:underline">
+					{item.title}
+				</a>
+			) : (
+				item.title
+			)
+		}
+	</h3>
+	{
+		!person && item.date && (
+			<div class="mb-4 text-lg text-muted-foreground">
+				<FormattedDate dateString={item.date} />
+			</div>
+		)
+	}
+	{item.excerpt && <p class="mb-4 text-lg leading-relaxed text-pretty">{item.excerpt}</p>}
+	{
+		people.length > 0 && (
+			<div class="flex flex-wrap gap-2">
+				{people.map((p) => (
+					<Avatar
+						name={p.title}
+						href={resolveHref(p.type, p.slug ?? undefined)}
+						coverImage={p.coverImage}
+					/>
+				))}
+			</div>
+		)
+	}
+</article>

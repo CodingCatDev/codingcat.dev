@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useClient } from "sanity";
-import { CopyIcon } from "@sanity/icons";
+import { CopyIcon } from "@sanity/icons/Copy";
 import { Button, Dialog, Text, Stack, Card } from "@sanity/ui";
 import { RecycleIcon } from "lucide-react";
-import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 
 interface SharePreviewActionButtonProps {
 	id: string;
@@ -60,7 +58,7 @@ const SharePreviewActionButton: React.FC<SharePreviewActionButtonProps> = ({
 			onClose={onClose}
 		>
 			<Card padding={4}>
-				<Stack space={3}>
+				<Stack gap={3}>
 					{loading && <Text>Generating link...</Text>}
 					{!loading && shareUrl && (
 						<>

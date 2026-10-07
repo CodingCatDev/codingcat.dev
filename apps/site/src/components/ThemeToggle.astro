@@ -1,0 +1,54 @@
+---
+/**
+ * Replaces the Next `mode-toggle.tsx` (next-themes + Radix dropdown) with a
+ * two-state button. The dropdown offered light / dark / system; system is
+ * still the default via ThemeScript, and clearing the stored preference is
+ * not worth a dropdown's worth of JS on every page.
+ */
+---
+
+<button
+	type="button"
+	id="theme-toggle"
+	class="inline-flex items-center justify-center rounded-md size-9 hover:bg-accent hover:text-accent-foreground transition-colors"
+	aria-label="Toggle theme"
+>
+	<svg
+		class="size-5 dark:hidden"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<circle cx="12" cy="12" r="4"></circle>
+		<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+	</svg>
+	<svg
+		class="size-5 hidden dark:block"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+	</svg>
+</button>
+
+<script>
+	const button = document.getElementById("theme-toggle");
+	button?.addEventListener("click", () => {
+		const dark = document.documentElement.classList.toggle("dark");
+		document.documentElement.style.colorScheme = dark ? "dark" : "light";
+		try {
+			localStorage.setItem("theme", dark ? "dark" : "light");
+		} catch {
+			// Private mode — the toggle still applies for this page view.
+		}
+	});
+</script>

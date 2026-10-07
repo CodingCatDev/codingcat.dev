@@ -1,0 +1,61 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { SanityImageSource } from "@sanity/image-url";
+import CoverImage from "@/components/CoverImage.astro";
+import PtYouTube from "@/components/portable-text/PtYouTube.astro";
+
+/**
+ * Picks the hero medium for a content page, in the Next app's precedence:
+ * uploaded video, then YouTube, then the cover image.
+ */
+interface Props {
+	image?: (SanityImageSource & { alt?: string }) | null;
+	video?: { asset?: { _ref?: string } } | null;
+	youtube?: string | null;
+	class?: string;
+}
+
+const { image, video, youtube, class: className } = Astro.props;
+
+/**
+ * Sanity file refs are `file-{hash}-{ext}`. The Next version read the project
+ * id and dataset from `process.env.NEXT_PUBLIC_*` at module scope, which does
+ * not exist on Workers — resolved from the per-request config instead.
+ */
+function fileUrl(ref: string | undefined) {
+	if (!ref?.startsWith("file-")) {
+		return undefined;
+	}
+	const parts = ref.split("-");
+	const ext = parts.pop();
+	const hash = parts.slice(1).join("-");
+	if (!ext || !hash) {
+		return undefined;
+	}
+	const { projectId, dataset } = Astro.locals.sanity.config;
+	return `https://cdn.sanity.io/files/${projectId}/${dataset}/${hash}.${ext}`;
+}
+
+const videoUrl = fileUrl(stegaClean(video?.asset?._ref));
+const youtubeUrl = stegaClean(youtube);
+---
+
+{
+	videoUrl ? (
+		<div class="shadow-md transition-shadow duration-200 sm:mx-0">
+			<video
+				class:list={["w-full h-auto rounded-md", className]}
+				width={1920}
+				height={1080}
+				controls
+				preload="metadata"
+			>
+				<source src={videoUrl} />
+			</video>
+		</div>
+	) : youtubeUrl ? (
+		<PtYouTube node={{ _type: "youtube", youtube: youtubeUrl }} index={0} isInline={false} />
+	) : (
+		<CoverImage image={image} priority class={className} />
+	)
+}

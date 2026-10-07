@@ -1,0 +1,33 @@
+---
+interface Props {
+	links: Array<{ title: string; href?: string }>;
+}
+
+const { links } = Astro.props;
+---
+
+<nav class="my-10 text-lg md:text-xl" aria-label="Breadcrumb">
+	<ol class="flex flex-wrap items-center gap-1.5">
+		<li><a href="/" class="hover:underline">Home</a></li>
+		{
+			links.map((link, index) => (
+				<>
+					<li aria-hidden="true" class="text-muted-foreground">
+						/
+					</li>
+					<li>
+						{link.href && index < links.length - 1 ? (
+							<a href={link.href} class="hover:underline">
+								{link.title}
+							</a>
+						) : (
+							<span class="text-muted-foreground" aria-current="page">
+								{link.title}
+							</span>
+						)}
+					</li>
+				</>
+			))
+		}
+	</ol>
+</nav>
