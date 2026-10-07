@@ -4669,6 +4669,10 @@ packages:
     resolution: {integrity: sha512-iEkGiHbrxCnT/A30A6pH+vX4otP3lLp935Vwuv0/YrnETxrKCn6PnsZU+TfTm6ZEZ9kZGs8wKP5yBLmZw5S6OQ==}
     engines: {node: '>=20'}
 
+  '@sanity/client@8.1.0':
+    resolution: {integrity: sha512-GS9q17kSIpF+NSOMJejAmTw0sKJA5oSTxtipkItnuWFvO4njVQnUQ+1OvRYZyg/AK9dwymlM35ROKuA5XuWyFQ==}
+    engines: {node: '>=22.12.0'}
+
   '@sanity/client@8.9.0':
     resolution: {integrity: sha512-V6kFNH6xvz29ot66zTVVyzZ34dIGzVJHzQJXEV2ljGVZEelHRoMayhErsTDac/ZR7ej8Spz39qEMYCaJWg176g==}
     engines: {node: '>=22.12.0'}
@@ -16105,7 +16109,7 @@ snapshots:
     dependencies:
       '@inquirer/prompts': 8.5.2(@types/node@24.12.4)
       '@oclif/core': 4.13.5
-      '@sanity/client': 8.9.0
+      '@sanity/client': 8.1.0
       boxen: 8.0.1
       empathic: 2.0.1
       get-it: 9.5.0
@@ -16144,7 +16148,7 @@ snapshots:
     dependencies:
       '@inquirer/prompts': 8.5.2(@types/node@25.5.0)
       '@oclif/core': 4.13.5
-      '@sanity/client': 8.9.0
+      '@sanity/client': 8.1.0
       boxen: 8.0.1
       empathic: 2.0.1
       get-it: 9.5.0
@@ -16396,6 +16400,16 @@ snapshots:
       get-it: 8.8.3
       nanoid: 3.3.18
       rxjs: 7.8.2
+
+  '@sanity/client@8.1.0':
+    dependencies:
+      eventsource: 5.1.0
+      get-it: 9.5.0
+      nanoid: 6.0.1
+      obug: 2.1.4
+      rxjs: 7.8.2
+    transitivePeerDependencies:
+      - vitest
 
   '@sanity/client@8.9.0':
     dependencies:
@@ -16790,7 +16804,7 @@ snapshots:
       '@sanity/blueprints-parser': 0.5.0
       '@sanity/cli-build': 5.2.1(@babel/core@7.29.7)(@babel/runtime@7.29.2)(@noble/hashes@2.0.1)(@types/node@24.12.4)(@types/react@19.2.14)(babel-plugin-react-compiler@1.0.0)(esbuild@0.28.1)(jiti@2.7.0)(rolldown@1.2.4)(terser@5.48.0)(tsx@4.23.12)(typescript@5.9.2)(yaml@2.9.0)
       '@sanity/cli-core': 3.1.0(@noble/hashes@2.0.1)(@types/node@24.12.4)(babel-plugin-react-compiler@1.0.0)(esbuild@0.28.1)(terser@5.48.0)(yaml@2.9.0)
-      '@sanity/client': 8.9.0
+      '@sanity/client': 8.1.0
       adm-zip: 0.6.0
       array-treeify: 0.2.0
       cardinal: 2.1.1
@@ -16849,7 +16863,7 @@ snapshots:
       '@sanity/blueprints-parser': 0.5.0
       '@sanity/cli-build': 5.2.1(@babel/core@7.29.7)(@babel/runtime@7.29.2)(@noble/hashes@2.0.1)(@types/node@25.5.0)(@types/react@19.2.14)(babel-plugin-react-compiler@1.0.0)(esbuild@0.28.1)(jiti@2.7.0)(rolldown@1.2.4)(terser@5.48.0)(tsx@4.23.12)(typescript@5.9.3)(yaml@2.9.0)
       '@sanity/cli-core': 3.1.0(@noble/hashes@2.0.1)(@types/node@25.5.0)(babel-plugin-react-compiler@1.0.0)(esbuild@0.28.1)(terser@5.48.0)(yaml@2.9.0)
-      '@sanity/client': 8.9.0
+      '@sanity/client': 8.1.0
       adm-zip: 0.6.0
       array-treeify: 0.2.0
       cardinal: 2.1.1
