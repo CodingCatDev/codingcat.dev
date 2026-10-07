@@ -572,7 +572,6 @@
     }
   },
   {
-<<<<<<< HEAD
     "name": "syndication",
     "type": "document",
     "attributes": {
@@ -704,8 +703,6 @@
     }
   },
   {
-=======
->>>>>>> origin/main
     "type": "type",
     "name": "page.reference",
     "value": {
@@ -13645,7 +13642,6 @@
     }
   },
   {
-<<<<<<< HEAD
     "type": "type",
     "name": "media.folder.reference",
     "value": {
@@ -13728,8 +13724,6 @@
     }
   },
   {
-=======
->>>>>>> origin/main
     "name": "media.tag",
     "type": "document",
     "attributes": {
