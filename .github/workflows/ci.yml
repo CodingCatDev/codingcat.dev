@@ -124,22 +124,18 @@ jobs:
           echo "- **Target Worker**: \`codingcatdev-dev\`" >> $GITHUB_STEP_SUMMARY
 
           if [ -n "$PREVIEW_URL" ]; then
-            cat << 'EOF' > pr_comment.md
-### ⚡ Cloudflare Worker Preview Ready!
+            {
+              echo "### ⚡ Cloudflare Worker Preview Ready!"
+              echo ""
+              echo "| Environment | URL |"
+              echo "|---|---|"
+              echo "| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |"
+              echo "| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |"
+              echo ""
+              echo "- **Worker Version ID**: \`${VERSION_ID}\`"
+              echo "- **Protection**: Restricted to \`@codingcat.dev\` accounts via Cloudflare Zero Trust Access"
+            } > pr_comment.md
 
-| Environment | URL |
-|---|---|
-| **PR Preview** | [${PREVIEW_URL}](${PREVIEW_URL}) |
-| **Dev Custom Domain** | [https://dev.codingcat.dev](https://dev.codingcat.dev) |
-
-- **Worker Version ID**: `${VERSION_ID}`
-- **Protection**: Restricted to `@codingcat.dev` accounts via Cloudflare Zero Trust Access
-EOF
-            # Replace placeholder variables with actual values in pr_comment.md
-            sed -i "s|\${PREVIEW_URL}|${PREVIEW_URL}|g" pr_comment.md
-            sed -i "s|\${VERSION_ID}|${VERSION_ID}|g" pr_comment.md
-
-            # Check if bot has already posted a preview comment on this PR
             COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" --jq '.[] | select((.user.login=="github-actions[bot]" or .user.login=="app/github-actions") and (.body | contains("Cloudflare Worker Preview Ready"))) | .id' | tail -n 1)
 
             if [ -n "$COMMENT_ID" ]; then
@@ -150,7 +146,7 @@ EOF
           fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'c46bd0f3b9ed47b8692cca098030edbf' }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
