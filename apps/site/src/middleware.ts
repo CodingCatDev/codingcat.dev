@@ -36,7 +36,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const isDedicatedMarkdownEndpoint =
 		pathname === "/auth.md" ||
 		pathname === "/pricing.md" ||
-		pathname.toLowerCase() === "/agents.md";
+		pathname.toLowerCase() === "/agents.md" ||
+		pathname.endsWith("/SKILL.md");
 	const isMarkdownUrl =
 		!isDedicatedMarkdownEndpoint &&
 		(pathname.endsWith(".md") || pathname.endsWith("/index.md"));
