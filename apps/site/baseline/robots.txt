@@ -6,6 +6,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 Disallow: /api/
 Disallow: /dashboard/
 
@@ -16,6 +17,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 User-Agent: ClaudeBot
 Allow: /
@@ -24,6 +26,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 User-Agent: PerplexityBot
 Allow: /
@@ -32,6 +35,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 User-Agent: Applebot-Extended
 Allow: /
@@ -40,7 +44,9 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 Host: https://codingcat.dev
 Sitemap: https://codingcat.dev/sitemap.xml
 Sitemap: https://codingcat.dev/sitemap-index.xml
+Agentmap: https://codingcat.dev/.well-known/ai-catalog.json

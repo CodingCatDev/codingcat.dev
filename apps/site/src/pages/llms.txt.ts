@@ -20,8 +20,12 @@ export const GET: APIRoute = async ({ locals }) => {
 
 - [Full LLM Directory](${origin}/llms-full.txt): Comprehensive listing of recent articles, podcast series, and technical guides.
 - [API Catalog (RFC 9727)](${origin}/.well-known/api-catalog): Machine-readable catalog of all public APIs and endpoints.
+- [OpenAPI Specification](${origin}/.well-known/openapi.json): OpenAPI 3.1 schema for search and agent endpoints.
+- [ARD AI Catalog](${origin}/.well-known/ai-catalog.json): Agentic Resource Discovery capability manifest.
 - [MCP Server Card](${origin}/.well-known/mcp/server-card.json): Model Context Protocol server metadata describing agent tools.
 - [Agent Skills Discovery](${origin}/.well-known/agent-skills/index.json): Discoverable agent capabilities and task specifications.
+- [Auth.md Specification](${origin}/auth.md): Autonomous AI agent authentication and registration guide.
+- [OAuth Protected Resource Metadata](${origin}/.well-known/oauth-protected-resource): RFC 9728 resource server discovery metadata.
 - [Search API](${origin}/api/search?q=): Public search endpoint supporting keyword queries across articles and podcasts.
 - [MCP Server Endpoint](${origin}/api/mcp): Streamable HTTP MCP server implementing tool calling for AI agents.
 - [Blog RSS Feed](${origin}/blog/rss.xml): RSS 2.0 feed of all published blog tutorials.

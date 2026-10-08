@@ -1005,4 +1005,114 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(resDisablePostJson.headers.get("Location"), "/");
 		});
 	});
+
+	// ── 7. Agent Readiness & Autonomous Discovery Endpoints ───────────────
+	describe("Agent Readiness & Discovery Contracts", () => {
+		const locals = {
+			siteUrl: new URL("https://codingcat.dev"),
+		};
+
+		it("7.1 API Catalog conforms to RFC 9727 and RFC 9264 linkset+json", async () => {
+			const apiCatalogModule = loadModule(
+				"src/pages/.well-known/api-catalog.ts",
+			);
+			const res = await apiCatalogModule.GET({ locals });
+			assert.equal(res.status, 200);
+			assert.ok(
+				res.headers.get("content-type")?.includes("application/linkset+json"),
+			);
+			const data = await res.json();
+			assert.ok(Array.isArray(data.linkset), "Must include linkset array");
+			assert.ok(
+				data.linkset.some(
+					(e) => e.anchor === "https://codingcat.dev/api/search",
+				),
+				"Must include search anchor",
+			);
+			assert.ok(
+				data.linkset.some((e) => e.anchor === "https://codingcat.dev/api/mcp"),
+				"Must include mcp anchor",
+			);
+		});
+
+		it("7.2 ARD AI Catalog manifest conforms to ARD v0.9 / ai-catalog model", async () => {
+			const aiCatalogModule = loadModule(
+				"src/pages/.well-known/ai-catalog.json.ts",
+			);
+			const res = await aiCatalogModule.GET({ locals });
+			assert.equal(res.status, 200);
+			assert.ok(res.headers.get("content-type")?.includes("application/json"));
+			assert.equal(res.headers.get("access-control-allow-origin"), "*");
+			const data = await res.json();
+			assert.equal(typeof data.specVersion, "string");
+			assert.ok(data.host?.identifier);
+			assert.ok(Array.isArray(data.entries) && data.entries.length >= 2);
+			for (const entry of data.entries) {
+				assert.ok(entry.identifier.startsWith("urn:air:"));
+				assert.ok(entry.displayName);
+				assert.ok(entry.type);
+				assert.ok(Boolean(entry.url) !== Boolean(entry.data)); // exactly one of url or data
+				assert.ok(Array.isArray(entry.representativeQueries));
+			}
+		});
+
+		it("7.3 OpenAPI 3.1 endpoint serves valid schema for search and mcp", async () => {
+			const openApiModule = loadModule("src/pages/.well-known/openapi.json.ts");
+			const res = await openApiModule.GET({ locals });
+			assert.equal(res.status, 200);
+			const data = await res.json();
+			assert.equal(data.openapi, "3.1.0");
+			assert.ok(data.paths["/api/search"]);
+			assert.ok(data.paths["/api/mcp"]);
+		});
+
+		it("7.4 OAuth & OIDC discovery metadata publishes authorization endpoints", async () => {
+			const oidcModule = loadModule(
+				"src/pages/.well-known/openid-configuration.ts",
+			);
+			const oauthServerModule = loadModule(
+				"src/pages/.well-known/oauth-authorization-server.ts",
+			);
+
+			const oidcRes = await oidcModule.GET({ locals });
+			const oidcData = await oidcRes.json();
+			assert.equal(oidcData.issuer, "https://codingcat.dev");
+			assert.ok(oidcData.authorization_endpoint);
+			assert.ok(oidcData.token_endpoint);
+
+			const oauthRes = await oauthServerModule.GET({ locals });
+			const oauthData = await oauthRes.json();
+			assert.equal(oauthData.issuer, "https://codingcat.dev");
+			assert.ok(
+				oauthData.agent_auth,
+				"Must include agent_auth block for Auth.md",
+			);
+			assert.ok(oauthData.agent_auth.skill.includes("/auth.md"));
+			assert.ok(oauthData.agent_auth.register_uri);
+		});
+
+		it("7.5 OAuth Protected Resource Metadata (RFC 9728) points to issuer and scopes", async () => {
+			const prmModule = loadModule(
+				"src/pages/.well-known/oauth-protected-resource.ts",
+			);
+			const res = await prmModule.GET({ locals });
+			assert.equal(res.status, 200);
+			const data = await res.json();
+			assert.equal(data.resource, "https://codingcat.dev");
+			assert.deepEqual(data.authorization_servers, ["https://codingcat.dev"]);
+			assert.ok(Array.isArray(data.scopes_supported));
+			assert.deepEqual(data.bearer_methods_supported, ["header"]);
+		});
+
+		it("7.6 Auth.md serves Markdown with H1 auth.md and agent instructions", async () => {
+			const authMdModule = loadModule("src/pages/auth.md.ts");
+			const res = await authMdModule.GET({ locals });
+			assert.equal(res.status, 200);
+			assert.ok(res.headers.get("content-type")?.includes("text/markdown"));
+			const body = await res.text();
+			assert.ok(body.includes("# CodingCat.dev auth.md"));
+			assert.ok(body.includes("/agent/claim"));
+			assert.ok(body.includes("/agent/auth"));
+		});
+	});
 });
