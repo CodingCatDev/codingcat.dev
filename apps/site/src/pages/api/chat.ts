@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createMCPClient } from "@ai-sdk/mcp";
+import { createClient } from "@sanity/client";
 import { isStepCount, streamText } from "ai";
 import type { APIRoute } from "astro";
 import { createWorkersAI } from "workers-ai-provider";
@@ -125,7 +126,72 @@ export const POST: APIRoute = async ({ request }) => {
 			},
 		});
 
-		const tools = await mcpClient.tools();
+		const mcpTools = await mcpClient.tools();
+
+		// Directly configure Sanity client for fallback per prompt instructions (Step 3)
+		const sanityClient = createClient({
+			projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
+			dataset: (cfEnv?.PUBLIC_SANITY_DATASET as string) || "production",
+			apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
+			useCdn: false,
+			token: sanityToken,
+		});
+
+		const tools = {
+			...mcpTools,
+			groq_query: {
+				...mcpTools.groq_query,
+				execute: async ({ query }: { query: string }) => {
+					try {
+						const mcpResult = await (mcpTools.groq_query as any).execute(
+							{ query },
+							{} as any,
+						);
+						const parsed =
+							typeof mcpResult === "string"
+								? JSON.parse(mcpResult)
+								: mcpResult;
+						const results =
+							parsed?.result ||
+							(Array.isArray(parsed?.content) && parsed.content[0]?.text
+								? JSON.parse(parsed.content[0].text)?.result
+								: null);
+						if (Array.isArray(results) && results.length > 0) {
+							return mcpResult;
+						}
+					} catch {}
+
+					// Fallback: direct Sanity fetch
+					try {
+						const cleanQuery = query.startsWith("*") ? query : `*[${query}]`;
+						const directResult = await sanityClient.fetch(cleanQuery);
+						return {
+							content: [
+								{
+									type: "text",
+									text: JSON.stringify({ result: directResult }),
+								},
+							],
+						};
+					} catch (directErr) {
+						return {
+							content: [
+								{
+									type: "text",
+									text: JSON.stringify({
+										error:
+											directErr instanceof Error
+												? directErr.message
+												: String(directErr),
+									}),
+								},
+							],
+							isError: true,
+						};
+					}
+				},
+			},
+		};
 
 		// 2. Setup Cloudflare Workers AI model
 		const aiBinding = cfEnv?.AI;
@@ -153,10 +219,10 @@ export const POST: APIRoute = async ({ request }) => {
 		const result = streamText({
 			model,
 			system:
-				"You are CodingCat.dev's intelligent content assistant. Answer user queries by searching and exploring the Sanity Content Lake dataset using your tools (initial_context, groq_query, schema_explorer, array_field_reader). In each step, you can call tools to query the dataset. Once you obtain the results from your tool calls, you MUST synthesize your findings and generate a helpful, complete text answer grounded in the retrieved content (articles, podcasts, authors, transcripts) citing relevant titles or URLs.",
+				"You are CodingCat.dev's intelligent content assistant (AJ). Answer user queries by searching and exploring the Sanity Content Lake dataset using your tools (initial_context, groq_query, schema_explorer, array_field_reader).\n\nDataset tips:\n- Content types: 'post' (blog articles), 'podcast' (podcast episodes), 'author', 'guest', 'transcript'.\n- People's names (authors, guests) are stored in the 'title' field (e.g. *[_type == 'author' && title match '*Alex*']).\n- Fields on posts and podcasts: title, slug, excerpt, date, author[]->title, guest[]->title, youtube.\n- Once you receive results from your query, synthesize them into a helpful, conversational, grounded response citing specific titles and URLs (/post/<slug> or /podcast/<slug>).",
 			messages: coreMessages,
 			tools,
-			stopWhen: isStepCount(10),
+			stopWhen: isStepCount(5),
 			onError: ({ error }) => {
 				console.error("[StreamText Internal Error]", error);
 			},
@@ -179,21 +245,32 @@ export const POST: APIRoute = async ({ request }) => {
 				if (!hasOutput) {
 					// Check all steps to see if text was produced across steps
 					const steps = await result.steps;
-					const allText = steps.map((s) => s.text).filter(Boolean).join("\n\n");
+					const allText = steps
+						.map((s) => s.text)
+						.filter(Boolean)
+						.join("\n\n");
 					if (allText) {
 						await writer.write(encoder.encode(allText));
 					} else {
-						const debugInfo = steps
-							.map(
-								(s, idx) =>
-									`Step ${idx + 1}: finish=${s.finishReason}, tools=${s.toolCalls?.map((t) => t.toolName).join(",") || "none"}`,
-							)
-							.join("; ");
-						await writer.write(
-							encoder.encode(
-								`I queried the CodingCat.dev Sanity content lake (${steps.length} steps: ${debugInfo}), but no final text was emitted.`,
-							),
-						);
+						const lastStep = steps[steps.length - 1];
+						const firstToolResult = lastStep?.toolResults?.[0] as any;
+						const directResult = firstToolResult?.output ?? firstToolResult?.result;
+						if (directResult?.result?.length) {
+							const titles = directResult.result
+								.map((item: any) => `• ${item.title || item._id}`)
+								.join("\n");
+							await writer.write(
+								encoder.encode(
+									`Here are the relevant items found in CodingCat.dev:\n\n${titles}`,
+								),
+							);
+						} else {
+							await writer.write(
+								encoder.encode(
+									"I searched the CodingCat.dev Sanity content lake for your query, but did not find any matching articles or episodes.",
+								),
+							);
+						}
 					}
 				}
 			} catch (streamErr) {
