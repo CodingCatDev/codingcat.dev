@@ -11,12 +11,24 @@
     "build:dashboard": "pnpm --filter @codingcatdev/web build",
     "build:studio": "pnpm --filter @codingcatdev/sanity build",
     "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
+    "deploy:blueprints": "sanity blueprints deploy",
+    "blueprints:deploy": "sanity blueprints deploy",
+    "blueprints:plan": "sanity blueprints plan",
+    "blueprints:doctor": "sanity blueprints doctor",
     "lint": "pnpm --filter @codingcatdev/site lint",
     "typecheck": "pnpm --filter @codingcatdev/site typecheck",
     "typegen": "pnpm --filter @codingcatdev/sanity typegen",
     "build:production": "pnpm --filter @codingcatdev/site build:production",
     "preview": "pnpm --filter @codingcatdev/site preview",
     "test:e2e": "pnpm --filter @codingcatdev/site test:e2e"
+  },
+  "devDependencies": {
+    "@portabletext/markdown": "^2.5.0",
+    "@sanity/blueprints": "^0.28.0",
+    "@sanity/client": "^8.9.0",
+    "@sanity/functions": "^1.8.1",
+    "@sanity/image-url": "^2.1.1",
+    "sanity": "^6.9.2"
   },
   "packageManager": "pnpm@10.34.1"
 }
