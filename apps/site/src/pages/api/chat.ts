@@ -236,10 +236,17 @@ export const POST: APIRoute = async ({ request }) => {
 		(async () => {
 			try {
 				let hasOutput = false;
-				for await (const chunk of result.textStream) {
-					if (chunk) {
+				for await (const part of result.stream) {
+					if (part.type === "text-delta") {
 						hasOutput = true;
-						await writer.write(encoder.encode(chunk));
+						await writer.write(encoder.encode(part.text));
+					} else if (part.type === "error") {
+						console.error("[Stream Part Error]", (part as any).error);
+						await writer.write(
+							encoder.encode(
+								`\n\n[Model Stream Error: ${(part as any).error instanceof Error ? (part as any).error.message : JSON.stringify((part as any).error)}]`,
+							),
+						);
 					}
 				}
 				if (!hasOutput) {
@@ -252,25 +259,23 @@ export const POST: APIRoute = async ({ request }) => {
 					if (allText) {
 						await writer.write(encoder.encode(allText));
 					} else {
-						const lastStep = steps[steps.length - 1];
-						const firstToolResult = lastStep?.toolResults?.[0] as any;
-						const directResult = firstToolResult?.output ?? firstToolResult?.result;
-						if (directResult?.result?.length) {
-							const titles = directResult.result
-								.map((item: any) => `• ${item.title || item._id}`)
-								.join("\n");
-							await writer.write(
-								encoder.encode(
-									`Here are the relevant items found in CodingCat.dev:\n\n${titles}`,
-								),
-							);
-						} else {
-							await writer.write(
-								encoder.encode(
-									"I searched the CodingCat.dev Sanity content lake for your query, but did not find any matching articles or episodes.",
-								),
-							);
-						}
+						const stepTrace = steps.map((s, idx) => ({
+							step: idx + 1,
+							finishReason: s.finishReason,
+							toolCalls: s.toolCalls?.map((tc) => ({
+								name: tc.toolName,
+								args: (tc as any).args ?? (tc as any).input,
+							})),
+							toolResults: s.toolResults?.map((tr) => ({
+								name: tr.toolName,
+								output: (tr as any).output ?? (tr as any).result,
+							})),
+						}));
+						await writer.write(
+							encoder.encode(
+								`I searched the CodingCat.dev Sanity content lake. Diagnostic trace:\n${JSON.stringify(stepTrace, null, 2)}`,
+							),
+						);
 					}
 				}
 			} catch (streamErr) {
