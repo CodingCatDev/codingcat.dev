@@ -259,9 +259,26 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 		useCdn: false,
 	});
 
+	const batchSize = parseInt(process.env.SYNC_BATCH_SIZE || "50", 10);
+
 	console.log(
 		`[Sync Missing YouTube Transcripts] Querying documents with YouTube URLs missing transcripts in project ${projectId}, dataset ${dataset}...`,
 	);
+
+	const totalMissing = await client.fetch<number>(
+		`count(*[_type in ["post", "podcast", "course", "lesson", "short"] && (defined(youtube) || defined(listenLinks.youtube)) && !defined(transcript) && !(_id in path("drafts.**"))])`,
+	);
+
+	console.log(
+		`[Sync Missing YouTube Transcripts] Total documents currently missing transcripts in ${dataset}: ${totalMissing}`,
+	);
+
+	if (totalMissing === 0) {
+		console.log(
+			"[Sync Missing YouTube Transcripts] All videos currently have linked transcripts. Done.",
+		);
+		return;
+	}
 
 	const missingDocs = await client.fetch<
 		Array<{
@@ -271,24 +288,18 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 			youtube: string;
 		}>
 	>(
-		`*[_type in ["post", "podcast"] && defined(youtube) && !defined(transcript) && !(_id in path("drafts.**"))][0...25]{
+		`*[_type in ["post", "podcast", "course", "lesson", "short"] && (defined(youtube) || defined(listenLinks.youtube)) && !defined(transcript) && !(_id in path("drafts.**"))][0...$batchSize]{
 			_id,
 			_type,
 			title,
-			youtube
+			"youtube": coalesce(youtube, listenLinks.youtube)
 		}`,
+		{ batchSize },
 	);
 
 	console.log(
-		`[Sync Missing YouTube Transcripts] Found ${missingDocs.length} documents missing transcripts.`,
+		`[Sync Missing YouTube Transcripts] Processing batch of ${missingDocs.length} documents (batch limit: ${batchSize})...`,
 	);
-
-	if (missingDocs.length === 0) {
-		console.log(
-			"[Sync Missing YouTube Transcripts] All videos currently have linked transcripts. Done.",
-		);
-		return;
-	}
 
 	let successCount = 0;
 	let failCount = 0;

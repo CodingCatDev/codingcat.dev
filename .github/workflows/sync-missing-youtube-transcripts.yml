@@ -11,6 +11,11 @@ on:
         options:
           - production
           - dev
+      batch_size:
+        description: "Batch size (number of videos to process in this run)"
+        required: true
+        default: "50"
+        type: string
 
 jobs:
   sync-transcripts:
@@ -39,3 +44,4 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ inputs.dataset }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          SYNC_BATCH_SIZE: ${{ inputs.batch_size }}
