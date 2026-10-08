@@ -9,10 +9,40 @@ export const prerender = false;
 const SANITY_CONTEXT_MCP_URL =
 	"https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/agent-aj-mcp";
 
+export const OPTIONS: APIRoute = async () => {
+	return new Response(null, {
+		status: 204,
+		headers: {
+			"access-control-allow-origin": "*",
+			"access-control-allow-methods": "GET, POST, OPTIONS",
+			"access-control-allow-headers": "Content-Type, Authorization",
+		},
+	});
+};
+
+export const GET: APIRoute = async () => {
+	return new Response(
+		JSON.stringify({
+			status: "ready",
+			name: "CodingCat AI Assistant",
+			model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+			mcp: SANITY_CONTEXT_MCP_URL,
+		}),
+		{
+			status: 200,
+			headers: {
+				"content-type": "application/json; charset=utf-8",
+				"access-control-allow-origin": "*",
+			},
+		},
+	);
+};
+
 export const POST: APIRoute = async ({ request }) => {
-	const cfEnv = env as unknown as Cloudflare.Env | undefined;
+	const cfEnv = env as unknown as Record<string, unknown> | undefined;
 	const sanityToken =
-		cfEnv?.SANITY_API_READ_TOKEN || process.env.SANITY_API_READ_TOKEN;
+		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
+		process.env.SANITY_API_READ_TOKEN;
 
 	if (!sanityToken) {
 		return new Response(
@@ -21,7 +51,10 @@ export const POST: APIRoute = async ({ request }) => {
 			}),
 			{
 				status: 500,
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"content-type": "application/json; charset=utf-8",
+					"access-control-allow-origin": "*",
+				},
 			},
 		);
 	}
@@ -37,7 +70,10 @@ export const POST: APIRoute = async ({ request }) => {
 			JSON.stringify({ error: "Invalid JSON request body" }),
 			{
 				status: 400,
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"content-type": "application/json; charset=utf-8",
+					"access-control-allow-origin": "*",
+				},
 			},
 		);
 	}
@@ -51,7 +87,10 @@ export const POST: APIRoute = async ({ request }) => {
 			JSON.stringify({ error: "Please provide a prompt or messages array" }),
 			{
 				status: 400,
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"content-type": "application/json; charset=utf-8",
+					"access-control-allow-origin": "*",
+				},
 			},
 		);
 	}
@@ -64,18 +103,20 @@ export const POST: APIRoute = async ({ request }) => {
 		content: m.content,
 	}));
 
-	// 1. Connect MCP client to Sanity Context MCP endpoint
-	const mcpClient = await createMCPClient({
-		transport: {
-			type: "http",
-			url: SANITY_CONTEXT_MCP_URL,
-			headers: {
-				Authorization: `Bearer ${sanityToken}`,
-			},
-		},
-	});
+	let mcpClient: Awaited<ReturnType<typeof createMCPClient>> | undefined;
 
 	try {
+		// 1. Connect MCP client to Sanity Context MCP endpoint
+		mcpClient = await createMCPClient({
+			transport: {
+				type: "http",
+				url: SANITY_CONTEXT_MCP_URL,
+				headers: {
+					Authorization: `Bearer ${sanityToken}`,
+				},
+			},
+		});
+
 		const tools = await mcpClient.tools();
 
 		// 2. Setup Cloudflare Workers AI model
@@ -89,7 +130,10 @@ export const POST: APIRoute = async ({ request }) => {
 				}),
 				{
 					status: 500,
-					headers: { "Content-Type": "application/json" },
+					headers: {
+						"content-type": "application/json; charset=utf-8",
+						"access-control-allow-origin": "*",
+					},
 				},
 			);
 		}
@@ -107,17 +151,28 @@ export const POST: APIRoute = async ({ request }) => {
 			stopWhen: isStepCount(10),
 			onFinish: async () => {
 				try {
-					await mcpClient.close();
+					if (mcpClient) {
+						await mcpClient.close();
+					}
 				} catch {
 					// Ignore cleanup errors
 				}
 			},
 		});
 
-		return result.toTextStreamResponse();
+		const textResponse = result.toTextStreamResponse();
+		const headers = new Headers(textResponse.headers);
+		headers.set("access-control-allow-origin", "*");
+		return new Response(textResponse.body, {
+			status: textResponse.status,
+			statusText: textResponse.statusText,
+			headers,
+		});
 	} catch (err) {
 		try {
-			await mcpClient.close();
+			if (mcpClient) {
+				await mcpClient.close();
+			}
 		} catch {}
 
 		console.error("[Chat API Error]", err);
@@ -130,7 +185,10 @@ export const POST: APIRoute = async ({ request }) => {
 			}),
 			{
 				status: 500,
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"content-type": "application/json; charset=utf-8",
+					"access-control-allow-origin": "*",
+				},
 			},
 		);
 	}

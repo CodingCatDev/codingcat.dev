@@ -30,6 +30,12 @@ declare namespace App {
 	}
 }
 
+declare namespace Cloudflare {
+	interface Env {
+		SANITY_API_READ_TOKEN?: string;
+	}
+}
+
 declare namespace astroHTML.JSX {
 	interface FormHTMLAttributes {
 		toolname?: string;

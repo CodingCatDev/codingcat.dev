@@ -89,9 +89,10 @@ export const POST: APIRoute = async ({ request }) => {
 	const rawBody = await request.text();
 
 	// Read server-side Sanity Context token from cloudflare:workers env or process.env
-	const cfEnv = env as unknown as Cloudflare.Env | undefined;
+	const cfEnv = env as unknown as Record<string, unknown> | undefined;
 	const sanityToken =
-		cfEnv?.SANITY_API_READ_TOKEN || process.env.SANITY_API_READ_TOKEN;
+		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
+		process.env.SANITY_API_READ_TOKEN;
 
 	if (!sanityToken) {
 		return new Response(
