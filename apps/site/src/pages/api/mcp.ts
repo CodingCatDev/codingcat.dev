@@ -14,17 +14,39 @@ interface JsonRpcRequest {
 	params?: any;
 }
 
+const MCP_HEADERS = {
+	"content-type": "application/json; charset=utf-8",
+	"access-control-allow-origin": "*",
+	"access-control-allow-methods": "GET, POST, OPTIONS",
+	"access-control-allow-headers":
+		"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version",
+	"mcp-protocol-version": "2024-11-05",
+};
+
+export const OPTIONS: APIRoute = async () => {
+	return new Response(null, {
+		status: 204,
+		headers: MCP_HEADERS,
+	});
+};
+
 export const GET: APIRoute = async ({ locals }) => {
 	const origin = locals.siteUrl.origin;
 	return new Response(
 		JSON.stringify(
 			{
 				status: "ok",
-				server: "CodingCat.dev Search MCP Server",
+				server: "codingcatdev-search-mcp",
 				version: "1.0.0",
-				protocolVersion: "2025-06-18",
+				protocolVersion: "2024-11-05",
+				supportedVersions: ["2026-07-28", "2024-11-05"],
 				transport: "streamable-http",
 				serverCard: `${origin}/.well-known/mcp/server-card.json`,
+				capabilities: {
+					tools: { listChanged: false },
+					resources: { subscribe: false, listChanged: false },
+					prompts: { listChanged: false },
+				},
 				tools: ["search_content"],
 			},
 			null,
@@ -32,7 +54,7 @@ export const GET: APIRoute = async ({ locals }) => {
 		),
 		{
 			headers: {
-				"content-type": "application/json; charset=utf-8",
+				...MCP_HEADERS,
 				"cache-control": "public, max-age=3600",
 			},
 		},
@@ -52,23 +74,60 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				id: null,
 				error: { code: -32700, message: "Parse error" },
 			}),
-			{ status: 400, headers: { "content-type": "application/json" } },
+			{ status: 400, headers: MCP_HEADERS },
 		);
 	}
 
 	const id = body.id ?? null;
 	const method = body.method;
 
-	// 1. Initialize
-	if (method === "initialize") {
+	// 1. Stateless discovery (MCP 2026-07-28+)
+	if (method === "server/discover") {
 		return new Response(
 			JSON.stringify({
 				jsonrpc: "2.0",
 				id,
 				result: {
-					protocolVersion: "2025-06-18",
+					supportedVersions: ["2026-07-28", "2024-11-05"],
 					capabilities: {
-						tools: {},
+						tools: { listChanged: false },
+						resources: { subscribe: false, listChanged: false },
+						prompts: { listChanged: false },
+					},
+					serverInfo: {
+						name: "codingcatdev-search-mcp",
+						version: "1.0.0",
+					},
+					_meta: {
+						"io.modelcontextprotocol/serverInfo": {
+							name: "codingcatdev-search-mcp",
+							version: "1.0.0",
+						},
+					},
+					instructions:
+						"Search technical tutorials, web development guides, and podcasts on CodingCat.dev.",
+				},
+			}),
+			{ headers: MCP_HEADERS },
+		);
+	}
+
+	// 2. Initialize (Legacy / standard MCP handshake)
+	if (method === "initialize") {
+		const clientVersion = body.params?.protocolVersion;
+		const protocolVersion =
+			clientVersion === "2026-07-28" ? "2026-07-28" : "2024-11-05";
+
+		return new Response(
+			JSON.stringify({
+				jsonrpc: "2.0",
+				id,
+				result: {
+					protocolVersion,
+					capabilities: {
+						tools: { listChanged: false },
+						resources: { subscribe: false, listChanged: false },
+						prompts: { listChanged: false },
 					},
 					serverInfo: {
 						name: "codingcatdev-search-mcp",
@@ -76,11 +135,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 					},
 				},
 			}),
-			{ headers: { "content-type": "application/json" } },
+			{ headers: MCP_HEADERS },
 		);
 	}
 
-	// 2. Notifications (initialized acknowledgement)
+	// 3. Notifications (initialized acknowledgement)
 	if (method === "notifications/initialized") {
 		return new Response(
 			JSON.stringify({
@@ -88,11 +147,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				id,
 				result: {},
 			}),
-			{ headers: { "content-type": "application/json" } },
+			{ headers: MCP_HEADERS },
 		);
 	}
 
-	// 3. Ping
+	// 4. Ping
 	if (method === "ping") {
 		return new Response(
 			JSON.stringify({
@@ -100,11 +159,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				id,
 				result: {},
 			}),
-			{ headers: { "content-type": "application/json" } },
+			{ headers: MCP_HEADERS },
 		);
 	}
 
-	// 4. Tools list
+	// 5. Tools list
 	if (method === "tools/list") {
 		return new Response(
 			JSON.stringify({
@@ -137,11 +196,39 @@ export const POST: APIRoute = async ({ request, locals }) => {
 					],
 				},
 			}),
-			{ headers: { "content-type": "application/json" } },
+			{ headers: MCP_HEADERS },
 		);
 	}
 
-	// 5. Tools call
+	// 6. Resources list
+	if (method === "resources/list") {
+		return new Response(
+			JSON.stringify({
+				jsonrpc: "2.0",
+				id,
+				result: {
+					resources: [],
+				},
+			}),
+			{ headers: MCP_HEADERS },
+		);
+	}
+
+	// 7. Prompts list
+	if (method === "prompts/list") {
+		return new Response(
+			JSON.stringify({
+				jsonrpc: "2.0",
+				id,
+				result: {
+					prompts: [],
+				},
+			}),
+			{ headers: MCP_HEADERS },
+		);
+	}
+
+	// 8. Tools call
 	if (method === "tools/call") {
 		const toolName = body.params?.name;
 		const args = body.params?.arguments || {};
@@ -165,7 +252,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 							isError: true,
 						},
 					}),
-					{ headers: { "content-type": "application/json" } },
+					{ headers: MCP_HEADERS },
 				);
 			}
 
@@ -230,7 +317,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 						],
 					},
 				}),
-				{ headers: { "content-type": "application/json" } },
+				{ headers: MCP_HEADERS },
 			);
 		}
 
@@ -240,16 +327,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				id,
 				error: { code: -32601, message: `Tool not found: ${toolName}` },
 			}),
-			{ status: 404, headers: { "content-type": "application/json" } },
+			{ headers: MCP_HEADERS },
 		);
 	}
 
+	// Default fallback: standard JSON-RPC 2.0 Method Not Found
 	return new Response(
 		JSON.stringify({
 			jsonrpc: "2.0",
 			id,
 			error: { code: -32601, message: `Method not found: ${method}` },
 		}),
-		{ status: 404, headers: { "content-type": "application/json" } },
+		{ headers: MCP_HEADERS },
 	);
 };
