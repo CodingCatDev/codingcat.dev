@@ -1121,28 +1121,39 @@ describe("Tier 1 - Feature Coverage", () => {
 
 			const agentsRes = await agentsMdModule.GET({ locals });
 			assert.equal(agentsRes.status, 200);
-			assert.ok(agentsRes.headers.get("content-type")?.includes("text/markdown"));
+			assert.ok(
+				agentsRes.headers.get("content-type")?.includes("text/markdown"),
+			);
 			const agentsBody = await agentsRes.text();
 			assert.ok(agentsBody.includes("# codingcat.dev: Agent Guide"));
 			assert.ok(agentsBody.includes("MCP Server Card"));
 
 			const pricingRes = await pricingMdModule.GET({ locals });
 			assert.equal(pricingRes.status, 200);
-			assert.ok(pricingRes.headers.get("content-type")?.includes("text/markdown"));
+			assert.ok(
+				pricingRes.headers.get("content-type")?.includes("text/markdown"),
+			);
 			const pricingBody = await pricingRes.text();
 			assert.ok(pricingBody.includes("# CodingCat.dev Pricing for Agents"));
 			assert.ok(pricingBody.includes("Public Read Operations"));
 		});
 
 		it("7.8 agents.json and agent-card.json serve agent discovery specifications", async () => {
-			const agentsJsonModule = loadModule("src/pages/.well-known/agents.json.ts");
-			const agentCardModule = loadModule("src/pages/.well-known/agent-card.json.ts");
+			const agentsJsonModule = loadModule(
+				"src/pages/.well-known/agents.json.ts",
+			);
+			const agentCardModule = loadModule(
+				"src/pages/.well-known/agent-card.json.ts",
+			);
 
 			const agentsRes = await agentsJsonModule.GET({ locals });
 			assert.equal(agentsRes.status, 200);
 			const agentsData = await agentsRes.json();
 			assert.ok(Array.isArray(agentsData.agents));
-			assert.equal(agentsData.agents[0].name, "CodingCat Search & Content Agent");
+			assert.equal(
+				agentsData.agents[0].name,
+				"CodingCat Search & Content Agent",
+			);
 
 			const cardRes = await agentCardModule.GET({ locals });
 			assert.equal(cardRes.status, 200);
@@ -1152,19 +1163,27 @@ describe("Tier 1 - Feature Coverage", () => {
 		});
 
 		it("7.9 SEP-1649 MCP server card serves transport, capabilities, and auth metadata", async () => {
-			const mcpCardModule = loadModule("src/pages/.well-known/mcp/server-card.json.ts");
+			const mcpCardModule = loadModule(
+				"src/pages/.well-known/mcp/server-card.json.ts",
+			);
 			const res = await mcpCardModule.GET({ locals });
 			assert.equal(res.status, 200);
 			const data = await res.json();
 			assert.equal(data.serverInfo.name, "codingcatdev-search-mcp");
 			assert.equal(data.transport.type, "streamable-http");
 			assert.ok(data.capabilities.tools);
-			assert.ok(data.auth.authorizationServers.includes("https://codingcat.dev"));
+			assert.ok(
+				data.auth.authorizationServers.includes("https://codingcat.dev"),
+			);
 		});
 
 		it("7.10 Agent Skills index conforms to v0.2.0 RFC with valid sha256 digest and SKILL.md", async () => {
-			const skillsIndexModule = loadModule("src/pages/.well-known/agent-skills/index.json.ts");
-			const skillMdModule = loadModule("src/pages/.well-known/agent-skills/search-content/SKILL.md.ts");
+			const skillsIndexModule = loadModule(
+				"src/pages/.well-known/agent-skills/index.json.ts",
+			);
+			const skillMdModule = loadModule(
+				"src/pages/.well-known/agent-skills/search-content/SKILL.md.ts",
+			);
 
 			const indexRes = await skillsIndexModule.GET({ locals });
 			assert.equal(indexRes.status, 200);
