@@ -15,6 +15,18 @@ export const GET: APIRoute = async ({ locals }) => {
 		url: origin,
 		version: "1.0.0",
 		protocol: "a2a",
+		supportedInterfaces: [
+			{
+				url: `${origin}/api/mcp`,
+				protocolBinding: "JSONRPC",
+				protocolVersion: "2.0",
+			},
+			{
+				url: `${origin}/api/search`,
+				protocolBinding: "HTTP+JSON",
+				protocolVersion: "1.0",
+			},
+		],
 		endpoints: {
 			mcp: `${origin}/api/mcp`,
 			search: `${origin}/api/search`,

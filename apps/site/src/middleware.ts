@@ -57,6 +57,24 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		response = await next();
 	}
 
+	// API error hygiene: structured JSON error responses (RFC 9457 Problem Details) for all /api/ paths
+	if (pathname.startsWith("/api/") && response.status === 404) {
+		const problemDetails = {
+			type: "https://codingcat.dev/errors/not-found",
+			title: "Not Found",
+			status: 404,
+			detail: `The requested API endpoint ${pathname} was not found on this server.`,
+			instance: pathname,
+		};
+		const headers = new Headers(response.headers);
+		headers.set("content-type", "application/problem+json; charset=utf-8");
+		response = new Response(JSON.stringify(problemDetails, null, 2), {
+			status: 404,
+			statusText: "Not Found",
+			headers,
+		});
+	}
+
 	if (context.locals.sanity.preview.enabled) {
 		// Not cosmetic: without this a response containing unpublished drafts can
 		// be written to the edge cache and served to the public.

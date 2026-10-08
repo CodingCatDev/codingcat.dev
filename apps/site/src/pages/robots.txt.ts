@@ -36,39 +36,42 @@ Disallow: /dashboard/
 
 User-Agent: GPTBot
 Allow: /
-Allow: /api/search
-Allow: /api/mcp
-Allow: /.well-known/
-Allow: /llms.txt
-Allow: /llms-full.txt
-Allow: /auth.md
+
+User-Agent: ChatGPT-User
+Allow: /
+
+User-Agent: OAI-SearchBot
+Allow: /
 
 User-Agent: ClaudeBot
 Allow: /
-Allow: /api/search
-Allow: /api/mcp
-Allow: /.well-known/
-Allow: /llms.txt
-Allow: /llms-full.txt
-Allow: /auth.md
+
+User-Agent: Claude-User
+Allow: /
+
+User-Agent: Claude-SearchBot
+Allow: /
+
+User-Agent: Google-Extended
+Allow: /
+
+User-Agent: Amazonbot
+Allow: /
+
+User-Agent: Bytespider
+Allow: /
+
+User-Agent: CCBot
+Allow: /
 
 User-Agent: PerplexityBot
 Allow: /
-Allow: /api/search
-Allow: /api/mcp
-Allow: /.well-known/
-Allow: /llms.txt
-Allow: /llms-full.txt
-Allow: /auth.md
 
 User-Agent: Applebot-Extended
 Allow: /
-Allow: /api/search
-Allow: /api/mcp
-Allow: /.well-known/
-Allow: /llms.txt
-Allow: /llms-full.txt
-Allow: /auth.md
+
+User-Agent: meta-externalagent
+Allow: /
 
 Host: ${origin}
 Sitemap: ${origin}/sitemap.xml
