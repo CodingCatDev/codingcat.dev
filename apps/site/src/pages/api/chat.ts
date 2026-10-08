@@ -153,7 +153,7 @@ export const POST: APIRoute = async ({ request }) => {
 		const result = streamText({
 			model,
 			system:
-				"You are CodingCat.dev's intelligent content assistant. Answer user queries by searching and exploring the Sanity Content Lake dataset using your tools (initial_context, groq_query, schema_explorer, array_field_reader). Always ground your answers in the retrieved content (articles, podcasts, authors, transcripts) and cite relevant URLs or titles.",
+				"You are CodingCat.dev's intelligent content assistant. Answer user queries by searching and exploring the Sanity Content Lake dataset using your tools (initial_context, groq_query, schema_explorer, array_field_reader). In each step, you can call tools to query the dataset. Once you obtain the results from your tool calls, you MUST synthesize your findings and generate a helpful, complete text answer grounded in the retrieved content (articles, podcasts, authors, transcripts) citing relevant titles or URLs.",
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(10),
@@ -177,14 +177,21 @@ export const POST: APIRoute = async ({ request }) => {
 					}
 				}
 				if (!hasOutput) {
-					// Fallback: check full text from result in case textStream did not emit intermediate text
-					const fullText = await result.text;
-					if (fullText) {
-						await writer.write(encoder.encode(fullText));
+					// Check all steps to see if text was produced across steps
+					const steps = await result.steps;
+					const allText = steps.map((s) => s.text).filter(Boolean).join("\n\n");
+					if (allText) {
+						await writer.write(encoder.encode(allText));
 					} else {
+						const debugInfo = steps
+							.map(
+								(s, idx) =>
+									`Step ${idx + 1}: finish=${s.finishReason}, tools=${s.toolCalls?.map((t) => t.toolName).join(",") || "none"}`,
+							)
+							.join("; ");
 						await writer.write(
 							encoder.encode(
-								"I searched the CodingCat.dev dataset for your query, but did not find any matching results.",
+								`I queried the CodingCat.dev Sanity content lake (${steps.length} steps: ${debugInfo}), but no final text was emitted.`,
 							),
 						);
 					}
