@@ -1,22 +1,10 @@
 import {
 	defineBlueprint,
 	defineDocumentFunction,
-	defineScheduledFunction,
-	defineStudio,
 } from "@sanity/blueprints";
 
 export default defineBlueprint({
 	resources: [
-		defineStudio({
-			name: "studio",
-			title: "CodingCatDev Studio",
-			project: process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
-			root: ".",
-			slug: process.env.SANITY_STUDIO_HOSTNAME || "codingcat-prod",
-			autoUpdates: {
-				enabled: true,
-			},
-		}),
 		defineDocumentFunction({
 			name: "syndicate-content",
 			displayName: "Syndicate Content (Dev.to & Hashnode)",
@@ -39,15 +27,6 @@ export default defineBlueprint({
 			env: {
 				YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || "",
 			},
-		}),
-		defineScheduledFunction({
-			name: "sync-nightly-dataset",
-			displayName: "Nightly Dataset Sync (production -> dev)",
-			event: {
-				expression: "0 4 * * *",
-			},
-			runtime: "nodejs22.x",
-			timeout: 300,
 		}),
 	],
 });
