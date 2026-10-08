@@ -23,6 +23,16 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 	const targetDataset = "dev";
 	const sourceDataset = "production";
 
+	if (
+		process.env.SANITY_STUDIO_DATASET &&
+		process.env.SANITY_STUDIO_DATASET !== "production"
+	) {
+		console.log(
+			`[Sync Nightly Dataset] Stack is "${process.env.SANITY_STUDIO_DATASET}". Nightly dataset sync only executes on production. Skipping.`,
+		);
+		return;
+	}
+
 	console.log(
 		`[Sync Nightly Dataset] Resetting dataset "${targetDataset}" from source "${sourceDataset}" for project ${projectId}...`,
 	);

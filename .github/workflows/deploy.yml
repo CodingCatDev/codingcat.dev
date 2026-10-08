@@ -38,12 +38,33 @@ jobs:
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
-      - name: Deploy Sanity Blueprints Functions
+      - name: Promote Stack to Organization Scope
         run: |
-          pnpm exec sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          mkdir -p .sanity
+          echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+
+      - name: Deploy Sanity Blueprints Functions
+        run: |
+          ORG_ID=$(node -e "
+            fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
+              headers: { Authorization: 'Bearer ${{ secrets.SANITY_AUTH_TOKEN }}' }
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (!d.organizationId) throw new Error('No organizationId in project response: ' + JSON.stringify(d));
+              console.log(d.organizationId);
+            })
+            .catch(err => { console.error(err); process.exit(1); });
+          ")
+          echo "Resolved Organization ID: $ORG_ID"
+          mkdir -p .sanity
+          echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
@@ -75,12 +96,33 @@ jobs:
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
-      - name: Deploy Sanity Blueprints Functions
+      - name: Promote Stack to Organization Scope
         run: |
-          pnpm exec sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          mkdir -p .sanity
+          echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+
+      - name: Deploy Sanity Blueprints Functions
+        run: |
+          ORG_ID=$(node -e "
+            fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
+              headers: { Authorization: 'Bearer ${{ secrets.SANITY_AUTH_TOKEN }}' }
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (!d.organizationId) throw new Error('No organizationId in project response: ' + JSON.stringify(d));
+              console.log(d.organizationId);
+            })
+            .catch(err => { console.error(err); process.exit(1); });
+          ")
+          echo "Resolved Organization ID: $ORG_ID"
+          mkdir -p .sanity
+          echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
