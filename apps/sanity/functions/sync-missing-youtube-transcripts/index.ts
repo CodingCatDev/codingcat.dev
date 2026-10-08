@@ -222,12 +222,14 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 		);
 	}
 
-	// 2. Token validation
+	// 2. Token validation: prefer Sanity runtime token, then project write token, then fallback
 	const token =
-		context.clientOptions?.token || process.env.SANITY_AUTH_TOKEN;
+		context.clientOptions?.token ||
+		process.env.SANITY_API_WRITE_TOKEN ||
+		process.env.SANITY_AUTH_TOKEN;
 	if (!token) {
 		throw new Error(
-			"[Sync Missing YouTube Transcripts] Missing Sanity API token (neither context.clientOptions.token nor SANITY_AUTH_TOKEN is present).",
+			"[Sync Missing YouTube Transcripts] Missing Sanity API token (neither context.clientOptions.token nor SANITY_API_WRITE_TOKEN is present).",
 		);
 	}
 

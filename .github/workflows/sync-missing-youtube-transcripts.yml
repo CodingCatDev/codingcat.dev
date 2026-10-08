@@ -35,6 +35,7 @@ jobs:
           pnpm exec sanity functions test sync-missing-youtube-transcripts --dataset ${{ inputs.dataset }}
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ inputs.dataset }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
