@@ -157,24 +157,61 @@ export const POST: APIRoute = async ({ request }) => {
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(10),
-			onFinish: async () => {
-				try {
-					if (mcpClient) {
-						await mcpClient.close();
-					}
-				} catch {
-					// Ignore cleanup errors
-				}
+			onError: ({ error }) => {
+				console.error("[StreamText Internal Error]", error);
 			},
 		});
 
-		const textResponse = result.toTextStreamResponse();
-		const headers = new Headers(textResponse.headers);
-		headers.set("access-control-allow-origin", "*");
-		return new Response(textResponse.body, {
-			status: textResponse.status,
-			statusText: textResponse.statusText,
-			headers,
+		// Pipe text stream through TransformStream with explicit error surface
+		const transformStream = new TransformStream();
+		const writer = transformStream.writable.getWriter();
+		const encoder = new TextEncoder();
+
+		(async () => {
+			try {
+				let hasOutput = false;
+				for await (const chunk of result.textStream) {
+					if (chunk) {
+						hasOutput = true;
+						await writer.write(encoder.encode(chunk));
+					}
+				}
+				if (!hasOutput) {
+					// Fallback: check full text from result in case textStream did not emit intermediate text
+					const fullText = await result.text;
+					if (fullText) {
+						await writer.write(encoder.encode(fullText));
+					} else {
+						await writer.write(
+							encoder.encode(
+								"I searched the CodingCat.dev dataset for your query, but did not find any matching results.",
+							),
+						);
+					}
+				}
+			} catch (streamErr) {
+				console.error("[StreamText Stream Loop Error]", streamErr);
+				const errMsg =
+					streamErr instanceof Error ? streamErr.message : String(streamErr);
+				await writer.write(
+					encoder.encode(`\n\n[Error generating response: ${errMsg}]`),
+				);
+			} finally {
+				await writer.close();
+				if (mcpClient) {
+					try {
+						await mcpClient.close();
+					} catch {}
+				}
+			}
+		})();
+
+		return new Response(transformStream.readable, {
+			headers: {
+				"content-type": "text/plain; charset=utf-8",
+				"access-control-allow-origin": "*",
+				"cache-control": "no-cache",
+			},
 		});
 	} catch (err) {
 		try {
