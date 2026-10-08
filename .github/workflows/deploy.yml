@@ -28,26 +28,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Deploy Sanity Studio
-        run: npx sanity deploy -y
-        working-directory: apps/sanity
-        env:
-          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SANITY_STUDIO_HOSTNAME: ${{ vars.SANITY_STUDIO_HOSTNAME }}
-          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
-          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
-
-      - name: Deploy Sanity Blueprints
-        continue-on-error: true
+      - name: Deploy Sanity via Blueprints (Studio & Functions)
         run: |
+          npx sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
+          npx sanity blueprints deploy --stack ${{ vars.SANITY_STUDIO_DATASET }} || \
           npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} || \
-          npx sanity blueprints init . --blueprint-type ts --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack-name ${{ vars.SANITY_STUDIO_DATASET }} || true
+          npx sanity deploy -y
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_HOSTNAME: ${{ vars.SANITY_STUDIO_HOSTNAME }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
@@ -67,24 +61,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Deploy Sanity Studio
-        run: npx sanity deploy -y
-        working-directory: apps/sanity
-        env:
-          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SANITY_STUDIO_HOSTNAME: ${{ vars.SANITY_STUDIO_HOSTNAME }}
-          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
-          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
-
-      - name: Deploy Sanity Blueprints
-        continue-on-error: true
+      - name: Deploy Sanity via Blueprints (Studio & Functions)
         run: |
+          npx sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
+          npx sanity blueprints deploy --stack ${{ vars.SANITY_STUDIO_DATASET }} || \
           npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} || \
-          npx sanity blueprints init . --blueprint-type ts --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack-name ${{ vars.SANITY_STUDIO_DATASET }} || true
+          npx sanity deploy -y
         working-directory: apps/sanity
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_HOSTNAME: ${{ vars.SANITY_STUDIO_HOSTNAME }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 

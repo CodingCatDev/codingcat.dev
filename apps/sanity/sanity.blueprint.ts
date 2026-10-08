@@ -2,10 +2,21 @@ import {
 	defineBlueprint,
 	defineDocumentFunction,
 	defineScheduledFunction,
+	defineStudio,
 } from "@sanity/blueprints";
 
 export default defineBlueprint({
 	resources: [
+		defineStudio({
+			name: "studio",
+			title: "CodingCatDev Studio",
+			project: process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
+			root: ".",
+			slug: process.env.SANITY_STUDIO_HOSTNAME || "codingcat-prod",
+			autoUpdates: {
+				enabled: true,
+			},
+		}),
 		defineDocumentFunction({
 			name: "syndicate-content",
 			displayName: "Syndicate Content (Dev.to & Hashnode)",
