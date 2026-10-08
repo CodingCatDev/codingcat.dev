@@ -6,37 +6,22 @@ export const GET: APIRoute = async ({ locals }) => {
 	const origin = locals.siteUrl.origin;
 
 	const skillsIndex = {
-		$schema: "https://agentskills.io/schema/v1/index.json",
-		version: "1.0",
+		$schema:
+			"https://raw.githubusercontent.com/cloudflare/agent-skills-discovery-rfc/main/schema/index.schema.json",
+		version: "0.2.0",
 		provider: {
 			name: "CodingCat.dev",
 			url: origin,
 		},
 		skills: [
 			{
-				id: "search-content",
-				name: "Search Content",
+				name: "search-content",
+				type: "skill-md",
 				description:
-					"Search full articles, podcast transcripts, and coding tutorials on CodingCat.dev across fullstack web development topics.",
-				endpoint: `${origin}/api/search`,
-				method: "GET",
-				parameters: [
-					{
-						name: "q",
-						type: "string",
-						required: true,
-						description: "The programming term or question to search",
-					},
-				],
-			},
-			{
-				id: "mcp-tools",
-				name: "Model Context Protocol Tools",
-				description:
-					"Streamable HTTP MCP tool execution for autonomous AI agent pair programming and search.",
-				endpoint: `${origin}/api/mcp`,
-				method: "POST",
-				documentation: `${origin}/.well-known/mcp/server-card.json`,
+					"Search fullstack web development tutorials, podcasts, and blog posts on CodingCat.dev",
+				url: `${origin}/.well-known/agent-skills/search-content/SKILL.md`,
+				digest:
+					"sha256:16567e9f7d6d3ed78c4be72cdb450eb46b384f5f91fc355ae866f364859164db",
 			},
 		],
 	};
@@ -45,6 +30,7 @@ export const GET: APIRoute = async ({ locals }) => {
 		headers: {
 			"content-type": "application/json; charset=utf-8",
 			"cache-control": "public, max-age=3600, s-maxage=86400",
+			"access-control-allow-origin": "*",
 			Vary: "Accept",
 			Link: `<${origin}/llms.txt>; rel="llms-txt", <${origin}/.well-known/api-catalog>; rel="api-catalog"`,
 		},

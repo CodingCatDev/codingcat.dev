@@ -1,0 +1,114 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Developer Documentation & APIs — CodingCat.dev";
+const description =
+	"Developer guides, APIs, Model Context Protocol (MCP) server endpoints, and agent integration documentation for CodingCat.dev.";
+const origin = Astro.locals.siteUrl.origin;
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="max-w-4xl mx-auto py-12 md:py-20">
+		<header class="mb-10 text-center">
+			<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Developer & Agent Documentation</h1>
+			<p class="text-xl text-muted-foreground">APIs, Machine-Readable Manifests & Autonomous Agent Protocols</p>
+		</header>
+
+		<div class="prose prose-neutral dark:prose-invert max-w-none space-y-8 text-lg leading-relaxed">
+			<section>
+				<h2 class="text-2xl font-bold mb-4">Overview</h2>
+				<p>
+					CodingCat.dev provides open, machine-readable interfaces designed for both human developers and autonomous AI coding agents. All public read APIs are free and do not require API keys or registration.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mb-4">Discovery Manifests</h2>
+				<div class="overflow-x-auto">
+					<table class="w-full text-left border-collapse text-base">
+						<thead>
+							<tr class="border-b border-border font-semibold">
+								<th class="py-2 pr-4">Standard</th>
+								<th class="py-2 px-4">Endpoint</th>
+								<th class="py-2 pl-4">Description</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-border">
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">RFC 9727 API Catalog</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/.well-known/api-catalog" class="text-primary hover:underline">/.well-known/api-catalog</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">IANA linkset discovery for all public APIs</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">OpenAPI 3.1</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/openapi.json" class="text-primary hover:underline">/openapi.json</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Complete machine-readable OpenAPI schema</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">MCP Server Card</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/.well-known/mcp/server-card.json" class="text-primary hover:underline">/.well-known/mcp/server-card.json</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Model Context Protocol server capability card</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">ARD AI Catalog</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/.well-known/ai-catalog.json" class="text-primary hover:underline">/.well-known/ai-catalog.json</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Agentic Resource Discovery manifest</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">Agent Skills</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/.well-known/agent-skills/index.json" class="text-primary hover:underline">/.well-known/agent-skills/index.json</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Cloudflare Agent Skills Discovery index</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">Auth.md</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/auth.md" class="text-primary hover:underline">/auth.md</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Agent registration & authentication contracts</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">Pricing.md</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/pricing.md" class="text-primary hover:underline">/pricing.md</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Agent pricing and usage constraints</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">Agent Guide</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/AGENTS.md" class="text-primary hover:underline">/AGENTS.md</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Root-level agent capability guide</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mb-4">Search API</h2>
+				<p>Perform keyword search across tutorials, blog posts, podcasts, authors, and sponsors:</p>
+				<pre class="bg-muted p-4 rounded-lg overflow-x-auto text-sm"><code>GET {origin}/api/search?q=astro HTTP/1.1
+Accept: application/json</code></pre>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mb-4">Streamable Model Context Protocol (MCP)</h2>
+				<p>Agents can invoke MCP tools over HTTP POST:</p>
+				<pre class="bg-muted p-4 rounded-lg overflow-x-auto text-sm"><code>POST {origin}/api/mcp HTTP/1.1
+Content-Type: application/json
+
+&#123;
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": &#123;
+    "name": "search_content",
+    "arguments": &#123; "query": "typescript" &#125;
+  &#125;,
+  "id": 1
+&#125;</code></pre>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mb-4">Markdown Content Negotiation</h2>
+				<p>
+					Any page on CodingCat.dev can be retrieved in clean Markdown by appending <code>.md</code> to the URL (e.g., <code>/blog.md</code>) or sending the HTTP header <code>Accept: text/markdown</code>.
+				</p>
+			</section>
+		</div>
+	</div>
+</BaseLayout>
