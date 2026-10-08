@@ -38,6 +38,21 @@ export const GET: APIRoute = async ({ locals }) => {
 			mcp: true,
 			read_content: true,
 		},
+		skills: [
+			{
+				id: "search_content",
+				name: "Search Content",
+				description:
+					"Search technical tutorials, blog posts, podcasts, and transcripts on CodingCat.dev.",
+				tags: ["tutorials", "podcasts", "search", "webdev"],
+				examples: [
+					"Find Astro and Cloudflare tutorials",
+					"Search for podcast episodes with Kent C. Dodds",
+				],
+			},
+		],
+		defaultInputModes: ["text/plain", "application/json"],
+		defaultOutputModes: ["text/plain", "application/json"],
 		documentation: `${origin}/AGENTS.md`,
 	};
 
