@@ -182,6 +182,7 @@ export const POST: APIRoute = async ({ request }) => {
 					err instanceof Error
 						? err.message
 						: "Failed to generate chat response",
+				stack: err instanceof Error ? err.stack : String(err),
 			}),
 			{
 				status: 500,

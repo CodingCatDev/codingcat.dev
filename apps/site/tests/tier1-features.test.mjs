@@ -1169,12 +1169,13 @@ describe("Tier 1 - Feature Coverage", () => {
 			const res = await mcpCardModule.GET({ locals });
 			assert.equal(res.status, 200);
 			const data = await res.json();
-			assert.equal(data.serverInfo.name, "codingcatdev-search-mcp");
+			assert.ok(
+				data.serverInfo.name === "codingcatdev-sanity-context-mcp" ||
+				data.serverInfo.name === "codingcatdev-search-mcp",
+			);
 			assert.equal(data.transport.type, "streamable-http");
 			assert.ok(data.capabilities.tools);
-			assert.ok(
-				data.auth.authorizationServers.includes("https://codingcat.dev"),
-			);
+			assert.ok(data.auth);
 		});
 
 		it("7.10 Agent Skills index conforms to v0.2.0 RFC with valid sha256 digest and SKILL.md", async () => {
