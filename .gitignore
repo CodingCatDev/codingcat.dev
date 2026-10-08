@@ -14,6 +14,7 @@ dist/
 
 # sanity
 .sanity/
+.build/
 
 # env files
 .env

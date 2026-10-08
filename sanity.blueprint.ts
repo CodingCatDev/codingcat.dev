@@ -50,5 +50,23 @@ export default defineBlueprint({
 					process.env.SANITY_STUDIO_DATASET || "production",
 			},
 		}),
+		defineScheduledFunction({
+			name: "sync-missing-youtube-transcripts",
+			displayName: "Sync Missing YouTube Transcripts",
+			src: "./apps/sanity/functions/sync-missing-youtube-transcripts",
+			event: {
+				expression: "0 5 * * *", // 5:00 AM UTC
+			},
+			runtime: "nodejs22.x",
+			timeout: 300,
+			env: {
+				YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || "",
+				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
+				SANITY_STUDIO_PROJECT_ID:
+					process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
+				SANITY_STUDIO_DATASET:
+					process.env.SANITY_STUDIO_DATASET || "production",
+			},
+		}),
 	],
 });
