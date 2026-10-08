@@ -1,11 +1,37 @@
 diff --git a/dist/index.mjs b/dist/index.mjs
-index 764cbf5325502a9836710b1c218e03d2356cd192..219f7886a71ebe7e469718e39abb72d30e1de4b9 100644
+index 764cbf5325502a9836710b1c218e03d2356cd192..1afdfcb438874e9d415fb0cd9da7e9fc24605ec8 100644
 --- a/dist/index.mjs
 +++ b/dist/index.mjs
-@@ -728,16 +728,7 @@ function getMappedStream(response, salvageContext) {
- 					});
- 				}
- 			}
+@@ -702,42 +702,8 @@ function getMappedStream(response, salvageContext) {
+ 			const directFinishReason = chunk.finish_reason;
+ 			if (choiceFinishReason != null) finishReason = mapWorkersAIFinishReason(choiceFinishReason);
+ 			else if (directFinishReason != null) finishReason = mapWorkersAIFinishReason(directFinishReason);
+-			const nativeResponse = chunk.response;
+-			if (nativeResponse != null && nativeResponse !== "") {
+-				const responseText = String(nativeResponse);
+-				if (responseText.length > 0) if (bufferContentForSalvage) contentBuffer += responseText;
+-				else {
+-					if (reasoningId) {
+-						controller.enqueue({
+-							type: "reasoning-end",
+-							id: reasoningId
+-						});
+-						reasoningId = null;
+-					}
+-					if (!textId) {
+-						textId = generateId();
+-						controller.enqueue({
+-							type: "text-start",
+-							id: textId
+-						});
+-					}
+-					controller.enqueue({
+-						type: "text-delta",
+-						id: textId,
+-						delta: responseText
+-					});
+-				}
+-			}
 -			if (Array.isArray(chunk.tool_calls)) {
 -				if (reasoningId) {
 -					controller.enqueue({
@@ -16,17 +42,80 @@ index 764cbf5325502a9836710b1c218e03d2356cd192..219f7886a71ebe7e469718e39abb72d3
 -				}
 -				emitToolCallDeltas(chunk.tool_calls, controller);
 -			}
++			let textEmitted = false;
 +			let toolCallsEmitted = false;
  			if (choices?.[0]?.delta) {
  				const delta = choices[0].delta;
  				const reasoningDelta = delta.reasoning_content ?? delta.reasoning;
-@@ -788,8 +779,19 @@ function getMappedStream(response, salvageContext) {
- 						reasoningId = null;
- 					}
- 					emitToolCallDeltas(deltaToolCalls, controller);
-+					toolCallsEmitted = true;
+@@ -756,7 +722,48 @@ function getMappedStream(response, salvageContext) {
+ 					});
  				}
- 			}
+ 				const textDelta = delta.content;
+-				if (textDelta && textDelta.length > 0) if (bufferContentForSalvage) contentBuffer += textDelta;
++				if (textDelta && textDelta.length > 0) {
++					textEmitted = true;
++					if (bufferContentForSalvage) contentBuffer += textDelta;
++					else {
++						if (reasoningId) {
++							controller.enqueue({
++								type: "reasoning-end",
++								id: reasoningId
++							});
++							reasoningId = null;
++						}
++						if (!textId) {
++							textId = generateId();
++							controller.enqueue({
++								type: "text-start",
++								id: textId
++							});
++						}
++						controller.enqueue({
++							type: "text-delta",
++							id: textId,
++							delta: textDelta
++						});
++					}
++				}
++				const deltaToolCalls = delta.tool_calls;
++				if (Array.isArray(deltaToolCalls)) {
++					if (reasoningId) {
++						controller.enqueue({
++							type: "reasoning-end",
++							id: reasoningId
++						});
++						reasoningId = null;
++					}
++					emitToolCallDeltas(deltaToolCalls, controller);
++					toolCallsEmitted = true;
++				}
++			}
++			const nativeResponse = chunk.response;
++			if (!textEmitted && nativeResponse != null && nativeResponse !== "") {
++				const responseText = String(nativeResponse);
++				if (responseText.length > 0) if (bufferContentForSalvage) contentBuffer += responseText;
+ 				else {
+ 					if (reasoningId) {
+ 						controller.enqueue({
+@@ -775,20 +782,19 @@ function getMappedStream(response, salvageContext) {
+ 					controller.enqueue({
+ 						type: "text-delta",
+ 						id: textId,
+-						delta: textDelta
++						delta: responseText
+ 					});
+ 				}
+-				const deltaToolCalls = delta.tool_calls;
+-				if (Array.isArray(deltaToolCalls)) {
+-					if (reasoningId) {
+-						controller.enqueue({
+-							type: "reasoning-end",
+-							id: reasoningId
+-						});
+-						reasoningId = null;
+-					}
+-					emitToolCallDeltas(deltaToolCalls, controller);
++			}
 +			if (!toolCallsEmitted && Array.isArray(chunk.tool_calls)) {
 +				if (reasoningId) {
 +					controller.enqueue({
@@ -34,20 +123,45 @@ index 764cbf5325502a9836710b1c218e03d2356cd192..219f7886a71ebe7e469718e39abb72d3
 +						id: reasoningId
 +					});
 +					reasoningId = null;
-+				}
+ 				}
 +				emitToolCallDeltas(chunk.tool_calls, controller);
-+			}
+ 			}
  		},
  		flush(controller) {
- 			for (const [idx] of activeToolCalls) {
 diff --git a/src/streaming.ts b/src/streaming.ts
-index 114d54f70ad03f9acb7f57886bc03961c2938cd5..7c116056e71f1410d7a7fcbb4579449c991dab2d 100644
+index 114d54f70ad03f9acb7f57886bc03961c2938cd5..c17b561e4a8628df5e429061eb47f0f63ce4d091 100644
 --- a/src/streaming.ts
 +++ b/src/streaming.ts
-@@ -189,16 +189,7 @@ export function getMappedStream(
- 					}
+@@ -163,42 +163,8 @@ export function getMappedStream(
+ 					finishReason = mapWorkersAIFinishReason(directFinishReason);
  				}
  
+-				// --- Native format: top-level `response` field ---
+-				const nativeResponse = chunk.response;
+-				if (nativeResponse != null && nativeResponse !== "") {
+-					const responseText = String(nativeResponse);
+-					if (responseText.length > 0) {
+-						if (bufferContentForSalvage) {
+-							contentBuffer += responseText;
+-						} else {
+-							// Close active reasoning block before text starts
+-							if (reasoningId) {
+-								controller.enqueue({ type: "reasoning-end", id: reasoningId });
+-								reasoningId = null;
+-							}
+-							if (!textId) {
+-								textId = generateId();
+-								controller.enqueue({ type: "text-start", id: textId });
+-							}
+-							controller.enqueue({
+-								type: "text-delta",
+-								id: textId,
+-								delta: responseText,
+-							});
+-						}
+-					}
+-				}
+-
 -				// --- Native format: top-level `tool_calls` ---
 -				if (Array.isArray(chunk.tool_calls)) {
 -					// Close active reasoning block before tool calls start
@@ -58,17 +172,52 @@ index 114d54f70ad03f9acb7f57886bc03961c2938cd5..7c116056e71f1410d7a7fcbb4579449c
 -					emitToolCallDeltas(chunk.tool_calls as Record<string, unknown>[], controller);
 -				}
 -
++				let textEmitted = false;
 +				let toolCallsEmitted = false;
  				// --- OpenAI format: choices[0].delta ---
  				if (choices?.[0]?.delta) {
  					const delta = choices[0].delta;
-@@ -253,8 +244,19 @@ export function getMappedStream(
+@@ -223,6 +189,7 @@ export function getMappedStream(
+ 
+ 					const textDelta = delta.content as string | undefined;
+ 					if (textDelta && textDelta.length > 0) {
++						textEmitted = true;
+ 						if (bufferContentForSalvage) {
+ 							contentBuffer += textDelta;
+ 						} else {
+@@ -253,8 +220,45 @@ export function getMappedStream(
  							reasoningId = null;
  						}
  						emitToolCallDeltas(deltaToolCalls, controller);
 +						toolCallsEmitted = true;
  					}
  				}
++
++				// --- Native format: top-level `response` field ---
++				const nativeResponse = chunk.response;
++				if (!textEmitted && nativeResponse != null && nativeResponse !== "") {
++					const responseText = String(nativeResponse);
++					if (responseText.length > 0) {
++						if (bufferContentForSalvage) {
++							contentBuffer += responseText;
++						} else {
++							// Close active reasoning block before text starts
++							if (reasoningId) {
++								controller.enqueue({ type: "reasoning-end", id: reasoningId });
++								reasoningId = null;
++							}
++							if (!textId) {
++								textId = generateId();
++								controller.enqueue({ type: "text-start", id: textId });
++							}
++							controller.enqueue({
++								type: "text-delta",
++								id: textId,
++								delta: responseText,
++							});
++						}
++					}
++				}
 +
 +				// --- Native format: top-level `tool_calls` ---
 +				if (!toolCallsEmitted && Array.isArray(chunk.tool_calls)) {

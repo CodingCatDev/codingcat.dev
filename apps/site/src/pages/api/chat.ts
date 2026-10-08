@@ -259,21 +259,9 @@ export const POST: APIRoute = async ({ request }) => {
 					if (allText) {
 						await writer.write(encoder.encode(allText));
 					} else {
-						const stepTrace = steps.map((s, idx) => ({
-							step: idx + 1,
-							finishReason: s.finishReason,
-							toolCalls: s.toolCalls?.map((tc) => ({
-								name: tc.toolName,
-								args: (tc as any).args ?? (tc as any).input,
-							})),
-							toolResults: s.toolResults?.map((tr) => ({
-								name: tr.toolName,
-								output: (tr as any).output ?? (tr as any).result,
-							})),
-						}));
 						await writer.write(
 							encoder.encode(
-								`I searched the CodingCat.dev Sanity content lake. Diagnostic trace:\n${JSON.stringify(stepTrace, null, 2)}`,
+								"I searched the CodingCat.dev Sanity content lake for your query, but could not find relevant content.",
 							),
 						);
 					}
