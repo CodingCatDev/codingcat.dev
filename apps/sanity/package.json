@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@portabletext/block-tools": "^5.2.0",
+    "@portabletext/markdown": "^2.5.0",
     "@portabletext/react": "^7.0.1",
     "@sanity/assist": "^6.1.19",
     "@sanity/blueprints": "^0.28.0",
@@ -20,6 +21,7 @@
     "@sanity/code-input": "^7.3.5",
     "@sanity/functions": "^1.8.1",
     "@sanity/icons": "^5.2.1",
+    "@sanity/image-url": "^2.1.1",
     "@sanity/ui": "^4.0.3",
     "@sanity/vision": "^6.9.2",
     "date-fns": "^4.1.0",

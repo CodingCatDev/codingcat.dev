@@ -191,6 +191,38 @@ export const podcastStructure = (): StructureResolver => {
                   ),
               ]),
           ),
+        S.listItem()
+          .title("Content Syndication")
+          .child(
+            S.list()
+              .title("Syndication Status")
+              .items([
+                S.listItem()
+                  .title("All Syndications")
+                  .child(S.documentTypeList("syndication").title("All Syndications")),
+                S.listItem()
+                  .title("Published")
+                  .child(
+                    S.documentList()
+                      .title("Published")
+                      .filter('_type == "syndication" && status == "published"'),
+                  ),
+                S.listItem()
+                  .title("Simulated Complete")
+                  .child(
+                    S.documentList()
+                      .title("Simulated Complete")
+                      .filter('_type == "syndication" && status == "simulated_complete"'),
+                  ),
+                S.listItem()
+                  .title("Failed")
+                  .child(
+                    S.documentList()
+                      .title("Failed")
+                      .filter('_type == "syndication" && status == "failed"'),
+                  ),
+              ]),
+          ),
         ...S.documentTypeListItems(),
       ]);
   };
