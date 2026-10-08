@@ -40,6 +40,8 @@ jobs:
 
       - name: Promote Stack to Organization Scope
         run: |
+          mkdir -p .sanity
+          echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
           pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -82,6 +84,8 @@ jobs:
 
       - name: Promote Stack to Organization Scope
         run: |
+          mkdir -p .sanity
+          echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
           pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
