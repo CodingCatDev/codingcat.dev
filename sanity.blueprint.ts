@@ -12,6 +12,7 @@ export default defineBlueprint({
 				on: ["create", "update"],
 				filter: '_type in ["post", "podcast"] && !(_id in path("drafts.**"))',
 			},
+			src: "./apps/sanity/functions/syndicate-content",
 			runtime: "nodejs22.x",
 			timeout: 30,
 		}),
@@ -22,6 +23,7 @@ export default defineBlueprint({
 				on: ["create", "update"],
 				filter: 'defined(youtube) && !(_id in path("drafts.**"))',
 			},
+			src: "./apps/sanity/functions/sync-youtube-transcript",
 			runtime: "nodejs22.x",
 			timeout: 60,
 			env: {

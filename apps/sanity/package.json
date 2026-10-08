@@ -6,7 +6,7 @@
     "dev": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "blueprints:deploy": "sanity blueprints deploy",
+    "blueprints:deploy": "pnpm --dir ../.. blueprints:deploy",
     "functions:dev": "sanity functions dev",
     "typegen:extract": "sanity schema extract --path=./extract.json --workspace production --force",
     "typegen": "pnpm run typegen:extract && sanity typegen generate"

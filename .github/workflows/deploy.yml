@@ -6,6 +6,7 @@ on:
     branches: [dev, main]
     paths:
       - "apps/sanity/**"
+      - "sanity.blueprint.ts"
       - "pnpm-lock.yaml"
       - ".github/workflows/deploy.yml"
 
@@ -39,8 +40,7 @@ jobs:
 
       - name: Deploy Sanity Blueprints Functions
         run: |
-          npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
-        working-directory: apps/sanity
+          pnpm exec sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
@@ -77,8 +77,7 @@ jobs:
 
       - name: Deploy Sanity Blueprints Functions
         run: |
-          npx sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
-        working-directory: apps/sanity
+          pnpm exec sanity blueprints deploy --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }}
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
