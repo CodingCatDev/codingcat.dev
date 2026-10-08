@@ -30,8 +30,34 @@ export const OPTIONS: APIRoute = async () => {
 	});
 };
 
-export const GET: APIRoute = async ({ locals }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = locals.siteUrl.origin;
+	const accept = request.headers.get("accept") || "";
+
+	// If client requests SSE stream (legacy MCP HTTP+SSE transport)
+	if (accept.includes("text/event-stream")) {
+		const encoder = new TextEncoder();
+		const stream = new ReadableStream({
+			start(controller) {
+				controller.enqueue(
+					encoder.encode(`event: endpoint\ndata: ${origin}/mcp\n\n`),
+				);
+			},
+		});
+
+		return new Response(stream, {
+			headers: {
+				"content-type": "text/event-stream; charset=utf-8",
+				"cache-control": "no-cache, no-transform",
+				connection: "keep-alive",
+				"access-control-allow-origin": "*",
+				"access-control-allow-methods": "GET, POST, OPTIONS",
+				"access-control-allow-headers":
+					"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version",
+			},
+		});
+	}
+
 	return new Response(
 		JSON.stringify(
 			{
@@ -41,6 +67,7 @@ export const GET: APIRoute = async ({ locals }) => {
 				protocolVersion: "2024-11-05",
 				supportedVersions: ["2026-07-28", "2024-11-05"],
 				transport: "streamable-http",
+				endpoint: `${origin}/mcp`,
 				serverCard: `${origin}/.well-known/mcp/server-card.json`,
 				capabilities: {
 					tools: { listChanged: false },
@@ -185,7 +212,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 									},
 									type: {
 										type: "string",
-										enum: ["all", "post", "podcast"],
+										enum: ["all", "post", "podcast", "author", "guest"],
 										description:
 											"Optional filter for content type (default: all)",
 									},
@@ -208,6 +235,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				id,
 				result: {
 					resources: [],
+				},
+			}),
+			{ headers: MCP_HEADERS },
+		);
+	}
+
+	// 6b. Resource templates list
+	if (method === "resources/templates/list") {
+		return new Response(
+			JSON.stringify({
+				jsonrpc: "2.0",
+				id,
+				result: {
+					resourceTemplates: [],
 				},
 			}),
 			{ headers: MCP_HEADERS },

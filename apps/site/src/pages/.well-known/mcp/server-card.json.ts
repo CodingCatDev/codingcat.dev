@@ -16,7 +16,16 @@ export const GET: APIRoute = async ({ locals }) => {
 			"Search and access CodingCat.dev web development guides, coding tutorials, podcast episodes, and transcripts directly from AI models.",
 		transport: {
 			type: "streamable-http",
-			endpoint: `${origin}/api/mcp`,
+			endpoint: `${origin}/mcp`,
+		},
+		mcpServers: {
+			main: {
+				url: `${origin}/mcp`,
+				name: "CodingCat.dev MCP Server",
+				description:
+					"Search and access CodingCat.dev web development guides, coding tutorials, podcast episodes, and transcripts",
+				transport: "streamable-http",
+			},
 		},
 		capabilities: {
 			tools: { listChanged: false },
@@ -24,8 +33,7 @@ export const GET: APIRoute = async ({ locals }) => {
 			prompts: {},
 		},
 		auth: {
-			type: "oauth2",
-			authorizationServers: [origin],
+			type: "none",
 		},
 		tools: [
 			{
@@ -54,7 +62,7 @@ export const GET: APIRoute = async ({ locals }) => {
 			"cache-control": "public, max-age=3600, s-maxage=86400",
 			"access-control-allow-origin": "*",
 			Vary: "Accept",
-			Link: `<${origin}/api/mcp>; rel="mcp-endpoint", <${origin}/llms.txt>; rel="llms-txt"`,
+			Link: `<${origin}/mcp>; rel="mcp-endpoint", <${origin}/llms.txt>; rel="llms-txt"`,
 		},
 	});
 };
