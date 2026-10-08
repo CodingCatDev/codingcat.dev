@@ -42,13 +42,27 @@ jobs:
         run: |
           mkdir -p .sanity
           echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
 
       - name: Deploy Sanity Blueprints Functions
         run: |
-          pnpm exec sanity blueprints deploy --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          ORG_ID=$(node -e "
+            fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
+              headers: { Authorization: 'Bearer ${{ secrets.SANITY_AUTH_TOKEN }}' }
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (!d.organizationId) throw new Error('No organizationId in project response: ' + JSON.stringify(d));
+              console.log(d.organizationId);
+            })
+            .catch(err => { console.error(err); process.exit(1); });
+          ")
+          echo "Resolved Organization ID: $ORG_ID"
+          mkdir -p .sanity
+          echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
@@ -86,13 +100,27 @@ jobs:
         run: |
           mkdir -p .sanity
           echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
 
       - name: Deploy Sanity Blueprints Functions
         run: |
-          pnpm exec sanity blueprints deploy --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          ORG_ID=$(node -e "
+            fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
+              headers: { Authorization: 'Bearer ${{ secrets.SANITY_AUTH_TOKEN }}' }
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (!d.organizationId) throw new Error('No organizationId in project response: ' + JSON.stringify(d));
+              console.log(d.organizationId);
+            })
+            .catch(err => { console.error(err); process.exit(1); });
+          ")
+          echo "Resolved Organization ID: $ORG_ID"
+          mkdir -p .sanity
+          echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
