@@ -8,7 +8,14 @@
 	aria-labelledby="search-modal-title"
 >
 	<!-- Modal Header & Search Bar -->
-	<div class="flex items-center border-b border-border px-4 py-3 gap-3 bg-muted/20">
+	<form
+		action="/search"
+		method="GET"
+		class="flex items-center border-b border-border px-4 py-3 gap-3 bg-muted/20"
+		toolname="search_content"
+		tooldescription="Search CodingCat.dev web development tutorials, blog posts, and podcasts"
+		onsubmit="return false"
+	>
 		<svg
 			class="size-5 shrink-0 text-muted-foreground"
 			viewBox="0 0 24 24"
@@ -30,9 +37,11 @@
 		<input
 			type="search"
 			id="search-modal-input"
+			name="q"
 			autocomplete="off"
 			placeholder="Search posts, podcasts, authors... (⌘K)"
 			class="w-full bg-transparent text-base md:text-lg placeholder:text-muted-foreground focus:outline-none"
+			toolparamdescription="Search keyword or technical topic"
 		/>
 
 		<!-- Loading spinner -->
@@ -65,7 +74,7 @@
 		>
 			ESC
 		</button>
-	</div>
+	</form>
 
 	<!-- Content Type Filter Pills -->
 	<div class="flex items-center gap-1.5 border-b border-border/50 px-4 py-2 text-xs overflow-x-auto bg-muted/10">

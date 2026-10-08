@@ -59,7 +59,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// Always emit Link headers (RFC 8288) for AI agent discoverability
 	response.headers.set(
 		"Link",
-		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/llms.txt>; rel="llms-txt"`,
+		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md"`,
 	);
 	response.headers.append("Vary", "Accept");
 

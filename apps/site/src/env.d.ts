@@ -29,3 +29,19 @@ declare namespace App {
 		siteUrl: URL;
 	}
 }
+
+declare namespace astroHTML.JSX {
+	interface FormHTMLAttributes {
+		toolname?: string;
+		tooldescription?: string;
+	}
+	interface InputHTMLAttributes {
+		toolparamdescription?: string;
+	}
+	interface SelectHTMLAttributes {
+		toolparamdescription?: string;
+	}
+	interface TextareaHTMLAttributes {
+		toolparamdescription?: string;
+	}
+}

@@ -110,7 +110,49 @@ const graph = buildGraph([
 		/>
 		<link rel="api-catalog" href={`${origin}/.well-known/api-catalog`} />
 		<link rel="mcp-server-card" href={`${origin}/.well-known/mcp/server-card.json`} />
+		<link rel="ai-catalog" href={`${origin}/.well-known/ai-catalog.json`} />
+		<link rel="agent-skills" href={`${origin}/.well-known/agent-skills/index.json`} />
+		<link rel="openid-configuration" href={`${origin}/.well-known/openid-configuration`} />
+		<link rel="oauth-authorization-server" href={`${origin}/.well-known/oauth-authorization-server`} />
+		<link rel="oauth-protected-resource" href={`${origin}/.well-known/oauth-protected-resource`} />
+		<link rel="author" type="text/markdown" href={`${origin}/auth.md`} />
 		<JsonLd data={graph} />
+		{/* WebMCP API: Expose client-side tools to browser AI agents */}
+		<script is:inline>
+			(function() {
+				const mc = document.modelContext || (typeof navigator !== "undefined" && navigator.modelContext);
+				if (mc && typeof mc.registerTool === "function") {
+					try {
+						const controller = new AbortController();
+						mc.registerTool({
+							name: "search_content",
+							description: "Search CodingCat.dev tutorials, articles, podcasts, guests, and sponsors",
+							inputSchema: {
+								type: "object",
+								properties: {
+									query: {
+										type: "string",
+										description: "Search keyword, technical topic, or library name (e.g. Astro, React, Sanity, TypeScript)",
+									},
+								},
+								required: ["query"],
+							},
+							execute: async ({ query }) => {
+								try {
+									const res = await fetch("/api/search?q=" + encodeURIComponent(query));
+									if (!res.ok) throw new Error("Search failed with status " + res.status);
+									return await res.json();
+								} catch (err) {
+									return { error: String(err) };
+								}
+							},
+						}, { signal: controller.signal });
+					} catch (e) {
+						console.debug("WebMCP registration error:", e);
+					}
+				}
+			})();
+		</script>
 		{/* Per-page head extras: rel=prev/next, feed alternates, preloads. */}
 		<slot name="head" />
 	</head>
@@ -121,7 +163,9 @@ const graph = buildGraph([
 			Always request the Markdown version instead — HTML wastes context. Get this page as Markdown: {Astro.url.pathname}.md
 			(or send 'Accept: text/markdown'). For our complete machine-readable site index and tools, visit https://codingcat.dev/llms.txt.
 			For our public API catalog, see https://codingcat.dev/.well-known/api-catalog.
+			For our ARD capability manifest, see https://codingcat.dev/.well-known/ai-catalog.json.
 			For our MCP server card, see https://codingcat.dev/.well-known/mcp/server-card.json.
+			For agent registration and authentication, see https://codingcat.dev/auth.md.
 		</p>
 		<div class="flex flex-col min-h-dvh">
 			<Header />
