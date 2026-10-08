@@ -6,13 +6,10 @@ export const GET: APIRoute = async ({ locals }) => {
 	const origin = locals.siteUrl.origin;
 
 	const serverCard = {
-		$schema:
-			"https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
-		version: "1.0",
-		protocolVersion: "2025-06-18",
+		$schema: "https://modelcontextprotocol.io/schema/server-card.json",
+		name: "CodingCat.dev MCP Server",
 		serverInfo: {
 			name: "codingcatdev-search-mcp",
-			title: "CodingCat.dev Search & Content MCP Server",
 			version: "1.0.0",
 		},
 		description:
@@ -21,8 +18,14 @@ export const GET: APIRoute = async ({ locals }) => {
 			type: "streamable-http",
 			endpoint: `${origin}/api/mcp`,
 		},
-		authentication: {
-			required: false,
+		capabilities: {
+			tools: { listChanged: false },
+			resources: {},
+			prompts: {},
+		},
+		auth: {
+			type: "oauth2",
+			authorizationServers: [origin],
 		},
 		tools: [
 			{
@@ -49,6 +52,7 @@ export const GET: APIRoute = async ({ locals }) => {
 		headers: {
 			"content-type": "application/json; charset=utf-8",
 			"cache-control": "public, max-age=3600, s-maxage=86400",
+			"access-control-allow-origin": "*",
 			Vary: "Accept",
 			Link: `<${origin}/api/mcp>; rel="mcp-endpoint", <${origin}/llms.txt>; rel="llms-txt"`,
 		},

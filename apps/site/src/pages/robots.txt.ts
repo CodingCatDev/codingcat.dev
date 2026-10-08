@@ -21,6 +21,7 @@ export const GET: APIRoute = async ({ locals }) => {
 	const body = isProduction
 		? `User-Agent: *
 Content-Signal: ai-train=no, search=yes, ai-input=yes
+Content-Usage: / train-ai=n, search=y
 Allow: /
 Allow: /api/search
 Allow: /api/mcp
@@ -28,6 +29,8 @@ Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
 Allow: /auth.md
+Allow: /AGENTS.md
+Allow: /pricing.md
 Disallow: /api/
 Disallow: /dashboard/
 

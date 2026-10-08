@@ -42,6 +42,7 @@ const { title, description, items, muted = false } = Astro.props;
 								{item.coverImage && (
 									<CoverImage
 										image={item.coverImage}
+										fallbackAlt={item.title || "CodingCat.dev tutorial cover image"}
 										width={320}
 										height={180}
 										class="aspect-video w-full object-cover object-center"
