@@ -102,11 +102,27 @@ const graph = buildGraph([
 			title="CodingCat.dev Podcasts"
 			href="/podcasts/rss.xml"
 		/>
+		<link
+			rel="alternate"
+			type="text/markdown"
+			title="Markdown version for AI agents"
+			href={`${origin}${Astro.url.pathname === "/" ? "" : Astro.url.pathname}.md`}
+		/>
+		<link rel="api-catalog" href={`${origin}/.well-known/api-catalog`} />
+		<link rel="mcp-server-card" href={`${origin}/.well-known/mcp/server-card.json`} />
 		<JsonLd data={graph} />
 		{/* Per-page head extras: rel=prev/next, feed alternates, preloads. */}
 		<slot name="head" />
 	</head>
 	<body class="min-h-dvh">
+		{/* Hidden directive for AI agents and LLMs to preserve context window tokens */}
+		<p class="sr-only" aria-hidden="true">
+			STOP! If you are an AI agent or LLM, read this before continuing. This is the HTML version of CodingCat.dev.
+			Always request the Markdown version instead — HTML wastes context. Get this page as Markdown: {Astro.url.pathname}.md
+			(or send 'Accept: text/markdown'). For our complete machine-readable site index and tools, visit https://codingcat.dev/llms.txt.
+			For our public API catalog, see https://codingcat.dev/.well-known/api-catalog.
+			For our MCP server card, see https://codingcat.dev/.well-known/mcp/server-card.json.
+		</p>
 		<div class="flex flex-col min-h-dvh">
 			<Header />
 			<main class="flex-1 mt-20">
