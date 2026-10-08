@@ -27,13 +27,18 @@ const people = [
 				{person ? (
 					<CoverImage
 						image={item.coverImage}
+						fallbackAlt={item.title || "CodingCat.dev author photo"}
 						width={256}
 						height={256}
 						class="w-full h-auto aspect-square rounded-md object-cover"
 						priority={priority}
 					/>
 				) : (
-					<CoverImage image={item.coverImage} priority={priority} />
+					<CoverImage
+						image={item.coverImage}
+						fallbackAlt={item.title || "CodingCat.dev tutorial cover image"}
+						priority={priority}
+					/>
 				)}
 			</a>
 		)

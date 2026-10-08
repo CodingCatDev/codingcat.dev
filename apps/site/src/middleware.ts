@@ -33,7 +33,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const origin = context.locals.siteUrl.origin;
 	const pathname = context.url.pathname;
-	const isDedicatedMarkdownEndpoint = pathname === "/auth.md";
+	const isDedicatedMarkdownEndpoint =
+		pathname === "/auth.md" ||
+		pathname === "/pricing.md" ||
+		pathname.toLowerCase() === "/agents.md" ||
+		pathname.endsWith("/SKILL.md");
 	const isMarkdownUrl =
 		!isDedicatedMarkdownEndpoint &&
 		(pathname.endsWith(".md") || pathname.endsWith("/index.md"));
@@ -43,7 +47,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const wantsMarkdown = isMarkdownUrl || Boolean(acceptMarkdown);
 
 	let response: Response;
-	if (isMarkdownUrl) {
+	if (pathname === "/agents.md") {
+		response = await context.rewrite("/AGENTS.md");
+	} else if (isMarkdownUrl) {
 		const cleanPath =
 			pathname.replace(/\/index\.md$/, "").replace(/\.md$/, "") || "/";
 		response = await context.rewrite(cleanPath);
@@ -58,10 +64,23 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		response.headers.set("X-Robots-Tag", "noindex, nofollow");
 	}
 
+	// Security & Trust Headers
+	response.headers.set(
+		"Strict-Transport-Security",
+		"max-age=31536000; includeSubDomains; preload",
+	);
+	response.headers.set("X-Content-Type-Options", "nosniff");
+	response.headers.set("X-Frame-Options", "SAMEORIGIN");
+	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+	response.headers.set("Content-Security-Policy", "frame-ancestors 'self'");
+
+	// AIPREF / AI Preference Headers
+	response.headers.set("Content-Usage", "train-ai=n, search=y");
+
 	// Always emit Link headers (RFC 8288) for AI agent discoverability
 	response.headers.set(
 		"Link",
-		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md"`,
+		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md", <${origin}/AGENTS.md>; rel="agent-guide", <${origin}/pricing.md>; rel="pricing"`,
 	);
 	response.headers.append("Vary", "Accept");
 

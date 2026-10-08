@@ -1,0 +1,52 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "About CodingCat.dev — Purrfect Web Development";
+const description =
+	"Learn about CodingCat.dev, our mission, podcast, tutorials, and fullstack web development community led by Alex Patterson.";
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="max-w-3xl mx-auto py-12 md:py-20">
+		<header class="mb-10 text-center">
+			<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">About CodingCat.dev</h1>
+			<p class="text-xl text-muted-foreground">Purrfect Web Development Tutorials, Podcasts & Community</p>
+		</header>
+
+		<div class="prose prose-neutral dark:prose-invert max-w-none space-y-6 text-lg leading-relaxed">
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">Our Mission</h2>
+				<p>
+					CodingCat.dev is an educational media platform and developer community dedicated to making modern fullstack web development accessible, engaging, and practical. Founded and hosted by Alex Patterson, CodingCat.dev produces high-quality technical tutorials, in-depth blog posts, and insightful video and audio podcasts interviewing engineering leaders, open source maintainers, and developer advocates across the technology landscape.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">What We Cover</h2>
+				<p>
+					We focus on modern frontend, backend, and cloud architectures, including:
+				</p>
+				<ul class="list-disc pl-6 space-y-2">
+					<li><strong>Frameworks & Runtimes:</strong> Astro, Next.js, React, SvelteKit, TypeScript, Node.js, and Cloudflare Workers.</li>
+					<li><strong>Headless CMS & Content Architecture:</strong> Sanity.io, structured content modeling, Portable Text, and real-time visual editing.</li>
+					<li><strong>Edge & Serverless Computing:</strong> Cloudflare edge infrastructure, serverless databases, KV, and vector search.</li>
+					<li><strong>AI & Autonomous Agents:</strong> Model Context Protocol (MCP), WebMCP, A2A agent cards, and modern Answer Engine Optimization (AEO).</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">The CodingCat.dev Podcast</h2>
+				<p>
+					The CodingCat.dev Podcast features weekly conversations with software engineers, creators, and innovators. We explore how technology leaders build scalable architectures, navigate developer experience challenges, and leverage emerging standards like AI agent protocols and edge runtimes.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">Connect with Us</h2>
+				<p>
+					We believe in building in public and fostering an open, welcoming developer community. You can find our tutorials on YouTube, follow our updates on X, explore our open source repositories on GitHub, and join our newsletter for curated web development insights.
+				</p>
+			</section>
+		</div>
+	</div>
+</BaseLayout>

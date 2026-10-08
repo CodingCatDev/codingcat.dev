@@ -4,9 +4,12 @@ import NavLink from "./NavLink.astro";
 const year = new Date().getUTCFullYear();
 
 const legalLinks = [
-	{ href: "/ftc-disclosure", label: "FTC Disclosure" },
+	{ href: "/about", label: "About" },
+	{ href: "/contact", label: "Contact" },
+	{ href: "/developers", label: "Developers" },
+	{ href: "/privacy", label: "Privacy Policy" },
 	{ href: "/terms-of-use", label: "Terms of Use" },
-	{ href: "/privacy-policy", label: "Privacy Policy" },
+	{ href: "/ftc-disclosure", label: "FTC Disclosure" },
 	{ href: "/sponsors", label: "Sponsors" },
 	{ href: "/sponsorships", label: "Sponsorships" },
 ];
@@ -84,14 +87,18 @@ const socialLinks = [
 			action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
 			method="post"
 			target="popupwindow"
+			toolname="subscribe_newsletter"
+			tooldescription="Subscribe to the CodingCat.dev web development newsletter"
 		>
 			<label class="sr-only" for="footer-email">Email</label>
 			<input
 				id="footer-email"
 				name="email"
 				type="email"
+				autocomplete="email"
 				required
 				placeholder="Enter your email"
+				toolparamdescription="Subscriber email address"
 				class="flex-1 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 			/>
 			<input type="hidden" value="1" name="embed" />
