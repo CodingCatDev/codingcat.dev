@@ -33,8 +33,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const origin = context.locals.siteUrl.origin;
 	const pathname = context.url.pathname;
+	const isDedicatedMarkdownEndpoint = pathname === "/auth.md";
 	const isMarkdownUrl =
-		pathname.endsWith(".md") || pathname.endsWith("/index.md");
+		!isDedicatedMarkdownEndpoint &&
+		(pathname.endsWith(".md") || pathname.endsWith("/index.md"));
 	const acceptMarkdown = context.request.headers
 		.get("Accept")
 		?.includes("text/markdown");
