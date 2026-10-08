@@ -32,6 +32,15 @@ const content = defineType({
 			},
 		}),
 		defineField({
+			name: "transcript",
+			title: "Transcript & Video Intelligence",
+			type: "reference",
+			to: [{ type: "transcript" }],
+			group: "data",
+			description:
+				"Automated YouTube transcript, metadata, and video intelligence",
+		}),
+		defineField({
 			name: "author",
 			title: "Author",
 			type: "array",

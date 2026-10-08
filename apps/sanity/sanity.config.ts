@@ -53,6 +53,7 @@ import short from "./schemas/documents/short";
 import lesson from "./schemas/documents/lesson";
 import course from "./schemas/documents/course";
 import syndication from "./schemas/documents/syndication";
+import transcript from "./schemas/documents/transcript";
 
 // ── Shared constants ─────────────────────────────────────────────────
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
@@ -118,6 +119,7 @@ const schemaTypes = [
   lesson,
   course,
   syndication,
+  transcript,
 ];
 
 // ── Shared document actions ──────────────────────────────────────────
