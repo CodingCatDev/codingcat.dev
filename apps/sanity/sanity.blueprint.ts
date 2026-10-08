@@ -10,6 +10,7 @@ export default defineBlueprint({
 		defineStudio({
 			name: "studio",
 			title: "CodingCatDev Studio",
+			project: process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
 			root: ".",
 			slug: process.env.SANITY_STUDIO_HOSTNAME || "codingcat-prod",
 			autoUpdates: {
