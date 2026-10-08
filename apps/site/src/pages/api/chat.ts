@@ -114,7 +114,14 @@ export const POST: APIRoute = async ({ request }) => {
 				headers: {
 					Authorization: `Bearer ${sanityToken}`,
 				},
-				fetch: (input, init) => globalThis.fetch(input, init),
+				redirect: "follow",
+				fetch: (input, init) => {
+					const sanitizedInit = init ? { ...init } : {};
+					if (sanitizedInit.redirect === "error") {
+						sanitizedInit.redirect = "follow";
+					}
+					return globalThis.fetch(input, sanitizedInit);
+				},
 			},
 		});
 
