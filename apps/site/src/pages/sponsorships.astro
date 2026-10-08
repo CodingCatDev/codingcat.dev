@@ -119,6 +119,8 @@ const sponsorshipTiers = [
 				method="POST"
 				action="/api/sponsorship"
 				class="flex flex-col gap-4"
+				toolname="submit_sponsorship_inquiry"
+				tooldescription="Submit sponsorship inquiry for CodingCat.dev media channels"
 			>
 				<div>
 					<label for="name" class="block text-sm font-medium mb-1">
@@ -131,6 +133,7 @@ const sponsorshipTiers = [
 						required
 						placeholder="Jane Doe"
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						toolparamdescription="Contact person name"
 					/>
 				</div>
 
@@ -145,6 +148,7 @@ const sponsorshipTiers = [
 						required
 						placeholder="jane@company.com"
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						toolparamdescription="Contact work email address"
 					/>
 				</div>
 
@@ -158,6 +162,7 @@ const sponsorshipTiers = [
 						name="company"
 						placeholder="Acme Inc."
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						toolparamdescription="Company or brand name"
 					/>
 				</div>
 
@@ -170,6 +175,7 @@ const sponsorshipTiers = [
 						name="tier"
 						required
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+						toolparamdescription="Selected sponsorship package tier"
 					>
 						<option value="" disabled selected>Select a sponsorship tier</option>
 						{
@@ -192,6 +198,7 @@ const sponsorshipTiers = [
 						rows="4"
 						placeholder="Tell us about your brand, timeframe, and goals..."
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						toolparamdescription="Sponsorship inquiry details or campaign goals"
 					></textarea>
 				</div>
 

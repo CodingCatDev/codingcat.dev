@@ -27,6 +27,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 Disallow: /api/
 Disallow: /dashboard/
 
@@ -37,6 +38,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 User-Agent: ClaudeBot
 Allow: /
@@ -45,6 +47,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 User-Agent: PerplexityBot
 Allow: /
@@ -53,6 +56,7 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 User-Agent: Applebot-Extended
 Allow: /
@@ -61,10 +65,12 @@ Allow: /api/mcp
 Allow: /.well-known/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Allow: /auth.md
 
 Host: ${origin}
 Sitemap: ${origin}/sitemap.xml
 Sitemap: ${origin}/sitemap-index.xml
+Agentmap: ${origin}/.well-known/ai-catalog.json
 `
 		: `User-Agent: *
 Disallow: /
