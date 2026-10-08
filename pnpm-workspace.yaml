@@ -7,6 +7,8 @@ onlyBuiltDependencies:
   - unrs-resolver
   - workerd
   - "@tailwindcss/oxide"
+patchedDependencies:
+  workers-ai-provider: patches/workers-ai-provider.patch
 
 peerDependencyRules:
   allowAny:
