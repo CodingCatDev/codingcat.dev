@@ -62,6 +62,7 @@ export default defineBlueprint({
 			env: {
 				YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || "",
 				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
+				SANITY_API_WRITE_TOKEN: process.env.SANITY_API_WRITE_TOKEN || "",
 				SANITY_STUDIO_PROJECT_ID:
 					process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
 				SANITY_STUDIO_DATASET:
