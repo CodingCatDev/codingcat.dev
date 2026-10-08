@@ -1,0 +1,56 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Contact Us — CodingCat.dev";
+const description =
+	"Get in touch with CodingCat.dev for sponsorships, podcast guest inquiries, speaking, or developer partnerships.";
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="max-w-3xl mx-auto py-12 md:py-20">
+		<header class="mb-10 text-center">
+			<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Contact CodingCat.dev</h1>
+			<p class="text-xl text-muted-foreground">We’d love to hear from you. Reach out with questions, inquiries, or feedback.</p>
+		</header>
+
+		<div class="prose prose-neutral dark:prose-invert max-w-none space-y-6 text-lg leading-relaxed">
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">Email & Direct Inquiries</h2>
+				<p>
+					For general inquiries, editorial questions, or partnership discussions, you can reach out directly via email at:
+					<a href="mailto:alex@codingcat.dev" class="text-primary hover:underline font-semibold">alex@codingcat.dev</a>.
+					We make every effort to respond to developer inquiries and community messages within 1–2 business days.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">Podcast Guest Appearances</h2>
+				<p>
+					Interested in being a guest on the CodingCat.dev Podcast? We love spotlighting developers building exciting tools, open source libraries, and novel developer experiences. You can connect with us directly via email or through our official PodMatch profile at
+					<a href="https://www.podmatch.com/member/codingcatdev" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">PodMatch</a>.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">Sponsorships & Media Partnerships</h2>
+				<p>
+					If your organization is looking to reach thousands of passionate web developers, software engineers, and technical leaders, explore our media sponsorship packages. We offer podcast pre-roll and mid-roll spots, dedicated tutorial videos, sponsored newsletter features, and social shoutouts.
+					Visit our dedicated <a href="/sponsorships" class="text-primary hover:underline">Sponsorships Page</a> to review packages and submit an inquiry.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">Social Media & Community</h2>
+				<p>
+					Stay connected across our social channels:
+				</p>
+				<ul class="list-disc pl-6 space-y-2">
+					<li><strong>X / Twitter:</strong> <a href="https://twitter.com/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">@CodingCatDev</a></li>
+					<li><strong>YouTube:</strong> <a href="https://youtube.com/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">YouTube.com/@CodingCatDev</a></li>
+					<li><strong>GitHub:</strong> <a href="https://github.com/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">GitHub.com/codingcatdev</a></li>
+					<li><strong>LinkedIn:</strong> <a href="https://linkedin.com/company/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">LinkedIn.com/company/codingcatdev</a></li>
+				</ul>
+			</section>
+		</div>
+	</div>
+</BaseLayout>

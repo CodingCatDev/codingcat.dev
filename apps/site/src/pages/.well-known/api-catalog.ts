@@ -15,11 +15,19 @@ export const GET: APIRoute = async ({ locals }) => {
 				anchor: `${origin}/api/search`,
 				"service-desc": [
 					{
+						href: `${origin}/openapi.json`,
+						type: "application/vnd.oai.openapi+json",
+					},
+					{
 						href: `${origin}/.well-known/openapi.json`,
 						type: "application/vnd.oai.openapi+json",
 					},
 				],
 				"service-doc": [
+					{
+						href: `${origin}/developers`,
+						type: "text/html",
+					},
 					{
 						href: `${origin}/llms.txt`,
 						type: "text/markdown",

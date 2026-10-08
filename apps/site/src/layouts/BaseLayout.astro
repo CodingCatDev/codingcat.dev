@@ -115,6 +115,9 @@ const graph = buildGraph([
 		<link rel="openid-configuration" href={`${origin}/.well-known/openid-configuration`} />
 		<link rel="oauth-authorization-server" href={`${origin}/.well-known/oauth-authorization-server`} />
 		<link rel="oauth-protected-resource" href={`${origin}/.well-known/oauth-protected-resource`} />
+		<link rel="agent-guide" type="text/markdown" href={`${origin}/AGENTS.md`} />
+		<link rel="pricing" type="text/markdown" href={`${origin}/pricing.md`} />
+		<link rel="agents" href={`${origin}/.well-known/agents.json`} />
 		<link rel="author" type="text/markdown" href={`${origin}/auth.md`} />
 		<JsonLd data={graph} />
 		{/* WebMCP API: Expose client-side tools to browser AI agents */}
@@ -127,6 +130,10 @@ const graph = buildGraph([
 						mc.registerTool({
 							name: "search_content",
 							description: "Search CodingCat.dev tutorials, articles, podcasts, guests, and sponsors",
+							annotations: {
+								readOnlyHint: true,
+								untrustedContentHint: true,
+							},
 							inputSchema: {
 								type: "object",
 								properties: {

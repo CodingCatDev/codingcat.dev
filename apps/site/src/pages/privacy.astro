@@ -1,0 +1,59 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Privacy Policy — CodingCat.dev";
+const description =
+	"Privacy Policy for CodingCat.dev detailing our data collection practices, newsletter handling, cookie usage, and user rights.";
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="max-w-3xl mx-auto py-12 md:py-20">
+		<header class="mb-10 text-center">
+			<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Privacy Policy</h1>
+			<p class="text-xl text-muted-foreground">Last updated: October 2026</p>
+		</header>
+
+		<div class="prose prose-neutral dark:prose-invert max-w-none space-y-6 text-lg leading-relaxed">
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">1. Introduction</h2>
+				<p>
+					CodingCat.dev ("we", "our", or "us") respects your privacy and is committed to protecting the personal data you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you visit https://codingcat.dev, read our tutorials, listen to our podcasts, or subscribe to our newsletter.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">2. Information We Collect</h2>
+				<p>
+					We collect minimal information necessary to deliver educational web development content:
+				</p>
+				<ul class="list-disc pl-6 space-y-2">
+					<li><strong>Newsletter Subscriptions:</strong> When you subscribe to our newsletter via our website form, we collect your email address. This is processed securely via Buttondown Email. You can unsubscribe at any time using the link in the footer of any email.</li>
+					<li><strong>Anonymous Usage & Analytics:</strong> We may use privacy-preserving, cookieless edge analytics provided by Cloudflare to understand traffic trends, popular tutorials, and performance metrics without tracking individuals across third-party websites.</li>
+					<li><strong>Contact Inquiries:</strong> If you email us or submit a sponsorship inquiry, we collect your name, email address, company name, and message content to respond to your request.</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">3. Cookies and Local Storage</h2>
+				<p>
+					CodingCat.dev does not use invasive advertising cookies or cross-site tracking scripts. We utilize standard local storage solely for user-selected website preferences (such as light/dark theme toggles).
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">4. Third-Party Services</h2>
+				<p>
+					Our website may contain links to external websites, platforms, or services (such as YouTube, GitHub, PodMatch, X, and sponsor sites). We are not responsible for the privacy practices of external platforms. We encourage you to review the privacy policies of any third-party websites you visit.
+				</p>
+			</section>
+
+			<section>
+				<h2 class="text-2xl font-bold mt-8 mb-4">5. Contact Information</h2>
+				<p>
+					If you have questions or concerns regarding this Privacy Policy or your personal data, please contact us at:
+					<a href="mailto:alex@codingcat.dev" class="text-primary hover:underline font-semibold">alex@codingcat.dev</a>.
+				</p>
+			</section>
+		</div>
+	</div>
+</BaseLayout>

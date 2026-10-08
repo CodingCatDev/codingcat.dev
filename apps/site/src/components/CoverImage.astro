@@ -4,6 +4,7 @@ import type { SanityImageSource } from "@sanity/image-url";
 
 interface Props {
 	image?: (SanityImageSource & { alt?: string }) | null;
+	fallbackAlt?: string;
 	width?: number;
 	height?: number;
 	quality?: number;
@@ -14,6 +15,7 @@ interface Props {
 
 const {
 	image,
+	fallbackAlt = "CodingCat.dev tutorial cover image",
 	width = 1920,
 	height = 1080,
 	quality = 80,
@@ -30,7 +32,8 @@ const src = Astro.locals.sanity
 
 // stegaClean: alt lands in an attribute, where stega's zero-width characters
 // would be read out verbatim by screen readers.
-const alt = stegaClean((image as { alt?: string } | null)?.alt) ?? "";
+const rawAlt = stegaClean((image as { alt?: string } | null)?.alt);
+const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : fallbackAlt;
 ---
 
 <div class="transition-shadow duration-200 shadow-md group-hover:shadow-lg sm:mx-0">
