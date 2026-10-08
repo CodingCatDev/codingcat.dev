@@ -1,0 +1,44 @@
+name: Nightly Dataset Sync (production -> dev)
+
+on:
+  schedule:
+    - cron: "0 4 * * *" # Every day at 04:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sync-dataset:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Reset dev dataset from production
+        run: |
+          PROJECT_ID="${{ vars.SANITY_STUDIO_PROJECT_ID }}"
+          [ -z "$PROJECT_ID" ] && PROJECT_ID="hfh83o0w"
+          TOKEN="${{ secrets.SANITY_AUTH_TOKEN }}"
+          API_HOST="https://api.sanity.io"
+          API_VERSION="v2025-09-30"
+
+          echo "Deleting existing 'dev' dataset..."
+          curl -s -X DELETE "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/dev" \
+            -H "Authorization: Bearer $TOKEN" || true
+
+          echo "Cloning 'production' dataset to 'dev'..."
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PUT \
+            "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/production/copy" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"targetDataset":"dev","skipHistory":true}')
+
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
+
+          echo "Status: $HTTP_STATUS"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "Dataset sync initiated successfully!"
+          else
+            echo "Dataset sync failed with status $HTTP_STATUS"
+            exit 1
+          fi
