@@ -247,13 +247,6 @@ export default defineType({
 			],
 		}),
 		defineField({
-			name: "transcript",
-			title: "Transcript",
-			type: "text",
-			group: "podcast",
-			description: "Full episode transcript",
-		}),
-		defineField({
 			name: "contentType",
 			title: "Content Type",
 			type: "string",

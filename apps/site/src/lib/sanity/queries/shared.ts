@@ -48,7 +48,18 @@ export const contentFields = `
   },
   tags,
   videoCloudinary,
-  youtube
+  youtube,
+  transcript->{
+    _id,
+    title,
+    duration,
+    durationSeconds,
+    status,
+    summary,
+    chapters,
+    cues,
+    statistics
+  }
 `;
 
 export const podcastFields = `
