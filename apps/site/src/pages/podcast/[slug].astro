@@ -13,7 +13,11 @@ import SponsorCard from "@/components/SponsorCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { morePodcastQuery, podcastQuery } from "@/lib/sanity/queries";
-import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
+import {
+	articleSchema,
+	breadcrumbSchema,
+	podcastEpisodeSchema,
+} from "@/lib/structured-data";
 
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
@@ -53,14 +57,31 @@ const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
 	authors={[...authors, ...guests].map((person) => person.title)}
 	canonical={path}
 	schema={[
-		articleSchema(origin, {
-			title: podcast.title,
-			excerpt: podcast.excerpt,
-			date: podcast.date,
-			_updatedAt: podcast._updatedAt,
-			imageUrl: ogImage?.url,
-			authors,
-		}, path),
+		podcastEpisodeSchema(
+			origin,
+			{
+				title: podcast.title,
+				excerpt: podcast.excerpt,
+				date: podcast.date,
+				imageUrl: ogImage?.url,
+				season: podcast.season,
+				episode: podcast.episode,
+				audioUrl,
+			},
+			path,
+		),
+		articleSchema(
+			origin,
+			{
+				title: podcast.title,
+				excerpt: podcast.excerpt,
+				date: podcast.date,
+				_updatedAt: podcast._updatedAt,
+				imageUrl: ogImage?.url,
+				authors,
+			},
+			path,
+		),
 		breadcrumbSchema(origin, [
 			{ name: "Podcasts", path: "/podcasts/page/1" },
 			{ name: podcast.title, path },

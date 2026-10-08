@@ -1,7 +1,46 @@
 User-Agent: *
+Content-Signal: ai-train=no, search=yes, ai-input=yes
 Allow: /
+Allow: /api/search
+Allow: /api/mcp
+Allow: /.well-known/
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /api/
 Disallow: /dashboard/
 
+User-Agent: GPTBot
+Allow: /
+Allow: /api/search
+Allow: /api/mcp
+Allow: /.well-known/
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-Agent: ClaudeBot
+Allow: /
+Allow: /api/search
+Allow: /api/mcp
+Allow: /.well-known/
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-Agent: PerplexityBot
+Allow: /
+Allow: /api/search
+Allow: /api/mcp
+Allow: /.well-known/
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-Agent: Applebot-Extended
+Allow: /
+Allow: /api/search
+Allow: /api/mcp
+Allow: /.well-known/
+Allow: /llms.txt
+Allow: /llms-full.txt
+
 Host: https://codingcat.dev
 Sitemap: https://codingcat.dev/sitemap.xml
+Sitemap: https://codingcat.dev/sitemap-index.xml

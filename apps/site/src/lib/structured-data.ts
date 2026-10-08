@@ -159,3 +159,45 @@ export function personSchema(
 		url,
 	};
 }
+
+interface PodcastEpisodeInput {
+	title?: string | null;
+	excerpt?: string | null;
+	date?: string | null;
+	imageUrl?: string;
+	season?: number | null;
+	episode?: number | null;
+	audioUrl?: string | null;
+}
+
+export function podcastEpisodeSchema(
+	origin: string,
+	content: PodcastEpisodeInput,
+	path: string,
+): Node {
+	const url = absoluteUrl(path, origin);
+	return {
+		"@type": "PodcastEpisode",
+		"@id": `${url}#episode`,
+		url,
+		name: content.title ?? undefined,
+		description: content.excerpt ?? undefined,
+		...(content.date ? { datePublished: content.date } : {}),
+		...(content.imageUrl ? { image: content.imageUrl } : {}),
+		...(content.season ? { seasonNumber: content.season } : {}),
+		...(content.episode ? { episodeNumber: content.episode } : {}),
+		...(content.audioUrl
+			? {
+					associatedMedia: {
+						"@type": "AudioObject",
+						contentUrl: content.audioUrl,
+					},
+				}
+			: {}),
+		partOfSeries: {
+			"@type": "PodcastSeries",
+			name: "CodingCat.dev Podcast",
+			url: `${origin}/podcasts`,
+		},
+	};
+}
