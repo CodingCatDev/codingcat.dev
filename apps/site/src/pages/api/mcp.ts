@@ -1,18 +1,10 @@
+import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
-import {
-	semanticSearchQuery,
-	textSearchFallbackQuery,
-} from "@/lib/sanity/queries";
-import { resolveHref } from "@/lib/sanity/resolve-href";
 
 export const prerender = false;
 
-interface JsonRpcRequest {
-	jsonrpc?: string;
-	id?: string | number | null;
-	method: string;
-	params?: any;
-}
+const SANITY_CONTEXT_MCP_URL =
+	"https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/agent-aj-mcp";
 
 const MCP_HEADERS = {
 	"content-type": "application/json; charset=utf-8",
@@ -34,7 +26,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = locals.siteUrl.origin;
 	const accept = request.headers.get("accept") || "";
 
-	// If client requests SSE stream (legacy MCP HTTP+SSE transport)
+	// Support SSE stream for legacy MCP HTTP+SSE clients
 	if (accept.includes("text/event-stream")) {
 		const encoder = new TextEncoder();
 		const stream = new ReadableStream({
@@ -62,7 +54,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 		JSON.stringify(
 			{
 				status: "ok",
-				server: "codingcatdev-search-mcp",
+				server: "codingcatdev-sanity-context-mcp",
 				version: "1.0.0",
 				protocolVersion: "2024-11-05",
 				supportedVersions: ["2026-07-28", "2024-11-05"],
@@ -70,11 +62,16 @@ export const GET: APIRoute = async ({ request, locals }) => {
 				endpoint: `${origin}/mcp`,
 				serverCard: `${origin}/.well-known/mcp/server-card.json`,
 				capabilities: {
-					tools: { listChanged: false },
+					tools: { listChanged: true },
 					resources: { subscribe: false, listChanged: false },
 					prompts: { listChanged: false },
 				},
-				tools: ["search_content"],
+				tools: [
+					"initial_context",
+					"schema_explorer",
+					"groq_query",
+					"array_field_reader",
+				],
 			},
 			null,
 			2,
@@ -88,297 +85,69 @@ export const GET: APIRoute = async ({ request, locals }) => {
 	);
 };
 
-export const POST: APIRoute = async ({ request, locals }) => {
-	const origin = locals.siteUrl.origin;
+export const POST: APIRoute = async ({ request }) => {
+	const rawBody = await request.text();
 
-	let body: JsonRpcRequest;
-	try {
-		body = (await request.json()) as JsonRpcRequest;
-	} catch {
+	// Read server-side Sanity Context token from cloudflare:workers env or process.env
+	const cfEnv = env as unknown as Cloudflare.Env | undefined;
+	const sanityToken =
+		cfEnv?.SANITY_API_READ_TOKEN || process.env.SANITY_API_READ_TOKEN;
+
+	if (!sanityToken) {
 		return new Response(
 			JSON.stringify({
 				jsonrpc: "2.0",
 				id: null,
-				error: { code: -32700, message: "Parse error" },
-			}),
-			{ status: 400, headers: MCP_HEADERS },
-		);
-	}
-
-	const id = body.id ?? null;
-	const method = body.method;
-
-	// 1. Stateless discovery (MCP 2026-07-28+)
-	if (method === "server/discover") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {
-					supportedVersions: ["2026-07-28", "2024-11-05"],
-					capabilities: {
-						tools: { listChanged: false },
-						resources: { subscribe: false, listChanged: false },
-						prompts: { listChanged: false },
-					},
-					serverInfo: {
-						name: "codingcatdev-search-mcp",
-						version: "1.0.0",
-					},
-					_meta: {
-						"io.modelcontextprotocol/serverInfo": {
-							name: "codingcatdev-search-mcp",
-							version: "1.0.0",
-						},
-					},
-					instructions:
-						"Search technical tutorials, web development guides, and podcasts on CodingCat.dev.",
+				error: {
+					code: -32001,
+					message:
+						"SANITY_API_READ_TOKEN is not configured on the server. Please add it to your environment variables.",
 				},
 			}),
-			{ headers: MCP_HEADERS },
+			{ status: 500, headers: MCP_HEADERS },
 		);
 	}
 
-	// 2. Initialize (Legacy / standard MCP handshake)
-	if (method === "initialize") {
-		const clientVersion = body.params?.protocolVersion;
-		const protocolVersion =
-			clientVersion === "2026-07-28" ? "2026-07-28" : "2024-11-05";
+	try {
+		// Forward request to Sanity Context MCP endpoint with server-side Bearer token
+		const sanityRes = await fetch(SANITY_CONTEXT_MCP_URL, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${sanityToken}`,
+				"Content-Type": "application/json",
+				Accept:
+					request.headers.get("accept") ||
+					"application/json, text/event-stream",
+			},
+			body: rawBody,
+		});
 
+		const responseText = await sanityRes.text();
+
+		return new Response(responseText, {
+			status: sanityRes.status,
+			headers: {
+				...MCP_HEADERS,
+				"content-type":
+					sanityRes.headers.get("content-type") ||
+					"application/json; charset=utf-8",
+			},
+		});
+	} catch (error) {
+		console.error("[Sanity Context MCP Proxy Error]", error);
 		return new Response(
 			JSON.stringify({
 				jsonrpc: "2.0",
-				id,
-				result: {
-					protocolVersion,
-					capabilities: {
-						tools: { listChanged: false },
-						resources: { subscribe: false, listChanged: false },
-						prompts: { listChanged: false },
-					},
-					serverInfo: {
-						name: "codingcatdev-search-mcp",
-						version: "1.0.0",
-					},
+				id: null,
+				error: {
+					code: -32603,
+					message:
+						error instanceof Error
+							? error.message
+							: "Internal error proxying to Sanity Context MCP",
 				},
 			}),
-			{ headers: MCP_HEADERS },
+			{ status: 502, headers: MCP_HEADERS },
 		);
 	}
-
-	// 3. Notifications (initialized acknowledgement)
-	if (method === "notifications/initialized") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {},
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// 4. Ping
-	if (method === "ping") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {},
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// 5. Tools list
-	if (method === "tools/list") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {
-					tools: [
-						{
-							name: "search_content",
-							description:
-								"Search across CodingCat.dev web development tutorials, blog posts, podcasts, and transcripts.",
-							inputSchema: {
-								type: "object",
-								properties: {
-									query: {
-										type: "string",
-										description:
-											"Programming topic, question, or keyword to search",
-									},
-									type: {
-										type: "string",
-										enum: ["all", "post", "podcast", "author", "guest"],
-										description:
-											"Optional filter for content type (default: all)",
-									},
-								},
-								required: ["query"],
-							},
-						},
-					],
-				},
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// 6. Resources list
-	if (method === "resources/list") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {
-					resources: [],
-				},
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// 6b. Resource templates list
-	if (method === "resources/templates/list") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {
-					resourceTemplates: [],
-				},
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// 7. Prompts list
-	if (method === "prompts/list") {
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				result: {
-					prompts: [],
-				},
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// 8. Tools call
-	if (method === "tools/call") {
-		const toolName = body.params?.name;
-		const args = body.params?.arguments || {};
-
-		if (toolName === "search_content") {
-			const query = (args.query || "").trim();
-			const filterType = args.type === "all" ? null : args.type || null;
-
-			if (!query) {
-				return new Response(
-					JSON.stringify({
-						jsonrpc: "2.0",
-						id,
-						result: {
-							content: [
-								{
-									type: "text",
-									text: "Please provide a valid non-empty query parameter.",
-								},
-							],
-							isError: true,
-						},
-					}),
-					{ headers: MCP_HEADERS },
-				);
-			}
-
-			const params = {
-				searchTerm: query,
-				type: filterType,
-			};
-
-			let rawHits: any[] = [];
-			try {
-				const result = await locals.sanity.fetchPublished(
-					semanticSearchQuery,
-					params,
-				);
-				if (Array.isArray(result)) {
-					rawHits = result;
-				}
-			} catch {
-				try {
-					const fallbackResult = await locals.sanity.fetchPublished(
-						textSearchFallbackQuery,
-						params,
-					);
-					if (Array.isArray(fallbackResult)) {
-						rawHits = fallbackResult;
-					}
-				} catch (err) {
-					console.warn("MCP Search error:", err);
-				}
-			}
-
-			const hits = rawHits.slice(0, 10).map((hit) => {
-				const href = resolveHref(hit._type, hit.slug);
-				return {
-					title: hit.title,
-					type: hit._type,
-					url: `${origin}${href}`,
-					markdownUrl: `${origin}${href}.md`,
-					excerpt: hit.excerpt || "",
-					date: hit.date,
-				};
-			});
-
-			return new Response(
-				JSON.stringify({
-					jsonrpc: "2.0",
-					id,
-					result: {
-						content: [
-							{
-								type: "text",
-								text: JSON.stringify(
-									{
-										query,
-										total: hits.length,
-										results: hits,
-									},
-									null,
-									2,
-								),
-							},
-						],
-					},
-				}),
-				{ headers: MCP_HEADERS },
-			);
-		}
-
-		return new Response(
-			JSON.stringify({
-				jsonrpc: "2.0",
-				id,
-				error: { code: -32601, message: `Tool not found: ${toolName}` },
-			}),
-			{ headers: MCP_HEADERS },
-		);
-	}
-
-	// Default fallback: standard JSON-RPC 2.0 Method Not Found
-	return new Response(
-		JSON.stringify({
-			jsonrpc: "2.0",
-			id,
-			error: { code: -32601, message: `Method not found: ${method}` },
-		}),
-		{ headers: MCP_HEADERS },
-	);
 };

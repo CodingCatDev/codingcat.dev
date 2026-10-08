@@ -18,6 +18,7 @@
     "test:e2e": "node tests/run-e2e.mjs"
   },
   "dependencies": {
+    "@ai-sdk/mcp": "^2.0.72",
     "@astrojs/cloudflare": "^14.2.1",
     "@astrojs/react": "^6.0.2",
     "@portabletext/to-html": "^6.0.0",
@@ -26,12 +27,14 @@
     "@sanity/image-url": "^2.1.1",
     "@sanity/visual-editing-standalone": "^2.0.1",
     "@tailwindcss/vite": "^4.2.1",
+    "ai": "^7.0.135",
     "astro": "^7.2.2",
     "astro-portabletext": "^0.13.0",
     "groq": "^6.9.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "tailwindcss": "^4.2.1",
+    "workers-ai-provider": "^4.0.0",
     "workers-og": "^0.0.27"
   },
   "devDependencies": {

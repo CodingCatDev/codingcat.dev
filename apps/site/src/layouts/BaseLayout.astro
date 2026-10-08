@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import "@/styles/global.css";
 
+import ChatModal from "@/components/ChatModal.astro";
 import DraftModeToggle from "@/components/DraftModeToggle.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
@@ -190,5 +191,6 @@ const graph = buildGraph([
 			<Footer />
 		</div>
 		{preview && <DraftModeToggle />}
+		<ChatModal />
 	</body>
 </html>
