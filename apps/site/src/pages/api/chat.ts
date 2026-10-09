@@ -29,7 +29,7 @@ export const GET: APIRoute = async () => {
 	return new Response(
 		JSON.stringify({
 			status: "ready",
-			name: "CodingCat AI Assistant",
+			name: "Agent AJ",
 			model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
 			mcp: SANITY_CONTEXT_MCP_URL,
 		}),
@@ -204,6 +204,63 @@ export const POST: APIRoute = async ({ request }) => {
 					}));
 				},
 			}),
+			get_recent_content: tool({
+				description:
+					"Retrieve the most recently published podcast episodes or blog articles on CodingCat.dev. ALWAYS use this tool first when asked for 'latest podcast', 'recent episodes', 'latest blog post', or 'new articles'.",
+				inputSchema: jsonSchema<{
+					type?: "all" | "podcast" | "post";
+					limit?: number;
+				}>({
+					type: "object",
+					properties: {
+						type: {
+							type: "string",
+							description:
+								"Filter by content type: 'all', 'podcast', or 'post'. Defaults to 'all'.",
+							enum: ["all", "podcast", "post"],
+						},
+						limit: {
+							type: "integer",
+							description: "Number of items to return (default: 5, max: 10).",
+						},
+					},
+				}),
+				execute: async ({ type, limit }) => {
+					const rawType = type ? String(type).toLowerCase() : "all";
+					const types =
+						rawType === "podcast"
+							? ["podcast"]
+							: rawType === "post"
+								? ["post"]
+								: ["podcast", "post"];
+					const count = Math.min(Math.max(Number(limit) || 5, 1), 10);
+					try {
+						const recent = await sanityClient.fetch(
+							`*[_type in $types && defined(slug.current)] | order(date desc, _createdAt desc)[0...$limit]{
+								title,
+								_type,
+								"slug": slug.current,
+								date,
+								excerpt,
+								youtube
+							}`,
+							{ types, limit: count },
+						);
+						return (recent || []).map((item: any) => ({
+							title: item.title,
+							type: item._type,
+							slug: item.slug,
+							url: `/${item._type === "podcast" ? "podcast" : "post"}/${item.slug}`,
+							date: item.date,
+							excerpt: item.excerpt || "",
+							youtube: item.youtube || null,
+						}));
+					} catch (err) {
+						console.error("[get_recent_content error]", err);
+						return [];
+					}
+				},
+			}),
 			groq_query: {
 				...mcpTools.groq_query,
 				execute: async ({ query }: { query: string }) => {
@@ -307,12 +364,14 @@ export const POST: APIRoute = async ({ request }) => {
 		const result = streamText({
 			model,
 			system:
-				"You are CodingCat.dev's intelligent content assistant (AJ). Answer user queries about CodingCat.dev podcasts, tutorials, articles, authors, and transcripts.\n\n" +
+				"You are Agent AJ, CodingCat.dev's intelligent AI assistant. Answer user queries about CodingCat.dev podcasts, tutorials, articles, authors, and transcripts.\n\n" +
 				"SEARCH & TOOL INSTRUCTIONS:\n" +
-				"- ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
+				"- ALWAYS use the `get_recent_content` tool first when asked for 'latest podcast', 'recent episodes', 'latest blog post', or 'new articles'.\n" +
+				"- ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
+				"- When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
 				"- Use `groq_query` for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
 				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Title](/podcast/slug) or [Title](/post/slug)). Never use localhost or absolute domain URLs.",
+				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Title](/podcast/slug) or [Title](/post/slug)). If YouTube links are available, include them. Never use localhost or absolute domain URLs.",
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(5),

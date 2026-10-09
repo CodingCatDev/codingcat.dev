@@ -6,14 +6,11 @@
 	<button
 		type="button"
 		id="ai-chat-open-btn"
-		class="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:opacity-90 transition-all hover:scale-105 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-		aria-label="Open AI Assistant"
+		class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:opacity-90 transition-all hover:scale-105 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+		aria-label="Open Agent AJ"
 	>
-		<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.708-1.175L2 22l1.175-5.292A9.96 9.96 0 0 1 2 12 10 10 0 0 1 12 2z"></path>
-			<path d="m9 12 2 2 4-4"></path>
-		</svg>
-		<span>Ask AI</span>
+		<img src="/icon.svg" alt="" class="size-5 object-contain" width="20" height="20" />
+		<span>Ask Agent AJ</span>
 	</button>
 
 	<!-- Modal Backdrop & Window -->
@@ -27,14 +24,16 @@
 		<div class="relative flex flex-col w-full max-w-2xl h-[640px] max-h-[90vh] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
 			<!-- Header -->
 			<header class="flex items-center justify-between border-b border-border px-5 py-3.5 bg-muted/40">
-				<div class="flex items-center gap-2.5">
-					<div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-						<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-						</svg>
-					</div>
+				<div class="flex items-center gap-3">
+					<img
+						src="/icon.svg"
+						alt="Agent AJ Logo"
+						class="size-8 rounded-lg object-contain bg-primary/10 p-1"
+						width="32"
+						height="32"
+					/>
 					<div>
-						<h2 id="ai-chat-title" class="text-sm font-bold tracking-tight">CodingCat AI Assistant</h2>
+						<h2 id="ai-chat-title" class="text-sm font-bold tracking-tight">Agent AJ</h2>
 						<p class="text-[11px] text-muted-foreground">Grounded in Sanity Content Lake & Workers AI</p>
 					</div>
 				</div>
@@ -55,28 +54,91 @@
 			<div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-4 text-sm">
 				<!-- Welcome / Prompt chips -->
 				<div id="ai-chat-welcome" class="flex flex-col gap-3 my-auto text-center items-center py-6">
-					<div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-						<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<circle cx="12" cy="12" r="10"></circle>
-							<path d="m9 12 2 2 4-4"></path>
-						</svg>
-					</div>
-					<h3 class="font-semibold text-base">How can I help you learn today?</h3>
+					<img src="/icon.svg" alt="Agent AJ" class="size-14 rounded-2xl object-contain bg-primary/10 p-2 shadow-sm" width="56" height="56" />
+					<h3 class="font-semibold text-base">Hi, I'm Agent AJ!</h3>
 					<p class="text-xs text-muted-foreground max-w-sm">
-						I query the live CodingCat.dev content catalog, podcasts, video transcripts, and author notes.
+						I query live CodingCat.dev podcasts, tutorials, and transcripts. Ask me anything or select a quick request:
 					</p>
 					<div class="flex flex-wrap gap-2 justify-center max-w-md pt-2">
-						<button type="button" class="ai-prompt-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer transition-colors" data-prompt="What tutorials are available for Astro?">
-							Tutorials for Astro
+						<button
+							type="button"
+							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
+							data-prompt="What is the latest podcast episode?"
+						>
+							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+								<path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+								<line x1="12" x2="12" y1="19" y2="22"></line>
+							</svg>
+							<span>Latest podcast</span>
 						</button>
-						<button type="button" class="ai-prompt-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer transition-colors" data-prompt="Who is Raul Melo and what did he write?">
-							Who is Raul Melo?
+						<button
+							type="button"
+							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
+							data-prompt="What is the latest blog post?"
+						>
+							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+								<polyline points="14 2 14 8 20 8"></polyline>
+								<line x1="16" y1="13" x2="8" y2="13"></line>
+								<line x1="16" y1="17" x2="8" y2="17"></line>
+							</svg>
+							<span>Latest blog post</span>
 						</button>
-						<button type="button" class="ai-prompt-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer transition-colors" data-prompt="What podcast episodes cover Sanity?">
-							Podcasts about Sanity
+						<button
+							type="button"
+							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
+							data-prompt="What are the top videos on CodingCat.dev?"
+						>
+							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<polygon points="23 7 16 12 23 17 23 7"></polygon>
+								<rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+							</svg>
+							<span>Top videos</span>
 						</button>
 					</div>
 				</div>
+			</div>
+
+			<!-- Predefined Quick Request Buttons (Sticky Bar) -->
+			<div class="flex items-center gap-1.5 px-3 sm:px-4 py-2 border-t border-border/40 bg-muted/20 overflow-x-auto no-scrollbar">
+				<span class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0 mr-1">Quick:</span>
+				<button
+					type="button"
+					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					data-prompt="What is the latest podcast episode?"
+				>
+					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+						<path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+						<line x1="12" x2="12" y1="19" y2="22"></line>
+					</svg>
+					<span>Latest podcast</span>
+				</button>
+				<button
+					type="button"
+					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					data-prompt="What is the latest blog post?"
+				>
+					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+						<polyline points="14 2 14 8 20 8"></polyline>
+						<line x1="16" y1="13" x2="8" y2="13"></line>
+						<line x1="16" y1="17" x2="8" y2="17"></line>
+					</svg>
+					<span>Latest blog post</span>
+				</button>
+				<button
+					type="button"
+					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					data-prompt="What are the top videos on CodingCat.dev?"
+				>
+					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="23 7 16 12 23 17 23 7"></polygon>
+						<rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+					</svg>
+					<span>Top videos</span>
+				</button>
 			</div>
 
 			<!-- Input Form -->
@@ -84,7 +146,7 @@
 				<input
 					type="text"
 					id="ai-chat-input"
-					placeholder="Ask anything about CodingCat.dev..."
+					placeholder="Ask Agent AJ about CodingCat.dev..."
 					class="flex-1 rounded-xl border border-input bg-background px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
 					autocomplete="off"
 				/>
@@ -161,6 +223,13 @@
 				? "ml-auto bg-primary text-primary-foreground rounded-2xl rounded-tr-xs px-4 py-2.5"
 				: "mr-auto bg-muted/60 text-foreground rounded-2xl rounded-tl-xs px-4 py-2.5 border border-border"
 		}`;
+
+		if (role === "assistant") {
+			const badge = document.createElement("div");
+			badge.className = "flex items-center gap-1.5 text-[11px] font-semibold text-primary mb-0.5";
+			badge.innerHTML = `<img src="/icon.svg" alt="" class="size-3.5 object-contain" width="14" height="14" /><span>Agent AJ</span>`;
+			msgDiv.appendChild(badge);
+		}
 
 		const contentDiv = document.createElement("div");
 		contentDiv.className = "whitespace-pre-wrap leading-relaxed";
