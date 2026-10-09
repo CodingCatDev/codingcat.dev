@@ -312,7 +312,7 @@ export const POST: APIRoute = async ({ request }) => {
 				"- ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
 				"- Use `groq_query` for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
 				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and their links (/podcast/<slug> or /post/<slug>).",
+				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Title](/podcast/slug) or [Title](/post/slug)). Never use localhost or absolute domain URLs.",
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(5),
