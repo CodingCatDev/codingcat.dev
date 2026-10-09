@@ -1,0 +1,424 @@
+---
+interface Props {
+	title: string;
+	slug?: string | null;
+	transcriptId?: string | null;
+	youtube?: string | null;
+	class?: string;
+}
+
+const {
+	title,
+	slug,
+	transcriptId,
+	youtube,
+	class: className = "",
+} = Astro.props;
+---
+
+<div class={`transcript-widget inline-block ${className}`}>
+	<!-- Trigger Button -->
+	<button
+		type="button"
+		class="transcript-open-btn inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground shadow-2xs hover:bg-accent hover:text-accent-foreground cursor-pointer transition-all hover:scale-102"
+		data-transcript-id={transcriptId}
+		data-slug={slug}
+		data-youtube={youtube}
+		data-title={title}
+		aria-haspopup="dialog"
+		aria-label={`Open transcript for ${title}`}
+	>
+		<svg
+			class="size-4 text-primary"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		>
+			<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+			<path d="M8 9h8"></path>
+			<path d="M8 13h6"></path>
+		</svg>
+		<span>View Transcript</span>
+	</button>
+
+	<!-- Modal Backdrop & Window -->
+	<div
+		class="transcript-modal hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-xs transition-opacity"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="transcript-modal-title"
+	>
+		<div
+			class="relative flex flex-col w-full max-w-3xl h-[720px] max-h-[92vh] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden text-foreground"
+		>
+			<!-- Header -->
+			<header class="flex items-center justify-between border-b border-border px-5 py-4 bg-muted/40">
+				<div class="flex items-center gap-3 overflow-hidden">
+					<div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+						<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+							<path d="M8 9h8"></path>
+							<path d="M8 13h6"></path>
+						</svg>
+					</div>
+					<div class="truncate">
+						<h2 id="transcript-modal-title" class="text-base font-bold tracking-tight truncate">
+							{title}
+						</h2>
+						<p class="transcript-meta text-xs text-muted-foreground truncate">
+							Interactive Video Transcript
+						</p>
+					</div>
+				</div>
+				<button
+					type="button"
+					class="transcript-close-btn rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer shrink-0"
+					aria-label="Close transcript"
+				>
+					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</header>
+
+			<!-- Action Toolbar -->
+			<div class="flex flex-wrap items-center justify-between gap-2.5 border-b border-border px-4 py-2.5 bg-muted/20 text-xs">
+				<div class="flex items-center gap-2">
+					<!-- Copy Button -->
+					<button
+						type="button"
+						class="transcript-copy-btn inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 font-semibold text-primary-foreground hover:opacity-90 active:scale-95 transition-all cursor-pointer shadow-2xs"
+						title="Copy full transcript to clipboard"
+					>
+						<svg class="size-3.5 copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+							<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+						</svg>
+						<svg class="size-3.5 check-icon hidden text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+						<span class="copy-text">Copy Transcript</span>
+					</button>
+
+					<!-- View Toggle -->
+					<div class="inline-flex rounded-lg border border-border bg-background p-0.5 text-muted-foreground">
+						<button
+							type="button"
+							class="transcript-tab-text px-2.5 py-1 rounded-md font-medium text-xs bg-muted text-foreground transition-colors cursor-pointer"
+							data-mode="text"
+						>
+							Full Text
+						</button>
+						<button
+							type="button"
+							class="transcript-tab-cues px-2.5 py-1 rounded-md font-medium text-xs hover:text-foreground transition-colors cursor-pointer"
+							data-mode="cues"
+						>
+							Timestamps
+						</button>
+					</div>
+				</div>
+
+				<!-- Search Input -->
+				<div class="relative w-full sm:w-56">
+					<input
+						type="text"
+						class="transcript-search-input w-full rounded-lg border border-input bg-background pl-7 pr-3 py-1 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+						placeholder="Search in transcript..."
+					/>
+					<svg class="size-3.5 text-muted-foreground absolute left-2 top-2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="11" cy="11" r="8"></circle>
+						<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Transcript Content Area -->
+			<div class="transcript-content-area flex-1 overflow-y-auto p-5 text-sm leading-relaxed">
+				<!-- Loading Skeleton -->
+				<div class="transcript-loading flex flex-col gap-3 py-8 items-center justify-center text-center">
+					<div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+					<p class="text-xs text-muted-foreground font-medium">Fetching transcript from YouTube...</p>
+				</div>
+
+				<!-- Error State -->
+				<div class="transcript-error hidden flex flex-col gap-2 py-12 items-center justify-center text-center">
+					<svg class="size-8 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="10"></circle>
+						<line x1="12" y1="8" x2="12" y2="12"></line>
+						<line x1="12" y1="16" x2="12.01" y2="16"></line>
+					</svg>
+					<p class="text-sm font-semibold text-foreground">Transcript not available</p>
+					<p class="text-xs text-muted-foreground max-w-xs">
+						No auto-generated captions could be found for this video.
+					</p>
+				</div>
+
+				<!-- Full Text View -->
+				<div class="transcript-fulltext-view hidden whitespace-pre-wrap leading-relaxed text-foreground/90 space-y-4"></div>
+
+				<!-- Cues View -->
+				<div class="transcript-cues-view hidden flex flex-col gap-2.5"></div>
+			</div>
+
+			<!-- Footer -->
+			<footer class="flex items-center justify-between border-t border-border px-5 py-3 bg-muted/30 text-xs text-muted-foreground">
+				<span class="transcript-stats">Loading transcript...</span>
+				<button
+					type="button"
+					class="transcript-close-footer-btn px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+				>
+					Close
+				</button>
+			</footer>
+		</div>
+	</div>
+</div>
+
+<script>
+	interface TranscriptData {
+		id: string;
+		title: string;
+		youtubeUrl?: string;
+		duration?: string;
+		summary?: string;
+		fullText: string;
+		cues?: Array<{ start: number; duration: number; text: string }>;
+		chapters?: Array<{ title: string; start: number; timestamp: string }>;
+	}
+
+	function formatTimestamp(seconds: number): string {
+		const m = Math.floor(seconds / 60);
+		const s = Math.floor(seconds % 60);
+		return `${m}:${s.toString().padStart(2, "0")}`;
+	}
+
+	document.querySelectorAll(".transcript-widget").forEach((widget) => {
+		const openBtn = widget.querySelector(".transcript-open-btn") as HTMLButtonElement | null;
+		const modal = widget.querySelector(".transcript-modal") as HTMLDivElement | null;
+		const closeBtn = widget.querySelector(".transcript-close-btn") as HTMLButtonElement | null;
+		const closeFooterBtn = widget.querySelector(".transcript-close-footer-btn") as HTMLButtonElement | null;
+		const copyBtn = widget.querySelector(".transcript-copy-btn") as HTMLButtonElement | null;
+		const copyIcon = widget.querySelector(".copy-icon") as SVGElement | null;
+		const checkIcon = widget.querySelector(".check-icon") as SVGElement | null;
+		const copyText = widget.querySelector(".copy-text") as HTMLElement | null;
+		const searchInput = widget.querySelector(".transcript-search-input") as HTMLInputElement | null;
+		const tabText = widget.querySelector(".transcript-tab-text") as HTMLButtonElement | null;
+		const tabCues = widget.querySelector(".transcript-tab-cues") as HTMLButtonElement | null;
+
+		const loadingEl = widget.querySelector(".transcript-loading") as HTMLElement | null;
+		const errorEl = widget.querySelector(".transcript-error") as HTMLElement | null;
+		const fulltextView = widget.querySelector(".transcript-fulltext-view") as HTMLElement | null;
+		const cuesView = widget.querySelector(".transcript-cues-view") as HTMLElement | null;
+		const metaEl = widget.querySelector(".transcript-meta") as HTMLElement | null;
+		const statsEl = widget.querySelector(".transcript-stats") as HTMLElement | null;
+
+		let cachedData: TranscriptData | null = null;
+		let currentMode: "text" | "cues" = "text";
+		let currentSearch = "";
+
+		function setMode(mode: "text" | "cues") {
+			currentMode = mode;
+			if (mode === "text") {
+				tabText?.classList.add("bg-muted", "text-foreground");
+				tabCues?.classList.remove("bg-muted", "text-foreground");
+				fulltextView?.classList.remove("hidden");
+				cuesView?.classList.add("hidden");
+			} else {
+				tabCues?.classList.add("bg-muted", "text-foreground");
+				tabText?.classList.remove("bg-muted", "text-foreground");
+				cuesView?.classList.remove("hidden");
+				fulltextView?.classList.add("hidden");
+			}
+		}
+
+		tabText?.addEventListener("click", () => setMode("text"));
+		tabCues?.addEventListener("click", () => setMode("cues"));
+
+		function renderContent() {
+			if (!cachedData) return;
+
+			const fullText = cachedData.fullText || "";
+			const cues = cachedData.cues || [];
+			const filter = currentSearch.toLowerCase().trim();
+
+			// Render Full Text
+			if (fulltextView) {
+				if (!fullText) {
+					fulltextView.innerHTML = `<p class="text-muted-foreground italic">No plain text transcript available.</p>`;
+				} else {
+					// Split into readable paragraphs (approx every 3-4 sentences or double newlines)
+					const rawParagraphs = fullText.split(/\n+/).filter(Boolean);
+					const paragraphs = rawParagraphs.length > 3
+						? rawParagraphs
+						: fullText.match(/[^.!?]+[.!?]+(\s+|$)/g) || [fullText];
+
+					// Group small sentences into chunky paragraphs of ~4 sentences
+					const chunky: string[] = [];
+					let buffer = "";
+					paragraphs.forEach((p, idx) => {
+						buffer += (buffer ? " " : "") + p.trim();
+						if ((idx + 1) % 4 === 0 || idx === paragraphs.length - 1) {
+							chunky.push(buffer);
+							buffer = "";
+						}
+					});
+
+					const filtered = filter
+						? chunky.filter((p) => p.toLowerCase().includes(filter))
+						: chunky;
+
+					if (filtered.length === 0) {
+						fulltextView.innerHTML = `<p class="text-muted-foreground italic py-8 text-center">No transcript sections matched "${currentSearch}".</p>`;
+					} else {
+						fulltextView.innerHTML = filtered
+							.map((p) => {
+								if (!filter) return `<p class="leading-relaxed">${p}</p>`;
+								const highlighted = p.replace(
+									new RegExp(`(${filter})`, "gi"),
+									`<mark class="bg-primary/20 text-primary font-semibold px-0.5 rounded">$1</mark>`,
+								);
+								return `<p class="leading-relaxed">${highlighted}</p>`;
+							})
+							.join("");
+					}
+				}
+			}
+
+			// Render Cues
+			if (cuesView) {
+				const filteredCues = filter
+					? cues.filter((c) => c.text.toLowerCase().includes(filter))
+					: cues;
+
+				if (filteredCues.length === 0) {
+					cuesView.innerHTML = `<p class="text-muted-foreground italic py-8 text-center">No cues matched "${currentSearch}".</p>`;
+				} else {
+					cuesView.innerHTML = filteredCues
+						.map((c) => {
+							const timeStr = formatTimestamp(c.start);
+							const textContent = filter
+								? c.text.replace(
+										new RegExp(`(${filter})`, "gi"),
+										`<mark class="bg-primary/20 text-primary font-semibold px-0.5 rounded">$1</mark>`,
+								  )
+								: c.text;
+
+							return `
+								<div class="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/40 transition-colors">
+									<span class="shrink-0 font-mono text-xs font-semibold px-2 py-0.5 rounded bg-muted text-primary select-all">
+										${timeStr}
+									</span>
+									<span class="text-xs sm:text-sm text-foreground/90 leading-relaxed">${textContent}</span>
+								</div>
+							`;
+						})
+						.join("");
+				}
+			}
+
+			// Update stats
+			if (statsEl) {
+				const words = fullText.split(/\s+/).filter(Boolean).length;
+				statsEl.textContent = `${words.toLocaleString()} words • ${cues.length} timed cues`;
+			}
+		}
+
+		searchInput?.addEventListener("input", (e) => {
+			currentSearch = (e.target as HTMLInputElement).value;
+			renderContent();
+		});
+
+		async function loadTranscript() {
+			if (cachedData) return;
+
+			loadingEl?.classList.remove("hidden");
+			errorEl?.classList.add("hidden");
+			fulltextView?.classList.add("hidden");
+			cuesView?.classList.add("hidden");
+
+			const transcriptId = openBtn?.getAttribute("data-transcript-id");
+			const slug = openBtn?.getAttribute("data-slug");
+			const youtube = openBtn?.getAttribute("data-youtube");
+
+			const params = new URLSearchParams();
+			if (transcriptId) params.set("id", transcriptId);
+			if (slug) params.set("slug", slug);
+			if (youtube) params.set("youtube", youtube);
+
+			try {
+				const res = await fetch(`/api/transcript?${params.toString()}`);
+				if (!res.ok) {
+					throw new Error("Transcript not found");
+				}
+				const data = (await res.json()) as TranscriptData;
+				cachedData = data;
+
+				if (metaEl && data.duration) {
+					metaEl.textContent = `Duration: ${data.duration} • Complete Transcript`;
+				}
+
+				loadingEl?.classList.add("hidden");
+				renderContent();
+				setMode(currentMode);
+			} catch (err) {
+				loadingEl?.classList.add("hidden");
+				errorEl?.classList.remove("hidden");
+				if (statsEl) statsEl.textContent = "Transcript unavailable";
+			}
+		}
+
+		function openModal() {
+			modal?.classList.remove("hidden");
+			document.body.style.overflow = "hidden";
+			loadTranscript();
+		}
+
+		function closeModal() {
+			modal?.classList.add("hidden");
+			document.body.style.overflow = "";
+		}
+
+		openBtn?.addEventListener("click", openModal);
+		closeBtn?.addEventListener("click", closeModal);
+		closeFooterBtn?.addEventListener("click", closeModal);
+
+		modal?.addEventListener("click", (e) => {
+			if (e.target === modal) {
+				closeModal();
+			}
+		});
+
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
+				closeModal();
+			}
+		});
+
+		// Copy functionality
+		copyBtn?.addEventListener("click", async () => {
+			if (!cachedData?.fullText) return;
+
+			try {
+				await navigator.clipboard.writeText(cachedData.fullText);
+				if (copyIcon) copyIcon.classList.add("hidden");
+				if (checkIcon) checkIcon.classList.remove("hidden");
+				if (copyText) copyText.textContent = "Copied!";
+				copyBtn.classList.add("bg-green-600");
+
+				setTimeout(() => {
+					if (copyIcon) copyIcon.classList.remove("hidden");
+					if (checkIcon) checkIcon.classList.add("hidden");
+					if (copyText) copyText.textContent = "Copy Transcript";
+					copyBtn.classList.remove("bg-green-600");
+				}, 2500);
+			} catch (err) {
+				console.error("Failed to copy transcript:", err);
+			}
+		});
+	});
+</script>

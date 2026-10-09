@@ -10,6 +10,7 @@ import PodmatchBadge from "@/components/PodmatchBadge.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import SponsorCard from "@/components/SponsorCard.astro";
+import TranscriptModal from "@/components/TranscriptModal.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { morePodcastQuery, podcastQuery } from "@/lib/sanity/queries";
@@ -144,6 +145,19 @@ const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
 				audioUrl={audioUrl}
 				youtube={podcast.youtube}
 			/>
+
+			{
+				(podcast.transcript || podcast.youtube) && (
+					<div class="mt-4 flex flex-wrap items-center gap-3">
+						<TranscriptModal
+							title={podcast.title}
+							slug={podcast.slug}
+							transcriptId={podcast.transcript?._id}
+							youtube={podcast.youtube}
+						/>
+					</div>
+				)
+			}
 		</div>
 
 		{

@@ -7,6 +7,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import SponsorCard from "@/components/SponsorCard.astro";
+import TranscriptModal from "@/components/TranscriptModal.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { morePostQuery, postQuery } from "@/lib/sanity/queries";
@@ -86,6 +87,19 @@ const authors = post.author ?? [];
 		<div class="mb-4 text-lg text-muted-foreground">
 			<FormattedDate dateString={post.date} />
 		</div>
+
+		{
+			(post.transcript || post.youtube) && (
+				<div class="mb-6">
+					<TranscriptModal
+						title={post.title}
+						slug={post.slug}
+						transcriptId={post.transcript?._id}
+						youtube={post.youtube}
+					/>
+				</div>
+			)
+		}
 
 		{
 			post.sponsor && post.sponsor.length > 0 && (
