@@ -394,11 +394,19 @@ export const POST: APIRoute = async ({ request }) => {
 						await writer.write(encoder.encode(part.text));
 					} else if (part.type === "error") {
 						console.error("[Stream Part Error]", (part as any).error);
-						await writer.write(
-							encoder.encode(
-								`\n\n[Model Stream Error: ${(part as any).error instanceof Error ? (part as any).error.message : JSON.stringify((part as any).error)}]`,
-							),
-						);
+						const errMsg =
+							(part as any).error instanceof Error
+								? (part as any).error.message
+								: JSON.stringify((part as any).error);
+						if (errMsg.includes("4006") || errMsg.includes("neurons")) {
+							await writer.write(
+								encoder.encode(
+									"Cloudflare Workers AI daily free neuron allocation (10,000 neurons) has been reached. To continue chatting, upgrade to Cloudflare Workers Paid ($5/mo) or provide an AI API key.",
+								),
+							);
+						} else {
+							await writer.write(encoder.encode(`\n\n[Error: ${errMsg}]`));
+						}
 					}
 				}
 				if (!hasOutput) {
