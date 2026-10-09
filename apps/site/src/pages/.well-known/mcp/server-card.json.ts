@@ -37,6 +37,104 @@ export const GET: APIRoute = async ({ locals }) => {
 		},
 		tools: [
 			{
+				name: "search_content",
+				title: "Search CodingCat.dev Content",
+				description:
+					"Search CodingCat.dev podcasts, tutorials, blog articles, authors, guests, and video transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, list, or search for content on a topic (e.g. 'Sanity', 'Vercel', 'Next.js', 'Astro', 'TypeScript', 'AI', 'Tailwind', etc.).",
+				inputSchema: {
+					type: "object",
+					properties: {
+						query: {
+							type: "string",
+							description:
+								"Search keywords, topic, or question (e.g. 'Sanity', 'Vercel', 'Next.js 15', 'Lee Robinson', 'Guillermo Rauch', 'AI agents').",
+						},
+						type: {
+							type: "string",
+							description:
+								"Optional content type filter: 'all', 'podcast', 'post', 'author', 'guest'. Defaults to 'all'.",
+							enum: ["all", "podcast", "post", "author", "guest"],
+						},
+						limit: {
+							type: "integer",
+							description: "Number of results to return (default: 10, max: 24).",
+						},
+					},
+					required: ["query"],
+				},
+			},
+			{
+				name: "get_content_by_slug",
+				title: "Get Content by Slug",
+				description:
+					"Retrieve complete details, show notes, transcript summary, links, and guest/author metadata for a specific podcast episode or article by its slug.",
+				inputSchema: {
+					type: "object",
+					properties: {
+						slug: {
+							type: "string",
+							description:
+								"The slug of the content item (e.g. '0-6-nextjs-with-guillermo-rauch', 'how-to-secure-vercel-cron-job-routes-in-next-js-14-app-router').",
+						},
+					},
+					required: ["slug"],
+				},
+			},
+			{
+				name: "get_recent_content",
+				title: "Get Recent Content",
+				description:
+					"Retrieve the most recently published podcast episodes or blog articles from CodingCat.dev, ordered by publication date.",
+				inputSchema: {
+					type: "object",
+					properties: {
+						type: {
+							type: "string",
+							description:
+								"Content type filter: 'all', 'podcast', or 'post'. Defaults to 'all'.",
+							enum: ["all", "podcast", "post"],
+						},
+						limit: {
+							type: "integer",
+							description: "Number of items to return (default: 10, max: 20).",
+						},
+					},
+				},
+			},
+			{
+				name: "query_content",
+				title: "Query Content Lake",
+				description:
+					"Execute a read-only query against the CodingCat.dev Sanity dataset. Supports GROQ queries such as count(*[_type == 'podcast']), *[_type == 'podcast'][0...5]{title, 'slug': slug.current}, or filtering by tags.",
+				inputSchema: {
+					type: "object",
+					properties: {
+						query: {
+							type: "string",
+							description:
+								"GROQ query to execute (e.g. count(*[_type == 'podcast']) or *[_type == 'guest'][0...10]{name, 'slug': slug.current}).",
+						},
+					},
+					required: ["query"],
+				},
+			},
+			{
+				name: "groq_query",
+				title: "GROQ Query (Legacy / Advanced)",
+				description:
+					"Execute read-only GROQ queries against the CodingCat.dev Sanity Content Lake dataset.",
+				inputSchema: {
+					type: "object",
+					properties: {
+						query: {
+							type: "string",
+							description: "GROQ query to execute against the dataset.",
+						},
+					},
+					required: ["query"],
+				},
+			},
+			{
 				name: "initial_context",
 				title: "Initial Context",
 				description:
@@ -65,22 +163,6 @@ export const GET: APIRoute = async ({ locals }) => {
 						},
 					},
 					required: ["type"],
-				},
-			},
-			{
-				name: "groq_query",
-				title: "GROQ Query",
-				description:
-					"Execute read-only GROQ queries against the CodingCat.dev Sanity Content Lake dataset.",
-				inputSchema: {
-					type: "object",
-					properties: {
-						query: {
-							type: "string",
-							description: "GROQ query to execute against the dataset.",
-						},
-					},
-					required: ["query"],
 				},
 			},
 			{
