@@ -168,54 +168,40 @@ export const POST: APIRoute = async ({ request }) => {
 				}),
 				execute: async ({ query, type }) => {
 					const filterType = type && type !== "all" ? type : null;
+					let results: any[] = [];
 					try {
-						const results = await sanityClient.fetch(semanticSearchQuery, {
+						const res = await sanityClient.fetch(semanticSearchQuery, {
 							searchTerm: query,
 							type: filterType,
 						});
-						if (Array.isArray(results) && results.length > 0) {
-							return {
-								content: [
-									{
-										type: "text",
-										text: JSON.stringify({ results }),
-									},
-								],
-							};
+						if (Array.isArray(res) && res.length > 0) {
+							results = res;
 						}
 					} catch (semanticErr) {
 						console.warn("[search_content semantic error, falling back]", semanticErr);
 					}
 
-					try {
-						const fallback = await sanityClient.fetch(textSearchFallbackQuery, {
-							searchTerm: query,
-							type: filterType,
-						});
-						return {
-							content: [
-								{
-									type: "text",
-									text: JSON.stringify({ results: fallback || [] }),
-								},
-							],
-						};
-					} catch (fallbackErr) {
-						return {
-							content: [
-								{
-									type: "text",
-									text: JSON.stringify({
-										error:
-											fallbackErr instanceof Error
-												? fallbackErr.message
-												: String(fallbackErr),
-									}),
-								},
-							],
-							isError: true,
-						};
+					if (!results.length) {
+						try {
+							const fallback = await sanityClient.fetch(textSearchFallbackQuery, {
+								searchTerm: query,
+								type: filterType,
+							});
+							if (Array.isArray(fallback)) {
+								results = fallback;
+							}
+						} catch (fallbackErr) {
+							console.error("[search_content text error]", fallbackErr);
+						}
 					}
+
+					return results.slice(0, 10).map((item: any) => ({
+						title: item.title,
+						type: item._type,
+						slug: item.slug,
+						url: `/${item._type === "podcast" ? "podcast" : item._type === "post" ? "post" : item._type}/${item.slug}`,
+						excerpt: item.excerpt || item.transcriptSummary || "",
+					}));
 				},
 			}),
 			groq_query: {
@@ -236,7 +222,7 @@ export const POST: APIRoute = async ({ request }) => {
 								? JSON.parse(parsed.content[0].text)?.result
 								: null);
 						if (Array.isArray(results) && results.length > 0) {
-							return mcpResult;
+							return results;
 						}
 					} catch {}
 
@@ -259,14 +245,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 						const directResult = await sanityClient.fetch(cleanQuery);
 						if (Array.isArray(directResult) && directResult.length > 0) {
-							return {
-								content: [
-									{
-										type: "text",
-										text: JSON.stringify({ result: directResult }),
-									},
-								],
-							};
+							return directResult;
 						}
 
 						// If still empty and query was a search for a keyword, extract keyword and run semantic search
@@ -280,39 +259,22 @@ export const POST: APIRoute = async ({ request }) => {
 								type: filterType,
 							});
 							if (Array.isArray(semanticResults) && semanticResults.length > 0) {
-								return {
-									content: [
-										{
-											type: "text",
-											text: JSON.stringify({ result: semanticResults }),
-										},
-									],
-								};
+								return semanticResults.slice(0, 10).map((item: any) => ({
+									title: item.title,
+									type: item._type,
+									slug: item.slug,
+									excerpt: item.excerpt || "",
+								}));
 							}
 						}
 
-						return {
-							content: [
-								{
-									type: "text",
-									text: JSON.stringify({ result: directResult || [] }),
-								},
-							],
-						};
+						return directResult || [];
 					} catch (directErr) {
 						return {
-							content: [
-								{
-									type: "text",
-									text: JSON.stringify({
-										error:
-											directErr instanceof Error
-												? directErr.message
-												: String(directErr),
-									}),
-								},
-							],
-							isError: true,
+							error:
+								directErr instanceof Error
+									? directErr.message
+									: String(directErr),
 						};
 					}
 				},
