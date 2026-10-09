@@ -1,9 +1,13 @@
 import { env } from "cloudflare:workers";
 import { createMCPClient } from "@ai-sdk/mcp";
 import { createClient } from "@sanity/client";
-import { isStepCount, streamText } from "ai";
+import { isStepCount, jsonSchema, streamText, tool } from "ai";
 import type { APIRoute } from "astro";
 import { createWorkersAI } from "workers-ai-provider";
+import {
+	semanticSearchQuery,
+	textSearchFallbackQuery,
+} from "@/lib/sanity/queries";
 
 export const prerender = false;
 
@@ -139,6 +143,81 @@ export const POST: APIRoute = async ({ request }) => {
 
 		const tools = {
 			...mcpTools,
+			search_content: tool({
+				description:
+					"Search CodingCat.dev articles, podcast episodes, authors, and transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, or query podcasts, articles, or topics (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev').",
+				inputSchema: jsonSchema<{
+					query: string;
+					type?: "all" | "podcast" | "post" | "author" | "guest";
+				}>({
+					type: "object",
+					properties: {
+						query: {
+							type: "string",
+							description:
+								"Search terms, topic, or question (e.g. 'Sanity', 'SvelteKit', 'AI SaaS').",
+						},
+						type: {
+							type: "string",
+							description:
+								"Optional content type filter: 'all', 'podcast', 'post', 'author', 'guest'. Defaults to 'all'.",
+							enum: ["all", "podcast", "post", "author", "guest"],
+						},
+					},
+					required: ["query"],
+				}),
+				execute: async ({ query, type }) => {
+					const filterType = type && type !== "all" ? type : null;
+					try {
+						const results = await sanityClient.fetch(semanticSearchQuery, {
+							searchTerm: query,
+							type: filterType,
+						});
+						if (Array.isArray(results) && results.length > 0) {
+							return {
+								content: [
+									{
+										type: "text",
+										text: JSON.stringify({ results }),
+									},
+								],
+							};
+						}
+					} catch (semanticErr) {
+						console.warn("[search_content semantic error, falling back]", semanticErr);
+					}
+
+					try {
+						const fallback = await sanityClient.fetch(textSearchFallbackQuery, {
+							searchTerm: query,
+							type: filterType,
+						});
+						return {
+							content: [
+								{
+									type: "text",
+									text: JSON.stringify({ results: fallback || [] }),
+								},
+							],
+						};
+					} catch (fallbackErr) {
+						return {
+							content: [
+								{
+									type: "text",
+									text: JSON.stringify({
+										error:
+											fallbackErr instanceof Error
+												? fallbackErr.message
+												: String(fallbackErr),
+									}),
+								},
+							],
+							isError: true,
+						};
+					}
+				},
+			}),
 			groq_query: {
 				...mcpTools.groq_query,
 				execute: async ({ query }: { query: string }) => {
@@ -161,15 +240,62 @@ export const POST: APIRoute = async ({ request }) => {
 						}
 					} catch {}
 
-					// Fallback: direct Sanity fetch
+					// Fallback: direct Sanity fetch with query healing
 					try {
-						const cleanQuery = query.startsWith("*") ? query : `*[${query}]`;
+						let cleanQuery = query.startsWith("*") ? query : `*[${query}]`;
+						// Heal common LLM query syntax issues:
+						// Heal [a, b] match "..." -> (a match "..." || b match "...")
+						cleanQuery = cleanQuery.replace(
+							/\[([a-zA-Z0-9_]+),\s*([a-zA-Z0-9_]+)\]\s+match\s+([^)]+\))/g,
+							"($1 match $3 || $2 match $3)",
+						);
+						// Heal text::query("...") -> "*...*"
+						cleanQuery = cleanQuery.replace(
+							/text::query\((["'])(.*?)\1\)/g,
+							"$1*$2*$1",
+						);
+						// Remove filter [_score > 0]
+						cleanQuery = cleanQuery.replace(/\[_score\s*>\s*0\]/g, "");
+
 						const directResult = await sanityClient.fetch(cleanQuery);
+						if (Array.isArray(directResult) && directResult.length > 0) {
+							return {
+								content: [
+									{
+										type: "text",
+										text: JSON.stringify({ result: directResult }),
+									},
+								],
+							};
+						}
+
+						// If still empty and query was a search for a keyword, extract keyword and run semantic search
+						const matchTerm = query.match(/match\s+["']\*?([a-zA-Z0-9_-]+)\*?["']/);
+						if (matchTerm?.[1]) {
+							const keyword = matchTerm[1];
+							const typeMatch = query.match(/_type\s*==\s*["']([a-zA-Z0-9_-]+)["']/);
+							const filterType = typeMatch?.[1] || null;
+							const semanticResults = await sanityClient.fetch(semanticSearchQuery, {
+								searchTerm: keyword,
+								type: filterType,
+							});
+							if (Array.isArray(semanticResults) && semanticResults.length > 0) {
+								return {
+									content: [
+										{
+											type: "text",
+											text: JSON.stringify({ result: semanticResults }),
+										},
+									],
+								};
+							}
+						}
+
 						return {
 							content: [
 								{
 									type: "text",
-									text: JSON.stringify({ result: directResult }),
+									text: JSON.stringify({ result: directResult || [] }),
 								},
 							],
 						};
@@ -219,7 +345,12 @@ export const POST: APIRoute = async ({ request }) => {
 		const result = streamText({
 			model,
 			system:
-				"You are CodingCat.dev's intelligent content assistant (AJ). Answer user queries by searching and exploring the Sanity Content Lake dataset using your tools (initial_context, groq_query, schema_explorer, array_field_reader).\n\nDataset tips:\n- Content types: 'post' (blog articles), 'podcast' (podcast episodes), 'author', 'guest', 'transcript'.\n- People's names (authors, guests) are stored in the 'title' field (e.g. *[_type == 'author' && title match '*Alex*']).\n- Fields on posts and podcasts: title, slug, excerpt, date, author[]->title, guest[]->title, youtube.\n- Once you receive results from your query, synthesize them into a helpful, conversational, grounded response citing specific titles and URLs (/post/<slug> or /podcast/<slug>).",
+				"You are CodingCat.dev's intelligent content assistant (AJ). Answer user queries about CodingCat.dev podcasts, tutorials, articles, authors, and transcripts.\n\n" +
+				"SEARCH & TOOL INSTRUCTIONS:\n" +
+				"- ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
+				"- Use `groq_query` for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
+				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
+				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and their links (/podcast/<slug> or /post/<slug>).",
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(5),
