@@ -91,6 +91,15 @@ const content = defineType({
 			group: "data",
 		}),
 		defineField({
+			name: "syndications",
+			title: "Syndications",
+			type: "array",
+			group: "data",
+			of: [{ type: "reference", to: [{ type: "syndication" }] }],
+			description: "Associated cross-platform syndication records (Dev.to, Hashnode, etc.)",
+			readOnly: true,
+		}),
+		defineField({
 			name: "statistics",
 			type: "object",
 			group: "data",

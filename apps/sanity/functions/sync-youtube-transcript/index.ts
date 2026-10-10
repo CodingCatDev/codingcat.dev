@@ -322,12 +322,14 @@ export const handler = documentEventHandler<TargetContentDocument>(
 		const transcriptId = `transcript-yt-${youtubeId}`;
 
 		// Recursion guard and recent fetch check:
-		// If document already links to this transcript and the transcript was fetched within the last 24 hours, skip.
 		const existingTranscript = await client
-			.getDocument<{ _id: string; lastFetchedAt?: string }>(transcriptId)
+			.getDocument<{ _id: string; status?: string; fullText?: string; cues?: any[]; lastFetchedAt?: string }>(transcriptId)
 			.catch(() => null);
 
 		const isLinked = rawData.transcript?._ref === transcriptId;
+
+		// If the transcript already exists and is marked completed with fullText, we don't re-scrape captions.
+		const isTranscriptCompleted = existingTranscript?.status === "completed" && Boolean(existingTranscript?.fullText);
 
 		if (existingTranscript && isLinked && existingTranscript.lastFetchedAt) {
 			const lastFetched = new Date(existingTranscript.lastFetchedAt).getTime();
@@ -374,16 +376,44 @@ export const handler = documentEventHandler<TargetContentDocument>(
 		const durationSeconds = parseIsoDuration(duration);
 		const chapters = extractChaptersFromDescription(snippet.description);
 
-		console.log(
-			`[Sync YouTube Transcript] Fetching timed captions for video ID: ${youtubeId}`,
-		);
-		const captionResult = await fetchYouTubeCaptions(youtubeId);
+		let cues = existingTranscript?.cues || [];
+		let fullText = existingTranscript?.fullText || "";
+		let status = existingTranscript?.status || "no_caption_available";
+
+		if (!isTranscriptCompleted) {
+			console.log(
+				`[Sync YouTube Transcript] Fetching timed captions for video ID: ${youtubeId}`,
+			);
+			const captionResult = await fetchYouTubeCaptions(youtubeId);
+			cues = captionResult.cues;
+			fullText = captionResult.fullText;
+			status = captionResult.status;
+		} else {
+			console.log(
+				`[Sync YouTube Transcript] Transcript for ${youtubeId} already completed. Preserving cues/fullText and updating video metadata and statistics only.`,
+			);
+		}
 
 		const summary = generateSummary(
 			snippet.title || rawData.title || "Video",
 			snippet.description || "",
-			captionResult.fullText,
+			fullText,
 		);
+
+		const parsedStats = {
+			viewCount: statistics.viewCount
+				? parseInt(statistics.viewCount, 10)
+				: undefined,
+			likeCount: statistics.likeCount
+				? parseInt(statistics.likeCount, 10)
+				: undefined,
+			commentCount: statistics.commentCount
+				? parseInt(statistics.commentCount, 10)
+				: undefined,
+			favoriteCount: statistics.favoriteCount
+				? parseInt(statistics.favoriteCount, 10)
+				: undefined,
+		};
 
 		// 1. Create or replace the published transcript document
 		await client.createOrReplace({
@@ -404,49 +434,38 @@ export const handler = documentEventHandler<TargetContentDocument>(
 			description: snippet.description || "",
 			tags: snippet.tags || [],
 			topicCategories: topicDetails.topicCategories || [],
-			status: captionResult.status,
-			fullText: captionResult.fullText,
+			status,
+			fullText,
 			summary,
 			chapters,
-			cues: captionResult.cues,
-			statistics: {
-				viewCount: statistics.viewCount
-					? parseInt(statistics.viewCount, 10)
-					: undefined,
-				likeCount: statistics.likeCount
-					? parseInt(statistics.likeCount, 10)
-					: undefined,
-				commentCount: statistics.commentCount
-					? parseInt(statistics.commentCount, 10)
-					: undefined,
-				favoriteCount: statistics.favoriteCount
-					? parseInt(statistics.favoriteCount, 10)
-					: undefined,
-			},
+			cues,
+			statistics: parsedStats,
 			lastFetchedAt: new Date().toISOString(),
 		});
 
 		console.log(
-			`[Sync YouTube Transcript] Successfully created/updated published transcript ${transcriptId} (cues: ${captionResult.cues.length}, status: ${captionResult.status}).`,
+			`[Sync YouTube Transcript] Successfully created/updated published transcript ${transcriptId} (cues: ${cues.length}, status: ${status}).`,
 		);
 
-		// 2. Link reference in parent document if not already linked
+		// 2. Patch parent document with transcript reference (if not linked) AND latest statistics.youtube
+		const patchPayload: Record<string, any> = {
+			statistics: {
+				youtube: parsedStats,
+			},
+		};
 		if (!isLinked) {
-			console.log(
-				`[Sync YouTube Transcript] Linking transcript ${transcriptId} to source document ${rawData._id}.`,
-			);
-			await client
-				.patch(rawData._id)
-				.set({
-					transcript: {
-						_type: "reference",
-						_ref: transcriptId,
-					},
-				})
-				.commit();
-			console.log(
-				`[Sync YouTube Transcript] Parent document ${rawData._id} patched with transcript reference.`,
-			);
+			patchPayload.transcript = {
+				_type: "reference",
+				_ref: transcriptId,
+			};
 		}
+
+		console.log(
+			`[Sync YouTube Transcript] Patching parent document ${rawData._id} with statistics and transcript link.`,
+		);
+		await client.patch(rawData._id).set(patchPayload).commit();
+		console.log(
+			`[Sync YouTube Transcript] Parent document ${rawData._id} updated successfully.`,
+		);
 	},
 );
