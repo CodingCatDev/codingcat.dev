@@ -18,6 +18,7 @@ import {
 	articleSchema,
 	breadcrumbSchema,
 	podcastEpisodeSchema,
+	videoObjectSchema,
 } from "@/lib/structured-data";
 
 const { sanity } = Astro.locals;
@@ -40,6 +41,20 @@ const ogImage = sanity.resolveOpenGraphImage(podcast.coverImage ?? undefined);
 const authors = podcast.author ?? [];
 const guests = podcast.guest ?? [];
 const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
+const videoSchema = podcast.youtube
+	? videoObjectSchema(
+			origin,
+			{
+				title: podcast.title,
+				description: podcast.excerpt,
+				uploadDate: podcast.date,
+				thumbnailUrl: ogImage?.url,
+				youtubeUrl: podcast.youtube,
+				durationSeconds: podcast.transcript?.durationSeconds,
+			},
+			path,
+		)
+	: null;
 ---
 
 <BaseLayout
@@ -87,6 +102,7 @@ const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
 			{ name: "Podcasts", path: "/podcasts/page/1" },
 			{ name: podcast.title, path },
 		]),
+		...(videoSchema ? [videoSchema] : []),
 	]}
 >
 	<Breadcrumbs
