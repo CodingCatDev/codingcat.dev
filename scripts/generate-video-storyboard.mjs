@@ -21,10 +21,11 @@ Example:
   process.exit(1);
 }
 
+const geminiApiKey = process.env.GEMINI_API_KEY;
 const openRouterKey = process.env.OPENROUTER_API_KEY;
 
-if (!openRouterKey) {
-  console.error("Error: OPENROUTER_API_KEY environment variable is required.");
+if (!geminiApiKey && !openRouterKey) {
+  console.error("Error: Either GEMINI_API_KEY or OPENROUTER_API_KEY environment variable is required.");
   process.exit(1);
 }
 
@@ -75,34 +76,58 @@ Provide 2-3 exact TypeScript or motion graphic prompt specifications that can be
 `;
 
 async function run() {
-  console.log(`\n🚀 Generating Cleo-style / Better Stack Storyboard for: "${topic}"\nUsing Gemini 1.5 Pro...\n`);
+  console.log(`\n🚀 Generating Cleo-style / Better Stack Storyboard for: "${topic}"\nUsing Gemini 2.5 Pro (Google AI)...\n`);
 
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${openRouterKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://codingcat.dev",
-        "X-Title": "CodingCat Video Storyboard Generator",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-pro-1.5",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Create a complete video storyboard and script for: ${topic}` },
-        ],
-        temperature: 0.7,
-      }),
-    });
+    let result = "";
 
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`OpenRouter API error (${response.status}): ${err}`);
+    if (geminiApiKey) {
+      // Use official Google Gemini 2.5 Pro via Google AI
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${geminiApiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ parts: [{ text: `Create a complete video storyboard and script for: ${topic}` }] }],
+          generationConfig: { temperature: 0.7 }
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Google Gemini API error (${res.status}): ${err}`);
+      }
+
+      const data = await res.json();
+      result = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    } else {
+      // Use OpenRouter with gemini-2.5-pro
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${openRouterKey}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://codingcat.dev",
+          "X-Title": "CodingCat Video Storyboard Generator",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-pro",
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: `Create a complete video storyboard and script for: ${topic}` },
+          ],
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`OpenRouter API error (${response.status}): ${err}`);
+      }
+
+      const data = await response.json();
+      result = data.choices?.[0]?.message?.content;
     }
-
-    const data = await response.json();
-    const result = data.choices?.[0]?.message?.content;
 
     console.log(result);
   } catch (err) {
