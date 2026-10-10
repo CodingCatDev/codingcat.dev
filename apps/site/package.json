@@ -21,6 +21,7 @@
     "@ai-sdk/mcp": "^2.0.72",
     "@astrojs/cloudflare": "^14.2.1",
     "@astrojs/react": "^6.0.2",
+    "@openrouter/ai-sdk-provider": "^3.1.0",
     "@portabletext/to-html": "^6.0.0",
     "@portabletext/types": "^4.0.2",
     "@sanity/client": "^7.26.2",

@@ -45,10 +45,14 @@ jobs:
       - name: Configure Cloudflare Worker Secrets (dev)
         run: |
           echo "$SANITY_API_READ_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_API_READ_TOKEN
+          if [ -n "$OPENROUTER_API_KEY" ]; then
+            echo "$OPENROUTER_API_KEY" | pnpm --filter @codingcatdev/site exec wrangler secret put OPENROUTER_API_KEY
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Deploy to Cloudflare Workers (dev.codingcat.dev)
         run: pnpm --filter @codingcatdev/site exec wrangler deploy
@@ -87,10 +91,14 @@ jobs:
       - name: Configure Cloudflare Worker Secrets (production)
         run: |
           echo "$SANITY_API_READ_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_API_READ_TOKEN --env production
+          if [ -n "$OPENROUTER_API_KEY" ]; then
+            echo "$OPENROUTER_API_KEY" | pnpm --filter @codingcatdev/site exec wrangler secret put OPENROUTER_API_KEY --env production
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Deploy to Cloudflare Workers (codingcat.dev)
         run: pnpm --filter @codingcatdev/site exec wrangler deploy --env production

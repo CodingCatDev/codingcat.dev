@@ -3,6 +3,7 @@ import { createMCPClient } from "@ai-sdk/mcp";
 import { createClient } from "@sanity/client";
 import { isStepCount, jsonSchema, streamText, tool } from "ai";
 import type { APIRoute } from "astro";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createWorkersAI } from "workers-ai-provider";
 import {
 	semanticSearchQuery,
@@ -338,27 +339,39 @@ export const POST: APIRoute = async ({ request }) => {
 			},
 		};
 
-		// 2. Setup Cloudflare Workers AI model
-		const aiBinding = cfEnv?.AI;
-		if (!aiBinding) {
-			await mcpClient.close();
-			return new Response(
-				JSON.stringify({
-					error:
-						"Cloudflare Workers AI binding is not available in the current environment.",
-				}),
-				{
-					status: 500,
-					headers: {
-						"content-type": "application/json; charset=utf-8",
-						"access-control-allow-origin": "*",
-					},
-				},
-			);
-		}
+		// 2. Setup AI Model (prefer OpenRouter when configured, fallback to Workers AI)
+		const openRouterApiKey =
+			(cfEnv?.OPENROUTER_API_KEY as string | undefined) ||
+			process.env.OPENROUTER_API_KEY;
 
-		const workersai = createWorkersAI({ binding: aiBinding as any });
-		const model = workersai("@cf/meta/llama-3.3-70b-instruct-fp8-fast");
+		let model: any;
+		if (openRouterApiKey) {
+			const openrouter = createOpenRouter({
+				apiKey: openRouterApiKey,
+			});
+			// Use meta-llama/llama-3.3-70b-instruct or deepseek/deepseek-chat via OpenRouter
+			model = openrouter("meta-llama/llama-3.3-70b-instruct");
+		} else {
+			const aiBinding = cfEnv?.AI;
+			if (!aiBinding) {
+				await mcpClient.close();
+				return new Response(
+					JSON.stringify({
+						error:
+							"Neither OPENROUTER_API_KEY nor Cloudflare Workers AI binding is configured.",
+					}),
+					{
+						status: 500,
+						headers: {
+							"content-type": "application/json; charset=utf-8",
+							"access-control-allow-origin": "*",
+						},
+					},
+				);
+			}
+			const workersai = createWorkersAI({ binding: aiBinding as any });
+			model = workersai("@cf/meta/llama-3.1-8b-instruct");
+		}
 
 		// 3. Stream model response with multi-step tool calling
 		const result = streamText({
@@ -371,7 +384,7 @@ export const POST: APIRoute = async ({ request }) => {
 				"- When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
 				"- Use `groq_query` for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
 				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Title](/podcast/slug) or [Title](/post/slug)). If YouTube links are available, include them. Never use localhost or absolute domain URLs.",
+				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When YouTube links are available, always include them directly on their own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER output localhost URLs, internal IP addresses, or malformed URL brackets like [\"/slug\"](http://localhost:3000/slug).",
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(5),
