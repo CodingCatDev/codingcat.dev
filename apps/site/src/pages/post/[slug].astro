@@ -11,7 +11,7 @@ import TranscriptModal from "@/components/TranscriptModal.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { morePostQuery, postQuery } from "@/lib/sanity/queries";
-import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
+import { articleSchema, breadcrumbSchema, videoObjectSchema } from "@/lib/structured-data";
 
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
@@ -31,6 +31,20 @@ const path = `/post/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
 const ogImage = sanity.resolveOpenGraphImage(post.coverImage ?? undefined);
 const authors = post.author ?? [];
+const videoSchema = post.youtube
+	? videoObjectSchema(
+			origin,
+			{
+				title: post.title,
+				description: post.excerpt,
+				uploadDate: post.date,
+				thumbnailUrl: ogImage?.url,
+				youtubeUrl: post.youtube,
+				durationSeconds: post.transcript?.durationSeconds,
+			},
+			path,
+		)
+	: null;
 ---
 
 <BaseLayout
@@ -56,6 +70,7 @@ const authors = post.author ?? [];
 			{ name: "Blog", path: "/blog/page/1" },
 			{ name: post.title, path },
 		]),
+		...(videoSchema ? [videoSchema] : []),
 	]}
 >
 	<Breadcrumbs links={[{ title: "Blog", href: "/blog/page/1" }, { title: post.title }]} />
