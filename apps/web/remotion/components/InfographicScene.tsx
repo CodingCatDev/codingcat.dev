@@ -7,6 +7,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { FONT_SIZES } from "../constants";
+import { KineticCaptions } from "./KineticCaptions";
 
 /**
  * InfographicScene — cycles through multiple infographic images with
@@ -214,6 +215,16 @@ export const InfographicScene: React.FC<InfographicSceneProps> = ({
           pointerEvents: "none",
         }}
       />
+
+      {/* Kinetic word-by-word captions for 9:16 vertical Shorts */}
+      {isVertical && narration && (
+        <KineticCaptions
+          narration={narration}
+          wordTimestamps={wordTimestamps}
+          durationInFrames={durationInFrames}
+          isVertical={isVertical}
+        />
+      )}
 
       {/* Watermark — subtle, bottom-right */}
       <div

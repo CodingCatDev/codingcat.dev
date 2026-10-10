@@ -22,7 +22,7 @@ export async function generateWithGemini(
 	prompt: string,
 	systemInstruction?: string,
 ): Promise<string> {
-	const geminiModel = await getConfigValue("pipeline_config", "geminiModel", "gemini-2.0-flash");
+	const geminiModel = await getConfigValue("pipeline_config", "geminiModel", "gemini-2.5-flash");
 	const ai = getAI();
 	const response = await ai.models.generateContent({
 		model: geminiModel,

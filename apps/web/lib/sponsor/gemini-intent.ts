@@ -30,7 +30,7 @@ export async function extractSponsorIntent(message: string): Promise<SponsorInte
     }
   }
 
-  const geminiModel = await getConfigValue('pipeline_config', 'geminiModel', 'gemini-2.0-flash')
+  const geminiModel = await getConfigValue('pipeline_config', 'geminiModel', 'gemini-2.5-flash')
   const ai = new GoogleGenAI({ apiKey })
 
   const prompt = `You are analyzing an inbound sponsorship inquiry for CodingCat.dev, a developer education platform with YouTube videos, podcasts, blog posts, and newsletters.

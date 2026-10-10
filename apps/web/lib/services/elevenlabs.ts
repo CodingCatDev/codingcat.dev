@@ -6,6 +6,7 @@
  *   script text → ElevenLabs TTS → MP3 audio → upload to GCS → Remotion render
  */
 
+import { GoogleGenAI } from "@google/genai";
 import {
   aggregateToWordTimestamps,
   type CharacterAlignment,
@@ -15,6 +16,119 @@ import {
 import { getConfigValue } from "@/lib/config";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";
+const GEMINI_TTS_MODEL = "gemini-2.5-flash-preview-tts";
+
+/**
+ * Wrap raw 24kHz 16-bit mono PCM audio bytes returned by Gemini TTS into a valid WAV file buffer.
+ */
+function wrapPcmInWavHeader(pcmData: Buffer, sampleRate = 24000): Buffer {
+  const numChannels = 1;
+  const bitsPerSample = 16;
+  const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+  const blockAlign = (numChannels * bitsPerSample) / 8;
+  const dataSize = pcmData.length;
+  const header = Buffer.alloc(44);
+
+  header.write("RIFF", 0);
+  header.writeUInt32LE(36 + dataSize, 4);
+  header.write("WAVE", 8);
+  header.write("fmt ", 12);
+  header.writeUInt32LE(16, 16); // Subchunk1Size (16 for PCM)
+  header.writeUInt16LE(1, 20); // AudioFormat (1 = PCM)
+  header.writeUInt16LE(numChannels, 22);
+  header.writeUInt32LE(sampleRate, 24);
+  header.writeUInt32LE(byteRate, 28);
+  header.writeUInt16LE(blockAlign, 32);
+  header.writeUInt16LE(bitsPerSample, 34);
+  header.write("data", 36);
+  header.writeUInt32LE(dataSize, 40);
+
+  return Buffer.concat([header, pcmData]);
+}
+
+/**
+ * Synthesize speech and compute proportional word timestamps using Gemini 2.5 Flash Native TTS.
+ * Used automatically when ElevenLabs is unconfigured or returns a 401/402/429 quota error.
+ */
+export async function generateSpeechWithGeminiFallback(
+  text: string
+): Promise<SceneAudioResult> {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey) {
+    throw new Error(
+      "Both ElevenLabs TTS and GEMINI_API_KEY fallback are unavailable."
+    );
+  }
+
+  console.log(
+    `[tts-fallback] Using ${GEMINI_TTS_MODEL} for speech synthesis (${text.length} chars)...`
+  );
+
+  const ai = new GoogleGenAI({ apiKey: geminiKey });
+  const response = await ai.models.generateContent({
+    model: GEMINI_TTS_MODEL,
+    contents: [{ parts: [{ text }] }],
+    config: {
+      responseModalities: ["AUDIO"],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: {
+            voiceName: "Puck",
+          },
+        },
+      },
+    },
+  });
+
+  const inlineData =
+    response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+  if (!inlineData?.data) {
+    throw new Error("Gemini TTS fallback returned no inline audio data.");
+  }
+
+  const rawBuffer = Buffer.from(inlineData.data, "base64");
+  const isAlreadyContainer =
+    inlineData.mimeType?.includes("wav") ||
+    inlineData.mimeType?.includes("mp3") ||
+    rawBuffer.subarray(0, 4).toString("ascii") === "RIFF";
+
+  const audioBuffer = isAlreadyContainer
+    ? rawBuffer
+    : wrapPcmInWavHeader(rawBuffer, 24000);
+  const pcmByteLength = isAlreadyContainer
+    ? Math.max(0, audioBuffer.length - 44)
+    : rawBuffer.length;
+  // 24,000 Hz * 2 bytes per sample = 48,000 bytes/sec
+  const durationMs = Math.max(
+    500,
+    Math.round((pcmByteLength / 48000) * 1000)
+  );
+
+  const words = text
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0);
+  const totalChars = words.reduce((sum, w) => sum + w.length + 1, 0);
+  let cursorMs = 0;
+  const wordTimestamps: WordTimestamp[] = words.map((word) => {
+    const weight = (word.length + 1) / Math.max(1, totalChars);
+    const wordDur = weight * durationMs;
+    const item: WordTimestamp = {
+      text: word,
+      startMs: Math.round(cursorMs),
+      endMs: Math.round(cursorMs + wordDur),
+    };
+    cursorMs += wordDur;
+    return item;
+  });
+
+  return {
+    audioBase64: audioBuffer.toString("base64"),
+    audioBuffer,
+    wordTimestamps,
+    durationMs,
+  };
+}
 
 /** Configuration for the ElevenLabs TTS service. */
 export type ElevenLabsConfig = {
@@ -81,26 +195,17 @@ async function getElevenLabsConfig(): Promise<ElevenLabsConfig> {
 }
 
 /**
- * Generate speech audio from plain text using the ElevenLabs TTS API.
- *
- * Calls the ElevenLabs v1 text-to-speech endpoint with the
- * `eleven_multilingual_v2` model and returns the resulting MP3 audio
- * as a Node.js `Buffer`.
- *
- * @param text - The text to convert to speech.
- * @returns A `Buffer` containing the MP3 audio data.
- * @throws {Error} If the text is empty, env vars are missing, or the API request fails.
- *
- * @example
- * ```ts
- * import { generateSpeech } from "@/lib/services/elevenlabs";
- *
- * const mp3Buffer = await generateSpeech("Hello from CodingCat.dev!");
- * ```
+ * Generate speech audio from plain text using the ElevenLabs TTS API,
+ * falling back to Gemini 2.5 Flash Native Audio TTS on quota/auth errors.
  */
 export async function generateSpeech(text: string): Promise<Buffer> {
   if (!text || text.trim().length === 0) {
     throw new Error("Cannot generate speech from empty text.");
+  }
+
+  if (!process.env.ELEVENLABS_API_KEY && process.env.GEMINI_API_KEY) {
+    const fallback = await generateSpeechWithGeminiFallback(text);
+    return fallback.audioBuffer;
   }
 
   const { apiKey, voiceId } = await getElevenLabsConfig();
@@ -146,6 +251,19 @@ export async function generateSpeech(text: string): Promise<Buffer> {
         JSON.stringify(errorBody);
     } catch {
       errorDetail = response.statusText || "Unknown error";
+    }
+
+    if (
+      (response.status === 401 ||
+        response.status === 402 ||
+        response.status === 429) &&
+      process.env.GEMINI_API_KEY
+    ) {
+      console.warn(
+        `[elevenlabs] ElevenLabs returned ${response.status} (${errorDetail}). Falling back to Gemini 2.5 TTS...`
+      );
+      const fallback = await generateSpeechWithGeminiFallback(text);
+      return fallback.audioBuffer;
     }
 
     throw new Error(
@@ -241,6 +359,10 @@ export async function generateSpeechWithTimestamps(
     throw new Error("Cannot generate speech from empty text.");
   }
 
+  if (!process.env.ELEVENLABS_API_KEY && process.env.GEMINI_API_KEY) {
+    return generateSpeechWithGeminiFallback(text);
+  }
+
   const { apiKey, voiceId } = await getElevenLabsConfig();
 
   const url = `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}/with-timestamps`;
@@ -283,6 +405,19 @@ export async function generateSpeechWithTimestamps(
     } catch {
       errorDetail = response.statusText || "Unknown error";
     }
+
+    if (
+      (response.status === 401 ||
+        response.status === 402 ||
+        response.status === 429) &&
+      process.env.GEMINI_API_KEY
+    ) {
+      console.warn(
+        `[elevenlabs] ElevenLabs timestamps API returned ${response.status} (${errorDetail}). Falling back to Gemini 2.5 TTS...`
+      );
+      return generateSpeechWithGeminiFallback(text);
+    }
+
     throw new Error(
       `ElevenLabs timestamps API error (${response.status}): ${errorDetail}`
     );

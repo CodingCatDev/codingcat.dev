@@ -70,13 +70,69 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 		useCdn: false,
 	});
 
-	// Query all posts and podcasts with YouTube URLs
+	// Step 0: Sync any published automatedVideo Shorts into standalone `_type == "short"` documents
+	const autoShortDocs = await client.fetch<
+		Array<{
+			_id: string;
+			_createdAt: string;
+			title: string;
+			slug?: { current?: string };
+			youtubeShortId: string;
+			shortUrl?: string;
+			hook?: string;
+		}>
+	>(
+		`*[_type == "automatedVideo" && defined(youtubeShortId) && !(_id in path("drafts.**"))]{
+			_id,
+			_createdAt,
+			title,
+			slug,
+			youtubeShortId,
+			shortUrl,
+			"hook": script.hook
+		}`,
+	);
+
+	for (const autoShort of autoShortDocs) {
+		const shortId = `short-${autoShort.youtubeShortId}`;
+		const slugCurrent =
+			autoShort.slug?.current ||
+			autoShort.title
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, "-")
+				.replace(/(^-|-$)/g, "")
+				.slice(0, 90);
+		await client
+			.createIfNotExists({
+				_id: shortId,
+				_type: "short",
+				title: autoShort.title,
+				slug: { _type: "slug", current: slugCurrent },
+				description: autoShort.hook || undefined,
+				youtube: `https://www.youtube.com/shorts/${autoShort.youtubeShortId}`,
+				shortVideoUrl: autoShort.shortUrl || undefined,
+				sourceAutomatedVideo: {
+					_type: "reference",
+					_ref: autoShort._id,
+				},
+				publishedAt: autoShort._createdAt,
+				duration: 60,
+			})
+			.catch((err) => {
+				console.warn(
+					`[Sync YouTube Analytics] Could not createIfNotExists short ${shortId}:`,
+					err,
+				);
+			});
+	}
+
+	// Query all posts, podcasts, and shorts with YouTube URLs
 	console.log(
 		`[Sync YouTube Analytics] Fetching documents with YouTube URLs in project ${projectId}, dataset ${dataset}...`,
 	);
 
 	const docs = await client.fetch<TargetVideoDoc[]>(
-		`*[_type in ["post", "podcast"] && (defined(youtube) || defined(listenLinks.youtube)) && !(_id in path("drafts.**"))]{
+		`*[_type in ["post", "podcast", "short"] && (defined(youtube) || defined(listenLinks.youtube)) && !(_id in path("drafts.**"))]{
 			_id,
 			_type,
 			title,

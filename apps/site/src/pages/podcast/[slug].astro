@@ -17,6 +17,8 @@ import { morePodcastQuery, podcastQuery } from "@/lib/sanity/queries";
 import {
 	articleSchema,
 	breadcrumbSchema,
+	extractFaqsFromPortableText,
+	faqSchema,
 	podcastEpisodeSchema,
 	videoObjectSchema,
 } from "@/lib/structured-data";
@@ -55,6 +57,7 @@ const videoSchema = podcast.youtube
 			path,
 		)
 	: null;
+const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 ---
 
 <BaseLayout
@@ -103,6 +106,7 @@ const videoSchema = podcast.youtube
 			{ name: podcast.title, path },
 		]),
 		...(videoSchema ? [videoSchema] : []),
+		...(faqNode ? [faqNode] : []),
 	]}
 >
 	<Breadcrumbs
