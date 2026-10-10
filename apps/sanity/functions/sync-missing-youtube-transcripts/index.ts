@@ -447,6 +447,9 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 				`[Sync Missing YouTube Transcripts] Successfully linked ${transcriptId} to document ${doc._id}.`,
 			);
 			successCount++;
+
+			// Rate-limit delay: wait 3.5s between video requests to avoid YouTube 429 rate limits
+			await new Promise((resolve) => setTimeout(resolve, 3500));
 		} catch (err) {
 			console.error(
 				`[Sync Missing YouTube Transcripts] Failed to process ${doc._id} (${youtubeId}):`,
