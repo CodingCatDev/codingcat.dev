@@ -36,6 +36,8 @@ export function organizationSchema(origin: string, logoUrl?: string): Node {
 			"https://www.youtube.com/@CodingCatDev",
 			"https://twitter.com/CodingCatDev",
 			"https://github.com/codingcatdev",
+			"https://www.linkedin.com/company/codingcatdev",
+			"https://bsky.app/profile/codingcat.dev",
 		],
 	};
 }
@@ -157,6 +159,65 @@ export function personSchema(
 		...(content.imageUrl ? { image: content.imageUrl } : {}),
 		...(sameAs.length ? { sameAs } : {}),
 		url,
+	};
+}
+
+export function videoObjectSchema(
+	origin: string,
+	video: {
+		title?: string | null;
+		description?: string | null;
+		uploadDate?: string | null;
+		thumbnailUrl?: string;
+		youtubeUrl?: string | null;
+		durationSeconds?: number | null;
+	},
+	path: string,
+): Node | null {
+	if (!video.youtubeUrl) return null;
+
+	const url = absoluteUrl(path, origin);
+	// Format ISO 8601 duration: PT#M#S or PT#S
+	let durationIso: string | undefined;
+	if (video.durationSeconds && video.durationSeconds > 0) {
+		const hours = Math.floor(video.durationSeconds / 3600);
+		const minutes = Math.floor((video.durationSeconds % 3600) / 60);
+		const seconds = Math.floor(video.durationSeconds % 60);
+		let d = "PT";
+		if (hours > 0) d += `${hours}H`;
+		if (minutes > 0) d += `${minutes}M`;
+		if (seconds > 0 || d === "PT") d += `${seconds}S`;
+		durationIso = d;
+	}
+
+	return {
+		"@type": "VideoObject",
+		"@id": `${url}#video`,
+		name: video.title ?? undefined,
+		description: video.description ?? undefined,
+		...(video.thumbnailUrl ? { thumbnailUrl: [video.thumbnailUrl] } : {}),
+		...(video.uploadDate ? { uploadDate: video.uploadDate } : {}),
+		...(durationIso ? { duration: durationIso } : {}),
+		contentUrl: video.youtubeUrl,
+		embedUrl: video.youtubeUrl.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/"),
+	};
+}
+
+export function faqSchema(
+	faqs: Array<{ question: string; answer: string }>,
+): Node | null {
+	if (!faqs || faqs.length === 0) return null;
+
+	return {
+		"@type": "FAQPage",
+		mainEntity: faqs.map((faq) => ({
+			"@type": "Question",
+			name: faq.question,
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: faq.answer,
+			},
+		})),
 	};
 }
 
