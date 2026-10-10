@@ -176,9 +176,9 @@ async function run() {
       : (doc.excerpt || "");
 
     const hashnodeTags = [
-      { id: "56744721958ef13879b94cad", name: "JavaScript", slug: "javascript" },
-      { id: "56744722958ef13879b94f1b", name: "Web Development", slug: "web-development" },
-      { id: "56744723958ef13879b955a9", name: "Beginner Developers", slug: "beginners" },
+      { name: "JavaScript", slug: "javascript" },
+      { name: "Web Development", slug: "web-development" },
+      { name: "Beginner Developers", slug: "beginners" },
     ];
 
     const hashnodeCoverImageUrl = urlForImage(doc.coverImage)?.width(1600).height(840).url() || "";
