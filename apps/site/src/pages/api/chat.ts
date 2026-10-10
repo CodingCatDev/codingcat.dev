@@ -208,6 +208,7 @@ export const POST: APIRoute = async ({ request }) => {
 						slug: item.slug,
 						url: `/${item._type === "podcast" ? "podcast" : item._type === "post" ? "post" : item._type}/${item.slug}`,
 						excerpt: item.excerpt || item.transcriptSummary || "",
+						youtube: item.youtube || undefined,
 					}));
 				},
 			}),
@@ -398,7 +399,7 @@ export const POST: APIRoute = async ({ request }) => {
 				"- When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
 				"- Use `groq_query` for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
 				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				'- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When YouTube links are available, always include them directly on their own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER output localhost URLs, internal IP addresses, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).',
+				'- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When an exact YouTube URL is present in the tool results (e.g. item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).',
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(5),
