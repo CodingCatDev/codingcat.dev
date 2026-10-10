@@ -44,7 +44,9 @@ export const GET: APIRoute = async ({ request }) => {
 
 	if (!idParam && !slugParam && !youtubeParam) {
 		return new Response(
-			JSON.stringify({ error: "Missing required query parameter: id, slug, or youtube" }),
+			JSON.stringify({
+				error: "Missing required query parameter: id, slug, or youtube",
+			}),
 			{ status: 400, headers: CORS_HEADERS },
 		);
 	}
@@ -109,7 +111,8 @@ export const GET: APIRoute = async ({ request }) => {
 	// 3. Try finding by YouTube video ID
 	if (!transcriptDoc && youtubeParam) {
 		const parsedYt = parseYoutubeId(youtubeParam);
-		const ytId = parsedYt || (youtubeParam.length === 11 ? youtubeParam : undefined);
+		const ytId =
+			parsedYt || (youtubeParam.length === 11 ? youtubeParam : undefined);
 		if (ytId) {
 			try {
 				transcriptDoc = await client.fetch(
@@ -134,16 +137,13 @@ export const GET: APIRoute = async ({ request }) => {
 
 	// If no transcript found in Sanity
 	if (!transcriptDoc) {
-		return new Response(
-			JSON.stringify({ error: "Transcript not found" }),
-			{
-				status: 404,
-				headers: {
-					...CORS_HEADERS,
-					"cache-control": "no-store, no-cache, must-revalidate",
-				},
+		return new Response(JSON.stringify({ error: "Transcript not found" }), {
+			status: 404,
+			headers: {
+				...CORS_HEADERS,
+				"cache-control": "no-store, no-cache, must-revalidate",
 			},
-		);
+		});
 	}
 
 	// If transcript exists in Sanity with completed captions

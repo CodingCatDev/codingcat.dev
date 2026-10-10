@@ -1,9 +1,9 @@
 import { env } from "cloudflare:workers";
 import { createMCPClient } from "@ai-sdk/mcp";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createClient } from "@sanity/client";
 import { isStepCount, jsonSchema, streamText, tool } from "ai";
 import type { APIRoute } from "astro";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createWorkersAI } from "workers-ai-provider";
 import {
 	semanticSearchQuery,
@@ -179,15 +179,21 @@ export const POST: APIRoute = async ({ request }) => {
 							results = res;
 						}
 					} catch (semanticErr) {
-						console.warn("[search_content semantic error, falling back]", semanticErr);
+						console.warn(
+							"[search_content semantic error, falling back]",
+							semanticErr,
+						);
 					}
 
 					if (!results.length) {
 						try {
-							const fallback = await sanityClient.fetch(textSearchFallbackQuery, {
-								searchTerm: query,
-								type: filterType,
-							});
+							const fallback = await sanityClient.fetch(
+								textSearchFallbackQuery,
+								{
+									searchTerm: query,
+									type: filterType,
+								},
+							);
 							if (Array.isArray(fallback)) {
 								results = fallback;
 							}
@@ -271,9 +277,7 @@ export const POST: APIRoute = async ({ request }) => {
 							{} as any,
 						);
 						const parsed =
-							typeof mcpResult === "string"
-								? JSON.parse(mcpResult)
-								: mcpResult;
+							typeof mcpResult === "string" ? JSON.parse(mcpResult) : mcpResult;
 						const results =
 							parsed?.result ||
 							(Array.isArray(parsed?.content) && parsed.content[0]?.text
@@ -307,16 +311,26 @@ export const POST: APIRoute = async ({ request }) => {
 						}
 
 						// If still empty and query was a search for a keyword, extract keyword and run semantic search
-						const matchTerm = query.match(/match\s+["']\*?([a-zA-Z0-9_-]+)\*?["']/);
+						const matchTerm = query.match(
+							/match\s+["']\*?([a-zA-Z0-9_-]+)\*?["']/,
+						);
 						if (matchTerm?.[1]) {
 							const keyword = matchTerm[1];
-							const typeMatch = query.match(/_type\s*==\s*["']([a-zA-Z0-9_-]+)["']/);
+							const typeMatch = query.match(
+								/_type\s*==\s*["']([a-zA-Z0-9_-]+)["']/,
+							);
 							const filterType = typeMatch?.[1] || null;
-							const semanticResults = await sanityClient.fetch(semanticSearchQuery, {
-								searchTerm: keyword,
-								type: filterType,
-							});
-							if (Array.isArray(semanticResults) && semanticResults.length > 0) {
+							const semanticResults = await sanityClient.fetch(
+								semanticSearchQuery,
+								{
+									searchTerm: keyword,
+									type: filterType,
+								},
+							);
+							if (
+								Array.isArray(semanticResults) &&
+								semanticResults.length > 0
+							) {
 								return semanticResults.slice(0, 10).map((item: any) => ({
 									title: item.title,
 									type: item._type,
@@ -384,7 +398,7 @@ export const POST: APIRoute = async ({ request }) => {
 				"- When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
 				"- Use `groq_query` for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
 				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				"- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When YouTube links are available, always include them directly on their own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER output localhost URLs, internal IP addresses, or malformed URL brackets like [\"/slug\"](http://localhost:3000/slug).",
+				'- Once you receive results from your tool calls, synthesize them into an engaging, helpful response. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When YouTube links are available, always include them directly on their own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER output localhost URLs, internal IP addresses, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).',
 			messages: coreMessages,
 			tools,
 			stopWhen: isStepCount(5),

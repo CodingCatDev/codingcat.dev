@@ -57,7 +57,8 @@ export const GET: APIRoute = async ({ locals }) => {
 						},
 						limit: {
 							type: "integer",
-							description: "Number of results to return (default: 10, max: 24).",
+							description:
+								"Number of results to return (default: 10, max: 24).",
 						},
 					},
 					required: ["query"],
