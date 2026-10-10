@@ -28,23 +28,10 @@ export default defineType({
 			validation: (rule) => rule.required(),
 		}),
 		defineField({
-			name: "description",
-			title: "Description / Hook",
-			type: "text",
-			rows: 3,
-			description: "Short hook or summary for SEO/AEO and card previews",
-		}),
-		defineField({
 			name: "youtube",
 			title: "YouTube",
 			type: "string",
 			description: "YouTube Shorts video ID or URL",
-		}),
-		defineField({
-			name: "shortVideoUrl",
-			title: "Direct MP4 Video URL",
-			type: "url",
-			description: "Direct Sanity CDN or R2 MP4 URL for native vertical video playback",
 		}),
 		defineField({
 			name: "thumbnail",
@@ -63,13 +50,6 @@ export default defineType({
 			description: "Long-form episode this Short was clipped from",
 		}),
 		defineField({
-			name: "sourceAutomatedVideo",
-			title: "Source Automated Video",
-			type: "reference",
-			to: [{ type: "automatedVideo" }],
-			description: "Automated video pipeline run that produced this Short",
-		}),
-		defineField({
 			name: "publishedAt",
 			title: "Published At",
 			type: "datetime",
@@ -79,24 +59,6 @@ export default defineType({
 			title: "Duration",
 			type: "number",
 			description: "Duration in seconds",
-		}),
-		defineField({
-			name: "statistics",
-			title: "Statistics",
-			type: "object",
-			fields: [
-				defineField({
-					name: "youtube",
-					title: "YouTube Statistics",
-					type: "object",
-					fields: [
-						defineField({ name: "viewCount", title: "Views", type: "number" }),
-						defineField({ name: "likeCount", title: "Likes", type: "number" }),
-						defineField({ name: "commentCount", title: "Comments", type: "number" }),
-						defineField({ name: "favoriteCount", title: "Favorites", type: "number" }),
-					],
-				}),
-			],
 		}),
 		defineField({
 			name: "categories",

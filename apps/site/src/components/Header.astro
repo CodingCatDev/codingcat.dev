@@ -5,13 +5,7 @@ import ThemeToggle from "./ThemeToggle.astro";
 import SearchModal from "./SearchModal.astro";
 
 const settings = await Astro.locals.sanity.loadQuery(settingsQuery);
-const rawNavLinks = settings?.navLinks ?? [];
-const navLinks = rawNavLinks.some((link) => link?.path === "/shorts")
-	? rawNavLinks
-	: [
-			...rawNavLinks,
-			{ _key: "shorts-nav", path: "/shorts", title: "Shorts", sideOnly: false },
-		];
+const navLinks = settings?.navLinks ?? [];
 
 // The Next header split these across a desktop <nav> and a mobile Sheet;
 // `sideOnly` links appear only in the drawer.
