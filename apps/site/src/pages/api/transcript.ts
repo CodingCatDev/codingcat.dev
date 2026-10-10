@@ -62,15 +62,16 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 		});
 
 		if (!response.ok) {
-			return { cues: [], fullText: "", status: "no_caption_available" };
+			return { cues: [], fullText: "", status: "no_caption_available", error: `innertube_http_${response.status}` };
 		}
 
 		const data: any = await response.json();
+		const playability = data?.playabilityStatus?.status;
 		const captionTracks =
 			data?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
 
 		if (!Array.isArray(captionTracks) || captionTracks.length === 0) {
-			return { cues: [], fullText: "", status: "no_caption_available" };
+			return { cues: [], fullText: "", status: "no_caption_available", error: `no_tracks_playability_${playability}` };
 		}
 
 		// Prefer English track or default to first
@@ -82,15 +83,18 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 			) || captionTracks[0];
 
 		if (!track?.baseUrl) {
-			return { cues: [], fullText: "", status: "no_caption_available" };
+			return { cues: [], fullText: "", status: "no_caption_available", error: "missing_track_baseUrl" };
 		}
 
 		const captionResp = await fetch(track.baseUrl);
 		if (!captionResp.ok) {
-			return { cues: [], fullText: "", status: "no_caption_available" };
+			return { cues: [], fullText: "", status: "no_caption_available", error: `caption_fetch_http_${captionResp.status}` };
 		}
 
 		const xml = await captionResp.text();
+		if (!xml || xml.length === 0) {
+			return { cues: [], fullText: "", status: "no_caption_available", error: "caption_xml_empty" };
+		}
 		const cues: Cue[] = [];
 
 		// Try srv3 format (<p t="ms" d="ms">text</p>)
