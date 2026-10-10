@@ -124,12 +124,14 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 		}
 
 		const data = await response.json();
+		const playability = data?.playabilityStatus?.status;
+		const playabilityReason = data?.playabilityStatus?.reason;
 		const captionTracks =
 			data?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
 
 		if (!Array.isArray(captionTracks) || captionTracks.length === 0) {
 			console.log(
-				`[Sync Missing YouTube Transcripts] No caption tracks found for video: ${videoId}`,
+				`[Sync Missing YouTube Transcripts] No caption tracks found for video: ${videoId}. (Playability: ${playability}, Reason: ${playabilityReason}, VisitorData: ${Boolean(visitorData)})`,
 			);
 			return { cues: [], fullText: "", status: "no_caption_available" };
 		}
