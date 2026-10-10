@@ -16,6 +16,7 @@ interface ContentDocument {
 	episode?: number;
 	devto?: string;
 	hashnode?: string;
+	syndications?: Array<{ _type: "reference"; _ref: string; _key?: string }>;
 }
 
 export const handler = documentEventHandler<ContentDocument>(
@@ -36,8 +37,14 @@ export const handler = documentEventHandler<ContentDocument>(
 		const isProduction = dataset === "production";
 		const projectId = context.clientOptions?.projectId || "hfh83o0w";
 
+		const token =
+			context.clientOptions?.token ||
+			process.env.SANITY_API_WRITE_TOKEN ||
+			process.env.SANITY_AUTH_TOKEN;
+
 		const client = createClient({
 			...context.clientOptions,
+			token,
 			apiVersion: "2025-09-30",
 		});
 
@@ -352,7 +359,7 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					if (existingHashnodeSlug && !existingHashnodeSlug.startsWith("simulated-")) {
 						// Lookup post ID from Hashnode
-						const getPostRes = await fetch("https://gql.hashnode.com", {
+						const getPostRes = await fetch("https://gql-beta.hashnode.com", {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
@@ -378,7 +385,7 @@ export const handler = documentEventHandler<ContentDocument>(
 							const updateInput = { ...articleInput };
 							delete updateInput.slug; // slug cannot be updated
 
-							const updateRes = await fetch("https://gql.hashnode.com", {
+							const updateRes = await fetch("https://gql-beta.hashnode.com", {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json",
@@ -412,7 +419,7 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					if (!publishedPost) {
 						// Create post mutation
-						const publishRes = await fetch("https://gql.hashnode.com", {
+						const publishRes = await fetch("https://gql-beta.hashnode.com", {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
@@ -490,6 +497,36 @@ export const handler = documentEventHandler<ContentDocument>(
 					error: errMsg,
 				});
 			}
+		}
+
+		// Update parent document's `syndications` reference array to maintain strong bidirectional links
+		try {
+			const expectedRefs = platforms.map((p) => `syndication.${data._id}.${p}`);
+			const existingRefs = (data.syndications || []).map((s) => s._ref);
+
+			const newRefs = expectedRefs.filter((ref) => !existingRefs.includes(ref));
+			if (newRefs.length > 0) {
+				const referencesToAppend = newRefs.map((ref) => ({
+					_key: `syn_${ref.replace(/[^a-zA-Z0-9]/g, "_")}`,
+					_type: "reference" as const,
+					_ref: ref,
+				}));
+
+				await client
+					.patch(data._id)
+					.setIfMissing({ syndications: [] })
+					.append("syndications", referencesToAppend)
+					.commit();
+
+				console.log(
+					`[Syndicate Content] Linked ${newRefs.length} syndication references to parent ${data._id}.`,
+				);
+			}
+		} catch (linkErr) {
+			console.warn(
+				`[Syndicate Content] Failed to link syndication references to parent ${data._id}:`,
+				linkErr,
+			);
 		}
 	},
 );
