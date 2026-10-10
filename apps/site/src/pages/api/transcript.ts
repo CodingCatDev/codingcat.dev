@@ -12,202 +12,6 @@ const CORS_HEADERS = {
 	"access-control-allow-headers": "Content-Type",
 };
 
-interface Cue {
-	start: number;
-	duration: number;
-	text: string;
-}
-
-function decodeHtmlEntities(text: string): string {
-	return text
-		.replace(/&amp;/g, "&")
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, '"')
-		.replace(/&#39;/g, "'")
-		.replace(/&apos;/g, "'")
-		.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
-			String.fromCodePoint(parseInt(hex, 16)),
-		)
-		.replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
-		.replace(/\s+/g, " ")
-		.trim();
-}
-
-async function fetchYouTubeCaptions(videoId: string): Promise<{
-	cues: Cue[];
-	fullText: string;
-	status: "completed" | "no_caption_available";
-	error?: string;
-}> {
-	// 1. Try Residential Bridge Service
-	try {
-		const bridgeResp = await fetch(`https://transcripts.codingcat.dev/transcript?videoId=${videoId}`, {
-			headers: {
-				Authorization: "Bearer e06fdac10c7c18aed27e47e3d18860121a0ca378288a3e04",
-			},
-		});
-		if (bridgeResp.ok) {
-			const data = (await bridgeResp.json()) as any;
-			if (data?.status === "completed" && Array.isArray(data?.cues) && data.cues.length > 0) {
-				return {
-					cues: data.cues,
-					fullText: data.fullText || data.cues.map((c: any) => c.text).join(" "),
-					status: "completed",
-				};
-			}
-		}
-	} catch (bridgeErr) {
-		console.warn("[transcript api] Bridge service call error:", bridgeErr);
-	}
-
-	const INNERTUBE_API_URL =
-		"https://www.youtube.com/youtubei/v1/player?prettyPrint=false";
-	const INNERTUBE_CLIENT_VERSION = "20.10.38";
-
-	try {
-		// Acquire fresh visitorData token to bypass LOGIN_REQUIRED in Cloudflare datacenters
-		let visitorData: string | undefined;
-		try {
-			const pageResp = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
-				headers: {
-					"User-Agent":
-						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-					"Accept-Language": "en-US,en;q=0.9",
-				},
-			});
-			if (pageResp.ok) {
-				const html = await pageResp.text();
-				const match = html.match(/"visitorData":"([^"]+)"/);
-				if (match) {
-					visitorData = match[1];
-				}
-			}
-		} catch {}
-
-		const requestHeaders: Record<string, string> = {
-			"Content-Type": "application/json",
-			"User-Agent": `com.google.android.youtube/${INNERTUBE_CLIENT_VERSION} (Linux; U; Android 14)`,
-		};
-		if (visitorData) {
-			requestHeaders["X-Goog-Visitor-Id"] = visitorData;
-		}
-
-		const response = await fetch(INNERTUBE_API_URL, {
-			method: "POST",
-			headers: requestHeaders,
-			body: JSON.stringify({
-				context: {
-					client: {
-						clientName: "ANDROID",
-						clientVersion: INNERTUBE_CLIENT_VERSION,
-						...(visitorData ? { visitorData } : {}),
-					},
-				},
-				videoId,
-			}),
-		});
-
-		if (!response.ok) {
-			return { cues: [], fullText: "", status: "no_caption_available", error: `innertube_http_${response.status}` };
-		}
-
-		const data: any = await response.json();
-		const playability = data?.playabilityStatus?.status;
-		const captionTracks =
-			data?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
-
-		if (!Array.isArray(captionTracks) || captionTracks.length === 0) {
-			return { cues: [], fullText: "", status: "no_caption_available", error: `no_tracks_playability_${playability}` };
-		}
-
-		// Prefer English track or default to first
-		const track =
-			captionTracks.find(
-				(t: any) =>
-					t?.languageCode?.toLowerCase().startsWith("en") ||
-					t?.name?.runs?.[0]?.text?.toLowerCase().includes("english"),
-			) || captionTracks[0];
-
-		if (!track?.baseUrl) {
-			return { cues: [], fullText: "", status: "no_caption_available", error: "missing_track_baseUrl" };
-		}
-
-		const captionResp = await fetch(track.baseUrl);
-		if (!captionResp.ok) {
-			return { cues: [], fullText: "", status: "no_caption_available", error: `caption_fetch_http_${captionResp.status}` };
-		}
-
-		const xml = await captionResp.text();
-		if (!xml || xml.length === 0) {
-			return { cues: [], fullText: "", status: "no_caption_available", error: "caption_xml_empty" };
-		}
-		const cues: Cue[] = [];
-
-		// Try srv3 format (<p t="ms" d="ms">text</p>)
-		const pRegex = /<p\s+t="(\d+)"(?:\s+d="(\d+)")?[^>]*>([\s\S]*?)<\/p>/g;
-		let match: RegExpExecArray | null;
-
-		while ((match = pRegex.exec(xml)) !== null) {
-			const startMs = parseInt(match[1], 10);
-			const durMs = match[2] ? parseInt(match[2], 10) : 3000;
-			const inner = match[3];
-
-			let text = "";
-			const sRegex = /<s[^>]*>([^<]*)<\/s>/g;
-			let sMatch: RegExpExecArray | null;
-			while ((sMatch = sRegex.exec(inner)) !== null) {
-				text += sMatch[1];
-			}
-			if (!text) {
-				text = inner.replace(/<[^>]+>/g, "");
-			}
-
-			text = decodeHtmlEntities(text);
-			if (text && !text.startsWith("[")) {
-				cues.push({
-					start: Math.round((startMs / 1000) * 100) / 100,
-					duration: Math.round((durMs / 1000) * 100) / 100,
-					text,
-				});
-			}
-		}
-
-		// Fallback to standard <text start="s" dur="s"> format
-		if (cues.length === 0) {
-			const textRegex =
-				/<text\s+start="([\d.]+)"(?:\s+dur="([\d.]+)")?[^>]*>([\s\S]*?)<\/text>/g;
-			while ((match = textRegex.exec(xml)) !== null) {
-				const start = parseFloat(match[1]);
-				const dur = match[2] ? parseFloat(match[2]) : 3.0;
-				let text = decodeHtmlEntities(match[3].replace(/<[^>]+>/g, ""));
-				if (text && !text.startsWith("[")) {
-					cues.push({
-						start: Math.round(start * 100) / 100,
-						duration: Math.round(dur * 100) / 100,
-						text,
-					});
-				}
-			}
-		}
-
-		const fullText = cues.map((c) => c.text).join(" ");
-		return {
-			cues,
-			fullText,
-			status: cues.length > 0 ? "completed" : "no_caption_available",
-		};
-	} catch (err: any) {
-		console.warn("[fetchYouTubeCaptions error]", err);
-		return {
-			cues: [],
-			fullText: "",
-			status: "no_caption_available",
-			error: err?.message || String(err),
-		};
-	}
-}
-
 function getSanityClient() {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
 	const token =
@@ -248,10 +52,9 @@ export const GET: APIRoute = async ({ request }) => {
 	const client = getSanityClient();
 
 	let transcriptDoc: any = null;
-	let ytId: string | undefined;
 	let parentDocTitle = "Transcript";
 
-	// 1. Try finding by ID
+	// 1. Try finding transcript document directly by ID
 	if (idParam) {
 		try {
 			transcriptDoc = await client.fetch(
@@ -270,13 +73,10 @@ export const GET: APIRoute = async ({ request }) => {
 				}`,
 				{ id: idParam },
 			);
-			if (transcriptDoc?.youtubeId) {
-				ytId = transcriptDoc.youtubeId;
-			}
 		} catch {}
 	}
 
-	// 2. Try finding by content slug
+	// 2. Try finding parent content (podcast or post) by slug
 	if (!transcriptDoc && slugParam) {
 		try {
 			const parent = await client.fetch(
@@ -302,15 +102,14 @@ export const GET: APIRoute = async ({ request }) => {
 			if (parent) {
 				parentDocTitle = parent.title || parentDocTitle;
 				transcriptDoc = parent.transcript;
-				ytId = parseYoutubeId(parent.youtube) || transcriptDoc?.youtubeId;
 			}
 		} catch {}
 	}
 
-	// 3. Try finding by YouTube ID
-	if (!transcriptDoc && (youtubeParam || ytId)) {
-		const rawYt = youtubeParam || ytId || "";
-		ytId = parseYoutubeId(rawYt) || (rawYt.length === 11 ? rawYt : undefined);
+	// 3. Try finding by YouTube video ID
+	if (!transcriptDoc && youtubeParam) {
+		const parsedYt = parseYoutubeId(youtubeParam);
+		const ytId = parsedYt || (youtubeParam.length === 11 ? youtubeParam : undefined);
 		if (ytId) {
 			try {
 				transcriptDoc = await client.fetch(
@@ -333,8 +132,22 @@ export const GET: APIRoute = async ({ request }) => {
 		}
 	}
 
-	// If we have a transcript in Sanity with real text, return it
-	if (transcriptDoc && transcriptDoc.fullText && transcriptDoc.fullText.trim().length > 50) {
+	// If no transcript found in Sanity
+	if (!transcriptDoc) {
+		return new Response(
+			JSON.stringify({ error: "Transcript not found" }),
+			{
+				status: 404,
+				headers: {
+					...CORS_HEADERS,
+					"cache-control": "no-store, no-cache, must-revalidate",
+				},
+			},
+		);
+	}
+
+	// If transcript exists in Sanity with completed captions
+	if (transcriptDoc.fullText && transcriptDoc.fullText.trim().length > 50) {
 		return new Response(
 			JSON.stringify(
 				{
@@ -360,84 +173,39 @@ export const GET: APIRoute = async ({ request }) => {
 				status: 200,
 				headers: {
 					...CORS_HEADERS,
-					"cache-control": "public, max-age=3600, s-maxage=86400",
+					"cache-control": "public, max-age=86400, s-maxage=604800",
 				},
 			},
 		);
 	}
 
-	// If Sanity doc is missing fullText, but we have a YouTube video ID, fetch on demand
-	const targetYtId = ytId || transcriptDoc?.youtubeId || parseYoutubeId(youtubeParam);
-	let captionsResult: any = null;
-	if (targetYtId) {
-		captionsResult = await fetchYouTubeCaptions(targetYtId);
-		if (captionsResult.status === "completed" && captionsResult.fullText.length > 50) {
-			return new Response(
-				JSON.stringify(
-					{
-						id: transcriptDoc?._id || `transcript-yt-${targetYtId}`,
-						title: transcriptDoc?.title || parentDocTitle,
-						youtubeUrl: `https://www.youtube.com/watch?v=${targetYtId}`,
-						duration: transcriptDoc?.duration || "",
-						durationSeconds: transcriptDoc?.durationSeconds || 0,
-						summary: transcriptDoc?.summary || "",
-						fullText: captionsResult.fullText,
-						chapters: transcriptDoc?.chapters || [],
-						cues: captionsResult.cues,
-						status: "completed",
-					},
-					null,
-					2,
-				),
-				{
-					status: 200,
-					headers: {
-						...CORS_HEADERS,
-						"cache-control": "public, max-age=86400, s-maxage=604800",
-					},
-				},
-			);
-		}
-	}
-
-	// If transcript exists but has only summary/chapters without captions
-	if (transcriptDoc) {
-		return new Response(
-			JSON.stringify(
-				{
-					id: transcriptDoc._id,
-					title: transcriptDoc.title || parentDocTitle,
-					youtubeUrl: transcriptDoc.youtubeUrl,
-					duration: transcriptDoc.duration,
-					summary: transcriptDoc.summary || "",
-					fullText:
-						transcriptDoc.fullText ||
-						transcriptDoc.summary ||
-						"No auto-generated captions were available for this video from YouTube.",
-					chapters: transcriptDoc.chapters || [],
-					cues: transcriptDoc.cues || [],
-					status: transcriptDoc.status || "no_caption_available",
-					_debug: {
-						targetYtId,
-						captionsStatus: captionsResult?.status,
-						captionsError: captionsResult?.error,
-					},
-				},
-				null,
-				2,
-			),
-			{
-				status: 200,
-				headers: {
-					...CORS_HEADERS,
-					"cache-control": "no-store, no-cache, must-revalidate",
-				},
-			},
-		);
-	}
-
+	// If transcript document exists in Sanity but captions have not synced yet
 	return new Response(
-		JSON.stringify({ error: "Transcript not found" }),
-		{ status: 404, headers: CORS_HEADERS },
+		JSON.stringify(
+			{
+				id: transcriptDoc._id,
+				title: transcriptDoc.title || parentDocTitle,
+				youtubeUrl: transcriptDoc.youtubeUrl,
+				duration: transcriptDoc.duration,
+				durationSeconds: transcriptDoc.durationSeconds,
+				summary: transcriptDoc.summary || "",
+				fullText:
+					transcriptDoc.fullText ||
+					transcriptDoc.summary ||
+					"Transcript is being processed.",
+				chapters: transcriptDoc.chapters || [],
+				cues: transcriptDoc.cues || [],
+				status: transcriptDoc.status || "pending",
+			},
+			null,
+			2,
+		),
+		{
+			status: 200,
+			headers: {
+				...CORS_HEADERS,
+				"cache-control": "public, max-age=60, s-maxage=300",
+			},
+		},
 	);
 };
