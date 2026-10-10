@@ -21,13 +21,13 @@ export const homePageQuery = defineQuery(`*[_type == "settings" ][0]{
   "latestPodcasts": *[_type == "podcast"]|order(date desc)[0...4]{
       ${baseFieldsNoContent},
   },
-  "topPodcasts": *[_type == "podcast" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{
+  "topPodcasts": *[_type == "podcast" && coalesce(statistics.youtube.viewCount, transcript->statistics.viewCount, 0) > 0]|order(coalesce(statistics.youtube.viewCount, transcript->statistics.viewCount, 0) desc)[0...4]{
       ${baseFieldsNoContent},
   },
   "latestPosts": *[_type == "post"]|order(date desc)[0...4]{
      ${baseFieldsNoContent},
   },
-  "topPosts": *[_type == "post" && statistics.youtube.viewCount > 0]|order(statistics.youtube.viewCount desc)[0...4]{
+  "topPosts": *[_type == "post" && coalesce(statistics.youtube.viewCount, transcript->statistics.viewCount, 0) > 0]|order(coalesce(statistics.youtube.viewCount, transcript->statistics.viewCount, 0) desc)[0...4]{
     ${baseFieldsNoContent},
   },
 }`);
