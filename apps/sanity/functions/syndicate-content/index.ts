@@ -309,15 +309,14 @@ export const handler = documentEventHandler<ContentDocument>(
 							? data.excerpt.substring(0, 247) + "..."
 							: data.excerpt || "";
 
-					const hashnodeTags: Array<{ id: string; name: string; slug: string }> = [
-						{ id: "56744721958ef13879b94cad", name: "JavaScript", slug: "javascript" },
-						{ id: "56744722958ef13879b94f1b", name: "Web Development", slug: "web-development" },
-						{ id: "56744723958ef13879b955a9", name: "Beginner Developers", slug: "beginners" },
+					const hashnodeTags: Array<{ name: string; slug: string }> = [
+						{ name: "JavaScript", slug: "javascript" },
+						{ name: "Web Development", slug: "web-development" },
+						{ name: "Beginner Developers", slug: "beginners" },
 					];
 
 					if (data._type === "podcast") {
 						hashnodeTags.push({
-							id: "56744722958ef13879b950d3",
 							name: "podcast",
 							slug: "podcast",
 						});
