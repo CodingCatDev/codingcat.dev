@@ -85,17 +85,42 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 	const INNERTUBE_CLIENT_VERSION = "20.10.38";
 
 	try {
+		// Acquire fresh visitorData token to bypass LOGIN_REQUIRED in datacenter environments
+		let visitorData: string | undefined;
+		try {
+			const pageResp = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+				headers: {
+					"User-Agent":
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+					"Accept-Language": "en-US,en;q=0.9",
+				},
+			});
+			if (pageResp.ok) {
+				const html = await pageResp.text();
+				const match = html.match(/"visitorData":"([^"]+)"/);
+				if (match) {
+					visitorData = match[1];
+				}
+			}
+		} catch {}
+
+		const requestHeaders: Record<string, string> = {
+			"Content-Type": "application/json",
+			"User-Agent": `com.google.android.youtube/${INNERTUBE_CLIENT_VERSION} (Linux; U; Android 14)`,
+		};
+		if (visitorData) {
+			requestHeaders["X-Goog-Visitor-Id"] = visitorData;
+		}
+
 		const response = await fetch(INNERTUBE_API_URL, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"User-Agent": `com.google.android.youtube/${INNERTUBE_CLIENT_VERSION} (Linux; U; Android 14)`,
-			},
+			headers: requestHeaders,
 			body: JSON.stringify({
 				context: {
 					client: {
 						clientName: "ANDROID",
 						clientVersion: INNERTUBE_CLIENT_VERSION,
+						...(visitorData ? { visitorData } : {}),
 					},
 				},
 				videoId,
