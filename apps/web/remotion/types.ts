@@ -115,6 +115,7 @@ export interface SceneProps {
   sceneIndex: number;
   durationInFrames: number;
   isVertical?: boolean;
+  wordTimestamps?: WordTimestamp[];
 }
 
 export interface HookSceneProps {

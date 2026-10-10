@@ -93,7 +93,7 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
       break;
   }
 
-  // --- 4. Fallback: Pexels b-roll scene (no text overlay) ---
+  // --- 4. Fallback: Pexels b-roll scene ---
   return (
     <Scene
       narration={scene.narration}
@@ -102,6 +102,7 @@ export const SceneRouter: React.FC<SceneRouterProps> = ({
       sceneIndex={sceneIndex}
       durationInFrames={durationInFrames}
       isVertical={isVertical}
+      wordTimestamps={scene.wordTimestamps}
     />
   );
 };

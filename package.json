@@ -20,7 +20,10 @@
     "typegen": "pnpm --filter @codingcatdev/sanity typegen",
     "build:production": "pnpm --filter @codingcatdev/site build:production",
     "preview": "pnpm --filter @codingcatdev/site preview",
-    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e"
+    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e",
+    "video:storyboard": "node scripts/generate-video-storyboard.mjs",
+    "aeo:pack": "node scripts/generate-aeo-distribution-pack.mjs",
+    "shorts:sync": "node scripts/sync-shorts-from-automated-videos.mjs"
   },
   "devDependencies": {
     "@portabletext/markdown": "^2.5.0",
