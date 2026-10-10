@@ -80,6 +80,31 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 	fullText: string;
 	status: "completed" | "no_caption_available";
 }> {
+	// 1. Try Residential Bridge Service if configured
+	const bridgeUrl = process.env.TRANSCRIPT_BRIDGE_URL || "https://transcripts.codingcat.dev";
+	const bridgeToken = process.env.TRANSCRIPT_BRIDGE_TOKEN || "e06fdac10c7c18aed27e47e3d18860121a0ca378288a3e04";
+
+	if (bridgeUrl) {
+		try {
+			const bridgeResp = await fetch(`${bridgeUrl.replace(/\/+$/, "")}/transcript?videoId=${videoId}`, {
+				headers: bridgeToken ? { Authorization: `Bearer ${bridgeToken}` } : {},
+			});
+			if (bridgeResp.ok) {
+				const data = (await bridgeResp.json()) as any;
+				if (data?.status === "completed" && Array.isArray(data?.cues) && data.cues.length > 0) {
+					console.log(`[Sync YouTube Transcript] Successfully fetched captions via residential bridge for ${videoId}`);
+					return {
+						cues: data.cues,
+						fullText: data.fullText || data.cues.map((c: any) => c.text).join(" "),
+						status: "completed",
+					};
+				}
+			}
+		} catch (bridgeErr) {
+			console.warn(`[Sync YouTube Transcript] Residential bridge failed, trying direct fallback:`, bridgeErr);
+		}
+	}
+
 	const INNERTUBE_API_URL =
 		"https://www.youtube.com/youtubei/v1/player?prettyPrint=false";
 	const INNERTUBE_CLIENT_VERSION = "20.10.38";

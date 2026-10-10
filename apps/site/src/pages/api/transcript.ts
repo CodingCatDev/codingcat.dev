@@ -38,7 +38,29 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 	cues: Cue[];
 	fullText: string;
 	status: "completed" | "no_caption_available";
+	error?: string;
 }> {
+	// 1. Try Residential Bridge Service
+	try {
+		const bridgeResp = await fetch(`https://transcripts.codingcat.dev/transcript?videoId=${videoId}`, {
+			headers: {
+				Authorization: "Bearer e06fdac10c7c18aed27e47e3d18860121a0ca378288a3e04",
+			},
+		});
+		if (bridgeResp.ok) {
+			const data = (await bridgeResp.json()) as any;
+			if (data?.status === "completed" && Array.isArray(data?.cues) && data.cues.length > 0) {
+				return {
+					cues: data.cues,
+					fullText: data.fullText || data.cues.map((c: any) => c.text).join(" "),
+					status: "completed",
+				};
+			}
+		}
+	} catch (bridgeErr) {
+		console.warn("[transcript api] Bridge service call error:", bridgeErr);
+	}
+
 	const INNERTUBE_API_URL =
 		"https://www.youtube.com/youtubei/v1/player?prettyPrint=false";
 	const INNERTUBE_CLIENT_VERSION = "20.10.38";
