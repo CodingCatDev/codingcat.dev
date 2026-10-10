@@ -1171,7 +1171,7 @@ describe("Tier 1 - Feature Coverage", () => {
 			const data = await res.json();
 			assert.ok(
 				data.serverInfo.name === "codingcatdev-sanity-context-mcp" ||
-				data.serverInfo.name === "codingcatdev-search-mcp",
+					data.serverInfo.name === "codingcatdev-search-mcp",
 			);
 			assert.equal(data.transport.type, "streamable-http");
 			assert.ok(data.capabilities.tools);

@@ -743,10 +743,7 @@ async function handleQueryContent(
 	);
 
 	// Heal text::query("...") -> "*...*"
-	cleanQuery = cleanQuery.replace(
-		/text::query\((["'])(.*?)\1\)/g,
-		"$1*$2*$1",
-	);
+	cleanQuery = cleanQuery.replace(/text::query\((["'])(.*?)\1\)/g, "$1*$2*$1");
 
 	// Remove [_score > 0]
 	cleanQuery = cleanQuery.replace(/\[_score\s*>\s*0\]/g, "");
@@ -761,7 +758,9 @@ async function handleQueryContent(
 			);
 			if (keywordMatch?.[1]) {
 				const term = keywordMatch[1].trim();
-				const typeMatch = rawQuery.match(/_type\s*==\s*["']([a-zA-Z0-9_-]+)["']/);
+				const typeMatch = rawQuery.match(
+					/_type\s*==\s*["']([a-zA-Z0-9_-]+)["']/,
+				);
 				const fallbackType = typeMatch?.[1] || null;
 				const fallbackRes = await client.fetch(semanticSearchQuery, {
 					searchTerm: term,
@@ -907,7 +906,11 @@ async function handleSchemaExplorer(
 				{ name: "date", type: "datetime", description: "Release date" },
 				{ name: "episode", type: "number", description: "Episode number" },
 				{ name: "season", type: "number", description: "Season number" },
-				{ name: "excerpt", type: "text", description: "Show notes and summary" },
+				{
+					name: "excerpt",
+					type: "text",
+					description: "Show notes and summary",
+				},
 				{
 					name: "guests",
 					type: "array",
@@ -985,9 +988,7 @@ async function handleSchemaExplorer(
 
 	if (type && schemas[type]) {
 		return {
-			content: [
-				{ type: "text", text: JSON.stringify(schemas[type], null, 2) },
-			],
+			content: [{ type: "text", text: JSON.stringify(schemas[type], null, 2) }],
 			isError: false,
 		};
 	}
