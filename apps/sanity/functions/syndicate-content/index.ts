@@ -335,9 +335,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						publicationId,
 						slug: `${data._type}-${slug}`,
 						tags: hashnodeTags,
-						coverImageOptions: {
-							coverImageURL: hashnodeCoverImageUrl,
-						},
+						...(hashnodeCoverImageUrl ? { coverImage: hashnodeCoverImageUrl } : {}),
 						originalArticleURL: canonicalUrl,
 						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
 					};
