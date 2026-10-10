@@ -251,38 +251,53 @@ const {
 				if (!fullText) {
 					fulltextView.innerHTML = `<p class="text-muted-foreground italic">No plain text transcript available.</p>`;
 				} else {
-					// Split into readable paragraphs (approx every 3-4 sentences or double newlines)
-					const rawParagraphs = fullText.split(/\n+/).filter(Boolean);
-					const paragraphs = rawParagraphs.length > 3
-						? rawParagraphs
-						: fullText.match(/[^.!?]+[.!?]+(\s+|$)/g) || [fullText];
+					// Build readable paragraphs:
+					// 1. If cues exist, group cues into natural paragraphs every ~5 cues or 35-40 seconds
+					// 2. Otherwise split on double newlines or punctuation sentences
+					let paragraphs: string[] = [];
 
-					// Group small sentences into chunky paragraphs of ~4 sentences
-					const chunky: string[] = [];
-					let buffer = "";
-					paragraphs.forEach((p, idx) => {
-						buffer += (buffer ? " " : "") + p.trim();
-						if ((idx + 1) % 4 === 0 || idx === paragraphs.length - 1) {
-							chunky.push(buffer);
-							buffer = "";
+					if (cues.length > 0) {
+						let currentParagraph: string[] = [];
+						for (let i = 0; i < cues.length; i++) {
+							currentParagraph.push(cues[i].text.trim());
+							if (currentParagraph.length >= 6 || i === cues.length - 1) {
+								paragraphs.push(currentParagraph.join(" "));
+								currentParagraph = [];
+							}
 						}
-					});
+					} else {
+						const rawParagraphs = fullText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+						if (rawParagraphs.length > 2) {
+							paragraphs = rawParagraphs;
+						} else {
+							// Split by sentence boundaries (. ! ?)
+							const sentences = fullText.match(/[^.!?]+[.!?]+(?:\s+|$)|[^.!?]+$/g) || [fullText];
+							let buffer = "";
+							sentences.forEach((s, idx) => {
+								buffer += (buffer ? " " : "") + s.trim();
+								if ((idx + 1) % 4 === 0 || idx === sentences.length - 1) {
+									paragraphs.push(buffer);
+									buffer = "";
+								}
+							});
+						}
+					}
 
 					const filtered = filter
-						? chunky.filter((p) => p.toLowerCase().includes(filter))
-						: chunky;
+						? paragraphs.filter((p) => p.toLowerCase().includes(filter))
+						: paragraphs;
 
 					if (filtered.length === 0) {
 						fulltextView.innerHTML = `<p class="text-muted-foreground italic py-8 text-center">No transcript sections matched "${currentSearch}".</p>`;
 					} else {
 						fulltextView.innerHTML = filtered
 							.map((p) => {
-								if (!filter) return `<p class="leading-relaxed">${p}</p>`;
+								if (!filter) return `<p class="leading-relaxed mb-4">${p}</p>`;
 								const highlighted = p.replace(
 									new RegExp(`(${filter})`, "gi"),
 									`<mark class="bg-primary/20 text-primary font-semibold px-0.5 rounded">$1</mark>`,
 								);
-								return `<p class="leading-relaxed">${highlighted}</p>`;
+								return `<p class="leading-relaxed mb-4">${highlighted}</p>`;
 							})
 							.join("");
 					}

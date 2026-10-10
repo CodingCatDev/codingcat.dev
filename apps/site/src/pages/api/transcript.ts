@@ -146,9 +146,14 @@ async function fetchYouTubeCaptions(videoId: string): Promise<{
 			fullText,
 			status: cues.length > 0 ? "completed" : "no_caption_available",
 		};
-	} catch (err) {
+	} catch (err: any) {
 		console.warn("[fetchYouTubeCaptions error]", err);
-		return { cues: [], fullText: "", status: "no_caption_available" };
+		return {
+			cues: [],
+			fullText: "",
+			status: "no_caption_available",
+			error: err?.message || String(err),
+		};
 	}
 }
 
@@ -312,9 +317,10 @@ export const GET: APIRoute = async ({ request }) => {
 
 	// If Sanity doc is missing fullText, but we have a YouTube video ID, fetch on demand
 	const targetYtId = ytId || transcriptDoc?.youtubeId || parseYoutubeId(youtubeParam);
+	let captionsResult: any = null;
 	if (targetYtId) {
-		const captions = await fetchYouTubeCaptions(targetYtId);
-		if (captions.status === "completed" && captions.fullText.length > 50) {
+		captionsResult = await fetchYouTubeCaptions(targetYtId);
+		if (captionsResult.status === "completed" && captionsResult.fullText.length > 50) {
 			return new Response(
 				JSON.stringify(
 					{
@@ -324,9 +330,9 @@ export const GET: APIRoute = async ({ request }) => {
 						duration: transcriptDoc?.duration || "",
 						durationSeconds: transcriptDoc?.durationSeconds || 0,
 						summary: transcriptDoc?.summary || "",
-						fullText: captions.fullText,
+						fullText: captionsResult.fullText,
 						chapters: transcriptDoc?.chapters || [],
-						cues: captions.cues,
+						cues: captionsResult.cues,
 						status: "completed",
 					},
 					null,
@@ -336,7 +342,7 @@ export const GET: APIRoute = async ({ request }) => {
 					status: 200,
 					headers: {
 						...CORS_HEADERS,
-						"cache-control": "public, max-age=3600, s-maxage=86400",
+						"cache-control": "public, max-age=86400, s-maxage=604800",
 					},
 				},
 			);
@@ -360,6 +366,11 @@ export const GET: APIRoute = async ({ request }) => {
 					chapters: transcriptDoc.chapters || [],
 					cues: transcriptDoc.cues || [],
 					status: transcriptDoc.status || "no_caption_available",
+					_debug: {
+						targetYtId,
+						captionsStatus: captionsResult?.status,
+						captionsError: captionsResult?.error,
+					},
 				},
 				null,
 				2,
@@ -368,7 +379,7 @@ export const GET: APIRoute = async ({ request }) => {
 				status: 200,
 				headers: {
 					...CORS_HEADERS,
-					"cache-control": "public, max-age=1800",
+					"cache-control": "no-store, no-cache, must-revalidate",
 				},
 			},
 		);
