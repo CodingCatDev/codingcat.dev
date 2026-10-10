@@ -1,6 +1,8 @@
 name: Sync Missing YouTube Transcripts
 
 on:
+  schedule:
+    - cron: "0 * * * *" # Run hourly
   workflow_dispatch:
     inputs:
       dataset:
