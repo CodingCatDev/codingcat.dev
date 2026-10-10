@@ -24,6 +24,7 @@ export const semanticSearchQuery = defineQuery(`
     "slug": slug.current,
     "excerpt": coalesce(excerpt, transcript->summary),
     "transcriptSummary": transcript->summary,
+    "youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl),
     coverImage,
     date,
     _score
@@ -57,6 +58,7 @@ export const textSearchFallbackQuery = defineQuery(`
     "slug": slug.current,
     "excerpt": coalesce(excerpt, transcript->summary),
     "transcriptSummary": transcript->summary,
+    "youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl),
     coverImage,
     date,
     _score
