@@ -5,10 +5,8 @@
   },
   "scripts": {
     "dev": "pnpm --filter @codingcatdev/site dev",
-    "dev:dashboard": "pnpm --filter @codingcatdev/web dev",
     "dev:studio": "pnpm --filter @codingcatdev/sanity dev",
     "build": "pnpm --filter @codingcatdev/site build",
-    "build:dashboard": "pnpm --filter @codingcatdev/web build",
     "build:studio": "pnpm --filter @codingcatdev/sanity build",
     "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
     "deploy:blueprints": "sanity blueprints deploy",
@@ -20,10 +18,7 @@
     "typegen": "pnpm --filter @codingcatdev/sanity typegen",
     "build:production": "pnpm --filter @codingcatdev/site build:production",
     "preview": "pnpm --filter @codingcatdev/site preview",
-    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e",
-    "video:storyboard": "node scripts/generate-video-storyboard.mjs",
-    "aeo:pack": "node scripts/generate-aeo-distribution-pack.mjs",
-    "shorts:sync": "node scripts/sync-shorts-from-automated-videos.mjs"
+    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e"
   },
   "devDependencies": {
     "@portabletext/markdown": "^2.5.0",

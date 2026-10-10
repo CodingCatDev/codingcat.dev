@@ -18,12 +18,6 @@ export const GET: APIRoute = async ({ locals }) => {
 	const urls = [
 		{ loc: origin, lastmod: now, changefreq: "monthly", priority: "1" },
 		{
-			loc: `${origin}/shorts`,
-			lastmod: now,
-			changefreq: "daily",
-			priority: "0.8",
-		},
-		{
 			loc: `${origin}/search`,
 			lastmod: now,
 			changefreq: "daily",
