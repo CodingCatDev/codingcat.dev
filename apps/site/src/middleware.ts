@@ -1,5 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 import { env } from "cloudflare:workers";
+import { trackEdgeRequest } from "@/lib/analytics";
 import { htmlToMarkdown } from "@/lib/html-to-markdown";
 import { createSanityContext, PREVIEW_COOKIE } from "@/lib/sanity/context";
 import { resolveSiteUrl } from "@/lib/site";
@@ -17,6 +18,7 @@ import { resolveSiteUrl } from "@/lib/site";
  * - Dynamic /index.md and *.md path rewriting to serve markdown versions of all pages
  */
 export const onRequest = defineMiddleware(async (context, next) => {
+	const startTime = performance.now();
 	// `Astro.site` is baked in at build time, but SITE_URL is a per-environment
 	// wrangler var and CI builds once for both. Without this, the dev Worker
 	// would emit canonical and og:url values pointing at production.
@@ -119,10 +121,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		headers.set("content-type", "text/markdown; charset=utf-8");
 		headers.delete("content-length");
 
+		trackEdgeRequest({
+			env: env as unknown as Record<string, unknown>,
+			request: context.request,
+			pathname,
+			statusCode: response.status,
+			durationMs: performance.now() - startTime,
+			wantsMarkdown: true,
+		});
+
 		return new Response(markdown, {
 			status: response.status,
 			statusText: response.statusText,
 			headers,
+		});
+	}
+
+	if (!pathname.startsWith("/ingest") && pathname !== "/api/event") {
+		trackEdgeRequest({
+			env: env as unknown as Record<string, unknown>,
+			request: context.request,
+			pathname,
+			statusCode: response.status,
+			durationMs: performance.now() - startTime,
+			wantsMarkdown: isDedicatedMarkdownEndpoint,
 		});
 	}
 

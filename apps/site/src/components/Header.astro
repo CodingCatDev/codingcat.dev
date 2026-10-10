@@ -29,6 +29,8 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 		<button
 			type="button"
 			id="search-header-trigger"
+			data-track="search_open"
+			data-track-label="header_search"
 			class="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/60 cursor-pointer"
 			aria-label="Search CodingCat.dev (⌘K)"
 		>

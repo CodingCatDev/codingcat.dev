@@ -11,6 +11,12 @@
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "workers_dev": true,
   "ai": { "binding": "AI" },
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "codingcat_events_dev"
+    }
+  ],
   "routes": [
     {
       "pattern": "dev.codingcat.dev",
@@ -42,13 +48,19 @@
         }
       ],
       "ai": { "binding": "AI" },
+      "analytics_engine_datasets": [
+        {
+          "binding": "ANALYTICS",
+          "dataset": "codingcat_events_prod"
+        }
+      ],
       "observability": { "enabled": true, "head_sampling_rate": 0.1 },
       "vars": {
         "ENVIRONMENT": "production",
         "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
         "PUBLIC_SANITY_DATASET": "production",
         "PUBLIC_SANITY_API_VERSION": "2025-09-30",
-        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat.dev.sanity.studio/production",
+        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/production",
         "SITE_URL": "https://codingcat.dev"
       }
     }

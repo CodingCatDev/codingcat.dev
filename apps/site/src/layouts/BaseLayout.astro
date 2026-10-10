@@ -3,6 +3,7 @@ import { Font } from "astro:assets";
 import "@/styles/global.css";
 
 import ChatModal from "@/components/ChatModal.astro";
+import AnalyticsBeacon from "@/components/AnalyticsBeacon.astro";
 import DraftModeToggle from "@/components/DraftModeToggle.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
@@ -192,5 +193,6 @@ const graph = buildGraph([
 		</div>
 		{preview && <DraftModeToggle />}
 		<ChatModal />
+		<AnalyticsBeacon />
 	</body>
 </html>

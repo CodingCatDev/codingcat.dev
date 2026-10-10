@@ -31,6 +31,9 @@ const items = sponsors ?? [];
 						href={href}
 						target={external ? "_blank" : undefined}
 						rel={external ? "noopener noreferrer sponsored" : undefined}
+						data-track="sponsor_click"
+						data-track-label={sponsor.title}
+						data-track-target={href}
 						class="flex"
 					>
 						<article class="flex max-w-xl grow flex-col overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all hover:scale-[1.02] hover:shadow-lg">
