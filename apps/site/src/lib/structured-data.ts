@@ -74,6 +74,7 @@ interface ArticleInput {
 	_updatedAt?: string | null;
 	imageUrl?: string;
 	authors?: Array<{ title?: string | null; slug?: string | null }> | null;
+	articleType?: "TechArticle" | "Article";
 }
 
 export function articleSchema(
@@ -93,7 +94,7 @@ export function articleSchema(
 		}));
 
 	return {
-		"@type": "Article",
+		"@type": content.articleType ?? "TechArticle",
 		"@id": `${url}#article`,
 		headline: content.title ?? undefined,
 		description: content.excerpt ?? undefined,
@@ -103,6 +104,10 @@ export function articleSchema(
 		...(authors.length ? { author: authors } : {}),
 		publisher: { "@id": orgId(origin) },
 		mainEntityOfPage: { "@type": "WebPage", "@id": url },
+		speakable: {
+			"@type": "SpeakableSpecification",
+			cssSelector: ["article h1", "article p:first-of-type"],
+		},
 		url,
 	};
 }
@@ -219,6 +224,62 @@ export function faqSchema(
 			},
 		})),
 	};
+}
+
+/**
+ * Automatically extracts Q&A pairs from Portable Text blocks where an H2/H3 heading
+ * is phrased as a question (ends with `?` or starts with How/Why/What/When/Where/Can/Should/Is).
+ */
+export function extractFaqsFromPortableText(
+	blocks: unknown,
+): Array<{ question: string; answer: string }> {
+	if (!Array.isArray(blocks)) return [];
+
+	const faqs: Array<{ question: string; answer: string }> = [];
+	let currentQuestion: string | null = null;
+	let currentAnswerParts: string[] = [];
+
+	const flush = () => {
+		if (currentQuestion && currentAnswerParts.length > 0) {
+			const answer = currentAnswerParts.join(" ").trim();
+			if (answer.length >= 25) {
+				faqs.push({ question: currentQuestion, answer: answer.slice(0, 600) });
+			}
+		}
+		currentQuestion = null;
+		currentAnswerParts = [];
+	};
+
+	for (const block of blocks) {
+		if (!block || typeof block !== "object") continue;
+		const b = block as {
+			_type?: string;
+			style?: string;
+			children?: Array<{ text?: string }>;
+		};
+		if (b._type !== "block" || !Array.isArray(b.children)) continue;
+
+		const text = b.children
+			.map((c) => (typeof c?.text === "string" ? c.text : ""))
+			.join("")
+			.trim();
+		if (!text) continue;
+
+		if (b.style === "h2" || b.style === "h3" || b.style === "h4") {
+			flush();
+			const isQuestion =
+				text.endsWith("?") ||
+				/^(how|why|what|when|where|can|should|is|does|do)\b/i.test(text);
+			if (isQuestion) {
+				currentQuestion = text.endsWith("?") ? text : `${text}?`;
+			}
+		} else if (currentQuestion && currentAnswerParts.length < 3) {
+			currentAnswerParts.push(text);
+		}
+	}
+
+	flush();
+	return faqs.slice(0, 8);
 }
 
 interface PodcastEpisodeInput {

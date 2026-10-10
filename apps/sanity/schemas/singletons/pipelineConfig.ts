@@ -10,8 +10,8 @@ export default defineType({
       name: "geminiModel",
       title: "Gemini Model",
       type: "string",
-      description: "The Google Gemini model used for script generation and content analysis (e.g., gemini-2.0-flash, gemini-2.5-pro)",
-      initialValue: "gemini-2.0-flash",
+      description: "The Google Gemini model used for script generation and content analysis (e.g., gemini-2.5-flash, gemini-2.5-pro)",
+      initialValue: "gemini-2.5-flash",
     }),
     defineField({
       name: "elevenLabsVoiceId",

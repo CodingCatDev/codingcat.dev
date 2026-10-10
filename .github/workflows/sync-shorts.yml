@@ -1,0 +1,42 @@
+name: Sync YouTube Shorts to Sanity
+
+on:
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: "Target Sanity Dataset"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - dev
+  schedule:
+    - cron: "30 6 * * *"
+
+jobs:
+  sync-shorts:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Sync Shorts from Automated Videos
+        run: node scripts/sync-shorts-from-automated-videos.mjs
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID || 'hfh83o0w' }}
+          SANITY_STUDIO_DATASET: ${{ inputs.dataset || 'production' }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}

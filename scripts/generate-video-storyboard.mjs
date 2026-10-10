@@ -117,6 +117,7 @@ async function run() {
             { role: "user", content: `Create a complete video storyboard and script for: ${topic}` },
           ],
           temperature: 0.7,
+          max_tokens: 2800,
         }),
       });
 

@@ -309,7 +309,7 @@ export function ConfigForm({ initialConfig }: ConfigFormProps) {
                 id="geminiModel"
                 value={config.geminiModel ?? ""}
                 onChange={(e) => update("geminiModel", e.target.value)}
-                placeholder="gemini-2.0-flash"
+                placeholder="gemini-2.5-flash"
               />
             </div>
             <div className="space-y-2">
@@ -318,7 +318,7 @@ export function ConfigForm({ initialConfig }: ConfigFormProps) {
                 id="infographicModel"
                 value={config.infographicModel ?? ""}
                 onChange={(e) => update("infographicModel", e.target.value)}
-                placeholder="imagen-3.0-generate-002"
+                placeholder="gemini-3.1-flash-image-preview"
               />
             </div>
           </div>

@@ -7,11 +7,11 @@ import {
 } from "remotion";
 import type { SceneProps } from "../types";
 import { COLORS, FONT_SIZES } from "../constants";
+import { KineticCaptions } from "./KineticCaptions";
 
 /**
  * Scene — fallback scene component for Pexels b-roll backgrounds.
- * NO text overlays — audio narration carries all words.
- * Used only when no infographic data is available.
+ * Renders KineticCaptions in vertical (9:16 Shorts) mode.
  */
 export const Scene: React.FC<SceneProps> = ({
   narration,
@@ -20,6 +20,7 @@ export const Scene: React.FC<SceneProps> = ({
   sceneIndex,
   durationInFrames,
   isVertical = false,
+  wordTimestamps,
 }) => {
   const frame = useCurrentFrame();
   const fonts = isVertical ? FONT_SIZES.portrait : FONT_SIZES.landscape;
@@ -61,6 +62,16 @@ export const Scene: React.FC<SceneProps> = ({
           style={{
             background: `linear-gradient(${gradientAngle}deg, ${COLORS.gradientStart}, ${COLORS.backgroundDark}, ${COLORS.backgroundMedium})`,
           }}
+        />
+      )}
+
+      {/* Kinetic word-by-word captions for 9:16 vertical Shorts */}
+      {isVertical && narration && (
+        <KineticCaptions
+          narration={narration}
+          wordTimestamps={wordTimestamps}
+          durationInFrames={durationInFrames}
+          isVertical={isVertical}
         />
       )}
 
