@@ -17,6 +17,13 @@ export default defineBlueprint({
 			src: "./apps/sanity/functions/syndicate-content",
 			runtime: "nodejs22.x",
 			timeout: 30,
+			env: {
+				DEVTO_API_KEY: process.env.PRIVATE_DEVTO || process.env.DEVTO_API_KEY || "",
+				HASHNODE_ACCESS_TOKEN: process.env.PRIVATE_HASHNODE || process.env.HASHNODE_ACCESS_TOKEN || "",
+				HASHNODE_PUBLICATION_ID: process.env.HASHNODE_PUBLICATION_ID || "60242f8180da6c44eadf775b",
+				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
+				SANITY_API_WRITE_TOKEN: process.env.SANITY_API_WRITE_TOKEN || "",
+			},
 		}),
 		defineDocumentFunction({
 			name: "sync-youtube-transcript",
@@ -56,6 +63,25 @@ export default defineBlueprint({
 			src: "./apps/sanity/functions/sync-missing-youtube-transcripts",
 			event: {
 				expression: "0 5 * * *", // 5:00 AM UTC
+			},
+			runtime: "nodejs22.x",
+			timeout: 300,
+			env: {
+				YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || "",
+				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
+				SANITY_API_WRITE_TOKEN: process.env.SANITY_API_WRITE_TOKEN || "",
+				SANITY_STUDIO_PROJECT_ID:
+					process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
+				SANITY_STUDIO_DATASET:
+					process.env.SANITY_STUDIO_DATASET || "production",
+			},
+		}),
+		defineScheduledFunction({
+			name: "sync-youtube-analytics",
+			displayName: "Sync YouTube Video Analytics (Views, Likes, Comments)",
+			src: "./apps/sanity/functions/sync-youtube-analytics",
+			event: {
+				expression: "0 6 * * *", // 6:00 AM UTC
 			},
 			runtime: "nodejs22.x",
 			timeout: 300,

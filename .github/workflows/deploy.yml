@@ -69,6 +69,8 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          PRIVATE_DEVTO: ${{ secrets.PRIVATE_DEVTO }}
+          PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
@@ -128,3 +130,5 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          PRIVATE_DEVTO: ${{ secrets.PRIVATE_DEVTO }}
+          PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
