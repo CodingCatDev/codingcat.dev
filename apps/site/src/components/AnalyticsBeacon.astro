@@ -1,0 +1,175 @@
+---
+import { env } from "cloudflare:workers";
+
+const runtimeEnv = env as unknown as Record<string, string | undefined>;
+const posthogKey =
+	runtimeEnv.PUBLIC_POSTHOG_KEY || import.meta.env.PUBLIC_POSTHOG_KEY || "";
+const posthogUiHost =
+	runtimeEnv.PUBLIC_POSTHOG_UI_HOST ||
+	import.meta.env.PUBLIC_POSTHOG_UI_HOST ||
+	"https://us.posthog.com";
+---
+
+<script is:inline define:vars={{ posthogKey, posthogUiHost }}>
+	(function () {
+		function sendBeaconEvent(type, detail) {
+			var payload = JSON.stringify({
+				type: type,
+				path: window.location.pathname,
+				target: (detail && detail.target) || "",
+				label: (detail && detail.label) || "",
+				value: (detail && detail.value) || 1,
+			});
+
+			try {
+				if (navigator.sendBeacon) {
+					navigator.sendBeacon("/api/event", payload);
+				} else {
+					fetch("/api/event", {
+						method: "POST",
+						body: payload,
+						keepalive: true,
+						headers: { "Content-Type": "application/json" },
+					}).catch(function () {});
+				}
+			} catch (_e) {}
+
+			try {
+				if (window.posthog && typeof window.posthog.capture === "function") {
+					window.posthog.capture(type, {
+						path: window.location.pathname,
+						target: detail && detail.target,
+						label: detail && detail.label,
+						value: detail && detail.value,
+					});
+				}
+			} catch (_e) {}
+		}
+
+		// Global helper for future LMS course/lesson components & auth gates
+		window.ccTrack = sendBeaconEvent;
+
+		// Passive click delegation for [data-track], outbound links, search, and chat
+		document.addEventListener(
+			"click",
+			function (e) {
+				var target = e.target;
+				if (!(target instanceof Element)) return;
+
+				var trackedEl = target.closest("[data-track]");
+				if (trackedEl) {
+					var eventType = trackedEl.getAttribute("data-track") || "ui_interaction";
+					var label =
+						trackedEl.getAttribute("data-track-label") ||
+						trackedEl.getAttribute("aria-label") ||
+						(trackedEl.textContent || "").trim().slice(0, 80);
+					var href =
+						trackedEl.getAttribute("data-track-target") ||
+						trackedEl.getAttribute("href") ||
+						"";
+					sendBeaconEvent(eventType, { target: href, label: label });
+					return;
+				}
+
+				var anchor = target.closest("a[href]");
+				if (anchor) {
+					var rawHref = anchor.getAttribute("href") || "";
+					if (rawHref.indexOf("http") === 0) {
+						try {
+							var parsed = new URL(rawHref, window.location.origin);
+							if (parsed.hostname !== window.location.hostname) {
+								var linkLabel =
+									anchor.getAttribute("aria-label") ||
+									(anchor.textContent || "").trim().slice(0, 80) ||
+									parsed.hostname;
+								sendBeaconEvent("outbound_click", {
+									target: rawHref,
+									label: linkLabel,
+								});
+							}
+						} catch (_e) {}
+					}
+				}
+			},
+			{ passive: true, capture: true },
+		);
+
+		// Track podcast audio plays passively
+		document.addEventListener(
+			"play",
+			function (e) {
+				var el = e.target;
+				if (el instanceof HTMLAudioElement) {
+					sendBeaconEvent("podcast_listen", {
+						target: el.currentSrc || el.src || window.location.pathname,
+						label: "html5_audio",
+					});
+				}
+			},
+			{ passive: true, capture: true },
+		);
+
+		// Optional PostHog initialization via first-party /ingest reverse proxy
+		if (posthogKey) {
+			!(function (t, e) {
+				var o, n, p, r;
+				e.__SV ||
+					((window.posthog = e),
+					(e._i = []),
+					(e.init = function (i, s, a) {
+						function g(t, e) {
+							var o = e.split(".");
+							2 == o.length && ((t = t[o[0]]), (e = o[1])),
+								(t[e] = function () {
+									t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+								});
+						}
+						((p = t.createElement("script")).type = "text/javascript"),
+							(p.crossOrigin = "anonymous"),
+							(p.async = !0),
+							(p.src =
+								s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") +
+								"/static/array.js"),
+							(r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(
+								p,
+								r,
+							);
+						var u = e;
+						for (
+							void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+								u.people = u.people || [],
+								u.toString = function (t) {
+									var e = "posthog";
+									return (
+										"posthog" !== a && (e += "." + a), t || (e += " (stub)"), e
+									);
+								},
+								u.people.toString = function () {
+									return u.toString(1) + ".people (stub)";
+								},
+								o =
+									"init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId setPersonPropertiesForFlags".split(
+										" ",
+									),
+								n = 0;
+							n < o.length;
+							n++
+						)
+							g(u, o[n]);
+						e._i.push([i, s, a]);
+					}),
+					(e.__SV = 1));
+			})(document, window.posthog || []);
+
+			window.posthog.init(posthogKey, {
+				api_host: "/ingest",
+				ui_host: posthogUiHost,
+				person_profiles: "identified_only",
+				capture_pageview: true,
+				capture_pageleave: true,
+				disable_session_recording:
+					window.location.pathname.indexOf("/courses") !== 0,
+			});
+		}
+	})();
+</script>
