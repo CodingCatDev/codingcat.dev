@@ -11,12 +11,14 @@
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "workers_dev": true,
   "ai": { "binding": "AI" },
-  "analytics_engine_datasets": [
-    {
-      "binding": "ANALYTICS",
-      "dataset": "codingcat_events_dev"
-    }
-  ],
+  // Uncomment after clicking "Enable Analytics Engine" once at:
+  // https://dash.cloudflare.com/c46bd0f3b9ed47b8692cca098030edbf/workers/analytics-engine
+  // "analytics_engine_datasets": [
+  //   {
+  //     "binding": "ANALYTICS",
+  //     "dataset": "codingcat_events_dev"
+  //   }
+  // ],
   "routes": [
     {
       "pattern": "dev.codingcat.dev",
@@ -50,12 +52,12 @@
         }
       ],
       "ai": { "binding": "AI" },
-      "analytics_engine_datasets": [
-        {
-          "binding": "ANALYTICS",
-          "dataset": "codingcat_events_prod"
-        }
-      ],
+      // "analytics_engine_datasets": [
+      //   {
+      //     "binding": "ANALYTICS",
+      //     "dataset": "codingcat_events_prod"
+      //   }
+      // ],
       "observability": { "enabled": true, "head_sampling_rate": 0.1 },
       "vars": {
         "ENVIRONMENT": "production",
