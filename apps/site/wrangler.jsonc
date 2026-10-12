@@ -29,7 +29,9 @@
     "PUBLIC_SANITY_DATASET": "dev",
     "PUBLIC_SANITY_API_VERSION": "2025-09-30",
     "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/dev",
-    "SITE_URL": "https://dev.codingcat.dev"
+    "SITE_URL": "https://dev.codingcat.dev",
+    "FLIPCORE_API_URL": "https://api.flipfeeds.dev",
+    "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.dev"
   },
 
   // NOTE: bindings are NOT inherited into `env.*`. Every binding added to the
@@ -61,7 +63,9 @@
         "PUBLIC_SANITY_DATASET": "production",
         "PUBLIC_SANITY_API_VERSION": "2025-09-30",
         "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/production",
-        "SITE_URL": "https://codingcat.dev"
+        "SITE_URL": "https://codingcat.dev",
+        "FLIPCORE_API_URL": "https://api.flipfeeds.com",
+        "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.com"
       }
     }
   }

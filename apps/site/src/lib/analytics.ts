@@ -114,7 +114,9 @@ export function classifyActor(
 }
 
 function extractHost(urlStr: string | null): string {
-	if (!urlStr) return "direct";
+	if (!urlStr) {
+		return "direct";
+	}
 	try {
 		return new URL(urlStr).hostname || "direct";
 	} catch {
@@ -132,7 +134,9 @@ export function trackEdgeRequest(options: {
 	detail?: string;
 }): void {
 	const dataset = options.env.ANALYTICS as AnalyticsEngineDataset | undefined;
-	if (!dataset || typeof dataset.writeDataPoint !== "function") return;
+	if (!dataset || typeof dataset.writeDataPoint !== "function") {
+		return;
+	}
 
 	const { request, pathname, statusCode, durationMs, wantsMarkdown } = options;
 
@@ -164,18 +168,19 @@ export function trackEdgeRequest(options: {
 		eventType = "search_api";
 	} else if (pathname.startsWith("/api/chat")) {
 		eventType = "chat_api";
-	} else if (category === "ai_bot" || category === "search_bot" || category === "social_bot") {
+	} else if (
+		category === "ai_bot" ||
+		category === "search_bot" ||
+		category === "social_bot"
+	) {
 		eventType = "bot_crawl";
 	}
 
 	const refererHost = extractHost(request.headers.get("referer"));
 	const cf = (request as Request & { cf?: { country?: string } }).cf;
-	const country =
-		cf?.country || request.headers.get("cf-ipcountry") || "XX";
+	const country = cf?.country || request.headers.get("cf-ipcountry") || "XX";
 	const targetOrDetail =
-		options.detail ||
-		new URL(request.url).searchParams.get("q") ||
-		refererHost;
+		options.detail || new URL(request.url).searchParams.get("q") || refererHost;
 
 	try {
 		dataset.writeDataPoint({
@@ -205,7 +210,9 @@ export function trackClientBeaconEvent(options: {
 	value?: number;
 }): void {
 	const dataset = options.env.ANALYTICS as AnalyticsEngineDataset | undefined;
-	if (!dataset || typeof dataset.writeDataPoint !== "function") return;
+	if (!dataset || typeof dataset.writeDataPoint !== "function") {
+		return;
+	}
 
 	const refererHost = extractHost(options.request.headers.get("referer"));
 	const cf = (options.request as Request & { cf?: { country?: string } }).cf;

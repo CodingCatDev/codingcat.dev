@@ -179,7 +179,9 @@ export function videoObjectSchema(
 	},
 	path: string,
 ): Node | null {
-	if (!video.youtubeUrl) return null;
+	if (!video.youtubeUrl) {
+		return null;
+	}
 
 	const url = absoluteUrl(path, origin);
 	// Format ISO 8601 duration: PT#M#S or PT#S
@@ -189,9 +191,15 @@ export function videoObjectSchema(
 		const minutes = Math.floor((video.durationSeconds % 3600) / 60);
 		const seconds = Math.floor(video.durationSeconds % 60);
 		let d = "PT";
-		if (hours > 0) d += `${hours}H`;
-		if (minutes > 0) d += `${minutes}M`;
-		if (seconds > 0 || d === "PT") d += `${seconds}S`;
+		if (hours > 0) {
+			d += `${hours}H`;
+		}
+		if (minutes > 0) {
+			d += `${minutes}M`;
+		}
+		if (seconds > 0 || d === "PT") {
+			d += `${seconds}S`;
+		}
 		durationIso = d;
 	}
 
@@ -204,14 +212,18 @@ export function videoObjectSchema(
 		...(video.uploadDate ? { uploadDate: video.uploadDate } : {}),
 		...(durationIso ? { duration: durationIso } : {}),
 		contentUrl: video.youtubeUrl,
-		embedUrl: video.youtubeUrl.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/"),
+		embedUrl: video.youtubeUrl
+			.replace("watch?v=", "embed/")
+			.replace("youtu.be/", "www.youtube.com/embed/"),
 	};
 }
 
 export function faqSchema(
 	faqs: Array<{ question: string; answer: string }>,
 ): Node | null {
-	if (!faqs || faqs.length === 0) return null;
+	if (!faqs || faqs.length === 0) {
+		return null;
+	}
 
 	return {
 		"@type": "FAQPage",
@@ -233,7 +245,9 @@ export function faqSchema(
 export function extractFaqsFromPortableText(
 	blocks: unknown,
 ): Array<{ question: string; answer: string }> {
-	if (!Array.isArray(blocks)) return [];
+	if (!Array.isArray(blocks)) {
+		return [];
+	}
 
 	const faqs: Array<{ question: string; answer: string }> = [];
 	let currentQuestion: string | null = null;
@@ -251,19 +265,25 @@ export function extractFaqsFromPortableText(
 	};
 
 	for (const block of blocks) {
-		if (!block || typeof block !== "object") continue;
+		if (!block || typeof block !== "object") {
+			continue;
+		}
 		const b = block as {
 			_type?: string;
 			style?: string;
 			children?: Array<{ text?: string }>;
 		};
-		if (b._type !== "block" || !Array.isArray(b.children)) continue;
+		if (b._type !== "block" || !Array.isArray(b.children)) {
+			continue;
+		}
 
 		const text = b.children
 			.map((c) => (typeof c?.text === "string" ? c.text : ""))
 			.join("")
 			.trim();
-		if (!text) continue;
+		if (!text) {
+			continue;
+		}
 
 		if (b.style === "h2" || b.style === "h3" || b.style === "h4") {
 			flush();

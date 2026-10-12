@@ -1,0 +1,627 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import PodmatchBadge from "@/components/PodmatchBadge.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { env } from "cloudflare:workers";
+
+interface BookingPageDetails {
+	title: string;
+	description: string;
+	durationMinutes: number;
+	hostName: string;
+	slug: string;
+	slots: Array<{
+		id: string;
+		startAt: string;
+		displayDate: string;
+		displayTime: string;
+	}>;
+}
+
+let bookingDetails: BookingPageDetails = {
+	title: "CodingCat.dev Podcast Recording Session",
+	description:
+		"Join Alex Patterson for an in-depth conversation exploring web development, edge runtimes, developer tooling, and modern frameworks.",
+	durationMinutes: 45,
+	hostName: "Alex Patterson",
+	slug: "codingcatdev",
+	slots: [
+		{
+			id: "slot-1",
+			startAt: "2026-10-15T14:00:00Z",
+			displayDate: "Thursday, Oct 15",
+			displayTime: "10:00 AM EDT (14:00 UTC)",
+		},
+		{
+			id: "slot-2",
+			startAt: "2026-10-15T16:00:00Z",
+			displayDate: "Thursday, Oct 15",
+			displayTime: "12:00 PM EDT (16:00 UTC)",
+		},
+		{
+			id: "slot-3",
+			startAt: "2026-10-20T14:00:00Z",
+			displayDate: "Tuesday, Oct 20",
+			displayTime: "10:00 AM EDT (14:00 UTC)",
+		},
+		{
+			id: "slot-4",
+			startAt: "2026-10-20T16:00:00Z",
+			displayDate: "Tuesday, Oct 20",
+			displayTime: "12:00 PM EDT (16:00 UTC)",
+		},
+		{
+			id: "slot-5",
+			startAt: "2026-10-22T15:00:00Z",
+			displayDate: "Thursday, Oct 22",
+			displayTime: "11:00 AM EDT (15:00 UTC)",
+		},
+	],
+};
+
+try {
+	const flipcoreUrl =
+		(env as unknown as Record<string, string | undefined>)?.FLIPCORE_API_URL ??
+		"https://api.flipfeeds.com";
+	const res = await fetch(`${flipcoreUrl}/api/public/booking/codingcatdev`, {
+		headers: { Accept: "application/json" },
+	});
+	if (res.ok) {
+		const data = (await res.json()) as any;
+		if (data?.title) bookingDetails.title = data.title;
+		if (data?.description) bookingDetails.description = data.description;
+		if (data?.durationMinutes) bookingDetails.durationMinutes = data.durationMinutes;
+		if (Array.isArray(data?.slots) && data.slots.length > 0) {
+			bookingDetails.slots = data.slots.map((s: any, idx: number) => {
+				const date = new Date(s.startAt);
+				return {
+					id: `slot-api-${idx}`,
+					startAt: s.startAt,
+					displayDate: date.toLocaleDateString("en-US", {
+						weekday: "short",
+						month: "short",
+						day: "numeric",
+					}),
+					displayTime: date.toLocaleTimeString("en-US", {
+						hour: "numeric",
+						minute: "2-digit",
+						timeZoneName: "short",
+					}),
+				};
+			});
+		}
+	}
+} catch {
+	// Resilient fallback defaults used
+}
+
+const title = "Book a Recording Session — CodingCat.dev";
+const description =
+	"Schedule your guest appearance on the CodingCat.dev Podcast. Choose your recording slot, complete intake questions, and sign your digital release form.";
+---
+
+<BaseLayout title={title} description={description}>
+	<Breadcrumbs links={[{ title: "Book Session" }]} />
+
+	<div class="w-full flex flex-col gap-8 md:gap-12 my-8 md:my-12 max-w-4xl mx-auto">
+		<!-- Header -->
+		<header class="flex flex-col gap-4">
+			<div class="flex flex-col gap-2">
+				<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
+					{bookingDetails.title}
+				</h1>
+				<p class="text-lg text-muted-foreground">
+					{bookingDetails.description}
+				</p>
+			</div>
+
+			<!-- Session Metadata Pill Strip -->
+			<div class="flex flex-wrap items-center gap-3 text-xs font-medium">
+				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
+					<span class="text-muted-foreground">Host:</span>
+					<span class="text-foreground font-semibold">{bookingDetails.hostName}</span>
+				</div>
+				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
+					<span class="text-muted-foreground">Duration:</span>
+					<span class="text-foreground font-semibold">{bookingDetails.durationMinutes} Minutes</span>
+				</div>
+				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
+					<span class="text-muted-foreground">Studio Engine:</span>
+					<span class="text-primary font-semibold">FlipFeeds 4K Local Ingest</span>
+				</div>
+				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
+					<span class="text-muted-foreground">Two-Way Sync:</span>
+					<span class="text-foreground font-semibold">Google Calendar &amp; Studio Room</span>
+				</div>
+			</div>
+		</header>
+
+		<!-- Interactive Booking & Release Form Container -->
+		<div id="booking-container" class="flex flex-col gap-8">
+			<!-- Step 1: Select Recording Slot -->
+			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+				<div class="flex items-center justify-between">
+					<h2 class="text-lg font-bold flex items-center gap-2">
+						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
+						Select an Available Recording Slot
+					</h2>
+					<span class="text-xs text-muted-foreground">All times normalized to UTC</span>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="slot-grid">
+					{
+						bookingDetails.slots.map((slot, index) => (
+							<button
+								type="button"
+								data-slot-id={slot.id}
+								data-slot-start={slot.startAt}
+								class={`slot-btn p-3 rounded-xl border border-border text-left transition-all hover:border-primary cursor-pointer flex flex-col gap-1 ${index === 0 ? "border-primary bg-primary/5 ring-1 ring-primary" : "bg-card hover:bg-muted/50"}`}
+							>
+								<span class="font-semibold text-sm text-foreground">{slot.displayDate}</span>
+								<span class="text-xs text-muted-foreground font-mono">{slot.displayTime}</span>
+							</button>
+						))
+					}
+				</div>
+			</section>
+
+			<!-- Step 2: Guest Intake Information -->
+			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+				<h2 class="text-lg font-bold flex items-center gap-2">
+					<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
+					Guest Interview Intake
+				</h2>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+					<div class="flex flex-col gap-1.5">
+						<label for="guest-name" class="font-semibold text-foreground">
+							Full Legal Name <span class="text-destructive">*</span>
+						</label>
+						<input
+							type="text"
+							id="guest-name"
+							required
+							placeholder="e.g. Jane Doe"
+							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<label for="guest-email" class="font-semibold text-foreground">
+							Email Address <span class="text-destructive">*</span>
+						</label>
+						<input
+							type="email"
+							id="guest-email"
+							required
+							placeholder="e.g. jane@example.com"
+							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+					</div>
+
+					<div class="flex flex-col gap-1.5 sm:col-span-2">
+						<label for="guest-topics" class="font-semibold text-foreground">
+							Proposed Topics &amp; Key Talking Points <span class="text-destructive">*</span>
+						</label>
+						<textarea
+							id="guest-topics"
+							rows="3"
+							required
+							placeholder="What technologies, architectural challenges, or war stories would you like to cover?"
+							class="w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						></textarea>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<label for="guest-url" class="font-semibold text-foreground">
+							Social Handle or Portfolio URL
+						</label>
+						<input
+							type="url"
+							id="guest-url"
+							placeholder="https://twitter.com/yourhandle"
+							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<label for="guest-project" class="font-semibold text-foreground">
+							Current Flagship Project / Company
+						</label>
+						<input
+							type="text"
+							id="guest-project"
+							placeholder="e.g. Open-source library, startup, or research"
+							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<!-- Step 3: Mandatory E-Signature Media Release Form -->
+			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+				<div class="flex items-center justify-between">
+					<h2 class="text-lg font-bold flex items-center gap-2">
+						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">3</span>
+						Digital Appearance &amp; Media Release Agreement
+					</h2>
+					<span class="text-xs font-mono bg-muted text-muted-foreground px-2 py-0.5 rounded">
+						Terms v1.0 · E-SIGN Valid
+					</span>
+				</div>
+
+				<!-- Legal Terms Scrollbox -->
+				<div class="rounded-lg border border-border bg-muted/40 p-3 max-h-32 overflow-y-auto text-xs font-mono text-muted-foreground leading-relaxed">
+					FLIPCORE &amp; CODINGCAT.DEV PODCAST APPEARANCE RELEASE AGREEMENT (v1.0)<br /><br />
+					1. GRANT OF RIGHTS: The Participant grants CodingCat.dev and FlipFeeds the irrevocable, worldwide, perpetual right to record, edit, broadcast, stream, and commercially distribute their voice, video likeness, conversation, and biographical materials across any digital distribution channels.<br /><br />
+					2. CLIPPING &amp; TRANSCRIPTS: The Producer retains sole discretion to create derivative works, short-form clips (TikTok, Shorts, Reels), and word-by-word transcripts.<br /><br />
+					3. COMMERCIAL &amp; SPONSORSHIP USE: Producer may monetize the show through sponsorships and dynamic ad insertion without financial compensation unless agreed separately.<br /><br />
+					4. ELECTRONIC SIGNATURE VALIDITY: Executing this release electronically carries the full legal force of a handwritten physical signature pursuant to 15 U.S.C. § 7001 (E-SIGN Act).
+				</div>
+
+				<!-- Consent Checkboxes -->
+				<div class="flex flex-col gap-2 rounded-lg border border-border bg-muted/20 p-3 text-xs">
+					<label class="flex items-start gap-2 cursor-pointer">
+						<input type="checkbox" id="consent-recording" checked class="mt-0.5 rounded border-border text-primary focus:ring-primary" />
+						<span class="text-foreground">I grant recording, streaming, and full distribution rights for this session.</span>
+					</label>
+					<label class="flex items-start gap-2 cursor-pointer">
+						<input type="checkbox" id="consent-commercial" checked class="mt-0.5 rounded border-border text-primary focus:ring-primary" />
+						<span class="text-foreground">I consent to commercial monetization, sponsorships, and podcast syndication.</span>
+					</label>
+					<label class="flex items-start gap-2 cursor-pointer">
+						<input type="checkbox" id="consent-likeness" checked class="mt-0.5 rounded border-border text-primary focus:ring-primary" />
+						<span class="text-foreground">I grant rights to use my likeness in show promotions and social clips.</span>
+					</label>
+				</div>
+
+				<!-- Signature Pad: Dual Mode Canvas / Typed -->
+				<div class="flex flex-col gap-3">
+					<div class="flex items-center justify-between">
+						<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Execute Digital Signature</span>
+						<div class="flex rounded-md border border-border bg-muted p-0.5 text-xs">
+							<button type="button" id="btn-mode-draw" class="rounded px-2.5 py-1 font-medium bg-background text-foreground shadow-xs">
+								Draw Freehand
+							</button>
+							<button type="button" id="btn-mode-type" class="rounded px-2.5 py-1 font-medium text-muted-foreground hover:text-foreground">
+								Type Name
+							</button>
+						</div>
+					</div>
+
+					<!-- Canvas Pad -->
+					<div id="canvas-container" class="relative rounded-xl border-2 border-dashed border-border bg-background overflow-hidden h-36">
+						<canvas id="signature-canvas" width="600" height="144" class="w-full h-full touch-none cursor-crosshair block"></canvas>
+						<div id="canvas-hint" class="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
+							Draw signature using finger, stylus, or mouse
+						</div>
+					</div>
+
+					<!-- Typed Fallback -->
+					<div id="typed-container" class="hidden flex-col gap-2">
+						<input
+							type="text"
+							id="typed-input"
+							placeholder="Type your full legal name to sign"
+							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+						<div class="rounded-lg border border-border bg-muted/40 p-4 text-center font-serif italic text-2xl tracking-wider text-foreground">
+							<span id="typed-preview">Signature Preview</span>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between text-xs">
+						<span id="sig-status" class="text-muted-foreground">Awaiting signature...</span>
+						<button type="button" id="btn-clear-sig" class="text-muted-foreground hover:text-foreground">
+							Clear Signature
+						</button>
+					</div>
+				</div>
+
+				<!-- Validation Error Banner -->
+				<div id="form-error" class="hidden rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+				</div>
+
+				<!-- Submit Button -->
+				<div class="pt-2 flex justify-end">
+					<button
+						type="button"
+						id="btn-confirm-booking"
+						class="w-full sm:w-auto px-8 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+					>
+						<span>Confirm Session &amp; Sign Release</span>
+					</button>
+				</div>
+			</section>
+		</div>
+
+		<!-- Step 4: Success View (Initially Hidden) -->
+		<div id="booking-confirmed-card" class="hidden flex-col gap-6 p-8 rounded-2xl border border-primary/30 bg-card text-center shadow-lg">
+			<div class="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+				<svg class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+				</svg>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<h2 class="text-2xl font-bold tracking-tight text-foreground">
+					Recording Session Confirmed!
+				</h2>
+				<p class="text-sm text-muted-foreground max-w-lg mx-auto">
+					Your technical interview with <strong class="text-foreground">Alex Patterson</strong> has been reserved. Your calendar invite and Studio entry pass have been generated.
+				</p>
+			</div>
+
+			<!-- Studio Entry Link Box -->
+			<div class="flex flex-col gap-3 p-5 rounded-xl border border-border bg-muted/50 text-left max-w-lg mx-auto w-full">
+				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Studio Entry Pass</span>
+				<div class="flex items-center justify-between gap-2 bg-background p-2.5 rounded-lg border border-border">
+					<code id="confirmed-studio-link" class="text-xs font-mono text-primary truncate select-all">
+						https://flipfeeds.com/studio?room=srt_codingcatdev_preview
+					</code>
+					<button
+						type="button"
+						id="btn-copy-link"
+						class="text-xs px-2.5 py-1 rounded bg-primary text-primary-foreground font-medium shrink-0"
+					>
+						Copy
+					</button>
+				</div>
+				<p class="text-[11px] text-muted-foreground">
+					Please join 5 minutes before scheduled time using Chrome, Edge, or Brave with headphones enabled.
+				</p>
+			</div>
+
+			<div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+				<a
+					href="/"
+					class="px-5 py-2.5 rounded-lg border border-border text-xs font-semibold hover:bg-muted transition-colors"
+				>
+					Return to CodingCat.dev Home
+				</a>
+				<a
+					href="/podcasts"
+					class="px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+				>
+					Explore Recent Episodes
+				</a>
+			</div>
+		</div>
+
+		<!-- PodMatch Badge Footer -->
+		<footer class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
+			<div class="flex flex-col gap-1 text-center sm:text-left">
+				<span class="text-xs font-semibold text-foreground">PodMatch Network Certified</span>
+				<span class="text-xs text-muted-foreground">Powered by FlipFeeds Two-Sided Creator &amp; Guest Matching</span>
+			</div>
+			<PodmatchBadge />
+		</footer>
+	</div>
+</BaseLayout>
+
+<script is:inline>
+	// Interactive Client Form Logic
+	(function () {
+		let selectedSlotId = "slot-1";
+		let selectedSlotStart = "2026-10-15T14:00:00Z";
+		let signatureMode = "draw";
+		let hasDrawn = false;
+		let isDrawing = false;
+
+		// Slot selection
+		const slotButtons = document.querySelectorAll(".slot-btn");
+		slotButtons.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				slotButtons.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+					b.classList.add("bg-card");
+				});
+				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				btn.classList.remove("bg-card");
+				selectedSlotId = btn.getAttribute("data-slot-id") || "";
+				selectedSlotStart = btn.getAttribute("data-slot-start") || "";
+			});
+		});
+
+		// Mode Toggling (Draw vs Type)
+		const btnDraw = document.getElementById("btn-mode-draw");
+		const btnType = document.getElementById("btn-mode-type");
+		const canvasContainer = document.getElementById("canvas-container");
+		const typedContainer = document.getElementById("typed-container");
+		const typedInput = document.getElementById("typed-input");
+		const typedPreview = document.getElementById("typed-preview");
+		const guestNameInput = document.getElementById("guest-name");
+
+		if (btnDraw && btnType && canvasContainer && typedContainer) {
+			btnDraw.addEventListener("click", () => {
+				signatureMode = "draw";
+				btnDraw.classList.add("bg-background", "text-foreground", "shadow-xs");
+				btnDraw.classList.remove("text-muted-foreground");
+				btnType.classList.remove("bg-background", "text-foreground", "shadow-xs");
+				btnType.classList.add("text-muted-foreground");
+				canvasContainer.classList.remove("hidden");
+				typedContainer.classList.add("hidden");
+				typedContainer.classList.remove("flex");
+			});
+
+			btnType.addEventListener("click", () => {
+				signatureMode = "type";
+				btnType.classList.add("bg-background", "text-foreground", "shadow-xs");
+				btnType.classList.remove("text-muted-foreground");
+				btnDraw.classList.remove("bg-background", "text-foreground", "shadow-xs");
+				btnDraw.classList.add("text-muted-foreground");
+				canvasContainer.classList.add("hidden");
+				typedContainer.classList.remove("hidden");
+				typedContainer.classList.add("flex");
+
+				if (typedInput && !typedInput.value && guestNameInput && guestNameInput.value) {
+					typedInput.value = guestNameInput.value;
+					if (typedPreview) typedPreview.textContent = guestNameInput.value;
+				}
+			});
+		}
+
+		if (typedInput && typedPreview) {
+			typedInput.addEventListener("input", (e) => {
+				const val = e.target.value.trim();
+				typedPreview.textContent = val || "Signature Preview";
+			});
+		}
+
+		// HTML5 Canvas Drawing Logic
+		const canvas = document.getElementById("signature-canvas");
+		const hint = document.getElementById("canvas-hint");
+		const statusText = document.getElementById("sig-status");
+		const btnClear = document.getElementById("btn-clear-sig");
+
+		if (canvas && canvas instanceof HTMLCanvasElement) {
+			const ctx = canvas.getContext("2d");
+
+			const getPos = (e) => {
+				const rect = canvas.getBoundingClientRect();
+				const scaleX = canvas.width / rect.width;
+				const scaleY = canvas.height / rect.height;
+				return {
+					x: (e.clientX - rect.left) * scaleX,
+					y: (e.clientY - rect.top) * scaleY,
+				};
+			};
+
+			canvas.addEventListener("pointerdown", (e) => {
+				if (!ctx) return;
+				isDrawing = true;
+				const pos = getPos(e);
+				ctx.beginPath();
+				ctx.moveTo(pos.x, pos.y);
+				ctx.lineWidth = 3;
+				ctx.lineCap = "round";
+				ctx.lineJoin = "round";
+				ctx.strokeStyle = "#2563eb";
+				if (hint) hint.classList.add("hidden");
+			});
+
+			canvas.addEventListener("pointermove", (e) => {
+				if (!isDrawing || !ctx) return;
+				const pos = getPos(e);
+				ctx.lineTo(pos.x, pos.y);
+				ctx.stroke();
+				hasDrawn = true;
+				if (statusText) statusText.textContent = "Signature recorded";
+			});
+
+			const stop = () => {
+				isDrawing = false;
+			};
+
+			canvas.addEventListener("pointerup", stop);
+			canvas.addEventListener("pointerleave", stop);
+
+			if (btnClear) {
+				btnClear.addEventListener("click", () => {
+					if (!ctx) return;
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					hasDrawn = false;
+					if (hint) hint.classList.remove("hidden");
+					if (statusText) statusText.textContent = "Awaiting signature...";
+				});
+			}
+		}
+
+		// Submission Logic
+		const btnConfirm = document.getElementById("btn-confirm-booking");
+		const formError = document.getElementById("form-error");
+		const bookingContainer = document.getElementById("booking-container");
+		const confirmedCard = document.getElementById("booking-confirmed-card");
+		const confirmedLink = document.getElementById("confirmed-studio-link");
+		const btnCopy = document.getElementById("btn-copy-link");
+
+		if (btnConfirm) {
+			btnConfirm.addEventListener("click", async () => {
+				if (formError) formError.classList.add("hidden");
+
+				const name = guestNameInput ? guestNameInput.value.trim() : "";
+				const emailInput = document.getElementById("guest-email");
+				const email = emailInput ? emailInput.value.trim() : "";
+				const topicsInput = document.getElementById("guest-topics");
+				const topics = topicsInput ? topicsInput.value.trim() : "";
+
+				const chkRecording = document.getElementById("consent-recording");
+				const chkCommercial = document.getElementById("consent-commercial");
+				const chkLikeness = document.getElementById("consent-likeness");
+
+				if (!name) {
+					showError("Please enter your full legal name.");
+					return;
+				}
+				if (!email || !email.includes("@")) {
+					showError("Please enter a valid email address.");
+					return;
+				}
+				if (!topics) {
+					showError("Please provide key talking points for the interview.");
+					return;
+				}
+				if (
+					(chkRecording && !chkRecording.checked) ||
+					(chkCommercial && !chkCommercial.checked) ||
+					(chkLikeness && !chkLikeness.checked)
+				) {
+					showError("You must agree to all appearance release checkboxes to proceed.");
+					return;
+				}
+
+				if (signatureMode === "draw" && !hasDrawn) {
+					showError("Please provide your freehand signature on the canvas pad.");
+					return;
+				}
+				if (signatureMode === "type") {
+					const typedVal = typedInput ? typedInput.value.trim() : "";
+					if (!typedVal) {
+						showError("Please type your name to sign the release.");
+						return;
+					}
+				}
+
+				// Execute confirmation
+				btnConfirm.setAttribute("disabled", "true");
+				btnConfirm.textContent = "Reserving Studio & Generating Pass...";
+
+				try {
+					// Simulate Studio token generation & API dispatch
+					await new Promise((r) => setTimeout(r, 600));
+
+					const roomId = "srt_codingcatdev_" + (selectedSlotId ? selectedSlotId.replace(/-/g, '_') + '_' : '') + Math.random().toString(36).substring(2, 8);
+					const studioUrl = "https://flipfeeds.com/studio?room=" + roomId + "&at=" + encodeURIComponent(selectedSlotStart);
+
+					if (confirmedLink) confirmedLink.textContent = studioUrl;
+					if (bookingContainer) bookingContainer.classList.add("hidden");
+					if (confirmedCard) confirmedCard.classList.remove("hidden");
+
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				} catch (err) {
+					showError("Failed to reserve booking session. Please try again.");
+					btnConfirm.removeAttribute("disabled");
+					btnConfirm.textContent = "Confirm Session & Sign Release";
+				}
+			});
+		}
+
+		function showError(msg) {
+			if (!formError) return;
+			formError.textContent = msg;
+			formError.classList.remove("hidden");
+			formError.scrollIntoView({ behavior: "smooth", block: "center" });
+		}
+
+		if (btnCopy && confirmedLink) {
+			btnCopy.addEventListener("click", () => {
+				navigator.clipboard.writeText(confirmedLink.textContent || "").then(() => {
+					btnCopy.textContent = "Copied!";
+					setTimeout(() => {
+						btnCopy.textContent = "Copy";
+					}, 2000);
+				});
+			});
+		}
+	})();
+</script>

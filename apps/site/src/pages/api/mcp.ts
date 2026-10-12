@@ -859,7 +859,7 @@ async function handleInitialContext(
 			content: [{ type: "text", text: JSON.stringify(summary, null, 2) }],
 			isError: false,
 		};
-	} catch (err) {
+	} catch (_err) {
 		return {
 			content: [
 				{
