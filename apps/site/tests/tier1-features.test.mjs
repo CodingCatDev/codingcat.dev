@@ -1243,5 +1243,141 @@ describe("Tier 1 - Feature Coverage", () => {
 			const data = await res.json();
 			assert.ok(data.client_id, "Must return client_id via alias");
 		});
+
+		it("7.13 /oauth2/authorize completes automated Account Linking redirect with code and state", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const registeredClient = {
+				clientId: "test_gemini_client_id",
+				redirectUris: JSON.stringify([
+					"https://oauth-redirect.googleusercontent.com/r/gemini-app",
+				]),
+				disabled: 0,
+			};
+			const verifications = new Map();
+			const mockDb = {
+				prepare(sql) {
+					return {
+						bind(...args) {
+							return {
+								async first() {
+									if (sql.includes("FROM oauthClient")) {
+										return registeredClient;
+									}
+									return null;
+								},
+								async run() {
+									if (sql.includes("INSERT INTO verification")) {
+										verifications.set(args[1], JSON.parse(args[2]));
+									}
+									return { success: true };
+								},
+							};
+						},
+					};
+				},
+			};
+
+			const request = new Request(
+				"https://codingcat.dev/oauth2/authorize?client_id=test_gemini_client_id&redirect_uri=https://oauth-redirect.googleusercontent.com/r/gemini-app&response_type=code&state=gemini_state_123",
+				{ method: "GET" },
+			);
+
+			const testLocals = { ...locals, db: mockDb };
+			const res = await oauth2Module.ALL({ request, locals: testLocals });
+			assert.equal(res.status, 302, "Must return 302 redirect");
+			const location = res.headers.get("Location");
+			assert.ok(location, "Must have Location header");
+			const locUrl = new URL(location);
+			assert.equal(
+				locUrl.origin,
+				"https://oauth-redirect.googleusercontent.com",
+			);
+			assert.equal(locUrl.pathname, "/r/gemini-app");
+			assert.equal(locUrl.searchParams.get("state"), "gemini_state_123");
+			assert.ok(
+				locUrl.searchParams.get("code"),
+				"Must contain authorization code",
+			);
+			assert.equal(locUrl.searchParams.get("iss"), "https://codingcat.dev");
+		});
+
+		it("7.14 /oauth2/token appends refresh_token for persistent Gemini Account Linking", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const regReq = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini Token Test",
+					redirect_uris: [
+						"https://oauth-redirect.googleusercontent.com/r/test",
+					],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_post",
+				}),
+			});
+			const regRes = await oauth2Module.ALL({ request: regReq, locals });
+			const regData = await regRes.json();
+
+			const { hashToken, getAuth } = loadModule("src/lib/auth.ts");
+			const auth = getAuth("https://codingcat.dev");
+
+			const ctx = await auth.$context;
+			const code = `test_code_refresh_${Date.now()}`;
+			const identifier = await hashToken(code);
+
+			const user = await ctx.internalAdapter.createUser({
+				email: "test_mcp@codingcat.dev",
+				emailVerified: true,
+				name: "Test MCP User",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+			const session = await ctx.internalAdapter.createSession(user.id);
+
+			await ctx.internalAdapter.createVerificationValue({
+				identifier,
+				value: JSON.stringify({
+					type: "authorization_code",
+					query: {
+						client_id: regData.client_id,
+						redirect_uri: "https://oauth-redirect.googleusercontent.com/r/test",
+						response_type: "code",
+						scope: "read:content search mcp:tools agent",
+						state: "st123",
+					},
+					userId: user.id,
+					sessionId: session.id,
+					authTime: Date.now(),
+					resource: ["https://codingcat.dev/mcp"],
+				}),
+				expiresAt: new Date(Date.now() + 600000),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			const tokenReq = new Request("https://codingcat.dev/oauth2/token", {
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({
+					grant_type: "authorization_code",
+					code,
+					client_id: regData.client_id,
+					client_secret: regData.client_secret,
+					redirect_uri: "https://oauth-redirect.googleusercontent.com/r/test",
+				}),
+			});
+
+			const tokenRes = await oauth2Module.ALL({ request: tokenReq, locals });
+			assert.equal(tokenRes.status, 200);
+
+			const tokenData = await tokenRes.json();
+			assert.ok(tokenData.access_token, "Must return access_token");
+			assert.ok(
+				tokenData.refresh_token,
+				"Must return refresh_token for Google Account Linking",
+			);
+			assert.equal(tokenData.token_type, "Bearer");
+		});
 	});
 });
