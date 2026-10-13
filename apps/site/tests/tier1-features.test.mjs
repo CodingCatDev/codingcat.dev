@@ -1379,5 +1379,119 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 			assert.equal(tokenData.token_type, "Bearer");
 		});
+
+		it("7.15 astro.config.mjs disables checkOrigin CSRF blocking and subpath /.well-known/oauth-protected-resource/mcp resolves", async () => {
+			const astroConfig = fs.readFileSync(
+				path.resolve(SRC_DIR, "../astro.config.mjs"),
+				"utf-8",
+			);
+			assert.ok(
+				astroConfig.includes("checkOrigin: false"),
+				"astro.config.mjs must disable checkOrigin so back-channel POST /oauth2/token requests without Origin header are not blocked with 403",
+			);
+
+			const subpathPrmModule = loadModule(
+				"src/pages/.well-known/oauth-protected-resource/[...slug].ts",
+			);
+			const res = await subpathPrmModule.GET({
+				params: { slug: "mcp" },
+				locals,
+			});
+			assert.equal(res.status, 200);
+			const data = await res.json();
+			assert.equal(data.resource, "https://codingcat.dev/mcp");
+			assert.deepEqual(data.authorization_servers, ["https://codingcat.dev"]);
+		});
+
+		it("7.16 /oauth2/token supports full OIDC + PKCE S256 scope exchange (openid profile email offline_access) for Google Gemini", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const regReq = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini OIDC PKCE Test",
+					redirect_uris: [
+						"https://vertexaisearch.cloud.google.com/oauth-redirect",
+					],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_basic",
+				}),
+			});
+			const regRes = await oauth2Module.ALL({ request: regReq, locals });
+			const regData = await regRes.json();
+			assert.ok(
+				regData.scope.includes("openid") &&
+					regData.scope.includes("offline_access"),
+				"Registered client must default to allowing openid and offline_access scopes",
+			);
+
+			const { hashToken, getAuth } = loadModule("src/lib/auth.ts");
+			const auth = getAuth("https://codingcat.dev");
+			const ctx = await auth.$context;
+
+			const codeVerifier =
+				"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk_gemini_pkce_verifier";
+			const codeChallenge = await hashToken(codeVerifier);
+			const code = `test_code_oidc_${Date.now()}`;
+			const identifier = await hashToken(code);
+
+			const user = await ctx.internalAdapter.createUser({
+				email: "gemini_oidc@codingcat.dev",
+				emailVerified: true,
+				name: "Gemini OIDC User",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+			const session = await ctx.internalAdapter.createSession(user.id);
+
+			await ctx.internalAdapter.createVerificationValue({
+				identifier,
+				value: JSON.stringify({
+					type: "authorization_code",
+					query: {
+						client_id: regData.client_id,
+						redirect_uri:
+							"https://vertexaisearch.cloud.google.com/oauth-redirect",
+						response_type: "code",
+						scope:
+							"openid profile email offline_access read:content search mcp:tools agent",
+						state: "state_gemini_pkce",
+						code_challenge: codeChallenge,
+						code_challenge_method: "S256",
+					},
+					userId: user.id,
+					sessionId: session.id,
+					authTime: Date.now(),
+					resource: ["https://codingcat.dev/mcp"],
+				}),
+				expiresAt: new Date(Date.now() + 600000),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			const basicAuth = btoa(`${regData.client_id}:${regData.client_secret}`);
+			const tokenReq = new Request("https://codingcat.dev/oauth2/token", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+					Authorization: `Basic ${basicAuth}`,
+				},
+				body: new URLSearchParams({
+					grant_type: "authorization_code",
+					code,
+					code_verifier: codeVerifier,
+					redirect_uri:
+						"https://vertexaisearch.cloud.google.com/oauth-redirect",
+				}),
+			});
+
+			const tokenRes = await oauth2Module.ALL({ request: tokenReq, locals });
+			assert.equal(tokenRes.status, 200);
+			const tokenData = await tokenRes.json();
+			assert.ok(tokenData.access_token, "Must return access_token");
+			assert.ok(tokenData.refresh_token, "Must return refresh_token");
+			assert.ok(tokenData.id_token, "Must return id_token for openid scope");
+		});
 	});
 });

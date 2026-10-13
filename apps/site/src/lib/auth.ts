@@ -8,6 +8,10 @@ export const BETTER_AUTH_SECRET =
 	"codingcat-mcp-oauth2-secret-secure-random-2026-key-better-auth";
 
 export const MCP_DEFAULT_SCOPES = [
+	"openid",
+	"profile",
+	"email",
+	"offline_access",
 	"read:content",
 	"search",
 	"mcp:tools",
@@ -92,6 +96,8 @@ export function getAuth(origin: string, d1?: D1Database) {
 				allowDynamicClientRegistration: true,
 				allowUnauthenticatedClientRegistration: true,
 				clientRegistrationRequirePKCE: false,
+				clientRegistrationDefaultScopes: [...MCP_DEFAULT_SCOPES],
+				enforcePerClientResources: false,
 				scopes: [...MCP_DEFAULT_SCOPES],
 			}),
 		],
