@@ -6,11 +6,25 @@ import {
 	ensureDefaultUserAndSession,
 	getAuth,
 	hashToken,
+	MCP_DEFAULT_SCOPES,
 } from "@/lib/auth";
 
 export const prerender = false;
 
+const CORS_HEADERS = {
+	"access-control-allow-origin": "*",
+	"access-control-allow-methods": "GET, POST, OPTIONS",
+	"access-control-allow-headers": "Content-Type, Authorization",
+};
+
 export const ALL: APIRoute = async ({ request, locals }) => {
+	if (request.method === "OPTIONS") {
+		return new Response(null, {
+			status: 204,
+			headers: CORS_HEADERS,
+		});
+	}
+
 	const origin = locals.siteUrl.origin;
 	const auth = getAuth(origin);
 	const url = new URL(request.url);
@@ -25,8 +39,13 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 		const redirectUri = url.searchParams.get("redirect_uri");
 		const responseType = url.searchParams.get("response_type");
 		const state = url.searchParams.get("state");
-		const scope =
-			url.searchParams.get("scope") || "read:content search mcp:tools agent";
+		const rawScope =
+			url.searchParams.get("scope") || MCP_DEFAULT_SCOPES.join(" ");
+		// Ensure offline_access is always included so Better Auth mints a refresh_token
+		const scopeTokens = Array.from(
+			new Set([...rawScope.split(/\s+/).filter(Boolean), "offline_access"]),
+		);
+		const scope = scopeTokens.join(" ");
 		const codeChallenge = url.searchParams.get("code_challenge");
 		const codeChallengeMethod = url.searchParams.get("code_challenge_method");
 
@@ -39,6 +58,7 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 					.first<{
 						clientId: string;
 						redirectUris: string;
+						scopes?: string;
 						disabled?: number;
 					}>();
 
@@ -58,6 +78,15 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 					);
 
 					if (isUriAllowed) {
+						// Ensure client's allowed scopes in D1 include all default + requested scopes
+						const allowedScopes = Array.from(
+							new Set([...MCP_DEFAULT_SCOPES, ...scopeTokens]),
+						);
+						await db
+							.prepare("UPDATE oauthClient SET scopes = ? WHERE clientId = ?")
+							.bind(JSON.stringify(allowedScopes), clientId)
+							.run();
+
 						// Ensure default user and active session exist
 						await ensureDefaultUserAndSession(db);
 
@@ -162,8 +191,13 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 					const refreshToken =
 						crypto.randomUUID().replace(/-/g, "") +
 						crypto.randomUUID().replace(/-/g, "");
+					const hashedRefreshToken = await hashToken(refreshToken);
 					const now = Date.now();
 					const refreshId = `rt_${now}_${Math.random().toString(36).slice(2, 8)}`;
+					const scopesList =
+						typeof data.scope === "string"
+							? data.scope.split(/\s+/).filter(Boolean)
+							: [...MCP_DEFAULT_SCOPES];
 
 					if (db) {
 						await db
@@ -173,13 +207,13 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 							)
 							.bind(
 								refreshId,
-								refreshToken,
+								hashedRefreshToken,
 								clientIdFromBody,
 								DEFAULT_MCP_SESSION.id,
 								DEFAULT_MCP_USER.id,
 								now,
 								now + 30 * 24 * 3600 * 1000, // 30 days
-								data.scope || "read:content search mcp:tools agent",
+								JSON.stringify(scopesList),
 							)
 							.run();
 					}
