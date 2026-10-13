@@ -35,6 +35,9 @@ function rawFonts(extensions) {
 
 export default defineConfig({
 	session: false,
+	security: {
+		checkOrigin: false,
+	},
 	site: process.env.SITE_URL ?? "https://codingcat.dev",
 	output: "server",
 	adapter: cloudflare({
