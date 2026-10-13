@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "codingcatdev-dev",
-  "account_id": "c46bd0f3b9ed47b8692cca098030edbf",
+  "account_id": "78d5864b11eaee66135a87ad575c644e",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-01",
   // nodejs_compat: Sanity client + Portable Text pull Node built-ins.
@@ -28,12 +28,12 @@
   "vars": {
     "ENVIRONMENT": "dev",
     "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
-    "PUBLIC_SANITY_DATASET": "dev",
+    "PUBLIC_SANITY_DATASET": "production",
     "PUBLIC_SANITY_API_VERSION": "2025-09-30",
-    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/dev",
-    "SITE_URL": "https://dev.codingcat.dev",
-    "FLIPCORE_API_URL": "https://api.flipfeeds.dev",
-    "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.dev"
+    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/production",
+    "SITE_URL": "http://localhost:4325",
+    "FLIPCORE_API_URL": "http://localhost:8787",
+    "PUBLIC_FLIPCORE_WEB_URL": "http://localhost:4322"
   },
 
   // NOTE: bindings are NOT inherited into `env.*`. Every binding added to the

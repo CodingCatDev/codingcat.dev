@@ -354,10 +354,15 @@ const description =
 
 			<!-- Studio Entry Link Box -->
 			<div class="flex flex-col gap-3 p-5 rounded-xl border border-border bg-muted/50 text-left max-w-lg mx-auto w-full">
-				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Studio Entry Pass</span>
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Studio Entry Pass</span>
+					<span id="confirmed-room-badge" class="text-xs font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+						Room: cc-guest-live
+					</span>
+				</div>
 				<div class="flex items-center justify-between gap-2 bg-background p-2.5 rounded-lg border border-border">
 					<code id="confirmed-studio-link" class="text-xs font-mono text-primary truncate select-all">
-						https://flipfeeds.com/studio?room=srt_codingcatdev_preview
+						https://studio.flipfeeds.com/room/cc-guest-live
 					</code>
 					<button
 						type="button"
@@ -373,6 +378,15 @@ const description =
 			</div>
 
 			<div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+				<a
+					id="btn-enter-green-room"
+					href="https://studio.flipfeeds.com/room/cc-guest-live"
+					target="_blank"
+					rel="noreferrer"
+					class="px-6 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-md inline-flex items-center gap-2"
+				>
+					<span>🎙️ Enter Green Room</span>
+				</a>
 				<a
 					href="/"
 					class="px-5 py-2.5 rounded-lg border border-border text-xs font-semibold hover:bg-muted transition-colors"
@@ -402,7 +416,6 @@ const description =
 <script is:inline>
 	// Interactive Client Form Logic
 	(function () {
-		let selectedSlotId = "slot-1";
 		let selectedSlotStart = "2026-10-15T14:00:00Z";
 		let signatureMode = "draw";
 		let hasDrawn = false;
@@ -418,7 +431,6 @@ const description =
 				});
 				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
 				btn.classList.remove("bg-card");
-				selectedSlotId = btn.getAttribute("data-slot-id") || "";
 				selectedSlotStart = btn.getAttribute("data-slot-start") || "";
 			});
 		});
@@ -570,36 +582,95 @@ const description =
 					return;
 				}
 
-				if (signatureMode === "draw" && !hasDrawn) {
-					showError("Please provide your freehand signature on the canvas pad.");
-					return;
-				}
-				if (signatureMode === "type") {
+				let signaturePngBase64 = "";
+				if (signatureMode === "draw") {
+					if (!hasDrawn || !canvas) {
+						showError("Please provide your freehand signature on the canvas pad.");
+						return;
+					}
+					signaturePngBase64 = canvas.toDataURL("image/png");
+				} else {
 					const typedVal = typedInput ? typedInput.value.trim() : "";
 					if (!typedVal) {
 						showError("Please type your name to sign the release.");
 						return;
 					}
+					// Generate image from typed signature
+					const offscreen = document.createElement("canvas");
+					offscreen.width = 600;
+					offscreen.height = 144;
+					const offCtx = offscreen.getContext("2d");
+					if (offCtx) {
+						offCtx.fillStyle = "#ffffff";
+						offCtx.fillRect(0, 0, 600, 144);
+						offCtx.fillStyle = "#1e3a8a";
+						offCtx.font = "italic 36px Georgia, serif";
+						offCtx.textAlign = "center";
+						offCtx.textBaseline = "middle";
+						offCtx.fillText(typedVal, 300, 72);
+						signaturePngBase64 = offscreen.toDataURL("image/png");
+					}
 				}
 
-				// Execute confirmation
+				const guestUrlInput = document.getElementById("guest-url");
+				const guestProjectInput = document.getElementById("guest-project");
+
+				const payload = {
+					guestName: name,
+					guestEmail: email,
+					topics: topics,
+					topicPitch: topics,
+					notes: topics,
+					guestTitle: guestProjectInput ? guestProjectInput.value.trim() : "",
+					project: guestProjectInput ? guestProjectInput.value.trim() : "",
+					url: guestUrlInput ? guestUrlInput.value.trim() : "",
+					proposedAt: selectedSlotStart,
+					signaturePngBase64: signaturePngBase64,
+					signatureMode: signatureMode,
+					recordingRightsAgreed: chkRecording ? chkRecording.checked : true,
+					commercialUseAgreed: chkCommercial ? chkCommercial.checked : true,
+					likenessAgreed: chkLikeness ? chkLikeness.checked : true,
+				};
+
+				// Execute confirmation via real API
 				btnConfirm.setAttribute("disabled", "true");
 				btnConfirm.textContent = "Reserving Studio & Generating Pass...";
 
 				try {
-					// Simulate Studio token generation & API dispatch
-					await new Promise((r) => setTimeout(r, 600));
+					const res = await fetch("/api/booking", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload),
+					});
 
-					const roomId = "srt_codingcatdev_" + (selectedSlotId ? selectedSlotId.replace(/-/g, '_') + '_' : '') + Math.random().toString(36).substring(2, 8);
-					const studioUrl = "https://flipfeeds.com/studio?room=" + roomId + "&at=" + encodeURIComponent(selectedSlotStart);
+					const result = await res.json();
+					if (!res.ok || !result.ok) {
+						showError(result.message || "Failed to reserve booking session. Please try again.");
+						btnConfirm.removeAttribute("disabled");
+						btnConfirm.textContent = "Confirm Session & Sign Release";
+						return;
+					}
 
-					if (confirmedLink) confirmedLink.textContent = studioUrl;
+					const roomId = result.roomId || "cc-guest-live";
+					const studioRoomUrl = result.studioRoomUrl || `/studio?room=${roomId}`;
+					const fullStudioUrl = studioRoomUrl.startsWith("http")
+						? studioRoomUrl
+						: `https://studio.flipfeeds.com${studioRoomUrl.startsWith("/") ? "" : "/"}${studioRoomUrl}`;
+
+					if (confirmedLink) confirmedLink.textContent = fullStudioUrl;
+
+					const roomBadge = document.getElementById("confirmed-room-badge");
+					if (roomBadge) roomBadge.textContent = "Room: " + roomId;
+
+					const enterRoomBtn = document.getElementById("btn-enter-green-room");
+					if (enterRoomBtn) enterRoomBtn.setAttribute("href", fullStudioUrl);
+
 					if (bookingContainer) bookingContainer.classList.add("hidden");
 					if (confirmedCard) confirmedCard.classList.remove("hidden");
 
 					window.scrollTo({ top: 0, behavior: "smooth" });
 				} catch (err) {
-					showError("Failed to reserve booking session. Please try again.");
+					showError("Failed to reserve booking session. Please check your connection and try again.");
 					btnConfirm.removeAttribute("disabled");
 					btnConfirm.textContent = "Confirm Session & Sign Release";
 				}

@@ -317,16 +317,20 @@ const sponsorshipTiers = [
 				const result = (await res.json()) as {
 					success?: boolean;
 					message?: string;
+					portalToken?: string;
 					portalUrl?: string;
 					dealRoomUrl?: string;
 				};
 
 				if (res.ok && result.success) {
 					form.reset();
-					const targetUrl = result.portalUrl || result.dealRoomUrl;
+					const targetUrl =
+						result.portalUrl ||
+						result.dealRoomUrl ||
+						(result.portalToken ? `https://flipfeeds.com/codingcatdev/portal/${result.portalToken}` : "");
 					if (targetUrl) {
 						if (successEl) {
-							successEl.innerHTML = `<strong>Inquiry received!</strong> Opening your Deal Room portal... <br><a class="underline font-semibold" href="${targetUrl}">Click here if not redirected automatically &rarr;</a>`;
+							successEl.innerHTML = `<strong>Inquiry received!</strong> Opening your Sponsor Deal Room portal... <br><a class="underline font-semibold text-primary" href="${targetUrl}">Click here if not redirected automatically &rarr;</a>`;
 							successEl.classList.remove("hidden");
 						}
 						window.location.href = targetUrl;
