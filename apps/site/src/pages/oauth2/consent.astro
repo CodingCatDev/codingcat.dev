@@ -1,0 +1,47 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export const prerender = false;
+
+const query = Astro.url.searchParams;
+const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
+---
+
+<BaseLayout
+	title="Authorize Access — CodingCat.dev"
+	description="Authorize access to CodingCat.dev tools and content"
+>
+	<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+		<div class="max-w-md w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-8 backdrop-blur shadow-2xl text-center">
+			<div class="w-16 h-16 mx-auto mb-6 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center text-3xl font-bold border border-purple-500/30">
+				🐱
+			</div>
+			
+			<h1 class="text-2xl font-bold text-white mb-2">Consent &amp; Authorization</h1>
+			<p class="text-slate-400 text-sm mb-6 leading-relaxed">
+				Allow this application to interact with CodingCat.dev on your behalf.
+			</p>
+
+			<div class="space-y-4">
+				<div class="bg-slate-800/60 rounded-xl p-4 text-left text-xs text-slate-300 border border-slate-700/50 space-y-1.5">
+					<div class="flex justify-between">
+						<span class="text-slate-400 font-medium">Scopes Requested</span>
+						<span class="text-purple-300">read:content, search, mcp:tools, agent</span>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-slate-400 font-medium">Resource</span>
+						<span>CodingCat.dev MCP Server</span>
+					</div>
+				</div>
+
+				<a
+					href={authorizeTarget}
+					id="consent-button"
+					class="block w-full py-3.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-purple-500/25 active:scale-[0.99]"
+				>
+					Grant Consent &amp; Continue
+				</a>
+			</div>
+		</div>
+	</div>
+</BaseLayout>
