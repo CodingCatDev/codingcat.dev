@@ -1,33 +1,47 @@
 import type { APIRoute } from "astro";
+import { getAuth } from "@/lib/auth";
 
 export const prerender = false;
 
 /**
  * OAuth 2.0 Authorization Server Metadata (RFC 8414)
- * with Auth.md agent_auth extension for autonomous AI agent discovery
+ * powered by Better Auth with Auth.md agent_auth extension for autonomous AI agent discovery
  */
-export const GET: APIRoute = async ({ locals }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = locals.siteUrl.origin;
+	const auth = getAuth(origin);
+
+	let baseMeta: Record<string, any> = {};
+	try {
+		const req = new Request(
+			`${origin}/.well-known/oauth-authorization-server`,
+			request,
+		);
+		const baseRes = await auth.handler(req);
+		if (baseRes.ok) {
+			baseMeta = await baseRes.json();
+		}
+	} catch {
+		// Fallback if request is invoked offline/in tests
+	}
 
 	const metadata = {
+		...baseMeta,
 		issuer: origin,
-		authorization_endpoint: `${origin}/oauth/authorize`,
-		token_endpoint: `${origin}/oauth/token`,
-		registration_endpoint: `${origin}/oauth/register`,
-		jwks_uri: `${origin}/.well-known/jwks.json`,
-		response_types_supported: ["code", "token"],
-		grant_types_supported: [
-			"authorization_code",
-			"client_credentials",
-			"urn:ietf:params:oauth:grant-type:token-exchange",
+		authorization_endpoint: `${origin}/oauth2/authorize`,
+		token_endpoint: `${origin}/oauth2/token`,
+		registration_endpoint: `${origin}/oauth2/register`,
+		jwks_uri: `${origin}/jwks`,
+		scopes_supported: [
+			"openid",
+			"profile",
+			"email",
+			"offline_access",
+			"read:content",
+			"search",
+			"mcp:tools",
+			"agent",
 		],
-		token_endpoint_auth_methods_supported: [
-			"client_secret_basic",
-			"client_secret_post",
-			"none",
-		],
-		scopes_supported: ["read:content", "search", "mcp:tools", "agent"],
-		code_challenge_methods_supported: ["S256"],
 		agent_auth: {
 			skill: `${origin}/auth.md`,
 			register_uri: `${origin}/agent/auth`,
