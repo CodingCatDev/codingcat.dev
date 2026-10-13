@@ -1,5 +1,5 @@
-import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
+import type { APIRoute } from "astro";
 
 /**
  * First-party Cloudflare Worker Reverse Proxy for PostHog (`/ingest/*`).

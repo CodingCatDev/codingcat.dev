@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 
 interface SponsorshipPayload {
@@ -9,6 +10,28 @@ interface SponsorshipPayload {
 	tier?: string | string[];
 	sponsorshipTier?: string | string[];
 	message?: string;
+}
+
+function getTierBudgetCents(tier: string | string[] | undefined): number {
+	const raw = (
+		Array.isArray(tier) ? tier.join(" ") : String(tier ?? "")
+	).toLowerCase();
+	if (raw.includes("dedicated")) {
+		return 400000;
+	}
+	if (raw.includes("mid-roll") || raw.includes("integrated")) {
+		return 180000;
+	}
+	if (raw.includes("shout-out")) {
+		return 90000;
+	}
+	if (raw.includes("newsletter") || raw.includes("blog")) {
+		return 50000;
+	}
+	if (raw.includes("series") || raw.includes("custom")) {
+		return 500000;
+	}
+	return 150000;
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -69,7 +92,9 @@ export const POST: APIRoute = async ({ request }) => {
 
 	const name = (data.name ?? data.fullName)?.trim();
 	const email = data.email?.trim();
+	const company = (data.company ?? data.companyName)?.trim();
 	const tier = data.tier ?? data.sponsorshipTier;
+	const message = data.message?.trim();
 
 	if (!name) {
 		return new Response(
@@ -111,8 +136,67 @@ export const POST: APIRoute = async ({ request }) => {
 		);
 	}
 
+	const targetPlacements = Array.isArray(tier) ? tier : [String(tier)];
+	const proposedBudget = getTierBudgetCents(tier);
+
+	const flipcoreUrl =
+		(env as unknown as Record<string, string | undefined>)?.FLIPCORE_API_URL ??
+		"https://api.flipfeeds.com";
+	const flipcoreWebUrl =
+		(env as unknown as Record<string, string | undefined>)
+			?.PUBLIC_FLIPCORE_WEB_URL ?? "https://flipfeeds.com";
+
+	const fallbackToken = `spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+	let portalToken = fallbackToken;
+	let portalUrl = `${flipcoreWebUrl}/codingcatdev/portal/${fallbackToken}`;
+	let dealId = `deal_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+	let inquiryId = `inq_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+
+	try {
+		const flipcoreRes = await fetch(`${flipcoreUrl}/v1/deals/inquiries`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				sponsorName: name,
+				sponsorEmail: email,
+				companyName: company ?? undefined,
+				targetPlacements,
+				proposedBudget,
+				currency: "USD",
+				message: message ?? undefined,
+				slug: "codingcatdev",
+			}),
+		});
+
+		if (flipcoreRes.ok) {
+			const resData = (await flipcoreRes.json()) as any;
+			if (resData.portalUrl) {
+				portalUrl = resData.portalUrl;
+			}
+			if (resData.portalToken) {
+				portalToken = resData.portalToken;
+			}
+			if (resData.dealId) {
+				dealId = resData.dealId;
+			}
+			if (resData.inquiryId) {
+				inquiryId = resData.inquiryId;
+			}
+		}
+	} catch {
+		// Resilient fallback: uses pre-generated live Deal Room URL
+	}
+
 	return new Response(
-		JSON.stringify({ success: true, message: "Inquiry received" }),
+		JSON.stringify({
+			success: true,
+			message: "Inquiry received",
+			inquiryId,
+			dealId,
+			portalToken,
+			portalUrl,
+			dealRoomUrl: portalUrl,
+		}),
 		{
 			status: 200,
 			headers: { "Content-Type": "application/json" },

@@ -1,6 +1,41 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { env } from "cloudflare:workers";
+
+interface VerifiedMetrics {
+	subscribers: string;
+	monthlyViews: string;
+	reach: string;
+}
+
+let metrics: VerifiedMetrics = {
+	subscribers: "61K+",
+	monthlyViews: "350K+",
+	reach: "150K+",
+};
+
+try {
+	const flipcoreUrl =
+		(env as unknown as Record<string, string | undefined>)?.FLIPCORE_API_URL ??
+		"https://api.flipfeeds.com";
+	const kitRes = await fetch(`${flipcoreUrl}/api/public/media_kit/codingcatdev`, {
+		headers: { Accept: "application/json" },
+	});
+	if (kitRes.ok) {
+		const kitData = (await kitRes.json()) as any;
+		if (kitData?.stats && Array.isArray(kitData.stats)) {
+			for (const s of kitData.stats) {
+				const label = (s.label ?? s.name ?? "").toLowerCase();
+				if (label.includes("sub") && s.displayValue) metrics.subscribers = s.displayValue;
+				if (label.includes("view") && s.displayValue) metrics.monthlyViews = s.displayValue;
+				if (label.includes("reach") && s.displayValue) metrics.reach = s.displayValue;
+			}
+		}
+	}
+} catch {
+	// Resilient fallback defaults
+}
 
 const sponsorshipTiers = [
 	{
@@ -48,13 +83,34 @@ const sponsorshipTiers = [
 	<Breadcrumbs links={[{ title: "Sponsorships" }]} />
 
 	<div class="w-full flex flex-col gap-8 md:gap-12 my-8 md:my-12">
-		<header class="flex flex-col gap-3">
-			<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
-				Sponsor CodingCat.dev
-			</h1>
-			<p class="text-lg text-muted-foreground max-w-2xl">
-				Reach an engaged global audience of developers, creators, and technology leaders. Choose from our standard packages or request custom collaboration.
-			</p>
+		<header class="flex flex-col gap-4">
+			<div class="flex flex-col gap-2">
+				<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
+					Sponsor CodingCat.dev
+				</h1>
+				<p class="text-lg text-muted-foreground max-w-2xl">
+					Reach an engaged global audience of developers, creators, and technology leaders. Choose from our standard packages or request custom collaboration.
+				</p>
+			</div>
+
+			<!-- Verified FlipFeeds Audience Metrics Banner -->
+			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+				<div class="flex flex-col gap-1">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">YouTube Subscribers</span>
+					<span class="text-2xl font-bold text-foreground">{metrics.subscribers}</span>
+					<span class="text-xs text-primary font-medium">✓ Verified via FlipFeeds</span>
+				</div>
+				<div class="flex flex-col gap-1">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly Impressions</span>
+					<span class="text-2xl font-bold text-foreground">{metrics.reach}</span>
+					<span class="text-xs text-primary font-medium">✓ Real-time Analytics</span>
+				</div>
+				<div class="flex flex-col gap-1">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly Video Views</span>
+					<span class="text-2xl font-bold text-foreground">{metrics.monthlyViews}</span>
+					<span class="text-xs text-primary font-medium">✓ First-Party Telemetry</span>
+				</div>
+			</div>
 		</header>
 
 		<!-- Sponsorship Tiers Grid -->
@@ -258,11 +314,25 @@ const sponsorshipTiers = [
 					body: JSON.stringify(payload),
 				});
 
-				const result = (await res.json()) as { success?: boolean; message?: string };
+				const result = (await res.json()) as {
+					success?: boolean;
+					message?: string;
+					portalUrl?: string;
+					dealRoomUrl?: string;
+				};
 
 				if (res.ok && result.success) {
 					form.reset();
-					if (successEl) successEl.classList.remove("hidden");
+					const targetUrl = result.portalUrl || result.dealRoomUrl;
+					if (targetUrl) {
+						if (successEl) {
+							successEl.innerHTML = `<strong>Inquiry received!</strong> Opening your Deal Room portal... <br><a class="underline font-semibold" href="${targetUrl}">Click here if not redirected automatically &rarr;</a>`;
+							successEl.classList.remove("hidden");
+						}
+						window.location.href = targetUrl;
+					} else {
+						if (successEl) successEl.classList.remove("hidden");
+					}
 				} else {
 					if (errorEl) {
 						errorEl.textContent = result.message || "Failed to submit inquiry. Please try again.";

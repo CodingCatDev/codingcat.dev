@@ -1,5 +1,5 @@
-import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
+import type { APIRoute } from "astro";
 import { trackClientBeaconEvent } from "@/lib/analytics";
 
 /**

@@ -11,7 +11,16 @@ export const GET: APIRoute = async ({ locals }) => {
 	const protectedResource = {
 		resource: origin,
 		authorization_servers: [origin],
-		scopes_supported: ["read:content", "search", "mcp:tools", "agent"],
+		scopes_supported: [
+			"openid",
+			"profile",
+			"email",
+			"offline_access",
+			"read:content",
+			"search",
+			"mcp:tools",
+			"agent",
+		],
 		bearer_methods_supported: ["header"],
 		resource_documentation: `${origin}/auth.md`,
 	};
