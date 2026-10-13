@@ -19,6 +19,13 @@
   //     "dataset": "codingcat_events_dev"
   //   }
   // ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "codingcat-auth-dev",
+      "database_id": "802a4e11-fa76-4e19-aef2-3bd8e6c214df"
+    }
+  ],
   "routes": [
     {
       "pattern": "dev.codingcat.dev",
@@ -38,8 +45,6 @@
 
   // NOTE: bindings are NOT inherited into `env.*`. Every binding added to the
   // top level must be repeated under env.production, or it will 503 in prod.
-  // D1 binding is intentionally absent until the codingcat.dev Cloudflare
-  // account is available to confirm/create the auth databases.
   "env": {
     "production": {
       "name": "codingcatdev-prod",
@@ -52,6 +57,13 @@
         }
       ],
       "ai": { "binding": "AI" },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "codingcat-auth",
+          "database_id": "a2f53117-5919-4224-95a2-dc3847bea540"
+        }
+      ],
       // "analytics_engine_datasets": [
       //   {
       //     "binding": "ANALYTICS",

@@ -1199,5 +1199,49 @@ describe("Tier 1 - Feature Coverage", () => {
 			const skillText = await skillRes.text();
 			assert.ok(skillText.includes("name: search-content"));
 		});
+
+		it("7.11 Better Auth OAuth 2.1 Dynamic Client Registration (RFC 7591) supports automated client creation (Gemini connection)", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const request = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini",
+					redirect_uris: ["https://gemini.google.com/oauth-callback"],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_basic",
+				}),
+			});
+
+			const res = await oauth2Module.ALL({ request, locals });
+			assert.equal(res.status, 201);
+			const data = await res.json();
+			assert.ok(data.client_id, "Must return client_id");
+			assert.ok(data.client_secret, "Must return client_secret");
+			assert.deepEqual(data.redirect_uris, [
+				"https://gemini.google.com/oauth-callback",
+			]);
+		});
+
+		it("7.12 Legacy /oauth/register alias maps to Better Auth registration endpoint", async () => {
+			const oauthModule = loadModule("src/pages/oauth/[...slug].ts");
+			const request = new Request("https://codingcat.dev/oauth/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini",
+					redirect_uris: ["https://gemini.google.com/oauth-callback"],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_basic",
+				}),
+			});
+
+			const res = await oauthModule.ALL({ request, locals });
+			assert.equal(res.status, 201);
+			const data = await res.json();
+			assert.ok(data.client_id, "Must return client_id via alias");
+		});
 	});
 });
