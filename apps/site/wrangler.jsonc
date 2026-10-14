@@ -10,6 +10,7 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "workers_dev": true,
+  "preview_urls": true,
   "ai": { "binding": "AI" },
   // Uncomment after clicking "Enable Analytics Engine" once at:
   // https://dash.cloudflare.com/c46bd0f3b9ed47b8692cca098030edbf/workers/analytics-engine

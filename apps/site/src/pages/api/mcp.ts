@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
-import { createClient } from "@sanity/client";
 import type { APIRoute } from "astro";
+import { createResilientClient } from "../../lib/sanity/client";
 import {
 	semanticSearchQuery,
 	textSearchFallbackQuery,
@@ -313,7 +313,7 @@ function getSanityClient() {
 		process.env.SANITY_API_READ_TOKEN ||
 		process.env.SANITY_AUTH_TOKEN;
 
-	return createClient({
+	return createResilientClient({
 		projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
 		dataset: (cfEnv?.PUBLIC_SANITY_DATASET as string) || "production",
 		apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
@@ -1314,13 +1314,6 @@ async function handleSchemaExplorer(
 						"URL slug identifier (e.g. '0-6-nextjs-with-guillermo-rauch')",
 				},
 				{ name: "date", type: "datetime", description: "Release date" },
-				{
-					name: "recordingDate",
-					type: "datetime",
-					description: "Recording date",
-				},
-				{ name: "season", type: "number", description: "Season number" },
-				{ name: "episode", type: "number", description: "Episode number" },
 				{
 					name: "coverImage",
 					type: "image",
