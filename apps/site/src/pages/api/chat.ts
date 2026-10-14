@@ -148,6 +148,7 @@ export const POST: APIRoute = async ({ request }) => {
 			date?: string;
 			excerpt?: string;
 			youtube?: string | null;
+			listenLinks?: Record<string, string | undefined>;
 		}> = [];
 
 		const normalizeAndCollectItems = (rawItems: any[]) => {
@@ -166,6 +167,47 @@ export const POST: APIRoute = async ({ request }) => {
 						(slugStr
 							? `/${itemType === "podcast" ? "podcast" : itemType === "post" ? "post" : itemType}/${slugStr}`
 							: undefined);
+					const rawLinks = item.listenLinks || {};
+					const spotifyLink =
+						rawLinks.spotify || item.spotifyLink || item.spotify?.link;
+					const youtubeLink = item.youtube || rawLinks.youtube || undefined;
+					const hasAudioOrLinks = Boolean(
+						spotifyLink ||
+							rawLinks.apple ||
+							rawLinks.pocketCasts ||
+							rawLinks.castbox ||
+							rawLinks.castro,
+					);
+					const listenLinks =
+						itemType === "podcast"
+							? {
+									...(youtubeLink ? { youtube: youtubeLink } : {}),
+									...(spotifyLink ? { spotify: spotifyLink } : {}),
+									...(rawLinks.apple
+										? { apple: rawLinks.apple }
+										: hasAudioOrLinks
+											? {
+													apple:
+														"https://podcasts.apple.com/us/podcast/codingcat-dev-podcast/id1491655542",
+												}
+											: {}),
+									...(rawLinks.pocketCasts
+										? { pocketCasts: rawLinks.pocketCasts }
+										: {}),
+									...(rawLinks.castbox ? { castbox: rawLinks.castbox } : {}),
+									...(rawLinks.castro ? { castro: rawLinks.castro } : {}),
+									...(rawLinks.overcast
+										? { overcast: rawLinks.overcast }
+										: hasAudioOrLinks
+											? { overcast: "https://overcast.fm/itunes1491655542" }
+											: {}),
+									...(rawLinks.rss
+										? { rss: rawLinks.rss }
+										: hasAudioOrLinks
+											? { rss: "https://anchor.fm/s/115b203c/podcast/rss" }
+											: {}),
+								}
+							: undefined;
 					return {
 						title: item.title || item.name || "Untitled",
 						type: itemType,
@@ -173,7 +215,11 @@ export const POST: APIRoute = async ({ request }) => {
 						url,
 						date: item.date || item.publishedAt,
 						excerpt: item.excerpt || item.transcriptSummary || "",
-						youtube: item.youtube || undefined,
+						youtube: youtubeLink,
+						listenLinks:
+							listenLinks && Object.keys(listenLinks).length > 0
+								? listenLinks
+								: undefined,
 					};
 				});
 			for (const entry of normalized) {
@@ -293,7 +339,9 @@ export const POST: APIRoute = async ({ request }) => {
 								"slug": slug.current,
 								date,
 								excerpt,
-								youtube
+								youtube,
+								listenLinks,
+								"spotifyLink": spotify.link
 							}`,
 							{ types, limit: count },
 						);
@@ -406,7 +454,9 @@ export const POST: APIRoute = async ({ request }) => {
 									"slug": slug.current,
 									date,
 									excerpt,
-									youtube
+									youtube,
+									listenLinks,
+									"spotifyLink": spotify.link
 								}`,
 								{ types: targetTypes },
 							);
@@ -580,6 +630,24 @@ export const POST: APIRoute = async ({ request }) => {
 							),
 						);
 					}
+				}
+
+				const podcastProviders = collectedToolItems
+					.filter(
+						(item) => item.type === "podcast" && item.url && item.listenLinks,
+					)
+					.slice(0, 5)
+					.map((item) => ({
+						title: item.title,
+						url: item.url,
+						listenLinks: item.listenLinks,
+					}));
+				if (podcastProviders.length > 0) {
+					await writer.write(
+						encoder.encode(
+							`\n<!--AJ_PODCAST_PROVIDERS:${JSON.stringify(podcastProviders)}-->`,
+						),
+					);
 				}
 			} catch (streamErr) {
 				console.error("[StreamText Stream Loop Error]", streamErr);

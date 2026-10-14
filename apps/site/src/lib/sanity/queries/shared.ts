@@ -81,7 +81,8 @@ export const podcastFields = `
     name,
     site
   },
-  spotify
+  spotify,
+  listenLinks
 `;
 
 export const userFields = `

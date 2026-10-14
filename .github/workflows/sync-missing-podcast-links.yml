@@ -1,0 +1,48 @@
+name: Sync Missing Podcast Provider Links
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # Run daily at 7:00 AM UTC
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: "Target Sanity Dataset"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - dev
+      batch_size:
+        description: "Batch size (number of podcasts to process in this run)"
+        required: true
+        default: "250"
+        type: string
+
+jobs:
+  sync-podcast-links:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Missing Podcast Provider Links Sync
+        run: |
+          pnpm exec sanity functions test sync-missing-podcast-links --dataset ${{ inputs.dataset || 'production' }}
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_DATASET: ${{ inputs.dataset || 'production' }}
+          SYNC_BATCH_SIZE: ${{ inputs.batch_size || '250' }}

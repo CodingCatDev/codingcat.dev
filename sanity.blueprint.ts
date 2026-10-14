@@ -95,5 +95,43 @@ export default defineBlueprint({
 					process.env.SANITY_STUDIO_DATASET || "production",
 			},
 		}),
+		defineDocumentFunction({
+			name: "sync-podcast-links",
+			displayName: "Sync Podcast Spotify & Provider Listen Links",
+			project: process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
+			event: {
+				on: ["create", "update"],
+				filter: '_type == "podcast" && !(_id in path("drafts.**"))',
+			},
+			src: "./apps/sanity/functions/sync-podcast-links",
+			runtime: "nodejs22.x",
+			timeout: 60,
+			env: {
+				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
+				SANITY_API_WRITE_TOKEN: process.env.SANITY_API_WRITE_TOKEN || "",
+				SANITY_STUDIO_PROJECT_ID:
+					process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
+				SANITY_STUDIO_DATASET:
+					process.env.SANITY_STUDIO_DATASET || "production",
+			},
+		}),
+		defineScheduledFunction({
+			name: "sync-missing-podcast-links",
+			displayName: "Sync Missing Podcast Spotify & Provider Listen Links",
+			src: "./apps/sanity/functions/sync-missing-podcast-links",
+			event: {
+				expression: "0 7 * * *", // 7:00 AM UTC daily
+			},
+			runtime: "nodejs22.x",
+			timeout: 300,
+			env: {
+				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
+				SANITY_API_WRITE_TOKEN: process.env.SANITY_API_WRITE_TOKEN || "",
+				SANITY_STUDIO_PROJECT_ID:
+					process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
+				SANITY_STUDIO_DATASET:
+					process.env.SANITY_STUDIO_DATASET || "production",
+			},
+		}),
 	],
 });

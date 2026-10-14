@@ -1,86 +1,222 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
 
+interface ListenLinks {
+	youtube?: string | null;
+	spotify?: string | null;
+	apple?: string | null;
+	overcast?: string | null;
+	pocketCasts?: string | null;
+	castbox?: string | null;
+	castro?: string | null;
+	rss?: string | null;
+}
+
 interface Props {
 	title: string;
 	audioUrl?: string | null;
 	youtube?: string | null;
+	spotifyLink?: string | null;
+	listenLinks?: ListenLinks | null;
 }
 
-const { title, audioUrl, youtube } = Astro.props;
+const { title, audioUrl, youtube, spotifyLink, listenLinks } = Astro.props;
 
 const src = stegaClean(audioUrl);
-const youtubeUrl = stegaClean(youtube);
 const cleanTitle = stegaClean(title) ?? "";
+const cleanLinks = stegaClean(listenLinks) ?? {};
+const cleanSpotifyLink = stegaClean(spotifyLink);
+const cleanYoutube = stegaClean(youtube);
 
-const spotifyUrl = `https://open.spotify.com/search/codingcat.dev%20${encodeURIComponent(cleanTitle)}/episodes`;
+const spotifyUrl =
+	cleanLinks.spotify ||
+	cleanSpotifyLink ||
+	(src
+		? `https://open.spotify.com/search/codingcat.dev%20${encodeURIComponent(cleanTitle)}/episodes`
+		: null);
 const appleUrl =
-	"https://podcasts.apple.com/us/podcast/codingcat-dev-podcast/id1491655542";
+	cleanLinks.apple ||
+	(src
+		? "https://podcasts.apple.com/us/podcast/codingcat-dev-podcast/id1491655542"
+		: null);
+const youtubeUrl = cleanLinks.youtube || cleanYoutube || null;
+const pocketCastsUrl = cleanLinks.pocketCasts || null;
+const castboxUrl = cleanLinks.castbox || null;
+const castroUrl = cleanLinks.castro || null;
+const overcastUrl = cleanLinks.overcast || null;
+const rssUrl =
+	cleanLinks.rss || (src ? "https://anchor.fm/s/115b203c/podcast/rss" : null);
+
+const hasAnyOption = Boolean(
+	src ||
+		spotifyUrl ||
+		appleUrl ||
+		youtubeUrl ||
+		pocketCastsUrl ||
+		castboxUrl ||
+		castroUrl ||
+		overcastUrl ||
+		rssUrl,
+);
 
 const buttonClass =
-	"inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground";
+	"inline-flex items-center justify-center gap-1.5 rounded-md border border-border/60 bg-card/60 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground";
 ---
 
 {
-	src && (
-		<div class="flex w-full flex-col flex-wrap items-center justify-start gap-2 border border-foreground p-2 sm:flex-row sm:gap-4 sm:p-4">
+	hasAnyOption && (
+		<div class="flex w-full flex-col flex-wrap items-center justify-start gap-3 border border-foreground p-3 sm:flex-row sm:gap-4 sm:p-4">
 			<h2 class="w-full text-center text-xl font-bold sm:text-start">
 				Listening Options
 			</h2>
-			{/*
-			  * A native audio element, not the floating persistent player — that
-			  * player is a React island and lands with the rest of the islands.
-			  * This keeps every episode playable in the meantime with no JS.
-			  */}
-			<audio class="w-full sm:flex-1" controls preload="none" src={src}>
-				<track kind="captions" />
-			</audio>
-			<div class="flex gap-1">
-				<a
-					href={spotifyUrl}
-					target="_blank"
-					rel="noreferrer noopener"
-					class={buttonClass}
-					aria-label="Search for this episode on Spotify"
-					data-track="podcast_listen"
-					data-track-label="spotify"
-					data-track-target={spotifyUrl}
-				>
-					<svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0Zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02Zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2Zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3Z" />
-					</svg>
-					<span class="sr-only">Listen on Spotify</span>
-				</a>
-				<a
-					href={appleUrl}
-					target="_blank"
-					rel="noreferrer noopener"
-					class={buttonClass}
-					aria-label="Listen on Apple Podcasts"
-					data-track="podcast_listen"
-					data-track-label="apple_podcasts"
-					data-track-target={appleUrl}
-				>
-					<svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path d="M5.34 0A5.328 5.328 0 0 0 0 5.34v13.32A5.328 5.328 0 0 0 5.34 24h13.32A5.328 5.328 0 0 0 24 18.66V5.34A5.328 5.328 0 0 0 18.66 0Zm6.525 2.568c2.336 0 4.448.902 6.056 2.587 1.224 1.272 1.912 2.619 2.264 4.392.12.59.12 2.2.007 2.864a8.506 8.506 0 0 1-3.24 5.296c-.608.46-2.096 1.261-2.336 1.261-.088 0-.096-.091-.056-.46.072-.592.144-.715.48-.856.535-.224 1.447-.874 2.008-1.435a7.644 7.644 0 0 0 2.008-3.536c.208-.824.184-2.656-.048-3.504-.728-2.672-2.512-4.544-5.096-5.336-.784-.24-2.44-.336-3.384-.2-2.36.32-4.448 1.664-5.616 3.616-1.096 1.832-1.264 4.24-.44 6.224.6 1.448 1.784 2.792 3.048 3.472.28.152.352.28.416.72.048.36.024.44-.056.44-.048 0-.416-.16-.816-.36l-.024-.008c-1.472-.72-2.72-2.032-3.448-3.648-1.472-3.248-.688-7.02 1.928-9.352 1.72-1.53 3.88-2.28 6.344-2.28z" />
-					</svg>
-					<span class="sr-only">Listen on Apple Podcasts</span>
-				</a>
+			{src && (
+				<audio class="w-full sm:flex-1 sm:min-w-[240px]" controls preload="none" src={src}>
+					<track kind="captions" />
+				</audio>
+			)}
+			<div class="flex flex-wrap items-center justify-center gap-1.5 sm:justify-start">
+				{spotifyUrl && (
+					<a
+						href={spotifyUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Listen on Spotify"
+						aria-label="Listen on Spotify"
+						data-track="podcast_listen"
+						data-track-label="spotify"
+						data-track-target={spotifyUrl}
+					>
+						<svg class="size-4 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0Zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02Zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2Zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3Z" />
+						</svg>
+						<span>Spotify</span>
+					</a>
+				)}
+				{appleUrl && (
+					<a
+						href={appleUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Listen on Apple Podcasts"
+						aria-label="Listen on Apple Podcasts"
+						data-track="podcast_listen"
+						data-track-label="apple_podcasts"
+						data-track-target={appleUrl}
+					>
+						<svg class="size-4 text-[#A555F7]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M5.34 0A5.328 5.328 0 0 0 0 5.34v13.32A5.328 5.328 0 0 0 5.34 24h13.32A5.328 5.328 0 0 0 24 18.66V5.34A5.328 5.328 0 0 0 18.66 0Zm6.525 2.568c2.336 0 4.448.902 6.056 2.587 1.224 1.272 1.912 2.619 2.264 4.392.12.59.12 2.2.007 2.864a8.506 8.506 0 0 1-3.24 5.296c-.608.46-2.096 1.261-2.336 1.261-.088 0-.096-.091-.056-.46.072-.592.144-.715.48-.856.535-.224 1.447-.874 2.008-1.435a7.644 7.644 0 0 0 2.008-3.536c.208-.824.184-2.656-.048-3.504-.728-2.672-2.512-4.544-5.096-5.336-.784-.24-2.44-.336-3.384-.2-2.36.32-4.448 1.664-5.616 3.616-1.096 1.832-1.264 4.24-.44 6.224.6 1.448 1.784 2.792 3.048 3.472.28.152.352.28.416.72.048.36.024.44-.056.44-.048 0-.416-.16-.816-.36l-.024-.008c-1.472-.72-2.72-2.032-3.448-3.648-1.472-3.248-.688-7.02 1.928-9.352 1.72-1.53 3.88-2.28 6.344-2.28z" />
+						</svg>
+						<span>Apple</span>
+					</a>
+				)}
 				{youtubeUrl && (
 					<a
 						href={youtubeUrl}
 						target="_blank"
 						rel="noreferrer noopener"
 						class={buttonClass}
+						title="Watch on YouTube"
 						aria-label="Watch on YouTube"
 						data-track="podcast_listen"
 						data-track-label="youtube"
 						data-track-target={youtubeUrl}
 					>
-						<svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<svg class="size-4 text-[#FF0000]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" />
 						</svg>
-						<span class="sr-only">Watch on YouTube</span>
+						<span>YouTube</span>
+					</a>
+				)}
+				{pocketCastsUrl && (
+					<a
+						href={pocketCastsUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Listen on Pocket Casts"
+						aria-label="Listen on Pocket Casts"
+						data-track="podcast_listen"
+						data-track-label="pocket_casts"
+						data-track-target={pocketCastsUrl}
+					>
+						<svg class="size-4 text-[#F43E37]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c4.639 0 8.4 3.761 8.4 8.4h-2.1c0-3.48-2.82-6.3-6.3-6.3S5.7 8.52 5.7 12s2.82 6.3 6.3 6.3v2.1c-4.639 0-8.4-3.761-8.4-8.4S7.361 3.6 12 3.6zm0 3.45c2.734 0 4.95 2.216 4.95 4.95h-2.1c0-1.574-1.276-2.85-2.85-2.85S9.15 10.426 9.15 12s1.276 2.85 2.85 2.85v2.1c-2.734 0-4.95-2.216-4.95-4.95S9.266 7.05 12 7.05z" />
+						</svg>
+						<span>Pocket Casts</span>
+					</a>
+				)}
+				{castboxUrl && (
+					<a
+						href={castboxUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Listen on Castbox"
+						aria-label="Listen on Castbox"
+						data-track="podcast_listen"
+						data-track-label="castbox"
+						data-track-target={castboxUrl}
+					>
+						<svg class="size-4 text-[#F55B23]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-4.5 9.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0v-5zm3.5-3a1 1 0 0 1 2 0v11a1 1 0 0 1-2 0v-11zm3.5 2a1 1 0 0 1 2 0v7a1 1 0 0 1-2 0v-7zm3.5 2.5a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2zm-14 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2z" />
+						</svg>
+						<span>Castbox</span>
+					</a>
+				)}
+				{castroUrl && (
+					<a
+						href={castroUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Listen on Castro"
+						aria-label="Listen on Castro"
+						data-track="podcast_listen"
+						data-track-label="castro"
+						data-track-target={castroUrl}
+					>
+						<svg class="size-4 text-[#00B265]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5a7.5 7.5 0 0 1 6.364 11.47l-2.12-1.474a4.92 4.92 0 1 0-8.488 0l-2.12 1.474A7.5 7.5 0 0 1 12 4.5zm0 4.8a2.7 2.7 0 1 1 0 5.4 2.7 2.7 0 0 1 0-5.4z" />
+						</svg>
+						<span>Castro</span>
+					</a>
+				)}
+				{overcastUrl && (
+					<a
+						href={overcastUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Listen on Overcast"
+						aria-label="Listen on Overcast"
+						data-track="podcast_listen"
+						data-track-label="overcast"
+						data-track-target={overcastUrl}
+					>
+						<svg class="size-4 text-[#FC7E0F]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M12 2.25c-5.376 0-9.75 4.374-9.75 9.75s4.374 9.75 9.75 9.75 9.75-4.374 9.75-9.75S17.376 2.25 12 2.25zm0 1.5c4.55 0 8.25 3.7 8.25 8.25 0 2.91-1.515 5.475-3.795 6.945l-.915-2.07c1.62-.99 2.71-2.775 2.71-4.875 0-3.31-2.69-6-6-6s-6 2.69-6 6c0 2.1 1.09 3.885 2.71 4.875l-.915 2.07C5.765 17.475 4.25 14.91 4.25 12c0-4.55 3.7-8.25 8.25-8.25zm0 5.25a3 3 0 0 1 1.32 5.69l1.43 4.81h-1.6l-.8-2.69h-.7l-.8 2.69H9.25l1.43-4.81A3 3 0 0 1 12 9z" />
+						</svg>
+						<span>Overcast</span>
+					</a>
+				)}
+				{rssUrl && (
+					<a
+						href={rssUrl}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={buttonClass}
+						title="Subscribe via RSS"
+						aria-label="Subscribe via RSS"
+						data-track="podcast_listen"
+						data-track-label="rss"
+						data-track-target={rssUrl}
+					>
+						<svg class="size-4 text-[#FFA500]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z" />
+						</svg>
+						<span>RSS</span>
 					</a>
 				)}
 			</div>
