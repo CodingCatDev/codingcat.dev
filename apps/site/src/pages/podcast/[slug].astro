@@ -43,6 +43,8 @@ const ogImage = sanity.resolveOpenGraphImage(podcast.coverImage ?? undefined);
 const authors = podcast.author ?? [];
 const guests = podcast.guest ?? [];
 const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
+const transcriptText =
+	podcast.transcript?.fullText || podcast.transcript?.summary || undefined;
 const videoSchema = podcast.youtube
 	? videoObjectSchema(
 			origin,
@@ -53,6 +55,7 @@ const videoSchema = podcast.youtube
 				thumbnailUrl: ogImage?.url,
 				youtubeUrl: podcast.youtube,
 				durationSeconds: podcast.transcript?.durationSeconds,
+				transcript: transcriptText,
 			},
 			path,
 		)
@@ -86,6 +89,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				season: podcast.season,
 				episode: podcast.episode,
 				audioUrl,
+				transcript: transcriptText,
 			},
 			path,
 		),
@@ -164,6 +168,8 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				title={podcast.title}
 				audioUrl={audioUrl}
 				youtube={podcast.youtube}
+				spotifyLink={podcast.spotify?.link}
+				listenLinks={podcast.listenLinks}
 			/>
 
 			{
@@ -196,6 +202,17 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 		<div class="my-2 md:my-8">
 			<PortableTextContent value={podcast.content} class="mx-auto prose-violet lg:prose-xl" />
 		</div>
+
+		{
+			podcast.transcript?.summary && (
+				<section class="my-8 rounded-xl border border-border bg-card/50 p-6">
+					<h2 class="mb-3 text-xl font-bold">Episode Summary</h2>
+					<p class="leading-relaxed text-muted-foreground">
+						{podcast.transcript.summary}
+					</p>
+				</section>
+			)
+		}
 	</article>
 
 	<div class="m-2 flex justify-center md:m-8">

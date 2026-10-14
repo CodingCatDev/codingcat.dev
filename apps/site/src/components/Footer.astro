@@ -14,6 +14,13 @@ const legalLinks = [
 	{ href: "/sponsorships", label: "Sponsorships" },
 ];
 
+const llmResourceLinks = [
+	{ href: "/llms.txt", label: "llms.txt" },
+	{ href: "/llms-full.txt", label: "llms-full.txt" },
+	{ href: "/.well-known/agent-skills/index.json", label: "Agent Skills" },
+	{ href: "/.well-known/mcp/server-card.json", label: "MCP Card" },
+];
+
 // Inlined rather than pulled from react-icons — four glyphs do not justify
 // shipping an icon library (and its React runtime) to every page.
 const socialLinks = [
@@ -60,6 +67,22 @@ const socialLinks = [
 					>
 						{link.label}
 					</NavLink>
+				))
+			}
+		</nav>
+		<nav
+			class="flex flex-wrap items-center justify-center gap-3 border-l border-border pl-4"
+			aria-label="LLM Resources"
+		>
+			<span class="text-xs font-semibold text-muted-foreground">LLM Resources:</span>
+			{
+				llmResourceLinks.map((link) => (
+					<a
+						href={link.href}
+						class="text-xs font-mono text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
+					>
+						{link.label}
+					</a>
 				))
 			}
 		</nav>

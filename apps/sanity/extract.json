@@ -7743,6 +7743,20 @@
               },
               "optional": true
             },
+            "castbox": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
+            "castro": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "rss": {
               "type": "objectAttribute",
               "value": {

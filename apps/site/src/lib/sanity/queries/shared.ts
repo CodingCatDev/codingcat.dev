@@ -56,6 +56,7 @@ export const contentFields = `
     durationSeconds,
     status,
     summary,
+    fullText,
     chapters,
     cues,
     statistics
@@ -80,7 +81,8 @@ export const podcastFields = `
     name,
     site
   },
-  spotify
+  spotify,
+  listenLinks
 `;
 
 export const userFields = `
