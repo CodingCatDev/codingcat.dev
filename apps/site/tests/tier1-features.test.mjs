@@ -1098,7 +1098,7 @@ describe("Tier 1 - Feature Coverage", () => {
 			const res = await prmModule.GET({ locals });
 			assert.equal(res.status, 200);
 			const data = await res.json();
-			assert.equal(data.resource, "https://codingcat.dev");
+			assert.equal(data.resource, "https://codingcat.dev/mcp");
 			assert.deepEqual(data.authorization_servers, ["https://codingcat.dev"]);
 			assert.ok(Array.isArray(data.scopes_supported));
 			assert.deepEqual(data.bearer_methods_supported, ["header"]);
@@ -1492,6 +1492,184 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(tokenData.access_token, "Must return access_token");
 			assert.ok(tokenData.refresh_token, "Must return refresh_token");
 			assert.ok(tokenData.id_token, "Must return id_token for openid scope");
+		});
+
+		it("7.17 MCP endpoint supports 2026-07-28 server/discover, Streamable HTTP 405/202/204, and OAuth 401 challenge", async () => {
+			const mcpModule = loadModule("src/pages/api/mcp.ts");
+
+			// 1. server/discover (MCP 2026-07-28 modern era)
+			const discoverReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 1,
+					method: "server/discover",
+					params: {},
+				}),
+			});
+			const discoverRes = await mcpModule.POST({
+				request: discoverReq,
+				locals,
+			});
+			assert.equal(discoverRes.status, 200);
+			const discoverData = await discoverRes.json();
+			assert.ok(
+				discoverData.result.supportedVersions.includes("2026-07-28"),
+				"Must advertise 2026-07-28 in server/discover",
+			);
+			assert.equal(discoverData.result.resultType, "complete");
+
+			// 2. Modern tools/list with 2026-07-28 metadata
+			const toolsReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 2,
+					method: "tools/list",
+					params: {
+						_meta: {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+						},
+					},
+				}),
+			});
+			const toolsRes = await mcpModule.POST({ request: toolsReq, locals });
+			const toolsData = await toolsRes.json();
+			assert.equal(toolsData.result.resultType, "complete");
+			assert.equal(toolsData.result.cacheScope, "public");
+			assert.ok(Array.isArray(toolsData.result.tools));
+
+			// 3. Notification returns 202 Accepted
+			const notifReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					method: "notifications/initialized",
+				}),
+			});
+			const notifRes = await mcpModule.POST({ request: notifReq, locals });
+			assert.equal(notifRes.status, 202);
+
+			// 4. Streamable HTTP GET with mcp-protocol-version returns 405 Method Not Allowed
+			const sseProbeReq = new Request("https://codingcat.dev/mcp", {
+				method: "GET",
+				headers: {
+					Accept: "text/event-stream",
+					"mcp-protocol-version": "2025-11-25",
+				},
+			});
+			const sseProbeRes = await mcpModule.GET({
+				request: sseProbeReq,
+				locals,
+			});
+			assert.equal(sseProbeRes.status, 405);
+
+			// 5. DELETE returns 204 No Content
+			const delReq = new Request("https://codingcat.dev/mcp", {
+				method: "DELETE",
+			});
+			const delRes = await mcpModule.DELETE({ request: delReq, locals });
+			assert.equal(delRes.status, 204);
+
+			// 6. ?requireAuth=1 without token returns 401 with WWW-Authenticate
+			const authChallengeReq = new Request(
+				"https://codingcat.dev/mcp?requireAuth=1",
+				{ method: "POST" },
+			);
+			const authChallengeRes = await mcpModule.POST({
+				request: authChallengeReq,
+				locals,
+			});
+			assert.equal(authChallengeRes.status, 401);
+			assert.ok(
+				authChallengeRes.headers
+					.get("www-authenticate")
+					?.includes("/.well-known/oauth-protected-resource/mcp"),
+			);
+		});
+
+		it("7.18 /oauth2/token normalizes dual client authentication (Basic header + client_secret body) and JSON bodies", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const regReq = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Dual Auth Client",
+					redirect_uris: [
+						"https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-test",
+					],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_post",
+				}),
+			});
+			const regRes = await oauth2Module.ALL({ request: regReq, locals });
+			const regData = await regRes.json();
+
+			const { hashToken, getAuth } = loadModule("src/lib/auth.ts");
+			const auth = getAuth("https://codingcat.dev");
+			const ctx = await auth.$context;
+
+			const code = `test_code_dual_${Date.now()}`;
+			const identifier = await hashToken(code);
+			const user = await ctx.internalAdapter.createUser({
+				email: "dual_auth@codingcat.dev",
+				emailVerified: true,
+				name: "Dual Auth User",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+			const session = await ctx.internalAdapter.createSession(user.id);
+
+			await ctx.internalAdapter.createVerificationValue({
+				identifier,
+				value: JSON.stringify({
+					type: "authorization_code",
+					query: {
+						client_id: regData.client_id,
+						redirect_uri:
+							"https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-test",
+						response_type: "code",
+						scope: "read:content search mcp:tools agent offline_access",
+						state: "dual_state",
+					},
+					userId: user.id,
+					sessionId: session.id,
+					authTime: Date.now(),
+					resource: ["https://codingcat.dev/mcp", "https://codingcat.dev"],
+				}),
+				expiresAt: new Date(Date.now() + 600000),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			// Send BOTH Authorization: Basic AND client_secret in body (which Better Auth normally rejects with 400)
+			const basicAuth = btoa(`${regData.client_id}:${regData.client_secret}`);
+			const tokenReq = new Request("https://codingcat.dev/oauth2/token", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Basic ${basicAuth}`,
+				},
+				body: JSON.stringify({
+					grant_type: "authorization_code",
+					code,
+					client_id: regData.client_id,
+					client_secret: regData.client_secret,
+					redirect_uri:
+						"https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-test",
+					resource: "https://codingcat.dev",
+				}),
+			});
+
+			const tokenRes = await oauth2Module.ALL({ request: tokenReq, locals });
+			assert.equal(tokenRes.status, 200);
+			const tokenData = await tokenRes.json();
+			assert.ok(tokenData.access_token, "Must return access_token");
+			assert.ok(tokenData.refresh_token, "Must return refresh_token");
 		});
 	});
 });
