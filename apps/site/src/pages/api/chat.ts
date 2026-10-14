@@ -26,13 +26,144 @@ export const OPTIONS: APIRoute = async () => {
 	});
 };
 
-export const GET: APIRoute = async () => {
+function getCandidateMcpTokens(
+	cfEnv: Record<string, unknown> | undefined,
+): string[] {
+	return Array.from(
+		new Set(
+			[
+				cfEnv?.SANITY_CONTEXT_TOKEN as string | undefined,
+				process.env.SANITY_CONTEXT_TOKEN,
+				cfEnv?.SANITY_AUTH_TOKEN as string | undefined,
+				process.env.SANITY_AUTH_TOKEN,
+				cfEnv?.SANITY_API_READ_TOKEN as string | undefined,
+				process.env.SANITY_API_READ_TOKEN,
+				cfEnv?.SANITY_API_WRITE_TOKEN as string | undefined,
+				process.env.SANITY_API_WRITE_TOKEN,
+			]
+				.map((t) => (typeof t === "string" ? t.trim() : ""))
+				.filter(Boolean),
+		),
+	);
+}
+
+function extractMcpText(mcpResult: unknown): string {
+	if (!mcpResult) {
+		return "";
+	}
+	if (typeof mcpResult === "string") {
+		return mcpResult.trim();
+	}
+	if (typeof mcpResult === "object") {
+		const obj = mcpResult as Record<string, unknown>;
+		if (Array.isArray(obj.content)) {
+			const texts = obj.content
+				.map((part: any) =>
+					part && typeof part === "object" && typeof part.text === "string"
+						? part.text
+						: "",
+				)
+				.filter(Boolean);
+			if (texts.length > 0) {
+				return texts.join("\n\n").trim();
+			}
+		}
+		if (typeof obj.text === "string") {
+			return obj.text.trim();
+		}
+		if (obj.result !== undefined) {
+			return typeof obj.result === "string"
+				? obj.result.trim()
+				: JSON.stringify(obj.result, null, 2);
+		}
+	}
+	return "";
+}
+
+async function connectSanityContextMcp(
+	cfEnv: Record<string, unknown> | undefined,
+): Promise<{
+	client?: Awaited<ReturnType<typeof createMCPClient>>;
+	tools: Record<string, any>;
+	error?: string;
+}> {
+	const tokens = getCandidateMcpTokens(cfEnv);
+	if (tokens.length === 0) {
+		return {
+			tools: {},
+			error:
+				"No Sanity API/Context token configured (SANITY_CONTEXT_TOKEN, SANITY_AUTH_TOKEN, or SANITY_API_READ_TOKEN).",
+		};
+	}
+
+	let lastError = "";
+	for (const token of tokens) {
+		let client: Awaited<ReturnType<typeof createMCPClient>> | undefined;
+		try {
+			client = await createMCPClient({
+				transport: {
+					type: "http",
+					url: SANITY_CONTEXT_MCP_URL,
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					redirect: "follow",
+					fetch: (input, init) => {
+						const sanitizedInit = init ? { ...init } : {};
+						if (sanitizedInit.redirect === "error") {
+							sanitizedInit.redirect = "follow";
+						}
+						return globalThis.fetch(input, sanitizedInit);
+					},
+				},
+			});
+			const tools = await client.tools();
+			return { client, tools: tools || {} };
+		} catch (err) {
+			lastError = err instanceof Error ? err.message : String(err);
+			if (client) {
+				try {
+					await client.close();
+				} catch {}
+			}
+		}
+	}
+
+	console.warn(
+		"[Chat API MCP connection warning, using direct Sanity client]",
+		lastError,
+	);
+	return { tools: {}, error: lastError };
+}
+
+export const GET: APIRoute = async ({ request }) => {
+	const url = new URL(request.url);
+	const verify = url.searchParams.get("verify") === "1";
+	const cfEnv = env as unknown as Record<string, unknown> | undefined;
+
+	let mcpDiagnostic: Record<string, unknown> = {};
+	if (verify) {
+		const { client, tools, error } = await connectSanityContextMcp(cfEnv);
+		const toolNames = Object.keys(tools);
+		mcpDiagnostic = {
+			mcpConnected: toolNames.length > 0,
+			mcpTools: toolNames,
+			...(error ? { mcpError: error } : {}),
+		};
+		if (client) {
+			try {
+				await client.close();
+			} catch {}
+		}
+	}
+
 	return new Response(
 		JSON.stringify({
 			status: "ready",
 			name: "Agent AJ",
 			model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
 			mcp: SANITY_CONTEXT_MCP_URL,
+			...mcpDiagnostic,
 		}),
 		{
 			status: 200,
@@ -48,7 +179,9 @@ export const POST: APIRoute = async ({ request }) => {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
 	const sanityToken =
 		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
-		process.env.SANITY_API_READ_TOKEN;
+		(cfEnv?.SANITY_AUTH_TOKEN as string | undefined) ||
+		process.env.SANITY_API_READ_TOKEN ||
+		process.env.SANITY_AUTH_TOKEN;
 
 	let body: {
 		messages?: Array<{ role: string; content: string }>;
@@ -97,35 +230,54 @@ export const POST: APIRoute = async ({ request }) => {
 	let mcpClient: Awaited<ReturnType<typeof createMCPClient>> | undefined;
 
 	try {
-		let mcpGroqTool: any;
-		if (sanityToken) {
-			try {
-				// 1. Optionally connect MCP client to Sanity Context MCP endpoint
-				mcpClient = await createMCPClient({
-					transport: {
-						type: "http",
-						url: SANITY_CONTEXT_MCP_URL,
-						headers: {
-							Authorization: `Bearer ${sanityToken}`,
-						},
-						redirect: "follow",
-						fetch: (input, init) => {
-							const sanitizedInit = init ? { ...init } : {};
-							if (sanitizedInit.redirect === "error") {
-								sanitizedInit.redirect = "follow";
-							}
-							return globalThis.fetch(input, sanitizedInit);
-						},
-					},
-				});
+		const collectedMcpOutputs: Array<{ toolName: string; text: string }> = [];
+		const { client: connectedMcpClient, tools: rawMcpTools } =
+			await connectSanityContextMcp(cfEnv);
+		mcpClient = connectedMcpClient;
 
-				const mcpTools = await mcpClient.tools();
-				mcpGroqTool = mcpTools.groq_query;
-			} catch (mcpErr) {
-				console.warn(
-					"[Chat API MCP connection warning, using direct Sanity client]",
-					mcpErr,
+		const mcpGroqTool = rawMcpTools.groq_query;
+		let initialContextOutline = "";
+		let cachedInitialContextResult: unknown;
+
+		// Pre-fetch initial_context from the Sanity Context MCP endpoint if available
+		// so Agent AJ immediately knows the Knowledge Base IDs, entry paths, and instructions on Step 1.
+		if (typeof rawMcpTools.initial_context?.execute === "function") {
+			try {
+				cachedInitialContextResult = await rawMcpTools.initial_context.execute(
+					{},
+					{} as any,
 				);
+				initialContextOutline = extractMcpText(cachedInitialContextResult);
+			} catch (initCtxErr) {
+				console.warn("[Chat API initial_context prefetch warning]", initCtxErr);
+			}
+		}
+
+		// Wrap all MCP tools so they are exposed to streamText AND their outputs are captured for fallback synthesis
+		const wrappedMcpTools: Record<string, any> = {};
+		for (const [toolName, mcpTool] of Object.entries(rawMcpTools)) {
+			if (!mcpTool || typeof mcpTool !== "object") {
+				continue;
+			}
+			const origExecute = (mcpTool as any).execute;
+			if (typeof origExecute === "function") {
+				wrappedMcpTools[toolName] = {
+					...mcpTool,
+					execute: async (args: any, options: any) => {
+						const res =
+							toolName === "initial_context" &&
+							cachedInitialContextResult !== undefined
+								? cachedInitialContextResult
+								: await origExecute(args, options);
+						const text = extractMcpText(res);
+						if (text && !(res as any)?.isError) {
+							collectedMcpOutputs.push({ toolName, text });
+						}
+						return res;
+					},
+				};
+			} else {
+				wrappedMcpTools[toolName] = mcpTool;
 			}
 		}
 
@@ -237,7 +389,8 @@ export const POST: APIRoute = async ({ request }) => {
 			return normalized;
 		};
 
-		const tools = {
+		const tools: Record<string, any> = {
+			...wrappedMcpTools,
 			search_content: tool({
 				description:
 					"Search CodingCat.dev articles, podcast episodes, authors, and transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, or query podcasts, articles, or topics (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev').",
@@ -541,20 +694,26 @@ export const POST: APIRoute = async ({ request }) => {
 		}
 
 		// 3. Stream model response with multi-step tool calling
+		const systemPrompt =
+			"You are Agent AJ, the CodingCat.dev mascot and intelligent AI assistant. Answer user queries about CodingCat.dev podcasts, tutorials, articles, authors, transcripts, and our Sanity Context Knowledge Base (including AJ Knowledge Jokes).\n\n" +
+			"SEARCH & TOOL INSTRUCTIONS:\n" +
+			"- KNOWLEDGE BASE & JOKES (`knowledge_base_read` / `initial_context`): When asked for a joke, programming dad joke, Git joke, SQL/database joke, Jeff Dean fact, legendary software engineering story, or coding culture humor, ALWAYS use the `knowledge_base_read` tool (and `initial_context` first if you need to see the knowledge base ID and entry paths) to read the actual entries from the Sanity Context Knowledge Base (`AJ Knowlege Jokes`) and share the real jokes/entries retrieved from it!\n" +
+			"- RECENT CONTENT (`get_recent_content`): ALWAYS use the `get_recent_content` tool first when asked for 'latest podcast', 'recent episodes', 'latest blog post', or 'new articles'.\n" +
+			"- TOPIC SEARCH (`search_content`): ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
+			"- TOP VIDEOS: When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
+			"- PRECISE GROQ (`groq_query`): Use `groq_query` only for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
+			"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
+			'- Once you have retrieved the final content (either from `knowledge_base_read` for knowledge base entries or from `search_content`/`get_recent_content` for episodes and posts), synthesize it into an engaging, helpful response. For podcasts and posts, list the relevant titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When an exact YouTube URL is present in the tool results (e.g. item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).' +
+			(initialContextOutline
+				? `\n\nSANITY CONTEXT MCP INITIAL CONTEXT OUTLINE:\n${initialContextOutline}`
+				: "");
+
 		const result = streamText({
 			model,
-			system:
-				"You are Agent AJ, CodingCat.dev's intelligent AI assistant. Answer user queries about CodingCat.dev podcasts, tutorials, articles, authors, and transcripts.\n\n" +
-				"SEARCH & TOOL INSTRUCTIONS:\n" +
-				"- ALWAYS use the `get_recent_content` tool first when asked for 'latest podcast', 'recent episodes', 'latest blog post', or 'new articles'.\n" +
-				"- ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
-				"- When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
-				"- Use `groq_query` only for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
-				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				'- Once you receive results from your tool calls, immediately synthesize them into an engaging, helpful response without calling more tools. List the relevant episode or article titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When an exact YouTube URL is present in the tool results (e.g. item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).',
+			system: systemPrompt,
 			messages: coreMessages,
 			tools,
-			stopWhen: isStepCount(5),
+			stopWhen: isStepCount(8),
 			onError: ({ error }) => {
 				console.error("[StreamText Internal Error]", error);
 			},
@@ -598,6 +757,52 @@ export const POST: APIRoute = async ({ request }) => {
 						.join("\n\n");
 					if (allText) {
 						await writer.write(encoder.encode(allText));
+					} else if (collectedMcpOutputs.length > 0) {
+						console.warn(
+							"[Chat API Synthesizing Fallback from MCP Tool Results]",
+							{
+								stepCount: steps.length,
+								mcpToolsCalled: collectedMcpOutputs.map((o) => o.toolName),
+							},
+						);
+						// Prefer non-initial_context outputs (e.g. knowledge_base_read) when available
+						const primaryMcpOutputs = collectedMcpOutputs.filter(
+							(o) => o.toolName !== "initial_context",
+						);
+						const mcpContextText = (
+							primaryMcpOutputs.length > 0
+								? primaryMcpOutputs
+								: collectedMcpOutputs
+						)
+							.map((o) => o.text)
+							.join("\n\n");
+
+						let synthesized = false;
+						try {
+							const synthResult = streamText({
+								model,
+								system:
+									"You are Agent AJ, the CodingCat.dev mascot. Answer the user's request directly and enthusiastically using the retrieved Sanity Context Knowledge Base content below.",
+								messages: [
+									...coreMessages,
+									{
+										role: "user",
+										content: `Retrieved Knowledge Base Content:\n\n${mcpContextText}\n\nPlease answer the user's request based on this content.`,
+									},
+								],
+							});
+							for await (const part of synthResult.stream) {
+								if (part.type === "text-delta" && part.text) {
+									synthesized = true;
+									await writer.write(encoder.encode(part.text));
+								}
+							}
+						} catch (synthErr) {
+							console.warn("[Chat API MCP synthesis error]", synthErr);
+						}
+						if (!synthesized) {
+							await writer.write(encoder.encode(mcpContextText));
+						}
 					} else if (collectedToolItems.length > 0) {
 						console.warn("[Chat API Synthesizing Fallback from Tool Results]", {
 							stepCount: steps.length,

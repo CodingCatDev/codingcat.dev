@@ -183,13 +183,135 @@ const MCP_TOOLS = [
 			required: ["mode", "documentId", "field"],
 		},
 	},
+	{
+		name: "knowledge_base_read",
+		title: "Read Knowledge Base Entries",
+		description:
+			"Read full entries from the CodingCat.dev Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes' — programming & tech dad jokes, Git jokes, SQL jokes, Jeff Dean facts, coding culture). Call initial_context first if you need the knowledgeBaseId and entry paths.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				knowledgeBaseId: {
+					type: "string",
+					description: "The ID of the Knowledge Base to read from.",
+				},
+				paths: {
+					type: "array",
+					items: { type: "string" },
+					description:
+						"List of entry paths to read from the Knowledge Base (up to 20 paths).",
+				},
+			},
+			required: ["knowledgeBaseId", "paths"],
+		},
+	},
 ];
+
+const SANITY_CONTEXT_MCP_URL =
+	"https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/agent-aj-mcp";
+
+function getCandidateMcpTokens(): string[] {
+	const cfEnv = env as unknown as Record<string, unknown> | undefined;
+	return Array.from(
+		new Set(
+			[
+				cfEnv?.SANITY_CONTEXT_TOKEN as string | undefined,
+				process.env.SANITY_CONTEXT_TOKEN,
+				cfEnv?.SANITY_AUTH_TOKEN as string | undefined,
+				process.env.SANITY_AUTH_TOKEN,
+				cfEnv?.SANITY_API_READ_TOKEN as string | undefined,
+				process.env.SANITY_API_READ_TOKEN,
+				cfEnv?.SANITY_API_WRITE_TOKEN as string | undefined,
+				process.env.SANITY_API_WRITE_TOKEN,
+			]
+				.map((t) => (typeof t === "string" ? t.trim() : ""))
+				.filter(Boolean),
+		),
+	);
+}
+
+async function callSanityContextMcpTool(
+	toolName: string,
+	toolArgs: Record<string, unknown>,
+): Promise<{
+	content: Array<{ type: string; text: string }>;
+	isError?: boolean;
+} | null> {
+	const tokens = getCandidateMcpTokens();
+	for (const token of tokens) {
+		try {
+			const headers: Record<string, string> = {
+				"Content-Type": "application/json",
+				Accept: "application/json, text/event-stream",
+				Authorization: `Bearer ${token}`,
+			};
+			const initRes = await globalThis.fetch(SANITY_CONTEXT_MCP_URL, {
+				method: "POST",
+				headers,
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 1,
+					method: "initialize",
+					params: {
+						protocolVersion: "2025-03-26",
+						capabilities: {},
+						clientInfo: MCP_SERVER_INFO,
+					},
+				}),
+			});
+			if (!initRes.ok) {
+				continue;
+			}
+			const sessionId = initRes.headers.get("mcp-session-id");
+			const callRes = await globalThis.fetch(SANITY_CONTEXT_MCP_URL, {
+				method: "POST",
+				headers: {
+					...headers,
+					...(sessionId ? { "mcp-session-id": sessionId } : {}),
+				},
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 2,
+					method: "tools/call",
+					params: {
+						name: toolName,
+						arguments: toolArgs,
+					},
+				}),
+			});
+			if (!callRes.ok) {
+				continue;
+			}
+			const rawText = await callRes.text();
+			let parsed: any;
+			if (rawText.includes("data: ")) {
+				const dataLine = rawText
+					.split("\n")
+					.find((l) => l.startsWith("data: "));
+				if (dataLine) {
+					parsed = JSON.parse(dataLine.slice(6));
+				}
+			} else {
+				parsed = JSON.parse(rawText);
+			}
+			if (parsed?.result?.content && Array.isArray(parsed.result.content)) {
+				return {
+					content: parsed.result.content,
+					isError: Boolean(parsed.result.isError),
+				};
+			}
+		} catch {}
+	}
+	return null;
+}
 
 function getSanityClient() {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
 	const token =
 		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
-		process.env.SANITY_API_READ_TOKEN;
+		(cfEnv?.SANITY_AUTH_TOKEN as string | undefined) ||
+		process.env.SANITY_API_READ_TOKEN ||
+		process.env.SANITY_AUTH_TOKEN;
 
 	return createClient({
 		projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
@@ -687,6 +809,10 @@ async function executeTool(
 		case "arrayFieldReader":
 			return handleArrayFieldReader(client, args);
 
+		case "knowledge_base_read":
+		case "knowledgeBaseRead":
+			return handleKnowledgeBaseRead(args);
+
 		default:
 			return {
 				content: [
@@ -1070,17 +1196,25 @@ async function handleInitialContext(
 	client: ReturnType<typeof getSanityClient>,
 ) {
 	try {
-		const counts = await client.fetch(`{
-			"podcasts": count(*[_type == "podcast"]),
-			"posts": count(*[_type == "post"]),
-			"authors": count(*[_type == "author"]),
-			"guests": count(*[_type == "guest"]),
-			"recentPodcasts": *[_type == "podcast" && defined(slug.current)] | order(date desc)[0...3]{
-				title,
-				"slug": slug.current,
-				date
-			}
-		}`);
+		const [counts, sanityContextInitial] = await Promise.all([
+			client.fetch(`{
+				"podcasts": count(*[_type == "podcast"]),
+				"posts": count(*[_type == "post"]),
+				"authors": count(*[_type == "author"]),
+				"guests": count(*[_type == "guest"]),
+				"recentPodcasts": *[_type == "podcast" && defined(slug.current)] | order(date desc)[0...3]{
+					title,
+					"slug": slug.current,
+					date
+				}
+			}`),
+			callSanityContextMcpTool("initial_context", {}).catch(() => null),
+		]);
+
+		const knowledgeBaseContext = sanityContextInitial?.content
+			?.map((c) => c.text)
+			.filter(Boolean)
+			.join("\n\n");
 
 		const summary = {
 			platform: "CodingCat.dev",
@@ -1098,11 +1232,15 @@ async function handleInitialContext(
 				url: `https://codingcat.dev/podcast/${p.slug}`,
 				date: p.date,
 			})),
+			...(knowledgeBaseContext
+				? { sanityContextKnowledgeBase: knowledgeBaseContext }
+				: {}),
 			recommendedTools: [
 				"search_content: Fast semantic & keyword search across all episodes, tutorials, and transcripts.",
 				"get_content_by_slug: Retrieve full episode or post details, show notes, and transcript summaries.",
 				"get_recent_content: Get the newest podcasts and articles.",
 				"query_content: Run custom read-only GROQ queries.",
+				"knowledge_base_read: Read full entries from the Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes').",
 			],
 		};
 
@@ -1124,6 +1262,7 @@ async function handleInitialContext(
 							"get_content_by_slug",
 							"get_recent_content",
 							"query_content",
+							"knowledge_base_read",
 						],
 					}),
 				},
@@ -1131,6 +1270,26 @@ async function handleInitialContext(
 			isError: false,
 		};
 	}
+}
+
+async function handleKnowledgeBaseRead(args: Record<string, any>) {
+	const result = await callSanityContextMcpTool("knowledge_base_read", args);
+	if (result) {
+		return result;
+	}
+	return {
+		content: [
+			{
+				type: "text",
+				text: JSON.stringify({
+					error:
+						"Unable to reach Sanity Context Knowledge Base MCP endpoint or missing Organization Context Viewer token (SANITY_CONTEXT_TOKEN / SANITY_AUTH_TOKEN).",
+					endpoint: SANITY_CONTEXT_MCP_URL,
+				}),
+			},
+		],
+		isError: true,
+	};
 }
 
 async function handleSchemaExplorer(
