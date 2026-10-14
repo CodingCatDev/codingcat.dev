@@ -539,7 +539,9 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: isModern2026 ? { _meta: modernMeta } : {},
+					result: isModern2026
+						? { _meta: modernMeta, resultType: "complete" }
+						: {},
 				};
 
 			case "tools/list":
@@ -560,7 +562,7 @@ async function handleSingleRequest(
 					jsonrpc: "2.0",
 					id,
 					result: isModern2026
-						? { _meta: modernMeta, ...callResult }
+						? { _meta: modernMeta, resultType: "complete", ...callResult }
 						: callResult,
 				};
 			}
@@ -599,7 +601,9 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: isModern2026 ? { _meta: modernMeta } : {},
+					result: isModern2026
+						? { _meta: modernMeta, resultType: "complete" }
+						: {},
 				};
 
 			case "completion/complete":
@@ -607,7 +611,9 @@ async function handleSingleRequest(
 					jsonrpc: "2.0",
 					id,
 					result: {
-						...(isModern2026 ? { _meta: modernMeta } : {}),
+						...(isModern2026
+							? { _meta: modernMeta, resultType: "complete" }
+							: {}),
 						completion: {
 							values: [],
 							total: 0,
