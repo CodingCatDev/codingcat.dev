@@ -60,6 +60,21 @@ const origin = Astro.locals.siteUrl.origin;
 								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Cloudflare Agent Skills Discovery index</td>
 							</tr>
 							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">LLM Resources</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/llms.txt" class="text-primary hover:underline">/llms.txt</a>, <a href="/llms-full.txt" class="text-primary hover:underline">/llms-full.txt</a>, <a href="/blog/llms.txt" class="text-primary hover:underline">/blog/llms.txt</a>, <a href="/podcasts/llms.txt" class="text-primary hover:underline">/podcasts/llms.txt</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Context-window-friendly LLM directories</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">RFC 9728 OAuth PRM</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/.well-known/oauth-protected-resource" class="text-primary hover:underline">/.well-known/oauth-protected-resource</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">OAuth 2.0 Protected Resource Metadata</td>
+							</tr>
+							<tr>
+								<td class="py-2.5 pr-4 font-mono text-sm">Web Bot Auth</td>
+								<td class="py-2.5 px-4 font-mono text-xs"><a href="/.well-known/http-message-signatures-directory" class="text-primary hover:underline">/.well-known/http-message-signatures-directory</a></td>
+								<td class="py-2.5 pl-4 text-sm text-muted-foreground">HTTP Message Signatures JWKS directory</td>
+							</tr>
+							<tr>
 								<td class="py-2.5 pr-4 font-mono text-sm">Auth.md</td>
 								<td class="py-2.5 px-4 font-mono text-xs"><a href="/auth.md" class="text-primary hover:underline">/auth.md</a></td>
 								<td class="py-2.5 pl-4 text-sm text-muted-foreground">Agent registration & authentication contracts</td>
@@ -106,7 +121,7 @@ Content-Type: application/json
 			<section>
 				<h2 class="text-2xl font-bold mb-4">Markdown Content Negotiation</h2>
 				<p>
-					Any page on CodingCat.dev can be retrieved in clean Markdown by appending <code>.md</code> to the URL (e.g., <code>/blog.md</code>) or sending the HTTP header <code>Accept: text/markdown</code>.
+					Any page on CodingCat.dev can be retrieved in clean Markdown by appending <code>/index.md</code> or <code>.md</code> to the URL (e.g., <code>/blog/index.md</code> or <code>/blog.md</code>) or sending the HTTP header <code>Accept: text/markdown</code>.
 				</p>
 			</section>
 		</div>

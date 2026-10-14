@@ -1098,7 +1098,7 @@ describe("Tier 1 - Feature Coverage", () => {
 			const res = await prmModule.GET({ locals });
 			assert.equal(res.status, 200);
 			const data = await res.json();
-			assert.equal(data.resource, "https://codingcat.dev/mcp");
+			assert.equal(data.resource, "https://codingcat.dev");
 			assert.deepEqual(data.authorization_servers, ["https://codingcat.dev"]);
 			assert.ok(Array.isArray(data.scopes_supported));
 			assert.deepEqual(data.bearer_methods_supported, ["header"]);
@@ -1670,6 +1670,98 @@ describe("Tier 1 - Feature Coverage", () => {
 			const tokenData = await tokenRes.json();
 			assert.ok(tokenData.access_token, "Must return access_token");
 			assert.ok(tokenData.refresh_token, "Must return refresh_token");
+		});
+
+		it("7.19 Web Bot Auth JWKS directory, scoped /blog/llms.txt & /podcasts/llms.txt, and clean HTML-to-Markdown stripping", async () => {
+			// 1. Web Bot Auth JWKS directory
+			const webBotAuthModule = loadModule(
+				"src/pages/.well-known/http-message-signatures-directory.ts",
+			);
+			const wbaReq = new Request(
+				"https://codingcat.dev/.well-known/http-message-signatures-directory",
+			);
+			const wbaRes = await webBotAuthModule.GET({ request: wbaReq, locals });
+			assert.equal(wbaRes.status, 200);
+			assert.ok(
+				wbaRes.headers
+					.get("content-type")
+					?.includes("application/http-message-signatures-directory+json"),
+			);
+			const wbaData = await wbaRes.json();
+			assert.ok(
+				Array.isArray(wbaData.keys) && wbaData.keys.length >= 1,
+				"Must contain at least one public verification key",
+			);
+			assert.equal(wbaData.keys[0].kty, "OKP");
+			assert.equal(wbaData.keys[0].crv, "Ed25519");
+
+			// 2. Scoped /blog/llms.txt and /podcasts/llms.txt
+			const blogLlmsModule = loadModule("src/pages/blog/llms.txt.ts");
+			const podcastsLlmsModule = loadModule("src/pages/podcasts/llms.txt.ts");
+			const mockSanityLocals = {
+				...locals,
+				sanity: {
+					async fetchPublished() {
+						return [
+							{
+								title: "Test Entry",
+								slug: "test-entry",
+								excerpt: "High value description for AI context window",
+								guests: ["Alex Patterson"],
+							},
+						];
+					},
+				},
+			};
+
+			const blogRes = await blogLlmsModule.GET({ locals: mockSanityLocals });
+			assert.equal(blogRes.status, 200);
+			const blogText = await blogRes.text();
+			assert.ok(blogText.includes("# CodingCat.dev Blog"));
+			assert.ok(
+				blogText.includes("https://codingcat.dev/post/test-entry/index.md"),
+			);
+
+			const podcastRes = await podcastsLlmsModule.GET({
+				locals: mockSanityLocals,
+			});
+			assert.equal(podcastRes.status, 200);
+			const podcastText = await podcastRes.text();
+			assert.ok(podcastText.includes("# CodingCat.dev Podcasts"));
+			assert.ok(
+				podcastText.includes(
+					"https://codingcat.dev/podcast/test-entry/index.md",
+				),
+			);
+
+			// 3. htmlToMarkdown strips client-only interactive transcript modal chrome
+			const { htmlToMarkdown } = loadModule("src/lib/html-to-markdown.ts");
+			const sampleHtml = `
+				<main>
+					<article>
+						<h1>Sample Episode</h1>
+						<div class="transcript-widget inline-block">
+							<button class="transcript-open-btn">View Transcript</button>
+							<div class="transcript-modal hidden">
+								<div>
+									<p>Fetching transcript from YouTube...</p>
+									<footer><span>Loading transcript...</span></footer>
+								</div>
+							</div>
+						</div>
+						<p>Real episode content.</p>
+					</article>
+				</main>
+			`;
+			const md = htmlToMarkdown(
+				sampleHtml,
+				"https://codingcat.dev/podcast/sample",
+			);
+			assert.ok(md.includes("Real episode content."));
+			assert.ok(
+				!md.includes("Fetching transcript from YouTube"),
+				"Must strip client-only modal loading skeleton from Markdown",
+			);
 		});
 	});
 });

@@ -37,6 +37,8 @@ const path = `/post/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
 const ogImage = sanity.resolveOpenGraphImage(post.coverImage ?? undefined);
 const authors = post.author ?? [];
+const transcriptText =
+	post.transcript?.fullText || post.transcript?.summary || undefined;
 const videoSchema = post.youtube
 	? videoObjectSchema(
 			origin,
@@ -47,6 +49,7 @@ const videoSchema = post.youtube
 				thumbnailUrl: ogImage?.url,
 				youtubeUrl: post.youtube,
 				durationSeconds: post.transcript?.durationSeconds,
+				transcript: transcriptText,
 			},
 			path,
 		)
@@ -138,6 +141,17 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 		}
 
 		<PortableTextContent value={post.content} class="mx-auto prose-violet lg:prose-xl" />
+
+		{
+			post.transcript?.summary && (
+				<section class="my-8 rounded-xl border border-border bg-card/50 p-6">
+					<h2 class="mb-3 text-xl font-bold">Video Summary</h2>
+					<p class="leading-relaxed text-muted-foreground">
+						{post.transcript.summary}
+					</p>
+				</section>
+			)
+		}
 	</article>
 
 	{
