@@ -831,16 +831,16 @@ async function handleGetContentBySlug(
 	const query = `*[_type in ["podcast", "post", "author", "guest"] && slug.current == $slug][0]{
 		_id,
 		_type,
-		"title": coalesce(title, name, "Untitled"),
+		"title": coalesce(title, "Untitled"),
 		"slug": slug.current,
 		date,
 		excerpt,
 		"transcriptSummary": transcript->summary,
 		"transcriptText": transcript->fullText,
-		"guests": guests[]->{ name, "slug": slug.current, bio },
-		"authors": authors[]->{ name, "slug": slug.current, bio },
+		"guest": guest[]->{ "title": coalesce(title, "Anonymous"), "slug": slug.current, excerpt },
+		"author": author[]->{ "title": coalesce(title, "Anonymous"), "slug": slug.current, excerpt },
 		spotify,
-		apple,
+		listenLinks,
 		youtube
 	}`;
 
@@ -1155,31 +1155,60 @@ async function handleSchemaExplorer(
 						"URL slug identifier (e.g. '0-6-nextjs-with-guillermo-rauch')",
 				},
 				{ name: "date", type: "datetime", description: "Release date" },
-				{ name: "episode", type: "number", description: "Episode number" },
+				{
+					name: "recordingDate",
+					type: "datetime",
+					description: "Recording date",
+				},
 				{ name: "season", type: "number", description: "Season number" },
+				{ name: "episode", type: "number", description: "Episode number" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "16:9 episode cover image",
+				},
 				{
 					name: "excerpt",
 					type: "text",
-					description: "Show notes and summary",
+					description: "Short summary excerpt",
 				},
 				{
-					name: "guests",
+					name: "content",
+					type: "array",
+					description: "Portable Text episode show notes",
+				},
+				{
+					name: "guest",
 					type: "array",
 					description: "References to guest documents",
 				},
 				{
-					name: "authors",
+					name: "author",
 					type: "array",
 					description: "References to host / author documents",
 				},
-				{ name: "youtube", type: "url", description: "YouTube video link" },
-				{ name: "spotify", type: "url", description: "Spotify audio link" },
-				{ name: "apple", type: "url", description: "Apple Podcasts link" },
+				{
+					name: "pick",
+					type: "array",
+					description: "Author and guest picks ({ user, name, site })",
+				},
+				{ name: "youtube", type: "string", description: "YouTube video URL" },
+				{
+					name: "spotify",
+					type: "podcastRssEpisode",
+					description: "Spotify / Anchor RSS episode metadata and audio URL",
+				},
+				{
+					name: "listenLinks",
+					type: "object",
+					description:
+						"Multi-platform listen links (youtube, spotify, apple, overcast, pocketCasts, castbox, castro, rss)",
+				},
 				{
 					name: "transcript",
 					type: "reference",
 					description:
-						"Reference to transcript document with fullText and summary",
+						"Reference to transcript document with fullText, summary, chapters, and statistics",
 				},
 			],
 		},
@@ -1191,9 +1220,14 @@ async function handleSchemaExplorer(
 				{ name: "title", type: "string", description: "Article title" },
 				{ name: "slug", type: "slug", description: "URL slug identifier" },
 				{ name: "date", type: "datetime", description: "Publication date" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "16:9 post cover image",
+				},
 				{ name: "excerpt", type: "text", description: "Summary excerpt" },
 				{
-					name: "authors",
+					name: "author",
 					type: "array",
 					description: "References to author documents",
 				},
@@ -1202,6 +1236,12 @@ async function handleSchemaExplorer(
 					type: "array",
 					description: "Portable Text article body",
 				},
+				{ name: "youtube", type: "string", description: "YouTube video URL" },
+				{
+					name: "transcript",
+					type: "reference",
+					description: "Reference to transcript document",
+				},
 			],
 		},
 		guest: {
@@ -1209,19 +1249,29 @@ async function handleSchemaExplorer(
 			title: "Podcast Guest",
 			description: "Invited podcast guest profile.",
 			fields: [
-				{ name: "name", type: "string", description: "Full name" },
+				{ name: "title", type: "string", description: "Full name" },
 				{ name: "slug", type: "slug", description: "URL slug identifier" },
-				{ name: "bio", type: "text", description: "Guest biography" },
 				{
-					name: "twitter",
-					type: "url",
-					description: "Twitter / X profile URL",
+					name: "coverImage",
+					type: "image",
+					description: "Guest portrait image",
 				},
-				{ name: "github", type: "url", description: "GitHub profile URL" },
+				{ name: "excerpt", type: "text", description: "Short guest summary" },
 				{
-					name: "website",
-					type: "url",
-					description: "Personal or company website",
+					name: "content",
+					type: "array",
+					description: "Portable Text guest biography",
+				},
+				{
+					name: "socials",
+					type: "object",
+					description:
+						"Social profile URLs (bluesky, github, linkedin, twitter, youtube, etc.)",
+				},
+				{
+					name: "websites",
+					type: "array",
+					description: "Personal or company websites ({ site, link })",
 				},
 			],
 		},
@@ -1230,9 +1280,70 @@ async function handleSchemaExplorer(
 			title: "Author / Host",
 			description: "CodingCat.dev author or podcast host.",
 			fields: [
-				{ name: "name", type: "string", description: "Author name" },
+				{ name: "title", type: "string", description: "Author name" },
 				{ name: "slug", type: "slug", description: "URL slug identifier" },
-				{ name: "bio", type: "text", description: "Short biography" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "Author portrait image",
+				},
+				{ name: "excerpt", type: "text", description: "Short biography" },
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text full biography",
+				},
+				{
+					name: "socials",
+					type: "object",
+					description: "Social profile URLs",
+				},
+				{
+					name: "websites",
+					type: "array",
+					description: "Personal websites ({ site, link })",
+				},
+			],
+		},
+		sponsor: {
+			name: "sponsor",
+			title: "Sponsor",
+			description: "Podcast and blog sponsor.",
+			fields: [
+				{ name: "title", type: "string", description: "Sponsor name" },
+				{ name: "slug", type: "slug", description: "URL slug identifier" },
+				{ name: "url", type: "url", description: "Sponsor website URL" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "Sponsor logo/cover",
+				},
+				{ name: "excerpt", type: "text", description: "Sponsor tagline" },
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text sponsor description",
+				},
+			],
+		},
+		transcript: {
+			name: "transcript",
+			title: "Transcript & Video Intelligence",
+			description:
+				"Automated YouTube transcript, chapters, cues, and video statistics.",
+			fields: [
+				{ name: "title", type: "string", description: "Video title" },
+				{ name: "youtubeId", type: "string", description: "YouTube video ID" },
+				{ name: "status", type: "string", description: "Transcript status" },
+				{ name: "summary", type: "text", description: "Transcript summary" },
+				{ name: "fullText", type: "text", description: "Full transcript text" },
+				{ name: "chapters", type: "array", description: "Video chapters" },
+				{ name: "cues", type: "array", description: "Timed caption cues" },
+				{
+					name: "statistics",
+					type: "object",
+					description: "YouTube viewCount, likeCount, commentCount",
+				},
 			],
 		},
 	};
@@ -1250,7 +1361,14 @@ async function handleSchemaExplorer(
 				type: "text",
 				text: JSON.stringify(
 					{
-						availableTypes: ["podcast", "post", "guest", "author", "sponsor"],
+						availableTypes: [
+							"podcast",
+							"post",
+							"guest",
+							"author",
+							"sponsor",
+							"transcript",
+						],
 						schemas,
 					},
 					null,

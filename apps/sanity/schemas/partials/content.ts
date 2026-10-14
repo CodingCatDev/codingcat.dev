@@ -69,15 +69,6 @@ const content = defineType({
 				},
 			],
 		}),
-		// defineField({
-		//   title: "Tags",
-		//   name: "tags",
-		//   type: "tags",
-		//   options: {
-		//     includeFromRelated: "tags",
-		//   },
-		//   validation: (Rule) => Rule.unique(),
-		// }),
 		defineField({
 			name: "devto",
 			title: "Dev.to",

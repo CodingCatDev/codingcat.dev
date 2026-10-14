@@ -1,7 +1,7 @@
 import { defineQuery } from "groq";
 import {
 	baseFieldsNoContent,
-	contentFields,
+	portableTextFields,
 	userFields,
 	userRelated,
 } from "./shared";
@@ -15,14 +15,14 @@ export const authorCountQuery = defineQuery(
 export const authorQuery =
 	defineQuery(`*[_type == "author" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
-  ${contentFields},
+  ${portableTextFields},
   ${userFields}
 }`);
 
 export const authorQueryWithRelated =
 	defineQuery(`*[_type == "author" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
-  ${contentFields},
+  ${portableTextFields},
   ${userFields},
   ${userRelated}
 }`);
@@ -41,14 +41,14 @@ export const guestCountQuery = defineQuery(
 export const guestQuery =
 	defineQuery(`*[_type == "guest" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
-  ${contentFields},
+  ${portableTextFields},
   ${userFields}
 }`);
 
 export const guestQueryWithRelated =
 	defineQuery(`*[_type == "guest" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
-  ${contentFields},
+  ${portableTextFields},
   ${userFields},
   ${userRelated}
 }`);
