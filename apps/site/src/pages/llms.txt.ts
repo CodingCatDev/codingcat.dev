@@ -11,14 +11,18 @@ export const GET: APIRoute = async ({ locals }) => {
 
 ## Core Content Sections
 
-- [Blog Tutorials and Articles](${origin}/blog): Practical, code-focused guides and tutorials for modern web developers.
-- [Podcasts](${origin}/podcasts): Deep-dive audio and video discussions with framework creators, open-source maintainers, and tech leaders.
+- [Blog Tutorials and Articles](${origin}/blog/index.md): Practical, code-focused guides and tutorials for modern web developers.
+- [Blog LLM Directory](${origin}/blog/llms.txt): Scoped context-window-friendly index of all blog posts and technical tutorials.
+- [Podcasts](${origin}/podcasts/index.md): Deep-dive audio and video discussions with framework creators, open-source maintainers, and tech leaders.
+- [Podcasts LLM Directory](${origin}/podcasts/llms.txt): Scoped context-window-friendly index of podcast episodes, guests, and transcripts.
 - [Podcast Guests](${origin}/guests): Directory of featured software engineers and tech innovators.
 - [Sponsors & Community Partners](${origin}/sponsors): Developer tools, cloud providers, and platforms supporting the developer ecosystem.
 
 ## Machine-Readable Discovery & Agent Tools
 
 - [Full LLM Directory](${origin}/llms-full.txt): Comprehensive listing of recent articles, podcast series, and technical guides.
+- [Blog LLM Directory](${origin}/blog/llms.txt): Scoped index of blog tutorials and articles.
+- [Podcasts LLM Directory](${origin}/podcasts/llms.txt): Scoped index of podcast episodes and interviews.
 - [API Catalog (RFC 9727)](${origin}/.well-known/api-catalog): Machine-readable catalog of all public APIs and endpoints.
 - [OpenAPI Specification](${origin}/.well-known/openapi.json): OpenAPI 3.1 schema for search and agent endpoints.
 - [ARD AI Catalog](${origin}/.well-known/ai-catalog.json): Agentic Resource Discovery capability manifest.
@@ -26,6 +30,7 @@ export const GET: APIRoute = async ({ locals }) => {
 - [Agent Skills Discovery](${origin}/.well-known/agent-skills/index.json): Discoverable agent capabilities and task specifications.
 - [Auth.md Specification](${origin}/auth.md): Autonomous AI agent authentication and registration guide.
 - [OAuth Protected Resource Metadata](${origin}/.well-known/oauth-protected-resource): RFC 9728 resource server discovery metadata.
+- [Web Bot Auth Directory](${origin}/.well-known/http-message-signatures-directory): HTTP Message Signatures JWKS directory for bot verification.
 - [Search API](${origin}/api/search?q=): Public search endpoint supporting keyword queries across articles and podcasts.
 - [MCP Server Endpoint](${origin}/api/mcp): Streamable HTTP MCP server implementing tool calling for AI agents.
 - [Blog RSS Feed](${origin}/blog/rss.xml): RSS 2.0 feed of all published blog tutorials.
@@ -36,7 +41,7 @@ export const GET: APIRoute = async ({ locals }) => {
 
 CodingCat.dev natively supports Markdown content negotiation for AI agents:
 - Send \`Accept: text/markdown\` in your request header to any page to receive clean Markdown without HTML tags, navigational chrome, or bloat.
-- Alternatively, append \`.md\` to any article, podcast, or page URL.
+- Alternatively, append \`/index.md\` or \`.md\` to any article, podcast, or page URL (e.g. \`${origin}/index.md\` or \`${origin}/blog/index.md\`).
 `;
 
 	return new Response(content, {

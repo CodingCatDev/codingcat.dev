@@ -56,6 +56,7 @@ export const contentFields = `
     durationSeconds,
     status,
     summary,
+    fullText,
     chapters,
     cues,
     statistics
