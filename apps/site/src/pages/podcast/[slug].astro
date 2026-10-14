@@ -168,6 +168,8 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				title={podcast.title}
 				audioUrl={audioUrl}
 				youtube={podcast.youtube}
+				spotifyLink={podcast.spotify?.link}
+				listenLinks={podcast.listenLinks}
 			/>
 
 			{

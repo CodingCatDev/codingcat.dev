@@ -240,6 +240,16 @@ export default defineType({
 					type: "string",
 				}),
 				defineField({
+					name: "castbox",
+					title: "Castbox",
+					type: "string",
+				}),
+				defineField({
+					name: "castro",
+					title: "Castro",
+					type: "string",
+				}),
+				defineField({
 					name: "rss",
 					title: "RSS",
 					type: "string",
