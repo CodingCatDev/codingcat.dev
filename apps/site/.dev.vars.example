@@ -1,5 +1,8 @@
 # Local secrets for `wrangler dev` / platformProxy. Copy to .dev.vars (gitignored).
 SANITY_API_READ_TOKEN=
+# Optional: Organization-level Sanity Context Viewer token for https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/agent-aj-mcp
+SANITY_CONTEXT_TOKEN=
+SANITY_AUTH_TOKEN=
 # Optional: PostHog project key for visitor flows, funnels, and LMS telemetry via /ingest proxy
 PUBLIC_POSTHOG_KEY=
 PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
