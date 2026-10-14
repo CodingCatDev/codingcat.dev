@@ -8,12 +8,27 @@ import {
 
 export const prerender = false;
 
+const MCP_SERVER_INFO = {
+	name: "codingcatdev-sanity-context-mcp",
+	version: "1.0.0",
+};
+
+const MCP_SUPPORTED_VERSIONS = [
+	"2026-07-28",
+	"2025-11-25",
+	"2025-06-18",
+	"2025-03-26",
+	"2024-11-05",
+];
+
 const MCP_HEADERS = {
 	"content-type": "application/json; charset=utf-8",
 	"access-control-allow-origin": "*",
-	"access-control-allow-methods": "GET, POST, OPTIONS",
+	"access-control-allow-methods": "GET, POST, DELETE, OPTIONS, HEAD",
 	"access-control-allow-headers":
-		"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version",
+		"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version, Last-Event-ID",
+	"access-control-expose-headers":
+		"Mcp-Session-Id, Mcp-Protocol-Version, WWW-Authenticate",
 	"mcp-protocol-version": "2024-11-05",
 };
 
@@ -187,7 +202,98 @@ function getSanityClient() {
 	});
 }
 
+async function logMcpDebug(
+	request: Request,
+	status: number,
+	detail: string,
+): Promise<void> {
+	try {
+		const cfEnv = env as unknown as { DB?: D1Database } | undefined;
+		const db = cfEnv?.DB;
+		if (!db) {
+			return;
+		}
+		const url = new URL(request.url);
+		const headersObj: Record<string, string> = {};
+		request.headers.forEach((v, k) => {
+			if (k.toLowerCase() === "authorization") {
+				const parts = v.split(" ");
+				headersObj[k] = `${parts[0]} [${parts[1]?.length || 0} chars]`;
+			} else if (k.toLowerCase() !== "cookie") {
+				headersObj[k] = v;
+			}
+		});
+		await db
+			.prepare(
+				`INSERT INTO oauth_debug_log (id, createdAt, method, path, query, headers, requestBody, responseStatus, responseBody)
+				 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)`,
+			)
+			.bind(
+				`mcp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+				Date.now(),
+				request.method,
+				url.pathname,
+				url.search,
+				JSON.stringify(headersObj),
+				detail.slice(0, 4000),
+				status,
+				"",
+			)
+			.run();
+	} catch {
+		// Ignore logging errors
+	}
+}
+
+function checkMcpAuth(request: Request, origin: string): Response | null {
+	const url = new URL(request.url);
+	const requireAuth = url.searchParams.get("requireAuth") === "1";
+	const authHeader = request.headers.get("authorization") || "";
+
+	if (
+		(requireAuth && !authHeader.toLowerCase().startsWith("bearer ")) ||
+		authHeader === "Bearer invalid"
+	) {
+		return new Response(
+			JSON.stringify({
+				error: "unauthorized",
+				error_description: "Bearer token required",
+			}),
+			{
+				status: 401,
+				headers: {
+					...MCP_HEADERS,
+					"www-authenticate": `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp", scope="openid profile email offline_access read:content search mcp:tools agent"`,
+				},
+			},
+		);
+	}
+	return null;
+}
+
 export const OPTIONS: APIRoute = async () => {
+	return new Response(null, {
+		status: 204,
+		headers: MCP_HEADERS,
+	});
+};
+
+export const HEAD: APIRoute = async ({ request, locals }) => {
+	const origin = locals.siteUrl.origin;
+	const authErr = checkMcpAuth(request, origin);
+	if (authErr) {
+		await logMcpDebug(request, 401, "HEAD unauthorized");
+		return authErr;
+	}
+	await logMcpDebug(request, 200, "HEAD ok");
+	return new Response(null, {
+		status: 200,
+		headers: MCP_HEADERS,
+	});
+};
+
+export const DELETE: APIRoute = async ({ request }) => {
+	await logMcpDebug(request, 204, "DELETE session");
 	return new Response(null, {
 		status: 204,
 		headers: MCP_HEADERS,
@@ -196,16 +302,46 @@ export const OPTIONS: APIRoute = async () => {
 
 export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = locals.siteUrl.origin;
-	const accept = request.headers.get("accept") || "";
+	const authErr = checkMcpAuth(request, origin);
+	if (authErr) {
+		await logMcpDebug(request, 401, "GET unauthorized");
+		return authErr;
+	}
 
-	// Support SSE stream for legacy MCP HTTP+SSE clients
-	if (accept.includes("text/event-stream")) {
+	const accept = request.headers.get("accept") || "";
+	const hasMcpProtocolHeader = Boolean(
+		request.headers.get("mcp-protocol-version") ||
+			request.headers.get("mcp-session-id"),
+	);
+
+	// Per MCP Streamable HTTP specification:
+	// When a Streamable HTTP client sends GET /mcp with Accept: text/event-stream to open a standalone
+	// notification stream, a stateless server that does not push unsolicited notifications MUST return 405
+	// Method Not Allowed so the client cleanly disables background SSE polling instead of reconnecting in a loop.
+	if (accept.includes("text/event-stream") && hasMcpProtocolHeader) {
+		await logMcpDebug(request, 405, "GET streamable-http SSE probe -> 405");
+		return new Response(null, {
+			status: 405,
+			headers: {
+				...MCP_HEADERS,
+				allow: "POST, DELETE, OPTIONS, HEAD",
+			},
+		});
+	}
+
+	// Support legacy 2024-11-05 HTTP+SSE clients that explicitly connect with Accept: text/event-stream only
+	if (
+		accept.includes("text/event-stream") &&
+		!accept.includes("application/json")
+	) {
+		await logMcpDebug(request, 200, "GET legacy SSE endpoint event");
 		const encoder = new TextEncoder();
 		const stream = new ReadableStream({
 			start(controller) {
 				controller.enqueue(
 					encoder.encode(`event: endpoint\ndata: ${origin}/mcp\n\n`),
 				);
+				controller.close();
 			},
 		});
 
@@ -215,26 +351,27 @@ export const GET: APIRoute = async ({ request, locals }) => {
 				"cache-control": "no-cache, no-transform",
 				connection: "keep-alive",
 				"access-control-allow-origin": "*",
-				"access-control-allow-methods": "GET, POST, OPTIONS",
+				"access-control-allow-methods": "GET, POST, DELETE, OPTIONS, HEAD",
 				"access-control-allow-headers":
-					"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version",
+					"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version, Last-Event-ID",
 			},
 		});
 	}
 
+	await logMcpDebug(request, 200, "GET status JSON");
 	return new Response(
 		JSON.stringify(
 			{
 				status: "ok",
-				server: "codingcatdev-sanity-context-mcp",
-				version: "1.0.0",
+				server: MCP_SERVER_INFO.name,
+				version: MCP_SERVER_INFO.version,
 				protocolVersion: "2024-11-05",
-				supportedVersions: ["2026-07-28", "2024-11-05"],
+				supportedVersions: MCP_SUPPORTED_VERSIONS,
 				transport: "streamable-http",
 				endpoint: `${origin}/mcp`,
 				serverCard: `${origin}/.well-known/mcp/server-card.json`,
 				capabilities: {
-					tools: { listChanged: true },
+					tools: { listChanged: false },
 					resources: { subscribe: false, listChanged: false },
 					prompts: { listChanged: false },
 				},
@@ -252,11 +389,21 @@ export const GET: APIRoute = async ({ request, locals }) => {
 	);
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+	const origin = locals.siteUrl.origin;
+	const authErr = checkMcpAuth(request, origin);
+	if (authErr) {
+		await logMcpDebug(request, 401, "POST unauthorized");
+		return authErr;
+	}
+
 	let body: any;
+	let rawText = "";
 	try {
-		body = await request.json();
+		rawText = await request.text();
+		body = JSON.parse(rawText);
 	} catch {
+		await logMcpDebug(request, 400, `POST invalid JSON: ${rawText}`);
 		return new Response(
 			JSON.stringify({
 				jsonrpc: "2.0",
@@ -270,16 +417,31 @@ export const POST: APIRoute = async ({ request }) => {
 	const client = getSanityClient();
 
 	if (Array.isArray(body)) {
-		const responses = await Promise.all(
-			body.map((req) => handleSingleRequest(client, req)),
-		);
+		const responses = (
+			await Promise.all(body.map((req) => handleSingleRequest(client, req)))
+		).filter((r) => r !== null);
+
+		await logMcpDebug(request, responses.length === 0 ? 202 : 200, rawText);
+		if (responses.length === 0) {
+			return new Response(null, { status: 202, headers: MCP_HEADERS });
+		}
 		return new Response(JSON.stringify(responses), {
 			status: 200,
 			headers: MCP_HEADERS,
 		});
 	}
 
+	// JSON-RPC notifications have no "id" member; per Streamable HTTP spec, return 202 Accepted with empty body
+	if (body && typeof body === "object" && body.id === undefined) {
+		await logMcpDebug(request, 202, rawText);
+		return new Response(null, {
+			status: 202,
+			headers: MCP_HEADERS,
+		});
+	}
+
 	const response = await handleSingleRequest(client, body);
+	await logMcpDebug(request, 200, rawText);
 	return new Response(JSON.stringify(response), {
 		status: 200,
 		headers: MCP_HEADERS,
@@ -298,30 +460,73 @@ async function handleSingleRequest(
 		};
 	}
 
-	const id = req.id !== undefined ? req.id : null;
+	if (req.id === undefined) {
+		return null;
+	}
+
+	const id = req.id;
 	const method = req.method;
+	const reqMeta = req.params?._meta as Record<string, unknown> | undefined;
+	const isModern2026 =
+		reqMeta?.["io.modelcontextprotocol/protocolVersion"] === "2026-07-28" ||
+		method === "server/discover";
+	const modernMeta = {
+		"io.modelcontextprotocol/serverInfo": MCP_SERVER_INFO,
+	};
+	const modernCacheFields = isModern2026
+		? {
+				_meta: modernMeta,
+				resultType: "complete",
+				ttlMs: 3600000,
+				cacheScope: "public",
+			}
+		: {};
 
 	try {
 		switch (method) {
-			case "initialize":
+			case "server/discover":
 				return {
 					jsonrpc: "2.0",
 					id,
 					result: {
-						protocolVersion: req.params?.protocolVersion || "2024-11-05",
+						_meta: modernMeta,
+						resultType: "complete",
+						ttlMs: 3600000,
+						cacheScope: "public",
+						supportedVersions: MCP_SUPPORTED_VERSIONS,
 						capabilities: {
 							tools: { listChanged: false },
 							resources: { subscribe: false, listChanged: false },
 							prompts: { listChanged: false },
 						},
-						serverInfo: {
-							name: "codingcatdev-sanity-context-mcp",
-							version: "1.0.0",
-						},
 						instructions:
 							"CodingCat.dev MCP Server provides tools to search and retrieve CodingCat.dev web development podcasts, tutorials, articles, authors, and transcripts.",
 					},
 				};
+
+			case "initialize": {
+				const requestedVersion = req.params?.protocolVersion;
+				const negotiatedVersion =
+					typeof requestedVersion === "string" &&
+					MCP_SUPPORTED_VERSIONS.includes(requestedVersion)
+						? requestedVersion
+						: "2024-11-05";
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: {
+						protocolVersion: negotiatedVersion,
+						capabilities: {
+							tools: { listChanged: false },
+							resources: { subscribe: false, listChanged: false },
+							prompts: { listChanged: false },
+						},
+						serverInfo: MCP_SERVER_INFO,
+						instructions:
+							"CodingCat.dev MCP Server provides tools to search and retrieve CodingCat.dev web development podcasts, tutorials, articles, authors, and transcripts.",
+					},
+				};
+			}
 
 			case "notifications/initialized":
 				return {
@@ -334,7 +539,7 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: {},
+					result: isModern2026 ? { _meta: modernMeta } : {},
 				};
 
 			case "tools/list":
@@ -342,6 +547,7 @@ async function handleSingleRequest(
 					jsonrpc: "2.0",
 					id,
 					result: {
+						...modernCacheFields,
 						tools: MCP_TOOLS,
 					},
 				};
@@ -353,7 +559,9 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: callResult,
+					result: isModern2026
+						? { _meta: modernMeta, ...callResult }
+						: callResult,
 				};
 			}
 
@@ -361,14 +569,51 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: { resources: [] },
+					result: {
+						...modernCacheFields,
+						resources: [],
+					},
+				};
+
+			case "resources/templates/list":
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: {
+						...modernCacheFields,
+						resourceTemplates: [],
+					},
 				};
 
 			case "prompts/list":
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: { prompts: [] },
+					result: {
+						...modernCacheFields,
+						prompts: [],
+					},
+				};
+
+			case "logging/setLevel":
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: isModern2026 ? { _meta: modernMeta } : {},
+				};
+
+			case "completion/complete":
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: {
+						...(isModern2026 ? { _meta: modernMeta } : {}),
+						completion: {
+							values: [],
+							total: 0,
+							hasMore: false,
+						},
+					},
 				};
 
 			default:

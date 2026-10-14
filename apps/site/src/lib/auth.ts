@@ -91,6 +91,8 @@ export function getAuth(origin: string, d1?: D1Database) {
 			jwt(),
 			mcp({
 				resource: `${origin}/mcp`,
+				resources: [`${origin}/mcp`, origin],
+				clientRegistrationDefaultResources: [`${origin}/mcp`, origin],
 				loginPage: "/sign-in",
 				consentPage: "/oauth2/consent",
 				allowDynamicClientRegistration: true,

@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ locals }) => {
 	const origin = locals.siteUrl.origin;
 
 	const protectedResource = {
-		resource: origin,
+		resource: `${origin}/mcp`,
 		authorization_servers: [origin],
 		scopes_supported: [
 			"openid",

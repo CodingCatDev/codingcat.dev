@@ -70,7 +70,7 @@
       //     "dataset": "codingcat_events_prod"
       //   }
       // ],
-      "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+      "observability": { "enabled": true, "head_sampling_rate": 1 },
       "vars": {
         "ENVIRONMENT": "production",
         "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
