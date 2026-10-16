@@ -28,7 +28,7 @@ const DEFAULTS = {
 	projectId: "hfh83o0w",
 	dataset: "production",
 	apiVersion: "2025-09-30",
-	studioUrl: "https://codingcat.dev.sanity.studio/production",
+	studioUrl: "https://codingcat-prod.sanity.studio",
 } as const;
 
 function read(env: EnvLike | undefined, key: string): string | undefined {

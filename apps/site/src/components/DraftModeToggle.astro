@@ -20,3 +20,17 @@ const returnTo = Astro.url.pathname + Astro.url.search;
 		Exit draft mode
 	</button>
 </form>
+
+<script>
+	import { enableVisualEditing } from "@sanity/visual-editing-standalone";
+
+	enableVisualEditing({
+		refresh: (payload) => {
+			if (payload.source === "mutation" || payload.source === "manual") {
+				window.location.reload();
+				return Promise.resolve();
+			}
+			return false;
+		},
+	});
+</script>

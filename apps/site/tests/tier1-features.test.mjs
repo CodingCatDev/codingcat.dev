@@ -877,7 +877,8 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(setCookieVal, "true");
 			assert.equal(setCookieOpts.httpOnly, true);
 			assert.equal(setCookieOpts.secure, true);
-			assert.equal(setCookieOpts.sameSite, "lax");
+			assert.equal(setCookieOpts.sameSite, "none");
+			assert.equal(setCookieOpts.partitioned, true);
 		});
 
 		it("6.7 POST and GET /api/draft-mode/disable clears __sanity_preview cookie and redirects", async () => {

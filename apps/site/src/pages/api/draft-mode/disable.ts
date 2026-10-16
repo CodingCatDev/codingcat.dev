@@ -45,17 +45,33 @@ export const POST: APIRoute = async ({ request, url, cookies, redirect }) => {
 		returnTo = url.searchParams.get("returnTo");
 	}
 
+	const isHttps = url.protocol === "https:";
 	cookies.delete(PREVIEW_COOKIE, { path: "/" });
-	cookies.set(PREVIEW_COOKIE, "", { maxAge: 0, path: "/" });
+	cookies.set(PREVIEW_COOKIE, "", {
+		maxAge: 0,
+		path: "/",
+		httpOnly: true,
+		secure: isHttps,
+		sameSite: isHttps ? "none" : "lax",
+		partitioned: isHttps,
+	});
 
 	return redirect(resolveDestination(returnTo), 303);
 };
 
 export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 	const returnTo = url.searchParams.get("returnTo");
+	const isHttps = url.protocol === "https:";
 
 	cookies.delete(PREVIEW_COOKIE, { path: "/" });
-	cookies.set(PREVIEW_COOKIE, "", { maxAge: 0, path: "/" });
+	cookies.set(PREVIEW_COOKIE, "", {
+		maxAge: 0,
+		path: "/",
+		httpOnly: true,
+		secure: isHttps,
+		sameSite: isHttps ? "none" : "lax",
+		partitioned: isHttps,
+	});
 
 	return redirect(resolveDestination(returnTo), 307);
 };
