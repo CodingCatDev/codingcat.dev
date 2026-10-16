@@ -37,7 +37,7 @@
     "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
     "PUBLIC_SANITY_DATASET": "dev",
     "PUBLIC_SANITY_API_VERSION": "2025-09-30",
-    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/dev",
+    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio",
     "SITE_URL": "https://dev.codingcat.dev",
     "FLIPCORE_API_URL": "https://api.flipfeeds.dev",
     "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.dev"
@@ -76,7 +76,7 @@
         "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
         "PUBLIC_SANITY_DATASET": "production",
         "PUBLIC_SANITY_API_VERSION": "2025-09-30",
-        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/production",
+        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-prod.sanity.studio",
         "SITE_URL": "https://codingcat.dev",
         "FLIPCORE_API_URL": "https://api.flipfeeds.com",
         "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.com"
