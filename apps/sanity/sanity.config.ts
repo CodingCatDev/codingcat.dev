@@ -63,11 +63,11 @@ const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const presentationEnabled =
   process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
-// Use local Next.js dev server for presentation preview when running Studio locally
+// Use local Astro dev server for presentation preview when running Studio locally
 const isLocal =
   typeof import.meta !== "undefined" &&
   (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
-const localPreviewOrigin = "http://localhost:3000";
+const localPreviewOrigin = "http://localhost:4321";
 
 // ── Shared helpers ───────────────────────────────────────────────────
 function resolveHref(type: string, slug?: string): string | undefined {
@@ -241,6 +241,10 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
                 {
                   route: "/post/:slug",
                   filter: `_type == "post" && slug.current == $slug`,
+                },
+                {
+                  route: "/podcast/:slug",
+                  filter: `_type == "podcast" && slug.current == $slug`,
                 },
               ]),
               locations: {
