@@ -1,9 +1,8 @@
 import { defineQuery } from "groq";
 import {
 	baseFieldsNoContent,
-	contentFields,
+	portableTextFields,
 	sponsorRelated,
-	userFields,
 } from "./shared";
 
 export const sponsorCountQuery = defineQuery(
@@ -13,15 +12,15 @@ export const sponsorCountQuery = defineQuery(
 export const sponsorQuery =
 	defineQuery(`*[_type == "sponsor" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
-  ${contentFields},
-  ${userFields}
+  ${portableTextFields},
+  url
 }`);
 
 export const sponsorQueryWithRelated =
 	defineQuery(`*[_type == "sponsor" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
-  ${contentFields},
-  ${userFields},
+  ${portableTextFields},
+  url,
   ${sponsorRelated}
 }`);
 

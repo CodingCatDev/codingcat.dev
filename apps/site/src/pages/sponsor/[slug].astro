@@ -4,7 +4,6 @@ import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
-import UserSocials from "@/components/UserSocials.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { sponsorQueryWithRelated } from "@/lib/sanity/queries";
@@ -52,8 +51,6 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 			<div class="shrink-0">
 				<CoverMedia
 					image={sponsor.coverImage}
-					video={sponsor.videoCloudinary}
-					youtube={sponsor.youtube}
 					class="size-24 rounded-md object-cover md:size-32"
 				/>
 			</div>
@@ -63,7 +60,6 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 				>
 					{sponsor.title}
 				</h1>
-				<UserSocials socials={sponsor.socials} websites={sponsor.websites} />
 			</div>
 		</div>
 

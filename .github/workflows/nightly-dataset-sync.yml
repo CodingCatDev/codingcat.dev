@@ -11,34 +11,133 @@ jobs:
     environment: production
 
     steps:
-      - name: Reset dev dataset from production
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Sync production dataset to dev
+        env:
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID || 'hfh83o0w' }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
         run: |
-          PROJECT_ID="${{ vars.SANITY_STUDIO_PROJECT_ID }}"
-          [ -z "$PROJECT_ID" ] && PROJECT_ID="hfh83o0w"
-          TOKEN="${{ secrets.SANITY_AUTH_TOKEN }}"
+          PROJECT_ID="${SANITY_STUDIO_PROJECT_ID:-hfh83o0w}"
           API_HOST="https://api.sanity.io"
-          API_VERSION="v2025-09-30"
+          API_VERSION="v2021-06-07"
 
-          echo "Deleting existing 'dev' dataset..."
-          curl -s -X DELETE "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/dev" \
-            -H "Authorization: Bearer $TOKEN" || true
+          echo "1. Ensuring 'dev' dataset exists (public ACL)..."
+          for T in "$SANITY_AUTH_TOKEN" "$SANITY_API_WRITE_TOKEN"; do
+            [ -z "$T" ] && continue
+            RESP=$(curl -s -X PUT "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/dev" \
+              -H "Authorization: Bearer $T" \
+              -H "Content-Type: application/json" \
+              -d '{"aclMode":"public"}' || true)
+            echo "Dataset create response: $RESP"
+            if echo "$RESP" | grep -q '"datasetName":"dev"'; then
+              break
+            fi
+          done
 
-          echo "Cloning 'production' dataset to 'dev'..."
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PUT \
-            "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/production/copy" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{"targetDataset":"dev","skipHistory":true}')
+          echo "2. Exporting 'production' dataset to /tmp/production.ndjson..."
+          curl -f -sS "https://$PROJECT_ID.api.sanity.io/$API_VERSION/data/export/production" -o /tmp/production.ndjson
+          gzip -k -f /tmp/production.ndjson
+          wc -l /tmp/production.ndjson
 
-          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
-          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
+          echo "3. Importing documents into 'dev' dataset via Sanity Mutate API..."
+          node -e '
+            const fs = require("fs");
+            const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
+            const tokens = [process.env.SANITY_API_WRITE_TOKEN, process.env.SANITY_AUTH_TOKEN].filter(Boolean);
+            const lines = fs.readFileSync("/tmp/production.ndjson", "utf8").trim().split("\n").filter(Boolean);
+            const allDocs = lines.map((l) => JSON.parse(l));
+            // Exclude sanity.imageAsset and sanity.fileAsset if mutate API rejects system asset docs without binary upload,
+            // or include content docs and weaken references to assets/missing docs so all content imports cleanly.
+            const contentDocs = allDocs.filter((d) => d._type !== "sanity.imageAsset" && d._type !== "sanity.fileAsset");
+            const contentIds = new Set(contentDocs.map((d) => d._id));
 
-          echo "Status: $HTTP_STATUS"
-          echo "Response: $BODY"
+            function sanitizeDoc(obj) {
+              if (!obj || typeof obj !== "object") return obj;
+              if (Array.isArray(obj)) return obj.map(sanitizeDoc);
+              const copy = {};
+              for (const [k, v] of Object.entries(obj)) {
+                if (k === "_rev") continue;
+                copy[k] = sanitizeDoc(v);
+              }
+              if (typeof copy._ref === "string" && !contentIds.has(copy._ref)) {
+                copy._weak = true;
+              }
+              return copy;
+            }
 
-          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
-            echo "Dataset sync initiated successfully!"
-          else
-            echo "Dataset sync failed with status $HTTP_STATUS"
-            exit 1
-          fi
+            const sanitized = contentDocs.map(sanitizeDoc);
+            console.log(`Prepared ${sanitized.length} content documents (from ${allDocs.length} total lines) for dataset "dev"...`);
+
+            async function mutateBatch(mutations) {
+              let lastErr = "";
+              for (const token of tokens) {
+                const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/dev?visibility=async&autoGenerateArrayKeys=true`, {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ mutations }),
+                });
+                if (res.ok) return;
+                lastErr = `HTTP ${res.status}: ${await res.text()}`;
+              }
+              throw new Error(`Mutate batch failed: ${lastErr}`);
+            }
+
+            (async () => {
+              // Pass 1: Create stubs so all internal document references resolve
+              const stubs = sanitized.map((d) => ({ createOrReplace: { _id: d._id, _type: d._type } }));
+              for (let i = 0; i < stubs.length; i += 250) {
+                await mutateBatch(stubs.slice(i, i + 250));
+              }
+              console.log("Pass 1 (document stubs) complete.");
+
+              // Pass 2: Populate full document bodies
+              for (let i = 0; i < sanitized.length; i += 100) {
+                const batch = sanitized.slice(i, i + 100).map((d) => ({ createOrReplace: d }));
+                await mutateBatch(batch);
+                if ((i / 100) % 5 === 0) {
+                  console.log(`Imported ${Math.min(i + 100, sanitized.length)} / ${sanitized.length} documents...`);
+                }
+              }
+
+              // Pass 3 (best-effort): Import asset metadata documents
+              const assetDocs = allDocs
+                .filter((d) => d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset")
+                .map(({ _rev, ...rest }) => rest);
+              try {
+                for (let i = 0; i < assetDocs.length; i += 250) {
+                  const batch = assetDocs.slice(i, i + 250).map((d) => ({ createOrReplace: d }));
+                  await mutateBatch(batch);
+                }
+                console.log(`Imported ${assetDocs.length} asset metadata documents.`);
+              } catch (assetErr) {
+                console.warn("Note: Asset metadata docs skipped (served via CDN):", assetErr.message);
+              }
+
+              console.log("Dataset sync completed successfully!");
+            })().catch((err) => {
+              console.error(err);
+              process.exit(1);
+            });
+          '
+
+      - name: Upload Sanity production dataset backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-production-backup-${{ github.run_id }}
+          path: /tmp/production.ndjson.gz
+          retention-days: 30

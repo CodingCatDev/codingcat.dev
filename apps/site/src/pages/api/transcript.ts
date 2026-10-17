@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
-import { createClient } from "@sanity/client";
 import type { APIRoute } from "astro";
+import { createResilientClient } from "../../lib/sanity/client";
 import { youtubeId as parseYoutubeId } from "../../lib/youtube";
 
 export const prerender = false;
@@ -18,7 +18,7 @@ function getSanityClient() {
 		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
 		process.env.SANITY_API_READ_TOKEN;
 
-	return createClient({
+	return createResilientClient({
 		projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
 		dataset: (cfEnv?.PUBLIC_SANITY_DATASET as string) || "production",
 		apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
