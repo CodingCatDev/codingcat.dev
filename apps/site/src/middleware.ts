@@ -90,9 +90,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		"max-age=31536000; includeSubDomains; preload",
 	);
 	response.headers.set("X-Content-Type-Options", "nosniff");
-	response.headers.set("X-Frame-Options", "SAMEORIGIN");
 	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-	response.headers.set("Content-Security-Policy", "frame-ancestors 'self'");
+	response.headers.set(
+		"Content-Security-Policy",
+		"frame-ancestors 'self' https://*.sanity.studio https://*.sanity.io https://sanity.io http://localhost:3333",
+	);
 
 	// AIPREF / AI Preference Headers
 	response.headers.set("Content-Usage", "train-ai=n, search=y");

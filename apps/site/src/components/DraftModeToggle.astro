@@ -10,12 +10,13 @@ const returnTo = Astro.url.pathname + Astro.url.search;
 <form
 	method="POST"
 	action="/api/draft-mode/disable"
-	class="fixed bottom-4 right-4 z-50"
+	data-sanity-preview
+	class="fixed bottom-4 left-4 z-50"
 >
 	<input type="hidden" name="returnTo" value={returnTo} />
 	<button
 		type="submit"
-		class="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
+		class="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-red-700 transition-colors"
 	>
 		Exit draft mode
 	</button>

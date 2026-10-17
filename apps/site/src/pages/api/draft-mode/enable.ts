@@ -10,10 +10,15 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 		(import.meta.env as Record<string, string | undefined>)
 			?.SANITY_API_READ_TOKEN;
 
-	// Query params supported: secret, slug, returnTo
-	const secret = url.searchParams.get("secret");
+	// Query params supported: sanity-preview-secret/secret, sanity-preview-pathname/returnTo, slug, sanity-preview-perspective
+	const secret =
+		url.searchParams.get("sanity-preview-secret") ??
+		url.searchParams.get("secret");
 	const slug = url.searchParams.get("slug");
-	const returnTo = url.searchParams.get("returnTo");
+	const returnTo =
+		url.searchParams.get("sanity-preview-pathname") ??
+		url.searchParams.get("returnTo");
+	const perspective = url.searchParams.get("sanity-preview-perspective");
 
 	if (!readToken) {
 		console.warn(
@@ -35,11 +40,18 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 		destination = "/";
 	}
 
+	if (perspective && !destination.includes("sanity-preview-perspective=")) {
+		const sep = destination.includes("?") ? "&" : "?";
+		destination = `${destination}${sep}sanity-preview-perspective=${encodeURIComponent(perspective)}`;
+	}
+
+	const isHttps = url.protocol === "https:";
 	cookies.set(PREVIEW_COOKIE, "true", {
 		path: "/",
 		httpOnly: true,
-		secure: true,
-		sameSite: "lax",
+		secure: isHttps,
+		sameSite: isHttps ? "none" : "lax",
+		partitioned: isHttps,
 	});
 
 	return redirect(destination, 307);

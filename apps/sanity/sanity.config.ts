@@ -44,7 +44,7 @@ const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
 const presentationEnabled =
 	process.env.SANITY_STUDIO_DISABLE_PRESENTATION !== "true";
 
-// Use local dev server for presentation preview when running Studio locally
+// Use local Astro dev server for presentation preview when running Studio locally
 const isLocal =
 	typeof import.meta !== "undefined" &&
 	(import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;

@@ -193,6 +193,24 @@ const graph = buildGraph([
 			<Footer />
 		</div>
 		{preview && <DraftModeToggle />}
+		<script>
+			import { enableVisualEditing } from "@sanity/visual-editing-standalone";
+
+			if (
+				window.self !== window.top ||
+				document.querySelector("[data-sanity-preview]")
+			) {
+				enableVisualEditing({
+					refresh: (payload) => {
+						if (payload.source === "mutation" || payload.source === "manual") {
+							window.location.reload();
+							return Promise.resolve();
+						}
+						return false;
+					},
+				});
+			}
+		</script>
 		<ChatModal />
 		<AnalyticsBeacon />
 	</body>

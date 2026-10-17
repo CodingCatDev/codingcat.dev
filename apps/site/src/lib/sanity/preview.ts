@@ -46,7 +46,7 @@ export function resolvePreview({
 	perspectiveParam,
 }: ResolvePreviewInput): PreviewContext {
 	const siteWide = env?.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true";
-	if (!siteWide && !hasPreviewCookie) {
+	if (!siteWide && !hasPreviewCookie && !perspectiveParam) {
 		return { enabled: false };
 	}
 
