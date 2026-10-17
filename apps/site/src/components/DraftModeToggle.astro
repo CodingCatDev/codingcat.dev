@@ -10,6 +10,7 @@ const returnTo = Astro.url.pathname + Astro.url.search;
 <form
 	method="POST"
 	action="/api/draft-mode/disable"
+	data-sanity-preview
 	class="fixed bottom-4 right-4 z-50"
 >
 	<input type="hidden" name="returnTo" value={returnTo} />
@@ -20,17 +21,3 @@ const returnTo = Astro.url.pathname + Astro.url.search;
 		Exit draft mode
 	</button>
 </form>
-
-<script>
-	import { enableVisualEditing } from "@sanity/visual-editing-standalone";
-
-	enableVisualEditing({
-		refresh: (payload) => {
-			if (payload.source === "mutation" || payload.source === "manual") {
-				window.location.reload();
-				return Promise.resolve();
-			}
-			return false;
-		},
-	});
-</script>
