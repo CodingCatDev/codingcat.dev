@@ -45,3 +45,10 @@ jobs:
           pnpm --filter @codingcatdev/sanity exec sanity dataset import /tmp/production.tar.gz dev --replace
 
           echo "Dataset sync completed successfully!"
+
+      - name: Upload Sanity production dataset backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-production-backup-${{ github.run_id }}
+          path: /tmp/production.tar.gz
+          retention-days: 30

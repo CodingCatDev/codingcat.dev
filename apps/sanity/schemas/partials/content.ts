@@ -119,6 +119,54 @@ const content = defineType({
 				}),
 			],
 		}),
+		// Legacy fields retained as hidden/readOnly so existing production documents
+		// do not trigger "Unknown fields found" warnings in Sanity Studio.
+		defineField({
+			name: "tags",
+			type: "array",
+			of: [
+				{
+					type: "object",
+					name: "tag",
+					fields: [
+						defineField({ name: "label", type: "string" }),
+						defineField({ name: "value", type: "string" }),
+					],
+				},
+			],
+			hidden: true,
+			readOnly: true,
+		}),
+		defineField({
+			name: "views",
+			type: "number",
+			hidden: true,
+			readOnly: true,
+		}),
+		defineField({
+			name: "ogTitle",
+			type: "string",
+			hidden: true,
+			readOnly: true,
+		}),
+		defineField({
+			name: "ogDescription",
+			type: "text",
+			hidden: true,
+			readOnly: true,
+		}),
+		defineField({
+			name: "twitterCardType",
+			type: "string",
+			hidden: true,
+			readOnly: true,
+		}),
+		defineField({
+			name: "noIndex",
+			type: "boolean",
+			hidden: true,
+			readOnly: true,
+		}),
 	],
 });
 
