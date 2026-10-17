@@ -93,7 +93,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 	response.headers.set(
 		"Content-Security-Policy",
-		"frame-ancestors 'self' https://*.sanity.studio http://localhost:3333",
+		"frame-ancestors 'self' https://*.sanity.studio https://*.sanity.io https://sanity.io http://localhost:3333",
 	);
 
 	// AIPREF / AI Preference Headers
