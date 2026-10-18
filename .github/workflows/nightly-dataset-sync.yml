@@ -399,24 +399,42 @@ jobs:
             if (!expRes.ok) return;
             const text = await expRes.text();
             const devDocs = text.trim().split("\n").filter(Boolean).map((l) => JSON.parse(l));
-            const deleteMutations = [];
+            const nonAssetDeletes = [];
+            const assetDeletes = [];
 
             for (const d of devDocs) {
               if (d._type.startsWith("system.")) continue;
               if (d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset") {
                 if (typeof d.path === "string" && d.path.includes("/production/")) {
-                  deleteMutations.push({ delete: { id: d._id } });
+                  assetDeletes.push(d);
                 }
                 continue;
               }
               if (!activeTypes.has(d._type) || (d._type === "transcript" && !allTargetIds.has(d._id))) {
-                deleteMutations.push({ delete: { id: d._id } });
+                nonAssetDeletes.push(d);
               }
             }
 
-            if (deleteMutations.length > 0) {
-              console.log(`Cleaning up ${deleteMutations.length} legacy/orphaned documents in 'dev'...`);
-              await sendChunked(deleteMutations, "Cleanup Legacy & Orphaned Docs", "raw");
+            const totalToDelete = nonAssetDeletes.length + assetDeletes.length;
+            if (totalToDelete > 0) {
+              console.log(`Cleaning up ${totalToDelete} legacy/orphaned documents in 'dev'...`);
+              if (nonAssetDeletes.length > 0) {
+                // First strip all references on legacy documents so inter-document references cannot block deletion
+                const emptyStubs = nonAssetDeletes.map((d) => ({ _id: d._id, _type: d._type }));
+                await sendChunked(emptyStubs, "Cleanup Pass 1: Strip References on Legacy Docs", "createOrReplace");
+                await sendChunked(
+                  nonAssetDeletes.map((d) => ({ delete: { id: d._id } })),
+                  "Cleanup Pass 2: Delete Legacy Docs",
+                  "raw"
+                );
+              }
+              if (assetDeletes.length > 0) {
+                await sendChunked(
+                  assetDeletes.map((d) => ({ delete: { id: d._id } })),
+                  "Cleanup Pass 3: Delete Orphaned Production Asset Metadata",
+                  "raw"
+                );
+              }
             }
           }
 
