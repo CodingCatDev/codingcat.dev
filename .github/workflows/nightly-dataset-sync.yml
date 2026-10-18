@@ -52,105 +52,99 @@ jobs:
           wc -l /tmp/production.ndjson
 
           echo "3. Importing documents into 'dev' dataset via Sanity Mutate API..."
-          node -e '
-            const fs = require("fs");
-            const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
-            const tokens = [process.env.SANITY_API_WRITE_TOKEN, process.env.SANITY_AUTH_TOKEN].filter(Boolean);
-            const lines = fs.readFileSync("/tmp/production.ndjson", "utf8").trim().split("\n").filter(Boolean);
-            const allDocs = lines.map((l) => JSON.parse(l));
-            // Exclude sanity.imageAsset and sanity.fileAsset if mutate API rejects system asset docs without binary upload,
-            // or include content docs and weaken references to assets/missing docs so all content imports cleanly.
-            const contentDocs = allDocs.filter((d) => d._type !== "sanity.imageAsset" && d._type !== "sanity.fileAsset");
-            const contentIds = new Set(contentDocs.map((d) => d._id));
+          cat << 'EOF' > /tmp/sync.cjs
+          const fs = require("fs");
+          const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
+          const tokens = [process.env.SANITY_API_WRITE_TOKEN, process.env.SANITY_AUTH_TOKEN].filter(Boolean);
+          const lines = fs.readFileSync("/tmp/production.ndjson", "utf8").trim().split("\n").filter(Boolean);
+          const allDocs = lines.map((l) => JSON.parse(l));
+          const contentDocs = allDocs.filter((d) => d._type !== "sanity.imageAsset" && d._type !== "sanity.fileAsset");
+          const contentIds = new Set(contentDocs.map((d) => d._id));
 
-            function sanitizeDoc(obj) {
-              if (!obj || typeof obj !== "object") return obj;
-              if (Array.isArray(obj)) return obj.map(sanitizeDoc);
-              const copy = {};
-              for (const [k, v] of Object.entries(obj)) {
-                if (k === "_rev") continue;
-                copy[k] = sanitizeDoc(v);
+          function sanitizeDoc(obj) {
+            if (!obj || typeof obj !== "object") return obj;
+            if (Array.isArray(obj)) return obj.map(sanitizeDoc);
+            const copy = {};
+            for (const [k, v] of Object.entries(obj)) {
+              if (k === "_rev") continue;
+              copy[k] = sanitizeDoc(v);
+            }
+            if (typeof copy._ref === "string" && !contentIds.has(copy._ref)) {
+              copy._weak = true;
+            }
+            return copy;
+          }
+
+          const sanitized = contentDocs.map(sanitizeDoc);
+          console.log(`Prepared ${sanitized.length} content documents (from ${allDocs.length} total lines) for dataset "dev"...`);
+
+          async function mutateBatch(mutations) {
+            let lastErr = "";
+            for (const token of tokens) {
+              const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/dev?visibility=async&autoGenerateArrayKeys=true`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ mutations }),
+              });
+              if (res.ok) return;
+              lastErr = `HTTP ${res.status}: ${await res.text()}`;
+            }
+            throw new Error(`Mutate batch failed: ${lastErr}`);
+          }
+
+          async function sendChunked(items, label) {
+            let batch = [];
+            let batchBytes = 0;
+            let sent = 0;
+            const MAX_ITEMS = 50;
+            const MAX_BYTES = 1500000;
+
+            for (const item of items) {
+              const mutation = { createOrReplace: item };
+              const itemBytes = Buffer.byteLength(JSON.stringify(mutation), "utf8");
+              if (batch.length > 0 && (batch.length >= MAX_ITEMS || batchBytes + itemBytes > MAX_BYTES)) {
+                await mutateBatch(batch);
+                sent += batch.length;
+                if (sent % 500 < batch.length) {
+                  console.log(`[${label}] Imported ${sent} / ${items.length}...`);
+                }
+                batch = [];
+                batchBytes = 0;
               }
-              if (typeof copy._ref === "string" && !contentIds.has(copy._ref)) {
-                copy._weak = true;
-              }
-              return copy;
+              batch.push(mutation);
+              batchBytes += itemBytes;
+            }
+            if (batch.length > 0) {
+              await mutateBatch(batch);
+              sent += batch.length;
+            }
+            console.log(`[${label}] Completed (${sent} / ${items.length}).`);
+          }
+
+          (async () => {
+            const stubs = sanitized.map((d) => ({ _id: d._id, _type: d._type }));
+            await sendChunked(stubs, "Pass 1: Stubs");
+            await sendChunked(sanitized, "Pass 2: Content Docs");
+
+            const assetDocs = allDocs
+              .filter((d) => d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset")
+              .map(({ _rev, ...rest }) => rest);
+            try {
+              await sendChunked(assetDocs, "Pass 3: Asset Docs");
+            } catch (assetErr) {
+              console.warn("Note: Asset metadata docs skipped (served via CDN):", assetErr.message);
             }
 
-            const sanitized = contentDocs.map(sanitizeDoc);
-            console.log(`Prepared ${sanitized.length} content documents (from ${allDocs.length} total lines) for dataset "dev"...`);
-
-            async function mutateBatch(mutations) {
-              let lastErr = "";
-              for (const token of tokens) {
-                const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/dev?visibility=async&autoGenerateArrayKeys=true`, {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ mutations }),
-                });
-                if (res.ok) return;
-                lastErr = `HTTP ${res.status}: ${await res.text()}`;
-              }
-              throw new Error(`Mutate batch failed: ${lastErr}`);
-            }
-
-            (async () => {
-              // Helper to chunk mutations by both count and byte size (< 1.5MB, well below Sanity's 4MB limit)
-              async function sendChunked(items, label) {
-                let batch = [];
-                let batchBytes = 0;
-                let sent = 0;
-                const MAX_ITEMS = 50;
-                const MAX_BYTES = 1500000;
-
-                for (const item of items) {
-                  const mutation = { createOrReplace: item };
-                  const itemBytes = Buffer.byteLength(JSON.stringify(mutation), "utf8");
-                  if (batch.length > 0 && (batch.length >= MAX_ITEMS || batchBytes + itemBytes > MAX_BYTES)) {
-                    await mutateBatch(batch);
-                    sent += batch.length;
-                    if (sent % 500 < batch.length) {
-                      console.log(`[${label}] Imported ${sent} / ${items.length}...`);
-                    }
-                    batch = [];
-                    batchBytes = 0;
-                  }
-                  batch.push(mutation);
-                  batchBytes += itemBytes;
-                }
-                if (batch.length > 0) {
-                  await mutateBatch(batch);
-                  sent += batch.length;
-                }
-                console.log(`[${label}] Completed (${sent} / ${items.length}).`);
-              }
-
-              // Pass 1: Create stubs so all internal document references resolve
-              const stubs = sanitized.map((d) => ({ _id: d._id, _type: d._type }));
-              await sendChunked(stubs, "Pass 1: Stubs");
-
-              // Pass 2: Populate full document bodies
-              await sendChunked(sanitized, "Pass 2: Content Docs");
-
-              // Pass 3 (best-effort): Import asset metadata documents so Studio Media Library resolves in dev
-              const assetDocs = allDocs
-                .filter((d) => d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset")
-                .map(({ _rev, ...rest }) => rest);
-              try {
-                await sendChunked(assetDocs, "Pass 3: Asset Docs");
-              } catch (assetErr) {
-                console.warn("Note: Asset metadata docs skipped (served via CDN):", assetErr.message);
-              }
-
-              console.log("Dataset sync completed successfully!");
-            })().catch((err) => {
-              console.error(err);
-              process.exit(1);
-            });
-          '
+            console.log("Dataset sync completed successfully!");
+          })().catch((err) => {
+            console.error(err);
+            process.exit(1);
+          });
+          EOF
+          node /tmp/sync.cjs
 
       - name: Upload Sanity production dataset backup artifact
         uses: actions/upload-artifact@v4
