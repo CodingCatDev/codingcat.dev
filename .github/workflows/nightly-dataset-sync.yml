@@ -199,16 +199,24 @@ jobs:
 
           let activeToken = tokens[0];
           async function mutateBatch(mutations, dataset = "dev") {
-            for (let attempt = 0; attempt < 5; attempt++) {
+            for (let attempt = 0; attempt < 6; attempt++) {
               const token = activeToken || tokens[attempt % tokens.length];
-              const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/${dataset}?visibility=sync&autoGenerateArrayKeys=true`, {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ mutations }),
-              });
+              let res;
+              try {
+                res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/${dataset}?visibility=sync&autoGenerateArrayKeys=true`, {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ mutations }),
+                });
+              } catch (netErr) {
+                const delay = 1000 * Math.pow(2, attempt);
+                console.warn(`Network error (${netErr.message}), retrying in ${delay}ms...`);
+                await new Promise((r) => setTimeout(r, delay));
+                continue;
+              }
               if (res.ok) {
                 activeToken = token;
                 return;
@@ -226,15 +234,15 @@ jobs:
               }
               throw new Error(`Mutate batch (${dataset}) failed: HTTP ${res.status}: ${errText}`);
             }
-            throw new Error(`Mutate batch (${dataset}) failed after 5 retries.`);
+            throw new Error(`Mutate batch (${dataset}) failed after 6 retries.`);
           }
 
           async function sendChunked(items, label, op = "createOrReplace") {
             let batch = [];
             let batchBytes = 0;
             let sent = 0;
-            const MAX_ITEMS = 200;
-            const MAX_BYTES = 2500000;
+            const MAX_ITEMS = 100;
+            const MAX_BYTES = 1500000;
 
             for (const item of items) {
               const mutation = op === "raw" ? item : { [op]: item };
