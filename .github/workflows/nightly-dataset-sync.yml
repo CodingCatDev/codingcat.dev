@@ -98,32 +98,49 @@ jobs:
             }
 
             (async () => {
-              // Pass 1: Create stubs so all internal document references resolve
-              const stubs = sanitized.map((d) => ({ createOrReplace: { _id: d._id, _type: d._type } }));
-              for (let i = 0; i < stubs.length; i += 250) {
-                await mutateBatch(stubs.slice(i, i + 250));
+              // Helper to chunk mutations by both count and byte size (< 1.5MB, well below Sanity's 4MB limit)
+              async function sendChunked(items, label) {
+                let batch = [];
+                let batchBytes = 0;
+                let sent = 0;
+                const MAX_ITEMS = 50;
+                const MAX_BYTES = 1500000;
+
+                for (const item of items) {
+                  const mutation = { createOrReplace: item };
+                  const itemBytes = Buffer.byteLength(JSON.stringify(mutation), "utf8");
+                  if (batch.length > 0 && (batch.length >= MAX_ITEMS || batchBytes + itemBytes > MAX_BYTES)) {
+                    await mutateBatch(batch);
+                    sent += batch.length;
+                    if (sent % 500 < batch.length) {
+                      console.log(`[${label}] Imported ${sent} / ${items.length}...`);
+                    }
+                    batch = [];
+                    batchBytes = 0;
+                  }
+                  batch.push(mutation);
+                  batchBytes += itemBytes;
+                }
+                if (batch.length > 0) {
+                  await mutateBatch(batch);
+                  sent += batch.length;
+                }
+                console.log(`[${label}] Completed (${sent} / ${items.length}).`);
               }
-              console.log("Pass 1 (document stubs) complete.");
+
+              // Pass 1: Create stubs so all internal document references resolve
+              const stubs = sanitized.map((d) => ({ _id: d._id, _type: d._type }));
+              await sendChunked(stubs, "Pass 1: Stubs");
 
               // Pass 2: Populate full document bodies
-              for (let i = 0; i < sanitized.length; i += 100) {
-                const batch = sanitized.slice(i, i + 100).map((d) => ({ createOrReplace: d }));
-                await mutateBatch(batch);
-                if ((i / 100) % 5 === 0) {
-                  console.log(`Imported ${Math.min(i + 100, sanitized.length)} / ${sanitized.length} documents...`);
-                }
-              }
+              await sendChunked(sanitized, "Pass 2: Content Docs");
 
-              // Pass 3 (best-effort): Import asset metadata documents
+              // Pass 3 (best-effort): Import asset metadata documents so Studio Media Library resolves in dev
               const assetDocs = allDocs
                 .filter((d) => d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset")
                 .map(({ _rev, ...rest }) => rest);
               try {
-                for (let i = 0; i < assetDocs.length; i += 250) {
-                  const batch = assetDocs.slice(i, i + 250).map((d) => ({ createOrReplace: d }));
-                  await mutateBatch(batch);
-                }
-                console.log(`Imported ${assetDocs.length} asset metadata documents.`);
+                await sendChunked(assetDocs, "Pass 3: Asset Docs");
               } catch (assetErr) {
                 console.warn("Note: Asset metadata docs skipped (served via CDN):", assetErr.message);
               }
