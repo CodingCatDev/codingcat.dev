@@ -78,10 +78,11 @@ jobs:
           const sanitized = contentDocs.map(sanitizeDoc);
           console.log(`Prepared ${sanitized.length} content documents (from ${allDocs.length} total lines) for dataset "dev"...`);
 
+          let activeToken = tokens[0];
           async function mutateBatch(mutations) {
-            let lastErr = "";
-            for (const token of tokens) {
-              const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/dev?visibility=async&autoGenerateArrayKeys=true`, {
+            for (let attempt = 0; attempt < 5; attempt++) {
+              const token = activeToken || tokens[attempt % tokens.length];
+              const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/dev?visibility=deferred&autoGenerateArrayKeys=true`, {
                 method: "POST",
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -89,18 +90,32 @@ jobs:
                 },
                 body: JSON.stringify({ mutations }),
               });
-              if (res.ok) return;
-              lastErr = `HTTP ${res.status}: ${await res.text()}`;
+              if (res.ok) {
+                activeToken = token;
+                return;
+              }
+              const errText = await res.text();
+              if (res.status === 401 || res.status === 403) {
+                activeToken = tokens.find((t) => t !== token) || token;
+                continue;
+              }
+              if (res.status === 429 || res.status >= 500) {
+                const delay = 1000 * Math.pow(2, attempt);
+                console.warn(`Rate limited / server busy (HTTP ${res.status}), retrying in ${delay}ms...`);
+                await new Promise((r) => setTimeout(r, delay));
+                continue;
+              }
+              throw new Error(`Mutate batch failed: HTTP ${res.status}: ${errText}`);
             }
-            throw new Error(`Mutate batch failed: ${lastErr}`);
+            throw new Error("Mutate batch failed after 5 retries.");
           }
 
           async function sendChunked(items, label) {
             let batch = [];
             let batchBytes = 0;
             let sent = 0;
-            const MAX_ITEMS = 50;
-            const MAX_BYTES = 1500000;
+            const MAX_ITEMS = 200;
+            const MAX_BYTES = 2500000;
 
             for (const item of items) {
               const mutation = { createOrReplace: item };
