@@ -73,7 +73,7 @@ jobs:
           echo "Resolved Organization ID: $ORG_ID"
           mkdir -p .sanity
           echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --non-interactive
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
@@ -147,7 +147,7 @@ jobs:
           echo "Resolved Organization ID: $ORG_ID"
           mkdir -p .sanity
           echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --non-interactive
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}

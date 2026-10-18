@@ -59,14 +59,37 @@ jobs:
           const lines = fs.readFileSync("/tmp/production.ndjson", "utf8").trim().split("\n").filter(Boolean);
           const allDocs = lines.map((l) => JSON.parse(l));
 
+          const activeTypes = new Set([
+            "post",
+            "podcast",
+            "guest",
+            "author",
+            "sponsor",
+            "page",
+            "settings",
+            "podcastType",
+            "syndication",
+            "transcript",
+          ]);
           const assetDocs = allDocs.filter((d) => d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset");
           const imageAssetMap = new Map(
             allDocs.filter((d) => d._type === "sanity.imageAsset").map((d) => [d._id, d])
           );
-          const contentDocs = allDocs.filter((d) => d._type !== "sanity.imageAsset" && d._type !== "sanity.fileAsset");
+          const rawContentDocs = allDocs.filter((d) => activeTypes.has(d._type));
+          const activeDocIds = new Set(rawContentDocs.filter((d) => d._type !== "transcript").map((d) => d._id));
+          const contentDocs = rawContentDocs.filter((d) => {
+            if (d._type !== "transcript") return true;
+            // Exclude transcripts that only reference legacy/deleted document types (lesson/short)
+            for (const v of Object.values(d)) {
+              if (v && typeof v === "object" && typeof v._ref === "string" && !activeDocIds.has(v._ref)) {
+                return false;
+              }
+            }
+            return true;
+          });
 
           // Collect all known IDs (including assets and syndication.* targets) so valid strong references are never weakened
-          const allTargetIds = new Set(allDocs.map((d) => d._id));
+          const allTargetIds = new Set(contentDocs.map((d) => d._id));
           const syndicationStubs = new Map();
 
           for (const doc of contentDocs) {
@@ -260,7 +283,6 @@ jobs:
             }
             console.log(`Found ${devUploadedIds.size} image binaries in 'dev' CDN bucket (${prodToDevAssetMap.size} mapped IDs).`);
 
-            const activeTypes = new Set(["post", "podcast", "guest", "author", "sponsor", "page", "settings", "podcastType"]);
             const priorityRefs = new Set();
             const inlineRefs = new Set();
 
@@ -274,7 +296,6 @@ jobs:
             }
 
             for (const doc of contentDocs) {
-              if (!activeTypes.has(doc._type)) continue;
               if (doc.coverImage?.asset?._ref) priorityRefs.add(doc.coverImage.asset._ref);
               if (doc.photo?.asset?._ref) priorityRefs.add(doc.photo.asset._ref);
               if (doc.ogImage?.asset?._ref) priorityRefs.add(doc.ogImage.asset._ref);
@@ -363,6 +384,34 @@ jobs:
             return devUploadedIds;
           }
 
+          async function cleanupOrphanedDevDocs() {
+            const expRes = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/export/dev`, {
+              headers: { Authorization: `Bearer ${activeToken || tokens[0]}` },
+            });
+            if (!expRes.ok) return;
+            const text = await expRes.text();
+            const devDocs = text.trim().split("\n").filter(Boolean).map((l) => JSON.parse(l));
+            const deleteMutations = [];
+
+            for (const d of devDocs) {
+              if (d._type.startsWith("system.")) continue;
+              if (d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset") {
+                if (typeof d.path === "string" && d.path.includes("/production/")) {
+                  deleteMutations.push({ delete: { id: d._id } });
+                }
+                continue;
+              }
+              if (!activeTypes.has(d._type) || (d._type === "transcript" && !allTargetIds.has(d._id))) {
+                deleteMutations.push({ delete: { id: d._id } });
+              }
+            }
+
+            if (deleteMutations.length > 0) {
+              console.log(`Cleaning up ${deleteMutations.length} legacy/orphaned documents in 'dev'...`);
+              await sendChunked(deleteMutations, "Cleanup Legacy & Orphaned Docs", "raw");
+            }
+          }
+
           (async () => {
             if (prodDeduplicateMutations.length > 0) {
               console.log(`Cleaning up ${prodDeduplicateMutations.length} duplicate syndications arrays in production...`);
@@ -375,29 +424,24 @@ jobs:
             }
 
             // 1. Upload/map missing active image binaries to dev (populates prodToDevAssetMap & allTargetIds)
-            const devUploadedIds = await uploadMissingDevImages();
+            await uploadMissingDevImages();
 
             // 2. Now sanitize content documents so all active image _refs are rewritten to their real dev binary asset IDs
             const sanitized = contentDocs.map(sanitizeDoc);
             console.log(`Prepared ${sanitized.length} content documents and ${syndicationStubs.size} syndication stubs for dataset "dev"...`);
 
-            // 3. Import remaining asset metadata docs (for unreferenced/legacy assets) so all asset refs resolve
-            const remainingAssetDocs = assetDocs
-              .filter((d) => !devUploadedIds.has(d._id))
-              .map(({ _rev, ...rest }) => rest);
-            if (remainingAssetDocs.length > 0) {
-              await sendChunked(remainingAssetDocs, "Pass 1a: Remaining Asset Metadata", "createIfNotExists");
-            }
-
-            // 4. Create content + syndication stubs so all internal document references resolve as strong references
+            // 3. Create content + syndication stubs so all internal document references resolve as strong references
             const stubs = [
               ...sanitized.map((d) => ({ _id: d._id, _type: d._type })),
               ...Array.from(syndicationStubs.values()),
             ];
-            await sendChunked(stubs, "Pass 1b: Document & Syndication Stubs", "createIfNotExists");
+            await sendChunked(stubs, "Pass 1: Document & Syndication Stubs", "createIfNotExists");
 
-            // 5. Populate full content documents (with strong coverImage.asset & syndications references and unique _keys)
+            // 4. Populate full content documents (with strong coverImage.asset & syndications references and unique _keys)
             await sendChunked(sanitized, "Pass 2: Content Docs", "createOrReplace");
+
+            // 5. Remove any legacy document types and orphaned production-path asset metadata from dev
+            await cleanupOrphanedDevDocs();
 
             console.log("Dataset sync completed successfully!");
           })().catch((err) => {
