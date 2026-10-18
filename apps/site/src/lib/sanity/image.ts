@@ -9,14 +9,11 @@ type Builder = ReturnType<typeof createImageUrlBuilder>;
 
 const builders = new Map<string, Builder>();
 
-function builderFor({ projectId }: SanityConfig): Builder {
-	// Image binary files synced from `production` to `dev` remain stored under
-	// the `production` dataset path in Sanity's CDN (`images/<projectId>/production/...`).
-	const imageDataset = "production";
-	const key = `${projectId}:${imageDataset}`;
+function builderFor({ projectId, dataset }: SanityConfig): Builder {
+	const key = `${projectId}:${dataset}`;
 	let b = builders.get(key);
 	if (!b) {
-		b = createImageUrlBuilder({ projectId, dataset: imageDataset });
+		b = createImageUrlBuilder({ projectId, dataset });
 		builders.set(key, b);
 	}
 	return b;

@@ -133,6 +133,8 @@ jobs:
             }
           }
 
+          const prodToDevAssetMap = new Map();
+
           function sanitizeDoc(obj) {
             if (!obj || typeof obj !== "object") return obj;
             if (Array.isArray(obj)) {
@@ -143,7 +145,6 @@ jobs:
                 if (item && typeof item === "object" && typeof item._key === "string") {
                   if (usedKeys.has(item._key)) {
                     if (typeof item._ref === "string") {
-                      // Duplicate reference key in array: skip duplicate entry
                       continue;
                     }
                     item._key = `${item._key}_${usedKeys.size}`;
@@ -160,6 +161,9 @@ jobs:
               copy[k] = sanitizeDoc(v);
             }
             if (typeof copy._ref === "string") {
+              if (prodToDevAssetMap.has(copy._ref)) {
+                copy._ref = prodToDevAssetMap.get(copy._ref);
+              }
               if (allTargetIds.has(copy._ref)) {
                 delete copy._weak;
                 delete copy._strengthenOnPublish;
@@ -170,14 +174,11 @@ jobs:
             return copy;
           }
 
-          const sanitized = contentDocs.map(sanitizeDoc);
-          console.log(`Prepared ${sanitized.length} content documents and ${syndicationStubs.size} syndication stubs for dataset "dev"...`);
-
           let activeToken = tokens[0];
           async function mutateBatch(mutations, dataset = "dev") {
             for (let attempt = 0; attempt < 5; attempt++) {
               const token = activeToken || tokens[attempt % tokens.length];
-              const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/${dataset}?visibility=deferred&autoGenerateArrayKeys=true`, {
+              const res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/${dataset}?visibility=sync&autoGenerateArrayKeys=true`, {
                 method: "POST",
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -213,7 +214,7 @@ jobs:
             const MAX_BYTES = 2500000;
 
             for (const item of items) {
-              const mutation = { [op]: item };
+              const mutation = op === "raw" ? item : { [op]: item };
               const itemBytes = Buffer.byteLength(JSON.stringify(mutation), "utf8");
               if (batch.length > 0 && (batch.length >= MAX_ITEMS || batchBytes + itemBytes > MAX_BYTES)) {
                 await mutateBatch(batch);
@@ -235,19 +236,29 @@ jobs:
           }
 
           async function uploadMissingDevImages() {
-            const q = encodeURIComponent(`*[_type == "sanity.imageAsset" && path match "images/${projectId}/dev/*"]._id`);
-            let devUploadedIds = new Set();
+            const q = encodeURIComponent(`*[_type == "sanity.imageAsset" && string::startsWith(path, "images/${projectId}/dev/")]{_id, label}`);
+            let devAssetDocs = [];
             for (const token of tokens) {
               const res = await fetch(`https://${projectId}.api.sanity.io/v2025-02-19/data/query/dev?query=${q}`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               if (res.ok) {
                 const json = await res.json();
-                devUploadedIds = new Set(json.result || []);
+                devAssetDocs = json.result || [];
                 break;
               }
             }
-            console.log(`Found ${devUploadedIds.size} image binaries already in 'dev' CDN bucket.`);
+
+            const devUploadedIds = new Set();
+            for (const d of devAssetDocs) {
+              devUploadedIds.add(d._id);
+              allTargetIds.add(d._id);
+              prodToDevAssetMap.set(d._id, d._id);
+              if (typeof d.label === "string" && d.label.startsWith("image-")) {
+                prodToDevAssetMap.set(d.label, d._id);
+              }
+            }
+            console.log(`Found ${devUploadedIds.size} image binaries in 'dev' CDN bucket (${prodToDevAssetMap.size} mapped IDs).`);
 
             const activeTypes = new Set(["post", "podcast", "guest", "author", "sponsor", "page", "settings", "podcastType"]);
             const priorityRefs = new Set();
@@ -271,79 +282,19 @@ jobs:
             }
 
             const orderedRefs = [...new Set([...priorityRefs, ...inlineRefs])].filter(
-              (id) => !devUploadedIds.has(id) && imageAssetMap.has(id)
+              (id) => !prodToDevAssetMap.has(id) && imageAssetMap.has(id)
             );
             if (orderedRefs.length === 0) {
-              console.log("All active image binaries are already present in 'dev' dataset.");
+              console.log("All active image binaries are already present and mapped in 'dev' dataset.");
               return devUploadedIds;
             }
 
-            // Check if any of orderedRefs exist in 'dev' as metadata-only docs pointing to 'production' bucket
-            // (Sanity's /assets/images/dev endpoint skips writing the binary if the document _id already exists in 'dev')
-            const prodPathQuery = encodeURIComponent(`*[_type == "sanity.imageAsset" && path match "images/${projectId}/production/*"]._id`);
-            let metadataOnlyIds = new Set();
-            for (const token of tokens) {
-              const res = await fetch(`https://${projectId}.api.sanity.io/v2025-02-19/data/query/dev?query=${prodPathQuery}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              if (res.ok) {
-                const json = await res.json();
-                metadataOnlyIds = new Set(json.result || []);
-                break;
-              }
-            }
-
-            const toDeleteBeforeUpload = orderedRefs.filter((id) => metadataOnlyIds.has(id));
-            if (toDeleteBeforeUpload.length > 0) {
-              const toDeleteSet = new Set(toDeleteBeforeUpload);
-              console.log(`Replacing ${toDeleteBeforeUpload.length} metadata-only asset docs with real 'dev' binaries...`);
-
-              function weakenTargetRefs(obj) {
-                if (!obj || typeof obj !== "object") return { val: obj, hit: false };
-                if (Array.isArray(obj)) {
-                  let anyHit = false;
-                  const arr = obj.map((item) => {
-                    const r = weakenTargetRefs(item);
-                    if (r.hit) anyHit = true;
-                    return r.val;
-                  });
-                  return { val: arr, hit: anyHit };
-                }
-                let anyHit = false;
-                const copy = {};
-                for (const [k, v] of Object.entries(obj)) {
-                  const r = weakenTargetRefs(v);
-                  if (r.hit) anyHit = true;
-                  copy[k] = r.val;
-                }
-                if (typeof copy._ref === "string" && toDeleteSet.has(copy._ref)) {
-                  copy._weak = true;
-                  anyHit = true;
-                }
-                return { val: copy, hit: anyHit };
-              }
-
-              const weakenedDocs = [];
-              for (const doc of sanitized) {
-                const { val, hit } = weakenTargetRefs(doc);
-                if (hit) weakenedDocs.push(val);
-              }
-              if (weakenedDocs.length > 0) {
-                await sendChunked(weakenedDocs, "Pre-upload: Temporarily Weaken Asset Refs", "createOrReplace");
-              }
-
-              for (let i = 0; i < toDeleteBeforeUpload.length; i += 200) {
-                const delBatch = toDeleteBeforeUpload.slice(i, i + 200).map((id) => ({ delete: { id } }));
-                await mutateBatch(delBatch, "dev");
-              }
-              console.log(`Deleted ${toDeleteBeforeUpload.length} metadata-only asset docs; ready for binary upload.`);
-            }
-
-            console.log(`Uploading ${orderedRefs.length} missing active image binaries to 'dev' dataset...`);
+            console.log(`Uploading/mapping ${orderedRefs.length} active image binaries to 'dev' dataset...`);
 
             let uploaded = 0;
             let idx = 0;
             const CONCURRENCY = 20;
+            const labelPatches = [];
 
             async function worker() {
               while (idx < orderedRefs.length) {
@@ -359,7 +310,8 @@ jobs:
                     const buf = Buffer.from(await imgRes.arrayBuffer());
                     const token = activeToken || tokens[attempt % tokens.length];
                     const filename = encodeURIComponent(assetDoc.originalFilename || `${assetId}.${assetDoc.extension || "jpg"}`);
-                    const upRes = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/assets/images/dev?filename=${filename}`, {
+                    const labelParam = encodeURIComponent(assetId);
+                    const upRes = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/assets/images/dev?filename=${filename}&label=${labelParam}`, {
                       method: "POST",
                       headers: {
                         Authorization: `Bearer ${token}`,
@@ -369,10 +321,19 @@ jobs:
                     });
                     if (upRes.ok) {
                       activeToken = token;
-                      devUploadedIds.add(assetId);
+                      const upJson = await upRes.json();
+                      const devId = upJson?.document?._id;
+                      if (devId) {
+                        devUploadedIds.add(devId);
+                        allTargetIds.add(devId);
+                        prodToDevAssetMap.set(assetId, devId);
+                        if (upJson.document.label !== assetId) {
+                          labelPatches.push({ patch: { id: devId, set: { label: assetId } } });
+                        }
+                      }
                       uploaded++;
                       if (uploaded % 100 === 0 || uploaded === orderedRefs.length) {
-                        console.log(`[Image Binaries] Uploaded ${uploaded} / ${orderedRefs.length}...`);
+                        console.log(`[Image Binaries] Mapped/uploaded ${uploaded} / ${orderedRefs.length}...`);
                       }
                       break;
                     }
@@ -393,7 +354,12 @@ jobs:
             }
 
             await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
-            console.log(`[Image Binaries] Finished uploading ${uploaded} image binaries to 'dev'.`);
+            console.log(`[Image Binaries] Finished mapping/uploading ${uploaded} image binaries to 'dev'.`);
+
+            if (labelPatches.length > 0) {
+              await sendChunked(labelPatches, "Image Asset Label Mapping Patches", "raw");
+            }
+
             return devUploadedIds;
           }
 
@@ -408,10 +374,14 @@ jobs:
               }
             }
 
-            // Upload missing active image binaries to dev (creates real sanity.imageAsset docs with dev bucket paths)
+            // 1. Upload/map missing active image binaries to dev (populates prodToDevAssetMap & allTargetIds)
             const devUploadedIds = await uploadMissingDevImages();
 
-            // Import remaining asset metadata docs (only those not already uploaded as dev binaries) so all asset refs resolve
+            // 2. Now sanitize content documents so all active image _refs are rewritten to their real dev binary asset IDs
+            const sanitized = contentDocs.map(sanitizeDoc);
+            console.log(`Prepared ${sanitized.length} content documents and ${syndicationStubs.size} syndication stubs for dataset "dev"...`);
+
+            // 3. Import remaining asset metadata docs (for unreferenced/legacy assets) so all asset refs resolve
             const remainingAssetDocs = assetDocs
               .filter((d) => !devUploadedIds.has(d._id))
               .map(({ _rev, ...rest }) => rest);
@@ -419,14 +389,14 @@ jobs:
               await sendChunked(remainingAssetDocs, "Pass 1a: Remaining Asset Metadata", "createIfNotExists");
             }
 
-            // Create content + syndication stubs so all internal document references resolve as strong references
+            // 4. Create content + syndication stubs so all internal document references resolve as strong references
             const stubs = [
               ...sanitized.map((d) => ({ _id: d._id, _type: d._type })),
               ...Array.from(syndicationStubs.values()),
             ];
             await sendChunked(stubs, "Pass 1b: Document & Syndication Stubs", "createIfNotExists");
 
-            // Populate full content documents (with strong coverImage.asset & syndications references and unique _keys)
+            // 5. Populate full content documents (with strong coverImage.asset & syndications references and unique _keys)
             await sendChunked(sanitized, "Pass 2: Content Docs", "createOrReplace");
 
             console.log("Dataset sync completed successfully!");
