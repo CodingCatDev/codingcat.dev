@@ -273,6 +273,72 @@ jobs:
             const orderedRefs = [...new Set([...priorityRefs, ...inlineRefs])].filter(
               (id) => !devUploadedIds.has(id) && imageAssetMap.has(id)
             );
+            if (orderedRefs.length === 0) {
+              console.log("All active image binaries are already present in 'dev' dataset.");
+              return devUploadedIds;
+            }
+
+            // Check if any of orderedRefs exist in 'dev' as metadata-only docs pointing to 'production' bucket
+            // (Sanity's /assets/images/dev endpoint skips writing the binary if the document _id already exists in 'dev')
+            const prodPathQuery = encodeURIComponent(`*[_type == "sanity.imageAsset" && path match "images/${projectId}/production/*"]._id`);
+            let metadataOnlyIds = new Set();
+            for (const token of tokens) {
+              const res = await fetch(`https://${projectId}.api.sanity.io/v2025-02-19/data/query/dev?query=${prodPathQuery}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (res.ok) {
+                const json = await res.json();
+                metadataOnlyIds = new Set(json.result || []);
+                break;
+              }
+            }
+
+            const toDeleteBeforeUpload = orderedRefs.filter((id) => metadataOnlyIds.has(id));
+            if (toDeleteBeforeUpload.length > 0) {
+              const toDeleteSet = new Set(toDeleteBeforeUpload);
+              console.log(`Replacing ${toDeleteBeforeUpload.length} metadata-only asset docs with real 'dev' binaries...`);
+
+              function weakenTargetRefs(obj) {
+                if (!obj || typeof obj !== "object") return { val: obj, hit: false };
+                if (Array.isArray(obj)) {
+                  let anyHit = false;
+                  const arr = obj.map((item) => {
+                    const r = weakenTargetRefs(item);
+                    if (r.hit) anyHit = true;
+                    return r.val;
+                  });
+                  return { val: arr, hit: anyHit };
+                }
+                let anyHit = false;
+                const copy = {};
+                for (const [k, v] of Object.entries(obj)) {
+                  const r = weakenTargetRefs(v);
+                  if (r.hit) anyHit = true;
+                  copy[k] = r.val;
+                }
+                if (typeof copy._ref === "string" && toDeleteSet.has(copy._ref)) {
+                  copy._weak = true;
+                  anyHit = true;
+                }
+                return { val: copy, hit: anyHit };
+              }
+
+              const weakenedDocs = [];
+              for (const doc of sanitized) {
+                const { val, hit } = weakenTargetRefs(doc);
+                if (hit) weakenedDocs.push(val);
+              }
+              if (weakenedDocs.length > 0) {
+                await sendChunked(weakenedDocs, "Pre-upload: Temporarily Weaken Asset Refs", "createOrReplace");
+              }
+
+              for (let i = 0; i < toDeleteBeforeUpload.length; i += 200) {
+                const delBatch = toDeleteBeforeUpload.slice(i, i + 200).map((id) => ({ delete: { id } }));
+                await mutateBatch(delBatch, "dev");
+              }
+              console.log(`Deleted ${toDeleteBeforeUpload.length} metadata-only asset docs; ready for binary upload.`);
+            }
+
             console.log(`Uploading ${orderedRefs.length} missing active image binaries to 'dev' dataset...`);
 
             let uploaded = 0;
