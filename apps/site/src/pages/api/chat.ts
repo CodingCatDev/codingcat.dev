@@ -1,10 +1,10 @@
 import { env } from "cloudflare:workers";
 import { createMCPClient } from "@ai-sdk/mcp";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { createClient } from "@sanity/client";
 import { isStepCount, jsonSchema, streamText, tool } from "ai";
 import type { APIRoute } from "astro";
 import { createWorkersAI } from "workers-ai-provider";
+import { createResilientClient } from "@/lib/sanity/client";
 import {
 	semanticSearchQuery,
 	textSearchFallbackQuery,
@@ -281,10 +281,10 @@ export const POST: APIRoute = async ({ request }) => {
 			}
 		}
 
-		// Configure Sanity client (fall back to public 'production' dataset when no read token is present)
+		// Configure Sanity client (fall back to public 'production' dataset when no read token is present or dataset is missing)
 		const configuredDataset =
 			(cfEnv?.PUBLIC_SANITY_DATASET as string) || "production";
-		const sanityClient = createClient({
+		const sanityClient = createResilientClient({
 			projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
 			dataset: sanityToken ? configuredDataset : "production",
 			apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",

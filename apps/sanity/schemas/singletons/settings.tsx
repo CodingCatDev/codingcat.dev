@@ -1,8 +1,5 @@
 import { CogIcon } from "@sanity/icons/Cog";
 import { defineArrayMember, defineField, defineType } from "sanity";
-import SVG from "react-inlinesvg";
-
-import internalLink from "../custom/internalLink";
 
 export default defineType({
 	name: "settings",

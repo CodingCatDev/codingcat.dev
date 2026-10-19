@@ -325,7 +325,7 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 			youtube: string;
 		}>
 	>(
-		`*[_type in ["post", "podcast", "course", "lesson", "short"] && (defined(youtube) || defined(listenLinks.youtube)) && (!defined(transcript) || !defined(transcript->fullText) || length(transcript->fullText) < 50) && !(_id in path("drafts.**"))][0...$batchSize]{
+		`*[_type in ["post", "podcast", "page"] && (defined(youtube) || defined(listenLinks.youtube)) && (!defined(transcript) || !defined(transcript->fullText) || length(transcript->fullText) < 50) && !(_id in path("drafts.**"))][0...$batchSize]{
 			_id,
 			_type,
 			title,

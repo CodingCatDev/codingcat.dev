@@ -2,10 +2,6 @@ import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { defineType } from "sanity";
 
 import contentType from "../partials/content";
-import {
-	socialPreviewFields,
-	socialPreviewGroup,
-} from "../partials/socialPreview";
 
 export default defineType({
 	...contentType,
@@ -13,6 +9,7 @@ export default defineType({
 	title: "Page",
 	icon: DocumentTextIcon,
 	type: "document",
-	groups: [...(contentType.groups || []), socialPreviewGroup],
-	fields: [...contentType.fields, ...socialPreviewFields],
+	groups: [...(contentType.groups || [])],
+	fields: [...contentType.fields],
 });
+

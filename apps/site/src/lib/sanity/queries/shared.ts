@@ -18,8 +18,26 @@ export const baseFieldsNoContent = `
   "date": coalesce(date, _createdAt)
 `;
 
+export const personRefFields = `
+  _id,
+  _type,
+  "title": coalesce(title, "Anonymous"),
+  "slug": slug.current,
+  coverImage
+`;
+
+export const sponsorRefFields = `
+  _id,
+  _type,
+  "title": coalesce(title, "Anonymous"),
+  "slug": slug.current,
+  excerpt,
+  coverImage,
+  url
+`;
+
 /** Resolves internalLink markDefs to hrefs; keep in sync with lib/sanity/resolve-href.ts. */
-export const contentFields = `
+export const portableTextFields = `
   content[]{
     ...,
     markDefs[]{
@@ -33,20 +51,19 @@ export const contentFields = `
         }
       },
     }
-  },
+  }
+`;
+
+export const contentFields = `
+  ${portableTextFields},
   author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   },
   devto,
   hashnode,
   sponsor[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${sponsorRefFields}
   },
-  tags,
   videoCloudinary,
   youtube,
   transcript->{
@@ -64,20 +81,19 @@ export const contentFields = `
 `;
 
 export const podcastFields = `
-  podcastType[]->{
-    ...,
-    "title": coalesce(title, "Missing Podcast Title"),
-  },
   season,
   episode,
   recordingDate,
   guest[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   },
   pick[]{
-    user->,
+    user->{
+      _id,
+      _type,
+      "title": coalesce(title, "Anonymous"),
+      "slug": slug.current
+    },
     name,
     site
   },
@@ -92,10 +108,10 @@ export const userFields = `
 
 export const userRelated = `
   "related":{
-    "podcast": *[_type == "podcast" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
+    "podcast": *[_type == "podcast" && references(^._id)] | order(date desc) [0...4] {
       ${baseFieldsNoContent}
     },
-    "post": *[_type == "post" && (^._id in author[]._ref || ^._id in guest[]._ref)] | order(date desc) [0...4] {
+    "post": *[_type == "post" && references(^._id)] | order(date desc) [0...4] {
       ${baseFieldsNoContent}
     },
   }
@@ -103,10 +119,10 @@ export const userRelated = `
 
 export const sponsorRelated = `
   "related":{
-    "podcast": *[_type == "podcast" && ^._id in sponsor[]._ref] | order(date desc) [] {
+    "podcast": *[_type == "podcast" && references(^._id)] | order(date desc) [] {
       ${baseFieldsNoContent}
     },
-    "post": *[_type == "post" && ^._id in sponsor[]._ref] | order(date desc) [] {
+    "post": *[_type == "post" && references(^._id)] | order(date desc) [] {
       ${baseFieldsNoContent}
     },
   }
@@ -117,20 +133,7 @@ export const sponsorRelated = `
  * Avoids dereferencing sponsors, tags and video metadata that never appear.
  */
 export const rssContentFields = `
-  content[]{
-    ...,
-    markDefs[]{
-      ...,
-      _type == "internalLink" => {
-        @.reference->_type == "page" => {
-          "href": "/" + @.reference->slug.current
-        },
-        @.reference->_type != "page" => {
-          "href": "/" + @.reference->_type + "/" + @.reference->slug.current
-        }
-      },
-    }
-  },
+  ${portableTextFields},
   author[]->{
     "title": coalesce(title, "Anonymous"),
     "slug": slug.current,
