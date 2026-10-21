@@ -6,13 +6,10 @@ export default defineCliConfig({
 		entry: "./src/index.tsx",
 		title: "CodingCat Ops & Revenue OS",
 	},
-	...(process.env.SANITY_OPS_APP_ID
-		? {
-				deployment: {
-					appId: process.env.SANITY_OPS_APP_ID,
-				},
-			}
-		: {}),
+	deployment: {
+		appId: process.env.SANITY_OPS_APP_ID || "yiugiba2sjnhpehqmky6nulc",
+	},
 });
+
 
 
