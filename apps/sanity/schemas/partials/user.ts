@@ -86,6 +86,10 @@ const content = defineType({
 					type: "string",
 				}),
 				defineField({
+					name: "threads",
+					type: "string",
+				}),
+				defineField({
 					name: "tiktok",
 					type: "string",
 				}),
