@@ -17,7 +17,7 @@ export default defineCliConfig({
 	deployment: {
 		appId:
 			process.env.SANITY_OPS_APP_ID ||
-			(isDev ? "yiugiba2sjnhpehqmky6nulc" : undefined),
+			(isDev ? "yiugiba2sjnhpehqmky6nulc" : "bv37w3mpgxoi5p12dg9kmp9r"),
 	},
 });
 

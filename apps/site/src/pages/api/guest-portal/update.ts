@@ -26,7 +26,6 @@ export const POST: APIRoute = async ({ request }) => {
 		const { client, canWrite } = getSanityServerClient();
 		const verification = await verifyGuestPortalToken(rawToken);
 
-		let guestId = verification.payload?.id;
 		if (!verification.valid) {
 			if (verification.expired) {
 				return new Response(
@@ -37,37 +36,13 @@ export const POST: APIRoute = async ({ request }) => {
 					{ status: 403, headers: { "Content-Type": "application/json" } },
 				);
 			}
-
-			// Fallback: check if token is stored directly on a guest doc in Sanity with non-expired portalTokenExpiresAt
-			const docByToken = await client.fetch<{
-				_id: string;
-				portalTokenExpiresAt?: string;
-			} | null>(
-				`*[_type == "guest" && portalToken == $token][0]{ _id, portalTokenExpiresAt }`,
-				{ token: rawToken },
+			return new Response(
+				JSON.stringify({ error: "Invalid guest portal token." }),
+				{ status: 403, headers: { "Content-Type": "application/json" } },
 			);
-
-			if (!docByToken) {
-				return new Response(
-					JSON.stringify({ error: "Invalid guest portal token." }),
-					{ status: 403, headers: { "Content-Type": "application/json" } },
-				);
-			}
-			if (
-				docByToken.portalTokenExpiresAt &&
-				new Date(docByToken.portalTokenExpiresAt).getTime() < Date.now()
-			) {
-				return new Response(
-					JSON.stringify({
-						error:
-							"This magic link has expired. Please reply to Alex's email for a fresh link.",
-					}),
-					{ status: 403, headers: { "Content-Type": "application/json" } },
-				);
-			}
-			guestId = docByToken._id;
 		}
 
+		const guestId = verification.payload?.id;
 		if (!guestId) {
 			return new Response(
 				JSON.stringify({ error: "Could not resolve guest profile." }),
