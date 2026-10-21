@@ -1,0 +1,437 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { verifyGuestPortalToken } from "@/lib/guest-portal";
+import { getSanityServerClient } from "@/lib/sanity/write-client";
+
+const { token } = Astro.params;
+
+interface EpisodeRef {
+	_id: string;
+	title: string;
+	slug: string;
+	season: number;
+	episode: number;
+	youtube?: string;
+}
+
+interface GuestDoc {
+	_id: string;
+	title: string;
+	slug: string;
+	avatarUrl?: string;
+	socials?: Record<string, string>;
+	websites?: Array<{ site?: string; link?: { href?: string } }>;
+	episodes: EpisodeRef[];
+}
+
+const verification = await verifyGuestPortalToken(token);
+const { client } = getSanityServerClient();
+
+let isExpired = verification.expired;
+let isValid = verification.valid;
+let expiresAtIso = verification.payload?.exp
+	? new Date(verification.payload.exp).toISOString()
+	: "";
+let guestDoc: GuestDoc | null = null;
+
+if (isValid && verification.payload) {
+	guestDoc = await client.fetch<GuestDoc | null>(
+		`*[_type == "guest" && (_id == $id || slug.current == $slug)][0]{
+			_id,
+			title,
+			"slug": slug.current,
+			"avatarUrl": coverImage.asset->url,
+			socials,
+			websites,
+			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) {
+				_id,
+				title,
+				"slug": slug.current,
+				season,
+				episode,
+				youtube
+			}
+		}`,
+		{ id: verification.payload.id, slug: verification.payload.slug },
+	);
+} else if (!isExpired && token) {
+	// Fallback: check Sanity portalToken field
+	const docByToken = await client.fetch<
+		(GuestDoc & { portalTokenExpiresAt?: string }) | null
+	>(
+		`*[_type == "guest" && portalToken == $token][0]{
+			_id,
+			title,
+			"slug": slug.current,
+			"avatarUrl": coverImage.asset->url,
+			socials,
+			websites,
+			portalTokenExpiresAt,
+			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) {
+				_id,
+				title,
+				"slug": slug.current,
+				season,
+				episode,
+				youtube
+			}
+		}`,
+		{ token },
+	);
+	if (docByToken) {
+		if (
+			docByToken.portalTokenExpiresAt &&
+			new Date(docByToken.portalTokenExpiresAt).getTime() < Date.now()
+		) {
+			isExpired = true;
+		} else {
+			isValid = true;
+			guestDoc = docByToken;
+			expiresAtIso = docByToken.portalTokenExpiresAt || "";
+		}
+	}
+}
+
+const socials = guestDoc?.socials || {};
+const primaryWebsite =
+	guestDoc?.websites?.[0]?.link?.href || guestDoc?.websites?.[0]?.site || "";
+
+const socialFields = [
+	{
+		key: "twitter",
+		label: "X (Twitter)",
+		placeholder: "@username or https://x.com/username",
+		priority: true,
+	},
+	{
+		key: "bluesky",
+		label: "Bluesky",
+		placeholder: "handle.bsky.social or https://bsky.app/profile/...",
+		priority: true,
+	},
+	{
+		key: "linkedin",
+		label: "LinkedIn",
+		placeholder: "https://www.linkedin.com/in/username",
+		priority: true,
+	},
+	{
+		key: "instagram",
+		label: "Instagram",
+		placeholder: "@username or https://www.instagram.com/username",
+		priority: true,
+	},
+	{
+		key: "threads",
+		label: "Threads",
+		placeholder: "@username or https://www.threads.net/@username",
+		priority: true,
+	},
+	{
+		key: "facebook",
+		label: "Facebook",
+		placeholder: "https://www.facebook.com/username",
+		priority: true,
+	},
+	{
+		key: "mastodon",
+		label: "Mastodon",
+		placeholder: "@user@mastodon.social or full URL",
+		priority: false,
+	},
+	{
+		key: "youtube",
+		label: "YouTube Channel",
+		placeholder: "@channel or https://www.youtube.com/@channel",
+		priority: false,
+	},
+	{
+		key: "github",
+		label: "GitHub",
+		placeholder: "username or https://github.com/username",
+		priority: false,
+	},
+	{
+		key: "tiktok",
+		label: "TikTok",
+		placeholder: "@username or https://www.tiktok.com/@username",
+		priority: false,
+	},
+	{
+		key: "twitch",
+		label: "Twitch",
+		placeholder: "https://www.twitch.tv/username",
+		priority: false,
+	},
+	{
+		key: "substack",
+		label: "Substack",
+		placeholder: "https://username.substack.com",
+		priority: false,
+	},
+	{
+		key: "devto",
+		label: "Dev.to",
+		placeholder: "https://dev.to/username",
+		priority: false,
+	},
+	{
+		key: "medium",
+		label: "Medium",
+		placeholder: "https://medium.com/@username",
+		priority: false,
+	},
+];
+---
+
+<BaseLayout
+	title={guestDoc ? `${guestDoc.title} · Guest Profile Portal — CodingCat.dev` : "Guest Profile Portal — CodingCat.dev"}
+	description="Update your CodingCat.dev podcast guest profile and social handles so we can tag you across X, Instagram, Threads, Bluesky, Facebook, Mastodon, and LinkedIn."
+>
+	<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+		<Breadcrumbs
+			items={[
+				{ label: "Guests", href: "/guests" },
+				{ label: guestDoc?.title || "Guest Portal" },
+			]}
+		/>
+
+		{!isValid || !guestDoc ? (
+			<div class="mt-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center">
+				<h1 class="text-2xl font-bold text-foreground">
+					{isExpired ? "This Guest Portal Magic Link Has Expired" : "Invalid Guest Portal Link"}
+				</h1>
+				<p class="mt-3 text-muted-foreground">
+					{isExpired
+						? "For security, guest profile edit links expire after 30 days."
+						: "We could not verify this guest profile link."}
+				</p>
+				<div class="mt-6">
+					<a
+						href="mailto:alex@codingcat.dev?subject=Request%20Fresh%20CodingCat.dev%20Guest%20Profile%20Link"
+						class="inline-flex items-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+					>
+						Email Alex for a Fresh Magic Link
+					</a>
+				</div>
+			</div>
+		) : (
+			<div class="mt-6 space-y-8">
+				<div class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+					<div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+						<div class="flex items-center gap-4">
+							{guestDoc.avatarUrl && (
+								<img
+									src={`${guestDoc.avatarUrl}?w=160&h=160&fit=crop&auto=format`}
+									alt={guestDoc.title}
+									class="h-16 w-16 rounded-full object-cover ring-2 ring-primary/30"
+								/>
+							)}
+							<div>
+								<span class="inline-flex items-center rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-400">
+									Verified Sanity Guest Magic Link
+									{expiresAtIso && ` · Expires ${new Date(expiresAtIso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+								</span>
+								<h1 class="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
+									{guestDoc.title}
+								</h1>
+								<p class="text-sm text-muted-foreground">
+									Public Speaker Profile:{" "}
+									<a
+										href={`/guest/${guestDoc.slug}`}
+										target="_blank"
+										rel="noreferrer"
+										class="font-medium text-primary underline"
+									>
+										codingcat.dev/guest/{guestDoc.slug}
+									</a>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<p class="mt-5 text-sm leading-relaxed text-muted-foreground">
+						We are sharing full episodes and vertical video clips from our archive across{" "}
+						<strong class="text-foreground">X, Instagram, Threads, Bluesky, Facebook, Mastodon, LinkedIn, and TikTok</strong>.
+						Add or update your social handles below and they will immediately sync to your Sanity profile so our social agent tags you whenever your episode is shared.
+					</p>
+
+					{guestDoc.episodes?.length > 0 && (
+						<div class="mt-5 rounded-xl border border-border/70 bg-muted/30 p-4">
+							<h2 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								Your CodingCat.dev Podcast Episode(s)
+							</h2>
+							<ul class="mt-2 space-y-1.5 text-sm">
+								{guestDoc.episodes.map((ep) => (
+									<li class="flex flex-wrap items-center justify-between gap-2">
+										<a
+											href={`/podcast/${ep.slug}`}
+											target="_blank"
+											rel="noreferrer"
+											class="font-medium text-foreground hover:text-primary hover:underline"
+										>
+											S{ep.season}E{ep.episode}: {ep.title}
+										</a>
+										{ep.youtube && (
+											<a
+												href={ep.youtube}
+												target="_blank"
+												rel="noreferrer"
+												class="text-xs text-muted-foreground hover:text-primary"
+											>
+												YouTube &nearr;
+											</a>
+										)}
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
+				</div>
+
+				<form
+					id="guest-profile-form"
+					data-token={token}
+					class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8 space-y-6"
+				>
+					<div class="grid gap-5 sm:grid-cols-2">
+						<div>
+							<label class="block text-sm font-medium text-foreground" for="field-title">
+								Display Name
+							</label>
+							<input
+								id="field-title"
+								name="title"
+								type="text"
+								value={guestDoc.title}
+								class="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+							/>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-foreground" for="field-website">
+								Personal or Company Website
+							</label>
+							<input
+								id="field-website"
+								name="websiteUrl"
+								type="text"
+								value={primaryWebsite}
+								placeholder="https://yourdomain.com"
+								class="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+							/>
+						</div>
+					</div>
+
+					<hr class="border-border" />
+
+					<div>
+						<h2 class="text-lg font-semibold text-foreground">
+							Social Handles for Episode Tagging
+						</h2>
+						<p class="mt-1 text-xs text-muted-foreground">
+							You can paste either your `@handle` or full profile URL — we normalize it automatically.
+						</p>
+					</div>
+
+					<div class="grid gap-5 sm:grid-cols-2">
+						{socialFields.map((field) => {
+							const currentVal = socials[field.key] || "";
+							const isMissingPriority = field.priority && !currentVal;
+							return (
+								<div>
+									<label
+										class="flex items-center justify-between text-sm font-medium text-foreground"
+										for={`social-${field.key}`}
+									>
+										<span>{field.label}</span>
+										{isMissingPriority ? (
+											<span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-400">
+												Missing for tagging
+											</span>
+										) : currentVal ? (
+											<span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-400">
+												On file
+											</span>
+										) : null}
+									</label>
+									<input
+										id={`social-${field.key}`}
+										name={`social_${field.key}`}
+										data-social-key={field.key}
+										type="text"
+										value={currentVal}
+										placeholder={field.placeholder}
+										class="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+									/>
+								</div>
+							);
+						})}
+					</div>
+
+					<div class="flex flex-wrap items-center justify-between gap-4 pt-4">
+						<div id="save-status" class="text-sm font-medium"></div>
+						<button
+							type="submit"
+							id="save-btn"
+							class="inline-flex items-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 cursor-pointer"
+						>
+							Save Profile to Sanity
+						</button>
+					</div>
+				</form>
+			</div>
+		)}
+	</div>
+
+	<script>
+		const form = document.getElementById("guest-profile-form") as HTMLFormElement | null;
+		const statusEl = document.getElementById("save-status");
+		const saveBtn = document.getElementById("save-btn") as HTMLButtonElement | null;
+
+		form?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			if (!saveBtn || !statusEl) return;
+
+			const token = form.dataset.token;
+			const titleInput = document.getElementById("field-title") as HTMLInputElement | null;
+			const websiteInput = document.getElementById("field-website") as HTMLInputElement | null;
+			const socialInputs = form.querySelectorAll<HTMLInputElement>("input[data-social-key]");
+
+			const socials: Record<string, string> = {};
+			socialInputs.forEach((input) => {
+				const k = input.dataset.socialKey;
+				if (k) socials[k] = input.value.trim();
+			});
+
+			saveBtn.disabled = true;
+			saveBtn.textContent = "Saving to Sanity...";
+			statusEl.textContent = "";
+
+			try {
+				const res = await fetch("/api/guest-portal/update", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						token,
+						title: titleInput?.value.trim(),
+						websiteUrl: websiteInput?.value.trim(),
+						socials,
+					}),
+				});
+				const data = await res.json();
+				if (!res.ok) {
+					throw new Error(data.error || "Failed to update profile");
+				}
+				statusEl.className = "text-sm font-medium text-emerald-400";
+				statusEl.textContent = "Saved! Your CodingCat.dev speaker profile has been updated.";
+			} catch (err) {
+				statusEl.className = "text-sm font-medium text-red-400";
+				statusEl.textContent = err instanceof Error ? err.message : "Error saving profile";
+			} finally {
+				saveBtn.disabled = false;
+				saveBtn.textContent = "Save Profile to Sanity";
+			}
+		});
+	</script>
+</BaseLayout>
