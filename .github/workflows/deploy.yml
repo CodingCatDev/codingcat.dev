@@ -42,6 +42,14 @@ jobs:
           path: /tmp/sanity-production-backup.ndjson.gz
           retention-days: 30
 
+      - name: Sync Enriched Guest Socials to Sanity Dataset
+        run: node apps/sanity/scripts/sync-guest-socials.mjs
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
         working-directory: apps/sanity
@@ -226,6 +234,14 @@ jobs:
           name: sanity-production-predeploy-backup-${{ github.sha }}
           path: /tmp/sanity-production-backup.ndjson.gz
           retention-days: 30
+
+      - name: Sync Enriched Guest Socials to Sanity Dataset
+        run: node apps/sanity/scripts/sync-guest-socials.mjs
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
 
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
