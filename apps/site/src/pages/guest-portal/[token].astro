@@ -155,9 +155,9 @@ const socialFields = [
 >
 	<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
 		<Breadcrumbs
-			items={[
-				{ label: "Guests", href: "/guests" },
-				{ label: guestDoc?.title || "Guest Portal" },
+			links={[
+				{ title: "Guests", href: "/guests" },
+				{ title: guestDoc?.title || "Guest Portal" },
 			]}
 		/>
 
@@ -383,7 +383,7 @@ const socialFields = [
 						socials,
 					}),
 				});
-				const data = await res.json();
+				const data = (await res.json()) as { error?: string };
 				if (!res.ok) {
 					throw new Error(data.error || "Failed to update profile");
 				}
