@@ -66,6 +66,12 @@ jobs:
             .catch(err => { console.error(err); process.exit(1); });
           ")
           export SANITY_ORGANIZATION_ID="$ORG_ID"
+          if [ "${{ vars.SANITY_STUDIO_DATASET }}" = "dev" ]; then
+            APP_TITLE="CodingCat Ops & Revenue OS (Dev)"
+          else
+            APP_TITLE="CodingCat Ops & Revenue OS (Production)"
+          fi
+          export APP_TITLE
           EXISTING_APP_ID=$(node -e "
             fetch('https://api.sanity.io/v2024-08-01/user-applications?appType=coreApp&organizationId=' + process.env.SANITY_ORGANIZATION_ID, {
               headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
@@ -73,20 +79,29 @@ jobs:
             .then(r => r.ok ? r.json() : [])
             .then(apps => {
               const list = Array.isArray(apps) ? apps : [];
-              const match = list.find(a => a.title === 'CodingCat Ops & Revenue OS');
+              const targetTitle = process.env.APP_TITLE;
+              const isDev = process.env.SANITY_APP_DATASET === 'dev';
+              const match = list.find(a =>
+                a.title === targetTitle ||
+                (isDev && (a.id === 'yiugiba2sjnhpehqmky6nulc' || a.title === 'CodingCat Ops & Revenue OS'))
+              );
               if (match && match.id) console.log(match.id);
             })
             .catch(() => {});
           ")
           if [ -n "$EXISTING_APP_ID" ]; then
-            echo "Found existing CodingCat Ops & Revenue OS app: $EXISTING_APP_ID"
+            echo "Found existing $APP_TITLE app: $EXISTING_APP_ID"
             SANITY_OPS_APP_ID="$EXISTING_APP_ID" npx sanity deploy -y
           else
-            echo "Creating and deploying new CodingCat Ops & Revenue OS app in organization $ORG_ID..."
-            npx sanity deploy -y --create --title "CodingCat Ops & Revenue OS"
+            echo "Creating and deploying new $APP_TITLE app in organization $ORG_ID..."
+            npx sanity deploy -y --create --title "$APP_TITLE"
           fi
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_APP_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_APP_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
       - name: Promote Stack to Organization Scope
         run: |
@@ -236,6 +251,12 @@ jobs:
             .catch(err => { console.error(err); process.exit(1); });
           ")
           export SANITY_ORGANIZATION_ID="$ORG_ID"
+          if [ "${{ vars.SANITY_STUDIO_DATASET }}" = "dev" ]; then
+            APP_TITLE="CodingCat Ops & Revenue OS (Dev)"
+          else
+            APP_TITLE="CodingCat Ops & Revenue OS (Production)"
+          fi
+          export APP_TITLE
           EXISTING_APP_ID=$(node -e "
             fetch('https://api.sanity.io/v2024-08-01/user-applications?appType=coreApp&organizationId=' + process.env.SANITY_ORGANIZATION_ID, {
               headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
@@ -243,20 +264,29 @@ jobs:
             .then(r => r.ok ? r.json() : [])
             .then(apps => {
               const list = Array.isArray(apps) ? apps : [];
-              const match = list.find(a => a.title === 'CodingCat Ops & Revenue OS');
+              const targetTitle = process.env.APP_TITLE;
+              const isDev = process.env.SANITY_APP_DATASET === 'dev';
+              const match = list.find(a =>
+                a.title === targetTitle ||
+                (isDev && (a.id === 'yiugiba2sjnhpehqmky6nulc' || a.title === 'CodingCat Ops & Revenue OS'))
+              );
               if (match && match.id) console.log(match.id);
             })
             .catch(() => {});
           ")
           if [ -n "$EXISTING_APP_ID" ]; then
-            echo "Found existing CodingCat Ops & Revenue OS app: $EXISTING_APP_ID"
+            echo "Found existing $APP_TITLE app: $EXISTING_APP_ID"
             SANITY_OPS_APP_ID="$EXISTING_APP_ID" npx sanity deploy -y
           else
-            echo "Creating and deploying new CodingCat Ops & Revenue OS app in organization $ORG_ID..."
-            npx sanity deploy -y --create --title "CodingCat Ops & Revenue OS"
+            echo "Creating and deploying new $APP_TITLE app in organization $ORG_ID..."
+            npx sanity deploy -y --create --title "$APP_TITLE"
           fi
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_APP_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_APP_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
       - name: Promote Stack to Organization Scope
         run: |
