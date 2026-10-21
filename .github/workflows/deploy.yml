@@ -6,7 +6,9 @@ on:
     branches: [dev, main]
     paths:
       - "apps/sanity/**"
+      - "apps/ops/**"
       - "sanity.blueprint.ts"
+      - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/deploy.yml"
 

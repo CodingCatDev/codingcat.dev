@@ -1,8 +1,7 @@
 import { type SanityConfig } from "@sanity/sdk";
 import { SanityApp } from "@sanity/sdk-react";
-import { StudioTheme, ThemeProvider } from "@sanity/ui";
+import { studioTheme, ThemeProvider } from "@sanity/ui";
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
 import { App } from "./App";
 
 const config: SanityConfig[] = [
@@ -12,15 +11,15 @@ const config: SanityConfig[] = [
 	},
 ];
 
-const rootEl = document.getElementById("root");
-if (rootEl) {
-	createRoot(rootEl).render(
+export default function RootApp() {
+	return (
 		<StrictMode>
-			<ThemeProvider theme={StudioTheme}>
+			<ThemeProvider theme={studioTheme}>
 				<SanityApp config={config} fallback={<div>Loading CodingCat.dev Ops...</div>}>
 					<App />
 				</SanityApp>
 			</ThemeProvider>
-		</StrictMode>,
+		</StrictMode>
 	);
 }
+

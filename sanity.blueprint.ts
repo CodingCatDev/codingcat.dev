@@ -1,11 +1,26 @@
 import {
+	defineApplication,
 	defineBlueprint,
 	defineDocumentFunction,
 	defineScheduledFunction,
+	defineWindowView,
 } from "@sanity/blueprints";
 
 export default defineBlueprint({
 	resources: [
+		defineApplication({
+			name: "codingcat-ops",
+			title: "CodingCat Ops & Revenue OS",
+			root: "./apps/ops",
+			views: [
+				defineWindowView({
+					name: "main",
+					title: "CodingCat Ops & Revenue OS",
+					src: "./src/index.tsx",
+					dock: { group: "applications", order: 10 },
+				}),
+			],
+		}),
 		defineDocumentFunction({
 			name: "syndicate-content",
 			displayName: "Syndicate Content (Dev.to & Hashnode)",

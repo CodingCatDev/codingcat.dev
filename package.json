@@ -28,7 +28,12 @@
     "@sanity/client": "^8.9.0",
     "@sanity/functions": "^1.8.1",
     "@sanity/image-url": "^2.1.1",
-    "sanity": "^6.9.2"
+    "sanity": "^6.20.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@sanity/runtime-cli": "17.16.0"
+    }
   },
   "packageManager": "pnpm@10.34.1"
 }

@@ -9,12 +9,12 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
-    "@sanity/sdk": "^1.0.0",
-    "@sanity/sdk-react": "^1.0.0",
-    "@sanity/ui": "^3.1.10",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "sanity": "^6.9.2",
+    "@sanity/sdk": "^3.9.1",
+    "@sanity/sdk-react": "^3.9.1",
+    "@sanity/ui": "^4.4.9",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sanity": "^6.20.0",
     "styled-components": "^6.3.11"
   },
   "devDependencies": {
