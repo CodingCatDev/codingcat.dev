@@ -195,6 +195,13 @@
           },
           "optional": true
         },
+        "threads": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
         "tiktok": {
           "type": "objectAttribute",
           "value": {
@@ -3336,6 +3343,20 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "portalToken": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "portalTokenExpiresAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       }
@@ -6767,6 +6788,20 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "portalToken": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "portalTokenExpiresAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       }
