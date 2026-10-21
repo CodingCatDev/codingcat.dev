@@ -9,19 +9,19 @@ export interface GuestPortalTokenPayload {
 	exp: number;
 }
 
-const DEFAULT_PORTAL_SIGNING_KEY =
-	"codingcat-guest-portal-hmac-v1-hfh83o0w-secret";
-
-function getSigningSecret(): string {
+function getSigningSecret(): string | undefined {
 	const workerEnv = (env ?? {}) as unknown as Record<
 		string,
 		string | undefined
 	>;
-	return (
-		workerEnv.GUEST_PORTAL_SECRET ||
-		workerEnv.SANITY_API_WRITE_TOKEN ||
-		DEFAULT_PORTAL_SIGNING_KEY
-	);
+	const fromWorker = workerEnv.GUEST_PORTAL_SECRET?.trim();
+	if (fromWorker) {
+		return fromWorker;
+	}
+	if (process?.env?.GUEST_PORTAL_SECRET) {
+		return process.env.GUEST_PORTAL_SECRET.trim();
+	}
+	return undefined;
 }
 
 function toBase64Url(bytes: Uint8Array): string {
@@ -67,21 +67,30 @@ export async function createGuestPortalToken(
 	payload: GuestPortalTokenPayload,
 	secretOverride?: string,
 ): Promise<string> {
+	const secret = secretOverride || getSigningSecret();
+	if (!secret) {
+		throw new Error(
+			"GUEST_PORTAL_SECRET is required to sign guest portal tokens",
+		);
+	}
 	const enc = new TextEncoder();
 	const payloadB64 = toBase64Url(enc.encode(JSON.stringify(payload)));
-	const sig = await computeHmacB64Url(
-		payloadB64,
-		secretOverride || DEFAULT_PORTAL_SIGNING_KEY,
-	);
+	const sig = await computeHmacB64Url(payloadB64, secret);
 	return `${payloadB64}.${sig}`;
 }
 
-export async function verifyGuestPortalToken(token: string | undefined): Promise<{
+export async function verifyGuestPortalToken(
+	token: string | undefined,
+): Promise<{
 	valid: boolean;
 	expired: boolean;
 	payload: GuestPortalTokenPayload | null;
 }> {
 	if (!token || !token.includes(".")) {
+		return { valid: false, expired: false, payload: null };
+	}
+	const secret = getSigningSecret();
+	if (!secret) {
 		return { valid: false, expired: false, payload: null };
 	}
 	const [payloadB64, providedSig] = token.split(".");
@@ -99,20 +108,8 @@ export async function verifyGuestPortalToken(token: string | undefined): Promise
 			return { valid: false, expired: false, payload: null };
 		}
 
-		// Accept signature signed with either worker secret or default deterministic key
-		const candidateSecrets = Array.from(
-			new Set([getSigningSecret(), DEFAULT_PORTAL_SIGNING_KEY]),
-		);
-		let sigMatches = false;
-		for (const sec of candidateSecrets) {
-			const expected = await computeHmacB64Url(payloadB64, sec);
-			if (expected === providedSig) {
-				sigMatches = true;
-				break;
-			}
-		}
-
-		if (!sigMatches) {
+		const expected = await computeHmacB64Url(payloadB64, secret);
+		if (expected !== providedSig) {
 			return { valid: false, expired: false, payload: null };
 		}
 
@@ -144,7 +141,6 @@ export const ALLOWED_SOCIAL_KEYS = [
 	"codepen",
 	"discord",
 	"stackoverflow",
-	"email",
 ] as const;
 
 export type AllowedSocialKey = (typeof ALLOWED_SOCIAL_KEYS)[number];
@@ -157,9 +153,15 @@ export function normalizeSocialInput(
 	rawValue: string | undefined | null,
 ): string {
 	const val = String(rawValue ?? "").trim();
-	if (!val) return "";
-	if (key === "email" || key === "discord") return val;
-	if (/^https?:\/\//i.test(val)) return val;
+	if (!val) {
+		return "";
+	}
+	if (key === "discord") {
+		return val;
+	}
+	if (/^https?:\/\//i.test(val)) {
+		return val;
+	}
 
 	const clean = val.replace(/^@/, "");
 	switch (key) {
@@ -191,7 +193,9 @@ export function normalizeSocialInput(
 			// Support @user@instance.tld
 			if (clean.includes("@")) {
 				const [user, instance] = clean.split("@");
-				if (user && instance) return `https://${instance}/@${user}`;
+				if (user && instance) {
+					return `https://${instance}/@${user}`;
+				}
 			}
 			return `https://mastodon.social/@${clean}`;
 		}
