@@ -11,6 +11,7 @@
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "workers_dev": true,
   "ai": { "binding": "AI" },
+  "send_email": [{ "name": "EMAIL" }],
   // Uncomment after clicking "Enable Analytics Engine" once at:
   // https://dash.cloudflare.com/c46bd0f3b9ed47b8692cca098030edbf/workers/analytics-engine
   // "analytics_engine_datasets": [
@@ -52,6 +53,7 @@
         }
       ],
       "ai": { "binding": "AI" },
+      "send_email": [{ "name": "EMAIL" }],
       // "analytics_engine_datasets": [
       //   {
       //     "binding": "ANALYTICS",

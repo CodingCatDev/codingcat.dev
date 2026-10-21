@@ -1,143 +1,134 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { env } from "cloudflare:workers";
+import { SPONSOR_PACKAGE_TIERS } from "@/lib/sanity/write-client";
 
-interface VerifiedMetrics {
-	subscribers: string;
-	monthlyViews: string;
-	reach: string;
-}
-
-let metrics: VerifiedMetrics = {
-	subscribers: "61K+",
-	monthlyViews: "350K+",
-	reach: "150K+",
+const metrics = {
+	subscribers: "61.2K+",
+	totalViews: "405K+",
+	tier1GeoShare: "21.1%",
+	shortPlatforms: "7 Platforms",
 };
 
-try {
-	const flipcoreUrl =
-		(env as unknown as Record<string, string | undefined>)?.FLIPCORE_API_URL ??
-		"https://api.flipfeeds.com";
-	const kitRes = await fetch(`${flipcoreUrl}/api/public/media_kit/codingcatdev`, {
-		headers: { Accept: "application/json" },
-	});
-	if (kitRes.ok) {
-		const kitData = (await kitRes.json()) as any;
-		if (kitData?.stats && Array.isArray(kitData.stats)) {
-			for (const s of kitData.stats) {
-				const label = (s.label ?? s.name ?? "").toLowerCase();
-				if (label.includes("sub") && s.displayValue) metrics.subscribers = s.displayValue;
-				if (label.includes("view") && s.displayValue) metrics.monthlyViews = s.displayValue;
-				if (label.includes("reach") && s.displayValue) metrics.reach = s.displayValue;
-			}
-		}
-	}
-} catch {
-	// Resilient fallback defaults
-}
-
-const sponsorshipTiers = [
-	{
-		id: "dedicated-video",
-		name: "Dedicated Video",
-		price: "$4,000",
-		description:
-			"A full video dedicated to your product or service. Includes a permanent logo and link on our sponsors page.",
-	},
-	{
-		id: "mid-roll-ad",
-		name: "Integrated Mid-Roll Ad",
-		price: "$1,800",
-		description:
-			"A 60-second ad integrated into the middle of a video. Includes a permanent logo and link on our sponsors page.",
-	},
-	{
-		id: "shout-out",
-		name: "Quick Shout-Out",
-		price: "$900",
-		description:
-			"A 30-second shout-out at the beginning of a video. Includes a permanent logo and link on our sponsors page.",
-	},
-	{
-		id: "blog-newsletter",
-		name: "Blog Post / Newsletter",
-		price: "$500",
-		description:
-			"Sponsor a blog post or our weekly newsletter. Your logo and a link will be featured.",
-	},
-	{
-		id: "video-series",
-		name: "Video Series",
-		price: "Custom",
-		description:
-			"Sponsor a whole series of videos. Contact us for custom pricing and tailored packages.",
-	},
-];
+const formatUsd = (cents: number) =>
+	new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+		maximumFractionDigits: 0,
+	}).format(cents / 100);
 ---
 
 <BaseLayout
-	title="Sponsor CodingCat.dev"
-	description="Reach a large audience of developers, students, and tech enthusiasts. Explore sponsorship tiers and partner with us."
+	title="Sponsor CodingCat.dev — B2B DevTool Multi-Channel Launch Bundles"
+	description="Put your developer tool, AI platform, or cloud infrastructure in front of 61K+ engineers across YouTube, 7 short-form video networks, and canonical SEO + Agent-Ready (AEO) articles."
 >
 	<Breadcrumbs links={[{ title: "Sponsorships" }]} />
 
 	<div class="w-full flex flex-col gap-8 md:gap-12 my-8 md:my-12">
-		<header class="flex flex-col gap-4">
+		<header class="flex flex-col gap-5">
 			<div class="flex flex-col gap-2">
+				<span class="text-xs font-mono uppercase tracking-wider text-primary font-semibold">
+					B2B Developer Marketing &amp; Multi-Channel Distribution
+				</span>
 				<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
-					Sponsor CodingCat.dev
+					Launch Your DevTool Across CodingCat.dev
 				</h1>
-				<p class="text-lg text-muted-foreground max-w-2xl">
-					Reach an engaged global audience of developers, creators, and technology leaders. Choose from our standard packages or request custom collaboration.
+				<p class="text-lg text-muted-foreground max-w-3xl">
+					Stop buying isolated one-off shout-outs. Partner with Alex Patterson for end-to-end technical deep-dives, 7-platform vertical Shorts syndication, canonical SEO &amp; Agent-Ready (AEO / WebMCP / <code>llms.txt</code>) articles, and live ROI Deal Room telemetry.
 				</p>
 			</div>
 
-			<!-- Verified FlipFeeds Audience Metrics Banner -->
-			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+			<!-- Verified First-Party Telemetry Banner -->
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
 				<div class="flex flex-col gap-1">
 					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">YouTube Subscribers</span>
 					<span class="text-2xl font-bold text-foreground">{metrics.subscribers}</span>
-					<span class="text-xs text-primary font-medium">✓ Verified via FlipFeeds</span>
+					<span class="text-xs text-primary font-medium">✓ Verified First-Party YouTube API</span>
 				</div>
 				<div class="flex flex-col gap-1">
-					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly Impressions</span>
-					<span class="text-2xl font-bold text-foreground">{metrics.reach}</span>
-					<span class="text-xs text-primary font-medium">✓ Real-time Analytics</span>
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">US / CA / UK / AU Share</span>
+					<span class="text-2xl font-bold text-foreground">{metrics.tier1GeoShare}</span>
+					<span class="text-xs text-primary font-medium">✓ #1 Watch-Time Engagement per Viewer</span>
 				</div>
 				<div class="flex flex-col gap-1">
-					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly Video Views</span>
-					<span class="text-2xl font-bold text-foreground">{metrics.monthlyViews}</span>
-					<span class="text-xs text-primary font-medium">✓ First-Party Telemetry</span>
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Short-Form Video Network</span>
+					<span class="text-2xl font-bold text-foreground">{metrics.shortPlatforms}</span>
+					<span class="text-xs text-primary font-medium">✓ YT, X, LinkedIn, BSky, Threads, Masto, IG/TT</span>
+				</div>
+				<div class="flex flex-col gap-1">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Canonical SEO &amp; AEO</span>
+					<span class="text-2xl font-bold text-foreground">WebMCP + llms.txt</span>
+					<span class="text-xs text-primary font-medium">✓ Syndicated to Dev.to &amp; Hashnode</span>
 				</div>
 			</div>
 		</header>
 
 		<!-- Sponsorship Tiers Grid -->
-		<section aria-labelledby="tiers-heading">
-			<h2 id="tiers-heading" class="sr-only">Sponsorship Tiers</h2>
+		<section aria-labelledby="tiers-heading" class="flex flex-col gap-4">
+			<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+				<div>
+					<h2 id="tiers-heading" class="text-2xl font-bold tracking-tight">
+						Multi-Channel Launch Bundles &amp; Rate Card
+					</h2>
+					<p class="text-sm text-muted-foreground">
+						All packages use milestone billing: <strong>50% upfront deposit</strong> to lock your production &amp; calendar slot, and <strong>50% upon publication</strong>. (Includes Dedicated Video, Integrated Mid-Roll Ad, Quick Shout-Out, Blog Post / Newsletter, and Video Series options.)
+					</p>
+				</div>
+				<a
+					href="https://calendar.app.google/tyGiF6dGFQeaVrN66"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-xs font-semibold text-primary hover:underline shrink-0"
+				>
+					Prefer to talk first? Book a 15-min Sponsor Discovery Call &nearr;
+				</a>
+			</div>
+
 			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{
-					sponsorshipTiers.map((tier) => (
-						<article class="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs hover:border-primary/50 transition-colors">
+					SPONSOR_PACKAGE_TIERS.map((tier, idx) => (
+						<article
+							class={`flex flex-col justify-between rounded-2xl border p-6 shadow-xs transition-colors ${
+								idx === 0
+									? "border-primary bg-primary/5 ring-1 ring-primary"
+									: "border-border bg-card hover:border-primary/50"
+							}`}
+						>
 							<div class="flex flex-col gap-3">
-								<h3 class="text-xl font-semibold tracking-tight">
+								<span class="text-xs font-mono font-semibold uppercase tracking-wider text-primary">
+									{tier.tagline}
+								</span>
+								<h3 class="text-xl font-bold tracking-tight">
 									{tier.name}
 								</h3>
-								<p class="text-2xl font-bold text-primary">
-									{tier.price}
-								</p>
+								<div class="flex items-baseline gap-2">
+									<p class="text-3xl font-bold text-foreground">
+										{formatUsd(tier.totalAmountCents)}
+									</p>
+									<span class="text-xs text-muted-foreground font-medium">
+										({formatUsd(tier.depositAmountCents)} 50% deposit)
+									</span>
+								</div>
 								<p class="text-sm text-muted-foreground leading-relaxed">
 									{tier.description}
 								</p>
+								<ul class="mt-2 flex flex-col gap-1.5 text-xs text-foreground">
+									{tier.deliverables.map((d) => (
+										<li class="flex items-start gap-2">
+											<span class="text-primary font-bold">✓</span>
+											<span>{d.title}</span>
+										</li>
+									))}
+								</ul>
 							</div>
-							<div class="mt-6 pt-4 border-t border-border/60">
+							<div class="mt-6 pt-4 border-t border-border/60 flex items-center justify-between">
 								<button
 									type="button"
 									class="tier-select-btn text-xs font-semibold uppercase tracking-wider text-primary hover:underline cursor-pointer"
+									data-tier-id={tier.id}
 									data-tier-name={tier.name}
 								>
-									Select {tier.name} &rarr;
+									Launch Deal Room ({formatUsd(tier.depositAmountCents)} Deposit) &rarr;
 								</button>
 							</div>
 						</article>
@@ -146,13 +137,13 @@ const sponsorshipTiers = [
 			</div>
 		</section>
 
-		<!-- Inquiry Form -->
+		<!-- Inquiry & Instant Deal Room Generator Form -->
 		<section class="max-w-2xl rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xs" aria-labelledby="form-heading">
 			<h2 id="form-heading" class="text-2xl font-bold tracking-tight mb-2">
-				Inquire About Sponsorship
+				Open Your Sponsor Deal Room
 			</h2>
 			<p class="text-sm text-muted-foreground mb-6">
-				Fill out the form below with your sponsorship goals, and our team will get back to you promptly.
+				Select your package below to immediately open your dedicated Deal Room with 50% deposit Stripe Checkout, Net-15 corporate invoice generation, and direct Google Calendar scheduling.
 			</p>
 
 			<div
@@ -160,7 +151,7 @@ const sponsorshipTiers = [
 				class="hidden mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-700 dark:text-green-300 text-sm"
 				role="status"
 			>
-				<strong>Thank you!</strong> Your inquiry has been received. We will be in touch shortly.
+				<strong>Deal Room Ready!</strong> Redirecting you now...
 			</div>
 
 			<div
@@ -176,55 +167,74 @@ const sponsorshipTiers = [
 				action="/api/sponsorship"
 				class="flex flex-col gap-4"
 				toolname="submit_sponsorship_inquiry"
-				tooldescription="Submit sponsorship inquiry for CodingCat.dev media channels"
+				tooldescription="Submit sponsorship inquiry and open a CodingCat.dev Sponsor Deal Room"
 			>
-				<div>
-					<label for="name" class="block text-sm font-medium mb-1">
-						Name <span class="text-red-500">*</span>
-					</label>
-					<input
-						type="text"
-						id="name"
-						name="name"
-						required
-						placeholder="Jane Doe"
-						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-						toolparamdescription="Contact person name"
-					/>
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div>
+						<label for="name" class="block text-sm font-medium mb-1">
+							Your Name <span class="text-red-500">*</span>
+						</label>
+						<input
+							type="text"
+							id="name"
+							name="name"
+							required
+							placeholder="Jane Doe"
+							class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							toolparamdescription="Contact person name"
+						/>
+					</div>
+
+					<div>
+						<label for="email" class="block text-sm font-medium mb-1">
+							Work Email <span class="text-red-500">*</span>
+						</label>
+						<input
+							type="email"
+							id="email"
+							name="email"
+							required
+							placeholder="jane@company.com"
+							class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							toolparamdescription="Contact work email address"
+						/>
+					</div>
 				</div>
 
-				<div>
-					<label for="email" class="block text-sm font-medium mb-1">
-						Email <span class="text-red-500">*</span>
-					</label>
-					<input
-						type="email"
-						id="email"
-						name="email"
-						required
-						placeholder="jane@company.com"
-						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-						toolparamdescription="Contact work email address"
-					/>
-				</div>
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div>
+						<label for="company" class="block text-sm font-medium mb-1">
+							Company / Product Name <span class="text-red-500">*</span>
+						</label>
+						<input
+							type="text"
+							id="company"
+							name="company"
+							required
+							placeholder="Acme DevTools"
+							class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							toolparamdescription="Company or brand name"
+						/>
+					</div>
 
-				<div>
-					<label for="company" class="block text-sm font-medium mb-1">
-						Company
-					</label>
-					<input
-						type="text"
-						id="company"
-						name="company"
-						placeholder="Acme Inc."
-						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-						toolparamdescription="Company or brand name"
-					/>
+					<div>
+						<label for="website" class="block text-sm font-medium mb-1">
+							Product URL
+						</label>
+						<input
+							type="url"
+							id="website"
+							name="website"
+							placeholder="https://acme.dev"
+							class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							toolparamdescription="Company website URL"
+						/>
+					</div>
 				</div>
 
 				<div>
 					<label for="tier" class="block text-sm font-medium mb-1">
-						Sponsorship Tier <span class="text-red-500">*</span>
+						Launch Package <span class="text-red-500">*</span>
 					</label>
 					<select
 						id="tier"
@@ -233,11 +243,11 @@ const sponsorshipTiers = [
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
 						toolparamdescription="Selected sponsorship package tier"
 					>
-						<option value="" disabled selected>Select a sponsorship tier</option>
+						<option value="" disabled selected>Select a sponsorship package</option>
 						{
-							sponsorshipTiers.map((t) => (
-								<option value={t.name}>
-									{t.name} ({t.price})
+							SPONSOR_PACKAGE_TIERS.map((t) => (
+								<option value={t.id}>
+									{t.name} ({formatUsd(t.totalAmountCents)} total &middot; {formatUsd(t.depositAmountCents)} 50% deposit)
 								</option>
 							))
 						}
@@ -246,13 +256,13 @@ const sponsorshipTiers = [
 
 				<div>
 					<label for="message" class="block text-sm font-medium mb-1">
-						Message
+						Launch Goals, Target Window, &amp; Key Features
 					</label>
 					<textarea
 						id="message"
 						name="message"
 						rows="4"
-						placeholder="Tell us about your brand, timeframe, and goals..."
+						placeholder="Tell us about your SDK/platform, target launch date, and what you want developers to build or try..."
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 						toolparamdescription="Sponsorship inquiry details or campaign goals"
 					></textarea>
@@ -261,9 +271,9 @@ const sponsorshipTiers = [
 				<button
 					type="submit"
 					id="submit-btn"
-					class="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary transition-colors cursor-pointer"
+					class="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary transition-colors cursor-pointer"
 				>
-					Send Inquiry
+					Create Deal Room &amp; View Deposit Options &rarr;
 				</button>
 			</form>
 		</section>
@@ -277,12 +287,11 @@ const sponsorshipTiers = [
 	const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement | null;
 	const tierSelect = document.getElementById("tier") as HTMLSelectElement | null;
 
-	// Click to auto-select tier from cards above
 	document.querySelectorAll(".tier-select-btn").forEach((btn) => {
 		btn.addEventListener("click", () => {
-			const tierName = btn.getAttribute("data-tier-name");
-			if (tierSelect && tierName) {
-				tierSelect.value = tierName;
+			const tierId = btn.getAttribute("data-tier-id");
+			if (tierSelect && tierId) {
+				tierSelect.value = tierId;
 				tierSelect.scrollIntoView({ behavior: "smooth", block: "center" });
 				tierSelect.focus();
 			}
@@ -300,12 +309,13 @@ const sponsorshipTiers = [
 				name: formData.get("name"),
 				email: formData.get("email"),
 				company: formData.get("company"),
+				website: formData.get("website"),
 				tier: formData.get("tier"),
 				message: formData.get("message"),
 			};
 
 			submitBtn.disabled = true;
-			submitBtn.textContent = "Sending...";
+			submitBtn.textContent = "Opening Deal Room...";
 
 			try {
 				const res = await fetch("/api/sponsorship", {
@@ -326,7 +336,7 @@ const sponsorshipTiers = [
 					const targetUrl = result.portalUrl || result.dealRoomUrl;
 					if (targetUrl) {
 						if (successEl) {
-							successEl.innerHTML = `<strong>Inquiry received!</strong> Opening your Deal Room portal... <br><a class="underline font-semibold" href="${targetUrl}">Click here if not redirected automatically &rarr;</a>`;
+							successEl.innerHTML = `<strong>Deal Room created!</strong> Opening your Deal Room portal... <br><a class="underline font-semibold" href="${targetUrl}">Click here if not redirected automatically &rarr;</a>`;
 							successEl.classList.remove("hidden");
 						}
 						window.location.href = targetUrl;
@@ -339,14 +349,14 @@ const sponsorshipTiers = [
 						errorEl.classList.remove("hidden");
 					}
 				}
-			} catch (err) {
+			} catch {
 				if (errorEl) {
 					errorEl.textContent = "A network error occurred. Please try again.";
 					errorEl.classList.remove("hidden");
 				}
 			} finally {
 				submitBtn.disabled = false;
-				submitBtn.textContent = "Send Inquiry";
+				submitBtn.textContent = "Create Deal Room & View Deposit Options →";
 			}
 		});
 	}

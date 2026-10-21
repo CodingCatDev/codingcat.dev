@@ -2,102 +2,24 @@
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import PodmatchBadge from "@/components/PodmatchBadge.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { env } from "cloudflare:workers";
+import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 
-interface BookingPageDetails {
-	title: string;
-	description: string;
-	durationMinutes: number;
-	hostName: string;
-	slug: string;
-	slots: Array<{
-		id: string;
-		startAt: string;
-		displayDate: string;
-		displayTime: string;
-	}>;
-}
+const searchParams = Astro.url.searchParams;
+const initialTrack =
+	searchParams.get("track") === "sponsored"
+		? "sponsored"
+		: searchParams.get("track") === "full-stack-launch"
+			? "full-stack-launch"
+			: "editorial";
+const initialCompany = searchParams.get("company") || "";
+const initialName = searchParams.get("name") || "";
+const initialEmail = searchParams.get("email") || "";
 
-let bookingDetails: BookingPageDetails = {
-	title: "CodingCat.dev Podcast Recording Session",
-	description:
-		"Join Alex Patterson for an in-depth conversation exploring web development, edge runtimes, developer tooling, and modern frameworks.",
-	durationMinutes: 45,
-	hostName: "Alex Patterson",
-	slug: "codingcatdev",
-	slots: [
-		{
-			id: "slot-1",
-			startAt: "2026-10-15T14:00:00Z",
-			displayDate: "Thursday, Oct 15",
-			displayTime: "10:00 AM EDT (14:00 UTC)",
-		},
-		{
-			id: "slot-2",
-			startAt: "2026-10-15T16:00:00Z",
-			displayDate: "Thursday, Oct 15",
-			displayTime: "12:00 PM EDT (16:00 UTC)",
-		},
-		{
-			id: "slot-3",
-			startAt: "2026-10-20T14:00:00Z",
-			displayDate: "Tuesday, Oct 20",
-			displayTime: "10:00 AM EDT (14:00 UTC)",
-		},
-		{
-			id: "slot-4",
-			startAt: "2026-10-20T16:00:00Z",
-			displayDate: "Tuesday, Oct 20",
-			displayTime: "12:00 PM EDT (16:00 UTC)",
-		},
-		{
-			id: "slot-5",
-			startAt: "2026-10-22T15:00:00Z",
-			displayDate: "Thursday, Oct 22",
-			displayTime: "11:00 AM EDT (15:00 UTC)",
-		},
-	],
-};
+const { slots: upcomingSlots, liveVerified } = await getMultiCalendarAvailableSlots(6);
 
-try {
-	const flipcoreUrl =
-		(env as unknown as Record<string, string | undefined>)?.FLIPCORE_API_URL ??
-		"https://api.flipfeeds.com";
-	const res = await fetch(`${flipcoreUrl}/api/public/booking/codingcatdev`, {
-		headers: { Accept: "application/json" },
-	});
-	if (res.ok) {
-		const data = (await res.json()) as any;
-		if (data?.title) bookingDetails.title = data.title;
-		if (data?.description) bookingDetails.description = data.description;
-		if (data?.durationMinutes) bookingDetails.durationMinutes = data.durationMinutes;
-		if (Array.isArray(data?.slots) && data.slots.length > 0) {
-			bookingDetails.slots = data.slots.map((s: any, idx: number) => {
-				const date = new Date(s.startAt);
-				return {
-					id: `slot-api-${idx}`,
-					startAt: s.startAt,
-					displayDate: date.toLocaleDateString("en-US", {
-						weekday: "short",
-						month: "short",
-						day: "numeric",
-					}),
-					displayTime: date.toLocaleTimeString("en-US", {
-						hour: "numeric",
-						minute: "2-digit",
-						timeZoneName: "short",
-					}),
-				};
-			});
-		}
-	}
-} catch {
-	// Resilient fallback defaults used
-}
-
-const title = "Book a Recording Session — CodingCat.dev";
+const title = "Book a Podcast & Showcase Session — CodingCat.dev";
 const description =
-	"Schedule your guest appearance on the CodingCat.dev Podcast. Choose your recording slot, complete intake questions, and sign your digital release form.";
+	"Schedule your guest appearance or fast-track sponsored showcase on the CodingCat.dev Podcast. Choose your track, complete intake questions, and sign your E-SIGN digital media release.";
 ---
 
 <BaseLayout title={title} description={description}>
@@ -107,11 +29,14 @@ const description =
 		<!-- Header -->
 		<header class="flex flex-col gap-4">
 			<div class="flex flex-col gap-2">
+				<span class="text-xs font-mono uppercase tracking-wider text-primary font-semibold">
+					CodingCat.dev Studio &amp; Google Calendar Sync
+				</span>
 				<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
-					{bookingDetails.title}
+					CodingCat.dev Podcast Recording Session
 				</h1>
 				<p class="text-lg text-muted-foreground">
-					{bookingDetails.description}
+					Join Alex Patterson for an in-depth conversation exploring AI agents, web engineering, cloud infrastructure, and modern developer tooling.
 				</p>
 			</div>
 
@@ -119,38 +44,119 @@ const description =
 			<div class="flex flex-wrap items-center gap-3 text-xs font-medium">
 				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
 					<span class="text-muted-foreground">Host:</span>
-					<span class="text-foreground font-semibold">{bookingDetails.hostName}</span>
+					<span class="text-foreground font-semibold">Alex Patterson</span>
 				</div>
 				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
 					<span class="text-muted-foreground">Duration:</span>
-					<span class="text-foreground font-semibold">{bookingDetails.durationMinutes} Minutes</span>
+					<span class="text-foreground font-semibold">45 Minutes</span>
 				</div>
 				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
-					<span class="text-muted-foreground">Studio Engine:</span>
-					<span class="text-primary font-semibold">FlipFeeds 4K Local Ingest</span>
+					<span class="text-muted-foreground">Recording Window:</span>
+					<span class="text-primary font-semibold">8:00 AM &ndash; 5:00 PM PT / ET</span>
 				</div>
 				<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card">
-					<span class="text-muted-foreground">Two-Way Sync:</span>
-					<span class="text-foreground font-semibold">Google Calendar &amp; Studio Room</span>
+					<span class="text-muted-foreground">Calendar Sync:</span>
+					<span class="text-foreground font-semibold">Google Calendar Appointment Schedule</span>
 				</div>
 			</div>
 		</header>
 
 		<!-- Interactive Booking & Release Form Container -->
 		<div id="booking-container" class="flex flex-col gap-8">
-			<!-- Step 1: Select Recording Slot -->
+			<!-- Step 0: Select Track (Editorial vs Sponsored Fast-Track) -->
 			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
 				<div class="flex items-center justify-between">
 					<h2 class="text-lg font-bold flex items-center gap-2">
 						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
-						Select an Available Recording Slot
+						Choose Your Session Track
 					</h2>
-					<span class="text-xs text-muted-foreground">All times normalized to UTC</span>
+					<span class="text-xs text-muted-foreground">Editorial vs. Guaranteed Launch Showcase</span>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<button
+						type="button"
+						data-track="editorial"
+						class={`track-btn p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+							initialTrack === "editorial"
+								? "border-primary bg-primary/5 ring-1 ring-primary"
+								: "border-border bg-card hover:bg-muted/50"
+						}`}
+					>
+						<div class="flex flex-col gap-1">
+							<div class="flex items-center justify-between">
+								<span class="text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+									Editorial Track
+								</span>
+								<span class="text-sm font-bold text-foreground">Free</span>
+							</div>
+							<span class="text-base font-bold text-foreground">
+								Standard Guest Application &amp; Invited Speakers
+							</span>
+							<p class="text-xs text-muted-foreground leading-relaxed">
+								For invited engineering guests, open-source maintainers, and non-promotional architectural deep-dives.
+							</p>
+						</div>
+						<span class="text-xs font-semibold text-primary">
+							Includes Google Calendar booking &amp; E-SIGN release
+						</span>
+					</button>
+
+					<button
+						type="button"
+						data-track="sponsored"
+						class={`track-btn p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+							initialTrack !== "editorial"
+								? "border-primary bg-primary/5 ring-1 ring-primary"
+								: "border-border bg-card hover:bg-muted/50"
+						}`}
+					>
+						<div class="flex flex-col gap-1">
+							<div class="flex items-center justify-between">
+								<span class="text-xs font-mono uppercase tracking-wider text-primary font-semibold">
+									Fast-Track Showcase
+								</span>
+								<span class="text-sm font-bold text-primary">$2,000 ($1,000 Deposit)</span>
+							</div>
+							<span class="text-base font-bold text-foreground">
+								Sponsored Podcast &amp; Multi-Channel Launch
+							</span>
+							<p class="text-xs text-muted-foreground leading-relaxed">
+								Priority recording slot + 4 vertical Shorts across 7 platforms + 60s mid-roll + canonical blog &amp; Deal Room telemetry.
+							</p>
+						</div>
+						<span class="text-xs font-semibold text-primary">
+							50% deposit ($1,000) locks slot &middot; 50% on publish
+						</span>
+					</button>
+				</div>
+			</section>
+
+			<!-- Step 1: Select Recording Slot -->
+			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+					<h2 class="text-lg font-bold flex items-center gap-2">
+						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
+						Select Preferred Recording Window
+						{liveVerified && (
+							<span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
+								✓ Live Multi-Calendar FreeBusy Verified
+							</span>
+						)}
+					</h2>
+					<a
+						href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-xs font-semibold text-primary hover:underline"
+					>
+						View full live Google Calendar schedule &nearr;
+					</a>
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="slot-grid">
 					{
-						bookingDetails.slots.map((slot, index) => (
+						upcomingSlots.map((slot, index) => (
 							<button
 								type="button"
 								data-slot-id={slot.id}
@@ -168,7 +174,7 @@ const description =
 			<!-- Step 2: Guest Intake Information -->
 			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
 				<h2 class="text-lg font-bold flex items-center gap-2">
-					<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
+					<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">3</span>
 					Guest Interview Intake
 				</h2>
 
@@ -180,6 +186,7 @@ const description =
 						<input
 							type="text"
 							id="guest-name"
+							value={initialName}
 							required
 							placeholder="e.g. Jane Doe"
 							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -193,6 +200,7 @@ const description =
 						<input
 							type="email"
 							id="guest-email"
+							value={initialEmail}
 							required
 							placeholder="e.g. jane@example.com"
 							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -207,19 +215,19 @@ const description =
 							id="guest-topics"
 							rows="3"
 							required
-							placeholder="What technologies, architectural challenges, or war stories would you like to cover?"
+							placeholder="What technologies, architectural challenges, or live demos would you like to cover?"
 							class="w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 						></textarea>
 					</div>
 
 					<div class="flex flex-col gap-1.5">
 						<label for="guest-url" class="font-semibold text-foreground">
-							Social Handle or Portfolio URL
+							Social Handle or Product URL
 						</label>
 						<input
 							type="url"
 							id="guest-url"
-							placeholder="https://twitter.com/yourhandle"
+							placeholder="https://x.com/yourhandle"
 							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 						/>
 					</div>
@@ -231,7 +239,8 @@ const description =
 						<input
 							type="text"
 							id="guest-project"
-							placeholder="e.g. Open-source library, startup, or research"
+							value={initialCompany}
+							placeholder="e.g. Open-source library, startup, or engineering team"
 							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 						/>
 					</div>
@@ -242,21 +251,21 @@ const description =
 			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
 				<div class="flex items-center justify-between">
 					<h2 class="text-lg font-bold flex items-center gap-2">
-						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">3</span>
+						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">4</span>
 						Digital Appearance &amp; Media Release Agreement
 					</h2>
 					<span class="text-xs font-mono bg-muted text-muted-foreground px-2 py-0.5 rounded">
-						Terms v1.0 · E-SIGN Valid
+						Terms v1.0 &middot; E-SIGN Valid
 					</span>
 				</div>
 
 				<!-- Legal Terms Scrollbox -->
 				<div class="rounded-lg border border-border bg-muted/40 p-3 max-h-32 overflow-y-auto text-xs font-mono text-muted-foreground leading-relaxed">
-					FLIPCORE &amp; CODINGCAT.DEV PODCAST APPEARANCE RELEASE AGREEMENT (v1.0)<br /><br />
-					1. GRANT OF RIGHTS: The Participant grants CodingCat.dev and FlipFeeds the irrevocable, worldwide, perpetual right to record, edit, broadcast, stream, and commercially distribute their voice, video likeness, conversation, and biographical materials across any digital distribution channels.<br /><br />
-					2. CLIPPING &amp; TRANSCRIPTS: The Producer retains sole discretion to create derivative works, short-form clips (TikTok, Shorts, Reels), and word-by-word transcripts.<br /><br />
+					CODINGCAT.DEV PODCAST APPEARANCE RELEASE AGREEMENT (v1.0)<br /><br />
+					1. GRANT OF RIGHTS: The Participant grants CodingCat.dev the irrevocable, worldwide, perpetual right to record, edit, broadcast, stream, and commercially distribute their voice, video likeness, conversation, and biographical materials across any digital distribution channels.<br /><br />
+					2. CLIPPING &amp; TRANSCRIPTS: The Producer retains sole discretion to create derivative works, short-form clips (YouTube Shorts, X, LinkedIn, Bluesky, Threads, Mastodon, TikTok, Reels), and word-by-word transcripts.<br /><br />
 					3. COMMERCIAL &amp; SPONSORSHIP USE: Producer may monetize the show through sponsorships and dynamic ad insertion without financial compensation unless agreed separately.<br /><br />
-					4. ELECTRONIC SIGNATURE VALIDITY: Executing this release electronically carries the full legal force of a handwritten physical signature pursuant to 15 U.S.C. § 7001 (E-SIGN Act).
+					4. ELECTRONIC SIGNATURE VALIDITY: Executing this release electronically carries the full legal force of a handwritten physical signature pursuant to 15 U.S.C. &sect; 7001 (E-SIGN Act).
 				</div>
 
 				<!-- Consent Checkboxes -->
@@ -271,7 +280,7 @@ const description =
 					</label>
 					<label class="flex items-start gap-2 cursor-pointer">
 						<input type="checkbox" id="consent-likeness" checked class="mt-0.5 rounded border-border text-primary focus:ring-primary" />
-						<span class="text-foreground">I grant rights to use my likeness in show promotions and social clips.</span>
+						<span class="text-foreground">I grant rights to use my likeness in show promotions and multi-platform social clips.</span>
 					</label>
 				</div>
 
@@ -345,30 +354,29 @@ const description =
 
 			<div class="flex flex-col gap-2">
 				<h2 class="text-2xl font-bold tracking-tight text-foreground">
-					Recording Session Confirmed!
+					Intake &amp; Media Release Recorded!
 				</h2>
 				<p class="text-sm text-muted-foreground max-w-lg mx-auto">
-					Your technical interview with <strong class="text-foreground">Alex Patterson</strong> has been reserved. Your calendar invite and Studio entry pass have been generated.
+					Your E-SIGN appearance release with <strong class="text-foreground">Alex Patterson</strong> has been saved to Sanity. Lock in your exact Google Calendar invite below.
 				</p>
 			</div>
 
-			<!-- Studio Entry Link Box -->
+			<!-- Google Calendar Appointment Link Box -->
 			<div class="flex flex-col gap-3 p-5 rounded-xl border border-border bg-muted/50 text-left max-w-lg mx-auto w-full">
-				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Studio Entry Pass</span>
-				<div class="flex items-center justify-between gap-2 bg-background p-2.5 rounded-lg border border-border">
-					<code id="confirmed-studio-link" class="text-xs font-mono text-primary truncate select-all">
-						https://flipfeeds.com/studio?room=srt_codingcatdev_preview
-					</code>
-					<button
-						type="button"
-						id="btn-copy-link"
-						class="text-xs px-2.5 py-1 rounded bg-primary text-primary-foreground font-medium shrink-0"
-					>
-						Copy
-					</button>
-				</div>
+				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+					Step 2: Lock Your Google Calendar Invite
+				</span>
+				<a
+					id="confirmed-calendar-link"
+					href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="px-5 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold text-center hover:bg-primary/90 transition-colors"
+				>
+					Open Google Calendar Appointment Schedule &nearr;
+				</a>
 				<p class="text-[11px] text-muted-foreground">
-					Please join 5 minutes before scheduled time using Chrome, Edge, or Brave with headphones enabled.
+					Selecting your time on the Google Calendar schedule automatically sends calendar invites and recording links to both you and Alex.
 				</p>
 			</div>
 
@@ -392,24 +400,40 @@ const description =
 		<footer class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
 			<div class="flex flex-col gap-1 text-center sm:text-left">
 				<span class="text-xs font-semibold text-foreground">PodMatch Network Certified</span>
-				<span class="text-xs text-muted-foreground">Powered by FlipFeeds Two-Sided Creator &amp; Guest Matching</span>
+				<span class="text-xs text-muted-foreground">Powered by CodingCat.dev &amp; Sanity Content Operating System</span>
 			</div>
 			<PodmatchBadge />
 		</footer>
 	</div>
 </BaseLayout>
 
-<script is:inline>
-	// Interactive Client Form Logic
+<script is:inline define:vars={{ initialTrack }}>
 	(function () {
-		let selectedSlotId = "slot-1";
-		let selectedSlotStart = "2026-10-15T14:00:00Z";
+		let selectedTrack = initialTrack || "editorial";
+		let selectedSlotStart = "";
 		let signatureMode = "draw";
 		let hasDrawn = false;
 		let isDrawing = false;
 
+		// Track selection
+		const trackButtons = document.querySelectorAll(".track-btn");
+		trackButtons.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				trackButtons.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+					b.classList.add("border-border", "bg-card");
+				});
+				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				btn.classList.remove("border-border", "bg-card");
+				selectedTrack = btn.getAttribute("data-track") || "editorial";
+			});
+		});
+
 		// Slot selection
 		const slotButtons = document.querySelectorAll(".slot-btn");
+		if (slotButtons.length > 0) {
+			selectedSlotStart = slotButtons[0].getAttribute("data-slot-start") || "";
+		}
 		slotButtons.forEach((btn) => {
 			btn.addEventListener("click", () => {
 				slotButtons.forEach((b) => {
@@ -418,7 +442,6 @@ const description =
 				});
 				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
 				btn.classList.remove("bg-card");
-				selectedSlotId = btn.getAttribute("data-slot-id") || "";
 				selectedSlotStart = btn.getAttribute("data-slot-start") || "";
 			});
 		});
@@ -532,8 +555,7 @@ const description =
 		const formError = document.getElementById("form-error");
 		const bookingContainer = document.getElementById("booking-container");
 		const confirmedCard = document.getElementById("booking-confirmed-card");
-		const confirmedLink = document.getElementById("confirmed-studio-link");
-		const btnCopy = document.getElementById("btn-copy-link");
+		const confirmedCalLink = document.getElementById("confirmed-calendar-link");
 
 		if (btnConfirm) {
 			btnConfirm.addEventListener("click", async () => {
@@ -544,6 +566,10 @@ const description =
 				const email = emailInput ? emailInput.value.trim() : "";
 				const topicsInput = document.getElementById("guest-topics");
 				const topics = topicsInput ? topicsInput.value.trim() : "";
+				const urlInput = document.getElementById("guest-url");
+				const socialUrl = urlInput ? urlInput.value.trim() : "";
+				const projectInput = document.getElementById("guest-project");
+				const company = projectInput ? projectInput.value.trim() : "";
 
 				const chkRecording = document.getElementById("consent-recording");
 				const chkCommercial = document.getElementById("consent-commercial");
@@ -570,35 +596,66 @@ const description =
 					return;
 				}
 
-				if (signatureMode === "draw" && !hasDrawn) {
-					showError("Please provide your freehand signature on the canvas pad.");
-					return;
-				}
-				if (signatureMode === "type") {
+				let signatureData = name;
+				if (signatureMode === "draw") {
+					if (!hasDrawn) {
+						showError("Please provide your freehand signature on the canvas pad.");
+						return;
+					}
+					if (canvas && canvas instanceof HTMLCanvasElement) {
+						signatureData = canvas.toDataURL("image/png");
+					}
+				} else {
 					const typedVal = typedInput ? typedInput.value.trim() : "";
 					if (!typedVal) {
 						showError("Please type your name to sign the release.");
 						return;
 					}
+					signatureData = typedVal;
 				}
 
-				// Execute confirmation
 				btnConfirm.setAttribute("disabled", "true");
-				btnConfirm.textContent = "Reserving Studio & Generating Pass...";
+				btnConfirm.textContent = "Saving E-SIGN Release & Booking...";
 
 				try {
-					// Simulate Studio token generation & API dispatch
-					await new Promise((r) => setTimeout(r, 600));
+					const res = await fetch("/api/booking", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							guestName: name,
+							guestEmail: email,
+							company,
+							socialUrl,
+							track: selectedTrack,
+							slotStartAt: selectedSlotStart,
+							topics,
+							signatureMode,
+							signatureData,
+							consentRecording: chkRecording ? chkRecording.checked : true,
+							consentCommercial: chkCommercial ? chkCommercial.checked : true,
+							consentLikeness: chkLikeness ? chkLikeness.checked : true,
+						}),
+					});
 
-					const roomId = "srt_codingcatdev_" + (selectedSlotId ? selectedSlotId.replace(/-/g, '_') + '_' : '') + Math.random().toString(36).substring(2, 8);
-					const studioUrl = "https://flipfeeds.com/studio?room=" + roomId + "&at=" + encodeURIComponent(selectedSlotStart);
-
-					if (confirmedLink) confirmedLink.textContent = studioUrl;
-					if (bookingContainer) bookingContainer.classList.add("hidden");
-					if (confirmedCard) confirmedCard.classList.remove("hidden");
-
-					window.scrollTo({ top: 0, behavior: "smooth" });
-				} catch (err) {
+					const data = await res.json();
+					if (res.ok && data.success) {
+						// If Sponsored Fast-Track, redirect straight to the Sponsor Deal Room
+						if (data.isSponsored && data.portalUrl) {
+							window.location.href = data.portalUrl;
+							return;
+						}
+						if (confirmedCalLink && data.appointmentScheduleUrl) {
+							confirmedCalLink.setAttribute("href", data.appointmentScheduleUrl);
+						}
+						if (bookingContainer) bookingContainer.classList.add("hidden");
+						if (confirmedCard) confirmedCard.classList.remove("hidden");
+						window.scrollTo({ top: 0, behavior: "smooth" });
+					} else {
+						showError(data.message || "Failed to save booking session. Please try again.");
+						btnConfirm.removeAttribute("disabled");
+						btnConfirm.textContent = "Confirm Session & Sign Release";
+					}
+				} catch {
 					showError("Failed to reserve booking session. Please try again.");
 					btnConfirm.removeAttribute("disabled");
 					btnConfirm.textContent = "Confirm Session & Sign Release";
@@ -611,17 +668,6 @@ const description =
 			formError.textContent = msg;
 			formError.classList.remove("hidden");
 			formError.scrollIntoView({ behavior: "smooth", block: "center" });
-		}
-
-		if (btnCopy && confirmedLink) {
-			btnCopy.addEventListener("click", () => {
-				navigator.clipboard.writeText(confirmedLink.textContent || "").then(() => {
-					btnCopy.textContent = "Copied!";
-					setTimeout(() => {
-						btnCopy.textContent = "Copy";
-					}, 2000);
-				});
-			});
 		}
 	})();
 </script>

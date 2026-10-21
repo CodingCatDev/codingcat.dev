@@ -3,7 +3,7 @@ import {HiOutlineUserGroup} from 'react-icons/hi'
 
 export default defineType({
   name: 'sponsorPool',
-  title: 'Sponsor Pool',
+  title: 'Sponsor Pool (Outbound Prospects)',
   type: 'document',
   icon: HiOutlineUserGroup,
   fields: [
@@ -15,7 +15,7 @@ export default defineType({
     }),
     defineField({
       name: 'contactName',
-      title: 'Contact Name',
+      title: 'Contact Name / Role',
       type: 'string',
     }),
     defineField({
@@ -35,11 +35,20 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'fundingRound',
+      title: 'Funding / Launch Signal',
+      type: 'string',
+      description: 'e.g. Seed $6M, Series A $18M, YC W26, HN Launch',
+    }),
+    defineField({
       name: 'source',
       title: 'Source',
       type: 'string',
       options: {
         list: [
+          {title: 'Y Combinator AI / DevTools', value: 'yc'},
+          {title: 'Hacker News Launch / Who Is Hiring', value: 'hackernews'},
+          {title: 'LinkedIn / Funding Announcement', value: 'linkedin'},
           {title: 'Curated', value: 'curated'},
           {title: 'Enriched', value: 'enriched'},
         ],
@@ -47,8 +56,39 @@ export default defineType({
     }),
     defineField({
       name: 'relevanceScore',
-      title: 'Relevance Score',
+      title: 'Relevance Score (0-100)',
       type: 'number',
+    }),
+    defineField({
+      name: 'videoConcepts',
+      title: 'Tailored CodingCat.dev Video Concepts (2 per Startup)',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'title', title: 'Proposed Video Title', type: 'string'}),
+            defineField({name: 'hook', title: '60s Short / Opening Hook', type: 'text'}),
+            defineField({name: 'angle', title: 'Production Architecture Angle', type: 'text'}),
+            defineField({
+              name: 'targetPackage',
+              title: 'Recommended Bundle',
+              type: 'string',
+              initialValue: 'Full-Stack Launch Bundle ($3,500)',
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'outreachDraftSubject',
+      title: 'Generated Outreach Subject',
+      type: 'string',
+    }),
+    defineField({
+      name: 'outreachDraftBody',
+      title: 'Generated Outreach Body',
+      type: 'text',
     }),
     defineField({
       name: 'lastContactedAt',
@@ -70,7 +110,14 @@ export default defineType({
   preview: {
     select: {
       title: 'companyName',
-      subtitle: 'category',
+      category: 'category',
+      funding: 'fundingRound',
+    },
+    prepare({title, category, funding}) {
+      return {
+        title,
+        subtitle: [funding, category].filter(Boolean).join(' \u00b7 '),
+      }
     },
   },
 })

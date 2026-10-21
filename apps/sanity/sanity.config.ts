@@ -37,6 +37,7 @@ import podcastType from "./schemas/documents/podcastType";
 import post from "./schemas/documents/post";
 import settings from "./schemas/singletons/settings";
 import engineConfig from "./schemas/singletons/engineConfig";
+import sponsorConfig from "./schemas/singletons/sponsorConfig";
 import sponsor from "./schemas/documents/sponsor";
 
 import sponsorshipRequest from "./schemas/documents/sponsorshipRequest";
@@ -46,6 +47,7 @@ import mediaAsset from "./schemas/documents/mediaAsset";
 import videoAnalytics from "./schemas/documents/videoAnalytics";
 import sponsorLead from "./schemas/documents/sponsorLead";
 import sponsorPool from "./schemas/documents/sponsorPool";
+import booking from "./schemas/documents/booking";
 import tableSchema, { rowType } from "./schemas/custom/table";
 import podcastSeries from "./schemas/documents/podcastSeries";
 import category from "./schemas/documents/category";
@@ -96,6 +98,7 @@ const schemaTypes = [
   // Singletons
   settings,
   engineConfig,
+  sponsorConfig,
   // Documents
   author,
   guest,
@@ -112,6 +115,7 @@ const schemaTypes = [
   videoAnalytics,
   sponsorLead,
   sponsorPool,
+  booking,
   // New document types
   podcastSeries,
   category,
@@ -296,7 +300,7 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
         ]
       : []),
     structureTool({ structure: podcastStructure() }),
-    singletonPlugin([settings.name, engineConfig.name]),
+    singletonPlugin([settings.name, engineConfig.name, sponsorConfig.name]),
     assistWithPresets(),
     media(),
     codeInput(),
