@@ -92,7 +92,7 @@ jobs:
         run: |
           mkdir -p .sanity
           echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
 
@@ -115,10 +115,13 @@ jobs:
 
           echo "=== Previous Stack Info & Logs ==="
           pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
-          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} || true
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
 
-          echo "=== Starting Blueprint Deployment ==="
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait
+          echo "=== Blueprint Deployment Plan ==="
+          pnpm exec sanity blueprints plan --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+
+          echo "=== Starting Blueprint Deployment (--verbose) ==="
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait --verbose
 
           echo "=== Synchronously Polling Blueprint Stack Operation Until Terminal State ==="
           ORG_ID="$ORG_ID" STACK_NAME="${{ vars.SANITY_STUDIO_DATASET }}" node -e "
@@ -166,8 +169,9 @@ jobs:
             })().catch(err => { console.error(err); process.exit(1); });
           "
 
-          echo "=== Verified Post-Deploy Stack Info ==="
+          echo "=== Verified Post-Deploy Stack Info & Logs (--verbose) ==="
           pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --limit 50 --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
@@ -258,7 +262,7 @@ jobs:
         run: |
           mkdir -p .sanity
           echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
 
@@ -281,10 +285,13 @@ jobs:
 
           echo "=== Previous Stack Info & Logs ==="
           pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
-          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} || true
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
 
-          echo "=== Starting Blueprint Deployment ==="
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait
+          echo "=== Blueprint Deployment Plan ==="
+          pnpm exec sanity blueprints plan --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+
+          echo "=== Starting Blueprint Deployment (--verbose) ==="
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait --verbose
 
           echo "=== Synchronously Polling Blueprint Stack Operation Until Terminal State ==="
           ORG_ID="$ORG_ID" STACK_NAME="${{ vars.SANITY_STUDIO_DATASET }}" node -e "
@@ -332,8 +339,9 @@ jobs:
             })().catch(err => { console.error(err); process.exit(1); });
           "
 
-          echo "=== Verified Post-Deploy Stack Info ==="
+          echo "=== Verified Post-Deploy Stack Info & Logs (--verbose) ==="
           pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --limit 50 --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
