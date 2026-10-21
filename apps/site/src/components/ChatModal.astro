@@ -1,279 +1,358 @@
 ---
+// ChatModal.astro — Persistent Right-Side Resizable "Ask Agent" Drawer (Desktop resizable side panel, Mobile full-screen drawer)
 ---
 
-<div id="ai-chat-widget">
-	<!-- Floating Trigger Button -->
-	<button
-		type="button"
-		id="ai-chat-open-btn"
-		class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:opacity-90 transition-all hover:scale-105 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-		aria-label="Open Agent AJ"
-	>
-		<img src="/icon.svg" alt="" class="size-5 object-contain" width="20" height="20" />
-		<span>Ask Agent AJ</span>
-	</button>
-
-	<!-- Modal Backdrop & Window -->
+<aside
+	id="aj-agent-drawer"
+	class="hidden fixed top-0 right-0 bottom-0 z-50 w-full md:w-[var(--aj-drawer-width,420px)] flex-col border-l border-border bg-card text-foreground shadow-2xl select-none md:select-auto"
+	aria-label="Ask Agent AJ"
+>
+	<!-- Desktop Left-Edge Drag Resize Handle -->
 	<div
-		id="ai-chat-modal"
-		class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity"
-		role="dialog"
-		aria-modal="true"
-		aria-labelledby="ai-chat-title"
+		id="aj-drawer-resize-handle"
+		class="hidden md:flex absolute left-0 top-0 bottom-0 w-2 -translate-x-1/2 cursor-col-resize items-center justify-center group z-20"
+		title="Drag to resize Ask Agent panel"
+		aria-hidden="true"
 	>
-		<div class="relative flex flex-col w-full max-w-2xl h-[640px] max-h-[90vh] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
-			<!-- Header -->
-			<header class="flex items-center justify-between border-b border-border px-5 py-3.5 bg-muted/40">
-				<div class="flex items-center gap-3">
-					<img
-						src="/icon.svg"
-						alt="Agent AJ Logo"
-						class="size-8 rounded-lg object-contain bg-primary/10 p-1"
-						width="32"
-						height="32"
-					/>
-					<div>
-						<h2 id="ai-chat-title" class="text-sm font-bold tracking-tight">Agent AJ</h2>
-						<p class="text-[11px] text-muted-foreground">Grounded in Sanity Content Lake • Clairic & Workers AI</p>
-					</div>
-				</div>
-				<div class="flex items-center gap-2">
-					<button
-						type="button"
-						id="ai-chat-switch-search-btn"
-						class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
-						title="Switch to Search"
-					>
-						<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<circle cx="11" cy="11" r="8"></circle>
-							<path d="m21 21-4.3-4.3"></path>
-						</svg>
-						<span>Search</span>
-					</button>
-					<button
-						type="button"
-						id="ai-chat-close-btn"
-						class="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
-						aria-label="Close dialog"
-					>
-						<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button>
-				</div>
-			</header>
+		<div class="h-full w-0.5 bg-transparent group-hover:bg-primary/60 group-active:bg-primary transition-colors"></div>
+	</div>
 
-			<!-- Messages Container -->
-			<div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-4 text-sm">
-				<!-- Welcome / Prompt chips -->
-				<div id="ai-chat-welcome" class="flex flex-col gap-3 my-auto text-center items-center py-6">
-					<img src="/icon.svg" alt="Agent AJ" class="size-14 rounded-2xl object-contain bg-primary/10 p-2 shadow-sm" width="56" height="56" />
-					<h3 class="font-semibold text-base">Hi, I'm Agent AJ!</h3>
-					<p class="text-xs text-muted-foreground max-w-sm">
-						I query live CodingCat.dev podcasts, tutorials, and transcripts. Ask me anything or select a quick request:
-					</p>
-					<div class="flex flex-wrap gap-2 justify-center max-w-md pt-2">
-						<button
-							type="button"
-							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
-							data-prompt="What is the latest podcast episode?"
-						>
-							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-								<path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-								<line x1="12" x2="12" y1="19" y2="22"></line>
-							</svg>
-							<span>Latest podcast</span>
-						</button>
-						<button
-							type="button"
-							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
-							data-prompt="What is the latest blog post?"
-						>
-							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-								<polyline points="14 2 14 8 20 8"></polyline>
-								<line x1="16" y1="13" x2="8" y2="13"></line>
-								<line x1="16" y1="17" x2="8" y2="17"></line>
-							</svg>
-							<span>Latest blog post</span>
-						</button>
-						<button
-							type="button"
-							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
-							data-prompt="What are the top videos on CodingCat.dev?"
-						>
-							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<polygon points="23 7 16 12 23 17 23 7"></polygon>
-								<rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-							</svg>
-							<span>Top videos</span>
-						</button>
-						<button
-							type="button"
-							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
-							data-prompt="Tell me a programming dad joke!"
-						>
-							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<circle cx="12" cy="12" r="10"></circle>
-								<path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-								<line x1="9" x2="9.01" y1="9" y2="9"></line>
-								<line x1="15" x2="15.01" y1="9" y2="9"></line>
-							</svg>
-							<span>Coding joke</span>
-						</button>
-					</div>
+	<!-- Drawer Header (Matches Sanity Docs "ASK AGENT" bar) -->
+	<header class="flex items-center justify-between border-b border-border px-4 py-3.5 bg-background/60 shrink-0">
+		<div class="flex items-center gap-2.5 min-w-0">
+			<span class="font-mono text-xs font-semibold uppercase tracking-widest text-foreground">
+				ASK AGENT
+			</span>
+			<span
+				id="aj-drawer-telemetry-pill"
+				class="hidden truncate rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-medium text-primary"
+				title="Cloudflare Clairic Extraction Telemetry"
+			></span>
+		</div>
+
+		<div class="flex items-center gap-1">
+			<!-- New Conversation / Clear Button (Compose Icon) -->
+			<button
+				type="button"
+				id="aj-drawer-new-btn"
+				class="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+				title="New conversation"
+				aria-label="New conversation"
+			>
+				<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+					<path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"></path>
+				</svg>
+			</button>
+
+			<!-- Close Drawer Button -->
+			<button
+				type="button"
+				id="aj-drawer-close-btn"
+				class="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+				title="Close Ask Agent"
+				aria-label="Close Ask Agent"
+			>
+				<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="18" y1="6" x2="6" y2="18"></line>
+					<line x1="6" y1="6" x2="18" y2="18"></line>
+				</svg>
+			</button>
+		</div>
+	</header>
+
+	<!-- Messages Container -->
+	<div
+		id="ai-chat-messages"
+		class="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-5 text-sm select-text"
+	>
+		<!-- Welcome / Initial State -->
+		<div id="ai-chat-welcome" class="flex flex-col gap-4 my-auto py-6">
+			<div class="flex items-center gap-2.5">
+				<img src="/icon.svg" alt="Agent AJ" class="size-8 rounded-lg object-contain bg-primary/10 p-1" width="32" height="32" />
+				<div>
+					<h3 class="font-semibold text-sm text-foreground">Agent AJ</h3>
+					<p class="text-[11px] text-muted-foreground">Sanity Content Lake • Cloudflare Clairic</p>
 				</div>
 			</div>
-
-			<!-- Predefined Quick Request Buttons (Sticky Bar) -->
-			<div class="flex items-center gap-1.5 px-3 sm:px-4 py-2 border-t border-border/40 bg-muted/20 overflow-x-auto no-scrollbar">
-				<span class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0 mr-1">Quick:</span>
+			<p class="text-sm text-muted-foreground leading-relaxed">
+				Ask anything about CodingCat.dev podcasts, tutorials, guests, or transcripts. This panel stays open as you browse episodes.
+			</p>
+			<div class="flex flex-col items-start gap-2 pt-1">
 				<button
 					type="button"
-					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					class="ai-prompt-chip inline-flex items-center gap-2 rounded-full border border-border bg-background/60 hover:bg-accent px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider text-foreground transition-colors cursor-pointer"
 					data-prompt="What is the latest podcast episode?"
 				>
-					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-						<path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-						<line x1="12" x2="12" y1="19" y2="22"></line>
-					</svg>
-					<span>Latest podcast</span>
+					LATEST PODCAST EPISODE
 				</button>
 				<button
 					type="button"
-					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					class="ai-prompt-chip inline-flex items-center gap-2 rounded-full border border-border bg-background/60 hover:bg-accent px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider text-foreground transition-colors cursor-pointer"
 					data-prompt="What is the latest blog post?"
 				>
-					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-						<polyline points="14 2 14 8 20 8"></polyline>
-						<line x1="16" y1="13" x2="8" y2="13"></line>
-						<line x1="16" y1="17" x2="8" y2="17"></line>
-					</svg>
-					<span>Latest blog post</span>
+					LATEST BLOG POST
 				</button>
 				<button
 					type="button"
-					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					class="ai-prompt-chip inline-flex items-center gap-2 rounded-full border border-border bg-background/60 hover:bg-accent px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider text-foreground transition-colors cursor-pointer"
 					data-prompt="What are the top videos on CodingCat.dev?"
 				>
-					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<polygon points="23 7 16 12 23 17 23 7"></polygon>
-						<rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-					</svg>
-					<span>Top videos</span>
+					TOP YOUTUBE VIDEOS
 				</button>
 				<button
 					type="button"
-					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					class="ai-prompt-chip inline-flex items-center gap-2 rounded-full border border-border bg-background/60 hover:bg-accent px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider text-foreground transition-colors cursor-pointer"
 					data-prompt="Tell me a programming dad joke!"
 				>
-					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<circle cx="12" cy="12" r="10"></circle>
-						<path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-						<line x1="9" x2="9.01" y1="9" y2="9"></line>
-						<line x1="15" x2="15.01" y1="9" y2="9"></line>
-					</svg>
-					<span>Coding joke</span>
+					PROGRAMMING DAD JOKE
 				</button>
 			</div>
-
-			<!-- Input Form -->
-			<form id="ai-chat-form" class="border-t border-border p-3 sm:p-4 bg-card flex items-center gap-2">
-				<input
-					type="text"
-					id="ai-chat-input"
-					placeholder="Ask Agent AJ about CodingCat.dev..."
-					class="flex-1 rounded-xl border border-input bg-background px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-					autocomplete="off"
-				/>
-				<button
-					type="submit"
-					id="ai-chat-send-btn"
-					class="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer"
-				>
-					Send
-				</button>
-			</form>
 		</div>
 	</div>
-</div>
+
+	<!-- Input Footer (Matches Sanity Docs boxed input + Enter/Shift+Enter + circular up arrow) -->
+	<form
+		id="ai-chat-form"
+		class="border-t border-border p-3 bg-background/40 flex flex-col gap-2 shrink-0"
+	>
+		<div class="rounded-lg border border-border bg-background focus-within:border-primary/60 focus-within:ring-1 focus-within:ring-primary/40 transition-all p-2.5">
+			<label for="ai-chat-input" class="sr-only">Ask anything about CodingCat.dev</label>
+			<textarea
+				id="ai-chat-input"
+				rows="2"
+				placeholder="Ask anything about CodingCat.dev..."
+				class="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none leading-relaxed"
+			></textarea>
+		</div>
+		<div class="flex items-center justify-between px-0.5">
+			<span class="font-mono text-[11px] text-muted-foreground">
+				Enter to send, Shift+Enter for a new line
+			</span>
+			<button
+				type="submit"
+				id="ai-chat-send-btn"
+				class="size-7 rounded-full bg-foreground text-background hover:opacity-90 disabled:opacity-40 flex items-center justify-center transition-opacity cursor-pointer shrink-0"
+				aria-label="Send message"
+			>
+				<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="12" y1="19" x2="12" y2="5"></line>
+					<polyline points="5 12 12 5 19 12"></polyline>
+				</svg>
+			</button>
+		</div>
+	</form>
+</aside>
+
+<!-- Synchronous pre-paint script so the drawer survives across navigations without flicker -->
+<script is:inline>
+	(function () {
+		try {
+			var savedWidth = localStorage.getItem("cc_aj_drawer_width");
+			var widthPx = savedWidth ? Math.min(Math.max(parseInt(savedWidth, 10) || 420, 320), 780) : 420;
+			document.documentElement.style.setProperty("--aj-drawer-width", widthPx + "px");
+
+			var isOpen = localStorage.getItem("cc_aj_drawer_open") === "true";
+			var isDesktop = window.innerWidth >= 768;
+			var forceMobileOpen = sessionStorage.getItem("cc_aj_mobile_open") === "true";
+
+			if (isOpen && (isDesktop || forceMobileOpen)) {
+				var drawer = document.getElementById("aj-agent-drawer");
+				if (drawer) {
+					drawer.classList.remove("hidden");
+					drawer.classList.add("flex");
+					document.documentElement.classList.add("aj-drawer-open");
+				}
+				if (forceMobileOpen) {
+					sessionStorage.removeItem("cc_aj_mobile_open");
+				}
+			}
+		} catch (e) {}
+	})();
+</script>
 
 <script>
-	const openBtn = document.getElementById("ai-chat-open-btn");
-	const closeBtn = document.getElementById("ai-chat-close-btn");
-	const switchSearchBtn = document.getElementById("ai-chat-switch-search-btn");
-	const modal = document.getElementById("ai-chat-modal");
+	interface StoredMessage {
+		role: "user" | "assistant";
+		text: string;
+		telemetry?: string;
+		timestamp: number;
+	}
+
+	interface RecentAskItem {
+		prompt: string;
+		timestamp: number;
+	}
+
+	const STORAGE_OPEN_KEY = "cc_aj_drawer_open";
+	const STORAGE_WIDTH_KEY = "cc_aj_drawer_width";
+	const STORAGE_MESSAGES_KEY = "cc_aj_messages";
+	const STORAGE_RECENT_ASKS_KEY = "cc_aj_recent_asks";
+
+	const drawer = document.getElementById("aj-agent-drawer");
+	const resizeHandle = document.getElementById("aj-drawer-resize-handle");
+	const closeBtn = document.getElementById("aj-drawer-close-btn");
+	const newChatBtn = document.getElementById("aj-drawer-new-btn");
+	const headerTelemetryPill = document.getElementById("aj-drawer-telemetry-pill");
 	const form = document.getElementById("ai-chat-form") as HTMLFormElement | null;
-	const input = document.getElementById("ai-chat-input") as HTMLInputElement | null;
+	const input = document.getElementById("ai-chat-input") as HTMLTextAreaElement | null;
 	const sendBtn = document.getElementById("ai-chat-send-btn") as HTMLButtonElement | null;
 	const messagesContainer = document.getElementById("ai-chat-messages");
 	const welcomeContainer = document.getElementById("ai-chat-welcome");
 
 	let isStreaming = false;
+	let storedMessages: StoredMessage[] = [];
 
-	function openModal(initialPrompt?: string) {
-		if (modal) {
-			modal.classList.remove("hidden");
+	function loadStoredMessages(): StoredMessage[] {
+		try {
+			const raw = localStorage.getItem(STORAGE_MESSAGES_KEY);
+			if (!raw) return [];
+			const parsed = JSON.parse(raw);
+			return Array.isArray(parsed) ? parsed.slice(-30) : [];
+		} catch {
+			return [];
+		}
+	}
+
+	function saveStoredMessages() {
+		try {
+			localStorage.setItem(
+				STORAGE_MESSAGES_KEY,
+				JSON.stringify(storedMessages.slice(-30)),
+			);
+		} catch {}
+	}
+
+	function recordRecentAsk(prompt: string) {
+		try {
+			const raw = localStorage.getItem(STORAGE_RECENT_ASKS_KEY);
+			const list: RecentAskItem[] = raw ? JSON.parse(raw) : [];
+			const filtered = Array.isArray(list)
+				? list.filter((item) => item.prompt.toLowerCase() !== prompt.toLowerCase())
+				: [];
+			filtered.unshift({ prompt, timestamp: Date.now() });
+			localStorage.setItem(
+				STORAGE_RECENT_ASKS_KEY,
+				JSON.stringify(filtered.slice(0, 6)),
+			);
+		} catch {}
+	}
+
+	function setDrawerOpen(open: boolean, initialPrompt?: string) {
+		if (!drawer) return;
+		if (open) {
+			drawer.classList.remove("hidden");
+			drawer.classList.add("flex");
+			document.documentElement.classList.add("aj-drawer-open");
+			try {
+				localStorage.setItem(STORAGE_OPEN_KEY, "true");
+			} catch {}
 			if (initialPrompt && input) {
 				input.value = initialPrompt;
-				form?.dispatchEvent(new Event("submit", { cancelable: true }));
+				submitPrompt(initialPrompt);
 			} else {
-				input?.focus();
+				setTimeout(() => input?.focus(), 30);
 			}
+		} else {
+			drawer.classList.add("hidden");
+			drawer.classList.remove("flex");
+			document.documentElement.classList.remove("aj-drawer-open");
+			try {
+				localStorage.setItem(STORAGE_OPEN_KEY, "false");
+			} catch {}
 		}
+		window.dispatchEvent(
+			new CustomEvent("aj-drawer-change", { detail: { open } }),
+		);
 	}
 
-	function closeModal() {
-		if (modal) {
-			modal.classList.add("hidden");
-		}
+	function toggleDrawer() {
+		const isOpen = drawer && !drawer.classList.contains("hidden");
+		setDrawerOpen(!isOpen);
 	}
 
-	(window as unknown as { openAgentAjModal?: (prompt?: string) => void }).openAgentAjModal = openModal;
+	// Expose global APIs for SearchModal, Header, and pages
+	(
+		window as unknown as {
+			openAgentAjModal?: (prompt?: string) => void;
+			openAgentAjDrawer?: (prompt?: string) => void;
+			toggleAgentAjDrawer?: () => void;
+		}
+	).openAgentAjModal = (prompt?: string) => setDrawerOpen(true, prompt);
+	(
+		window as unknown as {
+			openAgentAjDrawer?: (prompt?: string) => void;
+		}
+	).openAgentAjDrawer = (prompt?: string) => setDrawerOpen(true, prompt);
+	(
+		window as unknown as {
+			toggleAgentAjDrawer?: () => void;
+		}
+	).toggleAgentAjDrawer = toggleDrawer;
 
-	openBtn?.addEventListener("click", () => openModal());
-	closeBtn?.addEventListener("click", closeModal);
-	switchSearchBtn?.addEventListener("click", () => {
-		const draft = input?.value.trim() || "";
-		closeModal();
-		const searchDialog = document.getElementById("search-modal") as HTMLDialogElement | null;
-		const searchInput = document.getElementById("modal-search-input") as HTMLInputElement | null;
-		if (searchDialog) {
-			if (!searchDialog.open) {
-				searchDialog.showModal();
-			}
-			if (searchInput) {
-				if (draft) {
-					searchInput.value = draft;
-					searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+	closeBtn?.addEventListener("click", () => setDrawerOpen(false));
+
+	newChatBtn?.addEventListener("click", () => {
+		storedMessages = [];
+		saveStoredMessages();
+		if (messagesContainer) {
+			Array.from(messagesContainer.children).forEach((child) => {
+				if (child.id !== "ai-chat-welcome") {
+					child.remove();
 				}
-				searchInput.focus();
-			}
+			});
 		}
+		welcomeContainer?.classList.remove("hidden");
+		headerTelemetryPill?.classList.add("hidden");
+		input?.focus();
 	});
 
-	modal?.addEventListener("click", (e) => {
-		if (e.target === modal) {
-			closeModal();
-		}
-	});
+	// Desktop Drag Resizing
+	if (resizeHandle && drawer) {
+		let isResizing = false;
 
-	window.addEventListener("keydown", (e) => {
-		if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
-			closeModal();
-		}
-	});
+		resizeHandle.addEventListener("pointerdown", (e: PointerEvent) => {
+			if (window.innerWidth < 768) return;
+			isResizing = true;
+			resizeHandle.setPointerCapture(e.pointerId);
+			document.body.style.cursor = "col-resize";
+			document.body.style.userSelect = "none";
+		});
+
+		resizeHandle.addEventListener("pointermove", (e: PointerEvent) => {
+			if (!isResizing) return;
+			const newWidth = Math.min(
+				Math.max(window.innerWidth - e.clientX, 320),
+				Math.min(780, window.innerWidth - 280),
+			);
+			document.documentElement.style.setProperty(
+				"--aj-drawer-width",
+				`${newWidth}px`,
+			);
+			try {
+				localStorage.setItem(STORAGE_WIDTH_KEY, String(Math.round(newWidth)));
+			} catch {}
+		});
+
+		const stopResize = (e: PointerEvent) => {
+			if (!isResizing) return;
+			isResizing = false;
+			try {
+				resizeHandle.releasePointerCapture(e.pointerId);
+			} catch {}
+			document.body.style.cursor = "";
+			document.body.style.userSelect = "";
+		};
+
+		resizeHandle.addEventListener("pointerup", stopResize);
+		resizeHandle.addEventListener("pointercancel", stopResize);
+	}
 
 	document.querySelectorAll(".ai-prompt-chip").forEach((chip) => {
 		chip.addEventListener("click", () => {
 			const prompt = chip.getAttribute("data-prompt");
-			if (prompt && input) {
-				input.value = prompt;
-				form?.dispatchEvent(new Event("submit", { cancelable: true }));
+			if (prompt) {
+				submitPrompt(prompt);
 			}
 		});
 	});
@@ -312,30 +391,6 @@
 			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>',
 		},
 		{
-			key: "pocketCasts",
-			label: "Pocket Casts",
-			colorClass: "text-[#F43E37]",
-			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c4.639 0 8.4 3.761 8.4 8.4h-2.1c0-3.48-2.82-6.3-6.3-6.3S5.7 8.52 5.7 12s2.82 6.3 6.3 6.3v2.1c-4.639 0-8.4-3.761-8.4-8.4S7.361 3.6 12 3.6zm0 3.45c2.734 0 4.95 2.216 4.95 4.95h-2.1c0-1.574-1.276-2.85-2.85-2.85S9.15 10.426 9.15 12s1.276 2.85 2.85 2.85v2.1c-2.734 0-4.95-2.216-4.95-4.95S9.266 7.05 12 7.05z"/></svg>',
-		},
-		{
-			key: "castbox",
-			label: "Castbox",
-			colorClass: "text-[#F55B23]",
-			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-4.5 9.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0v-5zm3.5-3a1 1 0 0 1 2 0v11a1 1 0 0 1-2 0v-11zm3.5 2a1 1 0 0 1 2 0v7a1 1 0 0 1-2 0v-7zm3.5 2.5a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2zm-14 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2z"/></svg>',
-		},
-		{
-			key: "castro",
-			label: "Castro",
-			colorClass: "text-[#00B265]",
-			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5a7.5 7.5 0 0 1 6.364 11.47l-2.12-1.474a4.92 4.92 0 1 0-8.488 0l-2.12 1.474A7.5 7.5 0 0 1 12 4.5zm0 4.8a2.7 2.7 0 1 1 0 5.4 2.7 2.7 0 0 1 0-5.4z"/></svg>',
-		},
-		{
-			key: "overcast",
-			label: "Overcast",
-			colorClass: "text-[#FC7E0F]",
-			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.25c-5.376 0-9.75 4.374-9.75 9.75s4.374 9.75 9.75 9.75 9.75-4.374 9.75-9.75S17.376 2.25 12 2.25zm0 1.5c4.55 0 8.25 3.7 8.25 8.25 0 2.91-1.515 5.475-3.795 6.945l-.915-2.07c1.62-.99 2.71-2.775 2.71-4.875 0-3.31-2.69-6-6-6s-6 2.69-6 6c0 2.1 1.09 3.885 2.71 4.875l-.915 2.07C5.765 17.475 4.25 14.91 4.25 12c0-4.55 3.7-8.25 8.25-8.25zm0 5.25a3 3 0 0 1 1.32 5.69l1.43 4.81h-1.6l-.8-2.69h-.7l-.8 2.69H9.25l1.43-4.81A3 3 0 0 1 12 9z"/></svg>',
-		},
-		{
 			key: "rss",
 			label: "RSS",
 			colorClass: "text-[#FFA500]",
@@ -348,7 +403,6 @@
 	}
 
 	function renderRichAssistantContent(container: HTMLElement, rawText: string) {
-		// Extract podcast provider metadata trailer if present
 		const providerMap = new Map<string, Record<string, string>>();
 		const providerItems: Array<{
 			title: string;
@@ -372,14 +426,16 @@
 			} catch {}
 		}
 
-		// Clean up any localhost, trailer, or malformed url artifacts
 		let cleanedText = stripProviderTrailer(rawText)
 			.replace(/http:\/\/localhost:\d+/g, "")
-			.replace(/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]\((?:http:\/\/localhost:\d+)?(\/[a-zA-Z0-9_\-\/]+)\)/g, "[$1]($2)")
+			.replace(
+				/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]\((?:http:\/\/localhost:\d+)?(\/[a-zA-Z0-9_\-\/]+)\)/g,
+				"[$1]($2)",
+			)
 			.replace(/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]/g, "[$1]($1)");
 
-		// Extract YouTube links
-		const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/))([\w-]{11})/gi;
+		const ytRegex =
+			/(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/))([\w-]{11})/gi;
 		const youtubeIds = new Set<string>();
 		let ytMatch: RegExpExecArray | null;
 		while ((ytMatch = ytRegex.exec(cleanedText)) !== null) {
@@ -388,9 +444,13 @@
 			}
 		}
 
-		// Extract Internal Episode / Post Links
-		const internalLinkRegex = /\[([^\]]+)\]\(((\/(?:podcast|post)\/[a-zA-Z0-9_\-]+))\)/gi;
-		const internalLinks: Array<{ title: string; url: string; type: "podcast" | "post" }> = [];
+		const internalLinkRegex =
+			/\[([^\]]+)\]\(((\/(?:podcast|post)\/[a-zA-Z0-9_\-]+))\)/gi;
+		const internalLinks: Array<{
+			title: string;
+			url: string;
+			type: "podcast" | "post";
+		}> = [];
 		let intMatch: RegExpExecArray | null;
 		while ((intMatch = internalLinkRegex.exec(cleanedText)) !== null) {
 			const linkUrl = intMatch[2];
@@ -401,12 +461,13 @@
 			}
 		}
 
-		// Ensure podcast items from tool results that were mentioned are included in internalLinks
 		for (const pItem of providerItems) {
 			if (
 				!internalLinks.some((l) => l.url === pItem.url) &&
 				(internalLinks.length === 0 ||
-					cleanedText.toLowerCase().includes(pItem.title.toLowerCase().slice(0, 24)))
+					cleanedText
+						.toLowerCase()
+						.includes(pItem.title.toLowerCase().slice(0, 24)))
 			) {
 				internalLinks.push({
 					title: pItem.title,
@@ -416,55 +477,46 @@
 			}
 		}
 
-		// Convert markdown formatting to safe HTML
 		let html = escapeHtml(cleanedText);
-
-		// Bold: **text**
 		html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-		// Bullet list: - text
-		html = html.replace(/^[ \t]*-[ \t]+(.*)$/gm, "<li class='ml-4 list-disc'>$1</li>");
-		// Markdown links: [Title](url)
+		html = html.replace(
+			/^[ \t]*-[ \t]+(.*)$/gm,
+			"<li class='ml-4 list-disc'>$1</li>",
+		);
+		// Internal links navigate in the same tab so the user can bounce between podcasts while the drawer stays open
 		html = html.replace(
 			/\[([^\]]+)\]\(([^)]+)\)/g,
-			"<a href='$2' class='text-primary font-medium hover:underline inline-flex items-center gap-0.5' target='_blank' rel='noopener noreferrer'>$1<svg class='size-3 inline opacity-70' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'></path><polyline points='15 3 21 3 21 9'></polyline><line x1='10' y1='14' x2='21' y2='3'></line></svg></a>",
+			(_match, label, href) => {
+				const isInternal = href.startsWith("/");
+				return isInternal
+					? `<a href='${href}' class='aj-internal-nav text-primary font-medium underline underline-offset-2 hover:opacity-80'>${label}</a>`
+					: `<a href='${href}' class='text-primary font-medium underline underline-offset-2 hover:opacity-80' target='_blank' rel='noopener noreferrer'>${label}</a>`;
+			},
 		);
 
-		// Naked YouTube URLs
 		html = html.replace(
 			/(https?:\/\/(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/))[\w-]+[^\s<]*)/gi,
 			"<a href='$1' class='text-primary font-medium hover:underline' target='_blank' rel='noopener noreferrer'>$1</a>",
 		);
 
-		// Newlines to <br> or <p>
-		html = html.replace(/\n\n/g, "<div class='h-2'></div>");
+		html = html.replace(/\n\n/g, "<div class='h-2.5'></div>");
 		html = html.replace(/\n/g, "<br />");
 
-		// Build Cards Section
 		let cardsHtml = "";
 
-		// 1. YouTube Preview Cards
 		if (youtubeIds.size > 0) {
-			cardsHtml += `<div class="mt-3 flex flex-col gap-2.5">`;
+			cardsHtml += `<div class="mt-3 flex flex-col gap-2">`;
 			for (const ytId of youtubeIds) {
 				const thumbUrl = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
 				const ytUrl = `https://www.youtube.com/watch?v=${ytId}`;
 				cardsHtml += `
-					<a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="group relative flex flex-col sm:flex-row items-center gap-3 p-2.5 rounded-xl border border-border bg-card/80 hover:bg-accent/60 transition-all hover:scale-[1.01] hover:shadow-md overflow-hidden text-left no-underline">
-						<div class="relative shrink-0 w-full sm:w-36 h-24 sm:h-20 rounded-lg overflow-hidden bg-black/20 flex items-center justify-center">
-							<img src="${thumbUrl}" alt="YouTube Preview" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity" loading="lazy" />
-							<div class="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/10 transition-colors">
-								<div class="size-8 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-									<svg class="size-4 ml-0.5 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-								</div>
-							</div>
+					<a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="group relative flex items-center gap-3 p-2 rounded-xl border border-border bg-background/60 hover:bg-accent/60 transition-all overflow-hidden text-left no-underline">
+						<div class="relative shrink-0 w-24 h-14 rounded-lg overflow-hidden bg-black/20 flex items-center justify-center">
+							<img src="${thumbUrl}" alt="YouTube Preview" class="w-full h-full object-cover" loading="lazy" />
 						</div>
-						<div class="flex-1 min-w-0 py-0.5">
-							<div class="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-red-500 mb-0.5">
-								<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-								YouTube Video
-							</div>
-							<div class="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">Watch on YouTube</div>
-							<div class="text-[11px] text-muted-foreground truncate">youtube.com/watch?v=${ytId}</div>
+						<div class="flex-1 min-w-0">
+							<div class="text-[10px] uppercase font-bold tracking-wider text-red-500">YouTube Video</div>
+							<div class="text-xs font-semibold text-foreground truncate group-hover:text-primary">Watch on YouTube</div>
 						</div>
 					</a>
 				`;
@@ -472,24 +524,23 @@
 			cardsHtml += `</div>`;
 		}
 
-		// 2. Clickable Episode / Post Cards (+ Podcast Host Provider Logos)
 		if (internalLinks.length > 0) {
-			cardsHtml += `<div class="mt-2.5 flex flex-col gap-2">`;
+			cardsHtml += `<div class="mt-3 flex flex-col gap-2">`;
 			for (const link of internalLinks) {
 				const isPodcast = link.type === "podcast";
 				const linksForEp = providerMap.get(link.url);
 				let providerBadgesHtml = "";
 				if (isPodcast && linksForEp) {
-					const badges = PROVIDER_CONFIG.filter((p) => Boolean(linksForEp[p.key]))
+					const badges = PROVIDER_CONFIG.filter((p) =>
+						Boolean(linksForEp[p.key]),
+					)
 						.map(
 							(p) => `
 								<a
 									href="${escapeHtml(linksForEp[p.key])}"
 									target="_blank"
 									rel="noopener noreferrer"
-									title="Listen on ${p.label}"
-									aria-label="Listen on ${p.label}"
-									class="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background/80 px-2 py-1 text-[11px] font-medium text-foreground hover:bg-accent hover:border-primary/40 transition-colors no-underline"
+									class="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-foreground hover:bg-accent transition-colors no-underline"
 								>
 									<span class="${p.colorClass}">${p.svg}</span>
 									<span>${p.label}</span>
@@ -499,8 +550,7 @@
 						.join("");
 					if (badges) {
 						providerBadgesHtml = `
-							<div class="mt-2 pt-2 border-t border-border/60 flex flex-wrap items-center gap-1.5">
-								<span class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mr-1">Listen on:</span>
+							<div class="mt-2 pt-2 border-t border-border/60 flex flex-wrap items-center gap-1">
 								${badges}
 							</div>
 						`;
@@ -508,25 +558,13 @@
 				}
 
 				cardsHtml += `
-					<div class="flex flex-col p-3 rounded-xl border border-border bg-card/90 hover:border-primary/40 transition-all shadow-2xs text-left">
-						<a href="${link.url}" class="group flex items-center justify-between gap-3 no-underline">
-							<div class="flex items-center gap-2.5 min-w-0">
-								<div class="size-8 rounded-lg ${isPodcast ? "bg-purple-500/10 text-purple-600 dark:text-purple-400" : "bg-blue-500/10 text-blue-600 dark:text-blue-400"} flex items-center justify-center shrink-0">
-									${
-										isPodcast
-											? '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" x2="12" y1="19" y2="22"></line></svg>'
-											: '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>'
-									}
-								</div>
-								<div class="min-w-0">
-									<div class="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">${escapeHtml(link.title)}</div>
-									<div class="text-[10px] text-muted-foreground uppercase tracking-wider">${isPodcast ? "Podcast Episode" : "Blog Post"} • CodingCat.dev</div>
-								</div>
+					<div class="flex flex-col p-2.5 rounded-xl border border-border bg-background/70 hover:border-primary/50 transition-all text-left">
+						<a href="${link.url}" class="aj-internal-nav group flex items-center justify-between gap-2.5 no-underline">
+							<div class="min-w-0">
+								<div class="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">${escapeHtml(link.title)}</div>
+								<div class="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">${isPodcast ? "Podcast Episode" : "Blog Post"}</div>
 							</div>
-							<div class="shrink-0 text-xs font-medium text-primary flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-								<span>View</span>
-								<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-							</div>
+							<span class="shrink-0 text-xs font-medium text-primary">Open →</span>
 						</a>
 						${providerBadgesHtml}
 					</div>
@@ -538,65 +576,100 @@
 		container.innerHTML = html + cardsHtml;
 	}
 
-	function appendMessage(
+	function appendMessageElement(
 		role: "user" | "assistant",
 		initialText = "",
+		telemetryText?: string,
 	): { contentEl: HTMLElement; telemetryEl?: HTMLElement } {
-		if (welcomeContainer) {
-			welcomeContainer.classList.add("hidden");
-		}
+		welcomeContainer?.classList.add("hidden");
 
 		const msgDiv = document.createElement("div");
-		msgDiv.className = `flex flex-col gap-1 max-w-[85%] ${
-			role === "user"
-				? "ml-auto bg-primary text-primary-foreground rounded-2xl rounded-tr-xs px-4 py-2.5"
-				: "mr-auto bg-muted/60 text-foreground rounded-2xl rounded-tl-xs px-4 py-2.5 border border-border"
-		}`;
-
-		let telemetryEl: HTMLElement | undefined;
-
-		if (role === "assistant") {
-			const badgeRow = document.createElement("div");
-			badgeRow.className = "flex flex-wrap items-center justify-between gap-2 mb-0.5";
-
-			const badge = document.createElement("div");
-			badge.className = "flex items-center gap-1.5 text-[11px] font-semibold text-primary";
-			badge.innerHTML = `<img src="/icon.svg" alt="" class="size-3.5 object-contain" width="14" height="14" /><span>Agent AJ</span>`;
-
-			telemetryEl = document.createElement("span");
-			telemetryEl.className = "hidden rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-medium text-primary";
-
-			badgeRow.appendChild(badge);
-			badgeRow.appendChild(telemetryEl);
-			msgDiv.appendChild(badgeRow);
+		if (role === "user") {
+			msgDiv.className =
+				"ml-auto max-w-[85%] rounded-lg border border-border bg-muted/80 px-3.5 py-2 text-sm text-foreground";
+			const contentDiv = document.createElement("div");
+			contentDiv.textContent = initialText;
+			msgDiv.appendChild(contentDiv);
+			messagesContainer?.appendChild(msgDiv);
+			return { contentEl: contentDiv };
 		}
 
+		msgDiv.className = "flex flex-col gap-1.5 w-full text-foreground";
+
+		const telemetryEl = document.createElement("div");
+		telemetryEl.className =
+			"font-mono text-[10px] text-primary/90 flex items-center gap-1.5";
+		if (telemetryText) {
+			telemetryEl.textContent = telemetryText;
+		} else {
+			telemetryEl.classList.add("hidden");
+		}
+		msgDiv.appendChild(telemetryEl);
+
 		const contentDiv = document.createElement("div");
-		contentDiv.className = "leading-relaxed text-sm";
+		contentDiv.className = "leading-relaxed text-sm text-foreground/95";
 		contentDiv.textContent = initialText;
 
 		msgDiv.appendChild(contentDiv);
 		messagesContainer?.appendChild(msgDiv);
-		messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: "smooth" });
+		messagesContainer?.scrollTo({
+			top: messagesContainer.scrollHeight,
+			behavior: "smooth",
+		});
 
 		return { contentEl: contentDiv, telemetryEl };
 	}
 
-	form?.addEventListener("submit", async (e) => {
-		e.preventDefault();
-		if (!input) return;
-		const prompt = input.value.trim();
+	// Restore conversation history from localStorage across page navigations
+	function hydrateStoredConversation() {
+		storedMessages = loadStoredMessages();
+		if (storedMessages.length === 0) return;
+
+		welcomeContainer?.classList.add("hidden");
+		for (const msg of storedMessages) {
+			const { contentEl } = appendMessageElement(
+				msg.role,
+				msg.role === "user" ? msg.text : "",
+				msg.telemetry,
+			);
+			if (msg.role === "assistant") {
+				renderRichAssistantContent(contentEl, msg.text);
+			}
+			if (msg.telemetry && headerTelemetryPill) {
+				headerTelemetryPill.textContent = msg.telemetry;
+				headerTelemetryPill.classList.remove("hidden");
+			}
+		}
+		if (messagesContainer) {
+			messagesContainer.scrollTop = messagesContainer.scrollHeight;
+		}
+	}
+
+	hydrateStoredConversation();
+
+	async function submitPrompt(rawPrompt: string) {
+		const prompt = rawPrompt.trim();
 		if (!prompt || isStreaming) return;
 
-		input.value = "";
+		if (input) input.value = "";
 		isStreaming = true;
 		if (sendBtn) sendBtn.disabled = true;
 
-		appendMessage("user", prompt);
-		const { contentEl: assistantContent, telemetryEl } = appendMessage(
+		recordRecentAsk(prompt);
+		storedMessages.push({
+			role: "user",
+			text: prompt,
+			timestamp: Date.now(),
+		});
+		saveStoredMessages();
+
+		appendMessageElement("user", prompt);
+		const { contentEl: assistantContent, telemetryEl } = appendMessageElement(
 			"assistant",
 			"Thinking...",
 		);
+
+		let telemetryLabel = "";
 
 		try {
 			const res = await fetch("/api/chat", {
@@ -608,17 +681,24 @@
 			const extSource = res.headers.get("x-aj-extraction-source");
 			const extIntent = res.headers.get("x-aj-intent");
 			const extLatency = res.headers.get("x-aj-extraction-latency-ms");
-			const cascadeMode = res.headers.get("x-aj-cascade-mode");
-			if (telemetryEl && extSource && extIntent) {
-				telemetryEl.textContent = `⚡ ${extSource}: ${extIntent} (${extLatency ?? "0"}ms • ${cascadeMode ?? "cascade"})`;
-				telemetryEl.classList.remove("hidden");
+			if (extSource && extIntent) {
+				telemetryLabel = `⚡ ${extSource}: ${extIntent} (${extLatency ?? "0"}ms)`;
+				if (telemetryEl) {
+					telemetryEl.textContent = telemetryLabel;
+					telemetryEl.classList.remove("hidden");
+				}
+				if (headerTelemetryPill) {
+					headerTelemetryPill.textContent = telemetryLabel;
+					headerTelemetryPill.classList.remove("hidden");
+				}
 			}
 
 			if (!res.ok) {
 				const errorJson = (await res.json().catch(() => ({}))) as {
 					error?: string;
 				};
-				assistantContent.textContent = `Error: ${errorJson.error || "Failed to generate answer"}`;
+				const errText = `Error: ${errorJson.error || "Failed to generate answer"}`;
+				assistantContent.textContent = errText;
 				return;
 			}
 
@@ -636,20 +716,46 @@
 				if (done) break;
 				const chunk = decoder.decode(value, { stream: true });
 				accumulatedText += chunk;
-				// Render progressive text during streaming (without metadata trailer)
 				assistantContent.textContent = stripProviderTrailer(accumulatedText);
-				messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: "smooth" });
+				messagesContainer?.scrollTo({
+					top: messagesContainer.scrollHeight,
+					behavior: "smooth",
+				});
 			}
 
-			// On complete stream finish: render full rich content with cards & links
 			renderRichAssistantContent(assistantContent, accumulatedText);
-			messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: "smooth" });
+			storedMessages.push({
+				role: "assistant",
+				text: accumulatedText,
+				telemetry: telemetryLabel || undefined,
+				timestamp: Date.now(),
+			});
+			saveStoredMessages();
+			messagesContainer?.scrollTo({
+				top: messagesContainer.scrollHeight,
+				behavior: "smooth",
+			});
 		} catch (err) {
 			assistantContent.textContent = `Connection error: ${err instanceof Error ? err.message : String(err)}`;
 		} finally {
 			isStreaming = false;
 			if (sendBtn) sendBtn.disabled = false;
 			input?.focus();
+		}
+	}
+
+	// Enter to send, Shift+Enter for newline
+	input?.addEventListener("keydown", (e: KeyboardEvent) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			submitPrompt(input.value);
+		}
+	});
+
+	form?.addEventListener("submit", (e) => {
+		e.preventDefault();
+		if (input) {
+			submitPrompt(input.value);
 		}
 	});
 </script>

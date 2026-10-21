@@ -1858,7 +1858,21 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 			assert.ok(searchModalSource.includes('closedby="any"'));
 			assert.ok(searchModalSource.includes("modal-mode-ai"));
+			assert.ok(searchModalSource.includes("RECENTLY ASKED"));
+			assert.ok(searchModalSource.includes("RECENTLY VIEWED"));
 			assert.ok(searchModalSource.includes("modal-clairic-badge"));
+
+			const chatDrawerSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/ChatModal.astro"),
+				"utf-8",
+			);
+			assert.ok(chatDrawerSource.includes("aj-agent-drawer"));
+			assert.ok(chatDrawerSource.includes("aj-drawer-resize-handle"));
+			assert.ok(chatDrawerSource.includes("cc_aj_drawer_open"));
+			assert.ok(
+				!chatDrawerSource.includes('id="ai-chat-open-btn"'),
+				"Must remove floating bottom-right Ask Agent AJ button",
+			);
 
 			const searchPageSource = fs.readFileSync(
 				path.resolve(SRC_DIR, "pages/search.astro"),

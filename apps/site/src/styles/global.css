@@ -211,3 +211,13 @@
 	font-size: 0.875rem;
 	line-height: 1;
 }
+
+/* Desktop Right-Side Resizable Ask Agent Drawer layout shift */
+@media (min-width: 768px) {
+	html.aj-drawer-open body {
+		padding-right: var(--aj-drawer-width, 420px);
+	}
+	html.aj-drawer-open #site-header {
+		right: var(--aj-drawer-width, 420px);
+	}
+}
