@@ -1,5 +1,5 @@
 import { defineQuery } from "groq";
-import { baseFieldsNoContent, contentFields } from "./shared";
+import { baseFieldsNoContent, contentFields, personRefFields } from "./shared";
 
 /**
  * Counts are split per type rather than taking a $type parameter. A
@@ -21,9 +21,7 @@ export const latestPostQuery =
 	defineQuery(`*[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {
   ${baseFieldsNoContent},
   author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   }
 }`);
 
@@ -32,8 +30,6 @@ export const morePostQuery =
 	defineQuery(`*[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
   ${baseFieldsNoContent},
   author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   }
 }`);

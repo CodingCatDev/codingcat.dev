@@ -4,7 +4,6 @@ import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
-import UserSocials from "@/components/UserSocials.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { sponsorQueryWithRelated } from "@/lib/sanity/queries";
@@ -22,7 +21,17 @@ if (!sponsor?._id) {
 
 const path = `/sponsor/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const ogImage = sanity.resolveOpenGraphImage(sponsor.coverImage ?? undefined);
+const avatarUrl = sanity
+	.urlForImage(sponsor.coverImage ?? undefined)
+	?.width(256)
+	.height(256)
+	.fit("crop")
+	.url();
+const rawExcerpt = sponsor.excerpt?.trim();
+const description =
+	rawExcerpt && rawExcerpt.toLowerCase() !== "fix me"
+		? rawExcerpt
+		: `${sponsor.title} — Official sponsor supporting podcasts and web development tutorials on CodingCat.dev.`;
 
 // Sponsored content is listed in full rather than capped — `sponsorRelated`
 // uses an unbounded slice, unlike the person queries.
@@ -31,10 +40,15 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 ---
 
 <BaseLayout
-	title={sponsor.title}
-	description={sponsor.excerpt}
-	image={ogImage}
-	ogFallback={{ title: sponsor.title, type: "Sponsor" }}
+	title={`${sponsor.title} — Sponsor | CodingCat.dev`}
+	ogTitle={sponsor.title}
+	description={description}
+	ogFallback={{
+		title: sponsor.title,
+		subtitle: description,
+		type: "Sponsor",
+		avatar: avatarUrl,
+	}}
 	canonical={path}
 	schema={[
 		breadcrumbSchema(origin, [
@@ -52,8 +66,6 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 			<div class="shrink-0">
 				<CoverMedia
 					image={sponsor.coverImage}
-					video={sponsor.videoCloudinary}
-					youtube={sponsor.youtube}
 					class="size-24 rounded-md object-cover md:size-32"
 				/>
 			</div>
@@ -63,7 +75,6 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 				>
 					{sponsor.title}
 				</h1>
-				<UserSocials socials={sponsor.socials} websites={sponsor.websites} />
 			</div>
 		</div>
 

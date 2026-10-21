@@ -37,36 +37,11 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 		`[Sync Nightly Dataset] Resetting dataset "${targetDataset}" from source "${sourceDataset}" for project ${projectId}...`,
 	);
 
-	// 1. Delete existing target dataset (dev) if it exists
-	const deleteUrl = `${apiHost}/${apiVersion}/projects/${projectId}/datasets/${targetDataset}`;
-	console.log(`[Sync Nightly Dataset] Deleting existing dataset "${targetDataset}": ${deleteUrl}`);
-
-	const deleteResp = await fetch(deleteUrl, {
-		method: "DELETE",
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-
-	if (deleteResp.ok) {
-		console.log(
-			`[Sync Nightly Dataset] Target dataset "${targetDataset}" deleted successfully (HTTP ${deleteResp.status}).`,
-		);
-	} else if (deleteResp.status === 404) {
-		console.log(
-			`[Sync Nightly Dataset] Target dataset "${targetDataset}" does not exist yet (HTTP 404). Proceeding to clone.`,
-		);
-	} else {
-		const deleteError = await deleteResp.text();
-		console.warn(
-			`[Sync Nightly Dataset] Notice when deleting dataset "${targetDataset}": HTTP ${deleteResp.status} — ${deleteError}`,
-		);
-	}
-
-	// 2. Clone source dataset (production) to target (dev) via Sanity Enterprise Copy API
+	// Ensure target dataset exists or try Enterprise Copy API without pre-deleting `dev`,
+	// because non-Enterprise plans fail on `/copy` and pre-deleting `dev` leaves the dev site with no dataset.
 	const copyUrl = `${apiHost}/${apiVersion}/projects/${projectId}/datasets/${sourceDataset}/copy`;
 	console.log(
-		`[Sync Nightly Dataset] Copying "${sourceDataset}" -> "${targetDataset}": ${copyUrl}`,
+		`[Sync Nightly Dataset] Attempting dataset copy "${sourceDataset}" -> "${targetDataset}": ${copyUrl}`,
 	);
 
 	const copyResp = await fetch(copyUrl, {
@@ -83,6 +58,15 @@ export const handler = scheduledEventHandler(async ({ context }) => {
 
 	if (!copyResp.ok) {
 		const errorText = await copyResp.text();
+		if (
+			copyResp.status === 400 &&
+			errorText.includes("advanced dataset management")
+		) {
+			console.warn(
+				`[Sync Nightly Dataset] Plan does not include Enterprise dataset copy API. Skipping destructive delete; dataset sync is handled by GitHub Actions CLI export/import.`,
+			);
+			return;
+		}
 		throw new Error(
 			`[Sync Nightly Dataset] Failed to initiate dataset copy from "${sourceDataset}" to "${targetDataset}": HTTP ${copyResp.status} — ${errorText}`,
 		);

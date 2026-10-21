@@ -20,6 +20,15 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 		.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
 		.replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, "")
 		.replace(/<dialog\b[^<]*(?:(?!<\/dialog>)<[^<]*)*<\/dialog>/gi, "")
+		.replace(
+			/<div[^>]*class=["'][^"']*transcript-widget[^"']*["'][^>]*>[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>\s*<\/div>/gi,
+			"",
+		)
+		.replace(
+			/<a[^>]*href=["']https:\/\/www\.podmatch\.com\/member\/codingcatdev["'][^>]*>[\s\S]*?<\/a>/gi,
+			"",
+		)
+		.replace(/<button\b[^<]*(?:(?!<\/button>)<[^<]*)*<\/button>/gi, "")
 		.replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, "")
 		.replace(/<header\b[^<]*(?:(?!<\/header>)<[^<]*)*<\/header>/gi, "")
 		.replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, "");
@@ -79,7 +88,8 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 	);
 
 	// 7. Bold, Italic, Strikethrough
-	text = text.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**");
+	text = text.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2** ");
+	text = text.replace(/\*\* +([.,!?:;])/g, "**$1");
 	text = text.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, "*$2*");
 	text = text.replace(/<(s|del|strike)[^>]*>([\s\S]*?)<\/\1>/gi, "~~$2~~");
 
@@ -108,7 +118,7 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 
 	// 10. Lists
 	text = text.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_match, item) => {
-		return `\n- ${stripTags(item).trim()}`;
+		return `\n- ${stripTags(item).replace(/\s+/g, " ").trim()}`;
 	});
 	text = text.replace(/<\/(ul|ol)>/gi, "\n\n");
 

@@ -877,7 +877,8 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(setCookieVal, "true");
 			assert.equal(setCookieOpts.httpOnly, true);
 			assert.equal(setCookieOpts.secure, true);
-			assert.equal(setCookieOpts.sameSite, "lax");
+			assert.equal(setCookieOpts.sameSite, "none");
+			assert.equal(setCookieOpts.partitioned, true);
 		});
 
 		it("6.7 POST and GET /api/draft-mode/disable clears __sanity_preview cookie and redirects", async () => {
@@ -1198,6 +1199,570 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(skillRes.status, 200);
 			const skillText = await skillRes.text();
 			assert.ok(skillText.includes("name: search-content"));
+		});
+
+		it("7.11 Better Auth OAuth 2.1 Dynamic Client Registration (RFC 7591) supports automated client creation (Gemini connection)", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const request = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini",
+					redirect_uris: ["https://gemini.google.com/oauth-callback"],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_basic",
+				}),
+			});
+
+			const res = await oauth2Module.ALL({ request, locals });
+			assert.equal(res.status, 201);
+			const data = await res.json();
+			assert.ok(data.client_id, "Must return client_id");
+			assert.ok(data.client_secret, "Must return client_secret");
+			assert.deepEqual(data.redirect_uris, [
+				"https://gemini.google.com/oauth-callback",
+			]);
+		});
+
+		it("7.12 Legacy /oauth/register alias maps to Better Auth registration endpoint", async () => {
+			const oauthModule = loadModule("src/pages/oauth/[...slug].ts");
+			const request = new Request("https://codingcat.dev/oauth/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini",
+					redirect_uris: ["https://gemini.google.com/oauth-callback"],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_basic",
+				}),
+			});
+
+			const res = await oauthModule.ALL({ request, locals });
+			assert.equal(res.status, 201);
+			const data = await res.json();
+			assert.ok(data.client_id, "Must return client_id via alias");
+		});
+
+		it("7.13 /oauth2/authorize completes automated Account Linking redirect with code and state", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const registeredClient = {
+				clientId: "test_gemini_client_id",
+				redirectUris: JSON.stringify([
+					"https://oauth-redirect.googleusercontent.com/r/gemini-app",
+				]),
+				disabled: 0,
+			};
+			const verifications = new Map();
+			const mockDb = {
+				prepare(sql) {
+					return {
+						bind(...args) {
+							return {
+								async first() {
+									if (sql.includes("FROM oauthClient")) {
+										return registeredClient;
+									}
+									return null;
+								},
+								async run() {
+									if (sql.includes("INSERT INTO verification")) {
+										verifications.set(args[1], JSON.parse(args[2]));
+									}
+									return { success: true };
+								},
+							};
+						},
+					};
+				},
+			};
+
+			const request = new Request(
+				"https://codingcat.dev/oauth2/authorize?client_id=test_gemini_client_id&redirect_uri=https://oauth-redirect.googleusercontent.com/r/gemini-app&response_type=code&state=gemini_state_123",
+				{ method: "GET" },
+			);
+
+			const testLocals = { ...locals, db: mockDb };
+			const res = await oauth2Module.ALL({ request, locals: testLocals });
+			assert.equal(res.status, 302, "Must return 302 redirect");
+			const location = res.headers.get("Location");
+			assert.ok(location, "Must have Location header");
+			const locUrl = new URL(location);
+			assert.equal(
+				locUrl.origin,
+				"https://oauth-redirect.googleusercontent.com",
+			);
+			assert.equal(locUrl.pathname, "/r/gemini-app");
+			assert.equal(locUrl.searchParams.get("state"), "gemini_state_123");
+			assert.ok(
+				locUrl.searchParams.get("code"),
+				"Must contain authorization code",
+			);
+			assert.equal(locUrl.searchParams.get("iss"), "https://codingcat.dev");
+		});
+
+		it("7.14 /oauth2/token appends refresh_token for persistent Gemini Account Linking", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const regReq = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini Token Test",
+					redirect_uris: [
+						"https://oauth-redirect.googleusercontent.com/r/test",
+					],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_post",
+				}),
+			});
+			const regRes = await oauth2Module.ALL({ request: regReq, locals });
+			const regData = await regRes.json();
+
+			const { hashToken, getAuth } = loadModule("src/lib/auth.ts");
+			const auth = getAuth("https://codingcat.dev");
+
+			const ctx = await auth.$context;
+			const code = `test_code_refresh_${Date.now()}`;
+			const identifier = await hashToken(code);
+
+			const user = await ctx.internalAdapter.createUser({
+				email: "test_mcp@codingcat.dev",
+				emailVerified: true,
+				name: "Test MCP User",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+			const session = await ctx.internalAdapter.createSession(user.id);
+
+			await ctx.internalAdapter.createVerificationValue({
+				identifier,
+				value: JSON.stringify({
+					type: "authorization_code",
+					query: {
+						client_id: regData.client_id,
+						redirect_uri: "https://oauth-redirect.googleusercontent.com/r/test",
+						response_type: "code",
+						scope: "read:content search mcp:tools agent",
+						state: "st123",
+					},
+					userId: user.id,
+					sessionId: session.id,
+					authTime: Date.now(),
+					resource: ["https://codingcat.dev/mcp"],
+				}),
+				expiresAt: new Date(Date.now() + 600000),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			const tokenReq = new Request("https://codingcat.dev/oauth2/token", {
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({
+					grant_type: "authorization_code",
+					code,
+					client_id: regData.client_id,
+					client_secret: regData.client_secret,
+					redirect_uri: "https://oauth-redirect.googleusercontent.com/r/test",
+				}),
+			});
+
+			const tokenRes = await oauth2Module.ALL({ request: tokenReq, locals });
+			assert.equal(tokenRes.status, 200);
+
+			const tokenData = await tokenRes.json();
+			assert.ok(tokenData.access_token, "Must return access_token");
+			assert.ok(
+				tokenData.refresh_token,
+				"Must return refresh_token for Google Account Linking",
+			);
+			assert.equal(tokenData.token_type, "Bearer");
+		});
+
+		it("7.15 astro.config.mjs disables checkOrigin CSRF blocking and subpath /.well-known/oauth-protected-resource/mcp resolves", async () => {
+			const astroConfig = fs.readFileSync(
+				path.resolve(SRC_DIR, "../astro.config.mjs"),
+				"utf-8",
+			);
+			assert.ok(
+				astroConfig.includes("checkOrigin: false"),
+				"astro.config.mjs must disable checkOrigin so back-channel POST /oauth2/token requests without Origin header are not blocked with 403",
+			);
+
+			const subpathPrmModule = loadModule(
+				"src/pages/.well-known/oauth-protected-resource/[...slug].ts",
+			);
+			const res = await subpathPrmModule.GET({
+				params: { slug: "mcp" },
+				locals,
+			});
+			assert.equal(res.status, 200);
+			const data = await res.json();
+			assert.equal(data.resource, "https://codingcat.dev/mcp");
+			assert.deepEqual(data.authorization_servers, ["https://codingcat.dev"]);
+		});
+
+		it("7.16 /oauth2/token supports full OIDC + PKCE S256 scope exchange (openid profile email offline_access) for Google Gemini", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const regReq = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Gemini OIDC PKCE Test",
+					redirect_uris: [
+						"https://vertexaisearch.cloud.google.com/oauth-redirect",
+					],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_basic",
+				}),
+			});
+			const regRes = await oauth2Module.ALL({ request: regReq, locals });
+			const regData = await regRes.json();
+			assert.ok(
+				regData.scope.includes("openid") &&
+					regData.scope.includes("offline_access"),
+				"Registered client must default to allowing openid and offline_access scopes",
+			);
+
+			const { hashToken, getAuth } = loadModule("src/lib/auth.ts");
+			const auth = getAuth("https://codingcat.dev");
+			const ctx = await auth.$context;
+
+			const codeVerifier =
+				"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk_gemini_pkce_verifier";
+			const codeChallenge = await hashToken(codeVerifier);
+			const code = `test_code_oidc_${Date.now()}`;
+			const identifier = await hashToken(code);
+
+			const user = await ctx.internalAdapter.createUser({
+				email: "gemini_oidc@codingcat.dev",
+				emailVerified: true,
+				name: "Gemini OIDC User",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+			const session = await ctx.internalAdapter.createSession(user.id);
+
+			await ctx.internalAdapter.createVerificationValue({
+				identifier,
+				value: JSON.stringify({
+					type: "authorization_code",
+					query: {
+						client_id: regData.client_id,
+						redirect_uri:
+							"https://vertexaisearch.cloud.google.com/oauth-redirect",
+						response_type: "code",
+						scope:
+							"openid profile email offline_access read:content search mcp:tools agent",
+						state: "state_gemini_pkce",
+						code_challenge: codeChallenge,
+						code_challenge_method: "S256",
+					},
+					userId: user.id,
+					sessionId: session.id,
+					authTime: Date.now(),
+					resource: ["https://codingcat.dev/mcp"],
+				}),
+				expiresAt: new Date(Date.now() + 600000),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			const basicAuth = btoa(`${regData.client_id}:${regData.client_secret}`);
+			const tokenReq = new Request("https://codingcat.dev/oauth2/token", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+					Authorization: `Basic ${basicAuth}`,
+				},
+				body: new URLSearchParams({
+					grant_type: "authorization_code",
+					code,
+					code_verifier: codeVerifier,
+					redirect_uri:
+						"https://vertexaisearch.cloud.google.com/oauth-redirect",
+				}),
+			});
+
+			const tokenRes = await oauth2Module.ALL({ request: tokenReq, locals });
+			assert.equal(tokenRes.status, 200);
+			const tokenData = await tokenRes.json();
+			assert.ok(tokenData.access_token, "Must return access_token");
+			assert.ok(tokenData.refresh_token, "Must return refresh_token");
+			assert.ok(tokenData.id_token, "Must return id_token for openid scope");
+		});
+
+		it("7.17 MCP endpoint supports 2026-07-28 server/discover, Streamable HTTP 405/202/204, and OAuth 401 challenge", async () => {
+			const mcpModule = loadModule("src/pages/api/mcp.ts");
+
+			// 1. server/discover (MCP 2026-07-28 modern era)
+			const discoverReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 1,
+					method: "server/discover",
+					params: {},
+				}),
+			});
+			const discoverRes = await mcpModule.POST({
+				request: discoverReq,
+				locals,
+			});
+			assert.equal(discoverRes.status, 200);
+			const discoverData = await discoverRes.json();
+			assert.ok(
+				discoverData.result.supportedVersions.includes("2026-07-28"),
+				"Must advertise 2026-07-28 in server/discover",
+			);
+			assert.equal(discoverData.result.resultType, "complete");
+
+			// 2. Modern tools/list with 2026-07-28 metadata
+			const toolsReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 2,
+					method: "tools/list",
+					params: {
+						_meta: {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+						},
+					},
+				}),
+			});
+			const toolsRes = await mcpModule.POST({ request: toolsReq, locals });
+			const toolsData = await toolsRes.json();
+			assert.equal(toolsData.result.resultType, "complete");
+			assert.equal(toolsData.result.cacheScope, "public");
+			assert.ok(Array.isArray(toolsData.result.tools));
+
+			// 3. Notification returns 202 Accepted
+			const notifReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					method: "notifications/initialized",
+				}),
+			});
+			const notifRes = await mcpModule.POST({ request: notifReq, locals });
+			assert.equal(notifRes.status, 202);
+
+			// 4. Streamable HTTP GET with mcp-protocol-version returns 405 Method Not Allowed
+			const sseProbeReq = new Request("https://codingcat.dev/mcp", {
+				method: "GET",
+				headers: {
+					Accept: "text/event-stream",
+					"mcp-protocol-version": "2025-11-25",
+				},
+			});
+			const sseProbeRes = await mcpModule.GET({
+				request: sseProbeReq,
+				locals,
+			});
+			assert.equal(sseProbeRes.status, 405);
+
+			// 5. DELETE returns 204 No Content
+			const delReq = new Request("https://codingcat.dev/mcp", {
+				method: "DELETE",
+			});
+			const delRes = await mcpModule.DELETE({ request: delReq, locals });
+			assert.equal(delRes.status, 204);
+
+			// 6. ?requireAuth=1 without token returns 401 with WWW-Authenticate
+			const authChallengeReq = new Request(
+				"https://codingcat.dev/mcp?requireAuth=1",
+				{ method: "POST" },
+			);
+			const authChallengeRes = await mcpModule.POST({
+				request: authChallengeReq,
+				locals,
+			});
+			assert.equal(authChallengeRes.status, 401);
+			assert.ok(
+				authChallengeRes.headers
+					.get("www-authenticate")
+					?.includes("/.well-known/oauth-protected-resource/mcp"),
+			);
+		});
+
+		it("7.18 /oauth2/token normalizes dual client authentication (Basic header + client_secret body) and JSON bodies", async () => {
+			const oauth2Module = loadModule("src/pages/oauth2/[...slug].ts");
+			const regReq = new Request("https://codingcat.dev/oauth2/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					client_name: "Google Dual Auth Client",
+					redirect_uris: [
+						"https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-test",
+					],
+					grant_types: ["authorization_code", "refresh_token"],
+					response_types: ["code"],
+					token_endpoint_auth_method: "client_secret_post",
+				}),
+			});
+			const regRes = await oauth2Module.ALL({ request: regReq, locals });
+			const regData = await regRes.json();
+
+			const { hashToken, getAuth } = loadModule("src/lib/auth.ts");
+			const auth = getAuth("https://codingcat.dev");
+			const ctx = await auth.$context;
+
+			const code = `test_code_dual_${Date.now()}`;
+			const identifier = await hashToken(code);
+			const user = await ctx.internalAdapter.createUser({
+				email: "dual_auth@codingcat.dev",
+				emailVerified: true,
+				name: "Dual Auth User",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+			const session = await ctx.internalAdapter.createSession(user.id);
+
+			await ctx.internalAdapter.createVerificationValue({
+				identifier,
+				value: JSON.stringify({
+					type: "authorization_code",
+					query: {
+						client_id: regData.client_id,
+						redirect_uri:
+							"https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-test",
+						response_type: "code",
+						scope: "read:content search mcp:tools agent offline_access",
+						state: "dual_state",
+					},
+					userId: user.id,
+					sessionId: session.id,
+					authTime: Date.now(),
+					resource: ["https://codingcat.dev/mcp", "https://codingcat.dev"],
+				}),
+				expiresAt: new Date(Date.now() + 600000),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			// Send BOTH Authorization: Basic AND client_secret in body (which Better Auth normally rejects with 400)
+			const basicAuth = btoa(`${regData.client_id}:${regData.client_secret}`);
+			const tokenReq = new Request("https://codingcat.dev/oauth2/token", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Basic ${basicAuth}`,
+				},
+				body: JSON.stringify({
+					grant_type: "authorization_code",
+					code,
+					client_id: regData.client_id,
+					client_secret: regData.client_secret,
+					redirect_uri:
+						"https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-test",
+					resource: "https://codingcat.dev",
+				}),
+			});
+
+			const tokenRes = await oauth2Module.ALL({ request: tokenReq, locals });
+			assert.equal(tokenRes.status, 200);
+			const tokenData = await tokenRes.json();
+			assert.ok(tokenData.access_token, "Must return access_token");
+			assert.ok(tokenData.refresh_token, "Must return refresh_token");
+		});
+
+		it("7.19 Web Bot Auth JWKS directory, scoped /blog/llms.txt & /podcasts/llms.txt, and clean HTML-to-Markdown stripping", async () => {
+			// 1. Web Bot Auth JWKS directory
+			const webBotAuthModule = loadModule(
+				"src/pages/.well-known/http-message-signatures-directory.ts",
+			);
+			const wbaReq = new Request(
+				"https://codingcat.dev/.well-known/http-message-signatures-directory",
+			);
+			const wbaRes = await webBotAuthModule.GET({ request: wbaReq, locals });
+			assert.equal(wbaRes.status, 200);
+			assert.ok(
+				wbaRes.headers
+					.get("content-type")
+					?.includes("application/http-message-signatures-directory+json"),
+			);
+			const wbaData = await wbaRes.json();
+			assert.ok(
+				Array.isArray(wbaData.keys) && wbaData.keys.length >= 1,
+				"Must contain at least one public verification key",
+			);
+			assert.equal(wbaData.keys[0].kty, "OKP");
+			assert.equal(wbaData.keys[0].crv, "Ed25519");
+
+			// 2. Scoped /blog/llms.txt and /podcasts/llms.txt
+			const blogLlmsModule = loadModule("src/pages/blog/llms.txt.ts");
+			const podcastsLlmsModule = loadModule("src/pages/podcasts/llms.txt.ts");
+			const mockSanityLocals = {
+				...locals,
+				sanity: {
+					async fetchPublished() {
+						return [
+							{
+								title: "Test Entry",
+								slug: "test-entry",
+								excerpt: "High value description for AI context window",
+								guests: ["Alex Patterson"],
+							},
+						];
+					},
+				},
+			};
+
+			const blogRes = await blogLlmsModule.GET({ locals: mockSanityLocals });
+			assert.equal(blogRes.status, 200);
+			const blogText = await blogRes.text();
+			assert.ok(blogText.includes("# CodingCat.dev Blog"));
+			assert.ok(
+				blogText.includes("https://codingcat.dev/post/test-entry/index.md"),
+			);
+
+			const podcastRes = await podcastsLlmsModule.GET({
+				locals: mockSanityLocals,
+			});
+			assert.equal(podcastRes.status, 200);
+			const podcastText = await podcastRes.text();
+			assert.ok(podcastText.includes("# CodingCat.dev Podcasts"));
+			assert.ok(
+				podcastText.includes(
+					"https://codingcat.dev/podcast/test-entry/index.md",
+				),
+			);
+
+			// 3. htmlToMarkdown strips client-only interactive transcript modal chrome
+			const { htmlToMarkdown } = loadModule("src/lib/html-to-markdown.ts");
+			const sampleHtml = `
+				<main>
+					<article>
+						<h1>Sample Episode</h1>
+						<div class="transcript-widget inline-block">
+							<button class="transcript-open-btn">View Transcript</button>
+							<div class="transcript-modal hidden">
+								<div>
+									<p>Fetching transcript from YouTube...</p>
+									<footer><span>Loading transcript...</span></footer>
+								</div>
+							</div>
+						</div>
+						<p>Real episode content.</p>
+					</article>
+				</main>
+			`;
+			const md = htmlToMarkdown(
+				sampleHtml,
+				"https://codingcat.dev/podcast/sample",
+			);
+			assert.ok(md.includes("Real episode content."));
+			assert.ok(
+				!md.includes("Fetching transcript from YouTube"),
+				"Must strip client-only modal loading skeleton from Markdown",
+			);
 		});
 	});
 });

@@ -1,5 +1,10 @@
 import { defineQuery } from "groq";
-import { baseFieldsNoContent, contentFields, podcastFields } from "./shared";
+import {
+	baseFieldsNoContent,
+	contentFields,
+	personRefFields,
+	podcastFields,
+} from "./shared";
 
 export const podcastCountQuery = defineQuery(
 	`count(*[_type == "podcast" && defined(slug.current)])`,
@@ -16,14 +21,10 @@ export const latestPodcastQuery =
 	defineQuery(`*[_type == "podcast" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {
   ${baseFieldsNoContent},
   author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   },
   guest[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   }
 }`);
 
@@ -31,13 +32,9 @@ export const morePodcastQuery =
 	defineQuery(`*[_type == "podcast" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
   ${baseFieldsNoContent},
   author[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   },
   guest[]->{
-    ...,
-    "title": coalesce(title, "Anonymous"),
-    "slug": slug.current,
+    ${personRefFields}
   }
 }`);

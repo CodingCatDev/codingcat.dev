@@ -11,7 +11,8 @@ export const SITE_URL = (
 
 export const SITE_NAME = "CodingCat.dev";
 
-export const SITE_DESCRIPTION = "CodingCat.dev — Purrfect Web Tutorials";
+export const SITE_DESCRIPTION =
+	"Purrfect web development tutorials, deep-dive articles, and weekly podcast conversations with software engineers and tech leaders.";
 
 const FALLBACK = new URL(SITE_URL);
 

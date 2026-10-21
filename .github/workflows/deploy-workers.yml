@@ -51,6 +51,12 @@ jobs:
       - name: Configure Cloudflare Worker Secrets (dev)
         run: |
           echo "$SANITY_API_READ_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_API_READ_TOKEN --env=""
+          if [ -n "$SANITY_AUTH_TOKEN" ]; then
+            echo "$SANITY_AUTH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_AUTH_TOKEN --env=""
+          fi
+          if [ -n "$SANITY_CONTEXT_TOKEN" ]; then
+            echo "$SANITY_CONTEXT_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_CONTEXT_TOKEN --env=""
+          fi
           if [ -n "$OPENROUTER_API_KEY" ]; then
             echo "$OPENROUTER_API_KEY" | pnpm --filter @codingcatdev/site exec wrangler secret put OPENROUTER_API_KEY --env=""
           fi
@@ -58,6 +64,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_CONTEXT_TOKEN: ${{ secrets.SANITY_CONTEXT_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
   deploy-production:
@@ -97,6 +105,12 @@ jobs:
       - name: Configure Cloudflare Worker Secrets (production)
         run: |
           echo "$SANITY_API_READ_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_API_READ_TOKEN --env production
+          if [ -n "$SANITY_AUTH_TOKEN" ]; then
+            echo "$SANITY_AUTH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_AUTH_TOKEN --env production
+          fi
+          if [ -n "$SANITY_CONTEXT_TOKEN" ]; then
+            echo "$SANITY_CONTEXT_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_CONTEXT_TOKEN --env production
+          fi
           if [ -n "$OPENROUTER_API_KEY" ]; then
             echo "$OPENROUTER_API_KEY" | pnpm --filter @codingcatdev/site exec wrangler secret put OPENROUTER_API_KEY --env production
           fi
@@ -104,4 +118,6 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_CONTEXT_TOKEN: ${{ secrets.SANITY_CONTEXT_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

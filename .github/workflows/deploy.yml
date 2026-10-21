@@ -29,6 +29,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Export Sanity production dataset backup before deploy
+        run: |
+          curl -f -sS "https://hfh83o0w.api.sanity.io/v2021-06-07/data/export/production" | gzip > /tmp/sanity-production-backup.ndjson.gz
+
+      - name: Upload Sanity production dataset backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-production-predeploy-backup-dev-${{ github.sha }}
+          path: /tmp/sanity-production-backup.ndjson.gz
+          retention-days: 30
+
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
         working-directory: apps/sanity
@@ -62,7 +73,7 @@ jobs:
           echo "Resolved Organization ID: $ORG_ID"
           mkdir -p .sanity
           echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
@@ -90,6 +101,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Export Sanity production dataset backup before deploy
+        run: |
+          curl -f -sS "https://hfh83o0w.api.sanity.io/v2021-06-07/data/export/production" | gzip > /tmp/sanity-production-backup.ndjson.gz
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+
+      - name: Upload Sanity production dataset backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-production-predeploy-backup-${{ github.sha }}
+          path: /tmp/sanity-production-backup.ndjson.gz
+          retention-days: 30
+
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
         working-directory: apps/sanity
@@ -123,7 +147,7 @@ jobs:
           echo "Resolved Organization ID: $ORG_ID"
           mkdir -p .sanity
           echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }}
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}

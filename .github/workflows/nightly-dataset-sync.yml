@@ -11,34 +11,475 @@ jobs:
     environment: production
 
     steps:
-      - name: Reset dev dataset from production
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Sync production dataset to dev
+        env:
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID || 'hfh83o0w' }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
         run: |
-          PROJECT_ID="${{ vars.SANITY_STUDIO_PROJECT_ID }}"
-          [ -z "$PROJECT_ID" ] && PROJECT_ID="hfh83o0w"
-          TOKEN="${{ secrets.SANITY_AUTH_TOKEN }}"
+          PROJECT_ID="${SANITY_STUDIO_PROJECT_ID:-hfh83o0w}"
           API_HOST="https://api.sanity.io"
-          API_VERSION="v2025-09-30"
+          API_VERSION="v2021-06-07"
 
-          echo "Deleting existing 'dev' dataset..."
-          curl -s -X DELETE "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/dev" \
-            -H "Authorization: Bearer $TOKEN" || true
+          echo "1. Ensuring 'dev' dataset exists (public ACL)..."
+          for T in "$SANITY_AUTH_TOKEN" "$SANITY_API_WRITE_TOKEN"; do
+            [ -z "$T" ] && continue
+            RESP=$(curl -s -X PUT "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/dev" \
+              -H "Authorization: Bearer $T" \
+              -H "Content-Type: application/json" \
+              -d '{"aclMode":"public"}' || true)
+            echo "Dataset create response: $RESP"
+            if echo "$RESP" | grep -q '"datasetName":"dev"'; then
+              break
+            fi
+          done
 
-          echo "Cloning 'production' dataset to 'dev'..."
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PUT \
-            "$API_HOST/$API_VERSION/projects/$PROJECT_ID/datasets/production/copy" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{"targetDataset":"dev","skipHistory":true}')
+          echo "2. Exporting 'production' dataset to /tmp/production.ndjson..."
+          curl -f -sS "https://$PROJECT_ID.api.sanity.io/$API_VERSION/data/export/production" -o /tmp/production.ndjson
+          gzip -k -f /tmp/production.ndjson
+          wc -l /tmp/production.ndjson
 
-          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
-          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
+          echo "3. Importing documents and referenced image binaries into 'dev' dataset..."
+          cat << 'EOF' > /tmp/sync.cjs
+          const fs = require("fs");
+          const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
+          const tokens = [process.env.SANITY_API_WRITE_TOKEN, process.env.SANITY_AUTH_TOKEN].filter(Boolean);
+          const lines = fs.readFileSync("/tmp/production.ndjson", "utf8").trim().split("\n").filter(Boolean);
+          const allDocs = lines.map((l) => JSON.parse(l));
 
-          echo "Status: $HTTP_STATUS"
-          echo "Response: $BODY"
+          const activeTypes = new Set([
+            "post",
+            "podcast",
+            "guest",
+            "author",
+            "sponsor",
+            "page",
+            "settings",
+            "podcastType",
+            "syndication",
+            "transcript",
+          ]);
+          const assetDocs = allDocs.filter((d) => d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset");
+          const imageAssetMap = new Map(
+            allDocs.filter((d) => d._type === "sanity.imageAsset").map((d) => [d._id, d])
+          );
+          const rawContentDocs = allDocs.filter((d) => activeTypes.has(d._type));
+          const activeDocIds = new Set(rawContentDocs.filter((d) => d._type !== "transcript").map((d) => d._id));
+          const contentDocs = rawContentDocs.filter((d) => {
+            if (d._type !== "transcript") return true;
+            // Exclude transcripts that only reference legacy/deleted document types (lesson/short)
+            for (const v of Object.values(d)) {
+              if (v && typeof v === "object" && typeof v._ref === "string" && !activeDocIds.has(v._ref)) {
+                return false;
+              }
+            }
+            return true;
+          });
 
-          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
-            echo "Dataset sync initiated successfully!"
-          else
-            echo "Dataset sync failed with status $HTTP_STATUS"
-            exit 1
-          fi
+          // Collect all known IDs (including assets and syndication.* targets) so valid strong references are never weakened
+          const allTargetIds = new Set(contentDocs.map((d) => d._id));
+          const syndicationStubs = new Map();
+
+          for (const doc of contentDocs) {
+            if (Array.isArray(doc.syndications)) {
+              for (const item of doc.syndications) {
+                if (item && typeof item._ref === "string" && item._ref.startsWith("syndication.")) {
+                  allTargetIds.add(item._ref);
+                  if (!contentDocs.some((d) => d._id === item._ref)) {
+                    const platform = item._ref.endsWith(".devto") ? "devto" : "hashnode";
+                    const parentId = doc._id.replace(/^drafts\./, "");
+                    syndicationStubs.set(item._ref, {
+                      _id: item._ref,
+                      _type: "syndication",
+                      platform,
+                      status: "simulated_complete",
+                      externalUrl: `https://${platform === "devto" ? "dev.to" : "hashnode.com"}/codingcatdev`,
+                      syndicatedAt: doc._updatedAt || new Date().toISOString(),
+                      target: { _type: "reference", _ref: parentId, _weak: true },
+                    });
+                  }
+                }
+              }
+            }
+          }
+
+          // Track any production documents that have duplicate syndications keys so we can clean them up in production too
+          const prodDeduplicateMutations = [];
+          for (const doc of contentDocs) {
+            if (Array.isArray(doc.syndications) && doc.syndications.length > 0) {
+              const seenRefs = new Set();
+              const seenKeys = new Set();
+              const deduped = [];
+              let changed = false;
+
+              for (const item of doc.syndications) {
+                if (!item || typeof item._ref !== "string") continue;
+                if (seenRefs.has(item._ref)) {
+                  changed = true;
+                  continue;
+                }
+                seenRefs.add(item._ref);
+                const detKey = `syn_${item._ref.replace(/[^a-zA-Z0-9]/g, "_")}`;
+                const key = item._key && !seenKeys.has(item._key) ? item._key : detKey;
+                if (key !== item._key || item._weak) {
+                  changed = true;
+                }
+                seenKeys.add(key);
+                deduped.push({
+                  _key: key,
+                  _type: "reference",
+                  _ref: item._ref,
+                });
+              }
+
+              if (changed) {
+                doc.syndications = deduped;
+                prodDeduplicateMutations.push({
+                  patch: {
+                    id: doc._id,
+                    set: { syndications: deduped },
+                  },
+                });
+              }
+            }
+          }
+
+          const prodToDevAssetMap = new Map();
+
+          function sanitizeDoc(obj) {
+            if (!obj || typeof obj !== "object") return obj;
+            if (Array.isArray(obj)) {
+              const mapped = obj.map(sanitizeDoc);
+              const usedKeys = new Set();
+              const deduped = [];
+              for (const item of mapped) {
+                if (item && typeof item === "object" && typeof item._key === "string") {
+                  if (usedKeys.has(item._key)) {
+                    if (typeof item._ref === "string") {
+                      continue;
+                    }
+                    item._key = `${item._key}_${usedKeys.size}`;
+                  }
+                  usedKeys.add(item._key);
+                }
+                deduped.push(item);
+              }
+              return deduped;
+            }
+            const copy = {};
+            for (const [k, v] of Object.entries(obj)) {
+              if (k === "_rev") continue;
+              copy[k] = sanitizeDoc(v);
+            }
+            if (typeof copy._ref === "string") {
+              if (prodToDevAssetMap.has(copy._ref)) {
+                copy._ref = prodToDevAssetMap.get(copy._ref);
+              }
+              if (allTargetIds.has(copy._ref)) {
+                delete copy._weak;
+                delete copy._strengthenOnPublish;
+              } else {
+                copy._weak = true;
+              }
+            }
+            return copy;
+          }
+
+          let activeToken = tokens[0];
+          async function mutateBatch(mutations, dataset = "dev") {
+            for (let attempt = 0; attempt < 6; attempt++) {
+              const token = activeToken || tokens[attempt % tokens.length];
+              let res;
+              try {
+                res = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/mutate/${dataset}?visibility=sync&autoGenerateArrayKeys=true`, {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ mutations }),
+                });
+              } catch (netErr) {
+                const delay = 1000 * Math.pow(2, attempt);
+                console.warn(`Network error (${netErr.message}), retrying in ${delay}ms...`);
+                await new Promise((r) => setTimeout(r, delay));
+                continue;
+              }
+              if (res.ok) {
+                activeToken = token;
+                return;
+              }
+              const errText = await res.text();
+              if (res.status === 401 || res.status === 403) {
+                activeToken = tokens.find((t) => t !== token) || token;
+                continue;
+              }
+              if (res.status === 429 || res.status >= 500) {
+                const delay = 1000 * Math.pow(2, attempt);
+                console.warn(`Rate limited / server busy (HTTP ${res.status}), retrying in ${delay}ms...`);
+                await new Promise((r) => setTimeout(r, delay));
+                continue;
+              }
+              throw new Error(`Mutate batch (${dataset}) failed: HTTP ${res.status}: ${errText}`);
+            }
+            throw new Error(`Mutate batch (${dataset}) failed after 6 retries.`);
+          }
+
+          async function sendChunked(items, label, op = "createOrReplace") {
+            let batch = [];
+            let batchBytes = 0;
+            let sent = 0;
+            const MAX_ITEMS = 100;
+            const MAX_BYTES = 1500000;
+
+            for (const item of items) {
+              const mutation = op === "raw" ? item : { [op]: item };
+              const itemBytes = Buffer.byteLength(JSON.stringify(mutation), "utf8");
+              if (batch.length > 0 && (batch.length >= MAX_ITEMS || batchBytes + itemBytes > MAX_BYTES)) {
+                await mutateBatch(batch);
+                sent += batch.length;
+                if (sent % 500 < batch.length) {
+                  console.log(`[${label}] Imported ${sent} / ${items.length}...`);
+                }
+                batch = [];
+                batchBytes = 0;
+              }
+              batch.push(mutation);
+              batchBytes += itemBytes;
+            }
+            if (batch.length > 0) {
+              await mutateBatch(batch);
+              sent += batch.length;
+            }
+            console.log(`[${label}] Completed (${sent} / ${items.length}).`);
+          }
+
+          async function uploadMissingDevImages() {
+            const q = encodeURIComponent(`*[_type == "sanity.imageAsset" && string::startsWith(path, "images/${projectId}/dev/")]{_id, label}`);
+            let devAssetDocs = [];
+            for (const token of tokens) {
+              const res = await fetch(`https://${projectId}.api.sanity.io/v2025-02-19/data/query/dev?query=${q}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (res.ok) {
+                const json = await res.json();
+                devAssetDocs = json.result || [];
+                break;
+              }
+            }
+
+            const devUploadedIds = new Set();
+            for (const d of devAssetDocs) {
+              devUploadedIds.add(d._id);
+              allTargetIds.add(d._id);
+              prodToDevAssetMap.set(d._id, d._id);
+              if (typeof d.label === "string" && d.label.startsWith("image-")) {
+                prodToDevAssetMap.set(d.label, d._id);
+              }
+            }
+            console.log(`Found ${devUploadedIds.size} image binaries in 'dev' CDN bucket (${prodToDevAssetMap.size} mapped IDs).`);
+
+            const priorityRefs = new Set();
+            const inlineRefs = new Set();
+
+            function collectRefs(obj) {
+              if (!obj || typeof obj !== "object") return;
+              if (Array.isArray(obj)) return obj.forEach(collectRefs);
+              if (typeof obj._ref === "string" && obj._ref.startsWith("image-")) {
+                inlineRefs.add(obj._ref);
+              }
+              for (const v of Object.values(obj)) collectRefs(v);
+            }
+
+            for (const doc of contentDocs) {
+              if (doc.coverImage?.asset?._ref) priorityRefs.add(doc.coverImage.asset._ref);
+              if (doc.photo?.asset?._ref) priorityRefs.add(doc.photo.asset._ref);
+              if (doc.ogImage?.asset?._ref) priorityRefs.add(doc.ogImage.asset._ref);
+              collectRefs(doc);
+            }
+
+            const orderedRefs = [...new Set([...priorityRefs, ...inlineRefs])].filter(
+              (id) => !prodToDevAssetMap.has(id) && imageAssetMap.has(id)
+            );
+            if (orderedRefs.length === 0) {
+              console.log("All active image binaries are already present and mapped in 'dev' dataset.");
+              return devUploadedIds;
+            }
+
+            console.log(`Uploading/mapping ${orderedRefs.length} active image binaries to 'dev' dataset...`);
+
+            let uploaded = 0;
+            let idx = 0;
+            const CONCURRENCY = 20;
+            const labelPatches = [];
+
+            async function worker() {
+              while (idx < orderedRefs.length) {
+                const currentIdx = idx++;
+                const assetId = orderedRefs[currentIdx];
+                const assetDoc = imageAssetMap.get(assetId);
+                if (!assetDoc?.url) continue;
+
+                for (let attempt = 0; attempt < 4; attempt++) {
+                  try {
+                    const imgRes = await fetch(assetDoc.url);
+                    if (!imgRes.ok) break;
+                    const buf = Buffer.from(await imgRes.arrayBuffer());
+                    const token = activeToken || tokens[attempt % tokens.length];
+                    const filename = encodeURIComponent(assetDoc.originalFilename || `${assetId}.${assetDoc.extension || "jpg"}`);
+                    const labelParam = encodeURIComponent(assetId);
+                    const upRes = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/assets/images/dev?filename=${filename}&label=${labelParam}`, {
+                      method: "POST",
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": assetDoc.mimeType || imgRes.headers.get("content-type") || "image/jpeg",
+                      },
+                      body: buf,
+                    });
+                    if (upRes.ok) {
+                      activeToken = token;
+                      const upJson = await upRes.json();
+                      const devId = upJson?.document?._id;
+                      if (devId) {
+                        devUploadedIds.add(devId);
+                        allTargetIds.add(devId);
+                        prodToDevAssetMap.set(assetId, devId);
+                        if (upJson.document.label !== assetId) {
+                          labelPatches.push({ patch: { id: devId, set: { label: assetId } } });
+                        }
+                      }
+                      uploaded++;
+                      if (uploaded % 100 === 0 || uploaded === orderedRefs.length) {
+                        console.log(`[Image Binaries] Mapped/uploaded ${uploaded} / ${orderedRefs.length}...`);
+                      }
+                      break;
+                    }
+                    if (upRes.status === 401 || upRes.status === 403) {
+                      activeToken = tokens.find((t) => t !== token) || token;
+                      continue;
+                    }
+                    if (upRes.status === 429 || upRes.status >= 500) {
+                      await new Promise((r) => setTimeout(r, 500 * Math.pow(2, attempt)));
+                      continue;
+                    }
+                    break;
+                  } catch (err) {
+                    await new Promise((r) => setTimeout(r, 500));
+                  }
+                }
+              }
+            }
+
+            await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+            console.log(`[Image Binaries] Finished mapping/uploading ${uploaded} image binaries to 'dev'.`);
+
+            if (labelPatches.length > 0) {
+              await sendChunked(labelPatches, "Image Asset Label Mapping Patches", "raw");
+            }
+
+            return devUploadedIds;
+          }
+
+          async function cleanupOrphanedDevDocs() {
+            const expRes = await fetch(`https://${projectId}.api.sanity.io/v2021-06-07/data/export/dev`, {
+              headers: { Authorization: `Bearer ${activeToken || tokens[0]}` },
+            });
+            if (!expRes.ok) return;
+            const text = await expRes.text();
+            const devDocs = text.trim().split("\n").filter(Boolean).map((l) => JSON.parse(l));
+            const nonAssetDeletes = [];
+            const assetDeletes = [];
+
+            for (const d of devDocs) {
+              if (d._type.startsWith("system.")) continue;
+              if (d._type === "sanity.imageAsset" || d._type === "sanity.fileAsset") {
+                if (typeof d.path === "string" && d.path.includes("/production/")) {
+                  assetDeletes.push(d);
+                }
+                continue;
+              }
+              if (!activeTypes.has(d._type) || (d._type === "transcript" && !allTargetIds.has(d._id))) {
+                nonAssetDeletes.push(d);
+              }
+            }
+
+            const totalToDelete = nonAssetDeletes.length + assetDeletes.length;
+            if (totalToDelete > 0) {
+              console.log(`Cleaning up ${totalToDelete} legacy/orphaned documents in 'dev'...`);
+              if (nonAssetDeletes.length > 0) {
+                // First strip all references on legacy documents so inter-document references cannot block deletion
+                const emptyStubs = nonAssetDeletes.map((d) => ({ _id: d._id, _type: d._type }));
+                await sendChunked(emptyStubs, "Cleanup Pass 1: Strip References on Legacy Docs", "createOrReplace");
+                await sendChunked(
+                  nonAssetDeletes.map((d) => ({ delete: { id: d._id } })),
+                  "Cleanup Pass 2: Delete Legacy Docs",
+                  "raw"
+                );
+              }
+              if (assetDeletes.length > 0) {
+                await sendChunked(
+                  assetDeletes.map((d) => ({ delete: { id: d._id } })),
+                  "Cleanup Pass 3: Delete Orphaned Production Asset Metadata",
+                  "raw"
+                );
+              }
+            }
+          }
+
+          (async () => {
+            if (prodDeduplicateMutations.length > 0) {
+              console.log(`Cleaning up ${prodDeduplicateMutations.length} duplicate syndications arrays in production...`);
+              try {
+                await mutateBatch(prodDeduplicateMutations, "production");
+                console.log("Production syndications arrays deduplicated.");
+              } catch (prodErr) {
+                console.warn("Could not patch production syndications:", prodErr.message);
+              }
+            }
+
+            // 1. Upload/map missing active image binaries to dev (populates prodToDevAssetMap & allTargetIds)
+            await uploadMissingDevImages();
+
+            // 2. Now sanitize content documents so all active image _refs are rewritten to their real dev binary asset IDs
+            const sanitized = contentDocs.map(sanitizeDoc);
+            console.log(`Prepared ${sanitized.length} content documents and ${syndicationStubs.size} syndication stubs for dataset "dev"...`);
+
+            // 3. Create content + syndication stubs so all internal document references resolve as strong references
+            const stubs = [
+              ...sanitized.map((d) => ({ _id: d._id, _type: d._type })),
+              ...Array.from(syndicationStubs.values()),
+            ];
+            await sendChunked(stubs, "Pass 1: Document & Syndication Stubs", "createIfNotExists");
+
+            // 4. Populate full content documents (with strong coverImage.asset & syndications references and unique _keys)
+            await sendChunked(sanitized, "Pass 2: Content Docs", "createOrReplace");
+
+            // 5. Remove any legacy document types and orphaned production-path asset metadata from dev
+            await cleanupOrphanedDevDocs();
+
+            console.log("Dataset sync completed successfully!");
+          })().catch((err) => {
+            console.error(err);
+            process.exit(1);
+          });
+          EOF
+          node /tmp/sync.cjs
+
+      - name: Upload Sanity production dataset backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-production-backup-${{ github.run_id }}
+          path: /tmp/production.ndjson.gz
+          retention-days: 30

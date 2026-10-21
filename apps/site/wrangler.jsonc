@@ -10,6 +10,7 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "workers_dev": true,
+  "preview_urls": true,
   "ai": { "binding": "AI" },
   "send_email": [{ "name": "EMAIL" }],
   // Uncomment after clicking "Enable Analytics Engine" once at:
@@ -20,6 +21,13 @@
   //     "dataset": "codingcat_events_dev"
   //   }
   // ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "codingcat-auth-dev",
+      "database_id": "802a4e11-fa76-4e19-aef2-3bd8e6c214df"
+    }
+  ],
   "routes": [
     {
       "pattern": "dev.codingcat.dev",
@@ -31,7 +39,7 @@
     "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
     "PUBLIC_SANITY_DATASET": "dev",
     "PUBLIC_SANITY_API_VERSION": "2025-09-30",
-    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/dev",
+    "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio",
     "SITE_URL": "https://dev.codingcat.dev",
     "FLIPCORE_API_URL": "https://api.flipfeeds.dev",
     "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.dev"
@@ -39,8 +47,6 @@
 
   // NOTE: bindings are NOT inherited into `env.*`. Every binding added to the
   // top level must be repeated under env.production, or it will 503 in prod.
-  // D1 binding is intentionally absent until the codingcat.dev Cloudflare
-  // account is available to confirm/create the auth databases.
   "env": {
     "production": {
       "name": "codingcatdev-prod",
@@ -54,19 +60,26 @@
       ],
       "ai": { "binding": "AI" },
       "send_email": [{ "name": "EMAIL" }],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "codingcat-auth",
+          "database_id": "a2f53117-5919-4224-95a2-dc3847bea540"
+        }
+      ],
       // "analytics_engine_datasets": [
       //   {
       //     "binding": "ANALYTICS",
       //     "dataset": "codingcat_events_prod"
       //   }
       // ],
-      "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+      "observability": { "enabled": true, "head_sampling_rate": 1 },
       "vars": {
         "ENVIRONMENT": "production",
         "PUBLIC_SANITY_PROJECT_ID": "hfh83o0w",
         "PUBLIC_SANITY_DATASET": "production",
         "PUBLIC_SANITY_API_VERSION": "2025-09-30",
-        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-dev.sanity.studio/production",
+        "PUBLIC_SANITY_STUDIO_URL": "https://codingcat-prod.sanity.studio",
         "SITE_URL": "https://codingcat.dev",
         "FLIPCORE_API_URL": "https://api.flipfeeds.com",
         "PUBLIC_FLIPCORE_WEB_URL": "https://flipfeeds.com"

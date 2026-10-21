@@ -96,6 +96,19 @@
 							</svg>
 							<span>Top videos</span>
 						</button>
+						<button
+							type="button"
+							class="ai-prompt-chip inline-flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full border border-border bg-card hover:bg-accent text-foreground cursor-pointer transition-all font-medium shadow-2xs hover:scale-105"
+							data-prompt="Tell me a programming dad joke!"
+						>
+							<svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="12" cy="12" r="10"></circle>
+								<path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+								<line x1="9" x2="9.01" y1="9" y2="9"></line>
+								<line x1="15" x2="15.01" y1="9" y2="9"></line>
+							</svg>
+							<span>Coding joke</span>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -138,6 +151,19 @@
 						<rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
 					</svg>
 					<span>Top videos</span>
+				</button>
+				<button
+					type="button"
+					class="ai-prompt-chip shrink-0 inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer transition-colors font-medium shadow-2xs"
+					data-prompt="Tell me a programming dad joke!"
+				>
+					<svg class="size-3 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="10"></circle>
+						<path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+						<line x1="9" x2="9.01" y1="9" y2="9"></line>
+						<line x1="15" x2="15.01" y1="9" y2="9"></line>
+					</svg>
+					<span>Coding joke</span>
 				</button>
 			</div>
 
@@ -221,9 +247,93 @@
 			.replace(/'/g, "&#039;");
 	}
 
+	const PROVIDER_CONFIG: Array<{
+		key: string;
+		label: string;
+		colorClass: string;
+		svg: string;
+	}> = [
+		{
+			key: "spotify",
+			label: "Spotify",
+			colorClass: "text-[#1DB954]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0Zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02Zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2Zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3Z"/></svg>',
+		},
+		{
+			key: "apple",
+			label: "Apple",
+			colorClass: "text-[#A555F7]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M5.34 0A5.328 5.328 0 0 0 0 5.34v13.32A5.328 5.328 0 0 0 5.34 24h13.32A5.328 5.328 0 0 0 24 18.66V5.34A5.328 5.328 0 0 0 18.66 0Zm6.525 2.568c2.336 0 4.448.902 6.056 2.587 1.224 1.272 1.912 2.619 2.264 4.392.12.59.12 2.2.007 2.864a8.506 8.506 0 0 1-3.24 5.296c-.608.46-2.096 1.261-2.336 1.261-.088 0-.096-.091-.056-.46.072-.592.144-.715.48-.856.535-.224 1.447-.874 2.008-1.435a7.644 7.644 0 0 0 2.008-3.536c.208-.824.184-2.656-.048-3.504-.728-2.672-2.512-4.544-5.096-5.336-.784-.24-2.44-.336-3.384-.2-2.36.32-4.448 1.664-5.616 3.616-1.096 1.832-1.264 4.24-.44 6.224.6 1.448 1.784 2.792 3.048 3.472.28.152.352.28.416.72.048.36.024.44-.056.44-.048 0-.416-.16-.816-.36l-.024-.008c-1.472-.72-2.72-2.032-3.448-3.648-1.472-3.248-.688-7.02 1.928-9.352 1.72-1.53 3.88-2.28 6.344-2.28z"/></svg>',
+		},
+		{
+			key: "youtube",
+			label: "YouTube",
+			colorClass: "text-[#FF0000]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>',
+		},
+		{
+			key: "pocketCasts",
+			label: "Pocket Casts",
+			colorClass: "text-[#F43E37]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c4.639 0 8.4 3.761 8.4 8.4h-2.1c0-3.48-2.82-6.3-6.3-6.3S5.7 8.52 5.7 12s2.82 6.3 6.3 6.3v2.1c-4.639 0-8.4-3.761-8.4-8.4S7.361 3.6 12 3.6zm0 3.45c2.734 0 4.95 2.216 4.95 4.95h-2.1c0-1.574-1.276-2.85-2.85-2.85S9.15 10.426 9.15 12s1.276 2.85 2.85 2.85v2.1c-2.734 0-4.95-2.216-4.95-4.95S9.266 7.05 12 7.05z"/></svg>',
+		},
+		{
+			key: "castbox",
+			label: "Castbox",
+			colorClass: "text-[#F55B23]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-4.5 9.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0v-5zm3.5-3a1 1 0 0 1 2 0v11a1 1 0 0 1-2 0v-11zm3.5 2a1 1 0 0 1 2 0v7a1 1 0 0 1-2 0v-7zm3.5 2.5a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2zm-14 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2z"/></svg>',
+		},
+		{
+			key: "castro",
+			label: "Castro",
+			colorClass: "text-[#00B265]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5a7.5 7.5 0 0 1 6.364 11.47l-2.12-1.474a4.92 4.92 0 1 0-8.488 0l-2.12 1.474A7.5 7.5 0 0 1 12 4.5zm0 4.8a2.7 2.7 0 1 1 0 5.4 2.7 2.7 0 0 1 0-5.4z"/></svg>',
+		},
+		{
+			key: "overcast",
+			label: "Overcast",
+			colorClass: "text-[#FC7E0F]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.25c-5.376 0-9.75 4.374-9.75 9.75s4.374 9.75 9.75 9.75 9.75-4.374 9.75-9.75S17.376 2.25 12 2.25zm0 1.5c4.55 0 8.25 3.7 8.25 8.25 0 2.91-1.515 5.475-3.795 6.945l-.915-2.07c1.62-.99 2.71-2.775 2.71-4.875 0-3.31-2.69-6-6-6s-6 2.69-6 6c0 2.1 1.09 3.885 2.71 4.875l-.915 2.07C5.765 17.475 4.25 14.91 4.25 12c0-4.55 3.7-8.25 8.25-8.25zm0 5.25a3 3 0 0 1 1.32 5.69l1.43 4.81h-1.6l-.8-2.69h-.7l-.8 2.69H9.25l1.43-4.81A3 3 0 0 1 12 9z"/></svg>',
+		},
+		{
+			key: "rss",
+			label: "RSS",
+			colorClass: "text-[#FFA500]",
+			svg: '<svg class="size-3.5 fill-current" viewBox="0 0 24 24"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z"/></svg>',
+		},
+	];
+
+	function stripProviderTrailer(text: string): string {
+		return text.replace(/\n?<!--AJ_PODCAST_PROVIDERS:[\s\S]*?(?:-->|$)/g, "");
+	}
+
 	function renderRichAssistantContent(container: HTMLElement, rawText: string) {
-		// Clean up any localhost or malformed url artifacts
-		let cleanedText = rawText
+		// Extract podcast provider metadata trailer if present
+		const providerMap = new Map<string, Record<string, string>>();
+		const providerItems: Array<{
+			title: string;
+			url: string;
+			listenLinks: Record<string, string>;
+		}> = [];
+		const trailerMatch = rawText.match(
+			/<!--AJ_PODCAST_PROVIDERS:([\s\S]*?)-->/,
+		);
+		if (trailerMatch?.[1]) {
+			try {
+				const parsed = JSON.parse(trailerMatch[1]);
+				if (Array.isArray(parsed)) {
+					for (const item of parsed) {
+						if (item?.url && item?.listenLinks) {
+							providerMap.set(item.url, item.listenLinks);
+							providerItems.push(item);
+						}
+					}
+				}
+			} catch {}
+		}
+
+		// Clean up any localhost, trailer, or malformed url artifacts
+		let cleanedText = stripProviderTrailer(rawText)
 			.replace(/http:\/\/localhost:\d+/g, "")
 			.replace(/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]\((?:http:\/\/localhost:\d+)?(\/[a-zA-Z0-9_\-\/]+)\)/g, "[$1]($2)")
 			.replace(/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]/g, "[$1]($1)");
@@ -248,6 +358,21 @@
 			const type = linkUrl.startsWith("/podcast") ? "podcast" : "post";
 			if (!internalLinks.some((l) => l.url === linkUrl)) {
 				internalLinks.push({ title: linkTitle, url: linkUrl, type });
+			}
+		}
+
+		// Ensure podcast items from tool results that were mentioned are included in internalLinks
+		for (const pItem of providerItems) {
+			if (
+				!internalLinks.some((l) => l.url === pItem.url) &&
+				(internalLinks.length === 0 ||
+					cleanedText.toLowerCase().includes(pItem.title.toLowerCase().slice(0, 24)))
+			) {
+				internalLinks.push({
+					title: pItem.title,
+					url: pItem.url,
+					type: "podcast",
+				});
 			}
 		}
 
@@ -307,31 +432,64 @@
 			cardsHtml += `</div>`;
 		}
 
-		// 2. Clickable Episode / Post Cards
+		// 2. Clickable Episode / Post Cards (+ Podcast Host Provider Logos)
 		if (internalLinks.length > 0) {
 			cardsHtml += `<div class="mt-2.5 flex flex-col gap-2">`;
 			for (const link of internalLinks) {
 				const isPodcast = link.type === "podcast";
+				const linksForEp = providerMap.get(link.url);
+				let providerBadgesHtml = "";
+				if (isPodcast && linksForEp) {
+					const badges = PROVIDER_CONFIG.filter((p) => Boolean(linksForEp[p.key]))
+						.map(
+							(p) => `
+								<a
+									href="${escapeHtml(linksForEp[p.key])}"
+									target="_blank"
+									rel="noopener noreferrer"
+									title="Listen on ${p.label}"
+									aria-label="Listen on ${p.label}"
+									class="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background/80 px-2 py-1 text-[11px] font-medium text-foreground hover:bg-accent hover:border-primary/40 transition-colors no-underline"
+								>
+									<span class="${p.colorClass}">${p.svg}</span>
+									<span>${p.label}</span>
+								</a>
+							`,
+						)
+						.join("");
+					if (badges) {
+						providerBadgesHtml = `
+							<div class="mt-2 pt-2 border-t border-border/60 flex flex-wrap items-center gap-1.5">
+								<span class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mr-1">Listen on:</span>
+								${badges}
+							</div>
+						`;
+					}
+				}
+
 				cardsHtml += `
-					<a href="${link.url}" class="group flex items-center justify-between gap-3 p-3 rounded-xl border border-border bg-card/90 hover:bg-accent hover:border-primary/40 transition-all hover:scale-[1.01] hover:shadow-xs text-left no-underline">
-						<div class="flex items-center gap-2.5 min-w-0">
-							<div class="size-8 rounded-lg ${isPodcast ? "bg-purple-500/10 text-purple-600 dark:text-purple-400" : "bg-blue-500/10 text-blue-600 dark:text-blue-400"} flex items-center justify-center shrink-0">
-								${
-									isPodcast
-										? '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" x2="12" y1="19" y2="22"></line></svg>'
-										: '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>'
-								}
+					<div class="flex flex-col p-3 rounded-xl border border-border bg-card/90 hover:border-primary/40 transition-all shadow-2xs text-left">
+						<a href="${link.url}" class="group flex items-center justify-between gap-3 no-underline">
+							<div class="flex items-center gap-2.5 min-w-0">
+								<div class="size-8 rounded-lg ${isPodcast ? "bg-purple-500/10 text-purple-600 dark:text-purple-400" : "bg-blue-500/10 text-blue-600 dark:text-blue-400"} flex items-center justify-center shrink-0">
+									${
+										isPodcast
+											? '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" x2="12" y1="19" y2="22"></line></svg>'
+											: '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>'
+									}
+								</div>
+								<div class="min-w-0">
+									<div class="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">${escapeHtml(link.title)}</div>
+									<div class="text-[10px] text-muted-foreground uppercase tracking-wider">${isPodcast ? "Podcast Episode" : "Blog Post"} • CodingCat.dev</div>
+								</div>
 							</div>
-							<div class="min-w-0">
-								<div class="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">${escapeHtml(link.title)}</div>
-								<div class="text-[10px] text-muted-foreground uppercase tracking-wider">${isPodcast ? "Podcast Episode" : "Blog Post"} • CodingCat.dev</div>
+							<div class="shrink-0 text-xs font-medium text-primary flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+								<span>View</span>
+								<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
 							</div>
-						</div>
-						<div class="shrink-0 text-xs font-medium text-primary flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-							<span>View</span>
-							<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-						</div>
-					</a>
+						</a>
+						${providerBadgesHtml}
+					</div>
 				`;
 			}
 			cardsHtml += `</div>`;
@@ -412,8 +570,8 @@
 				if (done) break;
 				const chunk = decoder.decode(value, { stream: true });
 				accumulatedText += chunk;
-				// Render progressive text during streaming
-				assistantContent.textContent = accumulatedText;
+				// Render progressive text during streaming (without metadata trailer)
+				assistantContent.textContent = stripProviderTrailer(accumulatedText);
 				messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: "smooth" });
 			}
 

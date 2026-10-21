@@ -110,6 +110,8 @@ export const handler = documentEventHandler<ContentDocument>(
 			`[Syndicate Content] Processing ${data._type} (${data._id}) on dataset: ${dataset}. Production mode: ${isProduction}`,
 		);
 
+		const parentPatch: Record<string, unknown> = {};
+
 		for (const platform of platforms) {
 			const syndicationDocId = `syndication.${data._id}.${platform}`;
 
@@ -274,7 +276,7 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					// Keep parent document devto field in sync if present
 					if (resJson.url && data.devto !== resJson.url) {
-						await client.patch(data._id).set({ devto: resJson.url }).commit();
+						parentPatch.devto = resJson.url;
 					}
 
 					console.log(`[Syndicate Content] Successfully published to Dev.to: ${resJson.url}`);
@@ -472,7 +474,7 @@ export const handler = documentEventHandler<ContentDocument>(
 					// Keep parent document hashnode field in sync
 					const postSlug = publishedPost.slug || publishedPost.id;
 					if (postSlug && data.hashnode !== postSlug) {
-						await client.patch(data._id).set({ hashnode: postSlug }).commit();
+						parentPatch.hashnode = postSlug;
 					}
 
 					console.log(
@@ -496,27 +498,70 @@ export const handler = documentEventHandler<ContentDocument>(
 			}
 		}
 
-		// Update parent document's `syndications` reference array to maintain strong bidirectional links
+		// Update parent document's `syndications` reference array and platform URLs in a single idempotent patch
 		try {
+			const latestDoc = await client
+				.getDocument<ContentDocument>(data._id)
+				.catch(() => undefined);
+			const currentSyndications = Array.isArray(latestDoc?.syndications)
+				? latestDoc.syndications
+				: Array.isArray(data.syndications)
+					? data.syndications
+					: [];
+
 			const expectedRefs = platforms.map((p) => `syndication.${data._id}.${p}`);
-			const existingRefs = (data.syndications || []).map((s) => s._ref);
+			const byRef = new Map<
+				string,
+				{ _key: string; _type: "reference"; _ref: string }
+			>();
+			const usedKeys = new Set<string>();
 
-			const newRefs = expectedRefs.filter((ref) => !existingRefs.includes(ref));
-			if (newRefs.length > 0) {
-				const referencesToAppend = newRefs.map((ref) => ({
-					_key: `syn_${ref.replace(/[^a-zA-Z0-9]/g, "_")}`,
-					_type: "reference" as const,
-					_ref: ref,
-				}));
+			for (const item of currentSyndications) {
+				if (item && typeof item._ref === "string" && !byRef.has(item._ref)) {
+					const deterministicKey = `syn_${item._ref.replace(/[^a-zA-Z0-9]/g, "_")}`;
+					const key =
+						item._key && !usedKeys.has(item._key)
+							? item._key
+							: deterministicKey;
+					usedKeys.add(key);
+					byRef.set(item._ref, {
+						_key: key,
+						_type: "reference",
+						_ref: item._ref,
+					});
+				}
+			}
 
-				await client
-					.patch(data._id)
-					.setIfMissing({ syndications: [] })
-					.append("syndications", referencesToAppend)
-					.commit();
+			for (const ref of expectedRefs) {
+				if (!byRef.has(ref)) {
+					const key = `syn_${ref.replace(/[^a-zA-Z0-9]/g, "_")}`;
+					usedKeys.add(key);
+					byRef.set(ref, {
+						_key: key,
+						_type: "reference",
+						_ref: ref,
+					});
+				}
+			}
 
+			const deduplicatedSyndications = Array.from(byRef.values());
+			const needsSyndicationUpdate =
+				currentSyndications.length !== deduplicatedSyndications.length ||
+				currentSyndications.some(
+					(s, idx) =>
+						s._ref !== deduplicatedSyndications[idx]?._ref ||
+						s._key !== deduplicatedSyndications[idx]?._key ||
+						Boolean((s as Record<string, unknown>)._weak),
+				);
+
+			if (needsSyndicationUpdate) {
+				parentPatch.syndications = deduplicatedSyndications;
+			}
+
+			if (Object.keys(parentPatch).length > 0) {
+				await client.patch(data._id).set(parentPatch).commit();
 				console.log(
-					`[Syndicate Content] Linked ${newRefs.length} syndication references to parent ${data._id}.`,
+					`[Syndicate Content] Updated parent ${data._id} (${Object.keys(parentPatch).join(", ")}).`,
 				);
 			}
 		} catch (linkErr) {

@@ -176,6 +176,7 @@ export function videoObjectSchema(
 		thumbnailUrl?: string;
 		youtubeUrl?: string | null;
 		durationSeconds?: number | null;
+		transcript?: string | null;
 	},
 	path: string,
 ): Node | null {
@@ -211,6 +212,7 @@ export function videoObjectSchema(
 		...(video.thumbnailUrl ? { thumbnailUrl: [video.thumbnailUrl] } : {}),
 		...(video.uploadDate ? { uploadDate: video.uploadDate } : {}),
 		...(durationIso ? { duration: durationIso } : {}),
+		...(video.transcript ? { transcript: video.transcript } : {}),
 		contentUrl: video.youtubeUrl,
 		embedUrl: video.youtubeUrl
 			.replace("watch?v=", "embed/")
@@ -310,6 +312,7 @@ interface PodcastEpisodeInput {
 	season?: number | null;
 	episode?: number | null;
 	audioUrl?: string | null;
+	transcript?: string | null;
 }
 
 export function podcastEpisodeSchema(
@@ -336,6 +339,7 @@ export function podcastEpisodeSchema(
 					},
 				}
 			: {}),
+		...(content.transcript ? { transcript: content.transcript } : {}),
 		partOfSeries: {
 			"@type": "PodcastSeries",
 			name: "CodingCat.dev Podcast",

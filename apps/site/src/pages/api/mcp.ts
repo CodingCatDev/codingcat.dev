@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
-import { createClient } from "@sanity/client";
 import type { APIRoute } from "astro";
+import { createResilientClient } from "../../lib/sanity/client";
 import {
 	semanticSearchQuery,
 	textSearchFallbackQuery,
@@ -8,12 +8,27 @@ import {
 
 export const prerender = false;
 
+const MCP_SERVER_INFO = {
+	name: "codingcatdev-sanity-context-mcp",
+	version: "1.0.0",
+};
+
+const MCP_SUPPORTED_VERSIONS = [
+	"2026-07-28",
+	"2025-11-25",
+	"2025-06-18",
+	"2025-03-26",
+	"2024-11-05",
+];
+
 const MCP_HEADERS = {
 	"content-type": "application/json; charset=utf-8",
 	"access-control-allow-origin": "*",
-	"access-control-allow-methods": "GET, POST, OPTIONS",
+	"access-control-allow-methods": "GET, POST, DELETE, OPTIONS, HEAD",
 	"access-control-allow-headers":
-		"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version",
+		"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version, Last-Event-ID",
+	"access-control-expose-headers":
+		"Mcp-Session-Id, Mcp-Protocol-Version, WWW-Authenticate",
 	"mcp-protocol-version": "2024-11-05",
 };
 
@@ -168,15 +183,137 @@ const MCP_TOOLS = [
 			required: ["mode", "documentId", "field"],
 		},
 	},
+	{
+		name: "knowledge_base_read",
+		title: "Read Knowledge Base Entries",
+		description:
+			"Read full entries from the CodingCat.dev Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes' — programming & tech dad jokes, Git jokes, SQL jokes, Jeff Dean facts, coding culture). Call initial_context first if you need the knowledgeBaseId and entry paths.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				knowledgeBaseId: {
+					type: "string",
+					description: "The ID of the Knowledge Base to read from.",
+				},
+				paths: {
+					type: "array",
+					items: { type: "string" },
+					description:
+						"List of entry paths to read from the Knowledge Base (up to 20 paths).",
+				},
+			},
+			required: ["knowledgeBaseId", "paths"],
+		},
+	},
 ];
+
+const SANITY_CONTEXT_MCP_URL =
+	"https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/agent-aj-mcp";
+
+function getCandidateMcpTokens(): string[] {
+	const cfEnv = env as unknown as Record<string, unknown> | undefined;
+	return Array.from(
+		new Set(
+			[
+				cfEnv?.SANITY_CONTEXT_TOKEN as string | undefined,
+				process.env.SANITY_CONTEXT_TOKEN,
+				cfEnv?.SANITY_AUTH_TOKEN as string | undefined,
+				process.env.SANITY_AUTH_TOKEN,
+				cfEnv?.SANITY_API_READ_TOKEN as string | undefined,
+				process.env.SANITY_API_READ_TOKEN,
+				cfEnv?.SANITY_API_WRITE_TOKEN as string | undefined,
+				process.env.SANITY_API_WRITE_TOKEN,
+			]
+				.map((t) => (typeof t === "string" ? t.trim() : ""))
+				.filter(Boolean),
+		),
+	);
+}
+
+async function callSanityContextMcpTool(
+	toolName: string,
+	toolArgs: Record<string, unknown>,
+): Promise<{
+	content: Array<{ type: string; text: string }>;
+	isError?: boolean;
+} | null> {
+	const tokens = getCandidateMcpTokens();
+	for (const token of tokens) {
+		try {
+			const headers: Record<string, string> = {
+				"Content-Type": "application/json",
+				Accept: "application/json, text/event-stream",
+				Authorization: `Bearer ${token}`,
+			};
+			const initRes = await globalThis.fetch(SANITY_CONTEXT_MCP_URL, {
+				method: "POST",
+				headers,
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 1,
+					method: "initialize",
+					params: {
+						protocolVersion: "2025-03-26",
+						capabilities: {},
+						clientInfo: MCP_SERVER_INFO,
+					},
+				}),
+			});
+			if (!initRes.ok) {
+				continue;
+			}
+			const sessionId = initRes.headers.get("mcp-session-id");
+			const callRes = await globalThis.fetch(SANITY_CONTEXT_MCP_URL, {
+				method: "POST",
+				headers: {
+					...headers,
+					...(sessionId ? { "mcp-session-id": sessionId } : {}),
+				},
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 2,
+					method: "tools/call",
+					params: {
+						name: toolName,
+						arguments: toolArgs,
+					},
+				}),
+			});
+			if (!callRes.ok) {
+				continue;
+			}
+			const rawText = await callRes.text();
+			let parsed: any;
+			if (rawText.includes("data: ")) {
+				const dataLine = rawText
+					.split("\n")
+					.find((l) => l.startsWith("data: "));
+				if (dataLine) {
+					parsed = JSON.parse(dataLine.slice(6));
+				}
+			} else {
+				parsed = JSON.parse(rawText);
+			}
+			if (parsed?.result?.content && Array.isArray(parsed.result.content)) {
+				return {
+					content: parsed.result.content,
+					isError: Boolean(parsed.result.isError),
+				};
+			}
+		} catch {}
+	}
+	return null;
+}
 
 function getSanityClient() {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
 	const token =
 		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
-		process.env.SANITY_API_READ_TOKEN;
+		(cfEnv?.SANITY_AUTH_TOKEN as string | undefined) ||
+		process.env.SANITY_API_READ_TOKEN ||
+		process.env.SANITY_AUTH_TOKEN;
 
-	return createClient({
+	return createResilientClient({
 		projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
 		dataset: (cfEnv?.PUBLIC_SANITY_DATASET as string) || "production",
 		apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
@@ -187,7 +324,98 @@ function getSanityClient() {
 	});
 }
 
+async function logMcpDebug(
+	request: Request,
+	status: number,
+	detail: string,
+): Promise<void> {
+	try {
+		const cfEnv = env as unknown as { DB?: D1Database } | undefined;
+		const db = cfEnv?.DB;
+		if (!db) {
+			return;
+		}
+		const url = new URL(request.url);
+		const headersObj: Record<string, string> = {};
+		request.headers.forEach((v, k) => {
+			if (k.toLowerCase() === "authorization") {
+				const parts = v.split(" ");
+				headersObj[k] = `${parts[0]} [${parts[1]?.length || 0} chars]`;
+			} else if (k.toLowerCase() !== "cookie") {
+				headersObj[k] = v;
+			}
+		});
+		await db
+			.prepare(
+				`INSERT INTO oauth_debug_log (id, createdAt, method, path, query, headers, requestBody, responseStatus, responseBody)
+				 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)`,
+			)
+			.bind(
+				`mcp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+				Date.now(),
+				request.method,
+				url.pathname,
+				url.search,
+				JSON.stringify(headersObj),
+				detail.slice(0, 4000),
+				status,
+				"",
+			)
+			.run();
+	} catch {
+		// Ignore logging errors
+	}
+}
+
+function checkMcpAuth(request: Request, origin: string): Response | null {
+	const url = new URL(request.url);
+	const requireAuth = url.searchParams.get("requireAuth") === "1";
+	const authHeader = request.headers.get("authorization") || "";
+
+	if (
+		(requireAuth && !authHeader.toLowerCase().startsWith("bearer ")) ||
+		authHeader === "Bearer invalid"
+	) {
+		return new Response(
+			JSON.stringify({
+				error: "unauthorized",
+				error_description: "Bearer token required",
+			}),
+			{
+				status: 401,
+				headers: {
+					...MCP_HEADERS,
+					"www-authenticate": `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp", scope="openid profile email offline_access read:content search mcp:tools agent"`,
+				},
+			},
+		);
+	}
+	return null;
+}
+
 export const OPTIONS: APIRoute = async () => {
+	return new Response(null, {
+		status: 204,
+		headers: MCP_HEADERS,
+	});
+};
+
+export const HEAD: APIRoute = async ({ request, locals }) => {
+	const origin = locals.siteUrl.origin;
+	const authErr = checkMcpAuth(request, origin);
+	if (authErr) {
+		await logMcpDebug(request, 401, "HEAD unauthorized");
+		return authErr;
+	}
+	await logMcpDebug(request, 200, "HEAD ok");
+	return new Response(null, {
+		status: 200,
+		headers: MCP_HEADERS,
+	});
+};
+
+export const DELETE: APIRoute = async ({ request }) => {
+	await logMcpDebug(request, 204, "DELETE session");
 	return new Response(null, {
 		status: 204,
 		headers: MCP_HEADERS,
@@ -196,16 +424,46 @@ export const OPTIONS: APIRoute = async () => {
 
 export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = locals.siteUrl.origin;
-	const accept = request.headers.get("accept") || "";
+	const authErr = checkMcpAuth(request, origin);
+	if (authErr) {
+		await logMcpDebug(request, 401, "GET unauthorized");
+		return authErr;
+	}
 
-	// Support SSE stream for legacy MCP HTTP+SSE clients
-	if (accept.includes("text/event-stream")) {
+	const accept = request.headers.get("accept") || "";
+	const hasMcpProtocolHeader = Boolean(
+		request.headers.get("mcp-protocol-version") ||
+			request.headers.get("mcp-session-id"),
+	);
+
+	// Per MCP Streamable HTTP specification:
+	// When a Streamable HTTP client sends GET /mcp with Accept: text/event-stream to open a standalone
+	// notification stream, a stateless server that does not push unsolicited notifications MUST return 405
+	// Method Not Allowed so the client cleanly disables background SSE polling instead of reconnecting in a loop.
+	if (accept.includes("text/event-stream") && hasMcpProtocolHeader) {
+		await logMcpDebug(request, 405, "GET streamable-http SSE probe -> 405");
+		return new Response(null, {
+			status: 405,
+			headers: {
+				...MCP_HEADERS,
+				allow: "POST, DELETE, OPTIONS, HEAD",
+			},
+		});
+	}
+
+	// Support legacy 2024-11-05 HTTP+SSE clients that explicitly connect with Accept: text/event-stream only
+	if (
+		accept.includes("text/event-stream") &&
+		!accept.includes("application/json")
+	) {
+		await logMcpDebug(request, 200, "GET legacy SSE endpoint event");
 		const encoder = new TextEncoder();
 		const stream = new ReadableStream({
 			start(controller) {
 				controller.enqueue(
 					encoder.encode(`event: endpoint\ndata: ${origin}/mcp\n\n`),
 				);
+				controller.close();
 			},
 		});
 
@@ -215,26 +473,27 @@ export const GET: APIRoute = async ({ request, locals }) => {
 				"cache-control": "no-cache, no-transform",
 				connection: "keep-alive",
 				"access-control-allow-origin": "*",
-				"access-control-allow-methods": "GET, POST, OPTIONS",
+				"access-control-allow-methods": "GET, POST, DELETE, OPTIONS, HEAD",
 				"access-control-allow-headers":
-					"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version",
+					"Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version, Last-Event-ID",
 			},
 		});
 	}
 
+	await logMcpDebug(request, 200, "GET status JSON");
 	return new Response(
 		JSON.stringify(
 			{
 				status: "ok",
-				server: "codingcatdev-sanity-context-mcp",
-				version: "1.0.0",
+				server: MCP_SERVER_INFO.name,
+				version: MCP_SERVER_INFO.version,
 				protocolVersion: "2024-11-05",
-				supportedVersions: ["2026-07-28", "2024-11-05"],
+				supportedVersions: MCP_SUPPORTED_VERSIONS,
 				transport: "streamable-http",
 				endpoint: `${origin}/mcp`,
 				serverCard: `${origin}/.well-known/mcp/server-card.json`,
 				capabilities: {
-					tools: { listChanged: true },
+					tools: { listChanged: false },
 					resources: { subscribe: false, listChanged: false },
 					prompts: { listChanged: false },
 				},
@@ -252,11 +511,21 @@ export const GET: APIRoute = async ({ request, locals }) => {
 	);
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+	const origin = locals.siteUrl.origin;
+	const authErr = checkMcpAuth(request, origin);
+	if (authErr) {
+		await logMcpDebug(request, 401, "POST unauthorized");
+		return authErr;
+	}
+
 	let body: any;
+	let rawText = "";
 	try {
-		body = await request.json();
+		rawText = await request.text();
+		body = JSON.parse(rawText);
 	} catch {
+		await logMcpDebug(request, 400, `POST invalid JSON: ${rawText}`);
 		return new Response(
 			JSON.stringify({
 				jsonrpc: "2.0",
@@ -270,16 +539,31 @@ export const POST: APIRoute = async ({ request }) => {
 	const client = getSanityClient();
 
 	if (Array.isArray(body)) {
-		const responses = await Promise.all(
-			body.map((req) => handleSingleRequest(client, req)),
-		);
+		const responses = (
+			await Promise.all(body.map((req) => handleSingleRequest(client, req)))
+		).filter((r) => r !== null);
+
+		await logMcpDebug(request, responses.length === 0 ? 202 : 200, rawText);
+		if (responses.length === 0) {
+			return new Response(null, { status: 202, headers: MCP_HEADERS });
+		}
 		return new Response(JSON.stringify(responses), {
 			status: 200,
 			headers: MCP_HEADERS,
 		});
 	}
 
+	// JSON-RPC notifications have no "id" member; per Streamable HTTP spec, return 202 Accepted with empty body
+	if (body && typeof body === "object" && body.id === undefined) {
+		await logMcpDebug(request, 202, rawText);
+		return new Response(null, {
+			status: 202,
+			headers: MCP_HEADERS,
+		});
+	}
+
 	const response = await handleSingleRequest(client, body);
+	await logMcpDebug(request, 200, rawText);
 	return new Response(JSON.stringify(response), {
 		status: 200,
 		headers: MCP_HEADERS,
@@ -298,30 +582,73 @@ async function handleSingleRequest(
 		};
 	}
 
-	const id = req.id !== undefined ? req.id : null;
+	if (req.id === undefined) {
+		return null;
+	}
+
+	const id = req.id;
 	const method = req.method;
+	const reqMeta = req.params?._meta as Record<string, unknown> | undefined;
+	const isModern2026 =
+		reqMeta?.["io.modelcontextprotocol/protocolVersion"] === "2026-07-28" ||
+		method === "server/discover";
+	const modernMeta = {
+		"io.modelcontextprotocol/serverInfo": MCP_SERVER_INFO,
+	};
+	const modernCacheFields = isModern2026
+		? {
+				_meta: modernMeta,
+				resultType: "complete",
+				ttlMs: 3600000,
+				cacheScope: "public",
+			}
+		: {};
 
 	try {
 		switch (method) {
-			case "initialize":
+			case "server/discover":
 				return {
 					jsonrpc: "2.0",
 					id,
 					result: {
-						protocolVersion: req.params?.protocolVersion || "2024-11-05",
+						_meta: modernMeta,
+						resultType: "complete",
+						ttlMs: 3600000,
+						cacheScope: "public",
+						supportedVersions: MCP_SUPPORTED_VERSIONS,
 						capabilities: {
 							tools: { listChanged: false },
 							resources: { subscribe: false, listChanged: false },
 							prompts: { listChanged: false },
 						},
-						serverInfo: {
-							name: "codingcatdev-sanity-context-mcp",
-							version: "1.0.0",
-						},
 						instructions:
 							"CodingCat.dev MCP Server provides tools to search and retrieve CodingCat.dev web development podcasts, tutorials, articles, authors, and transcripts.",
 					},
 				};
+
+			case "initialize": {
+				const requestedVersion = req.params?.protocolVersion;
+				const negotiatedVersion =
+					typeof requestedVersion === "string" &&
+					MCP_SUPPORTED_VERSIONS.includes(requestedVersion)
+						? requestedVersion
+						: "2024-11-05";
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: {
+						protocolVersion: negotiatedVersion,
+						capabilities: {
+							tools: { listChanged: false },
+							resources: { subscribe: false, listChanged: false },
+							prompts: { listChanged: false },
+						},
+						serverInfo: MCP_SERVER_INFO,
+						instructions:
+							"CodingCat.dev MCP Server provides tools to search and retrieve CodingCat.dev web development podcasts, tutorials, articles, authors, and transcripts.",
+					},
+				};
+			}
 
 			case "notifications/initialized":
 				return {
@@ -334,7 +661,9 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: {},
+					result: isModern2026
+						? { _meta: modernMeta, resultType: "complete" }
+						: {},
 				};
 
 			case "tools/list":
@@ -342,6 +671,7 @@ async function handleSingleRequest(
 					jsonrpc: "2.0",
 					id,
 					result: {
+						...modernCacheFields,
 						tools: MCP_TOOLS,
 					},
 				};
@@ -353,7 +683,9 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: callResult,
+					result: isModern2026
+						? { _meta: modernMeta, resultType: "complete", ...callResult }
+						: callResult,
 				};
 			}
 
@@ -361,14 +693,55 @@ async function handleSingleRequest(
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: { resources: [] },
+					result: {
+						...modernCacheFields,
+						resources: [],
+					},
+				};
+
+			case "resources/templates/list":
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: {
+						...modernCacheFields,
+						resourceTemplates: [],
+					},
 				};
 
 			case "prompts/list":
 				return {
 					jsonrpc: "2.0",
 					id,
-					result: { prompts: [] },
+					result: {
+						...modernCacheFields,
+						prompts: [],
+					},
+				};
+
+			case "logging/setLevel":
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: isModern2026
+						? { _meta: modernMeta, resultType: "complete" }
+						: {},
+				};
+
+			case "completion/complete":
+				return {
+					jsonrpc: "2.0",
+					id,
+					result: {
+						...(isModern2026
+							? { _meta: modernMeta, resultType: "complete" }
+							: {}),
+						completion: {
+							values: [],
+							total: 0,
+							hasMore: false,
+						},
+					},
 				};
 
 			default:
@@ -435,6 +808,10 @@ async function executeTool(
 		case "array_field_reader":
 		case "arrayFieldReader":
 			return handleArrayFieldReader(client, args);
+
+		case "knowledge_base_read":
+		case "knowledgeBaseRead":
+			return handleKnowledgeBaseRead(args);
 
 		default:
 			return {
@@ -580,16 +957,16 @@ async function handleGetContentBySlug(
 	const query = `*[_type in ["podcast", "post", "author", "guest"] && slug.current == $slug][0]{
 		_id,
 		_type,
-		"title": coalesce(title, name, "Untitled"),
+		"title": coalesce(title, "Untitled"),
 		"slug": slug.current,
 		date,
 		excerpt,
 		"transcriptSummary": transcript->summary,
 		"transcriptText": transcript->fullText,
-		"guests": guests[]->{ name, "slug": slug.current, bio },
-		"authors": authors[]->{ name, "slug": slug.current, bio },
+		"guest": guest[]->{ "title": coalesce(title, "Anonymous"), "slug": slug.current, excerpt },
+		"author": author[]->{ "title": coalesce(title, "Anonymous"), "slug": slug.current, excerpt },
 		spotify,
-		apple,
+		listenLinks,
 		youtube
 	}`;
 
@@ -819,17 +1196,25 @@ async function handleInitialContext(
 	client: ReturnType<typeof getSanityClient>,
 ) {
 	try {
-		const counts = await client.fetch(`{
-			"podcasts": count(*[_type == "podcast"]),
-			"posts": count(*[_type == "post"]),
-			"authors": count(*[_type == "author"]),
-			"guests": count(*[_type == "guest"]),
-			"recentPodcasts": *[_type == "podcast" && defined(slug.current)] | order(date desc)[0...3]{
-				title,
-				"slug": slug.current,
-				date
-			}
-		}`);
+		const [counts, sanityContextInitial] = await Promise.all([
+			client.fetch(`{
+				"podcasts": count(*[_type == "podcast"]),
+				"posts": count(*[_type == "post"]),
+				"authors": count(*[_type == "author"]),
+				"guests": count(*[_type == "guest"]),
+				"recentPodcasts": *[_type == "podcast" && defined(slug.current)] | order(date desc)[0...3]{
+					title,
+					"slug": slug.current,
+					date
+				}
+			}`),
+			callSanityContextMcpTool("initial_context", {}).catch(() => null),
+		]);
+
+		const knowledgeBaseContext = sanityContextInitial?.content
+			?.map((c) => c.text)
+			.filter(Boolean)
+			.join("\n\n");
 
 		const summary = {
 			platform: "CodingCat.dev",
@@ -847,11 +1232,15 @@ async function handleInitialContext(
 				url: `https://codingcat.dev/podcast/${p.slug}`,
 				date: p.date,
 			})),
+			...(knowledgeBaseContext
+				? { sanityContextKnowledgeBase: knowledgeBaseContext }
+				: {}),
 			recommendedTools: [
 				"search_content: Fast semantic & keyword search across all episodes, tutorials, and transcripts.",
 				"get_content_by_slug: Retrieve full episode or post details, show notes, and transcript summaries.",
 				"get_recent_content: Get the newest podcasts and articles.",
 				"query_content: Run custom read-only GROQ queries.",
+				"knowledge_base_read: Read full entries from the Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes').",
 			],
 		};
 
@@ -873,6 +1262,7 @@ async function handleInitialContext(
 							"get_content_by_slug",
 							"get_recent_content",
 							"query_content",
+							"knowledge_base_read",
 						],
 					}),
 				},
@@ -880,6 +1270,26 @@ async function handleInitialContext(
 			isError: false,
 		};
 	}
+}
+
+async function handleKnowledgeBaseRead(args: Record<string, any>) {
+	const result = await callSanityContextMcpTool("knowledge_base_read", args);
+	if (result) {
+		return result;
+	}
+	return {
+		content: [
+			{
+				type: "text",
+				text: JSON.stringify({
+					error:
+						"Unable to reach Sanity Context Knowledge Base MCP endpoint or missing Organization Context Viewer token (SANITY_CONTEXT_TOKEN / SANITY_AUTH_TOKEN).",
+					endpoint: SANITY_CONTEXT_MCP_URL,
+				}),
+			},
+		],
+		isError: true,
+	};
 }
 
 async function handleSchemaExplorer(
@@ -904,31 +1314,53 @@ async function handleSchemaExplorer(
 						"URL slug identifier (e.g. '0-6-nextjs-with-guillermo-rauch')",
 				},
 				{ name: "date", type: "datetime", description: "Release date" },
-				{ name: "episode", type: "number", description: "Episode number" },
-				{ name: "season", type: "number", description: "Season number" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "16:9 episode cover image",
+				},
 				{
 					name: "excerpt",
 					type: "text",
-					description: "Show notes and summary",
+					description: "Short summary excerpt",
 				},
 				{
-					name: "guests",
+					name: "content",
+					type: "array",
+					description: "Portable Text episode show notes",
+				},
+				{
+					name: "guest",
 					type: "array",
 					description: "References to guest documents",
 				},
 				{
-					name: "authors",
+					name: "author",
 					type: "array",
 					description: "References to host / author documents",
 				},
-				{ name: "youtube", type: "url", description: "YouTube video link" },
-				{ name: "spotify", type: "url", description: "Spotify audio link" },
-				{ name: "apple", type: "url", description: "Apple Podcasts link" },
+				{
+					name: "pick",
+					type: "array",
+					description: "Author and guest picks ({ user, name, site })",
+				},
+				{ name: "youtube", type: "string", description: "YouTube video URL" },
+				{
+					name: "spotify",
+					type: "podcastRssEpisode",
+					description: "Spotify / Anchor RSS episode metadata and audio URL",
+				},
+				{
+					name: "listenLinks",
+					type: "object",
+					description:
+						"Multi-platform listen links (youtube, spotify, apple, overcast, pocketCasts, castbox, castro, rss)",
+				},
 				{
 					name: "transcript",
 					type: "reference",
 					description:
-						"Reference to transcript document with fullText and summary",
+						"Reference to transcript document with fullText, summary, chapters, and statistics",
 				},
 			],
 		},
@@ -940,9 +1372,14 @@ async function handleSchemaExplorer(
 				{ name: "title", type: "string", description: "Article title" },
 				{ name: "slug", type: "slug", description: "URL slug identifier" },
 				{ name: "date", type: "datetime", description: "Publication date" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "16:9 post cover image",
+				},
 				{ name: "excerpt", type: "text", description: "Summary excerpt" },
 				{
-					name: "authors",
+					name: "author",
 					type: "array",
 					description: "References to author documents",
 				},
@@ -951,6 +1388,12 @@ async function handleSchemaExplorer(
 					type: "array",
 					description: "Portable Text article body",
 				},
+				{ name: "youtube", type: "string", description: "YouTube video URL" },
+				{
+					name: "transcript",
+					type: "reference",
+					description: "Reference to transcript document",
+				},
 			],
 		},
 		guest: {
@@ -958,19 +1401,29 @@ async function handleSchemaExplorer(
 			title: "Podcast Guest",
 			description: "Invited podcast guest profile.",
 			fields: [
-				{ name: "name", type: "string", description: "Full name" },
+				{ name: "title", type: "string", description: "Full name" },
 				{ name: "slug", type: "slug", description: "URL slug identifier" },
-				{ name: "bio", type: "text", description: "Guest biography" },
 				{
-					name: "twitter",
-					type: "url",
-					description: "Twitter / X profile URL",
+					name: "coverImage",
+					type: "image",
+					description: "Guest portrait image",
 				},
-				{ name: "github", type: "url", description: "GitHub profile URL" },
+				{ name: "excerpt", type: "text", description: "Short guest summary" },
 				{
-					name: "website",
-					type: "url",
-					description: "Personal or company website",
+					name: "content",
+					type: "array",
+					description: "Portable Text guest biography",
+				},
+				{
+					name: "socials",
+					type: "object",
+					description:
+						"Social profile URLs (bluesky, github, linkedin, twitter, youtube, etc.)",
+				},
+				{
+					name: "websites",
+					type: "array",
+					description: "Personal or company websites ({ site, link })",
 				},
 			],
 		},
@@ -979,9 +1432,70 @@ async function handleSchemaExplorer(
 			title: "Author / Host",
 			description: "CodingCat.dev author or podcast host.",
 			fields: [
-				{ name: "name", type: "string", description: "Author name" },
+				{ name: "title", type: "string", description: "Author name" },
 				{ name: "slug", type: "slug", description: "URL slug identifier" },
-				{ name: "bio", type: "text", description: "Short biography" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "Author portrait image",
+				},
+				{ name: "excerpt", type: "text", description: "Short biography" },
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text full biography",
+				},
+				{
+					name: "socials",
+					type: "object",
+					description: "Social profile URLs",
+				},
+				{
+					name: "websites",
+					type: "array",
+					description: "Personal websites ({ site, link })",
+				},
+			],
+		},
+		sponsor: {
+			name: "sponsor",
+			title: "Sponsor",
+			description: "Podcast and blog sponsor.",
+			fields: [
+				{ name: "title", type: "string", description: "Sponsor name" },
+				{ name: "slug", type: "slug", description: "URL slug identifier" },
+				{ name: "url", type: "url", description: "Sponsor website URL" },
+				{
+					name: "coverImage",
+					type: "image",
+					description: "Sponsor logo/cover",
+				},
+				{ name: "excerpt", type: "text", description: "Sponsor tagline" },
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text sponsor description",
+				},
+			],
+		},
+		transcript: {
+			name: "transcript",
+			title: "Transcript & Video Intelligence",
+			description:
+				"Automated YouTube transcript, chapters, cues, and video statistics.",
+			fields: [
+				{ name: "title", type: "string", description: "Video title" },
+				{ name: "youtubeId", type: "string", description: "YouTube video ID" },
+				{ name: "status", type: "string", description: "Transcript status" },
+				{ name: "summary", type: "text", description: "Transcript summary" },
+				{ name: "fullText", type: "text", description: "Full transcript text" },
+				{ name: "chapters", type: "array", description: "Video chapters" },
+				{ name: "cues", type: "array", description: "Timed caption cues" },
+				{
+					name: "statistics",
+					type: "object",
+					description: "YouTube viewCount, likeCount, commentCount",
+				},
 			],
 		},
 	};
@@ -999,7 +1513,14 @@ async function handleSchemaExplorer(
 				type: "text",
 				text: JSON.stringify(
 					{
-						availableTypes: ["podcast", "post", "guest", "author", "sponsor"],
+						availableTypes: [
+							"podcast",
+							"post",
+							"guest",
+							"author",
+							"sponsor",
+							"transcript",
+						],
 						schemas,
 					},
 					null,

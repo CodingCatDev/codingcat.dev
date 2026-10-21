@@ -192,6 +192,28 @@ export const GET: APIRoute = async ({ locals }) => {
 					required: ["mode", "documentId", "field"],
 				},
 			},
+			{
+				name: "knowledge_base_read",
+				title: "Read Knowledge Base Entries",
+				description:
+					"Read full entries from the CodingCat.dev Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes' — programming & tech dad jokes, Git jokes, SQL jokes, Jeff Dean facts, coding culture).",
+				inputSchema: {
+					type: "object",
+					properties: {
+						knowledgeBaseId: {
+							type: "string",
+							description: "The ID of the Knowledge Base to read from.",
+						},
+						paths: {
+							type: "array",
+							items: { type: "string" },
+							description:
+								"List of entry paths to read from the Knowledge Base (up to 20 paths).",
+						},
+					},
+					required: ["knowledgeBaseId", "paths"],
+				},
+			},
 		],
 	};
 

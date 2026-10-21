@@ -6,7 +6,7 @@
  * conversion on Workers (text chunking, phantom child nodes). Passing element
  * objects straight to ImageResponse bypasses that path entirely.
  *
- * Query params: `title`, `subtitle`.
+ * Query params: `title`, `subtitle`, `image`.
  */
 import type { APIRoute } from "astro";
 import { ImageResponse } from "workers-og";
@@ -14,14 +14,17 @@ import {
 	buildDefaultOgElement,
 	loadFonts,
 	OG_CACHE_HEADER,
+	resolveSanityImageDataUri,
 } from "@/lib/og-utils";
 
 export const GET: APIRoute = async ({ url }) => {
 	try {
 		const title = url.searchParams.get("title") || "CodingCat.dev";
 		const subtitle = url.searchParams.get("subtitle") || undefined;
+		const imageParam = url.searchParams.get("image") || undefined;
 
-		const element = buildDefaultOgElement({ title, subtitle });
+		const image = await resolveSanityImageDataUri(imageParam);
+		const element = buildDefaultOgElement({ title, subtitle, image });
 
 		const response = new ImageResponse(element, {
 			width: 1200,

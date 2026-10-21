@@ -199,10 +199,10 @@ export default defineType({
       ],
     }),
     defineField({
-      name: 'bookedSlot',
-      title: 'Booked Slot',
+      name: 'bookedPodcast',
+      title: 'Linked Podcast Episode',
       type: 'reference',
-      to: [{type: 'automatedVideo'}],
+      to: [{type: 'podcast'}],
     }),
     defineField({
       name: 'sponsorDocId',

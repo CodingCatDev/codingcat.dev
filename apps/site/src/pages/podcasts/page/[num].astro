@@ -24,11 +24,23 @@ const { page, totalPages, offset, limit } = resolved.bounds;
 const items = await sanity.loadQuery(morePodcastQuery, { skip: "none", offset, limit });
 
 const title = page === 1 ? "Podcasts" : `Podcasts — Page ${page}`;
+const ogCardImageUrl = sanity
+	.urlForImage(items[0]?.coverImage ?? undefined)
+	?.width(640)
+	.height(360)
+	.fit("crop")
+	.url();
 ---
 
 <BaseLayout
 	title={`${title} | CodingCat.dev`}
 	description="Purrfect Web Development podcast episodes, interviews, and conversations."
+	ogFallback={{
+		title,
+		subtitle: "Purrfect Web Development podcast episodes, interviews, and conversations.",
+		type: "Podcast",
+		image: ogCardImageUrl,
+	}}
 	canonical={`/podcasts/page/${page}`}
 >
 	<Fragment slot="head">

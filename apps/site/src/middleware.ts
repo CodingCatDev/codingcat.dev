@@ -90,9 +90,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		"max-age=31536000; includeSubDomains; preload",
 	);
 	response.headers.set("X-Content-Type-Options", "nosniff");
-	response.headers.set("X-Frame-Options", "SAMEORIGIN");
 	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-	response.headers.set("Content-Security-Policy", "frame-ancestors 'self'");
+	response.headers.set(
+		"Content-Security-Policy",
+		"frame-ancestors 'self' https://*.sanity.studio https://*.sanity.io https://sanity.io http://localhost:3333",
+	);
 
 	// AIPREF / AI Preference Headers
 	response.headers.set("Content-Usage", "train-ai=n, search=y");
@@ -100,7 +102,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// Always emit Link headers (RFC 8288) for AI agent discoverability
 	response.headers.set(
 		"Link",
-		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md", <${origin}/AGENTS.md>; rel="agent-guide", <${origin}/pricing.md>; rel="pricing"`,
+		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/.well-known/oauth-authorization-server>; rel="oauth-authorization-server", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md", <${origin}/AGENTS.md>; rel="agent-guide", <${origin}/pricing.md>; rel="pricing"`,
 	);
 	response.headers.append("Vary", "Accept");
 

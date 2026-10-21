@@ -28,11 +28,23 @@ const posts = await sanity.loadQuery(morePostQuery, {
 });
 
 const title = page === 1 ? "Blog" : `Blog — Page ${page}`;
+const ogCardImageUrl = sanity
+	.urlForImage(posts[0]?.coverImage ?? undefined)
+	?.width(640)
+	.height(360)
+	.fit("crop")
+	.url();
 ---
 
 <BaseLayout
 	title={`${title} | CodingCat.dev`}
 	description="Purrfect web development tutorials, articles, and guides."
+	ogFallback={{
+		title,
+		subtitle: "Purrfect web development tutorials, articles, and guides.",
+		type: "Blog",
+		image: ogCardImageUrl,
+	}}
 	canonical={`/blog/page/${page}`}
 >
 	<Fragment slot="head">

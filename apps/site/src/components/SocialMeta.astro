@@ -9,9 +9,12 @@ import { SITE_NAME } from "@/lib/site";
  */
 interface Props {
 	title: string;
+	ogTitle?: string | null;
 	description?: string | null;
+	ogDescription?: string | null;
 	image?: { url: string; alt?: string; width?: number; height?: number } | null;
 	type?: "website" | "article";
+	twitterCard?: string | null;
 	publishedAt?: string | null;
 	modifiedAt?: string | null;
 	authors?: Array<string | null | undefined>;
@@ -21,15 +24,26 @@ interface Props {
 
 const {
 	title,
+	ogTitle,
 	description,
+	ogDescription,
 	image,
 	type = "website",
+	twitterCard,
 	publishedAt,
 	modifiedAt,
 	authors = [],
 	canonical = Astro.url,
 	noindex = false,
 } = Astro.props;
+
+function cleanMetaText(value: string | null | undefined): string | undefined {
+	const cleaned = stegaClean(value)?.trim();
+	if (!cleaned || cleaned.toLowerCase() === "fix me") {
+		return undefined;
+	}
+	return cleaned;
+}
 
 // Per-request, not `Astro.site`: the origin differs between the dev and
 // production Workers but the build is shared.
@@ -39,9 +53,18 @@ const canonicalUrl = new URL(
 	site,
 ).href;
 
-const cleanTitle = stegaClean(title) ?? SITE_NAME;
-const cleanDescription = stegaClean(description) ?? undefined;
+const cleanTitle = cleanMetaText(title) ?? SITE_NAME;
+const cleanOgTitle = cleanMetaText(ogTitle) ?? cleanTitle;
+const cleanDescription = cleanMetaText(description);
+const cleanOgDescription = cleanMetaText(ogDescription) ?? cleanDescription;
 const imageUrl = image?.url ? new URL(stegaClean(image.url), site).href : undefined;
+const imageAlt = cleanMetaText(image?.alt) ?? cleanOgTitle;
+const cardType =
+	cleanMetaText(twitterCard) === "summary"
+		? "summary"
+		: imageUrl
+			? "summary_large_image"
+			: "summary";
 ---
 
 <title>{cleanTitle}</title>
@@ -50,9 +73,10 @@ const imageUrl = image?.url ? new URL(stegaClean(image.url), site).href : undefi
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content="en_US" />
 <meta property="og:type" content={type} />
-<meta property="og:title" content={cleanTitle} />
-{cleanDescription && <meta property="og:description" content={cleanDescription} />}
+<meta property="og:title" content={cleanOgTitle} />
+{cleanOgDescription && <meta property="og:description" content={cleanOgDescription} />}
 <meta property="og:url" content={canonicalUrl} />
 {
 	imageUrl && (
@@ -60,16 +84,23 @@ const imageUrl = image?.url ? new URL(stegaClean(image.url), site).href : undefi
 			<meta property="og:image" content={imageUrl} />
 			{image?.width && <meta property="og:image:width" content={String(image.width)} />}
 			{image?.height && <meta property="og:image:height" content={String(image.height)} />}
-			{image?.alt && <meta property="og:image:alt" content={stegaClean(image.alt)} />}
+			{imageAlt && <meta property="og:image:alt" content={imageAlt} />}
 		</>
 	)
 }
 
-<meta name="twitter:card" content={imageUrl ? "summary_large_image" : "summary"} />
+<meta name="twitter:card" content={cardType} />
 <meta name="twitter:site" content="@CodingCatDev" />
-<meta name="twitter:title" content={cleanTitle} />
-{cleanDescription && <meta name="twitter:description" content={cleanDescription} />}
-{imageUrl && <meta name="twitter:image" content={imageUrl} />}
+<meta name="twitter:title" content={cleanOgTitle} />
+{cleanOgDescription && <meta name="twitter:description" content={cleanOgDescription} />}
+{
+	imageUrl && (
+		<>
+			<meta name="twitter:image" content={imageUrl} />
+			{imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
+		</>
+	)
+}
 
 {
 	type === "article" && (
