@@ -1,5 +1,14 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
+import { sendCodingCatEmail } from "@/lib/email";
+import {
+	getSanityServerClient,
+	resolveSponsorTier,
+} from "@/lib/sanity/write-client";
+import {
+	createStripeMilestoneCheckout,
+	createStripeMilestoneInvoice,
+} from "@/lib/stripe";
 
 interface SponsorshipPayload {
 	name?: string;
@@ -7,34 +16,14 @@ interface SponsorshipPayload {
 	email?: string;
 	company?: string;
 	companyName?: string;
+	website?: string;
 	tier?: string | string[];
 	sponsorshipTier?: string | string[];
+	paymentPreference?: "checkout" | "invoice";
 	message?: string;
 }
 
-function getTierBudgetCents(tier: string | string[] | undefined): number {
-	const raw = (
-		Array.isArray(tier) ? tier.join(" ") : String(tier ?? "")
-	).toLowerCase();
-	if (raw.includes("dedicated")) {
-		return 400000;
-	}
-	if (raw.includes("mid-roll") || raw.includes("integrated")) {
-		return 180000;
-	}
-	if (raw.includes("shout-out")) {
-		return 90000;
-	}
-	if (raw.includes("newsletter") || raw.includes("blog")) {
-		return 50000;
-	}
-	if (raw.includes("series") || raw.includes("custom")) {
-		return 500000;
-	}
-	return 150000;
-}
-
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, url }) => {
 	let data: SponsorshipPayload = {};
 	const contentType = request.headers.get("content-type") ?? "";
 
@@ -92,8 +81,10 @@ export const POST: APIRoute = async ({ request }) => {
 
 	const name = (data.name ?? data.fullName)?.trim();
 	const email = data.email?.trim();
-	const company = (data.company ?? data.companyName)?.trim();
-	const tier = data.tier ?? data.sponsorshipTier;
+	const company =
+		(data.company ?? data.companyName)?.trim() || name || "Sponsor Partner";
+	const website = data.website?.trim();
+	const rawTier = data.tier ?? data.sponsorshipTier;
 	const message = data.message?.trim();
 
 	if (!name) {
@@ -120,8 +111,8 @@ export const POST: APIRoute = async ({ request }) => {
 	}
 
 	const hasTier =
-		(typeof tier === "string" && tier.trim().length > 0) ||
-		(Array.isArray(tier) && tier.length > 0);
+		(typeof rawTier === "string" && rawTier.trim().length > 0) ||
+		(Array.isArray(rawTier) && rawTier.length > 0);
 
 	if (!hasTier) {
 		return new Response(
@@ -136,66 +127,128 @@ export const POST: APIRoute = async ({ request }) => {
 		);
 	}
 
-	const targetPlacements = Array.isArray(tier) ? tier : [String(tier)];
-	const proposedBudget = getTierBudgetCents(tier);
+	const selectedTier = resolveSponsorTier(rawTier);
+	const portalToken = `spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+	const leadId = `sponsorLead-${portalToken}`;
 
-	const flipcoreUrl =
-		(env as unknown as Record<string, string | undefined>)?.FLIPCORE_API_URL ??
-		"https://api.flipfeeds.com";
-	const flipcoreWebUrl =
-		(env as unknown as Record<string, string | undefined>)
-			?.PUBLIC_FLIPCORE_WEB_URL ?? "https://flipfeeds.com";
+	const workerEnv = (env ?? {}) as unknown as Record<
+		string,
+		string | undefined
+	>;
+	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
+	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
 
-	const fallbackToken = `spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-	let portalToken = fallbackToken;
-	let portalUrl = `${flipcoreWebUrl}/codingcatdev/portal/${fallbackToken}`;
-	let dealId = `deal_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-	let inquiryId = `inq_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+	// 1. Optional Stripe 50% Upfront Deposit Checkout + Net-15 Invoice generation
+	let stripeDepositCheckoutUrl: string | undefined;
+	let stripeDepositInvoiceId: string | undefined;
+	let stripeDepositInvoiceUrl: string | undefined;
 
 	try {
-		const flipcoreRes = await fetch(`${flipcoreUrl}/v1/deals/inquiries`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				sponsorName: name,
-				sponsorEmail: email,
-				companyName: company ?? undefined,
-				targetPlacements,
-				proposedBudget,
-				currency: "USD",
-				message: message ?? undefined,
-				slug: "codingcatdev",
+		const [checkout, invoice] = await Promise.all([
+			createStripeMilestoneCheckout({
+				leadId,
+				portalToken,
+				companyName: company,
+				contactEmail: email,
+				packageName: selectedTier.name,
+				milestone: "deposit",
+				amountCents: selectedTier.depositAmountCents,
+				siteUrl,
 			}),
-		});
-
-		if (flipcoreRes.ok) {
-			const resData = (await flipcoreRes.json()) as any;
-			if (resData.portalUrl) {
-				portalUrl = resData.portalUrl;
-			}
-			if (resData.portalToken) {
-				portalToken = resData.portalToken;
-			}
-			if (resData.dealId) {
-				dealId = resData.dealId;
-			}
-			if (resData.inquiryId) {
-				inquiryId = resData.inquiryId;
-			}
-		}
+			createStripeMilestoneInvoice({
+				leadId,
+				portalToken,
+				companyName: company,
+				contactEmail: email,
+				packageName: selectedTier.name,
+				milestone: "deposit",
+				amountCents: selectedTier.depositAmountCents,
+				siteUrl,
+				daysUntilDue: 15,
+			}),
+		]);
+		stripeDepositCheckoutUrl = checkout?.checkoutUrl;
+		stripeDepositInvoiceId = invoice?.invoiceId;
+		stripeDepositInvoiceUrl = invoice?.hostedInvoiceUrl;
 	} catch {
-		// Resilient fallback: uses pre-generated live Deal Room URL
+		// Non-fatal if Stripe is not configured in local dev
 	}
+
+	// 2. Persist sponsorLead directly in Sanity
+	const { client, canWrite } = getSanityServerClient();
+	if (canWrite) {
+		try {
+			await client.createOrReplace({
+				_id: leadId,
+				_type: "sponsorLead",
+				companyName: company,
+				contactName: name,
+				contactEmail: email,
+				...(website ? { website } : {}),
+				portalToken,
+				source: "inbound",
+				status:
+					stripeDepositCheckoutUrl || stripeDepositInvoiceUrl
+						? "deposit_sent"
+						: "new",
+				rateCard: selectedTier.id,
+				totalAmountCents: selectedTier.totalAmountCents,
+				depositAmountCents: selectedTier.depositAmountCents,
+				balanceAmountCents: selectedTier.balanceAmountCents,
+				...(stripeDepositCheckoutUrl ? { stripeDepositCheckoutUrl } : {}),
+				...(stripeDepositInvoiceId ? { stripeDepositInvoiceId } : {}),
+				...(stripeDepositInvoiceUrl ? { stripeDepositInvoiceUrl } : {}),
+				intent:
+					message ||
+					`Selected package: ${selectedTier.name} ($${selectedTier.priceUsd})`,
+				deliverables: selectedTier.deliverables.map((d, idx) => ({
+					_key: `deliv-${idx}`,
+					title: d.title,
+					channel: d.channel,
+					status: "pending",
+				})),
+				lastEmailAt: new Date().toISOString(),
+			});
+		} catch {
+			// Fallback to stateless Deal Room params if write token lacks permissions
+		}
+	}
+
+	const queryFallback = new URLSearchParams({
+		company,
+		name,
+		email,
+		tier: selectedTier.id,
+	});
+	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;
+
+	// 3. Fire-and-forget notification email via Cloudflare Email Routing if bound
+	await sendCodingCatEmail({
+		to: "alex.patterson@gmail.com",
+		subject: `[CodingCat.dev Sponsor Inquiry] ${company} (${selectedTier.name} - $${selectedTier.priceUsd})`,
+		text: [
+			"New Sponsorship Inquiry on CodingCat.dev",
+			`Company: ${company}`,
+			`Contact: ${name} <${email}>`,
+			`Package: ${selectedTier.name} ($${selectedTier.priceUsd} total / $${selectedTier.depositAmountCents / 100} 50% deposit)`,
+			`Deal Room URL: ${portalUrl}`,
+			`Message: ${message || "(none)"}`,
+		].join("\n"),
+	});
 
 	return new Response(
 		JSON.stringify({
 			success: true,
 			message: "Inquiry received",
-			inquiryId,
-			dealId,
+			inquiryId: leadId,
+			dealId: leadId,
 			portalToken,
 			portalUrl,
 			dealRoomUrl: portalUrl,
+			depositAmountUsd: selectedTier.depositAmountCents / 100,
+			totalAmountUsd: selectedTier.priceUsd,
+			stripeDepositCheckoutUrl,
+			stripeDepositInvoiceUrl,
 		}),
 		{
 			status: 200,

@@ -12,6 +12,7 @@
   "workers_dev": true,
   "preview_urls": true,
   "ai": { "binding": "AI" },
+  "send_email": [{ "name": "EMAIL" }],
   // Uncomment after clicking "Enable Analytics Engine" once at:
   // https://dash.cloudflare.com/c46bd0f3b9ed47b8692cca098030edbf/workers/analytics-engine
   // "analytics_engine_datasets": [
@@ -58,6 +59,7 @@
         }
       ],
       "ai": { "binding": "AI" },
+      "send_email": [{ "name": "EMAIL" }],
       "d1_databases": [
         {
           "binding": "DB",

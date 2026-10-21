@@ -57,6 +57,9 @@ jobs:
           SANITY_STUDIO_PROJECT_ID: hfh83o0w
           SANITY_STUDIO_DATASET: production
 
+      - name: Build ops app (Sanity App SDK)
+        run: pnpm --filter @codingcatdev/ops build
+
       - name: Run E2E Tests
         run: pnpm --filter @codingcatdev/site test:e2e
 

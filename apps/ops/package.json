@@ -1,0 +1,25 @@
+{
+  "name": "@codingcatdev/ops",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "@sanity/sdk": "^3.9.1",
+    "@sanity/sdk-react": "^3.9.1",
+    "@sanity/ui": "^4.4.9",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.3.11"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.3"
+  }
+}

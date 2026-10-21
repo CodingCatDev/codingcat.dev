@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "pnpm --filter @codingcatdev/site dev",
     "dev:studio": "pnpm --filter @codingcatdev/sanity dev",
+    "dev:ops": "pnpm --filter @codingcatdev/ops dev",
     "build": "pnpm --filter @codingcatdev/site build",
     "build:studio": "pnpm --filter @codingcatdev/sanity build",
+    "build:ops": "pnpm --filter @codingcatdev/ops build",
     "deploy:studio": "pnpm --filter @codingcatdev/sanity deploy",
     "deploy:blueprints": "sanity blueprints deploy",
     "blueprints:deploy": "sanity blueprints deploy",
@@ -26,7 +28,12 @@
     "@sanity/client": "^8.9.0",
     "@sanity/functions": "^1.8.1",
     "@sanity/image-url": "^2.1.1",
-    "sanity": "^6.9.2"
+    "sanity": "^6.20.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@sanity/runtime-cli": "17.16.0"
+    }
   },
   "packageManager": "pnpm@10.34.1"
 }

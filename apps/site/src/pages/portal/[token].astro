@@ -1,0 +1,533 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+	getSanityServerClient,
+	resolveSponsorTier,
+} from "@/lib/sanity/write-client";
+
+const { token } = Astro.params;
+const searchParams = Astro.url.searchParams;
+
+interface DeliverableItem {
+	title: string;
+	channel: string;
+	status: string;
+	url?: string;
+	views?: number;
+	publishedAt?: string;
+}
+
+interface LeadPortalData {
+	_id: string;
+	portalToken: string;
+	companyName: string;
+	contactName: string;
+	contactEmail: string;
+	status: string;
+	rateCard: string;
+	packageName: string;
+	packageDescription: string;
+	totalAmountCents: number;
+	depositAmountCents: number;
+	balanceAmountCents: number;
+	depositPaidAt?: string;
+	balancePaidAt?: string;
+	stripeDepositCheckoutUrl?: string;
+	stripeDepositInvoiceUrl?: string;
+	stripeBalanceCheckoutUrl?: string;
+	stripeBalanceInvoiceUrl?: string;
+	deliverables: DeliverableItem[];
+}
+
+const fallbackTier = resolveSponsorTier(searchParams.get("tier") || "full-stack-launch");
+const fallbackCompany = searchParams.get("company") || "Sponsor Partner";
+const fallbackName = searchParams.get("name") || "Sponsor Team";
+const fallbackEmail = searchParams.get("email") || "";
+const paymentNotice = searchParams.get("payment");
+
+let portalData: LeadPortalData = {
+	_id: `sponsorLead-${token}`,
+	portalToken: token || "demo",
+	companyName: fallbackCompany,
+	contactName: fallbackName,
+	contactEmail: fallbackEmail,
+	status: paymentNotice === "deposit_success" ? "deposit_paid" : "new",
+	rateCard: fallbackTier.id,
+	packageName: fallbackTier.name,
+	packageDescription: fallbackTier.description,
+	totalAmountCents: fallbackTier.totalAmountCents,
+	depositAmountCents: fallbackTier.depositAmountCents,
+	balanceAmountCents: fallbackTier.balanceAmountCents,
+	deliverables: fallbackTier.deliverables.map((d) => ({
+		title: d.title,
+		channel: d.channel,
+		status: paymentNotice === "deposit_success" ? "in-progress" : "pending",
+	})),
+};
+
+try {
+	const { client } = getSanityServerClient();
+	const doc = await client.fetch<Record<string, any> | null>(
+		`*[_type == "sponsorLead" && (portalToken == $portalToken || _id == $leadId)][0]`,
+		{ portalToken: token ?? "", leadId: `sponsorLead-${token ?? ""}` },
+	);
+	if (doc) {
+		const tier = resolveSponsorTier(doc.rateCard || fallbackTier.id);
+		portalData = {
+			_id: doc._id,
+			portalToken: doc.portalToken || token || "demo",
+			companyName: doc.companyName || fallbackCompany,
+			contactName: doc.contactName || fallbackName,
+			contactEmail: doc.contactEmail || fallbackEmail,
+			status:
+				paymentNotice === "deposit_success"
+					? "deposit_paid"
+					: paymentNotice === "balance_success"
+						? "paid"
+						: doc.status || "new",
+			rateCard: tier.id,
+			packageName: tier.name,
+			packageDescription: tier.description,
+			totalAmountCents: doc.totalAmountCents || tier.totalAmountCents,
+			depositAmountCents: doc.depositAmountCents || tier.depositAmountCents,
+			balanceAmountCents: doc.balanceAmountCents || tier.balanceAmountCents,
+			depositPaidAt: doc.depositPaidAt,
+			balancePaidAt: doc.balancePaidAt,
+			stripeDepositCheckoutUrl: doc.stripeDepositCheckoutUrl,
+			stripeDepositInvoiceUrl: doc.stripeDepositInvoiceUrl,
+			stripeBalanceCheckoutUrl: doc.stripeBalanceCheckoutUrl,
+			stripeBalanceInvoiceUrl: doc.stripeBalanceInvoiceUrl,
+			deliverables:
+				Array.isArray(doc.deliverables) && doc.deliverables.length > 0
+					? doc.deliverables
+					: tier.deliverables.map((d) => ({
+							title: d.title,
+							channel: d.channel,
+							status: "pending",
+						})),
+		};
+	}
+} catch {
+	// Uses resilient fallback portalData
+}
+
+const formatUsd = (cents: number) =>
+	new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+		maximumFractionDigits: 0,
+	}).format(cents / 100);
+
+const isDepositPaid =
+	Boolean(portalData.depositPaidAt) ||
+	portalData.status === "deposit_paid" ||
+	portalData.status === "booked" ||
+	portalData.status === "balance_sent" ||
+	portalData.status === "paid";
+
+const isBalancePaid =
+	Boolean(portalData.balancePaidAt) || portalData.status === "paid";
+---
+
+<BaseLayout
+	title={`${portalData.companyName} × CodingCat.dev — Sponsor Deal Room`}
+	description={`Live sponsorship deal room, milestone billing, calendar scheduling, and multi-channel deliverable tracking for ${portalData.companyName}.`}
+>
+	<Breadcrumbs
+		links={[
+			{ title: "Sponsorships", href: "/sponsorships" },
+			{ title: `${portalData.companyName} Deal Room` },
+		]}
+	/>
+
+	<div class="w-full flex flex-col gap-8 md:gap-10 my-8 md:my-12 max-w-5xl mx-auto">
+		{
+			paymentNotice === "deposit_success" && (
+				<div class="p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-300 text-sm">
+					<strong>50% Deposit Confirmed!</strong> Your production slot is locked. Next step: pick your kickoff or recording slot below.
+				</div>
+			)
+		}
+		{
+			paymentNotice === "balance_success" && (
+				<div class="p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-300 text-sm">
+					<strong>Final 50% Balance Paid!</strong> Thank you for partnering with CodingCat.dev.
+				</div>
+			)
+		}
+
+		<!-- Header Banner -->
+		<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl border border-border bg-card shadow-xs">
+			<div class="flex flex-col gap-2">
+				<div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-primary">
+					<span>CodingCat.dev Sponsor Deal Room</span>
+					<span>&middot;</span>
+					<span>Token: {portalData.portalToken}</span>
+				</div>
+				<h1 class="text-2xl md:text-4xl font-bold tracking-tight">
+					{portalData.companyName} &times; CodingCat.dev
+				</h1>
+				<p class="text-sm text-muted-foreground max-w-2xl">
+					{portalData.packageName} &mdash; {portalData.packageDescription}
+				</p>
+			</div>
+
+			<div class="flex flex-col items-start md:items-end gap-1 shrink-0">
+				<span class="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+					Total Campaign Value
+				</span>
+				<span class="text-3xl font-bold text-foreground">
+					{formatUsd(portalData.totalAmountCents)}
+				</span>
+				<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+					50% Deposit ({formatUsd(portalData.depositAmountCents)}) + 50% on Publish
+				</span>
+			</div>
+		</header>
+
+		<!-- Verified First-Party Telemetry Strip -->
+		<section class="grid grid-cols-1 sm:grid-cols-4 gap-4 p-5 rounded-2xl border border-border bg-card/60">
+			<div class="flex flex-col gap-1">
+				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">YouTube Subscribers</span>
+				<span class="text-2xl font-bold text-foreground">61.2K+</span>
+				<span class="text-xs text-primary font-medium">✓ Verified YouTube API</span>
+			</div>
+			<div class="flex flex-col gap-1">
+				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">US / CA / UK / AU Share</span>
+				<span class="text-2xl font-bold text-foreground">21.1%</span>
+				<span class="text-xs text-primary font-medium">✓ #1 Watch-Time Engagement</span>
+			</div>
+			<div class="flex flex-col gap-1">
+				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Short-Form Syndication</span>
+				<span class="text-2xl font-bold text-foreground">7 Platforms</span>
+				<span class="text-xs text-primary font-medium">✓ YT, X, LI, BSky, Threads, Masto, IG/TT</span>
+			</div>
+			<div class="flex flex-col gap-1">
+				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Canonical SEO + AEO</span>
+				<span class="text-2xl font-bold text-foreground">WebMCP + llms.txt</span>
+				<span class="text-xs text-primary font-medium">✓ Dev.to &amp; Hashnode Syndicated</span>
+			</div>
+		</section>
+
+		<!-- Two-Column Grid: Milestone Billing + Calendar Scheduling -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<!-- Milestone Billing Card -->
+			<section class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
+				<div class="flex flex-col gap-4">
+					<div class="flex items-center justify-between">
+						<h2 class="text-xl font-bold tracking-tight">
+							1. Milestone Billing (50% / 50%)
+						</h2>
+						<span class="text-xs font-mono px-2.5 py-1 rounded bg-muted text-muted-foreground">
+							Stripe Verified
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground leading-relaxed">
+						Lock your production and recording window with a 50% upfront deposit via instant card/ACH checkout or a Net-15 corporate invoice. The remaining 50% balance is billed only when your deliverables go live.
+					</p>
+
+					<!-- Milestone 1: 50% Upfront Deposit -->
+					<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
+						<div class="flex items-center justify-between">
+							<div>
+								<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+									Milestone 1 &middot; Upfront Deposit (50%)
+								</span>
+								<h3 class="text-base font-bold text-foreground">
+									Lock Production &amp; Calendar Slot
+								</h3>
+							</div>
+							<span class="text-xl font-bold text-foreground">
+								{formatUsd(portalData.depositAmountCents)}
+							</span>
+						</div>
+
+						{
+							isDepositPaid ? (
+								<div class="text-xs font-semibold text-green-600 dark:text-green-400">
+									✓ 50% Deposit Paid {portalData.depositPaidAt ? `on ${new Date(portalData.depositPaidAt).toLocaleDateString()}` : ""}
+								</div>
+							) : (
+								<div class="flex flex-wrap gap-2 pt-1">
+									{portalData.stripeDepositCheckoutUrl ? (
+										<a
+											href={portalData.stripeDepositCheckoutUrl}
+											class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+										>
+											Pay {formatUsd(portalData.depositAmountCents)} Deposit Now &rarr;
+										</a>
+									) : (
+										<button
+											type="button"
+											data-milestone="deposit"
+											data-mode="checkout"
+											class="stripe-action-btn px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+										>
+											Pay {formatUsd(portalData.depositAmountCents)} Deposit (Card / ACH) &rarr;
+										</button>
+									)}
+
+									{portalData.stripeDepositInvoiceUrl ? (
+										<a
+											href={portalData.stripeDepositInvoiceUrl}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors"
+										>
+											View Net-15 Corporate Invoice &nearr;
+										</a>
+									) : (
+										<button
+											type="button"
+											data-milestone="deposit"
+											data-mode="invoice"
+											class="stripe-action-btn px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+										>
+											Request Net-15 Hosted Invoice
+										</button>
+									)}
+								</div>
+							)
+						}
+					</div>
+
+					<!-- Milestone 2: 50% Final Balance -->
+					<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
+						<div class="flex items-center justify-between">
+							<div>
+								<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+									Milestone 2 &middot; Final Balance on Publish (50%)
+								</span>
+								<h3 class="text-base font-bold text-foreground">
+									Due Upon Campaign Publication
+								</h3>
+							</div>
+							<span class="text-xl font-bold text-foreground">
+								{formatUsd(portalData.balanceAmountCents)}
+							</span>
+						</div>
+
+						{
+							isBalancePaid ? (
+								<div class="text-xs font-semibold text-green-600 dark:text-green-400">
+									✓ Paid in Full
+								</div>
+							) : (
+								<div class="flex flex-wrap gap-2 pt-1">
+									<button
+										type="button"
+										data-milestone="balance"
+										data-mode="checkout"
+										class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+									>
+										Pay {formatUsd(portalData.balanceAmountCents)} Balance (Checkout)
+									</button>
+									<button
+										type="button"
+										data-milestone="balance"
+										data-mode="invoice"
+										class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+									>
+										Generate Net-15 Balance Invoice
+									</button>
+								</div>
+							)
+						}
+					</div>
+
+					<div id="stripe-feedback" class="hidden text-xs p-3 rounded-lg border border-border bg-muted/50"></div>
+				</div>
+			</section>
+
+			<!-- Calendar & Kickoff Card -->
+			<section class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
+				<div class="flex flex-col gap-4">
+					<div class="flex items-center justify-between">
+						<h2 class="text-xl font-bold tracking-tight">
+							2. Schedule Kickoff &amp; Recording
+						</h2>
+						<span class="text-xs font-mono px-2.5 py-1 rounded bg-primary/10 text-primary">
+							8am&ndash;5pm PT / ET
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground leading-relaxed">
+						Book your technical scoping call or 45-minute podcast recording directly on Alex Patterson's live Google Calendar. Multi-calendar conflict detection is enabled across all CodingCat.dev &amp; studio calendars.
+					</p>
+
+					<div class="grid grid-cols-1 gap-3">
+						<a
+							href="https://calendar.app.google/tyGiF6dGFQeaVrN66"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
+						>
+							<div class="flex flex-col gap-1">
+								<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+									Sponsor Scoping &amp; Architecture Sync
+								</span>
+								<span class="text-sm font-bold text-foreground">
+									Book 15-Min Sponsor Kickoff Call
+								</span>
+								<span class="text-xs text-muted-foreground">
+									Align on SDK demo, talking points, and launch date
+								</span>
+							</div>
+							<span class="text-sm font-bold text-primary">&nearr;</span>
+						</a>
+
+						<a
+							href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
+						>
+							<div class="flex flex-col gap-1">
+								<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+									Podcast &amp; Showcase Recording
+								</span>
+								<span class="text-sm font-bold text-foreground">
+									Book 45-Min Studio Recording Slot
+								</span>
+								<span class="text-xs text-muted-foreground">
+									Direct Google Calendar appointment schedule
+								</span>
+							</div>
+							<span class="text-sm font-bold text-primary">&nearr;</span>
+						</a>
+
+						<a
+							href={`/book?track=sponsored&company=${encodeURIComponent(portalData.companyName)}&name=${encodeURIComponent(portalData.contactName)}&email=${encodeURIComponent(portalData.contactEmail)}`}
+							class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
+						>
+							<div class="flex flex-col gap-1">
+								<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+									Mandatory Pre-Recording Step
+								</span>
+								<span class="text-sm font-bold text-foreground">
+									Complete Guest Intake &amp; E-SIGN Media Release
+								</span>
+								<span class="text-xs text-muted-foreground">
+									Takes 60 seconds &middot; 15 U.S.C. &sect; 7001 E-SIGN compliant
+								</span>
+							</div>
+							<span class="text-sm font-bold text-primary">&rarr;</span>
+						</a>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<!-- Deliverables & Live ROI Tracking Table -->
+		<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card shadow-xs">
+			<div class="flex items-center justify-between">
+				<div>
+					<h2 class="text-xl font-bold tracking-tight">
+						3. Multi-Channel Deliverables &amp; Live ROI Tracking
+					</h2>
+					<p class="text-xs text-muted-foreground">
+						Every asset in your bundle is tracked here with live links and verified impression telemetry as it ships.
+					</p>
+				</div>
+				<span class="text-xs font-mono px-2.5 py-1 rounded bg-muted text-muted-foreground">
+					{portalData.deliverables.length} Deliverables
+				</span>
+			</div>
+
+			<div class="divide-y divide-border rounded-xl border border-border overflow-hidden">
+				{
+					portalData.deliverables.map((item) => (
+						<div class="p-4 bg-background flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+							<div class="flex flex-col gap-1">
+								<span class="text-sm font-semibold text-foreground">
+									{item.title}
+								</span>
+								<span class="text-xs text-muted-foreground font-mono uppercase">
+									Channel: {item.channel}
+								</span>
+							</div>
+							<div class="flex items-center gap-3">
+								{typeof item.views === "number" && (
+									<span class="text-xs font-semibold text-foreground">
+										{item.views.toLocaleString()} views
+									</span>
+								)}
+								{item.url && (
+									<a
+										href={item.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="text-xs font-semibold text-primary hover:underline"
+									>
+										View Live &nearr;
+									</a>
+								)}
+								<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-muted text-foreground capitalize">
+									{item.status.replace("-", " ")}
+								</span>
+							</div>
+						</div>
+					))
+				}
+			</div>
+		</section>
+	</div>
+</BaseLayout>
+
+<script
+	is:inline
+	define:vars={{
+		portalToken: portalData.portalToken,
+		leadId: portalData._id,
+		companyName: portalData.companyName,
+		contactEmail: portalData.contactEmail,
+		tierId: portalData.rateCard,
+	}}
+>
+	document.querySelectorAll(".stripe-action-btn").forEach((btn) => {
+		btn.addEventListener("click", async () => {
+			const milestone = btn.getAttribute("data-milestone") || "deposit";
+			const mode = btn.getAttribute("data-mode") || "checkout";
+			const feedback = document.getElementById("stripe-feedback");
+			const originalText = btn.textContent;
+			btn.setAttribute("disabled", "true");
+			btn.textContent = "Generating Stripe Link...";
+
+			try {
+				const res = await fetch("/api/stripe/milestone", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						portalToken,
+						leadId,
+						companyName,
+						contactEmail,
+						tier: tierId,
+						milestone,
+						mode,
+					}),
+				});
+				const data = await res.json();
+				if (res.ok && data.url) {
+					window.location.href = data.url;
+					return;
+				}
+				if (feedback) {
+					feedback.textContent =
+						data.message ||
+						"Stripe invoice generation queued. Alex will send your payment link directly, or email alex@codingcat.dev.";
+					feedback.classList.remove("hidden");
+				}
+			} catch {
+				if (feedback) {
+					feedback.textContent =
+						"Could not reach billing service right now. Please email alex@codingcat.dev.";
+					feedback.classList.remove("hidden");
+				}
+			} finally {
+				btn.removeAttribute("disabled");
+				btn.textContent = originalText;
+			}
+		});
+	});
+</script>

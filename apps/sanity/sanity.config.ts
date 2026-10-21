@@ -31,7 +31,11 @@ import podcast from "./schemas/documents/podcast";
 import podcastType from "./schemas/documents/podcastType";
 import post from "./schemas/documents/post";
 import settings from "./schemas/singletons/settings";
+import sponsorConfig from "./schemas/singletons/sponsorConfig";
 import sponsor from "./schemas/documents/sponsor";
+import sponsorLead from "./schemas/documents/sponsorLead";
+import sponsorPool from "./schemas/documents/sponsorPool";
+import booking from "./schemas/documents/booking";
 import tableSchema, { rowType } from "./schemas/custom/table";
 import syndication from "./schemas/documents/syndication";
 import transcript from "./schemas/documents/transcript";
@@ -76,6 +80,7 @@ const schemaTypes = [
 	rowType,
 	// Singletons
 	settings,
+	sponsorConfig,
 	// Documents
 	author,
 	guest,
@@ -84,6 +89,9 @@ const schemaTypes = [
 	podcastType,
 	post,
 	sponsor,
+	sponsorLead,
+	sponsorPool,
+	booking,
 	syndication,
 	transcript,
 ];
@@ -158,7 +166,7 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 				]
 			: []),
 		structureTool({ structure: editorialStructure }),
-		singletonPlugin([settings.name]),
+		singletonPlugin([settings.name, sponsorConfig.name]),
 		assistWithPresets(),
 		media(),
 		codeInput(),
