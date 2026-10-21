@@ -1843,6 +1843,29 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 			assert.equal(fastJoke.source, "fastpath");
 			assert.equal(fastJoke.intent, "joke_or_kb");
+
+			// 4. Verify Search API and Search/Chat Modals expose Clairic telemetry & Search <-> AI switcher
+			const searchApiSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/api/search.ts"),
+				"utf-8",
+			);
+			assert.ok(searchApiSource.includes("extractIntentWithClairic"));
+			assert.ok(searchApiSource.includes("x-aj-extraction-source"));
+
+			const searchModalSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/SearchModal.astro"),
+				"utf-8",
+			);
+			assert.ok(searchModalSource.includes('closedby="any"'));
+			assert.ok(searchModalSource.includes("modal-mode-ai"));
+			assert.ok(searchModalSource.includes("modal-clairic-badge"));
+
+			const searchPageSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/search.astro"),
+				"utf-8",
+			);
+			assert.ok(searchPageSource.includes("search-mode-ai-btn"));
+			assert.ok(searchPageSource.includes("search-clairic-pill"));
 		});
 	});
 });

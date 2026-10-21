@@ -4,19 +4,21 @@
 
 <dialog
 	id="search-modal"
+	closedby="any"
 	class="fixed inset-0 m-auto z-50 w-full max-w-2xl rounded-2xl border border-border bg-card p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-xs text-foreground max-h-[85vh] flex-col overflow-hidden transition-all duration-150 open:flex"
 	aria-labelledby="search-modal-title"
 >
 	<!-- Modal Header & Search Bar -->
 	<form
+		id="search-modal-form"
 		action="/search"
 		method="GET"
 		class="flex items-center border-b border-border px-4 py-3 gap-3 bg-muted/20"
 		toolname="search_content"
 		tooldescription="Search CodingCat.dev web development tutorials, blog posts, and podcasts"
-		onsubmit="return false"
 	>
 		<svg
+			id="search-modal-icon-search"
 			class="size-5 shrink-0 text-muted-foreground"
 			viewBox="0 0 24 24"
 			fill="none"
@@ -29,6 +31,14 @@
 			<circle cx="11" cy="11" r="8"></circle>
 			<path d="m21 21-4.3-4.3"></path>
 		</svg>
+		<img
+			id="search-modal-icon-ai"
+			src="/icon.svg"
+			alt=""
+			class="hidden size-5 shrink-0 object-contain"
+			width="20"
+			height="20"
+		/>
 
 		<label for="search-modal-input" id="search-modal-title" class="sr-only">
 			Search CodingCat.dev
@@ -44,6 +54,15 @@
 			toolparamdescription="Search keyword or technical topic"
 		/>
 
+		<!-- AI Submit Button (visible in AI mode) -->
+		<button
+			type="submit"
+			id="search-modal-ai-submit"
+			class="hidden shrink-0 rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer"
+		>
+			Ask AI
+		</button>
+
 		<!-- Loading spinner -->
 		<div
 			id="search-modal-spinner"
@@ -56,7 +75,7 @@
 		<button
 			type="button"
 			id="search-modal-clear"
-			class="hidden text-muted-foreground hover:text-foreground size-6 items-center justify-center rounded-md"
+			class="hidden text-muted-foreground hover:text-foreground size-6 items-center justify-center rounded-md cursor-pointer"
 			aria-label="Clear query"
 		>
 			<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -69,100 +88,189 @@
 		<button
 			type="button"
 			id="search-modal-close"
-			class="rounded-md border border-border px-2 py-0.5 text-xs font-semibold text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+			class="rounded-md border border-border px-2 py-0.5 text-xs font-semibold text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
 			aria-label="Close search"
 		>
 			ESC
 		</button>
 	</form>
 
-	<!-- Content Type Filter Pills -->
-	<div class="flex items-center gap-1.5 border-b border-border/50 px-4 py-2 text-xs overflow-x-auto bg-muted/10">
-		<span class="text-muted-foreground font-medium uppercase tracking-wider text-[11px] mr-1">Filter:</span>
-		<button
-			type="button"
-			class="modal-filter-pill active-modal-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-primary text-primary-foreground transition-colors cursor-pointer"
-			data-type="all"
-		>
-			All
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="post"
-		>
-			Posts
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="podcast"
-		>
-			Podcasts
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="author"
-		>
-			Authors
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="guest"
-		>
-			Guests
-		</button>
+	<!-- Mode Switcher (Search vs Ask AI) + Content Type Filter Pills -->
+	<div class="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 px-4 py-2 text-xs bg-muted/10">
+		<!-- Segmented Mode Switcher -->
+		<div class="inline-flex items-center rounded-lg border border-border bg-background/80 p-0.5" role="group" aria-label="Search mode">
+			<button
+				type="button"
+				id="modal-mode-search"
+				class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold bg-primary text-primary-foreground shadow-2xs transition-all cursor-pointer"
+				aria-pressed="true"
+			>
+				<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.3-4.3"></path>
+				</svg>
+				<span>Search</span>
+			</button>
+			<button
+				type="button"
+				id="modal-mode-ai"
+				class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+				aria-pressed="false"
+			>
+				<img src="/icon.svg" alt="" class="size-3.5 object-contain" width="14" height="14" />
+				<span>Ask AI (Clairic)</span>
+			</button>
+		</div>
+
+		<!-- Filter Pills (shown in Search mode) -->
+		<div id="modal-filter-bar" class="flex items-center gap-1.5 overflow-x-auto">
+			<span class="text-muted-foreground font-medium uppercase tracking-wider text-[11px] mr-1">Filter:</span>
+			<button
+				type="button"
+				class="modal-filter-pill active-modal-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-primary text-primary-foreground transition-colors cursor-pointer"
+				data-type="all"
+			>
+				All
+			</button>
+			<button
+				type="button"
+				class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="post"
+			>
+				Posts
+			</button>
+			<button
+				type="button"
+				class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="podcast"
+			>
+				Podcasts
+			</button>
+			<button
+				type="button"
+				class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="author"
+			>
+				Authors
+			</button>
+			<button
+				type="button"
+				class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+				data-type="guest"
+			>
+				Guests
+			</button>
+		</div>
 	</div>
 
-	<!-- Body: Results or Suggestion States -->
-	<div class="flex-1 overflow-y-auto p-3 min-h-[220px]">
-		<!-- Initial Empty State -->
-		<div id="modal-state-initial" class="flex flex-col items-center justify-center py-10 text-center">
-			<p class="text-sm text-muted-foreground mb-4">
-				Start typing to search tutorials, podcast episodes, authors, and guests.
-			</p>
-			<div class="flex flex-wrap justify-center items-center gap-1.5 max-w-md">
-				<span class="text-xs text-muted-foreground">Try:</span>
-				{
-					["Astro", "Cloudflare", "Sanity", "Next.js", "AI"].map((tag) => (
-						<button
-							type="button"
-							class="modal-tag-suggestion text-xs px-2 py-0.5 rounded-md border border-border bg-muted/40 hover:bg-accent transition-colors cursor-pointer"
-							data-tag={tag}
-						>
-							{tag}
-						</button>
-					))
-				}
+	<!-- Body: Search Results OR AI Assistant View -->
+	<div class="flex-1 overflow-y-auto p-3 min-h-[240px]">
+		<!-- SEARCH VIEW -->
+		<div id="modal-search-view">
+			<!-- Switch-to-AI quick action bar when user has typed a query -->
+			<div id="modal-ask-ai-cta" class="hidden mb-2">
+				<button
+					type="button"
+					id="modal-ask-ai-cta-btn"
+					class="w-full flex items-center justify-between gap-2 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 px-3.5 py-2.5 text-left transition-colors cursor-pointer"
+				>
+					<div class="flex items-center gap-2.5 min-w-0">
+						<img src="/icon.svg" alt="" class="size-5 shrink-0 object-contain" width="20" height="20" />
+						<span class="text-xs font-semibold text-foreground truncate">
+							Ask Agent AJ (Clairic AI): <span id="modal-ask-ai-query" class="text-primary"></span>
+						</span>
+					</div>
+					<span class="shrink-0 text-[11px] font-semibold text-primary inline-flex items-center gap-1">
+						Switch to AI →
+					</span>
+				</button>
 			</div>
+
+			<!-- Initial Empty State -->
+			<div id="modal-state-initial" class="flex flex-col items-center justify-center py-10 text-center">
+				<p class="text-sm text-muted-foreground mb-4">
+					Start typing to search tutorials, podcast episodes, authors, and guests — or switch to <strong>Ask AI</strong>.
+				</p>
+				<div class="flex flex-wrap justify-center items-center gap-1.5 max-w-md">
+					<span class="text-xs text-muted-foreground">Try:</span>
+					{
+						["Astro", "Cloudflare", "Sanity", "Next.js", "AI", "latest podcast"].map((tag) => (
+							<button
+								type="button"
+								class="modal-tag-suggestion text-xs px-2 py-0.5 rounded-md border border-border bg-muted/40 hover:bg-accent transition-colors cursor-pointer"
+								data-tag={tag}
+							>
+								{tag}
+							</button>
+						))
+					}
+				</div>
+			</div>
+
+			<!-- No Results State -->
+			<div id="modal-state-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
+				<p class="text-sm font-semibold text-foreground mb-1" id="modal-empty-msg">No results found</p>
+				<p class="text-xs text-muted-foreground">Try broader search terms or click "Switch to AI" above to ask Agent AJ.</p>
+			</div>
+
+			<!-- Results List -->
+			<ul
+				id="modal-results-list"
+				class="hidden flex flex-col gap-1.5 list-none m-0 p-0"
+				role="listbox"
+				aria-label="Search suggestions"
+			>
+			</ul>
 		</div>
 
-		<!-- No Results State -->
-		<div id="modal-state-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
-			<p class="text-sm font-semibold text-foreground mb-1" id="modal-empty-msg">No results found</p>
-			<p class="text-xs text-muted-foreground">Try broader search terms or check spelling.</p>
-		</div>
+		<!-- AI VIEW -->
+		<div id="modal-ai-view" class="hidden flex flex-col gap-3">
+			<!-- AI Welcome / Quick Prompts -->
+			<div id="modal-ai-welcome" class="flex flex-col items-center justify-center py-8 text-center gap-2.5">
+				<img src="/icon.svg" alt="Agent AJ" class="size-10 rounded-xl bg-primary/10 p-1.5 object-contain" width="40" height="40" />
+				<div class="text-sm font-semibold">Ask Agent AJ (Powered by Cloudflare Clairic & Workers AI)</div>
+				<p class="text-xs text-muted-foreground max-w-md">
+					Type a question above and press <kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↵</kbd> or select a quick prompt:
+				</p>
+				<div class="flex flex-wrap justify-center gap-1.5 pt-1">
+					<button type="button" class="modal-ai-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer font-medium" data-prompt="What is the latest podcast episode?">Latest podcast</button>
+					<button type="button" class="modal-ai-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer font-medium" data-prompt="What is the latest blog post?">Latest blog post</button>
+					<button type="button" class="modal-ai-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer font-medium" data-prompt="What are the top videos on CodingCat.dev?">Top videos</button>
+					<button type="button" class="modal-ai-chip text-xs px-3 py-1.5 rounded-full border border-border bg-card hover:bg-accent cursor-pointer font-medium" data-prompt="Tell me a programming dad joke!">Coding joke</button>
+				</div>
+			</div>
 
-		<!-- Results List -->
-		<ul
-			id="modal-results-list"
-			class="hidden flex flex-col gap-1.5 list-none m-0 p-0"
-			role="listbox"
-			aria-label="Search suggestions"
-		>
-		</ul>
+			<!-- AI Telemetry Bar -->
+			<div id="modal-ai-telemetry" class="hidden flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/25 bg-primary/5 px-3 py-1.5 text-[11px]">
+				<span id="modal-ai-telemetry-text" class="font-mono text-primary font-medium"></span>
+				<button
+					type="button"
+					id="modal-open-full-chat"
+					class="text-xs font-semibold text-foreground hover:text-primary underline cursor-pointer"
+				>
+					Open in full Chat →
+				</button>
+			</div>
+
+			<!-- AI Response Output -->
+			<div
+				id="modal-ai-output"
+				class="hidden rounded-xl border border-border bg-muted/40 p-4 text-sm leading-relaxed text-foreground"
+			></div>
+		</div>
 	</div>
 
-	<!-- Footer with Keyboard Hints -->
-	<div class="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground bg-muted/20">
+	<!-- Footer with Keyboard Hints & Clairic Telemetry Badge -->
+	<div class="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2 text-[11px] text-muted-foreground bg-muted/20">
 		<div class="flex items-center gap-3">
 			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↑</kbd> <kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↓</kbd> navigate</span>
-			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↵</kbd> select</span>
+			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↵</kbd> select / ask</span>
 			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">esc</kbd> close</span>
 		</div>
-		<span id="modal-results-count" class="font-medium text-xs"></span>
+		<div class="flex items-center gap-2">
+			<span id="modal-clairic-badge" class="hidden rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary"></span>
+			<span id="modal-results-count" class="font-medium text-xs"></span>
+		</div>
 	</div>
 </dialog>
 
@@ -177,15 +285,27 @@
 		date?: string;
 	}
 
+	interface ClairicExtractionInfo {
+		model: string;
+		intent: string;
+		contentType: string;
+		searchQuery: string | null;
+		source: "clairic" | "fastpath";
+		confidence: number;
+		latencyMs: number;
+	}
+
 	interface ApiResponse {
 		query: string;
 		type?: string;
 		total: number;
 		hits: SearchHit[];
 		semantic: boolean;
+		extraction?: ClairicExtractionInfo;
 	}
 
 	const modal = document.getElementById("search-modal") as HTMLDialogElement | null;
+	const form = document.getElementById("search-modal-form") as HTMLFormElement | null;
 	const input = document.getElementById("search-modal-input") as HTMLInputElement | null;
 	const clearBtn = document.getElementById("search-modal-clear");
 	const closeBtn = document.getElementById("search-modal-close");
@@ -195,20 +315,183 @@
 	const emptyView = document.getElementById("modal-state-empty");
 	const emptyMsg = document.getElementById("modal-empty-msg");
 	const countView = document.getElementById("modal-results-count");
+	const clairicBadge = document.getElementById("modal-clairic-badge");
 
+	const modeSearchBtn = document.getElementById("modal-mode-search");
+	const modeAiBtn = document.getElementById("modal-mode-ai");
+	const filterBar = document.getElementById("modal-filter-bar");
+	const searchView = document.getElementById("modal-search-view");
+	const aiView = document.getElementById("modal-ai-view");
+	const aiWelcome = document.getElementById("modal-ai-welcome");
+	const aiOutput = document.getElementById("modal-ai-output");
+	const aiTelemetry = document.getElementById("modal-ai-telemetry");
+	const aiTelemetryText = document.getElementById("modal-ai-telemetry-text");
+	const aiSubmitBtn = document.getElementById("search-modal-ai-submit");
+	const iconSearch = document.getElementById("search-modal-icon-search");
+	const iconAi = document.getElementById("search-modal-icon-ai");
+	const askAiCta = document.getElementById("modal-ask-ai-cta");
+	const askAiCtaBtn = document.getElementById("modal-ask-ai-cta-btn");
+	const askAiQuerySpan = document.getElementById("modal-ask-ai-query");
+	const openFullChatBtn = document.getElementById("modal-open-full-chat");
+
+	let currentMode: "search" | "ai" = "search";
 	let currentType = "all";
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 	let abortController: AbortController | null = null;
+	let aiAbortController: AbortController | null = null;
 	let activeIndex = -1;
 	let currentHits: SearchHit[] = [];
 
-	function openModal() {
+	function escapeHtml(text: string): string {
+		return text
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+	}
+
+	function stripProviderTrailer(text: string): string {
+		return text.replace(/\n?<!--AJ_PODCAST_PROVIDERS:[\s\S]*?(?:-->|$)/g, "");
+	}
+
+	function formatAiMarkdown(rawText: string): string {
+		const cleaned = stripProviderTrailer(rawText)
+			.replace(/http:\/\/localhost:\d+/g, "")
+			.replace(/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]\((?:http:\/\/localhost:\d+)?(\/[a-zA-Z0-9_\-\/]+)\)/g, "[$1]($2)");
+		let html = escapeHtml(cleaned);
+		html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+		html = html.replace(/^[ \t]*-[ \t]+(.*)$/gm, "<li class='ml-4 list-disc'>$1</li>");
+		html = html.replace(
+			/\[([^\]]+)\]\(([^)]+)\)/g,
+			"<a href='$2' class='text-primary font-semibold hover:underline'>$1</a>",
+		);
+		html = html.replace(/\n\n/g, "<div class='h-2'></div>");
+		html = html.replace(/\n/g, "<br />");
+		return html;
+	}
+
+	function setMode(mode: "search" | "ai", autoRunAi = false) {
+		currentMode = mode;
+		const isAi = mode === "ai";
+
+		modeSearchBtn?.setAttribute("aria-pressed", String(!isAi));
+		modeAiBtn?.setAttribute("aria-pressed", String(isAi));
+
+		if (isAi) {
+			modeAiBtn?.classList.add("bg-primary", "text-primary-foreground", "shadow-2xs");
+			modeAiBtn?.classList.remove("text-muted-foreground");
+			modeSearchBtn?.classList.remove("bg-primary", "text-primary-foreground", "shadow-2xs");
+			modeSearchBtn?.classList.add("text-muted-foreground");
+		} else {
+			modeSearchBtn?.classList.add("bg-primary", "text-primary-foreground", "shadow-2xs");
+			modeSearchBtn?.classList.remove("text-muted-foreground");
+			modeAiBtn?.classList.remove("bg-primary", "text-primary-foreground", "shadow-2xs");
+			modeAiBtn?.classList.add("text-muted-foreground");
+		}
+
+		filterBar?.classList.toggle("hidden", isAi);
+		searchView?.classList.toggle("hidden", isAi);
+		aiView?.classList.toggle("hidden", !isAi);
+		aiSubmitBtn?.classList.toggle("hidden", !isAi);
+		iconSearch?.classList.toggle("hidden", isAi);
+		iconAi?.classList.toggle("hidden", !isAi);
+
+		if (input) {
+			input.placeholder = isAi
+				? "Ask Agent AJ anything about CodingCat.dev... (Press Enter)"
+				: "Search posts, podcasts, authors... (⌘K)";
+			input.focus();
+		}
+
+		if (isAi && autoRunAi && input?.value.trim()) {
+			runAiQuery(input.value.trim());
+		} else if (!isAi && input?.value.trim()) {
+			performSearch(input.value.trim(), currentType);
+		}
+	}
+
+	async function runAiQuery(prompt: string) {
+		const trimmed = prompt.trim();
+		if (!trimmed) return;
+
+		if (aiAbortController) aiAbortController.abort();
+		aiAbortController = new AbortController();
+
+		aiWelcome?.classList.add("hidden");
+		if (aiOutput) {
+			aiOutput.classList.remove("hidden");
+			aiOutput.textContent = "Agent AJ is thinking...";
+		}
+		if (spinner) spinner.classList.remove("hidden");
+		if (countView) countView.textContent = "Streaming AI...";
+
+		try {
+			const res = await fetch("/api/chat", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ prompt: trimmed }),
+				signal: aiAbortController.signal,
+			});
+
+			const source = res.headers.get("x-aj-extraction-source") || "clairic";
+			const cascadeMode = res.headers.get("x-aj-cascade-mode") || "clairic-fastpath";
+			const intent = res.headers.get("x-aj-intent") || "topic_search";
+			const latency = res.headers.get("x-aj-extraction-latency-ms") || "0";
+
+			if (aiTelemetry && aiTelemetryText) {
+				aiTelemetry.classList.remove("hidden");
+				aiTelemetryText.textContent = `⚡ @cf/cloudflare/clairic • source: ${source} • mode: ${cascadeMode} • intent: ${intent} (${latency}ms)`;
+			}
+			if (clairicBadge) {
+				clairicBadge.classList.remove("hidden");
+				clairicBadge.textContent = `⚡ ${source}: ${intent} (${latency}ms)`;
+			}
+
+			if (!res.ok || !res.body) {
+				if (aiOutput) aiOutput.textContent = "Failed to generate AI response.";
+				return;
+			}
+
+			let accumulated = "";
+			const reader = res.body.getReader();
+			const decoder = new TextDecoder();
+
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				accumulated += decoder.decode(value, { stream: true });
+				if (aiOutput) {
+					aiOutput.textContent = stripProviderTrailer(accumulated);
+				}
+			}
+
+			if (aiOutput) {
+				aiOutput.innerHTML = formatAiMarkdown(accumulated);
+			}
+			if (countView) countView.textContent = "AI answer ready";
+		} catch (err: unknown) {
+			if (err instanceof Error && err.name === "AbortError") return;
+			if (aiOutput) {
+				aiOutput.textContent = `Error: ${err instanceof Error ? err.message : String(err)}`;
+			}
+		} finally {
+			if (spinner) spinner.classList.add("hidden");
+		}
+	}
+
+	function openModal(initialQuery?: string, mode: "search" | "ai" = "search") {
 		if (!modal) return;
 		if (!modal.open) {
 			modal.showModal();
 			document.body.style.overflow = "hidden";
-			setTimeout(() => input?.focus(), 50);
 		}
+		if (typeof initialQuery === "string" && input) {
+			input.value = initialQuery;
+			clearBtn?.classList.toggle("hidden", !initialQuery);
+		}
+		setMode(mode, mode === "ai" && Boolean(initialQuery));
+		setTimeout(() => input?.focus(), 50);
 	}
 
 	function closeModal() {
@@ -219,8 +502,41 @@
 		}
 	}
 
-	// Expose to window for triggers from header or buttons
-	(window as unknown as { openSearchModal?: () => void }).openSearchModal = openModal;
+	// Expose to window for triggers from header or ChatModal
+	(window as unknown as { openSearchModal?: (q?: string, mode?: "search" | "ai") => void }).openSearchModal = openModal;
+
+	modeSearchBtn?.addEventListener("click", () => setMode("search"));
+	modeAiBtn?.addEventListener("click", () => setMode("ai", true));
+	askAiCtaBtn?.addEventListener("click", () => setMode("ai", true));
+
+	openFullChatBtn?.addEventListener("click", () => {
+		const q = input?.value.trim() || "";
+		closeModal();
+		const win = window as unknown as { openAgentAjModal?: (prompt?: string) => void };
+		if (win.openAgentAjModal) {
+			win.openAgentAjModal(q);
+		} else {
+			document.getElementById("ai-chat-open-btn")?.click();
+		}
+	});
+
+	document.querySelectorAll(".modal-ai-chip").forEach((chip) => {
+		chip.addEventListener("click", () => {
+			const prompt = chip.getAttribute("data-prompt");
+			if (prompt && input) {
+				input.value = prompt;
+				clearBtn?.classList.remove("hidden");
+				runAiQuery(prompt);
+			}
+		});
+	});
+
+	form?.addEventListener("submit", (e) => {
+		e.preventDefault();
+		if (currentMode === "ai" && input?.value.trim()) {
+			runAiQuery(input.value.trim());
+		}
+	});
 
 	// Global keyboard shortcuts (⌘K or Ctrl+K)
 	document.addEventListener("keydown", (e) => {
@@ -322,10 +638,17 @@
 			if (resultsList) resultsList.classList.add("hidden");
 			if (emptyView) emptyView.classList.add("hidden");
 			if (initialView) initialView.classList.remove("hidden");
+			if (askAiCta) askAiCta.classList.add("hidden");
+			if (clairicBadge) clairicBadge.classList.add("hidden");
 			if (countView) countView.textContent = "";
 			if (spinner) spinner.classList.add("hidden");
 			currentHits = [];
 			return;
+		}
+
+		if (askAiCta && askAiQuerySpan) {
+			askAiQuerySpan.textContent = `"${trimmed}"`;
+			askAiCta.classList.remove("hidden");
 		}
 
 		if (abortController) abortController.abort();
@@ -342,6 +665,15 @@
 			const data = (await res.json()) as ApiResponse;
 
 			if (spinner) spinner.classList.add("hidden");
+
+			if (clairicBadge) {
+				if (data.extraction) {
+					clairicBadge.classList.remove("hidden");
+					clairicBadge.textContent = `⚡ ${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+				} else {
+					clairicBadge.classList.add("hidden");
+				}
+			}
 
 			if (data.hits && data.hits.length > 0) {
 				renderHits(data.hits);
@@ -366,6 +698,15 @@
 	function handleInput() {
 		const val = input?.value ?? "";
 		if (clearBtn) clearBtn.classList.toggle("hidden", !val);
+
+		if (currentMode === "ai") {
+			if (!val.trim()) {
+				aiWelcome?.classList.remove("hidden");
+				aiOutput?.classList.add("hidden");
+				aiTelemetry?.classList.add("hidden");
+			}
+			return;
+		}
 
 		if (debounceTimer) clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(() => {

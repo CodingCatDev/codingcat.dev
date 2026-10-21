@@ -37,17 +37,31 @@
 						<p class="text-[11px] text-muted-foreground">Grounded in Sanity Content Lake • Clairic & Workers AI</p>
 					</div>
 				</div>
-				<button
-					type="button"
-					id="ai-chat-close-btn"
-					class="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
-					aria-label="Close dialog"
-				>
-					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<line x1="18" y1="6" x2="6" y2="18"></line>
-						<line x1="6" y1="6" x2="18" y2="18"></line>
-					</svg>
-				</button>
+				<div class="flex items-center gap-2">
+					<button
+						type="button"
+						id="ai-chat-switch-search-btn"
+						class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+						title="Switch to Search"
+					>
+						<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"></circle>
+							<path d="m21 21-4.3-4.3"></path>
+						</svg>
+						<span>Search</span>
+					</button>
+					<button
+						type="button"
+						id="ai-chat-close-btn"
+						class="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+						aria-label="Close dialog"
+					>
+						<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="18" y1="6" x2="6" y2="18"></line>
+							<line x1="6" y1="6" x2="18" y2="18"></line>
+						</svg>
+					</button>
+				</div>
 			</header>
 
 			<!-- Messages Container -->
@@ -191,6 +205,7 @@
 <script>
 	const openBtn = document.getElementById("ai-chat-open-btn");
 	const closeBtn = document.getElementById("ai-chat-close-btn");
+	const switchSearchBtn = document.getElementById("ai-chat-switch-search-btn");
 	const modal = document.getElementById("ai-chat-modal");
 	const form = document.getElementById("ai-chat-form") as HTMLFormElement | null;
 	const input = document.getElementById("ai-chat-input") as HTMLInputElement | null;
@@ -200,10 +215,15 @@
 
 	let isStreaming = false;
 
-	function openModal() {
+	function openModal(initialPrompt?: string) {
 		if (modal) {
 			modal.classList.remove("hidden");
-			input?.focus();
+			if (initialPrompt && input) {
+				input.value = initialPrompt;
+				form?.dispatchEvent(new Event("submit", { cancelable: true }));
+			} else {
+				input?.focus();
+			}
 		}
 	}
 
@@ -213,8 +233,28 @@
 		}
 	}
 
-	openBtn?.addEventListener("click", openModal);
+	(window as unknown as { openAgentAjModal?: (prompt?: string) => void }).openAgentAjModal = openModal;
+
+	openBtn?.addEventListener("click", () => openModal());
 	closeBtn?.addEventListener("click", closeModal);
+	switchSearchBtn?.addEventListener("click", () => {
+		const draft = input?.value.trim() || "";
+		closeModal();
+		const searchDialog = document.getElementById("search-modal") as HTMLDialogElement | null;
+		const searchInput = document.getElementById("modal-search-input") as HTMLInputElement | null;
+		if (searchDialog) {
+			if (!searchDialog.open) {
+				searchDialog.showModal();
+			}
+			if (searchInput) {
+				if (draft) {
+					searchInput.value = draft;
+					searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+				}
+				searchInput.focus();
+			}
+		}
+	});
 
 	modal?.addEventListener("click", (e) => {
 		if (e.target === modal) {
@@ -498,7 +538,10 @@
 		container.innerHTML = html + cardsHtml;
 	}
 
-	function appendMessage(role: "user" | "assistant", initialText = ""): HTMLElement {
+	function appendMessage(
+		role: "user" | "assistant",
+		initialText = "",
+	): { contentEl: HTMLElement; telemetryEl?: HTMLElement } {
 		if (welcomeContainer) {
 			welcomeContainer.classList.add("hidden");
 		}
@@ -510,11 +553,22 @@
 				: "mr-auto bg-muted/60 text-foreground rounded-2xl rounded-tl-xs px-4 py-2.5 border border-border"
 		}`;
 
+		let telemetryEl: HTMLElement | undefined;
+
 		if (role === "assistant") {
+			const badgeRow = document.createElement("div");
+			badgeRow.className = "flex flex-wrap items-center justify-between gap-2 mb-0.5";
+
 			const badge = document.createElement("div");
-			badge.className = "flex items-center gap-1.5 text-[11px] font-semibold text-primary mb-0.5";
+			badge.className = "flex items-center gap-1.5 text-[11px] font-semibold text-primary";
 			badge.innerHTML = `<img src="/icon.svg" alt="" class="size-3.5 object-contain" width="14" height="14" /><span>Agent AJ</span>`;
-			msgDiv.appendChild(badge);
+
+			telemetryEl = document.createElement("span");
+			telemetryEl.className = "hidden rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-medium text-primary";
+
+			badgeRow.appendChild(badge);
+			badgeRow.appendChild(telemetryEl);
+			msgDiv.appendChild(badgeRow);
 		}
 
 		const contentDiv = document.createElement("div");
@@ -525,7 +579,7 @@
 		messagesContainer?.appendChild(msgDiv);
 		messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: "smooth" });
 
-		return contentDiv;
+		return { contentEl: contentDiv, telemetryEl };
 	}
 
 	form?.addEventListener("submit", async (e) => {
@@ -539,7 +593,10 @@
 		if (sendBtn) sendBtn.disabled = true;
 
 		appendMessage("user", prompt);
-		const assistantContent = appendMessage("assistant", "Thinking...");
+		const { contentEl: assistantContent, telemetryEl } = appendMessage(
+			"assistant",
+			"Thinking...",
+		);
 
 		try {
 			const res = await fetch("/api/chat", {
@@ -547,6 +604,15 @@
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ prompt }),
 			});
+
+			const extSource = res.headers.get("x-aj-extraction-source");
+			const extIntent = res.headers.get("x-aj-intent");
+			const extLatency = res.headers.get("x-aj-extraction-latency-ms");
+			const cascadeMode = res.headers.get("x-aj-cascade-mode");
+			if (telemetryEl && extSource && extIntent) {
+				telemetryEl.textContent = `⚡ ${extSource}: ${extIntent} (${extLatency ?? "0"}ms • ${cascadeMode ?? "cascade"})`;
+				telemetryEl.classList.remove("hidden");
+			}
 
 			if (!res.ok) {
 				const errorJson = (await res.json().catch(() => ({}))) as {

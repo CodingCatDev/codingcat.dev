@@ -30,6 +30,7 @@ export interface ClairicExtractedParameters {
 	pNull: number;
 	source: "clairic" | "fastpath";
 	latencyMs: number;
+	clairicError?: string;
 }
 
 const SANITY_CONTEXT_MCP_URL =
@@ -111,10 +112,13 @@ function normalizeIntent(
 		return "top_videos";
 	}
 	if (
-		/\b(?:latest|newest|most recent|recent)\b/.test(promptLower) &&
-		/\b(?:podcast|podcasts|episode|episodes|blog|post|posts|article|articles|content)\b/.test(
+		(/^(?:the\s+)?(?:latest|newest|most\s+recent|recent|what'?s\s+new)[?!.]*$/i.test(
 			promptLower,
-		) &&
+		) ||
+			(/\b(?:latest|newest|most recent|recent)\b/.test(promptLower) &&
+				/\b(?:podcast|podcasts|episode|episodes|blog|post|posts|article|articles|content|show|shows)\b/.test(
+					promptLower,
+				))) &&
 		!searchQuery
 	) {
 		return "recent_content";
@@ -167,6 +171,7 @@ export async function extractIntentWithClairic(
 		return null;
 	}
 	const promptLower = trimmed.toLowerCase();
+	let clairicErrorMsg: string | undefined;
 
 	if (aiBinding && typeof (aiBinding as any).run === "function") {
 		try {
@@ -250,9 +255,11 @@ export async function extractIntentWithClairic(
 				};
 			}
 		} catch (clairicErr) {
+			clairicErrorMsg =
+				clairicErr instanceof Error ? clairicErr.message : String(clairicErr);
 			console.warn(
 				"[Chat API Clairic extraction warning, using deterministic fast-path]",
-				clairicErr instanceof Error ? clairicErr.message : String(clairicErr),
+				clairicErrorMsg,
 			);
 		}
 	}
@@ -273,6 +280,7 @@ export async function extractIntentWithClairic(
 			pNull: 0,
 			source: "fastpath",
 			latencyMs: Date.now() - startMs,
+			...(clairicErrorMsg ? { clairicError: clairicErrorMsg } : {}),
 		};
 	}
 
@@ -288,6 +296,7 @@ export async function extractIntentWithClairic(
 			pNull: 0,
 			source: "fastpath",
 			latencyMs: Date.now() - startMs,
+			...(clairicErrorMsg ? { clairicError: clairicErrorMsg } : {}),
 		};
 	}
 
