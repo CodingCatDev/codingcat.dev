@@ -1764,5 +1764,85 @@ describe("Tier 1 - Feature Coverage", () => {
 				"Must strip client-only modal loading skeleton from Markdown",
 			);
 		});
+
+		it("7.20 Agent AJ /api/chat integrates Cloudflare Clairic (@cf/cloudflare/clairic) extraction cascade and fastpath fallback", async () => {
+			const chatModule = loadModule("src/pages/api/chat.ts");
+			assert.equal(chatModule.CLAIRIC_MODEL_ID, "@cf/cloudflare/clairic");
+			assert.equal(typeof chatModule.extractIntentWithClairic, "function");
+
+			// 1. Verify GET /api/chat advertises Clairic extraction model
+			const statusRes = await chatModule.GET({
+				request: new Request("https://codingcat.dev/api/chat"),
+			});
+			assert.equal(statusRes.status, 200);
+			const statusData = await statusRes.json();
+			assert.equal(statusData.extractionModel, "@cf/cloudflare/clairic");
+			assert.equal(statusData.cascadeArchitecture, "extract-route-synthesize");
+
+			// 2. Verify Clairic extraction with mocked Workers AI binding
+			let invokedModel = null;
+			let invokedPayload = null;
+			const mockAiBinding = {
+				async run(modelId, payload) {
+					invokedModel = modelId;
+					invokedPayload = payload;
+					return {
+						answers: {
+							intent: {
+								value: "topic_search",
+								confidence: 0.96,
+								p_null: 0.01,
+							},
+							content_type: {
+								value: "podcast",
+								confidence: 0.92,
+								p_null: 0.02,
+							},
+							search_query: {
+								value: "Sanity CMS",
+								confidence: 0.98,
+								p_null: 0.01,
+							},
+							limit: {
+								value: 4,
+								confidence: 0.89,
+								p_null: 0.05,
+							},
+						},
+					};
+				},
+			};
+
+			const extracted = await chatModule.extractIntentWithClairic(
+				"Find me 4 podcast episodes about Sanity CMS",
+				mockAiBinding,
+			);
+			assert.equal(invokedModel, "@cf/cloudflare/clairic");
+			assert.equal(
+				invokedPayload.state,
+				"Find me 4 podcast episodes about Sanity CMS",
+			);
+			assert.ok(invokedPayload.fields.intent);
+			assert.equal(extracted.source, "clairic");
+			assert.equal(extracted.intent, "topic_search");
+			assert.equal(extracted.contentType, "podcast");
+			assert.equal(extracted.searchQuery, "Sanity CMS");
+			assert.equal(extracted.limit, 4);
+			assert.equal(extracted.confidence, 0.96);
+
+			// 3. Verify deterministic fastpath fallback when AI binding is absent
+			const fastRecent = await chatModule.extractIntentWithClairic(
+				"What is the latest podcast episode?",
+			);
+			assert.equal(fastRecent.source, "fastpath");
+			assert.equal(fastRecent.intent, "recent_content");
+			assert.equal(fastRecent.contentType, "podcast");
+
+			const fastJoke = await chatModule.extractIntentWithClairic(
+				"Tell me a programming dad joke!",
+			);
+			assert.equal(fastJoke.source, "fastpath");
+			assert.equal(fastJoke.intent, "joke_or_kb");
+		});
 	});
 });
