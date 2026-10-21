@@ -98,6 +98,12 @@ const ACTIVE_GMAIL_DEALS: SeededGmailDraft[] = [
 ];
 
 export function App() {
+	const projectId = process.env.SANITY_APP_PROJECT_ID || "hfh83o0w";
+	const dataset = process.env.SANITY_APP_DATASET || "production";
+	const isDev = dataset === "dev";
+	const envLabel = isDev ? "Dev" : "Production";
+	const siteOrigin = isDev ? "https://dev.codingcat.dev" : "https://codingcat.dev";
+
 	const [activeTab, setActiveTab] = useState<WorkspaceTab>("crm");
 	const [discovering, setDiscovering] = useState(false);
 	const [discoveredProspects, setDiscoveredProspects] = useState<Array<any>>([]);
@@ -109,7 +115,7 @@ export function App() {
 	const handleDiscoverOutbound = async () => {
 		setDiscovering(true);
 		try {
-			const res = await fetch("https://codingcat.dev/api/sponsors/outbound");
+			const res = await fetch(`${siteOrigin}/api/sponsors/outbound`);
 			if (res.ok) {
 				const data = await res.json();
 				setDiscoveredProspects(data.prospects || []);
@@ -125,9 +131,12 @@ export function App() {
 		<div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 1200, margin: "0 auto" }}>
 			<header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
 				<div>
-					<h1 style={{ margin: 0, fontSize: 28 }}>CodingCat.dev Revenue &amp; Booking OS</h1>
+					<h1 style={{ margin: 0, fontSize: 28 }}>
+						CodingCat.dev Revenue &amp; Booking OS ({envLabel})
+					</h1>
 					<p style={{ margin: "4px 0 0", color: "#666", fontSize: 14 }}>
-						Unified Sanity App SDK Workspace &middot; Project <code>hfh83o0w</code> (Production)
+						Unified Sanity App SDK Workspace &middot; Project <code>{projectId}</code> &middot; Dataset{" "}
+						<code>{dataset}</code> ({envLabel})
 					</p>
 				</div>
 				<div style={{ display: "flex", gap: 8 }}>
