@@ -55,42 +55,6 @@ if (isValid && verification.payload) {
 		}`,
 		{ id: verification.payload.id, slug: verification.payload.slug },
 	);
-} else if (!isExpired && token) {
-	// Fallback: check Sanity portalToken field
-	const docByToken = await client.fetch<
-		(GuestDoc & { portalTokenExpiresAt?: string }) | null
-	>(
-		`*[_type == "guest" && portalToken == $token][0]{
-			_id,
-			title,
-			"slug": slug.current,
-			"avatarUrl": coverImage.asset->url,
-			socials,
-			websites,
-			portalTokenExpiresAt,
-			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) {
-				_id,
-				title,
-				"slug": slug.current,
-				season,
-				episode,
-				youtube
-			}
-		}`,
-		{ token },
-	);
-	if (docByToken) {
-		if (
-			docByToken.portalTokenExpiresAt &&
-			new Date(docByToken.portalTokenExpiresAt).getTime() < Date.now()
-		) {
-			isExpired = true;
-		} else {
-			isValid = true;
-			guestDoc = docByToken;
-			expiresAtIso = docByToken.portalTokenExpiresAt || "";
-		}
-	}
 }
 
 const socials = guestDoc?.socials || {};

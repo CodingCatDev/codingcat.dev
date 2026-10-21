@@ -1,5 +1,7 @@
 # Local secrets for `wrangler dev` / platformProxy. Copy to .dev.vars (gitignored).
 SANITY_API_READ_TOKEN=
+SANITY_API_WRITE_TOKEN=
+GUEST_PORTAL_SECRET=
 # Optional: Organization-level Sanity Context Viewer token for https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/agent-aj-mcp
 SANITY_CONTEXT_TOKEN=
 SANITY_AUTH_TOKEN=
