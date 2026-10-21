@@ -20,23 +20,43 @@ if (!person?._id) {
 
 const path = `/guest/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const ogImage = sanity.resolveOpenGraphImage(person.coverImage ?? undefined);
+const personImage = sanity.resolveOpenGraphImage(
+	person.coverImage ?? undefined,
+	400,
+	400,
+);
+const avatarUrl = sanity
+	.urlForImage(person.coverImage ?? undefined)
+	?.width(256)
+	.height(256)
+	.fit("crop")
+	.url();
+const rawExcerpt = person.excerpt?.trim();
+const description =
+	rawExcerpt && rawExcerpt.toLowerCase() !== "fix me"
+		? rawExcerpt
+		: `Listen to podcast episodes and interviews featuring ${person.title} on CodingCat.dev.`;
 
 const relatedPosts = (person.related?.post ?? []) as ContentListItem[];
 const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 ---
 
 <BaseLayout
-	title={person.title}
-	description={person.excerpt}
-	image={ogImage}
-	ogFallback={{ title: person.title, type: "Guest" }}
+	title={`${person.title} — Guest | CodingCat.dev`}
+	ogTitle={`${person.title} — CodingCat.dev Podcast Guest`}
+	description={description}
+	ogFallback={{
+		title: person.title,
+		subtitle: description,
+		type: "Guest",
+		avatar: avatarUrl,
+	}}
 	canonical={path}
 	schema={[
 		personSchema(origin, {
 			title: person.title,
-			excerpt: person.excerpt,
-			imageUrl: ogImage?.url,
+			excerpt: description,
+			imageUrl: personImage?.url,
 			socials: person.socials,
 			websites: person.websites,
 		}, path),

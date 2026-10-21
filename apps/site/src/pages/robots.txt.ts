@@ -21,7 +21,6 @@ export const GET: APIRoute = async ({ locals }) => {
 	const body = isProduction
 		? `User-Agent: *
 Content-Signal: ai-train=no, search=yes, ai-input=yes
-Content-Usage: / train-ai=n, search=y
 Allow: /
 Allow: /api/search
 Allow: /api/mcp
@@ -76,7 +75,6 @@ Allow: /
 Host: ${origin}
 Sitemap: ${origin}/sitemap.xml
 Sitemap: ${origin}/sitemap-index.xml
-Agentmap: ${origin}/.well-known/ai-catalog.json
 `
 		: `User-Agent: *
 Disallow: /

@@ -21,7 +21,12 @@ const more = hero?._id
 	: [];
 
 const heroHref = hero?.slug ? `/podcast/${hero.slug}` : undefined;
-const ogImage = sanity.resolveOpenGraphImage(hero?.coverImage ?? undefined);
+const ogCardImageUrl = sanity
+	.urlForImage(hero?.coverImage ?? undefined)
+	?.width(640)
+	.height(360)
+	.fit("crop")
+	.url();
 
 const people = [
 	...(hero?.author ?? []).map((p) => ({ ...p, base: "/author" })),
@@ -32,8 +37,12 @@ const people = [
 <BaseLayout
 	title="Podcasts | CodingCat.dev"
 	description="Purrfect Web Development podcast episodes, interviews, and conversations."
-	image={ogImage}
-	ogFallback={{ title: "Podcasts", subtitle: "Purrfect Web Development" }}
+	ogFallback={{
+		title: "Purrfect Web Development Podcast",
+		subtitle: "Podcast episodes, interviews, and conversations with software engineers and tech leaders.",
+		type: "Podcast",
+		image: ogCardImageUrl,
+	}}
 >
 	{
 		hero ? (

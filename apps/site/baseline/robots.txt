@@ -1,6 +1,5 @@
 User-Agent: *
 Content-Signal: ai-train=no, search=yes, ai-input=yes
-Content-Usage: / train-ai=n, search=y
 Allow: /
 Allow: /api/search
 Allow: /api/mcp
@@ -55,4 +54,3 @@ Allow: /
 Host: https://codingcat.dev
 Sitemap: https://codingcat.dev/sitemap.xml
 Sitemap: https://codingcat.dev/sitemap-index.xml
-Agentmap: https://codingcat.dev/.well-known/ai-catalog.json

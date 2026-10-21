@@ -20,17 +20,21 @@ import {
 
 interface Props {
 	title: string;
+	ogTitle?: string | null;
 	description?: string | null;
+	ogDescription?: string | null;
 	image?: { url: string; alt?: string; width?: number; height?: number } | null;
 	type?: "website" | "article";
+	twitterCard?: string | null;
 	publishedAt?: string | null;
 	modifiedAt?: string | null;
 	authors?: Array<string | null | undefined>;
 	canonical?: string | URL;
 	noindex?: boolean;
 	/**
-	 * Used to generate an OG card when `image` is absent. Documents without a
-	 * cover image previously shipped no og:image at all.
+	 * Used to generate an OG card when `image` is absent. When omitted, a
+	 * default branded OG card is generated automatically from `title` and
+	 * `description` so every route ships a 1200×630 social preview image.
 	 */
 	ogFallback?: OgFallback;
 	/** Extra JSON-LD nodes merged into the site-wide @graph. */
@@ -41,9 +45,12 @@ interface Props {
 
 const {
 	title,
+	ogTitle,
 	description,
+	ogDescription,
 	image,
 	type,
+	twitterCard,
 	publishedAt,
 	modifiedAt,
 	authors,
@@ -58,7 +65,14 @@ const origin = Astro.locals.siteUrl.origin;
 const preview = Astro.locals.sanity.preview.enabled;
 
 const socialImage =
-	image ?? (ogFallback ? fallbackOgImage(origin, ogFallback) : undefined);
+	image ??
+	fallbackOgImage(
+		origin,
+		ogFallback ?? {
+			title: ogTitle ?? title,
+			subtitle: ogDescription ?? description,
+		},
+	);
 
 const graph = buildGraph([
 	organizationSchema(origin, absoluteUrl("/icon.svg", origin)),
@@ -78,9 +92,12 @@ const graph = buildGraph([
 		<Font cssVariable="--font-nunito" />
 		<SocialMeta
 			title={title}
+			ogTitle={ogTitle}
 			description={description}
+			ogDescription={ogDescription}
 			image={socialImage}
 			type={type}
+			twitterCard={twitterCard}
 			publishedAt={publishedAt}
 			modifiedAt={modifiedAt}
 			authors={authors}

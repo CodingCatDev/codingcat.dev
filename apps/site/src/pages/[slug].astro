@@ -21,14 +21,22 @@ if (!page?._id) {
 
 const path = `/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const ogImage = sanity.resolveOpenGraphImage(page.coverImage ?? undefined);
+const ogCardImageUrl = sanity
+	.urlForImage(page.coverImage ?? undefined)
+	?.width(640)
+	.height(360)
+	.fit("crop")
+	.url();
 ---
 
 <BaseLayout
 	title={page.title}
 	description={page.excerpt}
-	image={ogImage}
-	ogFallback={{ title: page.title, subtitle: page.excerpt }}
+	ogFallback={{
+		title: page.title,
+		subtitle: page.excerpt,
+		image: ogCardImageUrl,
+	}}
 	canonical={path}
 	schema={[breadcrumbSchema(origin, [{ name: page.title, path }])]}
 >

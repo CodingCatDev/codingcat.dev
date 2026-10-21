@@ -35,7 +35,15 @@ const more = await sanity.loadQuery(morePostQuery, {
 
 const path = `/post/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const ogImage = sanity.resolveOpenGraphImage(post.coverImage ?? undefined);
+const coverThumbnail = sanity.resolveOpenGraphImage(
+	post.coverImage ?? undefined,
+);
+const ogCardImageUrl = sanity
+	.urlForImage(post.coverImage ?? undefined)
+	?.width(640)
+	.height(360)
+	.fit("crop")
+	.url();
 const authors = post.author ?? [];
 const transcriptText =
 	post.transcript?.fullText || post.transcript?.summary || undefined;
@@ -46,7 +54,7 @@ const videoSchema = post.youtube
 				title: post.title,
 				description: post.excerpt,
 				uploadDate: post.date,
-				thumbnailUrl: ogImage?.url,
+				thumbnailUrl: coverThumbnail?.url,
 				youtubeUrl: post.youtube,
 				durationSeconds: post.transcript?.durationSeconds,
 				transcript: transcriptText,
@@ -60,8 +68,13 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 <BaseLayout
 	title={post.title}
 	description={post.excerpt}
-	image={ogImage}
-	ogFallback={{ title: post.title, type: "Blog", author: authors[0]?.title }}
+	ogFallback={{
+		title: post.title,
+		subtitle: post.excerpt,
+		type: "Blog",
+		author: authors[0]?.title,
+		image: ogCardImageUrl,
+	}}
 	type="article"
 	publishedAt={post.date}
 	modifiedAt={post._updatedAt}
@@ -73,7 +86,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 			excerpt: post.excerpt,
 			date: post.date,
 			_updatedAt: post._updatedAt,
-			imageUrl: ogImage?.url,
+			imageUrl: coverThumbnail?.url,
 			authors,
 		}, path),
 		breadcrumbSchema(origin, [

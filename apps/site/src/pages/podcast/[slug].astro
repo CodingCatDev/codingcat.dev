@@ -39,7 +39,15 @@ const more = await sanity.loadQuery(morePodcastQuery, {
 
 const path = `/podcast/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const ogImage = sanity.resolveOpenGraphImage(podcast.coverImage ?? undefined);
+const coverThumbnail = sanity.resolveOpenGraphImage(
+	podcast.coverImage ?? undefined,
+);
+const ogCardImageUrl = sanity
+	.urlForImage(podcast.coverImage ?? undefined)
+	?.width(640)
+	.height(360)
+	.fit("crop")
+	.url();
 const authors = podcast.author ?? [];
 const guests = podcast.guest ?? [];
 const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
@@ -52,7 +60,7 @@ const videoSchema = podcast.youtube
 				title: podcast.title,
 				description: podcast.excerpt,
 				uploadDate: podcast.date,
-				thumbnailUrl: ogImage?.url,
+				thumbnailUrl: coverThumbnail?.url,
 				youtubeUrl: podcast.youtube,
 				durationSeconds: podcast.transcript?.durationSeconds,
 				transcript: transcriptText,
@@ -66,12 +74,13 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 <BaseLayout
 	title={podcast.title}
 	description={podcast.excerpt}
-	image={ogImage}
 	ogFallback={{
 		title: podcast.title,
+		subtitle: podcast.excerpt,
 		type: "Podcast",
 		author: authors[0]?.title,
 		episode: podcast.episode,
+		image: ogCardImageUrl,
 	}}
 	type="article"
 	publishedAt={podcast.date}
@@ -85,7 +94,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				title: podcast.title,
 				excerpt: podcast.excerpt,
 				date: podcast.date,
-				imageUrl: ogImage?.url,
+				imageUrl: coverThumbnail?.url,
 				season: podcast.season,
 				episode: podcast.episode,
 				audioUrl,
@@ -100,7 +109,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				excerpt: podcast.excerpt,
 				date: podcast.date,
 				_updatedAt: podcast._updatedAt,
-				imageUrl: ogImage?.url,
+				imageUrl: coverThumbnail?.url,
 				authors,
 			},
 			path,
