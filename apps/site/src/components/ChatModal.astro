@@ -1,16 +1,16 @@
 ---
-// ChatModal.astro — Persistent Right-Side Resizable "Ask Agent" Drawer (Desktop resizable side panel, Mobile full-screen drawer)
+// ChatModal.astro — Persistent Right-Side Resizable "Ask Agent" Drawer (Survives across page changes via soft-navigation + pre-paint storage sync)
 ---
 
 <aside
 	id="aj-agent-drawer"
-	class="hidden fixed top-0 right-0 bottom-0 z-50 w-full md:w-[var(--aj-drawer-width,420px)] flex-col border-l border-border bg-card text-foreground shadow-2xl select-none md:select-auto"
+	class="hidden fixed top-0 right-0 bottom-0 z-50 w-full sm:w-[var(--aj-drawer-width,420px)] flex-col border-l border-border bg-card text-foreground shadow-2xl select-none sm:select-auto"
 	aria-label="Ask Agent AJ"
 >
 	<!-- Desktop Left-Edge Drag Resize Handle -->
 	<div
 		id="aj-drawer-resize-handle"
-		class="hidden md:flex absolute left-0 top-0 bottom-0 w-2 -translate-x-1/2 cursor-col-resize items-center justify-center group z-20"
+		class="hidden sm:flex absolute left-0 top-0 bottom-0 w-2 -translate-x-1/2 cursor-col-resize items-center justify-center group z-20"
 		title="Drag to resize Ask Agent panel"
 		aria-hidden="true"
 	>
@@ -152,20 +152,17 @@
 			var widthPx = savedWidth ? Math.min(Math.max(parseInt(savedWidth, 10) || 420, 320), 780) : 420;
 			document.documentElement.style.setProperty("--aj-drawer-width", widthPx + "px");
 
-			var isOpen = localStorage.getItem("cc_aj_drawer_open") === "true";
-			var isDesktop = window.innerWidth >= 768;
-			var forceMobileOpen = sessionStorage.getItem("cc_aj_mobile_open") === "true";
+			var isOpen =
+				localStorage.getItem("cc_aj_drawer_open") === "true" ||
+				sessionStorage.getItem("cc_aj_drawer_open") === "true";
 
-			if (isOpen && (isDesktop || forceMobileOpen)) {
+			if (isOpen) {
 				var drawer = document.getElementById("aj-agent-drawer");
 				if (drawer) {
 					drawer.classList.remove("hidden");
 					drawer.classList.add("flex");
-					document.documentElement.classList.add("aj-drawer-open");
 				}
-				if (forceMobileOpen) {
-					sessionStorage.removeItem("cc_aj_mobile_open");
-				}
+				document.documentElement.classList.add("aj-drawer-open");
 			}
 		} catch (e) {}
 	})();
@@ -202,10 +199,28 @@
 
 	let isStreaming = false;
 	let storedMessages: StoredMessage[] = [];
+	let loadedModuleScripts = new Set<string>();
+	document.querySelectorAll('script[type="module"][src]').forEach((s) => {
+		const src = s.getAttribute("src");
+		if (src) loadedModuleScripts.add(new URL(src, window.location.origin).pathname);
+	});
+
+	function isDrawerSavedOpen(): boolean {
+		try {
+			return (
+				localStorage.getItem(STORAGE_OPEN_KEY) === "true" ||
+				sessionStorage.getItem(STORAGE_OPEN_KEY) === "true"
+			);
+		} catch {
+			return false;
+		}
+	}
 
 	function loadStoredMessages(): StoredMessage[] {
 		try {
-			const raw = localStorage.getItem(STORAGE_MESSAGES_KEY);
+			const raw =
+				localStorage.getItem(STORAGE_MESSAGES_KEY) ||
+				sessionStorage.getItem(STORAGE_MESSAGES_KEY);
 			if (!raw) return [];
 			const parsed = JSON.parse(raw);
 			return Array.isArray(parsed) ? parsed.slice(-30) : [];
@@ -215,11 +230,12 @@
 	}
 
 	function saveStoredMessages() {
+		const serialized = JSON.stringify(storedMessages.slice(-30));
 		try {
-			localStorage.setItem(
-				STORAGE_MESSAGES_KEY,
-				JSON.stringify(storedMessages.slice(-30)),
-			);
+			localStorage.setItem(STORAGE_MESSAGES_KEY, serialized);
+		} catch {}
+		try {
+			sessionStorage.setItem(STORAGE_MESSAGES_KEY, serialized);
 		} catch {}
 	}
 
@@ -247,10 +263,13 @@
 			try {
 				localStorage.setItem(STORAGE_OPEN_KEY, "true");
 			} catch {}
+			try {
+				sessionStorage.setItem(STORAGE_OPEN_KEY, "true");
+			} catch {}
 			if (initialPrompt && input) {
 				input.value = initialPrompt;
 				submitPrompt(initialPrompt);
-			} else {
+			} else if (!initialPrompt) {
 				setTimeout(() => input?.focus(), 30);
 			}
 		} else {
@@ -260,16 +279,228 @@
 			try {
 				localStorage.setItem(STORAGE_OPEN_KEY, "false");
 			} catch {}
+			try {
+				sessionStorage.setItem(STORAGE_OPEN_KEY, "false");
+			} catch {}
 		}
 		window.dispatchEvent(
 			new CustomEvent("aj-drawer-change", { detail: { open } }),
 		);
 	}
 
+	function syncDrawerFromStorage() {
+		if (isDrawerSavedOpen()) {
+			drawer?.classList.remove("hidden");
+			drawer?.classList.add("flex");
+			document.documentElement.classList.add("aj-drawer-open");
+		}
+	}
+
+	// Ensure drawer open state is enforced on module execution and bfcache restore
+	syncDrawerFromStorage();
+	window.addEventListener("pageshow", syncDrawerFromStorage);
+	window.addEventListener("storage", (e) => {
+		if (e.key === STORAGE_OPEN_KEY) {
+			syncDrawerFromStorage();
+		}
+	});
+
 	function toggleDrawer() {
-		const isOpen = drawer && !drawer.classList.contains("hidden");
+		const isOpen =
+			document.documentElement.classList.contains("aj-drawer-open") ||
+			(drawer && !drawer.classList.contains("hidden"));
 		setDrawerOpen(!isOpen);
 	}
+
+	// Soft-navigation helper so page changes swap <main> without unmounting the Ask Agent drawer
+	let navAbortController: AbortController | null = null;
+
+	async function navigateInPlace(rawUrl: string | URL, pushState = true): Promise<boolean> {
+		try {
+			const targetUrl = new URL(rawUrl, window.location.origin);
+			if (targetUrl.origin !== window.location.origin) {
+				return false;
+			}
+			const path = targetUrl.pathname;
+			if (
+				path.startsWith("/api/") ||
+				path.startsWith("/oauth") ||
+				path.startsWith("/.well-known/") ||
+				/\.(xml|json|md|txt|png|jpg|jpeg|svg|ico|pdf|mp3)$/i.test(path)
+			) {
+				return false;
+			}
+
+			// If same pathname & search & only hash changed, let browser scroll to hash
+			if (
+				targetUrl.pathname === window.location.pathname &&
+				targetUrl.search === window.location.search &&
+				targetUrl.hash
+			) {
+				return false;
+			}
+
+			if (navAbortController) {
+				navAbortController.abort();
+			}
+			navAbortController = new AbortController();
+
+			const res = await fetch(targetUrl.href, {
+				headers: { Accept: "text/html" },
+				signal: navAbortController.signal,
+			});
+			if (!res.ok || !res.headers.get("content-type")?.includes("text/html")) {
+				window.location.href = targetUrl.href;
+				return true;
+			}
+
+			const html = await res.text();
+			const doc = new DOMParser().parseFromString(html, "text/html");
+			const newMain = doc.querySelector("main");
+			const currentMain = document.querySelector("main");
+
+			if (!newMain || !currentMain) {
+				window.location.href = targetUrl.href;
+				return true;
+			}
+
+			// Swap <main> content while keeping <aside id="aj-agent-drawer"> completely untouched
+			currentMain.replaceWith(newMain);
+
+			// Update document title & canonical URL
+			if (doc.title) {
+				document.title = doc.title;
+			}
+			const newCanonical = doc.querySelector('link[rel="canonical"]')?.getAttribute("href");
+			const curCanonical = document.querySelector('link[rel="canonical"]');
+			if (newCanonical && curCanonical) {
+				curCanonical.setAttribute("href", newCanonical);
+			}
+
+			// Update header nav active states
+			const newHeaderNav = doc.querySelector("#site-header nav");
+			const curHeaderNav = document.querySelector("#site-header nav");
+			if (newHeaderNav && curHeaderNav) {
+				curHeaderNav.innerHTML = newHeaderNav.innerHTML;
+			}
+
+			// Close SearchModal or mobile nav drawer if open
+			const searchDialog = document.getElementById("search-modal") as HTMLDialogElement | null;
+			if (searchDialog?.open) {
+				searchDialog.close();
+				document.body.style.overflow = "";
+			}
+			const mobileNav = document.getElementById("nav-drawer");
+			if (mobileNav && !mobileNav.hidden) {
+				mobileNav.hidden = true;
+				document.body.style.overflow = "";
+			}
+
+			if (pushState) {
+				window.history.pushState({}, "", targetUrl.href);
+			}
+			if (targetUrl.hash) {
+				const hashEl = document.querySelector(targetUrl.hash);
+				hashEl?.scrollIntoView();
+			} else {
+				window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+			}
+
+			// Load any new page-level module scripts not yet loaded (e.g. search.astro, TranscriptModal)
+			doc.querySelectorAll('script[type="module"][src]').forEach((s) => {
+				const src = s.getAttribute("src");
+				if (!src) return;
+				const pathname = new URL(src, window.location.origin).pathname;
+				if (!loadedModuleScripts.has(pathname)) {
+					loadedModuleScripts.add(pathname);
+					const scriptEl = document.createElement("script");
+					scriptEl.type = "module";
+					scriptEl.src = src;
+					document.head.appendChild(scriptEl);
+				}
+			});
+
+			// Re-ensure drawer stays open if saved open
+			syncDrawerFromStorage();
+
+			// Notify page widgets (e.g. TranscriptModal, Recently Viewed tracker)
+			window.dispatchEvent(new CustomEvent("cc:page-load"));
+			return true;
+		} catch (err: unknown) {
+			if (err instanceof Error && err.name === "AbortError") {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	// Intercept internal link clicks across the document so the drawer stays open without page reload
+	document.addEventListener("click", (e: MouseEvent) => {
+		if (
+			e.defaultPrevented ||
+			e.button !== 0 ||
+			e.metaKey ||
+			e.ctrlKey ||
+			e.shiftKey ||
+			e.altKey
+		) {
+			return;
+		}
+
+		const anchor = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+		if (!anchor) return;
+		if (
+			anchor.target &&
+			anchor.target !== "_self"
+		) {
+			return;
+		}
+		if (anchor.hasAttribute("download") || anchor.getAttribute("rel") === "external") {
+			return;
+		}
+
+		const href = anchor.getAttribute("href");
+		if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("javascript:")) {
+			return;
+		}
+
+		// Normalize any hardcoded codingcat.dev links inside the drawer to current origin
+		let resolvedHref = href;
+		if (anchor.closest("#aj-agent-drawer")) {
+			resolvedHref = href.replace(
+				/^https?:\/\/(?:www\.|dev\.)?codingcat\.dev(\/|$)/i,
+				"/",
+			);
+		}
+
+		let targetUrl: URL;
+		try {
+			targetUrl = new URL(resolvedHref, window.location.origin);
+		} catch {
+			return;
+		}
+
+		if (targetUrl.origin !== window.location.origin) {
+			return;
+		}
+
+		const path = targetUrl.pathname;
+		if (
+			path.startsWith("/api/") ||
+			path.startsWith("/oauth") ||
+			path.startsWith("/.well-known/") ||
+			/\.(xml|json|md|txt|png|jpg|jpeg|svg|ico|pdf|mp3)$/i.test(path)
+		) {
+			return;
+		}
+
+		e.preventDefault();
+		navigateInPlace(targetUrl, true);
+	});
+
+	window.addEventListener("popstate", () => {
+		navigateInPlace(window.location.href, false);
+	});
 
 	// Expose global APIs for SearchModal, Header, and pages
 	(
@@ -277,6 +508,7 @@
 			openAgentAjModal?: (prompt?: string) => void;
 			openAgentAjDrawer?: (prompt?: string) => void;
 			toggleAgentAjDrawer?: () => void;
+			navigateWithDrawer?: (url: string) => Promise<boolean>;
 		}
 	).openAgentAjModal = (prompt?: string) => setDrawerOpen(true, prompt);
 	(
@@ -289,6 +521,11 @@
 			toggleAgentAjDrawer?: () => void;
 		}
 	).toggleAgentAjDrawer = toggleDrawer;
+	(
+		window as unknown as {
+			navigateWithDrawer?: (url: string) => Promise<boolean>;
+		}
+	).navigateWithDrawer = (url: string) => navigateInPlace(url, true);
 
 	closeBtn?.addEventListener("click", () => setDrawerOpen(false));
 
@@ -312,7 +549,7 @@
 		let isResizing = false;
 
 		resizeHandle.addEventListener("pointerdown", (e: PointerEvent) => {
-			if (window.innerWidth < 768) return;
+			if (window.innerWidth < 640) return;
 			isResizing = true;
 			resizeHandle.setPointerCapture(e.pointerId);
 			document.body.style.cursor = "col-resize";
@@ -323,7 +560,7 @@
 			if (!isResizing) return;
 			const newWidth = Math.min(
 				Math.max(window.innerWidth - e.clientX, 320),
-				Math.min(780, window.innerWidth - 280),
+				Math.min(780, window.innerWidth - 240),
 			);
 			document.documentElement.style.setProperty(
 				"--aj-drawer-width",
@@ -402,6 +639,12 @@
 		return text.replace(/\n?<!--AJ_PODCAST_PROVIDERS:[\s\S]*?(?:-->|$)/g, "");
 	}
 
+	function normalizeInternalPath(url: string): string {
+		return url
+			.replace(/^https?:\/\/(?:www\.|dev\.)?codingcat\.dev(?=\/|$)/i, "")
+			.replace(/^https?:\/\/[a-z0-9-]+-codingcatdev-dev\.codingcatdev\.workers\.dev(?=\/|$)/i, "");
+	}
+
 	function renderRichAssistantContent(container: HTMLElement, rawText: string) {
 		const providerMap = new Map<string, Record<string, string>>();
 		const providerItems: Array<{
@@ -418,8 +661,9 @@
 				if (Array.isArray(parsed)) {
 					for (const item of parsed) {
 						if (item?.url && item?.listenLinks) {
-							providerMap.set(item.url, item.listenLinks);
-							providerItems.push(item);
+							const normUrl = normalizeInternalPath(item.url);
+							providerMap.set(normUrl, item.listenLinks);
+							providerItems.push({ ...item, url: normUrl });
 						}
 					}
 				}
@@ -428,6 +672,7 @@
 
 		let cleanedText = stripProviderTrailer(rawText)
 			.replace(/http:\/\/localhost:\d+/g, "")
+			.replace(/https?:\/\/(?:www\.|dev\.)?codingcat\.dev(?=\/)/gi, "")
 			.replace(
 				/\[\s*["']?(\/[a-zA-Z0-9_\-\/]+)["']?\s*\]\((?:http:\/\/localhost:\d+)?(\/[a-zA-Z0-9_\-\/]+)\)/g,
 				"[$1]($2)",
@@ -445,7 +690,7 @@
 		}
 
 		const internalLinkRegex =
-			/\[([^\]]+)\]\(((\/(?:podcast|post)\/[a-zA-Z0-9_\-]+))\)/gi;
+			/\[([^\]]+)\]\(((\/(?:podcast|post)\/[a-zA-Z0-9_\-.]+))\)/gi;
 		const internalLinks: Array<{
 			title: string;
 			url: string;
@@ -483,10 +728,10 @@
 			/^[ \t]*-[ \t]+(.*)$/gm,
 			"<li class='ml-4 list-disc'>$1</li>",
 		);
-		// Internal links navigate in the same tab so the user can bounce between podcasts while the drawer stays open
 		html = html.replace(
 			/\[([^\]]+)\]\(([^)]+)\)/g,
-			(_match, label, href) => {
+			(_match, label, rawHref) => {
+				const href = normalizeInternalPath(rawHref);
 				const isInternal = href.startsWith("/");
 				return isInternal
 					? `<a href='${href}' class='aj-internal-nav text-primary font-medium underline underline-offset-2 hover:opacity-80'>${label}</a>`
@@ -661,6 +906,12 @@
 			text: prompt,
 			timestamp: Date.now(),
 		});
+		const assistantEntry: StoredMessage = {
+			role: "assistant",
+			text: "Thinking...",
+			timestamp: Date.now(),
+		};
+		storedMessages.push(assistantEntry);
 		saveStoredMessages();
 
 		appendMessageElement("user", prompt);
@@ -683,6 +934,7 @@
 			const extLatency = res.headers.get("x-aj-extraction-latency-ms");
 			if (extSource && extIntent) {
 				telemetryLabel = `⚡ ${extSource}: ${extIntent} (${extLatency ?? "0"}ms)`;
+				assistantEntry.telemetry = telemetryLabel;
 				if (telemetryEl) {
 					telemetryEl.textContent = telemetryLabel;
 					telemetryEl.classList.remove("hidden");
@@ -699,11 +951,15 @@
 				};
 				const errText = `Error: ${errorJson.error || "Failed to generate answer"}`;
 				assistantContent.textContent = errText;
+				assistantEntry.text = errText;
+				saveStoredMessages();
 				return;
 			}
 
 			if (!res.body) {
 				assistantContent.textContent = "No response stream received.";
+				assistantEntry.text = "No response stream received.";
+				saveStoredMessages();
 				return;
 			}
 
@@ -717,6 +973,8 @@
 				const chunk = decoder.decode(value, { stream: true });
 				accumulatedText += chunk;
 				assistantContent.textContent = stripProviderTrailer(accumulatedText);
+				assistantEntry.text = accumulatedText;
+				saveStoredMessages();
 				messagesContainer?.scrollTo({
 					top: messagesContainer.scrollHeight,
 					behavior: "smooth",
@@ -724,19 +982,17 @@
 			}
 
 			renderRichAssistantContent(assistantContent, accumulatedText);
-			storedMessages.push({
-				role: "assistant",
-				text: accumulatedText,
-				telemetry: telemetryLabel || undefined,
-				timestamp: Date.now(),
-			});
+			assistantEntry.text = accumulatedText;
 			saveStoredMessages();
 			messagesContainer?.scrollTo({
 				top: messagesContainer.scrollHeight,
 				behavior: "smooth",
 			});
 		} catch (err) {
-			assistantContent.textContent = `Connection error: ${err instanceof Error ? err.message : String(err)}`;
+			const errMsg = `Connection error: ${err instanceof Error ? err.message : String(err)}`;
+			assistantContent.textContent = errMsg;
+			assistantEntry.text = errMsg;
+			saveStoredMessages();
 		} finally {
 			isStreaming = false;
 			if (sendBtn) sendBtn.disabled = false;

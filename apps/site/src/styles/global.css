@@ -212,8 +212,12 @@
 	line-height: 1;
 }
 
-/* Desktop Right-Side Resizable Ask Agent Drawer layout shift */
-@media (min-width: 768px) {
+/* Persistent Right-Side Resizable Ask Agent Drawer */
+html.aj-drawer-open #aj-agent-drawer {
+	display: flex !important;
+}
+
+@media (min-width: 640px) {
 	html.aj-drawer-open body {
 		padding-right: var(--aj-drawer-width, 420px);
 	}

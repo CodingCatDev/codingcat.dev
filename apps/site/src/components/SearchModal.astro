@@ -359,6 +359,7 @@
 	}
 
 	recordCurrentPageView();
+	window.addEventListener("cc:page-load", recordCurrentPageView);
 
 	function formatRelativeTime(timestamp: number): string {
 		const diffSec = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
@@ -730,7 +731,16 @@
 			if (activeIndex === 0) {
 				triggerAskAgent();
 			} else if (currentHits[activeIndex - 1]) {
-				window.location.href = currentHits[activeIndex - 1].href;
+				const href = currentHits[activeIndex - 1].href;
+				closeModal();
+				const win = window as unknown as {
+					navigateWithDrawer?: (url: string) => Promise<boolean>;
+				};
+				if (win.navigateWithDrawer) {
+					win.navigateWithDrawer(href);
+				} else {
+					window.location.href = href;
+				}
 			}
 		}
 	});
@@ -740,7 +750,16 @@
 		if (activeIndex === 0) {
 			triggerAskAgent();
 		} else if (currentHits[activeIndex - 1]) {
-			window.location.href = currentHits[activeIndex - 1].href;
+			const href = currentHits[activeIndex - 1].href;
+			closeModal();
+			const win = window as unknown as {
+				navigateWithDrawer?: (url: string) => Promise<boolean>;
+			};
+			if (win.navigateWithDrawer) {
+				win.navigateWithDrawer(href);
+			} else {
+				window.location.href = href;
+			}
 		}
 	});
 
