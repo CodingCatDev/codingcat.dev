@@ -77,10 +77,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		});
 	}
 
-	if (context.locals.sanity.preview.enabled) {
-		// Not cosmetic: without this a response containing unpublished drafts can
-		// be written to the edge cache and served to the public.
-		response.headers.set("Cache-Control", "no-store, private");
+	if (
+		context.locals.sanity.preview.enabled ||
+		origin !== "https://codingcat.dev"
+	) {
+		if (context.locals.sanity.preview.enabled) {
+			// Not cosmetic: without this a response containing unpublished drafts can
+			// be written to the edge cache and served to the public.
+			response.headers.set("Cache-Control", "no-store, private");
+		}
 		response.headers.set("X-Robots-Tag", "noindex, nofollow");
 	}
 
@@ -97,7 +102,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	);
 
 	// AIPREF / AI Preference Headers
-	response.headers.set("Content-Usage", "train-ai=n, search=y");
+	response.headers.set("Content-Usage", "train-ai=y, search=y");
 
 	// Always emit Link headers (RFC 8288) for AI agent discoverability
 	response.headers.set(
