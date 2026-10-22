@@ -5,7 +5,10 @@ import {
 	sanitizePortableTextBlocks,
 	verifyGuestPortalToken,
 } from "@/lib/guest-portal";
-import { getSanityServerClient } from "@/lib/sanity/write-client";
+import {
+	getSanityServerClient,
+	uploadSanityImageDataUrl,
+} from "@/lib/sanity/write-client";
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
@@ -15,6 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
 			websiteUrl?: string;
 			excerpt?: string;
 			content?: unknown[];
+			avatarDataUrl?: string;
 			socials?: Record<string, string>;
 		};
 
@@ -129,6 +133,27 @@ export const POST: APIRoute = async ({ request }) => {
 			}
 		}
 
+		let uploadedAvatarUrl: string | undefined;
+		if (
+			typeof body.avatarDataUrl === "string" &&
+			body.avatarDataUrl.startsWith("data:image/")
+		) {
+			const uploadedAsset = await uploadSanityImageDataUrl(
+				body.avatarDataUrl,
+				verification.payload?.slug || existingGuest._id,
+			);
+			if (uploadedAsset) {
+				patchSet.coverImage = {
+					_type: "image",
+					asset: {
+						_type: "reference",
+						_ref: uploadedAsset._id,
+					},
+				};
+				uploadedAvatarUrl = uploadedAsset.url;
+			}
+		}
+
 		if (canWrite) {
 			await client.patch(existingGuest._id).set(patchSet).commit();
 		}
@@ -138,6 +163,7 @@ export const POST: APIRoute = async ({ request }) => {
 				ok: true,
 				guestId: existingGuest._id,
 				socials: mergedSocials,
+				avatarUrl: uploadedAvatarUrl,
 				persistedToSanity: canWrite,
 			}),
 			{ status: 200, headers: { "Content-Type": "application/json" } },
