@@ -1800,7 +1800,7 @@ async function main() {
   const patchMutations = ENRICHED_GUESTS.map((g) => ({
     patch: {
       id: g.id,
-      set: {
+      setIfMissing: {
         socials: g.socials,
       },
       unset: ["socials.email", "portalToken", "portalTokenExpiresAt"],
