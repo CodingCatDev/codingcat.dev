@@ -22,6 +22,7 @@ export const GET: APIRoute = async ({ locals }) => {
 		? `User-Agent: *
 Content-Signal: ai-train=no, search=yes, ai-input=yes
 Allow: /
+Allow: /api/og/
 Allow: /api/search
 Allow: /api/mcp
 Allow: /.well-known/
@@ -32,6 +33,15 @@ Allow: /AGENTS.md
 Allow: /pricing.md
 Disallow: /api/
 Disallow: /dashboard/
+
+User-Agent: Twitterbot
+Allow: /
+
+User-Agent: facebookexternalhit
+Allow: /
+
+User-Agent: LinkedInBot
+Allow: /
 
 User-Agent: GPTBot
 Allow: /
