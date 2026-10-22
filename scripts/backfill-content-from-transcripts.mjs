@@ -1,4 +1,5 @@
 import { createClient } from "@sanity/client";
+import { publishPhp2ShellPost } from "./publish-php2shell-post.mjs";
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
@@ -172,6 +173,9 @@ async function run() {
 		.commit()
 		.then(() => console.log(`✓ Successfully updated ${doc2Id}`))
 		.catch((err) => console.error(`✗ Error updating ${doc2Id}:`, err.message));
+
+	// 3. Publish PHP2Shell blog post & patch missing excerpts
+	await publishPhp2ShellPost();
 
 	console.log("Backfill complete!");
 }
