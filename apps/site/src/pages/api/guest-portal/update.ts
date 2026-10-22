@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import {
 	ALLOWED_SOCIAL_KEYS,
 	normalizeSocialInput,
+	sanitizePortableTextBlocks,
 	verifyGuestPortalToken,
 } from "@/lib/guest-portal";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
@@ -12,6 +13,8 @@ export const POST: APIRoute = async ({ request }) => {
 			token?: string;
 			title?: string;
 			websiteUrl?: string;
+			excerpt?: string;
+			content?: unknown[];
 			socials?: Record<string, string>;
 		};
 
@@ -109,6 +112,20 @@ export const POST: APIRoute = async ({ request }) => {
 						},
 					},
 				];
+			}
+		}
+
+		if (typeof body.excerpt === "string") {
+			const cleanExcerpt = body.excerpt.trim();
+			if (cleanExcerpt) {
+				patchSet.excerpt = cleanExcerpt;
+			}
+		}
+
+		if (Array.isArray(body.content)) {
+			const sanitizedBlocks = sanitizePortableTextBlocks(body.content);
+			if (sanitizedBlocks.length > 0) {
+				patchSet.content = sanitizedBlocks;
 			}
 		}
 

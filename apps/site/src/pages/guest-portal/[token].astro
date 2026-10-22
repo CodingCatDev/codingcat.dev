@@ -1,7 +1,10 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { verifyGuestPortalToken } from "@/lib/guest-portal";
+import {
+	portableTextToHtml,
+	verifyGuestPortalToken,
+} from "@/lib/guest-portal";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const { token } = Astro.params;
@@ -20,6 +23,8 @@ interface GuestDoc {
 	title: string;
 	slug: string;
 	avatarUrl?: string;
+	excerpt?: string | null;
+	content?: unknown[];
 	socials?: Record<string, string>;
 	websites?: Array<{ site?: string; link?: { href?: string } }>;
 	episodes: EpisodeRef[];
@@ -42,6 +47,8 @@ if (isValid && verification.payload) {
 			title,
 			"slug": slug.current,
 			"avatarUrl": coverImage.asset->url,
+			excerpt,
+			content,
 			socials,
 			websites,
 			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) {
@@ -60,6 +67,11 @@ if (isValid && verification.payload) {
 const socials = guestDoc?.socials || {};
 const primaryWebsite =
 	guestDoc?.websites?.[0]?.link?.href || guestDoc?.websites?.[0]?.site || "";
+const initialExcerpt =
+	guestDoc?.excerpt && guestDoc.excerpt.trim().toLowerCase() !== "fix me"
+		? guestDoc.excerpt.trim()
+		: "";
+const initialAboutHtml = portableTextToHtml(guestDoc?.content);
 
 const socialFields = [
 	{
@@ -289,6 +301,176 @@ const socialFields = [
 
 					<hr class="border-border" />
 
+					<div class="space-y-4">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<div>
+								<h2 class="text-lg font-semibold text-foreground">
+									About Section (Sanity Portable Text)
+								</h2>
+								<p class="mt-0.5 text-xs text-muted-foreground">
+									Edit your speaker bio with headings, links, bold/italic text, code, and lists — saved directly as Sanity Portable Text blocks on your public profile.
+								</p>
+							</div>
+							<span
+								id="pt-block-badge"
+								class="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary"
+							>
+								Portable Text Ready
+							</span>
+						</div>
+
+						<div>
+							<label class="block text-xs font-medium text-muted-foreground" for="field-excerpt">
+								One-Line Summary / SEO Bio (optional)
+							</label>
+							<input
+								id="field-excerpt"
+								name="excerpt"
+								type="text"
+								value={initialExcerpt}
+								placeholder="Short one-sentence summary for search & social cards"
+								class="mt-1 w-full rounded-xl border border-border bg-background px-3.5 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+							/>
+						</div>
+
+						<div class="overflow-hidden rounded-xl border border-border bg-background focus-within:border-primary">
+							<div
+								id="pt-toolbar"
+								class="flex flex-wrap items-center gap-1 border-b border-border bg-muted/40 px-2.5 py-2 text-xs"
+								role="toolbar"
+								aria-label="Portable Text formatting toolbar"
+							>
+								<button
+									type="button"
+									data-pt-block="p"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Normal Paragraph"
+								>
+									Paragraph
+								</button>
+								<button
+									type="button"
+									data-pt-block="h2"
+									class="rounded-lg px-2.5 py-1 font-semibold text-foreground hover:bg-muted cursor-pointer"
+									title="Heading 2"
+								>
+									H2
+								</button>
+								<button
+									type="button"
+									data-pt-block="h3"
+									class="rounded-lg px-2.5 py-1 font-semibold text-foreground hover:bg-muted cursor-pointer"
+									title="Heading 3"
+								>
+									H3
+								</button>
+								<button
+									type="button"
+									data-pt-block="blockquote"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Blockquote"
+								>
+									Quote
+								</button>
+
+								<span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
+
+								<button
+									type="button"
+									data-pt-cmd="bold"
+									class="rounded-lg px-2.5 py-1 font-bold text-foreground hover:bg-muted cursor-pointer"
+									title="Bold (Ctrl/Cmd+B)"
+								>
+									B
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="italic"
+									class="rounded-lg px-2.5 py-1 italic text-foreground hover:bg-muted cursor-pointer"
+									title="Italic (Ctrl/Cmd+I)"
+								>
+									I
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="underline"
+									class="rounded-lg px-2.5 py-1 underline text-foreground hover:bg-muted cursor-pointer"
+									title="Underline (Ctrl/Cmd+U)"
+								>
+									U
+								</button>
+								<button
+									type="button"
+									data-pt-inline="code"
+									class="rounded-lg px-2.5 py-1 font-mono text-foreground hover:bg-muted cursor-pointer"
+									title="Inline Code"
+								>
+									&lt;/&gt;
+								</button>
+
+								<span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
+
+								<button
+									type="button"
+									data-pt-cmd="insertUnorderedList"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Bullet List"
+								>
+									&bull; List
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="insertOrderedList"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Numbered List"
+								>
+									1. List
+								</button>
+
+								<span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
+
+								<button
+									type="button"
+									data-pt-action="link"
+									class="rounded-lg px-2.5 py-1 font-medium text-primary hover:bg-muted cursor-pointer"
+									title="Insert or Edit Link"
+								>
+									Link
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="unlink"
+									class="rounded-lg px-2.5 py-1 font-medium text-muted-foreground hover:bg-muted cursor-pointer"
+									title="Remove Link"
+								>
+									Unlink
+								</button>
+							</div>
+
+							<div
+								id="pt-editor"
+								contenteditable="true"
+								role="textbox"
+								aria-multiline="true"
+								aria-label="About section rich text editor"
+								class="prose dark:prose-invert max-w-none min-h-[200px] px-4 py-3 text-sm leading-relaxed text-foreground focus:outline-none"
+								set:html={initialAboutHtml}
+							/>
+						</div>
+
+						<details class="rounded-xl border border-border/60 bg-muted/20 px-3.5 py-2 text-xs">
+							<summary class="cursor-pointer font-medium text-muted-foreground hover:text-foreground">
+								Inspect Generated Sanity Portable Text Blocks JSON
+							</summary>
+							<pre
+								id="pt-json-preview"
+								class="mt-2 max-h-48 overflow-auto rounded-lg bg-background p-3 font-mono text-[11px] text-muted-foreground"
+							></pre>
+						</details>
+					</div>
+
+					<hr class="border-border" />
+
 					<div>
 						<h2 class="text-lg font-semibold text-foreground">
 							Social Handles for Episode Tagging
@@ -352,6 +534,294 @@ const socialFields = [
 		const form = document.getElementById("guest-profile-form") as HTMLFormElement | null;
 		const statusEl = document.getElementById("save-status");
 		const saveBtn = document.getElementById("save-btn") as HTMLButtonElement | null;
+		const editorEl = document.getElementById("pt-editor") as HTMLElement | null;
+		const toolbarEl = document.getElementById("pt-toolbar") as HTMLElement | null;
+		const jsonPreviewEl = document.getElementById("pt-json-preview") as HTMLElement | null;
+		const badgeEl = document.getElementById("pt-block-badge") as HTMLElement | null;
+
+		interface PtSpan {
+			_type: "span";
+			_key: string;
+			text: string;
+			marks: string[];
+		}
+
+		interface PtMarkDef {
+			_type: "link";
+			_key: string;
+			href: string;
+			blank: boolean;
+		}
+
+		interface PtBlock {
+			_type: "block";
+			_key: string;
+			style: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
+			listItem?: "bullet" | "number";
+			level?: number;
+			markDefs: PtMarkDef[];
+			children: PtSpan[];
+		}
+
+		function genKey(): string {
+			const bytes = new Uint8Array(6);
+			crypto.getRandomValues(bytes);
+			return Array.from(bytes)
+				.map((b) => b.toString(16).padStart(2, "0"))
+				.join("");
+		}
+
+		function extractInlineSpans(
+			rootNode: Node,
+			activeMarks: string[],
+			markDefs: PtMarkDef[],
+			spans: PtSpan[],
+		): void {
+			if (rootNode.nodeType === Node.TEXT_NODE) {
+				const text = rootNode.textContent ?? "";
+				if (!text) return;
+				const prev = spans[spans.length - 1];
+				const sameMarks =
+					prev &&
+					prev.marks.length === activeMarks.length &&
+					prev.marks.every((m, idx) => m === activeMarks[idx]);
+				if (sameMarks) {
+					prev.text += text;
+				} else {
+					spans.push({
+						_type: "span",
+						_key: genKey(),
+						text,
+						marks: [...activeMarks],
+					});
+				}
+				return;
+			}
+
+			if (rootNode.nodeType !== Node.ELEMENT_NODE) return;
+			const el = rootNode as HTMLElement;
+			const tag = el.tagName.toLowerCase();
+
+			if (tag === "br") {
+				spans.push({
+					_type: "span",
+					_key: genKey(),
+					text: "\n",
+					marks: [...activeMarks],
+				});
+				return;
+			}
+
+			const nextMarks = [...activeMarks];
+			const addMark = (m: string) => {
+				if (!nextMarks.includes(m)) nextMarks.push(m);
+			};
+
+			if (tag === "strong" || tag === "b") addMark("strong");
+			if (tag === "em" || tag === "i") addMark("em");
+			if (tag === "u") addMark("underline");
+			if (tag === "s" || tag === "strike" || tag === "del") addMark("strike-through");
+			if (tag === "code") addMark("code");
+
+			if (tag === "a") {
+				const rawHref = el.getAttribute("href")?.trim() || "";
+				if (rawHref) {
+					const safeHref = /^(https?:\/\/|mailto:|\/)/i.test(rawHref)
+						? rawHref
+						: `https://${rawHref}`;
+					let existing = markDefs.find((md) => md.href === safeHref);
+					if (!existing) {
+						existing = {
+							_type: "link",
+							_key: genKey(),
+							href: safeHref,
+							blank: true,
+						};
+						markDefs.push(existing);
+					}
+					addMark(existing._key);
+				}
+			}
+
+			for (const child of Array.from(el.childNodes)) {
+				extractInlineSpans(child, nextMarks, markDefs, spans);
+			}
+		}
+
+		function buildBlockFromNode(
+			node: Node,
+			style: PtBlock["style"],
+			listItem?: "bullet" | "number",
+		): PtBlock {
+			const markDefs: PtMarkDef[] = [];
+			const spans: PtSpan[] = [];
+			for (const child of Array.from(node.childNodes)) {
+				extractInlineSpans(child, [], markDefs, spans);
+			}
+			// Strip trailing solitary newline from contenteditable <br>
+			if (spans.length === 1 && spans[0].text === "\n") {
+				spans[0].text = "";
+			}
+			if (spans.length === 0) {
+				spans.push({
+					_type: "span",
+					_key: genKey(),
+					text: "",
+					marks: [],
+				});
+			}
+			const block: PtBlock = {
+				_type: "block",
+				_key: genKey(),
+				style,
+				markDefs,
+				children: spans,
+			};
+			if (listItem) {
+				block.listItem = listItem;
+				block.level = 1;
+			}
+			return block;
+		}
+
+		function serializeEditorToPortableText(root: HTMLElement): PtBlock[] {
+			const blocks: PtBlock[] = [];
+			const BLOCK_TAGS = new Set([
+				"p",
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"blockquote",
+				"ul",
+				"ol",
+				"div",
+			]);
+
+			const walkChildren = (parent: HTMLElement) => {
+				for (const node of Array.from(parent.childNodes)) {
+					if (node.nodeType === Node.TEXT_NODE) {
+						const text = node.textContent?.trim() ?? "";
+						if (text) {
+							blocks.push({
+								_type: "block",
+								_key: genKey(),
+								style: "normal",
+								markDefs: [],
+								children: [
+									{
+										_type: "span",
+										_key: genKey(),
+										text,
+										marks: [],
+									},
+								],
+							});
+						}
+						continue;
+					}
+					if (node.nodeType !== Node.ELEMENT_NODE) continue;
+					const el = node as HTMLElement;
+					const tag = el.tagName.toLowerCase();
+
+					if (tag === "ul" || tag === "ol") {
+						const listType = tag === "ul" ? "bullet" : "number";
+						for (const li of Array.from(el.children)) {
+							if (li.tagName.toLowerCase() === "li") {
+								blocks.push(buildBlockFromNode(li, "normal", listType));
+							}
+						}
+						continue;
+					}
+
+					if (
+						tag === "h1" ||
+						tag === "h2" ||
+						tag === "h3" ||
+						tag === "h4" ||
+						tag === "blockquote"
+					) {
+						blocks.push(buildBlockFromNode(el, tag));
+						continue;
+					}
+
+					if (tag === "p" || tag === "div") {
+						// Check if div contains nested block elements
+						const hasNestedBlocks = Array.from(el.children).some((c) =>
+							BLOCK_TAGS.has(c.tagName.toLowerCase()),
+						);
+						if (hasNestedBlocks) {
+							walkChildren(el);
+						} else {
+							blocks.push(buildBlockFromNode(el, "normal"));
+						}
+						continue;
+					}
+
+					blocks.push(buildBlockFromNode(el, "normal"));
+				}
+			};
+
+			walkChildren(root);
+
+			// Filter out empty trailing normal blocks when there is other content
+			const nonEmpty = blocks.filter(
+				(b, idx) =>
+					idx === 0 ||
+					b.style !== "normal" ||
+					b.listItem ||
+					b.children.some((s) => s.text.trim().length > 0),
+			);
+			return nonEmpty;
+		}
+
+		function refreshPreview() {
+			if (!editorEl) return;
+			const ptBlocks = serializeEditorToPortableText(editorEl);
+			if (jsonPreviewEl) {
+				jsonPreviewEl.textContent = JSON.stringify(ptBlocks, null, 2);
+			}
+			if (badgeEl) {
+				badgeEl.textContent = `${ptBlocks.length} Portable Text ${ptBlocks.length === 1 ? "block" : "blocks"}`;
+			}
+		}
+
+		toolbarEl?.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement | null)?.closest("button");
+			if (!btn || !editorEl) return;
+			e.preventDefault();
+			editorEl.focus();
+
+			const blockTag = btn.dataset.ptBlock;
+			const cmd = btn.dataset.ptCmd;
+			const inlineTag = btn.dataset.ptInline;
+			const action = btn.dataset.ptAction;
+
+			if (blockTag) {
+				document.execCommand("formatBlock", false, `<${blockTag}>`);
+			} else if (cmd) {
+				document.execCommand(cmd, false);
+			} else if (inlineTag === "code") {
+				const sel = window.getSelection();
+				if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+					const text = sel.toString();
+					document.execCommand("insertHTML", false, `<code>${text}</code>`);
+				}
+			} else if (action === "link") {
+				const url = window.prompt("Enter link URL:", "https://");
+				if (url && url.trim() && url.trim() !== "https://") {
+					document.execCommand("createLink", false, url.trim());
+				}
+			}
+
+			refreshPreview();
+		});
+
+		editorEl?.addEventListener("input", () => {
+			refreshPreview();
+		});
+
+		refreshPreview();
 
 		form?.addEventListener("submit", async (e) => {
 			e.preventDefault();
@@ -360,6 +830,7 @@ const socialFields = [
 			const token = form.dataset.token;
 			const titleInput = document.getElementById("field-title") as HTMLInputElement | null;
 			const websiteInput = document.getElementById("field-website") as HTMLInputElement | null;
+			const excerptInput = document.getElementById("field-excerpt") as HTMLInputElement | null;
 			const socialInputs = form.querySelectorAll<HTMLInputElement>("input[data-social-key]");
 
 			const socials: Record<string, string> = {};
@@ -367,6 +838,8 @@ const socialFields = [
 				const k = input.dataset.socialKey;
 				if (k) socials[k] = input.value.trim();
 			});
+
+			const content = editorEl ? serializeEditorToPortableText(editorEl) : undefined;
 
 			saveBtn.disabled = true;
 			saveBtn.textContent = "Saving to Sanity...";
@@ -380,6 +853,8 @@ const socialFields = [
 						token,
 						title: titleInput?.value.trim(),
 						websiteUrl: websiteInput?.value.trim(),
+						excerpt: excerptInput?.value.trim(),
+						content,
 						socials,
 					}),
 				});
@@ -388,7 +863,7 @@ const socialFields = [
 					throw new Error(data.error || "Failed to update profile");
 				}
 				statusEl.className = "text-sm font-medium text-emerald-400";
-				statusEl.textContent = "Saved! Your CodingCat.dev speaker profile has been updated.";
+				statusEl.textContent = "Saved! Your CodingCat.dev speaker profile and About section have been updated.";
 			} catch (err) {
 				statusEl.className = "text-sm font-medium text-red-400";
 				statusEl.textContent = err instanceof Error ? err.message : "Error saving profile";
