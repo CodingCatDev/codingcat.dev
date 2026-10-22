@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ locals }) => {
 
 	const body = isProduction
 		? `User-Agent: *
-Content-Signal: ai-train=no, search=yes, ai-input=yes
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
 Allow: /api/og/
 Allow: /api/search
@@ -31,10 +31,19 @@ Allow: /llms-full.txt
 Allow: /auth.md
 Allow: /AGENTS.md
 Allow: /pricing.md
-Disallow: /api/
 Disallow: /dashboard/
+Disallow: /guest-portal/
 
 User-Agent: Twitterbot
+Allow: /
+
+User-Agent: Redditbot
+Allow: /
+
+User-Agent: Discordbot
+Allow: /
+
+User-Agent: Slackbot
 Allow: /
 
 User-Agent: facebookexternalhit
