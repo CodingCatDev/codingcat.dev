@@ -653,15 +653,16 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 
-		it("4.2 Production robots allows root and disallows /api/ and /dashboard/", async () => {
+		it("4.2 Production robots allows root and /api/og/ and disallows /dashboard/ and /guest-portal/", async () => {
 			const locals = { siteUrl: new URL("https://codingcat.dev") };
 			const res = await robotsModule.GET({ locals });
 			const body = await res.text();
 
 			assert.ok(body.includes("User-Agent: *"));
 			assert.ok(body.includes("Allow: /"));
-			assert.ok(body.includes("Disallow: /api/"));
+			assert.ok(body.includes("Allow: /api/og/"));
 			assert.ok(body.includes("Disallow: /dashboard/"));
+			assert.ok(body.includes("Disallow: /guest-portal/"));
 			assert.ok(body.includes("Host: https://codingcat.dev"));
 			assert.ok(body.includes("Sitemap: https://codingcat.dev/sitemap.xml"));
 		});
