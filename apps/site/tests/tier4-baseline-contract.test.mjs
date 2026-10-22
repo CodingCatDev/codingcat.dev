@@ -320,10 +320,10 @@ describe("Tier 4 - Real-World Application & Baseline Contract", () => {
 		const baselineRobots = loadBaseline("robots.txt");
 		const robotsModule = loadModule("src/pages/robots.txt.ts");
 
-		it("4.1 Baseline robots contains User-Agent: * block with /api/ and /dashboard/ disallowed", () => {
+		it("4.1 Baseline robots contains User-Agent: * block with /api/og/ allowed and /dashboard/ disallowed", () => {
 			assert.ok(baselineRobots.includes("User-Agent: *"));
 			assert.ok(baselineRobots.includes("Allow: /"));
-			assert.ok(baselineRobots.includes("Disallow: /api/"));
+			assert.ok(baselineRobots.includes("Allow: /api/og/"));
 			assert.ok(baselineRobots.includes("Disallow: /dashboard/"));
 		});
 
