@@ -20,6 +20,7 @@ interface EpisodeRef {
 
 interface GuestDoc {
 	_id: string;
+	_type: "guest" | "author";
 	title: string;
 	slug: string;
 	avatarUrl?: string;
@@ -42,8 +43,9 @@ let guestDoc: GuestDoc | null = null;
 
 if (isValid && verification.payload) {
 	guestDoc = await client.fetch<GuestDoc | null>(
-		`*[_type == "guest" && (_id == $id || slug.current == $slug)][0]{
+		`*[_type in ["guest", "author"] && (_id == $id || slug.current == $slug)][0]{
 			_id,
+			_type,
 			title,
 			"slug": slug.current,
 			"avatarUrl": coverImage.asset->url,
@@ -51,7 +53,7 @@ if (isValid && verification.payload) {
 			content,
 			socials,
 			websites,
-			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) {
+			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) [0...10] {
 				_id,
 				title,
 				"slug": slug.current,
@@ -64,6 +66,8 @@ if (isValid && verification.payload) {
 	);
 }
 
+const isAuthor = guestDoc?._type === "author";
+const profilePathPrefix = isAuthor ? "author" : "guest";
 const socials = guestDoc?.socials || {};
 const primaryWebsite =
 	guestDoc?.websites?.[0]?.link?.href || guestDoc?.websites?.[0]?.site || "";
@@ -168,8 +172,11 @@ const socialFields = [
 	<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
 		<Breadcrumbs
 			links={[
-				{ title: "Guests", href: "/guests" },
-				{ title: guestDoc?.title || "Guest Portal" },
+				{
+					title: isAuthor ? "Authors" : "Guests",
+					href: isAuthor ? "/authors/page/1" : "/guests/page/1",
+				},
+				{ title: guestDoc?.title || "Profile Portal" },
 			]}
 		/>
 
@@ -212,14 +219,14 @@ const socialFields = [
 									{guestDoc.title}
 								</h1>
 								<p class="text-sm text-muted-foreground">
-									Public Speaker Profile:{" "}
+									Public {isAuthor ? "Author" : "Speaker"} Profile:{" "}
 									<a
-										href={`/guest/${guestDoc.slug}`}
+										href={`/${profilePathPrefix}/${guestDoc.slug}`}
 										target="_blank"
 										rel="noreferrer"
 										class="font-medium text-primary underline"
 									>
-										codingcat.dev/guest/{guestDoc.slug}
+										codingcat.dev/{profilePathPrefix}/{guestDoc.slug}
 									</a>
 								</p>
 							</div>

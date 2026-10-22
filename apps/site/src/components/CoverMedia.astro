@@ -54,8 +54,14 @@ const youtubeUrl = stegaClean(youtube);
 			</video>
 		</div>
 	) : youtubeUrl ? (
-		<PtYouTube node={{ _type: "youtube", youtube: youtubeUrl }} index={0} isInline={false} />
+		<PtYouTube
+			node={{ _type: "youtube", youtube: youtubeUrl }}
+			coverImage={image}
+			priority
+			index={0}
+			isInline={false}
+		/>
 	) : (
-		<CoverImage image={image} priority class={className} />
+		<CoverImage image={image} priority sizes="(max-width: 1280px) 100vw, 1280px" class={className} />
 	)
 }

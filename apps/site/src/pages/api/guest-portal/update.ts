@@ -59,12 +59,13 @@ export const POST: APIRoute = async ({ request }) => {
 
 		const existingGuest = await client.fetch<{
 			_id: string;
+			_type: string;
 			title?: string;
 			socials?: Record<string, string>;
 			websites?: Array<any>;
 		} | null>(
-			`*[_type == "guest" && _id == $id][0]{ _id, title, socials, websites }`,
-			{ id: guestId },
+			`*[_type in ["guest", "author"] && (_id == $id || slug.current == $slug)][0]{ _id, _type, title, socials, websites }`,
+			{ id: guestId, slug: verification.payload?.slug || "" },
 		);
 
 		if (!existingGuest) {

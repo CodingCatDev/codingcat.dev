@@ -8,6 +8,7 @@ interface Props {
 	width?: number;
 	height?: number;
 	quality?: number;
+	sizes?: string;
 	/** Above-the-fold images opt out of lazy loading. */
 	priority?: boolean;
 	class?: string;
@@ -18,17 +19,36 @@ const {
 	fallbackAlt = "CodingCat.dev tutorial cover image",
 	width = 1920,
 	height = 1080,
-	quality = 80,
+	quality = 82,
+	sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 960px",
 	priority = false,
 	class: className = "w-full h-auto aspect-video rounded-md",
 } = Astro.props;
 
-const src = Astro.locals.sanity
-	.urlForImage(image ?? undefined)
+const builder = Astro.locals.sanity.urlForImage(image ?? undefined);
+const aspect = height / width;
+
+const src = builder
 	?.width(width)
 	.height(height)
 	.quality(quality)
 	.url();
+
+const responsiveWidths = [320, 480, 640, 960, 1280, 1600, 1920].filter(
+	(w) => w <= width,
+);
+if (!responsiveWidths.includes(width)) {
+	responsiveWidths.push(width);
+}
+const srcset = builder
+	? responsiveWidths
+			.map((w) => {
+				const h = Math.round(w * aspect);
+				const u = builder.width(w).height(h).quality(quality).url();
+				return `${u} ${w}w`;
+			})
+			.join(", ")
+	: undefined;
 
 // stegaClean: alt lands in an attribute, where stega's zero-width characters
 // would be read out verbatim by screen readers.
@@ -42,13 +62,14 @@ const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : fallbackAlt;
 			<img
 				class={className}
 				src={src}
+				srcset={srcset}
 				width={width}
 				height={height}
 				alt={alt}
 				loading={priority ? "eager" : "lazy"}
 				fetchpriority={priority ? "high" : "auto"}
 				decoding={priority ? "sync" : "async"}
-				sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+				sizes={sizes}
 			/>
 		) : (
 			<div class="bg-muted rounded-md" style="padding-top: 50%" />

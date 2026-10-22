@@ -28,8 +28,9 @@ const people = [
 					<CoverImage
 						image={item.coverImage}
 						fallbackAlt={item.title || "CodingCat.dev author photo"}
-						width={256}
-						height={256}
+						width={640}
+						height={640}
+						sizes="(max-width: 768px) 100vw, 560px"
 						class="w-full h-auto aspect-square rounded-md object-cover"
 						priority={priority}
 					/>
@@ -37,6 +38,7 @@ const people = [
 					<CoverImage
 						image={item.coverImage}
 						fallbackAlt={item.title || "CodingCat.dev tutorial cover image"}
+						sizes="(max-width: 768px) 100vw, 560px"
 						priority={priority}
 					/>
 				)}
