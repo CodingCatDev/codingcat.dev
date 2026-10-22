@@ -24,7 +24,15 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 		<!-- Search Input Bar -->
 		<div class="flex flex-col gap-2 w-full max-w-4xl">
-			<form id="search-page-form" class="relative w-full" onsubmit="return false">
+			<form
+				id="search-page-form"
+				action="/search"
+				method="GET"
+				class="relative w-full"
+				toolname="search_content"
+				tooldescription="Search CodingCat.dev web development tutorials, blog posts, and podcasts"
+				onsubmit="return false"
+			>
 				<label for="search-input" class="sr-only">Search</label>
 				<div class="relative flex items-center">
 					<div class="absolute left-3.5 text-muted-foreground pointer-events-none" aria-hidden="true">
@@ -40,6 +48,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 						autocomplete="off"
 						placeholder="Search in CodingCat.dev..."
 						class="w-full rounded-xl border border-input bg-card pl-11 pr-12 py-3.5 text-base md:text-lg shadow-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+						toolparamdescription="Search keyword or technical topic"
 					/>
 					<button
 						type="button"
@@ -135,7 +144,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			<span id="search-count-text"></span>
 			<div class="flex items-center gap-2">
 				<span id="search-clairic-pill" class="hidden rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-primary"></span>
-				<span id="search-powered-by" class="text-[11px] opacity-75">Sanity Semantic Search • Clairic</span>
+				<span id="search-powered-by" class="text-[11px]">Sanity Semantic Search • Clairic</span>
 			</div>
 		</div>
 

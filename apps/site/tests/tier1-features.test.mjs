@@ -1735,24 +1735,29 @@ describe("Tier 1 - Feature Coverage", () => {
 				),
 			);
 
-			// 3. htmlToMarkdown strips client-only interactive transcript modal chrome
+			// 3. htmlToMarkdown strips client-only interactive transcript modal chrome and Ask Agent drawer
 			const { htmlToMarkdown } = loadModule("src/lib/html-to-markdown.ts");
 			const sampleHtml = `
-				<main>
-					<article>
-						<h1>Sample Episode</h1>
-						<div class="transcript-widget inline-block">
-							<button class="transcript-open-btn">View Transcript</button>
-							<div class="transcript-modal hidden">
-								<div>
-									<p>Fetching transcript from YouTube...</p>
-									<footer><span>Loading transcript...</span></footer>
+				<body>
+					<main>
+						<article>
+							<h1>Sample Episode</h1>
+							<div class="transcript-widget inline-block">
+								<button class="transcript-open-btn">View Transcript</button>
+								<div class="transcript-modal hidden">
+									<div>
+										<p>Fetching transcript from YouTube...</p>
+										<footer><span>Loading transcript...</span></footer>
+									</div>
 								</div>
 							</div>
-						</div>
-						<p>Real episode content.</p>
-					</article>
-				</main>
+							<p>Real episode content.</p>
+						</article>
+					</main>
+					<aside id="aj-agent-drawer" data-markdown-ignore="true">
+						<p>Ask anything about CodingCat.dev podcasts, tutorials, guests, or transcripts.</p>
+					</aside>
+				</body>
 			`;
 			const md = htmlToMarkdown(
 				sampleHtml,
@@ -1762,6 +1767,10 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(
 				!md.includes("Fetching transcript from YouTube"),
 				"Must strip client-only modal loading skeleton from Markdown",
+			);
+			assert.ok(
+				!md.includes("Ask anything about CodingCat.dev podcasts"),
+				"Must strip Ask Agent drawer from Markdown output",
 			);
 		});
 
@@ -1869,6 +1878,7 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(chatDrawerSource.includes("aj-agent-drawer"));
 			assert.ok(chatDrawerSource.includes("aj-drawer-resize-handle"));
 			assert.ok(chatDrawerSource.includes("cc_aj_drawer_open"));
+			assert.ok(chatDrawerSource.includes('toolname="ask_agent_aj"'));
 			assert.ok(
 				!chatDrawerSource.includes('id="ai-chat-open-btn"'),
 				"Must remove floating bottom-right Ask Agent AJ button",
@@ -1880,6 +1890,11 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 			assert.ok(searchPageSource.includes("search-mode-ai-btn"));
 			assert.ok(searchPageSource.includes("search-clairic-pill"));
+			assert.ok(searchPageSource.includes('toolname="search_content"'));
+			assert.ok(
+				!searchPageSource.includes("opacity-75"),
+				"Must not reduce text-muted-foreground contrast with opacity-75",
+			);
 		});
 	});
 });

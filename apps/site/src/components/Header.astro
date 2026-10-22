@@ -32,7 +32,7 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 			id="search-header-trigger"
 			data-track="search_open"
 			data-track-label="header_search"
-			class="inline-flex items-center justify-between gap-3 rounded-full px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/70 cursor-pointer"
+			class="inline-flex min-h-8 min-w-8 items-center justify-center sm:justify-between gap-3 rounded-full px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/70 cursor-pointer"
 			aria-label="Search CodingCat.dev (⌘K)"
 		>
 			<span class="inline-flex items-center gap-1.5">
@@ -56,7 +56,7 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 		<button
 			type="button"
 			id="ask-agent-header-trigger"
-			class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-foreground hover:bg-accent transition-colors border border-border/70 cursor-pointer"
+			class="inline-flex min-h-8 min-w-8 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-foreground hover:bg-accent transition-colors border border-border/70 cursor-pointer"
 			aria-label="Ask Agent AJ"
 		>
 			<svg
