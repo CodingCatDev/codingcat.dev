@@ -248,17 +248,19 @@ async function run() {
       publicationId,
       slug: `${doc._type}-${slug}`,
       tags: hashnodeTags,
-      ...(hashnodeCoverImageUrl ? { coverImageOptions: { coverImageURL: hashnodeCoverImageUrl } } : {}),
+      ...(hashnodeCoverImageUrl ? { coverImage: hashnodeCoverImageUrl } : {}),
       originalArticleURL: canonicalUrl,
       contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
     };
 
     try {
-      const publishRes = await fetch("https://gql.hashnode.com", {
+      const authHeader = hashnodeToken.startsWith("Bearer ") ? hashnodeToken : `Bearer ${hashnodeToken}`;
+      const publishRes = await fetch("https://gql-beta.hashnode.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: hashnodeToken,
+          Authorization: authHeader,
+          "x-hashnode-client": "hashnode-cli",
         },
         body: JSON.stringify({
           operationName: "publishPost",
