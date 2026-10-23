@@ -30,6 +30,102 @@ const client = createClient({
   useCdn: false,
 });
 
+async function createGoogleSyndicationTask({ title, canonicalUrl, tags = [] }) {
+  const refreshToken = process.env.GOOGLE_WORKSPACE_REFRESH_TOKEN;
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  if (!refreshToken || !clientId || !clientSecret) {
+    console.log("Google Workspace credentials not set; skipping Google Task creation.");
+    return;
+  }
+
+  try {
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: "refresh_token",
+      }),
+    });
+    const tokenData = await tokenRes.json();
+    const accessToken = tokenData.access_token;
+    if (!accessToken) {
+      console.warn("Could not obtain Google access_token for Task creation.");
+      return;
+    }
+
+    const taskTitle = `Cross-post to Hashnode & Medium: ${title}`;
+    const taskNotes = [
+      `Canonical URL: ${canonicalUrl}`,
+      `Tags: ${tags.join(", ")}`,
+      ``,
+      `1. Hashnode (Free UI Editor):`,
+      `   - Open: https://hashnode.com/draft`,
+      `   - Set Original Article URL (Canonical): ${canonicalUrl}`,
+      ``,
+      `2. Medium (1-Click Import):`,
+      `   - Open: https://medium.com/p/import`,
+      `   - Paste: ${canonicalUrl} (automatically sets canonical tag)`,
+      ``,
+      `3. daily.dev Squad:`,
+      `   - Open: https://daily.dev/squads/codingcatdev -> Click "Share a link" -> Paste ${canonicalUrl}`,
+    ].join("\n");
+
+    // 1. Try Google Tasks API first
+    const tasksRes = await fetch("https://tasks.googleapis.com/tasks/v1/lists/@default/tasks", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: taskTitle,
+        notes: taskNotes,
+        due: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      }),
+    });
+
+    if (tasksRes.ok) {
+      const createdTask = await tasksRes.json();
+      console.log(`✓ Created Google Task: "${taskTitle}" (ID: ${createdTask.id})`);
+      return;
+    }
+
+    // 2. Fallback to Google Calendar To-Do Event on alex.patterson@gmail.com if Tasks scope is not yet authorized
+    const startDate = new Date(Date.now() + 60 * 60 * 1000);
+    const endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
+    const calRes = await fetch(
+      "https://www.googleapis.com/calendar/v3/calendars/alex.patterson%40gmail.com/events",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          summary: `📋 [Task] ${taskTitle}`,
+          description: taskNotes,
+          start: { dateTime: startDate.toISOString() },
+          end: { dateTime: endDate.toISOString() },
+        }),
+      }
+    );
+
+    if (calRes.ok) {
+      const createdEvent = await calRes.json();
+      console.log(`✓ Created Google Calendar Task Reminder: "${taskTitle}" (${createdEvent.htmlLink})`);
+    } else {
+      console.warn("Could not create Google Calendar fallback reminder:", await calRes.text());
+    }
+  } catch (err) {
+    console.warn("Error creating Google syndication task:", err);
+  }
+}
+
 async function run() {
   const doc = await client.getDocument(docId);
   if (!doc) {
@@ -303,6 +399,11 @@ async function run() {
         console.log(`✓ Updated Sanity doc ${doc._id} hashnode slug`);
       } else {
         console.error("✗ Hashnode publication failed:", publishData?.errors);
+        await createGoogleSyndicationTask({
+          title: doc.title || "Untitled",
+          canonicalUrl,
+          tags: hashnodeTags.map((t) => t.slug),
+        });
       }
     } catch (err) {
       console.error("✗ Hashnode request error:", err);

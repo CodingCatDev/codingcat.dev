@@ -751,6 +751,74 @@ export const handler = documentEventHandler<ContentDocument>(
 					publishErr instanceof Error ? publishErr.message : String(publishErr);
 				console.error(`[Syndicate Content] Error publishing to ${platform}:`, errMsg);
 
+				if (platform === "hashnode") {
+					const refreshToken = process.env.GOOGLE_WORKSPACE_REFRESH_TOKEN;
+					const clientId = process.env.GOOGLE_CLIENT_ID;
+					const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+					if (refreshToken && clientId && clientSecret) {
+						try {
+							const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+								method: "POST",
+								headers: { "Content-Type": "application/x-www-form-urlencoded" },
+								body: new URLSearchParams({
+									client_id: clientId,
+									client_secret: clientSecret,
+									refresh_token: refreshToken,
+									grant_type: "refresh_token",
+								}),
+							});
+							const tokenData = (await tokenRes.json()) as { access_token?: string };
+							if (tokenData.access_token) {
+								const taskTitle = `Cross-post to Hashnode & Medium: ${data.title || "Untitled"}`;
+								const taskNotes = [
+									`Canonical URL: ${canonicalUrl}`,
+									``,
+									`1. Hashnode (Free UI Editor): https://hashnode.com/draft`,
+									`2. Medium (1-Click Import): https://medium.com/p/import`,
+									`3. daily.dev Squad: https://daily.dev/squads/codingcatdev`,
+								].join("\n");
+								const tasksRes = await fetch(
+									"https://tasks.googleapis.com/tasks/v1/lists/@default/tasks",
+									{
+										method: "POST",
+										headers: {
+											Authorization: `Bearer ${tokenData.access_token}`,
+											"Content-Type": "application/json",
+										},
+										body: JSON.stringify({
+											title: taskTitle,
+											notes: taskNotes,
+											due: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+										}),
+									},
+								);
+								if (!tasksRes.ok) {
+									const startDate = new Date(Date.now() + 60 * 60 * 1000);
+									const endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
+									await fetch(
+										"https://www.googleapis.com/calendar/v3/calendars/alex.patterson%40gmail.com/events",
+										{
+											method: "POST",
+											headers: {
+												Authorization: `Bearer ${tokenData.access_token}`,
+												"Content-Type": "application/json",
+											},
+											body: JSON.stringify({
+												summary: `📋 [Task] ${taskTitle}`,
+												description: taskNotes,
+												start: { dateTime: startDate.toISOString() },
+												end: { dateTime: endDate.toISOString() },
+											}),
+										},
+									);
+								}
+							}
+						} catch (taskErr) {
+							console.warn("[Syndicate Content] Failed creating Google Task:", taskErr);
+						}
+					}
+				}
+
 				await client.createOrReplace({
 					_id: syndicationDocId,
 					_type: "syndication",
