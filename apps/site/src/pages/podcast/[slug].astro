@@ -214,7 +214,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 
 		{
 			podcast.transcript?.summary && (
-				<section class="my-8 rounded-xl border border-border bg-card/50 p-6">
+				<section class="my-8 mx-auto max-w-4xl rounded-xl border border-border bg-card/50 p-6">
 					<h2 class="mb-3 text-xl font-bold">Episode Summary</h2>
 					<p class="leading-relaxed text-muted-foreground">
 						{podcast.transcript.summary}
