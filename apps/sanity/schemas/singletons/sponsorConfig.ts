@@ -96,7 +96,7 @@ export default defineType({
       type: "text",
       description: "Template for automated sponsor outreach emails. Use {{companyName}} for personalization",
       initialValue:
-        "Hi {{contactName}},\n\nSaw {{companyName}}'s recent momentum and put together two concrete technical video concepts we could build and distribute across CodingCat.dev (61K+ YouTube subscribers, 7-platform Shorts syndication, and canonical AEO blog posts).\n\n{{videoConcepts}}\n\nWould you be open to a quick 15-minute chat this week? You can grab a time directly here: https://calendar.app.google/tyGiF6dGFQeaVrN66\n\nBest,\nAlex Patterson\nFounder, CodingCat.dev",
+        "Hi {{contactName}},\n\nSaw {{companyName}}'s recent momentum and put together two concrete technical video concepts we could build and distribute across CodingCat.dev (61K+ YouTube subscribers, 7-platform Shorts syndication, and canonical AEO blog posts).\n\n{{videoConcepts}}\n\nWould you be open to a quick 15-minute chat this week? You can grab a live time slot directly here: https://codingcat.dev/sponsorships#sponsorship-form\n\nBest,\nAlex Patterson\nFounder, CodingCat.dev",
     }),
     defineField({
       name: "maxOutreachPerRun",
