@@ -397,7 +397,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						slug: `${data._type}-${slug}`,
 						tags: hashnodeTags,
 						...(hashnodeCoverImageUrl
-							? { coverImageOptions: { coverImageURL: hashnodeCoverImageUrl } }
+							? { coverImage: hashnodeCoverImageUrl }
 							: {}),
 						originalArticleURL: canonicalUrl,
 						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
@@ -416,14 +416,16 @@ export const handler = documentEventHandler<ContentDocument>(
 						existingSyndication?.externalId || data.hashnode || null;
 
 					let publishedPost: { id: string; slug?: string; url?: string } | null = null;
+					const authHeader = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
 
 					if (existingHashnodeSlug && !existingHashnodeSlug.startsWith("simulated-")) {
 						// Lookup post ID from Hashnode
-						const getPostRes = await fetch("https://gql.hashnode.com", {
+						const getPostRes = await fetch("https://gql-beta.hashnode.com", {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: token,
+								Authorization: authHeader,
+								"x-hashnode-client": "hashnode-cli",
 							},
 							body: JSON.stringify({
 								operationName: "Publication",
@@ -445,11 +447,12 @@ export const handler = documentEventHandler<ContentDocument>(
 							const updateInput = { ...articleInput };
 							delete updateInput.slug; // slug cannot be updated
 
-							const updateRes = await fetch("https://gql.hashnode.com", {
+							const updateRes = await fetch("https://gql-beta.hashnode.com", {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json",
-									Authorization: token,
+									Authorization: authHeader,
+									"x-hashnode-client": "hashnode-cli",
 								},
 								body: JSON.stringify({
 									operationName: "updatePost",
@@ -479,11 +482,12 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					if (!publishedPost) {
 						// Create post mutation
-						const publishRes = await fetch("https://gql.hashnode.com", {
+						const publishRes = await fetch("https://gql-beta.hashnode.com", {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: token,
+								Authorization: authHeader,
+								"x-hashnode-client": "hashnode-cli",
 							},
 							body: JSON.stringify({
 								operationName: "publishPost",
