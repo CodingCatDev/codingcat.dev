@@ -75,6 +75,9 @@ const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 			<div class="shrink-0">
 				<CoverMedia
 					image={person.coverImage}
+					width={256}
+					height={256}
+					sizes="128px"
 					class="size-24 rounded-md object-cover md:size-32"
 				/>
 			</div>
