@@ -84,7 +84,7 @@ async function run() {
     const devtoTags = ["webdev", "javascript", "beginners"];
     if (doc._type === "podcast") devtoTags.push("podcast");
 
-    const mainImageUrl = urlForImage(doc.coverImage)?.width(1000).height(420).url() || "";
+    const mainImageUrl = urlForImage(doc.coverImage)?.width(1280).url() || "";
     const youtubeEmbed = doc.youtube ? `{% youtube ${doc.youtube.replace("live", "embed")} %}\n\n` : "";
 
     const devtoArticlePayload = {
@@ -105,10 +105,39 @@ async function run() {
     }
 
     try {
+      const existingSyndication = await client.getDocument(syndicationDocId).catch(() => null);
+      let existingArticleId =
+        existingSyndication?.externalId && !String(existingSyndication.externalId).startsWith("simulated-")
+          ? String(existingSyndication.externalId)
+          : null;
+
+      if (!existingArticleId && doc.devto) {
+        const pathSlug = doc.devto.split("https://dev.to/").at(-1);
+        if (pathSlug) {
+          const lookupRes = await fetch(`https://dev.to/api/articles/${pathSlug}`, {
+            headers: {
+              "api-key": devtoApiKey,
+              "Content-Type": "application/json",
+            },
+          });
+          if (lookupRes.ok) {
+            const lookupJson = await lookupRes.json();
+            if (lookupJson?.id) {
+              existingArticleId = String(lookupJson.id);
+            }
+          }
+        }
+      }
+
+      const method = existingArticleId ? "PUT" : "POST";
+      const targetUrl = existingArticleId
+        ? `https://dev.to/api/articles/${existingArticleId}`
+        : "https://dev.to/api/articles";
+
       // First attempt with organization_id: 1009
-      console.log("Sending POST to Dev.to API with organization_id: 1009...");
-      let res = await fetch("https://dev.to/api/articles", {
-        method: "POST",
+      console.log(`Sending ${method} to ${targetUrl} with organization_id: 1009...`);
+      let res = await fetch(targetUrl, {
+        method,
         headers: {
           "api-key": devtoApiKey,
           "Content-Type": "application/json",
@@ -124,8 +153,8 @@ async function run() {
       if (!res.ok && resText.toLowerCase().includes("organization")) {
         console.warn("Dev.to rejected organization_id 1009. Retrying under personal account without organization_id...");
         delete devtoArticlePayload.article.organization_id;
-        res = await fetch("https://dev.to/api/articles", {
-          method: "POST",
+        res = await fetch(targetUrl, {
+          method,
           headers: {
             "api-key": devtoApiKey,
             "Content-Type": "application/json",
@@ -181,7 +210,7 @@ async function run() {
       { name: "Beginner Developers", slug: "beginners" },
     ];
 
-    const hashnodeCoverImageUrl = urlForImage(doc.coverImage)?.width(1600).height(840).url() || "";
+    const hashnodeCoverImageUrl = urlForImage(doc.coverImage)?.width(1600).url() || "";
     const youtubeEmbed = doc.youtube ? `%[${doc.youtube.replace("live", "embed")}]\n\n` : "";
 
     const articleInput = {
