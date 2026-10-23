@@ -560,6 +560,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						"Content-Type": "application/json",
 						Accept: "application/json",
 						"builder-session-token": awsSessionToken,
+						Cookie: `builder-session-token=${awsSessionToken}`,
 					};
 
 					const existingSyndication = await client

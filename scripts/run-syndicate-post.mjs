@@ -318,6 +318,7 @@ async function run() {
       "Content-Type": "application/json",
       Accept: "application/json",
       "builder-session-token": awsSessionToken,
+      Cookie: `builder-session-token=${awsSessionToken}`,
     };
 
     try {
@@ -457,7 +458,11 @@ async function run() {
   // --- LINK SYNDICATION REFERENCES ON PARENT ---
   try {
     const platforms = ["devto", "hashnode", ...(shouldSyndicateAws ? ["awsbuilder"] : [])];
-    const expectedRefs = platforms.map((p) => `syndication.${doc._id}.${p}`);
+    const candidateRefs = platforms.map((p) => `syndication.${doc._id}.${p}`);
+    const existingSynDocs = await Promise.all(
+      candidateRefs.map((ref) => client.getDocument(ref).catch(() => null))
+    );
+    const expectedRefs = candidateRefs.filter((_, idx) => Boolean(existingSynDocs[idx]));
     const latestDoc = await client.getDocument(doc._id);
     const existingRefs = (latestDoc?.syndications || []).map((s) => s._ref);
 
