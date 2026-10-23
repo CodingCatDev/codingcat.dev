@@ -21,6 +21,12 @@ export const rssPodcastQuery =
   spotify,
 }`);
 
+export const rssAllQuery =
+	defineQuery(`*[_type in ["post", "podcast"] && _id != $skip && defined(slug.current)] | order(date desc) [$offset...$limit] {
+  ${baseFieldsNoContent},
+  ${rssContentFields},
+}`);
+
 export const sitemapQuery =
 	defineQuery(`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updatedAt desc) {
   _type,

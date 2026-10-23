@@ -22,6 +22,8 @@ export default defineType({
 				list: [
 					{ title: "Dev.to", value: "devto" },
 					{ title: "Hashnode", value: "hashnode" },
+					{ title: "AWS Builder Center", value: "awsbuilder" },
+					{ title: "daily.dev Squad", value: "dailydev" },
 				],
 			},
 			validation: (rule) => rule.required(),

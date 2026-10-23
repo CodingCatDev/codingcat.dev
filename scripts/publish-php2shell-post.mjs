@@ -456,6 +456,7 @@ sudo systemctl restart php8.4-fpm apache2`
           author: postDoc.author,
           coverImage: postDoc.coverImage,
           content: postDoc.content,
+          awsbuilder: "https://builder.aws.com/content/3L50qXKr83Y2r9mA6ZsGhcc4cRJ/php-shell-cve-how-ai-found-a-decade-old-bug-in-of-the-web",
         },
       },
     },
