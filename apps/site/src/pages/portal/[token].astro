@@ -1,6 +1,7 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 import {
 	getSanityServerClient,
 	resolveSponsorTier,
@@ -8,6 +9,14 @@ import {
 
 const { token } = Astro.params;
 const searchParams = Astro.url.searchParams;
+
+const [
+	{ slots: kickoffSlots, liveVerified: calendarLiveVerified },
+	{ slots: recordingSlots },
+] = await Promise.all([
+	getMultiCalendarAvailableSlots(6, 15),
+	getMultiCalendarAvailableSlots(6, 45),
+]);
 
 interface DeliverableItem {
 	title: string;
@@ -45,6 +54,7 @@ const fallbackCompany = searchParams.get("company") || "Sponsor Partner";
 const fallbackName = searchParams.get("name") || "Sponsor Team";
 const fallbackEmail = searchParams.get("email") || "";
 const paymentNotice = searchParams.get("payment");
+const bookedSlotParam = searchParams.get("bookedSlot");
 
 let portalData: LeadPortalData = {
 	_id: `sponsorLead-${token}`,
@@ -153,6 +163,13 @@ const isBalancePaid =
 			paymentNotice === "balance_success" && (
 				<div class="p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-300 text-sm">
 					<strong>Final 50% Balance Paid!</strong> Thank you for partnering with CodingCat.dev.
+				</div>
+			)
+		}
+		{
+			bookedSlotParam && (
+				<div class="p-4 rounded-xl border border-primary/30 bg-primary/10 text-foreground text-sm">
+					<strong>✓ Kickoff Call Scheduled!</strong> Your Google Calendar invite has been sent for <code>{new Date(bookedSlotParam).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</code>.
 				</div>
 			)
 		}
@@ -343,77 +360,131 @@ const isBalancePaid =
 			<!-- Calendar & Kickoff Card -->
 			<section class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
 				<div class="flex flex-col gap-4">
-					<div class="flex items-center justify-between">
+					<div class="flex items-center justify-between gap-2">
 						<h2 class="text-xl font-bold tracking-tight">
 							2. Schedule Kickoff &amp; Recording
 						</h2>
 						<span class="text-xs font-mono px-2.5 py-1 rounded bg-primary/10 text-primary">
-							8am&ndash;5pm PT / ET
+							{calendarLiveVerified ? "✓ Live Multi-Calendar Sync" : "8am–5pm PT / ET"}
 						</span>
 					</div>
 					<p class="text-xs text-muted-foreground leading-relaxed">
-						Book your technical scoping call or 45-minute podcast recording directly on Alex Patterson's live Google Calendar. Multi-calendar conflict detection is enabled across all CodingCat.dev &amp; studio calendars.
+						Pick a conflict-free slot below to automatically book directly on Alex Patterson's Google Calendar and send a confirmed calendar invite to <strong class="text-foreground">{portalData.contactEmail || "your team"}</strong>.
 					</p>
 
-					<div class="grid grid-cols-1 gap-3">
-						<a
-							href="https://calendar.app.google/tyGiF6dGFQeaVrN66"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
-						>
-							<div class="flex flex-col gap-1">
-								<span class="text-xs font-semibold uppercase tracking-wider text-primary">
-									Sponsor Scoping &amp; Architecture Sync
-								</span>
-								<span class="text-sm font-bold text-foreground">
-									Book 15-Min Sponsor Kickoff Call
-								</span>
-								<span class="text-xs text-muted-foreground">
-									Align on SDK demo, talking points, and launch date
-								</span>
+					<!-- 1-Click Live Slot Picker -->
+					<div class="flex flex-col gap-3 p-4 rounded-xl border border-border bg-background">
+						<div class="flex flex-col gap-1.5">
+							<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+								1-Click Live Calendar Booking
+							</span>
+							<div class="grid grid-cols-2 gap-2" role="group" aria-label="Select session duration">
+								<button
+									type="button"
+									data-portal-track="sponsor-kickoff"
+									data-portal-duration="15"
+									class="portal-track-btn px-3 py-2 rounded-lg border border-primary bg-primary/5 ring-1 ring-primary text-left transition-all cursor-pointer flex flex-col"
+								>
+									<span class="text-xs font-bold text-foreground">15-Min Kickoff Call</span>
+									<span class="text-[11px] text-muted-foreground">Scoping &amp; architecture sync</span>
+								</button>
+								<button
+									type="button"
+									data-portal-track="sponsored"
+									data-portal-duration="45"
+									class="portal-track-btn px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/50 text-left transition-all cursor-pointer flex flex-col"
+								>
+									<span class="text-xs font-bold text-foreground">45-Min Studio Recording</span>
+									<span class="text-[11px] text-muted-foreground">Podcast &amp; demo session</span>
+								</button>
 							</div>
-							<span class="text-sm font-bold text-primary">&nearr;</span>
-						</a>
+						</div>
 
-						<a
-							href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
-						>
-							<div class="flex flex-col gap-1">
-								<span class="text-xs font-semibold uppercase tracking-wider text-primary">
-									Podcast &amp; Showcase Recording
-								</span>
-								<span class="text-sm font-bold text-foreground">
-									Book 45-Min Studio Recording Slot
-								</span>
-								<span class="text-xs text-muted-foreground">
-									Direct Google Calendar appointment schedule
-								</span>
+						{!portalData.contactEmail && (
+							<div>
+								<label for="portal-booking-email" class="block text-xs font-semibold text-foreground mb-1">
+									Attendee Email for Calendar Invite <span class="text-destructive">*</span>
+								</label>
+								<input
+									type="email"
+									id="portal-booking-email"
+									placeholder="you@company.com"
+									class="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+								/>
 							</div>
-							<span class="text-sm font-bold text-primary">&nearr;</span>
-						</a>
+						)}
 
-						<a
-							href={`/book?track=sponsored&company=${encodeURIComponent(portalData.companyName)}&name=${encodeURIComponent(portalData.contactName)}&email=${encodeURIComponent(portalData.contactEmail)}`}
-							class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
+						<!-- 15-Min Kickoff Slots Grid -->
+						<div id="portal-slots-15" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+							{
+								kickoffSlots.map((slot, index) => (
+									<button
+										type="button"
+										data-slot-start={slot.startAt}
+										class={`portal-slot-btn-15 p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+											index === 0
+												? "border-primary bg-primary/5 ring-1 ring-primary"
+												: "border-border bg-card hover:border-primary"
+										}`}
+									>
+										<span class="font-semibold text-xs text-foreground">{slot.displayDate}</span>
+										<span class="text-[11px] text-muted-foreground font-mono">{slot.displayTime}</span>
+									</button>
+								))
+							}
+						</div>
+
+						<!-- 45-Min Recording Slots Grid -->
+						<div id="portal-slots-45" class="hidden grid-cols-1 sm:grid-cols-2 gap-2">
+							{
+								recordingSlots.map((slot, index) => (
+									<button
+										type="button"
+										data-slot-start={slot.startAt}
+										class={`portal-slot-btn-45 p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+											index === 0
+												? "border-primary bg-primary/5 ring-1 ring-primary"
+												: "border-border bg-card hover:border-primary"
+										}`}
+									>
+										<span class="font-semibold text-xs text-foreground">{slot.displayDate}</span>
+										<span class="text-[11px] text-muted-foreground font-mono">{slot.displayTime}</span>
+									</button>
+								))
+							}
+						</div>
+
+						<button
+							type="button"
+							id="btn-portal-book-slot"
+							class="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
 						>
-							<div class="flex flex-col gap-1">
-								<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-									Mandatory Pre-Recording Step
-								</span>
-								<span class="text-sm font-bold text-foreground">
-									Complete Guest Intake &amp; E-SIGN Media Release
-								</span>
-								<span class="text-xs text-muted-foreground">
-									Takes 60 seconds &middot; 15 U.S.C. &sect; 7001 E-SIGN compliant
-								</span>
-							</div>
-							<span class="text-sm font-bold text-primary">&rarr;</span>
-						</a>
+							Confirm Slot &amp; Send Google Calendar Invite &rarr;
+						</button>
+
+						<div
+							id="portal-booking-feedback"
+							class="hidden text-xs p-3 rounded-lg border border-border bg-muted/50"
+						></div>
 					</div>
+
+					<a
+						href={`/book?track=sponsored&portalToken=${encodeURIComponent(portalData.portalToken)}&company=${encodeURIComponent(portalData.companyName)}&name=${encodeURIComponent(portalData.contactName)}&email=${encodeURIComponent(portalData.contactEmail)}`}
+						class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
+					>
+						<div class="flex flex-col gap-1">
+							<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								Mandatory Pre-Recording Step
+							</span>
+							<span class="text-sm font-bold text-foreground">
+								Complete Guest Intake &amp; E-SIGN Media Release
+							</span>
+							<span class="text-xs text-muted-foreground">
+								Takes 60 seconds &middot; 15 U.S.C. &sect; 7001 E-SIGN compliant
+							</span>
+						</div>
+						<span class="text-sm font-bold text-primary">&rarr;</span>
+					</a>
 				</div>
 			</section>
 		</div>
@@ -480,10 +551,171 @@ const isBalancePaid =
 		portalToken: portalData.portalToken,
 		leadId: portalData._id,
 		companyName: portalData.companyName,
+		contactName: portalData.contactName,
 		contactEmail: portalData.contactEmail,
 		tierId: portalData.rateCard,
 	}}
 >
+	// 1-Click Deal Room Calendar Booking
+	(function () {
+		let activeTrack = "sponsor-kickoff";
+		let activeDuration = 15;
+		let selectedSlot15 = "";
+		let selectedSlot45 = "";
+
+		const grid15 = document.getElementById("portal-slots-15");
+		const grid45 = document.getElementById("portal-slots-45");
+		const btns15 = document.querySelectorAll(".portal-slot-btn-15");
+		const btns45 = document.querySelectorAll(".portal-slot-btn-45");
+		const trackBtns = document.querySelectorAll(".portal-track-btn");
+		const bookBtn = document.getElementById("btn-portal-book-slot");
+		const bookingFeedback = document.getElementById("portal-booking-feedback");
+
+		if (btns15.length > 0) {
+			selectedSlot15 = btns15[0].getAttribute("data-slot-start") || "";
+		}
+		if (btns45.length > 0) {
+			selectedSlot45 = btns45[0].getAttribute("data-slot-start") || "";
+		}
+
+		btns15.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				btns15.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+					b.classList.add("border-border", "bg-card");
+				});
+				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				btn.classList.remove("border-border", "bg-card");
+				selectedSlot15 = btn.getAttribute("data-slot-start") || "";
+			});
+		});
+
+		btns45.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				btns45.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+					b.classList.add("border-border", "bg-card");
+				});
+				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				btn.classList.remove("border-border", "bg-card");
+				selectedSlot45 = btn.getAttribute("data-slot-start") || "";
+			});
+		});
+
+		trackBtns.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				trackBtns.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+					b.classList.add("border-border", "bg-card");
+				});
+				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				btn.classList.remove("border-border", "bg-card");
+				activeTrack = btn.getAttribute("data-portal-track") || "sponsor-kickoff";
+				activeDuration = Number(btn.getAttribute("data-portal-duration")) || 15;
+
+				if (activeDuration === 15) {
+					if (grid15) {
+						grid15.classList.remove("hidden");
+						grid15.classList.add("grid");
+					}
+					if (grid45) {
+						grid45.classList.add("hidden");
+						grid45.classList.remove("grid");
+					}
+				} else {
+					if (grid45) {
+						grid45.classList.remove("hidden");
+						grid45.classList.add("grid");
+					}
+					if (grid15) {
+						grid15.classList.add("hidden");
+						grid15.classList.remove("grid");
+					}
+				}
+			});
+		});
+
+		if (bookBtn) {
+			bookBtn.addEventListener("click", async () => {
+				const emailInput = document.getElementById("portal-booking-email");
+				const resolvedEmail =
+					contactEmail || (emailInput && emailInput.value ? emailInput.value.trim() : "");
+				const slotStartAt = activeDuration === 15 ? selectedSlot15 : selectedSlot45;
+
+				if (!resolvedEmail || !resolvedEmail.includes("@")) {
+					if (bookingFeedback) {
+						bookingFeedback.textContent = "Please enter a valid attendee email address to receive the calendar invite.";
+						bookingFeedback.classList.remove("hidden");
+					}
+					return;
+				}
+				if (!slotStartAt) {
+					if (bookingFeedback) {
+						bookingFeedback.textContent = "Please select an available time slot.";
+						bookingFeedback.classList.remove("hidden");
+					}
+					return;
+				}
+
+				const originalText = bookBtn.textContent;
+				bookBtn.setAttribute("disabled", "true");
+				bookBtn.textContent = "Booking on Google Calendar...";
+				if (bookingFeedback) bookingFeedback.classList.add("hidden");
+
+				try {
+					const res = await fetch("/api/booking", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							portalToken,
+							guestName: contactName || companyName,
+							guestEmail: resolvedEmail,
+							company: companyName,
+							track: activeTrack,
+							durationMinutes: activeDuration,
+							slotStartAt,
+							topics:
+								activeDuration === 15
+									? `15-Min Sponsor Kickoff Call (${companyName})`
+									: `45-Min Sponsored Podcast Recording (${companyName})`,
+						}),
+					});
+					const data = await res.json();
+					if (res.ok && data.success) {
+						if (bookingFeedback) {
+							const calUrl = data.calendarEventUrl || data.addToCalendarUrl || "";
+							bookingFeedback.innerHTML = `<strong>✓ Confirmed!</strong> ${
+								data.calendarInviteSent
+									? `A Google Calendar invite has been sent to <strong>${resolvedEmail}</strong>.`
+									: "Your session has been reserved."
+							} ${
+								calUrl
+									? `<br><a href="${calUrl}" target="_blank" rel="noopener noreferrer" class="underline font-semibold text-primary">Open in Google Calendar &nearr;</a>`
+									: ""
+							}`;
+							bookingFeedback.classList.remove("hidden");
+						}
+						bookBtn.textContent = "✓ Calendar Invite Sent";
+						return;
+					}
+					if (bookingFeedback) {
+						bookingFeedback.textContent =
+							data.message || "Could not book that slot. Please select another time.";
+						bookingFeedback.classList.remove("hidden");
+					}
+				} catch {
+					if (bookingFeedback) {
+						bookingFeedback.textContent =
+							"Network error while booking slot. Please try again.";
+						bookingFeedback.classList.remove("hidden");
+					}
+				}
+				bookBtn.removeAttribute("disabled");
+				bookBtn.textContent = originalText;
+			});
+		}
+	})();
+
 	document.querySelectorAll(".stripe-action-btn").forEach((btn) => {
 		btn.addEventListener("click", async () => {
 			const milestone = btn.getAttribute("data-milestone") || "deposit";

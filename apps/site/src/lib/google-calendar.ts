@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 export const CODINGCAT_CALENDAR_IDS = [
 	"alex.patterson@gmail.com",
 	"alex@codingcat.dev",
+	"alex@flipfeeds.com",
 	"alex.patterson@sanity.io",
 	"mikqhmn29svd9p9m99quch9nuo@group.calendar.google.com", // Oliver - Alex
 	"2em0afukjm0gk9k3n0ohh5ag3g@group.calendar.google.com", // Oliver - Events
@@ -13,18 +14,32 @@ export interface AvailableCalendarSlot {
 	id: string;
 	startAt: string;
 	endAt: string;
+	durationMinutes: number;
 	displayDate: string;
 	displayTime: string;
 }
 
-async function getAccessToken(): Promise<string | null> {
+export interface CalendarCheckStatus {
+	id: string;
+	accessible: boolean;
+	busyCount: number;
+	error?: string;
+}
+
+async function getAccessToken(
+	refreshTokenOverride?: string,
+): Promise<string | null> {
 	const workerEnv = (env ?? {}) as unknown as Record<
 		string,
 		string | undefined
 	>;
-	const clientId = workerEnv.GOOGLE_CLIENT_ID;
-	const clientSecret = workerEnv.GOOGLE_CLIENT_SECRET;
-	const refreshToken = workerEnv.GOOGLE_REFRESH_TOKEN;
+	const clientId = workerEnv.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+	const clientSecret =
+		workerEnv.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET;
+	const refreshToken =
+		refreshTokenOverride ||
+		workerEnv.GOOGLE_REFRESH_TOKEN ||
+		process.env.GOOGLE_REFRESH_TOKEN;
 
 	if (!clientId || !clientSecret || !refreshToken) {
 		return null;
@@ -52,22 +67,27 @@ async function getAccessToken(): Promise<string | null> {
 
 function generateDefaultCandidateSlots(
 	daysAhead = 14,
+	durationMinutes = 45,
 ): AvailableCalendarSlot[] {
 	const slots: AvailableCalendarSlot[] = [];
 	const now = new Date();
 
 	// Candidate slots in overlapping US PT (8:00 AM - 2:00 PM PT) & ET (11:00 AM - 5:00 PM ET) work hours:
-	// 16:00 UTC (9:00 AM PDT / 12:00 PM EDT), 17:30 UTC (10:30 AM PDT / 1:30 PM EDT), 19:00 UTC (12:00 PM PDT / 3:00 PM EDT)
+	// 15:00 UTC (8:00 AM PDT / 11:00 AM EDT), 16:00 UTC (9:00 AM PDT / 12:00 PM EDT),
+	// 17:30 UTC (10:30 AM PDT / 1:30 PM EDT), 19:00 UTC (12:00 PM PDT / 3:00 PM EDT),
+	// 20:00 UTC (1:00 PM PDT / 4:00 PM EDT)
 	const candidateUtcHours = [
+		{ hour: 15, minute: 0, label: "8:00 AM PT / 11:00 AM ET" },
 		{ hour: 16, minute: 0, label: "9:00 AM PT / 12:00 PM ET" },
 		{ hour: 17, minute: 30, label: "10:30 AM PT / 1:30 PM ET" },
 		{ hour: 19, minute: 0, label: "12:00 PM PT / 3:00 PM ET" },
+		{ hour: 20, minute: 0, label: "1:00 PM PT / 4:00 PM ET" },
 	];
 
 	for (let d = 1; d <= daysAhead; d++) {
 		const dayDate = new Date(now.getTime() + d * 86400_000);
 		const dayOfWeek = dayDate.getUTCDay();
-		// Weekdays Monday (1) through Friday (5), prioritizing Tue-Thu
+		// Weekdays Monday (1) through Friday (5)
 		if (dayOfWeek === 0 || dayOfWeek === 6) {
 			continue;
 		}
@@ -83,18 +103,19 @@ function generateDefaultCandidateSlots(
 					0,
 				),
 			);
-			const end = new Date(start.getTime() + 45 * 60_000);
+			const end = new Date(start.getTime() + durationMinutes * 60_000);
 			slots.push({
 				id: `slot-${start.toISOString().slice(0, 16).replace(/[:T]/g, "-")}`,
 				startAt: start.toISOString(),
 				endAt: end.toISOString(),
+				durationMinutes,
 				displayDate: start.toLocaleDateString("en-US", {
 					weekday: "short",
 					month: "short",
 					day: "numeric",
 					timeZone: "America/New_York",
 				}),
-				displayTime: cand.label,
+				displayTime: `${cand.label} (${durationMinutes}m)`,
 			});
 		}
 	}
@@ -102,26 +123,30 @@ function generateDefaultCandidateSlots(
 	return slots;
 }
 
-/**
- * Queries Google Calendar FreeBusy API across all 6 of Alex Patterson's calendars
- * (Personal, CodingCat.dev, Sanity.io, and Oliver family calendars) and returns
- * conflict-free 45-minute recording slots during 8am-5pm PT/ET work hours.
- */
-export async function getMultiCalendarAvailableSlots(
-	maxSlots = 9,
-): Promise<{ slots: AvailableCalendarSlot[]; liveVerified: boolean }> {
-	const candidates = generateDefaultCandidateSlots(14);
+async function fetchBusyRanges(
+	timeMin: string,
+	timeMax: string,
+): Promise<{
+	liveVerified: boolean;
+	busyRanges: Array<{ startMs: number; endMs: number }>;
+	calendarStatuses: CalendarCheckStatus[];
+}> {
 	const accessToken = await getAccessToken();
-
-	if (!accessToken || candidates.length === 0) {
+	if (!accessToken) {
 		return {
-			slots: candidates.slice(0, maxSlots),
 			liveVerified: false,
+			busyRanges: [],
+			calendarStatuses: CODINGCAT_CALENDAR_IDS.map((id) => ({
+				id,
+				accessible: false,
+				busyCount: 0,
+				error: "missing_oauth_token",
+			})),
 		};
 	}
 
-	const timeMin = candidates[0].startAt;
-	const timeMax = candidates[candidates.length - 1].endAt;
+	const busyRanges: Array<{ startMs: number; endMs: number }> = [];
+	const calendarStatuses: CalendarCheckStatus[] = [];
 
 	try {
 		const res = await fetch("https://www.googleapis.com/calendar/v3/freeBusy", {
@@ -138,49 +163,195 @@ export async function getMultiCalendarAvailableSlots(
 		});
 
 		if (!res.ok) {
-			return { slots: candidates.slice(0, maxSlots), liveVerified: false };
+			return {
+				liveVerified: false,
+				busyRanges: [],
+				calendarStatuses: CODINGCAT_CALENDAR_IDS.map((id) => ({
+					id,
+					accessible: false,
+					busyCount: 0,
+					error: `http_${res.status}`,
+				})),
+			};
 		}
 
 		const data = (await res.json()) as {
 			calendars?: Record<
 				string,
-				{ busy?: Array<{ start: string; end: string }> }
+				{
+					busy?: Array<{ start: string; end: string }>;
+					errors?: Array<{ reason?: string }>;
+				}
 			>;
 		};
 
-		const busyRanges: Array<{ startMs: number; endMs: number }> = [];
-		for (const cal of Object.values(data.calendars ?? {})) {
-			for (const b of cal.busy ?? []) {
+		for (const id of CODINGCAT_CALENDAR_IDS) {
+			const cal = data.calendars?.[id];
+			const errReason = cal?.errors?.[0]?.reason;
+			const busyList = cal?.busy ?? [];
+			for (const b of busyList) {
 				busyRanges.push({
 					startMs: new Date(b.start).getTime(),
 					endMs: new Date(b.end).getTime(),
 				});
 			}
+			calendarStatuses.push({
+				id,
+				accessible: !errReason,
+				busyCount: busyList.length,
+				...(errReason ? { error: errReason } : {}),
+			});
 		}
 
-		const available = candidates.filter((slot) => {
-			const slotStart = new Date(slot.startAt).getTime();
-			const slotEnd = new Date(slot.endAt).getTime();
-			return !busyRanges.some(
-				(b) => slotStart < b.endMs && slotEnd > b.startMs,
-			);
-		});
+		// Optional secondary token for flipfeeds.com if alex@flipfeeds.com isn't shared via ACL yet
+		const workerEnv = (env ?? {}) as unknown as Record<
+			string,
+			string | undefined
+		>;
+		const flipfeedsRefreshToken =
+			workerEnv.GOOGLE_FLIPFEEDS_REFRESH_TOKEN ||
+			process.env.GOOGLE_FLIPFEEDS_REFRESH_TOKEN;
+		const flipStatus = calendarStatuses.find(
+			(c) => c.id === "alex@flipfeeds.com",
+		);
+		if (flipfeedsRefreshToken && flipStatus && !flipStatus.accessible) {
+			const flipAccess = await getAccessToken(flipfeedsRefreshToken);
+			if (flipAccess) {
+				const flipRes = await fetch(
+					"https://www.googleapis.com/calendar/v3/freeBusy",
+					{
+						method: "POST",
+						headers: {
+							Authorization: `Bearer ${flipAccess}`,
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							timeMin,
+							timeMax,
+							items: [{ id: "alex@flipfeeds.com" }],
+						}),
+					},
+				);
+				if (flipRes.ok) {
+					const flipData = (await flipRes.json()) as {
+						calendars?: Record<
+							string,
+							{ busy?: Array<{ start: string; end: string }> }
+						>;
+					};
+					const flipBusy =
+						flipData.calendars?.["alex@flipfeeds.com"]?.busy ?? [];
+					for (const b of flipBusy) {
+						busyRanges.push({
+							startMs: new Date(b.start).getTime(),
+							endMs: new Date(b.end).getTime(),
+						});
+					}
+					flipStatus.accessible = true;
+					flipStatus.busyCount = flipBusy.length;
+					delete flipStatus.error;
+				}
+			}
+		}
 
 		return {
-			slots: (available.length > 0 ? available : candidates).slice(0, maxSlots),
 			liveVerified: true,
+			busyRanges,
+			calendarStatuses,
 		};
 	} catch {
 		return {
-			slots: candidates.slice(0, maxSlots),
 			liveVerified: false,
+			busyRanges: [],
+			calendarStatuses: CODINGCAT_CALENDAR_IDS.map((id) => ({
+				id,
+				accessible: false,
+				busyCount: 0,
+				error: "network_error",
+			})),
 		};
 	}
 }
 
 /**
- * Creates a Google Calendar event on alex@codingcat.dev (or alex.patterson@gmail.com)
- * when a Sponsored Showcase or approved Editorial session is booked.
+ * Queries Google Calendar FreeBusy API across Alex Patterson's calendars
+ * (codingcat.dev, flipfeeds.com, alex.patterson@gmail.com, sanity.io, and Oliver family calendars)
+ * and returns conflict-free slots during 8am-5pm PT/ET work hours.
+ */
+export async function getMultiCalendarAvailableSlots(
+	maxSlots = 9,
+	durationMinutes = 45,
+): Promise<{
+	slots: AvailableCalendarSlot[];
+	liveVerified: boolean;
+	calendarStatuses: CalendarCheckStatus[];
+}> {
+	const candidates = generateDefaultCandidateSlots(14, durationMinutes);
+	if (candidates.length === 0) {
+		return { slots: [], liveVerified: false, calendarStatuses: [] };
+	}
+
+	const timeMin = candidates[0].startAt;
+	const timeMax = candidates[candidates.length - 1].endAt;
+	const { liveVerified, busyRanges, calendarStatuses } = await fetchBusyRanges(
+		timeMin,
+		timeMax,
+	);
+
+	if (!liveVerified) {
+		return {
+			slots: candidates.slice(0, maxSlots),
+			liveVerified: false,
+			calendarStatuses,
+		};
+	}
+
+	const available = candidates.filter((slot) => {
+		const slotStart = new Date(slot.startAt).getTime();
+		const slotEnd = new Date(slot.endAt).getTime();
+		return !busyRanges.some((b) => slotStart < b.endMs && slotEnd > b.startMs);
+	});
+
+	return {
+		slots: (available.length > 0 ? available : candidates).slice(0, maxSlots),
+		liveVerified: true,
+		calendarStatuses,
+	};
+}
+
+/**
+ * Builds a Google Calendar "Add to Calendar" template link so guests/sponsors can
+ * also save the event to their own calendar in 1 click.
+ */
+export function buildGoogleCalendarTemplateUrl(opts: {
+	title: string;
+	startAt: string;
+	durationMinutes: number;
+	description: string;
+}): string {
+	const start = new Date(opts.startAt);
+	const end = new Date(start.getTime() + opts.durationMinutes * 60_000);
+	const fmt = (d: Date) =>
+		d
+			.toISOString()
+			.replace(/[-:]/g, "")
+			.replace(/\.\d{3}Z$/, "Z");
+	const params = new URLSearchParams({
+		action: "TEMPLATE",
+		text: opts.title,
+		dates: `${fmt(start)}/${fmt(end)}`,
+		details: opts.description,
+		location: "CodingCat.dev Studio (Google Calendar Invite)",
+	});
+	return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/**
+ * Creates a Google Calendar event on alex@codingcat.dev (and invites alex.patterson@gmail.com + alex@flipfeeds.com):
+ * - Sponsored bookings ("sponsored" | "full-stack-launch" | "sponsor-kickoff"):
+ *   Immediately creates a CONFIRMED event and sends Google Calendar invites (sendUpdates=all) to the sponsor and Alex.
+ * - Editorial bookings ("editorial"):
+ *   Creates a TENTATIVE calendar hold on Alex's calendar (sendUpdates=none) so the slot is reserved pending editorial approval.
  */
 export async function createGoogleCalendarBookingEvent(opts: {
 	guestName: string;
@@ -188,34 +359,90 @@ export async function createGoogleCalendarBookingEvent(opts: {
 	company: string;
 	track: string;
 	startAt: string;
+	durationMinutes?: number;
 	topics: string;
 	portalUrl?: string;
-}): Promise<{ eventId: string; htmlLink?: string } | null> {
-	const accessToken = await getAccessToken();
-	if (!accessToken) {
-		return null;
-	}
+}): Promise<{
+	eventId?: string;
+	htmlLink?: string;
+	addToCalendarUrl: string;
+	calendarMode: "confirmed_invite" | "tentative_hold" | "template_fallback";
+	conflictDetected?: boolean;
+}> {
+	const isEditorial = opts.track === "editorial";
+	const isKickoff = opts.track === "sponsor-kickoff";
+	const durationMinutes = opts.durationMinutes ?? (isKickoff ? 15 : 45);
 
 	const start = new Date(opts.startAt);
-	const end = new Date(start.getTime() + 45 * 60_000);
+	const end = new Date(start.getTime() + durationMinutes * 60_000);
 
-	const summary =
-		opts.track === "editorial"
-			? `CodingCat.dev Podcast: ${opts.guestName} (${opts.company})`
+	const summary = isKickoff
+		? `[SPONSOR KICKOFF] ${opts.company} × CodingCat.dev (${opts.guestName})`
+		: isEditorial
+			? `[HOLD - EDITORIAL] CodingCat.dev Podcast: ${opts.guestName} (${opts.company})`
 			: `[SPONSORED] CodingCat.dev Showcase: ${opts.guestName} (${opts.company})`;
 
 	const descriptionLines = [
-		`CodingCat.dev Recording Session (${opts.track.toUpperCase()})`,
-		`Guest: ${opts.guestName} (${opts.guestEmail})`,
+		`CodingCat.dev Session (${opts.track.toUpperCase()} · ${durationMinutes} min)`,
+		`Guest / Contact: ${opts.guestName} <${opts.guestEmail}>`,
 		`Company: ${opts.company}`,
-		`Topics: ${opts.topics}`,
-		"E-SIGN Media Release: Signed & stored in Sanity",
-		...(opts.portalUrl ? [`Deal Room: ${opts.portalUrl}`] : []),
+		`Topics / Goals: ${opts.topics}`,
+		isEditorial
+			? "Status: Tentative Editorial Hold (Approve in Google Calendar to invite guest)"
+			: "Status: Confirmed Sponsored Session",
+		...(opts.portalUrl ? [`Sponsor Deal Room: ${opts.portalUrl}`] : []),
+	];
+	const description = descriptionLines.join("\n");
+
+	const addToCalendarUrl = buildGoogleCalendarTemplateUrl({
+		title: summary.replace(/^\[HOLD - EDITORIAL\]\s*/, ""),
+		startAt: start.toISOString(),
+		durationMinutes,
+		description,
+	});
+
+	const accessToken = await getAccessToken();
+	if (!accessToken) {
+		return {
+			addToCalendarUrl,
+			calendarMode: "template_fallback",
+		};
+	}
+
+	// Real-time conflict check across all calendars before inserting
+	const { liveVerified, busyRanges } = await fetchBusyRanges(
+		start.toISOString(),
+		end.toISOString(),
+	);
+	if (liveVerified) {
+		const startMs = start.getTime();
+		const endMs = end.getTime();
+		const hasConflict = busyRanges.some(
+			(b) => startMs < b.endMs && endMs > b.startMs,
+		);
+		if (hasConflict) {
+			return {
+				addToCalendarUrl,
+				calendarMode: "template_fallback",
+				conflictDetected: true,
+			};
+		}
+	}
+
+	const sendUpdates = isEditorial ? "none" : "all";
+	const status = isEditorial ? "tentative" : "confirmed";
+	const attendees = [
+		{ email: "alex.patterson@gmail.com" },
+		{ email: "alex@codingcat.dev" },
+		{ email: "alex@flipfeeds.com" },
+		...(isEditorial
+			? []
+			: [{ email: opts.guestEmail, displayName: opts.guestName }]),
 	];
 
 	try {
 		const res = await fetch(
-			"https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events?sendUpdates=all",
+			`https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events?sendUpdates=${sendUpdates}`,
 			{
 				method: "POST",
 				headers: {
@@ -224,27 +451,32 @@ export async function createGoogleCalendarBookingEvent(opts: {
 				},
 				body: JSON.stringify({
 					summary,
-					description: descriptionLines.join("\n"),
+					description,
+					status,
 					start: { dateTime: start.toISOString() },
 					end: { dateTime: end.toISOString() },
-					attendees: [
-						{ email: "alex.patterson@gmail.com" },
-						{ email: "alex@codingcat.dev" },
-						{ email: opts.guestEmail, displayName: opts.guestName },
-					],
+					attendees,
 				}),
 			},
 		);
 
 		if (!res.ok) {
-			return null;
+			return {
+				addToCalendarUrl,
+				calendarMode: "template_fallback",
+			};
 		}
 		const event = (await res.json()) as { id?: string; htmlLink?: string };
-		if (!event.id) {
-			return null;
-		}
-		return { eventId: event.id, htmlLink: event.htmlLink };
+		return {
+			eventId: event.id,
+			htmlLink: event.htmlLink,
+			addToCalendarUrl,
+			calendarMode: isEditorial ? "tentative_hold" : "confirmed_invite",
+		};
 	} catch {
-		return null;
+		return {
+			addToCalendarUrl,
+			calendarMode: "template_fallback",
+		};
 	}
 }

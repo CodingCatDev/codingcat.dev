@@ -1,7 +1,11 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 import { SPONSOR_PACKAGE_TIERS } from "@/lib/sanity/write-client";
+
+const { slots: kickoffSlots, liveVerified: calendarLiveVerified } =
+	await getMultiCalendarAvailableSlots(6, 15);
 
 const metrics = {
 	subscribers: "61.2K+",
@@ -75,12 +79,10 @@ const formatUsd = (cents: number) =>
 					</p>
 				</div>
 				<a
-					href="https://calendar.app.google/tyGiF6dGFQeaVrN66"
-					target="_blank"
-					rel="noopener noreferrer"
+					href="#sponsorship-form"
 					class="text-xs font-semibold text-primary hover:underline shrink-0"
 				>
-					Prefer to talk first? Book a 15-min Sponsor Discovery Call &nearr;
+					Prefer to talk first? Pick a 15-min Sponsor Kickoff Slot below &darr;
 				</a>
 			</div>
 
@@ -255,6 +257,44 @@ const formatUsd = (cents: number) =>
 				</div>
 
 				<div>
+					<div class="flex items-center justify-between gap-2 mb-1.5">
+						<label class="block text-sm font-medium">
+							Optional: Lock a 15-Min Sponsor Kickoff Call Now
+						</label>
+						{calendarLiveVerified && (
+							<span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
+								✓ Multi-Calendar Conflict-Free
+							</span>
+						)}
+					</div>
+					<p class="text-xs text-muted-foreground mb-2.5">
+						Select a time below to automatically receive a Google Calendar invite upon opening your Deal Room, or skip and schedule later inside your Deal Room.
+					</p>
+					<input type="hidden" id="kickoffSlotStartAt" name="kickoffSlotStartAt" value="" />
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="kickoff-slot-grid">
+						{
+							kickoffSlots.map((slot) => (
+								<button
+									type="button"
+									data-kickoff-start={slot.startAt}
+									class="kickoff-slot-btn p-2.5 rounded-lg border border-border bg-background hover:border-primary text-left transition-all cursor-pointer flex flex-col gap-0.5"
+								>
+									<span class="font-semibold text-xs text-foreground">{slot.displayDate}</span>
+									<span class="text-[11px] text-muted-foreground font-mono">{slot.displayTime}</span>
+								</button>
+							))
+						}
+					</div>
+					<button
+						type="button"
+						id="clear-kickoff-slot"
+						class="hidden mt-1.5 text-xs text-muted-foreground hover:text-foreground underline cursor-pointer"
+					>
+						Clear selected kickoff slot (schedule later in Deal Room)
+					</button>
+				</div>
+
+				<div>
 					<label for="message" class="block text-sm font-medium mb-1">
 						Launch Goals, Target Window, &amp; Key Features
 					</label>
@@ -286,6 +326,41 @@ const formatUsd = (cents: number) =>
 	const errorEl = document.getElementById("form-feedback-error");
 	const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement | null;
 	const tierSelect = document.getElementById("tier") as HTMLSelectElement | null;
+	const kickoffInput = document.getElementById("kickoffSlotStartAt") as HTMLInputElement | null;
+	const clearKickoffBtn = document.getElementById("clear-kickoff-slot") as HTMLButtonElement | null;
+	const kickoffSlotBtns = document.querySelectorAll(".kickoff-slot-btn");
+
+	kickoffSlotBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const startAt = btn.getAttribute("data-kickoff-start") || "";
+			if (kickoffInput && kickoffInput.value === startAt) {
+				kickoffInput.value = "";
+				btn.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				btn.classList.add("border-border", "bg-background");
+				if (clearKickoffBtn) clearKickoffBtn.classList.add("hidden");
+				return;
+			}
+			kickoffSlotBtns.forEach((b) => {
+				b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				b.classList.add("border-border", "bg-background");
+			});
+			btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+			btn.classList.remove("border-border", "bg-background");
+			if (kickoffInput) kickoffInput.value = startAt;
+			if (clearKickoffBtn) clearKickoffBtn.classList.remove("hidden");
+		});
+	});
+
+	if (clearKickoffBtn) {
+		clearKickoffBtn.addEventListener("click", () => {
+			if (kickoffInput) kickoffInput.value = "";
+			kickoffSlotBtns.forEach((b) => {
+				b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+				b.classList.add("border-border", "bg-background");
+			});
+			clearKickoffBtn.classList.add("hidden");
+		});
+	}
 
 	document.querySelectorAll(".tier-select-btn").forEach((btn) => {
 		btn.addEventListener("click", () => {
@@ -312,6 +387,7 @@ const formatUsd = (cents: number) =>
 				website: formData.get("website"),
 				tier: formData.get("tier"),
 				message: formData.get("message"),
+				kickoffSlotStartAt: formData.get("kickoffSlotStartAt") || undefined,
 			};
 
 			submitBtn.disabled = true;

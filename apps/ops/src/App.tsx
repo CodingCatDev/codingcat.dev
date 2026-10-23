@@ -286,20 +286,20 @@ export function App() {
 					</p>
 					<div style={{ display: "flex", gap: 12, marginTop: 16 }}>
 						<a
-							href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
+							href="https://codingcat.dev/book"
 							target="_blank"
 							rel="noreferrer"
 							style={{ padding: "10px 16px", background: "#111", color: "#fff", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 600 }}
 						>
-							Open Podcast Recording Schedule &nearr;
+							Open Podcast Recording Booking &nearr;
 						</a>
 						<a
-							href="https://calendar.app.google/tyGiF6dGFQeaVrN66"
+							href="https://codingcat.dev/sponsorships#sponsorship-form"
 							target="_blank"
 							rel="noreferrer"
 							style={{ padding: "10px 16px", border: "1px solid #ccc", color: "#111", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 600 }}
 						>
-							Open Sponsor Discovery Schedule &nearr;
+							Open Sponsor Discovery &amp; Deal Room &nearr;
 						</a>
 					</div>
 				</section>
