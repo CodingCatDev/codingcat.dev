@@ -90,7 +90,7 @@ export async function publishPhp2ShellPost() {
   console.log(`Uploading PHP2Shell cover and meme images to Sanity (${dataset})...`);
   const coverAssetId = await uploadImage(
     path.join(__dirname, "assets/php2shell-cover.jpg"),
-    "php2shell-cover.jpg"
+    "php2shell-excalidraw-cover.jpg"
   );
   const memeAssetId = await uploadImage(
     path.join(__dirname, "assets/php2shell-meme.jpg"),
@@ -444,7 +444,21 @@ sudo systemctl restart php8.4-fpm apache2`
   };
 
   const mutations = [
-    { createOrReplace: postDoc },
+    { createIfNotExists: postDoc },
+    {
+      patch: {
+        id: postDoc._id,
+        set: {
+          title: postDoc.title,
+          slug: postDoc.slug,
+          date: postDoc.date,
+          excerpt: postDoc.excerpt,
+          author: postDoc.author,
+          coverImage: postDoc.coverImage,
+          content: postDoc.content,
+        },
+      },
+    },
     { patch: { id: "LzgcvqoNSwz5R8loykZyIB", set: { excerpt: "Learn how to customize your Slack workspace theme using SlackThemes.net and contribute custom color themes on GitHub." } } },
     { patch: { id: "ZKdo3vLUqcb4sYreiCMc5A", set: { excerpt: "Learn how to inspect and debug Angular 9 components directly inside the Chrome DevTools console using the new ng global object." } } },
     { patch: { id: "ZKdo3vLUqcb4sYreiCPNnI", set: { excerpt: "Join Alex Patterson and Brittney Postma with special guests Zach DeRose, Facundo Giuliani, Swyx, Jason Lengstorf, and Scott Tolinski for a year-end Holiday AMA." } } },

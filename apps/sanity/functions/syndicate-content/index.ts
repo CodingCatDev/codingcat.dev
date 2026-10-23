@@ -176,7 +176,7 @@ export const handler = documentEventHandler<ContentDocument>(
 					}
 
 					const mainImageUrl =
-						urlForImage(data.coverImage)?.width(1000).height(420).url() || "";
+						urlForImage(data.coverImage)?.width(1280).url() || "";
 
 					const youtubeEmbed = data.youtube
 						? `{% youtube ${data.youtube.replace("live", "embed")} %}\n\n`
@@ -209,6 +209,9 @@ export const handler = documentEventHandler<ContentDocument>(
 						existingSyndication?.externalId ||
 						(data.devto ? data.devto.split("https://dev.to/").at(-1) : null);
 
+					let targetDevtoUrl = "https://dev.to/api/articles";
+					let devtoMethod = "POST";
+
 					if (existingDevtoId && !existingDevtoId.startsWith("simulated-")) {
 						// Retrieve existing article ID from Dev.to to perform a PUT update
 						const getArticleRes = await fetch(
@@ -223,39 +226,42 @@ export const handler = documentEventHandler<ContentDocument>(
 
 						if (getArticleRes.ok) {
 							const articleData = (await getArticleRes.json()) as any;
-							res = await fetch(`https://dev.to/api/articles/${articleData.id}`, {
-								method: "PUT",
-								headers: {
-									"api-key": apiKey,
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify(devtoArticlePayload),
-							});
-						} else {
-							// If lookup failed, create as new article
-							res = await fetch("https://dev.to/api/articles", {
-								method: "POST",
-								headers: {
-									"api-key": apiKey,
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify(devtoArticlePayload),
-							});
+							if (articleData?.id) {
+								targetDevtoUrl = `https://dev.to/api/articles/${articleData.id}`;
+								devtoMethod = "PUT";
+							}
 						}
-					} else {
-						// Create new article
-						res = await fetch("https://dev.to/api/articles", {
-							method: "POST",
-							headers: {
-								"api-key": apiKey,
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify(devtoArticlePayload),
-						});
+					}
+
+					res = await fetch(targetDevtoUrl, {
+						method: devtoMethod,
+						headers: {
+							"api-key": apiKey,
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(devtoArticlePayload),
+					});
+
+					let errText = "";
+					if (!res.ok) {
+						errText = await res.text();
+						if (errText.toLowerCase().includes("organization")) {
+							delete devtoArticlePayload.article.organization_id;
+							res = await fetch(targetDevtoUrl, {
+								method: devtoMethod,
+								headers: {
+									"api-key": apiKey,
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(devtoArticlePayload),
+							});
+							if (!res.ok) {
+								errText = await res.text();
+							}
+						}
 					}
 
 					if (!res.ok) {
-						const errText = await res.text();
 						throw new Error(`Dev.to API error (${res.status}): ${errText}`);
 					}
 
