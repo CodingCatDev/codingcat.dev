@@ -1,7 +1,6 @@
 ---
 import AnimatedHero from "@/components/AnimatedHero.astro";
 import HomeSection from "@/components/HomeSection.astro";
-import PodmatchBadge from "@/components/PodmatchBadge.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { SITE_DESCRIPTION } from "@/lib/site";
@@ -26,9 +25,6 @@ const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
 	bare
 >
 	<AnimatedHero />
-	<div class="flex justify-center -mb-8">
-		<PodmatchBadge />
-	</div>
 	<HomeSection
 		title="Latest Podcasts"
 		description="Check out our latest podcasts."

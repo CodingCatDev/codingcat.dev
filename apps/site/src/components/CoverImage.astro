@@ -22,29 +22,41 @@ const {
 	quality = 82,
 	sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 960px",
 	priority = false,
-	class: className = "w-full h-auto aspect-video rounded-md",
+	class: className = "w-full h-auto aspect-video rounded-md object-cover",
 } = Astro.props;
+
+const assetRef = stegaClean(
+	(image as { asset?: { _ref?: string } } | null)?.asset?._ref,
+);
+const dimMatch = assetRef?.match(/-(\d+)x(\d+)-[a-z0-9]+$/i);
+const intrinsicWidth = dimMatch ? Number(dimMatch[1]) : undefined;
 
 const builder = Astro.locals.sanity.urlForImage(image ?? undefined);
 const aspect = height / width;
+const isSquare = width === height;
+const maxWidth = intrinsicWidth ? Math.min(width, intrinsicWidth) : width;
+const maxHeight = Math.round(maxWidth * aspect);
 
-const src = builder
-	?.width(width)
-	.height(height)
-	.quality(quality)
-	.url();
+const buildUrl = (w: number) => {
+	if (!builder) return undefined;
+	const b = builder.width(w);
+	return (isSquare ? b.height(Math.round(w * aspect)) : b)
+		.quality(quality)
+		.url();
+};
+
+const src = buildUrl(maxWidth);
 
 const responsiveWidths = [320, 480, 640, 960, 1280, 1600, 1920].filter(
-	(w) => w <= width,
+	(w) => w <= maxWidth,
 );
-if (!responsiveWidths.includes(width)) {
-	responsiveWidths.push(width);
+if (!responsiveWidths.includes(maxWidth)) {
+	responsiveWidths.push(maxWidth);
 }
 const srcset = builder
 	? responsiveWidths
 			.map((w) => {
-				const h = Math.round(w * aspect);
-				const u = builder.width(w).height(h).quality(quality).url();
+				const u = buildUrl(w);
 				return `${u} ${w}w`;
 			})
 			.join(", ")
@@ -63,8 +75,8 @@ const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : fallbackAlt;
 				class={className}
 				src={src}
 				srcset={srcset}
-				width={width}
-				height={height}
+				width={maxWidth}
+				height={maxHeight}
 				alt={alt}
 				loading={priority ? "eager" : "lazy"}
 				fetchpriority={priority ? "high" : "auto"}

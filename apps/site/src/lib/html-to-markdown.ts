@@ -24,10 +24,6 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 			/<div[^>]*class=["'][^"']*transcript-widget[^"']*["'][^>]*>[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>\s*<\/div>/gi,
 			"",
 		)
-		.replace(
-			/<a[^>]*href=["']https:\/\/www\.podmatch\.com\/member\/codingcatdev["'][^>]*>[\s\S]*?<\/a>/gi,
-			"",
-		)
 		.replace(/<button\b[^<]*(?:(?!<\/button>)<[^<]*)*<\/button>/gi, "")
 		.replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, "")
 		.replace(/<header\b[^<]*(?:(?!<\/header>)<[^<]*)*<\/header>/gi, "")
