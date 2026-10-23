@@ -1,5 +1,6 @@
 import { createClient } from "@sanity/client";
 import { publishPhp2ShellPost } from "./publish-php2shell-post.mjs";
+import { autoTagAllContent } from "./auto-tag-from-transcripts.mjs";
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
@@ -176,6 +177,9 @@ async function run() {
 
 	// 3. Publish PHP2Shell blog post & patch missing excerpts
 	await publishPhp2ShellPost();
+
+	// 4. Auto-tag all posts and podcasts from transcripts & content
+	await autoTagAllContent({ dryRun: false });
 
 	console.log("Backfill complete!");
 }

@@ -48,3 +48,5 @@ jobs:
           PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
           DEVTO_API_KEY: ${{ secrets.PRIVATE_DEVTO }}
           HASHNODE_ACCESS_TOKEN: ${{ secrets.PRIVATE_HASHNODE }}
+          AWS_BUILDER_SESSION_TOKEN: ${{ secrets.AWS_BUILDER_SESSION_TOKEN }}
+          DAILY_DEV_TOKEN: ${{ secrets.DAILY_DEV_TOKEN }}

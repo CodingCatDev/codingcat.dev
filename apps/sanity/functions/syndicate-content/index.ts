@@ -16,6 +16,9 @@ interface ContentDocument {
 	episode?: number;
 	devto?: string;
 	hashnode?: string;
+	awsbuilder?: string;
+	tags?: Array<{ _key?: string; label?: string; value?: string }>;
+	sponsor?: Array<{ _ref: string }>;
 	syndications?: Array<{ _type: "reference"; _ref: string; _key?: string }>;
 }
 
@@ -104,10 +107,25 @@ export const handler = documentEventHandler<ContentDocument>(
 		};
 
 		const contentMarkdown = serializeContent(data.content);
-		const platforms: Array<"devto" | "hashnode"> = ["devto", "hashnode"];
+		const docTags = Array.isArray(data.tags) ? data.tags : [];
+		const hasAwsTag = docTags.some(
+			(t) =>
+				t?.value?.toLowerCase() === "aws" || t?.label?.toLowerCase() === "aws",
+		);
+		const isSponsored = Array.isArray(data.sponsor) && data.sponsor.length > 0;
+		const shouldSyndicateAws =
+			(hasAwsTag && !isSponsored) ||
+			Boolean(data.awsbuilder) ||
+			process.env.FORCE_AWS_BUILDER === "true";
+
+		const platforms: Array<"devto" | "hashnode" | "awsbuilder"> = [
+			"devto",
+			"hashnode",
+			...(shouldSyndicateAws ? (["awsbuilder"] as const) : []),
+		];
 
 		console.log(
-			`[Syndicate Content] Processing ${data._type} (${data._id}) on dataset: ${dataset}. Production mode: ${isProduction}`,
+			`[Syndicate Content] Processing ${data._type} (${data._id}) on dataset: ${dataset}. Production mode: ${isProduction}. Platforms: ${platforms.join(", ")}`,
 		);
 
 		const parentPatch: Record<string, unknown> = {};
@@ -122,6 +140,12 @@ export const handler = documentEventHandler<ContentDocument>(
 				);
 
 				try {
+					const simHost =
+						platform === "devto"
+							? "dev.to"
+							: platform === "hashnode"
+								? "hashnode.com"
+								: "builder.aws.com";
 					await client.createOrReplace({
 						_id: syndicationDocId,
 						_type: "syndication",
@@ -132,7 +156,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						platform,
 						status: "simulated_complete",
 						canonicalUrl,
-						externalUrl: `https://${platform === "devto" ? "dev.to" : "hashnode.com"}/preview-simulated/${slug}`,
+						externalUrl: `https://${simHost}/preview-simulated/${slug}`,
 						externalId: `simulated-${data._id}-${platform}`,
 						syndicatedAt: new Date().toISOString(),
 						error: undefined,
@@ -170,10 +194,22 @@ export const handler = documentEventHandler<ContentDocument>(
 						continue;
 					}
 
-					const devtoTags = ["webdev", "javascript", "beginners"];
-					if (data._type === "podcast") {
-						devtoTags.push("podcast");
-					}
+					const normalizedDocTags = docTags
+						.map((t) =>
+							(t?.value || t?.label || "")
+								.toLowerCase()
+								.replace(/[^a-z0-9]/g, ""),
+						)
+						.filter((v) => v.length >= 2 && v.length <= 20);
+
+					const devtoTags = Array.from(
+						new Set([
+							...(normalizedDocTags.length > 0
+								? normalizedDocTags.slice(0, 3)
+								: ["webdev", "javascript", "programming"]),
+							...(data._type === "podcast" ? ["podcast"] : []),
+						]),
+					).slice(0, 4);
 
 					const mainImageUrl =
 						urlForImage(data.coverImage)?.width(1280).url() || "";
@@ -317,13 +353,30 @@ export const handler = documentEventHandler<ContentDocument>(
 							? data.excerpt.substring(0, 247) + "..."
 							: data.excerpt || "";
 
-					const hashnodeTags: Array<{ name: string; slug: string }> = [
-						{ name: "JavaScript", slug: "javascript" },
-						{ name: "Web Development", slug: "web-development" },
-						{ name: "Beginner Developers", slug: "beginners" },
-					];
+					const mappedHashnodeTags: Array<{ name: string; slug: string }> =
+						docTags
+							.map((t) => ({
+								name: t?.label || t?.value || "",
+								slug: (t?.value || t?.label || "")
+									.toLowerCase()
+									.replace(/[^a-z0-9-]/g, "-"),
+							}))
+							.filter((t) => t.name && t.slug)
+							.slice(0, 4);
 
-					if (data._type === "podcast") {
+					const hashnodeTags: Array<{ name: string; slug: string }> =
+						mappedHashnodeTags.length > 0
+							? mappedHashnodeTags
+							: [
+									{ name: "JavaScript", slug: "javascript" },
+									{ name: "Web Development", slug: "web-development" },
+									{ name: "Beginner Developers", slug: "beginners" },
+								];
+
+					if (
+						data._type === "podcast" &&
+						!hashnodeTags.some((t) => t.slug === "podcast")
+					) {
 						hashnodeTags.push({
 							name: "podcast",
 							slug: "podcast",
@@ -343,7 +396,9 @@ export const handler = documentEventHandler<ContentDocument>(
 						publicationId,
 						slug: `${data._type}-${slug}`,
 						tags: hashnodeTags,
-						...(hashnodeCoverImageUrl ? { coverImage: hashnodeCoverImageUrl } : {}),
+						...(hashnodeCoverImageUrl
+							? { coverImageOptions: { coverImageURL: hashnodeCoverImageUrl } }
+							: {}),
 						originalArticleURL: canonicalUrl,
 						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
 					};
@@ -364,7 +419,7 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					if (existingHashnodeSlug && !existingHashnodeSlug.startsWith("simulated-")) {
 						// Lookup post ID from Hashnode
-						const getPostRes = await fetch("https://gql-beta.hashnode.com", {
+						const getPostRes = await fetch("https://gql.hashnode.com", {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
@@ -373,7 +428,7 @@ export const handler = documentEventHandler<ContentDocument>(
 							body: JSON.stringify({
 								operationName: "Publication",
 								query: `query Publication {
-									publication(host: "hashnode.codingcat.dev") {
+									publication(id: "${publicationId}") {
 										post(slug: "${existingHashnodeSlug}") {
 											id
 										}
@@ -390,7 +445,7 @@ export const handler = documentEventHandler<ContentDocument>(
 							const updateInput = { ...articleInput };
 							delete updateInput.slug; // slug cannot be updated
 
-							const updateRes = await fetch("https://gql-beta.hashnode.com", {
+							const updateRes = await fetch("https://gql.hashnode.com", {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json",
@@ -424,7 +479,7 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					if (!publishedPost) {
 						// Create post mutation
-						const publishRes = await fetch("https://gql-beta.hashnode.com", {
+						const publishRes = await fetch("https://gql.hashnode.com", {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
@@ -485,6 +540,205 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					console.log(
 						`[Syndicate Content] Successfully published to Hashnode: ${externalUrl}`,
+					);
+				}
+
+				if (platform === "awsbuilder") {
+					const awsSessionToken = process.env.AWS_BUILDER_SESSION_TOKEN;
+					if (!awsSessionToken) {
+						console.warn(
+							"[Syndicate Content] AWS_BUILDER_SESSION_TOKEN not configured. Skipping AWS Builder Center dispatch.",
+						);
+						continue;
+					}
+
+					const awsHeaders = {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+						"builder-session-token": awsSessionToken,
+					};
+
+					const existingSyndication = await client
+						.getDocument(syndicationDocId)
+						.catch(() => null);
+
+					const urlContentIdMatch = data.awsbuilder?.match(
+						/builder\.aws\.com\/content\/([A-Za-z0-9]+)/,
+					);
+					let contentId =
+						(existingSyndication?.externalId &&
+						!existingSyndication.externalId.startsWith("simulated-")
+							? existingSyndication.externalId
+							: null) ||
+						(urlContentIdMatch ? urlContentIdMatch[1] : null);
+					let versionId: string | null = null;
+
+					if (contentId) {
+						const editInitRes = await fetch(
+							"https://api.builder.aws.com/cs/article/InitializeEditArticle",
+							{
+								method: "POST",
+								headers: awsHeaders,
+								body: JSON.stringify({ contentId }),
+							},
+						);
+						if (editInitRes.ok) {
+							const editInitJson = (await editInitRes.json()) as any;
+							versionId = editInitJson?.versionId || null;
+						}
+					}
+
+					if (!contentId || !versionId) {
+						const initRes = await fetch(
+							"https://api.builder.aws.com/cs/article/InitializeArticle",
+							{
+								method: "POST",
+								headers: awsHeaders,
+								body: JSON.stringify({}),
+							},
+						);
+						if (!initRes.ok) {
+							throw new Error(
+								`AWS Builder InitializeArticle failed (${initRes.status}): ${await initRes.text()}`,
+							);
+						}
+						const initJson = (await initRes.json()) as any;
+						contentId = initJson?.contentId;
+						versionId = initJson?.versionId;
+					}
+
+					// Upload cover image if present
+					let coverImageUploadKey: string | undefined;
+					const coverImageUrl =
+						urlForImage(data.coverImage)?.width(1280).format("jpg").url() || "";
+					if (coverImageUrl) {
+						const imgRes = await fetch(coverImageUrl);
+						if (imgRes.ok) {
+							const imgBuf = await imgRes.arrayBuffer();
+							const presignRes = await fetch(
+								"https://api.builder.aws.com/cs/upload/generate-presigned-post",
+								{
+									method: "POST",
+									headers: awsHeaders,
+									body: JSON.stringify({
+										contentId,
+										fileName: `${slug}-cover.jpg`,
+										contentType: "image/jpeg",
+										uploadType: "ARTICLE",
+									}),
+								},
+							);
+							if (presignRes.ok) {
+								const presignData = (await presignRes.json()) as any;
+								const formData = new FormData();
+								for (const [k, v] of Object.entries(
+									presignData.presignedPostFields || {},
+								)) {
+									formData.append(k, String(v));
+								}
+								formData.append(
+									"file",
+									new Blob([imgBuf], { type: "image/jpeg" }),
+									`${slug}-cover.jpg`,
+								);
+								const s3Res = await fetch(presignData.presignedPostUrl, {
+									method: "POST",
+									body: formData,
+								});
+								if (s3Res.ok || s3Res.status === 204) {
+									coverImageUploadKey = presignData.uploadKey;
+								}
+							}
+						}
+					}
+
+					const awsTags = Array.from(
+						new Set(
+							docTags
+								.map((t) => (t?.value || t?.label || "").toLowerCase())
+								.filter(Boolean)
+								.slice(0, 5),
+						),
+					);
+					if (awsTags.length === 0) awsTags.push("aws");
+
+					const youtubeMd = data.youtube
+						? `Watch on YouTube: [${data.youtube}](${data.youtube})\n\n`
+						: "";
+
+					const draftPayload: any = {
+						contentId,
+						versionId,
+						title: data.title || "Untitled",
+						summary: (data.excerpt || data.title || "").slice(0, 300),
+						contentBody: `*Originally published at [${canonicalUrl}](${canonicalUrl})*\n\n${youtubeMd}${contentMarkdown}`,
+						canonicalUrl,
+						preferredUrlSlug: slug,
+						tags: awsTags,
+						autoSave: false,
+						...(coverImageUploadKey
+							? {
+									coverImageUploadKey,
+									coverImageAlt: data.title || "Cover image",
+								}
+							: {}),
+					};
+
+					const saveRes = await fetch(
+						"https://api.builder.aws.com/cs/article/SaveArticleDraft",
+						{
+							method: "POST",
+							headers: awsHeaders,
+							body: JSON.stringify(draftPayload),
+						},
+					);
+					if (!saveRes.ok) {
+						throw new Error(
+							`AWS Builder SaveArticleDraft failed (${saveRes.status}): ${await saveRes.text()}`,
+						);
+					}
+
+					await fetch("https://api.builder.aws.com/cs/article/SubmissionCheck", {
+						method: "POST",
+						headers: awsHeaders,
+						body: JSON.stringify({ contentId, versionId }),
+					});
+
+					const pubRes = await fetch(
+						"https://api.builder.aws.com/cs/article/PublishArticle",
+						{
+							method: "POST",
+							headers: awsHeaders,
+							body: JSON.stringify({ contentId, versionId }),
+						},
+					);
+					if (!pubRes.ok) {
+						throw new Error(
+							`AWS Builder PublishArticle failed (${pubRes.status}): ${await pubRes.text()}`,
+						);
+					}
+
+					const externalUrl = `https://builder.aws.com/content/${contentId}/${slug}`;
+
+					await client.createOrReplace({
+						_id: syndicationDocId,
+						_type: "syndication",
+						target: { _type: "reference", _ref: data._id },
+						platform: "awsbuilder",
+						status: "published",
+						canonicalUrl,
+						externalUrl,
+						externalId: String(contentId),
+						syndicatedAt: new Date().toISOString(),
+						error: undefined,
+					});
+
+					if (data.awsbuilder !== externalUrl) {
+						parentPatch.awsbuilder = externalUrl;
+					}
+
+					console.log(
+						`[Syndicate Content] Successfully published to AWS Builder Center: ${externalUrl}`,
 					);
 				}
 			} catch (publishErr) {
