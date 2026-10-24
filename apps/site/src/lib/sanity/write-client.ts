@@ -240,3 +240,103 @@ export function getSanityServerClient(): {
 		canWrite: Boolean(writeToken),
 	};
 }
+
+export async function uploadSanityImageDataUrl(
+	dataUrl: string,
+	filenameBase = "guest-avatar",
+): Promise<{ _id: string; url: string } | null> {
+	const workerEnv = (env ?? {}) as unknown as Record<
+		string,
+		string | undefined
+	>;
+	const projectId = workerEnv.PUBLIC_SANITY_PROJECT_ID || "hfh83o0w";
+	const dataset = workerEnv.PUBLIC_SANITY_DATASET || "production";
+	const apiVersion = workerEnv.PUBLIC_SANITY_API_VERSION || "2025-09-30";
+	const writeToken =
+		workerEnv.SANITY_API_WRITE_TOKEN ||
+		workerEnv.SANITY_AUTH_TOKEN ||
+		workerEnv.SANITY_WRITE_TOKEN;
+
+	if (!writeToken) {
+		return null;
+	}
+
+	const match = dataUrl.match(
+		/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/,
+	);
+	if (!match) {
+		throw new Error(
+			"Invalid image format. Please upload a JPEG, PNG, or WebP image.",
+		);
+	}
+
+	const mimeType = match[1];
+	const base64Data = match[2];
+	const binaryStr = atob(base64Data);
+	const len = binaryStr.length;
+
+	if (len < 64 || len > 2 * 1024 * 1024) {
+		throw new Error("Profile photo must be under 2 MB.");
+	}
+
+	const bytes = new Uint8Array(len);
+	for (let i = 0; i < len; i++) {
+		bytes[i] = binaryStr.charCodeAt(i);
+	}
+
+	// Verify magic bytes for JPEG (FF D8 FF), PNG (89 50 4E 47), or WebP (RIFF....WEBP)
+	const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+	const isPng =
+		bytes[0] === 0x89 &&
+		bytes[1] === 0x50 &&
+		bytes[2] === 0x4e &&
+		bytes[3] === 0x47;
+	const isWebp =
+		bytes[0] === 0x52 &&
+		bytes[1] === 0x49 &&
+		bytes[2] === 0x46 &&
+		bytes[3] === 0x46 &&
+		bytes[8] === 0x57 &&
+		bytes[9] === 0x45 &&
+		bytes[10] === 0x42 &&
+		bytes[11] === 0x50;
+
+	if (!isJpeg && !isPng && !isWebp) {
+		throw new Error("Invalid image file header.");
+	}
+
+	const ext =
+		mimeType === "image/png"
+			? "png"
+			: mimeType === "image/webp"
+				? "webp"
+				: "jpg";
+	const cleanFilename = `${filenameBase.replace(/[^a-zA-Z0-9_-]/g, "-")}.${ext}`;
+
+	const uploadUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/assets/images/${dataset}?filename=${encodeURIComponent(cleanFilename)}`;
+	const res = await fetch(uploadUrl, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${writeToken}`,
+			"Content-Type": mimeType,
+		},
+		body: bytes,
+	});
+
+	if (!res.ok) {
+		const text = await res.text();
+		throw new Error(`Sanity image upload failed (${res.status}): ${text}`);
+	}
+
+	const json = (await res.json()) as {
+		document?: { _id?: string; url?: string };
+	};
+	if (!json.document?._id || !json.document?.url) {
+		throw new Error("Sanity did not return an uploaded image asset document.");
+	}
+
+	return {
+		_id: json.document._id,
+		url: json.document.url,
+	};
+}

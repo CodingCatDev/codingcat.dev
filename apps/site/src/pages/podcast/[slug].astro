@@ -6,7 +6,6 @@ import CoverMedia from "@/components/CoverMedia.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PodcastListen from "@/components/PodcastListen.astro";
 import PodcastPicks from "@/components/PodcastPicks.astro";
-import PodmatchBadge from "@/components/PodmatchBadge.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import SponsorCard from "@/components/SponsorCard.astro";
@@ -168,9 +167,6 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 						<FormattedDate dateString={podcast.date} />
 					</div>
 				</div>
-				<div class="m-2 flex justify-center md:m-8">
-					<PodmatchBadge />
-				</div>
 			</div>
 
 			<PodcastListen
@@ -214,7 +210,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 
 		{
 			podcast.transcript?.summary && (
-				<section class="my-8 rounded-xl border border-border bg-card/50 p-6">
+				<section class="my-8 mx-auto max-w-4xl rounded-xl border border-border bg-card/50 p-6">
 					<h2 class="mb-3 text-xl font-bold">Episode Summary</h2>
 					<p class="leading-relaxed text-muted-foreground">
 						{podcast.transcript.summary}
@@ -223,10 +219,6 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 			)
 		}
 	</article>
-
-	<div class="m-2 flex justify-center md:m-8">
-		<PodmatchBadge />
-	</div>
 
 	<PodcastPicks picks={podcast.pick} />
 

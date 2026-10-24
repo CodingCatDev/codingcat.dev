@@ -1,0 +1,547 @@
+{
+  "post-php2shell-cve-2026-109618": {
+    "dailydevUrl": "https://daily.dev/posts/two-critical-pre-authentication-rce-flaws-in-php-cve-2026-109618-and-cve-2026-109619-uncovered-by-lmbg2iyss",
+    "externalId": "lmBG2IYsS",
+    "syndicatedAt": "2026-10-24T03:38:28.188Z"
+  },
+  "0531c732-d750-4dc4-b81f-7b6cfa7ebfae": {
+    "dailydevUrl": "https://daily.dev/posts/we-replaced-our-custom-pinecone-vector-rag-pipeline-with-sanity-context-knowledge-bases-and-the-nati-g0hcjrb95",
+    "externalId": "g0HCjrb95",
+    "syndicatedAt": "2026-10-24T04:04:42.303Z"
+  },
+  "12da09be-f4cd-4fd4-be7e-0333dace2024": {
+    "dailydevUrl": "https://daily.dev/posts/a-deep-dive-review-of-magnus-hillestad-s-five-layers-of-agentic-context-on-the-sanity-blog-explorin-utdq1xczx",
+    "externalId": "Utdq1XCzx",
+    "syndicatedAt": "2026-10-24T04:24:04.574Z"
+  },
+  "05eda048-efff-4e0f-8b76-83a2f482fa13": {
+    "dailydevUrl": "https://daily.dev/posts/hosted-image-apis-cost-3-to-4-cents-per-generation-using-runpod-flash-for-dockerless-serverless-gpu-hsmuowl3n",
+    "externalId": "hSmuoWL3n",
+    "syndicatedAt": "2026-10-24T04:23:33.175Z"
+  },
+  "ccddd177-443b-4614-896c-9a8a801278ef": {
+    "dailydevUrl": "https://daily.dev/posts/from-the-first-unboxing-to-daily-wear-on-laptops-bottles-and-notebooks-these-iridescent-ultra-du-biq3wh0mo",
+    "externalId": "biq3wh0mO",
+    "syndicatedAt": "2026-10-24T04:23:01.757Z"
+  },
+  "292601cc-5365-4644-9b34-82e67d033e4b": {
+    "dailydevUrl": "https://daily.dev/posts/curious-about-genai-for-engineers-learn-what-s-real-what-s-not-and-what-s-next-in-ai-full-guide--spm6hbumg",
+    "externalId": "sPM6hBUmG",
+    "syndicatedAt": "2026-10-24T04:22:30.355Z"
+  },
+  "ab22f27a-2d5d-4dfa-ad61-b5dd9ef85334": {
+    "dailydevUrl": "https://daily.dev/posts/curious-about-oauth-mcp-servers-and-building-cool-chatgpt-apps-hear-from-max-of-stytch-as-we-dive-mocogjy41",
+    "externalId": "MoCOGjY41",
+    "syndicatedAt": "2026-10-24T04:21:58.934Z"
+  },
+  "7fffc615-ed5a-491a-a5f3-e1dcf3338612": {
+    "dailydevUrl": "https://daily.dev/posts/firebase-sql-with-data-connect-how-to-use-semantic-searches-with-vector-embeddings-full-guide-http-spskkdg69",
+    "externalId": "SpSkKdG69",
+    "syndicatedAt": "2026-10-24T04:21:27.545Z"
+  },
+  "f78ab69a-69a7-4e88-9496-22d1217bbd72": {
+    "dailydevUrl": "https://daily.dev/posts/explore-ai-identity-management-with-expert-insights-on-mcp-servers-agent-security-oauth-and-futur-zdbxfqv7p",
+    "externalId": "zDBxfqV7P",
+    "syndicatedAt": "2026-10-24T04:20:56.153Z"
+  },
+  "a6cd2275-35e8-43a9-90fc-e114a5565103": {
+    "dailydevUrl": "https://daily.dev/posts/the-firebase-platform-is-evolving-with-a-focus-on-generative-ai-deeper-integration-with-google-clou-q9gigwmey",
+    "externalId": "Q9GIgWmeY",
+    "syndicatedAt": "2026-10-24T04:20:24.727Z"
+  },
+  "3a517661-b995-46e3-bed0-a755bb8e6c9b": {
+    "dailydevUrl": "https://daily.dev/posts/explore-firebase-data-connect-to-enhance-your-app-with-powerful-sql-capabilities-bridging-the-gap-b-r8mwr6uhp",
+    "externalId": "R8MWR6UHP",
+    "syndicatedAt": "2026-10-24T04:19:53.311Z"
+  },
+  "a3607438-2fa0-4660-be27-0b16bfb22b6c": {
+    "dailydevUrl": "https://daily.dev/posts/curious-about-no-code-app-building-dive-in-as-we-explore-adalo-vs-bubble-micro-saas-ideas-and-rea-boisy0qwm",
+    "externalId": "BOiSY0QwM",
+    "syndicatedAt": "2026-10-24T04:19:21.895Z"
+  },
+  "28b2a0b5-07d1-4b23-a515-2cdc1c1e7731": {
+    "dailydevUrl": "https://daily.dev/posts/discover-how-to-automate-your-tasks-and-reclaim-your-time-join-alex-and-joe-as-they-discuss-podcast-i4jiigxcj",
+    "externalId": "I4JIIGXcJ",
+    "syndicatedAt": "2026-10-24T04:18:50.460Z"
+  },
+  "d2d147a2-5954-4ee4-9548-222667035923": {
+    "dailydevUrl": "https://daily.dev/posts/tired-of-aws-running-in-the-cloud-how-about-right-on-your-desktop-full-guide-https-codingcat-de-ahrg7mxgf",
+    "externalId": "AhRg7mXgf",
+    "syndicatedAt": "2026-10-24T04:18:19.029Z"
+  },
+  "e4aefc68-fdf9-441a-962f-653d10a3f01a": {
+    "dailydevUrl": "https://daily.dev/posts/dive-into-hands-on-spicedb-demos-real-world-permission-modeling-and-ai-powered-scenario-testing-f-rsnu3kl8m",
+    "externalId": "RSnU3kl8M",
+    "syndicatedAt": "2026-10-24T04:17:47.616Z"
+  },
+  "b9dfe3ba-bd69-4588-97fe-012b3a370f14": {
+    "dailydevUrl": "https://daily.dev/posts/dive-into-authzed-spicedb-and-permissions-full-guide-https-codingcat-dev-podcast-scaling-permi-geecxk2xu",
+    "externalId": "gEeCXK2Xu",
+    "syndicatedAt": "2026-10-24T04:17:16.193Z"
+  },
+  "4628e5fe-28d8-49c4-af37-15904dcf787a": {
+    "dailydevUrl": "https://daily.dev/posts/anthony-is-back-join-us-for-a-fun-chat-on-coding-dev-tools-and-ai-full-guide-https-codingcat--y5jadtty7",
+    "externalId": "Y5JaDtTy7",
+    "syndicatedAt": "2026-10-24T04:16:44.791Z"
+  },
+  "8efab30e-08b7-408d-ac98-c51238069042": {
+    "dailydevUrl": "https://daily.dev/posts/explore-ray-camden-s-tech-journey-dive-into-ai-for-beginners-discover-the-latest-in-ai-from-codi-lnd5602ak",
+    "externalId": "LND5602AK",
+    "syndicatedAt": "2026-10-24T04:16:13.381Z"
+  },
+  "59b0c713-79dc-45cc-b7ef-95479932611b": {
+    "dailydevUrl": "https://daily.dev/posts/how-are-you-using-ai-is-it-the-right-way--qq8v9nwwt",
+    "externalId": "qQ8v9nwwt",
+    "syndicatedAt": "2025-02-19T21:54:16.927Z"
+  },
+  "668e776c-0102-416a-9f83-78c024dae636": {
+    "dailydevUrl": "https://daily.dev/posts/supastarter-next-js-setup-done-right-all-the-essentials-zero-clutter-check-out-this-game-changin-47pxrfnos",
+    "externalId": "47pxrfnOS",
+    "syndicatedAt": "2025-02-09T03:56:19.220Z"
+  },
+  "6c788031-cace-4c70-bcf5-66d0dcda085f": {
+    "dailydevUrl": "https://daily.dev/posts/join-us-as-we-explore-cloudinary-s-new-components-for-next-js-learn-how-to-optimize-images-integra-snhuw28rs",
+    "externalId": "sNhUw28RS",
+    "syndicatedAt": "2026-10-24T04:14:44.407Z"
+  },
+  "c091d38b-4812-4922-a6f9-2e8ea7aa1dd1": {
+    "dailydevUrl": "https://daily.dev/posts/onoskpiyl",
+    "externalId": "ONOSKpIYl",
+    "syndicatedAt": "2024-10-17T11:58:06.945Z"
+  },
+  "94893625-c4bc-4adc-b59b-391fa13f2b5e": {
+    "dailydevUrl": "https://daily.dev/posts/zoulzswqc",
+    "externalId": "ZOULzSWqc",
+    "syndicatedAt": "2024-10-17T11:57:42.572Z"
+  },
+  "c49ed931-7b57-4d27-a659-026d0c5c0e93": {
+    "dailydevUrl": "https://daily.dev/posts/jqwnnrao4",
+    "externalId": "jQWNNRao4",
+    "syndicatedAt": "2024-09-25T21:32:56.208Z"
+  },
+  "09d69095-4287-4b69-9f02-3d2e873f358e": {
+    "dailydevUrl": "https://daily.dev/posts/zedz8ywdw",
+    "externalId": "ZeDZ8YwDw",
+    "syndicatedAt": "2024-09-25T21:08:56.676Z"
+  },
+  "4edb915d-6b6c-4d9e-9692-0127da16ca1b": {
+    "dailydevUrl": "https://daily.dev/posts/qchcizrfl",
+    "externalId": "qchciZrfl",
+    "syndicatedAt": "2024-09-25T21:08:51.861Z"
+  },
+  "120b48ee-cd22-429e-b36f-d0a4704565e4": {
+    "dailydevUrl": "https://daily.dev/posts/qd9o8nbyx",
+    "externalId": "QD9O8nByx",
+    "syndicatedAt": "2024-09-25T21:08:42.427Z"
+  },
+  "2461c03e-63b1-4a26-95fb-6ef905af4b0e": {
+    "dailydevUrl": "https://daily.dev/posts/for-those-using-build-workflows-stick-with-github-workflows-if-you-want-to-try-out-vercel-s-cron-jo-itcfixxbl",
+    "externalId": "ItcFIxxbL",
+    "syndicatedAt": "2024-07-17T00:05:10.399Z"
+  },
+  "30be7590-3e6f-412f-bcd9-a5421ed57997": {
+    "dailydevUrl": "https://daily.dev/posts/does-anyone-like-the-direct-video-links-for-daily-dev--jpfpouczo",
+    "externalId": "jpfpoUczO",
+    "syndicatedAt": "2024-07-17T00:06:10.671Z"
+  },
+  "796783b3-91df-4657-9db0-316a77cf4cc1": {
+    "dailydevUrl": "https://daily.dev/posts/catch-the-latest-updates-on-flutter-and-firebase-from-google-i-o-2024-hear-roman-jacquez-s-insights-oprhhtylq",
+    "externalId": "OPrHhTYlQ",
+    "syndicatedAt": "2024-07-05T18:55:38.404Z"
+  },
+  "ca69fea5-608a-4cee-9eba-8a2d915d7c84": {
+    "dailydevUrl": "https://daily.dev/posts/explore-how-to-integrate-firebase-with-vonage-apis-in-our-latest-developer-podcast-learn-about-auth-padn54qqj",
+    "externalId": "Padn54qqj",
+    "syndicatedAt": "2024-07-05T18:54:54.950Z"
+  },
+  "ee3176c9-76b8-44cf-9a87-0fcac0aa8e53": {
+    "dailydevUrl": "https://daily.dev/posts/discover-the-latest-from-google-io-and-firebase-with-insights-from-a-devrel-engineer-watch-now-for--znyf4sksw",
+    "externalId": "Znyf4SKsW",
+    "syndicatedAt": "2024-07-02T19:16:56.725Z"
+  },
+  "1bb4346d-eba0-41af-aecf-644bc7bcdefe": {
+    "dailydevUrl": "https://daily.dev/posts/discover-advanced-angular-tips-and-tricks-with-mohammad-from-the-angular-cookbook-2nd-edition-watch-imdd1m19v",
+    "externalId": "IMdD1m19v",
+    "syndicatedAt": "2024-07-02T19:16:45.290Z"
+  },
+  "59b06426-2b94-4b31-ab7a-f18659c121e5": {
+    "dailydevUrl": "https://daily.dev/posts/join-us-as-chris-sev-shares-his-dev-journey-insights-on-building-scotch-io-and-his-exciting-new-ai-lawganvu3",
+    "externalId": "LaWgANVu3",
+    "syndicatedAt": "2024-07-02T19:16:33.588Z"
+  },
+  "b61bf55d-ab3d-4164-8a35-f5f7eb770536": {
+    "dailydevUrl": "https://daily.dev/posts/firebase-security-rules-are-a-powerful-feature-that-allows-you-to-control-access-to-your-app-s-data--upwfu02yi",
+    "externalId": "uPWfu02yI",
+    "syndicatedAt": "2024-07-02T19:16:16.143Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPA9U": {
+    "dailydevUrl": "https://daily.dev/posts/7k6tr7e5m",
+    "externalId": "7k6TR7e5m",
+    "syndicatedAt": "2024-03-06T22:20:14.263Z"
+  },
+  "8510028d-dec1-40c7-bdbe-bed50dbc1f3d": {
+    "dailydevUrl": "https://daily.dev/posts/q3ojktlsp",
+    "externalId": "q3OjKtLsP",
+    "syndicatedAt": "2024-07-02T19:15:58.474Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPARs": {
+    "dailydevUrl": "https://daily.dev/posts/fwqzdl8kf",
+    "externalId": "fwQzdL8Kf",
+    "syndicatedAt": "2024-03-06T22:20:05.445Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPAb4": {
+    "dailydevUrl": "https://daily.dev/posts/jqb6moxkv",
+    "externalId": "jQB6MOXkV",
+    "syndicatedAt": "2024-03-01T17:11:02.667Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPAkG": {
+    "dailydevUrl": "https://daily.dev/posts/mimvvxzqk",
+    "externalId": "mimvvxzqK",
+    "syndicatedAt": "2024-03-01T17:10:58.813Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPAIg": {
+    "dailydevUrl": "https://daily.dev/posts/ifqkzfqkp",
+    "externalId": "IFqKZfqKp",
+    "syndicatedAt": "2024-02-08T16:34:08.104Z"
+  },
+  "ZKdo3vLUqcb4sYreiCP9GK": {
+    "dailydevUrl": "https://daily.dev/posts/breaking-down-svelte-view-transitions-4xxa7vmpx",
+    "externalId": "4xxA7VMpx",
+    "syndicatedAt": "2024-02-08T16:32:53.918Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPAtS": {
+    "dailydevUrl": "https://daily.dev/posts/great-chat-about-how-to-use-raycast-d-1qrh6lh7a",
+    "externalId": "1Qrh6Lh7A",
+    "syndicatedAt": "2024-02-08T16:32:21.023Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPB2e": {
+    "dailydevUrl": "https://daily.dev/posts/sauwtypcy",
+    "externalId": "sAUwtYpcY",
+    "syndicatedAt": "2024-01-31T17:44:54.885Z"
+  },
+  "LzgcvqoNSwz5R8loykbNx1": {
+    "dailydevUrl": "https://daily.dev/posts/bgdvi0vur",
+    "externalId": "BGdvI0VuR",
+    "syndicatedAt": "2024-01-31T17:44:44.267Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPBBq": {
+    "dailydevUrl": "https://daily.dev/posts/i-had-a-lot-of-fun-chatting-with-richard-bray-make-sure-to-check-out-his-awesome-tiktok-channel-htt-evh7eyq1v",
+    "externalId": "evh7EyQ1V",
+    "syndicatedAt": "2024-01-30T19:18:18.836Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMcm4": {
+    "dailydevUrl": "https://daily.dev/posts/zschrfyhf",
+    "externalId": "zSCHRfyHF",
+    "syndicatedAt": "2023-12-26T17:08:15.180Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMQiK": {
+    "dailydevUrl": "https://daily.dev/posts/it-is-usually-pretty-hard-to-build-up-a-podcast-here-is-a-great-breakdown-of-it--esdnxx972",
+    "externalId": "esDnxx972",
+    "syndicatedAt": "2023-12-18T16:21:49.848Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMdMq": {
+    "dailydevUrl": "https://daily.dev/posts/vglkr70j0",
+    "externalId": "VGlkR70J0",
+    "syndicatedAt": "2023-12-26T17:08:09.473Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMVku": {
+    "dailydevUrl": "https://daily.dev/posts/qyvexqhqs",
+    "externalId": "qyVEXQhqS",
+    "syndicatedAt": "2023-12-26T17:08:04.029Z"
+  },
+  "LzgcvqoNSwz5R8loyka1hp": {
+    "dailydevUrl": "https://daily.dev/posts/kfwmdqjfw",
+    "externalId": "kFWmDQJFw",
+    "syndicatedAt": "2023-12-26T17:07:44.874Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMcNY": {
+    "dailydevUrl": "https://daily.dev/posts/uvgino2s9",
+    "externalId": "uVGiNO2s9",
+    "syndicatedAt": "2023-12-26T17:07:28.823Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMbUO": {
+    "dailydevUrl": "https://daily.dev/posts/tdrpxvwyl",
+    "externalId": "tDrPxVWYL",
+    "syndicatedAt": "2023-12-26T17:07:23.288Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMYWW": {
+    "dailydevUrl": "https://daily.dev/posts/08wheozyb",
+    "externalId": "08wHEoZYB",
+    "syndicatedAt": "2023-12-26T17:06:41.809Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMatc": {
+    "dailydevUrl": "https://daily.dev/posts/bkj7ho5l0",
+    "externalId": "BKj7hO5l0",
+    "syndicatedAt": "2023-12-26T17:06:35.729Z"
+  },
+  "ZKdo3vLUqcb4sYreiCP9hu": {
+    "dailydevUrl": "https://daily.dev/posts/tqanojw6v",
+    "externalId": "tqAnoJw6V",
+    "syndicatedAt": "2023-12-26T17:06:29.555Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMWCU": {
+    "dailydevUrl": "https://daily.dev/posts/vkagn8lrh",
+    "externalId": "vkAgN8LrH",
+    "syndicatedAt": "2023-12-26T17:06:23.758Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPA0I": {
+    "dailydevUrl": "https://daily.dev/posts/rm0v1faf5",
+    "externalId": "rM0v1FaF5",
+    "syndicatedAt": "2023-12-26T17:06:16.240Z"
+  },
+  "a5bec743-f096-484a-974d-02f493ecae7d": {
+    "dailydevUrl": "https://daily.dev/posts/mtwfpzf9n",
+    "externalId": "MtWFPzF9n",
+    "syndicatedAt": "2023-12-26T17:06:09.988Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMRkg": {
+    "dailydevUrl": "https://daily.dev/posts/mtwfpzf9n",
+    "externalId": "MtWFPzF9n",
+    "syndicatedAt": "2023-12-26T17:06:09.988Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMabE": {
+    "dailydevUrl": "https://daily.dev/posts/w0sk2xsga",
+    "externalId": "w0sK2xSGA",
+    "syndicatedAt": "2023-12-26T17:06:04.307Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMYfi": {
+    "dailydevUrl": "https://daily.dev/posts/qp5hmdxnr",
+    "externalId": "QP5hmdxNR",
+    "syndicatedAt": "2023-12-26T17:05:58.317Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMd4S": {
+    "dailydevUrl": "https://daily.dev/posts/a32lfpepl",
+    "externalId": "A32lFpEPL",
+    "syndicatedAt": "2023-12-26T17:05:51.265Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMWe4": {
+    "dailydevUrl": "https://daily.dev/posts/xabijcief",
+    "externalId": "XAbijCiEf",
+    "syndicatedAt": "2023-12-26T17:05:45.187Z"
+  },
+  "LzgcvqoNSwz5R8loyka0MD": {
+    "dailydevUrl": "https://daily.dev/posts/bxmgu3dc1",
+    "externalId": "bxmGu3dc1",
+    "syndicatedAt": "2023-12-26T17:05:39.467Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMU4i": {
+    "dailydevUrl": "https://daily.dev/posts/lvjm9lats",
+    "externalId": "LvJM9lATs",
+    "syndicatedAt": "2023-12-26T17:05:33.874Z"
+  },
+  "LzgcvqoNSwz5R8loykZzj1": {
+    "dailydevUrl": "https://daily.dev/posts/ygra60ywt",
+    "externalId": "yGra60YwT",
+    "syndicatedAt": "2023-12-26T17:05:28.056Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMa0S": {
+    "dailydevUrl": "https://daily.dev/posts/rejskzf4m",
+    "externalId": "REJSkzF4M",
+    "syndicatedAt": "2023-12-26T17:05:20.974Z"
+  },
+  "LzgcvqoNSwz5R8loyka0bt": {
+    "dailydevUrl": "https://daily.dev/posts/f6deajc6m",
+    "externalId": "F6deaJc6M",
+    "syndicatedAt": "2023-12-26T17:05:14.559Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMSOW": {
+    "dailydevUrl": "https://daily.dev/posts/fda6qwt2z",
+    "externalId": "fda6qwT2z",
+    "syndicatedAt": "2023-12-26T17:05:08.022Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMbmm": {
+    "dailydevUrl": "https://daily.dev/posts/isdwz4auv",
+    "externalId": "iSDwZ4AUv",
+    "syndicatedAt": "2023-12-26T17:04:50.516Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMUrk": {
+    "dailydevUrl": "https://daily.dev/posts/qdml1wruu",
+    "externalId": "QdML1WRuu",
+    "syndicatedAt": "2023-12-26T17:04:42.505Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMVA8": {
+    "dailydevUrl": "https://daily.dev/posts/7a0pgpebf",
+    "externalId": "7A0pGpebF",
+    "syndicatedAt": "2023-12-26T17:04:37.280Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMb2o": {
+    "dailydevUrl": "https://daily.dev/posts/dtfsjrhmu",
+    "externalId": "dTfSjrhmU",
+    "syndicatedAt": "2023-12-26T17:04:31.790Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMYou": {
+    "dailydevUrl": "https://daily.dev/posts/dmhb6fttl",
+    "externalId": "dmHb6Fttl",
+    "syndicatedAt": "2023-12-26T17:04:25.113Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMebS": {
+    "dailydevUrl": "https://daily.dev/posts/dmhb6fttl",
+    "externalId": "dmHb6Fttl",
+    "syndicatedAt": "2023-12-26T17:04:25.113Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMZ7I": {
+    "dailydevUrl": "https://daily.dev/posts/3ptvzqcfn",
+    "externalId": "3PTvZqcfN",
+    "syndicatedAt": "2023-12-26T17:04:11.371Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMWwS": {
+    "dailydevUrl": "https://daily.dev/posts/ytfbjurzs",
+    "externalId": "yTFBJurZs",
+    "syndicatedAt": "2023-12-26T17:04:04.144Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMcEM": {
+    "dailydevUrl": "https://daily.dev/posts/n7occgwbe",
+    "externalId": "n7OcCGwbE",
+    "syndicatedAt": "2023-12-26T17:03:58.607Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMdDe": {
+    "dailydevUrl": "https://daily.dev/posts/at94ffogf",
+    "externalId": "At94FfOgF",
+    "syndicatedAt": "2023-12-26T17:03:53.079Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMQua": {
+    "dailydevUrl": "https://daily.dev/posts/hknqvxozy",
+    "externalId": "HKnqVxozy",
+    "syndicatedAt": "2023-12-26T17:03:43.821Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMVSW": {
+    "dailydevUrl": "https://daily.dev/posts/e1auwswy8",
+    "externalId": "E1aUwswy8",
+    "syndicatedAt": "2023-12-26T17:03:37.897Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMW3I": {
+    "dailydevUrl": "https://daily.dev/posts/jbibir1ua",
+    "externalId": "jBIBir1Ua",
+    "syndicatedAt": "2023-12-26T17:03:31.977Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMWUs": {
+    "dailydevUrl": "https://daily.dev/posts/pobj2qnzj",
+    "externalId": "poBJ2qNzj",
+    "syndicatedAt": "2023-12-26T17:03:25.124Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPSUQ": {
+    "dailydevUrl": "https://daily.dev/posts/c0fw9wlx7",
+    "externalId": "c0FW9WlX7",
+    "syndicatedAt": "2023-12-26T17:02:34.539Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMRG2": {
+    "dailydevUrl": "https://daily.dev/posts/zdai9rkk6",
+    "externalId": "zDAi9rkK6",
+    "syndicatedAt": "2023-12-26T17:03:17.732Z"
+  },
+  "LzgcvqoNSwz5R8loyka1S9": {
+    "dailydevUrl": "https://daily.dev/posts/1rz4y7fsu",
+    "externalId": "1rz4y7FSu",
+    "syndicatedAt": "2023-12-26T17:02:47.405Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMbda": {
+    "dailydevUrl": "https://daily.dev/posts/f9bweajqc",
+    "externalId": "f9bweaJQC",
+    "syndicatedAt": "2023-12-26T17:02:40.897Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMWLg": {
+    "dailydevUrl": "https://daily.dev/posts/c0fw9wlx7",
+    "externalId": "c0FW9WlX7",
+    "syndicatedAt": "2023-12-26T17:02:34.539Z"
+  },
+  "LzgcvqoNSwz5R8loyka06X": {
+    "dailydevUrl": "https://daily.dev/posts/qscnp2fuu",
+    "externalId": "QsCNp2FUu",
+    "syndicatedAt": "2023-12-26T17:02:28.891Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMZPg": {
+    "dailydevUrl": "https://daily.dev/posts/ug9tileae",
+    "externalId": "UG9TilEaE",
+    "syndicatedAt": "2023-12-26T17:02:22.733Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMc5A": {
+    "dailydevUrl": "https://daily.dev/posts/42wdyl7wo",
+    "externalId": "42wdYl7Wo",
+    "syndicatedAt": "2023-12-26T17:02:17.051Z"
+  },
+  "ZKdo3vLUqcb4sYreiCPX8U": {
+    "dailydevUrl": "https://daily.dev/posts/join-us-as-we-explore-cloudinary-s-new-components-for-next-js-learn-how-to-optimize-images-integra-snhuw28rs",
+    "externalId": "sNhUw28RS",
+    "syndicatedAt": "2026-10-24T04:14:44.407Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMUN6": {
+    "dailydevUrl": "https://daily.dev/posts/5cjkupzg2",
+    "externalId": "5CjkupzG2",
+    "syndicatedAt": "2023-12-26T17:02:10.648Z"
+  },
+  "LzgcvqoNSwz5R8loykZyvN": {
+    "dailydevUrl": "https://daily.dev/posts/rejskzf4m",
+    "externalId": "REJSkzF4M",
+    "syndicatedAt": "2023-12-26T17:05:20.974Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMYNK": {
+    "dailydevUrl": "https://daily.dev/posts/o73qybxqw",
+    "externalId": "O73QYBxQw",
+    "syndicatedAt": "2023-12-26T17:02:04.512Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMdW2": {
+    "dailydevUrl": "https://daily.dev/posts/tfhe6wjte",
+    "externalId": "TfHe6WJTe",
+    "syndicatedAt": "2023-12-26T17:01:58.769Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMh1c": {
+    "dailydevUrl": "https://daily.dev/posts/a3vkjhktj",
+    "externalId": "a3VKJHKTJ",
+    "syndicatedAt": "2023-12-26T17:01:52.406Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMeke": {
+    "dailydevUrl": "https://daily.dev/posts/s8o3qnsbr",
+    "externalId": "S8O3QnsbR",
+    "syndicatedAt": "2023-12-26T17:01:45.368Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMbLC": {
+    "dailydevUrl": "https://daily.dev/posts/neojs55oj",
+    "externalId": "neOJs55OJ",
+    "syndicatedAt": "2023-12-26T17:01:38.600Z"
+  },
+  "LzgcvqoNSwz5R8loykZzyh": {
+    "dailydevUrl": "https://daily.dev/posts/edlzgd2dq",
+    "externalId": "EDLzgD2dQ",
+    "syndicatedAt": "2023-12-26T17:01:32.594Z"
+  },
+  "LzgcvqoNSwz5R8loykZzVx": {
+    "dailydevUrl": "https://daily.dev/posts/yzokrgbd6",
+    "externalId": "yZOKRGBD6",
+    "syndicatedAt": "2023-12-26T17:01:25.870Z"
+  },
+  "LzgcvqoNSwz5R8loykZyIB": {
+    "dailydevUrl": "https://daily.dev/posts/nnvhqiks1",
+    "externalId": "NnVHQIkS1",
+    "syndicatedAt": "2023-12-26T17:01:19.149Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMcWk": {
+    "dailydevUrl": "https://daily.dev/posts/al0tcmge2",
+    "externalId": "AL0Tcmge2",
+    "syndicatedAt": "2023-12-26T17:01:13.843Z"
+  },
+  "LzgcvqoNSwz5R8loykZxzt": {
+    "dailydevUrl": "https://daily.dev/posts/onmeybjcx",
+    "externalId": "OnmEYbjCX",
+    "syndicatedAt": "2023-12-26T17:01:06.263Z"
+  },
+  "LzgcvqoNSwz5R8loykZyQ1": {
+    "dailydevUrl": "https://daily.dev/posts/rgnrgpdab",
+    "externalId": "rGNRGPdAB",
+    "syndicatedAt": "2023-12-26T17:00:49.764Z"
+  },
+  "LzgcvqoNSwz5R8loykZxhb": {
+    "dailydevUrl": "https://daily.dev/posts/2fbw7y9jo",
+    "externalId": "2fBW7Y9jo",
+    "syndicatedAt": "2023-12-26T17:00:42.479Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMY4w": {
+    "dailydevUrl": "https://daily.dev/posts/xvr26ppsu",
+    "externalId": "XVR26Ppsu",
+    "syndicatedAt": "2023-12-26T17:00:33.769Z"
+  },
+  "ZKdo3vLUqcb4sYreiCMcvG": {
+    "dailydevUrl": "https://daily.dev/posts/gdvhk9ruo",
+    "externalId": "gDVhK9Ruo",
+    "syndicatedAt": "2023-12-26T17:00:10.364Z"
+  }
+}

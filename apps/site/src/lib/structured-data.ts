@@ -1,4 +1,17 @@
 import { absoluteUrl, SITE_NAME } from "./site";
+import { youtubeId } from "./youtube";
+
+function cleanDescription(
+	desc?: string | null,
+	fallback?: string | null,
+): string | undefined {
+	const trimmed = desc?.trim();
+	if (trimmed && trimmed.toLowerCase() !== "fix me") {
+		return trimmed;
+	}
+	const fb = fallback?.trim();
+	return fb && fb.toLowerCase() !== "fix me" ? fb : undefined;
+}
 
 /**
  * JSON-LD builders, ported from the Next app's lib/structured-data.ts.
@@ -105,7 +118,7 @@ export function articleSchema(
 		"@type": content.articleType ?? "TechArticle",
 		"@id": `${url}#article`,
 		headline: content.title ?? undefined,
-		description: content.excerpt ?? undefined,
+		description: cleanDescription(content.excerpt, content.title),
 		...(content.imageUrl ? { image: content.imageUrl } : {}),
 		...(content.date ? { datePublished: content.date } : {}),
 		...(content._updatedAt ? { dateModified: content._updatedAt } : {}),
@@ -212,19 +225,27 @@ export function videoObjectSchema(
 		durationIso = d;
 	}
 
+	const ytId = youtubeId(video.youtubeUrl);
+	const resolvedThumb =
+		video.thumbnailUrl ||
+		(ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : undefined);
+	const embedUrl = ytId
+		? `https://www.youtube.com/embed/${ytId}`
+		: video.youtubeUrl
+				.replace("watch?v=", "embed/")
+				.replace("youtu.be/", "www.youtube.com/embed/");
+
 	return {
 		"@type": "VideoObject",
 		"@id": `${url}#video`,
 		name: video.title ?? undefined,
-		description: video.description ?? undefined,
-		...(video.thumbnailUrl ? { thumbnailUrl: [video.thumbnailUrl] } : {}),
+		description: cleanDescription(video.description, video.title),
+		...(resolvedThumb ? { thumbnailUrl: [resolvedThumb] } : {}),
 		...(video.uploadDate ? { uploadDate: video.uploadDate } : {}),
 		...(durationIso ? { duration: durationIso } : {}),
 		...(video.transcript ? { transcript: video.transcript } : {}),
 		contentUrl: video.youtubeUrl,
-		embedUrl: video.youtubeUrl
-			.replace("watch?v=", "embed/")
-			.replace("youtu.be/", "www.youtube.com/embed/"),
+		embedUrl,
 	};
 }
 
@@ -334,7 +355,7 @@ export function podcastEpisodeSchema(
 		"@id": `${url}#episode`,
 		url,
 		name: content.title ?? undefined,
-		description: content.excerpt ?? undefined,
+		description: cleanDescription(content.excerpt, content.title),
 		...(content.date ? { datePublished: content.date } : {}),
 		...(content.imageUrl ? { image: content.imageUrl } : {}),
 		...(content.season ? { seasonNumber: content.season } : {}),

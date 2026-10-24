@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import { sendCodingCatEmail } from "@/lib/email";
+import { createGoogleCalendarBookingEvent } from "@/lib/google-calendar";
 import {
 	getSanityServerClient,
 	resolveSponsorTier,
@@ -20,6 +21,7 @@ interface SponsorshipPayload {
 	tier?: string | string[];
 	sponsorshipTier?: string | string[];
 	paymentPreference?: "checkout" | "invoice";
+	kickoffSlotStartAt?: string;
 	message?: string;
 }
 
@@ -85,6 +87,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		(data.company ?? data.companyName)?.trim() || name || "Sponsor Partner";
 	const website = data.website?.trim();
 	const rawTier = data.tier ?? data.sponsorshipTier;
+	const kickoffSlotStartAt = data.kickoffSlotStartAt?.trim();
 	const message = data.message?.trim();
 
 	if (!name) {
@@ -138,7 +141,38 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
 
-	// 1. Optional Stripe 50% Upfront Deposit Checkout + Net-15 Invoice generation
+	const queryFallback = new URLSearchParams({
+		company,
+		name,
+		email,
+		tier: selectedTier.id,
+		...(kickoffSlotStartAt ? { bookedSlot: kickoffSlotStartAt } : {}),
+	});
+	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;
+
+	// 1. Optional 15-min Sponsor Kickoff Call booking if slot pre-selected on /sponsorships
+	let calendarEventUrl: string | undefined;
+	if (kickoffSlotStartAt) {
+		try {
+			const calResult = await createGoogleCalendarBookingEvent({
+				guestName: name,
+				guestEmail: email,
+				company,
+				track: "sponsor-kickoff",
+				startAt: kickoffSlotStartAt,
+				durationMinutes: 15,
+				topics:
+					message ||
+					`15-Min Sponsor Kickoff: ${selectedTier.name} ($${selectedTier.priceUsd})`,
+				portalUrl,
+			});
+			calendarEventUrl = calResult.htmlLink || calResult.addToCalendarUrl;
+		} catch {
+			// Non-fatal
+		}
+	}
+
+	// 2. Optional Stripe 50% Upfront Deposit Checkout + Net-15 Invoice generation
 	let stripeDepositCheckoutUrl: string | undefined;
 	let stripeDepositInvoiceId: string | undefined;
 	let stripeDepositInvoiceUrl: string | undefined;
@@ -174,7 +208,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		// Non-fatal if Stripe is not configured in local dev
 	}
 
-	// 2. Persist sponsorLead directly in Sanity
+	// 3. Persist sponsorLead directly in Sanity
 	const { client, canWrite } = getSanityServerClient();
 	if (canWrite) {
 		try {
@@ -187,8 +221,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 				...(website ? { website } : {}),
 				portalToken,
 				source: "inbound",
-				status:
-					stripeDepositCheckoutUrl || stripeDepositInvoiceUrl
+				status: kickoffSlotStartAt
+					? "booked"
+					: stripeDepositCheckoutUrl || stripeDepositInvoiceUrl
 						? "deposit_sent"
 						: "new",
 				rateCard: selectedTier.id,
@@ -214,15 +249,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		}
 	}
 
-	const queryFallback = new URLSearchParams({
-		company,
-		name,
-		email,
-		tier: selectedTier.id,
-	});
-	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;
-
-	// 3. Fire-and-forget notification email via Cloudflare Email Routing if bound
+	// 4. Fire-and-forget notification email via Cloudflare Email Routing if bound
 	await sendCodingCatEmail({
 		to: "alex.patterson@gmail.com",
 		subject: `[CodingCat.dev Sponsor Inquiry] ${company} (${selectedTier.name} - $${selectedTier.priceUsd})`,
@@ -231,6 +258,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 			`Company: ${company}`,
 			`Contact: ${name} <${email}>`,
 			`Package: ${selectedTier.name} ($${selectedTier.priceUsd} total / $${selectedTier.depositAmountCents / 100} 50% deposit)`,
+			...(kickoffSlotStartAt
+				? [`15-Min Kickoff Slot Booked: ${kickoffSlotStartAt}`]
+				: []),
+			...(calendarEventUrl ? [`Calendar Event: ${calendarEventUrl}`] : []),
 			`Deal Room URL: ${portalUrl}`,
 			`Message: ${message || "(none)"}`,
 		].join("\n"),
@@ -245,6 +276,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 			portalToken,
 			portalUrl,
 			dealRoomUrl: portalUrl,
+			kickoffSlotStartAt,
+			calendarEventUrl,
 			depositAmountUsd: selectedTier.depositAmountCents / 100,
 			totalAmountUsd: selectedTier.priceUsd,
 			stripeDepositCheckoutUrl,

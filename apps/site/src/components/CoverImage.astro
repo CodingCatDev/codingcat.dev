@@ -8,6 +8,7 @@ interface Props {
 	width?: number;
 	height?: number;
 	quality?: number;
+	sizes?: string;
 	/** Above-the-fold images opt out of lazy loading. */
 	priority?: boolean;
 	class?: string;
@@ -18,17 +19,48 @@ const {
 	fallbackAlt = "CodingCat.dev tutorial cover image",
 	width = 1920,
 	height = 1080,
-	quality = 80,
+	quality = 82,
+	sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 960px",
 	priority = false,
-	class: className = "w-full h-auto aspect-video rounded-md",
+	class: className = "w-full h-auto aspect-video rounded-md object-cover",
 } = Astro.props;
 
-const src = Astro.locals.sanity
-	.urlForImage(image ?? undefined)
-	?.width(width)
-	.height(height)
-	.quality(quality)
-	.url();
+const assetRef = stegaClean(
+	(image as { asset?: { _ref?: string } } | null)?.asset?._ref,
+);
+const dimMatch = assetRef?.match(/-(\d+)x(\d+)-[a-z0-9]+$/i);
+const intrinsicWidth = dimMatch ? Number(dimMatch[1]) : undefined;
+
+const builder = Astro.locals.sanity.urlForImage(image ?? undefined);
+const aspect = height / width;
+const isSquare = width === height;
+const maxWidth = intrinsicWidth ? Math.min(width, intrinsicWidth) : width;
+const maxHeight = Math.round(maxWidth * aspect);
+
+const buildUrl = (w: number) => {
+	if (!builder) return undefined;
+	const b = builder.width(w);
+	return (isSquare ? b.height(Math.round(w * aspect)) : b)
+		.quality(quality)
+		.url();
+};
+
+const src = buildUrl(maxWidth);
+
+const responsiveWidths = [320, 480, 640, 960, 1280, 1600, 1920].filter(
+	(w) => w <= maxWidth,
+);
+if (!responsiveWidths.includes(maxWidth)) {
+	responsiveWidths.push(maxWidth);
+}
+const srcset = builder
+	? responsiveWidths
+			.map((w) => {
+				const u = buildUrl(w);
+				return `${u} ${w}w`;
+			})
+			.join(", ")
+	: undefined;
 
 // stegaClean: alt lands in an attribute, where stega's zero-width characters
 // would be read out verbatim by screen readers.
@@ -42,13 +74,14 @@ const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : fallbackAlt;
 			<img
 				class={className}
 				src={src}
-				width={width}
-				height={height}
+				srcset={srcset}
+				width={maxWidth}
+				height={maxHeight}
 				alt={alt}
 				loading={priority ? "eager" : "lazy"}
 				fetchpriority={priority ? "high" : "auto"}
 				decoding={priority ? "sync" : "async"}
-				sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+				sizes={sizes}
 			/>
 		) : (
 			<div class="bg-muted rounded-md" style="padding-top: 50%" />

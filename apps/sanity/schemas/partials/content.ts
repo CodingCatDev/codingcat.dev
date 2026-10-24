@@ -82,12 +82,53 @@ const content = defineType({
 			group: "data",
 		}),
 		defineField({
+			name: "awsbuilder",
+			title: "AWS Builder Center",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
+			name: "dailydev",
+			title: "daily.dev Squad",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
+			name: "medium",
+			title: "Medium",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
+			name: "reddit",
+			title: "Reddit (r/CodingCatDev)",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
+			name: "tags",
+			title: "Tags",
+			description:
+				"Topic, programming language, and company tags used for filtering and platform syndication (e.g., AWS Builder Center requires the AWS tag).",
+			type: "array",
+			of: [
+				{
+					type: "object",
+					name: "tag",
+					fields: [
+						defineField({ name: "label", title: "Label", type: "string" }),
+						defineField({ name: "value", title: "Value", type: "string" }),
+					],
+				},
+			],
+		}),
+		defineField({
 			name: "syndications",
 			title: "Syndications",
 			type: "array",
 			group: "data",
 			of: [{ type: "reference", to: [{ type: "syndication" }] }],
-			description: "Associated cross-platform syndication records (Dev.to, Hashnode, etc.)",
+			description: "Associated cross-platform syndication records (Dev.to, Hashnode, AWS Builder Center, etc.)",
 			readOnly: true,
 		}),
 		defineField({
@@ -121,22 +162,6 @@ const content = defineType({
 		}),
 		// Legacy fields retained as hidden/readOnly so existing production documents
 		// do not trigger "Unknown fields found" warnings in Sanity Studio.
-		defineField({
-			name: "tags",
-			type: "array",
-			of: [
-				{
-					type: "object",
-					name: "tag",
-					fields: [
-						defineField({ name: "label", type: "string" }),
-						defineField({ name: "value", type: "string" }),
-					],
-				},
-			],
-			hidden: true,
-			readOnly: true,
-		}),
 		defineField({
 			name: "views",
 			type: "number",

@@ -37,7 +37,11 @@ jobs:
 
       - name: Syndicate Post
         run: |
-          node scripts/run-syndicate-post.mjs
+          if [ "$TARGET_DOCUMENT_ID" = "backfill-dailydev" ]; then
+            node scripts/backfill-dailydev-and-links.mjs
+          else
+            node scripts/run-syndicate-post.mjs
+          fi
         env:
           TARGET_DOCUMENT_ID: ${{ inputs.document_id }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -48,3 +52,9 @@ jobs:
           PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
           DEVTO_API_KEY: ${{ secrets.PRIVATE_DEVTO }}
           HASHNODE_ACCESS_TOKEN: ${{ secrets.PRIVATE_HASHNODE }}
+          AWS_BUILDER_SESSION_TOKEN: ${{ secrets.AWS_BUILDER_SESSION_TOKEN }}
+          DAILY_DEV_TOKEN: ${{ secrets.DAILY_DEV_TOKEN }}
+          DAILY_DEV_SESSION_COOKIE: ${{ secrets.DAILY_DEV_SESSION_COOKIE }}
+          GOOGLE_WORKSPACE_REFRESH_TOKEN: ${{ secrets.GOOGLE_WORKSPACE_REFRESH_TOKEN }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}

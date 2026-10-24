@@ -1,6 +1,5 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import PodmatchBadge from "@/components/PodmatchBadge.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 
@@ -14,6 +13,8 @@ const initialTrack =
 const initialCompany = searchParams.get("company") || "";
 const initialName = searchParams.get("name") || "";
 const initialEmail = searchParams.get("email") || "";
+const initialPortalToken = searchParams.get("portalToken") || "";
+const initialSlotParam = searchParams.get("slot") || "";
 
 const { slots: upcomingSlots, liveVerified } = await getMultiCalendarAvailableSlots(6);
 
@@ -144,14 +145,9 @@ const description =
 							</span>
 						)}
 					</h2>
-					<a
-						href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-xs font-semibold text-primary hover:underline"
-					>
-						View full live Google Calendar schedule &nearr;
-					</a>
+					<span class="text-xs text-muted-foreground">
+						Checked across CodingCat.dev, FlipFeeds &amp; studio calendars
+					</span>
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="slot-grid">
@@ -353,30 +349,38 @@ const description =
 			</div>
 
 			<div class="flex flex-col gap-2">
-				<h2 class="text-2xl font-bold tracking-tight text-foreground">
-					Intake &amp; Media Release Recorded!
+				<h2 id="confirmed-heading" class="text-2xl font-bold tracking-tight text-foreground">
+					Session Booked &amp; E-SIGN Release Recorded!
 				</h2>
-				<p class="text-sm text-muted-foreground max-w-lg mx-auto">
-					Your E-SIGN appearance release with <strong class="text-foreground">Alex Patterson</strong> has been saved to Sanity. Lock in your exact Google Calendar invite below.
+				<p id="confirmed-summary" class="text-sm text-muted-foreground max-w-lg mx-auto">
+					Your E-SIGN appearance release with <strong class="text-foreground">Alex Patterson</strong> has been saved to Sanity and synced with Google Calendar.
 				</p>
 			</div>
 
-			<!-- Google Calendar Appointment Link Box -->
+			<!-- Google Calendar Event / Invite Box -->
 			<div class="flex flex-col gap-3 p-5 rounded-xl border border-border bg-muted/50 text-left max-w-lg mx-auto w-full">
-				<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-					Step 2: Lock Your Google Calendar Invite
+				<span id="confirmed-calendar-badge" class="text-xs font-semibold uppercase tracking-wider text-primary">
+					Google Calendar Sync
 				</span>
+				<p id="confirmed-slot-display" class="text-sm font-bold text-foreground"></p>
 				<a
 					id="confirmed-calendar-link"
-					href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
+					href="/book"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="px-5 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold text-center hover:bg-primary/90 transition-colors"
 				>
-					Open Google Calendar Appointment Schedule &nearr;
+					Add / View Session in Google Calendar &nearr;
 				</a>
-				<p class="text-[11px] text-muted-foreground">
-					Selecting your time on the Google Calendar schedule automatically sends calendar invites and recording links to both you and Alex.
+				<a
+					id="confirmed-portal-link"
+					href="/sponsorships"
+					class="hidden px-5 py-3 rounded-xl border border-primary bg-primary/10 text-primary text-sm font-semibold text-center hover:bg-primary/20 transition-colors"
+				>
+					Open Your Sponsor Deal Room &rarr;
+				</a>
+				<p id="confirmed-calendar-note" class="text-[11px] text-muted-foreground">
+					A calendar hold and E-SIGN receipt have been created for your selected recording window.
 				</p>
 			</div>
 
@@ -396,21 +400,20 @@ const description =
 			</div>
 		</div>
 
-		<!-- PodMatch Badge Footer -->
+		<!-- Footer -->
 		<footer class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
 			<div class="flex flex-col gap-1 text-center sm:text-left">
-				<span class="text-xs font-semibold text-foreground">PodMatch Network Certified</span>
+				<span class="text-xs font-semibold text-foreground">CodingCat.dev Studio</span>
 				<span class="text-xs text-muted-foreground">Powered by CodingCat.dev &amp; Sanity Content Operating System</span>
 			</div>
-			<PodmatchBadge />
 		</footer>
 	</div>
 </BaseLayout>
 
-<script is:inline define:vars={{ initialTrack }}>
+<script is:inline define:vars={{ initialTrack, initialPortalToken, initialSlotParam }}>
 	(function () {
 		let selectedTrack = initialTrack || "editorial";
-		let selectedSlotStart = "";
+		let selectedSlotStart = initialSlotParam || "";
 		let signatureMode = "draw";
 		let hasDrawn = false;
 		let isDrawing = false;
@@ -622,6 +625,7 @@ const description =
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
+							portalToken: initialPortalToken || undefined,
 							guestName: name,
 							guestEmail: email,
 							company,
@@ -639,16 +643,62 @@ const description =
 
 					const data = await res.json();
 					if (res.ok && data.success) {
-						// If Sponsored Fast-Track, redirect straight to the Sponsor Deal Room
-						if (data.isSponsored && data.portalUrl) {
-							window.location.href = data.portalUrl;
-							return;
+						const confirmedHeading = document.getElementById("confirmed-heading");
+						const confirmedSummary = document.getElementById("confirmed-summary");
+						const confirmedSlotDisplay = document.getElementById("confirmed-slot-display");
+						const confirmedBadge = document.getElementById("confirmed-calendar-badge");
+						const confirmedNote = document.getElementById("confirmed-calendar-note");
+						const confirmedPortalLink = document.getElementById("confirmed-portal-link");
+
+						if (confirmedSlotDisplay && selectedSlotStart) {
+							try {
+								confirmedSlotDisplay.textContent = `Scheduled Window: ${new Date(selectedSlotStart).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}`;
+							} catch {
+								confirmedSlotDisplay.textContent = `Scheduled Window: ${selectedSlotStart}`;
+							}
 						}
-						if (confirmedCalLink && data.appointmentScheduleUrl) {
-							confirmedCalLink.setAttribute("href", data.appointmentScheduleUrl);
+
+						if (data.calendarInviteSent) {
+							if (confirmedHeading) {
+								confirmedHeading.textContent = "Google Calendar Invite Sent & E-SIGN Release Recorded!";
+							}
+							if (confirmedBadge) {
+								confirmedBadge.textContent = "✓ Confirmed Google Calendar Invite Sent";
+							}
+							if (confirmedNote) {
+								confirmedNote.textContent = `A confirmed Google Calendar invitation has been sent to ${email} and placed on Alex Patterson's studio calendar.`;
+							}
+						} else if (data.calendarEventStatus === "tentative") {
+							if (confirmedHeading) {
+								confirmedHeading.textContent = "Editorial Hold Created & E-SIGN Release Recorded!";
+							}
+							if (confirmedBadge) {
+								confirmedBadge.textContent = "✓ Tentative Studio Calendar Hold Created";
+							}
+							if (confirmedNote) {
+								confirmedNote.textContent = "Your requested time is held on Alex Patterson's studio calendar pending editorial review. Use the button above to add a hold to your own Google Calendar.";
+							}
 						}
+
+						if (confirmedSummary && data.message) {
+							confirmedSummary.textContent = data.message;
+						}
+
+						const calHref = data.calendarEventUrl || data.addToCalendarUrl || data.appointmentScheduleUrl;
+						if (confirmedCalLink && calHref) {
+							confirmedCalLink.setAttribute("href", calHref);
+						}
+
+						if (data.isSponsored && data.portalUrl && confirmedPortalLink) {
+							confirmedPortalLink.setAttribute("href", data.portalUrl);
+							confirmedPortalLink.classList.remove("hidden");
+						}
+
 						if (bookingContainer) bookingContainer.classList.add("hidden");
-						if (confirmedCard) confirmedCard.classList.remove("hidden");
+						if (confirmedCard) {
+							confirmedCard.classList.remove("hidden");
+							confirmedCard.classList.add("flex");
+						}
 						window.scrollTo({ top: 0, behavior: "smooth" });
 					} else {
 						showError(data.message || "Failed to save booking session. Please try again.");

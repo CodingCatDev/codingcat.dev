@@ -12,10 +12,21 @@ interface Props {
 	image?: (SanityImageSource & { alt?: string }) | null;
 	video?: { asset?: { _ref?: string } } | null;
 	youtube?: string | null;
+	width?: number;
+	height?: number;
+	sizes?: string;
 	class?: string;
 }
 
-const { image, video, youtube, class: className } = Astro.props;
+const {
+	image,
+	video,
+	youtube,
+	width,
+	height,
+	sizes = "(max-width: 1280px) 100vw, 1280px",
+	class: className,
+} = Astro.props;
 
 /**
  * Sanity file refs are `file-{hash}-{ext}`. The Next version read the project
@@ -54,8 +65,21 @@ const youtubeUrl = stegaClean(youtube);
 			</video>
 		</div>
 	) : youtubeUrl ? (
-		<PtYouTube node={{ _type: "youtube", youtube: youtubeUrl }} index={0} isInline={false} />
+		<PtYouTube
+			node={{ _type: "youtube", youtube: youtubeUrl }}
+			coverImage={image}
+			priority
+			index={0}
+			isInline={false}
+		/>
 	) : (
-		<CoverImage image={image} priority class={className} />
+		<CoverImage
+			image={image}
+			width={width}
+			height={height}
+			priority
+			sizes={sizes}
+			class={className}
+		/>
 	)
 }

@@ -1,7 +1,7 @@
 import { useDocuments } from "@sanity/sdk-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-type WorkspaceTab = "crm" | "bookings" | "billing";
+type WorkspaceTab = "crm" | "bookings" | "billing" | "syndication";
 
 interface SeededGmailDraft {
 	companyName: string;
@@ -98,6 +98,12 @@ const ACTIVE_GMAIL_DEALS: SeededGmailDraft[] = [
 ];
 
 export function App() {
+	const projectId = process.env.SANITY_APP_PROJECT_ID || "hfh83o0w";
+	const dataset = process.env.SANITY_APP_DATASET || "production";
+	const isDev = dataset === "dev";
+	const envLabel = isDev ? "Dev" : "Production";
+	const siteOrigin = isDev ? "https://dev.codingcat.dev" : "https://codingcat.dev";
+
 	const [activeTab, setActiveTab] = useState<WorkspaceTab>("crm");
 	const [discovering, setDiscovering] = useState(false);
 	const [discoveredProspects, setDiscoveredProspects] = useState<Array<any>>([]);
@@ -105,11 +111,38 @@ export function App() {
 	const sponsorLeads = useDocuments({ documentType: "sponsorLead" });
 	const sponsorPool = useDocuments({ documentType: "sponsorPool" });
 	const bookings = useDocuments({ documentType: "booking" });
+	const syndications = useDocuments({ documentType: "syndication" });
+	const [syndicatedContent, setSyndicatedContent] = useState<Array<any>>([]);
+
+	useEffect(() => {
+		const query = encodeURIComponent(
+			`*[_type in ["post", "podcast"] && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...40] {
+				_id,
+				_type,
+				title,
+				"slug": slug.current,
+				"date": coalesce(date, _createdAt),
+				youtube,
+				dailydev,
+				devto,
+				hashnode,
+				awsbuilder,
+				medium,
+				reddit
+			}`,
+		);
+		fetch(`https://${projectId}.apicdn.sanity.io/v2025-09-30/data/query/${dataset}?query=${query}`)
+			.then((r) => r.json())
+			.then((d) => {
+				if (Array.isArray(d?.result)) setSyndicatedContent(d.result);
+			})
+			.catch(() => {});
+	}, [projectId, dataset]);
 
 	const handleDiscoverOutbound = async () => {
 		setDiscovering(true);
 		try {
-			const res = await fetch("https://codingcat.dev/api/sponsors/outbound");
+			const res = await fetch(`${siteOrigin}/api/sponsors/outbound`);
 			if (res.ok) {
 				const data = await res.json();
 				setDiscoveredProspects(data.prospects || []);
@@ -125,9 +158,12 @@ export function App() {
 		<div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 1200, margin: "0 auto" }}>
 			<header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
 				<div>
-					<h1 style={{ margin: 0, fontSize: 28 }}>CodingCat.dev Revenue &amp; Booking OS</h1>
+					<h1 style={{ margin: 0, fontSize: 28 }}>
+						CodingCat.dev Revenue &amp; Booking OS ({envLabel})
+					</h1>
 					<p style={{ margin: "4px 0 0", color: "#666", fontSize: 14 }}>
-						Unified Sanity App SDK Workspace &middot; Project <code>hfh83o0w</code> (Production)
+						Unified Sanity App SDK Workspace &middot; Project <code>{projectId}</code> &middot; Dataset{" "}
+						<code>{dataset}</code> ({envLabel})
 					</p>
 				</div>
 				<div style={{ display: "flex", gap: 8 }}>
@@ -175,6 +211,21 @@ export function App() {
 						}}
 					>
 						3. Stripe 50/50 Billing &amp; Deal Rooms
+					</button>
+					<button
+						type="button"
+						onClick={() => setActiveTab("syndication")}
+						style={{
+							padding: "8px 16px",
+							borderRadius: 8,
+							border: "1px solid #ccc",
+							background: activeTab === "syndication" ? "#111" : "#fff",
+							color: activeTab === "syndication" ? "#fff" : "#111",
+							fontWeight: 600,
+							cursor: "pointer",
+						}}
+					>
+						4. Syndication &amp; Platform Links ({syndications.data?.length || syndicatedContent.length})
 					</button>
 				</div>
 			</header>
@@ -277,20 +328,20 @@ export function App() {
 					</p>
 					<div style={{ display: "flex", gap: 12, marginTop: 16 }}>
 						<a
-							href="https://calendar.app.google/s3B6PEqbVsGcY81MA"
+							href="https://codingcat.dev/book"
 							target="_blank"
 							rel="noreferrer"
 							style={{ padding: "10px 16px", background: "#111", color: "#fff", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 600 }}
 						>
-							Open Podcast Recording Schedule &nearr;
+							Open Podcast Recording Booking &nearr;
 						</a>
 						<a
-							href="https://calendar.app.google/tyGiF6dGFQeaVrN66"
+							href="https://codingcat.dev/sponsorships#sponsorship-form"
 							target="_blank"
 							rel="noreferrer"
 							style={{ padding: "10px 16px", border: "1px solid #ccc", color: "#111", borderRadius: 8, textDecoration: "none", fontSize: 13, fontWeight: 600 }}
 						>
-							Open Sponsor Discovery Schedule &nearr;
+							Open Sponsor Discovery &amp; Deal Room &nearr;
 						</a>
 					</div>
 				</section>
@@ -307,6 +358,133 @@ export function App() {
 						<li><strong>Sponsored Podcast &amp; Multi-Channel Showcase ($2,000)</strong>: $1,000 upfront deposit + $1,000 on publish</li>
 						<li><strong>Ecosystem Integration ($950)</strong>: $475 upfront deposit + $475 on publish</li>
 					</ul>
+				</section>
+			)}
+
+			{activeTab === "syndication" && (
+				<section style={{ padding: 20, border: "1px solid #ddd", borderRadius: 12 }}>
+					<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+						<div>
+							<h2 style={{ margin: 0, fontSize: 18 }}>Cross-Platform Syndication &amp; YouTube Funnel Tracker</h2>
+							<p style={{ margin: "4px 0 0", color: "#666", fontSize: 13 }}>
+								Tracks canonical <code>codingcat.dev</code> URLs and outbound links across YouTube, daily.dev Squad, Dev.to, Hashnode, AWS Builder Center, Medium, and Reddit.
+							</p>
+						</div>
+						<div style={{ display: "flex", gap: 8 }}>
+							<a
+								href="https://daily.dev/squads/codingcatdev"
+								target="_blank"
+								rel="noreferrer"
+								style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 6, textDecoration: "none", color: "#111", fontSize: 12, fontWeight: 600 }}
+							>
+								daily.dev Squad &nearr;
+							</a>
+							<a
+								href="https://dev.to/codingcatdev"
+								target="_blank"
+								rel="noreferrer"
+								style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 6, textDecoration: "none", color: "#111", fontSize: 12, fontWeight: 600 }}
+							>
+								Dev.to Org &nearr;
+							</a>
+						</div>
+					</div>
+					<div style={{ overflowX: "auto" }}>
+						<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+							<thead>
+								<tr style={{ textAlign: "left", borderBottom: "2px solid #eee" }}>
+									<th style={{ padding: "8px 6px" }}>Date</th>
+									<th style={{ padding: "8px 6px" }}>Title (Canonical)</th>
+									<th style={{ padding: "8px 6px" }}>YouTube</th>
+									<th style={{ padding: "8px 6px" }}>daily.dev Squad</th>
+									<th style={{ padding: "8px 6px" }}>Dev.to</th>
+									<th style={{ padding: "8px 6px" }}>Hashnode</th>
+									<th style={{ padding: "8px 6px" }}>AWS Builder</th>
+									<th style={{ padding: "8px 6px" }}>Medium / Reddit</th>
+								</tr>
+							</thead>
+							<tbody>
+								{syndicatedContent.map((item) => {
+									const canonical = `${siteOrigin}/${item._type}/${item.slug}`;
+									const hnUrl = item.hashnode
+										? item.hashnode.startsWith("http")
+											? item.hashnode
+											: `https://hashnode.codingcat.dev/${item.hashnode}`
+										: null;
+									return (
+										<tr key={item._id} style={{ borderBottom: "1px solid #f0f0f0" }}>
+											<td style={{ padding: "8px 6px", whiteSpace: "nowrap", color: "#666" }}>
+												{(item.date || "").slice(0, 10)}
+											</td>
+											<td style={{ padding: "8px 6px", fontWeight: 600 }}>
+												<a href={canonical} target="_blank" rel="noreferrer" style={{ color: "#111" }}>
+													{item.title}
+												</a>
+											</td>
+											<td style={{ padding: "8px 6px" }}>
+												{item.youtube ? (
+													<a href={item.youtube} target="_blank" rel="noreferrer" style={{ color: "#c00", fontWeight: 600 }}>
+														Watch &nearr;
+													</a>
+												) : (
+													<span style={{ color: "#aaa" }}>-</span>
+												)}
+											</td>
+											<td style={{ padding: "8px 6px" }}>
+												{item.dailydev ? (
+													<a href={item.dailydev} target="_blank" rel="noreferrer" style={{ color: "#7c3aed", fontWeight: 600 }}>
+														Squad &nearr;
+													</a>
+												) : (
+													<span style={{ color: "#aaa" }}>-</span>
+												)}
+											</td>
+											<td style={{ padding: "8px 6px" }}>
+												{item.devto ? (
+													<a href={item.devto} target="_blank" rel="noreferrer" style={{ color: "#2563eb", fontWeight: 600 }}>
+														Dev.to &nearr;
+													</a>
+												) : (
+													<span style={{ color: "#aaa" }}>-</span>
+												)}
+											</td>
+											<td style={{ padding: "8px 6px" }}>
+												{hnUrl ? (
+													<a href={hnUrl} target="_blank" rel="noreferrer" style={{ color: "#2563eb", fontWeight: 600 }}>
+														Hashnode &nearr;
+													</a>
+												) : (
+													<span style={{ color: "#aaa" }}>-</span>
+												)}
+											</td>
+											<td style={{ padding: "8px 6px" }}>
+												{item.awsbuilder ? (
+													<a href={item.awsbuilder} target="_blank" rel="noreferrer" style={{ color: "#d97706", fontWeight: 600 }}>
+														AWS &nearr;
+													</a>
+												) : (
+													<span style={{ color: "#aaa" }}>-</span>
+												)}
+											</td>
+											<td style={{ padding: "8px 6px" }}>
+												{item.medium && (
+													<a href={item.medium} target="_blank" rel="noreferrer" style={{ marginRight: 8 }}>
+														Medium &nearr;
+													</a>
+												)}
+												{item.reddit && (
+													<a href={item.reddit} target="_blank" rel="noreferrer" style={{ color: "#ea580c" }}>
+														Reddit &nearr;
+													</a>
+												)}
+												{!item.medium && !item.reddit && <span style={{ color: "#aaa" }}>-</span>}
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
 				</section>
 			)}
 		</div>

@@ -42,6 +42,14 @@ jobs:
           path: /tmp/sanity-production-backup.ndjson.gz
           retention-days: 30
 
+      - name: Sync Enriched Guest Socials to Sanity Dataset
+        run: node apps/sanity/scripts/sync-guest-socials.mjs
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
         working-directory: apps/sanity
@@ -51,19 +59,71 @@ jobs:
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
+      - name: Deploy Sanity Ops App (Sanity App SDK)
+        working-directory: apps/ops
+        run: |
+          ORG_ID=$(node -e "
+            fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
+              headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (!d.organizationId) throw new Error('No organizationId in project response');
+              console.log(d.organizationId);
+            })
+            .catch(err => { console.error(err); process.exit(1); });
+          ")
+          export SANITY_ORGANIZATION_ID="$ORG_ID"
+          if [ "${{ vars.SANITY_STUDIO_DATASET }}" = "dev" ]; then
+            APP_TITLE="CodingCat Ops & Revenue OS (Dev)"
+          else
+            APP_TITLE="CodingCat Ops & Revenue OS (Production)"
+          fi
+          export APP_TITLE
+          EXISTING_APP_ID=$(node -e "
+            fetch('https://api.sanity.io/v2024-08-01/user-applications?appType=coreApp&organizationId=' + process.env.SANITY_ORGANIZATION_ID, {
+              headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
+            })
+            .then(r => r.ok ? r.json() : [])
+            .then(apps => {
+              const list = Array.isArray(apps) ? apps : [];
+              const targetTitle = process.env.APP_TITLE;
+              const isDev = process.env.SANITY_APP_DATASET === 'dev';
+              const match = list.find(a =>
+                a.title === targetTitle ||
+                (isDev && (a.id === 'yiugiba2sjnhpehqmky6nulc' || a.title === 'CodingCat Ops & Revenue OS'))
+              );
+              if (match && match.id) console.log(match.id);
+            })
+            .catch(() => {});
+          ")
+          if [ -n "$EXISTING_APP_ID" ]; then
+            echo "Found existing $APP_TITLE app: $EXISTING_APP_ID"
+            SANITY_OPS_APP_ID="$EXISTING_APP_ID" npx sanity deploy -y
+          else
+            echo "Creating and deploying new $APP_TITLE app in organization $ORG_ID..."
+            npx sanity deploy -y --create --title "$APP_TITLE"
+          fi
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_APP_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_APP_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+
       - name: Promote Stack to Organization Scope
         run: |
           mkdir -p .sanity
           echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
 
-      - name: Deploy Sanity Blueprints Functions
+      - name: Deploy Sanity Blueprints & Poll Synchronously Until Completed
         run: |
           ORG_ID=$(node -e "
             fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
-              headers: { Authorization: 'Bearer ${{ secrets.SANITY_AUTH_TOKEN }}' }
+              headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
             })
             .then(r => r.json())
             .then(d => {
@@ -75,7 +135,66 @@ jobs:
           echo "Resolved Organization ID: $ORG_ID"
           mkdir -p .sanity
           echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait
+
+          echo "=== Previous Stack Info & Logs ==="
+          pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+
+          echo "=== Blueprint Deployment Plan ==="
+          pnpm exec sanity blueprints plan --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+
+          echo "=== Starting Blueprint Deployment (--verbose) ==="
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait --verbose
+
+          echo "=== Synchronously Polling Blueprint Stack Operation Until Terminal State ==="
+          ORG_ID="$ORG_ID" STACK_NAME="${{ vars.SANITY_STUDIO_DATASET }}" node -e "
+            const token = process.env.SANITY_AUTH_TOKEN;
+            const orgId = process.env.ORG_ID;
+            const stackName = process.env.STACK_NAME;
+            const headers = {
+              Accept: 'application/json',
+              Authorization: 'Bearer ' + token,
+              'X-Sanity-Scope-Type': 'organization',
+              'X-Sanity-Scope-Id': orgId,
+            };
+            (async () => {
+              const stacksRes = await fetch('https://api.sanity.io/v2026-06-15/blueprints/stacks', { headers });
+              if (!stacksRes.ok) throw new Error('Failed to list stacks: HTTP ' + stacksRes.status);
+              const stacks = await stacksRes.json();
+              const stack = stacks.find(s => s.name === stackName || s.id === stackName);
+              if (!stack) throw new Error('Stack not found: ' + stackName);
+              console.log('Polling Stack:', stack.name, '(' + stack.id + ')');
+              const deadline = Date.now() + 5 * 60 * 1000;
+              while (Date.now() < deadline) {
+                const res = await fetch('https://api.sanity.io/v2026-06-15/blueprints/stacks/' + stack.id, { headers });
+                if (!res.ok) throw new Error('Failed to fetch stack ' + stack.id + ': HTTP ' + res.status);
+                const data = await res.json();
+                const op = data.recentOperation;
+                const status = op?.status || 'NONE';
+                console.log('[' + new Date().toISOString() + '] Operation ' + (op?.id || 'n/a') + ' status: ' + status);
+                if (status === 'COMPLETED' || status === 'NONE') {
+                  console.log('✔ Blueprint Stack operation settled with status:', status);
+                  process.exit(0);
+                }
+                if (status === 'FAILED' || status === 'CANCELLED') {
+                  console.error('✖ Blueprint Stack operation failed:', JSON.stringify(op, null, 2));
+                  const logsRes = await fetch('https://api.sanity.io/v2026-06-15/blueprints/logs?stackId=' + stack.id + (op?.id ? '&operationId=' + op.id : ''), { headers });
+                  if (logsRes.ok) {
+                    const logs = await logsRes.json();
+                    console.error('Operation logs:', JSON.stringify(logs, null, 2));
+                  }
+                  process.exit(1);
+                }
+                await new Promise(r => setTimeout(r, 4000));
+              }
+              console.error('✖ Timed out waiting 5 minutes for Blueprint Stack operation to complete');
+              process.exit(1);
+            })().catch(err => { console.error(err); process.exit(1); });
+          "
+
+          echo "=== Verified Post-Deploy Stack Info & Logs (--verbose) ==="
+          pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --limit 50 --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
@@ -116,6 +235,14 @@ jobs:
           path: /tmp/sanity-production-backup.ndjson.gz
           retention-days: 30
 
+      - name: Sync Enriched Guest Socials to Sanity Dataset
+        run: node apps/sanity/scripts/sync-guest-socials.mjs
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+
       - name: Deploy Sanity Studio
         run: npx sanity deploy -y
         working-directory: apps/sanity
@@ -125,19 +252,71 @@ jobs:
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
           SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
 
+      - name: Deploy Sanity Ops App (Sanity App SDK)
+        working-directory: apps/ops
+        run: |
+          ORG_ID=$(node -e "
+            fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
+              headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (!d.organizationId) throw new Error('No organizationId in project response');
+              console.log(d.organizationId);
+            })
+            .catch(err => { console.error(err); process.exit(1); });
+          ")
+          export SANITY_ORGANIZATION_ID="$ORG_ID"
+          if [ "${{ vars.SANITY_STUDIO_DATASET }}" = "dev" ]; then
+            APP_TITLE="CodingCat Ops & Revenue OS (Dev)"
+          else
+            APP_TITLE="CodingCat Ops & Revenue OS (Production)"
+          fi
+          export APP_TITLE
+          EXISTING_APP_ID=$(node -e "
+            fetch('https://api.sanity.io/v2024-08-01/user-applications?appType=coreApp&organizationId=' + process.env.SANITY_ORGANIZATION_ID, {
+              headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
+            })
+            .then(r => r.ok ? r.json() : [])
+            .then(apps => {
+              const list = Array.isArray(apps) ? apps : [];
+              const targetTitle = process.env.APP_TITLE;
+              const isDev = process.env.SANITY_APP_DATASET === 'dev';
+              const match = list.find(a =>
+                a.title === targetTitle ||
+                (isDev && (a.id === 'yiugiba2sjnhpehqmky6nulc' || a.title === 'CodingCat Ops & Revenue OS'))
+              );
+              if (match && match.id) console.log(match.id);
+            })
+            .catch(() => {});
+          ")
+          if [ -n "$EXISTING_APP_ID" ]; then
+            echo "Found existing $APP_TITLE app: $EXISTING_APP_ID"
+            SANITY_OPS_APP_ID="$EXISTING_APP_ID" npx sanity deploy -y
+          else
+            echo "Creating and deploying new $APP_TITLE app in organization $ORG_ID..."
+            npx sanity deploy -y --create --title "$APP_TITLE"
+          fi
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_APP_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
+          SANITY_APP_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+
       - name: Promote Stack to Organization Scope
         run: |
           mkdir -p .sanity
           echo '{"projectId":"${{ vars.SANITY_STUDIO_PROJECT_ID }}"}' > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force || true
+          pnpm exec sanity blueprints promote --project-id ${{ vars.SANITY_STUDIO_PROJECT_ID }} --stack ${{ vars.SANITY_STUDIO_DATASET }} --force --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
 
-      - name: Deploy Sanity Blueprints Functions
+      - name: Deploy Sanity Blueprints & Poll Synchronously Until Completed
         run: |
           ORG_ID=$(node -e "
             fetch('https://api.sanity.io/v2021-06-07/projects/${{ vars.SANITY_STUDIO_PROJECT_ID }}', {
-              headers: { Authorization: 'Bearer ${{ secrets.SANITY_AUTH_TOKEN }}' }
+              headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
             })
             .then(r => r.json())
             .then(d => {
@@ -149,7 +328,66 @@ jobs:
           echo "Resolved Organization ID: $ORG_ID"
           mkdir -p .sanity
           echo "{\"organizationId\":\"$ORG_ID\"}" > .sanity/blueprint.config.json
-          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait
+
+          echo "=== Previous Stack Info & Logs ==="
+          pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+
+          echo "=== Blueprint Deployment Plan ==="
+          pnpm exec sanity blueprints plan --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose || true
+
+          echo "=== Starting Blueprint Deployment (--verbose) ==="
+          pnpm exec sanity blueprints deploy --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --no-wait --verbose
+
+          echo "=== Synchronously Polling Blueprint Stack Operation Until Terminal State ==="
+          ORG_ID="$ORG_ID" STACK_NAME="${{ vars.SANITY_STUDIO_DATASET }}" node -e "
+            const token = process.env.SANITY_AUTH_TOKEN;
+            const orgId = process.env.ORG_ID;
+            const stackName = process.env.STACK_NAME;
+            const headers = {
+              Accept: 'application/json',
+              Authorization: 'Bearer ' + token,
+              'X-Sanity-Scope-Type': 'organization',
+              'X-Sanity-Scope-Id': orgId,
+            };
+            (async () => {
+              const stacksRes = await fetch('https://api.sanity.io/v2026-06-15/blueprints/stacks', { headers });
+              if (!stacksRes.ok) throw new Error('Failed to list stacks: HTTP ' + stacksRes.status);
+              const stacks = await stacksRes.json();
+              const stack = stacks.find(s => s.name === stackName || s.id === stackName);
+              if (!stack) throw new Error('Stack not found: ' + stackName);
+              console.log('Polling Stack:', stack.name, '(' + stack.id + ')');
+              const deadline = Date.now() + 5 * 60 * 1000;
+              while (Date.now() < deadline) {
+                const res = await fetch('https://api.sanity.io/v2026-06-15/blueprints/stacks/' + stack.id, { headers });
+                if (!res.ok) throw new Error('Failed to fetch stack ' + stack.id + ': HTTP ' + res.status);
+                const data = await res.json();
+                const op = data.recentOperation;
+                const status = op?.status || 'NONE';
+                console.log('[' + new Date().toISOString() + '] Operation ' + (op?.id || 'n/a') + ' status: ' + status);
+                if (status === 'COMPLETED' || status === 'NONE') {
+                  console.log('✔ Blueprint Stack operation settled with status:', status);
+                  process.exit(0);
+                }
+                if (status === 'FAILED' || status === 'CANCELLED') {
+                  console.error('✖ Blueprint Stack operation failed:', JSON.stringify(op, null, 2));
+                  const logsRes = await fetch('https://api.sanity.io/v2026-06-15/blueprints/logs?stackId=' + stack.id + (op?.id ? '&operationId=' + op.id : ''), { headers });
+                  if (logsRes.ok) {
+                    const logs = await logsRes.json();
+                    console.error('Operation logs:', JSON.stringify(logs, null, 2));
+                  }
+                  process.exit(1);
+                }
+                await new Promise(r => setTimeout(r, 4000));
+              }
+              console.error('✖ Timed out waiting 5 minutes for Blueprint Stack operation to complete');
+              process.exit(1);
+            })().catch(err => { console.error(err); process.exit(1); });
+          "
+
+          echo "=== Verified Post-Deploy Stack Info & Logs (--verbose) ==="
+          pnpm exec sanity blueprints info --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --verbose
+          pnpm exec sanity blueprints logs --organization-id "$ORG_ID" --stack ${{ vars.SANITY_STUDIO_DATASET }} --limit 50 --verbose || true
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}

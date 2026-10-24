@@ -195,6 +195,13 @@
           },
           "optional": true
         },
+        "threads": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
         "tiktok": {
           "type": "objectAttribute",
           "value": {
@@ -587,6 +594,26 @@
             {
               "type": "string",
               "value": "hashnode"
+            },
+            {
+              "type": "string",
+              "value": "awsbuilder"
+            },
+            {
+              "type": "string",
+              "value": "dailydev"
+            },
+            {
+              "type": "string",
+              "value": "medium"
+            },
+            {
+              "type": "string",
+              "value": "reddit"
+            },
+            {
+              "type": "string",
+              "value": "youtube"
             }
           ]
         },
@@ -3338,6 +3365,20 @@
           }
         },
         "optional": true
+      },
+      "portalToken": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "portalTokenExpiresAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
       }
     }
   },
@@ -4363,33 +4404,31 @@
         },
         "optional": true
       },
-      "syndications": {
+      "awsbuilder": {
         "type": "objectAttribute",
         "value": {
-          "type": "array",
-          "of": {
-            "type": "object",
-            "attributes": {
-              "_key": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              }
-            },
-            "rest": {
-              "type": "inline",
-              "name": "syndication.reference"
-            }
-          }
+          "type": "string"
         },
         "optional": true
       },
-      "statistics": {
+      "dailydev": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "statistics"
+          "type": "string"
+        },
+        "optional": true
+      },
+      "medium": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "reddit": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },
@@ -4434,6 +4473,36 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "syndications": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "syndication.reference"
+            }
+          }
+        },
+        "optional": true
+      },
+      "statistics": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -5466,33 +5535,31 @@
         },
         "optional": true
       },
-      "syndications": {
+      "awsbuilder": {
         "type": "objectAttribute",
         "value": {
-          "type": "array",
-          "of": {
-            "type": "object",
-            "attributes": {
-              "_key": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              }
-            },
-            "rest": {
-              "type": "inline",
-              "name": "syndication.reference"
-            }
-          }
+          "type": "string"
         },
         "optional": true
       },
-      "statistics": {
+      "dailydev": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "statistics"
+          "type": "string"
+        },
+        "optional": true
+      },
+      "medium": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "reddit": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },
@@ -5537,6 +5604,36 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "syndications": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "syndication.reference"
+            }
+          }
+        },
+        "optional": true
+      },
+      "statistics": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -6767,6 +6864,20 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "portalToken": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "portalTokenExpiresAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       }
@@ -8557,33 +8668,31 @@
         },
         "optional": true
       },
-      "syndications": {
+      "awsbuilder": {
         "type": "objectAttribute",
         "value": {
-          "type": "array",
-          "of": {
-            "type": "object",
-            "attributes": {
-              "_key": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              }
-            },
-            "rest": {
-              "type": "inline",
-              "name": "syndication.reference"
-            }
-          }
+          "type": "string"
         },
         "optional": true
       },
-      "statistics": {
+      "dailydev": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "statistics"
+          "type": "string"
+        },
+        "optional": true
+      },
+      "medium": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "reddit": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },
@@ -8628,6 +8737,36 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "syndications": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "syndication.reference"
+            }
+          }
+        },
+        "optional": true
+      },
+      "statistics": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },

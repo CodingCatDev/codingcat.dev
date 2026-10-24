@@ -1,0 +1,999 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+	portableTextToHtml,
+	verifyGuestPortalToken,
+} from "@/lib/guest-portal";
+import { getSanityServerClient } from "@/lib/sanity/write-client";
+
+const { token } = Astro.params;
+
+interface EpisodeRef {
+	_id: string;
+	title: string;
+	slug: string;
+	season: number;
+	episode: number;
+	youtube?: string;
+}
+
+interface GuestDoc {
+	_id: string;
+	_type: "guest" | "author";
+	title: string;
+	slug: string;
+	avatarUrl?: string;
+	excerpt?: string | null;
+	content?: unknown[];
+	socials?: Record<string, string>;
+	websites?: Array<{ site?: string; link?: { href?: string } }>;
+	episodes: EpisodeRef[];
+}
+
+const verification = await verifyGuestPortalToken(token);
+const { client } = getSanityServerClient();
+
+let isExpired = verification.expired;
+let isValid = verification.valid;
+let expiresAtIso = verification.payload?.exp
+	? new Date(verification.payload.exp).toISOString()
+	: "";
+let guestDoc: GuestDoc | null = null;
+
+if (isValid && verification.payload) {
+	guestDoc = await client.fetch<GuestDoc | null>(
+		`*[_type in ["guest", "author"] && (_id == $id || slug.current == $slug)][0]{
+			_id,
+			_type,
+			title,
+			"slug": slug.current,
+			"avatarUrl": coverImage.asset->url,
+			excerpt,
+			content,
+			socials,
+			websites,
+			"episodes": *[_type == "podcast" && references(^._id) && !(_id in path("drafts.**"))] | order(season desc, episode desc) [0...10] {
+				_id,
+				title,
+				"slug": slug.current,
+				season,
+				episode,
+				youtube
+			}
+		}`,
+		{ id: verification.payload.id, slug: verification.payload.slug },
+	);
+}
+
+const isAuthor = guestDoc?._type === "author";
+const profilePathPrefix = isAuthor ? "author" : "guest";
+const socials = guestDoc?.socials || {};
+const primaryWebsite =
+	guestDoc?.websites?.[0]?.link?.href || guestDoc?.websites?.[0]?.site || "";
+const initialExcerpt =
+	guestDoc?.excerpt && guestDoc.excerpt.trim().toLowerCase() !== "fix me"
+		? guestDoc.excerpt.trim()
+		: "";
+const initialAboutHtml = portableTextToHtml(guestDoc?.content);
+
+const socialFields = [
+	{
+		key: "twitter",
+		label: "X (Twitter)",
+		placeholder: "@username or https://x.com/username",
+		priority: true,
+	},
+	{
+		key: "bluesky",
+		label: "Bluesky",
+		placeholder: "handle.bsky.social or https://bsky.app/profile/...",
+		priority: true,
+	},
+	{
+		key: "linkedin",
+		label: "LinkedIn",
+		placeholder: "https://www.linkedin.com/in/username",
+		priority: true,
+	},
+	{
+		key: "instagram",
+		label: "Instagram",
+		placeholder: "@username or https://www.instagram.com/username",
+		priority: true,
+	},
+	{
+		key: "threads",
+		label: "Threads",
+		placeholder: "@username or https://www.threads.net/@username",
+		priority: true,
+	},
+	{
+		key: "facebook",
+		label: "Facebook",
+		placeholder: "https://www.facebook.com/username",
+		priority: true,
+	},
+	{
+		key: "mastodon",
+		label: "Mastodon",
+		placeholder: "@user@mastodon.social or full URL",
+		priority: false,
+	},
+	{
+		key: "youtube",
+		label: "YouTube Channel",
+		placeholder: "@channel or https://www.youtube.com/@channel",
+		priority: false,
+	},
+	{
+		key: "github",
+		label: "GitHub",
+		placeholder: "username or https://github.com/username",
+		priority: false,
+	},
+	{
+		key: "tiktok",
+		label: "TikTok",
+		placeholder: "@username or https://www.tiktok.com/@username",
+		priority: false,
+	},
+	{
+		key: "twitch",
+		label: "Twitch",
+		placeholder: "https://www.twitch.tv/username",
+		priority: false,
+	},
+	{
+		key: "substack",
+		label: "Substack",
+		placeholder: "https://username.substack.com",
+		priority: false,
+	},
+	{
+		key: "devto",
+		label: "Dev.to",
+		placeholder: "https://dev.to/username",
+		priority: false,
+	},
+	{
+		key: "medium",
+		label: "Medium",
+		placeholder: "https://medium.com/@username",
+		priority: false,
+	},
+];
+---
+
+<BaseLayout
+	title={guestDoc ? `${guestDoc.title} · Guest Profile Portal — CodingCat.dev` : "Guest Profile Portal — CodingCat.dev"}
+	description="Update your CodingCat.dev podcast guest profile and social handles so we can tag you across X, Instagram, Threads, Bluesky, Facebook, Mastodon, and LinkedIn."
+>
+	<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+		<Breadcrumbs
+			links={[
+				{
+					title: isAuthor ? "Authors" : "Guests",
+					href: isAuthor ? "/authors/page/1" : "/guests/page/1",
+				},
+				{ title: guestDoc?.title || "Profile Portal" },
+			]}
+		/>
+
+		{!isValid || !guestDoc ? (
+			<div class="mt-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center">
+				<h1 class="text-2xl font-bold text-foreground">
+					{isExpired ? "This Guest Portal Magic Link Has Expired" : "Invalid Guest Portal Link"}
+				</h1>
+				<p class="mt-3 text-muted-foreground">
+					{isExpired
+						? "For security, guest profile edit links expire after 30 days."
+						: "We could not verify this guest profile link."}
+				</p>
+				<div class="mt-6">
+					<a
+						href="mailto:alex@codingcat.dev?subject=Request%20Fresh%20CodingCat.dev%20Guest%20Profile%20Link"
+						class="inline-flex items-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+					>
+						Email Alex for a Fresh Magic Link
+					</a>
+				</div>
+			</div>
+		) : (
+			<div class="mt-6 space-y-8">
+				<div class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+					<div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+						<div class="flex items-center gap-4">
+							<img
+								id="header-avatar-img"
+								src={guestDoc.avatarUrl ? `${guestDoc.avatarUrl}?w=160&h=160&fit=crop&auto=format` : "https://codingcat.dev/images/logo.png"}
+								alt={guestDoc.title}
+								class="h-16 w-16 rounded-full object-cover ring-2 ring-primary/30"
+							/>
+							<div>
+								<span class="inline-flex items-center rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-400">
+									Verified Sanity Guest Magic Link
+									{expiresAtIso && ` · Expires ${new Date(expiresAtIso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+								</span>
+								<h1 class="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
+									{guestDoc.title}
+								</h1>
+								<p class="text-sm text-muted-foreground">
+									Public {isAuthor ? "Author" : "Speaker"} Profile:{" "}
+									<a
+										href={`/${profilePathPrefix}/${guestDoc.slug}`}
+										target="_blank"
+										rel="noreferrer"
+										class="font-medium text-primary underline"
+									>
+										codingcat.dev/{profilePathPrefix}/{guestDoc.slug}
+									</a>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<p class="mt-5 text-sm leading-relaxed text-muted-foreground">
+						We are sharing full episodes and vertical video clips from our archive across{" "}
+						<strong class="text-foreground">X, Instagram, Threads, Bluesky, Facebook, Mastodon, LinkedIn, and TikTok</strong>.
+						Add or update your social handles below and they will immediately sync to your Sanity profile so our social agent tags you whenever your episode is shared.
+					</p>
+
+					{guestDoc.episodes?.length > 0 && (
+						<div class="mt-5 rounded-xl border border-border/70 bg-muted/30 p-4">
+							<h2 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								Your CodingCat.dev Podcast Episode(s)
+							</h2>
+							<ul class="mt-2 space-y-1.5 text-sm">
+								{guestDoc.episodes.map((ep) => (
+									<li class="flex flex-wrap items-center justify-between gap-2">
+										<a
+											href={`/podcast/${ep.slug}`}
+											target="_blank"
+											rel="noreferrer"
+											class="font-medium text-foreground hover:text-primary hover:underline"
+										>
+											S{ep.season}E{ep.episode}: {ep.title}
+										</a>
+										{ep.youtube && (
+											<a
+												href={ep.youtube}
+												target="_blank"
+												rel="noreferrer"
+												class="text-xs text-muted-foreground hover:text-primary"
+											>
+												YouTube &nearr;
+											</a>
+										)}
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
+				</div>
+
+				<form
+					id="guest-profile-form"
+					data-token={token}
+					class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8 space-y-6"
+				>
+					<div class="flex flex-col gap-4 rounded-xl border border-border/80 bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
+						<div class="flex items-center gap-4">
+							<img
+								id="avatar-preview-img"
+								src={guestDoc.avatarUrl ? `${guestDoc.avatarUrl}?w=160&h=160&fit=crop&auto=format` : "https://codingcat.dev/images/logo.png"}
+								alt={guestDoc.title}
+								class="h-16 w-16 rounded-full object-cover ring-2 ring-primary/40"
+							/>
+							<div>
+								<h2 class="text-sm font-semibold text-foreground">
+									Profile Photo
+								</h2>
+								<p id="avatar-status-text" class="mt-0.5 text-xs text-muted-foreground">
+									Upload a new JPG, PNG, or WebP speaker headshot (automatically optimized before saving to Sanity).
+								</p>
+							</div>
+						</div>
+						<div class="flex items-center gap-2">
+							<input
+								id="field-avatar-file"
+								type="file"
+								accept="image/jpeg,image/png,image/webp"
+								class="hidden"
+							/>
+							<button
+								type="button"
+								id="choose-avatar-btn"
+								class="inline-flex items-center rounded-xl border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-sm hover:bg-muted cursor-pointer"
+							>
+								Upload New Photo
+							</button>
+						</div>
+					</div>
+
+					<div class="grid gap-5 sm:grid-cols-2">
+						<div>
+							<label class="block text-sm font-medium text-foreground" for="field-title">
+								Display Name
+							</label>
+							<input
+								id="field-title"
+								name="title"
+								type="text"
+								value={guestDoc.title}
+								class="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+							/>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-foreground" for="field-website">
+								Personal or Company Website
+							</label>
+							<input
+								id="field-website"
+								name="websiteUrl"
+								type="text"
+								value={primaryWebsite}
+								placeholder="https://yourdomain.com"
+								class="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+							/>
+						</div>
+					</div>
+
+					<hr class="border-border" />
+
+					<div class="space-y-4">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<div>
+								<h2 class="text-lg font-semibold text-foreground">
+									About Section (Sanity Portable Text)
+								</h2>
+								<p class="mt-0.5 text-xs text-muted-foreground">
+									Edit your speaker bio with headings, links, bold/italic text, code, and lists — saved directly as Sanity Portable Text blocks on your public profile.
+								</p>
+							</div>
+							<span
+								id="pt-block-badge"
+								class="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary"
+							>
+								Portable Text Ready
+							</span>
+						</div>
+
+						<div>
+							<label class="block text-xs font-medium text-muted-foreground" for="field-excerpt">
+								One-Line Summary / SEO Bio (optional)
+							</label>
+							<input
+								id="field-excerpt"
+								name="excerpt"
+								type="text"
+								value={initialExcerpt}
+								placeholder="Short one-sentence summary for search & social cards"
+								class="mt-1 w-full rounded-xl border border-border bg-background px-3.5 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+							/>
+						</div>
+
+						<div class="overflow-hidden rounded-xl border border-border bg-background focus-within:border-primary">
+							<div
+								id="pt-toolbar"
+								class="flex flex-wrap items-center gap-1 border-b border-border bg-muted/40 px-2.5 py-2 text-xs"
+								role="toolbar"
+								aria-label="Portable Text formatting toolbar"
+							>
+								<button
+									type="button"
+									data-pt-block="p"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Normal Paragraph"
+								>
+									Paragraph
+								</button>
+								<button
+									type="button"
+									data-pt-block="h2"
+									class="rounded-lg px-2.5 py-1 font-semibold text-foreground hover:bg-muted cursor-pointer"
+									title="Heading 2"
+								>
+									H2
+								</button>
+								<button
+									type="button"
+									data-pt-block="h3"
+									class="rounded-lg px-2.5 py-1 font-semibold text-foreground hover:bg-muted cursor-pointer"
+									title="Heading 3"
+								>
+									H3
+								</button>
+								<button
+									type="button"
+									data-pt-block="blockquote"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Blockquote"
+								>
+									Quote
+								</button>
+
+								<span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
+
+								<button
+									type="button"
+									data-pt-cmd="bold"
+									class="rounded-lg px-2.5 py-1 font-bold text-foreground hover:bg-muted cursor-pointer"
+									title="Bold (Ctrl/Cmd+B)"
+								>
+									B
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="italic"
+									class="rounded-lg px-2.5 py-1 italic text-foreground hover:bg-muted cursor-pointer"
+									title="Italic (Ctrl/Cmd+I)"
+								>
+									I
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="underline"
+									class="rounded-lg px-2.5 py-1 underline text-foreground hover:bg-muted cursor-pointer"
+									title="Underline (Ctrl/Cmd+U)"
+								>
+									U
+								</button>
+								<button
+									type="button"
+									data-pt-inline="code"
+									class="rounded-lg px-2.5 py-1 font-mono text-foreground hover:bg-muted cursor-pointer"
+									title="Inline Code"
+								>
+									&lt;/&gt;
+								</button>
+
+								<span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
+
+								<button
+									type="button"
+									data-pt-cmd="insertUnorderedList"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Bullet List"
+								>
+									&bull; List
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="insertOrderedList"
+									class="rounded-lg px-2.5 py-1 font-medium text-foreground hover:bg-muted cursor-pointer"
+									title="Numbered List"
+								>
+									1. List
+								</button>
+
+								<span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
+
+								<button
+									type="button"
+									data-pt-action="link"
+									class="rounded-lg px-2.5 py-1 font-medium text-primary hover:bg-muted cursor-pointer"
+									title="Insert or Edit Link"
+								>
+									Link
+								</button>
+								<button
+									type="button"
+									data-pt-cmd="unlink"
+									class="rounded-lg px-2.5 py-1 font-medium text-muted-foreground hover:bg-muted cursor-pointer"
+									title="Remove Link"
+								>
+									Unlink
+								</button>
+							</div>
+
+							<div
+								id="pt-editor"
+								contenteditable="true"
+								role="textbox"
+								aria-multiline="true"
+								aria-label="About section rich text editor"
+								class="prose dark:prose-invert max-w-none min-h-[200px] px-4 py-3 text-sm leading-relaxed text-foreground focus:outline-none"
+								set:html={initialAboutHtml}
+							/>
+						</div>
+
+						<details class="rounded-xl border border-border/60 bg-muted/20 px-3.5 py-2 text-xs">
+							<summary class="cursor-pointer font-medium text-muted-foreground hover:text-foreground">
+								Inspect Generated Sanity Portable Text Blocks JSON
+							</summary>
+							<pre
+								id="pt-json-preview"
+								class="mt-2 max-h-48 overflow-auto rounded-lg bg-background p-3 font-mono text-[11px] text-muted-foreground"
+							></pre>
+						</details>
+					</div>
+
+					<hr class="border-border" />
+
+					<div>
+						<h2 class="text-lg font-semibold text-foreground">
+							Social Handles for Episode Tagging
+						</h2>
+						<p class="mt-1 text-xs text-muted-foreground">
+							You can paste either your `@handle` or full profile URL — we normalize it automatically.
+						</p>
+					</div>
+
+					<div class="grid gap-5 sm:grid-cols-2">
+						{socialFields.map((field) => {
+							const currentVal = socials[field.key] || "";
+							const isMissingPriority = field.priority && !currentVal;
+							return (
+								<div>
+									<label
+										class="flex items-center justify-between text-sm font-medium text-foreground"
+										for={`social-${field.key}`}
+									>
+										<span>{field.label}</span>
+										{isMissingPriority ? (
+											<span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-400">
+												Missing for tagging
+											</span>
+										) : currentVal ? (
+											<span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-400">
+												On file
+											</span>
+										) : null}
+									</label>
+									<input
+										id={`social-${field.key}`}
+										name={`social_${field.key}`}
+										data-social-key={field.key}
+										type="text"
+										value={currentVal}
+										placeholder={field.placeholder}
+										class="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+									/>
+								</div>
+							);
+						})}
+					</div>
+
+					<div class="flex flex-wrap items-center justify-between gap-4 pt-4">
+						<div id="save-status" class="text-sm font-medium"></div>
+						<button
+							type="submit"
+							id="save-btn"
+							class="inline-flex items-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 cursor-pointer"
+						>
+							Save Profile to Sanity
+						</button>
+					</div>
+				</form>
+			</div>
+		)}
+	</div>
+
+	<script>
+		const form = document.getElementById("guest-profile-form") as HTMLFormElement | null;
+		const statusEl = document.getElementById("save-status");
+		const saveBtn = document.getElementById("save-btn") as HTMLButtonElement | null;
+		const editorEl = document.getElementById("pt-editor") as HTMLElement | null;
+		const toolbarEl = document.getElementById("pt-toolbar") as HTMLElement | null;
+		const jsonPreviewEl = document.getElementById("pt-json-preview") as HTMLElement | null;
+		const badgeEl = document.getElementById("pt-block-badge") as HTMLElement | null;
+		const avatarFileInput = document.getElementById("field-avatar-file") as HTMLInputElement | null;
+		const chooseAvatarBtn = document.getElementById("choose-avatar-btn") as HTMLButtonElement | null;
+		const avatarPreviewImg = document.getElementById("avatar-preview-img") as HTMLImageElement | null;
+		const headerAvatarImg = document.getElementById("header-avatar-img") as HTMLImageElement | null;
+		const avatarStatusText = document.getElementById("avatar-status-text") as HTMLElement | null;
+
+		let stagedAvatarDataUrl: string | undefined;
+
+		async function resizeImageFileToDataUrl(file: File, maxDim = 800): Promise<string> {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onerror = () => reject(new Error("Could not read selected image file."));
+				reader.onload = () => {
+					const img = new Image();
+					img.onerror = () => reject(new Error("Invalid or unsupported image file."));
+					img.onload = () => {
+						let width = img.naturalWidth || img.width;
+						let height = img.naturalHeight || img.height;
+						if (width > maxDim || height > maxDim) {
+							if (width >= height) {
+								height = Math.round((height * maxDim) / width);
+								width = maxDim;
+							} else {
+								width = Math.round((width * maxDim) / height);
+								height = maxDim;
+							}
+						}
+						const canvas = document.createElement("canvas");
+						canvas.width = width;
+						canvas.height = height;
+						const ctx = canvas.getContext("2d");
+						if (!ctx) {
+							reject(new Error("Browser canvas is unavailable."));
+							return;
+						}
+						ctx.drawImage(img, 0, 0, width, height);
+						const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+						resolve(dataUrl);
+					};
+					img.src = String(reader.result);
+				};
+				reader.readAsDataURL(file);
+			});
+		}
+
+		chooseAvatarBtn?.addEventListener("click", () => {
+			avatarFileInput?.click();
+		});
+
+		avatarFileInput?.addEventListener("change", async () => {
+			const file = avatarFileInput.files?.[0];
+			if (!file) return;
+			try {
+				if (avatarStatusText) {
+					avatarStatusText.className = "mt-0.5 text-xs text-muted-foreground";
+					avatarStatusText.textContent = "Optimizing photo...";
+				}
+				const dataUrl = await resizeImageFileToDataUrl(file, 800);
+				stagedAvatarDataUrl = dataUrl;
+				if (avatarPreviewImg) avatarPreviewImg.src = dataUrl;
+				if (headerAvatarImg) headerAvatarImg.src = dataUrl;
+				if (avatarStatusText) {
+					avatarStatusText.className = "mt-0.5 text-xs font-medium text-emerald-400";
+					avatarStatusText.textContent = `Ready to save (${file.name}) — click "Save Profile to Sanity" below.`;
+				}
+			} catch (err) {
+				if (avatarStatusText) {
+					avatarStatusText.className = "mt-0.5 text-xs font-medium text-red-400";
+					avatarStatusText.textContent = err instanceof Error ? err.message : "Could not load photo.";
+				}
+			}
+		});
+
+		interface PtSpan {
+			_type: "span";
+			_key: string;
+			text: string;
+			marks: string[];
+		}
+
+		interface PtMarkDef {
+			_type: "link";
+			_key: string;
+			href: string;
+			blank: boolean;
+		}
+
+		interface PtBlock {
+			_type: "block";
+			_key: string;
+			style: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
+			listItem?: "bullet" | "number";
+			level?: number;
+			markDefs: PtMarkDef[];
+			children: PtSpan[];
+		}
+
+		function genKey(): string {
+			const bytes = new Uint8Array(6);
+			crypto.getRandomValues(bytes);
+			return Array.from(bytes)
+				.map((b) => b.toString(16).padStart(2, "0"))
+				.join("");
+		}
+
+		function extractInlineSpans(
+			rootNode: Node,
+			activeMarks: string[],
+			markDefs: PtMarkDef[],
+			spans: PtSpan[],
+		): void {
+			if (rootNode.nodeType === Node.TEXT_NODE) {
+				const text = rootNode.textContent ?? "";
+				if (!text) return;
+				const prev = spans[spans.length - 1];
+				const sameMarks =
+					prev &&
+					prev.marks.length === activeMarks.length &&
+					prev.marks.every((m, idx) => m === activeMarks[idx]);
+				if (sameMarks) {
+					prev.text += text;
+				} else {
+					spans.push({
+						_type: "span",
+						_key: genKey(),
+						text,
+						marks: [...activeMarks],
+					});
+				}
+				return;
+			}
+
+			if (rootNode.nodeType !== Node.ELEMENT_NODE) return;
+			const el = rootNode as HTMLElement;
+			const tag = el.tagName.toLowerCase();
+
+			if (tag === "br") {
+				spans.push({
+					_type: "span",
+					_key: genKey(),
+					text: "\n",
+					marks: [...activeMarks],
+				});
+				return;
+			}
+
+			const nextMarks = [...activeMarks];
+			const addMark = (m: string) => {
+				if (!nextMarks.includes(m)) nextMarks.push(m);
+			};
+
+			if (tag === "strong" || tag === "b") addMark("strong");
+			if (tag === "em" || tag === "i") addMark("em");
+			if (tag === "u") addMark("underline");
+			if (tag === "s" || tag === "strike" || tag === "del") addMark("strike-through");
+			if (tag === "code") addMark("code");
+
+			if (tag === "a") {
+				const rawHref = el.getAttribute("href")?.trim() || "";
+				if (rawHref) {
+					const safeHref = /^(https?:\/\/|mailto:|\/)/i.test(rawHref)
+						? rawHref
+						: `https://${rawHref}`;
+					let existing = markDefs.find((md) => md.href === safeHref);
+					if (!existing) {
+						existing = {
+							_type: "link",
+							_key: genKey(),
+							href: safeHref,
+							blank: true,
+						};
+						markDefs.push(existing);
+					}
+					addMark(existing._key);
+				}
+			}
+
+			for (const child of Array.from(el.childNodes)) {
+				extractInlineSpans(child, nextMarks, markDefs, spans);
+			}
+		}
+
+		function buildBlockFromNode(
+			node: Node,
+			style: PtBlock["style"],
+			listItem?: "bullet" | "number",
+		): PtBlock {
+			const markDefs: PtMarkDef[] = [];
+			const spans: PtSpan[] = [];
+			for (const child of Array.from(node.childNodes)) {
+				extractInlineSpans(child, [], markDefs, spans);
+			}
+			// Strip trailing solitary newline from contenteditable <br>
+			if (spans.length === 1 && spans[0].text === "\n") {
+				spans[0].text = "";
+			}
+			if (spans.length === 0) {
+				spans.push({
+					_type: "span",
+					_key: genKey(),
+					text: "",
+					marks: [],
+				});
+			}
+			const block: PtBlock = {
+				_type: "block",
+				_key: genKey(),
+				style,
+				markDefs,
+				children: spans,
+			};
+			if (listItem) {
+				block.listItem = listItem;
+				block.level = 1;
+			}
+			return block;
+		}
+
+		function serializeEditorToPortableText(root: HTMLElement): PtBlock[] {
+			const blocks: PtBlock[] = [];
+			const BLOCK_TAGS = new Set([
+				"p",
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"blockquote",
+				"ul",
+				"ol",
+				"div",
+			]);
+
+			const walkChildren = (parent: HTMLElement) => {
+				for (const node of Array.from(parent.childNodes)) {
+					if (node.nodeType === Node.TEXT_NODE) {
+						const text = node.textContent?.trim() ?? "";
+						if (text) {
+							blocks.push({
+								_type: "block",
+								_key: genKey(),
+								style: "normal",
+								markDefs: [],
+								children: [
+									{
+										_type: "span",
+										_key: genKey(),
+										text,
+										marks: [],
+									},
+								],
+							});
+						}
+						continue;
+					}
+					if (node.nodeType !== Node.ELEMENT_NODE) continue;
+					const el = node as HTMLElement;
+					const tag = el.tagName.toLowerCase();
+
+					if (tag === "ul" || tag === "ol") {
+						const listType = tag === "ul" ? "bullet" : "number";
+						for (const li of Array.from(el.children)) {
+							if (li.tagName.toLowerCase() === "li") {
+								blocks.push(buildBlockFromNode(li, "normal", listType));
+							}
+						}
+						continue;
+					}
+
+					if (
+						tag === "h1" ||
+						tag === "h2" ||
+						tag === "h3" ||
+						tag === "h4" ||
+						tag === "blockquote"
+					) {
+						blocks.push(buildBlockFromNode(el, tag));
+						continue;
+					}
+
+					if (tag === "p" || tag === "div") {
+						// Check if div contains nested block elements
+						const hasNestedBlocks = Array.from(el.children).some((c) =>
+							BLOCK_TAGS.has(c.tagName.toLowerCase()),
+						);
+						if (hasNestedBlocks) {
+							walkChildren(el);
+						} else {
+							blocks.push(buildBlockFromNode(el, "normal"));
+						}
+						continue;
+					}
+
+					blocks.push(buildBlockFromNode(el, "normal"));
+				}
+			};
+
+			walkChildren(root);
+
+			// Filter out empty trailing normal blocks when there is other content
+			const nonEmpty = blocks.filter(
+				(b, idx) =>
+					idx === 0 ||
+					b.style !== "normal" ||
+					b.listItem ||
+					b.children.some((s) => s.text.trim().length > 0),
+			);
+			return nonEmpty;
+		}
+
+		function refreshPreview() {
+			if (!editorEl) return;
+			const ptBlocks = serializeEditorToPortableText(editorEl);
+			if (jsonPreviewEl) {
+				jsonPreviewEl.textContent = JSON.stringify(ptBlocks, null, 2);
+			}
+			if (badgeEl) {
+				badgeEl.textContent = `${ptBlocks.length} Portable Text ${ptBlocks.length === 1 ? "block" : "blocks"}`;
+			}
+		}
+
+		toolbarEl?.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement | null)?.closest("button");
+			if (!btn || !editorEl) return;
+			e.preventDefault();
+			editorEl.focus();
+
+			const blockTag = btn.dataset.ptBlock;
+			const cmd = btn.dataset.ptCmd;
+			const inlineTag = btn.dataset.ptInline;
+			const action = btn.dataset.ptAction;
+
+			if (blockTag) {
+				document.execCommand("formatBlock", false, `<${blockTag}>`);
+			} else if (cmd) {
+				document.execCommand(cmd, false);
+			} else if (inlineTag === "code") {
+				const sel = window.getSelection();
+				if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+					const text = sel.toString();
+					document.execCommand("insertHTML", false, `<code>${text}</code>`);
+				}
+			} else if (action === "link") {
+				const url = window.prompt("Enter link URL:", "https://");
+				if (url && url.trim() && url.trim() !== "https://") {
+					document.execCommand("createLink", false, url.trim());
+				}
+			}
+
+			refreshPreview();
+		});
+
+		editorEl?.addEventListener("input", () => {
+			refreshPreview();
+		});
+
+		refreshPreview();
+
+		form?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			if (!saveBtn || !statusEl) return;
+
+			const token = form.dataset.token;
+			const titleInput = document.getElementById("field-title") as HTMLInputElement | null;
+			const websiteInput = document.getElementById("field-website") as HTMLInputElement | null;
+			const excerptInput = document.getElementById("field-excerpt") as HTMLInputElement | null;
+			const socialInputs = form.querySelectorAll<HTMLInputElement>("input[data-social-key]");
+
+			const socials: Record<string, string> = {};
+			socialInputs.forEach((input) => {
+				const k = input.dataset.socialKey;
+				if (k) socials[k] = input.value.trim();
+			});
+
+			const content = editorEl ? serializeEditorToPortableText(editorEl) : undefined;
+
+			saveBtn.disabled = true;
+			saveBtn.textContent = "Saving to Sanity...";
+			statusEl.textContent = "";
+
+			try {
+				const res = await fetch("/api/guest-portal/update", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						token,
+						title: titleInput?.value.trim(),
+						websiteUrl: websiteInput?.value.trim(),
+						excerpt: excerptInput?.value.trim(),
+						content,
+						avatarDataUrl: stagedAvatarDataUrl,
+						socials,
+					}),
+				});
+				const data = (await res.json()) as { error?: string; avatarUrl?: string };
+				if (!res.ok) {
+					throw new Error(data.error || "Failed to update profile");
+				}
+				if (data.avatarUrl) {
+					const freshUrl = `${data.avatarUrl}?w=160&h=160&fit=crop&auto=format`;
+					if (avatarPreviewImg) avatarPreviewImg.src = freshUrl;
+					if (headerAvatarImg) headerAvatarImg.src = freshUrl;
+					stagedAvatarDataUrl = undefined;
+					if (avatarStatusText) {
+						avatarStatusText.className = "mt-0.5 text-xs font-medium text-emerald-400";
+						avatarStatusText.textContent = "Profile photo uploaded and saved to Sanity!";
+					}
+				}
+				statusEl.className = "text-sm font-medium text-emerald-400";
+				statusEl.textContent = "Saved! Your CodingCat.dev speaker profile, photo, and About section have been updated.";
+			} catch (err) {
+				statusEl.className = "text-sm font-medium text-red-400";
+				statusEl.textContent = err instanceof Error ? err.message : "Error saving profile";
+			} finally {
+				saveBtn.disabled = false;
+				saveBtn.textContent = "Save Profile to Sanity";
+			}
+		});
+	</script>
+</BaseLayout>

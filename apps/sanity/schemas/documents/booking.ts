@@ -71,9 +71,9 @@ export default defineType({
     }),
     defineField({
       name: 'appointmentScheduleUrl',
-      title: 'Google Calendar Appointment Schedule Link',
+      title: 'Google Calendar Event / Booking Link',
       type: 'url',
-      initialValue: 'https://calendar.app.google/s3B6PEqbVsGcY81MA',
+      initialValue: 'https://codingcat.dev/book',
     }),
     defineField({
       name: 'googleCalendarEventId',

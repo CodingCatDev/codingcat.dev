@@ -21,11 +21,9 @@ if (!sponsor?._id) {
 
 const path = `/sponsor/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const avatarUrl = sanity
+const ogCardImageUrl = sanity
 	.urlForImage(sponsor.coverImage ?? undefined)
-	?.width(256)
-	.height(256)
-	.fit("crop")
+	?.width(640)
 	.url();
 const rawExcerpt = sponsor.excerpt?.trim();
 const description =
@@ -47,7 +45,7 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 		title: sponsor.title,
 		subtitle: description,
 		type: "Sponsor",
-		avatar: avatarUrl,
+		image: ogCardImageUrl,
 	}}
 	canonical={path}
 	schema={[
@@ -62,11 +60,14 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 	/>
 
 	<div class="flex w-full flex-col gap-4 md:gap-8">
-		<div class="flex gap-2 md:gap-8">
+		<div class="flex items-center gap-4 md:gap-8">
 			<div class="shrink-0">
 				<CoverMedia
 					image={sponsor.coverImage}
-					class="size-24 rounded-md object-cover md:size-32"
+					width={640}
+					height={360}
+					sizes="(max-width: 768px) 160px, 256px"
+					class="h-auto w-40 max-h-32 rounded-md object-contain md:w-64"
 				/>
 			</div>
 			<div class="flex flex-col gap-2">

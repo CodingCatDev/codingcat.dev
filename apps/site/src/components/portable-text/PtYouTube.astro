@@ -1,39 +1,74 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
+import type { SanityImageSource } from "@sanity/image-url";
 import type { Props as PtProps } from "astro-portabletext/types";
 import { youtubeId } from "@/lib/youtube";
 
 type YouTubeNode = { _type: "youtube"; youtube?: string };
 
-type Props = PtProps<YouTubeNode>;
+type Props = PtProps<YouTubeNode> & {
+	coverImage?: (SanityImageSource & { alt?: string }) | null;
+	priority?: boolean;
+};
 
-const { node } = Astro.props;
+const { node, coverImage, priority = false } = Astro.props;
 const id = youtubeId(stegaClean(node.youtube));
+
+const builder = Astro.locals.sanity.urlForImage(coverImage ?? undefined);
+const sanitySrc = builder?.width(1920).height(1080).quality(82).url();
+const sanitySrcset = builder
+	? [480, 640, 960, 1280, 1600, 1920]
+			.map((w) => {
+				const h = Math.round((w * 9) / 16);
+				return `${builder.width(w).height(h).quality(82).url()} ${w}w`;
+			})
+			.join(", ")
+	: undefined;
+const rawAlt = stegaClean((coverImage as { alt?: string } | null)?.alt);
+const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : "";
 ---
 
 {
 	id && (
 		<div class="not-prose my-6">
 			<div class="yt-embed relative aspect-video isolate overflow-hidden rounded-md" data-yt={id}>
-				<picture>
-					<source
-						type="image/webp"
-						srcset={[
-							`https://i.ytimg.com/vi_webp/${id}/mqdefault.webp 320w`,
-							`https://i.ytimg.com/vi_webp/${id}/hqdefault.webp 480w`,
-							`https://i.ytimg.com/vi_webp/${id}/sddefault.webp 640w`,
-						].join(", ")}
-					/>
+				{sanitySrc ? (
 					<img
 						class="size-full object-cover"
-						src={`https://i.ytimg.com/vi/${id}/sddefault.jpg`}
-						alt=""
-						width={640}
-						height={480}
-						loading="lazy"
-						decoding="async"
+						src={sanitySrc}
+						srcset={sanitySrcset}
+						sizes="(max-width: 1280px) 100vw, 1280px"
+						alt={alt}
+						width={1920}
+						height={1080}
+						loading={priority ? "eager" : "lazy"}
+						fetchpriority={priority ? "high" : "auto"}
+						decoding={priority ? "sync" : "async"}
 					/>
-				</picture>
+				) : (
+					<picture>
+						<source
+							type="image/webp"
+							sizes="(max-width: 1280px) 100vw, 1280px"
+							srcset={[
+								`https://i.ytimg.com/vi_webp/${id}/mqdefault.webp 320w`,
+								`https://i.ytimg.com/vi_webp/${id}/hqdefault.webp 480w`,
+								`https://i.ytimg.com/vi_webp/${id}/sddefault.webp 640w`,
+								`https://i.ytimg.com/vi_webp/${id}/maxresdefault.webp 1280w`,
+							].join(", ")}
+						/>
+						<img
+							class="size-full object-cover"
+							src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}
+							alt=""
+							width={1280}
+							height={720}
+							loading={priority ? "eager" : "lazy"}
+							fetchpriority={priority ? "high" : "auto"}
+							decoding={priority ? "sync" : "async"}
+						/>
+					</picture>
+				)}
 				<button
 					type="button"
 					class="absolute inset-0 grid size-full place-items-center border-0 bg-transparent"

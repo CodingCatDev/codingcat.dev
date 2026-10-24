@@ -16,6 +16,10 @@ interface ContentDocument {
 	episode?: number;
 	devto?: string;
 	hashnode?: string;
+	awsbuilder?: string;
+	dailydev?: string;
+	tags?: Array<{ _key?: string; label?: string; value?: string }>;
+	sponsor?: Array<{ _ref: string }>;
 	syndications?: Array<{ _type: "reference"; _ref: string; _key?: string }>;
 }
 
@@ -73,8 +77,44 @@ export const handler = documentEventHandler<ContentDocument>(
 			return imgBuilder.image(source).auto("format").fit("max");
 		};
 
+		const extractYouTubeId = (url: string | undefined): string | null => {
+			if (!url || typeof url !== "string") return null;
+			const trimmed = url.trim();
+			const patterns = [
+				/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/,
+				/^([A-Za-z0-9_-]{11})$/,
+			];
+			for (const re of patterns) {
+				const m = trimmed.match(re);
+				if (m) return m[1];
+			}
+			return null;
+		};
+
+		const formatYouTubeBlock = (
+			url: string | undefined,
+			targetPlatform: "devto" | "hashnode" | "awsbuilder" = "devto",
+		): string => {
+			const ytId = extractYouTubeId(url);
+			if (!ytId && !url) return "";
+			const watchUrl = ytId ? `https://www.youtube.com/watch?v=${ytId}` : url || "";
+			if (targetPlatform === "devto") {
+				return `{% youtube ${ytId || (url || "").replace("live", "embed")} %}`;
+			}
+			if (targetPlatform === "hashnode") {
+				return `%[${watchUrl}]`;
+			}
+			const thumbUrl = ytId ? `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg` : "";
+			return thumbUrl
+				? `[![Watch on YouTube](${thumbUrl})](${watchUrl})\n\n**[▶ Watch the video on YouTube](${watchUrl})**`
+				: `**[▶ Watch on YouTube](${watchUrl})**`;
+		};
+
 		// Helper to serialize Portable Text to Markdown matching exact legacy serializer specifications
-		const serializeContent = (content: any[] | undefined): string => {
+		const serializeContent = (
+			content: any[] | undefined,
+			targetPlatform: "devto" | "hashnode" | "awsbuilder" = "devto",
+		): string => {
 			if (!content || !Array.isArray(content) || content.length === 0) {
 				return "";
 			}
@@ -88,13 +128,21 @@ export const handler = documentEventHandler<ContentDocument>(
 							const url = urlForImage(value)?.url();
 							return url ? `![](${url})` : "";
 						},
+						youtube: ({ value }) =>
+							formatYouTubeBlock(value?.youtube || value?.url || "", targetPlatform),
+						youtubeShorts: ({ value }) =>
+							Array.isArray(value?.shorts)
+								? value.shorts
+										.map((s: string) => formatYouTubeBlock(s, targetPlatform))
+										.join("\n\n")
+								: "",
 						codepen: ({ value }) => `{% codepen ${value?.url || ""} %}`,
 						codesandbox: ({ value }) => {
 							const id = value?.url?.split("https://codesandbox.io/p/sandbox/")?.at(-1);
 							return `{% codesandbox ${id || value?.url || ""} %}`;
 						},
 						twitter: ({ value }) => `{% twitter ${value?.id || ""} %}`,
-						quote: ({ value }) => `> ${serializeContent(value?.content)}`,
+						quote: ({ value }) => `> ${serializeContent(value?.content, targetPlatform)}`,
 					},
 				});
 			} catch (err) {
@@ -103,11 +151,33 @@ export const handler = documentEventHandler<ContentDocument>(
 			}
 		};
 
-		const contentMarkdown = serializeContent(data.content);
-		const platforms: Array<"devto" | "hashnode"> = ["devto", "hashnode"];
+		const contentMarkdown = serializeContent(data.content, "devto");
+		const hashnodeMarkdown = serializeContent(data.content, "hashnode");
+		const awsMarkdown = serializeContent(data.content, "awsbuilder");
+		const topYouTubeId = extractYouTubeId(data.youtube);
+		const topYouTubeWatchUrl = topYouTubeId
+			? `https://www.youtube.com/watch?v=${topYouTubeId}`
+			: data.youtube || "";
+		const docTags = Array.isArray(data.tags) ? data.tags : [];
+		const hasAwsTag = docTags.some(
+			(t) =>
+				t?.value?.toLowerCase() === "aws" || t?.label?.toLowerCase() === "aws",
+		);
+		const isSponsored = Array.isArray(data.sponsor) && data.sponsor.length > 0;
+		const shouldSyndicateAws =
+			(hasAwsTag && !isSponsored) ||
+			Boolean(data.awsbuilder) ||
+			process.env.FORCE_AWS_BUILDER === "true";
+
+		const platforms: Array<"devto" | "hashnode" | "dailydev" | "awsbuilder"> = [
+			"devto",
+			"hashnode",
+			"dailydev",
+			...(shouldSyndicateAws ? (["awsbuilder"] as const) : []),
+		];
 
 		console.log(
-			`[Syndicate Content] Processing ${data._type} (${data._id}) on dataset: ${dataset}. Production mode: ${isProduction}`,
+			`[Syndicate Content] Processing ${data._type} (${data._id}) on dataset: ${dataset}. Production mode: ${isProduction}. Platforms: ${platforms.join(", ")}`,
 		);
 
 		const parentPatch: Record<string, unknown> = {};
@@ -122,6 +192,14 @@ export const handler = documentEventHandler<ContentDocument>(
 				);
 
 				try {
+					const simHost =
+						platform === "devto"
+							? "dev.to"
+							: platform === "hashnode"
+								? "hashnode.com"
+								: platform === "dailydev"
+									? "daily.dev"
+									: "builder.aws.com";
 					await client.createOrReplace({
 						_id: syndicationDocId,
 						_type: "syndication",
@@ -132,7 +210,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						platform,
 						status: "simulated_complete",
 						canonicalUrl,
-						externalUrl: `https://${platform === "devto" ? "dev.to" : "hashnode.com"}/preview-simulated/${slug}`,
+						externalUrl: `https://${simHost}/preview-simulated/${slug}`,
 						externalId: `simulated-${data._id}-${platform}`,
 						syndicatedAt: new Date().toISOString(),
 						error: undefined,
@@ -170,16 +248,28 @@ export const handler = documentEventHandler<ContentDocument>(
 						continue;
 					}
 
-					const devtoTags = ["webdev", "javascript", "beginners"];
-					if (data._type === "podcast") {
-						devtoTags.push("podcast");
-					}
+					const normalizedDocTags = docTags
+						.map((t) =>
+							(t?.value || t?.label || "")
+								.toLowerCase()
+								.replace(/[^a-z0-9]/g, ""),
+						)
+						.filter((v) => v.length >= 2 && v.length <= 20);
+
+					const devtoTags = Array.from(
+						new Set([
+							...(normalizedDocTags.length > 0
+								? normalizedDocTags.slice(0, 3)
+								: ["webdev", "javascript", "programming"]),
+							...(data._type === "podcast" ? ["podcast"] : []),
+						]),
+					).slice(0, 4);
 
 					const mainImageUrl =
-						urlForImage(data.coverImage)?.width(1000).height(420).url() || "";
+						urlForImage(data.coverImage)?.width(1280).url() || "";
 
 					const youtubeEmbed = data.youtube
-						? `{% youtube ${data.youtube.replace("live", "embed")} %}\n\n`
+						? `{% youtube ${topYouTubeId || data.youtube.replace("live", "embed")} %}\n\n**[▶ Watch on YouTube & Subscribe to CodingCat.dev](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)**\n\n`
 						: "";
 
 					const devtoArticlePayload: any = {
@@ -209,6 +299,9 @@ export const handler = documentEventHandler<ContentDocument>(
 						existingSyndication?.externalId ||
 						(data.devto ? data.devto.split("https://dev.to/").at(-1) : null);
 
+					let targetDevtoUrl = "https://dev.to/api/articles";
+					let devtoMethod = "POST";
+
 					if (existingDevtoId && !existingDevtoId.startsWith("simulated-")) {
 						// Retrieve existing article ID from Dev.to to perform a PUT update
 						const getArticleRes = await fetch(
@@ -223,39 +316,42 @@ export const handler = documentEventHandler<ContentDocument>(
 
 						if (getArticleRes.ok) {
 							const articleData = (await getArticleRes.json()) as any;
-							res = await fetch(`https://dev.to/api/articles/${articleData.id}`, {
-								method: "PUT",
-								headers: {
-									"api-key": apiKey,
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify(devtoArticlePayload),
-							});
-						} else {
-							// If lookup failed, create as new article
-							res = await fetch("https://dev.to/api/articles", {
-								method: "POST",
-								headers: {
-									"api-key": apiKey,
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify(devtoArticlePayload),
-							});
+							if (articleData?.id) {
+								targetDevtoUrl = `https://dev.to/api/articles/${articleData.id}`;
+								devtoMethod = "PUT";
+							}
 						}
-					} else {
-						// Create new article
-						res = await fetch("https://dev.to/api/articles", {
-							method: "POST",
-							headers: {
-								"api-key": apiKey,
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify(devtoArticlePayload),
-						});
+					}
+
+					res = await fetch(targetDevtoUrl, {
+						method: devtoMethod,
+						headers: {
+							"api-key": apiKey,
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(devtoArticlePayload),
+					});
+
+					let errText = "";
+					if (!res.ok) {
+						errText = await res.text();
+						if (errText.toLowerCase().includes("organization")) {
+							delete devtoArticlePayload.article.organization_id;
+							res = await fetch(targetDevtoUrl, {
+								method: devtoMethod,
+								headers: {
+									"api-key": apiKey,
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(devtoArticlePayload),
+							});
+							if (!res.ok) {
+								errText = await res.text();
+							}
+						}
 					}
 
 					if (!res.ok) {
-						const errText = await res.text();
 						throw new Error(`Dev.to API error (${res.status}): ${errText}`);
 					}
 
@@ -311,13 +407,30 @@ export const handler = documentEventHandler<ContentDocument>(
 							? data.excerpt.substring(0, 247) + "..."
 							: data.excerpt || "";
 
-					const hashnodeTags: Array<{ name: string; slug: string }> = [
-						{ name: "JavaScript", slug: "javascript" },
-						{ name: "Web Development", slug: "web-development" },
-						{ name: "Beginner Developers", slug: "beginners" },
-					];
+					const mappedHashnodeTags: Array<{ name: string; slug: string }> =
+						docTags
+							.map((t) => ({
+								name: t?.label || t?.value || "",
+								slug: (t?.value || t?.label || "")
+									.toLowerCase()
+									.replace(/[^a-z0-9-]/g, "-"),
+							}))
+							.filter((t) => t.name && t.slug)
+							.slice(0, 4);
 
-					if (data._type === "podcast") {
+					const hashnodeTags: Array<{ name: string; slug: string }> =
+						mappedHashnodeTags.length > 0
+							? mappedHashnodeTags
+							: [
+									{ name: "JavaScript", slug: "javascript" },
+									{ name: "Web Development", slug: "web-development" },
+									{ name: "Beginner Developers", slug: "beginners" },
+								];
+
+					if (
+						data._type === "podcast" &&
+						!hashnodeTags.some((t) => t.slug === "podcast")
+					) {
 						hashnodeTags.push({
 							name: "podcast",
 							slug: "podcast",
@@ -328,7 +441,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						urlForImage(data.coverImage)?.width(1600).height(840).url() || "";
 
 					const youtubeEmbed = data.youtube
-						? `%[${data.youtube.replace("live", "embed")}]\n\n`
+						? `%[${topYouTubeWatchUrl}]\n\n**[▶ Watch on YouTube & Subscribe to CodingCat.dev](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)**\n\n`
 						: "";
 
 					const articleInput: any = {
@@ -337,9 +450,11 @@ export const handler = documentEventHandler<ContentDocument>(
 						publicationId,
 						slug: `${data._type}-${slug}`,
 						tags: hashnodeTags,
-						...(hashnodeCoverImageUrl ? { coverImage: hashnodeCoverImageUrl } : {}),
+						...(hashnodeCoverImageUrl
+							? { coverImage: hashnodeCoverImageUrl }
+							: {}),
 						originalArticleURL: canonicalUrl,
-						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
+						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${hashnodeMarkdown}`,
 					};
 
 					if (data._type === "podcast") {
@@ -355,6 +470,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						existingSyndication?.externalId || data.hashnode || null;
 
 					let publishedPost: { id: string; slug?: string; url?: string } | null = null;
+					const authHeader = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
 
 					if (existingHashnodeSlug && !existingHashnodeSlug.startsWith("simulated-")) {
 						// Lookup post ID from Hashnode
@@ -362,12 +478,13 @@ export const handler = documentEventHandler<ContentDocument>(
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: token,
+								Authorization: authHeader,
+								"x-hashnode-client": "hashnode-cli",
 							},
 							body: JSON.stringify({
 								operationName: "Publication",
 								query: `query Publication {
-									publication(host: "hashnode.codingcat.dev") {
+									publication(id: "${publicationId}") {
 										post(slug: "${existingHashnodeSlug}") {
 											id
 										}
@@ -388,7 +505,8 @@ export const handler = documentEventHandler<ContentDocument>(
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json",
-									Authorization: token,
+									Authorization: authHeader,
+									"x-hashnode-client": "hashnode-cli",
 								},
 								body: JSON.stringify({
 									operationName: "updatePost",
@@ -422,7 +540,8 @@ export const handler = documentEventHandler<ContentDocument>(
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: token,
+								Authorization: authHeader,
+								"x-hashnode-client": "hashnode-cli",
 							},
 							body: JSON.stringify({
 								operationName: "publishPost",
@@ -481,10 +600,492 @@ export const handler = documentEventHandler<ContentDocument>(
 						`[Syndicate Content] Successfully published to Hashnode: ${externalUrl}`,
 					);
 				}
+
+				if (platform === "awsbuilder") {
+					const awsSessionToken = process.env.AWS_BUILDER_SESSION_TOKEN;
+					if (!awsSessionToken) {
+						console.warn(
+							"[Syndicate Content] AWS_BUILDER_SESSION_TOKEN not configured. Skipping AWS Builder Center dispatch.",
+						);
+						continue;
+					}
+
+					const awsHeaders = {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+						"builder-session-token": awsSessionToken,
+						Cookie: `builder-session-token=${awsSessionToken}`,
+					};
+
+					const existingSyndication = await client
+						.getDocument(syndicationDocId)
+						.catch(() => null);
+
+					const urlContentIdMatch = data.awsbuilder?.match(
+						/builder\.aws\.com\/content\/([A-Za-z0-9]+)/,
+					);
+					let contentId =
+						(existingSyndication?.externalId &&
+						!existingSyndication.externalId.startsWith("simulated-")
+							? existingSyndication.externalId
+							: null) ||
+						(urlContentIdMatch ? urlContentIdMatch[1] : null);
+					let versionId: string | null = null;
+
+					if (contentId) {
+						const editInitRes = await fetch(
+							"https://api.builder.aws.com/cs/article/InitializeEditArticle",
+							{
+								method: "POST",
+								headers: awsHeaders,
+								body: JSON.stringify({ contentId }),
+							},
+						);
+						if (editInitRes.ok) {
+							const editInitJson = (await editInitRes.json()) as any;
+							versionId = editInitJson?.versionId || null;
+						}
+					}
+
+					if (!contentId || !versionId) {
+						const initRes = await fetch(
+							"https://api.builder.aws.com/cs/article/InitializeArticle",
+							{
+								method: "POST",
+								headers: awsHeaders,
+								body: JSON.stringify({}),
+							},
+						);
+						if (!initRes.ok) {
+							throw new Error(
+								`AWS Builder InitializeArticle failed (${initRes.status}): ${await initRes.text()}`,
+							);
+						}
+						const initJson = (await initRes.json()) as any;
+						contentId = initJson?.contentId;
+						versionId = initJson?.versionId;
+					}
+
+					// Upload cover image if present
+					let coverImageUploadKey: string | undefined;
+					const coverImageUrl =
+						urlForImage(data.coverImage)?.width(1280).format("jpg").url() || "";
+					if (coverImageUrl) {
+						const imgRes = await fetch(coverImageUrl);
+						if (imgRes.ok) {
+							const imgBuf = await imgRes.arrayBuffer();
+							const presignRes = await fetch(
+								"https://api.builder.aws.com/cs/upload/generate-presigned-post",
+								{
+									method: "POST",
+									headers: awsHeaders,
+									body: JSON.stringify({
+										contentId,
+										fileName: `${slug}-cover.jpg`,
+										contentType: "image/jpeg",
+										uploadType: "ARTICLE",
+									}),
+								},
+							);
+							if (presignRes.ok) {
+								const presignData = (await presignRes.json()) as any;
+								const formData = new FormData();
+								for (const [k, v] of Object.entries(
+									presignData.presignedPostFields || {},
+								)) {
+									formData.append(k, String(v));
+								}
+								formData.append(
+									"file",
+									new Blob([imgBuf], { type: "image/jpeg" }),
+									`${slug}-cover.jpg`,
+								);
+								const s3Res = await fetch(presignData.presignedPostUrl, {
+									method: "POST",
+									body: formData,
+								});
+								if (s3Res.ok || s3Res.status === 204) {
+									coverImageUploadKey = presignData.uploadKey;
+								}
+							}
+						}
+					}
+
+					const awsTags = Array.from(
+						new Set(
+							docTags
+								.map((t) => (t?.value || t?.label || "").toLowerCase())
+								.filter(Boolean)
+								.slice(0, 5),
+						),
+					);
+					if (awsTags.length === 0) awsTags.push("aws");
+
+					const youtubeMd = data.youtube
+						? `${formatYouTubeBlock(data.youtube, "awsbuilder")}\n\n`
+						: "";
+
+					const draftPayload: any = {
+						contentId,
+						versionId,
+						title: data.title || "Untitled",
+						summary: (data.excerpt || data.title || "").slice(0, 300),
+						contentBody: `*Originally published at [${canonicalUrl}](${canonicalUrl})*\n\n${youtubeMd}${awsMarkdown}`,
+						canonicalUrl,
+						preferredUrlSlug: slug,
+						tags: awsTags,
+						autoSave: false,
+						...(coverImageUploadKey
+							? {
+									coverImageUploadKey,
+									coverImageAlt: data.title || "Cover image",
+								}
+							: {}),
+					};
+
+					const saveRes = await fetch(
+						"https://api.builder.aws.com/cs/article/SaveArticleDraft",
+						{
+							method: "POST",
+							headers: awsHeaders,
+							body: JSON.stringify(draftPayload),
+						},
+					);
+					if (!saveRes.ok) {
+						throw new Error(
+							`AWS Builder SaveArticleDraft failed (${saveRes.status}): ${await saveRes.text()}`,
+						);
+					}
+
+					await fetch("https://api.builder.aws.com/cs/article/SubmissionCheck", {
+						method: "POST",
+						headers: awsHeaders,
+						body: JSON.stringify({ contentId, versionId }),
+					});
+
+					const pubRes = await fetch(
+						"https://api.builder.aws.com/cs/article/PublishArticle",
+						{
+							method: "POST",
+							headers: awsHeaders,
+							body: JSON.stringify({ contentId, versionId }),
+						},
+					);
+					if (!pubRes.ok) {
+						throw new Error(
+							`AWS Builder PublishArticle failed (${pubRes.status}): ${await pubRes.text()}`,
+						);
+					}
+
+					const externalUrl = `https://builder.aws.com/content/${contentId}/${slug}`;
+
+					await client.createOrReplace({
+						_id: syndicationDocId,
+						_type: "syndication",
+						target: { _type: "reference", _ref: data._id },
+						platform: "awsbuilder",
+						status: "published",
+						canonicalUrl,
+						externalUrl,
+						externalId: String(contentId),
+						syndicatedAt: new Date().toISOString(),
+						error: undefined,
+					});
+
+					if (data.awsbuilder !== externalUrl) {
+						parentPatch.awsbuilder = externalUrl;
+					}
+
+					console.log(
+						`[Syndicate Content] Successfully published to AWS Builder Center: ${externalUrl}`,
+					);
+				} else if (platform === "dailydev") {
+					const dailyDevSession = process.env.DAILY_DEV_SESSION_COOKIE;
+					if (!dailyDevSession) {
+						console.warn(
+							"[Syndicate Content] DAILY_DEV_SESSION_COOKIE not configured. Skipping daily.dev Squad live dispatch.",
+						);
+						continue;
+					}
+
+					const squadSourceId = "dc8ed5af-d1f6-423d-9f17-703d33946006";
+					const baseCookie = dailyDevSession.includes("__Secure-dast=")
+						? dailyDevSession
+						: `da2=m7Z6H7R0hwoOhyQZ1WW7K; __Secure-dast=${dailyDevSession}`;
+
+					// 1. Refresh short-lived da3 JWT via /boot
+					const bootRes = await fetch("https://api.daily.dev/boot?v=3.47.11", {
+						headers: {
+							app: "webapp",
+							"Content-Type": "application/json",
+							Cookie: baseCookie,
+							Origin: "https://app.daily.dev",
+							Referer: "https://app.daily.dev/",
+						},
+					});
+					const refreshedCookies =
+						bootRes.headers
+							.getSetCookie?.()
+							?.map((c) => c.split(";")[0])
+							.join("; ") || baseCookie;
+
+					const gqlHeaders = {
+						"Content-Type": "application/json",
+						Cookie: refreshedCookies,
+						Origin: "https://app.daily.dev",
+						Referer: "https://app.daily.dev/",
+					};
+
+					const existingSyndication = await client
+						.getDocument(syndicationDocId)
+						.catch(() => null);
+					const existingPostId =
+						existingSyndication?.externalId &&
+						!String(existingSyndication.externalId).startsWith("simulated-")
+							? String(existingSyndication.externalId)
+							: null;
+
+					const squadSuffix = topYouTubeWatchUrl ? `\nFull guide: ${canonicalUrl}` : "";
+					const maxExcerptLen = Math.max(40, 240 - squadSuffix.length);
+					const rawCommentary = (
+						data.excerpt ||
+						data.title ||
+						"New on CodingCat.dev!"
+					).trim();
+					const trimmedCommentary =
+						rawCommentary.length > maxExcerptLen
+							? `${rawCommentary.slice(0, maxExcerptLen - 3).trim()}...`
+							: rawCommentary;
+					const commentary = `${trimmedCommentary}${squadSuffix}`.slice(0, 240);
+					const coverImageUrl =
+						urlForImage(data.coverImage)?.width(1280).format("jpg").url() ||
+						(topYouTubeId ? `https://i.ytimg.com/vi/${topYouTubeId}/maxresdefault.jpg` : "");
+					const squadExternalLink = topYouTubeWatchUrl || canonicalUrl;
+
+					let postId = existingPostId;
+					if (!postId && data.dailydev) {
+						const match = data.dailydev.match(/-([A-Za-z0-9]{9})$/);
+						if (match) postId = match[1];
+					}
+
+					if (postId) {
+						const editRes = await fetch("https://api.daily.dev/graphql", {
+							method: "POST",
+							headers: gqlHeaders,
+							body: JSON.stringify({
+								query: `mutation UpdateSquadPost($id: ID!, $commentary: String) {
+									editSharePost(id: $id, commentary: $commentary) {
+										id
+									}
+								}`,
+								variables: { id: postId, commentary },
+							}),
+						});
+						const editData = (await editRes.json()) as any;
+						if (editData?.errors) {
+							console.warn(
+								"[Syndicate Content] editSharePost warning, creating new Squad post:",
+								editData.errors,
+							);
+							postId = null;
+						}
+					}
+
+					if (!postId) {
+						const createRes = await fetch("https://api.daily.dev/graphql", {
+							method: "POST",
+							headers: gqlHeaders,
+							body: JSON.stringify({
+								query: `mutation CreatePostInMultipleSources(
+									$sourceIds: [ID!]!
+									$title: String
+									$commentary: String
+									$imageUrl: String
+									$externalLink: String
+								) {
+									createPostInMultipleSources(
+										sourceIds: $sourceIds
+										title: $title
+										commentary: $commentary
+										imageUrl: $imageUrl
+										externalLink: $externalLink
+									) {
+										id
+										sourceId
+										type
+										slug
+									}
+								}`,
+								variables: {
+									sourceIds: [squadSourceId],
+									title: data.title || "Untitled",
+									commentary,
+									...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
+									externalLink: squadExternalLink,
+								},
+							}),
+						});
+						let createData = (await createRes.json()) as any;
+						if (createData?.errors && squadExternalLink !== canonicalUrl) {
+							const retryRes = await fetch("https://api.daily.dev/graphql", {
+								method: "POST",
+								headers: gqlHeaders,
+								body: JSON.stringify({
+									query: `mutation CreatePostInMultipleSources(
+										$sourceIds: [ID!]!
+										$title: String
+										$commentary: String
+										$imageUrl: String
+										$externalLink: String
+									) {
+										createPostInMultipleSources(
+											sourceIds: $sourceIds
+											title: $title
+											commentary: $commentary
+											imageUrl: $imageUrl
+											externalLink: $externalLink
+										) {
+											id
+											sourceId
+											type
+											slug
+										}
+									}`,
+									variables: {
+										sourceIds: [squadSourceId],
+										title: data.title || "Untitled",
+										commentary: rawCommentary.slice(0, 240),
+										...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
+										externalLink: canonicalUrl,
+									},
+								}),
+							});
+							createData = (await retryRes.json()) as any;
+						}
+						if (createData?.errors) {
+							throw new Error(
+								`daily.dev createPostInMultipleSources error: ${JSON.stringify(createData.errors)}`,
+							);
+						}
+						postId = createData?.data?.createPostInMultipleSources?.[0]?.id;
+					}
+
+					if (!postId) {
+						throw new Error("daily.dev Squad publish did not return a post ID");
+					}
+
+					const postRes = await fetch("https://api.daily.dev/graphql", {
+						method: "POST",
+						headers: gqlHeaders,
+						body: JSON.stringify({
+							query: `query GetSquadPost($id: ID!) {
+								post(id: $id) {
+									id
+									commentsPermalink
+									permalink
+								}
+							}`,
+							variables: { id: postId },
+						}),
+					});
+					const postJson = (await postRes.json()) as any;
+					const externalUrl =
+						postJson?.data?.post?.commentsPermalink ||
+						`https://daily.dev/posts/${postId}`;
+
+					await client.createOrReplace({
+						_id: syndicationDocId,
+						_type: "syndication",
+						target: { _type: "reference", _ref: data._id },
+						platform: "dailydev",
+						status: "published",
+						canonicalUrl,
+						externalUrl,
+						externalId: String(postId),
+						syndicatedAt: new Date().toISOString(),
+						error: undefined,
+					});
+
+					if (data.dailydev !== externalUrl) {
+						parentPatch.dailydev = externalUrl;
+					}
+
+					console.log(
+						`[Syndicate Content] Successfully published to daily.dev Squad: ${externalUrl}`,
+					);
+				}
 			} catch (publishErr) {
 				const errMsg =
 					publishErr instanceof Error ? publishErr.message : String(publishErr);
 				console.error(`[Syndicate Content] Error publishing to ${platform}:`, errMsg);
+
+				if (platform === "hashnode") {
+					const refreshToken = process.env.GOOGLE_WORKSPACE_REFRESH_TOKEN;
+					const clientId = process.env.GOOGLE_CLIENT_ID;
+					const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+					if (refreshToken && clientId && clientSecret) {
+						try {
+							const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+								method: "POST",
+								headers: { "Content-Type": "application/x-www-form-urlencoded" },
+								body: new URLSearchParams({
+									client_id: clientId,
+									client_secret: clientSecret,
+									refresh_token: refreshToken,
+									grant_type: "refresh_token",
+								}),
+							});
+							const tokenData = (await tokenRes.json()) as { access_token?: string };
+							if (tokenData.access_token) {
+								const taskTitle = `Cross-post to Hashnode & Medium: ${data.title || "Untitled"}`;
+								const taskNotes = [
+									`Canonical URL: ${canonicalUrl}`,
+									``,
+									`1. Hashnode (Free UI Editor): https://hashnode.com/draft`,
+									`2. Medium (1-Click Import): https://medium.com/p/import`,
+									`3. daily.dev Squad: https://daily.dev/squads/codingcatdev`,
+								].join("\n");
+								const tasksRes = await fetch(
+									"https://tasks.googleapis.com/tasks/v1/lists/@default/tasks",
+									{
+										method: "POST",
+										headers: {
+											Authorization: `Bearer ${tokenData.access_token}`,
+											"Content-Type": "application/json",
+										},
+										body: JSON.stringify({
+											title: taskTitle,
+											notes: taskNotes,
+											due: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+										}),
+									},
+								);
+								if (!tasksRes.ok) {
+									const startDate = new Date(Date.now() + 60 * 60 * 1000);
+									const endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
+									await fetch(
+										"https://www.googleapis.com/calendar/v3/calendars/alex.patterson%40gmail.com/events",
+										{
+											method: "POST",
+											headers: {
+												Authorization: `Bearer ${tokenData.access_token}`,
+												"Content-Type": "application/json",
+											},
+											body: JSON.stringify({
+												summary: `📋 [Task] ${taskTitle}`,
+												description: taskNotes,
+												start: { dateTime: startDate.toISOString() },
+												end: { dateTime: endDate.toISOString() },
+											}),
+										},
+									);
+								}
+							}
+						} catch (taskErr) {
+							console.warn("[Syndicate Content] Failed creating Google Task:", taskErr);
+						}
+					}
+				}
 
 				await client.createOrReplace({
 					_id: syndicationDocId,

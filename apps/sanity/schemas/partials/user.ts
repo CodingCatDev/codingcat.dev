@@ -86,6 +86,10 @@ const content = defineType({
 					type: "string",
 				}),
 				defineField({
+					name: "threads",
+					type: "string",
+				}),
+				defineField({
 					name: "tiktok",
 					type: "string",
 				}),
@@ -120,6 +124,20 @@ const content = defineType({
 					],
 				}),
 			],
+		}),
+		defineField({
+			name: "portalToken",
+			title: "Guest Portal Magic Token",
+			type: "string",
+			readOnly: true,
+			hidden: true,
+		}),
+		defineField({
+			name: "portalTokenExpiresAt",
+			title: "Guest Portal Token Expiration",
+			type: "datetime",
+			readOnly: true,
+			hidden: true,
 		}),
 	],
 });

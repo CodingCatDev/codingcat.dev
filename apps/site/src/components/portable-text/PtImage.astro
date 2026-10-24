@@ -13,11 +13,31 @@ type Props = PtProps<ImageNode>;
 
 const { node } = Astro.props;
 
-const src = Astro.locals.sanity
-	.urlForImage(node)
-	?.width(1920)
-	.height(1080)
-	.url();
+// Parse intrinsic dimensions from Sanity asset _ref ("image-<hash>-<width>x<height>-<ext>")
+// so we never pass a forced 16:9 .height(1080) to @sanity/image-url (which causes
+// @sanity/image-url to inject ?rect=... and crop tall/square images like memes or diagrams).
+const assetRef = stegaClean(
+	(node as { asset?: { _ref?: string } })?.asset?._ref,
+);
+const dimMatch = assetRef?.match(/-(\d+)x(\d+)-[a-z0-9]+$/i);
+const intrinsicWidth = dimMatch ? Number(dimMatch[1]) : 1200;
+const intrinsicHeight = dimMatch ? Number(dimMatch[2]) : 675;
+
+const builder = Astro.locals.sanity.urlForImage(node);
+const maxWidth = Math.min(intrinsicWidth, 1600);
+const src = builder?.width(maxWidth).quality(82).url();
+
+const responsiveWidths = [480, 640, 800, 960, 1200, 1600].filter(
+	(w) => w <= maxWidth,
+);
+if (!responsiveWidths.includes(maxWidth)) {
+	responsiveWidths.push(maxWidth);
+}
+const srcset = builder
+	? responsiveWidths
+			.map((w) => `${builder.width(w).quality(82).url()} ${w}w`)
+			.join(", ")
+	: undefined;
 
 const alt = stegaClean(node.alt) ?? "";
 const caption = node.caption;
@@ -25,13 +45,14 @@ const caption = node.caption;
 
 {
 	src && (
-		<figure class="not-prose my-8">
+		<figure class="not-prose my-8 flex flex-col items-center">
 			<img
-				class="w-full h-auto rounded-md shadow-md"
+				class="h-auto w-auto max-w-full max-h-[80dvh] rounded-md shadow-md"
 				src={src}
-				width={1920}
-				height={1080}
-				sizes="100vw"
+				srcset={srcset}
+				width={intrinsicWidth}
+				height={intrinsicHeight}
+				sizes="(max-width: 896px) 100vw, 896px"
 				alt={alt}
 				loading="lazy"
 				decoding="async"

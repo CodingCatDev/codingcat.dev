@@ -20,10 +20,11 @@ const {
 	height = 48,
 } = Astro.props;
 
-const src = Astro.locals.sanity
-	.urlForImage(coverImage ?? undefined)
-	?.width(width)
-	.height(height)
+const builder = Astro.locals.sanity.urlForImage(coverImage ?? undefined);
+const src = builder
+	?.width(width * 2)
+	.height(height * 2)
+	.quality(82)
 	.url();
 
 // stegaClean: href is an attribute; zero-width characters break the URL.

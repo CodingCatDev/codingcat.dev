@@ -60,13 +60,33 @@ jobs:
           if [ -n "$OPENROUTER_API_KEY" ]; then
             echo "$OPENROUTER_API_KEY" | pnpm --filter @codingcatdev/site exec wrangler secret put OPENROUTER_API_KEY --env=""
           fi
+          if [ -n "$SANITY_API_WRITE_TOKEN" ]; then
+            echo "$SANITY_API_WRITE_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_API_WRITE_TOKEN --env=""
+          fi
+          if [ -n "$GUEST_PORTAL_SECRET" ]; then
+            echo "$GUEST_PORTAL_SECRET" | pnpm --filter @codingcatdev/site exec wrangler secret put GUEST_PORTAL_SECRET --env=""
+          fi
+          if [ -n "$GOOGLE_CLIENT_ID" ]; then
+            echo "$GOOGLE_CLIENT_ID" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_CLIENT_ID --env=""
+          fi
+          if [ -n "$GOOGLE_CLIENT_SECRET" ]; then
+            echo "$GOOGLE_CLIENT_SECRET" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_CLIENT_SECRET --env=""
+          fi
+          if [ -n "$GOOGLE_REFRESH_TOKEN" ]; then
+            echo "$GOOGLE_REFRESH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_REFRESH_TOKEN --env=""
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_CONTEXT_TOKEN: ${{ secrets.SANITY_CONTEXT_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GUEST_PORTAL_SECRET: ${{ secrets.GUEST_PORTAL_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
@@ -114,10 +134,30 @@ jobs:
           if [ -n "$OPENROUTER_API_KEY" ]; then
             echo "$OPENROUTER_API_KEY" | pnpm --filter @codingcatdev/site exec wrangler secret put OPENROUTER_API_KEY --env production
           fi
+          if [ -n "$SANITY_API_WRITE_TOKEN" ]; then
+            echo "$SANITY_API_WRITE_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_API_WRITE_TOKEN --env production
+          fi
+          if [ -n "$GUEST_PORTAL_SECRET" ]; then
+            echo "$GUEST_PORTAL_SECRET" | pnpm --filter @codingcatdev/site exec wrangler secret put GUEST_PORTAL_SECRET --env production
+          fi
+          if [ -n "$GOOGLE_CLIENT_ID" ]; then
+            echo "$GOOGLE_CLIENT_ID" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_CLIENT_ID --env production
+          fi
+          if [ -n "$GOOGLE_CLIENT_SECRET" ]; then
+            echo "$GOOGLE_CLIENT_SECRET" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_CLIENT_SECRET --env production
+          fi
+          if [ -n "$GOOGLE_REFRESH_TOKEN" ]; then
+            echo "$GOOGLE_REFRESH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_REFRESH_TOKEN --env production
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_CONTEXT_TOKEN: ${{ secrets.SANITY_CONTEXT_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GUEST_PORTAL_SECRET: ${{ secrets.GUEST_PORTAL_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
