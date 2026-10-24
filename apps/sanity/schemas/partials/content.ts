@@ -94,6 +94,18 @@ const content = defineType({
 			group: "data",
 		}),
 		defineField({
+			name: "medium",
+			title: "Medium",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
+			name: "reddit",
+			title: "Reddit (r/CodingCatDev)",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
 			name: "tags",
 			title: "Tags",
 			description:

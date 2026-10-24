@@ -24,6 +24,9 @@ export default defineType({
 					{ title: "Hashnode", value: "hashnode" },
 					{ title: "AWS Builder Center", value: "awsbuilder" },
 					{ title: "daily.dev Squad", value: "dailydev" },
+					{ title: "Medium", value: "medium" },
+					{ title: "Reddit (r/CodingCatDev)", value: "reddit" },
+					{ title: "YouTube", value: "youtube" },
 				],
 			},
 			validation: (rule) => rule.required(),
@@ -73,11 +76,12 @@ export default defineType({
 			platform: "platform",
 			status: "status",
 			targetTitle: "target.title",
+			externalUrl: "externalUrl",
 		},
-		prepare({ platform, status, targetTitle }) {
+		prepare({ platform, status, targetTitle, externalUrl }) {
 			return {
 				title: `${(platform || "Syndication").toUpperCase()}: ${targetTitle || "Unknown Content"}`,
-				subtitle: `Status: ${status || "pending"}`,
+				subtitle: `${status || "pending"}${externalUrl ? ` • ${externalUrl}` : ""}`,
 			};
 		},
 	},
