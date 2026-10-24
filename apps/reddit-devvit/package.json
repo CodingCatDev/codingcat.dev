@@ -1,0 +1,19 @@
+{
+  "name": "@codingcatdev/reddit-devvit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "login": "devvit login",
+    "upload": "devvit upload",
+    "playtest": "devvit playtest r/CodingCatDev",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@devvit/public-api": "^0.11.0"
+  },
+  "devDependencies": {
+    "devvit": "^0.11.0",
+    "typescript": "^5.7.0"
+  }
+}

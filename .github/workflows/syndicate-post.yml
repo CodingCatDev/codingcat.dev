@@ -37,7 +37,11 @@ jobs:
 
       - name: Syndicate Post
         run: |
-          node scripts/run-syndicate-post.mjs
+          if [ "$TARGET_DOCUMENT_ID" = "backfill-dailydev" ]; then
+            node scripts/backfill-dailydev-and-links.mjs
+          else
+            node scripts/run-syndicate-post.mjs
+          fi
         env:
           TARGET_DOCUMENT_ID: ${{ inputs.document_id }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}

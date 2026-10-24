@@ -143,7 +143,37 @@ async function run() {
     return imgBuilder.image(source).auto("format").fit("max");
   };
 
-  const serializeContent = (content) => {
+  const extractYouTubeId = (url) => {
+    if (!url || typeof url !== "string") return null;
+    const trimmed = url.trim();
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/,
+      /^([A-Za-z0-9_-]{11})$/,
+    ];
+    for (const re of patterns) {
+      const m = trimmed.match(re);
+      if (m) return m[1];
+    }
+    return null;
+  };
+
+  const formatYouTubeBlock = (url, targetPlatform = "devto") => {
+    const ytId = extractYouTubeId(url);
+    if (!ytId && !url) return "";
+    const watchUrl = ytId ? `https://www.youtube.com/watch?v=${ytId}` : url;
+    if (targetPlatform === "devto") {
+      return `{% youtube ${ytId || url.replace("live", "embed")} %}`;
+    }
+    if (targetPlatform === "hashnode") {
+      return `%[${watchUrl}]`;
+    }
+    const thumbUrl = ytId ? `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg` : "";
+    return thumbUrl
+      ? `[![Watch on YouTube](${thumbUrl})](${watchUrl})\n\n**[▶ Watch the video on YouTube](${watchUrl})**`
+      : `**[▶ Watch on YouTube](${watchUrl})**`;
+  };
+
+  const serializeContent = (content, targetPlatform = "devto") => {
     if (!content || !Array.isArray(content) || content.length === 0) {
       return "";
     }
@@ -155,13 +185,18 @@ async function run() {
             const url = urlForImage(value)?.url();
             return url ? `![](${url})` : "";
           },
+          youtube: ({ value }) => formatYouTubeBlock(value?.youtube || value?.url || "", targetPlatform),
+          youtubeShorts: ({ value }) =>
+            Array.isArray(value?.shorts)
+              ? value.shorts.map((s) => formatYouTubeBlock(s, targetPlatform)).join("\n\n")
+              : "",
           codepen: ({ value }) => `{% codepen ${value?.url || ""} %}`,
           codesandbox: ({ value }) => {
             const id = value?.url?.split("https://codesandbox.io/p/sandbox/")?.at(-1);
             return `{% codesandbox ${id || value?.url || ""} %}`;
           },
           twitter: ({ value }) => `{% twitter ${value?.id || ""} %}`,
-          quote: ({ value }) => `> ${serializeContent(value?.content)}`,
+          quote: ({ value }) => `> ${serializeContent(value?.content, targetPlatform)}`,
         },
       });
     } catch (err) {
@@ -170,8 +205,28 @@ async function run() {
     }
   };
 
-  const contentMarkdown = serializeContent(doc.content);
+  const contentMarkdown = serializeContent(doc.content, "devto");
+  const hashnodeMarkdown = serializeContent(doc.content, "hashnode");
+  const awsMarkdown = serializeContent(doc.content, "awsbuilder");
+  const topYouTubeId = extractYouTubeId(doc.youtube);
+  const topYouTubeWatchUrl = topYouTubeId
+    ? `https://www.youtube.com/watch?v=${topYouTubeId}`
+    : doc.youtube || "";
   console.log(`Content serialized to Markdown: ${contentMarkdown.length} characters`);
+
+  if (doc.youtube) {
+    await client.createOrReplace({
+      _id: `syndication.${doc._id}.youtube`,
+      _type: "syndication",
+      target: { _type: "reference", _ref: doc._id },
+      platform: "youtube",
+      status: "published",
+      canonicalUrl,
+      externalUrl: topYouTubeWatchUrl,
+      externalId: topYouTubeId || doc.youtube,
+      syndicatedAt: doc.date || new Date().toISOString(),
+    });
+  }
 
   const docTags = Array.isArray(doc.tags) ? doc.tags : [];
   const hasAwsTag = docTags.some(
@@ -200,7 +255,9 @@ async function run() {
     ).slice(0, 4);
 
     const mainImageUrl = urlForImage(doc.coverImage)?.width(1280).url() || "";
-    const youtubeEmbed = doc.youtube ? `{% youtube ${doc.youtube.replace("live", "embed")} %}\n\n` : "";
+    const youtubeEmbed = doc.youtube
+      ? `{% youtube ${topYouTubeId || doc.youtube.replace("live", "embed")} %}\n\n**[▶ Watch on YouTube & Subscribe to CodingCat.dev](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)**\n\n`
+      : "";
 
     const devtoArticlePayload = {
       article: {
@@ -336,7 +393,9 @@ async function run() {
         ];
 
     const hashnodeCoverImageUrl = urlForImage(doc.coverImage)?.width(1600).url() || "";
-    const youtubeEmbed = doc.youtube ? `%[${doc.youtube.replace("live", "embed")}]\n\n` : "";
+    const youtubeEmbed = doc.youtube
+      ? `%[${topYouTubeWatchUrl}]\n\n**[▶ Watch on YouTube & Subscribe to CodingCat.dev](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)**\n\n`
+      : "";
 
     const articleInput = {
       title: doc.title || "Untitled",
@@ -346,7 +405,7 @@ async function run() {
       tags: hashnodeTags,
       ...(hashnodeCoverImageUrl ? { coverImage: hashnodeCoverImageUrl } : {}),
       originalArticleURL: canonicalUrl,
-      contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
+      contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${hashnodeMarkdown}`,
     };
 
     try {
@@ -497,13 +556,15 @@ async function run() {
       );
       if (awsTags.length === 0) awsTags.push("aws");
 
-      const youtubeMd = doc.youtube ? `Watch on YouTube: [${doc.youtube}](${doc.youtube})\n\n` : "";
+      const youtubeMd = doc.youtube
+        ? `${formatYouTubeBlock(doc.youtube, "awsbuilder")}\n\n`
+        : "";
       const draftPayload = {
         contentId,
         versionId,
         title: doc.title || "Untitled",
         summary: (doc.excerpt || doc.title || "").slice(0, 300),
-        contentBody: `*Originally published at [${canonicalUrl}](${canonicalUrl})*\n\n${youtubeMd}${contentMarkdown}`,
+        contentBody: `*Originally published at [${canonicalUrl}](${canonicalUrl})*\n\n${youtubeMd}${awsMarkdown}`,
         canonicalUrl,
         preferredUrlSlug: slug,
         tags: awsTags,
@@ -598,8 +659,18 @@ async function run() {
             ? "lmBG2IYsS"
             : null;
 
-      const commentary = (doc.excerpt || doc.title || "New on CodingCat.dev!").slice(0, 240);
-      const coverImageUrl = urlForImage(doc.coverImage)?.width(1280).format("jpg").url() || "";
+      const squadSuffix = topYouTubeWatchUrl ? `\nFull guide: ${canonicalUrl}` : "";
+      const maxExcerptLen = Math.max(40, 240 - squadSuffix.length);
+      const rawCommentary = (doc.excerpt || doc.title || "New on CodingCat.dev!").trim();
+      const trimmedCommentary =
+        rawCommentary.length > maxExcerptLen
+          ? `${rawCommentary.slice(0, maxExcerptLen - 3).trim()}...`
+          : rawCommentary;
+      const commentary = `${trimmedCommentary}${squadSuffix}`.slice(0, 240);
+      const coverImageUrl =
+        urlForImage(doc.coverImage)?.width(1280).format("jpg").url() ||
+        (topYouTubeId ? `https://i.ytimg.com/vi/${topYouTubeId}/maxresdefault.jpg` : "");
+      const squadExternalLink = topYouTubeWatchUrl || canonicalUrl;
 
       if (!postId && doc.dailydev) {
         const match = doc.dailydev.match(/-([A-Za-z0-9]{9})$/);
@@ -656,11 +727,51 @@ async function run() {
               title: doc.title || "Untitled",
               commentary,
               ...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
-              externalLink: canonicalUrl,
+              externalLink: squadExternalLink,
             },
           }),
         });
-        const createData = await createRes.json();
+        let createData = await createRes.json();
+        if (createData?.errors && squadExternalLink !== canonicalUrl) {
+          console.warn(
+            "daily.dev Squad YouTube link warning, retrying with canonicalUrl:",
+            createData.errors
+          );
+          const retryRes = await fetch("https://api.daily.dev/graphql", {
+            method: "POST",
+            headers: gqlHeaders,
+            body: JSON.stringify({
+              query: `mutation CreatePostInMultipleSources(
+                $sourceIds: [ID!]!
+                $title: String
+                $commentary: String
+                $imageUrl: String
+                $externalLink: String
+              ) {
+                createPostInMultipleSources(
+                  sourceIds: $sourceIds
+                  title: $title
+                  commentary: $commentary
+                  imageUrl: $imageUrl
+                  externalLink: $externalLink
+                ) {
+                  id
+                  sourceId
+                  type
+                  slug
+                }
+              }`,
+              variables: {
+                sourceIds: [squadSourceId],
+                title: doc.title || "Untitled",
+                commentary: rawCommentary.slice(0, 240),
+                ...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
+                externalLink: canonicalUrl,
+              },
+            }),
+          });
+          createData = await retryRes.json();
+        }
         if (createData?.errors) {
           throw new Error(
             `daily.dev createPostInMultipleSources error: ${JSON.stringify(createData.errors)}`
@@ -714,7 +825,15 @@ async function run() {
 
   // --- LINK SYNDICATION REFERENCES ON PARENT ---
   try {
-    const platforms = ["devto", "hashnode", "dailydev", ...(shouldSyndicateAws ? ["awsbuilder"] : [])];
+    const platforms = [
+      "devto",
+      "hashnode",
+      "dailydev",
+      "youtube",
+      "medium",
+      "reddit",
+      ...(shouldSyndicateAws ? ["awsbuilder"] : []),
+    ];
     const candidateRefs = platforms.map((p) => `syndication.${doc._id}.${p}`);
     const existingSynDocs = await Promise.all(
       candidateRefs.map((ref) => client.getDocument(ref).catch(() => null))
