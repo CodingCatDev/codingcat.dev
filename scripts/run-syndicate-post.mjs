@@ -556,9 +556,165 @@ async function run() {
     }
   }
 
+  // --- DAILY.DEV SQUAD SYNDICATION ---
+  const dailyDevSession = process.env.DAILY_DEV_SESSION_COOKIE;
+  if (dailyDevSession) {
+    console.log("\n--- Syndicating to daily.dev Squad ---");
+    const syndicationDocId = `syndication.${doc._id}.dailydev`;
+    const squadSourceId = "dc8ed5af-d1f6-423d-9f17-703d33946006";
+    const baseCookie = dailyDevSession.includes("__Secure-dast=")
+      ? dailyDevSession
+      : `da2=m7Z6H7R0hwoOhyQZ1WW7K; __Secure-dast=${dailyDevSession}`;
+
+    try {
+      const bootRes = await fetch("https://api.daily.dev/boot?v=3.47.11", {
+        headers: {
+          app: "webapp",
+          "Content-Type": "application/json",
+          Cookie: baseCookie,
+          Origin: "https://app.daily.dev",
+          Referer: "https://app.daily.dev/",
+        },
+      });
+      const refreshedCookies =
+        bootRes.headers
+          .getSetCookie?.()
+          ?.map((c) => c.split(";")[0])
+          .join("; ") || baseCookie;
+
+      const gqlHeaders = {
+        "Content-Type": "application/json",
+        Cookie: refreshedCookies,
+        Origin: "https://app.daily.dev",
+        Referer: "https://app.daily.dev/",
+      };
+
+      const existingSyndication = await client.getDocument(syndicationDocId).catch(() => null);
+      let postId =
+        existingSyndication?.externalId &&
+        !String(existingSyndication.externalId).startsWith("simulated-")
+          ? String(existingSyndication.externalId)
+          : doc._id === "post-php2shell-cve-2026-109618"
+            ? "lmBG2IYsS"
+            : null;
+
+      const commentary = (doc.excerpt || doc.title || "New on CodingCat.dev!").slice(0, 240);
+      const coverImageUrl = urlForImage(doc.coverImage)?.width(1280).format("jpg").url() || "";
+
+      if (!postId && doc.dailydev) {
+        const match = doc.dailydev.match(/-([A-Za-z0-9]{9})$/);
+        if (match) postId = match[1];
+      }
+
+      if (postId) {
+        const editRes = await fetch("https://api.daily.dev/graphql", {
+          method: "POST",
+          headers: gqlHeaders,
+          body: JSON.stringify({
+            query: `mutation UpdateSquadPost($id: ID!, $commentary: String) {
+              editSharePost(id: $id, commentary: $commentary) {
+                id
+              }
+            }`,
+            variables: { id: postId, commentary },
+          }),
+        });
+        const editData = await editRes.json();
+        if (editData?.errors) {
+          console.warn("daily.dev editSharePost warning, creating new Squad post:", editData.errors);
+          postId = null;
+        }
+      }
+
+      if (!postId) {
+        const createRes = await fetch("https://api.daily.dev/graphql", {
+          method: "POST",
+          headers: gqlHeaders,
+          body: JSON.stringify({
+            query: `mutation CreatePostInMultipleSources(
+              $sourceIds: [ID!]!
+              $title: String
+              $commentary: String
+              $imageUrl: String
+              $externalLink: String
+            ) {
+              createPostInMultipleSources(
+                sourceIds: $sourceIds
+                title: $title
+                commentary: $commentary
+                imageUrl: $imageUrl
+                externalLink: $externalLink
+              ) {
+                id
+                sourceId
+                type
+                slug
+              }
+            }`,
+            variables: {
+              sourceIds: [squadSourceId],
+              title: doc.title || "Untitled",
+              commentary,
+              ...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
+              externalLink: canonicalUrl,
+            },
+          }),
+        });
+        const createData = await createRes.json();
+        if (createData?.errors) {
+          throw new Error(
+            `daily.dev createPostInMultipleSources error: ${JSON.stringify(createData.errors)}`
+          );
+        }
+        postId = createData?.data?.createPostInMultipleSources?.[0]?.id;
+      }
+
+      if (!postId) {
+        throw new Error("daily.dev Squad publish did not return a post ID");
+      }
+
+      const postRes = await fetch("https://api.daily.dev/graphql", {
+        method: "POST",
+        headers: gqlHeaders,
+        body: JSON.stringify({
+          query: `query GetSquadPost($id: ID!) {
+            post(id: $id) {
+              id
+              commentsPermalink
+              permalink
+            }
+          }`,
+          variables: { id: postId },
+        }),
+      });
+      const postJson = await postRes.json();
+      const externalUrl =
+        postJson?.data?.post?.commentsPermalink || `https://daily.dev/posts/${postId}`;
+
+      console.log(`✓ daily.dev Squad published: ${externalUrl}`);
+
+      await client.createOrReplace({
+        _id: syndicationDocId,
+        _type: "syndication",
+        target: { _type: "reference", _ref: doc._id },
+        platform: "dailydev",
+        status: "published",
+        canonicalUrl,
+        externalUrl,
+        externalId: String(postId),
+        syndicatedAt: new Date().toISOString(),
+      });
+
+      await client.patch(doc._id).set({ dailydev: externalUrl }).commit();
+      console.log(`✓ Updated Sanity doc ${doc._id} dailydev URL`);
+    } catch (err) {
+      console.error("✗ daily.dev Squad syndication error:", err);
+    }
+  }
+
   // --- LINK SYNDICATION REFERENCES ON PARENT ---
   try {
-    const platforms = ["devto", "hashnode", ...(shouldSyndicateAws ? ["awsbuilder"] : [])];
+    const platforms = ["devto", "hashnode", "dailydev", ...(shouldSyndicateAws ? ["awsbuilder"] : [])];
     const candidateRefs = platforms.map((p) => `syndication.${doc._id}.${p}`);
     const existingSynDocs = await Promise.all(
       candidateRefs.map((ref) => client.getDocument(ref).catch(() => null))

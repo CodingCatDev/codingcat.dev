@@ -88,6 +88,12 @@ const content = defineType({
 			group: "data",
 		}),
 		defineField({
+			name: "dailydev",
+			title: "daily.dev Squad",
+			type: "url",
+			group: "data",
+		}),
+		defineField({
 			name: "tags",
 			title: "Tags",
 			description:

@@ -17,6 +17,7 @@ interface ContentDocument {
 	devto?: string;
 	hashnode?: string;
 	awsbuilder?: string;
+	dailydev?: string;
 	tags?: Array<{ _key?: string; label?: string; value?: string }>;
 	sponsor?: Array<{ _ref: string }>;
 	syndications?: Array<{ _type: "reference"; _ref: string; _key?: string }>;
@@ -118,9 +119,10 @@ export const handler = documentEventHandler<ContentDocument>(
 			Boolean(data.awsbuilder) ||
 			process.env.FORCE_AWS_BUILDER === "true";
 
-		const platforms: Array<"devto" | "hashnode" | "awsbuilder"> = [
+		const platforms: Array<"devto" | "hashnode" | "dailydev" | "awsbuilder"> = [
 			"devto",
 			"hashnode",
+			"dailydev",
 			...(shouldSyndicateAws ? (["awsbuilder"] as const) : []),
 		];
 
@@ -145,7 +147,9 @@ export const handler = documentEventHandler<ContentDocument>(
 							? "dev.to"
 							: platform === "hashnode"
 								? "hashnode.com"
-								: "builder.aws.com";
+								: platform === "dailydev"
+									? "daily.dev"
+									: "builder.aws.com";
 					await client.createOrReplace({
 						_id: syndicationDocId,
 						_type: "syndication",
@@ -744,6 +748,175 @@ export const handler = documentEventHandler<ContentDocument>(
 
 					console.log(
 						`[Syndicate Content] Successfully published to AWS Builder Center: ${externalUrl}`,
+					);
+				} else if (platform === "dailydev") {
+					const dailyDevSession = process.env.DAILY_DEV_SESSION_COOKIE;
+					if (!dailyDevSession) {
+						console.warn(
+							"[Syndicate Content] DAILY_DEV_SESSION_COOKIE not configured. Skipping daily.dev Squad live dispatch.",
+						);
+						continue;
+					}
+
+					const squadSourceId = "dc8ed5af-d1f6-423d-9f17-703d33946006";
+					const baseCookie = dailyDevSession.includes("__Secure-dast=")
+						? dailyDevSession
+						: `da2=m7Z6H7R0hwoOhyQZ1WW7K; __Secure-dast=${dailyDevSession}`;
+
+					// 1. Refresh short-lived da3 JWT via /boot
+					const bootRes = await fetch("https://api.daily.dev/boot?v=3.47.11", {
+						headers: {
+							app: "webapp",
+							"Content-Type": "application/json",
+							Cookie: baseCookie,
+							Origin: "https://app.daily.dev",
+							Referer: "https://app.daily.dev/",
+						},
+					});
+					const refreshedCookies =
+						bootRes.headers
+							.getSetCookie?.()
+							?.map((c) => c.split(";")[0])
+							.join("; ") || baseCookie;
+
+					const gqlHeaders = {
+						"Content-Type": "application/json",
+						Cookie: refreshedCookies,
+						Origin: "https://app.daily.dev",
+						Referer: "https://app.daily.dev/",
+					};
+
+					const existingSyndication = await client
+						.getDocument(syndicationDocId)
+						.catch(() => null);
+					const existingPostId =
+						existingSyndication?.externalId &&
+						!String(existingSyndication.externalId).startsWith("simulated-")
+							? String(existingSyndication.externalId)
+							: null;
+
+					const commentary = (
+						data.excerpt ||
+						data.title ||
+						"New on CodingCat.dev!"
+					).slice(0, 240);
+					const coverImageUrl =
+						urlForImage(data.coverImage)?.width(1280).format("jpg").url() || "";
+
+					let postId = existingPostId;
+					if (!postId && data.dailydev) {
+						const match = data.dailydev.match(/-([A-Za-z0-9]{9})$/);
+						if (match) postId = match[1];
+					}
+
+					if (postId) {
+						const editRes = await fetch("https://api.daily.dev/graphql", {
+							method: "POST",
+							headers: gqlHeaders,
+							body: JSON.stringify({
+								query: `mutation UpdateSquadPost($id: ID!, $commentary: String) {
+									editSharePost(id: $id, commentary: $commentary) {
+										id
+									}
+								}`,
+								variables: { id: postId, commentary },
+							}),
+						});
+						const editData = (await editRes.json()) as any;
+						if (editData?.errors) {
+							console.warn(
+								"[Syndicate Content] editSharePost warning, creating new Squad post:",
+								editData.errors,
+							);
+							postId = null;
+						}
+					}
+
+					if (!postId) {
+						const createRes = await fetch("https://api.daily.dev/graphql", {
+							method: "POST",
+							headers: gqlHeaders,
+							body: JSON.stringify({
+								query: `mutation CreatePostInMultipleSources(
+									$sourceIds: [ID!]!
+									$title: String
+									$commentary: String
+									$imageUrl: String
+									$externalLink: String
+								) {
+									createPostInMultipleSources(
+										sourceIds: $sourceIds
+										title: $title
+										commentary: $commentary
+										imageUrl: $imageUrl
+										externalLink: $externalLink
+									) {
+										id
+										sourceId
+										type
+										slug
+									}
+								}`,
+								variables: {
+									sourceIds: [squadSourceId],
+									title: data.title || "Untitled",
+									commentary,
+									...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
+									externalLink: canonicalUrl,
+								},
+							}),
+						});
+						const createData = (await createRes.json()) as any;
+						if (createData?.errors) {
+							throw new Error(
+								`daily.dev createPostInMultipleSources error: ${JSON.stringify(createData.errors)}`,
+							);
+						}
+						postId = createData?.data?.createPostInMultipleSources?.[0]?.id;
+					}
+
+					if (!postId) {
+						throw new Error("daily.dev Squad publish did not return a post ID");
+					}
+
+					const postRes = await fetch("https://api.daily.dev/graphql", {
+						method: "POST",
+						headers: gqlHeaders,
+						body: JSON.stringify({
+							query: `query GetSquadPost($id: ID!) {
+								post(id: $id) {
+									id
+									commentsPermalink
+									permalink
+								}
+							}`,
+							variables: { id: postId },
+						}),
+					});
+					const postJson = (await postRes.json()) as any;
+					const externalUrl =
+						postJson?.data?.post?.commentsPermalink ||
+						`https://daily.dev/posts/${postId}`;
+
+					await client.createOrReplace({
+						_id: syndicationDocId,
+						_type: "syndication",
+						target: { _type: "reference", _ref: data._id },
+						platform: "dailydev",
+						status: "published",
+						canonicalUrl,
+						externalUrl,
+						externalId: String(postId),
+						syndicatedAt: new Date().toISOString(),
+						error: undefined,
+					});
+
+					if (data.dailydev !== externalUrl) {
+						parentPatch.dailydev = externalUrl;
+					}
+
+					console.log(
+						`[Syndicate Content] Successfully published to daily.dev Squad: ${externalUrl}`,
 					);
 				}
 			} catch (publishErr) {
