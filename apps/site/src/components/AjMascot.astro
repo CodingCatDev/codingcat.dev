@@ -1,0 +1,85 @@
+---
+/**
+ * AJ the CodingCat.dev Mascot — 2026 Feather Green & Macaw Blue Edition (Column 1).
+ *
+ * Features AJ with a bold white die-cut sticker rim-light, Feather Green (#58CC02)
+ * eyes, Macaw Sky Blue (#1CB0F6) & Sunny Yellow (#FFC800) headphones, and a
+ * glowing Flame Orange (#FF9600) yarn ball + hand-drawn Excalidraw speech/action badge.
+ */
+import AjHeadphones from "@/components/icons/AjHeadphones.astro";
+import AjPrimaryAlt from "@/components/icons/AjPrimaryAlt.astro";
+
+interface Props {
+	pose?: "yarn-chase" | "code-peek" | "lever-pull" | "headphones";
+	caption?: string;
+	cls?: string;
+	showYarnBall?: boolean;
+}
+
+const {
+	pose = "yarn-chase",
+	caption,
+	cls = "w-44 h-44",
+	showYarnBall = true,
+} = Astro.props;
+---
+
+<div class="relative inline-flex flex-col items-center select-none group">
+	{
+		caption && (
+			<div class="mb-2 rounded-2xl border-2 border-[#FFFFFF] bg-[#202F36] px-3.5 py-1.5 font-hand text-xl font-bold text-[#FFC800] shadow-[0_3px_0_#37464F] -rotate-2 transition-transform group-hover:rotate-1">
+				{caption}
+			</div>
+		)
+	}
+	<div class="relative flex items-center justify-center">
+		{
+			pose === "code-peek" || pose === "lever-pull" ? (
+				<AjPrimaryAlt cls={`${cls} drop-shadow-[0_8px_20px_rgba(88,204,2,0.18)] transition-transform duration-300 group-hover:scale-105`} />
+			) : (
+				<AjHeadphones cls={`${cls} drop-shadow-[0_8px_20px_rgba(28,176,246,0.22)] transition-transform duration-300 group-hover:scale-105`} />
+			)
+		}
+
+		{
+			showYarnBall && (
+				<svg
+					class="yarn-glow absolute -bottom-3 -right-4 h-16 w-16 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+					viewBox="0 0 80 80"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+					aria-hidden="true"
+				>
+					{/* Glowing Flame Orange Yarn Ball with sketchy Excalidraw cross-strands */}
+					<circle
+						cx="40"
+						cy="40"
+						r="24"
+						fill="#FF9600"
+						stroke="#FFFFFF"
+						stroke-width="3"
+					/>
+					<path
+						d="M22 32C30 24 48 24 58 34M20 42C32 34 48 36 60 46M26 52C36 44 48 46 54 54"
+						stroke="#131F24"
+						stroke-width="2.5"
+						stroke-linecap="round"
+					/>
+					<path
+						d="M32 18C26 30 28 48 38 60M44 18C38 32 40 48 50 60"
+						stroke="#FFC800"
+						stroke-width="2.2"
+						stroke-linecap="round"
+					/>
+					{/* Trailing loose yarn tail */}
+					<path
+						d="M58 52C66 58 72 64 76 74"
+						stroke="#FF9600"
+						stroke-width="4"
+						stroke-linecap="round"
+					/>
+				</svg>
+			)
+		}
+	</div>
+</div>

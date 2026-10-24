@@ -4,6 +4,7 @@ import NavLink from "./NavLink.astro";
 const year = new Date().getUTCFullYear();
 
 const legalLinks = [
+	{ href: "/courses", label: "Courses" },
 	{ href: "/about", label: "About" },
 	{ href: "/contact", label: "Contact" },
 	{ href: "/developers", label: "Developers" },
@@ -21,8 +22,6 @@ const llmResourceLinks = [
 	{ href: "/.well-known/mcp/server-card.json", label: "MCP Card" },
 ];
 
-// Inlined rather than pulled from react-icons — four glyphs do not justify
-// shipping an icon library (and its React runtime) to every page.
 const socialLinks = [
 	{
 		href: "https://twitter.com/codingcatdev",
@@ -48,11 +47,11 @@ const socialLinks = [
 ---
 
 <footer
-	class="flex flex-col gap-6 lg:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t justify-center"
+	class="flex w-full shrink-0 flex-col items-center justify-center gap-6 border-t-2 border-[#37464F] bg-[#0D1519] px-4 py-10 md:px-6 lg:flex-row"
 >
-	<div class="flex flex-col sm:flex-row items-center gap-4">
-		<p class="text-xs text-muted-foreground">
-			&copy; {year} CodingCat.dev. All rights reserved.
+	<div class="flex flex-col items-center gap-4 sm:flex-row">
+		<p class="text-xs font-bold text-[#DCE6EC]">
+			&copy; {year} CodingCat.dev. free. fun. purrfect.
 		</p>
 		<nav
 			class="flex flex-wrap items-center justify-center gap-4 sm:gap-6"
@@ -62,7 +61,7 @@ const socialLinks = [
 				legalLinks.map((link) => (
 					<NavLink
 						href={link.href}
-						class="text-xs hover:underline underline-offset-4"
+						class="text-xs font-semibold hover:text-[#58CC02] hover:underline underline-offset-4"
 						prefix={false}
 					>
 						{link.label}
@@ -71,15 +70,15 @@ const socialLinks = [
 			}
 		</nav>
 		<nav
-			class="flex flex-wrap items-center justify-center gap-3 border-l border-border pl-4"
+			class="flex flex-wrap items-center justify-center gap-3 border-l-2 border-[#37464F] pl-4"
 			aria-label="LLM Resources"
 		>
-			<span class="text-xs font-semibold text-muted-foreground">LLM Resources:</span>
+			<span class="text-xs font-extrabold text-[#FFC800]">LLM Resources:</span>
 			{
 				llmResourceLinks.map((link) => (
 					<a
 						href={link.href}
-						class="text-xs font-mono text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
+						class="font-mono text-xs text-[#DCE6EC] hover:text-[#1CB0F6] hover:underline underline-offset-4"
 					>
 						{link.label}
 					</a>
@@ -94,7 +93,7 @@ const socialLinks = [
 					href={link.href}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-muted-foreground hover:text-foreground transition-colors"
+					class="text-[#DCE6EC] transition-colors hover:text-[#58CC02]"
 				>
 					<svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 						<path d={link.path} />
@@ -104,7 +103,7 @@ const socialLinks = [
 			))
 		}
 	</div>
-	<div class="flex-1 max-w-[300px]">
+	<div class="max-w-[320px] flex-1">
 		<form
 			class="flex gap-2"
 			action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
@@ -122,12 +121,12 @@ const socialLinks = [
 				required
 				placeholder="Enter your email"
 				toolparamdescription="Subscriber email address"
-				class="flex-1 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+				class="h-10 flex-1 rounded-xl border-2 border-[#37464F] bg-[#202F36] px-3 py-1 text-sm text-white outline-none focus-visible:border-[#1CB0F6]"
 			/>
 			<input type="hidden" value="1" name="embed" />
 			<button
 				type="submit"
-				class="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+				class="duo-btn duo-btn-green h-10 px-4 text-xs"
 			>
 				Subscribe
 			</button>

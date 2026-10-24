@@ -1,5 +1,6 @@
 import type { PortableTextHtmlComponents } from "@portabletext/to-html";
 import { toHTML } from "@portabletext/to-html";
+import { resolvePartnerUrl } from "./partner-links";
 import { escapeXml } from "./xml";
 
 /**
@@ -112,7 +113,9 @@ export function portableTextToHtml(
 		},
 		marks: {
 			link: ({ value: mark, children }) =>
-				mark?.href ? linkTag(absolute(mark.href), children) : children,
+				mark?.href
+					? linkTag(resolvePartnerUrl(absolute(mark.href)), children)
+					: children,
 			// Resolved to an href in GROQ; made absolute so it works off-site.
 			internalLink: ({ value: mark, children }) =>
 				mark?.href ? linkTag(absolute(mark.href), children) : children,

@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 
@@ -60,6 +61,39 @@ const description =
 					<span class="text-foreground font-semibold">Google Calendar Appointment Schedule</span>
 				</div>
 			</div>
+
+			<ExcalidrawDiagram
+				title="Podcast Studio Booking Flow"
+				caption="Multi-calendar FreeBusy check + E-SIGN release + automatic Google Calendar invite"
+				compact={true}
+				nodes={[
+					{
+						id: "track",
+						badge: "Step 1",
+						label: "Choose Track",
+						sublabel: "Editorial or Fast-Track",
+						color: "green",
+					},
+					{
+						id: "slot",
+						badge: "Step 2",
+						label: "Pick Live Slot",
+						sublabel: "4 Google Calendars synced",
+						color: "blue",
+					},
+					{
+						id: "studio",
+						badge: "Step 3",
+						label: "E-SIGN & Record!",
+						sublabel: "Instant calendar invite",
+						color: "orange",
+					},
+				]}
+				edges={[
+					{ from: "track", to: "slot", label: "check FreeBusy" },
+					{ from: "slot", to: "studio", label: "auto-invite!" },
+				]}
+			/>
 		</header>
 
 		<!-- Interactive Booking & Release Form Container -->

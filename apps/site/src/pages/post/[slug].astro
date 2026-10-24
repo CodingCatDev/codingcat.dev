@@ -3,6 +3,7 @@ import Avatar from "@/components/Avatar.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
@@ -152,6 +153,11 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 				</section>
 			)
 		}
+
+		<ExcalidrawBlueprintCard
+			title={post.title}
+			kind="post"
+		/>
 
 		<PortableTextContent value={post.content} class="mx-auto prose-violet lg:prose-xl" />
 

@@ -1,0 +1,402 @@
+---
+/**
+ * Hand-Drawn Excalidraw Chalkboard Diagram Engine (`ExcalidrawDiagram.astro`).
+ *
+ * Renders authentic Excalidraw-style double-stroked sketchy white chalk boxes,
+ * diagonal cross-hatched Duolingo color fills (#58CC02, #1CB0F6, #FF9600,
+ * #FFC800, #CE82FF, #FF4B4B), curved chalk arrows, and Caveat hand-written
+ * annotations on a deep #0D1519 chalkboard well.
+ *
+ * Can be driven either by structured `nodes` + `edges` props OR by raw
+ * `mermaid` / `excalidraw` text blocks from Portable Text.
+ */
+
+export type ExcalidrawColor =
+	| "green"
+	| "blue"
+	| "orange"
+	| "yellow"
+	| "purple"
+	| "red";
+
+export interface ExcalidrawNode {
+	id: string;
+	label: string;
+	sublabel?: string;
+	color?: ExcalidrawColor;
+	badge?: string;
+}
+
+export interface ExcalidrawEdge {
+	from: string;
+	to: string;
+	label?: string;
+}
+
+interface Props {
+	title?: string;
+	caption?: string;
+	nodes?: ExcalidrawNode[];
+	edges?: ExcalidrawEdge[];
+	rawCode?: string;
+	compact?: boolean;
+}
+
+const {
+	title = "Architecture Sketch",
+	caption,
+	nodes: propNodes,
+	edges: propEdges,
+	rawCode,
+	compact = false,
+} = Astro.props;
+
+const COLOR_MAP: Record<
+	ExcalidrawColor,
+	{ hex: string; patternId: string; border: string }
+> = {
+	green: {
+		hex: "#58CC02",
+		patternId: "hatch-green",
+		border: "#58CC02",
+	},
+	blue: {
+		hex: "#1CB0F6",
+		patternId: "hatch-blue",
+		border: "#1CB0F6",
+	},
+	orange: {
+		hex: "#FF9600",
+		patternId: "hatch-orange",
+		border: "#FF9600",
+	},
+	yellow: {
+		hex: "#FFC800",
+		patternId: "hatch-yellow",
+		border: "#FFC800",
+	},
+	purple: {
+		hex: "#CE82FF",
+		patternId: "hatch-purple",
+		border: "#CE82FF",
+	},
+	red: {
+		hex: "#FF4B4B",
+		patternId: "hatch-red",
+		border: "#FF4B4B",
+	},
+};
+
+const PALETTE_CYCLE: ExcalidrawColor[] = [
+	"green",
+	"blue",
+	"orange",
+	"purple",
+	"yellow",
+	"red",
+];
+
+function parseMermaidOrText(raw: string): {
+	nodes: ExcalidrawNode[];
+	edges: ExcalidrawEdge[];
+} {
+	const nodeMap = new Map<string, ExcalidrawNode>();
+	const edges: ExcalidrawEdge[] = [];
+	const lines = raw
+		.split(/\r?\n/)
+		.map((l) => l.trim())
+		.filter(
+			(l) =>
+				l.length > 0 &&
+				!l.startsWith("%%") &&
+				!l.match(/^(graph|flowchart|sequenceDiagram|stateDiagram)/i),
+		);
+
+	const cleanLabel = (str: string) =>
+		str
+			.replace(/^[\[\(\{\>]+|[\]\)\}]+$/g, "")
+			.replace(/["']/g, "")
+			.trim();
+
+	for (const line of lines) {
+		const arrowMatch = line.match(
+			/^([A-Za-z0-9_-]+)(?:\[([^\]]+)\]|(?:\(([^\)]+)\))|\{([^\}]+)\})?\s*(?:--+>|==+>|-\.+->|--\s*([^-]+)\s*-->)\s*([A-Za-z0-9_-]+)(?:\[([^\]]+)\]|(?:\(([^\)]+)\))|\{([^\}]+)\})?/,
+		);
+		if (arrowMatch) {
+			const [, fromId, f1, f2, f3, edgeLbl, toId, t1, t2, t3] = arrowMatch;
+			const fromLabel = cleanLabel(f1 || f2 || f3 || fromId);
+			const toLabel = cleanLabel(t1 || t2 || t3 || toId);
+			if (!nodeMap.has(fromId)) {
+				nodeMap.set(fromId, {
+					id: fromId,
+					label: fromLabel,
+					color: PALETTE_CYCLE[nodeMap.size % PALETTE_CYCLE.length],
+				});
+			}
+			if (!nodeMap.has(toId)) {
+				nodeMap.set(toId, {
+					id: toId,
+					label: toLabel,
+					color: PALETTE_CYCLE[nodeMap.size % PALETTE_CYCLE.length],
+				});
+			}
+			edges.push({
+				from: fromId,
+				to: toId,
+				label: edgeLbl ? cleanLabel(edgeLbl) : undefined,
+			});
+		}
+	}
+
+	if (nodeMap.size === 0) {
+		const fallbackSteps = lines.slice(0, 4);
+		fallbackSteps.forEach((step, idx) => {
+			const id = `step-${idx}`;
+			nodeMap.set(id, {
+				id,
+				label: step.slice(0, 32),
+				color: PALETTE_CYCLE[idx % PALETTE_CYCLE.length],
+			});
+			if (idx > 0) {
+				edges.push({ from: `step-${idx - 1}`, to: id });
+			}
+		});
+	}
+
+	return { nodes: Array.from(nodeMap.values()).slice(0, 5), edges };
+}
+
+const resolved =
+	propNodes && propNodes.length > 0
+		? { nodes: propNodes, edges: propEdges ?? [] }
+		: rawCode
+			? parseMermaidOrText(rawCode)
+			: {
+					nodes: [
+						{
+							id: "idea",
+							label: "1. Curiosity",
+							sublabel: "Ask how it works",
+							color: "green" as ExcalidrawColor,
+						},
+						{
+							id: "code",
+							label: "2. Sketch & Build",
+							sublabel: "Write real code",
+							color: "blue" as ExcalidrawColor,
+						},
+						{
+							id: "ship",
+							label: "3. Ship to Prod!",
+							sublabel: "Share with the world",
+							color: "orange" as ExcalidrawColor,
+						},
+					],
+					edges: [
+						{ from: "idea", to: "code", label: "chase the yarn" },
+						{ from: "code", to: "ship", label: "purrfect!" },
+					],
+				};
+
+const nodes = resolved.nodes;
+const edges = resolved.edges;
+const count = Math.max(nodes.length, 1);
+const svgWidth = Math.max(count * 240, 720);
+const svgHeight = compact ? 200 : 230;
+const boxW = 184;
+const boxH = 92;
+const boxY = Math.round((svgHeight - boxH) / 2) + 8;
+---
+
+<figure class="excalidraw-well duo-scroll-reveal relative my-6 overflow-hidden p-5 md:p-7">
+	{/* Top Chalkboard Header Bar */}
+	<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-[#37464F] pb-3">
+		<div class="flex items-center gap-2.5">
+			<span class="inline-flex h-3.5 w-3.5 rounded-full bg-[#58CC02]"></span>
+			<span class="inline-flex h-3.5 w-3.5 rounded-full bg-[#FF9600]"></span>
+			<span class="inline-flex h-3.5 w-3.5 rounded-full bg-[#1CB0F6]"></span>
+			<span class="ml-1 font-hand text-xl font-bold tracking-wide text-[#FFC800]">
+				✏️ {title}
+			</span>
+		</div>
+		<span class="rounded-full border border-[#37464F] bg-[#202F36] px-3 py-0.5 font-mono text-xs font-semibold text-[#DCE6EC]">
+			excalidraw.chalkboard
+		</span>
+	</div>
+
+	{/* Responsive Hand-Drawn SVG Flowchart */}
+	<div class="w-full overflow-x-auto">
+		<svg
+			viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+			class="mx-auto h-auto w-full min-w-[580px] select-none"
+			role="img"
+			aria-label={title}
+		>
+			<defs>
+				{/* Diagonal Cross-Hatch Marker Patterns (Excalidraw signature fill) */}
+				<pattern id="hatch-green" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#58CC02" stroke-width="3" stroke-opacity="0.32" />
+				</pattern>
+				<pattern id="hatch-blue" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#1CB0F6" stroke-width="3" stroke-opacity="0.32" />
+				</pattern>
+				<pattern id="hatch-orange" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#FF9600" stroke-width="3" stroke-opacity="0.35" />
+				</pattern>
+				<pattern id="hatch-yellow" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#FFC800" stroke-width="3" stroke-opacity="0.32" />
+				</pattern>
+				<pattern id="hatch-purple" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#CE82FF" stroke-width="3" stroke-opacity="0.32" />
+				</pattern>
+				<pattern id="hatch-red" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#FF4B4B" stroke-width="3" stroke-opacity="0.32" />
+				</pattern>
+			</defs>
+
+			{
+				nodes.map((node, index) => {
+					const stepSpan = svgWidth / count;
+					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
+					const y = boxY + (index % 2 === 0 ? -4 : 6);
+					const colorKey = node.color ?? PALETTE_CYCLE[index % PALETTE_CYCLE.length];
+					const palette = COLOR_MAP[colorKey];
+					const nextX = Math.round((index + 1) * stepSpan + (stepSpan - boxW) / 2);
+					const nextY = boxY + ((index + 1) % 2 === 0 ? -4 : 6);
+					const edge = edges[index];
+
+					return (
+						<g>
+							{/* Sketchy Excalidraw Arrow to Next Node */}
+							{index < nodes.length - 1 && (
+								<g>
+									<path
+										d={`M ${x + boxW + 4} ${y + boxH / 2} C ${x + boxW + 28} ${y + boxH / 2 - 22}, ${nextX - 28} ${nextY + boxH / 2 - 22}, ${nextX - 8} ${nextY + boxH / 2}`}
+										fill="none"
+										stroke="#FF9600"
+										stroke-width="3.2"
+										stroke-dasharray="7 5"
+										stroke-linecap="round"
+									/>
+									<path
+										d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
+										fill="none"
+										stroke="#FF9600"
+										stroke-width="3.2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+									{edge?.label && (
+										<text
+											x={(x + boxW + nextX) / 2}
+											y={Math.min(y, nextY) + 18}
+											text-anchor="middle"
+											fill="#FFC800"
+											style="font-family: var(--font-hand); font-size: 18px; font-weight: 700;"
+										>
+											{edge.label}
+										</text>
+									)}
+								</g>
+							)}
+
+							{/* Excalidraw Cross-Hatched Marker Fill */}
+							<rect
+								x={x}
+								y={y}
+								width={boxW}
+								height={boxH}
+								rx="14"
+								fill={`url(#${palette.patternId})`}
+							/>
+
+							{/* Outer Sketchy Chalk Stroke #1 */}
+							<rect
+								x={x}
+								y={y}
+								width={boxW}
+								height={boxH}
+								rx="14"
+								fill="none"
+								stroke="#FFFFFF"
+								stroke-width="2.6"
+							/>
+
+							{/* Offset Double-Stroke Chalk Line #2 (Excalidraw Roughness Effect) */}
+							<rect
+								x={x + 2.5}
+								y={y - 2}
+								width={boxW}
+								height={boxH}
+								rx="16"
+								fill="none"
+								stroke={palette.border}
+								stroke-width="2"
+								stroke-opacity="0.85"
+							/>
+
+							{/* Optional Step Pill Badge */}
+							{node.badge && (
+								<g>
+									<rect
+										x={x + 12}
+										y={y - 14}
+										width={Math.max(node.badge.length * 9 + 18, 58)}
+										height="24"
+										rx="12"
+										fill={palette.hex}
+										stroke="#131F24"
+										stroke-width="2"
+									/>
+									<text
+										x={x + 12 + Math.max(node.badge.length * 9 + 18, 58) / 2}
+										y={y + 2}
+										text-anchor="middle"
+										fill="#131F24"
+										style="font-family: var(--font-display); font-size: 11px; font-weight: 900; text-transform: uppercase;"
+									>
+										{node.badge}
+									</text>
+								</g>
+							)}
+
+							{/* Node Primary Label */}
+							<text
+								x={x + boxW / 2}
+								y={node.sublabel ? y + 42 : y + 52}
+								text-anchor="middle"
+								fill="#FFFFFF"
+								style="font-family: var(--font-display); font-size: 16px; font-weight: 800;"
+							>
+								{node.label.length > 21 ? `${node.label.slice(0, 19)}…` : node.label}
+							</text>
+
+							{/* Node Handwritten Sub-label */}
+							{node.sublabel && (
+								<text
+									x={x + boxW / 2}
+									y={y + 68}
+									text-anchor="middle"
+									fill="#DCE6EC"
+									style="font-family: var(--font-hand); font-size: 18px; font-weight: 700;"
+								>
+									{node.sublabel.length > 26
+										? `${node.sublabel.slice(0, 24)}…`
+										: node.sublabel}
+								</text>
+							)}
+						</g>
+					);
+				})
+			}
+		</svg>
+	</div>
+
+	{
+		caption && (
+			<figcaption class="mt-3 text-center font-hand text-xl text-[#DCE6EC]">
+				🧶 {caption}
+			</figcaption>
+		)
+	}
+</figure>

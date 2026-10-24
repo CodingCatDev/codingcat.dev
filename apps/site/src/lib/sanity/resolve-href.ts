@@ -26,6 +26,8 @@ export function resolveHref(
 			return `/guest/${slug}`;
 		case "sponsor":
 			return `/sponsor/${slug}`;
+		case "course":
+			return `/course/${slug}`;
 		case "page":
 			return `/${slug}`;
 		default:

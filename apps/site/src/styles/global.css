@@ -2,60 +2,81 @@
 @plugin "@tailwindcss/typography";
 
 /*
- * Design tokens ported from apps/web/app/globals.css — the live production
- * stylesheet. This is a migration, not a redesign: the `dev` branch's
- * pre-Next Astro app carried a different, never-shipped token set
- * (dark-first `--bg`/`--text`), and adopting it would have been a visual
- * regression at cutover.
+ * CodingCat.dev 2026 — Duolingo Chalkboard & Hand-Drawn Excalidraw Design System
  *
- * Dashboard-only tokens (--sidebar-*, --chart-*) are intentionally dropped;
- * they are unreferenced by any public route.
+ * Canonical palette:
+ * - Deep Chalkboard Charcoal: #131F24 (diagram wells: #0D1519, elevated cards: #202F36)
+ * - Duolingo Feather Green:   #58CC02 (lip: #46A302, hover: #89E219)
+ * - Macaw Sky Blue:           #1CB0F6 (lip: #1899D6)
+ * - Fox Flame Orange (Yarn):  #FF9600 (lip: #E58700)
+ * - Bee Sunny Yellow:         #FFC800 (lip: #E5B400)
+ * - Cardinal Coral Red:       #FF4B4B (lip: #EA2B2B)
+ * - Beetle Candy Purple:      #CE82FF (lip: #A560E8)
  */
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
 	:root {
-		--radius: 0.65rem;
-		--background: oklch(1 0 0);
-		--foreground: oklch(0.141 0.005 285.823);
-		--card: oklch(1 0 0);
-		--card-foreground: oklch(0.141 0.005 285.823);
-		--popover: oklch(1 0 0);
-		--popover-foreground: oklch(0.141 0.005 285.823);
-		--primary: oklch(0.541 0.281 293.009);
-		--primary-foreground: oklch(0.985 0 0);
-		--secondary: oklch(0.967 0.001 286.375);
-		--secondary-foreground: oklch(0.21 0.006 285.885);
-		--muted: oklch(0.967 0.001 286.375);
-		--muted-foreground: oklch(0.442 0.017 285.786);
-		--accent: oklch(0.967 0.001 286.375);
-		--accent-foreground: oklch(0.21 0.006 285.885);
-		--destructive: oklch(0.577 0.245 27.325);
-		--border: oklch(0.92 0.004 286.32);
-		--input: oklch(0.92 0.004 286.32);
-		--ring: oklch(0.541 0.281 293.009);
+		--radius: 1rem;
+		/* Default Chalkboard Charcoal tokens (also support optional light chalkboard flip) */
+		--background: #131f24;
+		--foreground: #ffffff;
+		--card: #202f36;
+		--card-foreground: #ffffff;
+		--popover: #202f36;
+		--popover-foreground: #ffffff;
+		--primary: #58cc02;
+		--primary-foreground: #131f24;
+		--secondary: #1cb0f6;
+		--secondary-foreground: #131f24;
+		--muted: #18262c;
+		--muted-foreground: #dce6ec;
+		--accent: #ff9600;
+		--accent-foreground: #131f24;
+		--destructive: #ff4b4b;
+		--border: #37464f;
+		--input: #202f36;
+		--ring: #58cc02;
+
+		/* Duolingo + Excalidraw semantic tokens */
+		--duo-bg: #131f24;
+		--duo-well: #0d1519;
+		--duo-card: #202f36;
+		--duo-border: #37464f;
+		--duo-green: #58cc02;
+		--duo-green-lip: #46a302;
+		--duo-blue: #1cb0f6;
+		--duo-blue-lip: #1899d6;
+		--duo-orange: #ff9600;
+		--duo-orange-lip: #e58700;
+		--duo-yellow: #ffc800;
+		--duo-yellow-lip: #e5b400;
+		--duo-red: #ff4b4b;
+		--duo-red-lip: #ea2b2b;
+		--duo-purple: #ce82ff;
+		--duo-purple-lip: #a560e8;
 	}
 
 	.dark {
-		--background: oklch(0.141 0.005 285.823);
-		--foreground: oklch(0.985 0 0);
-		--card: oklch(0.21 0.006 285.885);
-		--card-foreground: oklch(0.985 0 0);
-		--popover: oklch(0.21 0.006 285.885);
-		--popover-foreground: oklch(0.985 0 0);
-		--primary: oklch(0.541 0.281 293.009);
-		--primary-foreground: oklch(0.985 0 0);
-		--secondary: oklch(0.274 0.006 286.033);
-		--secondary-foreground: oklch(0.985 0 0);
-		--muted: oklch(0.274 0.006 286.033);
-		--muted-foreground: oklch(0.705 0.015 286.067);
-		--accent: oklch(0.274 0.006 286.033);
-		--accent-foreground: oklch(0.985 0 0);
-		--destructive: oklch(0.704 0.191 22.216);
-		--border: oklch(1 0 0 / 10%);
-		--input: oklch(1 0 0 / 15%);
-		--ring: oklch(0.541 0.281 293.009);
+		--background: #131f24;
+		--foreground: #ffffff;
+		--card: #202f36;
+		--card-foreground: #ffffff;
+		--popover: #202f36;
+		--popover-foreground: #ffffff;
+		--primary: #58cc02;
+		--primary-foreground: #131f24;
+		--secondary: #1cb0f6;
+		--secondary-foreground: #131f24;
+		--muted: #18262c;
+		--muted-foreground: #dce6ec;
+		--accent: #ff9600;
+		--accent-foreground: #131f24;
+		--destructive: #ff4b4b;
+		--border: #37464f;
+		--input: #202f36;
+		--ring: #58cc02;
 	}
 }
 
@@ -83,8 +104,9 @@
 	--color-input: var(--input);
 	--color-ring: var(--ring);
 	/* Bound by the Astro `fonts` config; see astro.config.mjs. */
-	--font-sans: var(--font-inter), system-ui, sans-serif;
+	--font-sans: var(--font-nunito), var(--font-inter), system-ui, sans-serif;
 	--font-display: var(--font-nunito), system-ui, sans-serif;
+	--font-hand: var(--font-caveat), cursive, sans-serif;
 }
 
 @layer base {
@@ -93,6 +115,11 @@
 	}
 	body {
 		@apply bg-background text-foreground font-sans antialiased;
+		background-image: radial-gradient(
+			rgba(255, 255, 255, 0.04) 1px,
+			transparent 1px
+		);
+		background-size: 24px 24px;
 	}
 	h1,
 	h2,
@@ -101,6 +128,149 @@
 	h5,
 	h6 {
 		font-family: var(--font-display);
+	}
+}
+
+/* Hand-drawn annotation font helper */
+.font-hand {
+	font-family: var(--font-hand);
+}
+
+/*
+ * Tactile Duolingo 3D Buttons with 4px Bottom Lip
+ */
+.duo-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border-radius: 1rem;
+	font-family: var(--font-display);
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	transition:
+		transform 120ms cubic-bezier(0.2, 0, 0, 1),
+		box-shadow 120ms cubic-bezier(0.2, 0, 0, 1),
+		background-color 120ms ease;
+	cursor: pointer;
+	user-select: none;
+}
+
+.duo-btn-green {
+	background-color: #58cc02;
+	color: #131f24;
+	border: 2px solid #58cc02;
+	box-shadow: 0 4px 0 #46a302;
+}
+.duo-btn-green:hover {
+	background-color: #89e219;
+	border-color: #89e219;
+}
+.duo-btn-green:active {
+	transform: translateY(4px);
+	box-shadow: 0 0 0 #46a302;
+}
+
+.duo-btn-blue {
+	background-color: #1cb0f6;
+	color: #131f24;
+	border: 2px solid #1cb0f6;
+	box-shadow: 0 4px 0 #1899d6;
+}
+.duo-btn-blue:hover {
+	background-color: #3cc0ff;
+	border-color: #3cc0ff;
+}
+.duo-btn-blue:active {
+	transform: translateY(4px);
+	box-shadow: 0 0 0 #1899d6;
+}
+
+.duo-btn-orange {
+	background-color: #ff9600;
+	color: #131f24;
+	border: 2px solid #ff9600;
+	box-shadow: 0 4px 0 #e58700;
+}
+.duo-btn-orange:hover {
+	background-color: #ffaa2b;
+	border-color: #ffaa2b;
+}
+.duo-btn-orange:active {
+	transform: translateY(4px);
+	box-shadow: 0 0 0 #e58700;
+}
+
+.duo-btn-outline {
+	background-color: #202f36;
+	color: #1cb0f6;
+	border: 2px solid #37464f;
+	box-shadow: 0 4px 0 #37464f;
+}
+.duo-btn-outline:hover {
+	background-color: #283b44;
+	border-color: #1cb0f6;
+}
+.duo-btn-outline:active {
+	transform: translateY(4px);
+	box-shadow: 0 0 0 #37464f;
+}
+
+/*
+ * Tactile Duolingo Chunky Card & Excalidraw Chalk Well
+ */
+.duo-card {
+	background-color: #202f36;
+	border: 2px solid #37464f;
+	border-radius: 1.25rem;
+	box-shadow: 0 4px 0 #37464f;
+}
+
+.excalidraw-well {
+	background-color: #0d1519;
+	border: 2px dashed #37464f;
+	border-radius: 1.5rem;
+	box-shadow:
+		0 6px 0 #202f36,
+		inset 0 0 32px rgba(28, 176, 246, 0.04);
+}
+
+/*
+ * Scroll-Driven Animations (Progressive Enhancement for Duolingo Scrollytelling)
+ */
+@keyframes excalidraw-pop-in {
+	0% {
+		opacity: 0;
+		transform: translateY(28px) scale(0.96);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes yarn-pulse {
+	0%,
+	100% {
+		filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.55));
+	}
+	50% {
+		filter: drop-shadow(0 0 16px rgba(255, 150, 0, 0.9));
+	}
+}
+
+.yarn-glow {
+	animation: yarn-pulse 3s ease-in-out infinite;
+}
+
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.duo-scroll-reveal {
+			animation: excalidraw-pop-in linear both;
+			animation-timeline: view();
+			animation-range: entry 5% cover 28%;
+		}
 	}
 }
 
@@ -114,7 +284,7 @@
 		transform: translateY(0px);
 	}
 	50% {
-		transform: translateY(-20px);
+		transform: translateY(-14px);
 	}
 	100% {
 		transform: translateY(0px);
@@ -164,7 +334,7 @@
 }
 
 .animate-float {
-	animation: float 6s ease-in-out infinite;
+	animation: float 5s ease-in-out infinite;
 }
 
 .animate-paw-one {
@@ -178,7 +348,8 @@
 @media (prefers-reduced-motion: reduce) {
 	.animate-float,
 	.animate-paw-one,
-	.animate-paw-two {
+	.animate-paw-two,
+	.yarn-glow {
 		animation: none;
 	}
 }

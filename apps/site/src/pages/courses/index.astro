@@ -1,0 +1,277 @@
+---
+/**
+ * `/courses` — CodingCat.dev Duolingo-Style Beginner-to-Pro Winding Learning Path Map.
+ *
+ * Connects our Sanity courses along an unwinding Flame Orange (#FF9600) yarn
+ * trail from "HTML for a 10 Year Old" & "micro:bit for a 10 Year Old" through
+ * "CSS Animations", "Intro to Svelte", "Intro to SolidJS", "Learn Svelte",
+ * "Angular Material", and "Learn SvelteKit and Firebase".
+ */
+import AjMascot from "@/components/AjMascot.astro";
+import CoverImage from "@/components/CoverImage.astro";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { coursesQuery } from "@/lib/sanity/queries";
+
+const { sanity } = Astro.locals;
+const rawCourses = (await sanity.loadQuery(coursesQuery)) ?? [];
+
+const LEARNING_ORDER: Record<
+	string,
+	{
+		rank: number;
+		tier: string;
+		color: string;
+		lip: string;
+		badge: string;
+	}
+> = {
+	"html-for-a-10-year-old": {
+		rank: 1,
+		tier: "Unit 1 · First Lines of Code",
+		color: "#58CC02",
+		lip: "#46A302",
+		badge: "🌱 Curious Kitten",
+	},
+	"micro-bit-for-a-10-year-old": {
+		rank: 2,
+		tier: "Unit 1 · Hardware & Play",
+		color: "#58CC02",
+		lip: "#46A302",
+		badge: "🌱 Curious Kitten",
+	},
+	"css-animations": {
+		rank: 3,
+		tier: "Unit 2 · Style & Motion",
+		color: "#1CB0F6",
+		lip: "#1899D6",
+		badge: "🎨 Visual Builder",
+	},
+	"intro-to-svelte": {
+		rank: 4,
+		tier: "Unit 3 · Reactive UI",
+		color: "#1CB0F6",
+		lip: "#1899D6",
+		badge: "⚡ Code Pouncer",
+	},
+	"intro-to-solid-js": {
+		rank: 5,
+		tier: "Unit 3 · Fine-Grained Reactivity",
+		color: "#FFC800",
+		lip: "#E5B400",
+		badge: "⚡ Code Pouncer",
+	},
+	svelte: {
+		rank: 6,
+		tier: "Unit 4 · Component Mastery",
+		color: "#FF9600",
+		lip: "#E58700",
+		badge: "🧶 Yarn Master",
+	},
+	angularmaterial: {
+		rank: 7,
+		tier: "Unit 4 · Enterprise Design Systems",
+		color: "#CE82FF",
+		lip: "#A560E8",
+		badge: "🏗️ System Architect",
+	},
+	"sveltekit-firebase": {
+		rank: 8,
+		tier: "Unit 5 · Full-Stack Production",
+		color: "#FF4B4B",
+		lip: "#EA2B2B",
+		badge: "🚀 Production Cat",
+	},
+};
+
+const courses = [...rawCourses].sort((a, b) => {
+	const rA = LEARNING_ORDER[a.slug ?? ""]?.rank ?? 99;
+	const rB = LEARNING_ORDER[b.slug ?? ""]?.rank ?? 99;
+	return rA - rB;
+});
+---
+
+<BaseLayout
+	title="Courses & Learning Path Map — CodingCat.dev"
+	description="Follow AJ's Duolingo-style winding yarn map from HTML & micro:bit for a 10 Year Old all the way to full-stack SvelteKit, SolidJS, and Firebase."
+	ogFallback={{
+		title: "CodingCat.dev Learning Map",
+		subtitle: "Beginner-to-Pro Hand-Drawn Course Path",
+		type: "Blog",
+	}}
+>
+	<section class="py-10 md:py-16">
+		{/* Top Hero Banner */}
+		<div class="mx-auto max-w-4xl text-center">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#37464F] bg-[#202F36] px-4 py-1.5 font-hand text-xl font-bold text-[#FFC800] shadow-[0_3px_0_#37464F]">
+				🧶 Duolingo-Style Winding Course Map
+			</span>
+			<h1 class="mt-4 text-4xl font-black tracking-tight text-white sm:text-6xl">
+				pick your <span class="text-[#58CC02]">starting node.</span>
+			</h1>
+			<p class="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-[#DCE6EC]">
+				Start at Node #1 if you are brand new to coding, or jump straight to the framework and full-stack units down the yarn trail.
+			</p>
+		</div>
+
+		{/* Hand-Drawn Excalidraw Skill Tree Overview */}
+		<div class="mx-auto mt-8 max-w-5xl">
+			<ExcalidrawDiagram
+				title="CodingCat.dev Skill Tree Overview"
+				caption="Click any course node below to open its interactive video & code lessons."
+				compact={true}
+				nodes={[
+					{
+						id: "u1",
+						badge: "Unit 1",
+						label: "HTML & micro:bit",
+						sublabel: "Zero prior experience",
+						color: "green",
+					},
+					{
+						id: "u2",
+						badge: "Unit 2-3",
+						label: "CSS, Svelte & Solid",
+						sublabel: "Interactive web apps",
+						color: "blue",
+					},
+					{
+						id: "u3",
+						badge: "Unit 4-5",
+						label: "SvelteKit + Firebase",
+						sublabel: "Full-stack & Auth",
+						color: "orange",
+					},
+				]}
+				edges={[
+					{ from: "u1", to: "u2", label: "build UI" },
+					{ from: "u2", to: "u3", label: "ship full-stack" },
+				]}
+			/>
+		</div>
+
+		{/* Winding Duolingo Path Nodes */}
+		<div class="relative mx-auto mt-14 max-w-4xl">
+			{/* Central Vertical Glowing Flame Orange Yarn Spine */}
+			<div
+				class="pointer-events-none absolute bottom-10 left-1/2 top-10 hidden w-1.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#58CC02] via-[#1CB0F6] to-[#FF9600] opacity-75 md:block"
+				aria-hidden="true"
+			></div>
+
+			<div class="flex flex-col gap-12">
+				{
+					courses.map((course, index) => {
+						const meta = LEARNING_ORDER[course.slug ?? ""] ?? {
+							rank: index + 1,
+							tier: `Unit ${index + 1} · Hands-On Course`,
+							color: "#58CC02",
+							lip: "#46A302",
+							badge: "🧶 CodingCat Course",
+						};
+						const isEven = index % 2 === 0;
+						const href = `/course/${course.slug}`;
+
+						return (
+							<div
+								class:list={[
+									"duo-scroll-reveal relative flex flex-col items-center gap-6 md:flex-row",
+									isEven ? "md:flex-row" : "md:flex-row-reverse",
+								]}
+							>
+								{/* Course Card */}
+								<div class="w-full md:w-[46%]">
+									<a
+										href={href}
+										class="duo-card group block overflow-hidden p-5 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#58CC02]"
+									>
+										<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+											<span
+												class="rounded-full px-3 py-1 text-xs font-black uppercase tracking-wider text-[#131F24]"
+												style={`background-color: ${meta.color}`}
+											>
+												{meta.tier}
+											</span>
+											<span class="font-hand text-lg font-bold text-[#FFC800]">
+												{meta.badge}
+											</span>
+										</div>
+
+										{course.coverImage && (
+											<div class="mb-4 overflow-hidden rounded-xl border-2 border-[#37464F] bg-[#0D1519]">
+												<CoverImage
+													image={course.coverImage}
+													fallbackAlt={course.title}
+													width={640}
+													height={360}
+												/>
+											</div>
+										)}
+
+										<h2 class="text-2xl font-black text-white transition-colors group-hover:text-[#58CC02]">
+											{course.title}
+										</h2>
+										{course.excerpt && (
+											<p class="mt-2 text-sm leading-relaxed text-[#DCE6EC] line-clamp-3">
+												{course.excerpt}
+											</p>
+										)}
+
+										<div class="mt-4 flex items-center justify-between border-t border-dashed border-[#37464F] pt-3">
+											<span class="font-mono text-xs font-bold text-[#1CB0F6]">
+												{course.lessonsCount
+													? `${course.lessonsCount} Lessons`
+													: "Interactive Course"}
+											</span>
+											<span class="duo-btn duo-btn-green px-4 py-1.5 text-xs">
+												Start Unit →
+											</span>
+										</div>
+									</a>
+								</div>
+
+								{/* Center Tactile 3D Level Node Circle */}
+								<div class="z-10 flex shrink-0 flex-col items-center justify-center md:w-[8%]">
+									<a
+										href={href}
+										class="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white text-xl font-black text-[#131F24] transition-transform hover:scale-110"
+										style={`background-color: ${meta.color}; box-shadow: 0 5px 0 ${meta.lip};`}
+										aria-label={`Node ${index + 1}: ${course.title}`}
+									>
+										{index + 1}
+									</a>
+								</div>
+
+								{/* Opposite Side Mascot Milestone or Handwritten Chalk Note */}
+								<div class="hidden md:flex md:w-[46%] md:justify-center">
+									{index === 0 ? (
+										<AjMascot
+											pose="yarn-chase"
+											cls="w-32 h-32"
+											caption="Great place to start!"
+										/>
+									) : index === 3 ? (
+										<AjMascot
+											pose="code-peek"
+											cls="w-28 h-28"
+											caption="Reactive frameworks! ⚡"
+										/>
+									) : index === courses.length - 1 ? (
+										<AjMascot
+											pose="headphones"
+											cls="w-32 h-32"
+											caption="Full-stack boss node! 🚀"
+										/>
+									) : (
+										<div class="rounded-2xl border-2 border-dashed border-[#37464F] bg-[#0D1519]/80 px-5 py-4 font-hand text-2xl text-[#DCE6EC]">
+											✏️ Milestone #{index + 1}: Hands-on code & visual diagrams
+										</div>
+									)}
+								</div>
+							</div>
+						);
+					})
+				}
+			</div>
+		</div>
+	</section>
+</BaseLayout>

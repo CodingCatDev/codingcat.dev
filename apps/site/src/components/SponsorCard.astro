@@ -1,6 +1,7 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
 import CoverImage from "@/components/CoverImage.astro";
+import { resolvePartnerUrl } from "@/lib/partner-links";
 import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
 
 interface Sponsor {
@@ -24,7 +25,8 @@ const items = sponsors ?? [];
 	items.length > 0 && (
 		<div class="grid justify-center gap-6 p-4 md:p-6 lg:auto-cols-[1fr] lg:grid-flow-col">
 			{items.map((sponsor) => {
-				const external = stegaClean(sponsor.url);
+				const rawExternal = stegaClean(sponsor.url);
+				const external = rawExternal ? resolvePartnerUrl(rawExternal) : "";
 				const href = external || `/sponsor/${sponsor.slug}`;
 				return (
 					<a
@@ -36,13 +38,13 @@ const items = sponsors ?? [];
 						data-track-target={href}
 						class="flex"
 					>
-						<article class="flex max-w-xl grow flex-col overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all hover:scale-[1.02] hover:shadow-lg">
+						<article class="duo-card flex max-w-xl grow flex-col overflow-hidden rounded-2xl border-2 border-[#37464F] bg-[#202F36] text-white shadow-md transition-all hover:-translate-y-1 hover:border-[#58CC02]">
 							<CoverImage image={sponsor.coverImage} />
 							<div class="grow p-6">
-								<h3 class="mb-3 text-3xl text-balance">{sponsor.title}</h3>
+								<h3 class="mb-3 text-3xl font-extrabold text-balance text-white">{sponsor.title}</h3>
 							</div>
 							{sponsor.excerpt && (
-								<p class="px-6 pb-6 text-lg leading-relaxed text-pretty">
+								<p class="px-6 pb-6 text-lg leading-relaxed text-[#DCE6EC] text-pretty">
 									{sponsor.excerpt}
 								</p>
 							)}

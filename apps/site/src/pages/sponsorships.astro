@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 import { SPONSOR_PACKAGE_TIERS } from "@/lib/sanity/write-client";
@@ -65,6 +66,39 @@ const formatUsd = (cents: number) =>
 					<span class="text-xs text-primary font-medium">✓ Syndicated to Dev.to &amp; Hashnode</span>
 				</div>
 			</div>
+
+			<ExcalidrawDiagram
+				title="Multi-Channel Sponsor Flywheel"
+				caption="1 Recording Session -> 7 Short-Form Video Networks + Canonical AEO Blog + Live Deal Room"
+				compact={true}
+				nodes={[
+					{
+						id: "kickoff",
+						badge: "Step 1",
+						label: "15-Min Kickoff",
+						sublabel: "Pick slot & lock 50%",
+						color: "green",
+					},
+					{
+						id: "record",
+						badge: "Step 2",
+						label: "Deep-Dive + Shorts",
+						sublabel: "YouTube + 7 Platforms",
+						color: "blue",
+					},
+					{
+						id: "dealroom",
+						badge: "Step 3",
+						label: "AEO Blog & ROI Room",
+						sublabel: "WebMCP + Live Telemetry",
+						color: "orange",
+					},
+				]}
+				edges={[
+					{ from: "kickoff", to: "record", label: "studio session" },
+					{ from: "record", to: "dealroom", label: "syndicate everywhere" },
+				]}
+			/>
 		</header>
 
 		<!-- Sponsorship Tiers Grid -->
