@@ -1,0 +1,100 @@
+---
+/**
+ * Auto-generated Hand-Drawn Excalidraw "Visual Blueprint" Card for every
+ * Podcast (`/podcast/[slug]`) and Blog Post (`/post/[slug]`) detail page.
+ *
+ * Extracts the core workflow from the post/episode title and tags so every
+ * single lesson on CodingCat.dev includes an approachable Excalidraw diagram
+ * guided by AJ & his Flame Orange yarn ball.
+ */
+import ExcalidrawDiagram, {
+	type ExcalidrawNode,
+} from "@/components/ExcalidrawDiagram.astro";
+import AjMascot from "@/components/AjMascot.astro";
+
+interface Props {
+	title: string;
+	kind?: "podcast" | "post" | "course";
+	tags?: Array<string | null | undefined>;
+}
+
+const { title, kind = "post", tags = [] } = Astro.props;
+
+const cleanTags = tags
+	.filter((t): t is string => Boolean(t && t.trim()))
+	.slice(0, 2);
+
+const topicHook =
+	cleanTags[0] ||
+	title
+		.replace(/^(CodingCat\.dev|Purrfect\.dev)\s*[-:]?\s*/i, "")
+		.split(/[:\-–|]/)[0]
+		.trim()
+		.slice(0, 22);
+
+const secondHook =
+	cleanTags[1] ||
+	(kind === "podcast" ? "Architecture & Patterns" : "Hands-On Implementation");
+
+const nodes: ExcalidrawNode[] = [
+	{
+		id: "fundamentals",
+		badge: "Step 1",
+		label: topicHook || "Core Concept",
+		sublabel: "Mental model & why it matters",
+		color: "green",
+	},
+	{
+		id: "build",
+		badge: "Step 2",
+		label: secondHook,
+		sublabel: "Under the hood & live code",
+		color: "blue",
+	},
+	{
+		id: "production",
+		badge: "Step 3",
+		label: "Ship It Purrfectly",
+		sublabel: "Real-world trade-offs",
+		color: "orange",
+	},
+];
+
+const edges = [
+	{ from: "fundamentals", to: "build", label: "unroll the yarn" },
+	{ from: "build", to: "production", label: "production ready!" },
+];
+---
+
+<section
+	aria-label="Excalidraw Visual Blueprint"
+	class="my-8 rounded-3xl border-2 border-[#37464F] bg-[#202F36] p-5 shadow-[0_6px_0_#37464F] md:p-7"
+>
+	<div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+		<div>
+			<span class="inline-flex items-center gap-1.5 rounded-full bg-[#58CC02]/15 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-[#58CC02]">
+				✏️ Hand-Drawn Visual Blueprint
+			</span>
+			<h2 class="mt-2 text-2xl font-black tracking-tight text-white md:text-3xl">
+				how this {kind === "podcast" ? "episode" : "lesson"} connects together.
+			</h2>
+			<p class="mt-1 font-hand text-xl text-[#DCE6EC]">
+				Follow AJ’s orange yarn trail from first principles to production code.
+			</p>
+		</div>
+		<div class="hidden shrink-0 sm:block">
+			<AjMascot
+				pose="code-peek"
+				cls="w-24 h-24"
+				caption="Let’s sketch it!"
+			/>
+		</div>
+	</div>
+
+	<ExcalidrawDiagram
+		title={`Visual Map: ${title.slice(0, 48)}${title.length > 48 ? "…" : ""}`}
+		nodes={nodes}
+		edges={edges}
+		compact={true}
+	/>
+</section>

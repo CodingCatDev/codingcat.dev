@@ -1766,4 +1766,51 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 	});
+
+	// ── 12. Partner & Affiliate Link Tracker Registry ────────────────────
+	describe("Partner & Affiliate Link Tracker Registry", () => {
+		const partnerLinks = loadModule("src/lib/partner-links.ts");
+
+		it("12.1 Rewrites bare sanity.io and sanity.io/manage links to https://www.sanity.io/manage?coupon=CodingCatDev", () => {
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://sanity.io"),
+				"https://www.sanity.io/manage?coupon=CodingCatDev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.sanity.io/"),
+				"https://www.sanity.io/manage?coupon=CodingCatDev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.sanity.io/manage"),
+				"https://www.sanity.io/manage?coupon=CodingCatDev",
+			);
+		});
+
+		it("12.2 Appends coupon=CodingCatDev to deep sanity.io documentation links while leaving cdn.sanity.io untouched", () => {
+			const deepDoc = partnerLinks.resolvePartnerUrl(
+				"https://www.sanity.io/docs/groq",
+			);
+			assert.ok(deepDoc.includes("coupon=CodingCatDev"));
+			assert.ok(deepDoc.includes("/docs/groq"));
+
+			const cdnUrl =
+				"https://cdn.sanity.io/images/hfh83o0w/production/sample.png";
+			assert.equal(partnerLinks.resolvePartnerUrl(cdnUrl), cdnUrl);
+		});
+
+		it("12.3 Applies partner UTM/shortlink tracking for Algolia, Cloudinary, and Sticker Mule", () => {
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.algolia.com/doc/"),
+				"https://www.algolia.com/doc/?utm_source=codingcatdev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://cloudinary.com"),
+				"https://cld.media/codingcatdev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.stickermule.com"),
+				"https://mule.to/p5h2",
+			);
+		});
+	});
 });

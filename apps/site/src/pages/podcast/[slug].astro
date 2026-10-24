@@ -3,6 +3,7 @@ import Avatar from "@/components/Avatar.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PodcastListen from "@/components/PodcastListen.astro";
 import PodcastPicks from "@/components/PodcastPicks.astro";
@@ -203,6 +204,12 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				</section>
 			)
 		}
+
+		<ExcalidrawBlueprintCard
+			title={podcast.title}
+			kind="podcast"
+			tags={guests.map((g) => g.title)}
+		/>
 
 		<div class="my-2 md:my-8">
 			<PortableTextContent value={podcast.content} class="mx-auto prose-violet lg:prose-xl" />

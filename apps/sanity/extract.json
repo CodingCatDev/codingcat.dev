@@ -594,6 +594,14 @@
             {
               "type": "string",
               "value": "hashnode"
+            },
+            {
+              "type": "string",
+              "value": "awsbuilder"
+            },
+            {
+              "type": "string",
+              "value": "dailydev"
             }
           ]
         },
@@ -2437,6 +2445,51 @@
         "type": "objectAttribute",
         "value": {
           "type": "string"
+        },
+        "optional": true
+      },
+      "matchDomains": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "string"
+          }
+        },
+        "optional": true
+      },
+      "couponCode": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "rewriteMode": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "root_or_append"
+            },
+            {
+              "type": "string",
+              "value": "append_params"
+            },
+            {
+              "type": "string",
+              "value": "replace_root_only"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "active": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
         },
         "optional": true
       }
@@ -4384,33 +4437,17 @@
         },
         "optional": true
       },
-      "syndications": {
+      "awsbuilder": {
         "type": "objectAttribute",
         "value": {
-          "type": "array",
-          "of": {
-            "type": "object",
-            "attributes": {
-              "_key": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              }
-            },
-            "rest": {
-              "type": "inline",
-              "name": "syndication.reference"
-            }
-          }
+          "type": "string"
         },
         "optional": true
       },
-      "statistics": {
+      "dailydev": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "statistics"
+          "type": "string"
         },
         "optional": true
       },
@@ -4455,6 +4492,36 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "syndications": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "syndication.reference"
+            }
+          }
+        },
+        "optional": true
+      },
+      "statistics": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -5487,33 +5554,17 @@
         },
         "optional": true
       },
-      "syndications": {
+      "awsbuilder": {
         "type": "objectAttribute",
         "value": {
-          "type": "array",
-          "of": {
-            "type": "object",
-            "attributes": {
-              "_key": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              }
-            },
-            "rest": {
-              "type": "inline",
-              "name": "syndication.reference"
-            }
-          }
+          "type": "string"
         },
         "optional": true
       },
-      "statistics": {
+      "dailydev": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "statistics"
+          "type": "string"
         },
         "optional": true
       },
@@ -5558,6 +5609,36 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "syndications": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "syndication.reference"
+            }
+          }
+        },
+        "optional": true
+      },
+      "statistics": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -8592,33 +8673,17 @@
         },
         "optional": true
       },
-      "syndications": {
+      "awsbuilder": {
         "type": "objectAttribute",
         "value": {
-          "type": "array",
-          "of": {
-            "type": "object",
-            "attributes": {
-              "_key": {
-                "type": "objectAttribute",
-                "value": {
-                  "type": "string"
-                }
-              }
-            },
-            "rest": {
-              "type": "inline",
-              "name": "syndication.reference"
-            }
-          }
+          "type": "string"
         },
         "optional": true
       },
-      "statistics": {
+      "dailydev": {
         "type": "objectAttribute",
         "value": {
-          "type": "inline",
-          "name": "statistics"
+          "type": "string"
         },
         "optional": true
       },
@@ -8663,6 +8728,36 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "syndications": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "_key": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "rest": {
+              "type": "inline",
+              "name": "syndication.reference"
+            }
+          }
+        },
+        "optional": true
+      },
+      "statistics": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "statistics"
         },
         "optional": true
       },
@@ -9261,6 +9356,67 @@
         "type": "objectAttribute",
         "value": {
           "type": "number"
+        },
+        "optional": true
+      },
+      "partnerTrackers": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "name": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "matchDomains": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "array",
+                  "of": {
+                    "type": "string"
+                  }
+                },
+                "optional": true
+              },
+              "landingUrl": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "couponCode": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "utmSource": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "optional": true
       }

@@ -20,10 +20,10 @@ const people = [
 ];
 ---
 
-<article>
+<article class="duo-card group flex h-full flex-col overflow-hidden p-5 transition-all duration-200 hover:-translate-y-1 hover:border-[#58CC02]">
 	{
 		href && (
-			<a href={href} class="block mb-5 group">
+			<a href={href} class="mb-5 block overflow-hidden rounded-xl border-2 border-[#37464F] bg-[#0D1519]">
 				{person ? (
 					<CoverImage
 						image={item.coverImage}
@@ -31,7 +31,7 @@ const people = [
 						width={640}
 						height={640}
 						sizes="(max-width: 768px) 100vw, 560px"
-						class="w-full h-auto aspect-square rounded-md object-cover"
+						class="aspect-square h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
 						priority={priority}
 					/>
 				) : (
@@ -45,36 +45,40 @@ const people = [
 			</a>
 		)
 	}
-	<h3 class="mb-3 text-3xl leading-snug text-balance">
+	<div class="flex flex-1 flex-col justify-between">
+		<div>
+			{
+				!person && item.date && (
+					<div class="mb-2 font-mono text-xs font-extrabold uppercase tracking-wider text-[#FFC800]">
+						<FormattedDate dateString={item.date} />
+					</div>
+				)
+			}
+			<h3 class="mb-3 text-2xl font-extrabold leading-snug text-balance text-white transition-colors group-hover:text-[#58CC02] md:text-3xl">
+				{
+					href ? (
+						<a href={href} class="hover:underline">
+							{item.title}
+						</a>
+					) : (
+						item.title
+					)
+				}
+			</h3>
+			{item.excerpt && <p class="mb-4 text-base leading-relaxed text-[#DCE6EC] text-pretty line-clamp-3">{item.excerpt}</p>}
+		</div>
 		{
-			href ? (
-				<a href={href} class="hover:underline">
-					{item.title}
-				</a>
-			) : (
-				item.title
+			people.length > 0 && (
+				<div class="mt-2 flex flex-wrap gap-2 border-t border-dashed border-[#37464F] pt-3">
+					{people.map((p) => (
+						<Avatar
+							name={p.title}
+							href={resolveHref(p.type, p.slug ?? undefined)}
+							coverImage={p.coverImage}
+						/>
+					))}
+				</div>
 			)
 		}
-	</h3>
-	{
-		!person && item.date && (
-			<div class="mb-4 text-lg text-muted-foreground">
-				<FormattedDate dateString={item.date} />
-			</div>
-		)
-	}
-	{item.excerpt && <p class="mb-4 text-lg leading-relaxed text-pretty">{item.excerpt}</p>}
-	{
-		people.length > 0 && (
-			<div class="flex flex-wrap gap-2">
-				{people.map((p) => (
-					<Avatar
-						name={p.title}
-						href={resolveHref(p.type, p.slug ?? undefined)}
-						coverImage={p.coverImage}
-					/>
-				))}
-			</div>
-		)
-	}
+	</div>
 </article>

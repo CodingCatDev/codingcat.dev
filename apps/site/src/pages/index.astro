@@ -1,45 +1,125 @@
 ---
+import AjMascot from "@/components/AjMascot.astro";
+import AjYarnTrail from "@/components/AjYarnTrail.astro";
 import AnimatedHero from "@/components/AnimatedHero.astro";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import HomeSection from "@/components/HomeSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
-import { SITE_DESCRIPTION } from "@/lib/site";
 import { homePageQuery } from "@/lib/sanity/queries";
+import { SITE_DESCRIPTION } from "@/lib/site";
 
 const { sanity } = Astro.locals;
 
 const home = await sanity.loadQuery(homePageQuery);
 
-// The Next version grouped these into pairs with `slice(0, length / 2)` and
-// index arithmetic to build a two-column layout. A plain two-column grid is
-// visually identical and does not silently drop the last item when the count
-// is odd, which the original did.
 const latestPodcasts = (home?.latestPodcasts ?? []) as ContentListItem[];
 const topPodcasts = (home?.topPodcasts ?? []) as ContentListItem[];
 const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
 ---
 
-<BaseLayout title="CodingCat.dev — Purrfect Web Development"
+<BaseLayout
+	title="CodingCat.dev — Purrfect Web Development"
 	description={SITE_DESCRIPTION}
 	ogFallback={{ title: "CodingCat.dev", subtitle: "Purrfect Web Development" }}
 	bare
 >
+	{/* Section 1: Duolingo Chalkboard Hero ("free. fun. purrfect.") */}
 	<AnimatedHero />
+
+	<AjYarnTrail variant="left-to-right" />
+
+	{/* Section 2: Duolingo Scrollytelling — "learn by building." */}
+	<section class="duo-scroll-reveal container mx-auto max-w-6xl px-5 py-10 md:py-16">
+		<div class="grid items-center gap-10 lg:grid-cols-12">
+			<div class="lg:col-span-5">
+				<span class="inline-flex items-center gap-1.5 rounded-full bg-[#58CC02]/15 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-[#58CC02]">
+					🧶 Interactive Course Map
+				</span>
+				<h2 class="mt-3 text-4xl font-black tracking-tight text-[#58CC02] sm:text-5xl">
+					learn by building.
+				</h2>
+				<p class="mt-4 text-lg leading-relaxed text-[#DCE6EC]">
+					Whether you are 10 years old writing your first HTML tag or a staff engineer wiring up SvelteKit, Firebase, and AI agents, our step-by-step course map guides you node by node.
+				</p>
+				<div class="mt-6 flex flex-wrap items-center gap-4">
+					<a href="/courses" class="duo-btn duo-btn-green px-6 py-3.5 text-sm">
+						Explore the Course Map →
+					</a>
+					<AjMascot pose="code-peek" cls="w-20 h-20" showYarnBall={false} />
+				</div>
+			</div>
+			<div class="lg:col-span-7">
+				<ExcalidrawDiagram
+					title="Beginner-to-Pro Winding Course Path"
+					caption="Start at HTML & micro:bit or jump straight into full-stack frameworks."
+					nodes={[
+						{
+							id: "step1",
+							badge: "Start Here",
+							label: "HTML & micro:bit",
+							sublabel: "For a 10 Year Old",
+							color: "green",
+						},
+						{
+							id: "step2",
+							badge: "Style & Motion",
+							label: "CSS Animations",
+							sublabel: "Keyframes & Transitions",
+							color: "blue",
+						},
+						{
+							id: "step3",
+							badge: "Full-Stack",
+							label: "SvelteKit + Firebase",
+							sublabel: "Auth, Data & Edge",
+							color: "orange",
+						},
+					]}
+					edges={[
+						{ from: "step1", to: "step2", label: "level up!" },
+						{ from: "step2", to: "step3", label: "ship apps" },
+					]}
+				/>
+			</div>
+		</div>
+	</section>
+
+	<AjYarnTrail variant="right-to-left" />
+
+	{/* Section 3: Chronological Latest Podcasts ("meet real codingcat learners & guests.") */}
 	<HomeSection
-		title="Latest Podcasts"
-		description="Check out our latest podcasts."
+		title="meet real builders & guests."
+		description="Chronological deep-dive conversations with the creators of modern web frameworks, databases, and AI tools."
 		items={latestPodcasts}
+		accentColor="blue"
+		ctaHref="/podcasts"
+		ctaLabel="All Episodes"
 		muted
 	/>
+
+	<AjYarnTrail variant="center-wave" />
+
+	{/* Section 4: Top Podcasts */}
 	<HomeSection
-		title="Top Podcasts"
-		description="Check out our latest and greatest podcast episodes covering a wide range of topics in web development."
+		title="most-watched episodes."
+		description="Community-favorite episodes covering web development, cloud architecture, and developer workflows."
 		items={topPodcasts}
+		accentColor="orange"
+		ctaHref="/podcasts"
+		ctaLabel="Browse Archive"
 	/>
+
+	<AjYarnTrail variant="left-to-right" />
+
+	{/* Section 5: Chronological Blog Posts ("backed by real code.") */}
 	<HomeSection
-		title="From the Blog"
-		description="Check out our latest blog posts on a variety of web development topics."
+		title="backed by real code."
+		description="Chronological tutorials, architectural breakdowns, and hand-drawn Excalidraw blueprints."
 		items={latestPosts}
+		accentColor="green"
+		ctaHref="/blog"
+		ctaLabel="All Tutorials"
 		muted
 	/>
 </BaseLayout>
