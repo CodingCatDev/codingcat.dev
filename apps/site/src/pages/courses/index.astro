@@ -12,9 +12,21 @@ import CoverImage from "@/components/CoverImage.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { coursesQuery } from "@/lib/sanity/queries";
+import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
+
+interface CourseListItem {
+	_id: string;
+	_type?: string;
+	title: string;
+	slug?: string | null;
+	excerpt?: string | null;
+	coverImage?: CoverImageType | null;
+	lessonsCount?: number | null;
+}
 
 const { sanity } = Astro.locals;
-const rawCourses = (await sanity.loadQuery(coursesQuery)) ?? [];
+const rawCourses = ((await sanity.loadQuery(coursesQuery)) ??
+	[]) as unknown as CourseListItem[];
 
 const LEARNING_ORDER: Record<
 	string,

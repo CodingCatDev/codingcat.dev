@@ -8,14 +8,7 @@ import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro"
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { courseQuery } from "@/lib/sanity/queries";
-
-const { sanity } = Astro.locals;
-const { slug } = Astro.params;
-
-const course = slug ? await sanity.loadQuery(courseQuery, { slug }) : null;
-if (!course?._id) {
-	return new Response(null, { status: 404 });
-}
+import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
 
 interface CourseLesson {
 	_id?: string;
@@ -29,7 +22,29 @@ interface CourseSection {
 	lesson?: CourseLesson[] | null;
 }
 
-const sections: CourseSection[] = (course.sections ?? []) as CourseSection[];
+interface CourseDetail {
+	_id: string;
+	title: string;
+	slug?: string | null;
+	excerpt?: string | null;
+	coverImage?: CoverImageType | null;
+	videoCloudinary?: { asset?: { _ref?: string } } | null;
+	youtube?: string | null;
+	content?: Array<{ _type: string; [key: string]: unknown }> | null;
+	sections?: CourseSection[] | null;
+}
+
+const { sanity } = Astro.locals;
+const { slug } = Astro.params;
+
+const course = (
+	slug ? await sanity.loadQuery(courseQuery, { slug }) : null
+) as unknown as CourseDetail | null;
+if (!course?._id) {
+	return new Response(null, { status: 404 });
+}
+
+const sections: CourseSection[] = course.sections ?? [];
 ---
 
 <BaseLayout
