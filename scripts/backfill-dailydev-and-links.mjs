@@ -489,7 +489,6 @@ async function main() {
     }
   }
 
-  const mapPath = path.resolve("scripts/dailydev-squad-map.json");
   fs.writeFileSync(mapPath, JSON.stringify(squadMap, null, 2));
   console.log(`   Saved ${Object.keys(squadMap).length} Squad mappings to ${mapPath}`);
 
