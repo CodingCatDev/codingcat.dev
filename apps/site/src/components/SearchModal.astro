@@ -1,23 +1,24 @@
 ---
-// SearchModal.astro — Accessible semantic search modal dialog
+// SearchModal.astro — Command-palette search modal with "Ask agent" as first item, Recently Asked, Recently Viewed, and Sanity Semantic Search
 ---
 
 <dialog
 	id="search-modal"
-	class="fixed inset-0 m-auto z-50 w-full max-w-2xl rounded-2xl border border-border bg-card p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-xs text-foreground max-h-[85vh] flex-col overflow-hidden transition-all duration-150 open:flex"
+	closedby="any"
+	class="fixed inset-0 m-auto z-50 w-full max-w-2xl rounded-xl border border-border bg-card p-0 shadow-2xl backdrop:bg-black/65 backdrop:backdrop-blur-xs text-foreground max-h-[82vh] flex-col overflow-hidden transition-all duration-150 open:flex"
 	aria-labelledby="search-modal-title"
 >
-	<!-- Modal Header & Search Bar -->
+	<!-- Top Search Input Bar -->
 	<form
+		id="search-modal-form"
 		action="/search"
 		method="GET"
-		class="flex items-center border-b border-border px-4 py-3 gap-3 bg-muted/20"
+		class="flex items-center border-b border-border px-4 py-3.5 gap-3 bg-card"
 		toolname="search_content"
 		tooldescription="Search CodingCat.dev web development tutorials, blog posts, and podcasts"
-		onsubmit="return false"
 	>
 		<svg
-			class="size-5 shrink-0 text-muted-foreground"
+			class="size-4 shrink-0 text-muted-foreground"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -31,7 +32,7 @@
 		</svg>
 
 		<label for="search-modal-input" id="search-modal-title" class="sr-only">
-			Search CodingCat.dev
+			Search in CodingCat.dev
 		</label>
 
 		<input
@@ -39,8 +40,8 @@
 			id="search-modal-input"
 			name="q"
 			autocomplete="off"
-			placeholder="Search posts, podcasts, authors... (⌘K)"
-			class="w-full bg-transparent text-base md:text-lg placeholder:text-muted-foreground focus:outline-none"
+			placeholder="Search in CodingCat.dev..."
+			class="w-full bg-transparent text-sm md:text-base placeholder:text-muted-foreground focus:outline-none"
 			toolparamdescription="Search keyword or technical topic"
 		/>
 
@@ -56,7 +57,7 @@
 		<button
 			type="button"
 			id="search-modal-clear"
-			class="hidden text-muted-foreground hover:text-foreground size-6 items-center justify-center rounded-md"
+			class="hidden text-muted-foreground hover:text-foreground size-6 items-center justify-center rounded-md cursor-pointer"
 			aria-label="Clear query"
 		>
 			<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -69,100 +70,179 @@
 		<button
 			type="button"
 			id="search-modal-close"
-			class="rounded-md border border-border px-2 py-0.5 text-xs font-semibold text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+			class="rounded border border-border px-2 py-0.5 font-mono text-[10px] font-semibold uppercase text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
 			aria-label="Close search"
 		>
 			ESC
 		</button>
 	</form>
 
-	<!-- Content Type Filter Pills -->
-	<div class="flex items-center gap-1.5 border-b border-border/50 px-4 py-2 text-xs overflow-x-auto bg-muted/10">
-		<span class="text-muted-foreground font-medium uppercase tracking-wider text-[11px] mr-1">Filter:</span>
-		<button
-			type="button"
-			class="modal-filter-pill active-modal-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-primary text-primary-foreground transition-colors cursor-pointer"
-			data-type="all"
-		>
-			All
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="post"
-		>
-			Posts
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="podcast"
-		>
-			Podcasts
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="author"
-		>
-			Authors
-		</button>
-		<button
-			type="button"
-			class="modal-filter-pill rounded-full px-2.5 py-0.5 font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
-			data-type="guest"
-		>
-			Guests
-		</button>
-	</div>
+	<!-- Scrollable Command Palette Body -->
+	<div class="flex-1 overflow-y-auto px-2 py-2.5 min-h-[280px] flex flex-col gap-3">
+		<!-- FIRST ITEM (ALWAYS TOP): ✨ Ask agent -->
+		<div class="px-1">
+			<button
+				type="button"
+				id="modal-mode-ai"
+				data-nav-index="0"
+				class="modal-nav-item w-full flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground hover:bg-accent focus:bg-accent focus:outline-none transition-colors cursor-pointer group"
+			>
+				<div class="flex items-center gap-3 min-w-0">
+					<!-- Sparkles / Ask Agent Icon -->
+					<svg
+						class="size-4 shrink-0 text-primary"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+						<path d="M20 3v4"></path>
+						<path d="M22 5h-4"></path>
+						<path d="M4 17v2"></path>
+						<path d="M5 18H3"></path>
+					</svg>
+					<span class="truncate">
+						Ask agent<span id="modal-ask-agent-query" class="text-primary font-semibold"></span>
+					</span>
+				</div>
+				<span class="shrink-0 font-mono text-[10px] uppercase tracking-wider text-muted-foreground group-hover:text-foreground">
+					Agent AJ →
+				</span>
+			</button>
+		</div>
 
-	<!-- Body: Results or Suggestion States -->
-	<div class="flex-1 overflow-y-auto p-3 min-h-[220px]">
-		<!-- Initial Empty State -->
-		<div id="modal-state-initial" class="flex flex-col items-center justify-center py-10 text-center">
-			<p class="text-sm text-muted-foreground mb-4">
-				Start typing to search tutorials, podcast episodes, authors, and guests.
-			</p>
-			<div class="flex flex-wrap justify-center items-center gap-1.5 max-w-md">
-				<span class="text-xs text-muted-foreground">Try:</span>
-				{
-					["Astro", "Cloudflare", "Sanity", "Next.js", "AI"].map((tag) => (
-						<button
-							type="button"
-							class="modal-tag-suggestion text-xs px-2 py-0.5 rounded-md border border-border bg-muted/40 hover:bg-accent transition-colors cursor-pointer"
-							data-tag={tag}
-						>
-							{tag}
-						</button>
-					))
-				}
+		<!-- Filter Bar (shown when user is typing a search query) -->
+		<div
+			id="modal-filter-bar"
+			class="hidden items-center justify-between gap-2 px-3 py-1.5 border-y border-border/50 text-xs"
+		>
+			<div class="flex items-center gap-1.5 overflow-x-auto">
+				<span class="text-muted-foreground font-mono uppercase tracking-wider text-[10px] mr-1">Filter:</span>
+				<button
+					type="button"
+					class="modal-filter-pill active-modal-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-primary text-primary-foreground transition-colors cursor-pointer"
+					data-type="all"
+				>
+					All
+				</button>
+				<button
+					type="button"
+					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+					data-type="post"
+				>
+					Posts
+				</button>
+				<button
+					type="button"
+					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+					data-type="podcast"
+				>
+					Podcasts
+				</button>
+				<button
+					type="button"
+					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+					data-type="author"
+				>
+					Authors
+				</button>
+				<button
+					type="button"
+					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+					data-type="guest"
+				>
+					Guests
+				</button>
+			</div>
+			<span
+				id="modal-clairic-badge"
+				class="hidden shrink-0 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-medium text-primary"
+			></span>
+		</div>
+
+		<!-- INITIAL STATE (When search input is empty: Recently Asked + Recently Viewed + Search Suggestions) -->
+		<div id="modal-state-initial" class="flex flex-col gap-4 px-1 pb-2">
+			<!-- RECENTLY ASKED -->
+			<div id="modal-recently-asked-section" class="hidden flex-col gap-1">
+				<div class="px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+					RECENTLY ASKED
+				</div>
+				<div id="modal-recently-asked-list" class="flex flex-col gap-0.5"></div>
+			</div>
+
+			<!-- RECENTLY VIEWED -->
+			<div id="modal-recently-viewed-section" class="hidden flex-col gap-1">
+				<div class="px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+					RECENTLY VIEWED
+				</div>
+				<div id="modal-recently-viewed-list" class="flex flex-col gap-0.5"></div>
+			</div>
+
+			<!-- SEARCH SUGGESTIONS -->
+			<div class="flex flex-col gap-1">
+				<div class="px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+					SEARCH SUGGESTIONS
+				</div>
+				<div class="flex flex-col gap-0.5">
+					{
+						[
+							{ label: "Latest podcast episodes", query: "latest podcast" },
+							{ label: "Sanity Content Lake & Studio", query: "Sanity" },
+							{ label: "Cloudflare Workers & AI", query: "Cloudflare" },
+							{ label: "Astro & Modern Web", query: "Astro" },
+						].map((item) => (
+							<button
+								type="button"
+								class="modal-tag-suggestion flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-foreground/90 hover:bg-accent hover:text-foreground transition-colors cursor-pointer"
+								data-tag={item.query}
+							>
+								<svg
+									class="size-3.5 shrink-0 text-muted-foreground"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+								>
+									<circle cx="11" cy="11" r="8" />
+									<path d="m21 21-4.3-4.3" />
+								</svg>
+								<span>{item.label}</span>
+							</button>
+						))
+					}
+				</div>
 			</div>
 		</div>
 
 		<!-- No Results State -->
-		<div id="modal-state-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
+		<div id="modal-state-empty" class="hidden flex-col items-center justify-center py-10 text-center px-4">
 			<p class="text-sm font-semibold text-foreground mb-1" id="modal-empty-msg">No results found</p>
-			<p class="text-xs text-muted-foreground">Try broader search terms or check spelling.</p>
+			<p class="text-xs text-muted-foreground">
+				Press <kbd class="font-mono bg-muted text-foreground px-1.5 py-0.5 rounded border border-border">↵</kbd> on <strong>Ask agent</strong> above to ask Agent AJ directly.
+			</p>
 		</div>
 
-		<!-- Results List -->
+		<!-- Search Results List -->
 		<ul
 			id="modal-results-list"
-			class="hidden flex flex-col gap-1.5 list-none m-0 p-0"
+			class="hidden flex-col gap-1 list-none m-0 px-1"
 			role="listbox"
-			aria-label="Search suggestions"
-		>
-		</ul>
+			aria-label="Search results"
+		></ul>
 	</div>
 
 	<!-- Footer with Keyboard Hints -->
-	<div class="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground bg-muted/20">
+	<div class="flex items-center justify-between gap-2 border-t border-border px-4 py-2 text-[11px] text-muted-foreground bg-muted/20">
 		<div class="flex items-center gap-3">
-			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↑</kbd> <kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↓</kbd> navigate</span>
-			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">↵</kbd> select</span>
-			<span><kbd class="font-mono bg-muted px-1 py-0.5 rounded border border-border">esc</kbd> close</span>
+			<span><kbd class="font-mono bg-muted text-foreground px-1 py-0.5 rounded border border-border">↑</kbd> <kbd class="font-mono bg-muted text-foreground px-1 py-0.5 rounded border border-border">↓</kbd> navigate</span>
+			<span><kbd class="font-mono bg-muted text-foreground px-1 py-0.5 rounded border border-border">↵</kbd> select</span>
+			<span><kbd class="font-mono bg-muted text-foreground px-1 py-0.5 rounded border border-border">esc</kbd> close</span>
 		</div>
-		<span id="modal-results-count" class="font-medium text-xs"></span>
+		<span id="modal-results-count" class="font-mono text-[11px]"></span>
 	</div>
 </dialog>
 
@@ -177,38 +257,227 @@
 		date?: string;
 	}
 
+	interface ClairicExtractionInfo {
+		model: string;
+		intent: string;
+		contentType: string;
+		searchQuery: string | null;
+		source: "clairic" | "fastpath";
+		confidence: number;
+		latencyMs: number;
+	}
+
 	interface ApiResponse {
 		query: string;
 		type?: string;
 		total: number;
 		hits: SearchHit[];
 		semantic: boolean;
+		extraction?: ClairicExtractionInfo;
 	}
 
+	interface RecentAskItem {
+		prompt: string;
+		timestamp: number;
+	}
+
+	interface RecentlyViewedItem {
+		title: string;
+		href: string;
+		section: string;
+		timestamp: number;
+	}
+
+	const STORAGE_RECENT_ASKS_KEY = "cc_aj_recent_asks";
+	const STORAGE_RECENT_VIEWED_KEY = "cc_recently_viewed";
+
 	const modal = document.getElementById("search-modal") as HTMLDialogElement | null;
+	const form = document.getElementById("search-modal-form") as HTMLFormElement | null;
 	const input = document.getElementById("search-modal-input") as HTMLInputElement | null;
 	const clearBtn = document.getElementById("search-modal-clear");
 	const closeBtn = document.getElementById("search-modal-close");
 	const spinner = document.getElementById("search-modal-spinner");
-	const resultsList = document.getElementById("modal-results-list");
+	const askAgentBtn = document.getElementById("modal-mode-ai");
+	const askAgentQuerySpan = document.getElementById("modal-ask-agent-query");
+	const filterBar = document.getElementById("modal-filter-bar");
+	const clairicBadge = document.getElementById("modal-clairic-badge");
 	const initialView = document.getElementById("modal-state-initial");
 	const emptyView = document.getElementById("modal-state-empty");
 	const emptyMsg = document.getElementById("modal-empty-msg");
+	const resultsList = document.getElementById("modal-results-list");
 	const countView = document.getElementById("modal-results-count");
+	const recentlyAskedSection = document.getElementById("modal-recently-asked-section");
+	const recentlyAskedList = document.getElementById("modal-recently-asked-list");
+	const recentlyViewedSection = document.getElementById("modal-recently-viewed-section");
+	const recentlyViewedList = document.getElementById("modal-recently-viewed-list");
 
 	let currentType = "all";
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 	let abortController: AbortController | null = null;
-	let activeIndex = -1;
+	let activeIndex = 0; // 0 = "Ask agent" button, 1..N = search results
 	let currentHits: SearchHit[] = [];
 
-	function openModal() {
+	// Track current page in Recently Viewed if it's a content page
+	function recordCurrentPageView() {
+		try {
+			const path = window.location.pathname;
+			if (
+				!path.startsWith("/podcast/") &&
+				!path.startsWith("/post/") &&
+				!path.startsWith("/author/") &&
+				!path.startsWith("/guest/")
+			) {
+				return;
+			}
+			const rawTitle = document.title.replace(/\s*[|–-]\s*CodingCat\.dev.*$/i, "").trim();
+			if (!rawTitle) return;
+
+			const section = path.startsWith("/podcast/")
+				? "Podcasts"
+				: path.startsWith("/post/")
+					? "Blog"
+					: path.startsWith("/author/")
+						? "Authors"
+						: "Guests";
+
+			const raw = localStorage.getItem(STORAGE_RECENT_VIEWED_KEY);
+			const list: RecentlyViewedItem[] = raw ? JSON.parse(raw) : [];
+			const filtered = Array.isArray(list)
+				? list.filter((item) => item.href !== path)
+				: [];
+			filtered.unshift({
+				title: rawTitle,
+				href: path,
+				section,
+				timestamp: Date.now(),
+			});
+			localStorage.setItem(
+				STORAGE_RECENT_VIEWED_KEY,
+				JSON.stringify(filtered.slice(0, 4)),
+			);
+		} catch {}
+	}
+
+	recordCurrentPageView();
+	window.addEventListener("cc:page-load", recordCurrentPageView);
+
+	function formatRelativeTime(timestamp: number): string {
+		const diffSec = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+		if (diffSec < 60) return "just now";
+		const diffMin = Math.floor(diffSec / 60);
+		if (diffMin < 60) return `${diffMin}m ago`;
+		const diffHr = Math.floor(diffMin / 60);
+		if (diffHr < 24) return `${diffHr}h ago`;
+		const diffDays = Math.floor(diffHr / 24);
+		return `${diffDays}d ago`;
+	}
+
+	function escapeHtml(text: string): string {
+		return text
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+	}
+
+	function renderRecentSections() {
+		// 1. Recently Asked
+		try {
+			const rawAsks = localStorage.getItem(STORAGE_RECENT_ASKS_KEY);
+			const asks: RecentAskItem[] = rawAsks ? JSON.parse(rawAsks) : [];
+			if (recentlyAskedSection && recentlyAskedList) {
+				if (Array.isArray(asks) && asks.length > 0) {
+					recentlyAskedList.innerHTML = "";
+					for (const item of asks.slice(0, 3)) {
+						const btn = document.createElement("button");
+						btn.type = "button";
+						btn.className =
+							"flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-foreground/90 hover:bg-accent hover:text-foreground transition-colors cursor-pointer w-full";
+						btn.innerHTML = `
+							<svg class="size-3.5 shrink-0 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+							</svg>
+							<span class="truncate">${escapeHtml(item.prompt)}, <span class="text-muted-foreground text-xs">${formatRelativeTime(item.timestamp)}</span></span>
+						`;
+						btn.addEventListener("click", () => {
+							triggerAskAgent(item.prompt);
+						});
+						recentlyAskedList.appendChild(btn);
+					}
+					recentlyAskedSection.classList.remove("hidden");
+					recentlyAskedSection.classList.add("flex");
+				} else {
+					recentlyAskedSection.classList.add("hidden");
+					recentlyAskedSection.classList.remove("flex");
+				}
+			}
+		} catch {}
+
+		// 2. Recently Viewed
+		try {
+			const rawViewed = localStorage.getItem(STORAGE_RECENT_VIEWED_KEY);
+			const viewed: RecentlyViewedItem[] = rawViewed ? JSON.parse(rawViewed) : [];
+			if (recentlyViewedSection && recentlyViewedList) {
+				if (Array.isArray(viewed) && viewed.length > 0) {
+					recentlyViewedList.innerHTML = "";
+					for (const item of viewed.slice(0, 3)) {
+						const link = document.createElement("a");
+						link.href = item.href;
+						link.className =
+							"flex items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-accent transition-colors no-underline group";
+						link.innerHTML = `
+							<div class="size-7 rounded-md border border-border bg-muted/40 flex items-center justify-center shrink-0 text-primary">
+								<svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+									<polyline points="14 2 14 8 20 8"></polyline>
+								</svg>
+							</div>
+							<div class="min-w-0 flex-1">
+								<div class="text-sm font-medium text-foreground group-hover:text-primary truncate">${escapeHtml(item.title)}</div>
+								<div class="text-[11px] text-muted-foreground truncate">${escapeHtml(item.section)} &gt; ${escapeHtml(item.title)}</div>
+							</div>
+						`;
+						recentlyViewedList.appendChild(link);
+					}
+					recentlyViewedSection.classList.remove("hidden");
+					recentlyViewedSection.classList.add("flex");
+				} else {
+					recentlyViewedSection.classList.add("hidden");
+					recentlyViewedSection.classList.remove("flex");
+				}
+			}
+		} catch {}
+	}
+
+	function triggerAskAgent(promptOverride?: string) {
+		const q = (promptOverride ?? input?.value ?? "").trim();
+		closeModal();
+		const win = window as unknown as {
+			openAgentAjDrawer?: (prompt?: string) => void;
+			openAgentAjModal?: (prompt?: string) => void;
+		};
+		if (win.openAgentAjDrawer) {
+			win.openAgentAjDrawer(q || undefined);
+		} else if (win.openAgentAjModal) {
+			win.openAgentAjModal(q || undefined);
+		}
+	}
+
+	function openModal(initialQuery?: string) {
 		if (!modal) return;
+		renderRecentSections();
 		if (!modal.open) {
 			modal.showModal();
 			document.body.style.overflow = "hidden";
-			setTimeout(() => input?.focus(), 50);
 		}
+		if (typeof initialQuery === "string" && input) {
+			input.value = initialQuery;
+			handleInput();
+		} else {
+			highlightActive(0);
+		}
+		setTimeout(() => input?.focus(), 40);
 	}
 
 	function closeModal() {
@@ -219,8 +488,12 @@
 		}
 	}
 
-	// Expose to window for triggers from header or buttons
-	(window as unknown as { openSearchModal?: () => void }).openSearchModal = openModal;
+	(window as unknown as { openSearchModal?: (q?: string) => void }).openSearchModal =
+		openModal;
+
+	askAgentBtn?.addEventListener("click", () => {
+		triggerAskAgent();
+	});
 
 	// Global keyboard shortcuts (⌘K or Ctrl+K)
 	document.addEventListener("keydown", (e) => {
@@ -255,22 +528,59 @@
 	function getBadgeClasses(type: string): { label: string; badgeClass: string } {
 		switch (type) {
 			case "post":
-				return { label: "Post", badgeClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" };
+				return {
+					label: "Post",
+					badgeClass:
+						"bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+				};
 			case "podcast":
-				return { label: "Podcast", badgeClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" };
+				return {
+					label: "Podcast",
+					badgeClass:
+						"bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+				};
 			case "author":
-				return { label: "Author", badgeClass: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" };
+				return {
+					label: "Author",
+					badgeClass:
+						"bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+				};
 			case "guest":
-				return { label: "Guest", badgeClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" };
+				return {
+					label: "Guest",
+					badgeClass:
+						"bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+				};
 			default:
-				return { label: type || "Content", badgeClass: "bg-secondary text-secondary-foreground border-border" };
+				return {
+					label: type || "Content",
+					badgeClass: "bg-secondary text-secondary-foreground border-border",
+				};
 		}
+	}
+
+	function highlightActive(index: number) {
+		activeIndex = index;
+		if (askAgentBtn) {
+			if (index === 0) {
+				askAgentBtn.classList.add("bg-accent");
+			} else {
+				askAgentBtn.classList.remove("bg-accent");
+			}
+		}
+		const items = document.querySelectorAll(".search-result-item");
+		items.forEach((item, i) => {
+			if (i + 1 === index) {
+				item.classList.add("bg-accent", "border-primary/40");
+				item.scrollIntoView({ block: "nearest" });
+			} else {
+				item.classList.remove("bg-accent", "border-primary/40");
+			}
+		});
 	}
 
 	function renderHits(hits: SearchHit[]) {
 		currentHits = hits;
-		activeIndex = -1;
-
 		if (!resultsList) return;
 		resultsList.innerHTML = "";
 
@@ -283,16 +593,16 @@
 			li.innerHTML = `
 				<a
 					href="${hit.href}"
-					data-index="${idx}"
-					class="search-result-item flex flex-col gap-1 rounded-xl p-3 hover:bg-accent transition-colors focus:bg-accent focus:outline-none cursor-pointer border border-transparent hover:border-border"
+					data-index="${idx + 1}"
+					class="search-result-item flex flex-col gap-1 rounded-lg px-3 py-2.5 hover:bg-accent transition-colors focus:bg-accent focus:outline-none cursor-pointer border border-transparent"
 				>
 					<div class="flex items-center justify-between gap-2">
-						<span class="font-semibold text-sm line-clamp-1 text-foreground">${hit.title}</span>
+						<span class="font-medium text-sm line-clamp-1 text-foreground">${escapeHtml(hit.title)}</span>
 						<span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${badge.badgeClass}">
 							${badge.label}
 						</span>
 					</div>
-					${hit.excerpt ? `<p class="text-xs text-muted-foreground line-clamp-1">${hit.excerpt}</p>` : ""}
+					${hit.excerpt ? `<p class="text-xs text-muted-foreground line-clamp-1">${escapeHtml(hit.excerpt)}</p>` : ""}
 				</a>
 			`;
 
@@ -300,33 +610,37 @@
 		});
 
 		resultsList.classList.remove("hidden");
+		resultsList.classList.add("flex");
 		initialView?.classList.add("hidden");
 		emptyView?.classList.add("hidden");
-	}
-
-	function highlightActive(index: number) {
-		const items = document.querySelectorAll(".search-result-item");
-		items.forEach((item, i) => {
-			if (i === index) {
-				item.classList.add("bg-accent", "border-primary/40");
-				item.scrollIntoView({ block: "nearest" });
-			} else {
-				item.classList.remove("bg-accent", "border-primary/40");
-			}
-		});
+		emptyView?.classList.remove("flex");
+		highlightActive(0);
 	}
 
 	async function performSearch(q: string, type: string) {
 		const trimmed = q.trim();
+		if (askAgentQuerySpan) {
+			askAgentQuerySpan.textContent = trimmed ? `: "${trimmed}"` : "";
+		}
+
 		if (!trimmed || trimmed.length < 2) {
-			if (resultsList) resultsList.classList.add("hidden");
-			if (emptyView) emptyView.classList.add("hidden");
-			if (initialView) initialView.classList.remove("hidden");
+			resultsList?.classList.add("hidden");
+			resultsList?.classList.remove("flex");
+			emptyView?.classList.add("hidden");
+			emptyView?.classList.remove("flex");
+			filterBar?.classList.add("hidden");
+			filterBar?.classList.remove("flex");
+			initialView?.classList.remove("hidden");
+			clairicBadge?.classList.add("hidden");
 			if (countView) countView.textContent = "";
 			if (spinner) spinner.classList.add("hidden");
 			currentHits = [];
+			highlightActive(0);
 			return;
 		}
+
+		filterBar?.classList.remove("hidden");
+		filterBar?.classList.add("flex");
 
 		if (abortController) abortController.abort();
 		abortController = new AbortController();
@@ -334,27 +648,44 @@
 		if (spinner) spinner.classList.remove("hidden");
 
 		try {
-			const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}&type=${encodeURIComponent(type)}`, {
-				signal: abortController.signal,
-			});
+			const res = await fetch(
+				`/api/search?q=${encodeURIComponent(trimmed)}&type=${encodeURIComponent(type)}`,
+				{
+					signal: abortController.signal,
+				},
+			);
 
 			if (!res.ok) throw new Error("Search failed");
 			const data = (await res.json()) as ApiResponse;
 
 			if (spinner) spinner.classList.add("hidden");
 
+			if (clairicBadge) {
+				if (data.extraction) {
+					clairicBadge.classList.remove("hidden");
+					clairicBadge.textContent = `⚡ ${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+				} else {
+					clairicBadge.classList.add("hidden");
+				}
+			}
+
 			if (data.hits && data.hits.length > 0) {
 				renderHits(data.hits);
-				if (countView) countView.textContent = `${data.total} result${data.total === 1 ? "" : "s"}`;
+				if (countView)
+					countView.textContent = `${data.total} result${data.total === 1 ? "" : "s"}`;
 			} else {
-				if (resultsList) resultsList.classList.add("hidden");
-				if (initialView) initialView.classList.add("hidden");
+				resultsList?.classList.add("hidden");
+				resultsList?.classList.remove("flex");
+				initialView?.classList.add("hidden");
 				if (emptyView) {
 					emptyView.classList.remove("hidden");
-					if (emptyMsg) emptyMsg.textContent = `No results found for "${trimmed}"`;
+					emptyView.classList.add("flex");
+					if (emptyMsg)
+						emptyMsg.textContent = `No results found for "${trimmed}"`;
 				}
 				if (countView) countView.textContent = "0 results";
 				currentHits = [];
+				highlightActive(0);
 			}
 		} catch (err: unknown) {
 			if (err instanceof Error && err.name === "AbortError") return;
@@ -366,11 +697,14 @@
 	function handleInput() {
 		const val = input?.value ?? "";
 		if (clearBtn) clearBtn.classList.toggle("hidden", !val);
+		if (askAgentQuerySpan) {
+			askAgentQuerySpan.textContent = val.trim() ? `: "${val.trim()}"` : "";
+		}
 
 		if (debounceTimer) clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(() => {
 			performSearch(val, currentType);
-		}, 200);
+		}, 180);
 	}
 
 	input?.addEventListener("input", handleInput);
@@ -383,21 +717,49 @@
 		}
 	});
 
-	// Arrow key navigation inside input
+	// Keyboard navigation: 0 is "Ask agent", 1..N are search results
 	input?.addEventListener("keydown", (e) => {
-		if (currentHits.length === 0) return;
-
+		const totalItems = 1 + currentHits.length;
 		if (e.key === "ArrowDown") {
 			e.preventDefault();
-			activeIndex = (activeIndex + 1) % currentHits.length;
-			highlightActive(activeIndex);
+			highlightActive((activeIndex + 1) % totalItems);
 		} else if (e.key === "ArrowUp") {
 			e.preventDefault();
-			activeIndex = (activeIndex - 1 + currentHits.length) % currentHits.length;
-			highlightActive(activeIndex);
-		} else if (e.key === "Enter" && activeIndex >= 0 && currentHits[activeIndex]) {
+			highlightActive((activeIndex - 1 + totalItems) % totalItems);
+		} else if (e.key === "Enter") {
 			e.preventDefault();
-			window.location.href = currentHits[activeIndex].href;
+			if (activeIndex === 0) {
+				triggerAskAgent();
+			} else if (currentHits[activeIndex - 1]) {
+				const href = currentHits[activeIndex - 1].href;
+				closeModal();
+				const win = window as unknown as {
+					navigateWithDrawer?: (url: string) => Promise<boolean>;
+				};
+				if (win.navigateWithDrawer) {
+					win.navigateWithDrawer(href);
+				} else {
+					window.location.href = href;
+				}
+			}
+		}
+	});
+
+	form?.addEventListener("submit", (e) => {
+		e.preventDefault();
+		if (activeIndex === 0) {
+			triggerAskAgent();
+		} else if (currentHits[activeIndex - 1]) {
+			const href = currentHits[activeIndex - 1].href;
+			closeModal();
+			const win = window as unknown as {
+				navigateWithDrawer?: (url: string) => Promise<boolean>;
+			};
+			if (win.navigateWithDrawer) {
+				win.navigateWithDrawer(href);
+			} else {
+				window.location.href = href;
+			}
 		}
 	});
 
@@ -405,10 +767,18 @@
 	document.querySelectorAll(".modal-filter-pill").forEach((pill) => {
 		pill.addEventListener("click", () => {
 			document.querySelectorAll(".modal-filter-pill").forEach((p) => {
-				p.classList.remove("active-modal-pill", "bg-primary", "text-primary-foreground");
+				p.classList.remove(
+					"active-modal-pill",
+					"bg-primary",
+					"text-primary-foreground",
+				);
 				p.classList.add("bg-card", "text-foreground");
 			});
-			pill.classList.add("active-modal-pill", "bg-primary", "text-primary-foreground");
+			pill.classList.add(
+				"active-modal-pill",
+				"bg-primary",
+				"text-primary-foreground",
+			);
 			pill.classList.remove("bg-card", "text-foreground");
 
 			currentType = pill.getAttribute("data-type") || "all";

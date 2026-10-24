@@ -11,7 +11,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 	<div
 		id="search-container"
-		class="w-full flex flex-col gap-6 my-8 md:my-10"
+		class="w-full flex flex-col gap-5 my-8 md:my-10"
 	>
 		<header class="flex flex-col gap-2">
 			<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
@@ -23,39 +23,82 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</header>
 
 		<!-- Search Input Bar -->
-		<div class="relative w-full max-w-3xl">
-			<label for="search-input" class="sr-only">Search</label>
-			<div class="relative flex items-center">
-				<div class="absolute left-3.5 text-muted-foreground pointer-events-none" aria-hidden="true">
-					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<circle cx="11" cy="11" r="8"></circle>
-						<path d="m21 21-4.3-4.3"></path>
-					</svg>
+		<div class="flex flex-col gap-2 w-full max-w-4xl">
+			<form
+				id="search-page-form"
+				action="/search"
+				method="GET"
+				class="relative w-full"
+				toolname="search_content"
+				tooldescription="Search CodingCat.dev web development tutorials, blog posts, and podcasts"
+				onsubmit="return false"
+			>
+				<label for="search-input" class="sr-only">Search</label>
+				<div class="relative flex items-center">
+					<div class="absolute left-3.5 text-muted-foreground pointer-events-none" aria-hidden="true">
+						<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"></circle>
+							<path d="m21 21-4.3-4.3"></path>
+						</svg>
+					</div>
+					<input
+						type="search"
+						id="search-input"
+						name="q"
+						autocomplete="off"
+						placeholder="Search in CodingCat.dev..."
+						class="w-full rounded-xl border border-input bg-card pl-11 pr-12 py-3.5 text-base md:text-lg shadow-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+						toolparamdescription="Search keyword or technical topic"
+					/>
+					<button
+						type="button"
+						id="search-clear-btn"
+						class="hidden absolute right-3 size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+						aria-label="Clear search query"
+					>
+						<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="18" y1="6" x2="6" y2="18"></line>
+							<line x1="6" y1="6" x2="18" y2="18"></line>
+						</svg>
+					</button>
 				</div>
-				<input
-					type="search"
-					id="search-input"
-					name="q"
-					autocomplete="off"
-					placeholder="Search for your purr-fect thing!"
-					class="w-full rounded-xl border border-input bg-card pl-11 pr-10 py-3.5 text-base md:text-lg shadow-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-				/>
-				<button
-					type="button"
-					id="search-clear-btn"
-					class="hidden absolute right-3 size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-					aria-label="Clear search query"
-				>
-					<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<line x1="18" y1="6" x2="6" y2="18"></line>
-						<line x1="6" y1="6" x2="18" y2="18"></line>
+			</form>
+
+			<!-- First Item: ✨ Ask agent (Opens persistent right-side Agent AJ Drawer) -->
+			<button
+				type="button"
+				id="search-mode-ai-btn"
+				class="w-full flex items-center justify-between gap-3 rounded-xl border border-border bg-card hover:bg-accent px-4 py-3 text-left text-sm font-medium text-foreground transition-colors cursor-pointer shadow-2xs group"
+			>
+				<div class="flex items-center gap-3 min-w-0">
+					<svg
+						class="size-4 shrink-0 text-primary"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+						<path d="M20 3v4"></path>
+						<path d="M22 5h-4"></path>
+						<path d="M4 17v2"></path>
+						<path d="M5 18H3"></path>
 					</svg>
-				</button>
-			</div>
+					<span class="truncate">
+						Ask agent<span id="search-ask-agent-query" class="text-primary font-semibold"></span>
+					</span>
+				</div>
+				<span class="shrink-0 font-mono text-[11px] uppercase tracking-wider text-muted-foreground group-hover:text-foreground">
+					Open Drawer →
+				</span>
+			</button>
 		</div>
 
 		<!-- Content Type Filters -->
-		<div class="flex flex-wrap items-center gap-2 pt-1" role="toolbar" aria-label="Filter results by content type">
+		<div id="search-filter-toolbar" class="flex flex-wrap items-center gap-2 pt-1" role="toolbar" aria-label="Filter results by content type">
 			<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">
 				Filter:
 			</span>
@@ -97,13 +140,16 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</div>
 
 		<!-- Status & Summary Line -->
-		<div id="search-status-bar" class="flex items-center justify-between text-xs text-muted-foreground min-h-5">
+		<div id="search-status-bar" class="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground min-h-5 max-w-4xl">
 			<span id="search-count-text"></span>
-			<span id="search-powered-by" class="text-[11px] opacity-75">Sanity Semantic Search</span>
+			<div class="flex items-center gap-2">
+				<span id="search-clairic-pill" class="hidden rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-primary"></span>
+				<span id="search-powered-by" class="text-[11px]">Sanity Semantic Search • Clairic</span>
+			</div>
 		</div>
 
 		<!-- Empty State: Ready to Search (Initial) -->
-		<div id="state-ready" class="flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-dashed border-border/80 bg-card/40 my-4">
+		<div id="state-ready" class="flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-dashed border-border/80 bg-card/40 my-4 max-w-4xl">
 			<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-3">
 				<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<circle cx="11" cy="11" r="8"></circle>
@@ -112,7 +158,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			</div>
 			<h2 class="text-lg font-semibold mb-1">Ready to explore?</h2>
 			<p class="text-sm text-muted-foreground max-w-md mb-6">
-				Type a query above to search articles, podcasts, authors, and guests across the CodingCat.dev catalog.
+				Type a query above to search articles, podcasts, authors, and guests — or click <strong>Ask agent</strong> to open the persistent Agent AJ side drawer.
 			</p>
 			<div class="flex flex-wrap justify-center items-center gap-2 max-w-lg">
 				<span class="text-xs text-muted-foreground">Popular topics:</span>
@@ -131,7 +177,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</div>
 
 		<!-- Loading State -->
-		<div id="state-loading" class="hidden flex flex-col items-center justify-center p-12 text-center my-4">
+		<div id="state-loading" class="hidden flex flex-col items-center justify-center p-12 text-center my-4 max-w-4xl">
 			<div class="inline-block size-8 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent mb-3" role="status">
 				<span class="sr-only">Loading...</span>
 			</div>
@@ -139,7 +185,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</div>
 
 		<!-- State: Error / Unavailable -->
-		<div id="state-error" class="hidden flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-border bg-card my-4">
+		<div id="state-error" class="hidden flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-border bg-card my-4 max-w-4xl">
 			<div class="size-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-3">
 				<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<circle cx="12" cy="12" r="10"></circle>
@@ -162,7 +208,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</div>
 
 		<!-- State: No Results Found -->
-		<div id="state-no-results" class="hidden flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-border bg-card my-4">
+		<div id="state-no-results" class="hidden flex flex-col items-center justify-center p-8 md:p-12 text-center rounded-2xl border border-border bg-card my-4 max-w-4xl">
 			<div class="size-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-3">
 				<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<circle cx="11" cy="11" r="8"></circle>
@@ -172,7 +218,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			</div>
 			<h2 class="text-lg font-semibold mb-1">No results found</h2>
 			<p class="text-sm text-muted-foreground max-w-md" id="no-results-text">
-				We could not find any matches for your query. Try searching for different keywords or checking for spelling errors.
+				We could not find any matches for your query. Try searching for different keywords or click "Ask agent" above.
 			</p>
 		</div>
 
@@ -199,11 +245,22 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		total: number;
 		hits: SearchHit[];
 		semantic: boolean;
+		extraction?: {
+			model: string;
+			source: "clairic" | "fastpath";
+			intent: string;
+			contentType?: string;
+			searchQuery: string;
+			latencyMs: number;
+		};
 	}
 
 	const input = document.getElementById("search-input") as HTMLInputElement | null;
 	const clearBtn = document.getElementById("search-clear-btn");
 	const statusCount = document.getElementById("search-count-text");
+	const askAgentBtn = document.getElementById("search-mode-ai-btn");
+	const askAgentQuerySpan = document.getElementById("search-ask-agent-query");
+	const clairicPill = document.getElementById("search-clairic-pill");
 
 	const stateReady = document.getElementById("state-ready");
 	const stateLoading = document.getElementById("state-loading");
@@ -224,6 +281,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		if (stateNoResults) stateNoResults.classList.toggle("hidden", state !== "no-results");
 		if (resultsList) resultsList.classList.toggle("hidden", state !== "results");
 	}
+
+	askAgentBtn?.addEventListener("click", () => {
+		const q = input?.value.trim() || "";
+		const win = window as unknown as {
+			openAgentAjDrawer?: (prompt?: string) => void;
+		};
+		win.openAgentAjDrawer?.(q || undefined);
+	});
 
 	function getBadgeInfo(type: string): { label: string; badgeClass: string; iconSvg: string } {
 		switch (type) {
@@ -295,9 +360,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 	async function performSearch(query: string, type: string) {
 		const trimmed = query.trim();
+		if (askAgentQuerySpan) {
+			askAgentQuerySpan.textContent = trimmed ? `: "${trimmed}"` : "";
+		}
 		if (!trimmed || trimmed.length < 2) {
 			showState("ready");
 			if (statusCount) statusCount.textContent = "";
+			if (clairicPill) clairicPill.classList.add("hidden");
 			return;
 		}
 
@@ -321,9 +390,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			const data = (await res.json()) as ApiResponse;
 			const hits = data.hits || [];
 
+			if (clairicPill && data.extraction) {
+				clairicPill.textContent = `⚡ ${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+				clairicPill.classList.remove("hidden");
+			}
+
 			if (hits.length === 0) {
 				if (noResultsText) {
-					noResultsText.textContent = `No matches found for "${trimmed}". Try different keywords or broad search terms.`;
+					noResultsText.textContent = `No matches found for "${trimmed}". Click "Ask agent" above to ask Agent AJ in the side drawer.`;
 				}
 				if (statusCount) {
 					statusCount.textContent = "0 results found";
@@ -351,6 +425,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		currentQuery = val;
 		if (clearBtn) {
 			clearBtn.classList.toggle("hidden", !val);
+		}
+		if (askAgentQuerySpan) {
+			askAgentQuerySpan.textContent = val.trim() ? `: "${val.trim()}"` : "";
 		}
 
 		const url = new URL(window.location.href);
@@ -408,14 +485,21 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		});
 	});
 
-	// Check if URL has ?q=
+	// Check if URL has ?q= or ?mode=ai
 	const initialParams = new URLSearchParams(window.location.search);
 	const initialQuery = initialParams.get("q");
+	const initialMode = initialParams.get("mode");
 	if (initialQuery && input) {
 		input.value = initialQuery;
 		currentQuery = initialQuery;
 		if (clearBtn) clearBtn.classList.remove("hidden");
 		performSearch(initialQuery, selectedType);
+		if (initialMode === "ai") {
+			const win = window as unknown as {
+				openAgentAjDrawer?: (prompt?: string) => void;
+			};
+			win.openAgentAjDrawer?.(initialQuery);
+		}
 	} else {
 		showState("ready");
 	}

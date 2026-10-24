@@ -13,6 +13,7 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 ---
 
 <header
+	id="site-header"
 	class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background"
 >
 	<div class="flex items-center gap-4">
@@ -31,11 +32,35 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 			id="search-header-trigger"
 			data-track="search_open"
 			data-track-label="header_search"
-			class="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/60 cursor-pointer"
+			class="inline-flex min-h-8 min-w-8 items-center justify-center sm:justify-between gap-3 rounded-full px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/70 cursor-pointer"
 			aria-label="Search CodingCat.dev (⌘K)"
 		>
+			<span class="inline-flex items-center gap-1.5">
+				<svg
+					class="size-3.5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.3-4.3"></path>
+				</svg>
+				<span class="hidden sm:inline font-mono text-[11px] uppercase tracking-wider text-foreground">Search</span>
+			</span>
+			<span class="hidden md:inline-flex items-center text-[10px] font-mono bg-muted text-foreground px-1.5 py-0.5 rounded border border-border">⌘K</span>
+		</button>
+		<button
+			type="button"
+			id="ask-agent-header-trigger"
+			class="inline-flex min-h-8 min-w-8 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-foreground hover:bg-accent transition-colors border border-border/70 cursor-pointer"
+			aria-label="Ask Agent AJ"
+		>
 			<svg
-				class="size-4"
+				class="size-3.5 text-primary"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -44,10 +69,11 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 				stroke-linejoin="round"
 				aria-hidden="true"
 			>
-				<circle cx="11" cy="11" r="8"></circle>
-				<path d="m21 21-4.3-4.3"></path>
+				<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+				<path d="M20 3v4"></path>
+				<path d="M22 5h-4"></path>
 			</svg>
-			<span class="hidden md:inline-flex items-center text-[10px] font-mono bg-muted text-foreground px-1.5 py-0.5 rounded border border-border">⌘K</span>
+			<span class="hidden sm:inline">Ask Agent</span>
 		</button>
 		<ThemeToggle />
 		<button
@@ -112,9 +138,14 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 	const openButton = document.getElementById("nav-drawer-toggle");
 	const closeButton = document.getElementById("nav-drawer-close");
 	const searchTrigger = document.getElementById("search-header-trigger");
+	const askAgentTrigger = document.getElementById("ask-agent-header-trigger");
 
 	searchTrigger?.addEventListener("click", () => {
 		(window as unknown as { openSearchModal?: () => void }).openSearchModal?.();
+	});
+
+	askAgentTrigger?.addEventListener("click", () => {
+		(window as unknown as { toggleAgentAjDrawer?: () => void }).toggleAgentAjDrawer?.();
 	});
 
 	const setOpen = (open: boolean) => {
