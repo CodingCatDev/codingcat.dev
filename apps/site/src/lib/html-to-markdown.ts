@@ -21,6 +21,10 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 		.replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, "")
 		.replace(/<dialog\b[^<]*(?:(?!<\/dialog>)<[^<]*)*<\/dialog>/gi, "")
 		.replace(
+			/<aside\b[^>]*id=["']aj-agent-drawer["'][^>]*>[\s\S]*?<\/aside>/gi,
+			"",
+		)
+		.replace(
 			/<div[^>]*class=["'][^"']*transcript-widget[^"']*["'][^>]*>[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>\s*<\/div>/gi,
 			"",
 		)

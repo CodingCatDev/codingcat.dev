@@ -88,6 +88,24 @@ const graph = buildGraph([
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		{/* Before the stylesheet, so the theme class is applied without a flash. */}
 		<ThemeScript />
+		{/* Restore Ask Agent drawer state before body paint so it stays open across page changes without flicker */}
+		<script is:inline>
+			(function () {
+				try {
+					var savedWidth = localStorage.getItem("cc_aj_drawer_width");
+					var widthPx = savedWidth
+						? Math.min(Math.max(parseInt(savedWidth, 10) || 420, 320), 780)
+						: 420;
+					document.documentElement.style.setProperty("--aj-drawer-width", widthPx + "px");
+					var isOpen =
+						localStorage.getItem("cc_aj_drawer_open") === "true" ||
+						sessionStorage.getItem("cc_aj_drawer_open") === "true";
+					if (isOpen) {
+						document.documentElement.classList.add("aj-drawer-open");
+					}
+				} catch (e) {}
+			})();
+		</script>
 		<Font cssVariable="--font-inter" preload />
 		<Font cssVariable="--font-nunito" />
 		<SocialMeta
