@@ -18,6 +18,8 @@ interface ContentDocument {
 	hashnode?: string;
 	awsbuilder?: string;
 	dailydev?: string;
+	medium?: string;
+	reddit?: string;
 	tags?: Array<{ _key?: string; label?: string; value?: string }>;
 	sponsor?: Array<{ _ref: string }>;
 	syndications?: Array<{ _type: "reference"; _ref: string; _key?: string }>;
@@ -169,10 +171,13 @@ export const handler = documentEventHandler<ContentDocument>(
 			Boolean(data.awsbuilder) ||
 			process.env.FORCE_AWS_BUILDER === "true";
 
-		const platforms: Array<"devto" | "hashnode" | "dailydev" | "awsbuilder"> = [
+		const platforms: Array<
+			"devto" | "hashnode" | "dailydev" | "reddit" | "awsbuilder"
+		> = [
 			"devto",
 			"hashnode",
 			"dailydev",
+			"reddit",
 			...(shouldSyndicateAws ? (["awsbuilder"] as const) : []),
 		];
 
@@ -199,7 +204,9 @@ export const handler = documentEventHandler<ContentDocument>(
 								? "hashnode.com"
 								: platform === "dailydev"
 									? "daily.dev"
-									: "builder.aws.com";
+									: platform === "reddit"
+										? "reddit.com/r/CodingCatDev"
+										: "builder.aws.com";
 					await client.createOrReplace({
 						_id: syndicationDocId,
 						_type: "syndication",
@@ -1013,6 +1020,152 @@ export const handler = documentEventHandler<ContentDocument>(
 					console.log(
 						`[Syndicate Content] Successfully published to daily.dev Squad: ${externalUrl}`,
 					);
+				} else if (platform === "reddit") {
+					const redditRefreshToken = process.env.REDDIT_REFRESH_TOKEN;
+					if (!redditRefreshToken) {
+						console.warn(
+							"[Syndicate Content] REDDIT_REFRESH_TOKEN not configured. Skipping Reddit (r/CodingCatDev) live dispatch.",
+						);
+						continue;
+					}
+
+					const existingSyndication = await client
+						.getDocument(syndicationDocId)
+						.catch(() => null);
+					let redditUrl =
+						(existingSyndication?.externalUrl &&
+						!String(existingSyndication.externalUrl).includes("preview-simulated")
+							? String(existingSyndication.externalUrl)
+							: null) ||
+						data.reddit ||
+						null;
+					let thingId = existingSyndication?.externalId
+						? String(existingSyndication.externalId)
+						: null;
+
+					if (!redditUrl) {
+						const basicAuth = Buffer.from("TWTsqXa53CexlrYGBWaesQ:").toString("base64");
+						const refreshRes = await fetch("https://www.reddit.com/api/v1/access_token", {
+							method: "POST",
+							headers: {
+								Authorization: `Basic ${basicAuth}`,
+								"Content-Type": "application/x-www-form-urlencoded",
+								"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+							},
+							body: new URLSearchParams({
+								grant_type: "refresh_token",
+								refresh_token: redditRefreshToken,
+							}),
+						});
+						const { access_token: redditAccessToken } = (await refreshRes.json()) as {
+							access_token?: string;
+						};
+						if (!redditAccessToken) {
+							throw new Error("Could not refresh Reddit OAuth access_token");
+						}
+
+						const targetLinkUrl = topYouTubeWatchUrl || canonicalUrl;
+						const prefix = data._type === "podcast" ? "[Podcast] " : "";
+						const postTitle = `${prefix}${data.title || "Untitled"}`.slice(0, 300);
+
+						const subRes = await fetch("https://oauth.reddit.com/api/submit", {
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${redditAccessToken}`,
+								"Content-Type": "application/x-www-form-urlencoded",
+								"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+							},
+							body: new URLSearchParams({
+								api_type: "json",
+								sr: "CodingCatDev",
+								kind: "link",
+								title: postTitle,
+								url: targetLinkUrl,
+								resubmit: "true",
+							}),
+						});
+						const subJson = (await subRes.json()) as any;
+						const subData = subJson?.json?.data;
+						if (!subData?.url) {
+							throw new Error(
+								`Reddit api/submit error: ${JSON.stringify(subJson?.json?.errors || subJson)}`,
+							);
+						}
+
+						redditUrl = subData.url;
+						thingId = subData.name || subData.id;
+
+						const commentText = [
+							data.excerpt ? `> ${data.excerpt.trim()}` : "",
+							"",
+							`📖 **Read the full guide, code snippets & transcript on CodingCat.dev:** [${canonicalUrl}](${canonicalUrl})`,
+							topYouTubeWatchUrl
+								? `📺 **Watch on YouTube & Subscribe:** [${topYouTubeWatchUrl}](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)`
+								: `📺 **Subscribe to CodingCat.dev on YouTube:** [https://www.youtube.com/@CodingCatDev](https://www.youtube.com/@CodingCatDev?sub_confirmation=1)`,
+						]
+							.filter(Boolean)
+							.join("\n");
+
+						const comRes = await fetch("https://oauth.reddit.com/api/comment", {
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${redditAccessToken}`,
+								"Content-Type": "application/x-www-form-urlencoded",
+								"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+							},
+							body: new URLSearchParams({
+								api_type: "json",
+								thing_id: String(thingId),
+								text: commentText,
+							}),
+						});
+						const comJson = (await comRes.json()) as any;
+						const comName = comJson?.json?.data?.things?.[0]?.data?.name;
+						if (comName) {
+							await fetch("https://oauth.reddit.com/api/distinguish", {
+								method: "POST",
+								headers: {
+									Authorization: `Bearer ${redditAccessToken}`,
+									"Content-Type": "application/x-www-form-urlencoded",
+									"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+								},
+								body: new URLSearchParams({
+									api_type: "json",
+									id: String(comName),
+									how: "yes",
+									sticky: "true",
+								}),
+							});
+						}
+					}
+
+					if (redditUrl) {
+						const extractedId =
+							thingId ||
+							redditUrl.match(/comments\/([a-z0-9]+)/i)?.[1] ||
+							data._id;
+
+						await client.createOrReplace({
+							_id: syndicationDocId,
+							_type: "syndication",
+							target: { _type: "reference", _ref: data._id },
+							platform: "reddit",
+							status: "published",
+							canonicalUrl,
+							externalUrl: redditUrl,
+							externalId: String(extractedId),
+							syndicatedAt: new Date().toISOString(),
+							error: undefined,
+						});
+
+						if (data.reddit !== redditUrl) {
+							parentPatch.reddit = redditUrl;
+						}
+
+						console.log(
+							`[Syndicate Content] Successfully published to Reddit (r/CodingCatDev): ${redditUrl}`,
+						);
+					}
 				}
 			} catch (publishErr) {
 				const errMsg =

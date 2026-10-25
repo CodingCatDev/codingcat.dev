@@ -823,6 +823,146 @@ async function run() {
     }
   }
 
+  // --- REDDIT (r/CodingCatDev) SYNDICATION ---
+  const redditRefreshToken = process.env.REDDIT_REFRESH_TOKEN;
+  if (redditRefreshToken) {
+    console.log("\n--- Syndicating to Reddit (r/CodingCatDev) ---");
+    const syndicationDocId = `syndication.${doc._id}.reddit`;
+    try {
+      const existingSyndication = await client.getDocument(syndicationDocId).catch(() => null);
+      let redditUrl =
+        (existingSyndication?.externalUrl &&
+        !String(existingSyndication.externalUrl).includes("preview-simulated")
+          ? existingSyndication.externalUrl
+          : null) ||
+        doc.reddit ||
+        (doc._id === "post-php2shell-cve-2026-109618"
+          ? "https://www.reddit.com/r/CodingCatDev/comments/1xf2yhz/php2shell_cve2026109618_how_ai_found_a_decadeold/"
+          : doc._id === "05eda048-efff-4e0f-8b76-83a2f482fa13"
+            ? "https://www.reddit.com/r/CodingCatDev/comments/1xf2yg5/sanity_knowledge_bases_why_we_replaced_our_custom/"
+            : null);
+
+      let thingId = existingSyndication?.externalId || null;
+
+      if (!redditUrl) {
+        const basicAuth = Buffer.from("TWTsqXa53CexlrYGBWaesQ:").toString("base64");
+        const refreshRes = await fetch("https://www.reddit.com/api/v1/access_token", {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${basicAuth}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+          },
+          body: new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: redditRefreshToken,
+          }),
+        });
+        const { access_token: redditAccessToken } = await refreshRes.json();
+        if (!redditAccessToken) {
+          throw new Error("Could not refresh Reddit OAuth access_token");
+        }
+
+        const targetLinkUrl = topYouTubeWatchUrl || canonicalUrl;
+        const prefix = doc._type === "podcast" ? "[Podcast] " : "";
+        const postTitle = `${prefix}${doc.title || "Untitled"}`.slice(0, 300);
+
+        const subRes = await fetch("https://oauth.reddit.com/api/submit", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${redditAccessToken}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+          },
+          body: new URLSearchParams({
+            api_type: "json",
+            sr: "CodingCatDev",
+            kind: "link",
+            title: postTitle,
+            url: targetLinkUrl,
+            resubmit: "true",
+          }),
+        });
+        const subJson = await subRes.json();
+        const subData = subJson?.json?.data;
+        if (!subData?.url) {
+          throw new Error(`Reddit api/submit error: ${JSON.stringify(subJson?.json?.errors || subJson)}`);
+        }
+
+        redditUrl = subData.url;
+        thingId = subData.name || subData.id;
+
+        const commentText = [
+          doc.excerpt ? `> ${doc.excerpt.trim()}` : "",
+          "",
+          `📖 **Read the full guide, code snippets & transcript on CodingCat.dev:** [${canonicalUrl}](${canonicalUrl})`,
+          topYouTubeWatchUrl
+            ? `📺 **Watch on YouTube & Subscribe:** [${topYouTubeWatchUrl}](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)`
+            : `📺 **Subscribe to CodingCat.dev on YouTube:** [https://www.youtube.com/@CodingCatDev](https://www.youtube.com/@CodingCatDev?sub_confirmation=1)`,
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        const comRes = await fetch("https://oauth.reddit.com/api/comment", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${redditAccessToken}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+          },
+          body: new URLSearchParams({
+            api_type: "json",
+            thing_id: thingId,
+            text: commentText,
+          }),
+        });
+        const comJson = await comRes.json();
+        const comName = comJson?.json?.data?.things?.[0]?.data?.name;
+        if (comName) {
+          await fetch("https://oauth.reddit.com/api/distinguish", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${redditAccessToken}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+              "User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+            },
+            body: new URLSearchParams({
+              api_type: "json",
+              id: comName,
+              how: "yes",
+              sticky: "true",
+            }),
+          });
+        }
+      }
+
+      if (redditUrl) {
+        const extractedId =
+          thingId ||
+          redditUrl.match(/comments\/([a-z0-9]+)/i)?.[1] ||
+          doc._id;
+        console.log(`✓ Reddit (r/CodingCatDev) published: ${redditUrl}`);
+
+        await client.createOrReplace({
+          _id: syndicationDocId,
+          _type: "syndication",
+          target: { _type: "reference", _ref: doc._id },
+          platform: "reddit",
+          status: "published",
+          canonicalUrl,
+          externalUrl: redditUrl,
+          externalId: String(extractedId),
+          syndicatedAt: new Date().toISOString(),
+        });
+
+        await client.patch(doc._id).set({ reddit: redditUrl }).commit();
+        console.log(`✓ Updated Sanity doc ${doc._id} reddit URL`);
+      }
+    } catch (err) {
+      console.error("✗ Reddit (r/CodingCatDev) syndication error:", err);
+    }
+  }
+
   // --- LINK SYNDICATION REFERENCES ON PARENT ---
   try {
     const platforms = [
