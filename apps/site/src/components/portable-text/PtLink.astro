@@ -11,7 +11,10 @@ type Props = MarkProps<{ href?: string; blank?: boolean }>;
 const { node } = Astro.props;
 
 // stegaClean: href is an attribute — zero-width characters break the URL.
-const href = stegaClean(node.markDef.href) || "#";
+const rawHref = stegaClean(node.markDef.href) || "#";
+const href = rawHref.startsWith("https://codingcat.dev/")
+	? rawHref.replace("https://codingcat.dev", "")
+	: rawHref;
 
 // Matches the Next behaviour: anything not starting with "/" is off-site.
 const isExternal = !href.startsWith("/");
