@@ -26,7 +26,7 @@ Devvit.addSettings([
     name: "sanityWriteToken",
     label: "Sanity API Write Token (optional: writes Reddit URL back to Sanity)",
     isSecret: true,
-    scope: SettingScope.Installation,
+    scope: SettingScope.App,
   },
 ]);
 
