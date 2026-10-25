@@ -1,7 +1,7 @@
 import { CogIcon } from "@sanity/icons/Cog";
 import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { UserIcon } from "@sanity/icons/User";
-import { FaCat, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
+import { FaCat, FaFire, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
 import { HiOutlineDocumentText, HiOutlinePencilAlt } from "react-icons/hi";
 import { PiCurrencyDollarSimpleFill } from "react-icons/pi";
 import type { StructureResolver } from "sanity/structure";
@@ -17,6 +17,7 @@ const MANAGED_DOCUMENT_TYPES = new Set([
 	"sponsor",
 	"transcript",
 	"syndication",
+	"trendSignal",
 	"media.tag",
 ]);
 
@@ -296,6 +297,59 @@ export const editorialStructure: StructureResolver = (S) =>
 			S.divider(),
 
 			// 5. Automation & Intelligence
+			S.listItem()
+				.title("Trend Radar (Web Dev & AI)")
+				.icon(FaFire)
+				.child(
+					S.list()
+						.title("Web Dev & AI Trend Radar")
+						.items([
+							S.listItem()
+								.title("All Discovered Trends (Ranked)")
+								.icon(FaFire)
+								.child(
+									S.documentTypeList("trendSignal")
+										.title("All Discovered Trends")
+										.defaultOrdering([
+											{ field: "score", direction: "desc" },
+											{ field: "discoveredAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Drafts Created (Ready to Review)")
+								.child(
+									S.documentList()
+										.title("Drafts Created")
+										.schemaType("trendSignal")
+										.filter('_type == "trendSignal" && status == "drafted"')
+										.defaultOrdering([
+											{ field: "discoveredAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("High-Velocity Signals (Score >= 70)")
+								.child(
+									S.documentList()
+										.title("High-Velocity Signals")
+										.schemaType("trendSignal")
+										.filter(
+											'_type == "trendSignal" && status == "discovered" && score >= 70',
+										)
+										.defaultOrdering([
+											{ field: "score", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Published / Covered")
+								.child(
+									S.documentList()
+										.title("Published / Covered")
+										.schemaType("trendSignal")
+										.filter('_type == "trendSignal" && status == "published"'),
+								),
+						]),
+				),
+
 			S.listItem()
 				.title("Transcripts & Video Intelligence")
 				.icon(HiOutlineDocumentText)
