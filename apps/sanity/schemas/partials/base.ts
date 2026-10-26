@@ -17,6 +17,16 @@ import twitter from "../custom/twitter-embed";
 import quote from "../custom/quote";
 import youtube from "../custom/youtube";
 import youtubeShorts from "../custom/youtube-shorts";
+import socialEmbed, {
+	blueskyEmbed,
+	githubGistEmbed,
+	instagramEmbed,
+	linkedinEmbed,
+	mastodonEmbed,
+	redditEmbed,
+	threadsEmbed,
+	tiktokEmbed,
+} from "../custom/social-embed";
 
 const baseType = defineType({
 	name: "base",
@@ -101,6 +111,15 @@ const baseType = defineType({
 				defineArrayMember(codepen),
 				defineArrayMember(codesandbox),
 				defineArrayMember(twitter),
+				defineArrayMember(socialEmbed),
+				defineArrayMember(blueskyEmbed),
+				defineArrayMember(linkedinEmbed),
+				defineArrayMember(redditEmbed),
+				defineArrayMember(tiktokEmbed),
+				defineArrayMember(instagramEmbed),
+				defineArrayMember(threadsEmbed),
+				defineArrayMember(mastodonEmbed),
+				defineArrayMember(githubGistEmbed),
 				defineArrayMember(html),
 				defineArrayMember(quote),
 				defineArrayMember({ type: "table" }),

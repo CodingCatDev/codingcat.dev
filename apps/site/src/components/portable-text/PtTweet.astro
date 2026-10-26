@@ -2,29 +2,120 @@
 import { stegaClean } from "@sanity/client/stega";
 import type { Props as PtProps } from "astro-portabletext/types";
 
-type TweetNode = { _type: "twitter"; id?: string };
+type TweetNode = {
+	_type: "twitter";
+	id?: string;
+	url?: string;
+	author?: string;
+	handle?: string;
+	text?: string;
+	date?: string;
+};
 
 type Props = PtProps<TweetNode>;
 
 const { node } = Astro.props;
 
 /**
- * Replaces `react-twitter-embed`. X's own widgets.js upgrades this blockquote
- * in place, so the markup degrades to a readable link if the script is blocked
- * — which the React version did not.
- *
- * The id is validated as digits before interpolation: it lands in an href.
+ * Extracts a numeric X/Twitter status ID and optional handle whether the author
+ * stored a raw numeric ID ("2114705042817110293") or a full status URL
+ * ("https://x.com/anthropicai/status/2114705042817110293?s=46&t=...").
  */
-const raw = stegaClean(node.id) ?? "";
-const id = /^\d+$/.test(raw) ? raw : undefined;
+const rawIdOrUrl = stegaClean(node.id || node.url) ?? "";
+const rawUrl = stegaClean(node.url) ?? "";
+
+function parseTweetIdentifier(input: string): { id?: string; handle?: string } {
+	const trimmed = input.trim();
+	if (/^\d+$/.test(trimmed)) {
+		return { id: trimmed };
+	}
+	const urlMatch = trimmed.match(
+		/(?:twitter\.com|x\.com)\/(?:([^/?#]+)\/)?status(?:es)?\/(\d+)/i,
+	);
+	if (urlMatch?.[2]) {
+		const parsedHandle =
+			urlMatch[1] && urlMatch[1].toLowerCase() !== "i" ? urlMatch[1] : undefined;
+		return { id: urlMatch[2], handle: parsedHandle };
+	}
+	return {};
+}
+
+const parsedPrimary = parseTweetIdentifier(rawIdOrUrl);
+const parsedSecondary = parseTweetIdentifier(rawUrl);
+const id = parsedPrimary.id ?? parsedSecondary.id;
+const handle = (
+	stegaClean(node.handle)?.replace(/^@/, "") ||
+	parsedPrimary.handle ||
+	parsedSecondary.handle ||
+	""
+).trim();
+const author = stegaClean(node.author)?.trim() || (handle ? `@${handle}` : "X Post");
+const fallbackText = stegaClean(node.text)?.trim();
+const displayDate = stegaClean(node.date)?.trim();
+const canonicalUrl = id
+	? `https://x.com/${handle || "i"}/status/${id}`
+	: rawUrl || undefined;
 ---
 
 {
-	id && (
-		<div class="not-prose my-6 flex justify-center">
-			<blockquote class="twitter-tweet" data-dnt="true">
-				<a href={`https://twitter.com/i/status/${id}`}>View post on X</a>
-			</blockquote>
+	id && canonicalUrl && (
+		<div class="not-prose my-8 flex justify-center">
+			<div class="w-full max-w-xl rounded-2xl border border-border bg-card p-5 text-card-foreground shadow-sm">
+				<div class="mb-3 flex items-center justify-between gap-3">
+					<div class="flex items-center gap-3">
+						<div class="flex size-10 items-center justify-center rounded-full bg-primary/15 font-bold text-primary">
+							{(author.replace(/^@/, "")[0] || "X").toUpperCase()}
+						</div>
+						<div class="leading-tight">
+							<div class="font-semibold text-foreground">{author}</div>
+							{handle && (
+								<a
+									href={`https://x.com/${handle}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-xs text-muted-foreground hover:underline"
+								>
+									@{handle}
+								</a>
+							)}
+						</div>
+					</div>
+					<a
+						href={canonicalUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="View post on X"
+						class="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary hover:text-foreground"
+					>
+						<svg viewBox="0 0 24 24" class="size-3.5 fill-current" aria-hidden="true">
+							<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+						</svg>
+						<span>Post on X</span>
+					</a>
+				</div>
+				<blockquote class="twitter-tweet m-0" data-theme="dark" data-dnt="true">
+					{fallbackText ? (
+						<p class="whitespace-pre-line text-sm leading-relaxed text-foreground">
+							{fallbackText}
+						</p>
+					) : (
+						<p class="text-sm text-muted-foreground">
+							Embedded post from {handle ? `@${handle}` : "X"}
+						</p>
+					)}
+					<div class="mt-3 flex items-center justify-between border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
+						<span>{displayDate || "X / Twitter"}</span>
+						<a
+							href={canonicalUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="font-medium text-primary hover:underline"
+						>
+							Open conversation on X &rarr;
+						</a>
+					</div>
+				</blockquote>
+			</div>
 		</div>
 	)
 }

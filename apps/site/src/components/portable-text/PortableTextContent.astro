@@ -11,6 +11,7 @@ import PtImage from "./PtImage.astro";
 import PtInternalLink from "./PtInternalLink.astro";
 import PtLink from "./PtLink.astro";
 import PtQuote from "./PtQuote.astro";
+import PtSocialEmbed from "./PtSocialEmbed.astro";
 import PtTable from "./PtTable.astro";
 import PtTweet from "./PtTweet.astro";
 import PtYouTube from "./PtYouTube.astro";
@@ -19,7 +20,7 @@ import PtYouTubeShorts from "./PtYouTubeShorts.astro";
 interface Props {
 	/**
 	 * Sanity TypeGen emits `children?:` as optional on blocks, while
-	 * `PortableTextBlock` requires it — so the generated content types are not
+	 * `PortableTextBlock` requires it, so the generated content types are not
 	 * assignable to it. `TypedObject` is the library's own minimum contract
 	 * (`{_type: string}`), which the generated types do satisfy, and it is what
 	 * PortableText actually needs to dispatch on.
@@ -31,11 +32,9 @@ interface Props {
 const { value, class: className } = Astro.props;
 
 /**
- * astro-portabletext uses SINGULAR keys — `type`, `block`, `mark` — where
- * @portabletext/react uses `types` / `marks`. Getting this wrong fails
- * silently: the custom components are simply never called and every custom
- * block renders as nothing, which is exactly what the pre-Next Astro app did.
- */
+	* astro-portabletext uses SINGULAR keys (`type`, `block`, `mark`) where
+	* @portabletext/react uses `types` / `marks`.
+	*/
 const components = {
 	type: {
 		image: PtImage,
@@ -45,6 +44,15 @@ const components = {
 		youtube: PtYouTube,
 		youtubeShorts: PtYouTubeShorts,
 		twitter: PtTweet,
+		socialEmbed: PtSocialEmbed,
+		bluesky: PtSocialEmbed,
+		linkedin: PtSocialEmbed,
+		reddit: PtSocialEmbed,
+		tiktok: PtSocialEmbed,
+		instagram: PtSocialEmbed,
+		threads: PtSocialEmbed,
+		mastodon: PtSocialEmbed,
+		githubGist: PtSocialEmbed,
 		htmlBlock: PtHtml,
 		quote: PtQuote,
 		table: PtTable,
@@ -70,14 +78,22 @@ const components = {
 
 {/* One delegated listener per page rather than one island per block. */}
 <script>
-	// X's widgets.js upgrades any `.twitter-tweet` blockquote in place. Loaded
-	// only when the page actually contains one, so pages without an embedded
-	// post make no third-party request at all.
-	if (document.querySelector(".twitter-tweet")) {
-		const script = document.createElement("script");
-		script.src = "https://platform.twitter.com/widgets.js";
-		script.async = true;
-		document.head.appendChild(script);
+	const embedWidgets: Array<{ selector: string; src: string }> = [
+		{ selector: ".twitter-tweet", src: "https://platform.twitter.com/widgets.js" },
+		{ selector: ".bluesky-embed", src: "https://embed.bsky.app/static/embed.js" },
+		{ selector: ".reddit-embed-bq", src: "https://embed.reddit.com/widgets.js" },
+		{ selector: ".tiktok-embed", src: "https://www.tiktok.com/embed.js" },
+		{ selector: ".instagram-media", src: "https://www.instagram.com/embed.js" },
+		{ selector: ".text-post-media", src: "https://www.threads.net/embed.js" },
+	];
+
+	for (const { selector, src } of embedWidgets) {
+		if (document.querySelector(selector)) {
+			const script = document.createElement("script");
+			script.src = src;
+			script.async = true;
+			document.head.appendChild(script);
+		}
 	}
 
 	document.addEventListener("click", (event) => {
