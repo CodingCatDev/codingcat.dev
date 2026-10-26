@@ -1,0 +1,423 @@
+---
+/**
+ * `InfiniteContentGrid.astro` | SSR-First Infinite Scroll & In-Page Filter Grid.
+ *
+ * Performance & Core Web Vitals Architecture:
+ * 1. Initial batch renders synchronously in SSR HTML for instant FCP/LCP.
+ * 2. Off-screen cards use `.infinite-card-deferred` (`content-visibility: auto; contain-intrinsic-size: auto none auto 460px`).
+ * 3. Subsequent batches stream as pre-rendered HTML partials from `/api/feed-cards` via `IntersectionObserver` (`rootMargin: "650px 0px"`).
+ * 4. Supports instant in-page topic filtering (`?topic=sanity`, etc.) without losing above-the-fold context.
+ */
+import ContentCard from "@/components/ContentCard.astro";
+import type { ContentListItem } from "@/lib/content";
+import { TOPICS_BY_SLUG } from "@/lib/topics";
+
+interface Props {
+	items: ContentListItem[];
+	type: "podcast" | "post" | "author" | "guest" | "sponsor";
+	skipId?: string;
+	initialOffset?: number;
+	totalCount?: number;
+	batchSize?: number;
+	activeTopic?: string;
+	priorityCount?: number;
+	nounPlural?: string;
+	fallbackHref?: string;
+	class?: string;
+}
+
+const {
+	items,
+	type,
+	skipId = "none",
+	initialOffset = items.length,
+	totalCount = items.length,
+	batchSize = 8,
+	activeTopic = "",
+	priorityCount = 0,
+	nounPlural = type === "podcast"
+		? "episodes"
+		: type === "post"
+			? "blog posts"
+			: type === "guest"
+				? "guests"
+				: type === "author"
+					? "authors"
+					: "sponsors",
+	fallbackHref,
+	class: className,
+} = Astro.props;
+
+const hasMoreInitial = items.length > 0 && initialOffset < totalCount;
+const activeTopicDef = activeTopic ? TOPICS_BY_SLUG[activeTopic] : undefined;
+---
+
+<div
+	class="infinite-feed-root"
+	data-feed-type={type}
+	data-skip-id={skipId}
+	data-offset={String(initialOffset)}
+	data-total={String(totalCount)}
+	data-batch-size={String(batchSize)}
+	data-has-more={hasMoreInitial ? "true" : "false"}
+	data-active-topic={activeTopic}
+	data-noun-plural={nounPlural}
+>
+	{/* Active Topic Status & Count Bar */}
+	<div
+		class="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-[#2A1155]/20 bg-[#FAF9FC] px-4 py-2.5 dark:border-white/15 dark:bg-[#131B2E]/70"
+		data-feed-status-bar
+	>
+		<div class="flex flex-wrap items-center gap-2 font-mono text-xs font-bold text-[#2A1155]/80 dark:text-slate-300">
+			<span
+				class="inline-block size-2 rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"
+				aria-hidden="true"
+			></span>
+			<span data-feed-count-label>
+				Showing {items.length} of {totalCount} {nounPlural}
+			</span>
+			<span
+				data-feed-topic-badge
+				class:list={[
+					"inline-flex items-center gap-1.5 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-purple-200",
+					!activeTopicDef && "hidden",
+				]}
+			>
+				<span data-feed-topic-name>
+					{activeTopicDef ? `Filtered: ${activeTopicDef.title}` : ""}
+				</span>
+			</span>
+		</div>
+
+		<a
+			href={activeTopicDef ? `/topic/${activeTopicDef.slug}` : "/topics"}
+			data-feed-hub-link
+			class:list={[
+				"font-display text-xs font-black text-[#7C3AED] hover:underline dark:text-[#C084FC]",
+				!activeTopicDef && "hidden",
+			]}
+		>
+			Open Full Topic Hub &rarr;
+		</a>
+	</div>
+
+	{/* Cards Grid Container */}
+	<div
+		data-feed-grid
+		aria-live="polite"
+		aria-busy="false"
+		class:list={[
+			"grid grid-cols-1 gap-y-20 md:grid-cols-2 md:gap-x-16 md:gap-y-32 lg:gap-x-32",
+			className,
+		]}
+	>
+		{
+			items.map((item, index) => (
+				<ContentCard
+					item={item}
+					priority={index < priorityCount}
+					deferred={index >= priorityCount}
+				/>
+			))
+		}
+	</div>
+
+	{/* Empty Filter State */}
+	<div
+		data-feed-empty
+		class:list={[
+			"duo-card hand-border my-12 p-10 text-center",
+			items.length > 0 && "hidden",
+		]}
+	>
+		<p class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+			No matching {nounPlural} found for this topic filter yet.
+		</p>
+		<p class="font-hand mt-2 text-xl font-bold text-[#4C1D95] dark:text-purple-200">
+			Try selecting "All" above to browse the full feed.
+		</p>
+	</div>
+
+	{/* Infinite Scroll Sentinel & Manual Load More Button */}
+	<div
+		data-feed-sentinel
+		class:list={[
+			"mt-16 flex flex-col items-center justify-center gap-4 py-6",
+			!hasMoreInitial && "hidden",
+		]}
+	>
+		<div
+			data-feed-spinner
+			class="hidden items-center gap-3 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] shadow-sketch-sm dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200"
+		>
+			<span class="inline-block size-2.5 animate-ping rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"></span>
+			<span>Loading more {nounPlural}...</span>
+		</div>
+
+		<button
+			type="button"
+			data-feed-load-more
+			class="duo-btn duo-btn-outline px-6 py-3 text-sm"
+		>
+			<span>Load More {nounPlural}</span>
+			<span class="text-[#7C3AED] dark:text-[#C084FC]">&darr;</span>
+		</button>
+
+		{
+			fallbackHref && (
+				<noscript>
+					<a href={fallbackHref} class="tactile-btn mt-3 inline-flex px-6 py-3 text-sm">
+						Browse Paginated Archive &rarr;
+					</a>
+				</noscript>
+			)
+		}
+	</div>
+
+	{/* End of Feed Indicator */}
+	<div
+		data-feed-end
+		class:list={[
+			"mt-16 flex items-center justify-center",
+			(hasMoreInitial || items.length === 0) && "hidden",
+		]}
+	>
+		<span class="inline-flex items-center gap-2 rounded-full border-2 border-dashed border-[#2A1155]/25 bg-[#FAF9FC] px-5 py-2 font-hand text-lg font-bold text-[#4C1D95] dark:border-white/20 dark:bg-[#131B2E] dark:text-purple-200">
+			✓ All {nounPlural} loaded
+		</span>
+	</div>
+</div>
+
+<script>
+	function initInfiniteFeeds() {
+		const roots = document.querySelectorAll<HTMLElement>(".infinite-feed-root");
+		for (const root of roots) {
+			if (root.dataset.initialized === "true") continue;
+			root.dataset.initialized = "true";
+
+			const grid = root.querySelector<HTMLElement>("[data-feed-grid]");
+			const sentinel = root.querySelector<HTMLElement>("[data-feed-sentinel]");
+			const spinner = root.querySelector<HTMLElement>("[data-feed-spinner]");
+			const loadMoreBtn = root.querySelector<HTMLButtonElement>("[data-feed-load-more]");
+			const endBadge = root.querySelector<HTMLElement>("[data-feed-end]");
+			const emptyBox = root.querySelector<HTMLElement>("[data-feed-empty]");
+			const countLabel = root.querySelector<HTMLElement>("[data-feed-count-label]");
+			const topicBadge = root.querySelector<HTMLElement>("[data-feed-topic-badge]");
+			const topicName = root.querySelector<HTMLElement>("[data-feed-topic-name]");
+			const hubLink = root.querySelector<HTMLAnchorElement>("[data-feed-hub-link]");
+
+			if (!grid || !sentinel) continue;
+
+			const feedType = root.dataset.feedType || "podcast";
+			const baseSkipId = root.dataset.skipId || "none";
+			const batchSize = Number.parseInt(root.dataset.batchSize || "8", 10);
+			const nounPlural = root.dataset.nounPlural || "items";
+
+			let offset = Number.parseInt(root.dataset.offset || "0", 10);
+			let total = Number.parseInt(root.dataset.total || "0", 10);
+			let hasMore = root.dataset.hasMore === "true";
+			let activeTopic = root.dataset.activeTopic || "";
+			let isLoading = false;
+
+			const updateStatusUI = () => {
+				const loadedCount = grid.children.length;
+				if (countLabel) {
+					countLabel.textContent = `Showing ${loadedCount} of ${total} ${nounPlural}`;
+				}
+				if (emptyBox) {
+					emptyBox.classList.toggle("hidden", loadedCount > 0);
+				}
+				sentinel.classList.toggle("hidden", !hasMore);
+				if (endBadge) {
+					endBadge.classList.toggle("hidden", hasMore || loadedCount === 0);
+				}
+			};
+
+			const fetchBatch = async (reset = false) => {
+				if (isLoading || (!hasMore && !reset)) return;
+				isLoading = true;
+				grid.setAttribute("aria-busy", "true");
+				if (spinner) {
+					spinner.classList.remove("hidden");
+					spinner.classList.add("inline-flex");
+				}
+				if (loadMoreBtn) loadMoreBtn.disabled = true;
+
+				try {
+					const targetOffset = reset ? 0 : offset;
+					// When filtering by a specific topic, include the hero item too (skip="none")
+					const effectiveSkip = activeTopic ? "none" : baseSkipId;
+					const params = new URLSearchParams({
+						type: feedType,
+						skip: effectiveSkip,
+						offset: String(targetOffset),
+						limit: String(batchSize),
+					});
+					if (activeTopic) {
+						params.set("topic", activeTopic);
+					}
+
+					const response = await fetch(`/api/feed-cards?${params.toString()}`);
+					if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+					const html = await response.text();
+					const headerHasMore = response.headers.get("X-Has-More");
+					const headerNextOffset = response.headers.get("X-Next-Offset");
+					const headerTotal = response.headers.get("X-Total-Count");
+
+					const parser = new DOMParser();
+					const doc = parser.parseFromString(html, "text/html");
+					const newCards = Array.from(doc.body.children);
+
+					if (reset) {
+						grid.replaceChildren(...newCards);
+					} else {
+						for (const card of newCards) {
+							grid.appendChild(card);
+						}
+					}
+
+					offset = headerNextOffset
+						? Number.parseInt(headerNextOffset, 10)
+						: targetOffset + newCards.length;
+					total = headerTotal ? Number.parseInt(headerTotal, 10) : total;
+					hasMore = headerHasMore === "true";
+
+					root.dataset.offset = String(offset);
+					root.dataset.total = String(total);
+					root.dataset.hasMore = String(hasMore);
+					updateStatusUI();
+				} catch (err) {
+					console.error("Failed to load more feed items:", err);
+				} finally {
+					isLoading = false;
+					grid.setAttribute("aria-busy", "false");
+					if (spinner) {
+						spinner.classList.add("hidden");
+						spinner.classList.remove("inline-flex");
+					}
+					if (loadMoreBtn) loadMoreBtn.disabled = false;
+				}
+			};
+
+			// 1. IntersectionObserver for automatic infinite scrolling
+			const observer = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries) {
+						if (entry.isIntersecting && hasMore && !isLoading) {
+							void fetchBatch(false);
+						}
+					}
+				},
+				{ rootMargin: "650px 0px" },
+			);
+			observer.observe(sentinel);
+
+			// 2. Manual button click fallback
+			loadMoreBtn?.addEventListener("click", () => {
+				void fetchBatch(false);
+			});
+
+			// 3. In-page Topic Filter Strip interception
+			const filterStrip = document.querySelector<HTMLElement>(
+				'[data-topic-filter-strip="in-page"]',
+			);
+			if (filterStrip) {
+				const pills = Array.from(
+					filterStrip.querySelectorAll<HTMLAnchorElement>("[data-topic-pill]"),
+				);
+
+				const syncPillStyles = (selectedSlug: string, selectedTitle: string) => {
+					for (const pill of pills) {
+						const slug = pill.dataset.topicPill || "";
+						const isActive = slug === selectedSlug;
+						pill.setAttribute("aria-current", isActive ? "true" : "false");
+						if (isActive) {
+							pill.classList.add("bg-[#7C3AED]", "text-white", "dark:border-white/50");
+							pill.classList.remove(
+								"bg-white",
+								"text-[#2A1155]",
+								"hover:bg-[#EDE9FE]",
+								"hover:text-[#7C3AED]",
+								"dark:border-white/25",
+								"dark:bg-[#131B2E]",
+								"dark:text-slate-100",
+							);
+						} else {
+							pill.classList.remove("bg-[#7C3AED]", "text-white", "dark:border-white/50");
+							pill.classList.add(
+								"bg-white",
+								"text-[#2A1155]",
+								"hover:bg-[#EDE9FE]",
+								"hover:text-[#7C3AED]",
+								"dark:border-white/25",
+								"dark:bg-[#131B2E]",
+								"dark:text-slate-100",
+							);
+						}
+					}
+
+					if (topicBadge && topicName) {
+						if (selectedSlug) {
+							topicName.textContent = `Filtered: ${selectedTitle}`;
+							topicBadge.classList.remove("hidden");
+						} else {
+							topicBadge.classList.add("hidden");
+						}
+					}
+					if (hubLink) {
+						if (selectedSlug) {
+							hubLink.href = `/topic/${selectedSlug}`;
+							hubLink.classList.remove("hidden");
+						} else {
+							hubLink.classList.add("hidden");
+						}
+					}
+				};
+
+				for (const pill of pills) {
+					pill.addEventListener("click", (e) => {
+						e.preventDefault();
+						const nextTopic = pill.dataset.topicPill || "";
+						const nextTitle = pill.dataset.topicTitle || nextTopic;
+						if (nextTopic === activeTopic && !isLoading) return;
+
+						activeTopic = nextTopic;
+						root.dataset.activeTopic = activeTopic;
+						syncPillStyles(activeTopic, nextTitle);
+
+						const url = new URL(window.location.href);
+						if (activeTopic) {
+							url.searchParams.set("topic", activeTopic);
+						} else {
+							url.searchParams.delete("topic");
+						}
+						window.history.pushState({ topic: activeTopic }, "", url.toString());
+
+						hasMore = true;
+						void fetchBatch(true);
+					});
+				}
+
+				window.addEventListener("popstate", () => {
+					const url = new URL(window.location.href);
+					const poppedTopic = url.searchParams.get("topic") || "";
+					if (poppedTopic === activeTopic) return;
+					activeTopic = poppedTopic;
+					const matchingPill = pills.find(
+						(p) => (p.dataset.topicPill || "") === activeTopic,
+					);
+					syncPillStyles(
+						activeTopic,
+						matchingPill?.dataset.topicTitle || activeTopic,
+					);
+					hasMore = true;
+					void fetchBatch(true);
+				});
+			}
+		}
+	}
+
+	initInfiniteFeeds();
+	document.addEventListener("astro:page-load", initInfiniteFeeds);
+</script>

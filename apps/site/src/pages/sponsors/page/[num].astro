@@ -1,6 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -50,7 +50,17 @@ const title = page === 1 ? "Sponsors" : `Sponsors: Page ${page}`;
 			linkText="Become a Sponsor"
 			showHr={false}
 		/>
-		<ContentGrid items={items as ContentListItem[]} />
-		<Pagination base="sponsors" page={page} totalPages={totalPages} />
+		<InfiniteContentGrid
+			type="sponsor"
+			items={items as ContentListItem[]}
+			skipId="none"
+			initialOffset={offset + items.length}
+			totalCount={count}
+			priorityCount={2}
+			nounPlural="sponsors"
+		/>
+		<noscript>
+			<Pagination base="sponsors" page={page} totalPages={totalPages} />
+		</noscript>
 	</div>
 </BaseLayout>

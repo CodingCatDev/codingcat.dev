@@ -1,25 +1,54 @@
 ---
 import Avatar from "@/components/Avatar.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
-import { latestPostQuery, morePostQuery } from "@/lib/sanity/queries";
+import {
+	latestPostQuery,
+	morePostQuery,
+	postCountQuery,
+} from "@/lib/sanity/queries";
+import { itemMatchesTopic, TOPICS_BY_SLUG } from "@/lib/topics";
 
 const { sanity } = Astro.locals;
 
-const hero = await sanity.loadQuery(latestPostQuery);
+const selectedTopic = Astro.url.searchParams.get("topic")?.trim() || "";
+const topicDef = selectedTopic ? TOPICS_BY_SLUG[selectedTopic] : undefined;
 
-const more = hero?._id
-	? await sanity.loadQuery(morePostQuery, {
-			skip: hero._id,
-			offset: 0,
-			limit: 6,
-		})
-	: [];
+const [hero, rawTotalCount] = await Promise.all([
+	sanity.loadQuery(latestPostQuery),
+	sanity.loadQuery(postCountQuery),
+]);
+
+const INITIAL_BATCH = 8;
+let more: ContentListItem[] = [];
+let totalRemaining = Math.max(
+	0,
+	(typeof rawTotalCount === "number" ? rawTotalCount : 0) - (hero?._id ? 1 : 0),
+);
+
+if (topicDef) {
+	const allPosts = ((await sanity.loadQuery(morePostQuery, {
+		skip: "none",
+		offset: 0,
+		limit: 250,
+	})) ?? []) as ContentListItem[];
+	const filtered = allPosts.filter((item) =>
+		itemMatchesTopic(item.title, item.excerpt, topicDef),
+	);
+	totalRemaining = filtered.length;
+	more = filtered.slice(0, INITIAL_BATCH);
+} else if (hero?._id) {
+	more = ((await sanity.loadQuery(morePostQuery, {
+		skip: hero._id,
+		offset: 0,
+		limit: INITIAL_BATCH,
+	})) ?? []) as ContentListItem[];
+}
 
 const heroHref = hero?.slug ? `/post/${hero.slug}` : undefined;
 const ogCardImageUrl = sanity
@@ -54,7 +83,12 @@ const ogCardImageUrl = sanity
 			</p>
 		</div>
 
-		<TopicFilterStrip label="Filter Blog Posts by Topic & Vendor:" />
+		<TopicFilterStrip
+			label="Filter Blog Posts by Topic & Vendor:"
+			basePath="/blog"
+			allLabel="All Blog Posts"
+			activeSlug={topicDef ? topicDef.slug : ""}
+		/>
 
 		{
 			hero ? (
@@ -132,17 +166,20 @@ const ogCardImageUrl = sanity
 			)
 		}
 
-		{
-			more.length > 0 && (
-				<aside class="mb-20">
-					<SectionHeader
-						title="more blog posts"
-						href="/blog/page/1"
-						linkText="Browse All Blog Posts"
-					/>
-					<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
-				</aside>
-			)
-		}
+		<aside class="mb-20">
+			<SectionHeader title="all blog posts" />
+			<InfiniteContentGrid
+				type="post"
+				items={more}
+				skipId={hero?._id ?? "none"}
+				initialOffset={more.length}
+				totalCount={totalRemaining}
+				batchSize={INITIAL_BATCH}
+				activeTopic={topicDef ? topicDef.slug : ""}
+				priorityCount={0}
+				nounPlural="blog posts"
+				fallbackHref="/blog/page/1"
+			/>
+		</aside>
 	</section>
 </BaseLayout>

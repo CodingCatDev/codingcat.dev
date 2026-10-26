@@ -525,3 +525,12 @@ html.aj-drawer-open #aj-agent-drawer {
 		right: var(--aj-drawer-width, 420px);
 	}
 }
+
+/*
+ * Off-screen rendering deferral for infinite scroll feeds (modern-web-guidance: defer-rendering-heavy-content).
+ * Applied strictly to below-the-fold cards so the browser skips layout/paint work until near viewport.
+ */
+.infinite-card-deferred {
+	content-visibility: auto;
+	contain-intrinsic-size: auto none auto 460px;
+}

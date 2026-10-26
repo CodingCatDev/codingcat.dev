@@ -1,6 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
@@ -62,9 +62,23 @@ const ogCardImageUrl = sanity
 	/>
 
 	<div class="mb-24">
-		<SectionHeader title={`blog posts (page ${page})`} showHr={false} />
-		<TopicFilterStrip label="Filter by Topic & Vendor:" />
-		<ContentGrid items={posts as ContentListItem[]} />
-		<Pagination base="blog" page={page} totalPages={totalPages} />
+		<SectionHeader title={page === 1 ? "all blog posts" : `blog posts (page ${page})`} showHr={false} />
+		<TopicFilterStrip
+			label="Filter by Topic & Vendor:"
+			basePath="/blog"
+			allLabel="All Blog Posts"
+		/>
+		<InfiniteContentGrid
+			type="post"
+			items={posts as ContentListItem[]}
+			skipId="none"
+			initialOffset={offset + posts.length}
+			totalCount={count}
+			priorityCount={2}
+			nounPlural="blog posts"
+		/>
+		<noscript>
+			<Pagination base="blog" page={page} totalPages={totalPages} />
+		</noscript>
 	</div>
 </BaseLayout>

@@ -1,6 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -45,7 +45,17 @@ const title = page === 1 ? "Podcast Guests" : `Podcast Guests: Page ${page}`;
 
 	<div class="mb-24">
 		<SectionHeader title="podcast guests" showHr={false} />
-		<ContentGrid items={items as ContentListItem[]} />
-		<Pagination base="guests" page={page} totalPages={totalPages} />
+		<InfiniteContentGrid
+			type="guest"
+			items={items as ContentListItem[]}
+			skipId="none"
+			initialOffset={offset + items.length}
+			totalCount={count}
+			priorityCount={2}
+			nounPlural="guests"
+		/>
+		<noscript>
+			<Pagination base="guests" page={page} totalPages={totalPages} />
+		</noscript>
 	</div>
 </BaseLayout>

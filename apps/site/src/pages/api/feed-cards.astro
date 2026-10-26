@@ -1,0 +1,160 @@
+---
+/**
+ * `/api/feed-cards` | Astro HTML Partial Endpoint (`export const partial = true`)
+ *
+ * Streams pre-rendered `<ContentCard>` fragments for infinite scrolling and
+ * in-page topic filtering across `/podcasts`, `/blog`, `/authors`, `/guests`,
+ * and `/sponsors`. Zero client hydration bundle or duplicated card templates.
+ */
+export const partial = true;
+
+import ContentCard from "@/components/ContentCard.astro";
+import type { ContentListItem } from "@/lib/content";
+import {
+	authorCountQuery,
+	guestCountQuery,
+	moreAuthorQuery,
+	moreGuestQuery,
+	morePodcastQuery,
+	morePostQuery,
+	moreSponsorQuery,
+	podcastCountQuery,
+	postCountQuery,
+	sponsorCountQuery,
+} from "@/lib/sanity/queries";
+import { itemMatchesTopic, TOPICS_BY_SLUG } from "@/lib/topics";
+
+type FeedType = "podcast" | "post" | "author" | "guest" | "sponsor";
+
+const VALID_TYPES = new Set<FeedType>([
+	"podcast",
+	"post",
+	"author",
+	"guest",
+	"sponsor",
+]);
+
+const { sanity } = Astro.locals;
+const params = Astro.url.searchParams;
+
+const rawType = (params.get("type") ?? "podcast") as FeedType;
+if (!VALID_TYPES.has(rawType)) {
+	return new Response("Invalid feed type", { status: 400 });
+}
+
+const skip = params.get("skip")?.trim() || "none";
+const rawOffset = Number.parseInt(params.get("offset") ?? "0", 10);
+const rawLimit = Number.parseInt(params.get("limit") ?? "8", 10);
+const offset = Number.isFinite(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
+const pageSize =
+	Number.isFinite(rawLimit) && rawLimit >= 1 && rawLimit <= 24 ? rawLimit : 8;
+const sliceEnd = offset + pageSize;
+
+const topicSlug = params.get("topic")?.trim() || "";
+const topicDef = topicSlug ? TOPICS_BY_SLUG[topicSlug] : undefined;
+
+let items: ContentListItem[] = [];
+let totalCount = 0;
+
+if (topicDef && (rawType === "podcast" || rawType === "post")) {
+	const query = rawType === "podcast" ? morePodcastQuery : morePostQuery;
+	const allItems = ((await sanity.loadQuery(query, {
+		skip,
+		offset: 0,
+		limit: 250,
+	})) ?? []) as ContentListItem[];
+
+	const matched = allItems.filter((item) =>
+		itemMatchesTopic(item.title, item.excerpt, topicDef),
+	);
+	totalCount = matched.length;
+	items = matched.slice(offset, sliceEnd);
+} else {
+	switch (rawType) {
+		case "podcast": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(podcastCountQuery),
+				sanity.loadQuery(morePodcastQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "post": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(postCountQuery),
+				sanity.loadQuery(morePostQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "author": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(authorCountQuery),
+				sanity.loadQuery(moreAuthorQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = typeof count === "number" ? count : 0;
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "guest": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(guestCountQuery),
+				sanity.loadQuery(moreGuestQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = typeof count === "number" ? count : 0;
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "sponsor": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(sponsorCountQuery),
+				sanity.loadQuery(moreSponsorQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = typeof count === "number" ? count : 0;
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+	}
+}
+
+const nextOffset = offset + items.length;
+const hasMore = items.length > 0 && nextOffset < totalCount;
+
+Astro.response.headers.set("X-Has-More", hasMore ? "true" : "false");
+Astro.response.headers.set("X-Next-Offset", String(nextOffset));
+Astro.response.headers.set("X-Total-Count", String(totalCount));
+Astro.response.headers.set(
+	"Cache-Control",
+	"public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+);
+---
+
+{items.map((item) => <ContentCard item={item} priority={false} deferred={true} />)}

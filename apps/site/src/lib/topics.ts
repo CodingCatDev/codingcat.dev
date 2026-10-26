@@ -379,13 +379,28 @@ export const TOPICS: TopicDefinition[] = [
 	},
 ];
 
+export const TOPICS_BY_SLUG: Record<string, TopicDefinition> =
+	Object.fromEntries(TOPICS.map((t) => [t.slug, t]));
+
 export function getTopicBySlug(slug: string): TopicDefinition | undefined {
 	const normalized = slug.trim().toLowerCase();
-	return TOPICS.find((t) => t.slug === normalized);
+	return TOPICS_BY_SLUG[normalized];
 }
 
-export function matchTopicsForText(text: string): TopicDefinition[] {
-	const hay = text.toLowerCase();
+export function itemMatchesTopic(
+	title: string | null | undefined,
+	excerpt: string | null | undefined,
+	topic: TopicDefinition,
+): boolean {
+	const hay = `${title ?? ""} ${excerpt ?? ""}`.toLowerCase();
+	return topic.keywords.some((kw) => hay.includes(kw.toLowerCase()));
+}
+
+export function matchTopicsForText(
+	textOrTitle?: string | null,
+	excerpt?: string | null,
+): TopicDefinition[] {
+	const hay = `${textOrTitle ?? ""} ${excerpt ?? ""}`.toLowerCase();
 	return TOPICS.filter((topic) =>
 		topic.keywords.some((kw) => hay.includes(kw.toLowerCase())),
 	);

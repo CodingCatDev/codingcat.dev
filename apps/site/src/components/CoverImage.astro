@@ -79,7 +79,7 @@ const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : fallbackAlt;
 				height={maxHeight}
 				alt={alt}
 				loading={priority ? "eager" : "lazy"}
-				fetchpriority={priority ? "high" : "auto"}
+				fetchpriority={priority ? "high" : undefined}
 				decoding={priority ? "sync" : "async"}
 				sizes={sizes}
 			/>
