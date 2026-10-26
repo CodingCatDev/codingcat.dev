@@ -21,6 +21,8 @@ Always ground multimodal image and video generation in the canonical reference f
 - `assets/AJ-3D-Headphones-Left.jpg`: Canonical 3D stylized vinyl-toy left profile turnaround render.
 - `assets/AJ-3D-Headphones-Right.jpg`: Canonical 3D stylized vinyl-toy right profile turnaround render.
 - `assets/alex-likeness/alex-likeness-01.jpg` .. `assets/alex-likeness/alex-likeness-13.jpg`: Canonical `2048x2048` studio reaction & pointing portraits of **Alex Patterson** against `#000000` black (sourced from `https://photos.app.goo.gl/bmrt6shq5YKfG16SA`). Use `alex-likeness-10.jpg` or `alex-likeness-02.jpg` when Alex is placed on the right pointing left at a diagram, and `alex-likeness-11.jpg` when Alex is placed on the left pointing right at a diagram.
+- `assets/logos/sanity-logos/`: Canonical **Sanity** brand logos (`Sanity-Full_logo/Sanity-Full_logo--white_on_black.png`, `Sanity-Symbol/Sanity-Symbol--white_on_black.png`, `Sanity-Logotype/Sanity-Logotype--white_on_black.png`, plus SVG & light-mode variants). **CRITICAL RULE**: Always read and use these official Sanity logos (angular zig-zag symbol + serif `Sanity` wordmark). **NEVER** generate or use the legacy red/coral square `"S"` icon.
+- `assets/logos/firebase-brand-assets/` & `assets/logos/Amplify.png`: Official **Firebase** (Primary Lockup, Logomark, and Product Icons for Genkit, App Hosting, Data Connect, Firestore, etc.) and **AWS Amplify** brand logos.
 
 ## Reference Modules (`references/`)
 

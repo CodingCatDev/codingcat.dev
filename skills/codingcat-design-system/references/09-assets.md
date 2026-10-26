@@ -12,6 +12,9 @@ All canonical mascot files live in `/home/alex/codingcat.dev/assets/` (and are s
 | `aj_3d_headphones_left` | `assets/AJ-3D-Headphones-Left.jpg` | 3D stylized vinyl-toy render (left profile turnaround) | Side-facing thumbnail reactions (looking right toward a diagram) and 3D modeling reference. |
 | `aj_3d_headphones_right` | `assets/AJ-3D-Headphones-Right.jpg` | 3D stylized vinyl-toy render (right profile turnaround) | Side-facing thumbnail reactions (looking left toward a diagram) and 3D modeling reference. |
 | `alex_likeness_library` | `assets/alex-likeness/alex-likeness-01.jpg` .. `13.jpg` | `2048x2048` studio portraits of Alex Patterson against pure `#000000` black | Multimodal character likeness reference & cutouts for 16:9 YouTube thumbnails, blog covers, and social graphics. |
+| `sanity_official_logos` | `assets/logos/sanity-logos/` (`Sanity-Full_logo`, `Sanity-Symbol`, `Sanity-Logotype`) | Official Sanity brand assets (white-on-black, black-on-white, SVG/PNG) | **Always use these official Sanity logos** (the angular zig-zag symbol + serif `Sanity` wordmark). **NEVER** use the legacy red-square `"S"` icon. |
+| `firebase_official_logos` | `assets/logos/firebase-brand-assets/` | Official Firebase Primary Lockups, Logomarks, and Product Icons (Genkit, App Hosting, Data Connect, Vertex AI, etc.) | Thumbnails, blog covers, and architecture diagrams referencing Firebase products. |
+| `aws_amplify_logo` | `assets/logos/Amplify.svg` & `assets/logos/Amplify.png` | Official AWS Amplify logo | Thumbnails, blog covers, and diagrams referencing AWS Amplify. |
 
 ## Canonical Alex Patterson Studio Likeness Library (`assets/alex-likeness/`)
 
