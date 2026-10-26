@@ -20,10 +20,10 @@ const people = [
 ];
 ---
 
-<article class="duo-card group flex h-full flex-col overflow-hidden p-5 transition-all duration-200 hover:-translate-y-1 hover:border-[#58CC02]">
+<article class="duo-card group flex h-full flex-col overflow-hidden p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#C5E86C]">
 	{
 		href && (
-			<a href={href} class="mb-5 block overflow-hidden rounded-xl border-2 border-[#37464F] bg-[#0D1519]">
+			<a href={href} class="mb-5 block overflow-hidden rounded-xl border border-[#B4A7D6]/25 bg-[#000000]">
 				{person ? (
 					<CoverImage
 						image={item.coverImage}
@@ -49,12 +49,12 @@ const people = [
 		<div>
 			{
 				!person && item.date && (
-					<div class="mb-2 font-mono text-xs font-extrabold uppercase tracking-wider text-[#FFC800]">
+					<div class="mb-2 font-mono text-xs font-extrabold uppercase tracking-wider text-[#C5E86C]">
 						<FormattedDate dateString={item.date} />
 					</div>
 				)
 			}
-			<h3 class="mb-3 text-2xl font-extrabold leading-snug text-balance text-white transition-colors group-hover:text-[#58CC02] md:text-3xl">
+			<h3 class="mb-3 text-2xl font-extrabold leading-snug text-balance text-[#F8FAFC] transition-colors group-hover:text-[#C5E86C] md:text-3xl">
 				{
 					href ? (
 						<a href={href} class="hover:underline">
@@ -65,11 +65,11 @@ const people = [
 					)
 				}
 			</h3>
-			{item.excerpt && <p class="mb-4 text-base leading-relaxed text-[#DCE6EC] text-pretty line-clamp-3">{item.excerpt}</p>}
+			{item.excerpt && <p class="mb-4 text-base leading-relaxed text-[#94A3B8] text-pretty line-clamp-3">{item.excerpt}</p>}
 		</div>
 		{
 			people.length > 0 && (
-				<div class="mt-2 flex flex-wrap gap-2 border-t border-dashed border-[#37464F] pt-3">
+				<div class="mt-2 flex flex-wrap gap-2 border-t border-dashed border-[#B4A7D6]/25 pt-3">
 					{people.map((p) => (
 						<Avatar
 							name={p.title}

@@ -1,0 +1,29 @@
+/*
+ * CodingCat.dev Canonical Design Tokens (Tailwind CSS v4 @theme + CSS Custom Properties)
+ * Generated from tokens/tokens.json
+ */
+
+:root {
+	/* 02-colors: Core CodingCat.dev Dark-Mode-First Palette */
+	--cc-bg-primary: #0f172a;
+	--cc-bg-void: #000000;
+	--cc-surface: #1e293b;
+	--cc-surface-elevated: #334155;
+	--cc-purple-primary: #4b2e83;
+	--cc-purple-vivid: #7c3aed;
+	--cc-purple-lip: #351f5e;
+	--cc-lavender: #b4a7d6;
+	--cc-lime: #c5e86c;
+	--cc-lime-lip: #9bc53d;
+	--cc-mint: #86efac;
+	--cc-coral: #fca5a5;
+	--cc-text-primary: #f8fafc;
+	--cc-text-muted: #94a3b8;
+
+	/* 06-shadows: Elevation & Ambient Glows */
+	--cc-shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.7),
+		inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+	--cc-glow-purple: 0 0 25px -5px rgba(75, 46, 131, 0.6);
+	--cc-glow-lime: 0 0 20px -4px rgba(197, 232, 108, 0.45);
+	--cc-thumbnail-drop: 0 12px 24px rgba(0, 0, 0, 0.85);
+}

@@ -1,10 +1,11 @@
 ---
 /**
- * AJ the CodingCat.dev Mascot — 2026 Feather Green & Macaw Blue Edition (Column 1).
+ * AJ the CodingCat.dev Mascot — Canonical 2D Upright Bipedal Vector Edition.
  *
- * Features AJ with a bold white die-cut sticker rim-light, Feather Green (#58CC02)
- * eyes, Macaw Sky Blue (#1CB0F6) & Sunny Yellow (#FFC800) headphones, and a
- * glowing Flame Orange (#FF9600) yarn ball + hand-drawn Excalidraw speech/action badge.
+ * Uses the approved 2D upright bipedal flat-vector AJ character (/images/aj-bipedal-2d.webp)
+ * featuring Royal Purple (#4B2E83) & Soft Lavender (#B4A7D6) podcast headphones,
+ * pastel-rainbow hexagonal "AJ" earcup & collar badges, Electric Lime (#C5E86C) eyes,
+ * and a crisp white die-cut sticker outline for high contrast on dark canvases.
  */
 import AjHeadphones from "@/components/icons/AjHeadphones.astro";
 import AjPrimaryAlt from "@/components/icons/AjPrimaryAlt.astro";
@@ -14,67 +15,85 @@ interface Props {
 	caption?: string;
 	cls?: string;
 	showYarnBall?: boolean;
+	fullBody?: boolean;
 }
 
 const {
 	pose = "yarn-chase",
 	caption,
-	cls = "w-44 h-44",
+	cls = "w-44 h-auto",
 	showYarnBall = true,
+	fullBody = true,
 } = Astro.props;
 ---
 
 <div class="relative inline-flex flex-col items-center select-none group">
 	{
 		caption && (
-			<div class="mb-2 rounded-2xl border-2 border-[#FFFFFF] bg-[#202F36] px-3.5 py-1.5 font-hand text-xl font-bold text-[#FFC800] shadow-[0_3px_0_#37464F] -rotate-2 transition-transform group-hover:rotate-1">
+			<div class="mb-2.5 rounded-xl border-2 border-[#B4A7D6] bg-[#1E293B] px-3.5 py-1.5 font-hand text-lg font-bold text-[#C5E86C] shadow-[0_4px_0_#0F172A] -rotate-2 transition-transform group-hover:rotate-1">
 				{caption}
 			</div>
 		)
 	}
 	<div class="relative flex items-center justify-center">
 		{
-			pose === "code-peek" || pose === "lever-pull" ? (
-				<AjPrimaryAlt cls={`${cls} drop-shadow-[0_8px_20px_rgba(88,204,2,0.18)] transition-transform duration-300 group-hover:scale-105`} />
+			fullBody ? (
+				<picture>
+					<source srcset="/images/aj-bipedal-2d.webp" type="image/webp" />
+					<img
+						src="/images/aj-bipedal-2d.png"
+						alt="AJ the CodingCat.dev mascot standing upright wearing purple podcast headphones and a hexagonal AJ collar tag"
+						width="280"
+						height="515"
+						loading="lazy"
+						decoding="async"
+						class={`${cls} object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] transition-transform duration-300 group-hover:scale-105`}
+					/>
+				</picture>
+			) : pose === "code-peek" || pose === "lever-pull" ? (
+				<AjPrimaryAlt
+					cls={`${cls} transition-transform duration-300 group-hover:scale-105`}
+				/>
 			) : (
-				<AjHeadphones cls={`${cls} drop-shadow-[0_8px_20px_rgba(28,176,246,0.22)] transition-transform duration-300 group-hover:scale-105`} />
+				<AjHeadphones
+					cls={`${cls} transition-transform duration-300 group-hover:scale-105`}
+				/>
 			)
 		}
 
 		{
 			showYarnBall && (
 				<svg
-					class="yarn-glow absolute -bottom-3 -right-4 h-16 w-16 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+					class="yarn-glow absolute -bottom-2 -right-3 h-14 w-14 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
 					viewBox="0 0 80 80"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
 					aria-hidden="true"
 				>
-					{/* Glowing Flame Orange Yarn Ball with sketchy Excalidraw cross-strands */}
+					{/* CodingCat Royal Purple & Electric Lime Yarn Ball with sketchy Excalidraw strands */}
 					<circle
 						cx="40"
 						cy="40"
 						r="24"
-						fill="#FF9600"
-						stroke="#FFFFFF"
+						fill="#4B2E83"
+						stroke="#F8FAFC"
 						stroke-width="3"
 					/>
 					<path
 						d="M22 32C30 24 48 24 58 34M20 42C32 34 48 36 60 46M26 52C36 44 48 46 54 54"
-						stroke="#131F24"
+						stroke="#B4A7D6"
 						stroke-width="2.5"
 						stroke-linecap="round"
 					/>
 					<path
 						d="M32 18C26 30 28 48 38 60M44 18C38 32 40 48 50 60"
-						stroke="#FFC800"
-						stroke-width="2.2"
+						stroke="#C5E86C"
+						stroke-width="2.5"
 						stroke-linecap="round"
 					/>
-					{/* Trailing loose yarn tail */}
 					<path
 						d="M58 52C66 58 72 64 76 74"
-						stroke="#FF9600"
+						stroke="#C5E86C"
 						stroke-width="4"
 						stroke-linecap="round"
 					/>

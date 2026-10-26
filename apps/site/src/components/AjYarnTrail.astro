@@ -1,7 +1,8 @@
 ---
 /**
- * Scroll-driven Flame Orange (#FF9600) unwinding yarn string that connects
- * sections down the page, inspired by Duolingo's playful path progression.
+ * Scroll-driven CodingCat Royal Purple (#7C3AED), Soft Lavender (#B4A7D6),
+ * and Electric Lime (#C5E86C) unwinding yarn string that connects
+ * Excalidraw explanation sections down the page.
  */
 interface Props {
 	variant?: "left-to-right" | "right-to-left" | "center-wave";
@@ -24,19 +25,19 @@ const pathD =
 		class="h-24 w-full overflow-visible"
 		preserveAspectRatio="none"
 	>
-		{/* Sketchy white chalk guide shadow */}
+		{/* Sketchy Soft Lavender guide shadow */}
 		<path
 			d={pathD}
-			stroke="#37464F"
-			stroke-width="6"
+			stroke="#4B2E83"
+			stroke-width="7"
 			stroke-dasharray="10 10"
 			stroke-linecap="round"
 		/>
-		{/* Glowing Flame Orange Yarn String */}
+		{/* Glowing Electric Lime & Lavender Yarn String */}
 		<path
 			d={pathD}
-			stroke="#FF9600"
-			stroke-width="5"
+			stroke="#C5E86C"
+			stroke-width="4.5"
 			stroke-linecap="round"
 			class="yarn-glow"
 		/>
@@ -45,9 +46,9 @@ const pathD =
 			cx="500"
 			cy="60"
 			r="9"
-			fill="#FF9600"
-			stroke="#FFFFFF"
-			stroke-width="2.5"
+			fill="#4B2E83"
+			stroke="#C5E86C"
+			stroke-width="3"
 		/>
 	</svg>
 </div>

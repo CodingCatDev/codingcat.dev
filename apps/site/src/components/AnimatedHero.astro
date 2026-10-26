@@ -1,24 +1,34 @@
 ---
 /**
- * CodingCat.dev 2026 — Duolingo Chalkboard & Hand-Drawn Excalidraw Hero.
+ * CodingCat.dev 2026 — Royal Purple, Electric Lime & Excalidraw Hero.
  *
- * Combines Duolingo's giant lowercase Feather Green ("free. fun. purrfect.")
- * scrollytelling energy and tactile 4px-lip 3D buttons with AJ the Mascot
- * chasing his glowing Flame Orange (#FF9600) yarn ball across a hand-drawn
- * Excalidraw chalkboard diagram.
+ * Features chunky rounded Nunito 900 H1 headlines ("purrfect web tutorials."),
+ * Virgil hand-drawn Excalidraw explanations ("learn by building."), tactile 3D
+ * Electric Lime (#C5E86C) and Royal Purple (#4B2E83) CTAs, and the canonical
+ * 2D upright bipedal AJ mascot alongside a Pure Void (#000000) Excalidraw diagram well.
  */
 import AjMascot from "@/components/AjMascot.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import { HERO_ICONS } from "@/lib/hero-icons";
 ---
 
-<section class="relative w-full overflow-hidden border-b-2 border-[#37464F] bg-[#131F24] py-14 md:py-24">
+<section class="relative w-full overflow-hidden border-b border-[#B4A7D6]/25 bg-[#0F172A] py-14 md:py-24">
+	{/* Ambient Royal Purple radial glow */}
+	<div
+		class="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-[#4B2E83]/35 blur-3xl"
+		aria-hidden="true"
+	></div>
+	<div
+		class="pointer-events-none absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-[#7C3AED]/20 blur-3xl"
+		aria-hidden="true"
+	></div>
+
 	{/* Subtle floating tech chalk icons in background */}
-	<div class="pointer-events-none absolute inset-0 grid grid-cols-4 grid-rows-3 gap-4 opacity-10" aria-hidden="true">
+	<div class="pointer-events-none absolute inset-0 grid grid-cols-4 grid-rows-3 gap-4 opacity-[0.06]" aria-hidden="true">
 		{
 			HERO_ICONS.map((icon, index) => (
 				<div
-					class="flex items-center justify-center text-[#1CB0F6] animate-float"
+					class="flex items-center justify-center text-[#B4A7D6] animate-float"
 					style={`animation-delay: ${index * 0.45}s`}
 				>
 					<svg class="size-14" viewBox={icon.viewBox} fill="currentColor">
@@ -31,89 +41,92 @@ import { HERO_ICONS } from "@/lib/hero-icons";
 		}
 	</div>
 
-	<div class="container relative z-10 mx-auto max-w-6xl px-5">
-		<div class="grid items-center gap-12 lg:grid-cols-12">
-			{/* Left Column: Duolingo Playful Lowercase Copy + Tactile 3D CTAs */}
-			<div class="flex flex-col items-center text-center lg:col-span-6 lg:items-start lg:text-left">
-				<span class="mb-4 inline-flex items-center gap-2 rounded-full border-2 border-[#37464F] bg-[#202F36] px-4 py-1.5 font-hand text-xl font-bold text-[#FFC800] shadow-[0_3px_0_#37464F]">
-					🧶 Hand-Drawn Web Dev & AI for Humans
+	<div class="container relative z-10 mx-auto max-w-7xl px-5">
+		<div class="grid items-center gap-10 lg:grid-cols-12">
+			{/* Left Column: Chunky Nunito 900 H1 + Virgil Excalidraw Subhead + Tactile 3D CTAs */}
+			<div class="flex flex-col items-center text-center lg:col-span-5 lg:items-start lg:text-left">
+				<span class="mb-4 inline-flex items-center gap-2 rounded-full border border-[#B4A7D6]/40 bg-[#4B2E83]/60 px-4 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#C5E86C] shadow-[0_0_25px_-5px_rgba(75,46,131,0.6)]">
+					✏️ Excalidraw Web Dev & AI Blueprints
 				</span>
-				<h1 class="text-5xl font-black leading-[1.04] tracking-tight text-white sm:text-6xl md:text-7xl">
-					<span class="text-[#58CC02]">free.</span>{" "}
-					<span class="text-[#1CB0F6]">fun.</span>{" "}
-					<span class="text-[#FF9600]">purrfect.</span>
+				<h1 class="font-display text-5xl font-black leading-[1.03] tracking-tight text-[#F8FAFC] sm:text-6xl md:text-7xl">
+					purrfect <span class="text-[#C5E86C]">web</span>{" "}
+					<span class="text-[#B4A7D6]">tutorials.</span>
 				</h1>
-				<p class="mt-3 text-xl font-extrabold text-white sm:text-2xl">
-					CodingCat.dev Podcast, Courses & Visual Blueprints
+				<p class="mt-3 font-hand text-3xl font-bold text-[#F8FAFC] sm:text-4xl">
+					learn by building.
 				</p>
-				<p class="mt-3 max-w-xl text-base leading-relaxed text-[#DCE6EC] md:text-lg">
-					Learn to code from your very first HTML tag all the way to production cloud & AI agent architectures — explained with playful hand-drawn Excalidraw chalkboard diagrams and AJ the cat.
+				<p class="mt-4 max-w-xl text-base leading-relaxed text-[#94A3B8] md:text-lg">
+					Learn to code from your very first HTML tag all the way to production cloud and AI agent architectures. Every concept is explained with dark-mode Excalidraw diagrams and AJ the cat.
 				</p>
 
-				<div class="mt-8 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
+				<div class="mt-8 flex w-full flex-col gap-3.5 sm:w-auto sm:flex-row">
 					<a
 						href="/courses"
-						class="duo-btn duo-btn-green px-7 py-4 text-sm sm:text-base"
+						class="duo-btn cc-btn-lime px-7 py-4 text-sm sm:text-base"
 					>
-						🧶 Start Learning Path
+						Get Started
 					</a>
 					<a
 						href="/podcasts"
-						class="duo-btn duo-btn-blue px-7 py-4 text-sm sm:text-base"
+						class="duo-btn cc-btn-purple px-7 py-4 text-sm sm:text-base"
 					>
 						🎙️ Watch Podcasts
 					</a>
 					<a
 						href="/blog"
-						class="duo-btn duo-btn-outline px-6 py-4 text-sm sm:text-base"
+						class="duo-btn cc-btn-outline px-6 py-4 text-sm sm:text-base"
 					>
-						✏️ Read Blueprints
+						✏️ Blueprints
 					</a>
 				</div>
 			</div>
 
-			{/* Right Column: AJ Mascot + Interactive Hand-Drawn Excalidraw Diagram */}
-			<div class="flex flex-col items-center lg:col-span-6">
-				<div class="mb-2 flex items-center justify-center">
-					<AjMascot
-						pose="yarn-chase"
-						cls="w-36 h-36 md:w-44 md:h-44"
-						caption="Follow the orange yarn! ↓"
-					/>
-				</div>
-				<div class="w-full">
-					<ExcalidrawDiagram
-						title="How You Level Up on CodingCat.dev"
-						caption="Every course, podcast & blog post breaks down complex tech into hand-drawn sketches."
-						compact={true}
-						nodes={[
-							{
-								id: "curious",
-								badge: "Level 1",
-								label: "First Line of Code",
-								sublabel: "HTML, CSS & micro:bit",
-								color: "green",
-							},
-							{
-								id: "builder",
-								badge: "Level 2",
-								label: "Modern Frameworks",
-								sublabel: "Svelte, Solid, Astro",
-								color: "blue",
-							},
-							{
-								id: "architect",
-								badge: "Level 3",
-								label: "Production & AI",
-								sublabel: "Agents, Cloud & Scale",
-								color: "orange",
-							},
-						]}
-						edges={[
-							{ from: "curious", to: "builder", label: "build projects" },
-							{ from: "builder", to: "architect", label: "ship to prod!" },
-						]}
-					/>
+			{/* Right Column: Pure Void (#000000) Excalidraw Canvas + Approved 2D Bipedal AJ Mascot */}
+			<div class="relative flex flex-col items-center lg:col-span-7">
+				<div class="grid w-full items-center gap-4 md:grid-cols-12">
+					<div class="w-full md:col-span-9">
+						<ExcalidrawDiagram
+							title="How You Level Up on CodingCat.dev"
+							caption="Start with core web fundamentals, build full-stack & AI agent loops, and ship verified architectures to the edge."
+							compact={true}
+							nodes={[
+								{
+									id: "curious",
+									badge: "01. Foundations",
+									label: "First Line of Code",
+									sublabel: "HTML, CSS & JS",
+									color: "purple",
+								},
+								{
+									id: "builder",
+									badge: "02. Frameworks",
+									label: "Astro, Next & React",
+									sublabel: "✓ Server & Edge SSR",
+									color: "blue",
+									status: "good",
+								},
+								{
+									id: "architect",
+									badge: "03. AI & Cloud",
+									label: "Ship to Prod",
+									sublabel: "✓ Agents & Workers",
+									color: "green",
+									status: "good",
+								},
+							]}
+							edges={[
+								{ from: "curious", to: "builder", label: "build projects" },
+								{ from: "builder", to: "architect", label: "✓ ship it!" },
+							]}
+						/>
+					</div>
+					<div class="flex flex-col items-center justify-center md:col-span-3">
+						<AjMascot
+							pose="yarn-chase"
+							cls="w-36 md:w-44 h-auto"
+							caption="Let’s build it!"
+						/>
+					</div>
 				</div>
 			</div>
 		</div>

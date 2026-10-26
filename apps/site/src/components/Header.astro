@@ -15,23 +15,23 @@ const hasCoursesLink = desktopLinks.some((link) =>
 ---
 
 <header
-	class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between border-b-2 border-[#37464F] bg-[#131F24]/95 px-5 py-3.5 backdrop-blur-md"
+	class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A]/95 px-5 py-3.5 backdrop-blur-md"
 >
 	<div class="flex items-center gap-5">
 		<a
-			class="group flex items-center gap-2.5 text-lg font-black tracking-tight text-white md:text-2xl"
+			class="group flex items-center gap-2.5 font-display text-lg font-black tracking-tight text-[#F8FAFC] md:text-2xl"
 			href="/"
 		>
 			<AjHeadphones cls="block size-9 transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6" />
 			<span>
-				codingcat<span class="text-[#58CC02]">.dev</span>
+				CodingCat<span class="text-[#C5E86C]">.dev</span>
 			</span>
 		</a>
 		<nav class="hidden items-center gap-5 md:flex" aria-label="Main">
 			{
 				!hasCoursesLink && (
 					<NavLink href="/courses">
-						<span class="inline-flex items-center gap-1.5 font-extrabold text-[#58CC02]">
+						<span class="inline-flex items-center gap-1.5 font-extrabold text-[#C5E86C]">
 							🧶 Courses
 						</span>
 					</NavLink>
@@ -47,20 +47,20 @@ const hasCoursesLink = desktopLinks.some((link) =>
 	<div class="flex items-center gap-2.5">
 		<a
 			href="/courses"
-			class="duo-btn duo-btn-green hidden px-3.5 py-1.5 text-xs sm:inline-flex"
+			class="duo-btn cc-btn-lime hidden px-3.5 py-1.5 text-xs sm:inline-flex"
 		>
-			Start Learning
+			Get Started
 		</a>
 		<button
 			type="button"
 			id="search-header-trigger"
 			data-track="search_open"
 			data-track-label="header_search"
-			class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border-2 border-[#37464F] bg-[#202F36] px-3 py-1.5 text-xs font-bold text-[#DCE6EC] shadow-[0_3px_0_#37464F] transition-colors hover:border-[#1CB0F6] hover:text-white"
+			class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] px-3 py-1.5 text-xs font-bold text-[#F8FAFC] transition-colors hover:border-[#C5E86C] hover:text-[#C5E86C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5E86C]"
 			aria-label="Search CodingCat.dev (⌘K)"
 		>
 			<svg
-				class="size-4 text-[#1CB0F6]"
+				class="size-4 text-[#B4A7D6]"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -72,13 +72,13 @@ const hasCoursesLink = desktopLinks.some((link) =>
 				<circle cx="11" cy="11" r="8"></circle>
 				<path d="m21 21-4.3-4.3"></path>
 			</svg>
-			<span class="hidden items-center rounded border border-[#37464F] bg-[#131F24] px-1.5 py-0.5 font-mono text-[10px] text-[#FFC800] md:inline-flex">⌘K</span>
+			<span class="hidden items-center rounded border border-[#B4A7D6]/30 bg-[#0F172A] px-1.5 py-0.5 font-mono text-[10px] text-[#C5E86C] md:inline-flex">⌘K</span>
 		</button>
 		<ThemeToggle />
 		<button
 			type="button"
 			id="nav-drawer-toggle"
-			class="inline-flex size-9 items-center justify-center rounded-xl border-2 border-[#37464F] bg-[#202F36] transition-colors hover:border-[#58CC02] md:hidden"
+			class="inline-flex size-9 items-center justify-center rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] transition-colors hover:border-[#C5E86C] md:hidden"
 			aria-controls="nav-drawer"
 			aria-expanded="false"
 		>
@@ -102,13 +102,13 @@ const hasCoursesLink = desktopLinks.some((link) =>
 <div
 	id="nav-drawer"
 	hidden
-	class="fixed inset-0 z-50 bg-[#131F24]/98 backdrop-blur md:hidden"
+	class="fixed inset-0 z-50 bg-[#0F172A]/98 backdrop-blur md:hidden"
 >
 	<div class="flex items-center justify-end px-6 py-4">
 		<button
 			type="button"
 			id="nav-drawer-close"
-			class="inline-flex size-9 items-center justify-center rounded-xl border-2 border-[#37464F] bg-[#202F36]"
+			class="inline-flex size-9 items-center justify-center rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B]"
 			aria-label="Close navigation menu"
 		>
 			<svg

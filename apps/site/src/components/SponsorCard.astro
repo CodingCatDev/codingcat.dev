@@ -38,13 +38,13 @@ const items = sponsors ?? [];
 						data-track-target={href}
 						class="flex"
 					>
-						<article class="duo-card flex max-w-xl grow flex-col overflow-hidden rounded-2xl border-2 border-[#37464F] bg-[#202F36] text-white shadow-md transition-all hover:-translate-y-1 hover:border-[#58CC02]">
+						<article class="duo-card flex max-w-xl grow flex-col overflow-hidden rounded-2xl border border-[#B4A7D6]/25 bg-[#1E293B] text-[#F8FAFC] shadow-md transition-all hover:-translate-y-1 hover:border-[#C5E86C]">
 							<CoverImage image={sponsor.coverImage} />
 							<div class="grow p-6">
-								<h3 class="mb-3 text-3xl font-extrabold text-balance text-white">{sponsor.title}</h3>
+								<h3 class="mb-3 text-3xl font-extrabold text-balance text-[#F8FAFC]">{sponsor.title}</h3>
 							</div>
 							{sponsor.excerpt && (
-								<p class="px-6 pb-6 text-lg leading-relaxed text-[#DCE6EC] text-pretty">
+								<p class="px-6 pb-6 text-lg leading-relaxed text-[#94A3B8] text-pretty">
 									{sponsor.excerpt}
 								</p>
 							)}

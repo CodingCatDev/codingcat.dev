@@ -8,7 +8,7 @@ interface Props {
 	title: string;
 	description: string;
 	items: ContentListItem[];
-	/** Alternating band colour, matching the Next home page. */
+	/** Alternating band colour */
 	muted?: boolean;
 	accentColor?: "green" | "blue" | "orange" | "purple";
 	ctaHref?: string;
@@ -27,51 +27,51 @@ const {
 
 const accentHex =
 	accentColor === "blue"
-		? "#1CB0F6"
+		? "#B4A7D6"
 		: accentColor === "orange"
-			? "#FF9600"
+			? "#86EFAC"
 			: accentColor === "purple"
-				? "#CE82FF"
-				: "#58CC02";
+				? "#7C3AED"
+				: "#C5E86C";
 ---
 
 {
 	items.length > 0 && (
 		<section
 			class:list={[
-				"duo-scroll-reveal w-full py-12 md:py-20 flex flex-col items-center justify-center",
-				muted ? "bg-[#0D1519]/70 border-y-2 border-[#37464F]" : "",
+				"duo-scroll-reveal w-full py-16 md:py-20 flex flex-col items-center justify-center",
+				muted ? "bg-[#000000]/60 border-y border-[#B4A7D6]/20" : "",
 			]}
 		>
-			<div class="container mx-auto max-w-6xl px-4 md:px-6">
+			<div class="container mx-auto max-w-7xl px-4 md:px-6">
 				<div class="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
 					<div class="space-y-2">
 						<h2
-							class="text-3xl font-black tracking-tight sm:text-5xl"
+							class="font-display text-3xl font-black tracking-tight sm:text-5xl"
 							style={`color: ${accentHex}`}
 						>
 							{title}
 						</h2>
-						<p class="max-w-[780px] text-base text-[#DCE6EC] md:text-xl/relaxed">
+						<p class="excalidraw-explain max-w-[780px] text-[#B4A7D6]">
 							{description}
 						</p>
 					</div>
 					{ctaHref && (
-						<a href={ctaHref} class="duo-btn duo-btn-outline shrink-0 px-5 py-3 text-xs sm:text-sm">
+						<a href={ctaHref} class="duo-btn cc-btn-outline shrink-0 px-5 py-3 text-xs sm:text-sm">
 							{ctaLabel} →
 						</a>
 					)}
 				</div>
-				<div class="mx-auto grid max-w-6xl items-stretch gap-6 py-10 lg:grid-cols-2 lg:gap-8">
+				<div class="mx-auto grid max-w-7xl items-stretch gap-6 py-10 lg:grid-cols-2 lg:gap-8">
 					{items.map((item) => {
 						const href = resolveHref(item._type, item.slug ?? undefined);
 						return (
 							<a
 								href={href}
-								class="duo-card group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1.5 hover:border-[#58CC02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#58CC02]"
+								class="duo-card group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1.5 hover:border-[#C5E86C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5E86C]"
 							>
 								{item.coverImage && (
-									<div class="border-b-2 border-[#37464F] bg-[#0D1519]">
+									<div class="border-b border-[#B4A7D6]/25 bg-[#000000]">
 										<CoverImage
 											image={item.coverImage}
 											fallbackAlt={item.title || "CodingCat.dev tutorial cover image"}
@@ -82,24 +82,24 @@ const accentHex =
 										/>
 									</div>
 								)}
-								<div class="flex flex-1 flex-col justify-between gap-3 p-5 sm:p-6">
+								<div class="flex flex-1 flex-col justify-between gap-3 p-6">
 									<div>
 										{item.date && (
-											<div class="mb-2 font-mono text-xs font-bold uppercase tracking-wider text-[#FFC800]">
+											<div class="mb-2 font-mono text-xs font-bold uppercase tracking-wider text-[#C5E86C]">
 												<FormattedDate dateString={item.date} />
 											</div>
 										)}
-										<h3 class="text-xl font-extrabold leading-snug text-white transition-colors group-hover:text-[#58CC02] sm:text-2xl">
+										<h3 class="text-xl font-extrabold leading-snug text-[#F8FAFC] transition-colors group-hover:text-[#C5E86C] sm:text-2xl">
 											{item.title}
 										</h3>
 										{item.excerpt && (
-											<p class="mt-2 text-sm leading-relaxed text-[#DCE6EC] line-clamp-2">
+											<p class="mt-2 text-sm leading-relaxed text-[#94A3B8] line-clamp-2">
 												{item.excerpt}
 											</p>
 										)}
 									</div>
-									<span class="mt-2 inline-flex items-center gap-1.5 font-hand text-xl font-bold text-[#1CB0F6] group-hover:text-[#58CC02]">
-										Open Visual Blueprint →
+									<span class="mt-2 inline-flex items-center gap-1.5 font-hand text-xl font-bold text-[#B4A7D6] group-hover:text-[#C5E86C]">
+										Open Excalidraw Explanation →
 									</span>
 								</div>
 							</a>

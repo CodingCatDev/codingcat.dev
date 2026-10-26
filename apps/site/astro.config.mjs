@@ -78,6 +78,15 @@ export default defineConfig({
 			subsets: ["latin"],
 			fallbacks: ["cursive", "sans-serif"],
 		},
+		{
+			provider: fontProviders.google(),
+			name: "JetBrains Mono",
+			cssVariable: "--font-mono",
+			weights: ["400 700"],
+			styles: ["normal"],
+			subsets: ["latin"],
+			fallbacks: ["monospace"],
+		},
 	],
 	// Legacy RSS feed redirects. Listing stubs (/blog/page, /podcasts/page,
 	// /authors, /guests, /sponsors) are implemented as dedicated SSR redirect

@@ -42,14 +42,14 @@ const filename = node.filename;
 		code && (
 			<figure class="not-prose duo-card group relative my-6 overflow-hidden">
 				{filename && (
-					<figcaption class="flex items-center justify-between border-b-2 border-[#37464F] bg-[#131F24] px-4 py-2.5 font-mono text-xs font-bold text-[#FFC800]">
+					<figcaption class="flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A] px-4 py-2.5 font-mono text-xs font-bold text-[#C5E86C]">
 						<span>📄 {filename}</span>
-						<span class="font-hand text-base text-[#1CB0F6]">{language}</span>
+						<span class="font-hand text-base text-[#B4A7D6]">{language}</span>
 					</figcaption>
 				)}
 				<button
 					type="button"
-					class="copy-code absolute right-3 top-2.5 z-10 inline-flex size-8 items-center justify-center rounded-lg border-2 border-[#37464F] bg-[#202F36] text-white opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 hover:border-[#58CC02]"
+					class="copy-code absolute right-3 top-2.5 z-10 inline-flex size-8 items-center justify-center rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] text-[#F8FAFC] opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 hover:border-[#C5E86C]"
 					data-code={code}
 					aria-label="Copy code"
 				>

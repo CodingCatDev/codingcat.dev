@@ -1,82 +1,56 @@
 @import "tailwindcss";
+@import "../../../../tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
 /*
- * CodingCat.dev 2026 — Duolingo Chalkboard & Hand-Drawn Excalidraw Design System
+ * CodingCat.dev 2026 — Royal Purple, Electric Lime & Excalidraw Design System
  *
- * Canonical palette:
- * - Deep Chalkboard Charcoal: #131F24 (diagram wells: #0D1519, elevated cards: #202F36)
- * - Duolingo Feather Green:   #58CC02 (lip: #46A302, hover: #89E219)
- * - Macaw Sky Blue:           #1CB0F6 (lip: #1899D6)
- * - Fox Flame Orange (Yarn):  #FF9600 (lip: #E58700)
- * - Bee Sunny Yellow:         #FFC800 (lip: #E5B400)
- * - Cardinal Coral Red:       #FF4B4B (lip: #EA2B2B)
- * - Beetle Candy Purple:      #CE82FF (lip: #A560E8)
+ * Canonical palette (from tokens/tokens.json & tokens/theme.css):
+ * - Canvas Obsidian (Primary Background): #0F172A (--cc-bg-primary)
+ * - Pure Void (Excalidraw Wells):         #000000 (--cc-bg-void)
+ * - Surface Slate (Cards, Code Blocks):   #1E293B (--cc-surface)
+ * - Elevated Surface (Hover / Modals):    #334155 (--cc-surface-elevated)
+ * - CodingCat Royal Purple:               #4B2E83 (--cc-purple-primary) / #7C3AED (--cc-purple-vivid)
+ * - Soft Lavender:                        #B4A7D6 (--cc-lavender)
+ * - Electric Lime Green (Primary CTA):    #C5E86C (--cc-lime)
+ * - Mint Success (Good Pattern ✓):        #86EFAC (--cc-mint)
+ * - Coral Anti-Pattern (Bad Pattern ✗):   #FCA5A5 (--cc-coral)
+ * - Text Primary:                         #F8FAFC (--cc-text-primary, 15.4:1 AAA)
+ * - Text Muted:                           #94A3B8 (--cc-text-muted, 7.1:1 AA+)
  */
+
+@font-face {
+	font-family: "Virgil";
+	src: url("/fonts/Virgil.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
-	:root {
-		--radius: 1rem;
-		/* Default Chalkboard Charcoal tokens (also support optional light chalkboard flip) */
-		--background: #131f24;
-		--foreground: #ffffff;
-		--card: #202f36;
-		--card-foreground: #ffffff;
-		--popover: #202f36;
-		--popover-foreground: #ffffff;
-		--primary: #58cc02;
-		--primary-foreground: #131f24;
-		--secondary: #1cb0f6;
-		--secondary-foreground: #131f24;
-		--muted: #18262c;
-		--muted-foreground: #dce6ec;
-		--accent: #ff9600;
-		--accent-foreground: #131f24;
-		--destructive: #ff4b4b;
-		--border: #37464f;
-		--input: #202f36;
-		--ring: #58cc02;
-
-		/* Duolingo + Excalidraw semantic tokens */
-		--duo-bg: #131f24;
-		--duo-well: #0d1519;
-		--duo-card: #202f36;
-		--duo-border: #37464f;
-		--duo-green: #58cc02;
-		--duo-green-lip: #46a302;
-		--duo-blue: #1cb0f6;
-		--duo-blue-lip: #1899d6;
-		--duo-orange: #ff9600;
-		--duo-orange-lip: #e58700;
-		--duo-yellow: #ffc800;
-		--duo-yellow-lip: #e5b400;
-		--duo-red: #ff4b4b;
-		--duo-red-lip: #ea2b2b;
-		--duo-purple: #ce82ff;
-		--duo-purple-lip: #a560e8;
-	}
-
+	:root,
 	.dark {
-		--background: #131f24;
-		--foreground: #ffffff;
-		--card: #202f36;
-		--card-foreground: #ffffff;
-		--popover: #202f36;
-		--popover-foreground: #ffffff;
-		--primary: #58cc02;
-		--primary-foreground: #131f24;
-		--secondary: #1cb0f6;
-		--secondary-foreground: #131f24;
-		--muted: #18262c;
-		--muted-foreground: #dce6ec;
-		--accent: #ff9600;
-		--accent-foreground: #131f24;
-		--destructive: #ff4b4b;
-		--border: #37464f;
-		--input: #202f36;
-		--ring: #58cc02;
+		--radius: 1rem;
+		--background: var(--cc-bg-primary);
+		--foreground: var(--cc-text-primary);
+		--card: var(--cc-surface);
+		--card-foreground: var(--cc-text-primary);
+		--popover: var(--cc-surface);
+		--popover-foreground: var(--cc-text-primary);
+		--primary: var(--cc-lime);
+		--primary-foreground: var(--cc-bg-primary);
+		--secondary: var(--cc-purple-primary);
+		--secondary-foreground: var(--cc-text-primary);
+		--muted: var(--cc-surface);
+		--muted-foreground: var(--cc-text-muted);
+		--accent: var(--cc-lavender);
+		--accent-foreground: var(--cc-bg-primary);
+		--destructive: var(--cc-coral);
+		--border: var(--cc-surface-elevated);
+		--input: var(--cc-surface);
+		--ring: var(--cc-lime);
 	}
 }
 
@@ -103,10 +77,11 @@
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
-	/* Bound by the Astro `fonts` config; see astro.config.mjs. */
-	--font-sans: var(--font-nunito), var(--font-inter), system-ui, sans-serif;
-	--font-display: var(--font-nunito), system-ui, sans-serif;
-	--font-hand: var(--font-caveat), cursive, sans-serif;
+	/* Bound by Astro fonts config + Virgil Excalidraw webfont */
+	--font-sans: var(--font-inter), system-ui, sans-serif;
+	--font-display: var(--font-nunito), var(--font-inter), system-ui, sans-serif;
+	--font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+	--font-hand: "Virgil", var(--font-caveat), cursive, sans-serif;
 }
 
 @layer base {
@@ -116,38 +91,56 @@
 	body {
 		@apply bg-background text-foreground font-sans antialiased;
 		background-image: radial-gradient(
-			rgba(255, 255, 255, 0.04) 1px,
+			rgba(180, 167, 214, 0.08) 1px,
 			transparent 1px
 		);
 		background-size: 24px 24px;
 	}
-	h1,
+	/* H1 uses chunky rounded Nunito 900 per brand spec */
+	h1 {
+		font-family: var(--font-display);
+		letter-spacing: -0.025em;
+	}
+	/* H2-H6 use crisp Inter with tight tracking */
 	h2,
 	h3,
 	h4,
 	h5,
 	h6 {
-		font-family: var(--font-display);
+		font-family: var(--font-sans);
+		letter-spacing: -0.025em;
+	}
+	code,
+	pre,
+	kbd {
+		font-family: var(--font-mono);
 	}
 }
 
-/* Hand-drawn annotation font helper */
+/* Hand-drawn Excalidraw annotation & explanation font helpers */
 .font-hand {
 	font-family: var(--font-hand);
 }
 
+.excalidraw-explain {
+	font-family: var(--font-hand);
+	font-size: 1.125rem;
+	line-height: 1.55;
+	color: var(--cc-text-primary);
+}
+
 /*
- * Tactile Duolingo 3D Buttons with 4px Bottom Lip
+ * Tactile 3D Buttons with 4px Bottom Lip & CodingCat Ambient Glows
  */
 .duo-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	border-radius: 1rem;
+	border-radius: 0.75rem;
 	font-family: var(--font-display);
 	font-weight: 800;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.03em;
 	text-transform: uppercase;
 	transition:
 		transform 120ms cubic-bezier(0.2, 0, 0, 1),
@@ -157,87 +150,119 @@
 	user-select: none;
 }
 
-.duo-btn-green {
-	background-color: #58cc02;
-	color: #131f24;
-	border: 2px solid #58cc02;
-	box-shadow: 0 4px 0 #46a302;
-}
-.duo-btn-green:hover {
-	background-color: #89e219;
-	border-color: #89e219;
-}
-.duo-btn-green:active {
-	transform: translateY(4px);
-	box-shadow: 0 0 0 #46a302;
+.duo-btn:focus-visible {
+	outline: none;
+	box-shadow:
+		0 0 0 2px #0f172a,
+		0 0 0 4px #c5e86c;
 }
 
-.duo-btn-blue {
-	background-color: #1cb0f6;
-	color: #131f24;
-	border: 2px solid #1cb0f6;
-	box-shadow: 0 4px 0 #1899d6;
+/* Primary Electric Lime CTA (#C5E86C on #0F172A = 13.8:1 AAA contrast) */
+.duo-btn-green,
+.cc-btn-lime {
+	background-color: #c5e86c;
+	color: #0f172a;
+	border: 2px solid #c5e86c;
+	box-shadow:
+		0 4px 0 #9bc53d,
+		var(--cc-glow-lime);
 }
-.duo-btn-blue:hover {
-	background-color: #3cc0ff;
-	border-color: #3cc0ff;
+.duo-btn-green:hover,
+.cc-btn-lime:hover {
+	background-color: #d4f285;
+	border-color: #d4f285;
 }
-.duo-btn-blue:active {
+.duo-btn-green:active,
+.cc-btn-lime:active {
 	transform: translateY(4px);
-	box-shadow: 0 0 0 #1899d6;
+	box-shadow: 0 0 0 #9bc53d;
 }
 
-.duo-btn-orange {
-	background-color: #ff9600;
-	color: #131f24;
-	border: 2px solid #ff9600;
-	box-shadow: 0 4px 0 #e58700;
+/* Secondary CodingCat Royal Purple CTA (#4B2E83 / #6D28D9) */
+.duo-btn-blue,
+.cc-btn-purple {
+	background-color: #4b2e83;
+	color: #f8fafc;
+	border: 2px solid rgba(180, 167, 214, 0.45);
+	box-shadow:
+		0 4px 0 #311d58,
+		var(--cc-glow-purple);
 }
-.duo-btn-orange:hover {
-	background-color: #ffaa2b;
-	border-color: #ffaa2b;
+.duo-btn-blue:hover,
+.cc-btn-purple:hover {
+	background-color: #5e3aa3;
+	border-color: #b4a7d6;
 }
-.duo-btn-orange:active {
+.duo-btn-blue:active,
+.cc-btn-purple:active {
 	transform: translateY(4px);
-	box-shadow: 0 0 0 #e58700;
+	box-shadow: 0 0 0 #311d58;
 }
 
-.duo-btn-outline {
-	background-color: #202f36;
-	color: #1cb0f6;
-	border: 2px solid #37464f;
-	box-shadow: 0 4px 0 #37464f;
+/* Accent Soft Lavender Button (#B4A7D6 with #0F172A text = 9.4:1 AAA contrast) */
+.duo-btn-orange,
+.cc-btn-lavender {
+	background-color: #b4a7d6;
+	color: #0f172a;
+	border: 2px solid #b4a7d6;
+	box-shadow: 0 4px 0 #8c7bb8;
 }
-.duo-btn-outline:hover {
-	background-color: #283b44;
-	border-color: #1cb0f6;
+.duo-btn-orange:hover,
+.cc-btn-lavender:hover {
+	background-color: #c7bde3;
+	border-color: #c7bde3;
+}
+.duo-btn-orange:active,
+.cc-btn-lavender:active {
+	transform: translateY(4px);
+	box-shadow: 0 0 0 #8c7bb8;
+}
+
+/* Surface Slate Outline Button (#1E293B with #B4A7D6 border) */
+.duo-btn-outline,
+.cc-btn-outline {
+	background-color: #1e293b;
+	color: #f8fafc;
+	border: 2px solid rgba(180, 167, 214, 0.35);
+	box-shadow: 0 4px 0 #0f172a;
+}
+.duo-btn-outline:hover,
+.cc-btn-outline:hover {
+	background-color: #334155;
+	border-color: #c5e86c;
+	color: #c5e86c;
 }
 .duo-btn-outline:active {
 	transform: translateY(4px);
-	box-shadow: 0 0 0 #37464f;
+	box-shadow: 0 0 0 #0f172a;
 }
 
 /*
- * Tactile Duolingo Chunky Card & Excalidraw Chalk Well
+ * Surface Slate Bento Card & Pure Void (#000000) Excalidraw Well
  */
 .duo-card {
-	background-color: #202f36;
-	border: 2px solid #37464f;
-	border-radius: 1.25rem;
-	box-shadow: 0 4px 0 #37464f;
+	background-color: #1e293b;
+	border: 1.5px solid rgba(180, 167, 214, 0.22);
+	border-radius: 1rem;
+	box-shadow: var(--cc-shadow-card);
 }
 
 .excalidraw-well {
-	background-color: #0d1519;
-	border: 2px dashed #37464f;
-	border-radius: 1.5rem;
+	background-color: #000000;
+	background-image: radial-gradient(
+		rgba(180, 167, 214, 0.16) 1px,
+		transparent 1px
+	);
+	background-size: 20px 20px;
+	border: 2px dashed rgba(180, 167, 214, 0.45);
+	border-radius: 1rem;
 	box-shadow:
-		0 6px 0 #202f36,
-		inset 0 0 32px rgba(28, 176, 246, 0.04);
+		var(--cc-shadow-card),
+		var(--cc-glow-purple);
 }
 
 /*
- * Scroll-Driven Animations (Progressive Enhancement for Duolingo Scrollytelling)
+ * Scroll-Driven Animations (Progressive Enhancement)
  */
 @keyframes excalidraw-pop-in {
 	0% {
@@ -253,10 +278,10 @@
 @keyframes yarn-pulse {
 	0%,
 	100% {
-		filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.55));
+		filter: drop-shadow(0 0 8px rgba(197, 232, 108, 0.5));
 	}
 	50% {
-		filter: drop-shadow(0 0 16px rgba(255, 150, 0, 0.9));
+		filter: drop-shadow(0 0 16px rgba(180, 167, 214, 0.85));
 	}
 }
 
@@ -284,52 +309,10 @@
 		transform: translateY(0px);
 	}
 	50% {
-		transform: translateY(-14px);
+		transform: translateY(-10px);
 	}
 	100% {
 		transform: translateY(0px);
-	}
-}
-
-@keyframes paw-one {
-	0% {
-		transform: translate(0, 0);
-	}
-	20% {
-		transform: translate(-40px, 40px) rotate(-15deg);
-	}
-	40% {
-		transform: translate(-30px, 30px) rotate(-5deg);
-	}
-	60% {
-		transform: translate(-40px, 40px) rotate(-15deg);
-	}
-	80% {
-		transform: translate(-30px, 30px) rotate(-5deg);
-	}
-	100% {
-		transform: translate(0, 0);
-	}
-}
-
-@keyframes paw-two {
-	0% {
-		transform: translate(0, 0);
-	}
-	20% {
-		transform: translate(40px, -40px) rotate(15deg);
-	}
-	40% {
-		transform: translate(30px, -30px) rotate(5deg);
-	}
-	60% {
-		transform: translate(40px, -40px) rotate(15deg);
-	}
-	80% {
-		transform: translate(30px, -30px) rotate(5deg);
-	}
-	100% {
-		transform: translate(0, 0);
 	}
 }
 
@@ -337,27 +320,15 @@
 	animation: float 5s ease-in-out infinite;
 }
 
-.animate-paw-one {
-	animation: paw-one 8s ease-in-out infinite;
-}
-
-.animate-paw-two {
-	animation: paw-two 8s ease-in-out infinite 2s;
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.animate-float,
-	.animate-paw-one,
-	.animate-paw-two,
 	.yarn-glow {
 		animation: none;
 	}
 }
 
 /*
- * Shiki dual-theme activation. <Code themes={{light,dark}}> emits the dark
- * colours as `--shiki-dark*` custom properties and needs a rule to apply them;
- * without this, code blocks stay light-themed inside dark mode.
+ * Shiki dual-theme activation.
  */
 :root.dark .astro-code,
 :root.dark .astro-code span {

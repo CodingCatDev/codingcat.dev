@@ -19,75 +19,121 @@ const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
 ---
 
 <BaseLayout
-	title="CodingCat.dev — Purrfect Web Development"
+	title="CodingCat.dev | Purrfect Web Tutorials"
 	description={SITE_DESCRIPTION}
-	ogFallback={{ title: "CodingCat.dev", subtitle: "Purrfect Web Development" }}
+	ogFallback={{ title: "CodingCat.dev", subtitle: "Purrfect Web Tutorials" }}
 	bare
 >
-	{/* Section 1: Duolingo Chalkboard Hero ("free. fun. purrfect.") */}
+	{/* Section 1: Royal Purple & Excalidraw Hero ("purrfect web tutorials.") */}
 	<AnimatedHero />
 
 	<AjYarnTrail variant="left-to-right" />
 
-	{/* Section 2: Duolingo Scrollytelling — "learn by building." */}
-	<section class="duo-scroll-reveal container mx-auto max-w-6xl px-5 py-10 md:py-16">
+	{/* Section 2: Excalidraw Explanations + Architecture Comparison Table */}
+	<section class="duo-scroll-reveal container mx-auto max-w-7xl px-5 py-12 md:py-20">
 		<div class="grid items-center gap-10 lg:grid-cols-12">
 			<div class="lg:col-span-5">
-				<span class="inline-flex items-center gap-1.5 rounded-full bg-[#58CC02]/15 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-[#58CC02]">
+				<span class="inline-flex items-center gap-1.5 rounded-full border border-[#B4A7D6]/40 bg-[#4B2E83]/60 px-3.5 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#C5E86C]">
 					🧶 Interactive Course Map
 				</span>
-				<h2 class="mt-3 text-4xl font-black tracking-tight text-[#58CC02] sm:text-5xl">
-					learn by building.
+				<h2 class="mt-3 font-display text-4xl font-black tracking-tight text-[#F8FAFC] sm:text-5xl">
+					learn by <span class="text-[#C5E86C]">building.</span>
 				</h2>
-				<p class="mt-4 text-lg leading-relaxed text-[#DCE6EC]">
-					Whether you are 10 years old writing your first HTML tag or a staff engineer wiring up SvelteKit, Firebase, and AI agents, our step-by-step course map guides you node by node.
+				<p class="excalidraw-explain mt-3 text-[#B4A7D6]">
+					Visual Excalidraw explanations from first principles to production edge systems.
+				</p>
+				<p class="mt-3 text-base leading-relaxed text-[#94A3B8]">
+					Whether you are writing your first HTML tag or wiring up Astro, Cloudflare Workers, Sanity, and AI agents, our step-by-step course map guides you node by node.
 				</p>
 				<div class="mt-6 flex flex-wrap items-center gap-4">
-					<a href="/courses" class="duo-btn duo-btn-green px-6 py-3.5 text-sm">
+					<a href="/courses" class="duo-btn cc-btn-lime px-6 py-3.5 text-sm">
 						Explore the Course Map →
 					</a>
-					<AjMascot pose="code-peek" cls="w-20 h-20" showYarnBall={false} />
+					<AjMascot pose="code-peek" cls="w-24 h-auto" showYarnBall={false} />
 				</div>
 			</div>
 			<div class="lg:col-span-7">
 				<ExcalidrawDiagram
-					title="Beginner-to-Pro Winding Course Path"
-					caption="Start at HTML & micro:bit or jump straight into full-stack frameworks."
+					title="Anti-Pattern vs. Purrfect Pattern (Excalidraw Breakdown)"
+					caption="We compare real-world trade-offs visually: Coral (✗) shows fragile bottlenecks and Mint/Lime (✓) shows production-tested patterns."
 					nodes={[
 						{
-							id: "step1",
-							badge: "Start Here",
-							label: "HTML & micro:bit",
-							sublabel: "For a 10 Year Old",
+							id: "bad",
+							badge: "✗ Anti-Pattern",
+							label: "Bloated Monolith",
+							sublabel: "✗ Slow cold starts",
+							color: "red",
+							status: "bad",
+						},
+						{
+							id: "agent",
+							badge: "02. Architecture",
+							label: "Edge + Sanity + AI",
+							sublabel: "✓ Typed schemas",
+							color: "purple",
+							status: "good",
+						},
+						{
+							id: "good",
+							badge: "✓ Purrfect Pattern",
+							label: "Global Edge SSR",
+							sublabel: "✓ Sub-20ms response",
 							color: "green",
-						},
-						{
-							id: "step2",
-							badge: "Style & Motion",
-							label: "CSS Animations",
-							sublabel: "Keyframes & Transitions",
-							color: "blue",
-						},
-						{
-							id: "step3",
-							badge: "Full-Stack",
-							label: "SvelteKit + Firebase",
-							sublabel: "Auth, Data & Edge",
-							color: "orange",
+							status: "good",
 						},
 					]}
 					edges={[
-						{ from: "step1", to: "step2", label: "level up!" },
-						{ from: "step2", to: "step3", label: "ship apps" },
+						{ from: "bad", to: "agent", label: "refactor" },
+						{ from: "agent", to: "good", label: "✓ ship to prod" },
 					]}
 				/>
+
+				{/* Canonical CodingCat.dev Comparison Table Component (08-components.md) */}
+				<div class="mt-6 overflow-hidden rounded-2xl border border-[#B4A7D6]/25 bg-[#1E293B] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.7)]">
+					<div class="flex items-center justify-between border-b border-[#B4A7D6]/20 bg-[#0F172A] px-5 py-3">
+						<span class="font-mono text-xs font-bold uppercase tracking-wider text-[#B4A7D6]">
+							Architecture Trade-Off Comparison
+						</span>
+						<span class="font-hand text-base text-[#C5E86C]">
+							✏️ Why we teach with diagrams + tables
+						</span>
+					</div>
+					<div class="overflow-x-auto">
+						<table class="w-full text-left text-sm">
+							<thead class="border-b border-[#B4A7D6]/20 bg-[#0F172A] font-mono text-xs uppercase text-[#94A3B8]">
+								<tr>
+									<th class="px-5 py-3">Learning Dimension</th>
+									<th class="px-5 py-3 text-[#FCA5A5]">✗ Generic Text Tutorials</th>
+									<th class="px-5 py-3 text-[#C5E86C]">✓ CodingCat.dev Blueprints</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-[#B4A7D6]/15 text-[#F8FAFC]">
+								<tr class="bg-[#1E293B]">
+									<td class="px-5 py-3 font-semibold">Mental Model</td>
+									<td class="px-5 py-3 text-[#FCA5A5]">✗ Walls of copy-paste prose</td>
+									<td class="px-5 py-3 font-semibold text-[#86EFAC]">✓ Hand-drawn Excalidraw flows</td>
+								</tr>
+								<tr class="bg-[#0F172A]/50">
+									<td class="px-5 py-3 font-semibold">Trade-Off Analysis</td>
+									<td class="px-5 py-3 text-[#FCA5A5]">✗ Hidden gotchas in production</td>
+									<td class="px-5 py-3 font-semibold text-[#86EFAC]">✓ Side-by-side comparison tables</td>
+								</tr>
+								<tr class="bg-[#1E293B]">
+									<td class="px-5 py-3 font-semibold">Accessibility (A11Y)</td>
+									<td class="px-5 py-3 text-[#FCA5A5]">✗ Unlabeled flat screenshots</td>
+									<td class="px-5 py-3 font-semibold text-[#C5E86C]">✓ AAA contrast + screen-reader SVG</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>
 
 	<AjYarnTrail variant="right-to-left" />
 
-	{/* Section 3: Chronological Latest Podcasts ("meet real codingcat learners & guests.") */}
+	{/* Section 3: Chronological Latest Podcasts */}
 	<HomeSection
 		title="meet real builders & guests."
 		description="Chronological deep-dive conversations with the creators of modern web frameworks, databases, and AI tools."
@@ -112,7 +158,7 @@ const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
 
 	<AjYarnTrail variant="left-to-right" />
 
-	{/* Section 5: Chronological Blog Posts ("backed by real code.") */}
+	{/* Section 5: Chronological Blog Posts */}
 	<HomeSection
 		title="backed by real code."
 		description="Chronological tutorials, architectural breakdowns, and hand-drawn Excalidraw blueprints."
