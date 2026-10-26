@@ -353,3 +353,17 @@
 	font-size: 0.875rem;
 	line-height: 1;
 }
+
+/* Persistent Right-Side Resizable Ask Agent Drawer */
+html.aj-drawer-open #aj-agent-drawer {
+	display: flex !important;
+}
+
+@media (min-width: 640px) {
+	html.aj-drawer-open body {
+		padding-right: var(--aj-drawer-width, 420px);
+	}
+	html.aj-drawer-open #site-header {
+		right: var(--aj-drawer-width, 420px);
+	}
+}

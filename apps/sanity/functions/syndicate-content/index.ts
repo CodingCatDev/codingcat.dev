@@ -18,6 +18,8 @@ interface ContentDocument {
 	hashnode?: string;
 	awsbuilder?: string;
 	dailydev?: string;
+	medium?: string;
+	reddit?: string;
 	tags?: Array<{ _key?: string; label?: string; value?: string }>;
 	sponsor?: Array<{ _ref: string }>;
 	syndications?: Array<{ _type: "reference"; _ref: string; _key?: string }>;
@@ -77,8 +79,44 @@ export const handler = documentEventHandler<ContentDocument>(
 			return imgBuilder.image(source).auto("format").fit("max");
 		};
 
+		const extractYouTubeId = (url: string | undefined): string | null => {
+			if (!url || typeof url !== "string") return null;
+			const trimmed = url.trim();
+			const patterns = [
+				/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/,
+				/^([A-Za-z0-9_-]{11})$/,
+			];
+			for (const re of patterns) {
+				const m = trimmed.match(re);
+				if (m) return m[1];
+			}
+			return null;
+		};
+
+		const formatYouTubeBlock = (
+			url: string | undefined,
+			targetPlatform: "devto" | "hashnode" | "awsbuilder" = "devto",
+		): string => {
+			const ytId = extractYouTubeId(url);
+			if (!ytId && !url) return "";
+			const watchUrl = ytId ? `https://www.youtube.com/watch?v=${ytId}` : url || "";
+			if (targetPlatform === "devto") {
+				return `{% youtube ${ytId || (url || "").replace("live", "embed")} %}`;
+			}
+			if (targetPlatform === "hashnode") {
+				return `%[${watchUrl}]`;
+			}
+			const thumbUrl = ytId ? `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg` : "";
+			return thumbUrl
+				? `[![Watch on YouTube](${thumbUrl})](${watchUrl})\n\n**[▶ Watch the video on YouTube](${watchUrl})**`
+				: `**[▶ Watch on YouTube](${watchUrl})**`;
+		};
+
 		// Helper to serialize Portable Text to Markdown matching exact legacy serializer specifications
-		const serializeContent = (content: any[] | undefined): string => {
+		const serializeContent = (
+			content: any[] | undefined,
+			targetPlatform: "devto" | "hashnode" | "awsbuilder" = "devto",
+		): string => {
 			if (!content || !Array.isArray(content) || content.length === 0) {
 				return "";
 			}
@@ -92,13 +130,21 @@ export const handler = documentEventHandler<ContentDocument>(
 							const url = urlForImage(value)?.url();
 							return url ? `![](${url})` : "";
 						},
+						youtube: ({ value }) =>
+							formatYouTubeBlock(value?.youtube || value?.url || "", targetPlatform),
+						youtubeShorts: ({ value }) =>
+							Array.isArray(value?.shorts)
+								? value.shorts
+										.map((s: string) => formatYouTubeBlock(s, targetPlatform))
+										.join("\n\n")
+								: "",
 						codepen: ({ value }) => `{% codepen ${value?.url || ""} %}`,
 						codesandbox: ({ value }) => {
 							const id = value?.url?.split("https://codesandbox.io/p/sandbox/")?.at(-1);
 							return `{% codesandbox ${id || value?.url || ""} %}`;
 						},
 						twitter: ({ value }) => `{% twitter ${value?.id || ""} %}`,
-						quote: ({ value }) => `> ${serializeContent(value?.content)}`,
+						quote: ({ value }) => `> ${serializeContent(value?.content, targetPlatform)}`,
 					},
 				});
 			} catch (err) {
@@ -107,7 +153,13 @@ export const handler = documentEventHandler<ContentDocument>(
 			}
 		};
 
-		const contentMarkdown = serializeContent(data.content);
+		const contentMarkdown = serializeContent(data.content, "devto");
+		const hashnodeMarkdown = serializeContent(data.content, "hashnode");
+		const awsMarkdown = serializeContent(data.content, "awsbuilder");
+		const topYouTubeId = extractYouTubeId(data.youtube);
+		const topYouTubeWatchUrl = topYouTubeId
+			? `https://www.youtube.com/watch?v=${topYouTubeId}`
+			: data.youtube || "";
 		const docTags = Array.isArray(data.tags) ? data.tags : [];
 		const hasAwsTag = docTags.some(
 			(t) =>
@@ -119,10 +171,13 @@ export const handler = documentEventHandler<ContentDocument>(
 			Boolean(data.awsbuilder) ||
 			process.env.FORCE_AWS_BUILDER === "true";
 
-		const platforms: Array<"devto" | "hashnode" | "dailydev" | "awsbuilder"> = [
+		const platforms: Array<
+			"devto" | "hashnode" | "dailydev" | "reddit" | "awsbuilder"
+		> = [
 			"devto",
 			"hashnode",
 			"dailydev",
+			"reddit",
 			...(shouldSyndicateAws ? (["awsbuilder"] as const) : []),
 		];
 
@@ -149,7 +204,9 @@ export const handler = documentEventHandler<ContentDocument>(
 								? "hashnode.com"
 								: platform === "dailydev"
 									? "daily.dev"
-									: "builder.aws.com";
+									: platform === "reddit"
+										? "reddit.com/r/CodingCatDev"
+										: "builder.aws.com";
 					await client.createOrReplace({
 						_id: syndicationDocId,
 						_type: "syndication",
@@ -219,7 +276,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						urlForImage(data.coverImage)?.width(1280).url() || "";
 
 					const youtubeEmbed = data.youtube
-						? `{% youtube ${data.youtube.replace("live", "embed")} %}\n\n`
+						? `{% youtube ${topYouTubeId || data.youtube.replace("live", "embed")} %}\n\n**[▶ Watch on YouTube & Subscribe to CodingCat.dev](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)**\n\n`
 						: "";
 
 					const devtoArticlePayload: any = {
@@ -391,7 +448,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						urlForImage(data.coverImage)?.width(1600).height(840).url() || "";
 
 					const youtubeEmbed = data.youtube
-						? `%[${data.youtube.replace("live", "embed")}]\n\n`
+						? `%[${topYouTubeWatchUrl}]\n\n**[▶ Watch on YouTube & Subscribe to CodingCat.dev](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)**\n\n`
 						: "";
 
 					const articleInput: any = {
@@ -404,7 +461,7 @@ export const handler = documentEventHandler<ContentDocument>(
 							? { coverImage: hashnodeCoverImageUrl }
 							: {}),
 						originalArticleURL: canonicalUrl,
-						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${contentMarkdown}`,
+						contentMarkdown: `Original: ${canonicalUrl}\n\n${youtubeEmbed}${hashnodeMarkdown}`,
 					};
 
 					if (data._type === "podcast") {
@@ -672,7 +729,7 @@ export const handler = documentEventHandler<ContentDocument>(
 					if (awsTags.length === 0) awsTags.push("aws");
 
 					const youtubeMd = data.youtube
-						? `Watch on YouTube: [${data.youtube}](${data.youtube})\n\n`
+						? `${formatYouTubeBlock(data.youtube, "awsbuilder")}\n\n`
 						: "";
 
 					const draftPayload: any = {
@@ -680,7 +737,7 @@ export const handler = documentEventHandler<ContentDocument>(
 						versionId,
 						title: data.title || "Untitled",
 						summary: (data.excerpt || data.title || "").slice(0, 300),
-						contentBody: `*Originally published at [${canonicalUrl}](${canonicalUrl})*\n\n${youtubeMd}${contentMarkdown}`,
+						contentBody: `*Originally published at [${canonicalUrl}](${canonicalUrl})*\n\n${youtubeMd}${awsMarkdown}`,
 						canonicalUrl,
 						preferredUrlSlug: slug,
 						tags: awsTags,
@@ -795,13 +852,22 @@ export const handler = documentEventHandler<ContentDocument>(
 							? String(existingSyndication.externalId)
 							: null;
 
-					const commentary = (
+					const squadSuffix = topYouTubeWatchUrl ? `\nFull guide: ${canonicalUrl}` : "";
+					const maxExcerptLen = Math.max(40, 240 - squadSuffix.length);
+					const rawCommentary = (
 						data.excerpt ||
 						data.title ||
 						"New on CodingCat.dev!"
-					).slice(0, 240);
+					).trim();
+					const trimmedCommentary =
+						rawCommentary.length > maxExcerptLen
+							? `${rawCommentary.slice(0, maxExcerptLen - 3).trim()}...`
+							: rawCommentary;
+					const commentary = `${trimmedCommentary}${squadSuffix}`.slice(0, 240);
 					const coverImageUrl =
-						urlForImage(data.coverImage)?.width(1280).format("jpg").url() || "";
+						urlForImage(data.coverImage)?.width(1280).format("jpg").url() ||
+						(topYouTubeId ? `https://i.ytimg.com/vi/${topYouTubeId}/maxresdefault.jpg` : "");
+					const squadExternalLink = topYouTubeWatchUrl || canonicalUrl;
 
 					let postId = existingPostId;
 					if (!postId && data.dailydev) {
@@ -862,11 +928,47 @@ export const handler = documentEventHandler<ContentDocument>(
 									title: data.title || "Untitled",
 									commentary,
 									...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
-									externalLink: canonicalUrl,
+									externalLink: squadExternalLink,
 								},
 							}),
 						});
-						const createData = (await createRes.json()) as any;
+						let createData = (await createRes.json()) as any;
+						if (createData?.errors && squadExternalLink !== canonicalUrl) {
+							const retryRes = await fetch("https://api.daily.dev/graphql", {
+								method: "POST",
+								headers: gqlHeaders,
+								body: JSON.stringify({
+									query: `mutation CreatePostInMultipleSources(
+										$sourceIds: [ID!]!
+										$title: String
+										$commentary: String
+										$imageUrl: String
+										$externalLink: String
+									) {
+										createPostInMultipleSources(
+											sourceIds: $sourceIds
+											title: $title
+											commentary: $commentary
+											imageUrl: $imageUrl
+											externalLink: $externalLink
+										) {
+											id
+											sourceId
+											type
+											slug
+										}
+									}`,
+									variables: {
+										sourceIds: [squadSourceId],
+										title: data.title || "Untitled",
+										commentary: rawCommentary.slice(0, 240),
+										...(coverImageUrl ? { imageUrl: coverImageUrl } : {}),
+										externalLink: canonicalUrl,
+									},
+								}),
+							});
+							createData = (await retryRes.json()) as any;
+						}
 						if (createData?.errors) {
 							throw new Error(
 								`daily.dev createPostInMultipleSources error: ${JSON.stringify(createData.errors)}`,
@@ -918,6 +1020,152 @@ export const handler = documentEventHandler<ContentDocument>(
 					console.log(
 						`[Syndicate Content] Successfully published to daily.dev Squad: ${externalUrl}`,
 					);
+				} else if (platform === "reddit") {
+					const redditRefreshToken = process.env.REDDIT_REFRESH_TOKEN;
+					if (!redditRefreshToken) {
+						console.warn(
+							"[Syndicate Content] REDDIT_REFRESH_TOKEN not configured. Skipping Reddit (r/CodingCatDev) live dispatch.",
+						);
+						continue;
+					}
+
+					const existingSyndication = await client
+						.getDocument(syndicationDocId)
+						.catch(() => null);
+					let redditUrl =
+						(existingSyndication?.externalUrl &&
+						!String(existingSyndication.externalUrl).includes("preview-simulated")
+							? String(existingSyndication.externalUrl)
+							: null) ||
+						data.reddit ||
+						null;
+					let thingId = existingSyndication?.externalId
+						? String(existingSyndication.externalId)
+						: null;
+
+					if (!redditUrl) {
+						const basicAuth = Buffer.from("TWTsqXa53CexlrYGBWaesQ:").toString("base64");
+						const refreshRes = await fetch("https://www.reddit.com/api/v1/access_token", {
+							method: "POST",
+							headers: {
+								Authorization: `Basic ${basicAuth}`,
+								"Content-Type": "application/x-www-form-urlencoded",
+								"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+							},
+							body: new URLSearchParams({
+								grant_type: "refresh_token",
+								refresh_token: redditRefreshToken,
+							}),
+						});
+						const { access_token: redditAccessToken } = (await refreshRes.json()) as {
+							access_token?: string;
+						};
+						if (!redditAccessToken) {
+							throw new Error("Could not refresh Reddit OAuth access_token");
+						}
+
+						const targetLinkUrl = topYouTubeWatchUrl || canonicalUrl;
+						const prefix = data._type === "podcast" ? "[Podcast] " : "";
+						const postTitle = `${prefix}${data.title || "Untitled"}`.slice(0, 300);
+
+						const subRes = await fetch("https://oauth.reddit.com/api/submit", {
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${redditAccessToken}`,
+								"Content-Type": "application/x-www-form-urlencoded",
+								"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+							},
+							body: new URLSearchParams({
+								api_type: "json",
+								sr: "CodingCatDev",
+								kind: "link",
+								title: postTitle,
+								url: targetLinkUrl,
+								resubmit: "true",
+							}),
+						});
+						const subJson = (await subRes.json()) as any;
+						const subData = subJson?.json?.data;
+						if (!subData?.url) {
+							throw new Error(
+								`Reddit api/submit error: ${JSON.stringify(subJson?.json?.errors || subJson)}`,
+							);
+						}
+
+						redditUrl = subData.url;
+						thingId = subData.name || subData.id;
+
+						const commentText = [
+							data.excerpt ? `> ${data.excerpt.trim()}` : "",
+							"",
+							`📖 **Read the full guide, code snippets & transcript on CodingCat.dev:** [${canonicalUrl}](${canonicalUrl})`,
+							topYouTubeWatchUrl
+								? `📺 **Watch on YouTube & Subscribe:** [${topYouTubeWatchUrl}](${topYouTubeWatchUrl}${topYouTubeWatchUrl.includes("?") ? "&" : "?"}sub_confirmation=1)`
+								: `📺 **Subscribe to CodingCat.dev on YouTube:** [https://www.youtube.com/@CodingCatDev](https://www.youtube.com/@CodingCatDev?sub_confirmation=1)`,
+						]
+							.filter(Boolean)
+							.join("\n");
+
+						const comRes = await fetch("https://oauth.reddit.com/api/comment", {
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${redditAccessToken}`,
+								"Content-Type": "application/x-www-form-urlencoded",
+								"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+							},
+							body: new URLSearchParams({
+								api_type: "json",
+								thing_id: String(thingId),
+								text: commentText,
+							}),
+						});
+						const comJson = (await comRes.json()) as any;
+						const comName = comJson?.json?.data?.things?.[0]?.data?.name;
+						if (comName) {
+							await fetch("https://oauth.reddit.com/api/distinguish", {
+								method: "POST",
+								headers: {
+									Authorization: `Bearer ${redditAccessToken}`,
+									"Content-Type": "application/x-www-form-urlencoded",
+									"User-Agent": "codingcat-sync/0.1.0 by u/ajonp",
+								},
+								body: new URLSearchParams({
+									api_type: "json",
+									id: String(comName),
+									how: "yes",
+									sticky: "true",
+								}),
+							});
+						}
+					}
+
+					if (redditUrl) {
+						const extractedId =
+							thingId ||
+							redditUrl.match(/comments\/([a-z0-9]+)/i)?.[1] ||
+							data._id;
+
+						await client.createOrReplace({
+							_id: syndicationDocId,
+							_type: "syndication",
+							target: { _type: "reference", _ref: data._id },
+							platform: "reddit",
+							status: "published",
+							canonicalUrl,
+							externalUrl: redditUrl,
+							externalId: String(extractedId),
+							syndicatedAt: new Date().toISOString(),
+							error: undefined,
+						});
+
+						if (data.reddit !== redditUrl) {
+							parentPatch.reddit = redditUrl;
+						}
+
+						console.log(
+							`[Syndicate Content] Successfully published to Reddit (r/CodingCatDev): ${redditUrl}`,
+						);
+					}
 				}
 			} catch (publishErr) {
 				const errMsg =

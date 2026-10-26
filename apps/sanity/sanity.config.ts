@@ -39,6 +39,7 @@ import booking from "./schemas/documents/booking";
 import tableSchema, { rowType } from "./schemas/custom/table";
 import syndication from "./schemas/documents/syndication";
 import transcript from "./schemas/documents/transcript";
+import trendSignal from "./schemas/documents/trendSignal";
 
 // ── Shared constants ─────────────────────────────────────────────────
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
@@ -94,6 +95,7 @@ const schemaTypes = [
 	booking,
 	syndication,
 	transcript,
+	trendSignal,
 ];
 
 // ── Build plugins for a given preview URL ────────────────────────────

@@ -1,7 +1,7 @@
 import { CogIcon } from "@sanity/icons/Cog";
 import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { UserIcon } from "@sanity/icons/User";
-import { FaCat, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
+import { FaCat, FaFire, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
 import { HiOutlineDocumentText, HiOutlinePencilAlt } from "react-icons/hi";
 import { PiCurrencyDollarSimpleFill } from "react-icons/pi";
 import type { StructureResolver } from "sanity/structure";
@@ -17,6 +17,7 @@ const MANAGED_DOCUMENT_TYPES = new Set([
 	"sponsor",
 	"transcript",
 	"syndication",
+	"trendSignal",
 	"media.tag",
 ]);
 
@@ -146,6 +147,24 @@ export const editorialStructure: StructureResolver = (S) =>
 										.schemaType("post")
 										.filter('_type == "post" && !defined(hashnode)'),
 								),
+							S.listItem()
+								.title("Missing daily.dev Squad")
+								.child(
+									S.documentList()
+										.title("Missing daily.dev Squad")
+										.schemaType("post")
+										.filter('_type == "post" && !defined(dailydev)'),
+								),
+							S.listItem()
+								.title("Missing AWS Builder Center (AWS Tagged)")
+								.child(
+									S.documentList()
+										.title("Missing AWS Builder Center (AWS Tagged)")
+										.schemaType("post")
+										.filter(
+											'_type == "post" && "aws" in tags[].value && !defined(awsbuilder)',
+										),
+								),
 						]),
 				),
 
@@ -243,6 +262,24 @@ export const editorialStructure: StructureResolver = (S) =>
 										.schemaType("podcast")
 										.filter('_type == "podcast" && !defined(hashnode)'),
 								),
+							S.listItem()
+								.title("Missing daily.dev Squad")
+								.child(
+									S.documentList()
+										.title("Missing daily.dev Squad")
+										.schemaType("podcast")
+										.filter('_type == "podcast" && !defined(dailydev)'),
+								),
+							S.listItem()
+								.title("Missing AWS Builder Center (AWS Tagged)")
+								.child(
+									S.documentList()
+										.title("Missing AWS Builder Center (AWS Tagged)")
+										.schemaType("podcast")
+										.filter(
+											'_type == "podcast" && "aws" in tags[].value && !defined(awsbuilder)',
+										),
+								),
 						]),
 				),
 
@@ -260,6 +297,59 @@ export const editorialStructure: StructureResolver = (S) =>
 			S.divider(),
 
 			// 5. Automation & Intelligence
+			S.listItem()
+				.title("Trend Radar (Web Dev & AI)")
+				.icon(FaFire)
+				.child(
+					S.list()
+						.title("Web Dev & AI Trend Radar")
+						.items([
+							S.listItem()
+								.title("All Discovered Trends (Ranked)")
+								.icon(FaFire)
+								.child(
+									S.documentTypeList("trendSignal")
+										.title("All Discovered Trends")
+										.defaultOrdering([
+											{ field: "score", direction: "desc" },
+											{ field: "discoveredAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Drafts Created (Ready to Review)")
+								.child(
+									S.documentList()
+										.title("Drafts Created")
+										.schemaType("trendSignal")
+										.filter('_type == "trendSignal" && status == "drafted"')
+										.defaultOrdering([
+											{ field: "discoveredAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("High-Velocity Signals (Score >= 70)")
+								.child(
+									S.documentList()
+										.title("High-Velocity Signals")
+										.schemaType("trendSignal")
+										.filter(
+											'_type == "trendSignal" && status == "discovered" && score >= 70',
+										)
+										.defaultOrdering([
+											{ field: "score", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Published / Covered")
+								.child(
+									S.documentList()
+										.title("Published / Covered")
+										.schemaType("trendSignal")
+										.filter('_type == "trendSignal" && status == "published"'),
+								),
+						]),
+				),
+
 			S.listItem()
 				.title("Transcripts & Video Intelligence")
 				.icon(HiOutlineDocumentText)
@@ -303,7 +393,7 @@ export const editorialStructure: StructureResolver = (S) =>
 				.icon(FaShareAlt)
 				.child(
 					S.list()
-						.title("Syndication Status")
+						.title("Syndication Status & Platform Links")
 						.items([
 							S.listItem()
 								.title("All Syndications")
@@ -336,6 +426,63 @@ export const editorialStructure: StructureResolver = (S) =>
 										.title("Failed")
 										.schemaType("syndication")
 										.filter('_type == "syndication" && status == "failed"'),
+								),
+							S.divider(),
+							S.listItem()
+								.title("By Platform: YouTube")
+								.child(
+									S.documentList()
+										.title("YouTube Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "youtube"'),
+								),
+							S.listItem()
+								.title("By Platform: daily.dev Squad")
+								.child(
+									S.documentList()
+										.title("daily.dev Squad Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "dailydev"'),
+								),
+							S.listItem()
+								.title("By Platform: Dev.to")
+								.child(
+									S.documentList()
+										.title("Dev.to Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "devto"'),
+								),
+							S.listItem()
+								.title("By Platform: Hashnode")
+								.child(
+									S.documentList()
+										.title("Hashnode Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "hashnode"'),
+								),
+							S.listItem()
+								.title("By Platform: AWS Builder Center")
+								.child(
+									S.documentList()
+										.title("AWS Builder Center Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "awsbuilder"'),
+								),
+							S.listItem()
+								.title("By Platform: Medium")
+								.child(
+									S.documentList()
+										.title("Medium Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "medium"'),
+								),
+							S.listItem()
+								.title("By Platform: Reddit (r/CodingCatDev)")
+								.child(
+									S.documentList()
+										.title("Reddit Links")
+										.schemaType("syndication")
+										.filter('_type == "syndication" && platform == "reddit"'),
 								),
 						]),
 				),

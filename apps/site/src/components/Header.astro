@@ -15,6 +15,7 @@ const hasCoursesLink = desktopLinks.some((link) =>
 ---
 
 <header
+	id="site-header"
 	class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A]/95 px-5 py-3.5 backdrop-blur-md"
 >
 	<div class="flex items-center gap-5">
@@ -56,11 +57,35 @@ const hasCoursesLink = desktopLinks.some((link) =>
 			id="search-header-trigger"
 			data-track="search_open"
 			data-track-label="header_search"
-			class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] px-3 py-1.5 text-xs font-bold text-[#F8FAFC] transition-colors hover:border-[#C5E86C] hover:text-[#C5E86C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5E86C]"
+			class="inline-flex min-h-8 min-w-8 cursor-pointer items-center justify-center gap-3 rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] px-3 py-1.5 text-xs font-bold text-[#F8FAFC] transition-colors hover:border-[#C5E86C] hover:text-[#C5E86C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5E86C] sm:justify-between"
 			aria-label="Search CodingCat.dev (⌘K)"
 		>
+			<span class="inline-flex items-center gap-1.5">
+				<svg
+					class="size-3.5 text-[#B4A7D6]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.3-4.3"></path>
+				</svg>
+				<span class="hidden font-mono text-[11px] uppercase tracking-wider text-foreground sm:inline">Search</span>
+			</span>
+			<span class="hidden items-center rounded border border-[#B4A7D6]/30 bg-[#0F172A] px-1.5 py-0.5 font-mono text-[10px] text-[#C5E86C] md:inline-flex">⌘K</span>
+		</button>
+		<button
+			type="button"
+			id="ask-agent-header-trigger"
+			class="inline-flex min-h-8 min-w-8 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-foreground transition-colors hover:border-[#C5E86C] hover:text-[#C5E86C]"
+			aria-label="Ask Agent AJ"
+		>
 			<svg
-				class="size-4 text-[#B4A7D6]"
+				class="size-3.5 text-[#C5E86C]"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -69,10 +94,11 @@ const hasCoursesLink = desktopLinks.some((link) =>
 				stroke-linejoin="round"
 				aria-hidden="true"
 			>
-				<circle cx="11" cy="11" r="8"></circle>
-				<path d="m21 21-4.3-4.3"></path>
+				<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+				<path d="M20 3v4"></path>
+				<path d="M22 5h-4"></path>
 			</svg>
-			<span class="hidden items-center rounded border border-[#B4A7D6]/30 bg-[#0F172A] px-1.5 py-0.5 font-mono text-[10px] text-[#C5E86C] md:inline-flex">⌘K</span>
+			<span class="hidden sm:inline">Ask Agent</span>
 		</button>
 		<ThemeToggle />
 		<button
@@ -138,9 +164,14 @@ const hasCoursesLink = desktopLinks.some((link) =>
 	const openButton = document.getElementById("nav-drawer-toggle");
 	const closeButton = document.getElementById("nav-drawer-close");
 	const searchTrigger = document.getElementById("search-header-trigger");
+	const askAgentTrigger = document.getElementById("ask-agent-header-trigger");
 
 	searchTrigger?.addEventListener("click", () => {
 		(window as unknown as { openSearchModal?: () => void }).openSearchModal?.();
+	});
+
+	askAgentTrigger?.addEventListener("click", () => {
+		(window as unknown as { toggleAgentAjDrawer?: () => void }).toggleAgentAjDrawer?.();
 	});
 
 	const setOpen = (open: boolean) => {

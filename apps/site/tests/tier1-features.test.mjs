@@ -1736,24 +1736,29 @@ describe("Tier 1 - Feature Coverage", () => {
 				),
 			);
 
-			// 3. htmlToMarkdown strips client-only interactive transcript modal chrome
+			// 3. htmlToMarkdown strips client-only interactive transcript modal chrome and Ask Agent drawer
 			const { htmlToMarkdown } = loadModule("src/lib/html-to-markdown.ts");
 			const sampleHtml = `
-				<main>
-					<article>
-						<h1>Sample Episode</h1>
-						<div class="transcript-widget inline-block">
-							<button class="transcript-open-btn">View Transcript</button>
-							<div class="transcript-modal hidden">
-								<div>
-									<p>Fetching transcript from YouTube...</p>
-									<footer><span>Loading transcript...</span></footer>
+				<body>
+					<main>
+						<article>
+							<h1>Sample Episode</h1>
+							<div class="transcript-widget inline-block">
+								<button class="transcript-open-btn">View Transcript</button>
+								<div class="transcript-modal hidden">
+									<div>
+										<p>Fetching transcript from YouTube...</p>
+										<footer><span>Loading transcript...</span></footer>
+									</div>
 								</div>
 							</div>
-						</div>
-						<p>Real episode content.</p>
-					</article>
-				</main>
+							<p>Real episode content.</p>
+						</article>
+					</main>
+					<aside id="aj-agent-drawer" data-markdown-ignore="true">
+						<p>Ask anything about CodingCat.dev podcasts, tutorials, guests, or transcripts.</p>
+					</aside>
+				</body>
 			`;
 			const md = htmlToMarkdown(
 				sampleHtml,
@@ -1763,6 +1768,133 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(
 				!md.includes("Fetching transcript from YouTube"),
 				"Must strip client-only modal loading skeleton from Markdown",
+			);
+			assert.ok(
+				!md.includes("Ask anything about CodingCat.dev podcasts"),
+				"Must strip Ask Agent drawer from Markdown output",
+			);
+		});
+
+		it("7.20 Agent AJ /api/chat integrates Cloudflare Clairic (@cf/cloudflare/clairic) extraction cascade and fastpath fallback", async () => {
+			const chatModule = loadModule("src/pages/api/chat.ts");
+			assert.equal(chatModule.CLAIRIC_MODEL_ID, "@cf/cloudflare/clairic");
+			assert.equal(typeof chatModule.extractIntentWithClairic, "function");
+
+			// 1. Verify GET /api/chat advertises Clairic extraction model
+			const statusRes = await chatModule.GET({
+				request: new Request("https://codingcat.dev/api/chat"),
+			});
+			assert.equal(statusRes.status, 200);
+			const statusData = await statusRes.json();
+			assert.equal(statusData.extractionModel, "@cf/cloudflare/clairic");
+			assert.equal(statusData.cascadeArchitecture, "extract-route-synthesize");
+
+			// 2. Verify Clairic extraction with mocked Workers AI binding
+			let invokedModel = null;
+			let invokedPayload = null;
+			const mockAiBinding = {
+				async run(modelId, payload) {
+					invokedModel = modelId;
+					invokedPayload = payload;
+					return {
+						answers: {
+							intent: {
+								value: "topic_search",
+								confidence: 0.96,
+								p_null: 0.01,
+							},
+							content_type: {
+								value: "podcast",
+								confidence: 0.92,
+								p_null: 0.02,
+							},
+							search_query: {
+								value: "Sanity CMS",
+								confidence: 0.98,
+								p_null: 0.01,
+							},
+							limit: {
+								value: 4,
+								confidence: 0.89,
+								p_null: 0.05,
+							},
+						},
+					};
+				},
+			};
+
+			const extracted = await chatModule.extractIntentWithClairic(
+				"Find me 4 podcast episodes about Sanity CMS",
+				mockAiBinding,
+			);
+			assert.equal(invokedModel, "@cf/cloudflare/clairic");
+			assert.equal(
+				invokedPayload.state,
+				"Find me 4 podcast episodes about Sanity CMS",
+			);
+			assert.ok(invokedPayload.fields.intent);
+			assert.equal(extracted.source, "clairic");
+			assert.equal(extracted.intent, "topic_search");
+			assert.equal(extracted.contentType, "podcast");
+			assert.equal(extracted.searchQuery, "Sanity CMS");
+			assert.equal(extracted.limit, 4);
+			assert.equal(extracted.confidence, 0.96);
+
+			// 3. Verify deterministic fastpath fallback when AI binding is absent
+			const fastRecent = await chatModule.extractIntentWithClairic(
+				"What is the latest podcast episode?",
+			);
+			assert.equal(fastRecent.source, "fastpath");
+			assert.equal(fastRecent.intent, "recent_content");
+			assert.equal(fastRecent.contentType, "podcast");
+
+			const fastJoke = await chatModule.extractIntentWithClairic(
+				"Tell me a programming dad joke!",
+			);
+			assert.equal(fastJoke.source, "fastpath");
+			assert.equal(fastJoke.intent, "joke_or_kb");
+
+			// 4. Verify Search API and Search/Chat Modals expose Clairic telemetry & Search <-> AI switcher
+			const searchApiSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/api/search.ts"),
+				"utf-8",
+			);
+			assert.ok(searchApiSource.includes("extractIntentWithClairic"));
+			assert.ok(searchApiSource.includes("x-aj-extraction-source"));
+
+			const searchModalSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/SearchModal.astro"),
+				"utf-8",
+			);
+			assert.ok(searchModalSource.includes('closedby="any"'));
+			assert.ok(searchModalSource.includes("modal-mode-ai"));
+			assert.ok(searchModalSource.includes("RECENTLY ASKED"));
+			assert.ok(searchModalSource.includes("RECENTLY VIEWED"));
+			assert.ok(searchModalSource.includes("modal-clairic-badge"));
+
+			const chatDrawerSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/ChatModal.astro"),
+				"utf-8",
+			);
+			assert.ok(chatDrawerSource.includes("aj-agent-drawer"));
+			assert.ok(chatDrawerSource.includes("aj-drawer-resize-handle"));
+			assert.ok(chatDrawerSource.includes("cc_aj_drawer_open"));
+			assert.ok(chatDrawerSource.includes('toolname="ask_agent_aj"'));
+			assert.ok(
+				!chatDrawerSource.includes('id="ai-chat-open-btn"'),
+				"Must remove floating bottom-right Ask Agent AJ button",
+			);
+
+			const searchPageSource = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/search.astro"),
+				"utf-8",
+			);
+			assert.ok(searchPageSource.includes("search-mode-ai-btn"));
+			assert.ok(searchPageSource.includes("search-clairic-pill"));
+			assert.ok(searchPageSource.includes('toolname="search_content"'));
+			assert.ok(
+				!searchPageSource.includes("opacity-75"),
+				"Must not reduce text-muted-foreground contrast with opacity-75",
 			);
 		});
 	});

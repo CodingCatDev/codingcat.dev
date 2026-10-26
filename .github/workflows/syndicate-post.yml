@@ -37,7 +37,23 @@ jobs:
 
       - name: Syndicate Post
         run: |
-          node scripts/run-syndicate-post.mjs
+          if [ "$TARGET_DOCUMENT_ID" = "backfill-dailydev" ]; then
+            node scripts/backfill-dailydev-and-links.mjs
+          elif [ "$TARGET_DOCUMENT_ID" = "enrich-aeo-seo" ]; then
+            SANITY_STUDIO_DATASET=production node scripts/enrich-all-posts-aeo-seo-links.mjs
+            SANITY_STUDIO_DATASET=dev node scripts/enrich-all-posts-aeo-seo-links.mjs
+          elif [ "$TARGET_DOCUMENT_ID" = "trend-radar" ]; then
+            SANITY_STUDIO_DATASET=production node scripts/run-trend-radar.mjs
+            SANITY_STUDIO_DATASET=dev node scripts/run-trend-radar.mjs
+          elif [ "$TARGET_DOCUMENT_ID" = "firebase-archive-2025-2026" ]; then
+            FIREBASE_ARCHIVE_YEARS=2025,2026 SANITY_STUDIO_DATASET=production node scripts/generate-firebase-archive-posts.mjs
+            FIREBASE_ARCHIVE_YEARS=2025,2026 SANITY_STUDIO_DATASET=dev node scripts/generate-firebase-archive-posts.mjs
+          elif [ "$TARGET_DOCUMENT_ID" = "firebase-archive-2017-2024" ]; then
+            FIREBASE_ARCHIVE_YEARS=2017,2018,2019,2020,2021,2022,2023,2024 SANITY_STUDIO_DATASET=production node scripts/generate-firebase-archive-posts.mjs
+            FIREBASE_ARCHIVE_YEARS=2017,2018,2019,2020,2021,2022,2023,2024 SANITY_STUDIO_DATASET=dev node scripts/generate-firebase-archive-posts.mjs
+          else
+            node scripts/run-syndicate-post.mjs
+          fi
         env:
           TARGET_DOCUMENT_ID: ${{ inputs.document_id }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -51,6 +67,7 @@ jobs:
           AWS_BUILDER_SESSION_TOKEN: ${{ secrets.AWS_BUILDER_SESSION_TOKEN }}
           DAILY_DEV_TOKEN: ${{ secrets.DAILY_DEV_TOKEN }}
           DAILY_DEV_SESSION_COOKIE: ${{ secrets.DAILY_DEV_SESSION_COOKIE }}
+          REDDIT_REFRESH_TOKEN: ${{ secrets.REDDIT_REFRESH_TOKEN }}
           GOOGLE_WORKSPACE_REFRESH_TOKEN: ${{ secrets.GOOGLE_WORKSPACE_REFRESH_TOKEN }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}

@@ -13,7 +13,10 @@ const { node } = Astro.props;
 
 // stegaClean: href is an attribute — zero-width characters break the URL.
 const rawHref = stegaClean(node.markDef.href) || "#";
-const href = resolvePartnerUrl(rawHref) || "#";
+const normalizedHref = rawHref.startsWith("https://codingcat.dev/")
+	? rawHref.replace("https://codingcat.dev", "")
+	: rawHref;
+const href = resolvePartnerUrl(normalizedHref) || "#";
 
 // Matches the Next behaviour: anything not starting with "/" is off-site.
 const isExternal = !href.startsWith("/");
