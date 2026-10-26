@@ -11,6 +11,27 @@ All canonical mascot files live in `/home/alex/codingcat.dev/assets/` (and are s
 | `aj_3d_headphones_front` | `assets/AJ-3D-Headphones-Front.jpg` | 3D stylized vinyl-toy / Pixar-grade render (front 3/4 view on pedestal) | YouTube thumbnails, 3D video bumpers, hero feature cards, and multimodal 3D character references. |
 | `aj_3d_headphones_left` | `assets/AJ-3D-Headphones-Left.jpg` | 3D stylized vinyl-toy render (left profile turnaround) | Side-facing thumbnail reactions (looking right toward a diagram) and 3D modeling reference. |
 | `aj_3d_headphones_right` | `assets/AJ-3D-Headphones-Right.jpg` | 3D stylized vinyl-toy render (right profile turnaround) | Side-facing thumbnail reactions (looking left toward a diagram) and 3D modeling reference. |
+| `alex_likeness_library` | `assets/alex-likeness/alex-likeness-01.jpg` .. `13.jpg` | `2048x2048` studio portraits of Alex Patterson against pure `#000000` black | Multimodal character likeness reference & cutouts for 16:9 YouTube thumbnails, blog covers, and social graphics. |
+
+## Canonical Alex Patterson Studio Likeness Library (`assets/alex-likeness/`)
+
+All 13 studio portraits from the canonical likeness album (`https://photos.app.goo.gl/bmrt6shq5YKfG16SA`) are `2048x2048` high-resolution images on a pure `#000000` studio black background, stored in `assets/alex-likeness/` across `/home/alex/codingcat.dev`, `/home/alex/codingcat-social-agent`, and `~/code/codingcatdev-agent-toolkit`:
+
+| File | Pose & Direction | Best Thumbnail / Cover Placement |
+| :--- | :--- | :--- |
+| `assets/alex-likeness/alex-likeness-01.jpg` | Pointing up-right with left index finger, looking up-right with curious expression | Bottom-left placement pointing up-right toward header hook or diagram |
+| `assets/alex-likeness/alex-likeness-02.jpg` | Pointing left with right index finger, friendly smile looking at camera | **Right-third placement** pointing left at an architecture diagram |
+| `assets/alex-likeness/alex-likeness-03.jpg` | Mind-blown / shocked with both hands open near head | Breaking news, CVEs, wild benchmarks, or `"WTF is..."` deep dives |
+| `assets/alex-likeness/alex-likeness-04.jpg` | Surprised / wide-eyed with both hands framing head | Unexpected framework changes or production incident stories |
+| `assets/alex-likeness/alex-likeness-05.jpg` | Shrugging with both hands open (`"Why / What?!"` pose) | Trade-off comparisons, anti-patterns, or myth-busting covers |
+| `assets/alex-likeness/alex-likeness-06.jpg` | Celebrating / double fist-pump with huge smile | Major releases, shipped milestones, or performance wins |
+| `assets/alex-likeness/alex-likeness-07.jpg` | Cupping left ear (`"Listen to this"` pose) | Podcast episode covers or hot-take discussions |
+| `assets/alex-likeness/alex-likeness-08.jpg` | Double thumbs-up with big smile | Recommended tools, best-practice guides, and cheat sheets |
+| `assets/alex-likeness/alex-likeness-09.jpg` | Pointing straight up (`"Aha / Idea!"` pose) with left index finger | Top-banner callouts or key architectural insights |
+| `assets/alex-likeness/alex-likeness-10.jpg` | Pointing left with left index finger, excited open-mouth smile | **Right-third placement (Primary)** pointing left directly at a diagram |
+| `assets/alex-likeness/alex-likeness-11.jpg` | Pointing right with right index finger, excited open-mouth smile | **Left-third placement (Primary)** pointing right directly at a diagram |
+| `assets/alex-likeness/alex-likeness-12.jpg` | Thinking / stroking chin with left hand, looking left thoughtfully | Architectural trade-offs, system design evaluations, and debugging |
+| `assets/alex-likeness/alex-likeness-13.jpg` | Facepalm covering forehead/right eye (`"Oh no / Bug"` pose) | Post-mortems, security vulnerabilities, or painful dev mistakes |
 
 ## Strict Anatomical & Visual Rules for AJ the Cat
 Whenever selecting, compositing, or generating new poses of AJ using the reference images above, enforce every single trait below:
