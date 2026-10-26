@@ -6,12 +6,6 @@ import { escapeXml } from "./xml";
 /**
  * Serialises Portable Text to HTML for feed `content:encoded` bodies.
  *
- * The Next app called `toHTML` with no component map, so every custom block
- * and mark fell through to the library's placeholder output — internal links
- * rendered as `<span class="unknown__pt__mark__internalLink">` in the live
- * feed, and code, images and embeds were dropped or stubbed. This supplies the
- * map.
- *
  * Feeds are read in third-party clients that strip scripts and iframes, so
  * embeds degrade to links rather than attempting to render.
  *
@@ -40,6 +34,11 @@ export function portableTextToHtml(
 	const absolute = (href: string) =>
 		href.startsWith("/") ? `${origin}${href}` : href;
 
+	const renderSocialFeedLink =
+		(label: string) =>
+		({ value: node }: { value?: { url?: string } }) =>
+			node?.url ? `<p>${linkTag(node.url, label)}</p>` : "";
+
 	const components: Partial<PortableTextHtmlComponents> = {
 		types: {
 			image: ({ value: node }) => {
@@ -55,17 +54,15 @@ export function portableTextToHtml(
 				if (!code) {
 					return "";
 				}
-				// Highlighting is not carried into feeds; readers restyle <pre>
-				// anyway, and inline styles are commonly stripped.
 				const language = node?.language
 					? ` class="language-${escapeXml(node.language)}"`
 					: "";
 				return `<pre><code${language}>${escapeXml(code)}</code></pre>`;
 			},
-			youtube: ({ value: node }) =>
-				node?.youtube
-					? `<p>${linkTag(node.youtube, "Watch on YouTube")}</p>`
-					: "",
+			youtube: ({ value: node }) => {
+				const ytUrl = node?.youtube ?? node?.url;
+				return ytUrl ? `<p>${linkTag(ytUrl, "Watch on YouTube")}</p>` : "";
+			},
 			youtubeShorts: ({ value: node }) =>
 				Array.isArray(node?.shorts)
 					? node.shorts
@@ -79,12 +76,25 @@ export function portableTextToHtml(
 				node?.url ? `<p>${linkTag(node.url, "View on CodePen")}</p>` : "",
 			codesandbox: ({ value: node }) =>
 				node?.url ? `<p>${linkTag(node.url, "View on CodeSandbox")}</p>` : "",
-			twitter: ({ value: node }) =>
-				node?.id
-					? `<p>${linkTag(`https://twitter.com/i/status/${node.id}`, "View post on X")}</p>`
-					: "",
-			// Author-written markup, already HTML — passed through as-is, the same
-			// as on the site itself.
+			twitter: ({ value: node }) => {
+				const raw = node?.url || node?.id || "";
+				if (!raw) {
+					return "";
+				}
+				const href = /^https?:\/\//i.test(raw)
+					? raw
+					: `https://x.com/i/status/${raw}`;
+				return `<p>${linkTag(href, "View post on X")}</p>`;
+			},
+			socialEmbed: renderSocialFeedLink("View social post"),
+			bluesky: renderSocialFeedLink("View post on Bluesky"),
+			linkedin: renderSocialFeedLink("View post on LinkedIn"),
+			reddit: renderSocialFeedLink("View discussion on Reddit"),
+			tiktok: renderSocialFeedLink("Watch on TikTok"),
+			instagram: renderSocialFeedLink("View on Instagram"),
+			threads: renderSocialFeedLink("View on Threads"),
+			mastodon: renderSocialFeedLink("View on Mastodon"),
+			githubGist: renderSocialFeedLink("View GitHub Gist"),
 			htmlBlock: ({ value: node }) => node?.html ?? "",
 			quote: ({ value: node }) => {
 				const inner = portableTextToHtml(node?.content, { origin, imageUrl });

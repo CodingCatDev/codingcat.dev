@@ -12,13 +12,13 @@ const maxLimit = limitArg ? Number(limitArg.split("=")[1]) : 200;
 const EXCLUDE_SLUG_REGEX =
   /(fcm-on-android|ai-logic-unity-androidxr|fpnv-|firebase-pnv-|crashlytics-android|crashlytics-mcp|crashlytics-export|dart-functions-exp|apple-foundation-models|build-ios-app|firebase-analytics-outage|brazil-roundup|ios-sdk|android-sdk|cocoapods|swiftpm|gradle|wear-os|tvos|watchos|flutter-only)/i;
 
-function cleanDashes(text) {
+function cleanDashes(text, { trim = true } = {}) {
   if (!text) return "";
-  return String(text)
+  const cleaned = String(text)
     .replace(/\s*[—–]\s*/g, ", ")
     .replace(/\s+--\s+/g, ", ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
+    .replace(/\s{2,}/g, " ");
+  return trim ? cleaned.trim() : cleaned;
 }
 
 function decodeHtmlEntities(str) {
@@ -35,12 +35,71 @@ function decodeHtmlEntities(str) {
 }
 
 function stripTags(html) {
-  return decodeHtmlEntities(String(html || "").replace(/<[^>]+>/g, "")).trim();
+  return decodeHtmlEntities(
+    String(html || "")
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+  ).trim();
 }
 
 function makeKey(prefix, seed) {
   const hash = crypto.createHash("md5").update(String(seed)).digest("hex").slice(0, 10);
   return `fb_${prefix}_${hash}`;
+}
+
+export function shouldInsertSpaceBetweenSpans(pText, cText) {
+  if (!pText || !cText) return false;
+  if (/\s$/.test(pText) || /^\s/.test(cText)) return false;
+
+  const lastChar = pText.slice(-1);
+  const firstChar = cText.slice(0, 1);
+
+  if (/^[.,;:!?)\]}’']/.test(firstChar)) return false;
+  if (/^["”](\s|[.,;:!?)]|$)/.test(cText)) return false;
+  if (/[(\[{]$/.test(lastChar) && pText.length === 1) return false;
+  if (/(^|\s)[(\[{"“‘]$/.test(pText)) return false;
+  if (lastChar === "—" || firstChar === "—" || cText.startsWith("---") || pText.endsWith("---")) return false;
+  if (pText === "-" || cText === "-") return false;
+
+  return true;
+}
+
+export function normalizeBlockSpacing(block) {
+  if (!block || block._type !== "block" || !Array.isArray(block.children) || block.children.length < 2) {
+    return block;
+  }
+  const linkMarkKeys = new Set((block.markDefs || []).map((m) => m._key));
+  const children = block.children.map((c) => ({
+    ...c,
+    marks: Array.isArray(c.marks) ? [...c.marks] : [],
+  }));
+
+  const out = [];
+  for (let i = 0; i < children.length; i++) {
+    const curr = children[i];
+    if (out.length > 0) {
+      const prev = out[out.length - 1];
+      if (shouldInsertSpaceBetweenSpans(prev.text, curr.text)) {
+        const prevHasLinkOrCode = prev.marks.some((m) => m === "code" || linkMarkKeys.has(m));
+        const currHasLinkOrCode = curr.marks.some((m) => m === "code" || linkMarkKeys.has(m));
+        if (!prevHasLinkOrCode) {
+          prev.text = `${prev.text} `;
+        } else if (!currHasLinkOrCode) {
+          curr.text = ` ${curr.text}`;
+        } else {
+          out.push({
+            _type: "span",
+            _key: `${prev._key || "sp"}_sep_${i}`,
+            marks: [],
+            text: " ",
+          });
+        }
+      }
+    }
+    out.push(curr);
+  }
+  return { ...block, children: out };
 }
 
 function createTextBlock(text, style = "normal", keySeed = text) {
@@ -64,7 +123,8 @@ function createRichBlock(segments, { style = "normal", listItem = undefined, lev
   const markDefs = [];
   const children = [];
   segments.forEach((seg, i) => {
-    const rawText = cleanDashes(seg.text || "");
+    const hasMark = Boolean(seg.href || seg.code || seg.strong);
+    const rawText = cleanDashes(seg.text || "", { trim: hasMark });
     if (!rawText) return;
     const marks = [];
     if (seg.strong) marks.push("strong");
@@ -98,7 +158,131 @@ function createRichBlock(segments, { style = "normal", listItem = undefined, lev
     block.listItem = listItem;
     block.level = level || 1;
   }
-  return block;
+  return normalizeBlockSpacing(block);
+}
+
+/**
+ * Rewrites source Firebase blogger text so that:
+ * 1) Firebase product-team "we / our / us" is attributed in third person ("the Firebase team", "Firebase").
+ * 2) Demo walkthrough "I / my / we / our" is converted to second-person developer perspective ("you / your").
+ * 3) First-person "I / we / our / us" in the published article belongs exclusively to Alex Patterson & CodingCat.dev.
+ */
+export function rewriteSourceTextToAlexVoice(rawText) {
+  if (!rawText) return "";
+  let t = String(rawText);
+
+  // 1. Source blogger first-person singular ("I / my") & tutorial walkthrough "we / our / us" -> Second-person ("you / your")
+  t = t
+    .replace(/\bThe agent understands can consult\b/gi, "The agent can consult")
+    .replace(/\bI\s+prompted\s+a\b/g, "For example, if you prompt a")
+    .replace(/\bI\s+used\s+the\s+slash\s+command\b/g, "You can run the slash command")
+    .replace(/\bfor\s+my\s+web\s+app,\s*so\s+I\s+didn['’]t\s+need\s+to\b/gi, "for your web app, so you don't need to")
+    .replace(/\bso\s+I\s+didn['’]t\s+need\s+to\b/gi, "so you don't need to")
+    .replace(/\bmy\s+(web\s+app|app|application|project|database|code|workflow|prompt|prompts|schema|rules)\b/gi, "your $1")
+    .replace(/\bUsing\s+([A-Z][A-Za-z0-9\s]+?)\s+we\s+can\s+then\b/g, "Using $1, you can then")
+    .replace(/\bthat\s+we\s+want\s+the\s+agent\s+to\s+take\s+in\s+building\s+our\s+app\b/gi, "that you want the agent to take when building your app")
+    .replace(/\bWe\s+don['’]t\s+need\s+to\s+run\s+any\s+commands\s+ourselves\b/gi, "You don't need to run manual CLI commands yourself")
+    .replace(/\basking\s+the\s+agent\s+to\s+deploy\s+for\s+us\b/gi, "asking the agent to deploy for you")
+    .replace(/\bOnce\s+this\s+is\s+done,\s*we\s+can\s+share\s+the\s+game\s+we\s+built\s+with\s+our\s+friends!?/gi, "Once the build finishes, your application is live on a preview or production URL ready to share with your team.")
+    .replace(/\bthe\s+(game|app|application|project|feature|prototype)\s+we\s+built\b/gi, "the $1 you built")
+    .replace(/\bWe\s+can\s+(add|use|define|create|run|deploy|configure|specify|write|test|verify|check|inspect|query|call|pass|set|see|build|make|update|install|enable)\b/gi, "You can $1")
+    .replace(/\bwe\s+can\s+(add|use|define|create|run|deploy|configure|specify|write|test|verify|check|inspect|query|call|pass|set|see|build|make|update|install|enable)\b/g, "you can $1")
+    .replace(/\bWe\s+reuse\b/g, "You can reuse")
+    .replace(/\bWe\s+also\s+see\b/g, "You will also see")
+    .replace(/\bWe\s+evaluate\b/g, "The evaluation pipeline measures")
+    .replace(/\bHow\s+we\s+build\b/gi, "How the Firebase Team Builds")
+    .replace(/\bso\s+we\s+can\b/gi, "so you can")
+    .replace(/\bhow\s+we\s+can\b/gi, "how you can")
+    .replace(/\bwhere\s+we\s+can\b/gi, "where you can")
+    .replace(/\bIn\s+our\s+(security\s+rules|example|schema|app|application|project|code|query|mutation|configuration|config|setup|database|table)\b/gi, "In your $1")
+    .replace(/\bour\s+(security\s+rules|example|schema|app|application|project|code|query|mutation|configuration|config|setup|database|table|friends)\b/gi, "your $1");
+
+  // 2. Firebase product-team announcements -> Third-person attribution
+  t = t
+    .replace(/\bWe have been hard at work making sure that\b/gi, "The Firebase engineering team has focused on ensuring that")
+    .replace(/\bWe['’]?ve been hard at work\b/gi, "The Firebase engineering team has been working")
+    .replace(/\bNow,?\s*we(?:\s+are|['’]re)\s+(?:pleased|excited|thrilled|happy|proud)\s+to\s+(?:share|announce|introduce|launch)\s+that\b/gi, "With this release, the Firebase team announced that")
+    .replace(/\bWe(?:\s+are|['’]re)\s+(?:pleased|excited|thrilled|happy|proud)\s+to\s+(?:share|announce|introduce|launch)\s+that\b/gi, "In this update, the Firebase team announced that")
+    .replace(/\bWe(?:\s+are|['’]re)\s+(?:pleased|excited|thrilled|happy|proud)\s+to\s+(?:share|announce|introduce|launch)\b/gi, "The Firebase team announced")
+    .replace(/\bToday,?\s*we(?:\s+are|['’]re)\s+(?:announcing|introducing|launching|releasing|sharing|excited to)\b/gi, "In this release, the Firebase team is launching")
+    .replace(/\bEarlier this year,?\s*we\s+(integrated|launched|introduced|released|announced|added|shipped|built|open-sourced)\b/gi, "Earlier, the Firebase team $1")
+    .replace(/\bLast\s+(?:year|month|week|fall|spring|summer),?\s*we\s+(integrated|launched|introduced|released|announced|added|shipped|built|shared)\b/gi, "Previously, the Firebase team $1")
+    .replace(/\bRecently,?\s*we\s+(integrated|launched|introduced|released|announced|added|shipped|built|shared)\b/gi, "Recently, the Firebase team $1")
+    .replace(/\bIn today['’]?s landscape of ([^,]+),\s*our goal is to\b/gi, "As $1 matures, the Firebase team's goal is to")
+    .replace(/\bour goal is to\b/gi, "the Firebase team's goal is to")
+    .replace(/\bWe(?:\s+have|['’]ve)\s+(added|built|created|updated|introduced|launched|released|redesigned|improved|expanded|partnered|integrated|made|designed|heard|seen|worked|shipped|open-sourced)\b/gi, "The Firebase team $1")
+    .replace(/\bWe\s+(added|built|created|updated|introduced|launched|released|redesigned|improved|expanded|partnered|integrated|designed|heard|shipped|open-sourced)\b/g, "The Firebase team $1")
+    .replace(/\bWe(?:\s+are|['’]re)\s+(introducing|launching|releasing|rolling out|adding|updating|expanding|building|making|working on|bringing|open-sourcing)\b/gi, "Firebase is $1")
+    .replace(/\bWe\s+also\s+now\s+support\b/gi, "Firebase also now supports")
+    .replace(/\bWe\s+now\s+support\b/gi, "Firebase now supports")
+    .replace(/\bwe\s+strongly\s+recommend\b/gi, "I strongly recommend")
+    .replace(/\bWe\s+recommend\b/gi, "I recommend")
+    .replace(/\bLet['’]?s\s+take\s+a\s+look\s+at\s+how\s+to\b/gi, "Here is how you can")
+    .replace(/\bLet['’]?s\s+take\s+a\s+look\s+at\b/gi, "Let's break down")
+    .replace(/\bour\s+(Firebase\s+)?(MCP\s+server|SDK|SDKs|CLI|console|documentation|docs|platform|service|services|team|engineers|users|developers|community|blog|plugin|extension|extensions|emulator|tools|models|API|APIs|agent\s+skills|skills|github\s+repo|repository)\b/gi, "the $1$2");
+
+  return t;
+}
+
+function isBoilerplateHeading(text) {
+  return /^(conclusion|wrap[\s-]*up|wrapping up|summary|next steps|what['’]?s next\??|share your (?:feedback|thoughts)|let us know(?:\s+what you think)?!?|tell us what you think!?|we['’]?d love to hear from you!?|what do you think\??|give .* a try!?|try .* out!?|get started(?:\s+today|\s+now)?!?|stay connected|feedback|acknowledgements?|more resources|further reading|learn more|final thoughts|closing thoughts)$/i.test(
+    String(text || "").trim()
+  );
+}
+
+function isBoilerplateSourceParagraph(text, segments = []) {
+  const t = String(text || "").trim();
+  if (!t || t.length < 35) return true;
+  if (
+    /\b(come tell us|tell us on|reach out to us|follow us on|join us on|share with us|we cannot wait to see|we can['’]t wait to see|can['’]t wait to see what you build|leave us more detailed feedback|let us know what you think|happy coding|in the comments below|what will you build|share your thoughts|we['’]?d love to hear from you|drop us a line|tag us on)\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (
+    /^(I then went to test out|Let['’]?s take a look at how|Let['’]?s dive in|Without further ado)/i.test(t) &&
+    t.length < 120
+  ) {
+    return true;
+  }
+  const hasFirebaseSocialLink = segments.some(
+    (s) =>
+      s.href &&
+      /(x\.com\/firebase|twitter\.com\/firebase|linkedin\.com\/showcase\/firebase|firebase\.uservoice\.com)/i.test(
+        s.href
+      )
+  );
+  if (hasFirebaseSocialLink) return true;
+  return false;
+}
+
+function rewriteSegmentsToAlexVoice(segments) {
+  return segments.map((seg) => {
+    let href = seg.href;
+    if (href) {
+      if (/(x\.com\/firebase|twitter\.com\/firebase)/i.test(href)) {
+        href = "https://x.com/CodingCatDev";
+      } else if (/linkedin\.com\/showcase\/firebase/i.test(href)) {
+        href = "https://www.linkedin.com/company/codingcatdev";
+      }
+    }
+    return {
+      ...seg,
+      href,
+      text: rewriteSourceTextToAlexVoice(seg.text || ""),
+    };
+  });
+}
+
+function rewriteHeadingToAlexVoice(headingText) {
+  let h = rewriteSourceTextToAlexVoice(cleanDashes(headingText));
+  h = h
+    .replace(/^Adding\s+/i, "How to Add ")
+    .replace(/^Link your\s+/i, "Linking Your ")
+    .replace(/^Ask\s+([A-Za-z0-9]+)\s+to\s+build\s+your\s+app$/i, "Prompting $1 to Scaffold Your Web App")
+    .replace(/^Deploy\s+the\s+app\s+with\s+/i, "Deploying to Production with ");
+  return h;
 }
 
 /**
@@ -113,7 +297,7 @@ function parseInlineHtmlToSegments(html, baseUrl = "https://firebase.blog") {
   while ((match = tokenRegex.exec(html)) !== null) {
     if (match.index > lastIndex) {
       const plain = stripTags(html.slice(lastIndex, match.index));
-      if (plain) segments.push({ text: `${plain} ` });
+      if (plain) segments.push({ text: plain });
     }
     const fullToken = match[1];
     const hrefAttr = match[2];
@@ -124,11 +308,11 @@ function parseInlineHtmlToSegments(html, baseUrl = "https://firebase.blog") {
         try {
           resolvedHref = new URL(hrefAttr, baseUrl).toString();
         } catch {}
-        segments.push({ text: ` ${innerText} `, href: resolvedHref, strong: true });
+        segments.push({ text: innerText, href: resolvedHref, strong: true });
       } else if (/^<(?:strong|b)>/i.test(fullToken)) {
-        segments.push({ text: ` ${innerText} `, strong: true });
+        segments.push({ text: innerText, strong: true });
       } else if (/^<code>/i.test(fullToken)) {
-        segments.push({ text: ` ${innerText} `, code: true });
+        segments.push({ text: innerText, code: true });
       }
     }
     lastIndex = tokenRegex.lastIndex;
@@ -136,20 +320,20 @@ function parseInlineHtmlToSegments(html, baseUrl = "https://firebase.blog") {
 
   if (lastIndex < html.length) {
     const tail = stripTags(html.slice(lastIndex));
-    if (tail) segments.push({ text: ` ${tail}` });
+    if (tail) segments.push({ text: tail });
   }
 
   if (segments.length === 0) {
     const fallback = stripTags(html);
     if (fallback) segments.push({ text: fallback });
   }
-  return segments;
+  return rewriteSegmentsToAlexVoice(segments);
 }
 
 /**
  * Fetches and parses a firebase.blog article page.
  */
-async function fetchAndParseFirebaseBlogPost(url) {
+export async function fetchAndParseFirebaseBlogPost(url) {
   const res = await fetch(url, {
     headers: { "User-Agent": "CodingCatDev-FirebaseArchive/1.0" },
   });
@@ -185,7 +369,17 @@ async function fetchAndParseFirebaseBlogPost(url) {
 
   // Extract <article class="content">...</article>
   const articleMatch = html.match(/<article[^>]*class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/article>/i);
-  const articleHtml = articleMatch ? articleMatch[1] : html;
+  let articleHtml = articleMatch ? articleMatch[1] : html;
+
+  // Extract subhead/deck separately and remove it from articleHtml so it is never glued into body paragraphs
+  const subheadMatch = articleHtml.match(/<p[^>]*class="[^"]*_subhead_[^"]*"[^>]*>([\s\S]*?)<\/p>/i);
+  let subhead = subheadMatch ? rewriteSourceTextToAlexVoice(cleanDashes(stripTags(subheadMatch[1]))) : "";
+  if (subhead && !/[.!?]$/.test(subhead)) {
+    subhead += ".";
+  }
+  if (subheadMatch) {
+    articleHtml = articleHtml.replace(subheadMatch[0], "");
+  }
 
   // Check if the body is strictly iOS/Android-only without web relevance
   const plainArticle = stripTags(articleHtml);
@@ -197,32 +391,47 @@ async function fetchAndParseFirebaseBlogPost(url) {
 
   // Parse ordered structural elements (h2, h3, p, ul, pre) from articleHtml
   const elements = [];
-  const blockRegex =
-    /<(h2|h3|p|ul|pre)\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+  const blockRegex = /<(h2|h3|p|ul|pre)\b([^>]*)>([\s\S]*?)<\/\1>/gi;
   let match;
+  let skipBoilerplateSection = false;
+
   while ((match = blockRegex.exec(articleHtml)) !== null) {
     const tag = match[1].toLowerCase();
     const attrs = match[2] || "";
     const inner = match[3] || "";
 
     if (tag === "h2" || tag === "h3") {
-      const text = cleanDashes(stripTags(inner));
-      if (text && text.length > 2 && !/^(the firebase blog|share|related)$/i.test(text)) {
-        elements.push({ type: "heading", style: tag, text });
+      const rawHeading = cleanDashes(stripTags(inner));
+      if (!rawHeading || rawHeading.length <= 2 || /^(the firebase blog|share|related)$/i.test(rawHeading)) {
+        continue;
       }
+      if (isBoilerplateHeading(rawHeading)) {
+        skipBoilerplateSection = true;
+        continue;
+      }
+      skipBoilerplateSection = false;
+      elements.push({ type: "heading", style: tag, text: rewriteHeadingToAlexVoice(rawHeading) });
     } else if (tag === "p") {
-      const text = cleanDashes(stripTags(inner));
-      if (text && text.length >= 35) {
-        const segments = parseInlineHtmlToSegments(inner, url);
-        elements.push({ type: "paragraph", text, segments });
-      }
+      if (skipBoilerplateSection) continue;
+      if (/class="[^"]*(_subhead_|post-date)[^"]*"/i.test(attrs)) continue;
+      const rawPara = cleanDashes(stripTags(inner));
+      const segments = parseInlineHtmlToSegments(inner, url);
+      if (isBoilerplateSourceParagraph(rawPara, segments)) continue;
+      const rewrittenText = rewriteSourceTextToAlexVoice(rawPara);
+      elements.push({
+        type: "paragraph",
+        text: /[.!?:]$/.test(rewrittenText) ? rewrittenText : `${rewrittenText}.`,
+        segments,
+      });
     } else if (tag === "ul") {
+      if (skipBoilerplateSection) continue;
       const items = [...inner.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)]
-        .map((m) => ({
-          text: cleanDashes(stripTags(m[1])),
-          segments: parseInlineHtmlToSegments(m[1], url),
-        }))
-        .filter((it) => it.text.length >= 10);
+        .map((m) => {
+          const segs = parseInlineHtmlToSegments(m[1], url);
+          const txt = rewriteSourceTextToAlexVoice(cleanDashes(stripTags(m[1])));
+          return { text: txt, segments: segs };
+        })
+        .filter((it) => it.text.length >= 10 && !isBoilerplateSourceParagraph(it.text, it.segments));
       if (items.length > 0) {
         elements.push({ type: "list", items: items.slice(0, 8) });
       }
@@ -262,6 +471,7 @@ async function fetchAndParseFirebaseBlogPost(url) {
   return {
     sourceUrl: url,
     originalTitle: cleanDashes(rawTitle),
+    subhead,
     originalDateIso: originalDate.toISOString(),
     publishDateIso: plusOneDayDate.toISOString(),
     originalDateLabel: originalDate.toISOString().slice(0, 10),
@@ -522,7 +732,60 @@ async function uploadCoverToSanity(svgString, filename, targetDataset) {
   };
 }
 
-function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs, coverImageRef) {
+function buildAlexTopicFraming(parsed, tags) {
+  const tagVals = new Set(tags.map((t) => t.value));
+  const titleLower = parsed.originalTitle.toLowerCase();
+
+  if (tagVals.has("mcp") || /antigravity|codex|cursor|cli|agent skill/i.test(titleLower)) {
+    return {
+      painPoint: `If you have ever watched an AI coding agent hallucinate deprecated Firebase v8 syntax or deploy wide-open Firestore rules, you know that raw LLM prompts are not enough for production backends.`,
+      mentalModel: `Instead of relying on stale training weights, wiring up the Model Context Protocol (MCP) and structured Firebase agent skills gives your IDE or CLI direct, schema-aware tools to provision resources, inspect security rules, and run deterministic CLI deployments.`,
+      proTip: `AJ Pro-Tip from Alex: Never let an autonomous coding agent push Firestore or Data Connect rules straight to production without a gate. Always require the agent to run your test suite against the Firebase Local Emulator Suite first, and audit every generated rule for strict request.auth.uid ownership checks.`,
+    };
+  }
+  if (tagVals.has("sql") || /data connect|postgres|graphql/i.test(titleLower)) {
+    return {
+      painPoint: `For years, choosing Firebase meant trading away relational SQL joins, strict foreign keys, and pgvector similarity search in favor of NoSQL document denormalization.`,
+      mentalModel: `Firebase Data Connect bridges that gap by pairing a managed Google Cloud SQL for PostgreSQL instance with a declarative GraphQL schema compiler that automatically generates type-safe TypeScript, React, and Angular SDKs alongside server-enforced @auth directives.`,
+      proTip: `AJ Pro-Tip from Alex: Keep your authorization logic inside your Data Connect GraphQL operations using @auth(level: USER) and server-evaluated expressions like auth.uid and request.time rather than trusting client-supplied user IDs in query variables.`,
+    };
+  }
+  if (/studio/i.test(titleLower)) {
+    return {
+      painPoint: `Spinning up a full-stack web environment with cloud emulators, preview URLs, and AI-assisted scaffolding usually means hours of local Docker and environment variable wrangling.`,
+      mentalModel: `Firebase Studio unifies cloud workspaces, Gemini-powered prototyping agents, and one-click Firebase App Hosting deploys so you can move from an initial architecture prompt to a live SSR web app in a single browser tab.`,
+      proTip: `AJ Pro-Tip from Alex: Treat prototypes generated in Firebase Studio like any other production repo: commit your idx/dev.nix workspace configuration, lock down your environment secrets in Cloud Secret Manager, and wire up CI/CD branch previews before inviting real users.`,
+    };
+  }
+  if (/genkit/i.test(titleLower)) {
+    return {
+      painPoint: `Building AI features in TypeScript or Go quickly turns into spaghetti when you try to bolt structured output validation, tool calling, and OpenTelemetry tracing onto raw model API calls.`,
+      mentalModel: `Firebase Genkit gives full-stack engineers strongly typed flows, dotprompt templates, local developer UI trace inspection, and production observability wired directly into Google Cloud and Firebase.`,
+      proTip: `AJ Pro-Tip from Alex: Always wrap your Genkit flows with explicit Zod input/output schemas and enforce Firebase App Check attestation on callable endpoints so bots cannot rack up unauthenticated token spend.`,
+    };
+  }
+  if (tagVals.has("ai") || /gemini|ai logic|vertex/i.test(titleLower)) {
+    return {
+      painPoint: `Calling frontier multimodal models directly from a web or mobile client is a security minefield if you expose raw API keys or hardcode brittle system prompts in your frontend bundle.`,
+      mentalModel: `Firebase AI Logic lets you invoke Gemini and Imagen models from client and edge apps using the Firebase Web SDK while keeping your API credentials off the wire, enforcing Firebase App Check, and managing server-side prompt templates centrally.`,
+      proTip: `AJ Pro-Tip from Alex: Combine Firebase AI Logic with server prompt templates, Firebase Remote Config feature flags, and project spend caps so you can iterate on prompts or swap Gemini models instantly without redeploying your Next.js or Astro frontend.`,
+    };
+  }
+  if (/app hosting|hosting|next\.?js|angular|ssr/i.test(titleLower)) {
+    return {
+      painPoint: `Deploying server-rendered Next.js, Angular, or Astro apps alongside Firebase used to require stitching together custom Cloud Functions rewrites or managing separate Cloud Run containers by hand.`,
+      mentalModel: `Firebase App Hosting automates Git-driven Cloud Build pipelines, Cloud Run scaling, CDN caching, and Secret Manager integration so full-stack SSR frameworks run natively on Google Cloud infrastructure.`,
+      proTip: `AJ Pro-Tip from Alex: Set explicit maxInstances and concurrency limits in your apphosting.yaml file and cache public SSR responses at the CDN edge so traffic spikes do not trigger unnecessary Cloud Run cold starts.`,
+    };
+  }
+  return {
+    painPoint: `Shipping reliable full-stack web applications requires keeping your client SDKs, backend security rules, and cloud infrastructure tightly aligned as your traffic scales.`,
+    mentalModel: `This Firebase update streamlines how web and cloud engineers configure, secure, and observe production workloads across modern TypeScript frameworks like Next.js, Astro, SvelteKit, React, and Angular.`,
+    proTip: `AJ Pro-Tip from Alex: Whenever we adopt a new Firebase capability at CodingCat.dev, we validate it in the Firebase Local Emulator Suite first and pair client SDK calls with Firebase App Check and strict Security Rules before shipping to production.`,
+  };
+}
+
+export function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs, coverImageRef) {
   const urlParts = new URL(parsed.sourceUrl).pathname.split("/").filter(Boolean);
   const year = urlParts[1] || "2025";
   const month = urlParts[2] || "01";
@@ -532,7 +795,9 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
 
   const tags = inferTagsForPost(parsed.originalTitle, parsed.elements);
   const tagLabels = tags.map((t) => t.label);
-  const primarySubTopic = tags.find((t) => t.value !== "firebase" && t.value !== "google-cloud" && t.value !== "webdev")?.label || "Full-Stack Web";
+  const primarySubTopic =
+    tags.find((t) => t.value !== "firebase" && t.value !== "google-cloud" && t.value !== "webdev")?.label ||
+    "Full-Stack Web";
 
   const title = cleanDashes(
     parsed.originalTitle.toLowerCase().includes("firebase")
@@ -540,41 +805,46 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
       : `${parsed.originalTitle} in Firebase: Web Architecture & Implementation Guide`
   );
 
-  const firstParagraphs = parsed.elements.filter((e) => e.type === "paragraph").slice(0, 2);
-  const leadSummary = firstParagraphs.map((p) => p.text).join(" ");
+  const framing = buildAlexTopicFraming(parsed, tags);
+  const firstParagraphs = parsed.elements.filter((e) => e.type === "paragraph");
+  const coreSummarySentence =
+    parsed.subhead ||
+    firstParagraphs[0]?.text ||
+    `This release streamlines ${tagLabels.join(", ")} workflows across client and server boundaries.`;
+
   const excerpt = cleanDashes(
-    `Hands-on web engineering breakdown of "${parsed.originalTitle}" (${parsed.originalDateLabel}). Learn how to integrate ${tagLabels
+    `Alex Patterson's hands-on web engineering breakdown of "${parsed.originalTitle}" (${parsed.originalDateLabel}). Learn how to wire up ${tagLabels
       .slice(0, 4)
-      .join(", ")} in production web apps with TypeScript, Security Rules, and Firebase.`
+      .join(", ")} in production web apps.`
   ).slice(0, 280);
 
   const blocks = [];
 
-  // 1. Speakable Opening Paragraph (`article p:first-of-type`)
+  // 1. Speakable Opening Hook in Alex Patterson's Voice ("Lead with the Problem")
   blocks.push(
     createRichBlock(
       [
-        { text: `${parsed.originalTitle} `, strong: true },
+        { text: `${framing.painPoint} ` },
         {
-          text: `marks an important milestone for full-stack web and AI engineers building on Firebase and Google Cloud. Following the official announcement by ${parsed.authors.join(
-            ", "
-          )} on the `,
+          text: `Following the announcement of `,
         },
-        { text: "Firebase Blog", href: parsed.sourceUrl, strong: true },
+        { text: parsed.originalTitle, strong: true },
         {
-          text: ` (${parsed.originalDateLabel}), this hands-on CodingCat.dev implementation guide breaks down how to adopt these capabilities in modern TypeScript, Next.js, SvelteKit, React, and Angular applications. ${
-            leadSummary ? leadSummary.slice(0, 320) : ""
-          }`,
+          text: ` by ${parsed.authors.join(", ")} on the `,
+        },
+        { text: "Official Firebase Blog", href: parsed.sourceUrl, strong: true },
+        {
+          text: ` (${parsed.originalDateLabel}), here is our hands-on CodingCat.dev breakdown of what actually shipped, how it works under the hood, and how we wire it into production TypeScript, Next.js, Astro, SvelteKit, React, and Angular applications. ${coreSummarySentence}`,
         },
       ],
       { style: "normal", keySeed: `speakable_${docId}` }
     )
   );
 
-  // 2. Why This Release Matters for Web & AI Engineers
+  // 2. Alex's Mental Model & GDE Architectural Perspective + AJ Pro-Tip Callout
   blocks.push(
     createTextBlock(
-      `Why ${parsed.originalTitle} Matters for Full-Stack Web Developers`,
+      `The Mental Model: Why ${parsed.originalTitle} Matters for Web Devs`,
       "h2",
       `h2_intro_${docId}`
     )
@@ -583,28 +853,34 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     createRichBlock(
       [
         {
-          text: `When evaluating every new Firebase release for our production web apps and Google Developer Expert (GDE) architecture reviews, the first question is always how it improves developer velocity, runtime security, and end-user latency in the browser and on the server. `,
-        },
-        {
-          text: firstParagraphs[0]?.text || `This update streamlines ${tagLabels.join(", ")} workflows across client and server boundaries.`,
+          text: `As a Google Developer Expert (GDE) for Firebase and Senior Solutions Engineer at CodingCat.dev, I evaluate every Firebase update through one lens: does it reduce boilerplate while keeping our runtime security and cloud bills predictable? ${framing.mentalModel}`,
         },
       ],
       { style: "normal", keySeed: `p_intro_${docId}` }
     )
   );
+  blocks.push(
+    createTextBlock(framing.proTip, "blockquote", `bq_protip_${docId}`)
+  );
 
-  // 3. Transform Source Sections, Paragraphs, Lists & Code Examples
+  // 3. Rewritten Technical Breakdown, Steps & Code Examples
+  blocks.push(
+    createTextBlock(
+      `How It Works: Technical Breakdown & Implementation`,
+      "h2",
+      `h2_breakdown_${docId}`
+    )
+  );
+
   let includedCodeBlocks = 0;
-  let sectionCount = 0;
 
   for (let i = 0; i < parsed.elements.length; i++) {
     const el = parsed.elements[i];
     if (el.type === "heading") {
-      sectionCount++;
       blocks.push(createTextBlock(el.text, el.style, `sec_h_${docId}_${i}`));
     } else if (el.type === "paragraph") {
-      // Skip the very first paragraph if already used verbatim in intro
-      if (i === 0) continue;
+      // Avoid repeating coreSummarySentence if it came from firstParagraphs[0]
+      if (!parsed.subhead && i === 0) continue;
       blocks.push(
         createRichBlock(el.segments, {
           style: "normal",
@@ -638,14 +914,14 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     const sample = buildFallbackCodeSample(parsed, tags);
     blocks.push(
       createTextBlock(
-        `TypeScript & Web SDK Implementation Pattern`,
+        `Show Me the Code: TypeScript & Web SDK Setup`,
         "h2",
         `h2_code_fallback_${docId}`
       )
     );
     blocks.push(
       createTextBlock(
-        `Here is the baseline configuration pattern for integrating ${parsed.originalTitle} into a modern TypeScript web application:`,
+        `Here is the production baseline pattern we use at CodingCat.dev when wiring ${parsed.originalTitle} into a modern TypeScript web application:`,
         "normal",
         `p_code_fallback_${docId}`
       )
@@ -658,7 +934,7 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     });
   }
 
-  // 4. Production Web Architecture & 2026 Modern Context
+  // 4. Production Web Architecture & Security Checklist
   blocks.push(
     createTextBlock(
       `Production Web Architecture & Security Checklist`,
@@ -670,7 +946,7 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     createRichBlock(
       [
         {
-          text: `Whether you are deploying on `,
+          text: `Whether we are deploying on `,
         },
         {
           text: `Firebase App Hosting`,
@@ -707,7 +983,7 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     [
       { text: `Keep Server & Client Boundaries Type-Safe: `, strong: true },
       {
-        text: `Use the modular Firebase Web SDK and generated TypeScript bindings so SSR frameworks like Next.js, SvelteKit, and Angular serialize state cleanly without hydration flickers.`,
+        text: `Use the modular Firebase Web SDK and generated TypeScript bindings so SSR frameworks like Next.js, Astro, SvelteKit, and Angular serialize state cleanly without hydration flickers.`,
       },
     ],
   ];
@@ -723,7 +999,52 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     );
   });
 
-  // 5. Inline CodingCat.dev YouTube Video Embed (Driving YouTube Views!)
+  // 5. Conclusion: Our Verdict at CodingCat.dev (with CodingCat.dev's X, LinkedIn, and YouTube accounts!)
+  blocks.push(
+    createTextBlock(
+      `Conclusion`,
+      "h2",
+      `h2_conclusion_${docId}`
+    )
+  );
+  blocks.push(
+    createRichBlock(
+      [
+        {
+          text: `Accelerate your full-stack web and AI development by pairing `,
+        },
+        { text: parsed.originalTitle, strong: true },
+        {
+          text: ` with strict Security Rules, Firebase App Check, and local emulator testing. Come tell us on `,
+        },
+        {
+          text: `X (@CodingCatDev)`,
+          href: "https://x.com/CodingCatDev",
+          strong: true,
+        },
+        { text: ` and ` },
+        {
+          text: `LinkedIn (CodingCat.dev)`,
+          href: "https://www.linkedin.com/company/codingcatdev",
+          strong: true,
+        },
+        {
+          text: ` how you are using Firebase in your stack, and subscribe to the `,
+        },
+        {
+          text: `CodingCat.dev YouTube Channel`,
+          href: "https://www.youtube.com/@CodingCatDev?sub_confirmation=1",
+          strong: true,
+        },
+        {
+          text: ` so you don't miss what we build next!`,
+        },
+      ],
+      { style: "normal", keySeed: `p_conclusion_${docId}` }
+    )
+  );
+
+  // 6. Inline CodingCat.dev YouTube Video Embed (Driving YouTube Views!)
   if (matchedVideoDoc?.youtube) {
     blocks.push(
       createTextBlock(
@@ -761,7 +1082,7 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     });
   }
 
-  // 6. Official References & Related CodingCat.dev Firebase Guides
+  // 7. Official References & Related CodingCat.dev Firebase Guides
   blocks.push(
     createTextBlock(
       `Resources, Official Docs & Related CodingCat.dev Guides`,
@@ -805,7 +1126,7 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     );
   });
 
-  // 7. AEO FAQPage Section (3 Question Headings for Structured Data)
+  // 8. AEO FAQPage Section (3 Question Headings for Structured Data)
   blocks.push(
     createTextBlock(
       `Frequently Asked Questions (FAQ)`,
@@ -825,14 +1146,12 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
     createRichBlock(
       [
         {
-          text: `${parsed.originalTitle} (announced ${parsed.originalDateLabel}) enhances the Firebase platform for ${tagLabels.join(
+          text: `${parsed.originalTitle} (announced ${parsed.originalDateLabel} by the Firebase team) enhances the platform for ${tagLabels.join(
             ", "
-          )} workloads. ${
-            firstParagraphs[0]?.text || ""
-          } Developers can review the official release notes on the `,
+          )} workloads. ${coreSummarySentence} Developers can review the primary announcement on the `,
         },
         { text: "Firebase Blog", href: parsed.sourceUrl, strong: true },
-        { text: " alongside the implementation patterns in this guide." },
+        { text: " alongside our implementation patterns and production checklist above." },
       ],
       { style: "normal", keySeed: `p_faq1_${docId}` }
     )
@@ -880,13 +1199,19 @@ function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFirebaseDocs,
           href: "https://www.youtube.com/@CodingCatDev?sub_confirmation=1",
           strong: true,
         },
-        { text: `, including `, },
+        { text: `, including ` },
         {
           text: matchedVideoDoc?.title || "Firebase SQL with Data Connect",
           href: matchedVideoDoc?.youtube || "https://www.youtube.com/@CodingCatDev?sub_confirmation=1",
           strong: true,
         },
-        { text: `, and browse our complete Firebase tutorial archive on CodingCat.dev.` },
+        { text: `, and follow us on ` },
+        {
+          text: "X (@CodingCatDev)",
+          href: "https://x.com/CodingCatDev",
+          strong: true,
+        },
+        { text: ` for weekly full-stack tutorials.` },
       ],
       { style: "normal", keySeed: `p_faq3_${docId}` }
     )
@@ -918,7 +1243,7 @@ async function main() {
     }) on dataset: ${dataset}`
   );
 
-  // 1. Fetch existing Firebase docs with YouTube videos from Sanity
+  // 1. Fetch existing Firebase docs with YouTube videos (and existing post-fb-* covers to avoid re-uploading)
   const sanityQuery = `*[_type in ["post", "podcast"] && !(_id in path("drafts.**")) && "firebase" in tags[].value] | order(coalesce(date, _createdAt) desc) {
     _id,
     _type,
@@ -932,9 +1257,15 @@ async function main() {
   );
   const { result: existingFirebaseDocs } = await qRes.json();
   const firebaseVideoCatalog = (existingFirebaseDocs || []).filter((d) => Boolean(d.youtube));
+  const existingCoverByDocId = new Map();
+  for (const d of existingFirebaseDocs || []) {
+    if (d?._id && d?.coverImage?.asset?._ref) {
+      existingCoverByDocId.set(d._id, d.coverImage);
+    }
+  }
   const fallbackCoverRef = (existingFirebaseDocs || []).find((d) => d.coverImage?.asset)?.coverImage;
   console.log(
-    `Loaded ${existingFirebaseDocs.length} existing Firebase docs (${firebaseVideoCatalog.length} with YouTube videos).`
+    `Loaded ${existingFirebaseDocs.length} existing Firebase docs (${firebaseVideoCatalog.length} with YouTube videos, ${existingCoverByDocId.size} with covers).`
   );
 
   // 2. Fetch firebase.blog/sitemap-0.xml and filter to target years & web-first slugs
@@ -990,13 +1321,18 @@ async function main() {
     }
     const relatedDocs = [...neighborDocs, ...firebaseVideoCatalog.slice(0, 2)];
 
-    let coverImageRef = fallbackCoverRef;
-    const tags = inferTagsForPost(parsed.originalTitle, parsed.elements);
-    const svg = buildCoverSvg(parsed.originalTitle, parsed.publishDateLabel, tags);
+    const uParts = new URL(parsed.sourceUrl).pathname.split("/").filter(Boolean);
+    const candidateDocId = `post-fb-${uParts[1] || "2025"}-${uParts[2] || "01"}-${uParts[3] || "firebase-update"}`
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-")
+      .slice(0, 90);
 
-    if (!isDryRun && token) {
+    let coverImageRef = existingCoverByDocId.get(candidateDocId) || fallbackCoverRef;
+    const tags = inferTagsForPost(parsed.originalTitle, parsed.elements);
+
+    if (!isDryRun && token && !existingCoverByDocId.has(candidateDocId)) {
       try {
-        const uParts = new URL(parsed.sourceUrl).pathname.split("/").filter(Boolean);
+        const svg = buildCoverSvg(parsed.originalTitle, parsed.publishDateLabel, tags);
         coverImageRef = await uploadCoverToSanity(
           svg,
           `firebase-${uParts[1]}-${uParts[2]}-${uParts[3]}.svg`,
@@ -1029,7 +1365,7 @@ async function main() {
 
     mutations.push({ createOrReplace: postDoc });
 
-    if (mutations.length >= 10 || i === parsedPosts.length - 1) {
+    if (mutations.length >= 15 || i === parsedPosts.length - 1) {
       const mutRes = await fetch(
         `https://${projectId}.api.sanity.io/v2024-01-01/data/mutate/${dataset}`,
         {
@@ -1052,7 +1388,9 @@ async function main() {
   console.log(`\nCompleted Firebase Archive Generator (${dataset}): ${createdCount} posts processed.`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
