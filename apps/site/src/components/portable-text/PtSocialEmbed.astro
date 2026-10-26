@@ -1,0 +1,258 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+
+type SocialEmbedNode = {
+	_type: string;
+	platform?: string;
+	url?: string;
+	author?: string;
+	handle?: string;
+	fallbackText?: string;
+	caption?: string;
+};
+
+type Props = PtProps<SocialEmbedNode>;
+
+const { node } = Astro.props;
+
+const rawUrl = stegaClean(node.url)?.trim() ?? "";
+const rawPlatform = stegaClean(node.platform)?.trim().toLowerCase() ?? "auto";
+const author = stegaClean(node.author)?.trim();
+const handle = stegaClean(node.handle)?.trim();
+const fallbackText = stegaClean(node.fallbackText)?.trim();
+const caption = stegaClean(node.caption)?.trim();
+
+type PlatformKey =
+	| "x"
+	| "bluesky"
+	| "linkedin"
+	| "reddit"
+	| "tiktok"
+	| "instagram"
+	| "threads"
+	| "mastodon"
+	| "gist"
+	| "generic";
+
+function detectPlatform(type: string, explicitPlatform: string, url: string): PlatformKey {
+	if (explicitPlatform && explicitPlatform !== "auto") {
+		if (explicitPlatform === "twitter") return "x";
+		if (explicitPlatform === "githubgist") return "gist";
+		return explicitPlatform as PlatformKey;
+	}
+	const typeLower = type.toLowerCase();
+	if (typeLower === "bluesky") return "bluesky";
+	if (typeLower === "linkedin") return "linkedin";
+	if (typeLower === "reddit") return "reddit";
+	if (typeLower === "tiktok") return "tiktok";
+	if (typeLower === "instagram") return "instagram";
+	if (typeLower === "threads") return "threads";
+	if (typeLower === "mastodon") return "mastodon";
+	if (typeLower === "githubgist") return "gist";
+
+	const lower = url.toLowerCase();
+	if (lower.includes("x.com/") || lower.includes("twitter.com/")) return "x";
+	if (lower.includes("bsky.app/")) return "bluesky";
+	if (lower.includes("linkedin.com/")) return "linkedin";
+	if (lower.includes("reddit.com/")) return "reddit";
+	if (lower.includes("tiktok.com/")) return "tiktok";
+	if (lower.includes("instagram.com/")) return "instagram";
+	if (lower.includes("threads.net/") || lower.includes("threads.com/")) return "threads";
+	if (lower.includes("gist.github.com/")) return "gist";
+	if (/\/@[^/]+\/\d+/.test(lower)) return "mastodon";
+	return "generic";
+}
+
+const platform = detectPlatform(node._type, rawPlatform, rawUrl);
+
+const platformLabels: Record<PlatformKey, string> = {
+	x: "X (Twitter)",
+	bluesky: "Bluesky",
+	linkedin: "LinkedIn",
+	reddit: "Reddit",
+	tiktok: "TikTok",
+	instagram: "Instagram",
+	threads: "Threads",
+	mastodon: "Mastodon",
+	gist: "GitHub Gist",
+	generic: "Social Post",
+};
+
+const label = platformLabels[platform] ?? "Social Post";
+
+// Extract LinkedIn embed URN if available
+const linkedInUrnMatch = rawUrl.match(/urn:li:(?:activity|share|ugcPost):\d+/i);
+const linkedInNumericMatch = rawUrl.match(/activity-(\d+)/i);
+const linkedInEmbedSrc = linkedInUrnMatch
+	? `https://www.linkedin.com/embed/feed/update/${linkedInUrnMatch[0]}`
+	: linkedInNumericMatch
+		? `https://www.linkedin.com/embed/feed/update/urn:li:activity:${linkedInNumericMatch[1]}`
+		: undefined;
+
+// Extract TikTok video ID if available
+const tiktokVideoId = rawUrl.match(/\/video\/(\d+)/)?.[1];
+
+// Clean Mastodon embed URL
+const mastodonEmbedSrc =
+	platform === "mastodon" && rawUrl
+		? `${rawUrl.replace(/\/$/, "")}/embed`
+		: undefined;
+---
+
+{
+	rawUrl && (
+		<figure class="not-prose my-8 flex flex-col items-center">
+			<div class="w-full max-w-xl rounded-2xl border border-border bg-card p-5 text-card-foreground shadow-sm">
+				<div class="mb-3 flex items-center justify-between gap-3">
+					<div class="flex items-center gap-2.5">
+						<span class="inline-flex size-8 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+							{label.slice(0, 2).toUpperCase()}
+						</span>
+						<div class="leading-tight">
+							<div class="text-sm font-semibold text-foreground">
+								{author || label}
+							</div>
+							{handle && (
+								<div class="text-xs text-muted-foreground">
+									@{handle.replace(/^@/, "")}
+								</div>
+							)}
+						</div>
+					</div>
+					<a
+						href={rawUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary hover:text-foreground"
+					>
+						<span>View on {label}</span>
+						<span aria-hidden="true">&rarr;</span>
+					</a>
+				</div>
+
+				{platform === "x" && (
+					<blockquote class="twitter-tweet m-0" data-theme="dark" data-dnt="true">
+						{fallbackText && (
+							<p class="whitespace-pre-line text-sm text-foreground">{fallbackText}</p>
+						)}
+						<a href={rawUrl}>View post on X</a>
+					</blockquote>
+				)}
+
+				{platform === "bluesky" && (
+					<blockquote class="bluesky-embed m-0" data-bluesky-uri={rawUrl}>
+						{fallbackText && (
+							<p class="whitespace-pre-line text-sm text-foreground">{fallbackText}</p>
+						)}
+						<a href={rawUrl} target="_blank" rel="noopener noreferrer" class="text-xs text-primary hover:underline">
+							Open post on Bluesky &rarr;
+						</a>
+					</blockquote>
+				)}
+
+				{platform === "linkedin" && (
+					linkedInEmbedSrc ? (
+						<div class="overflow-hidden rounded-xl border border-border">
+							<iframe
+								src={linkedInEmbedSrc}
+								title="LinkedIn Post"
+								class="h-[420px] w-full border-0"
+								loading="lazy"
+							/>
+						</div>
+					) : (
+						<div class="space-y-2">
+							{fallbackText && (
+								<p class="whitespace-pre-line text-sm leading-relaxed text-foreground">
+									{fallbackText}
+								</p>
+							)}
+						</div>
+					)
+				)}
+
+				{platform === "reddit" && (
+					<blockquote class="reddit-embed-bq m-0" data-embed-theme="dark">
+						{fallbackText && (
+							<p class="whitespace-pre-line text-sm text-foreground">{fallbackText}</p>
+						)}
+						<a href={rawUrl}>View discussion on Reddit</a>
+					</blockquote>
+				)}
+
+				{platform === "tiktok" && (
+					<blockquote
+						class="tiktok-embed m-0"
+						cite={rawUrl}
+						data-video-id={tiktokVideoId}
+					>
+						<section>
+							<a target="_blank" rel="noopener noreferrer" href={rawUrl}>
+								{fallbackText || "Watch on TikTok"}
+							</a>
+						</section>
+					</blockquote>
+				)}
+
+				{platform === "instagram" && (
+					<blockquote
+						class="instagram-media m-0 w-full"
+						data-instgrm-permalink={rawUrl}
+						data-instgrm-version="14"
+					>
+						<a href={rawUrl} target="_blank" rel="noopener noreferrer">
+							{fallbackText || "View post on Instagram"}
+						</a>
+					</blockquote>
+				)}
+
+				{platform === "threads" && (
+					<blockquote
+						class="text-post-media m-0"
+						data-text-post-permalink={rawUrl}
+						data-text-post-version="0"
+					>
+						<a href={rawUrl} target="_blank" rel="noopener noreferrer">
+							{fallbackText || "View conversation on Threads"}
+						</a>
+					</blockquote>
+				)}
+
+				{platform === "mastodon" && mastodonEmbedSrc && (
+					<div class="overflow-hidden rounded-xl border border-border">
+						<iframe
+							src={mastodonEmbedSrc}
+							title="Mastodon Post"
+							class="min-h-[260px] w-full border-0"
+							loading="lazy"
+						/>
+					</div>
+				)}
+
+				{(platform === "gist" || platform === "generic") && (
+					<div class="space-y-2">
+						{fallbackText && (
+							<p class="whitespace-pre-line font-mono text-xs leading-relaxed text-foreground">
+								{fallbackText}
+							</p>
+						)}
+						<a
+							href={rawUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="inline-block text-xs font-medium text-primary hover:underline"
+						>
+							{rawUrl}
+						</a>
+					</div>
+				)}
+			</div>
+			{caption && (
+				<figcaption class="mt-2 text-center text-xs text-muted-foreground">
+					{caption}
+				</figcaption>
+			)}
+		</figure>
+	)
+}
