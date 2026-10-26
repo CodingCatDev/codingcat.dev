@@ -4,7 +4,7 @@ import type { SanityImageSource } from "@sanity/image-url";
 import type { Props as PtProps } from "astro-portabletext/types";
 import { youtubeId } from "@/lib/youtube";
 
-type YouTubeNode = { _type: "youtube"; youtube?: string };
+type YouTubeNode = { _type: "youtube"; youtube?: string; url?: string };
 
 type Props = PtProps<YouTubeNode> & {
 	coverImage?: (SanityImageSource & { alt?: string }) | null;
@@ -12,7 +12,7 @@ type Props = PtProps<YouTubeNode> & {
 };
 
 const { node, coverImage, priority = false } = Astro.props;
-const id = youtubeId(stegaClean(node.youtube));
+const id = youtubeId(stegaClean(node.youtube ?? node.url));
 
 const builder = Astro.locals.sanity.urlForImage(coverImage ?? undefined);
 const sanitySrc = builder?.width(1920).height(1080).quality(82).url();

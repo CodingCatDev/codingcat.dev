@@ -51,6 +51,9 @@ jobs:
           elif [ "$TARGET_DOCUMENT_ID" = "firebase-archive-2017-2024" ]; then
             FIREBASE_ARCHIVE_YEARS=2017,2018,2019,2020,2021,2022,2023,2024 SANITY_STUDIO_DATASET=production node scripts/generate-firebase-archive-posts.mjs
             FIREBASE_ARCHIVE_YEARS=2017,2018,2019,2020,2021,2022,2023,2024 SANITY_STUDIO_DATASET=dev node scripts/generate-firebase-archive-posts.mjs
+          elif [ "$TARGET_DOCUMENT_ID" = "publish-circular-ai-s1" ]; then
+            SANITY_STUDIO_DATASET=production node scripts/publish-circular-ai-s1-post.mjs
+            SANITY_STUDIO_DATASET=dev node scripts/publish-circular-ai-s1-post.mjs
           else
             node scripts/run-syndicate-post.mjs
           fi
