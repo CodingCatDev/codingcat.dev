@@ -532,5 +532,5 @@ html.aj-drawer-open #aj-agent-drawer {
  */
 .infinite-card-deferred {
 	content-visibility: auto;
-	contain-intrinsic-size: auto none auto 460px;
+	contain-intrinsic-size: auto 520px;
 }

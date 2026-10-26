@@ -1,4 +1,5 @@
 ---
+import { stegaClean } from "@sanity/client/stega";
 import groq from "groq";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
@@ -21,12 +22,13 @@ if (!person?._id) {
 	return new Response(null, { status: 404 });
 }
 
+const cleanPersonId = stegaClean(person._id).trim().replace(/^drafts\./, "");
 const countsQuery = groq`{
 	"podcasts": count(*[_type == "podcast" && references($refId) && defined(slug.current)]),
 	"posts": count(*[_type == "post" && references($refId) && defined(slug.current)])
 }`;
 const counts = ((await sanity.loadQuery(countsQuery, {
-	refId: person._id,
+	refId: cleanPersonId,
 })) ?? { podcasts: 0, posts: 0 }) as { podcasts?: number; posts?: number };
 
 const path = `/guest/${slug}`;
@@ -127,10 +129,12 @@ const totalPosts = counts.posts ?? relatedPosts.length;
 					<InfiniteContentGrid
 						type="podcast"
 						items={relatedPodcasts}
-						refId={person._id}
+						refId={cleanPersonId}
 						initialOffset={relatedPodcasts.length}
 						totalCount={totalPodcasts}
-						priorityCount={0}
+						showSearch={totalPodcasts > 4}
+						searchPlaceholder={`Filter ${stegaClean(person.title)} episodes...`}
+						priorityCount={2}
 						nounPlural="episodes"
 					/>
 				</aside>
@@ -144,9 +148,11 @@ const totalPosts = counts.posts ?? relatedPosts.length;
 					<InfiniteContentGrid
 						type="post"
 						items={relatedPosts}
-						refId={person._id}
+						refId={cleanPersonId}
 						initialOffset={relatedPosts.length}
 						totalCount={totalPosts}
+						showSearch={totalPosts > 4}
+						searchPlaceholder={`Filter ${stegaClean(person.title)} blog posts...`}
 						priorityCount={0}
 						nounPlural="blog posts"
 					/>

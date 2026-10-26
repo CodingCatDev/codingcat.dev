@@ -8,6 +8,7 @@
  * 3. Subsequent batches stream as pre-rendered HTML partials from `/api/feed-cards` via `IntersectionObserver` (`rootMargin: "650px 0px"`).
  * 4. Supports instant in-page topic filtering (`?topic=sanity`) and keyword/name filtering (`?q=...`) without losing above-the-fold context.
  */
+import { stegaClean } from "@sanity/client/stega";
 import ContentCard from "@/components/ContentCard.astro";
 import type { ContentListItem } from "@/lib/content";
 import { TOPICS_BY_SLUG } from "@/lib/topics";
@@ -56,6 +57,9 @@ const {
 	class: className,
 } = Astro.props;
 
+const cleanSkipId =
+	stegaClean(skipId).trim().replace(/^drafts\./, "") || "none";
+const cleanRefId = stegaClean(refId).trim().replace(/^drafts\./, "");
 const hasMoreInitial = items.length > 0 && initialOffset < totalCount;
 const activeTopicDef = activeTopic ? TOPICS_BY_SLUG[activeTopic] : undefined;
 const effectivePlaceholder =
@@ -65,8 +69,8 @@ const effectivePlaceholder =
 <div
 	class="infinite-feed-root"
 	data-feed-type={type}
-	data-skip-id={skipId}
-	data-ref-id={refId}
+	data-skip-id={cleanSkipId}
+	data-ref-id={cleanRefId}
 	data-offset={String(initialOffset)}
 	data-total={String(totalCount)}
 	data-batch-size={String(batchSize)}
@@ -145,7 +149,7 @@ const effectivePlaceholder =
 				<ContentCard
 					item={item}
 					priority={index < priorityCount}
-					deferred={index >= priorityCount}
+					deferred={index >= Math.max(priorityCount, 8)}
 				/>
 			))
 		}
@@ -188,7 +192,7 @@ const effectivePlaceholder =
 			data-feed-load-more
 			class="duo-btn duo-btn-outline px-6 py-3 text-sm"
 		>
-			<span>Load More {nounPlural}</span>
+			<span data-feed-load-more-text>Load More {nounPlural}</span>
 			<span class="text-[#7C3AED] dark:text-[#C084FC]">&darr;</span>
 		</button>
 
@@ -217,45 +221,55 @@ const effectivePlaceholder =
 	</div>
 </div>
 
-<script>
-	function initInfiniteFeeds() {
-		const roots = document.querySelectorAll<HTMLElement>(".infinite-feed-root");
-		for (const root of roots) {
-			if (root.dataset.initialized === "true") continue;
-			root.dataset.initialized = "true";
+<script is:inline>
+	(function () {
+		function initInfiniteFeeds() {
+			var roots = document.querySelectorAll(".infinite-feed-root");
+			for (var i = 0; i < roots.length; i++) {
+				var root = roots[i];
+				if (root.dataset.initialized === "true") continue;
+				root.dataset.initialized = "true";
+				setupFeedRoot(root, roots.length === 1);
+			}
+		}
 
-			const grid = root.querySelector<HTMLElement>("[data-feed-grid]");
-			const sentinel = root.querySelector<HTMLElement>("[data-feed-sentinel]");
-			const spinner = root.querySelector<HTMLElement>("[data-feed-spinner]");
-			const loadMoreBtn = root.querySelector<HTMLButtonElement>("[data-feed-load-more]");
-			const endBadge = root.querySelector<HTMLElement>("[data-feed-end]");
-			const emptyBox = root.querySelector<HTMLElement>("[data-feed-empty]");
-			const countLabel = root.querySelector<HTMLElement>("[data-feed-count-label]");
-			const topicBadge = root.querySelector<HTMLElement>("[data-feed-topic-badge]");
-			const topicName = root.querySelector<HTMLElement>("[data-feed-topic-name]");
-			const hubLink = root.querySelector<HTMLAnchorElement>("[data-feed-hub-link]");
-			const searchInput = root.querySelector<HTMLInputElement>("[data-feed-search-input]");
+		function setupFeedRoot(root, isSingleFeedPage) {
+			var grid = root.querySelector("[data-feed-grid]");
+			var sentinel = root.querySelector("[data-feed-sentinel]");
+			var spinner = root.querySelector("[data-feed-spinner]");
+			var loadMoreBtn = root.querySelector("[data-feed-load-more]");
+			var loadMoreText = root.querySelector("[data-feed-load-more-text]");
+			var endBadge = root.querySelector("[data-feed-end]");
+			var emptyBox = root.querySelector("[data-feed-empty]");
+			var countLabel = root.querySelector("[data-feed-count-label]");
+			var topicBadge = root.querySelector("[data-feed-topic-badge]");
+			var topicName = root.querySelector("[data-feed-topic-name]");
+			var hubLink = root.querySelector("[data-feed-hub-link]");
+			var searchInput = root.querySelector("[data-feed-search-input]");
 
-			if (!grid || !sentinel) continue;
+			if (!grid || !sentinel) return;
 
-			const feedType = root.dataset.feedType || "podcast";
-			const baseSkipId = root.dataset.skipId || "none";
-			const refId = root.dataset.refId || "";
-			const batchSize = Number.parseInt(root.dataset.batchSize || "8", 10);
-			const nounPlural = root.dataset.nounPlural || "items";
+			var feedType = root.dataset.feedType || "podcast";
+			var baseSkipId = root.dataset.skipId || "none";
+			var refId = root.dataset.refId || "";
+			var batchSize = Number.parseInt(root.dataset.batchSize || "8", 10);
+			var nounPlural = root.dataset.nounPlural || "items";
 
-			let offset = Number.parseInt(root.dataset.offset || "0", 10);
-			let total = Number.parseInt(root.dataset.total || "0", 10);
-			let hasMore = root.dataset.hasMore === "true";
-			let activeTopic = root.dataset.activeTopic || "";
-			let activeQuery = root.dataset.activeQuery || "";
-			let isLoading = false;
-			let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+			var offset = Number.parseInt(root.dataset.offset || "0", 10);
+			var total = Number.parseInt(root.dataset.total || "0", 10);
+			var hasMore = root.dataset.hasMore === "true";
+			var activeTopic = root.dataset.activeTopic || "";
+			var activeQuery = root.dataset.activeQuery || "";
+			var isLoading = false;
+			var pendingManual = false;
+			var debounceTimer = null;
+			var observer = null;
 
-			const updateStatusUI = () => {
-				const loadedCount = grid.children.length;
+			var updateStatusUI = function () {
+				var loadedCount = grid.children.length;
 				if (countLabel) {
-					countLabel.textContent = `Showing ${loadedCount} of ${total} ${nounPlural}`;
+					countLabel.textContent =
+						"Showing " + loadedCount + " of " + total + " " + nounPlural;
 				}
 				if (emptyBox) {
 					emptyBox.classList.toggle("hidden", loadedCount > 0);
@@ -264,10 +278,20 @@ const effectivePlaceholder =
 				if (endBadge) {
 					endBadge.classList.toggle("hidden", hasMore || loadedCount === 0);
 				}
+				if (loadMoreText) {
+					loadMoreText.textContent = "Load More " + nounPlural;
+				}
 			};
 
-			const fetchBatch = async (reset = false) => {
-				if (isLoading || (!hasMore && !reset)) return;
+			var fetchBatch = async function (reset, isManualClick) {
+				if (isLoading) {
+					if (isManualClick) {
+						pendingManual = true;
+					}
+					return;
+				}
+				if (!hasMore && !reset) return;
+
 				isLoading = true;
 				grid.setAttribute("aria-busy", "true");
 				if (spinner) {
@@ -277,10 +301,10 @@ const effectivePlaceholder =
 				if (loadMoreBtn) loadMoreBtn.disabled = true;
 
 				try {
-					const targetOffset = reset ? 0 : offset;
-					const effectiveSkip =
+					var targetOffset = reset ? 0 : offset;
+					var effectiveSkip =
 						activeTopic || activeQuery ? "none" : baseSkipId;
-					const params = new URLSearchParams({
+					var params = new URLSearchParams({
 						type: feedType,
 						skip: effectiveSkip,
 						offset: String(targetOffset),
@@ -296,38 +320,61 @@ const effectivePlaceholder =
 						params.set("q", activeQuery);
 					}
 
-					const response = await fetch(`/api/feed-cards?${params.toString()}`);
-					if (!response.ok) throw new Error(`HTTP ${response.status}`);
+					var response = await fetch("/api/feed-cards?" + params.toString(), {
+						credentials: "same-origin",
+						headers: { Accept: "text/html" },
+					});
+					if (!response.ok) {
+						throw new Error("HTTP " + response.status);
+					}
 
-					const html = await response.text();
-					const headerHasMore = response.headers.get("X-Has-More");
-					const headerNextOffset = response.headers.get("X-Next-Offset");
-					const headerTotal = response.headers.get("X-Total-Count");
+					var html = await response.text();
+					var parser = new DOMParser();
+					var doc = parser.parseFromString(html, "text/html");
+					var metaEl = doc.querySelector("[data-feed-batch-meta]");
+					var newCards = Array.from(doc.querySelectorAll("article"));
 
-					const parser = new DOMParser();
-					const doc = parser.parseFromString(html, "text/html");
-					const newCards = Array.from(doc.body.children);
+					var rawHasMore =
+						(metaEl && metaEl.getAttribute("data-has-more")) ||
+						response.headers.get("X-Has-More");
+					var rawNextOffset =
+						(metaEl && metaEl.getAttribute("data-next-offset")) ||
+						response.headers.get("X-Next-Offset");
+					var rawTotal =
+						(metaEl && metaEl.getAttribute("data-total-count")) ||
+						response.headers.get("X-Total-Count");
 
 					if (reset) {
-						grid.replaceChildren(...newCards);
+						grid.replaceChildren.apply(grid, newCards);
 					} else {
-						for (const card of newCards) {
-							grid.appendChild(card);
+						for (var c = 0; c < newCards.length; c++) {
+							grid.appendChild(newCards[c]);
 						}
 					}
 
-					offset = headerNextOffset
-						? Number.parseInt(headerNextOffset, 10)
+					offset = rawNextOffset
+						? Number.parseInt(rawNextOffset, 10)
 						: targetOffset + newCards.length;
-					total = headerTotal ? Number.parseInt(headerTotal, 10) : total;
-					hasMore = headerHasMore === "true";
+					total = rawTotal ? Number.parseInt(rawTotal, 10) : total;
+					hasMore =
+						rawHasMore !== null
+							? rawHasMore === "true"
+							: newCards.length > 0 && offset < total;
 
 					root.dataset.offset = String(offset);
 					root.dataset.total = String(total);
 					root.dataset.hasMore = String(hasMore);
 					updateStatusUI();
+
+					if (observer && hasMore) {
+						observer.unobserve(sentinel);
+						observer.observe(sentinel);
+					}
 				} catch (err) {
 					console.error("Failed to load more feed items:", err);
+					if (loadMoreText) {
+						loadMoreText.textContent = "Retry Load More " + nounPlural;
+					}
 				} finally {
 					isLoading = false;
 					grid.setAttribute("aria-busy", "false");
@@ -336,70 +383,76 @@ const effectivePlaceholder =
 						spinner.classList.remove("inline-flex");
 					}
 					if (loadMoreBtn) loadMoreBtn.disabled = false;
+					if (pendingManual && hasMore) {
+						pendingManual = false;
+						void fetchBatch(false, false);
+					}
 				}
 			};
 
+			root.__ccFetchBatch = fetchBatch;
+
 			// 1. IntersectionObserver for automatic infinite scrolling
-			const observer = new IntersectionObserver(
-				(entries) => {
-					for (const entry of entries) {
-						if (entry.isIntersecting && hasMore && !isLoading) {
-							void fetchBatch(false);
+			if ("IntersectionObserver" in window) {
+				observer = new IntersectionObserver(
+					function (entries) {
+						for (var e = 0; e < entries.length; e++) {
+							if (entries[e].isIntersecting && hasMore && !isLoading) {
+								void fetchBatch(false, false);
+							}
 						}
-					}
-				},
-				{ rootMargin: "650px 0px" },
-			);
-			observer.observe(sentinel);
+					},
+					{ rootMargin: "550px 0px" },
+				);
+				observer.observe(sentinel);
+			}
 
-			// 2. Manual button click fallback
-			loadMoreBtn?.addEventListener("click", () => {
-				void fetchBatch(false);
-			});
+			// 2. Live Search / Filter Input (debounced 220ms)
+			if (searchInput) {
+				searchInput.addEventListener("input", function () {
+					if (debounceTimer) clearTimeout(debounceTimer);
+					debounceTimer = setTimeout(function () {
+						var nextQuery = searchInput.value.trim();
+						if (nextQuery === activeQuery) return;
+						activeQuery = nextQuery;
+						root.dataset.activeQuery = activeQuery;
 
-			// 3. Live Search / Filter Input (debounced 220ms)
-			searchInput?.addEventListener("input", () => {
-				if (debounceTimer) clearTimeout(debounceTimer);
-				debounceTimer = setTimeout(() => {
-					const nextQuery = searchInput.value.trim();
-					if (nextQuery === activeQuery) return;
-					activeQuery = nextQuery;
-					root.dataset.activeQuery = activeQuery;
+						if (isSingleFeedPage) {
+							var url = new URL(window.location.href);
+							if (activeQuery) {
+								url.searchParams.set("q", activeQuery);
+							} else {
+								url.searchParams.delete("q");
+							}
+							window.history.replaceState(
+								{ topic: activeTopic, q: activeQuery },
+								"",
+								url.toString(),
+							);
+						}
 
-					const url = new URL(window.location.href);
-					if (activeQuery) {
-						url.searchParams.set("q", activeQuery);
-					} else {
-						url.searchParams.delete("q");
-					}
-					window.history.replaceState(
-						{ topic: activeTopic, q: activeQuery },
-						"",
-						url.toString(),
-					);
+						hasMore = true;
+						void fetchBatch(true, false);
+					}, 220);
+				});
+			}
 
-					hasMore = true;
-					void fetchBatch(true);
-				}, 220);
-			});
-
-			// 4. In-page Topic Filter Strip interception (when only 1 primary feed on page)
-			if (roots.length === 1) {
-				const filterStrip = document.querySelector<HTMLElement>(
+			// 3. In-page Topic Filter Strip interception (when only 1 primary feed on page)
+			if (isSingleFeedPage) {
+				var filterStrip = document.querySelector(
 					'[data-topic-filter-strip="in-page"]',
 				);
-				if (filterStrip) {
-					const pills = Array.from(
-						filterStrip.querySelectorAll<HTMLAnchorElement>("[data-topic-pill]"),
+				if (filterStrip && filterStrip.dataset.bound !== "true") {
+					filterStrip.dataset.bound = "true";
+					var pills = Array.from(
+						filterStrip.querySelectorAll("[data-topic-pill]"),
 					);
 
-					const syncPillStyles = (
-						selectedSlug: string,
-						selectedTitle: string,
-					) => {
-						for (const pill of pills) {
-							const slug = pill.dataset.topicPill || "";
-							const isActive = slug === selectedSlug;
+					var syncPillStyles = function (selectedSlug, selectedTitle) {
+						for (var p = 0; p < pills.length; p++) {
+							var pill = pills[p];
+							var slug = pill.dataset.topicPill || "";
+							var isActive = slug === selectedSlug;
 							pill.setAttribute("aria-current", isActive ? "true" : "false");
 							if (isActive) {
 								pill.classList.add(
@@ -436,7 +489,7 @@ const effectivePlaceholder =
 
 						if (topicBadge && topicName) {
 							if (selectedSlug) {
-								topicName.textContent = `Filtered: ${selectedTitle}`;
+								topicName.textContent = "Filtered: " + selectedTitle;
 								topicBadge.classList.remove("hidden");
 							} else {
 								topicBadge.classList.add("hidden");
@@ -444,7 +497,7 @@ const effectivePlaceholder =
 						}
 						if (hubLink) {
 							if (selectedSlug) {
-								hubLink.href = `/topic/${selectedSlug}`;
+								hubLink.href = "/topic/" + selectedSlug;
 								hubLink.classList.remove("hidden");
 							} else {
 								hubLink.classList.add("hidden");
@@ -452,58 +505,82 @@ const effectivePlaceholder =
 						}
 					};
 
-					for (const pill of pills) {
-						pill.addEventListener("click", (e) => {
-							e.preventDefault();
-							const nextTopic = pill.dataset.topicPill || "";
-							const nextTitle = pill.dataset.topicTitle || nextTopic;
-							if (nextTopic === activeTopic && !isLoading) return;
+					for (var k = 0; k < pills.length; k++) {
+						(function (pill) {
+							pill.addEventListener("click", function (ev) {
+								ev.preventDefault();
+								var nextTopic = pill.dataset.topicPill || "";
+								var nextTitle = pill.dataset.topicTitle || nextTopic;
+								if (nextTopic === activeTopic && !isLoading) return;
 
-							activeTopic = nextTopic;
-							root.dataset.activeTopic = activeTopic;
-							syncPillStyles(activeTopic, nextTitle);
+								activeTopic = nextTopic;
+								root.dataset.activeTopic = activeTopic;
+								syncPillStyles(activeTopic, nextTitle);
 
-							const url = new URL(window.location.href);
-							if (activeTopic) {
-								url.searchParams.set("topic", activeTopic);
-							} else {
-								url.searchParams.delete("topic");
-							}
-							window.history.pushState(
-								{ topic: activeTopic, q: activeQuery },
-								"",
-								url.toString(),
-							);
+								var url = new URL(window.location.href);
+								if (activeTopic) {
+									url.searchParams.set("topic", activeTopic);
+								} else {
+									url.searchParams.delete("topic");
+								}
+								window.history.pushState(
+									{ topic: activeTopic, q: activeQuery },
+									"",
+									url.toString(),
+								);
 
-							hasMore = true;
-							void fetchBatch(true);
-						});
+								hasMore = true;
+								void fetchBatch(true, false);
+							});
+						})(pills[k]);
 					}
 
-					window.addEventListener("popstate", () => {
-						const url = new URL(window.location.href);
-						const poppedTopic = url.searchParams.get("topic") || "";
-						const poppedQuery = url.searchParams.get("q") || "";
+					window.addEventListener("popstate", function () {
+						var url = new URL(window.location.href);
+						var poppedTopic = url.searchParams.get("topic") || "";
+						var poppedQuery = url.searchParams.get("q") || "";
 						if (poppedTopic === activeTopic && poppedQuery === activeQuery)
 							return;
 						activeTopic = poppedTopic;
 						activeQuery = poppedQuery;
 						if (searchInput) searchInput.value = activeQuery;
-						const matchingPill = pills.find(
-							(p) => (p.dataset.topicPill || "") === activeTopic,
-						);
+						var matchingPill = pills.find(function (p) {
+							return (p.dataset.topicPill || "") === activeTopic;
+						});
 						syncPillStyles(
 							activeTopic,
-							matchingPill?.dataset.topicTitle || activeTopic,
+							(matchingPill && matchingPill.dataset.topicTitle) || activeTopic,
 						);
 						hasMore = true;
-						void fetchBatch(true);
+						void fetchBatch(true, false);
 					});
 				}
 			}
 		}
-	}
 
-	initInfiniteFeeds();
-	document.addEventListener("astro:page-load", initInfiniteFeeds);
+		if (!window.__ccInfiniteFeedsBound) {
+			window.__ccInfiniteFeedsBound = true;
+
+			// Delegated click handler guarantees clicking any Load More button always works
+			document.addEventListener("click", function (ev) {
+				var target = ev.target;
+				if (!(target instanceof Element)) return;
+				var btn = target.closest("[data-feed-load-more]");
+				if (!btn) return;
+				var root = btn.closest(".infinite-feed-root");
+				if (!root) return;
+				ev.preventDefault();
+				initInfiniteFeeds();
+				if (typeof root.__ccFetchBatch === "function") {
+					void root.__ccFetchBatch(false, true);
+				}
+			});
+
+			document.addEventListener("DOMContentLoaded", initInfiniteFeeds);
+			window.addEventListener("load", initInfiniteFeeds);
+			document.addEventListener("astro:page-load", initInfiniteFeeds);
+		}
+
+		initInfiniteFeeds();
+	})();
 </script>

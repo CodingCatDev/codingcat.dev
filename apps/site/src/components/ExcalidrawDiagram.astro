@@ -226,11 +226,12 @@ const resolved =
 const nodes = resolved.nodes;
 const edges = resolved.edges;
 const count = Math.max(nodes.length, 1);
-const svgWidth = Math.max(count * 248, 740);
-const svgHeight = compact ? 204 : 234;
-const boxW = 192;
-const boxH = 96;
-const boxY = Math.round((svgHeight - boxH) / 2) + 8;
+const stepSpan = 336;
+const svgWidth = Math.max(count * stepSpan, 1008);
+const svgHeight = compact ? 236 : 264;
+const boxW = 248;
+const boxH = 104;
+const boxY = Math.round((svgHeight - boxH) / 2) - 8;
 
 const uid = `diagram-${Math.random().toString(36).slice(2, 9)}`;
 const a11ySummary = nodes
@@ -292,16 +293,13 @@ const a11ySummary = nodes
 				</pattern>
 			</defs>
 
+			{/* Layer 1: Node Boxes */}
 			{
 				nodes.map((node, index) => {
-					const stepSpan = svgWidth / count;
 					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
 					const y = boxY + (index % 2 === 0 ? -4 : 6);
 					const colorKey = node.color ?? PALETTE_CYCLE[index % PALETTE_CYCLE.length];
 					const palette = COLOR_MAP[colorKey];
-					const nextX = Math.round((index + 1) * stepSpan + (stepSpan - boxW) / 2);
-					const nextY = boxY + ((index + 1) % 2 === 0 ? -4 : 6);
-					const edge = edges[index];
 					const isBad = colorKey === "red" || node.status === "bad";
 					const isGood =
 						colorKey === "green" ||
@@ -311,39 +309,6 @@ const a11ySummary = nodes
 
 					return (
 						<g>
-							{/* Sketchy Arrow to Next Node */}
-							{index < nodes.length - 1 && (
-								<g>
-									<path
-										d={`M ${x + boxW + 4} ${y + boxH / 2} C ${x + boxW + 28} ${y + boxH / 2 - 22}, ${nextX - 28} ${nextY + boxH / 2 - 22}, ${nextX - 8} ${nextY + boxH / 2}`}
-										fill="none"
-										stroke="#D8B4FE"
-										stroke-width="3"
-										stroke-dasharray="7 5"
-										stroke-linecap="round"
-									/>
-									<path
-										d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
-										fill="none"
-										stroke="#FEF08A"
-										stroke-width="3.2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									/>
-									{edge?.label && (
-										<text
-											x={(x + boxW + nextX) / 2}
-											y={Math.min(y, nextY) + 16}
-											text-anchor="middle"
-											fill="#FEF08A"
-											style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
-										>
-											{edge.label}
-										</text>
-									)}
-								</g>
-							)}
-
 							{/* Solid backing inside node for AAA text readability */}
 							<rect
 								x={x}
@@ -393,7 +358,7 @@ const a11ySummary = nodes
 							{/* Evaluation Marker Badge (✓ Mint or ✗ Coral) */}
 							<g>
 								<circle
-									cx={x + boxW - 16}
+									cx={x + boxW - 18}
 									cy={y + 18}
 									r="11"
 									fill={isBad ? "#FCA5A5" : isGood ? "#86EFAC" : "#EDE9FE"}
@@ -401,7 +366,7 @@ const a11ySummary = nodes
 									stroke-width="2"
 								/>
 								<text
-									x={x + boxW - 16}
+									x={x + boxW - 18}
 									y={y + 22}
 									text-anchor="middle"
 									fill="#2A1155"
@@ -415,9 +380,9 @@ const a11ySummary = nodes
 							{node.badge && (
 								<g>
 									<rect
-										x={x + 12}
+										x={x + 14}
 										y={y - 13}
-										width={Math.max(node.badge.length * 8.5 + 18, 60)}
+										width={Math.max(node.badge.length * 8.5 + 18, 64)}
 										height="23"
 										rx="8"
 										fill={palette.hex}
@@ -425,7 +390,7 @@ const a11ySummary = nodes
 										stroke-width="2"
 									/>
 									<text
-										x={x + 12 + Math.max(node.badge.length * 8.5 + 18, 60) / 2}
+										x={x + 14 + Math.max(node.badge.length * 8.5 + 18, 64) / 2}
 										y={y + 2}
 										text-anchor="middle"
 										fill={palette.textOnBadge}
@@ -438,28 +403,89 @@ const a11ySummary = nodes
 
 							{/* Node Primary Label */}
 							<text
-								x={x + boxW / 2 - 4}
-								y={node.sublabel ? y + 44 : y + 54}
+								x={x + boxW / 2}
+								y={node.sublabel ? y + 48 : y + 58}
 								text-anchor="middle"
 								fill="#FFFFFF"
-								style="font-family: var(--font-hand); font-size: 18px; font-weight: 700;"
+								style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
 							>
-								{node.label.length > 21 ? `${node.label.slice(0, 19)}…` : node.label}
+								{node.label.length > 26 ? `${node.label.slice(0, 24)}…` : node.label}
 							</text>
 
 							{/* Node Hand-Drawn Sub-label */}
 							{node.sublabel && (
 								<text
 									x={x + boxW / 2}
-									y={y + 72}
+									y={y + 76}
 									text-anchor="middle"
 									fill="#FEF08A"
-									style="font-family: var(--font-hand); font-size: 16px; font-weight: 400;"
+									style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 400;"
 								>
-									{node.sublabel.length > 26
-										? `${node.sublabel.slice(0, 24)}…`
+									{node.sublabel.length > 30
+										? `${node.sublabel.slice(0, 28)}…`
 										: node.sublabel}
 								</text>
+							)}
+						</g>
+					);
+				})
+			}
+
+			{/* Layer 2: Connecting Arrows & High-Contrast Pill Labels (Never occluded by boxes) */}
+			{
+				nodes.map((_, index) => {
+					if (index >= nodes.length - 1) return null;
+					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
+					const y = boxY + (index % 2 === 0 ? -4 : 6);
+					const nextX = Math.round((index + 1) * stepSpan + (stepSpan - boxW) / 2);
+					const nextY = boxY + ((index + 1) % 2 === 0 ? -4 : 6);
+					const edge = edges[index];
+					const midX = Math.round((x + boxW + nextX) / 2);
+					const labelY = Math.max(y, nextY) + boxH + 26;
+					const pillW = edge?.label ? Math.max(edge.label.length * 8.2 + 22, 88) : 0;
+
+					return (
+						<g>
+							<path
+								d={`M ${x + boxW + 6} ${y + boxH / 2} C ${x + boxW + 34} ${y + boxH / 2 - 18}, ${nextX - 34} ${nextY + boxH / 2 - 18}, ${nextX - 8} ${nextY + boxH / 2}`}
+								fill="none"
+								stroke="#D8B4FE"
+								stroke-width="3"
+								stroke-dasharray="7 5"
+								stroke-linecap="round"
+							/>
+							<path
+								d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
+								fill="none"
+								stroke="#FEF08A"
+								stroke-width="3.2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+							{edge?.label && (
+								<g>
+									<rect
+										x={midX - pillW / 2}
+										y={labelY - 16}
+										width={pillW}
+										height="24"
+										rx="12"
+										fill="#0B1326"
+										fill-opacity="0.92"
+										stroke="#D8B4FE"
+										stroke-width="1.5"
+										stroke-dasharray="4 3"
+									/>
+									<text
+										x={midX}
+										y={labelY}
+										text-anchor="middle"
+										fill="#FEF08A"
+										style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 700;"
+									>
+										{edge.label}
+									</text>
+								</g>
 							)}
 						</g>
 					);
