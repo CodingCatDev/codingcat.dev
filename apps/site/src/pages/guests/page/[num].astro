@@ -1,11 +1,12 @@
 ---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePage } from "@/lib/pagination";
-import { moreGuestQuery, guestCountQuery } from "@/lib/sanity/queries";
+import { guestCountQuery, moreGuestQuery } from "@/lib/sanity/queries";
 
 const { sanity } = Astro.locals;
 
@@ -21,9 +22,13 @@ if (!resolved.ok) {
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
 
-const items = await sanity.loadQuery(moreGuestQuery, { skip: "none", offset, limit });
+const items = await sanity.loadQuery(moreGuestQuery, {
+	skip: "none",
+	offset,
+	limit,
+});
 
-const title = page === 1 ? "Guests" : `Guests — Page ${page}`;
+const title = page === 1 ? "Podcast Guests" : `Podcast Guests: Page ${page}`;
 ---
 
 <BaseLayout
@@ -36,8 +41,10 @@ const title = page === 1 ? "Guests" : `Guests — Page ${page}`;
 		{page < totalPages && <link rel="next" href={`/guests/page/${page + 1}`} />}
 	</Fragment>
 
-	<div class="mb-32">
-		<SectionHeader title="Guests" showHr={false} />
+	<Breadcrumbs links={[{ title: "Podcast Guests" }]} />
+
+	<div class="mb-24">
+		<SectionHeader title="podcast guests" showHr={false} />
 		<ContentGrid items={items as ContentListItem[]} />
 		<Pagination base="guests" page={page} totalPages={totalPages} />
 	</div>

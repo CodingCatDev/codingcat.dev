@@ -22,6 +22,7 @@ import {
 	podcastEpisodeSchema,
 	videoObjectSchema,
 } from "@/lib/structured-data";
+import { matchTopicsForText } from "@/lib/topics";
 
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
@@ -53,6 +54,9 @@ const guests = podcast.guest ?? [];
 const audioUrl = podcast.spotify?.enclosures?.at(0)?.url;
 const transcriptText =
 	podcast.transcript?.fullText || podcast.transcript?.summary || undefined;
+const matchedTopics = matchTopicsForText(
+	`${podcast.title ?? ""} ${podcast.excerpt ?? ""}`,
+);
 const videoSchema = podcast.youtube
 	? videoObjectSchema(
 			origin,
@@ -115,7 +119,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 			path,
 		),
 		breadcrumbSchema(origin, [
-			{ name: "Podcasts", path: "/podcasts/page/1" },
+			{ name: "Podcasts", path: "/podcasts" },
 			{ name: podcast.title, path },
 		]),
 		...(videoSchema ? [videoSchema] : []),
@@ -123,17 +127,54 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 	]}
 >
 	<Breadcrumbs
-		links={[{ title: "Podcasts", href: "/podcasts/page/1" }, { title: podcast.title }]}
+		links={[{ title: "Podcasts", href: "/podcasts" }, { title: podcast.title }]}
 	/>
 
-	<article>
-		<h1
-			class="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl"
-		>
+	<article class="py-4">
+		{/* Episode Badge & Matched Vendor / Topic Pills */}
+		<div class="mb-4 flex flex-wrap items-center gap-2">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+				🎧 Podcast Episode
+				{podcast.season && podcast.episode
+					? ` · S${podcast.season}E${podcast.episode}`
+					: ""}
+			</span>
+			{podcast.date && (
+				<span class="rounded-full border border-[#2A1155]/30 bg-white px-3.5 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-slate-200">
+					<FormattedDate dateString={podcast.date} />
+				</span>
+			)}
+			{matchedTopics.map((topic) => (
+				<a
+					href={`/topic/${topic.slug}`}
+					class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-white px-3.5 py-1 font-display text-xs font-black text-[#2A1155] transition-all hover:-translate-y-0.5 hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-white dark:hover:bg-purple-950/60 shadow-sketch-sm"
+				>
+					{topic.symbolLight && (
+						<img
+							src={topic.symbolLight}
+							alt=""
+							aria-hidden="true"
+							class="h-3.5 w-auto object-contain dark:hidden"
+						/>
+					)}
+					{topic.symbolDark && (
+						<img
+							src={topic.symbolDark}
+							alt=""
+							aria-hidden="true"
+							class="hidden h-3.5 w-auto object-contain dark:block"
+						/>
+					)}
+					<span>{topic.title}</span>
+				</a>
+			))}
+		</div>
+
+		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-balance text-[#2A1155] dark:text-white md:text-6xl">
 			{podcast.title}
 		</h1>
 
-		<div class="mb-8 sm:mx-0 md:mb-16">
+		<div class="mb-8 overflow-hidden rounded-3xl border-2 border-[#2A1155] bg-[#2A1155] shadow-sketch dark:border-white/25 dark:bg-[#060E20] md:mb-12">
 			<CoverMedia
 				image={podcast.coverImage}
 				video={podcast.videoCloudinary}
@@ -142,32 +183,40 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 		</div>
 
 		<div class="max-w-2xl sm:max-w-none">
-			<div class="flex flex-wrap justify-between">
-				<div class="flex-1">
-					<div class="mb-6 flex flex-wrap gap-2">
-						{
-							authors.map((person) => (
-								<Avatar
-									name={person.title}
-									href={person.slug ? `/author/${person.slug}` : undefined}
-									coverImage={person.coverImage}
-								/>
-							))
-						}
-						{
-							guests.map((person) => (
-								<Avatar
-									name={person.title}
-									href={person.slug ? `/guest/${person.slug}` : undefined}
-									coverImage={person.coverImage}
-								/>
-							))
-						}
-					</div>
-					<div class="mb-4 text-lg text-muted-foreground">
-						<FormattedDate dateString={podcast.date} />
-					</div>
+			<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+				<div class="flex flex-wrap gap-2.5">
+					{
+						authors.map((person) => (
+							<Avatar
+								name={person.title}
+								href={person.slug ? `/author/${person.slug}` : undefined}
+								coverImage={person.coverImage}
+							/>
+						))
+					}
+					{
+						guests.map((person) => (
+							<Avatar
+								name={person.title}
+								href={person.slug ? `/guest/${person.slug}` : undefined}
+								coverImage={person.coverImage}
+							/>
+						))
+					}
 				</div>
+
+				{
+					(podcast.transcript || podcast.youtube) && (
+						<div class="flex flex-wrap items-center gap-3">
+							<TranscriptModal
+								title={podcast.title}
+								slug={podcast.slug}
+								transcriptId={podcast.transcript?._id}
+								youtube={podcast.youtube}
+							/>
+						</div>
+					)
+				}
 			</div>
 
 			<PodcastListen
@@ -177,30 +226,15 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				spotifyLink={podcast.spotify?.link}
 				listenLinks={podcast.listenLinks}
 			/>
-
-			{
-				(podcast.transcript || podcast.youtube) && (
-					<div class="mt-4 flex flex-wrap items-center gap-3">
-						<TranscriptModal
-							title={podcast.title}
-							slug={podcast.slug}
-							transcriptId={podcast.transcript?._id}
-							youtube={podcast.youtube}
-						/>
-					</div>
-				)
-			}
 		</div>
 
 		{
 			podcast.sponsor && podcast.sponsor.length > 0 && (
 				<section class="my-10 flex flex-col">
-					<h2 class="mb-4 text-2xl font-bold">Sponsors</h2>
-					<hr class="border-border" />
-					<div class="my-12">
-						<SponsorCard sponsors={podcast.sponsor} />
-					</div>
-					<hr class="border-border" />
+					<h2 class="mb-4 font-display text-2xl font-black text-[#2A1155] dark:text-white">
+						Episode Sponsors<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+					</h2>
+					<SponsorCard sponsors={podcast.sponsor} />
 				</section>
 			)
 		}
@@ -211,15 +245,20 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 			tags={guests.map((g) => g.title)}
 		/>
 
-		<div class="my-2 md:my-8">
-			<PortableTextContent value={podcast.content} class="mx-auto prose-violet lg:prose-xl" />
+		<div class="my-4 md:my-8">
+			<PortableTextContent
+				value={podcast.content}
+				class="mx-auto prose-violet lg:prose-xl"
+			/>
 		</div>
 
 		{
 			podcast.transcript?.summary && (
-				<section class="my-8 mx-auto max-w-4xl rounded-xl border border-border bg-card/50 p-6">
-					<h2 class="mb-3 text-xl font-bold">Episode Summary</h2>
-					<p class="leading-relaxed text-muted-foreground">
+				<section class="duo-card hand-border mx-auto my-8 max-w-4xl p-6">
+					<h2 class="mb-3 font-display text-xl font-black text-[#2A1155] dark:text-white">
+						✏️ Episode Summary
+					</h2>
+					<p class="leading-relaxed text-[#2A1155]/80 dark:text-slate-300">
 						{podcast.transcript.summary}
 					</p>
 				</section>
@@ -231,8 +270,12 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 
 	{
 		more.length > 0 && (
-			<aside class="mb-32">
-				<SectionHeader title="Recent Podcasts" href="/podcasts/page/1" />
+			<aside class="mb-24">
+				<SectionHeader
+					title="recent episodes"
+					href="/podcasts/page/1"
+					linkText="All Episodes"
+				/>
 				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
 			</aside>
 		)

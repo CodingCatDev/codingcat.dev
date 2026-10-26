@@ -1,0 +1,91 @@
+---
+/**
+ * `/topics` | Canonical Vendor & Topic Hubs Directory.
+ *
+ * Displays official light/dark vendor logos (`Sanity`, `Firebase`, `AWS Amplify`)
+ * alongside framework & architecture hubs (`Astro`, `Cloudflare`, `Svelte`, `AI & MCP`).
+ */
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { TOPICS } from "@/lib/topics";
+---
+
+<BaseLayout
+	title="Topics & Vendor Hubs | CodingCat.dev"
+	description="Browse CodingCat.dev courses, podcast episodes, and blog posts by technology and official vendor hub: Sanity, Firebase, AWS Amplify, Astro, Cloudflare, Svelte, and AI Agents."
+	canonical="/topics"
+>
+	<Breadcrumbs links={[{ title: "Topics & Vendors" }]} />
+
+	<section class="py-6 md:py-10">
+		<div class="mx-auto max-w-4xl text-center">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+				🏷️ Official Vendor &amp; Technology Hubs
+			</span>
+			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+				explore by <span class="text-[#7C3AED] dark:text-[#C084FC]">topic</span>
+				<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+			</h1>
+			<p class="font-hand mx-auto mt-3 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+				Click any vendor or technology below to see its architecture diagram, courses, podcast episodes, and blog posts in one place.
+			</p>
+		</div>
+
+		<div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+			{
+				TOPICS.map((topic) => (
+					<a
+						href={`/topic/${topic.slug}`}
+						class="duo-card hand-border group flex flex-col justify-between p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
+					>
+						<div>
+							<div class="mb-4 flex items-center justify-between gap-3">
+								<span class="rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-1 font-mono text-[11px] font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+									{topic.badge}
+								</span>
+							</div>
+
+							{/* Official Vendor Light/Dark Lockup Box */}
+							{topic.logoLight && topic.logoDark && (
+								<div class="mb-5 flex h-20 items-center justify-center rounded-2xl border-2 border-[#2A1155]/20 bg-[#FAF9FC] px-6 py-4 dark:border-white/15 dark:bg-[#0B1326]">
+									<img
+										src={topic.logoLight}
+										alt={`${topic.title} official logo`}
+										class="max-h-11 w-auto object-contain dark:hidden"
+										loading="lazy"
+									/>
+									<img
+										src={topic.logoDark}
+										alt={`${topic.title} official logo`}
+										class="hidden max-h-11 w-auto object-contain dark:block"
+										loading="lazy"
+									/>
+								</div>
+							)}
+
+							<h2 class="font-display text-3xl font-black text-[#2A1155] transition-colors group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+								{topic.title}
+							</h2>
+							<p class="font-hand mt-1 text-xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
+								{topic.tagline}
+							</p>
+							<p class="mt-2.5 text-sm font-medium leading-relaxed text-[#2A1155]/75 dark:text-slate-300">
+								{topic.description}
+							</p>
+						</div>
+
+						<div class="mt-6 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-4 dark:border-white/15">
+							<span class="font-mono text-xs font-bold text-[#2A1155]/70 dark:text-slate-400">
+								Courses · Podcasts · Blog
+							</span>
+							<span class="tactile-btn px-4 py-1.5 text-xs">
+								<span>Explore {topic.title}</span>
+								<span class="text-[#86EFAC]">&rarr;</span>
+							</span>
+						</div>
+					</a>
+				))
+			}
+		</div>
+	</section>
+</BaseLayout>

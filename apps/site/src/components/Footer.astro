@@ -4,21 +4,28 @@ import NavLink from "./NavLink.astro";
 
 const year = new Date().getUTCFullYear();
 
-const legalLinks = [
+const primaryLinks = [
 	{ href: "/courses", label: "Courses" },
 	{ href: "/podcasts", label: "Podcasts" },
 	{ href: "/blog", label: "Blog" },
+	{ href: "/topics", label: "Topics & Vendors" },
+	{ href: "/search", label: "Search" },
+];
+
+const communityLinks = [
 	{ href: "/about", label: "About" },
+	{ href: "/guests/page/1", label: "Podcast Guests" },
+	{ href: "/authors/page/1", label: "Authors" },
+	{ href: "/book", label: "Book Podcast Session" },
+	{ href: "/sponsorships", label: "Sponsor CodingCat.dev" },
 	{ href: "/contact", label: "Contact" },
-	{ href: "/developers", label: "Developers" },
 	{ href: "/privacy", label: "Privacy" },
 	{ href: "/terms-of-use", label: "Terms" },
 	{ href: "/ftc-disclosure", label: "FTC Disclosure" },
-	{ href: "/sponsors", label: "Sponsors" },
-	{ href: "/sponsorships", label: "Sponsorships" },
 ];
 
 const llmResourceLinks = [
+	{ href: "/developers", label: "Developer & Agent Docs" },
 	{ href: "/llms.txt", label: "llms.txt" },
 	{ href: "/llms-full.txt", label: "llms-full.txt" },
 	{ href: "/.well-known/agent-skills/index.json", label: "Agent Skills" },
@@ -53,7 +60,7 @@ const socialLinks = [
 	<div class="rounded-3xl bg-white p-8 md:p-12 dark:bg-[#131B2E]/90 hand-border shadow-sketch">
 		<div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
 			{/* Brand & AJ Bio */}
-			<div class="space-y-4 lg:col-span-4">
+			<div class="space-y-4 lg:col-span-3">
 				<a href="/" class="flex items-center gap-3">
 					<div class="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] dark:border-white/40 shadow-sketch-sm">
 						<AjHeadphones cls="block size-8" />
@@ -84,15 +91,15 @@ const socialLinks = [
 				</div>
 			</div>
 
-			{/* Navigation & LLM Resources */}
-			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:col-span-4">
+			{/* Structured Sitemap Columns */}
+			<div class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:col-span-5">
 				<div class="space-y-2.5">
 					<h4 class="font-display text-sm font-black uppercase tracking-wider text-[#2A1155] dark:text-white">
-						Explore
+						Learn
 					</h4>
-					<nav class="flex flex-wrap gap-x-4 gap-y-2" aria-label="Legal">
+					<nav class="flex flex-col gap-1.5" aria-label="Learn">
 						{
-							legalLinks.map((link) => (
+							primaryLinks.map((link) => (
 								<NavLink
 									href={link.href}
 									class="text-xs font-bold text-[#2A1155]/75 hover:text-[#7C3AED] hover:underline underline-offset-4 dark:text-slate-300 dark:hover:text-[#C084FC]"
@@ -105,6 +112,24 @@ const socialLinks = [
 					</nav>
 				</div>
 				<div class="space-y-2.5">
+					<h4 class="font-display text-sm font-black uppercase tracking-wider text-[#2A1155] dark:text-white">
+						Community
+					</h4>
+					<nav class="flex flex-col gap-1.5" aria-label="Community">
+						{
+							communityLinks.map((link) => (
+								<NavLink
+									href={link.href}
+									class="text-xs font-bold text-[#2A1155]/75 hover:text-[#7C3AED] hover:underline underline-offset-4 dark:text-slate-300 dark:hover:text-[#C084FC]"
+									prefix={false}
+								>
+									{link.label}
+								</NavLink>
+							))
+						}
+					</nav>
+				</div>
+				<div class="col-span-2 space-y-2.5 sm:col-span-1">
 					<h4 class="font-display text-sm font-black uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
 						LLM &amp; Agent Ready
 					</h4>

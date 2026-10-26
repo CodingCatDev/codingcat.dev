@@ -4,6 +4,7 @@ import ContentGrid from "@/components/ContentGrid.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { latestPodcastQuery, morePodcastQuery } from "@/lib/sanity/queries";
@@ -16,7 +17,7 @@ const more = hero?._id
 	? await sanity.loadQuery(morePodcastQuery, {
 			skip: hero._id,
 			offset: 0,
-			limit: 4,
+			limit: 6,
 		})
 	: [];
 
@@ -35,67 +36,119 @@ const people = [
 ---
 
 <BaseLayout
-	title="Podcasts | CodingCat.dev"
-	description="Purrfect Web Development podcast episodes, interviews, and conversations."
+	title="Podcasts & Episodes | CodingCat.dev"
+	description="Purrfect Web Development podcast episodes, interviews, and conversations with software engineers and tech leaders."
 	ogFallback={{
 		title: "Purrfect Web Development Podcast",
-		subtitle: "Podcast episodes, interviews, and conversations with software engineers and tech leaders.",
+		subtitle:
+			"Podcast episodes, interviews, and conversations with software engineers and tech leaders.",
 		type: "Podcast",
 		image: ogCardImageUrl,
 	}}
 >
-	{
-		hero ? (
-			<article>
-				{heroHref && (
-					<a class="block mb-8 group md:mb-16" href={heroHref}>
-						<CoverImage image={hero.coverImage} priority />
-					</a>
-				)}
-				<div class="mb-8 md:mb-16 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
-					<div>
-						<h1 class="mb-4 text-4xl leading-tight text-pretty lg:text-6xl">
-							{heroHref ? (
-								<a href={heroHref} class="hover:underline">
-									{hero.title}
-								</a>
-							) : (
-								hero.title
-							)}
-						</h1>
-						<div class="mb-4 text-lg text-muted-foreground md:mb-0">
-							<FormattedDate dateString={hero.date} />
-						</div>
-					</div>
-					<div>
-						{hero.excerpt && (
-							<p class="mb-4 text-lg leading-relaxed text-pretty">{hero.excerpt}</p>
-						)}
-						<div class="flex flex-wrap gap-2">
-							{people.map((p) => (
-								<Avatar
-									name={p.title}
-									href={p.slug ? `${p.base}/${p.slug}` : undefined}
-									coverImage={p.coverImage}
-								/>
-							))}
-						</div>
-					</div>
-				</div>
-			</article>
-		) : (
-			<p class="py-32 text-center text-lg text-muted-foreground">
-				No episodes published yet.
+	<section class="py-8 md:py-12">
+		<div class="mb-6">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+				🎧 CodingCat.dev Podcasts &amp; Episodes
+			</span>
+			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+				podcasts &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">episodes</span>
+				<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+			</h1>
+			<p class="font-hand mt-2 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+				Weekly conversations with engineering leaders, open-source maintainers, and AI builders.
 			</p>
-		)
-	}
+		</div>
 
-	{
-		more.length > 0 && (
-			<aside class="mb-32">
-				<SectionHeader title="Latest Podcasts" href="/podcasts/page/1" />
-				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
-			</aside>
-		)
-	}
+		<TopicFilterStrip label="Filter Episodes by Topic:" />
+
+		{
+			hero ? (
+				<article class="duo-card hand-border my-8 overflow-hidden p-6 md:p-8">
+					<div class="grid items-center gap-8 lg:grid-cols-12">
+						{heroHref && (
+							<a
+								class="group block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20] lg:col-span-7"
+								href={heroHref}
+							>
+								<CoverImage image={hero.coverImage} priority />
+							</a>
+						)}
+						<div class="flex flex-col justify-between space-y-4 lg:col-span-5">
+							<div>
+								<div class="mb-3 flex flex-wrap items-center gap-2">
+									<span class="rounded-full border border-[#2A1155] bg-[#FEF08A] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#713F12]">
+										★ Latest Episode
+									</span>
+									{hero.date && (
+										<span class="rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+											<FormattedDate dateString={hero.date} />
+										</span>
+									)}
+								</div>
+								<h2 class="font-display text-3xl font-black leading-tight text-balance text-[#2A1155] dark:text-white sm:text-4xl">
+									{heroHref ? (
+										<a
+											href={heroHref}
+											class="transition-colors hover:text-[#7C3AED] hover:underline dark:hover:text-[#C084FC]"
+										>
+											{hero.title}
+										</a>
+									) : (
+										hero.title
+									)}
+								</h2>
+								{hero.excerpt && (
+									<p class="mt-3 text-base font-medium leading-relaxed text-[#2A1155]/80 dark:text-slate-300 text-pretty line-clamp-4">
+										{hero.excerpt}
+									</p>
+								)}
+							</div>
+
+							{people.length > 0 && (
+								<div class="flex flex-wrap gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-4 dark:border-white/15">
+									{people.map((p) => (
+										<Avatar
+											name={p.title}
+											href={p.slug ? `${p.base}/${p.slug}` : undefined}
+											coverImage={p.coverImage}
+										/>
+									))}
+								</div>
+							)}
+
+							{heroHref && (
+								<div class="pt-2">
+									<a
+										href={heroHref}
+										class="tactile-btn inline-flex items-center gap-2 px-6 py-3 text-sm"
+									>
+										<span>Watch &amp; Listen</span>
+										<span class="text-[#86EFAC]">&rarr;</span>
+									</a>
+								</div>
+							)}
+						</div>
+					</div>
+				</article>
+			) : (
+				<p class="py-24 text-center font-display text-xl font-bold text-[#2A1155]/70 dark:text-slate-400">
+					No episodes published yet.
+				</p>
+			)
+		}
+
+		{
+			more.length > 0 && (
+				<aside class="mb-20">
+					<SectionHeader
+						title="latest episodes"
+						href="/podcasts/page/1"
+						linkText="Browse All Episodes"
+					/>
+					<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
+				</aside>
+			)
+		}
+	</section>
 </BaseLayout>

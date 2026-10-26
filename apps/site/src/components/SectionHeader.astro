@@ -8,22 +8,27 @@ interface Props {
 	showHr?: boolean;
 }
 
-const { title, href, linkText = "View More", showHr = true } = Astro.props;
+const { title, href, linkText = "View All", showHr = true } = Astro.props;
 ---
 
-{showHr && <hr class="mb-8 sm:mb-16 mt-8 sm:mt-24 border-border" />}
+{
+	showHr && (
+		<hr class="mb-8 mt-10 border-t-2 border-dashed border-[#2A1155]/20 dark:border-white/15 sm:mb-12 sm:mt-16" />
+	)
+}
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 sm:mb-16 gap-4">
-	<h2 class="text-5xl font-bold leading-tight tracking-tighter md:text-6xl">
-		{title}
+<div class="mb-8 flex flex-col gap-4 sm:mb-12 md:flex-row md:items-center md:justify-between">
+	<h2 class="font-display text-4xl font-black leading-tight tracking-tight text-[#2A1155] dark:text-white md:text-5xl">
+		{title}<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 	</h2>
 	{
 		href && (
 			<a
 				href={stegaClean(href)}
-				class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-xl font-bold text-primary-foreground hover:bg-primary/90 transition-colors md:text-2xl"
+				class="tactile-btn inline-flex items-center justify-center px-6 py-2.5 text-sm"
 			>
-				{linkText}
+				<span>{linkText}</span>
+				<span class="text-[#86EFAC]">&rarr;</span>
 			</a>
 		)
 	}

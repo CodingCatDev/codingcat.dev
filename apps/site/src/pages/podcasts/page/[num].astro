@@ -1,7 +1,9 @@
 ---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePage } from "@/lib/pagination";
@@ -21,9 +23,13 @@ if (!resolved.ok) {
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
 
-const items = await sanity.loadQuery(morePodcastQuery, { skip: "none", offset, limit });
+const items = await sanity.loadQuery(morePodcastQuery, {
+	skip: "none",
+	offset,
+	limit,
+});
 
-const title = page === 1 ? "Podcasts" : `Podcasts — Page ${page}`;
+const title = page === 1 ? "Podcasts" : `Podcasts: Page ${page}`;
 const ogCardImageUrl = sanity
 	.urlForImage(items[0]?.coverImage ?? undefined)
 	?.width(640)
@@ -37,7 +43,8 @@ const ogCardImageUrl = sanity
 	description="Purrfect Web Development podcast episodes, interviews, and conversations."
 	ogFallback={{
 		title,
-		subtitle: "Purrfect Web Development podcast episodes, interviews, and conversations.",
+		subtitle:
+			"Purrfect Web Development podcast episodes, interviews, and conversations.",
 		type: "Podcast",
 		image: ogCardImageUrl,
 	}}
@@ -48,8 +55,16 @@ const ogCardImageUrl = sanity
 		{page < totalPages && <link rel="next" href={`/podcasts/page/${page + 1}`} />}
 	</Fragment>
 
-	<div class="mb-32">
-		<SectionHeader title="Podcasts" showHr={false} />
+	<Breadcrumbs
+		links={[
+			{ title: "Podcasts", href: "/podcasts" },
+			{ title: `Page ${page}` },
+		]}
+	/>
+
+	<div class="mb-24">
+		<SectionHeader title={`podcasts (page ${page})`} showHr={false} />
+		<TopicFilterStrip label="Filter by Topic & Vendor:" />
 		<ContentGrid items={items as ContentListItem[]} />
 		<Pagination base="podcasts" page={page} totalPages={totalPages} />
 	</div>

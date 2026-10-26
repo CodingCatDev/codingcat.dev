@@ -1,4 +1,5 @@
 ---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
@@ -21,14 +22,18 @@ if (!resolved.ok) {
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
 
-const items = await sanity.loadQuery(moreSponsorQuery, { skip: "none", offset, limit });
+const items = await sanity.loadQuery(moreSponsorQuery, {
+	skip: "none",
+	offset,
+	limit,
+});
 
-const title = page === 1 ? "Sponsors" : `Sponsors — Page ${page}`;
+const title = page === 1 ? "Sponsors" : `Sponsors: Page ${page}`;
 ---
 
 <BaseLayout
 	title={`${title} | CodingCat.dev`}
-	description="The sponsors who make CodingCat.dev possible."
+	description="The partners and sponsors who support CodingCat.dev."
 	canonical={`/sponsors/page/${page}`}
 >
 	<Fragment slot="head">
@@ -36,8 +41,15 @@ const title = page === 1 ? "Sponsors" : `Sponsors — Page ${page}`;
 		{page < totalPages && <link rel="next" href={`/sponsors/page/${page + 1}`} />}
 	</Fragment>
 
-	<div class="mb-32">
-		<SectionHeader title="Sponsors" showHr={false} />
+	<Breadcrumbs links={[{ title: "Sponsors" }]} />
+
+	<div class="mb-24">
+		<SectionHeader
+			title="partners & sponsors"
+			href="/sponsorships"
+			linkText="Become a Sponsor"
+			showHr={false}
+		/>
 		<ContentGrid items={items as ContentListItem[]} />
 		<Pagination base="sponsors" page={page} totalPages={totalPages} />
 	</div>

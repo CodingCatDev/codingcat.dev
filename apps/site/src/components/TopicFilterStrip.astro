@@ -1,0 +1,69 @@
+---
+/**
+ * `TopicFilterStrip.astro` | Clickable Vendor & Topic Pills with Official Light/Dark Logos.
+ */
+import { TOPICS } from "@/lib/topics";
+
+interface Props {
+	activeSlug?: string;
+	label?: string;
+}
+
+const { activeSlug, label = "Browse by Topic & Vendor:" } = Astro.props;
+---
+
+<nav
+	class="my-6 flex flex-wrap items-center gap-2.5"
+	aria-label="Topics and Vendor Hubs"
+>
+	<span class="mr-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155]/70 dark:text-slate-400">
+		{label}
+	</span>
+	<a
+		href="/topics"
+		class:list={[
+			"inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] px-3.5 py-1.5 font-display text-xs font-black transition-all hover:-translate-y-0.5 shadow-sketch-sm",
+			!activeSlug
+				? "bg-[#7C3AED] text-white dark:border-white/50"
+				: "bg-white text-[#2A1155] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100 dark:hover:bg-purple-950/60",
+		]}
+	>
+		<span>All Topics</span>
+	</a>
+	{
+		TOPICS.map((topic) => {
+			const isActive = activeSlug === topic.slug;
+			return (
+				<a
+					href={`/topic/${topic.slug}`}
+					class:list={[
+						"inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] px-3.5 py-1.5 font-display text-xs font-black transition-all hover:-translate-y-0.5 shadow-sketch-sm",
+						isActive
+							? "bg-[#7C3AED] text-white dark:border-white/50"
+							: "bg-white text-[#2A1155] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100 dark:hover:bg-purple-950/60",
+					]}
+				>
+					{topic.symbolLight && (
+						<img
+							src={isActive && topic.symbolDark ? topic.symbolDark : topic.symbolLight}
+							alt=""
+							aria-hidden="true"
+							class="h-3.5 w-auto object-contain dark:hidden"
+							loading="lazy"
+						/>
+					)}
+					{topic.symbolDark && (
+						<img
+							src={topic.symbolDark}
+							alt=""
+							aria-hidden="true"
+							class="hidden h-3.5 w-auto object-contain dark:block"
+							loading="lazy"
+						/>
+					)}
+					<span>{topic.title}</span>
+				</a>
+			);
+		})
+	}
+</nav>

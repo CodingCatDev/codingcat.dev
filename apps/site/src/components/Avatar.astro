@@ -15,7 +15,7 @@ const {
 	name,
 	href,
 	coverImage,
-	imgSize = "w-12 h-12 mr-4",
+	imgSize = "w-9 h-9",
 	width = 48,
 	height = 48,
 } = Astro.props;
@@ -27,17 +27,19 @@ const src = builder
 	.quality(82)
 	.url();
 
-// stegaClean: href is an attribute; zero-width characters break the URL.
 const cleanHref = stegaClean(href);
 ---
 
 {
 	src &&
 		(cleanHref ? (
-			<a class="flex items-center text-xl" href={cleanHref}>
-				<div class={imgSize}>
+			<a
+				class="group/avatar inline-flex items-center gap-2.5 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] py-1 pl-1 pr-3.5 text-sm font-bold text-[#2A1155] transition-all hover:-translate-y-0.5 hover:border-[#7C3AED] hover:bg-[#EDE9FE] dark:border-white/25 dark:bg-[#0B1326] dark:text-slate-100 dark:hover:border-[#C084FC] dark:hover:bg-purple-950/60 shadow-sketch-sm"
+				href={cleanHref}
+			>
+				<div class={`${imgSize} shrink-0 overflow-hidden rounded-full border border-[#2A1155] dark:border-white/30`}>
 					<img
-						class="w-full h-auto aspect-square rounded-md object-cover"
+						class="aspect-square h-full w-full object-cover"
 						src={src}
 						width={width}
 						height={height}
@@ -47,20 +49,25 @@ const cleanHref = stegaClean(href);
 					/>
 				</div>
 				{name && (
-					<div class="text-xl font-bold text-pretty hover:underline">{name}</div>
+					<span class="font-display text-sm font-black group-hover/avatar:text-[#7C3AED] dark:group-hover/avatar:text-[#C084FC]">
+						{name}
+					</span>
 				)}
 			</a>
 		) : (
-			<div class={imgSize}>
-				<img
-					class="w-full h-auto aspect-square rounded-md object-cover"
-					src={src}
-					width={width}
-					height={height}
-					alt={stegaClean(name) ?? ""}
-					loading="lazy"
-					decoding="async"
-				/>
+			<div class="inline-flex items-center gap-2.5 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] py-1 pl-1 pr-3.5 text-sm font-bold text-[#2A1155] dark:border-white/25 dark:bg-[#0B1326] dark:text-slate-100 shadow-sketch-sm">
+				<div class={`${imgSize} shrink-0 overflow-hidden rounded-full border border-[#2A1155] dark:border-white/30`}>
+					<img
+						class="aspect-square h-full w-full object-cover"
+						src={src}
+						width={width}
+						height={height}
+						alt={stegaClean(name) ?? ""}
+						loading="lazy"
+						decoding="async"
+					/>
+				</div>
+				{name && <span class="font-display text-sm font-black">{name}</span>}
 			</div>
 		))
 }

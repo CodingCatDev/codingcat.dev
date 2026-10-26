@@ -1,56 +1,75 @@
 ---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
-const title = "Contact Us — CodingCat.dev";
+const title = "Contact Us | CodingCat.dev";
 const description =
 	"Get in touch with CodingCat.dev for sponsorships, podcast guest inquiries, speaking, or developer partnerships.";
 ---
 
-<BaseLayout title={title} description={description}>
-	<div class="max-w-3xl mx-auto py-12 md:py-20">
-		<header class="mb-10 text-center">
-			<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Contact CodingCat.dev</h1>
-			<p class="text-xl text-muted-foreground">We’d love to hear from you. Reach out with questions, inquiries, or feedback.</p>
-		</header>
+<BaseLayout title={title} description={description} canonical="/contact">
+	<Breadcrumbs links={[{ title: "Contact" }]} />
 
-		<div class="prose prose-neutral dark:prose-invert max-w-none space-y-6 text-lg leading-relaxed">
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">Email & Direct Inquiries</h2>
-				<p>
-					For general inquiries, editorial questions, or partnership discussions, you can reach out directly via email at:
-					<a href="mailto:alex@codingcat.dev" class="text-primary hover:underline font-semibold">alex@codingcat.dev</a>.
-					We make every effort to respond to developer inquiries and community messages within 1–2 business days.
+	<section class="mx-auto max-w-3xl py-6 md:py-10">
+		<div class="duo-card hand-border p-8 md:p-12">
+			<header class="mb-8">
+				<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200">
+					📬 Say Hello
+				</span>
+				<h1 class="mt-3 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-5xl">
+					contact <span class="text-[#7C3AED] dark:text-[#C084FC]">codingcat.dev</span>
+				</h1>
+				<p class="font-hand mt-2 text-2xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
+					Questions, podcast guest ideas, or partnership inquiries? Reach out anytime.
 				</p>
-			</section>
+			</header>
 
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">Podcast Guest Appearances</h2>
-				<p>
-					Interested in being a guest on the CodingCat.dev Podcast? We love spotlighting developers building exciting tools, open source libraries, and novel developer experiences. You can connect with us directly via email at
-					<a href="mailto:alex@codingcat.dev" class="text-primary hover:underline">alex@codingcat.dev</a> or schedule a session on our <a href="/book" class="text-primary hover:underline">booking page</a>.
-				</p>
-			</section>
+			<div class="grid gap-6 sm:grid-cols-2">
+				<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] shadow-sketch-sm">
+					<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+						✉️ Direct Email
+					</h2>
+					<p class="mt-2 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
+						For editorial questions or general inquiries, email Alex directly:
+					</p>
+					<a
+						href="mailto:alex@codingcat.dev"
+						class="mt-4 inline-flex font-mono text-sm font-extrabold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+					>
+						alex@codingcat.dev &rarr;
+					</a>
+				</div>
 
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">Sponsorships & Media Partnerships</h2>
-				<p>
-					If your organization is looking to reach thousands of passionate web developers, software engineers, and technical leaders, explore our media sponsorship packages. We offer podcast pre-roll and mid-roll spots, dedicated tutorial videos, sponsored newsletter features, and social shoutouts.
-					Visit our dedicated <a href="/sponsorships" class="text-primary hover:underline">Sponsorships Page</a> to review packages and submit an inquiry.
-				</p>
-			</section>
+				<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] shadow-sketch-sm">
+					<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+						🎙️ Podcast Guest Booking
+					</h2>
+					<p class="mt-2 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
+						Building an exciting developer tool or open-source project? Book a live studio session:
+					</p>
+					<a
+						href="/book"
+						class="mt-4 inline-flex font-mono text-sm font-extrabold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+					>
+						Book a Podcast Session &rarr;
+					</a>
+				</div>
+			</div>
 
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">Social Media & Community</h2>
-				<p>
-					Stay connected across our social channels:
+			<div class="mt-6 rounded-2xl border-2 border-[#2A1155] bg-[#EDE9FE] p-6 dark:border-purple-400/30 dark:bg-purple-950/50 shadow-sketch-sm">
+				<h2 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+					🚀 Sponsorships &amp; Multi-Channel Launches
+				</h2>
+				<p class="mt-2 text-sm font-medium text-[#2A1155]/80 dark:text-purple-200/90">
+					Put your SDK, AI platform, or cloud infrastructure in front of 61K+ engineers across YouTube, 7 short-form video networks, and canonical AEO blog posts.
 				</p>
-				<ul class="list-disc pl-6 space-y-2">
-					<li><strong>X / Twitter:</strong> <a href="https://twitter.com/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">@CodingCatDev</a></li>
-					<li><strong>YouTube:</strong> <a href="https://youtube.com/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">YouTube.com/@CodingCatDev</a></li>
-					<li><strong>GitHub:</strong> <a href="https://github.com/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">GitHub.com/codingcatdev</a></li>
-					<li><strong>LinkedIn:</strong> <a href="https://linkedin.com/company/codingcatdev" target="_blank" rel="noopener noreferrer" class="hover:underline">LinkedIn.com/company/codingcatdev</a></li>
-				</ul>
-			</section>
+				<div class="mt-4">
+					<a href="/sponsorships" class="tactile-btn inline-flex px-6 py-2.5 text-xs">
+						<span>View Sponsorship Packages &amp; Deal Room</span>
+						<span class="text-[#86EFAC]">&rarr;</span>
+					</a>
+				</div>
+			</div>
 		</div>
-	</div>
+	</section>
 </BaseLayout>

@@ -12,6 +12,9 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 const hasCoursesLink = desktopLinks.some((link) =>
 	(link?.path ?? "").startsWith("/course"),
 );
+const hasTopicsLink = desktopLinks.some((link) =>
+	(link?.path ?? "").startsWith("/topic"),
+);
 const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 ---
 
@@ -46,6 +49,11 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 					desktopLinks.map((link) => (
 						<NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>
 					))
+				}
+				{
+					!hasTopicsLink && (
+						<NavLink href="/topics">Topics</NavLink>
+					)
 				}
 			</nav>
 		</div>
@@ -169,6 +177,7 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 	<nav class="grid gap-4 px-6 py-6 text-xl font-bold text-[#2A1155] dark:text-white" aria-label="Mobile">
 		{!hasHomeLink && <NavLink href="/">Home</NavLink>}
 		{!hasCoursesLink && <NavLink href="/courses">Courses</NavLink>}
+		{!hasTopicsLink && <NavLink href="/topics">Topics &amp; Vendors</NavLink>}
 		{navLinks.map((link) => <NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>)}
 	</nav>
 </div>
