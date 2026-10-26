@@ -2,14 +2,11 @@
 /**
  * Hand-Drawn Excalidraw Explanation Engine (`ExcalidrawDiagram.astro`).
  *
- * Renders dark-mode Excalidraw diagrams on a Pure Void (#000000) canvas with:
- * - Sketchy white (#FFFFFF) and Soft Lavender (#B4A7D6) double-stroked boxes & arrows
- * - Authentic `Virgil` hand-drawn Excalidraw typography (--font-hand)
- * - Evaluation markers: Mint (#86EFAC) / Electric Lime (#C5E86C) checkmarks (✓)
- *   for recommended patterns and Coral (#FCA5A5) X marks (✗) for anti-patterns
- * - Strict WCAG AAA accessibility: <svg role="img" aria-labelledby="..."> with
- *   <title> + <desc>, plus a high-contrast Excalidraw Visual Explanation Strip
- *   (<figcaption>) below the diagram.
+ * Dual-Theme Excalidraw Canvas matching Google Stitch screens:
+ * - Light Mode: `8d1319903d504a79ae56110486455e17` (Chalkboard Paper `#FFFFFF`, `#2A1155` borders,
+ *   pastel `#EDE9FE` lilac, `#BAE6FD` sky blue, `#FEF08A` yellow, `#FBCFE8` candy pink, `#86EFAC` mint)
+ * - Dark Mode: `b9e00f99c0d34e9884bf7766a014577b` (Obsidian Chalkboard `#131B2E` / `#060E20`,
+ *   `#C084FC` purple, `#38BDF8` sky, `#FACC15` yellow, `#F472B6` pink, `#86EFAC` mint)
  */
 
 export type ExcalidrawColor =
@@ -55,57 +52,69 @@ const {
 
 const COLOR_MAP: Record<
 	ExcalidrawColor,
-	{ hex: string; patternId: string; border: string; textOnBadge: string }
+	{
+		hex: string;
+		patternId: string;
+		border: string;
+		textOnBadge: string;
+		nodeFill: string;
+	}
 > = {
-	/* Electric Lime (#C5E86C) */
+	/* Mint / Emerald (#86EFAC) */
 	green: {
-		hex: "#C5E86C",
-		patternId: "hatch-lime",
-		border: "#C5E86C",
-		textOnBadge: "#0F172A",
-	},
-	/* Soft Lavender (#B4A7D6) */
-	blue: {
-		hex: "#B4A7D6",
-		patternId: "hatch-lavender",
-		border: "#B4A7D6",
-		textOnBadge: "#0F172A",
-	},
-	/* Mint Success (#86EFAC) */
-	orange: {
 		hex: "#86EFAC",
 		patternId: "hatch-mint",
-		border: "#86EFAC",
-		textOnBadge: "#0F172A",
+		border: "#10B981",
+		textOnBadge: "#166534",
+		nodeFill: "#064E3B",
 	},
-	/* Electric Lime Accent (#C5E86C) */
+	/* Sky Blue (#38BDF8 / #BAE6FD) */
+	blue: {
+		hex: "#BAE6FD",
+		patternId: "hatch-sky",
+		border: "#38BDF8",
+		textOnBadge: "#0369A1",
+		nodeFill: "#0C4A6E",
+	},
+	/* Sunny Yellow (#FEF08A / #FACC15) */
+	orange: {
+		hex: "#FEF08A",
+		patternId: "hatch-yellow",
+		border: "#FACC15",
+		textOnBadge: "#713F12",
+		nodeFill: "#422006",
+	},
+	/* Sunny Yellow (#FEF08A / #FACC15) */
 	yellow: {
-		hex: "#C5E86C",
-		patternId: "hatch-lime",
-		border: "#C5E86C",
-		textOnBadge: "#0F172A",
+		hex: "#FEF08A",
+		patternId: "hatch-yellow",
+		border: "#FACC15",
+		textOnBadge: "#713F12",
+		nodeFill: "#422006",
 	},
-	/* CodingCat Royal Purple / Vivid Purple (#7C3AED) */
+	/* Royal / Candy Purple (#7C3AED / #C084FC) */
 	purple: {
-		hex: "#B4A7D6",
+		hex: "#EDE9FE",
 		patternId: "hatch-purple",
-		border: "#7C3AED",
-		textOnBadge: "#0F172A",
+		border: "#C084FC",
+		textOnBadge: "#2A1155",
+		nodeFill: "#2A1155",
 	},
-	/* Coral Anti-Pattern (#FCA5A5) */
+	/* Candy Pink / Coral (#FBCFE8 / #F472B6) */
 	red: {
-		hex: "#FCA5A5",
-		patternId: "hatch-coral",
-		border: "#FCA5A5",
-		textOnBadge: "#0F172A",
+		hex: "#FBCFE8",
+		patternId: "hatch-pink",
+		border: "#F472B6",
+		textOnBadge: "#9D174D",
+		nodeFill: "#500724",
 	},
 };
 
 const PALETTE_CYCLE: ExcalidrawColor[] = [
 	"purple",
 	"blue",
+	"yellow",
 	"green",
-	"orange",
 	"red",
 ];
 
@@ -234,29 +243,29 @@ const a11ySummary = nodes
 	.join(" -> ");
 ---
 
-<figure class="excalidraw-well duo-scroll-reveal relative my-6 overflow-hidden p-5 md:p-7">
+<figure class="excalidraw-well hand-border duo-scroll-reveal relative my-6 overflow-hidden p-5 md:p-7">
 	{/* Top Excalidraw Canvas Header Bar */}
-	<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-[#B4A7D6]/35 pb-3">
-		<div class="flex items-center gap-2.5">
-			<span class="inline-flex h-3 w-3 rounded-full bg-[#FCA5A5]"></span>
-			<span class="inline-flex h-3 w-3 rounded-full bg-[#C5E86C]"></span>
-			<span class="inline-flex h-3 w-3 rounded-full bg-[#B4A7D6]"></span>
-			<span class="ml-1 font-hand text-xl font-bold tracking-wide text-[#F8FAFC]">
+	<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2A1155]/15 pb-3 dark:border-white/15">
+		<div class="flex items-center gap-2">
+			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#FBCFE8] dark:border-black/60 dark:bg-[#F472B6]"></span>
+			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#FEF08A] dark:border-black/60 dark:bg-[#FACC15]"></span>
+			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#86EFAC] dark:border-black/60 dark:bg-[#86EFAC]"></span>
+			<span class="ml-1.5 font-hand text-xl font-bold tracking-wide text-[#2A1155] dark:text-white">
 				✏️ {title}
 			</span>
 		</div>
 		<div class="flex items-center gap-2">
-			<span class="rounded-md border border-[#86EFAC]/40 bg-[#86EFAC]/10 px-2.5 py-0.5 font-mono text-xs font-semibold text-[#86EFAC]">
+			<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-2.5 py-0.5 font-mono text-xs font-bold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-[#86EFAC]">
 				✓ Good Pattern
 			</span>
-			<span class="rounded-md border border-[#B4A7D6]/35 bg-[#1E293B] px-3 py-0.5 font-mono text-xs font-semibold text-[#B4A7D6]">
-				excalidraw.canvas
+			<span class="rounded-full border border-[#7C3AED]/40 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
+				LIVE SKETCH
 			</span>
 		</div>
 	</div>
 
-	{/* Responsive Hand-Drawn SVG Flowchart on Pure Void (#000000) */}
-	<div class="w-full overflow-x-auto">
+	{/* Responsive Hand-Drawn SVG Flowchart */}
+	<div class="w-full overflow-x-auto rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] p-3 dark:border-white/20 dark:bg-[#060E20]">
 		<svg
 			viewBox={`0 0 ${svgWidth} ${svgHeight}`}
 			class="mx-auto h-auto w-full min-w-[580px] select-none"
@@ -268,21 +277,20 @@ const a11ySummary = nodes
 				Excalidraw architectural diagram showing: {a11ySummary}. {caption ?? ""}
 			</desc>
 			<defs>
-				{/* Diagonal Cross-Hatch Marker Patterns (Excalidraw signature fill) */}
-				<pattern id="hatch-lime" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
-					<line x1="0" y1="0" x2="0" y2="10" stroke="#C5E86C" stroke-width="3" stroke-opacity="0.28" />
-				</pattern>
-				<pattern id="hatch-lavender" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
-					<line x1="0" y1="0" x2="0" y2="10" stroke="#B4A7D6" stroke-width="3" stroke-opacity="0.28" />
-				</pattern>
 				<pattern id="hatch-mint" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
-					<line x1="0" y1="0" x2="0" y2="10" stroke="#86EFAC" stroke-width="3" stroke-opacity="0.28" />
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#86EFAC" stroke-width="3" stroke-opacity="0.3" />
+				</pattern>
+				<pattern id="hatch-sky" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#38BDF8" stroke-width="3" stroke-opacity="0.3" />
+				</pattern>
+				<pattern id="hatch-yellow" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#FACC15" stroke-width="3" stroke-opacity="0.3" />
 				</pattern>
 				<pattern id="hatch-purple" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
-					<line x1="0" y1="0" x2="0" y2="10" stroke="#7C3AED" stroke-width="3.5" stroke-opacity="0.34" />
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#C084FC" stroke-width="3.5" stroke-opacity="0.35" />
 				</pattern>
-				<pattern id="hatch-coral" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
-					<line x1="0" y1="0" x2="0" y2="10" stroke="#FCA5A5" stroke-width="3" stroke-opacity="0.3" />
+				<pattern id="hatch-pink" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#F472B6" stroke-width="3" stroke-opacity="0.32" />
 				</pattern>
 			</defs>
 
@@ -311,7 +319,7 @@ const a11ySummary = nodes
 									<path
 										d={`M ${x + boxW + 4} ${y + boxH / 2} C ${x + boxW + 28} ${y + boxH / 2 - 22}, ${nextX - 28} ${nextY + boxH / 2 - 22}, ${nextX - 8} ${nextY + boxH / 2}`}
 										fill="none"
-										stroke="#B4A7D6"
+										stroke="#D8B4FE"
 										stroke-width="3"
 										stroke-dasharray="7 5"
 										stroke-linecap="round"
@@ -319,7 +327,7 @@ const a11ySummary = nodes
 									<path
 										d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
 										fill="none"
-										stroke="#C5E86C"
+										stroke="#FEF08A"
 										stroke-width="3.2"
 										stroke-linecap="round"
 										stroke-linejoin="round"
@@ -329,7 +337,7 @@ const a11ySummary = nodes
 											x={(x + boxW + nextX) / 2}
 											y={Math.min(y, nextY) + 16}
 											text-anchor="middle"
-											fill="#C5E86C"
+											fill="#FEF08A"
 											style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
 										>
 											{edge.label}
@@ -338,14 +346,14 @@ const a11ySummary = nodes
 								</g>
 							)}
 
-							{/* Solid dark backing inside node for AAA text readability */}
+							{/* Solid backing inside node for AAA text readability */}
 							<rect
 								x={x}
 								y={y}
 								width={boxW}
 								height={boxH}
 								rx="14"
-								fill="#0F172A"
+								fill={palette.nodeFill}
 								fill-opacity="0.92"
 							/>
 
@@ -359,7 +367,7 @@ const a11ySummary = nodes
 								fill={`url(#${palette.patternId})`}
 							/>
 
-							{/* Outer Sketchy White Chalk Stroke #1 */}
+							{/* Outer Sketchy Chalk Stroke #1 */}
 							<rect
 								x={x}
 								y={y}
@@ -371,7 +379,7 @@ const a11ySummary = nodes
 								stroke-width="2.4"
 							/>
 
-							{/* Offset Double-Stroke Lavender/Accent Line #2 (Excalidraw Roughness) */}
+							{/* Offset Double-Stroke Accent Line #2 (Excalidraw Roughness) */}
 							<rect
 								x={x + 2.5}
 								y={y - 2}
@@ -381,24 +389,24 @@ const a11ySummary = nodes
 								fill="none"
 								stroke={palette.border}
 								stroke-width="2"
-								stroke-opacity="0.9"
+								stroke-opacity="0.95"
 							/>
 
-							{/* Evaluation Marker Badge (✓ Mint/Lime or ✗ Coral) */}
+							{/* Evaluation Marker Badge (✓ Mint or ✗ Coral) */}
 							<g>
 								<circle
 									cx={x + boxW - 16}
 									cy={y + 18}
 									r="11"
-									fill={isBad ? "#FCA5A5" : isGood ? "#86EFAC" : "#B4A7D6"}
-									stroke="#000000"
-									stroke-width="1.8"
+									fill={isBad ? "#FCA5A5" : isGood ? "#86EFAC" : "#EDE9FE"}
+									stroke="#2A1155"
+									stroke-width="2"
 								/>
 								<text
 									x={x + boxW - 16}
 									y={y + 22}
 									text-anchor="middle"
-									fill="#0F172A"
+									fill="#2A1155"
 									style="font-family: var(--font-mono); font-size: 12px; font-weight: 900;"
 								>
 									{isBad ? "✗" : "✓"}
@@ -415,7 +423,7 @@ const a11ySummary = nodes
 										height="23"
 										rx="8"
 										fill={palette.hex}
-										stroke="#000000"
+										stroke="#2A1155"
 										stroke-width="2"
 									/>
 									<text
@@ -430,7 +438,7 @@ const a11ySummary = nodes
 								</g>
 							)}
 
-							{/* Node Primary Label (Crisp White #FFFFFF on #0F172A) */}
+							{/* Node Primary Label */}
 							<text
 								x={x + boxW / 2 - 4}
 								y={node.sublabel ? y + 44 : y + 54}
@@ -441,13 +449,13 @@ const a11ySummary = nodes
 								{node.label.length > 21 ? `${node.label.slice(0, 19)}…` : node.label}
 							</text>
 
-							{/* Node Hand-Drawn Virgil Sub-label (#B4A7D6 / #C5E86C) */}
+							{/* Node Hand-Drawn Virgil Sub-label */}
 							{node.sublabel && (
 								<text
 									x={x + boxW / 2}
 									y={y + 72}
 									text-anchor="middle"
-									fill="#B4A7D6"
+									fill="#FEF08A"
 									style="font-family: var(--font-hand); font-size: 16px; font-weight: 400;"
 								>
 									{node.sublabel.length > 26
@@ -463,14 +471,14 @@ const a11ySummary = nodes
 	</div>
 
 	{/* High-Contrast WCAG AAA Accessible Explanation Strip */}
-	<figcaption class="mt-4 flex flex-col justify-between gap-2 rounded-xl border border-[#B4A7D6]/30 bg-[#0F172A]/95 px-4 py-3 text-left sm:flex-row sm:items-center">
-		<div class="excalidraw-explain text-[#F8FAFC]">
-			<span class="mr-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#C5E86C]">
+	<figcaption class="mt-4 flex flex-col justify-between gap-2 rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] px-4 py-3 text-left dark:border-white/20 dark:bg-[#0B1326] sm:flex-row sm:items-center">
+		<div class="font-hand text-xl font-bold text-[#2A1155] dark:text-slate-100">
+			<span class="mr-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
 				[Excalidraw Walkthrough]
 			</span>
 			{caption ?? a11ySummary}
 		</div>
-		<span class="shrink-0 font-mono text-xs text-[#94A3B8]">
+		<span class="shrink-0 font-mono text-xs font-bold text-[#4C1D95] dark:text-purple-300">
 			AAA Contrast Verified
 		</span>
 	</figcaption>

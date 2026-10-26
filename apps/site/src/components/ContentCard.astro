@@ -20,10 +20,10 @@ const people = [
 ];
 ---
 
-<article class="duo-card group flex h-full flex-col overflow-hidden p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#C5E86C]">
+<article class="duo-card hand-border group flex h-full flex-col overflow-hidden p-5 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]">
 	{
 		href && (
-			<a href={href} class="mb-5 block overflow-hidden rounded-xl border border-[#B4A7D6]/25 bg-[#000000]">
+			<a href={href} class="mb-4 block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20]">
 				{person ? (
 					<CoverImage
 						image={item.coverImage}
@@ -49,12 +49,12 @@ const people = [
 		<div>
 			{
 				!person && item.date && (
-					<div class="mb-2 font-mono text-xs font-extrabold uppercase tracking-wider text-[#C5E86C]">
+					<div class="mb-2 inline-flex rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
 						<FormattedDate dateString={item.date} />
 					</div>
 				)
 			}
-			<h3 class="mb-3 text-2xl font-extrabold leading-snug text-balance text-[#F8FAFC] transition-colors group-hover:text-[#C5E86C] md:text-3xl">
+			<h3 class="mb-2.5 font-display text-2xl font-black leading-snug text-balance text-[#2A1155] transition-colors group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
 				{
 					href ? (
 						<a href={href} class="hover:underline">
@@ -65,11 +65,11 @@ const people = [
 					)
 				}
 			</h3>
-			{item.excerpt && <p class="mb-4 text-base leading-relaxed text-[#94A3B8] text-pretty line-clamp-3">{item.excerpt}</p>}
+			{item.excerpt && <p class="mb-4 text-sm font-medium leading-relaxed text-[#2A1155]/75 dark:text-slate-300 text-pretty line-clamp-3">{item.excerpt}</p>}
 		</div>
 		{
 			people.length > 0 && (
-				<div class="mt-2 flex flex-wrap gap-2 border-t border-dashed border-[#B4A7D6]/25 pt-3">
+				<div class="mt-2 flex flex-wrap gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
 					{people.map((p) => (
 						<Avatar
 							name={p.title}

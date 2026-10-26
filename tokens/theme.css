@@ -1,29 +1,120 @@
 /*
- * CodingCat.dev Canonical Design Tokens (Tailwind CSS v4 @theme + CSS Custom Properties)
- * Generated from tokens/tokens.json
+ * CodingCat.dev Canonical Design Tokens (Dual-Theme Chalkboard & Royal Purple)
+ * Generated from tokens/tokens.json & Google Stitch Screens:
+ * - Light Mode: 8d1319903d504a79ae56110486455e17
+ * - Dark Mode:  b9e00f99c0d34e9884bf7766a014577b
  */
 
 :root {
-	/* 02-colors: Core CodingCat.dev Dark-Mode-First Palette */
-	--cc-bg-primary: #0f172a;
-	--cc-bg-void: #000000;
-	--cc-surface: #1e293b;
-	--cc-surface-elevated: #334155;
-	--cc-purple-primary: #4b2e83;
-	--cc-purple-vivid: #7c3aed;
-	--cc-purple-lip: #351f5e;
-	--cc-lavender: #b4a7d6;
-	--cc-lime: #c5e86c;
-	--cc-lime-lip: #9bc53d;
-	--cc-mint: #86efac;
-	--cc-coral: #fca5a5;
-	--cc-text-primary: #f8fafc;
-	--cc-text-muted: #94a3b8;
+	/* Light Mode (Chalkboard Paper - Screen 8d1319903d504a79ae56110486455e17) */
+	--cc-bg-primary: #faf9fc;
+	--cc-bg-canvas: #f5f3fb;
+	--cc-bg-void: #2a1155;
+	--cc-surface: #ffffff;
+	--cc-surface-elevated: #ede9fe;
+	--cc-card: #ffffff;
+	--cc-ink: #2a1155;
+	--cc-text-primary: #2a1155;
+	--cc-text-secondary: #4c1d95;
+	--cc-text-muted: #6b21a8;
+	--cc-border-sketch: #2a1155;
+	--cc-dot-grid: #d8b4fe;
 
-	/* 06-shadows: Elevation & Ambient Glows */
-	--cc-shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.7),
-		inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
-	--cc-glow-purple: 0 0 25px -5px rgba(75, 46, 131, 0.6);
-	--cc-glow-lime: 0 0 20px -4px rgba(197, 232, 108, 0.45);
-	--cc-thumbnail-drop: 0 12px 24px rgba(0, 0, 0, 0.85);
+	/* Brand Purples & Accents (Light) */
+	--cc-purple-primary: #7c3aed;
+	--cc-purple-vivid: #7c3aed;
+	--cc-purple-hover: #8b5cf6;
+	--cc-purple-deep: #2a1155;
+	--cc-purple-lip: #2a1155;
+	--cc-lavender: #ede9fe;
+	--cc-lavender-border: #ddd6fe;
+	--cc-candy: #a855f7;
+	--cc-fuchsia: #d946ef;
+
+	/* Excalidraw Pastel Palette (Light) */
+	--cc-yellow-bg: #fef08a;
+	--cc-yellow-border: #2a1155;
+	--cc-yellow-text: #713f12;
+	--cc-sky-bg: #bae6fd;
+	--cc-sky-border: #2a1155;
+	--cc-sky-text: #0369a1;
+	--cc-pink-bg: #fbcfe8;
+	--cc-pink-border: #2a1155;
+	--cc-pink-text: #9d174d;
+	--cc-lilac-bg: #ede9fe;
+	--cc-lilac-border: #2a1155;
+	--cc-lilac-text: #5b21b6;
+	--cc-mint: #86efac;
+	--cc-mint-bg: #dcfce7;
+	--cc-mint-text: #166534;
+	--cc-aj-green: #58cc02;
+	--cc-coral: #fca5a5;
+	--cc-lime: #86efac;
+	--cc-lime-lip: #2a1155;
+
+	/* Sketch Shadows (Light) */
+	--cc-shadow-sketch: 3px 4px 0px 0px #2a1155;
+	--cc-shadow-sketch-sm: 2px 2px 0px 0px #2a1155;
+	--cc-shadow-sketch-lg: 6px 7px 0px 0px #2a1155;
+	--cc-shadow-card: 3px 4px 0px 0px #2a1155;
+	--cc-glow-purple: 0 4px 14px rgba(124, 58, 237, 0.18);
+	--cc-glow-lime: 0 4px 14px rgba(134, 239, 172, 0.25);
+	--cc-thumbnail-drop: 6px 7px 0px 0px #2a1155;
+}
+
+.dark {
+	/* Dark Mode (Obsidian Chalkboard - Screen b9e00f99c0d34e9884bf7766a014577b) */
+	--cc-bg-primary: #0b1326;
+	--cc-bg-canvas: #131b2e;
+	--cc-bg-void: #060e20;
+	--cc-surface: #131b2e;
+	--cc-surface-elevated: #171f33;
+	--cc-card: #171f33;
+	--cc-ink: #f1f5f9;
+	--cc-text-primary: #f1f5f9;
+	--cc-text-secondary: #cbd5e1;
+	--cc-text-muted: #d8b4fe;
+	--cc-border-sketch: rgba(255, 255, 255, 0.22);
+	--cc-dot-grid: rgba(216, 180, 254, 0.08);
+
+	/* Brand Purples & Accents (Dark) */
+	--cc-purple-primary: #7c3aed;
+	--cc-purple-vivid: #7c3aed;
+	--cc-purple-hover: #8b5cf6;
+	--cc-purple-deep: #4c1d95;
+	--cc-purple-lip: #4c1d95;
+	--cc-lavender: #b18cf8;
+	--cc-lavender-border: rgba(168, 85, 247, 0.4);
+	--cc-candy: #c084fc;
+	--cc-fuchsia: #d946ef;
+
+	/* Excalidraw Chalk Palette (Dark) */
+	--cc-yellow-bg: rgba(66, 32, 6, 0.8);
+	--cc-yellow-border: #facc15;
+	--cc-yellow-text: #fde047;
+	--cc-sky-bg: rgba(8, 47, 73, 0.8);
+	--cc-sky-border: #38bdf8;
+	--cc-sky-text: #bae6fd;
+	--cc-pink-bg: rgba(80, 7, 36, 0.55);
+	--cc-pink-border: #f472b6;
+	--cc-pink-text: #f9a8d4;
+	--cc-lilac-bg: rgba(59, 7, 100, 0.65);
+	--cc-lilac-border: #c084fc;
+	--cc-lilac-text: #e9d5ff;
+	--cc-mint: #86efac;
+	--cc-mint-bg: rgba(2, 44, 34, 0.8);
+	--cc-mint-text: #6ee7b7;
+	--cc-aj-green: #34d399;
+	--cc-coral: #fca5a5;
+	--cc-lime: #86efac;
+	--cc-lime-lip: #059669;
+
+	/* Sketch Shadows (Dark) */
+	--cc-shadow-sketch: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
+	--cc-shadow-sketch-sm: 2px 2px 0px 0px rgba(0, 0, 0, 0.7);
+	--cc-shadow-sketch-lg: 6px 7px 0px 0px rgba(0, 0, 0, 0.85);
+	--cc-shadow-card: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
+	--cc-glow-purple: 0 0 28px rgba(124, 58, 237, 0.25);
+	--cc-glow-lime: 0 0 20px rgba(134, 239, 172, 0.25);
+	--cc-thumbnail-drop: 6px 7px 0px 0px rgba(0, 0, 0, 0.85);
 }

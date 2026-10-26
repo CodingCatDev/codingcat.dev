@@ -1,11 +1,9 @@
 ---
 /**
- * AJ the CodingCat.dev Mascot — Canonical 2D Upright Bipedal Vector Edition.
+ * AJ the CodingCat.dev Mascot - Canonical 2D Upright Bipedal Vector Edition.
  *
- * Uses the approved 2D upright bipedal flat-vector AJ character (/images/aj-bipedal-2d.webp)
- * featuring Royal Purple (#4B2E83) & Soft Lavender (#B4A7D6) podcast headphones,
- * pastel-rainbow hexagonal "AJ" earcup & collar badges, Electric Lime (#C5E86C) eyes,
- * and a crisp white die-cut sticker outline for high contrast on dark canvases.
+ * Styled for both Chalkboard Paper Light Mode (`8d1319903d504a79ae56110486455e17`)
+ * and Obsidian Chalkboard Dark Mode (`b9e00f99c0d34e9884bf7766a014577b`).
  */
 import AjHeadphones from "@/components/icons/AjHeadphones.astro";
 import AjPrimaryAlt from "@/components/icons/AjPrimaryAlt.astro";
@@ -30,7 +28,7 @@ const {
 <div class="relative inline-flex flex-col items-center select-none group">
 	{
 		caption && (
-			<div class="mb-2.5 rounded-xl border-2 border-[#B4A7D6] bg-[#1E293B] px-3.5 py-1.5 font-hand text-lg font-bold text-[#C5E86C] shadow-[0_4px_0_#0F172A] -rotate-2 transition-transform group-hover:rotate-1">
+			<div class="mb-2.5 -rotate-2 rounded-2xl border-2 border-[#2A1155] bg-[#FEF08A] px-3.5 py-1.5 font-hand text-lg font-bold text-[#713F12] transition-transform group-hover:rotate-1 dark:border-yellow-500 shadow-sketch-sm">
 				{caption}
 			</div>
 		)
@@ -47,7 +45,7 @@ const {
 						height="515"
 						loading="lazy"
 						decoding="async"
-						class={`${cls} object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] transition-transform duration-300 group-hover:scale-105`}
+						class={`${cls} object-contain drop-shadow-[0_10px_20px_rgba(42,17,85,0.4)] transition-transform duration-300 group-hover:scale-105`}
 					/>
 				</picture>
 			) : pose === "code-peek" || pose === "lever-pull" ? (
@@ -64,36 +62,36 @@ const {
 		{
 			showYarnBall && (
 				<svg
-					class="yarn-glow absolute -bottom-2 -right-3 h-14 w-14 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+					class="yarn-glow absolute -bottom-2 -right-3 size-14 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
 					viewBox="0 0 80 80"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
 					aria-hidden="true"
 				>
-					{/* CodingCat Royal Purple & Electric Lime Yarn Ball with sketchy Excalidraw strands */}
+					{/* CodingCat Royal Purple & Fuchsia Yarn Ball (matches Stitch 8d131990 & b9e00f99) */}
 					<circle
 						cx="40"
 						cy="40"
 						r="24"
-						fill="#4B2E83"
-						stroke="#F8FAFC"
+						fill="#7C3AED"
+						stroke="#2A1155"
 						stroke-width="3"
 					/>
 					<path
 						d="M22 32C30 24 48 24 58 34M20 42C32 34 48 36 60 46M26 52C36 44 48 46 54 54"
-						stroke="#B4A7D6"
+						stroke="#EDE9FE"
 						stroke-width="2.5"
 						stroke-linecap="round"
 					/>
 					<path
 						d="M32 18C26 30 28 48 38 60M44 18C38 32 40 48 50 60"
-						stroke="#C5E86C"
+						stroke="#D946EF"
 						stroke-width="2.5"
 						stroke-linecap="round"
 					/>
 					<path
 						d="M58 52C66 58 72 64 76 74"
-						stroke="#C5E86C"
+						stroke="#C084FC"
 						stroke-width="4"
 						stroke-linecap="round"
 					/>

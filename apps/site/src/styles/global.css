@@ -3,20 +3,11 @@
 @plugin "@tailwindcss/typography";
 
 /*
- * CodingCat.dev 2026 — Royal Purple, Electric Lime & Excalidraw Design System
+ * CodingCat.dev 2026 - Dual-Theme Excalidraw Chalkboard & Royal Purple Design System
  *
- * Canonical palette (from tokens/tokens.json & tokens/theme.css):
- * - Canvas Obsidian (Primary Background): #0F172A (--cc-bg-primary)
- * - Pure Void (Excalidraw Wells):         #000000 (--cc-bg-void)
- * - Surface Slate (Cards, Code Blocks):   #1E293B (--cc-surface)
- * - Elevated Surface (Hover / Modals):    #334155 (--cc-surface-elevated)
- * - CodingCat Royal Purple:               #4B2E83 (--cc-purple-primary) / #7C3AED (--cc-purple-vivid)
- * - Soft Lavender:                        #B4A7D6 (--cc-lavender)
- * - Electric Lime Green (Primary CTA):    #C5E86C (--cc-lime)
- * - Mint Success (Good Pattern ✓):        #86EFAC (--cc-mint)
- * - Coral Anti-Pattern (Bad Pattern ✗):   #FCA5A5 (--cc-coral)
- * - Text Primary:                         #F8FAFC (--cc-text-primary, 15.4:1 AAA)
- * - Text Muted:                           #94A3B8 (--cc-text-muted, 7.1:1 AA+)
+ * Reference Google Stitch Screens:
+ * - Light Mode (Chalkboard Paper): 8d1319903d504a79ae56110486455e17
+ * - Dark Mode (Obsidian Chalkboard): b9e00f99c0d34e9884bf7766a014577b
  */
 
 @font-face {
@@ -30,32 +21,53 @@
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
-	:root,
+	:root {
+		--radius: 1.25rem;
+		--background: #faf9fc;
+		--foreground: #2a1155;
+		--card: #ffffff;
+		--card-foreground: #2a1155;
+		--popover: #ffffff;
+		--popover-foreground: #2a1155;
+		--primary: #7c3aed;
+		--primary-foreground: #ffffff;
+		--secondary: #ede9fe;
+		--secondary-foreground: #2a1155;
+		--muted: #f5f3fb;
+		--muted-foreground: #4c1d95;
+		--accent: #ede9fe;
+		--accent-foreground: #2a1155;
+		--destructive: #fca5a5;
+		--border: #2a1155;
+		--input: #ffffff;
+		--ring: #7c3aed;
+	}
+
 	.dark {
-		--radius: 1rem;
-		--background: var(--cc-bg-primary);
-		--foreground: var(--cc-text-primary);
-		--card: var(--cc-surface);
-		--card-foreground: var(--cc-text-primary);
-		--popover: var(--cc-surface);
-		--popover-foreground: var(--cc-text-primary);
-		--primary: var(--cc-lime);
-		--primary-foreground: var(--cc-bg-primary);
-		--secondary: var(--cc-purple-primary);
-		--secondary-foreground: var(--cc-text-primary);
-		--muted: var(--cc-surface);
-		--muted-foreground: var(--cc-text-muted);
-		--accent: var(--cc-lavender);
-		--accent-foreground: var(--cc-bg-primary);
-		--destructive: var(--cc-coral);
-		--border: var(--cc-surface-elevated);
-		--input: var(--cc-surface);
-		--ring: var(--cc-lime);
+		--radius: 1.25rem;
+		--background: #0b1326;
+		--foreground: #f1f5f9;
+		--card: #171f33;
+		--card-foreground: #f1f5f9;
+		--popover: #131b2e;
+		--popover-foreground: #f1f5f9;
+		--primary: #7c3aed;
+		--primary-foreground: #ffffff;
+		--secondary: #131b2e;
+		--secondary-foreground: #f1f5f9;
+		--muted: #131b2e;
+		--muted-foreground: #cbd5e1;
+		--accent: #171f33;
+		--accent-foreground: #c084fc;
+		--destructive: #fca5a5;
+		--border: rgba(255, 255, 255, 0.22);
+		--input: #060e20;
+		--ring: #c084fc;
 	}
 }
 
 @theme inline {
-	--radius-sm: calc(var(--radius) - 4px);
+	--radius-sm: calc(var(--radius) - 6px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
@@ -89,26 +101,42 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-foreground font-sans antialiased;
-		background-image: radial-gradient(
-			rgba(180, 167, 214, 0.08) 1px,
-			transparent 1px
-		);
-		background-size: 24px 24px;
+		@apply bg-background text-foreground font-sans antialiased selection:bg-[#7C3AED] selection:text-white;
+		background-color: #faf9fc;
+		background-image: radial-gradient(#d8b4fe 1.25px, transparent 1.25px);
+		background-size: 20px 20px;
 	}
-	/* H1 uses chunky rounded Nunito 900 per brand spec */
-	h1 {
+	:root.dark body {
+		background-color: #0b1326;
+		background-image:
+			radial-gradient(
+				circle at 20% 15%,
+				rgba(124, 58, 237, 0.16) 0%,
+				transparent 45%
+			),
+			radial-gradient(
+				circle at 80% 35%,
+				rgba(217, 70, 239, 0.12) 0%,
+				transparent 40%
+			),
+			radial-gradient(rgba(216, 180, 254, 0.08) 1.25px, transparent 1.25px);
+		background-size:
+			100% 100%,
+			100% 100%,
+			20px 20px;
+	}
+	/* H1 & H2 use chunky rounded Nunito 900 per Stitch reference */
+	h1,
+	h2 {
 		font-family: var(--font-display);
 		letter-spacing: -0.025em;
 	}
-	/* H2-H6 use crisp Inter with tight tracking */
-	h2,
 	h3,
 	h4,
 	h5,
 	h6 {
 		font-family: var(--font-sans);
-		letter-spacing: -0.025em;
+		letter-spacing: -0.02em;
 	}
 	code,
 	pre,
@@ -117,157 +145,283 @@
 	}
 }
 
+/*
+ * Hand-Drawn Borders & Sketch Shadows (from Stitch 8d131990 & b9e00f99)
+ */
+.hand-border {
+	border: 2px solid var(--cc-border-sketch);
+	border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+.hand-border-rect {
+	border: 2px solid var(--cc-border-sketch);
+	border-radius: 20px 8px 18px 10px;
+}
+
+.shadow-sketch {
+	box-shadow: var(--cc-shadow-sketch);
+}
+
+.shadow-sketch-sm {
+	box-shadow: var(--cc-shadow-sketch-sm);
+}
+
+.shadow-sketch-lg {
+	box-shadow: var(--cc-shadow-sketch-lg);
+}
+
+.shadow-glow-purple {
+	box-shadow: var(--cc-glow-purple);
+}
+
+/* Excalidraw Diagonal Marker Cross-Hatch */
+.chalk-hatch {
+	background-image: repeating-linear-gradient(
+		-45deg,
+		rgba(167, 139, 250, 0.35),
+		rgba(167, 139, 250, 0.35) 4px,
+		transparent 4px,
+		transparent 8px
+	);
+}
+
+:root.dark .chalk-hatch {
+	background-color: rgba(30, 27, 75, 0.7);
+	background-image: repeating-linear-gradient(
+		-45deg,
+		rgba(168, 85, 247, 0.35),
+		rgba(168, 85, 247, 0.35) 4px,
+		transparent 4px,
+		transparent 8px
+	);
+}
+
 /* Hand-drawn Excalidraw annotation & explanation font helpers */
-.font-hand {
+.font-hand,
+.font-sketch {
 	font-family: var(--font-hand);
 }
 
 .excalidraw-explain {
 	font-family: var(--font-hand);
-	font-size: 1.125rem;
-	line-height: 1.55;
-	color: var(--cc-text-primary);
+	font-size: 1.25rem;
+	line-height: 1.5;
+	color: var(--cc-text-secondary);
 }
 
 /*
- * Tactile 3D Buttons with 4px Bottom Lip & CodingCat Ambient Glows
+ * Tactile 3D Buttons (Dual-Theme: #2A1155 -> #7C3AED in Light Mode, #7C3AED with #4C1D95 lip in Dark Mode)
  */
+.tactile-btn,
 .duo-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	border-radius: 0.75rem;
+	border-radius: 9999px;
 	font-family: var(--font-display);
 	font-weight: 800;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
+	letter-spacing: 0.02em;
 	transition:
-		transform 120ms cubic-bezier(0.2, 0, 0, 1),
-		box-shadow 120ms cubic-bezier(0.2, 0, 0, 1),
-		background-color 120ms ease;
+		transform 150ms cubic-bezier(0.2, 0, 0, 1),
+		box-shadow 150ms cubic-bezier(0.2, 0, 0, 1),
+		background-color 150ms ease,
+		border-color 150ms ease;
 	cursor: pointer;
 	user-select: none;
 }
 
+.tactile-btn:focus-visible,
 .duo-btn:focus-visible {
 	outline: none;
 	box-shadow:
-		0 0 0 2px #0f172a,
-		0 0 0 4px #c5e86c;
+		0 0 0 2px var(--background),
+		0 0 0 4px #7c3aed;
 }
 
-/* Primary Electric Lime CTA (#C5E86C on #0F172A = 13.8:1 AAA contrast) */
+/* Primary Royal Purple CTA (Matches Stitch 8d131990 & b9e00f99) */
+.tactile-btn,
 .duo-btn-green,
-.cc-btn-lime {
-	background-color: #c5e86c;
-	color: #0f172a;
-	border: 2px solid #c5e86c;
-	box-shadow:
-		0 4px 0 #9bc53d,
-		var(--cc-glow-lime);
+.cc-btn-lime,
+.cc-btn-primary {
+	background-color: #2a1155;
+	color: #ffffff;
+	border: 2px solid #2a1155;
+	box-shadow: 3px 4px 0px 0px #2a1155;
 }
+
+.tactile-btn:hover,
 .duo-btn-green:hover,
-.cc-btn-lime:hover {
-	background-color: #d4f285;
-	border-color: #d4f285;
+.cc-btn-lime:hover,
+.cc-btn-primary:hover {
+	background-color: #7c3aed;
+	border-color: #2a1155;
+	transform: translateY(-2px);
+	box-shadow: 5px 6px 0px 0px #2a1155;
 }
+
+.tactile-btn:active,
 .duo-btn-green:active,
-.cc-btn-lime:active {
-	transform: translateY(4px);
-	box-shadow: 0 0 0 #9bc53d;
+.cc-btn-lime:active,
+.cc-btn-primary:active {
+	transform: translateY(2px);
+	box-shadow: 1px 2px 0px 0px #2a1155;
 }
 
-/* Secondary CodingCat Royal Purple CTA (#4B2E83 / #6D28D9) */
-.duo-btn-blue,
-.cc-btn-purple {
-	background-color: #4b2e83;
-	color: #f8fafc;
-	border: 2px solid rgba(180, 167, 214, 0.45);
+:root.dark .tactile-btn,
+:root.dark .duo-btn-green,
+:root.dark .cc-btn-lime,
+:root.dark .cc-btn-primary {
+	background-color: #7c3aed;
+	color: #ffffff;
+	border: 2px solid rgba(255, 255, 255, 0.25);
 	box-shadow:
-		0 4px 0 #311d58,
-		var(--cc-glow-purple);
-}
-.duo-btn-blue:hover,
-.cc-btn-purple:hover {
-	background-color: #5e3aa3;
-	border-color: #b4a7d6;
-}
-.duo-btn-blue:active,
-.cc-btn-purple:active {
-	transform: translateY(4px);
-	box-shadow: 0 0 0 #311d58;
+		0 4px 0 #4c1d95,
+		0 8px 20px rgba(124, 58, 237, 0.4);
 }
 
-/* Accent Soft Lavender Button (#B4A7D6 with #0F172A text = 9.4:1 AAA contrast) */
-.duo-btn-orange,
-.cc-btn-lavender {
-	background-color: #b4a7d6;
-	color: #0f172a;
-	border: 2px solid #b4a7d6;
-	box-shadow: 0 4px 0 #8c7bb8;
-}
-.duo-btn-orange:hover,
-.cc-btn-lavender:hover {
-	background-color: #c7bde3;
-	border-color: #c7bde3;
-}
-.duo-btn-orange:active,
-.cc-btn-lavender:active {
-	transform: translateY(4px);
-	box-shadow: 0 0 0 #8c7bb8;
+:root.dark .tactile-btn:hover,
+:root.dark .duo-btn-green:hover,
+:root.dark .cc-btn-lime:hover,
+:root.dark .cc-btn-primary:hover {
+	background-color: #8b5cf6;
+	transform: translateY(-2px);
+	box-shadow:
+		0 6px 0 #4c1d95,
+		0 12px 24px rgba(124, 58, 237, 0.55);
 }
 
-/* Surface Slate Outline Button (#1E293B with #B4A7D6 border) */
+:root.dark .tactile-btn:active,
+:root.dark .duo-btn-green:active,
+:root.dark .cc-btn-lime:active,
+:root.dark .cc-btn-primary:active {
+	transform: translateY(2px);
+	box-shadow:
+		0 2px 0 #4c1d95,
+		0 4px 10px rgba(124, 58, 237, 0.3);
+}
+
+/* Secondary / Outline Sketch Pill Button ("Watch Teardowns", "All Episodes") */
+.duo-btn-blue,
+.cc-btn-purple,
 .duo-btn-outline,
-.cc-btn-outline {
-	background-color: #1e293b;
-	color: #f8fafc;
-	border: 2px solid rgba(180, 167, 214, 0.35);
-	box-shadow: 0 4px 0 #0f172a;
+.cc-btn-outline,
+.cc-btn-lavender {
+	background-color: #ffffff;
+	color: #2a1155;
+	border: 2px solid #2a1155;
+	box-shadow: 3px 4px 0px 0px #2a1155;
 }
+
+.duo-btn-blue:hover,
+.cc-btn-purple:hover,
 .duo-btn-outline:hover,
-.cc-btn-outline:hover {
-	background-color: #334155;
-	border-color: #c5e86c;
-	color: #c5e86c;
+.cc-btn-outline:hover,
+.cc-btn-lavender:hover {
+	background-color: #ede9fe;
+	color: #2a1155;
+	transform: translateY(-2px);
+	box-shadow: 5px 6px 0px 0px #2a1155;
 }
-.duo-btn-outline:active {
-	transform: translateY(4px);
-	box-shadow: 0 0 0 #0f172a;
+
+:root.dark .duo-btn-blue,
+:root.dark .cc-btn-purple,
+:root.dark .duo-btn-outline,
+:root.dark .cc-btn-outline,
+:root.dark .cc-btn-lavender {
+	background-color: #131b2e;
+	color: #f1f5f9;
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	box-shadow: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
+}
+
+:root.dark .duo-btn-blue:hover,
+:root.dark .cc-btn-purple:hover,
+:root.dark .duo-btn-outline:hover,
+:root.dark .cc-btn-outline:hover,
+:root.dark .cc-btn-lavender:hover {
+	background-color: #171f33;
+	border-color: #a855f7;
+	color: #ffffff;
+	transform: translateY(-2px);
 }
 
 /*
- * Surface Slate Bento Card & Pure Void (#000000) Excalidraw Well
+ * Dual-Theme Sketch Cards & Excalidraw Wells
  */
 .duo-card {
-	background-color: #1e293b;
-	border: 1.5px solid rgba(180, 167, 214, 0.22);
-	border-radius: 1rem;
-	box-shadow: var(--cc-shadow-card);
+	background-color: #ffffff;
+	border: 2px solid #2a1155;
+	border-radius: 1.5rem;
+	box-shadow: 3px 4px 0px 0px #2a1155;
+}
+
+:root.dark .duo-card {
+	background-color: rgba(19, 27, 46, 0.92);
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	border-radius: 1.5rem;
+	box-shadow: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
 }
 
 .excalidraw-well {
-	background-color: #000000;
+	background-color: #ffffff;
+	background-image: radial-gradient(#d8b4fe 1.25px, transparent 1.25px);
+	background-size: 20px 20px;
+	border: 2px solid #2a1155;
+	border-radius: 1.5rem;
+	box-shadow: 6px 7px 0px 0px #2a1155;
+}
+
+:root.dark .excalidraw-well {
+	background-color: rgba(19, 27, 46, 0.9);
 	background-image: radial-gradient(
-		rgba(180, 167, 214, 0.16) 1px,
-		transparent 1px
+		rgba(216, 180, 254, 0.12) 1.25px,
+		transparent 1.25px
 	);
 	background-size: 20px 20px;
-	border: 2px dashed rgba(180, 167, 214, 0.45);
-	border-radius: 1rem;
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	border-radius: 1.5rem;
 	box-shadow:
-		var(--cc-shadow-card),
-		var(--cc-glow-purple);
+		6px 7px 0px 0px rgba(0, 0, 0, 0.85),
+		0 0 28px rgba(124, 58, 237, 0.25);
 }
 
 /*
- * Scroll-Driven Animations (Progressive Enhancement)
+ * Playful Bobble & Yarn Animations (from Stitch 8d131990 & b9e00f99)
  */
+@keyframes bobble {
+	0%,
+	100% {
+		transform: translateY(0px) rotate(0deg);
+	}
+	50% {
+		transform: translateY(-7px) rotate(2deg);
+	}
+}
+
+.animate-bobble {
+	animation: bobble 3.8s ease-in-out infinite;
+}
+
+@keyframes pulse-yarn {
+	0%,
+	100% {
+		stroke-dashoffset: 0;
+	}
+	50% {
+		stroke-dashoffset: 18;
+	}
+}
+
+.animate-yarn {
+	stroke-dasharray: 8 6;
+	animation: pulse-yarn 6s linear infinite;
+}
+
 @keyframes excalidraw-pop-in {
 	0% {
 		opacity: 0;
-		transform: translateY(28px) scale(0.96);
+		transform: translateY(24px) scale(0.97);
 	}
 	100% {
 		opacity: 1;
@@ -278,10 +432,10 @@
 @keyframes yarn-pulse {
 	0%,
 	100% {
-		filter: drop-shadow(0 0 8px rgba(197, 232, 108, 0.5));
+		filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.55));
 	}
 	50% {
-		filter: drop-shadow(0 0 16px rgba(180, 167, 214, 0.85));
+		filter: drop-shadow(0 0 16px rgba(217, 70, 239, 0.85));
 	}
 }
 
@@ -299,7 +453,6 @@
 	}
 }
 
-/* Algolia's search input renders a native clear affordance we style ourselves. */
 .ais-SearchBox-input[type="search"]::-webkit-search-cancel-button {
 	display: none;
 }
@@ -322,6 +475,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.animate-float,
+	.animate-bobble,
+	.animate-yarn,
 	.yarn-glow {
 		animation: none;
 	}
@@ -339,7 +494,6 @@
 	text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
-/* Copy-to-clipboard confirmation, driven by the delegated click handler. */
 .copy-code.copied {
 	color: var(--primary);
 }

@@ -2,8 +2,8 @@
 /**
  * `/courses` | CodingCat.dev Beginner-to-Pro Excalidraw Learning Path Map.
  *
- * Connects our Sanity courses along an unwinding Royal Purple (#7C3AED),
- * Soft Lavender (#B4A7D6), and Electric Lime (#C5E86C) yarn trail.
+ * Dual-Theme Chalkboard Paper (`8d1319903d504a79ae56110486455e17`) &
+ * Obsidian Chalkboard (`b9e00f99c0d34e9884bf7766a014577b`) Course Map.
  */
 import AjMascot from "@/components/AjMascot.astro";
 import CoverImage from "@/components/CoverImage.astro";
@@ -40,65 +40,65 @@ const LEARNING_ORDER: Record<
 	"html-for-a-10-year-old": {
 		rank: 1,
 		tier: "Unit 1 · First Lines of Code",
-		color: "#C5E86C",
-		lip: "#9BC53D",
-		textColor: "#0F172A",
+		color: "#FEF08A",
+		lip: "#2A1155",
+		textColor: "#713F12",
 		badge: "🌱 Curious Kitten",
 	},
 	"micro-bit-for-a-10-year-old": {
 		rank: 2,
 		tier: "Unit 1 · Hardware & Play",
-		color: "#C5E86C",
-		lip: "#9BC53D",
-		textColor: "#0F172A",
+		color: "#BAE6FD",
+		lip: "#2A1155",
+		textColor: "#0369A1",
 		badge: "🌱 Curious Kitten",
 	},
 	"css-animations": {
 		rank: 3,
 		tier: "Unit 2 · Style & Motion",
-		color: "#B4A7D6",
-		lip: "#8C7BB8",
-		textColor: "#0F172A",
+		color: "#FBCFE8",
+		lip: "#2A1155",
+		textColor: "#9D174D",
 		badge: "🎨 Visual Builder",
 	},
 	"intro-to-svelte": {
 		rank: 4,
 		tier: "Unit 3 · Reactive UI",
-		color: "#B4A7D6",
-		lip: "#8C7BB8",
-		textColor: "#0F172A",
+		color: "#EDE9FE",
+		lip: "#2A1155",
+		textColor: "#5B21B6",
 		badge: "⚡ Code Pouncer",
 	},
 	"intro-to-solid-js": {
 		rank: 5,
 		tier: "Unit 3 · Fine-Grained Reactivity",
 		color: "#86EFAC",
-		lip: "#4ADE80",
-		textColor: "#0F172A",
+		lip: "#2A1155",
+		textColor: "#166534",
 		badge: "⚡ Code Pouncer",
 	},
 	svelte: {
 		rank: 6,
 		tier: "Unit 4 · Component Mastery",
-		color: "#C5E86C",
-		lip: "#9BC53D",
-		textColor: "#0F172A",
+		color: "#FEF08A",
+		lip: "#2A1155",
+		textColor: "#713F12",
 		badge: "🧶 Yarn Master",
 	},
 	angularmaterial: {
 		rank: 7,
 		tier: "Unit 4 · Enterprise Design Systems",
-		color: "#B4A7D6",
-		lip: "#8C7BB8",
-		textColor: "#0F172A",
+		color: "#BAE6FD",
+		lip: "#2A1155",
+		textColor: "#0369A1",
 		badge: "🏗️ System Architect",
 	},
 	"sveltekit-firebase": {
 		rank: 8,
 		tier: "Unit 5 · Full-Stack Production",
-		color: "#86EFAC",
-		lip: "#4ADE80",
-		textColor: "#0F172A",
+		color: "#7C3AED",
+		lip: "#2A1155",
+		textColor: "#FFFFFF",
 		badge: "🚀 Production Cat",
 	},
 };
@@ -122,15 +122,15 @@ const courses = [...rawCourses].sort((a, b) => {
 	<section class="py-10 md:py-16">
 		{/* Top Hero Banner */}
 		<div class="mx-auto max-w-4xl text-center">
-			<span class="inline-flex items-center gap-2 rounded-full border border-[#B4A7D6]/40 bg-[#4B2E83]/60 px-4 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#C5E86C]">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
 				🧶 Excalidraw Winding Course Map
 			</span>
-			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#F8FAFC] sm:text-6xl">
-				pick your <span class="text-[#C5E86C]">starting</span>{" "}
-				<span class="text-[#B4A7D6]">node.</span>
+			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+				pick your <span class="text-[#7C3AED] dark:text-[#C084FC]">starting</span>{" "}
+				node<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 			</h1>
-			<p class="excalidraw-explain mx-auto mt-3 max-w-2xl text-[#B4A7D6]">
-				Start at Node #1 if you are brand new to coding, or jump straight to the framework and full-stack units down the yarn trail.
+			<p class="font-hand mx-auto mt-3 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+				Start at Node #1 if you are brand new to coding, or jump straight to the framework and full-stack units down the purple yarn trail.
 			</p>
 		</div>
 
@@ -174,9 +174,9 @@ const courses = [...rawCourses].sort((a, b) => {
 
 		{/* Winding Learning Path Nodes */}
 		<div class="relative mx-auto mt-14 max-w-4xl">
-			{/* Central Vertical Glowing Purple-to-Lime Yarn Spine */}
+			{/* Central Vertical Glowing Purple-to-Fuchsia Yarn Spine */}
 			<div
-				class="pointer-events-none absolute bottom-10 left-1/2 top-10 hidden w-1.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#7C3AED] via-[#B4A7D6] to-[#C5E86C] opacity-80 md:block"
+				class="pointer-events-none absolute bottom-10 left-1/2 top-10 hidden w-1.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#7C3AED] via-[#C084FC] to-[#D946EF] opacity-85 md:block"
 				aria-hidden="true"
 			></div>
 
@@ -186,9 +186,9 @@ const courses = [...rawCourses].sort((a, b) => {
 						const meta = LEARNING_ORDER[course.slug ?? ""] ?? {
 							rank: index + 1,
 							tier: `Unit ${index + 1} · Hands-On Course`,
-							color: "#C5E86C",
-							lip: "#9BC53D",
-							textColor: "#0F172A",
+							color: "#EDE9FE",
+							lip: "#2A1155",
+							textColor: "#2A1155",
 							badge: "🧶 CodingCat Course",
 						};
 						const isEven = index % 2 === 0;
@@ -205,22 +205,22 @@ const courses = [...rawCourses].sort((a, b) => {
 								<div class="w-full md:w-[46%]">
 									<a
 										href={href}
-										class="duo-card group block overflow-hidden p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#C5E86C]"
+										class="duo-card hand-border group block overflow-hidden p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
 									>
 										<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
 											<span
-												class="rounded-full px-3 py-1 font-mono text-xs font-black uppercase tracking-wider"
+												class="rounded-full border border-[#2A1155] px-3 py-1 font-mono text-xs font-black uppercase tracking-wider"
 												style={`background-color: ${meta.color}; color: ${meta.textColor};`}
 											>
 												{meta.tier}
 											</span>
-											<span class="font-hand text-lg font-bold text-[#B4A7D6]">
+											<span class="font-hand text-lg font-bold text-[#7C3AED] dark:text-[#C084FC]">
 												{meta.badge}
 											</span>
 										</div>
 
 										{course.coverImage && (
-											<div class="mb-4 overflow-hidden rounded-xl border border-[#B4A7D6]/30 bg-[#000000]">
+											<div class="mb-4 overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20]">
 												<CoverImage
 													image={course.coverImage}
 													fallbackAlt={course.title}
@@ -230,23 +230,24 @@ const courses = [...rawCourses].sort((a, b) => {
 											</div>
 										)}
 
-										<h2 class="text-2xl font-extrabold text-[#F8FAFC] transition-colors group-hover:text-[#C5E86C]">
+										<h2 class="font-display text-2xl font-black text-[#2A1155] transition-colors group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
 											{course.title}
 										</h2>
 										{course.excerpt && (
-											<p class="mt-2 text-sm leading-relaxed text-[#94A3B8] line-clamp-3">
+											<p class="mt-2 text-sm font-medium leading-relaxed text-[#2A1155]/75 dark:text-slate-300 line-clamp-3">
 												{course.excerpt}
 											</p>
 										)}
 
-										<div class="mt-4 flex items-center justify-between border-t border-dashed border-[#B4A7D6]/25 pt-3">
-											<span class="font-mono text-xs font-bold text-[#B4A7D6]">
+										<div class="mt-4 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
+											<span class="font-mono text-xs font-bold text-[#4C1D95] dark:text-purple-200">
 												{course.lessonsCount
 													? `${course.lessonsCount} Lessons`
 													: "Interactive Course"}
 											</span>
-											<span class="duo-btn cc-btn-lime px-4 py-1.5 text-xs">
-												Start Unit →
+											<span class="tactile-btn px-4 py-1.5 text-xs">
+												<span>Start Unit</span>
+												<span class="text-[#86EFAC]">→</span>
 											</span>
 										</div>
 									</a>
@@ -256,15 +257,15 @@ const courses = [...rawCourses].sort((a, b) => {
 								<div class="z-10 flex shrink-0 flex-col items-center justify-center md:w-[8%]">
 									<a
 										href={href}
-										class="flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#F8FAFC] font-display text-xl font-black transition-transform hover:scale-110"
-										style={`background-color: ${meta.color}; color: ${meta.textColor}; box-shadow: 0 5px 0 ${meta.lip};`}
+										class="flex size-16 items-center justify-center rounded-full border-2 border-[#2A1155] font-display text-xl font-black transition-transform hover:scale-110 shadow-sketch"
+										style={`background-color: ${meta.color}; color: ${meta.textColor};`}
 										aria-label={`Node ${index + 1}: ${course.title}`}
 									>
 										{index + 1}
 									</a>
 								</div>
 
-								{/* Opposite Side Mascot Milestone or Handwritten Excalidraw Note */}
+								{/* Opposite Side Mascot Milestone or Handwritten Excalidraw Sticky Note */}
 								<div class="hidden md:flex md:w-[46%] md:justify-center">
 									{index === 0 ? (
 										<AjMascot
@@ -285,8 +286,8 @@ const courses = [...rawCourses].sort((a, b) => {
 											caption="Full-stack boss node! 🚀"
 										/>
 									) : (
-										<div class="rounded-2xl border-2 border-dashed border-[#B4A7D6]/40 bg-[#000000]/90 px-5 py-4 font-hand text-xl text-[#F8FAFC]">
-											✏️ Milestone #{index + 1}: Hands-on code & Excalidraw diagrams
+										<div class="-rotate-1 rounded-2xl border-2 border-[#2A1155] bg-[#FEF08A] px-5 py-4 font-hand text-xl font-bold text-[#713F12] shadow-sketch-sm dark:border-yellow-600">
+											✏️ Milestone #{index + 1}: Hands-on code &amp; Excalidraw diagrams
 										</div>
 									)}
 								</div>

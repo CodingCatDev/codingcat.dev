@@ -65,11 +65,11 @@ const sections: CourseSection[] = course.sections ?? [];
 	/>
 
 	<article class="py-6">
-		<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-[#B4A7D6]/40 bg-[#4B2E83]/60 px-4 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#C5E86C]">
+		<div class="mb-6 inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
 			🧶 Interactive CodingCat.dev Course
 		</div>
 
-		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-[#F8FAFC] md:text-6xl">
+		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-[#2A1155] dark:text-white md:text-6xl">
 			{course.title}
 		</h1>
 
@@ -101,28 +101,28 @@ const sections: CourseSection[] = course.sections ?? [];
 		{
 			sections.length > 0 && (
 				<section class="my-12">
-					<h2 class="mb-6 font-display text-3xl font-black text-[#C5E86C]">
-						course modules & lessons.
+					<h2 class="mb-6 font-display text-3xl font-black text-[#2A1155] dark:text-white">
+						course modules &amp; lessons<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 					</h2>
 					<div class="grid gap-6">
 						{sections.map((sec, sIdx) => (
-							<div class="duo-card p-6">
+							<div class="duo-card hand-border p-6">
 								<div class="mb-4 flex items-center gap-3">
-									<span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#C5E86C] font-display font-black text-[#0F172A]">
+									<span class="inline-flex size-9 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#7C3AED] font-display font-black text-white shadow-sketch-sm dark:border-white/50">
 										{sIdx + 1}
 									</span>
-									<h3 class="text-2xl font-extrabold text-[#F8FAFC]">
+									<h3 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
 										{sec?.title || `Module ${sIdx + 1}`}
 									</h3>
 								</div>
 								{sec?.lesson && sec.lesson.length > 0 && (
 									<ul class="grid gap-3 sm:grid-cols-2">
 										{sec.lesson.map((lesson, lIdx) => (
-											<li class="flex items-start gap-3 rounded-xl border border-[#B4A7D6]/25 bg-[#0F172A] p-3.5">
-												<span class="font-mono text-xs font-bold text-[#C5E86C]">
+											<li class="flex items-start gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-3.5 dark:border-white/20 dark:bg-[#0B1326] shadow-sketch-sm">
+												<span class="font-mono text-xs font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
 													{sIdx + 1}.{lIdx + 1}
 												</span>
-												<span class="font-bold text-[#F8FAFC]">
+												<span class="font-bold text-[#2A1155] dark:text-slate-100">
 													{lesson?.title || `Lesson ${lIdx + 1}`}
 												</span>
 											</li>

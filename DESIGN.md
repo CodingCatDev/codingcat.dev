@@ -1,106 +1,59 @@
----
-name: CodingCat.dev 13-Module Design System & Agent Toolkit Specification
-version: 1.0.0
-colors:
-  bg-primary: '#0F172A'
-  bg-void: '#000000'
-  surface: '#1E293B'
-  surface-elevated: '#334155'
-  purple-primary: '#4B2E83'
-  purple-vivid: '#7C3AED'
-  purple-lip: '#351F5E'
-  lavender: '#B4A7D6'
-  lime: '#C5E86C'
-  lime-lip: '#9BC53D'
-  mint: '#86EFAC'
-  coral: '#FCA5A5'
-  text-primary: '#F8FAFC'
-  text-muted: '#94A3B8'
-typography:
-  display:
-    fontFamily: 'Nunito, Inter, system-ui, sans-serif'
-    fontWeight: '800 / 900'
-    usage: 'Chunky H1 display titles and hero headlines'
-  sans:
-    fontFamily: 'Inter, system-ui, sans-serif'
-    fontWeight: '400 / 500 / 600 / 700 / 800'
-    usage: 'UI components, H2-H6 headings, and long-form prose'
-  mono:
-    fontFamily: 'JetBrains Mono, monospace'
-    fontWeight: '400 / 500 / 700'
-    usage: 'Code blocks, terminal snippets, badge tags, and metadata'
-  hand:
-    fontFamily: 'Virgil, Excalifont, Caveat, cursive, sans-serif'
-    fontWeight: '400 / 700'
-    usage: 'Dark-mode Excalidraw diagram explanations and sketchy annotations'
-radius:
-  none: '0px'
-  md: '6px'
-  lg: '8px'
-  xl: '12px'
-  2xl: '16px'
-  full: '9999px'
----
+# CodingCat.dev Canonical Design System (2026 Dual-Theme Chalkboard & Royal Purple)
 
-# CodingCat.dev 13-Module Design System & Agent Toolkit Specification
+This document defines the canonical design system for CodingCat.dev based on the Google Stitch reference screens:
+- **Light Mode (Chalkboard Paper)**: `https://stitch.withgoogle.com/projects/3020591313534241286?node-id=8d1319903d504a79ae56110486455e17`
+- **Dark Mode (Obsidian Chalkboard)**: `https://stitch.withgoogle.com/projects/3020591313534241286?node-id=b9e00f99c0d34e9884bf7766a014577b`
 
-This document is the canonical root specification for **CodingCat.dev** ("Purrfect Web Tutorials"), unifying Web UI, W3C Design Tokens, AJ the Cat Mascot & Dark-Mode Excalidraw Visual Rules, Video Production Workflows, and **Alex Patterson (`@alex.patterson`)** Voice & Copy across Google Antigravity (`agy`) and Gemini Web.
+## 1. Visual Direction & Dual-Theme Philosophy
 
----
+CodingCat.dev blends Duolingo-inspired playful educational UI with authentic, hand-drawn Excalidraw architectural diagrams, sticky notes, and live code teardowns. Both Light Mode and Dark Mode are first-class citizens:
+- **Light Mode (`:root`)** uses a warm Chalkboard Paper background (`#FAF9FC`) with a subtle lavender dot grid (`#D8B4FE`), crisp white cards (`#FFFFFF`), deep Royal Purple ink (`#2A1155`), and hard-offset sketch shadows (`3px 4px 0 #2A1155`).
+- **Dark Mode (`.dark`)** uses an Obsidian Chalkboard background (`#0B1326`) with ambient purple/fuchsia radial glows, slate-obsidian cards (`#131B2E` / `#171F33`), deep code/diagram wells (`#060E20`), chalk-white sketch borders (`rgba(255, 255, 255, 0.22)`), and dark offset sketch shadows (`3px 4px 0 rgba(0, 0, 0, 0.75)`).
 
-## The 13-Module Taxonomy
+## 2. Dual-Theme Color Tokens
 
-| # | Category | Module Path | Purpose Across CodingCat.dev | Core Contents |
-| :--- | :--- | :--- | :--- | :--- |
-| **01** | **Overview** | `skills/codingcat-design-system/references/01-overview.md` | Brand ethos & core identity | Mission, dark-mode-first philosophy, when to use AJ vs. Alex Patterson. |
-| **02** | **Colors** | `skills/codingcat-design-system/references/02-colors.md` | Web UI, image prompts, video LUTs | Hex/RGB/Tailwind tokens (`#0F172A`, `#000000`, `#1E293B`, `#334155`, `#4B2E83`, `#B4A7D6`, `#C5E86C`, `#86EFAC`, `#FCA5A5`), semantic states. |
-| **03** | **Typography** | `skills/codingcat-design-system/references/03-typography.md` | Web CSS, thumbnail text, captions | `Nunito` (`800`/`900` chunky `H1` display), `Inter` (UI & `H2`-`H6`), `JetBrains Mono` (code/badges), `Virgil` / `Excalifont` (Excalidraw explanations). |
-| **04** | **Spacing** | `skills/codingcat-design-system/references/04-spacing.md` | Web layout, thumbnail safe-zones | `4px`/`8px` grid rules, `1280px` container padding, YouTube 16:9 (`96px` edge, `320x120px` bottom-right) and Shorts 9:16 safe margins. |
-| **05** | **Corner Radius** | `skills/codingcat-design-system/references/05-corner-radius.md` | UI cards, lower-thirds, code frames | Tailwind `rounded-*` mappings from `0px` (`rounded-none`) to `16px` (`rounded-2xl`) and `9999px` (`rounded-full`). |
-| **06** | **Shadows** | `skills/codingcat-design-system/references/06-shadows.md` | Elevation, neon glow effects | Dark-mode top-border highlights, `--cc-shadow-card`, `--cc-glow-purple`, `--cc-glow-lime`, and `--cc-thumbnail-drop`. |
-| **07** | **Focus** | `skills/codingcat-design-system/references/07-focus.md` | Accessibility & interactive states | High-contrast Electric Lime (`#C5E86C`) and Soft Lavender (`#B4A7D6`) focus rings on `#0F172A` surfaces. |
-| **08** | **Components** | `skills/codingcat-design-system/references/08-components.md` | Astro/React/shadcn UI & Canvas | Pre-approved Tailwind patterns: Primary Lime CTA, Secondary Purple Button, Bento Tutorial Card, AJ Callout Box, Comparison Table. |
-| **09** | **Assets** | `skills/codingcat-design-system/references/09-assets.md` | Mascot (AJ) & Personal Likeness | Canonical 2D/3D AJ reference sheets (`assets/AJHeadphones.png`, `assets/AJ-2D-Bipedal.jpg`, `assets/AJ-3D-Headphones-*.jpg`). |
-| **10** | **Files** | `skills/codingcat-design-system/references/10-files.md` | Raw templates & JSON schemas | `tokens/tokens.json`, Tailwind v4 `tokens/theme.css`, MDX frontmatter schemas, social templates. |
-| **11** | **Voice & Copy** | `skills/alex-voice-and-copy/` | Blog posts, X threads, docs | Pragmatic Senior SE tone, **never use em-dashes**, **always use tables for comparisons**, "WTF is..." framing. |
-| **12** | **Visual Prompts** | `skills/codingcat-media-studio/` | Thumbnails, Excalidraw, diagrams | Dark-mode Excalidraw rules (`#000000`/`#0F172A`), 2D upright bipedal & 3D vinyl-toy AJ prompts, Coral `#FCA5A5` `X` vs. Mint `#86EFAC` / Lime `#C5E86C` checkmarks. |
-| **13** | **Video & Motion** | `skills/codingcat-media-studio/references/youtube-intros-and-video.md` | YouTube intros, shorts, motion | First-15-second retention hooks, presenter cutaway separation, lower-third plates. |
-
----
-
-## Summary of Core Specifications
-
-### 1. Color Palette (`02-colors.md` & `tokens/tokens.json`)
-
-| Token Name | Hex | Tailwind / CSS Variable | Primary Role |
+| Token Role | Light Mode (`8d1319903d504a79ae56110486455e17`) | Dark Mode (`b9e00f99c0d34e9884bf7766a014577b`) | CSS Custom Property |
 | :--- | :--- | :--- | :--- |
-| **Canvas Obsidian** | `#0F172A` | `bg-slate-900` / `--cc-bg-primary` | Primary page background |
-| **Pure Void** | `#000000` | `bg-black` / `--cc-bg-void` | Excalidraw diagram wells & deepest dark contrast |
-| **Surface Slate** | `#1E293B` | `bg-slate-800` / `--cc-surface` | Bento cards, code containers, callout boxes, table rows |
-| **Elevated Surface** | `#334155` | `bg-slate-700` / `--cc-surface-elevated` | Hover states, modals, dropdowns |
-| **CodingCat Royal Purple** | `#4B2E83` | `--cc-purple-primary` | Primary brand color, secondary buttons, AJ's headphones |
-| **Soft Lavender** | `#B4A7D6` | `--cc-lavender` | Secondary accents, borders (`#B4A7D6/20`), overlines, AJ's collar & earcups |
-| **Electric Lime Green** | `#C5E86C` | `--cc-lime` | Primary CTAs, focus rings, thumbnail highlight word, AJ's eyes, checkmarks |
-| **Mint Success** | `#86EFAC` | `text-green-300` / `--cc-mint` | Excalidraw recommended pattern checkmarks (`✓`) |
-| **Coral Anti-Pattern** | `#FCA5A5` | `text-red-300` / `--cc-coral` | Excalidraw anti-pattern `X` marks (`✗`) & errors |
-| **Text Primary** | `#F8FAFC` | `text-slate-50` / `--cc-text-primary` | Primary headings & body copy (15.4:1 AAA on `#0F172A`) |
-| **Text Muted** | `#94A3B8` | `text-slate-400` / `--cc-text-muted` | Secondary metadata & captions (7.1:1 AA+ on `#0F172A`) |
+| **Page Canvas** | `#FAF9FC` (`brand.chalk`) + `#D8B4FE` dot grid | `#0B1326` (`obsidian.DEFAULT`) + radial glows & dot grid | `--cc-bg-primary` |
+| **Secondary Canvas** | `#F5F3FB` (`brand.canvas`) | `#131B2E` (`obsidian.surface`) | `--cc-bg-canvas` |
+| **Card / Whiteboard** | `#FFFFFF` (`brand.paper`) | `#171F33` (`obsidian.card`) | `--cc-card` |
+| **Deep Code / Video Well** | `#2A1155` (`brand.dark`) | `#060E20` (`obsidian.deep`) | `--cc-bg-void` |
+| **Primary Ink / Text** | `#2A1155` (`brand.dark`) | `#F1F5F9` (`chalk.white`) | `--cc-text-primary` |
+| **Secondary Body Text** | `#4C1D95` (`purple-900`) | `#CBD5E1` (`slate-300`) | `--cc-text-secondary` |
+| **Muted / Accent Text** | `#6B21A8` (`purple-800`) | `#D8B4FE` (`purple-300`) | `--cc-text-muted` |
+| **Primary Brand Purple** | `#7C3AED` (hover `#8B5CF6`) | `#7C3AED` (hover `#8B5CF6`, lip `#4C1D95`) | `--cc-purple-primary` |
+| **Candy / Fuchsia Accent** | `#A855F7` / `#D946EF` | `#C084FC` (`chalk.candy`) / `#D946EF` | `--cc-candy` |
+| **Sketch Border** | `2px solid #2A1155` | `2px solid rgba(255, 255, 255, 0.22)` | `--cc-border-sketch` |
+| **Sunny Yellow (Sticky/Node)** | `#FEF08A` (text `#713F12`, border `#2A1155`) | Sticky `#FEF08A` / Node `rgba(66, 32, 6, 0.8)` (`#FACC15` border) | `--cc-yellow-bg` |
+| **Sky Blue (Node/Header)** | `#BAE6FD` (text `#0369A1`, border `#2A1155`) | `rgba(8, 47, 73, 0.8)` (`#38BDF8` border, `#BAE6FD` text) | `--cc-sky-bg` |
+| **Candy Pink (Node/Header)** | `#FBCFE8` (text `#9D174D`, border `#2A1155`) | `rgba(80, 7, 36, 0.55)` (`#F472B6` border, `#F9A8D4` text) | `--cc-pink-bg` |
+| **Lilac (Node/Header)** | `#EDE9FE` (text `#5B21B6`, border `#2A1155`) | `rgba(59, 7, 100, 0.65)` (`#C084FC` border, `#E9D5FF` text) | `--cc-lilac-bg` |
+| **Mint / Emerald Green** | `#86EFAC` / `#58CC02` (pill `#DCFCE7`, text `#166534`) | `#86EFAC` / `#34D399` (pill `rgba(2, 44, 34, 0.8)`, text `#6EE7B7`) | `--cc-mint` |
 
-### 2. Typography (`03-typography.md`)
+## 3. Typography Hierarchy
 
-| Role | Font Family | Weights | Usage |
-| :--- | :--- | :--- | :--- |
-| **Chunky Display (`H1`)** | `Nunito` | `800`, `900` | Hero headlines, page `H1` titles, thumbnail display text (max 3-5 words) |
-| **UI & Headings (`H2`-`H6`)** | `Inter` | `400` to `800` | Section subheadings, UI controls, body prose, comparison tables |
-| **Code & Technical Badges** | `JetBrains Mono` | `400`, `500`, `700` | Code blocks, terminal output, category pills, timestamps |
-| **Excalidraw Explanations** | `Virgil` / `Excalifont` | `400`, `700` | Hand-drawn diagram annotations in `#FFFFFF`, `#B4A7D6`, or `#C5E86C` |
+1. **Display Headlines (`--font-display`)**: `Nunito` / `Fredoka` (`800-900` weight, tight tracking `-0.03em`). Used for playful lowercase hero and section titles (`free. fun. purrfect.`, `learn by building.`, `meet real codingcat learners & guests`).
+2. **Excalidraw Hand-Drawn Explanations (`--font-hand`)**: `Virgil` / `Caveat` (`400-700` weight). Used for sketch subtitles (`learn by building real apps.`), sticky notes (`AJ's Tip`), flowchart node labels, and speech bubbles (`"Purrfect code!"`).
+3. **UI & Editorial Body (`--font-sans`)**: `Plus Jakarta Sans` / `Inter` (`400-700` weight).
+4. **Code & Metadata Badges (`--font-mono`)**: `JetBrains Mono` (`500-700` weight).
 
-### 3. Canonical AJ the Cat Mascot Assets (`09-assets.md`)
-- `assets/AJHeadphones.png`: 2D vector head-and-collar emblem of AJ wearing `"CodingCat.dev Podcast"` over-ear headphones and the pastel rainbow hexagonal `"AJ"` collar tag.
-- `assets/AJ-2D-Bipedal.jpg`: 2D flat vector full-body upright bipedal AJ standing on two legs with dark gray oval belly patch, Electric Lime (`#C5E86C`) eyes, Soft Lavender (`#B4A7D6`) collar with hexagonal `"AJ"` tag, and over-ear Royal Purple/Lavender headphones.
-- `assets/AJ-3D-Headphones-Front.jpg`, `assets/AJ-3D-Headphones-Left.jpg`, `assets/AJ-3D-Headphones-Right.jpg`: 3D stylized vinyl-toy turnaround renders of upright bipedal AJ on a circular pedestal base.
+## 4. Hand-Drawn Borders, Sketch Shadows & Tactile Buttons
 
-### 4. Editorial & Media Studio Laws (`11` to `13`)
-- **Zero Em-Dashes**: Never use the em-dash character anywhere in prose, UI copy, titles, or scripts.
-- **Comparison Tables**: Always use Markdown or HTML tables when comparing tools, architectures, or trade-offs.
-- **Excalidraw Separation**: Keep `@alex.patterson` presenter cutaways separate from dark-mode Excalidraw diagram canvases.
+- **`.hand-border`**:
+  ```css
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  border: 2px solid var(--cc-border-sketch);
+  ```
+- **`.hand-border-rect`**:
+  ```css
+  border-radius: 20px 8px 18px 10px;
+  border: 2px solid var(--cc-border-sketch);
+  ```
+- **`.shadow-sketch`**:
+  - Light Mode: `3px 4px 0px 0px #2A1155` (`sm`: `2px 2px`, `lg`: `6px 7px`)
+  - Dark Mode: `3px 4px 0px 0px rgba(0, 0, 0, 0.75)` (`sm`: `2px 2px`, `lg`: `6px 7px`)
+- **Primary Tactile CTA (`.tactile-btn`)**:
+  - Light Mode: `background: #2A1155` (hover `#7C3AED`), white text, `#86EFAC` arrow, `box-shadow: 3px 4px 0 #2A1155`
+  - Dark Mode: `background: #7C3AED` (hover `#8B5CF6`), white text, `#6EE7B7` arrow, `box-shadow: 0 4px 0 #4C1D95, 0 8px 20px rgba(124, 58, 237, 0.4)`
+- **`.chalk-hatch`**:
+  - Diagonal `-45deg` repeating marker hatch fill in purple/lavender (`rgba(167, 139, 250, 0.35)` Light / `rgba(168, 85, 247, 0.35)` Dark).
