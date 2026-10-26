@@ -250,18 +250,72 @@ export function repairHref(rawHref, currentDoc, validRoutesMap, fallbackRelatedD
   return trimmed;
 }
 
-function cleanDashes(text) {
+function cleanDashes(text, { trim = true } = {}) {
   if (!text) return "";
-  return String(text)
+  const cleaned = String(text)
     .replace(/\s*[—–]\s*/g, ", ")
     .replace(/\s+--\s+/g, ", ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
+    .replace(/\s{2,}/g, " ");
+  return trim ? cleaned.trim() : cleaned;
 }
 
 function makeKey(prefix, seed) {
   const hash = crypto.createHash("md5").update(String(seed)).digest("hex").slice(0, 10);
   return `aeo2026_${prefix}_${hash}`;
+}
+
+export function shouldInsertSpaceBetweenSpans(pText, cText) {
+  if (!pText || !cText) return false;
+  if (/\s$/.test(pText) || /^\s/.test(cText)) return false;
+
+  const lastChar = pText.slice(-1);
+  const firstChar = cText.slice(0, 1);
+
+  if (/^[.,;:!?)\]}’']/.test(firstChar)) return false;
+  if (/^["”](\s|[.,;:!?)]|$)/.test(cText)) return false;
+  if (/[(\[{]$/.test(lastChar) && pText.length === 1) return false;
+  if (/(^|\s)[(\[{"“‘]$/.test(pText)) return false;
+  if (lastChar === "—" || firstChar === "—" || cText.startsWith("---") || pText.endsWith("---")) return false;
+  if (pText === "-" || cText === "-") return false;
+
+  return true;
+}
+
+export function normalizeBlockSpacing(block) {
+  if (!block || block._type !== "block" || !Array.isArray(block.children) || block.children.length < 2) {
+    return block;
+  }
+  const linkMarkKeys = new Set((block.markDefs || []).map((m) => m._key));
+  const children = block.children.map((c) => ({
+    ...c,
+    marks: Array.isArray(c.marks) ? [...c.marks] : [],
+  }));
+
+  const out = [];
+  for (let i = 0; i < children.length; i++) {
+    const curr = children[i];
+    if (out.length > 0) {
+      const prev = out[out.length - 1];
+      if (shouldInsertSpaceBetweenSpans(prev.text, curr.text)) {
+        const prevHasLinkOrCode = prev.marks.some((m) => m === "code" || linkMarkKeys.has(m));
+        const currHasLinkOrCode = curr.marks.some((m) => m === "code" || linkMarkKeys.has(m));
+        if (!prevHasLinkOrCode) {
+          prev.text = `${prev.text} `;
+        } else if (!currHasLinkOrCode) {
+          curr.text = ` ${curr.text}`;
+        } else {
+          out.push({
+            _type: "span",
+            _key: `${prev._key || "sp"}_sep_${i}`,
+            marks: [],
+            text: " ",
+          });
+        }
+      }
+    }
+    out.push(curr);
+  }
+  return { ...block, children: out };
 }
 
 function createTextBlock(text, style = "normal", keySeed = text) {
@@ -287,7 +341,8 @@ function createRichBlock(segments, { style = "normal", listItem = undefined, lev
   const children = [];
 
   segments.forEach((seg, i) => {
-    const rawText = cleanDashes(seg.text || "");
+    const hasMark = Boolean(seg.href || seg.code || seg.strong);
+    const rawText = cleanDashes(seg.text || "", { trim: hasMark });
     if (!rawText) return;
     const marks = [];
     if (seg.strong) marks.push("strong");
@@ -320,7 +375,7 @@ function createRichBlock(segments, { style = "normal", listItem = undefined, lev
     block.listItem = listItem;
     block.level = level || 1;
   }
-  return block;
+  return normalizeBlockSpacing(block);
 }
 
 export function blockToPlainText(block) {
@@ -554,10 +609,11 @@ export function buildEnrichedContent(doc, relatedDocs, rankedTags, validRoutesMa
   );
 
   const baseBlocks = rawBaseBlocks.map((block) => {
-    if (!Array.isArray(block?.markDefs) || block.markDefs.length === 0) return block;
+    const normalized = normalizeBlockSpacing(block);
+    if (!Array.isArray(normalized?.markDefs) || normalized.markDefs.length === 0) return normalized;
     return {
-      ...block,
-      markDefs: block.markDefs.map((md) => {
+      ...normalized,
+      markDefs: normalized.markDefs.map((md) => {
         if (md?.href && validRoutesMap) {
           return {
             ...md,
@@ -568,6 +624,11 @@ export function buildEnrichedContent(doc, relatedDocs, rankedTags, validRoutesMa
       }),
     };
   });
+
+  // Firebase Archive posts already include their dedicated Web Architecture, Resources, and FAQ sections
+  if (String(doc?._id || "").startsWith("post-fb-")) {
+    return baseBlocks;
+  }
 
   const plainText = baseBlocks.map(blockToPlainText).filter(Boolean).join(" ");
   const wordCount = plainText ? plainText.split(/\s+/).length : 0;
@@ -762,7 +823,7 @@ export function buildEnrichedContent(doc, relatedDocs, rankedTags, validRoutesMa
         createRichBlock(
           [
             { text: `${tsLabel}`, href: chUrl, strong: true },
-            { text: ` : ${chTitle}` },
+            { text: `: ${chTitle}` },
           ],
           {
             style: "normal",
@@ -987,7 +1048,7 @@ export function buildEnrichedContent(doc, relatedDocs, rankedTags, validRoutesMa
             { text: rel.title, href: relUrl, strong: true },
             {
               text: relExcerpt
-                ? ` : ${relExcerpt.slice(0, 160)}${relExcerpt.length > 160 ? "..." : ""}`
+                ? `: ${relExcerpt.slice(0, 160)}${relExcerpt.length > 160 ? "..." : ""}`
                 : ` (${rel._type === "podcast" ? "Podcast Episode" : "Technical Guide"})`,
             },
           ],
