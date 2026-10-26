@@ -12,13 +12,13 @@ const maxLimit = limitArg ? Number(limitArg.split("=")[1]) : 200;
 const EXCLUDE_SLUG_REGEX =
   /(fcm-on-android|ai-logic-unity-androidxr|fpnv-|firebase-pnv-|crashlytics-android|crashlytics-mcp|crashlytics-export|dart-functions-exp|apple-foundation-models|build-ios-app|firebase-analytics-outage|brazil-roundup|ios-sdk|android-sdk|cocoapods|swiftpm|gradle|wear-os|tvos|watchos|flutter-only)/i;
 
-function cleanDashes(text) {
+function cleanDashes(text, { trim = true } = {}) {
   if (!text) return "";
-  return String(text)
+  const cleaned = String(text)
     .replace(/\s*[—–]\s*/g, ", ")
     .replace(/\s+--\s+/g, ", ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
+    .replace(/\s{2,}/g, " ");
+  return trim ? cleaned.trim() : cleaned;
 }
 
 function decodeHtmlEntities(str) {
@@ -35,12 +35,71 @@ function decodeHtmlEntities(str) {
 }
 
 function stripTags(html) {
-  return decodeHtmlEntities(String(html || "").replace(/<[^>]+>/g, "")).trim();
+  return decodeHtmlEntities(
+    String(html || "")
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+  ).trim();
 }
 
 function makeKey(prefix, seed) {
   const hash = crypto.createHash("md5").update(String(seed)).digest("hex").slice(0, 10);
   return `fb_${prefix}_${hash}`;
+}
+
+export function shouldInsertSpaceBetweenSpans(pText, cText) {
+  if (!pText || !cText) return false;
+  if (/\s$/.test(pText) || /^\s/.test(cText)) return false;
+
+  const lastChar = pText.slice(-1);
+  const firstChar = cText.slice(0, 1);
+
+  if (/^[.,;:!?)\]}’']/.test(firstChar)) return false;
+  if (/^["”](\s|[.,;:!?)]|$)/.test(cText)) return false;
+  if (/[(\[{]$/.test(lastChar) && pText.length === 1) return false;
+  if (/(^|\s)[(\[{"“‘]$/.test(pText)) return false;
+  if (lastChar === "—" || firstChar === "—" || cText.startsWith("---") || pText.endsWith("---")) return false;
+  if (pText === "-" || cText === "-") return false;
+
+  return true;
+}
+
+export function normalizeBlockSpacing(block) {
+  if (!block || block._type !== "block" || !Array.isArray(block.children) || block.children.length < 2) {
+    return block;
+  }
+  const linkMarkKeys = new Set((block.markDefs || []).map((m) => m._key));
+  const children = block.children.map((c) => ({
+    ...c,
+    marks: Array.isArray(c.marks) ? [...c.marks] : [],
+  }));
+
+  const out = [];
+  for (let i = 0; i < children.length; i++) {
+    const curr = children[i];
+    if (out.length > 0) {
+      const prev = out[out.length - 1];
+      if (shouldInsertSpaceBetweenSpans(prev.text, curr.text)) {
+        const prevHasLinkOrCode = prev.marks.some((m) => m === "code" || linkMarkKeys.has(m));
+        const currHasLinkOrCode = curr.marks.some((m) => m === "code" || linkMarkKeys.has(m));
+        if (!prevHasLinkOrCode) {
+          prev.text = `${prev.text} `;
+        } else if (!currHasLinkOrCode) {
+          curr.text = ` ${curr.text}`;
+        } else {
+          out.push({
+            _type: "span",
+            _key: `${prev._key || "sp"}_sep_${i}`,
+            marks: [],
+            text: " ",
+          });
+        }
+      }
+    }
+    out.push(curr);
+  }
+  return { ...block, children: out };
 }
 
 function createTextBlock(text, style = "normal", keySeed = text) {
@@ -64,7 +123,8 @@ function createRichBlock(segments, { style = "normal", listItem = undefined, lev
   const markDefs = [];
   const children = [];
   segments.forEach((seg, i) => {
-    const rawText = cleanDashes(seg.text || "");
+    const hasMark = Boolean(seg.href || seg.code || seg.strong);
+    const rawText = cleanDashes(seg.text || "", { trim: hasMark });
     if (!rawText) return;
     const marks = [];
     if (seg.strong) marks.push("strong");
@@ -98,7 +158,7 @@ function createRichBlock(segments, { style = "normal", listItem = undefined, lev
     block.listItem = listItem;
     block.level = level || 1;
   }
-  return block;
+  return normalizeBlockSpacing(block);
 }
 
 /**
@@ -113,7 +173,7 @@ function parseInlineHtmlToSegments(html, baseUrl = "https://firebase.blog") {
   while ((match = tokenRegex.exec(html)) !== null) {
     if (match.index > lastIndex) {
       const plain = stripTags(html.slice(lastIndex, match.index));
-      if (plain) segments.push({ text: `${plain} ` });
+      if (plain) segments.push({ text: plain });
     }
     const fullToken = match[1];
     const hrefAttr = match[2];
@@ -124,11 +184,11 @@ function parseInlineHtmlToSegments(html, baseUrl = "https://firebase.blog") {
         try {
           resolvedHref = new URL(hrefAttr, baseUrl).toString();
         } catch {}
-        segments.push({ text: ` ${innerText} `, href: resolvedHref, strong: true });
+        segments.push({ text: innerText, href: resolvedHref, strong: true });
       } else if (/^<(?:strong|b)>/i.test(fullToken)) {
-        segments.push({ text: ` ${innerText} `, strong: true });
+        segments.push({ text: innerText, strong: true });
       } else if (/^<code>/i.test(fullToken)) {
-        segments.push({ text: ` ${innerText} `, code: true });
+        segments.push({ text: innerText, code: true });
       }
     }
     lastIndex = tokenRegex.lastIndex;
@@ -136,7 +196,7 @@ function parseInlineHtmlToSegments(html, baseUrl = "https://firebase.blog") {
 
   if (lastIndex < html.length) {
     const tail = stripTags(html.slice(lastIndex));
-    if (tail) segments.push({ text: ` ${tail}` });
+    if (tail) segments.push({ text: tail });
   }
 
   if (segments.length === 0) {
