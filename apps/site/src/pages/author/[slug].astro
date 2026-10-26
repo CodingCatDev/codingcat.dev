@@ -1,7 +1,8 @@
 ---
+import groq from "groq";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import UserSocials from "@/components/UserSocials.astro";
@@ -13,10 +14,20 @@ import { breadcrumbSchema, personSchema } from "@/lib/structured-data";
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
 
-const person = slug ? await sanity.loadQuery(authorQueryWithRelated, { slug }) : null;
+const person = slug
+	? await sanity.loadQuery(authorQueryWithRelated, { slug })
+	: null;
 if (!person?._id) {
 	return new Response(null, { status: 404 });
 }
+
+const countsQuery = groq`{
+	"podcasts": count(*[_type == "podcast" && references($refId) && defined(slug.current)]),
+	"posts": count(*[_type == "post" && references($refId) && defined(slug.current)])
+}`;
+const counts = ((await sanity.loadQuery(countsQuery, {
+	refId: person._id,
+})) ?? { podcasts: 0, posts: 0 }) as { podcasts?: number; posts?: number };
 
 const path = `/author/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
@@ -39,6 +50,8 @@ const description =
 
 const relatedPosts = (person.related?.post ?? []) as ContentListItem[];
 const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
+const totalPodcasts = counts.podcasts ?? relatedPodcasts.length;
+const totalPosts = counts.posts ?? relatedPosts.length;
 ---
 
 <BaseLayout
@@ -110,8 +123,16 @@ const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 		{
 			relatedPodcasts.length > 0 && (
 				<aside>
-					<SectionHeader title="podcast episodes" href="/podcasts/page/1" />
-					<ContentGrid items={relatedPodcasts} priorityCount={0} />
+					<SectionHeader title="podcast episodes" />
+					<InfiniteContentGrid
+						type="podcast"
+						items={relatedPodcasts}
+						refId={person._id}
+						initialOffset={relatedPodcasts.length}
+						totalCount={totalPodcasts}
+						priorityCount={0}
+						nounPlural="episodes"
+					/>
 				</aside>
 			)
 		}
@@ -119,8 +140,16 @@ const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 		{
 			relatedPosts.length > 0 && (
 				<aside class="mb-24">
-					<SectionHeader title="blog posts" href="/blog/page/1" />
-					<ContentGrid items={relatedPosts} priorityCount={0} />
+					<SectionHeader title="blog posts" />
+					<InfiniteContentGrid
+						type="post"
+						items={relatedPosts}
+						refId={person._id}
+						initialOffset={relatedPosts.length}
+						totalCount={totalPosts}
+						priorityCount={0}
+						nounPlural="blog posts"
+					/>
 				</aside>
 			)
 		}

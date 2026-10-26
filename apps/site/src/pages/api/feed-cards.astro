@@ -3,11 +3,13 @@
  * `/api/feed-cards` | Astro HTML Partial Endpoint (`export const partial = true`)
  *
  * Streams pre-rendered `<ContentCard>` fragments for infinite scrolling and
- * in-page topic filtering across `/podcasts`, `/blog`, `/authors`, `/guests`,
- * and `/sponsors`. Zero client hydration bundle or duplicated card templates.
+ * in-page topic/keyword filtering across `/podcasts`, `/blog`, `/guests`,
+ * `/authors`, `/sponsors`, `/topic/[slug]`, `/author/[slug]`, `/guest/[slug]`,
+ * and `/sponsor/[slug]`.
  */
 export const partial = true;
 
+import groq from "groq";
 import ContentCard from "@/components/ContentCard.astro";
 import type { ContentListItem } from "@/lib/content";
 import {
@@ -22,6 +24,7 @@ import {
 	postCountQuery,
 	sponsorCountQuery,
 } from "@/lib/sanity/queries";
+import { baseFieldsNoContent, personRefFields } from "@/lib/sanity/queries/shared";
 import { itemMatchesTopic, TOPICS_BY_SLUG } from "@/lib/topics";
 
 type FeedType = "podcast" | "post" | "author" | "guest" | "sponsor";
@@ -43,6 +46,8 @@ if (!VALID_TYPES.has(rawType)) {
 }
 
 const skip = params.get("skip")?.trim() || "none";
+const refId = params.get("refId")?.trim() || "";
+const searchQuery = params.get("q")?.trim().toLowerCase() || "";
 const rawOffset = Number.parseInt(params.get("offset") ?? "0", 10);
 const rawLimit = Number.parseInt(params.get("limit") ?? "8", 10);
 const offset = Number.isFinite(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
@@ -53,20 +58,87 @@ const sliceEnd = offset + pageSize;
 const topicSlug = params.get("topic")?.trim() || "";
 const topicDef = topicSlug ? TOPICS_BY_SLUG[topicSlug] : undefined;
 
+const refPodcastQuery = groq`*[_type == "podcast" && references($refId) && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
+	${baseFieldsNoContent},
+	author[]->{ ${personRefFields} },
+	guest[]->{ ${personRefFields} }
+}`;
+const refPodcastCountQuery = groq`count(*[_type == "podcast" && references($refId) && defined(slug.current)])`;
+
+const refPostQuery = groq`*[_type == "post" && references($refId) && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
+	${baseFieldsNoContent},
+	author[]->{ ${personRefFields} }
+}`;
+const refPostCountQuery = groq`count(*[_type == "post" && references($refId) && defined(slug.current)])`;
+
+const matchesSearch = (item: ContentListItem, q: string) => {
+	if (!q) {
+		return true;
+	}
+	const hay = `${item.title ?? ""} ${item.excerpt ?? ""}`.toLowerCase();
+	return hay.includes(q);
+};
+
 let items: ContentListItem[] = [];
 let totalCount = 0;
 
-if (topicDef && (rawType === "podcast" || rawType === "post")) {
-	const query = rawType === "podcast" ? morePodcastQuery : morePostQuery;
-	const allItems = ((await sanity.loadQuery(query, {
-		skip,
-		offset: 0,
-		limit: 250,
-	})) ?? []) as ContentListItem[];
+if (refId && (rawType === "podcast" || rawType === "post")) {
+	if (rawType === "podcast") {
+		const [count, batch] = await Promise.all([
+			sanity.loadQuery(refPodcastCountQuery, { refId }),
+			sanity.loadQuery(refPodcastQuery, { refId, offset, limit: sliceEnd }),
+		]);
+		totalCount = typeof count === "number" ? count : 0;
+		items = (batch ?? []) as ContentListItem[];
+	} else {
+		const [count, batch] = await Promise.all([
+			sanity.loadQuery(refPostCountQuery, { refId }),
+			sanity.loadQuery(refPostQuery, { refId, offset, limit: sliceEnd }),
+		]);
+		totalCount = typeof count === "number" ? count : 0;
+		items = (batch ?? []) as ContentListItem[];
+	}
+} else if (topicDef || searchQuery) {
+	let allItems: ContentListItem[] = [];
+	if (rawType === "podcast") {
+		allItems = ((await sanity.loadQuery(morePodcastQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "post") {
+		allItems = ((await sanity.loadQuery(morePostQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "guest") {
+		allItems = ((await sanity.loadQuery(moreGuestQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "author") {
+		allItems = ((await sanity.loadQuery(moreAuthorQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "sponsor") {
+		allItems = ((await sanity.loadQuery(moreSponsorQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	}
 
-	const matched = allItems.filter((item) =>
-		itemMatchesTopic(item.title, item.excerpt, topicDef),
-	);
+	const matched = allItems.filter((item) => {
+		const okTopic = topicDef
+			? itemMatchesTopic(item.title, item.excerpt, topicDef)
+			: true;
+		const okSearch = matchesSearch(item, searchQuery);
+		return okTopic && okSearch;
+	});
 	totalCount = matched.length;
 	items = matched.slice(offset, sliceEnd);
 } else {
@@ -112,7 +184,10 @@ if (topicDef && (rawType === "podcast" || rawType === "post")) {
 					limit: sliceEnd,
 				}),
 			]);
-			totalCount = typeof count === "number" ? count : 0;
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
 			items = (batch ?? []) as ContentListItem[];
 			break;
 		}
@@ -125,7 +200,10 @@ if (topicDef && (rawType === "podcast" || rawType === "post")) {
 					limit: sliceEnd,
 				}),
 			]);
-			totalCount = typeof count === "number" ? count : 0;
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
 			items = (batch ?? []) as ContentListItem[];
 			break;
 		}
@@ -138,7 +216,10 @@ if (topicDef && (rawType === "podcast" || rawType === "post")) {
 					limit: sliceEnd,
 				}),
 			]);
-			totalCount = typeof count === "number" ? count : 0;
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
 			items = (batch ?? []) as ContentListItem[];
 			break;
 		}

@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import CoverImage from "@/components/CoverImage.astro";
 import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
@@ -21,12 +22,18 @@ if (!resolved.ok) {
 	return resolved.response;
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
+const initialQuery = Astro.url.searchParams.get("q")?.trim() || "";
 
 const items = await sanity.loadQuery(moreGuestQuery, {
 	skip: "none",
 	offset,
 	limit,
 });
+
+const featuredGuest = page === 1 ? items[0] : undefined;
+const featuredHref = featuredGuest?.slug
+	? `/guest/${featuredGuest.slug}`
+	: undefined;
 
 const title = page === 1 ? "Podcast Guests" : `Podcast Guests: Page ${page}`;
 ---
@@ -43,19 +50,116 @@ const title = page === 1 ? "Podcast Guests" : `Podcast Guests: Page ${page}`;
 
 	<Breadcrumbs links={[{ title: "Podcast Guests" }]} />
 
-	<div class="mb-24">
-		<SectionHeader title="podcast guests" showHr={false} />
-		<InfiniteContentGrid
-			type="guest"
-			items={items as ContentListItem[]}
-			skipId="none"
-			initialOffset={offset + items.length}
-			totalCount={count}
-			priorityCount={2}
-			nounPlural="guests"
-		/>
-		<noscript>
-			<Pagination base="guests" page={page} totalPages={totalPages} />
-		</noscript>
-	</div>
+	<section class="py-4 md:py-8">
+		{/* Above-the-Fold Header & Callout */}
+		<div class="mb-6">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+				🎙️ {count}+ CodingCat.dev Podcast Guests
+			</span>
+			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+				podcast <span class="text-[#7C3AED] dark:text-[#C084FC]">guests</span>
+				<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+			</h1>
+			<p class="font-hand mt-2 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+				Open-source maintainers, framework creators, and engineering leaders who have joined us on Purrfect Web Tutorials.
+			</p>
+		</div>
+
+		{/* Above-the-Fold Featured Guest & Podcast Booking Callout */}
+		{
+			featuredGuest && (
+				<article class="duo-card hand-border my-8 overflow-hidden p-6 md:p-8">
+					<div class="grid items-center gap-8 lg:grid-cols-12">
+						<div class="flex flex-col gap-5 sm:flex-row sm:items-center lg:col-span-7">
+							{featuredHref && (
+								<a
+									href={featuredHref}
+									class="group block size-28 shrink-0 overflow-hidden rounded-3xl border-2 border-[#2A1155] bg-[#2A1155] shadow-sketch-sm dark:border-white/25 dark:bg-[#060E20] sm:size-36"
+								>
+									<CoverImage
+										image={featuredGuest.coverImage}
+										fallbackAlt={featuredGuest.title}
+										width={320}
+										height={320}
+										sizes="144px"
+										class="aspect-square h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+										priority
+									/>
+								</a>
+							)}
+							<div>
+								<span class="inline-flex rounded-full border border-[#2A1155] bg-[#FEF08A] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#713F12]">
+									★ Featured Guest
+								</span>
+								<h2 class="mt-2 font-display text-3xl font-black text-[#2A1155] dark:text-white">
+									{featuredHref ? (
+										<a
+											href={featuredHref}
+											class="hover:text-[#7C3AED] hover:underline dark:hover:text-[#C084FC]"
+										>
+											{featuredGuest.title}
+										</a>
+									) : (
+										featuredGuest.title
+									)}
+								</h2>
+								{featuredGuest.excerpt && (
+									<p class="mt-2 text-sm font-medium text-[#2A1155]/80 dark:text-slate-300 line-clamp-2">
+										{featuredGuest.excerpt}
+									</p>
+								)}
+								{featuredHref && (
+									<div class="mt-3">
+										<a
+											href={featuredHref}
+											class="font-display text-sm font-black text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+										>
+											View Guest Profile &amp; Episodes &rarr;
+										</a>
+									</div>
+								)}
+							</div>
+						</div>
+
+						<div class="flex flex-col justify-between gap-3 rounded-2xl border-2 border-dashed border-[#2A1155]/25 bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] lg:col-span-5">
+							<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+								🎧 Join the Show
+							</span>
+							<p class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+								Building something awesome in web dev, cloud, or AI?
+							</p>
+							<div class="flex flex-wrap gap-2 pt-1">
+								<a href="/podcasts" class="tactile-btn px-4 py-2 text-xs">
+									<span>Watch Episodes</span>
+									<span class="text-[#86EFAC]">&rarr;</span>
+								</a>
+								<a href="/contact" class="duo-btn duo-btn-outline px-4 py-2 text-xs">
+									Pitch a Guest Topic
+								</a>
+							</div>
+						</div>
+					</div>
+				</article>
+			)
+		}
+
+		<div class="mb-24">
+			<SectionHeader title="all podcast guests" showHr={false} />
+			<InfiniteContentGrid
+				type="guest"
+				items={items as ContentListItem[]}
+				skipId="none"
+				initialOffset={offset + items.length}
+				totalCount={count}
+				initialQuery={initialQuery}
+				showSearch={true}
+				searchPlaceholder="Filter guests by name..."
+				priorityCount={2}
+				nounPlural="guests"
+			/>
+			<noscript>
+				<Pagination base="guests" page={page} totalPages={totalPages} />
+			</noscript>
+		</div>
+	</section>
 </BaseLayout>

@@ -22,6 +22,7 @@ if (!resolved.ok) {
 	return resolved.response;
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
+const initialQuery = Astro.url.searchParams.get("q")?.trim() || "";
 
 const posts = await sanity.loadQuery(morePostQuery, {
 	skip: "none",
@@ -74,6 +75,9 @@ const ogCardImageUrl = sanity
 			skipId="none"
 			initialOffset={offset + posts.length}
 			totalCount={count}
+			initialQuery={initialQuery}
+			showSearch={true}
+			searchPlaceholder="Filter blog posts by title or keyword..."
 			priorityCount={2}
 			nounPlural="blog posts"
 		/>

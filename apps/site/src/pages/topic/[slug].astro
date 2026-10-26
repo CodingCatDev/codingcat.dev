@@ -3,19 +3,21 @@
  * `/topic/[slug]` | Vendor & Technology Hub Page (e.g. `/topic/sanity`, `/topic/firebase`, `/topic/amplify`).
  *
  * Displays the official vendor logo (`Sanity-Full_logo`, `Firebase Primary Lockup`, `Amplify.svg`),
- * a hand-drawn architecture diagram, partner CTA (if applicable), and all matching
+ * a hand-drawn architecture diagram, partner CTA (if applicable), and infinite-scrolling
  * Courses, Podcasts (Episodes), and Blog Posts from Sanity.
  */
 import groq from "groq";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePartnerUrl } from "@/lib/partner-links";
-import { getTopicBySlug } from "@/lib/topics";
+import { morePodcastQuery, morePostQuery } from "@/lib/sanity/queries";
+import { getTopicBySlug, itemMatchesTopic } from "@/lib/topics";
 
 const { slug } = Astro.params;
 const topic = slug ? getTopicBySlug(slug) : undefined;
@@ -28,51 +30,36 @@ const { sanity } = Astro.locals;
 const primaryKeyword = `*${topic.keywords[0]}*`;
 const secondaryKeyword = `*${topic.keywords[1] ?? topic.keywords[0]}*`;
 
-const topicHubQuery = groq`{
-	"courses": *[_type == "course" && defined(slug.current) && (title match $kw1 || excerpt match $kw1 || title match $kw2 || excerpt match $kw2)] | order(_createdAt desc)[0...6]{
-		_id,
-		_type,
-		title,
-		"slug": slug.current,
-		excerpt,
-		coverImage,
-		date
-	},
-	"posts": *[_type == "post" && defined(slug.current) && (title match $kw1 || excerpt match $kw1 || title match $kw2 || excerpt match $kw2)] | order(date desc)[0...9]{
-		_id,
-		_type,
-		title,
-		"slug": slug.current,
-		excerpt,
-		coverImage,
-		date,
-		"author": author[]->{ _id, title, "slug": slug.current, coverImage }
-	},
-	"podcasts": *[_type == "podcast" && defined(slug.current) && (title match $kw1 || excerpt match $kw1 || title match $kw2 || excerpt match $kw2)] | order(date desc)[0...9]{
-		_id,
-		_type,
-		title,
-		"slug": slug.current,
-		excerpt,
-		coverImage,
-		date,
-		"author": author[]->{ _id, title, "slug": slug.current, coverImage },
-		"guest": guest[]->{ _id, title, "slug": slug.current, coverImage }
-	}
+const coursesHubQuery = groq`*[_type == "course" && defined(slug.current) && (title match $kw1 || excerpt match $kw1 || title match $kw2 || excerpt match $kw2)] | order(_createdAt desc)[0...6]{
+	_id,
+	_type,
+	title,
+	"slug": slug.current,
+	excerpt,
+	coverImage,
+	date
 }`;
 
-const data = (await sanity.loadQuery(topicHubQuery, {
-	kw1: primaryKeyword,
-	kw2: secondaryKeyword,
-})) as unknown as {
-	courses?: ContentListItem[];
-	posts?: ContentListItem[];
-	podcasts?: ContentListItem[];
-};
+const [rawCourses, allPosts, allPodcasts] = await Promise.all([
+	sanity.loadQuery(coursesHubQuery, {
+		kw1: primaryKeyword,
+		kw2: secondaryKeyword,
+	}),
+	sanity.loadQuery(morePostQuery, { skip: "none", offset: 0, limit: 300 }),
+	sanity.loadQuery(morePodcastQuery, { skip: "none", offset: 0, limit: 300 }),
+]);
 
-const courses = data?.courses ?? [];
-const posts = data?.posts ?? [];
-const podcasts = data?.podcasts ?? [];
+const courses = (rawCourses ?? []) as unknown as ContentListItem[];
+const matchedPosts = ((allPosts ?? []) as ContentListItem[]).filter((item) =>
+	itemMatchesTopic(item.title, item.excerpt, topic),
+);
+const matchedPodcasts = ((allPodcasts ?? []) as ContentListItem[]).filter(
+	(item) => itemMatchesTopic(item.title, item.excerpt, topic),
+);
+
+const INITIAL_BATCH = 8;
+const posts = matchedPosts.slice(0, INITIAL_BATCH);
+const podcasts = matchedPodcasts.slice(0, INITIAL_BATCH);
 const partnerHref = topic.partnerUrl
 	? resolvePartnerUrl(topic.partnerUrl)
 	: undefined;
@@ -148,7 +135,7 @@ const partnerHref = topic.partnerUrl
 							class="hidden max-h-20 w-auto object-contain dark:block"
 						/>
 						<span class="font-mono text-xs font-bold text-[#2A1155]/65 dark:text-slate-400">
-							Official {topic.title} Brand Lockup ({posts.length} Blog Posts · {podcasts.length} Episodes)
+							Official {topic.title} Brand Lockup ({matchedPosts.length} Blog Posts · {matchedPodcasts.length} Episodes)
 						</span>
 					</div>
 				) : (
@@ -157,7 +144,7 @@ const partnerHref = topic.partnerUrl
 							{topic.title}
 						</span>
 						<span class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C084FC]">
-							{posts.length} Blog Posts · {podcasts.length} Podcast Episodes
+							{matchedPosts.length} Blog Posts · {matchedPodcasts.length} Podcast Episodes
 						</span>
 					</div>
 				)}
@@ -190,30 +177,46 @@ const partnerHref = topic.partnerUrl
 		)
 	}
 
-	{/* Matching Blog Posts */}
+	{/* Matching Blog Posts (Infinite Scroll) */}
 	{
 		posts.length > 0 && (
 			<section class="my-12">
-				<SectionHeader
-					title={`${topic.title} Blog Posts`}
-					href="/blog/page/1"
-					linkText="All Blog Posts"
+				<SectionHeader title={`${topic.title} Blog Posts`} />
+				<InfiniteContentGrid
+					type="post"
+					items={posts}
+					skipId="none"
+					initialOffset={posts.length}
+					totalCount={matchedPosts.length}
+					batchSize={INITIAL_BATCH}
+					activeTopic={topic.slug}
+					showSearch={true}
+					searchPlaceholder={`Filter ${topic.title} blog posts...`}
+					priorityCount={2}
+					nounPlural="blog posts"
 				/>
-				<ContentGrid items={posts} priorityCount={2} />
 			</section>
 		)
 	}
 
-	{/* Matching Podcast Episodes */}
+	{/* Matching Podcast Episodes (Infinite Scroll) */}
 	{
 		podcasts.length > 0 && (
 			<section class="my-12 mb-24">
-				<SectionHeader
-					title={`${topic.title} Podcast Episodes`}
-					href="/podcasts/page/1"
-					linkText="All Podcasts"
+				<SectionHeader title={`${topic.title} Podcast Episodes`} />
+				<InfiniteContentGrid
+					type="podcast"
+					items={podcasts}
+					skipId="none"
+					initialOffset={podcasts.length}
+					totalCount={matchedPodcasts.length}
+					batchSize={INITIAL_BATCH}
+					activeTopic={topic.slug}
+					showSearch={true}
+					searchPlaceholder={`Filter ${topic.title} episodes...`}
+					priorityCount={0}
+					nounPlural="episodes"
 				/>
-				<ContentGrid items={podcasts} priorityCount={0} />
 			</section>
 		)
 	}

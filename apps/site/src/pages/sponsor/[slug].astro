@@ -1,7 +1,7 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -32,8 +32,11 @@ const description =
 		? rawExcerpt
 		: `${sponsor.title}: Official partner supporting podcasts and web development tutorials on CodingCat.dev.`;
 
-const relatedPosts = (sponsor.related?.post ?? []) as ContentListItem[];
-const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
+const allRelatedPosts = (sponsor.related?.post ?? []) as ContentListItem[];
+const allRelatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
+const INITIAL_BATCH = 8;
+const relatedPosts = allRelatedPosts.slice(0, INITIAL_BATCH);
+const relatedPodcasts = allRelatedPodcasts.slice(0, INITIAL_BATCH);
 const partnerUrl = sponsor.url ? resolvePartnerUrl(sponsor.url) : undefined;
 ---
 
@@ -107,8 +110,18 @@ const partnerUrl = sponsor.url ? resolvePartnerUrl(sponsor.url) : undefined;
 		{
 			relatedPodcasts.length > 0 && (
 				<aside>
-					<SectionHeader title="sponsored episodes" href="/podcasts/page/1" />
-					<ContentGrid items={relatedPodcasts} priorityCount={0} />
+					<SectionHeader title="sponsored episodes" />
+					<InfiniteContentGrid
+						type="podcast"
+						items={relatedPodcasts}
+						refId={sponsor._id}
+						initialOffset={relatedPodcasts.length}
+						totalCount={allRelatedPodcasts.length}
+						showSearch={allRelatedPodcasts.length > 4}
+						searchPlaceholder={`Filter ${sponsor.title} episodes...`}
+						priorityCount={0}
+						nounPlural="episodes"
+					/>
 				</aside>
 			)
 		}
@@ -116,8 +129,18 @@ const partnerUrl = sponsor.url ? resolvePartnerUrl(sponsor.url) : undefined;
 		{
 			relatedPosts.length > 0 && (
 				<aside class="mb-24">
-					<SectionHeader title="sponsored blog posts" href="/blog/page/1" />
-					<ContentGrid items={relatedPosts} priorityCount={0} />
+					<SectionHeader title="sponsored blog posts" />
+					<InfiniteContentGrid
+						type="post"
+						items={relatedPosts}
+						refId={sponsor._id}
+						initialOffset={relatedPosts.length}
+						totalCount={allRelatedPosts.length}
+						showSearch={allRelatedPosts.length > 4}
+						searchPlaceholder={`Filter ${sponsor.title} blog posts...`}
+						priorityCount={0}
+						nounPlural="blog posts"
+					/>
 				</aside>
 			)
 		}

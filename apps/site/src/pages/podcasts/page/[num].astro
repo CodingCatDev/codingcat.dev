@@ -22,6 +22,7 @@ if (!resolved.ok) {
 	return resolved.response;
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
+const initialQuery = Astro.url.searchParams.get("q")?.trim() || "";
 
 const items = await sanity.loadQuery(morePodcastQuery, {
 	skip: "none",
@@ -75,6 +76,9 @@ const ogCardImageUrl = sanity
 			skipId="none"
 			initialOffset={offset + items.length}
 			totalCount={count}
+			initialQuery={initialQuery}
+			showSearch={true}
+			searchPlaceholder="Filter episodes by title or guest..."
 			priorityCount={2}
 			nounPlural="episodes"
 		/>
