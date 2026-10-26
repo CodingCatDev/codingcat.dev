@@ -29,11 +29,11 @@ const TOPIC_RULES = [
   { tag: { label: "Python", value: "python" }, regex: /\b(python|pydantic|fastapi|pytorch|uv)\b/i, weight: 10 },
   { tag: { label: "PHP", value: "php" }, regex: /\b(php|laravel|wordpress|zend)\b/i, weight: 14 },
   { tag: { label: "Security", value: "security" }, regex: /\b(cve-\d{4}-\d+|vulnerability|rce|zero-day|0-day|auth|oauth|passkey|spicedb|security|exploit)\b/i, weight: 18 },
-  { tag: { label: "Firebase", value: "firebase" }, regex: /\b(firebase|firestore|data connect)\b/i, weight: 16 },
+  { tag: { label: "Firebase", value: "firebase" }, regex: /\b(firebase|firestore|data connect|genkit|app hosting|firebase studio|crashlytics|fcm|cloud functions for firebase)\b/i, weight: 28 },
+  { tag: { label: "AWS", value: "aws" }, regex: /\b(aws|amazon web services|lambda|s3|dynamodb|bedrock|amplify|cloudformation|cdk|ecs|eks|eventbridge|step functions)\b/i, weight: 28 },
+  { tag: { label: "Cloudflare", value: "cloudflare" }, regex: /\b(cloudflare|workers|workerd|d1|r2|durable objects|hyperdrive|pages|wrangler|workers ai)\b/i, weight: 28 },
   { tag: { label: "Supabase", value: "supabase" }, regex: /\b(supabase|pgvector|postgres|postgresql)\b/i, weight: 16 },
   { tag: { label: "Sanity", value: "sanity" }, regex: /\b(sanity|groq|headless cms|portable text)\b/i, weight: 18 },
-  { tag: { label: "Cloudflare", value: "cloudflare" }, regex: /\b(cloudflare|workers|workerd|d1|r2)\b/i, weight: 16 },
-  { tag: { label: "AWS", value: "aws" }, regex: /\b(aws|lambda|s3|dynamodb|bedrock|amplify|cloudformation|cdk)\b/i, weight: 15 },
   { tag: { label: "CSS", value: "css" }, regex: /\b(css|tailwind|tailwindcss|view transitions|anchor positioning)\b/i, weight: 14 },
   { tag: { label: "Docker", value: "docker" }, regex: /\b(docker|kubernetes|k8s|container|linux)\b/i, weight: 10 },
   { tag: { label: "GitHub", value: "github" }, regex: /\b(github|git|open source|oss)\b/i, weight: 10 },
@@ -159,6 +159,16 @@ async function fetchGoogleTrendsSignals() {
   const signals = [];
   const feeds = [
     {
+      url: "https://firebase.blog/rss.xml",
+      label: "Official Firebase Blog Feed",
+      baseScore: 68,
+    },
+    {
+      url: "https://news.google.com/rss/search?q=(%22Firebase%22+OR+%22Firestore%22+OR+%22Firebase+Genkit%22+OR+%22Firebase+Data+Connect%22+OR+%22AWS+Lambda%22+OR+%22AWS+Bedrock%22+OR+%22AWS+Amplify%22+OR+%22Cloudflare+Workers%22+OR+%22Cloudflare+D1%22)+when:3d&hl=en-US&gl=US&ceid=US:en",
+      label: "Firebase, AWS & Cloudflare Priority Trend Radar (72h)",
+      baseScore: 65,
+    },
+    {
       url: "https://trends.google.com/trending/rss?geo=US",
       label: "Google Trends US Realtime",
       baseScore: 58,
@@ -274,7 +284,7 @@ async function fetchGitHubTrendingSignals() {
 // 4. Fetch Reddit Developer Subreddits (r/webdev, r/nextjs, r/reactjs, r/LocalLLaMA, r/sveltejs)
 async function fetchRedditSignals() {
   const signals = [];
-  const subreddits = ["webdev", "nextjs", "reactjs", "LocalLLaMA", "sveltejs"];
+  const subreddits = ["Firebase", "aws", "Cloudflare", "webdev", "nextjs", "reactjs", "LocalLLaMA", "sveltejs"];
   for (const sub of subreddits) {
     try {
       const res = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=12`, {
