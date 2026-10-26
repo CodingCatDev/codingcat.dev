@@ -1,11 +1,16 @@
 ---
 name: codingcat-media-studio
-description: Visual and video generation rules for CodingCat.dev, including 2D upright bipedal and 3D vinyl-toy AJ the Cat mascot prompts, dark-mode Excalidraw architecture diagrams, 16:9 YouTube thumbnails, and high-retention video intros. Activate whenever generating images, diagrams, thumbnails, or video scripts/storyboards.
+description: Visual and video generation rules for CodingCat.dev, including 2D upright bipedal and 3D vinyl-toy AJ the Cat mascot prompts, hand-drawn architecture diagrams, 16:9 YouTube thumbnails, and high-retention video intros. Activate whenever generating images, diagrams, thumbnails, or video scripts/storyboards.
 ---
 
 # CodingCat.dev Media Studio Skill
 
-This skill governs all visual media, mascot illustration prompts, dark-mode Excalidraw diagrams, YouTube thumbnails, and video production workflows for **CodingCat.dev**.
+This skill governs all visual media, mascot illustration prompts, hand-drawn architecture diagrams, YouTube thumbnails, and video production workflows for **CodingCat.dev**.
+
+## Canonical Terminology Guardrail
+
+- In user-facing UI text, captions, and badges, always call diagrams **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams** (never write the brand name `"Excalidraw"` in user-facing UI copy, and never call content `"Teardowns"` or `"Blueprints"`).
+- Content pillars are strictly **Courses** (made of **Lessons**), **Podcasts** (made of **Episodes**), and **Blog** (made of **Blog Posts**).
 
 ## Canonical Reference Assets
 
@@ -21,6 +26,6 @@ Always ground multimodal image and video generation in the canonical reference f
 | Reference File | Purpose |
 | :--- | :--- |
 | [`references/aj-mascot-prompts.md`](./references/aj-mascot-prompts.md) | Exact 2D upright bipedal vector prompt, 3D vinyl-toy turnaround prompt modifiers, and anatomical guardrails for AJ |
-| [`references/excalidraw-diagrams.md`](./references/excalidraw-diagrams.md) | Dark-mode Excalidraw architecture rules (`#000000` / `#0F172A`), `Virgil` / `Excalifont` labels, Coral `#FCA5A5` `X` vs. Mint `#86EFAC` / Lime `#C5E86C` checkmarks |
+| [`references/excalidraw-diagrams.md`](./references/excalidraw-diagrams.md) | Hand-drawn architecture diagram style rules, `Virgil` labels, Coral `#FCA5A5` `✗` vs. Mint `#86EFAC` `✓` checkmarks |
 | [`references/youtube-thumbnails.md`](./references/youtube-thumbnails.md) | 16:9 YouTube thumbnail composition, safe zones (`96px` edge, `320x120px` bottom-right clear), and 3-4 word `Nunito` display text rules |
 | [`references/youtube-intros-and-video.md`](./references/youtube-intros-and-video.md) | First-15-second retention hooks, presenter cutaway rules, lower-third plates, and 9:16 vertical Shorts safe zones |

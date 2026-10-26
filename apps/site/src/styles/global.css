@@ -212,9 +212,13 @@
 /*
  * Tactile 3D Buttons (Dual-Theme: #2A1155 -> #7C3AED in Light Mode, #7C3AED with #4C1D95 lip in Dark Mode)
  */
+.tactile-btn:not([hidden]):not(.hidden),
+.duo-btn:not([hidden]):not(.hidden) {
+	display: inline-flex;
+}
+
 .tactile-btn,
 .duo-btn {
-	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;

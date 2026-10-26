@@ -5,17 +5,33 @@ import CoverImage from "@/components/CoverImage.astro";
 import HomeSection from "@/components/HomeSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
-import { homePageQuery } from "@/lib/sanity/queries";
+import { coursesQuery, homePageQuery } from "@/lib/sanity/queries";
 import { resolveHref } from "@/lib/sanity/resolve-href";
+import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
 import { SITE_DESCRIPTION } from "@/lib/site";
+
+interface CourseCardItem {
+	_id: string;
+	_type?: string;
+	title: string;
+	slug?: string | null;
+	excerpt?: string | null;
+	coverImage?: CoverImageType | null;
+	lessonsCount?: number | null;
+}
 
 const { sanity } = Astro.locals;
 
-const home = await sanity.loadQuery(homePageQuery);
+const [home, rawCourses] = await Promise.all([
+	sanity.loadQuery(homePageQuery),
+	sanity.loadQuery(coursesQuery),
+]);
 
 const latestPodcasts = (home?.latestPodcasts ?? []) as ContentListItem[];
 const topPodcasts = (home?.topPodcasts ?? []) as ContentListItem[];
 const latestPosts = (home?.latestPosts ?? []) as ContentListItem[];
+const allCourses = (rawCourses ?? []) as unknown as CourseCardItem[];
+const featuredCourses = allCourses.slice(0, 3);
 
 const spotlightPodcast = latestPodcasts[0];
 const spotlightHref = spotlightPodcast
@@ -34,7 +50,7 @@ const spotlightHref = spotlightPodcast
 
 	<AjYarnTrail variant="left-to-right" />
 
-	{/* Section 2: "learn by building." Dual Layout (Excalidraw System Flow + Featured Video Spotlight) */}
+	{/* Section 2: "learn by building." Dual Layout (System Flow Diagram + Featured Podcast Episode) */}
 	<section class="duo-scroll-reveal mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16">
 		<div class="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
 			<div>
@@ -42,7 +58,7 @@ const spotlightHref = spotlightPodcast
 					learn by building<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 				</h2>
 				<p class="mt-2 text-lg font-medium text-[#2A1155]/75 dark:text-slate-300">
-					Visual architecture first. Code second. Ship faster.
+					Visual diagrams first. Real code second. Ship faster.
 				</p>
 			</div>
 			<div class="flex items-center gap-3">
@@ -53,13 +69,13 @@ const spotlightHref = spotlightPodcast
 		</div>
 
 		<div class="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12">
-			{/* Left Card: Interactive Excalidraw Architecture Breakdown */}
+			{/* Left Card: Interactive Visual Architecture Diagram */}
 			<div class="flex flex-col justify-between rounded-3xl bg-white p-6 sm:p-7 dark:bg-[#131B2E]/90 lg:col-span-6 hand-border shadow-sketch">
 				<div class="mb-4 flex flex-wrap items-center justify-between gap-2">
 					<div class="flex items-center gap-2.5">
 						<span class="size-3 rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"></span>
 						<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-slate-200">
-							SYSTEM FLOW TEARDOWN #104
+							SYSTEM ARCHITECTURE DIAGRAM
 						</span>
 					</div>
 					<span class="rounded-lg border border-[#7C3AED]/30 bg-[#EDE9FE] px-2.5 py-1 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
@@ -68,7 +84,7 @@ const spotlightHref = spotlightPodcast
 				</div>
 
 				{/* Diagram Canvas Box */}
-				<div class=" relative my-2 overflow-x-auto rounded-2xl border-2 border-dashed border-[#2A1155]/25 bg-[#FAF9FC] p-5 dark:border-purple-400/25 dark:bg-[#060E20]/90">
+				<div class="relative my-2 overflow-x-auto rounded-2xl border-2 border-dashed border-[#2A1155]/25 bg-[#FAF9FC] p-5 dark:border-purple-400/25 dark:bg-[#060E20]/90">
 					<div class="flex min-w-[440px] items-center justify-between gap-3">
 						{/* Left Entry Node */}
 						<div class="rounded-xl border-2 border-[#2A1155] bg-[#2A1155] px-4 py-3 text-center text-white shadow-sketch-sm dark:border-white/80 dark:bg-[#7C3AED]">
@@ -115,19 +131,19 @@ const spotlightHref = spotlightPodcast
 
 				<div class="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2">
 					<p class="font-hand text-xl font-bold text-[#2A1155]/80 dark:text-purple-200">
-						✏️ Diagram generated with Excalidraw
+						✏️ Visual architecture diagram
 					</p>
 					<a
 						href="/courses"
 						class="inline-flex items-center gap-1 text-sm font-extrabold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
 					>
-						<span>Inspect Course Nodes</span>
+						<span>Explore Courses</span>
 						<span>→</span>
 					</a>
 				</div>
 			</div>
 
-			{/* Right Card: Featured Learner & Guest Video Spotlight */}
+			{/* Right Card: Featured Podcast Episode Spotlight */}
 			<div class="flex flex-col justify-between rounded-3xl bg-[#EDE9FE] p-6 sm:p-7 dark:bg-[#131B2E]/90 lg:col-span-6 hand-border shadow-sketch">
 				<div class="mb-4 flex items-center justify-between">
 					<h3 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
@@ -146,13 +162,13 @@ const spotlightHref = spotlightPodcast
 					<div class="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
 						<div class="space-y-2.5 sm:max-w-[62%]">
 							<div class="inline-flex items-center gap-1.5 rounded-md border border-[#FEF08A]/40 bg-[#FEF08A]/20 px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#FEF08A]">
-								<span>EXCALIDRAW DEEP DIVE</span>
+								<span>FEATURED PODCAST EPISODE</span>
 							</div>
 							<h4 class="font-display text-xl font-black leading-snug text-white group-hover:text-[#FEF08A] sm:text-2xl">
 								{spotlightPodcast?.title ?? "How Modern Compilers & Signals Transform the DOM"}
 							</h4>
 							<p class="font-hand text-lg text-[#EDE9FE]">
-								Live architectural sketching with Alex &amp; guests
+								Video &amp; audio conversation with Alex &amp; guests
 							</p>
 						</div>
 
@@ -190,14 +206,14 @@ const spotlightHref = spotlightPodcast
 					<div class="flex items-center gap-2">
 						<span class="size-2.5 rounded-full bg-[#58CC02] dark:bg-emerald-400"></span>
 						<span class="text-xs font-bold text-[#2A1155]/80 dark:text-slate-300">
-							Full Video + Interactive Excalidraw Notes
+							Full Video + Interactive Show Notes
 						</span>
 					</div>
 					<a
 						href={spotlightHref}
 						class="inline-flex items-center gap-1 rounded-full border-2 border-[#2A1155] bg-white px-4 py-1.5 text-xs font-extrabold text-[#2A1155] transition-colors hover:bg-[#7C3AED] hover:text-white dark:border-white/30 dark:bg-[#171F33] dark:text-white dark:hover:bg-[#7C3AED] shadow-sketch-sm"
 					>
-						<span>Listen</span>
+						<span>Watch Episode</span>
 						<span>→</span>
 					</a>
 				</div>
@@ -205,202 +221,146 @@ const spotlightHref = spotlightPodcast
 		</div>
 	</section>
 
-	{/* Section 3: Architecture Teardowns & Videos (3-Column Pastel/Chalk Sketch Cards from Stitch) */}
-	<section class="duo-scroll-reveal mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
-		<div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-			<div>
-				<span class="font-hand text-2xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
-					pick a blueprint &amp; start sketching
-				</span>
-				<h2 class="font-display text-3xl font-black text-[#2A1155] dark:text-white sm:text-4xl">
-					Architecture Teardowns &amp; Videos
-				</h2>
-			</div>
-			<a
-				href="/courses"
-				class="duo-btn cc-btn-outline self-start px-5 py-2.5 text-xs font-extrabold sm:self-auto"
-			>
-				<span>Browse All Blueprints</span>
-				<span>→</span>
-			</a>
-		</div>
-
-		<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-			{/* Card 1: Lilac / Astro 5 + Server Islands */}
-			<a
-				href="/courses"
-				class="group flex flex-col justify-between rounded-3xl bg-white p-5 transition-transform hover:-translate-y-1.5 dark:bg-[#131B2E]/90 hand-border shadow-sketch"
-			>
-				<div>
-					<div class="relative mb-4 flex h-44 flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#EDE9FE] p-4 dark:border-purple-400/40 dark:bg-purple-950/60">
-						<span class="absolute left-3 top-3 rounded-full border border-[#2A1155] bg-white px-2.5 py-0.5 font-mono text-[10px] font-extrabold text-[#7C3AED] dark:border-purple-300/40 dark:bg-[#0B1326] dark:text-purple-200">
-							ARCHITECTURE
+	{/* Section 3: Featured Courses from Sanity (3-Column Pastel/Chalk Sketch Cards) */}
+	{
+		featuredCourses.length > 0 && (
+			<section class="duo-scroll-reveal mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
+				<div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+					<div>
+						<span class="font-hand text-2xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
+							step-by-step courses &amp; lessons
 						</span>
-						<div class="flex items-center gap-2">
-							<div class="rounded-lg border-2 border-[#2A1155] bg-white px-3 py-1.5 font-mono text-xs font-bold text-[#2A1155] shadow-sketch-sm dark:border-white/70 dark:bg-[#171F33] dark:text-white">
-								Static Shell
-							</div>
-							<span class="font-hand text-xl font-bold text-[#7C3AED] dark:text-[#C084FC]">→</span>
-							<div class="rounded-lg border-2 border-[#2A1155] bg-[#7C3AED] px-3 py-1.5 font-mono text-xs font-bold text-white shadow-sketch-sm dark:border-white/70">
-								Server Island
-							</div>
-						</div>
-						<p class="mt-3 font-hand text-lg font-bold text-[#5B21B6] dark:text-purple-200">
-							✏️ Sub-20ms edge caching
-						</p>
+						<h2 class="font-display text-3xl font-black text-[#2A1155] dark:text-white sm:text-5xl">
+							courses<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+						</h2>
 					</div>
-					<h3 class="font-display text-xl font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
-						Astro 5 + Server Islands Deep Dive
-					</h3>
-					<p class="mt-2 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
-						How to combine instant static edge shells with personalized dynamic islands without shipping client JS bloat.
-					</p>
+					<a
+						href="/courses"
+						class="duo-btn cc-btn-outline self-start px-5 py-2.5 text-xs font-extrabold sm:self-auto"
+					>
+						<span>All Courses</span>
+						<span class="text-[#7C3AED] dark:text-[#C084FC]">→</span>
+					</a>
 				</div>
-				<div class="mt-5 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
-					<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-3 py-0.5 font-mono text-xs font-extrabold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-emerald-300">
-						Free Blueprint
-					</span>
-					<span class="font-hand text-lg font-bold text-[#7C3AED] dark:text-[#C084FC]">
-						Open Sketch →
-					</span>
-				</div>
-			</a>
 
-			{/* Card 2: Sky Blue / AI Agents with MCP & Tool Calling */}
-			<a
-				href="/blog"
-				class="group flex flex-col justify-between rounded-3xl bg-white p-5 transition-transform hover:-translate-y-1.5 dark:bg-[#131B2E]/90 hand-border shadow-sketch"
-			>
-				<div>
-					<div class="relative mb-4 flex h-44 flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#BAE6FD] p-4 dark:border-[#38BDF8]/50 dark:bg-sky-950/60">
-						<span class="absolute left-3 top-3 rounded-full border border-[#2A1155] bg-white px-2.5 py-0.5 font-mono text-[10px] font-extrabold text-[#0369A1] dark:border-sky-300/40 dark:bg-[#0B1326] dark:text-sky-200">
-							AI AGENTS
-						</span>
-						<div class="flex items-center gap-2">
-							<div class="rounded-lg border-2 border-[#2A1155] bg-[#FEF08A] px-3 py-1.5 font-mono text-xs font-bold text-[#713F12] shadow-sketch-sm">
-								LLM Prompt
-							</div>
-							<span class="font-hand text-xl font-bold text-[#0369A1] dark:text-sky-300">⇄</span>
-							<div class="rounded-lg border-2 border-[#2A1155] bg-white px-3 py-1.5 font-mono text-xs font-bold text-[#2A1155] shadow-sketch-sm dark:bg-[#171F33] dark:text-white">
-								MCP Server
-							</div>
-						</div>
-						<p class="mt-3 font-hand text-lg font-bold text-[#0369A1] dark:text-sky-200">
-							✏️ Typed tool schemas &amp; guardrails
-						</p>
-					</div>
-					<h3 class="font-display text-xl font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
-						AI Agents with MCP &amp; Tool Calling
-					</h3>
-					<p class="mt-2 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
-						Trace every step of the Model Context Protocol loop with visual state machines and production Workers code.
-					</p>
+				<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+					{featuredCourses.map((course, idx) => {
+						const courseHref = `/course/${course.slug}`;
+						const headerStyle =
+							idx % 3 === 0
+								? "bg-[#EDE9FE] dark:bg-purple-950/60 dark:border-purple-400/40"
+								: idx % 3 === 1
+									? "bg-[#BAE6FD] dark:bg-sky-950/60 dark:border-[#38BDF8]/50"
+									: "bg-[#FBCFE8] dark:bg-pink-950/50 dark:border-[#F472B6]/50";
+						return (
+							<a
+								href={courseHref}
+								class="group flex flex-col justify-between rounded-3xl bg-white p-5 transition-transform hover:-translate-y-1.5 dark:bg-[#131B2E]/90 hand-border shadow-sketch"
+							>
+								<div>
+									<div class={`relative mb-4 overflow-hidden rounded-2xl border-2 border-[#2A1155] ${headerStyle}`}>
+										{course.coverImage ? (
+											<CoverImage
+												image={course.coverImage}
+												fallbackAlt={course.title}
+												width={640}
+												height={360}
+												class="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
+											/>
+										) : (
+											<div class="flex aspect-video items-center justify-center p-4">
+												<span class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+													{course.title}
+												</span>
+											</div>
+										)}
+										<span class="absolute left-3 top-3 rounded-full border border-[#2A1155] bg-white px-2.5 py-0.5 font-mono text-[10px] font-extrabold uppercase text-[#7C3AED] dark:border-purple-300/40 dark:bg-[#0B1326] dark:text-purple-200">
+											Course
+										</span>
+									</div>
+									<h3 class="font-display text-xl font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+										{course.title}
+									</h3>
+									{course.excerpt && (
+										<p class="mt-2 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300 line-clamp-3">
+											{course.excerpt}
+										</p>
+									)}
+								</div>
+								<div class="mt-5 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
+									<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-3 py-0.5 font-mono text-xs font-extrabold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-emerald-300">
+										{course.lessonsCount
+											? `${course.lessonsCount} Lessons`
+											: "Course Lessons"}
+									</span>
+									<span class="font-hand text-lg font-bold text-[#7C3AED] dark:text-[#C084FC]">
+										Start Course →
+									</span>
+								</div>
+							</a>
+						);
+					})}
 				</div>
-				<div class="mt-5 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
-					<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-3 py-0.5 font-mono text-xs font-extrabold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-emerald-300">
-						Free Blueprint
-					</span>
-					<span class="font-hand text-lg font-bold text-[#7C3AED] dark:text-[#C084FC]">
-						Open Sketch →
-					</span>
-				</div>
-			</a>
-
-			{/* Card 3: Candy Pink / Zero-Latency Edge & Sanity */}
-			<a
-				href="/podcasts"
-				class="group flex flex-col justify-between rounded-3xl bg-white p-5 transition-transform hover:-translate-y-1.5 dark:bg-[#131B2E]/90 hand-border shadow-sketch"
-			>
-				<div>
-					<div class="relative mb-4 flex h-44 flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#FBCFE8] p-4 dark:border-[#F472B6]/50 dark:bg-pink-950/50">
-						<span class="absolute left-3 top-3 rounded-full border border-[#2A1155] bg-white px-2.5 py-0.5 font-mono text-[10px] font-extrabold text-[#9D174D] dark:border-pink-300/40 dark:bg-[#0B1326] dark:text-pink-200">
-							EDGE DATA
-						</span>
-						<div class="flex items-center gap-2">
-							<div class="rounded-lg border-2 border-[#2A1155] bg-white px-3 py-1.5 font-mono text-xs font-bold text-[#2A1155] shadow-sketch-sm dark:bg-[#171F33] dark:text-white">
-								GROQ Query
-							</div>
-							<span class="font-hand text-xl font-bold text-[#9D174D] dark:text-pink-300">→</span>
-							<div class="rounded-lg border-2 border-[#2A1155] bg-[#86EFAC] px-3 py-1.5 font-mono text-xs font-bold text-[#166534] shadow-sketch-sm">
-								Edge Replica
-							</div>
-						</div>
-						<p class="mt-3 font-hand text-lg font-bold text-[#9D174D] dark:text-pink-200">
-							✏️ Global read replication
-						</p>
-					</div>
-					<h3 class="font-display text-xl font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
-						Zero-Latency Content &amp; Edge Replicas
-					</h3>
-					<p class="mt-2 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
-						Eliminate cold-start database waterfalls by pairing content lakes with edge workers and smart cache tags.
-					</p>
-				</div>
-				<div class="mt-5 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
-					<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-3 py-0.5 font-mono text-xs font-extrabold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-emerald-300">
-						Free Blueprint
-					</span>
-					<span class="font-hand text-lg font-bold text-[#7C3AED] dark:text-[#C084FC]">
-						Open Sketch →
-					</span>
-				</div>
-			</a>
-		</div>
-	</section>
+			</section>
+		)
+	}
 
 	<AjYarnTrail variant="right-to-left" />
 
 	{/* Section 4: Chronological Latest Podcasts */}
 	<HomeSection
-		title="meet real builders & guests."
-		description="Chronological deep-dive conversations with the creators of modern web frameworks, databases, and AI tools."
+		title="latest podcasts."
+		description="Chronological video and audio episodes with the builders behind modern web frameworks, cloud databases, and AI tools."
 		items={latestPodcasts}
 		accentColor="purple"
 		ctaHref="/podcasts"
-		ctaLabel="All Episodes"
+		ctaLabel="All Podcasts"
+		actionLabel="Watch Episode →"
 		muted
 	/>
 
 	<AjYarnTrail variant="center-wave" />
 
-	{/* Section 5: Most-Watched Episodes */}
+	{/* Section 5: Most-Watched Podcast Episodes */}
 	<HomeSection
 		title="most-watched episodes."
-		description="Community-favorite episodes covering web development, cloud architecture, and developer workflows."
+		description="Community-favorite podcast episodes covering web development, cloud architecture, and developer workflows."
 		items={topPodcasts}
 		accentColor="blue"
 		ctaHref="/podcasts"
-		ctaLabel="Browse Archive"
+		ctaLabel="Browse Podcasts"
+		actionLabel="Watch Episode →"
 	/>
 
 	<AjYarnTrail variant="left-to-right" />
 
-	{/* Section 6: Chronological Blog Tutorials */}
+	{/* Section 6: Chronological Blog Posts */}
 	<HomeSection
-		title="backed by real code."
-		description="Chronological tutorials, architectural breakdowns, and hand-drawn Excalidraw blueprints."
+		title="latest blog posts."
+		description="Chronological blog posts, hands-on code guides, and visual architecture diagrams."
 		items={latestPosts}
 		accentColor="green"
 		ctaHref="/blog"
-		ctaLabel="All Tutorials"
+		ctaLabel="All Blog Posts"
+		actionLabel="Read Post →"
 		muted
 	/>
 
-	{/* Section 7: Production Teardown Code Block + Tilted Yellow Sticky Note Banner (from Stitch 8d131990 & b9e00f99) */}
+	{/* Section 7: Architecture Code Block + Tilted Yellow Sticky Note Banner */}
 	<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16">
 		<div class="rounded-3xl bg-[#2A1155] p-6 text-white sm:p-8 md:p-10 dark:bg-[#131B2E] hand-border shadow-sketch-lg">
 			<div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
 				<div class="space-y-4 lg:col-span-8">
 					<div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 font-mono text-xs font-bold text-[#FEF08A]">
-						<span>⚡ PRODUCTION TEARDOWN NOTE</span>
+						<span>⚡ ARCHITECTURE NOTE</span>
 					</div>
 					<h2 class="font-display text-2xl font-black text-white sm:text-3xl">
 						&ldquo;Build apps by understanding the network boundary.&rdquo;
 					</h2>
 					<div class="overflow-x-auto rounded-2xl border-2 border-white/20 bg-[#180838] p-4 font-mono text-xs leading-relaxed text-purple-100 dark:bg-[#060E20] sm:text-sm">
 						<pre><code><span class="text-[#C084FC]">export async function</span> <span class="text-[#FEF08A]">GET</span>(&#123; locals &#125;: APIContext) &#123;
-  <span class="text-slate-400">// Stream Excalidraw blueprint + edge HTML in a single roundtrip</span>
-  <span class="text-[#C084FC]">const</span> data = <span class="text-[#C084FC]">await</span> locals.sanity.loadQuery(blueprintQuery);
+  <span class="text-slate-400">// Stream Sanity content + edge HTML in a single roundtrip</span>
+  <span class="text-[#C084FC]">const</span> data = <span class="text-[#C084FC]">await</span> locals.sanity.loadQuery(homePageQuery);
   <span class="text-[#C084FC]">return new</span> <span class="text-[#86EFAC]">Response</span>(JSON.stringify(data), &#123;
     headers: &#123; <span class="text-[#BAE6FD]">&quot;cache-control&quot;</span>: <span class="text-[#86EFAC]">&quot;public, s-maxage=3600&quot;</span> &#125;,
   &#125;);

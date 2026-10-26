@@ -1,11 +1,12 @@
-# Cursor Rules for CodingCat.dev (.cursorrules)
+# CodingCat.dev Cursor & IDE Rules (`.cursorrules`)
 
-Always read and follow `AGENTS.md`, `GEMINI.md`, and `DESIGN.md` at the root of this repository before generating code, copy, or visual prompts.
+Always follow `AGENTS.md` and `DESIGN.md`:
 
-## Critical Rules Summary
-1. NEVER use em-dashes anywhere in prose, UI copy, titles, comments, or documentation. Use commas, parentheses, colons, or separate sentences.
-2. ALWAYS use Markdown tables for comparisons between tools, frameworks, architectures, or trade-offs.
-3. Follow the 13-module CodingCat.dev Design System in `skills/codingcat-design-system/`, `skills/alex-voice-and-copy/`, and `skills/codingcat-media-studio/`:
-   - Colors: Canvas Obsidian `#0F172A`, Pure Void `#000000`, Surface Slate `#1E293B`, Elevated `#334155`, Royal Purple `#4B2E83`, Soft Lavender `#B4A7D6`, Electric Lime `#C5E86C`, Mint `#86EFAC`, Coral `#FCA5A5`, Text Primary `#F8FAFC`, Text Muted `#94A3B8`.
-   - Typography: `Nunito` (800/900) for chunky H1 display titles, `Inter` for UI and H2-H6, `JetBrains Mono` for code/badges, and `Virgil` / `Excalifont` for dark-mode Excalidraw diagram explanations.
-   - Mascot Assets: Use canonical files in `assets/` (`AJHeadphones.png`, `AJ-2D-Bipedal.jpg`, `AJ-3D-Headphones-Front.jpg`, `AJ-3D-Headphones-Left.jpg`, `AJ-3D-Headphones-Right.jpg`).
+1. **Canonical Content Pillars & Terminology**:
+   - **Courses** (`/courses` -> `/course/[slug]`), made of **Lessons** (`Explore Courses →`, `Start Course →`).
+   - **Podcasts** (`/podcasts` -> `/podcast/[slug]`), made of **Episodes** (`Watch Podcasts`, `Watch Episode →`).
+   - **Blog** (`/blog` -> `/post/[slug]`), made of **Blog Posts** (`Read Blog`, `Read Post →`).
+   - **Diagrams**: Never write the brand word `"Excalidraw"` in user-facing UI copy, badges, filenames, or captions; call them **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams**. Never invent synonyms like `"Teardowns"`, `"Blueprints"`, `"Curriculum"`, `"Units"`, or `"Skill Trees"`.
+2. **NEVER Use Em-Dashes**: Do not output the em-dash character anywhere.
+3. **Always Use Tables for Comparisons**: Render Markdown or HTML comparison tables.
+4. **Header & Mobile 3-Line Drawer**: Never put a `"Get Started"` button inside `#site-header`; keep the mobile header clean so `#nav-drawer-toggle` (the 3-line menu button) is always visible.

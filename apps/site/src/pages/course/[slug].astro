@@ -1,6 +1,6 @@
 ---
 /**
- * `/course/[slug]` | Individual Course Detail & Lesson Map Page.
+ * `/course/[slug]` | Individual Course Detail & Lessons Page.
  */
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
@@ -66,7 +66,7 @@ const sections: CourseSection[] = course.sections ?? [];
 
 	<article class="py-6">
 		<div class="mb-6 inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
-			🧶 Interactive CodingCat.dev Course
+			🧶 CodingCat.dev Course
 		</div>
 
 		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-[#2A1155] dark:text-white md:text-6xl">
@@ -102,7 +102,7 @@ const sections: CourseSection[] = course.sections ?? [];
 			sections.length > 0 && (
 				<section class="my-12">
 					<h2 class="mb-6 font-display text-3xl font-black text-[#2A1155] dark:text-white">
-						course modules &amp; lessons<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+						course lessons<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 					</h2>
 					<div class="grid gap-6">
 						{sections.map((sec, sIdx) => (
@@ -112,7 +112,7 @@ const sections: CourseSection[] = course.sections ?? [];
 										{sIdx + 1}
 									</span>
 									<h3 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
-										{sec?.title || `Module ${sIdx + 1}`}
+										{sec?.title || `Section ${sIdx + 1}`}
 									</h3>
 								</div>
 								{sec?.lesson && sec.lesson.length > 0 && (

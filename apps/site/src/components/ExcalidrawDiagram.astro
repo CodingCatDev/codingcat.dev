@@ -1,12 +1,10 @@
 ---
 /**
- * Hand-Drawn Excalidraw Explanation Engine (`ExcalidrawDiagram.astro`).
+ * Hand-Drawn Visual Diagram Engine (`ExcalidrawDiagram.astro`).
  *
- * Dual-Theme Excalidraw Canvas matching Google Stitch screens:
- * - Light Mode: `8d1319903d504a79ae56110486455e17` (Chalkboard Paper `#FFFFFF`, `#2A1155` borders,
- *   pastel `#EDE9FE` lilac, `#BAE6FD` sky blue, `#FEF08A` yellow, `#FBCFE8` candy pink, `#86EFAC` mint)
- * - Dark Mode: `b9e00f99c0d34e9884bf7766a014577b` (Obsidian Chalkboard `#131B2E` / `#060E20`,
- *   `#C084FC` purple, `#38BDF8` sky, `#FACC15` yellow, `#F472B6` pink, `#86EFAC` mint)
+ * Dual-Theme Diagram Canvas matching Google Stitch screens:
+ * - Light Mode: `8d1319903d504a79ae56110486455e17`
+ * - Dark Mode: `b9e00f99c0d34e9884bf7766a014577b`
  */
 
 export type ExcalidrawColor =
@@ -42,7 +40,7 @@ interface Props {
 }
 
 const {
-	title = "Architecture Sketch",
+	title = "Architecture Diagram",
 	caption,
 	nodes: propNodes,
 	edges: propEdges,
@@ -234,7 +232,7 @@ const boxW = 192;
 const boxH = 96;
 const boxY = Math.round((svgHeight - boxH) / 2) + 8;
 
-const uid = `excalidraw-${Math.random().toString(36).slice(2, 9)}`;
+const uid = `diagram-${Math.random().toString(36).slice(2, 9)}`;
 const a11ySummary = nodes
 	.map(
 		(n, idx) =>
@@ -244,7 +242,7 @@ const a11ySummary = nodes
 ---
 
 <figure class="excalidraw-well hand-border duo-scroll-reveal relative my-6 overflow-hidden p-5 md:p-7">
-	{/* Top Excalidraw Canvas Header Bar */}
+	{/* Top Diagram Canvas Header Bar */}
 	<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2A1155]/15 pb-3 dark:border-white/15">
 		<div class="flex items-center gap-2">
 			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#FBCFE8] dark:border-black/60 dark:bg-[#F472B6]"></span>
@@ -259,7 +257,7 @@ const a11ySummary = nodes
 				✓ Good Pattern
 			</span>
 			<span class="rounded-full border border-[#7C3AED]/40 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
-				LIVE SKETCH
+				VISUAL DIAGRAM
 			</span>
 		</div>
 	</div>
@@ -274,7 +272,7 @@ const a11ySummary = nodes
 		>
 			<title id={`${uid}-title`}>{title}</title>
 			<desc id={`${uid}-desc`}>
-				Excalidraw architectural diagram showing: {a11ySummary}. {caption ?? ""}
+				Visual architectural diagram showing: {a11ySummary}. {caption ?? ""}
 			</desc>
 			<defs>
 				<pattern id="hatch-mint" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
@@ -313,7 +311,7 @@ const a11ySummary = nodes
 
 					return (
 						<g>
-							{/* Sketchy Excalidraw Arrow to Next Node */}
+							{/* Sketchy Arrow to Next Node */}
 							{index < nodes.length - 1 && (
 								<g>
 									<path
@@ -357,7 +355,7 @@ const a11ySummary = nodes
 								fill-opacity="0.92"
 							/>
 
-							{/* Excalidraw Cross-Hatched Marker Fill */}
+							{/* Cross-Hatched Marker Fill */}
 							<rect
 								x={x}
 								y={y}
@@ -379,7 +377,7 @@ const a11ySummary = nodes
 								stroke-width="2.4"
 							/>
 
-							{/* Offset Double-Stroke Accent Line #2 (Excalidraw Roughness) */}
+							{/* Offset Double-Stroke Accent Line #2 */}
 							<rect
 								x={x + 2.5}
 								y={y - 2}
@@ -449,7 +447,7 @@ const a11ySummary = nodes
 								{node.label.length > 21 ? `${node.label.slice(0, 19)}…` : node.label}
 							</text>
 
-							{/* Node Hand-Drawn Virgil Sub-label */}
+							{/* Node Hand-Drawn Sub-label */}
 							{node.sublabel && (
 								<text
 									x={x + boxW / 2}
@@ -474,7 +472,7 @@ const a11ySummary = nodes
 	<figcaption class="mt-4 flex flex-col justify-between gap-2 rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] px-4 py-3 text-left dark:border-white/20 dark:bg-[#0B1326] sm:flex-row sm:items-center">
 		<div class="font-hand text-xl font-bold text-[#2A1155] dark:text-slate-100">
 			<span class="mr-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
-				[Excalidraw Walkthrough]
+				[Diagram Walkthrough]
 			</span>
 			{caption ?? a11ySummary}
 		</div>

@@ -1,10 +1,7 @@
 ---
 /**
- * Auto-generated Hand-Drawn Excalidraw "Visual Blueprint" Card for every
+ * Auto-generated Hand-Drawn Visual Diagram Card for every
  * Podcast (`/podcast/[slug]`), Blog Post (`/post/[slug]`), and Course (`/course/[slug]`).
- *
- * Uses the Dual-Theme Chalkboard Paper (`8d1319903d504a79ae56110486455e17`) &
- * Obsidian Chalkboard (`b9e00f99c0d34e9884bf7766a014577b`) design system.
  */
 import ExcalidrawDiagram, {
 	type ExcalidrawNode,
@@ -68,16 +65,16 @@ const edges = [
 ---
 
 <section
-	aria-label="Excalidraw Visual Blueprint"
+	aria-label="Visual Architecture Diagram"
 	class="duo-card hand-border my-8 p-5 md:p-7"
 >
 	<div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
 		<div>
 			<span class="inline-flex items-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-3.5 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 shadow-sketch-sm">
-				✏️ Excalidraw Architecture Explanation
+				✏️ Visual Architecture Diagram
 			</span>
 			<h2 class="mt-2 font-display text-2xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-3xl">
-				how this {kind === "podcast" ? "episode" : kind === "course" ? "course" : "lesson"} connects together<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+				how this {kind === "podcast" ? "episode" : kind === "course" ? "course" : "post"} connects together<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 			</h2>
 			<p class="font-hand mt-1 text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
 				Follow AJ from first principles to production-ready architecture.
@@ -87,14 +84,14 @@ const edges = [
 			<AjMascot
 				pose="code-peek"
 				cls="w-24 h-auto"
-				caption="Let’s sketch it!"
+				caption="Let’s build it!"
 			/>
 		</div>
 	</div>
 
 	<ExcalidrawDiagram
-		title={`Visual Map: ${title.slice(0, 48)}${title.length > 48 ? "…" : ""}`}
-		caption={`Step-by-step Excalidraw breakdown for ${title}: start with ${topicHook || "core fundamentals"}, implement ${secondHook}, and ship to production.`}
+		title={`Visual Diagram: ${title.slice(0, 48)}${title.length > 48 ? "…" : ""}`}
+		caption={`Step-by-step diagram breakdown for ${title}: start with ${topicHook || "core fundamentals"}, implement ${secondHook}, and ship to production.`}
 		nodes={nodes}
 		edges={edges}
 		compact={true}

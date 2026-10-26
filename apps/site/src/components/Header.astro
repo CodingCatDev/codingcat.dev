@@ -12,26 +12,27 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 const hasCoursesLink = desktopLinks.some((link) =>
 	(link?.path ?? "").startsWith("/course"),
 );
+const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 ---
 
 <header
 	id="site-header"
-	class="fixed left-0 right-0 top-0 z-40 px-4 pt-3 sm:px-6 sm:pt-4"
+	class="fixed left-0 right-0 top-0 z-40 px-3 pt-2.5 sm:px-6 sm:pt-4"
 >
-	<div class="mx-auto flex max-w-7xl items-center justify-between rounded-full bg-white/95 px-4 py-2.5 backdrop-blur-md dark:bg-[#131B2E]/90 sm:px-7 sm:py-3 hand-border shadow-sketch">
-		<div class="flex items-center gap-6">
+	<div class="mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-full border-2 border-[#2A1155] bg-white/95 px-3.5 py-2 backdrop-blur-md dark:border-white/22 dark:bg-[#131B2E]/90 sm:px-6 sm:py-2.5 shadow-sketch">
+		<div class="flex min-w-0 items-center gap-4 lg:gap-6">
 			<a
-				class="group flex items-center gap-3 font-display text-xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-2xl"
+				class="group flex shrink-0 items-center gap-2 font-display text-lg font-black tracking-tight text-[#2A1155] dark:text-white sm:gap-2.5 sm:text-2xl"
 				href="/"
 			>
-				<div class="flex size-10 items-center justify-center overflow-hidden rounded-full bg-[#7C3AED] transition-transform duration-200 group-hover:-rotate-6 group-hover:scale-105 hand-border shadow-sketch-sm">
-					<AjHeadphones cls="block size-8" />
+				<div class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] transition-transform duration-200 group-hover:-rotate-6 group-hover:scale-105 dark:border-white/40 sm:size-10 shadow-sketch-sm">
+					<AjHeadphones cls="block size-6 sm:size-8" />
 				</div>
-				<span>
+				<span class="truncate">
 					CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
 				</span>
 			</a>
-			<nav class="hidden items-center gap-6 text-sm font-bold text-[#2A1155]/85 dark:text-slate-300 lg:flex" aria-label="Main">
+			<nav class="hidden items-center gap-6 text-sm font-bold text-[#2A1155]/85 dark:text-slate-200 lg:flex" aria-label="Main">
 				{
 					!hasCoursesLink && (
 						<NavLink href="/courses">
@@ -49,18 +50,18 @@ const hasCoursesLink = desktopLinks.some((link) =>
 			</nav>
 		</div>
 
-		<div class="flex items-center gap-2 sm:gap-2.5">
+		<div class="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
 			<button
 				type="button"
 				id="search-header-trigger"
 				data-track="search_open"
 				data-track-label="header_search"
-				class="inline-flex min-h-9 min-w-9 cursor-pointer items-center justify-center gap-2.5 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] px-3 py-1.5 text-xs font-bold text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#0B1326]/90 dark:text-slate-100 dark:hover:border-[#C084FC] sm:justify-between shadow-sketch-sm"
+				class="inline-flex size-9 cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-xs font-bold text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#0B1326]/90 dark:text-slate-100 dark:hover:border-[#C084FC] sm:w-auto sm:px-3 sm:py-1.5 shadow-sketch-sm"
 				aria-label="Search CodingCat.dev (⌘K)"
 			>
 				<span class="inline-flex items-center gap-1.5">
 					<svg
-						class="size-3.5 text-[#7C3AED] dark:text-[#C084FC]"
+						class="size-4 text-[#7C3AED] dark:text-[#C084FC] sm:size-3.5"
 						viewBox="0 0 24 24"
 						fill="none"
 						stroke="currentColor"
@@ -80,11 +81,11 @@ const hasCoursesLink = desktopLinks.some((link) =>
 			<button
 				type="button"
 				id="ask-agent-header-trigger"
-				class="inline-flex min-h-9 min-w-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-[#2A1155] transition-colors hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 dark:hover:border-[#C084FC] shadow-sketch-sm"
+				class="inline-flex size-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] font-mono text-[11px] font-bold uppercase tracking-wider text-[#2A1155] transition-colors hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 dark:hover:border-[#C084FC] md:w-auto md:px-3 md:py-1.5 shadow-sketch-sm"
 				aria-label="Ask Agent AJ"
 			>
 				<svg
-					class="size-3.5 text-[#7C3AED] dark:text-[#C084FC]"
+					class="size-4 text-[#7C3AED] dark:text-[#C084FC] md:size-3.5"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
@@ -102,20 +103,13 @@ const hasCoursesLink = desktopLinks.some((link) =>
 
 			<ThemeToggle />
 
-			<a
-				href="/courses"
-				class="tactile-btn hidden px-4 py-2 text-xs font-extrabold sm:inline-flex"
-			>
-				<span>Get Started</span>
-				<span class="text-[#86EFAC]">→</span>
-			</a>
-
 			<button
 				type="button"
 				id="nav-drawer-toggle"
-				class="inline-flex size-9 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#EDE9FE] dark:border-white/20 dark:bg-[#0B1326] dark:text-white lg:hidden shadow-sketch-sm"
+				class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#EDE9FE] dark:border-white/20 dark:bg-[#0B1326] dark:text-white lg:hidden shadow-sketch-sm"
 				aria-controls="nav-drawer"
 				aria-expanded="false"
+				aria-label="Open navigation menu"
 			>
 				<svg
 					class="size-5"
@@ -138,17 +132,28 @@ const hasCoursesLink = desktopLinks.some((link) =>
 <div
 	id="nav-drawer"
 	hidden
-	class="fixed inset-0 z-50 bg-[#FAF9FC]/98 backdrop-blur dark:bg-[#0B1326]/98 lg:hidden"
+	class="fixed inset-0 z-50 bg-[#FAF9FC]/98 backdrop-blur-md dark:bg-[#0B1326]/98 lg:hidden"
 >
-	<div class="flex items-center justify-end px-6 py-5">
+	<div class="flex items-center justify-between border-b border-[#2A1155]/15 px-6 py-4 dark:border-white/15">
+		<a
+			href="/"
+			class="flex items-center gap-2.5 font-display text-xl font-black text-[#2A1155] dark:text-white"
+		>
+			<div class="flex size-8 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] dark:border-white/40">
+				<AjHeadphones cls="block size-6" />
+			</div>
+			<span>
+				CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
+			</span>
+		</a>
 		<button
 			type="button"
 			id="nav-drawer-close"
-			class="inline-flex size-10 items-center justify-center rounded-full border-2 border-[#2A1155] bg-white text-[#2A1155] dark:border-white/25 dark:bg-[#131B2E] dark:text-white shadow-sketch-sm"
+			class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-white text-[#2A1155] dark:border-white/25 dark:bg-[#131B2E] dark:text-white shadow-sketch-sm"
 			aria-label="Close navigation menu"
 		>
 			<svg
-				class="size-6"
+				class="size-5"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -161,8 +166,9 @@ const hasCoursesLink = desktopLinks.some((link) =>
 			</svg>
 		</button>
 	</div>
-	<nav class="grid gap-3 px-6 py-4 text-lg font-extrabold text-[#2A1155] dark:text-white" aria-label="Mobile">
-		<NavLink href="/courses">Courses & Learning Map</NavLink>
+	<nav class="grid gap-4 px-6 py-6 text-xl font-bold text-[#2A1155] dark:text-white" aria-label="Mobile">
+		{!hasHomeLink && <NavLink href="/">Home</NavLink>}
+		{!hasCoursesLink && <NavLink href="/courses">Courses</NavLink>}
 		{navLinks.map((link) => <NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>)}
 	</nav>
 </div>
