@@ -212,10 +212,10 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 						</div>
 					</div>
 
-					{/* Lower Connector & Yellow Sticky Note + WebSockets Row */}
-					<div class="flex w-full flex-col items-center justify-between gap-4 pt-2 sm:flex-row sm:px-2">
+					{/* Lower Connector & Yellow Sticky Note + Glowing Purple Yarn Swirl + AJ Mascot Row */}
+					<div class="relative flex w-full flex-col items-center justify-between gap-4 pt-2 sm:flex-row sm:px-2">
 						{/* Hand-drawn Yellow Sticky Note */}
-						<div class="max-w-[235px] -rotate-2 rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] p-3.5 text-[#2A1155] shadow-sketch-sm dark:border-yellow-600">
+						<div class="relative z-10 max-w-[220px] -rotate-2 rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] p-3.5 text-[#2A1155] shadow-sketch-sm dark:border-yellow-600">
 							<div class="font-hand text-lg font-bold leading-tight text-[#713F12]">
 								✏️ AJ&apos;s Tip:
 							</div>
@@ -224,20 +224,44 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 							</p>
 						</div>
 
+						{/* Glowing Purple Yarn Curve connecting Sticky Note to Yarn Ball */}
+						<svg
+							class="pointer-events-none hidden h-20 w-40 shrink-0 sm:block"
+							viewBox="0 0 180 80"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<path
+								d="M 4 28 C 42 10, 62 72, 108 56 C 138 44, 152 24, 174 44"
+								stroke="#A855F7"
+								stroke-width="7"
+								stroke-linecap="round"
+								class="opacity-45 blur-[3px]"
+							/>
+							<path
+								d="M 4 28 C 42 10, 62 72, 108 56 C 138 44, 152 24, 174 44"
+								stroke="#7C3AED"
+								stroke-width="3.5"
+								stroke-linecap="round"
+								stroke-dasharray="8 4"
+							/>
+						</svg>
+
 						{/* Center Converging Node */}
-						<div class="rotate-1 rounded-xl border-2 border-[#2A1155] bg-white px-5 py-2.5 shadow-sketch-sm dark:border-[#A855F7] chalk-hatch">
+						<div class="relative z-10 rotate-1 rounded-xl border-2 border-[#2A1155] bg-white px-4 py-2 shadow-sketch-sm dark:border-[#A855F7] dark:bg-[#171F33] chalk-hatch">
 							<span class="font-mono text-xs font-extrabold text-[#2A1155] dark:text-purple-100">
 								⚡ WebSockets &amp; AI Stream
 							</span>
 						</div>
 
 						{/* Spacer for AJ Mascot on desktop */}
-						<div class="hidden w-24 sm:block"></div>
+						<div class="hidden w-28 sm:block"></div>
 					</div>
 				</div>
 
-				{/* Interactive Purple Yarn Swirl & Ball */}
-				<div class="mt-3 flex items-center justify-between border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
+				{/* Interactive Purple Yarn Swirl & Ball Footer */}
+				<div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-3 pr-0 sm:pr-32 dark:border-white/15">
 					<div class="flex items-center gap-3">
 						<div class="flex size-9 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#7C3AED] shadow-sketch-sm dark:border-white/80 dark:bg-gradient-to-tr dark:from-[#7C3AED] dark:to-[#D946EF]">
 							<svg class="size-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -249,13 +273,25 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 							Follow the purple yarn trail down the page ↓
 						</span>
 					</div>
-					<span class="hidden font-mono text-[11px] font-bold text-[#2A1155]/60 dark:text-slate-400 sm:inline">
-						AAA Contrast · Screen-Reader Ready
-					</span>
+					<a
+						href="/mascot-lab"
+						class="font-mono text-[11px] font-extrabold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+					>
+						Open AJ Mascot Lab →
+					</a>
 				</div>
 
-				{/* Articulated Interactive 2D Vector AJ Mascot in Bottom-Right Corner */}
-				<div class="mt-4 flex flex-col items-center sm:absolute sm:-bottom-6 sm:-right-4 sm:mt-0">
+				{/* Articulated Interactive 2D Vector AJ Mascot + Glowing Yarn Ball in Bottom-Right Corner */}
+				<div class="mt-4 flex items-end justify-center gap-1 sm:absolute sm:-bottom-5 sm:-right-3 sm:mt-0">
+					<div class="relative -mr-3 mb-3 size-12 shrink-0">
+						<div class="absolute inset-0 animate-pulse rounded-full bg-[#A855F7] opacity-60 blur-md"></div>
+						<svg class="relative size-full" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+							<circle cx="50" cy="50" r="42" fill="#7C3AED" stroke="#2A1155" stroke-width="5"></circle>
+							<path d="M 20 40 Q 50 10 80 40" stroke="#DDD6FE" stroke-width="4" stroke-linecap="round"></path>
+							<path d="M 20 60 Q 50 90 80 60" stroke="#C4B5FD" stroke-width="4" stroke-linecap="round"></path>
+							<path d="M 30 25 Q 70 50 40 85" stroke="#EDE9FE" stroke-width="3.5" stroke-linecap="round"></path>
+						</svg>
+					</div>
 					<AjAnimatedMascot
 						id="hero-aj"
 						variant="full-body"

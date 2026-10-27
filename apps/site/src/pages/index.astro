@@ -3,6 +3,7 @@ import AjYarnTrail from "@/components/AjYarnTrail.astro";
 import AnimatedHero from "@/components/AnimatedHero.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import HomeSection from "@/components/HomeSection.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { coursesQuery, homePageQuery } from "@/lib/sanity/queries";
@@ -48,6 +49,11 @@ const spotlightHref = spotlightPodcast
 	{/* Section 1: Dual-Theme Video-First Chalkboard Hero ("free. fun. purrfect.") */}
 	<AnimatedHero />
 
+	{/* Official Vendor & Topic Hub Strip */}
+	<div class="mx-auto max-w-7xl px-4 pb-4 sm:px-6">
+		<TopicFilterStrip label="Explore Official Vendor & Topic Hubs:" />
+	</div>
+
 	<AjYarnTrail variant="left-to-right" />
 
 	{/* Section 2: "learn by building." Dual Layout (System Flow Diagram + Featured Podcast Episode) */}
@@ -69,8 +75,8 @@ const spotlightHref = spotlightPodcast
 		</div>
 
 		<div class="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12">
-			{/* Left Card: Interactive Visual Architecture Diagram */}
-			<div class="flex flex-col justify-between rounded-3xl bg-white p-6 sm:p-7 dark:bg-[#131B2E]/90 lg:col-span-6 hand-border shadow-sketch">
+			{/* Left Card: Interactive Visual Architecture Diagram (Stitch Vertical 2-Branch Layout) */}
+			<div class="flex flex-col justify-between rounded-3xl bg-white p-6 sm:p-8 dark:bg-[#131B2E]/90 lg:col-span-6 hand-border shadow-sketch">
 				<div class="mb-4 flex flex-wrap items-center justify-between gap-2">
 					<div class="flex items-center gap-2.5">
 						<span class="size-3 rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"></span>
@@ -78,60 +84,70 @@ const spotlightHref = spotlightPodcast
 							SYSTEM ARCHITECTURE DIAGRAM
 						</span>
 					</div>
-					<span class="rounded-lg border border-[#7C3AED]/30 bg-[#EDE9FE] px-2.5 py-1 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+					<span class="rounded-full border border-[#7C3AED]/30 bg-[#EDE9FE] px-3 py-1 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
 						Full-Stack SSR
 					</span>
 				</div>
 
-				{/* Diagram Canvas Box */}
-				<div class="relative my-2 overflow-x-auto rounded-2xl border-2 border-dashed border-[#2A1155]/25 bg-[#FAF9FC] p-5 dark:border-purple-400/25 dark:bg-[#060E20]/90">
-					<div class="flex min-w-[440px] items-center justify-between gap-3">
-						{/* Left Entry Node */}
-						<div class="rounded-xl border-2 border-[#2A1155] bg-[#2A1155] px-4 py-3 text-center text-white shadow-sketch-sm dark:border-white/80 dark:bg-[#7C3AED]">
-							<div class="font-mono text-[10px] text-[#EDE9FE]">ENTRY</div>
-							<div class="font-display text-base font-extrabold">Code</div>
-						</div>
+				{/* Vertical 2-Branch Flowchart Hierarchy matching Stitch 8d131990 / b9e00f99 */}
+				<div class="relative my-2 rounded-2xl border-2 border-dashed border-[#2A1155]/20 bg-[#FAF9FC] px-4 py-6 dark:border-purple-400/25 dark:bg-[#060E20]/90">
+					<div class="mb-4 flex items-center justify-between px-2 font-hand text-lg font-bold">
+						<span class="flex items-center gap-1 text-[#CA8A04] dark:text-[#FACC15]">
+							<span>Sunny Yellow</span>
+							<span>↓</span>
+						</span>
+						<span class="flex items-center gap-1 text-[#7C3AED] dark:text-[#C084FC]">
+							<span>↓</span>
+							<span>Candy Purple</span>
+						</span>
+					</div>
 
-						{/* Branching Paths */}
-						<div class="flex flex-1 flex-col gap-5">
-							{/* Top Branch (Sunny Yellow) */}
-							<div class="flex items-center justify-between gap-2">
-								<span class="font-mono text-xs font-bold text-[#2A1155] dark:text-purple-300">→</span>
-								<div class="flex-1 rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] px-3 py-2 text-center shadow-sketch-sm dark:border-[#FACC15] dark:bg-yellow-950/80">
-									<span class="font-hand text-lg font-bold text-[#713F12] dark:text-[#FDE047]">Schema</span>
+					<div class="flex flex-col items-center gap-4">
+						{/* Level 1: Code root */}
+						<div class="rounded-2xl border-2 border-[#2A1155] bg-white px-8 py-2.5 font-display text-lg font-extrabold text-[#2A1155] shadow-sketch-sm dark:border-white/80 dark:bg-[#171F33] dark:text-white">
+							Code
+						</div>
+						<div class="h-5 w-0.5 bg-[#2A1155] dark:bg-purple-300"></div>
+
+						{/* Level 2: Two Branches (Yellow vs Purple) */}
+						<div class="grid w-full max-w-md grid-cols-2 gap-6 sm:gap-8">
+							{/* Left Sunny Yellow Subtree */}
+							<div class="flex flex-col items-center gap-2.5">
+								<div class="w-full rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] py-2.5 text-center font-hand text-xl font-bold text-[#713F12] shadow-sketch-sm dark:border-[#FACC15] dark:bg-yellow-950/80 dark:text-[#FDE047]">
+									Schema
 								</div>
-								<span class="font-mono text-xs font-bold text-[#2A1155] dark:text-purple-300">→</span>
-								<div class="flex-1 rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2 text-center shadow-sketch-sm dark:border-white/40 dark:bg-[#171F33]">
-									<span class="font-mono text-xs font-bold text-[#2A1155] dark:text-slate-200">node</span>
+								<div class="h-4 w-0.5 bg-[#2A1155] dark:bg-purple-300"></div>
+								<div class="w-full rounded-xl border-2 border-[#2A1155] bg-white py-2 text-center font-mono text-xs font-bold text-[#2A1155] shadow-sketch-sm dark:border-white/40 dark:bg-[#171F33] dark:text-slate-200">
+									node
 								</div>
-								<span class="font-mono text-xs font-bold text-[#2A1155] dark:text-purple-300">→</span>
-								<div class="flex-1 rounded-xl border-2 border-[#2A1155] bg-[#DCFCE7] px-3 py-2 text-center shadow-sketch-sm dark:border-emerald-400 dark:bg-emerald-950/80">
-									<span class="font-mono text-xs font-bold text-[#166534] dark:text-emerald-200">verify</span>
+								<div class="h-4 w-0.5 bg-[#2A1155] dark:bg-purple-300"></div>
+								<div class="w-full rounded-xl border-2 border-[#2A1155] bg-[#DCFCE7] py-2.5 text-center font-mono text-xs font-extrabold text-[#166534] shadow-sketch-sm dark:border-emerald-400 dark:bg-emerald-950/80 dark:text-emerald-200 chalk-hatch">
+									verify ✓
 								</div>
 							</div>
 
-							{/* Bottom Branch (Candy Purple) */}
-							<div class="flex items-center justify-between gap-2">
-								<span class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C084FC]">→</span>
-								<div class="flex-1 rounded-xl border-2 border-[#2A1155] bg-[#EDE9FE] px-3 py-2 text-center shadow-sketch-sm dark:border-[#C084FC] dark:bg-purple-950/80">
-									<span class="font-hand text-lg font-bold text-[#5B21B6] dark:text-purple-200">Config</span>
+							{/* Right Candy Purple Subtree */}
+							<div class="flex flex-col items-center gap-2.5">
+								<div class="w-full rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] py-2.5 text-center font-hand text-xl font-bold text-white shadow-sketch-sm dark:border-[#C084FC]">
+									Config
 								</div>
-								<span class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C084FC]">→</span>
-								<div class="flex-1 rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2 text-center shadow-sketch-sm dark:border-white/40 dark:bg-[#171F33]">
-									<span class="font-mono text-xs font-bold text-[#2A1155] dark:text-slate-200">edge</span>
+								<div class="h-4 w-0.5 bg-[#2A1155] dark:bg-purple-300"></div>
+								<div class="w-full rounded-xl border-2 border-[#2A1155] bg-white py-2 text-center font-mono text-xs font-bold text-[#2A1155] shadow-sketch-sm dark:border-white/40 dark:bg-[#171F33] dark:text-slate-200">
+									edge
 								</div>
-								<span class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C084FC]">→</span>
-								<div class="flex-1 rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-3 py-2 text-center text-white shadow-sketch-sm dark:border-white/80">
-									<span class="font-mono text-xs font-bold">deploy</span>
+								<div class="h-4 w-0.5 bg-[#2A1155] dark:bg-purple-300"></div>
+								<div class="w-full rounded-xl border-2 border-[#2A1155] bg-[#EDE9FE] py-2.5 text-center font-mono text-xs font-extrabold text-[#4C1D95] shadow-sketch-sm dark:border-purple-400 dark:bg-purple-950/80 dark:text-purple-200">
+									deploy 🚀
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2">
-					<p class="font-hand text-xl font-bold text-[#2A1155]/80 dark:text-purple-200">
-						✏️ Visual architecture diagram
+				<div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-4 dark:border-white/15">
+					<p class="flex items-center gap-2 font-hand text-xl font-bold text-[#2A1155]/80 dark:text-purple-200">
+						<span class="size-2.5 rounded-full bg-[#58CC02]"></span>
+						<span>Visual architecture diagram</span>
 					</p>
 					<a
 						href="/courses"
@@ -143,80 +159,73 @@ const spotlightHref = spotlightPodcast
 				</div>
 			</div>
 
-			{/* Right Card: Featured Podcast Episode Spotlight */}
-			<div class="flex flex-col justify-between rounded-3xl bg-[#EDE9FE] p-6 sm:p-7 dark:bg-[#131B2E]/90 lg:col-span-6 hand-border shadow-sketch">
-				<div class="mb-4 flex items-center justify-between">
-					<h3 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
-						meet real codingcat learners &amp; guests
-					</h3>
-					<span class="rounded-full border-2 border-[#2A1155] bg-[#7C3AED] px-3 py-1 font-mono text-xs font-extrabold text-white shadow-sketch-sm dark:border-white/40">
-						PODCAST
-					</span>
-				</div>
-
-				{/* Video Thumbnail / Chalkboard Frame */}
-				<a
-					href={spotlightHref}
-					class="group relative block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] p-5 text-white shadow-sketch dark:border-white/30 dark:bg-[#060E20]"
-				>
-					<div class="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-						<div class="space-y-2.5 sm:max-w-[62%]">
-							<div class="inline-flex items-center gap-1.5 rounded-md border border-[#FEF08A]/40 bg-[#FEF08A]/20 px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#FEF08A]">
-								<span>FEATURED PODCAST EPISODE</span>
-							</div>
-							<h4 class="font-display text-xl font-black leading-snug text-white group-hover:text-[#FEF08A] sm:text-2xl">
-								{spotlightPodcast?.title ?? "How Modern Compilers & Signals Transform the DOM"}
-							</h4>
-							<p class="font-hand text-lg text-[#EDE9FE]">
-								Video &amp; audio conversation with Alex &amp; guests
-							</p>
-						</div>
-
-						{/* Play Button & Cover Preview */}
-						<div class="relative flex shrink-0 items-center justify-center">
-							{spotlightPodcast?.coverImage ? (
-								<div class="relative w-40 overflow-hidden rounded-xl border-2 border-white/40">
-									<CoverImage
-										image={spotlightPodcast.coverImage}
-										fallbackAlt={spotlightPodcast.title || "Featured Podcast Episode"}
-										width={320}
-										height={180}
-										class="aspect-video w-full object-cover"
-									/>
-									<div class="absolute inset-0 flex items-center justify-center bg-black/35">
-										<div class="flex size-12 items-center justify-center rounded-full border-2 border-white bg-[#7C3AED] text-white transition-transform group-hover:scale-110">
-											<svg class="ml-0.5 size-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-												<path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path>
-											</svg>
-										</div>
-									</div>
-								</div>
-							) : (
-								<div class="flex size-16 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#7C3AED] text-white shadow-sketch transition-transform group-hover:scale-110 dark:border-white">
-									<svg class="ml-1 size-8" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-										<path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path>
-									</svg>
-								</div>
-							)}
-						</div>
-					</div>
-				</a>
-
-				<div class="mt-4 flex items-center justify-between pt-2">
-					<div class="flex items-center gap-2">
-						<span class="size-2.5 rounded-full bg-[#58CC02] dark:bg-emerald-400"></span>
-						<span class="text-xs font-bold text-[#2A1155]/80 dark:text-slate-300">
-							Full Video + Interactive Show Notes
+			{/* Right Card: Featured Podcast Episode Spotlight (Stitch 16:9 Video Player Frame) */}
+			<div class="flex flex-col justify-between rounded-3xl bg-[#FAF9FC] p-6 sm:p-8 dark:bg-[#131B2E]/90 lg:col-span-6 hand-border shadow-sketch">
+				<div>
+					<div class="mb-3 flex items-start justify-between gap-3">
+						<h3 class="font-display text-2xl font-black leading-tight text-[#2A1155] dark:text-white sm:text-3xl">
+							meet real codingcat<br />learners &amp; guests
+						</h3>
+						<span class="shrink-0 rounded-xl border-2 border-[#2A1155] bg-[#BAE6FD] px-3 py-1 font-mono text-xs font-extrabold text-[#0369A1] shadow-sketch-sm dark:border-[#38BDF8]/50 dark:bg-sky-950/80 dark:text-sky-200">
+							PODCAST
 						</span>
 					</div>
-					<a
-						href={spotlightHref}
-						class="inline-flex items-center gap-1 rounded-full border-2 border-[#2A1155] bg-white px-4 py-1.5 text-xs font-extrabold text-[#2A1155] transition-colors hover:bg-[#7C3AED] hover:text-white dark:border-white/30 dark:bg-[#171F33] dark:text-white dark:hover:bg-[#7C3AED] shadow-sketch-sm"
-					>
-						<span>Watch Episode</span>
-						<span>→</span>
-					</a>
+					<p class="mb-5 font-hand text-xl font-bold text-[#5B21B6] dark:text-purple-200">
+						Unfiltered engineering talks on modern web frameworks, edge compute, and AI agent architectures.
+					</p>
 				</div>
+
+				{/* Full 16:9 Video Player Preview Frame matching Stitch 8d131990 / b9e00f99 */}
+				<a
+					href={spotlightHref}
+					class="group relative block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#1E1B4B] shadow-sketch dark:border-white/30 dark:bg-[#060E20]"
+				>
+					{/* Video Top Header Bar */}
+					<div class="flex items-center justify-between border-b border-white/15 bg-[#18181B] px-4 py-2 font-mono text-xs text-white">
+						<span class="font-hand text-base font-bold tracking-wider text-[#BAE6FD]">
+							FEATURED PODCAST EPISODE
+						</span>
+						<span class="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+							<span class="size-2 animate-pulse rounded-full bg-emerald-400"></span>
+							<span>Watch Video</span>
+						</span>
+					</div>
+
+					{/* 16:9 Video Canvas with Centered Glowing Play Button */}
+					<div class="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[#1E1B4B] via-[#2A1155] to-[#0F172A]">
+						{spotlightPodcast?.coverImage ? (
+							<CoverImage
+								image={spotlightPodcast.coverImage}
+								fallbackAlt={spotlightPodcast.title || "Featured Podcast Episode"}
+								width={640}
+								height={360}
+								class="h-full w-full object-cover opacity-85 transition-transform duration-300 group-hover:scale-105"
+							/>
+						) : null}
+						<div class="absolute inset-0 flex items-center justify-center bg-black/30">
+							<div class="flex size-20 items-center justify-center rounded-full border-4 border-[#2A1155] bg-[#7C3AED] text-white shadow-sketch transition-transform group-hover:scale-110 group-hover:bg-[#8B5CF6] dark:border-white">
+								<svg class="ml-1 size-9 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+									<path d="M8 5v14l11-7z"></path>
+								</svg>
+							</div>
+						</div>
+					</div>
+
+					{/* Video Meta Footer Bar */}
+					<div class="flex items-center justify-between gap-4 border-t-2 border-[#2A1155] bg-white p-4 dark:border-white/20 dark:bg-[#131B2E]">
+						<div class="min-w-0">
+							<h4 class="truncate font-display text-base font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC] sm:text-lg">
+								{spotlightPodcast?.title ?? "How Modern Compilers & Signals Transform the DOM"}
+							</h4>
+							<p class="text-xs font-bold text-[#6D28D9] dark:text-purple-300">
+								Full Video + Interactive Show Notes
+							</p>
+						</div>
+						<span class="shrink-0 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 text-xs font-extrabold text-[#2A1155] transition-colors group-hover:bg-[#7C3AED] group-hover:text-white dark:border-white/30 dark:bg-[#171F33] dark:text-white dark:group-hover:bg-[#7C3AED] shadow-sketch-sm">
+							Watch Episode →
+						</span>
+					</div>
+				</a>
 			</div>
 		</div>
 	</section>
