@@ -32,3 +32,4 @@ Always ground multimodal image and video generation in the canonical reference f
 | [`references/excalidraw-diagrams.md`](./references/excalidraw-diagrams.md) | Hand-drawn architecture diagram style rules, `Virgil` labels, Coral `#FCA5A5` `✗` vs. Mint `#86EFAC` `✓` checkmarks |
 | [`references/youtube-thumbnails.md`](./references/youtube-thumbnails.md) | 16:9 YouTube thumbnail composition, safe zones (`96px` edge, `320x120px` bottom-right clear), and 3-4 word `Nunito` display text rules |
 | [`references/youtube-intros-and-video.md`](./references/youtube-intros-and-video.md) | First-15-second retention hooks, presenter cutaway rules, lower-third plates, and 9:16 vertical Shorts safe zones |
+| [`references/google-flow-veo.md`](./references/google-flow-veo.md) | Google Flow (Veo 3.1) Ingredients-to-Video 3-slot casting, Frames-to-Video transitions, and Gemini App video prompts |

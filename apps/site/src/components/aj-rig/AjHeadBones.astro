@@ -1,0 +1,239 @@
+---
+/**
+ * Articulated Head, Headphones, Ears, Eyes, Nose, Whiskers & Switchable Mouth Visemes
+ * for AJ the Cat (`#aj-head-group`).
+ *
+ * Enforces strict z-ordering:
+ * 1. `#aj-headphones-back` (headband arch, sliders, and right earcup BEHIND head/ears)
+ * 2. `#aj-head-cranium` (rounded black head + 3 spiky fur tufts)
+ * 3. `#aj-ears-left` & `#aj-ears-right` (black ear cones + pink inner ears ON TOP of cranium)
+ * 4. `#aj-eyes-group` (Electric Lime irises + cursor-tracked pupils + double-blink eyelids)
+ * 5. `#aj-whiskers` & `#aj-nose`
+ * 6. `#aj-mouth` (`smile-open`, `grin`, `surprised-o`, `talking`)
+ * 7. `#aj-earcup-left` (foreground left earcup + pastel-rainbow hexagonal "AJ" badge)
+ */
+import { AJ_TRACED_PATHS as P } from "./ajTracedPaths";
+import type { AjAnimationState, AjMouthViseme, AjTurnaroundAngle } from "./ajRigTypes";
+
+interface Props {
+	idPrefix: string;
+	state: AjAnimationState;
+	angle: AjTurnaroundAngle;
+	mouth: AjMouthViseme;
+}
+
+const { idPrefix, state, angle, mouth } = Astro.props;
+const isLeftAngle = angle === "three-quarter-left";
+const isBored = state === "bored-nap";
+---
+
+<g
+	id={`${idPrefix}-aj-head-group`}
+	data-bone="aj-head-group"
+	class="aj-bone aj-bone-head"
+>
+	<!-- 8a. #aj-headphones-back: Renders BEHIND the Black Head & Cat Ears -->
+	<g
+		id={`${idPrefix}-aj-headphones`}
+		data-bone="aj-headphones"
+		class="aj-bone aj-bone-headphones"
+	>
+		<!-- Right Earcup (Behind Right Cheek/Ear) -->
+		<g id={`${idPrefix}-aj-earcup-right`}>
+			<path d={P.right_earcup_lavender} fill="#9D8BC9" fill-rule="evenodd" />
+			<path d={P.right_earcup_purple} fill="#472D89" fill-rule="evenodd" />
+		</g>
+		<!-- Headband Dark Sliders & Underside Arch -->
+		<path d={P.headband_dark} fill="#242424" fill-rule="evenodd" />
+		<!-- Headband Lighter Top Arch Bevel -->
+		<path d={P.headband_arch} fill="#3E403F" fill-rule="evenodd" />
+		<!-- Exact Traced "CodingCat.dev Podcast" White Lettering (Counter-Flipped in three-quarter-left so Text Reads Left-to-Right) -->
+		{
+			isLeftAngle ? (
+				<g transform="translate(594.8, 0) scale(-1, 1)">
+					<path d={P.headband_text} fill="#F8FAFC" fill-rule="evenodd" />
+				</g>
+			) : (
+				<path d={P.headband_text} fill="#F8FAFC" fill-rule="evenodd" />
+			)
+		}
+	</g>
+
+	<!-- 8b. #aj-head-cranium: Main Rounded Black Head + 3 Spiky Fur Tufts -->
+	<g id={`${idPrefix}-aj-head-cranium`}>
+		<path d={P.bone_head_black} fill="#050507" fill-rule="evenodd" />
+	</g>
+
+	<!-- 8c. #aj-ears-left & #aj-ears-right (On Top of Cranium so Pink Inner Ears Are 100% Visible) -->
+	<g
+		id={`${idPrefix}-aj-ears-left`}
+		data-bone="aj-ears-left"
+		class="aj-bone aj-bone-ear-left"
+	>
+		<path d={P.bone_ear_left_black} fill="#050507" fill-rule="evenodd" />
+		<path d={P.inner_ear_left} fill="#ECA4A5" fill-rule="evenodd" />
+	</g>
+	<g
+		id={`${idPrefix}-aj-ears-right`}
+		data-bone="aj-ears-right"
+		class="aj-bone aj-bone-ear-right"
+	>
+		<path d={P.bone_ear_right_black} fill="#050507" fill-rule="evenodd" />
+		<path d={P.inner_ear_right} fill="#EEA2A6" fill-rule="evenodd" />
+	</g>
+
+	<!-- 8d. Spiky Hair Tuft Crease Lines -->
+	<path
+		id={`${idPrefix}-aj-tuft-creases`}
+		d={P.tuft_creases}
+		fill="#2C2C2C"
+		fill-rule="evenodd"
+	/>
+
+	<!-- 8e. #aj-eyes-group: Electric Lime Irises (#C3EE7B) + Clamped Cursor-Tracked Pupils + Double-Blink Eyelids -->
+	<g
+		id={`${idPrefix}-aj-eyes-group`}
+		data-bone="aj-eyes-group"
+		class="aj-bone aj-bone-eyes"
+	>
+		<g id={`${idPrefix}-aj-eye-left`} clip-path={`url(#${idPrefix}-iris-clip-left)`}>
+			<path d={P.left_iris} fill="#C3EE7B" fill-rule="evenodd" />
+			<g class="aj-pupil-track">
+				<path d={P.left_pupil} fill="#000000" fill-rule="evenodd" />
+				<path d={P.left_catchlight} fill="#FFFFFF" fill-rule="evenodd" />
+			</g>
+			{
+				isBored && (
+					<g>
+						<rect x="215" y="290" width="125" height="68" fill="#050507" />
+						<line
+							x1="222"
+							y1="358"
+							x2="332"
+							y2="358"
+							stroke="#2C2C2E"
+							stroke-width="5"
+							stroke-linecap="round"
+						/>
+					</g>
+				)
+			}
+			<rect
+				class="aj-eyelid"
+				x="210"
+				y="290"
+				width="145"
+				height="145"
+				fill="#050507"
+			/>
+		</g>
+		<g id={`${idPrefix}-aj-eye-right`} clip-path={`url(#${idPrefix}-iris-clip-right)`}>
+			<path d={P.right_iris} fill="#C3ED7F" fill-rule="evenodd" />
+			<g class="aj-pupil-track aj-pupil-track-right">
+				<path d={P.right_pupil} fill="#000000" fill-rule="evenodd" />
+				<path d={P.right_catchlight} fill="#FFFFFF" fill-rule="evenodd" />
+			</g>
+			{
+				isBored && (
+					<g>
+						<rect x="385" y="290" width="95" height="68" fill="#050507" />
+						<line
+							x1="392"
+							y1="358"
+							x2="468"
+							y2="358"
+							stroke="#2C2C2E"
+							stroke-width="5"
+							stroke-linecap="round"
+						/>
+					</g>
+				)
+			}
+			<rect
+				class="aj-eyelid"
+				x="420"
+				y="290"
+				width="80"
+				height="145"
+				fill="#050507"
+			/>
+		</g>
+	</g>
+
+	<!-- 8f. Cheek Whiskers & Pink Triangle Nose -->
+	<g id={`${idPrefix}-aj-whiskers`}>
+		<path d={P.whiskers_left} fill="#FFFFFF" fill-rule="evenodd" />
+		<path d={P.whiskers_right} fill="#FFFFFF" fill-rule="evenodd" />
+	</g>
+	<path id={`${idPrefix}-aj-nose`} d={P.nose} fill="#FEC9D1" fill-rule="evenodd" />
+
+	<!-- 8g. #aj-mouth: 4 Switchable Mouth Visemes (plus flat bored mouth override) -->
+	<g
+		id={`${idPrefix}-aj-mouth`}
+		data-bone="aj-mouth"
+		data-active-viseme={mouth}
+		class="aj-bone aj-bone-mouth"
+	>
+		{
+			isBored ? (
+				<path
+					d="M 358,494 Q 388,482 418,494"
+					stroke="#FEC9D1"
+					stroke-width="5.5"
+					stroke-linecap="round"
+					fill="none"
+				/>
+			) : (
+				<>
+					<g class="aj-viseme aj-viseme-smile-open">
+						<path d={P.mouth_interior} fill="#643935" fill-rule="evenodd" />
+						<path d={P.tongue} fill="#E57176" fill-rule="evenodd" />
+					</g>
+					<g class="aj-viseme aj-viseme-grin">
+						<path
+							d="M 336,484 Q 388,526 440,478"
+							stroke="#FEC9D1"
+							stroke-width="5.5"
+							stroke-linecap="round"
+							fill="none"
+						/>
+					</g>
+					<g class="aj-viseme aj-viseme-surprised-o">
+						<ellipse cx="390" cy="506" rx="26" ry="30" fill="#643935" />
+						<ellipse cx="390" cy="518" rx="17" ry="15" fill="#E57176" />
+					</g>
+					<g class="aj-viseme aj-viseme-talking">
+						<g class="aj-talking-frame">
+							<path d={P.mouth_interior} fill="#643935" fill-rule="evenodd" />
+							<path d={P.tongue} fill="#E57176" fill-rule="evenodd" />
+						</g>
+					</g>
+				</>
+			)
+		}
+	</g>
+
+	<!-- 8h. #aj-earcup-left: Foreground Left Earcup + Exact Traced Rainbow Hexagonal "AJ" Badge -->
+	<g
+		id={`${idPrefix}-aj-earcup-left`}
+		class="aj-bone aj-bone-headphones"
+	>
+		<path d={P.left_earcup_purple} fill="#442B87" fill-rule="evenodd" />
+		<path d={P.left_earcup_lavender} fill="#B7A8D9" fill-rule="evenodd" />
+		<path d={P.earcup_hex_violet} fill="#856CC2" fill-rule="evenodd" />
+		<path d={P.earcup_hex_yellow} fill="#F0CA52" fill-rule="evenodd" />
+		<path d={P.earcup_hex_cyan} fill="#9BE2EE" fill-rule="evenodd" />
+		<path d={P.earcup_hex_green} fill="#A9DB5C" fill-rule="evenodd" />
+		<path d={P.earcup_hex_pink} fill="#F27FB8" fill-rule="evenodd" />
+		<path d={P.earcup_hex_inner} fill="#DCD5EE" fill-rule="evenodd" />
+		{
+			isLeftAngle ? (
+				<g transform="translate(125.1, 0) scale(-1, 1)">
+					<path d={P.earcup_hex_aj_text} fill="#3D227E" fill-rule="evenodd" />
+				</g>
+			) : (
+				<path d={P.earcup_hex_aj_text} fill="#3D227E" fill-rule="evenodd" />
+			)
+		}
+	</g>
+</g>

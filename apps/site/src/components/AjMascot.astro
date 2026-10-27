@@ -1,15 +1,24 @@
 ---
 /**
- * AJ the CodingCat.dev Mascot - Canonical 2D Upright Bipedal Vector Edition.
+ * AJ the CodingCat.dev Mascot (`AjMascot.astro`)
  *
- * Styled for both Chalkboard Paper Light Mode (`8d1319903d504a79ae56110486455e17`)
- * and Obsidian Chalkboard Dark Mode (`b9e00f99c0d34e9884bf7766a014577b`).
+ * Delegates directly to `AjAnimatedMascot.astro` so every existing caller
+ * across Courses, Podcasts, Blog Posts, and Diagrams automatically gets the
+ * 57-path articulated 2D vector bone rig.
  */
-import AjHeadphones from "@/components/icons/AjHeadphones.astro";
-import AjPrimaryAlt from "@/components/icons/AjPrimaryAlt.astro";
+import AjAnimatedMascot, {
+	type AjAnimationState,
+	type AjMascotVariant,
+	type AjMouthViseme,
+	type AjTurnaroundAngle,
+} from "@/components/AjAnimatedMascot.astro";
 
 interface Props {
 	pose?: "yarn-chase" | "code-peek" | "lever-pull" | "headphones";
+	state?: AjAnimationState;
+	variant?: AjMascotVariant;
+	angle?: AjTurnaroundAngle;
+	mouth?: AjMouthViseme;
 	caption?: string;
 	cls?: string;
 	showYarnBall?: boolean;
@@ -18,85 +27,34 @@ interface Props {
 
 const {
 	pose = "yarn-chase",
+	state,
+	variant,
+	angle = "three-quarter-right",
+	mouth,
 	caption,
 	cls = "w-44 h-auto",
 	showYarnBall = true,
 	fullBody = true,
 } = Astro.props;
+
+const poseToState: Record<NonNullable<Props["pose"]>, AjAnimationState> = {
+	"yarn-chase": "idle-wave",
+	"code-peek": "point-diagram",
+	"lever-pull": "point-diagram",
+	headphones: "podcast-groove",
+};
+
+const resolvedState: AjAnimationState = state ?? poseToState[pose] ?? "idle-wave";
+const resolvedVariant: AjMascotVariant =
+	variant ?? (fullBody ? "full-body" : "head");
 ---
 
-<div class="relative inline-flex flex-col items-center select-none group">
-	{
-		caption && (
-			<div class="mb-2.5 -rotate-2 rounded-2xl border-2 border-[#2A1155] bg-[#FEF08A] px-3.5 py-1.5 font-hand text-lg font-bold text-[#713F12] transition-transform group-hover:rotate-1 dark:border-yellow-500 shadow-sketch-sm">
-				{caption}
-			</div>
-		)
-	}
-	<div class="relative flex items-center justify-center">
-		{
-			fullBody ? (
-				<picture>
-					<source srcset="/images/aj-bipedal-2d.webp" type="image/webp" />
-					<img
-						src="/images/aj-bipedal-2d.png"
-						alt="AJ the CodingCat.dev mascot standing upright wearing purple podcast headphones and a hexagonal AJ collar tag"
-						width="280"
-						height="515"
-						loading="lazy"
-						decoding="async"
-						class={`${cls} object-contain drop-shadow-[0_10px_20px_rgba(42,17,85,0.4)] transition-transform duration-300 group-hover:scale-105`}
-					/>
-				</picture>
-			) : pose === "code-peek" || pose === "lever-pull" ? (
-				<AjPrimaryAlt
-					cls={`${cls} transition-transform duration-300 group-hover:scale-105`}
-				/>
-			) : (
-				<AjHeadphones
-					cls={`${cls} transition-transform duration-300 group-hover:scale-105`}
-				/>
-			)
-		}
-
-		{
-			showYarnBall && (
-				<svg
-					class="yarn-glow absolute -bottom-2 -right-3 size-14 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
-					viewBox="0 0 80 80"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-					aria-hidden="true"
-				>
-					{/* CodingCat Royal Purple & Fuchsia Yarn Ball (matches Stitch 8d131990 & b9e00f99) */}
-					<circle
-						cx="40"
-						cy="40"
-						r="24"
-						fill="#7C3AED"
-						stroke="#2A1155"
-						stroke-width="3"
-					/>
-					<path
-						d="M22 32C30 24 48 24 58 34M20 42C32 34 48 36 60 46M26 52C36 44 48 46 54 54"
-						stroke="#EDE9FE"
-						stroke-width="2.5"
-						stroke-linecap="round"
-					/>
-					<path
-						d="M32 18C26 30 28 48 38 60M44 18C38 32 40 48 50 60"
-						stroke="#D946EF"
-						stroke-width="2.5"
-						stroke-linecap="round"
-					/>
-					<path
-						d="M58 52C66 58 72 64 76 74"
-						stroke="#C084FC"
-						stroke-width="4"
-						stroke-linecap="round"
-					/>
-				</svg>
-			)
-		}
-	</div>
-</div>
+<AjAnimatedMascot
+	state={resolvedState}
+	variant={resolvedVariant}
+	angle={angle}
+	mouth={mouth}
+	caption={caption}
+	cls={cls}
+	showYarnBall={showYarnBall}
+/>

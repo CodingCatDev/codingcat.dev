@@ -1,4 +1,5 @@
 ---
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 import Avatar from "@/components/Avatar.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
@@ -76,17 +77,28 @@ const people = [
 	}}
 >
 	<section class="py-8 md:py-12">
-		<div class="mb-6">
-			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
-				🎧 CodingCat.dev Podcasts &amp; Episodes
-			</span>
-			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
-				podcasts &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">episodes</span>
-				<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
-			</h1>
-			<p class="font-hand mt-2 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
-				Weekly conversations with engineering leaders, open-source maintainers, and AI builders.
-			</p>
+		<div class="mb-6 flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+			<div>
+				<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+					🎧 CodingCat.dev Podcasts &amp; Episodes
+				</span>
+				<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+					podcasts &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">episodes</span>
+					<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+				</h1>
+				<p class="font-hand mt-2 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+					Weekly conversations with engineering leaders, open-source maintainers, and AI builders.
+				</p>
+			</div>
+			<div class="hidden shrink-0 sm:block">
+				<AjAnimatedMascot
+					variant="head"
+					state="podcast-groove"
+					angle="three-quarter-left"
+					cls="w-24 h-24"
+					caption="120 BPM Groove!"
+				/>
+			</div>
 		</div>
 
 		<TopicFilterStrip

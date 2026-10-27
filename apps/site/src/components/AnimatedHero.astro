@@ -8,6 +8,7 @@
  *
  * Uses canonical terminology: Courses, Podcasts, Blog, and Diagrams.
  */
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 ---
 
 <section class="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 md:pb-24 md:pt-10">
@@ -253,23 +254,16 @@
 					</span>
 				</div>
 
-				{/* Bobbling AJ Mascot Character in Bottom-Right Corner */}
-				<div class="animate-bobble mt-4 flex flex-col items-center sm:absolute sm:-bottom-6 sm:-right-4 sm:mt-0">
-					<div class="mb-1.5 rotate-3 rounded-2xl border-2 border-[#2A1155] bg-white px-3 py-1 font-hand text-base font-bold text-[#2A1155] shadow-sketch-sm dark:border-purple-300 dark:bg-[#171F33] dark:text-[#FEF08A]">
-						&ldquo;Purrfect code!&rdquo; 🐾
-					</div>
-					<picture>
-						<source srcset="/images/aj-bipedal-2d.webp" type="image/webp" />
-						<img
-							src="/images/aj-bipedal-2d.png"
-							alt="AJ the CodingCat.dev mascot standing upright wearing purple podcast headphones"
-							width="140"
-							height="257"
-							loading="eager"
-							decoding="async"
-							class="h-auto w-24 object-contain drop-shadow-[0_10px_20px_rgba(42,17,85,0.35)] sm:w-28"
-						/>
-					</picture>
+				{/* Articulated Interactive 2D Vector AJ Mascot in Bottom-Right Corner */}
+				<div class="mt-4 flex flex-col items-center sm:absolute sm:-bottom-6 sm:-right-4 sm:mt-0">
+					<AjAnimatedMascot
+						id="hero-aj"
+						variant="full-body"
+						state="idle-wave"
+						angle="three-quarter-left"
+						caption="Purrfect code! 🐾"
+						cls="h-auto w-28 sm:w-32"
+					/>
 				</div>
 			</div>
 		</div>

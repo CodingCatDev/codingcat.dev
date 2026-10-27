@@ -43,3 +43,13 @@ Whenever selecting, compositing, or generating new poses of AJ using the referen
 3. **Collar & Hexagonal `"AJ"` Tag**: Around AJ's neck is a Soft Lavender (`#B4A7D6`) collar holding a matching pastel rainbow hexagonal tag with `"AJ"` in bold Royal Purple (`#4B2E83`) lettering.
 4. **Eyes & Expression**: Huge, expressive Electric Lime Green (`#C5E86C`) eyes with vertical oval black pupils and crisp white catchlights, paired with a small pink triangular nose, three white whiskers per cheek, and a cheerful open-mouth smile showing a pink tongue.
 5. **Thumbnail Separation**: When compositing AJ onto a `#0F172A` or `#000000` thumbnail canvas, apply `--cc-thumbnail-drop` (`0 12px 24px rgba(0, 0, 0, 0.85)`) or a crisp white sticker rim-light so his black fur separates cleanly from dark backgrounds.
+
+## Interactive 2D Vector Bone Rig (`AjAnimatedMascot.astro` & `/mascot-lab`)
+
+All web UI mascot placements use `<AjAnimatedMascot />` (`apps/site/src/components/AjAnimatedMascot.astro` + modular 57-path bone rig in `apps/site/src/components/aj-rig/`) with zero external JS runtime dependencies:
+
+| Variant / Component | SVG `viewBox` | Supported Angles (`angle` prop) | Active Rig Features | Canonical Placement on CodingCat.dev |
+| :--- | :--- | :--- | :--- | :--- |
+| `<AjAnimatedMascot variant="full-body" />` | `0 0 560 1030` | `three-quarter-right` (default) or `three-quarter-left` (counter-flipped readable text) | Full 57-layer traced skeleton: `#aj-shadow`, `#aj-sticker-underlay`, `#aj-tail`, `#aj-leg-right`, `#aj-leg-left`, `#aj-arm-left`, `#aj-torso`, `#aj-arm-right`, `#aj-head-group`, `#aj-collar` | Homepage Hero (`AnimatedHero.astro`), Courses Path Milestones (`courses/index.astro`), About Hero (`about.astro`), 404 Page (`404.astro`), and `/mascot-lab` (`112px to 260px`). |
+| `<AjAnimatedMascot variant="head" />` | `10 12 540 676` | `three-quarter-right` or `three-quarter-left` | Shared upper skeleton (`#aj-head-group` + `#aj-collar` + `#aj-hex-tag`) with cursor pupil tracking, double-blink, and switchable mouth visemes (`smile-open`, `grin`, `surprised-o`, `talking`) | Visual Diagram Header Cards (`ExcalidrawBlueprintCard.astro`), Agent AJ Chat Drawer Header (`ChatModal.astro`), Sign-In Header (`sign-in.astro`), and inline AJ Pro-Tip Callouts (`40px to 96px`). |
+| `<AjHeadphones />` | `0 0 276 275` | Static | Static zero-JS vector emblem | Top Navbar Medallion (`Header.astro`), Footer Medallion (`Footer.astro`), and OG Image Renderer (`og-mascots.ts`) (`24px to 40px`). |

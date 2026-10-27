@@ -269,19 +269,22 @@ const courses = [...rawCourses].sort((a, b) => {
 								<div class="hidden md:flex md:w-[46%] md:justify-center">
 									{index === 0 ? (
 										<AjMascot
-											pose="yarn-chase"
+											state="idle-wave"
+											angle="three-quarter-left"
 											cls="w-32 h-auto"
 											caption="Great place to start!"
 										/>
 									) : index === 3 ? (
 										<AjMascot
-											pose="code-peek"
+											state="point-diagram"
+											angle="three-quarter-right"
 											cls="w-28 h-auto"
 											caption="Reactive frameworks! ⚡"
 										/>
 									) : index === courses.length - 1 ? (
 										<AjMascot
-											pose="headphones"
+											state="podcast-groove"
+											angle={isEven ? "three-quarter-left" : "three-quarter-right"}
 											cls="w-32 h-auto"
 											caption="Full-stack apps! 🚀"
 										/>

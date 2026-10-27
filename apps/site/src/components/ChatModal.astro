@@ -1,5 +1,6 @@
 ---
-// ChatModal.astro — Persistent Right-Side Resizable "Ask Agent" Drawer (Survives across page changes via soft-navigation + pre-paint storage sync)
+// ChatModal.astro | Persistent Right-Side Resizable "Ask Agent" Drawer (Survives across page changes via soft-navigation + pre-paint storage sync)
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 ---
 
 <aside
@@ -70,7 +71,17 @@
 		<!-- Welcome / Initial State -->
 		<div id="ai-chat-welcome" class="flex flex-col gap-4 my-auto py-6">
 			<div class="flex items-center gap-2.5">
-				<img src="/icon.svg" alt="Agent AJ" class="size-8 rounded-lg object-contain bg-primary/10 p-1" width="32" height="32" />
+				<div class="rounded-lg bg-primary/10 p-1 flex items-center justify-center">
+					<AjAnimatedMascot
+						id="agent-aj-avatar"
+						variant="head"
+						state="idle-wave"
+						mouth="smile-open"
+						cls="size-10"
+						showYarnBall={false}
+						interactive={false}
+					/>
+				</div>
 				<div>
 					<div class="font-semibold text-sm text-foreground">Agent AJ</div>
 					<p class="text-[11px] text-muted-foreground">Sanity Content Lake • Cloudflare Clairic</p>
@@ -904,6 +915,9 @@
 		if (input) input.value = "";
 		isStreaming = true;
 		if (sendBtn) sendBtn.disabled = true;
+		document
+			.getElementById("agent-aj-avatar-aj-mouth")
+			?.setAttribute("data-active-viseme", "talking");
 
 		recordRecentAsk(prompt);
 		storedMessages.push({
@@ -1001,6 +1015,9 @@
 		} finally {
 			isStreaming = false;
 			if (sendBtn) sendBtn.disabled = false;
+			document
+				.getElementById("agent-aj-avatar-aj-mouth")
+				?.setAttribute("data-active-viseme", "smile-open");
 			input?.focus();
 		}
 	}

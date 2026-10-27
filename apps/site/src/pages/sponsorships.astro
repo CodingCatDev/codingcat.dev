@@ -1,4 +1,5 @@
 ---
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -31,16 +32,27 @@ const formatUsd = (cents: number) =>
 
 	<div class="w-full flex flex-col gap-8 md:gap-12 my-8 md:my-12">
 		<header class="flex flex-col gap-5">
-			<div class="flex flex-col gap-2">
-				<span class="w-fit rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
-					🚀 B2B Developer Marketing &amp; Multi-Channel Distribution
-				</span>
-				<h1 class="mt-2 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-6xl">
-					launch your devtool across <span class="text-[#7C3AED] dark:text-[#C084FC]">codingcat.dev</span>
-				</h1>
-				<p class="font-hand text-2xl font-bold text-[#4C1D95] dark:text-purple-200 max-w-3xl">
-					Stop buying isolated one-off shout-outs. Partner with Alex Patterson for end-to-end technical deep-dives, 7-platform vertical Shorts syndication, canonical SEO &amp; Agent-Ready (AEO / WebMCP / <code>llms.txt</code>) articles, and live ROI Deal Room telemetry.
-				</p>
+			<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+				<div class="flex flex-col gap-2">
+					<span class="w-fit rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+						🚀 B2B Developer Marketing &amp; Multi-Channel Distribution
+					</span>
+					<h1 class="mt-2 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-6xl">
+						launch your devtool across <span class="text-[#7C3AED] dark:text-[#C084FC]">codingcat.dev</span>
+					</h1>
+					<p class="font-hand text-2xl font-bold text-[#4C1D95] dark:text-purple-200 max-w-3xl">
+						Stop buying isolated one-off shout-outs. Partner with Alex Patterson for end-to-end technical deep-dives, 7-platform vertical Shorts syndication, canonical SEO &amp; Agent-Ready (AEO / WebMCP / <code>llms.txt</code>) articles, and live ROI Deal Room telemetry.
+					</p>
+				</div>
+				<div class="hidden shrink-0 sm:block">
+					<AjAnimatedMascot
+						variant="full-body"
+						state="cool-shades"
+						angle="three-quarter-left"
+						cls="w-28 h-auto"
+						caption="Purrfect ROI!"
+					/>
+				</div>
 			</div>
 
 			<!-- Verified First-Party Telemetry Banner -->
