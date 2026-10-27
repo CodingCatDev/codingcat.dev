@@ -16,10 +16,12 @@ const initialName = searchParams.get("name") || "";
 const initialEmail = searchParams.get("email") || "";
 const initialPortalToken = searchParams.get("portalToken") || "";
 const initialSlotParam = searchParams.get("slot") || "";
+const initialStartDate = searchParams.get("startDate") || undefined;
 
-const { slots: upcomingSlots, liveVerified } = await getMultiCalendarAvailableSlots(6);
+const { slots: upcomingSlots, liveVerified } =
+	await getMultiCalendarAvailableSlots(9, 45, initialStartDate);
 
-const title = "Book a Podcast & Showcase Session | CodingCat.dev";
+const title = "Book a Podcast and Showcase Session | CodingCat.dev";
 const description =
 	"Schedule your guest appearance or fast-track sponsored showcase on the CodingCat.dev Podcast. Choose your track, complete intake questions, and sign your E-SIGN digital media release.";
 ---
@@ -64,7 +66,7 @@ const description =
 
 			<ExcalidrawDiagram
 				title="Podcast Studio Booking Flow"
-				caption="Multi-calendar FreeBusy check + E-SIGN release + automatic Google Calendar invite"
+				caption="Live Google Calendar FreeBusy check + E-SIGN release + automatic Google Calendar invite"
 				compact={true}
 				nodes={[
 					{
@@ -78,7 +80,7 @@ const description =
 						id: "slot",
 						badge: "Step 2",
 						label: "Pick Live Slot",
-						sublabel: "4 Google Calendars synced",
+						sublabel: "Live Google Calendar sync",
 						color: "blue",
 					},
 					{
@@ -170,18 +172,85 @@ const description =
 			<!-- Step 1: Select Recording Slot -->
 			<section class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
 				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-					<h2 class="text-lg font-bold flex items-center gap-2">
+					<h2 class="text-lg font-bold flex items-center gap-2 flex-wrap">
 						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
 						Select Preferred Recording Window
 						{liveVerified && (
 							<span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
-								✓ Live Multi-Calendar FreeBusy Verified
+								✓ Live Calendar FreeBusy Verified
 							</span>
 						)}
 					</h2>
-					<span class="text-xs text-muted-foreground">
-						Checked across CodingCat.dev, FlipFeeds &amp; studio calendars
+					<span id="slot-window-status" class="text-xs text-muted-foreground font-mono">
+						Showing available slots (Pacific Time)
 					</span>
+				</div>
+
+				<!-- Date & Week Range Controls (Schedule Further Out) -->
+				<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded-xl border border-border bg-muted/30">
+					<div class="flex flex-wrap items-center gap-1.5">
+						<span class="text-xs font-semibold text-muted-foreground mr-1">Jump to:</span>
+						<button
+							type="button"
+							data-jump-offset="0"
+							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-semibold border border-primary bg-primary/10 text-primary cursor-pointer transition-colors"
+						>
+							Next Available
+						</button>
+						<button
+							type="button"
+							data-jump-offset="7"
+							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+						>
+							+1 Week
+						</button>
+						<button
+							type="button"
+							data-jump-offset="14"
+							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+						>
+							+2 Weeks
+						</button>
+						<button
+							type="button"
+							data-jump-offset="30"
+							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+						>
+							+1 Month
+						</button>
+						<button
+							type="button"
+							data-jump-date="2026-12-07"
+							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+						>
+							Post-re:Invent (Dec 7+)
+						</button>
+					</div>
+
+					<div class="flex items-center gap-2">
+						<button
+							type="button"
+							id="btn-prev-week"
+							class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-border bg-background hover:bg-muted text-foreground cursor-pointer transition-colors disabled:opacity-40"
+							title="Previous week"
+						>
+							&larr; Earlier
+						</button>
+						<input
+							type="date"
+							id="slot-date-picker"
+							aria-label="Choose starting date for available recording slots"
+							class="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+						<button
+							type="button"
+							id="btn-next-week"
+							class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-border bg-background hover:bg-muted text-foreground cursor-pointer transition-colors"
+							title="Next week"
+						>
+							Later &rarr;
+						</button>
+					</div>
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="slot-grid">
@@ -466,22 +535,152 @@ const description =
 			});
 		});
 
-		// Slot selection
-		const slotButtons = document.querySelectorAll(".slot-btn");
-		if (slotButtons.length > 0) {
-			selectedSlotStart = slotButtons[0].getAttribute("data-slot-start") || "";
+		// Slot selection & dynamic date-range fetching
+		const slotGrid = document.getElementById("slot-grid");
+		const datePicker = document.getElementById("slot-date-picker");
+		const btnPrevWeek = document.getElementById("btn-prev-week");
+		const btnNextWeek = document.getElementById("btn-next-week");
+		const jumpButtons = document.querySelectorAll(".date-jump-btn");
+		const slotWindowStatus = document.getElementById("slot-window-status");
+
+		function toYmd(d) {
+			return d.toISOString().slice(0, 10);
 		}
-		slotButtons.forEach((btn) => {
-			btn.addEventListener("click", () => {
-				slotButtons.forEach((b) => {
-					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-					b.classList.add("bg-card");
+
+		const minDateObj = new Date(Date.now() + 24 * 60 * 60 * 1000);
+		const maxDateObj = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+		let currentStartDate = toYmd(minDateObj);
+
+		if (datePicker && datePicker instanceof HTMLInputElement) {
+			datePicker.min = toYmd(minDateObj);
+			datePicker.max = toYmd(maxDateObj);
+			datePicker.value = currentStartDate;
+		}
+
+		function bindSlotButtons() {
+			const slotButtons = document.querySelectorAll(".slot-btn");
+			if (slotButtons.length > 0 && !selectedSlotStart) {
+				selectedSlotStart = slotButtons[0].getAttribute("data-slot-start") || "";
+			}
+			slotButtons.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					slotButtons.forEach((b) => {
+						b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+						b.classList.add("bg-card");
+					});
+					btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+					btn.classList.remove("bg-card");
+					selectedSlotStart = btn.getAttribute("data-slot-start") || "";
 				});
-				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-				btn.classList.remove("bg-card");
-				selectedSlotStart = btn.getAttribute("data-slot-start") || "";
+			});
+		}
+
+		bindSlotButtons();
+
+		async function loadSlotsForDate(startDateYmd) {
+			if (!slotGrid) return;
+			currentStartDate = startDateYmd;
+			if (datePicker && datePicker instanceof HTMLInputElement) {
+				datePicker.value = startDateYmd;
+			}
+			if (slotWindowStatus) {
+				slotWindowStatus.textContent = `Checking availability from ${startDateYmd}...`;
+			}
+			slotGrid.classList.add("opacity-60", "pointer-events-none");
+
+			try {
+				const res = await fetch(
+					`/api/calendar/freebusy?startDate=${encodeURIComponent(startDateYmd)}&limit=9`,
+				);
+				const data = await res.json();
+				const slots = Array.isArray(data.slots) ? data.slots : [];
+
+				if (slots.length === 0) {
+					slotGrid.innerHTML =
+						'<div class="col-span-full p-4 rounded-xl border border-border bg-card text-xs text-muted-foreground text-center">No open windows found in that week. Try clicking <strong>Later &rarr;</strong> or picking another date.</div>';
+				} else {
+					selectedSlotStart = slots[0].startAt || "";
+					slotGrid.innerHTML = slots
+						.map(
+							(slot, idx) => `
+							<button
+								type="button"
+								data-slot-id="${slot.id}"
+								data-slot-start="${slot.startAt}"
+								class="slot-btn p-3 rounded-xl border text-left transition-all hover:border-primary cursor-pointer flex flex-col gap-1 ${
+									idx === 0
+										? "border-primary bg-primary/5 ring-1 ring-primary"
+										: "border-border bg-card hover:bg-muted/50"
+								}"
+							>
+								<span class="font-semibold text-sm text-foreground">${slot.displayDate}</span>
+								<span class="text-xs text-muted-foreground font-mono">${slot.displayTime}</span>
+							</button>
+						`,
+						)
+						.join("");
+					bindSlotButtons();
+				}
+
+				if (slotWindowStatus) {
+					slotWindowStatus.textContent = `Showing available slots from ${startDateYmd} (Pacific Time)`;
+				}
+			} catch {
+				if (slotWindowStatus) {
+					slotWindowStatus.textContent = "Could not refresh calendar slots. Try again.";
+				}
+			} finally {
+				slotGrid.classList.remove("opacity-60", "pointer-events-none");
+			}
+		}
+
+		jumpButtons.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				jumpButtons.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/10", "text-primary", "font-semibold");
+					b.classList.add("border-border", "bg-background", "text-foreground", "font-medium");
+				});
+				btn.classList.add("border-primary", "bg-primary/10", "text-primary", "font-semibold");
+				btn.classList.remove("border-border", "bg-background", "text-foreground", "font-medium");
+
+				const explicitDate = btn.getAttribute("data-jump-date");
+				if (explicitDate) {
+					loadSlotsForDate(explicitDate);
+					return;
+				}
+				const offsetDays = Number(btn.getAttribute("data-jump-offset") || "0");
+				const target = new Date(minDateObj.getTime() + offsetDays * 24 * 60 * 60 * 1000);
+				loadSlotsForDate(toYmd(target));
 			});
 		});
+
+		if (datePicker && datePicker instanceof HTMLInputElement) {
+			datePicker.addEventListener("change", () => {
+				if (datePicker.value) {
+					loadSlotsForDate(datePicker.value);
+				}
+			});
+		}
+
+		if (btnPrevWeek) {
+			btnPrevWeek.addEventListener("click", () => {
+				const cur = new Date(`${currentStartDate}T12:00:00Z`);
+				const prev = new Date(
+					Math.max(minDateObj.getTime(), cur.getTime() - 7 * 24 * 60 * 60 * 1000),
+				);
+				loadSlotsForDate(toYmd(prev));
+			});
+		}
+
+		if (btnNextWeek) {
+			btnNextWeek.addEventListener("click", () => {
+				const cur = new Date(`${currentStartDate}T12:00:00Z`);
+				const next = new Date(
+					Math.min(maxDateObj.getTime(), cur.getTime() + 7 * 24 * 60 * 60 * 1000),
+				);
+				loadSlotsForDate(toYmd(next));
+			});
+		}
 
 		// Mode Toggling (Draw vs Type)
 		const btnDraw = document.getElementById("btn-mode-draw");

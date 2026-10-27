@@ -65,12 +65,32 @@ async function getAccessToken(
 	return data.access_token ?? null;
 }
 
+function resolveBaseStartDate(startDateStr?: string): Date {
+	const tomorrow = new Date(Date.now() + 86400_000);
+	if (!startDateStr) {
+		return tomorrow;
+	}
+	const parsed = new Date(`${startDateStr}T12:00:00Z`);
+	if (Number.isNaN(parsed.getTime())) {
+		return tomorrow;
+	}
+	const maxFuture = new Date(Date.now() + 180 * 86400_000);
+	if (parsed < tomorrow) {
+		return tomorrow;
+	}
+	if (parsed > maxFuture) {
+		return maxFuture;
+	}
+	return parsed;
+}
+
 function generateDefaultCandidateSlots(
-	daysAhead = 14,
+	daysAhead = 21,
 	durationMinutes = 45,
+	startDateStr?: string,
 ): AvailableCalendarSlot[] {
 	const slots: AvailableCalendarSlot[] = [];
-	const now = new Date();
+	const baseDate = resolveBaseStartDate(startDateStr);
 
 	// Candidate slots in overlapping US PT (8:00 AM - 2:00 PM PT) & ET (11:00 AM - 5:00 PM ET) work hours:
 	// 15:00 UTC (8:00 AM PDT / 11:00 AM EDT), 16:00 UTC (9:00 AM PDT / 12:00 PM EDT),
@@ -84,8 +104,8 @@ function generateDefaultCandidateSlots(
 		{ hour: 20, minute: 0, label: "1:00 PM PT / 4:00 PM ET" },
 	];
 
-	for (let d = 1; d <= daysAhead; d++) {
-		const dayDate = new Date(now.getTime() + d * 86400_000);
+	for (let d = 0; d < daysAhead; d++) {
+		const dayDate = new Date(baseDate.getTime() + d * 86400_000);
 		const dayOfWeek = dayDate.getUTCDay();
 		// Weekdays Monday (1) through Friday (5)
 		if (dayOfWeek === 0 || dayOfWeek === 6) {
@@ -273,20 +293,60 @@ async function fetchBusyRanges(
 	}
 }
 
+function spreadSlotsAcrossDays(
+	slots: AvailableCalendarSlot[],
+	maxSlots: number,
+	maxPerDay = 2,
+): AvailableCalendarSlot[] {
+	const selected: AvailableCalendarSlot[] = [];
+	const perDayCount = new Map<string, number>();
+
+	for (const slot of slots) {
+		const dayKey = slot.startAt.slice(0, 10);
+		const current = perDayCount.get(dayKey) ?? 0;
+		if (current < maxPerDay) {
+			selected.push(slot);
+			perDayCount.set(dayKey, current + 1);
+			if (selected.length >= maxSlots) {
+				return selected;
+			}
+		}
+	}
+
+	if (selected.length < maxSlots) {
+		for (const slot of slots) {
+			if (!selected.some((s) => s.id === slot.id)) {
+				selected.push(slot);
+				if (selected.length >= maxSlots) {
+					break;
+				}
+			}
+		}
+	}
+
+	return selected.sort(
+		(a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+	);
+}
+
 /**
  * Queries Google Calendar FreeBusy API across Alex Patterson's calendars
- * (codingcat.dev, flipfeeds.com, alex.patterson@gmail.com, sanity.io, and Oliver family calendars)
  * and returns conflict-free slots during 8am-5pm PT/ET work hours.
  */
 export async function getMultiCalendarAvailableSlots(
 	maxSlots = 9,
 	durationMinutes = 45,
+	startDate?: string,
 ): Promise<{
 	slots: AvailableCalendarSlot[];
 	liveVerified: boolean;
 	calendarStatuses: CalendarCheckStatus[];
 }> {
-	const candidates = generateDefaultCandidateSlots(14, durationMinutes);
+	const candidates = generateDefaultCandidateSlots(
+		21,
+		durationMinutes,
+		startDate,
+	);
 	if (candidates.length === 0) {
 		return { slots: [], liveVerified: false, calendarStatuses: [] };
 	}
@@ -300,7 +360,7 @@ export async function getMultiCalendarAvailableSlots(
 
 	if (!liveVerified) {
 		return {
-			slots: candidates.slice(0, maxSlots),
+			slots: spreadSlotsAcrossDays(candidates, maxSlots),
 			liveVerified: false,
 			calendarStatuses,
 		};
@@ -313,7 +373,10 @@ export async function getMultiCalendarAvailableSlots(
 	});
 
 	return {
-		slots: (available.length > 0 ? available : candidates).slice(0, maxSlots),
+		slots: spreadSlotsAcrossDays(
+			available.length > 0 ? available : candidates,
+			maxSlots,
+		),
 		liveVerified: true,
 		calendarStatuses,
 	};

@@ -463,8 +463,8 @@ function coverShowcaseElement({
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				padding: "10px",
-				borderRadius: "22px",
+				padding: "6px",
+				borderRadius: "18px",
 				background: `linear-gradient(145deg, ${accentColor}38 0%, rgba(124, 58, 237, 0.18) 100%)`,
 				border: "2px solid rgba(196, 181, 253, 0.42)",
 				flexShrink: 0,
@@ -475,21 +475,21 @@ function coverShowcaseElement({
 			{
 				style: {
 					display: "flex",
-					width: "400px",
-					height: "225px",
-					borderRadius: "14px",
+					width: "208px",
+					height: "117px",
+					borderRadius: "12px",
 					overflow: "hidden",
 					background: "#090514",
 				},
 			},
 			h("img", {
 				src: imageUrl,
-				width: 400,
-				height: 225,
+				width: 208,
+				height: 117,
 				style: {
-					width: "400px",
-					height: "225px",
-					borderRadius: "14px",
+					width: "208px",
+					height: "117px",
+					borderRadius: "12px",
 					objectFit: "cover",
 				},
 			}),
@@ -513,11 +513,11 @@ function mascotShowcaseElement({
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				width: "290px",
-				height: "290px",
-				borderRadius: "145px",
-				background: `radial-gradient(circle, ${accentColor}30 0%, rgba(124, 58, 237, 0.12) 65%, rgba(0, 0, 0, 0) 100%)`,
-				border: "1px solid rgba(167, 139, 250, 0.22)",
+				width: "168px",
+				height: "168px",
+				borderRadius: "84px",
+				background: `radial-gradient(circle, ${accentColor}35 0%, rgba(124, 58, 237, 0.14) 68%, rgba(0, 0, 0, 0) 100%)`,
+				border: "1.5px solid rgba(167, 139, 250, 0.28)",
 				flexShrink: 0,
 			},
 		},
@@ -528,39 +528,46 @@ function mascotShowcaseElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					width: "252px",
-					height: "252px",
-					borderRadius: "126px",
+					width: "144px",
+					height: "144px",
+					borderRadius: "72px",
 					background: BRAND.medallionGradient,
-					border: "3px solid rgba(196, 181, 253, 0.45)",
+					border: "2.5px solid rgba(196, 181, 253, 0.5)",
 					overflow: "hidden",
 				},
 			},
 			avatarUrl
 				? h("img", {
 						src: avatarUrl,
-						width: 252,
-						height: 252,
+						width: 144,
+						height: 144,
 						style: {
-							width: "252px",
-							height: "252px",
-							borderRadius: "126px",
+							width: "144px",
+							height: "144px",
+							borderRadius: "72px",
 							objectFit: "cover",
 						},
 					})
 				: h("img", {
 						src: mascotUri,
-						width: 216,
-						height: 216,
+						width: 122,
+						height: 122,
 						style: {
-							width: "216px",
-							height: "216px",
+							width: "122px",
+							height: "122px",
 						},
 					}),
 		),
 	);
 }
 
+/**
+ * Full-bleed 1200x630 canvas with a 588px centered safe zone (x = 306px..894px).
+ * - Fits 100% inside Slack's 1:1 square center crop (630x630 -> x = 285px..915px)
+ *   so neither text nor AJ/cover is ever clipped in compact link cards.
+ * - Looks like a full-bleed dark poster in 1.91:1 large cards (X, LinkedIn, Bluesky, Discord, Slack hover).
+ * - Keeps bottom-left (x < 280px, y > 540px) completely clear of text for X.com's domain overlay pill.
+ */
 function cardShell(
 	accentBarGradient: string,
 	leftContent: any,
@@ -574,47 +581,97 @@ function cardShell(
 				flexDirection: "column",
 				width: "1200px",
 				height: "630px",
-				background: BRAND.bgGradient,
+				background:
+					"radial-gradient(circle at 50% 50%, #1E293B 0%, #0F172A 58%, #050811 100%)",
 				fontFamily: "'Inter', sans-serif",
 			},
 		},
-		// Top gradient accent bar
+		// Top full-bleed gradient accent bar
 		h("div", {
 			style: {
 				display: "flex",
 				width: "1200px",
-				height: "8px",
+				height: "10px",
 				background: accentBarGradient,
 			},
 		}),
-		// Outer padding wrapper
+		// Full-bleed stage with centered 588px safe-zone column
 		h(
 			"div",
 			{
 				style: {
 					display: "flex",
 					flex: 1,
-					padding: "40px 48px 44px 48px",
+					width: "1200px",
+					alignItems: "center",
+					justifyContent: "center",
+					padding: "34px 0 38px 0",
 				},
 			},
-			// Inner framed card
+			// Left ambient decorative wing (outside 630x630 center crop, keeps bottom-left clear for X.com pill)
 			h(
 				"div",
 				{
 					style: {
 						display: "flex",
-						width: "100%",
+						width: "260px",
+						height: "100%",
+						alignItems: "center",
+						justifyContent: "center",
+						opacity: 0.35,
+					},
+				},
+				h("div", {
+					style: {
+						display: "flex",
+						width: "140px",
+						height: "140px",
+						borderRadius: "70px",
+						border: "1.5px dashed rgba(196, 181, 253, 0.25)",
+					},
+				}),
+			),
+			// Center 588px safe-zone card (x = 306px..894px, 100% inside 630x630 square crop)
+			h(
+				"div",
+				{
+					style: {
+						display: "flex",
+						flexDirection: "column",
+						width: "588px",
 						height: "100%",
 						background: BRAND.cardGradient,
-						border: `1.5px solid ${BRAND.border}`,
-						borderRadius: "28px",
-						padding: "42px 48px",
+						border: "1.5px solid rgba(196, 181, 253, 0.28)",
+						borderRadius: "26px",
+						padding: "30px 32px",
 						justifyContent: "space-between",
-						alignItems: "stretch",
 					},
 				},
 				leftContent,
 				rightShowcase,
+			),
+			// Right ambient decorative wing
+			h(
+				"div",
+				{
+					style: {
+						display: "flex",
+						width: "260px",
+						height: "100%",
+						alignItems: "center",
+						justifyContent: "center",
+						opacity: 0.35,
+					},
+				},
+				h("div", {
+					style: {
+						display: "flex",
+						width: "140px",
+						height: "140px",
+						borderRadius: "70px",
+						border: "1.5px dashed rgba(197, 232, 108, 0.22)",
+					},
+				}),
 			),
 		),
 	);
@@ -647,15 +704,14 @@ export function buildOgElement({
 }: OgElementOptions): any {
 	const typeColor = TYPE_COLORS[type] || BRAND.typeBlog;
 	const cleanTitle = stripSiteSuffix(title) || title;
-	const displayTitle = clampText(cleanTitle, 95) || "CodingCat.dev";
+	const displayTitle = clampText(cleanTitle, 85) || "CodingCat.dev";
 	const baseFontSize = titleFontSize(displayTitle);
-	const fontSize = image
-		? displayTitle.length > 60
-			? 36
+	const fontSize =
+		displayTitle.length > 60
+			? 28
 			: displayTitle.length > 40
-				? 42
-				: 48
-		: baseFontSize;
+				? 32
+				: Math.min(baseFontSize, 38);
 	const isPersonCard =
 		type === "Author" || type === "Guest" || type === "Sponsor";
 
@@ -669,7 +725,7 @@ export function buildOgElement({
 					: undefined;
 
 	const cleanSubtitle =
-		clampText(subtitle, image ? 110 : 130) ||
+		clampText(subtitle, image ? 90 : 105) ||
 		(isPersonCard ? defaultPersonSubtitle : undefined);
 
 	const mascotUri =
@@ -684,7 +740,7 @@ export function buildOgElement({
 				style: {
 					fontSize: `${fontSize}px`,
 					fontWeight: 700,
-					lineHeight: 1.14,
+					lineHeight: 1.15,
 					letterSpacing: "-0.02em",
 					color: BRAND.text,
 					maxWidth: "100%",
@@ -701,11 +757,11 @@ export function buildOgElement({
 				"div",
 				{
 					style: {
-						fontSize: image ? "19px" : "21px",
+						fontSize: "16px",
 						fontWeight: 400,
 						color: BRAND.textSecondary,
-						marginTop: "14px",
-						lineHeight: 1.4,
+						marginTop: "12px",
+						lineHeight: 1.38,
 					},
 				},
 				cleanSubtitle,
@@ -713,7 +769,19 @@ export function buildOgElement({
 		);
 	}
 
-	const leftColumn = h(
+	const showcaseVisual =
+		image && !isPersonCard
+			? coverShowcaseElement({
+					imageUrl: image,
+					accentColor: typeColor,
+				})
+			: mascotShowcaseElement({
+					mascotUri,
+					accentColor: typeColor,
+					avatarUrl: avatar,
+				});
+
+	const mainBody = h(
 		"div",
 		{
 			style: {
@@ -721,7 +789,7 @@ export function buildOgElement({
 				flexDirection: "column",
 				flex: 1,
 				justifyContent: "space-between",
-				paddingRight: "32px",
+				width: "100%",
 			},
 		},
 		// Top row: logo + badge
@@ -737,19 +805,32 @@ export function buildOgElement({
 			logoElement(),
 			badgeElement(type, typeColor, episodeNumber),
 		),
-		// Middle: title + optional subtitle
+		// Middle row: title/subtitle + right showcase inside the 588px safe zone
 		h(
 			"div",
 			{
 				style: {
 					display: "flex",
-					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "space-between",
+					gap: "20px",
 					flex: 1,
-					justifyContent: "center",
-					padding: "16px 0",
+					padding: "14px 0",
 				},
 			},
-			...middleChildren,
+			h(
+				"div",
+				{
+					style: {
+						display: "flex",
+						flexDirection: "column",
+						flex: 1,
+						justifyContent: "center",
+					},
+				},
+				...middleChildren,
+			),
+			showcaseVisual,
 		),
 		// Bottom row: author / role + URL
 		h(
@@ -766,31 +847,10 @@ export function buildOgElement({
 		),
 	);
 
-	const rightColumn = h(
-		"div",
-		{
-			style: {
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-			},
-		},
-		image && !isPersonCard
-			? coverShowcaseElement({
-					imageUrl: image,
-					accentColor: typeColor,
-				})
-			: mascotShowcaseElement({
-					mascotUri,
-					accentColor: typeColor,
-					avatarUrl: avatar,
-				}),
-	);
-
 	return cardShell(
 		`linear-gradient(90deg, ${BRAND.primary} 0%, ${typeColor} 50%, ${BRAND.primaryLight} 100%)`,
-		leftColumn,
-		rightColumn,
+		mainBody,
+		null,
 	);
 }
 
@@ -815,7 +875,7 @@ export function buildDefaultOgElement({
 
 	const heroTitle = isHomeCard
 		? "Purrfect Web Development"
-		: clampText(strippedTitle, 90) || "CodingCat.dev";
+		: clampText(strippedTitle, 80) || "CodingCat.dev";
 
 	const heroSubtitle =
 		clampText(
@@ -823,20 +883,19 @@ export function buildDefaultOgElement({
 				subtitle.toLowerCase() !== "purrfect web development" &&
 				subtitle.toLowerCase() !== "codingcat.dev — purrfect web tutorials"
 				? subtitle
-				: "Hands-on web development tutorials, deep-dive articles, and weekly podcast conversations with builders across tech.",
-			image ? 115 : 145,
+				: "Hands-on web development courses, deep-dive blog posts, and weekly podcast episodes with builders across tech.",
+			image ? 95 : 110,
 		) ?? "";
 
 	const baseFontSize = titleFontSize(heroTitle);
-	const fontSize = image
-		? heroTitle.length > 60
-			? 36
+	const fontSize =
+		heroTitle.length > 60
+			? 28
 			: heroTitle.length > 40
-				? 42
-				: 48
-		: baseFontSize;
+				? 32
+				: Math.min(baseFontSize, 38);
 
-	const featurePills = ["Podcasts", "Tutorials", "Video Guides", "AI & Web"];
+	const featurePills = ["Courses", "Podcasts", "Blog", "AI & Web"];
 
 	const middleChildren: any[] = [
 		h(
@@ -845,7 +904,7 @@ export function buildDefaultOgElement({
 				style: {
 					fontSize: `${fontSize}px`,
 					fontWeight: 700,
-					lineHeight: 1.12,
+					lineHeight: 1.15,
 					letterSpacing: "-0.02em",
 					color: BRAND.text,
 					maxWidth: "100%",
@@ -858,11 +917,11 @@ export function buildDefaultOgElement({
 			"div",
 			{
 				style: {
-					fontSize: image ? "20px" : "22px",
+					fontSize: "16px",
 					fontWeight: 400,
 					color: BRAND.textSecondary,
-					marginTop: "16px",
-					lineHeight: 1.42,
+					marginTop: "12px",
+					lineHeight: 1.38,
 				},
 			},
 			heroSubtitle,
@@ -877,8 +936,8 @@ export function buildDefaultOgElement({
 					style: {
 						display: "flex",
 						alignItems: "center",
-						gap: "10px",
-						marginTop: "22px",
+						gap: "8px",
+						marginTop: "14px",
 					},
 				},
 				...featurePills.map((pill) =>
@@ -887,11 +946,11 @@ export function buildDefaultOgElement({
 						{
 							style: {
 								display: "flex",
-								padding: "6px 14px",
+								padding: "4px 10px",
 								borderRadius: "9999px",
 								background: "rgba(124, 58, 237, 0.2)",
 								border: "1px solid rgba(167, 139, 250, 0.35)",
-								fontSize: "14px",
+								fontSize: "12px",
 								fontWeight: 500,
 								color: BRAND.primarySoft,
 							},
@@ -903,7 +962,17 @@ export function buildDefaultOgElement({
 		);
 	}
 
-	const leftColumn = h(
+	const showcaseVisual = image
+		? coverShowcaseElement({
+				imageUrl: image,
+				accentColor: BRAND.primaryLight,
+			})
+		: mascotShowcaseElement({
+				mascotUri: AJ_HEADPHONES_DATA_URI,
+				accentColor: BRAND.primaryLight,
+			});
+
+	const mainBody = h(
 		"div",
 		{
 			style: {
@@ -911,7 +980,7 @@ export function buildDefaultOgElement({
 				flexDirection: "column",
 				flex: 1,
 				justifyContent: "space-between",
-				paddingRight: "32px",
+				width: "100%",
 			},
 		},
 		// Top row: logo
@@ -925,20 +994,34 @@ export function buildDefaultOgElement({
 				},
 			},
 			logoElement(),
+			badgeElement("Studio", BRAND.primary),
 		),
-		// Middle: title + subtitle + pills
+		// Middle row: title + subtitle + pills alongside mascot/cover
 		h(
 			"div",
 			{
 				style: {
 					display: "flex",
-					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "space-between",
+					gap: "20px",
 					flex: 1,
-					justifyContent: "center",
-					padding: "16px 0",
+					padding: "14px 0",
 				},
 			},
-			...middleChildren,
+			h(
+				"div",
+				{
+					style: {
+						display: "flex",
+						flexDirection: "column",
+						flex: 1,
+						justifyContent: "center",
+					},
+				},
+				...middleChildren,
+			),
+			showcaseVisual,
 		),
 		// Bottom: Author & URL
 		h(
@@ -955,29 +1038,9 @@ export function buildDefaultOgElement({
 		),
 	);
 
-	const rightColumn = h(
-		"div",
-		{
-			style: {
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-			},
-		},
-		image
-			? coverShowcaseElement({
-					imageUrl: image,
-					accentColor: BRAND.primaryLight,
-				})
-			: mascotShowcaseElement({
-					mascotUri: AJ_HEADPHONES_DATA_URI,
-					accentColor: BRAND.primaryLight,
-				}),
-	);
-
 	return cardShell(
 		`linear-gradient(90deg, ${BRAND.primary} 0%, #ec4899 50%, #f59e0b 100%)`,
-		leftColumn,
-		rightColumn,
+		mainBody,
+		null,
 	);
 }

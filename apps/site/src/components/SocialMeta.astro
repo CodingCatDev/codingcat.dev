@@ -65,10 +65,16 @@ const cardType =
 		: imageUrl
 			? "summary_large_image"
 			: "summary";
+const cleanAuthors = authors
+	.map((name) => cleanMetaText(name))
+	.filter((name): name is string => Boolean(name));
+const primaryAuthor = cleanAuthors[0] ?? "Alex Patterson";
 ---
 
 <title>{cleanTitle}</title>
 {cleanDescription && <meta name="description" content={cleanDescription} />}
+<meta name="author" content={primaryAuthor} />
+<meta name="theme-color" content="#7C3AED" />
 <link rel="canonical" href={canonicalUrl} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -82,6 +88,8 @@ const cardType =
 	imageUrl && (
 		<>
 			<meta property="og:image" content={imageUrl} />
+			<meta property="og:image:secure_url" content={imageUrl} />
+			<meta property="og:image:type" content="image/png" />
 			{image?.width && <meta property="og:image:width" content={String(image.width)} />}
 			{image?.height && <meta property="og:image:height" content={String(image.height)} />}
 			{imageAlt && <meta property="og:image:alt" content={imageAlt} />}
@@ -91,6 +99,8 @@ const cardType =
 
 <meta name="twitter:card" content={cardType} />
 <meta name="twitter:site" content="@CodingCatDev" />
+<meta name="twitter:creator" content="@CodingCatDev" />
+<meta name="twitter:domain" content="codingcat.dev" />
 <meta name="twitter:title" content={cleanOgTitle} />
 {cleanOgDescription && <meta name="twitter:description" content={cleanOgDescription} />}
 {
@@ -102,6 +112,8 @@ const cardType =
 	)
 }
 
+<meta name="fediverse:creator" content="@codingcatdev@mastodon.social" />
+
 {
 	type === "article" && (
 		<>
@@ -111,11 +123,9 @@ const cardType =
 			{modifiedAt && (
 				<meta property="article:modified_time" content={stegaClean(modifiedAt)} />
 			)}
-			{authors
-				.filter((name): name is string => Boolean(name))
-				.map((name) => (
-					<meta property="article:author" content={stegaClean(name)} />
-				))}
+			{cleanAuthors.map((name) => (
+				<meta property="article:author" content={name} />
+			))}
 		</>
 	)
 }
