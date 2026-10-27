@@ -59,27 +59,27 @@ async function createGoogleSyndicationTask({ title, canonicalUrl, tags = [] }) {
     }
 
     const hnUrl = `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(canonicalUrl)}&t=${encodeURIComponent(title)}`;
-    const taskTitle = `Post: ${title}`;
+    const taskTitle = title;
+    // Put canonicalUrl on Line 1 so it is immediately clickable on the Google Tasks card preview
     const taskNotes = [
-      `📌 COPY-PASTE TITLE:`,
-      title,
-      ``,
-      `🔗 CANONICAL URL:`,
       canonicalUrl,
       `Tags: ${tags.join(", ")}`,
-      ``,
-      `🚀 1-TAP CROSS-POST LINKS:`,
-      `1. Hacker News (1-Tap Submit):`,
-      `   ${hnUrl}`,
-      ``,
-      `2. Medium (1-Click Import - automatically sets canonical tag):`,
-      `   https://medium.com/p/import`,
-      `   Paste: ${canonicalUrl}`,
-      ``,
-      `3. Hashnode (Free UI Editor):`,
-      `   https://hashnode.com/draft`,
-      `   Original Article URL: ${canonicalUrl}`,
     ].join("\n");
+
+    const subtasks = [
+      {
+        title: "3. Cross-post to Hashnode",
+        notes: `https://hashnode.com/draft\nCanonical URL: ${canonicalUrl}`,
+      },
+      {
+        title: "2. Import to Medium (1-Click)",
+        notes: `https://medium.com/p/import\nPaste URL: ${canonicalUrl}`,
+      },
+      {
+        title: "1. Submit to Hacker News (1-Tap Pre-filled)",
+        notes: `${hnUrl}\nTitle: ${title}`,
+      },
+    ];
 
     // 1. Try Google Tasks API first (targeting the "CodingCat.dev Posts" list)
     let targetListId = "@default";
@@ -118,8 +118,9 @@ async function createGoogleSyndicationTask({ title, canonicalUrl, tags = [] }) {
         const existingData = await existingTasksRes.json();
         const existingTask = (existingData.items || []).find(
           (t) =>
-            (t.notes && t.notes.includes(canonicalUrl)) ||
-            (t.title && t.title.toLowerCase() === taskTitle.toLowerCase())
+            !t.parent &&
+            ((t.notes && t.notes.includes(canonicalUrl)) ||
+              (t.title && t.title.toLowerCase() === taskTitle.toLowerCase()))
         );
         if (existingTask) {
           console.log(`✓ Google Task already exists in "CodingCat.dev Posts": "${taskTitle}" (ID: ${existingTask.id})`);
@@ -146,6 +147,19 @@ async function createGoogleSyndicationTask({ title, canonicalUrl, tags = [] }) {
       if (tasksRes.ok) {
         const createdTask = await tasksRes.json();
         console.log(`✓ Created Google Task in "CodingCat.dev Posts": "${taskTitle}" (ID: ${createdTask.id})`);
+        for (const st of subtasks) {
+          await fetch(
+            `https://tasks.googleapis.com/tasks/v1/lists/${encodeURIComponent(targetListId)}/tasks?parent=${encodeURIComponent(createdTask.id)}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(st),
+            }
+          );
+        }
         return;
       }
     }
