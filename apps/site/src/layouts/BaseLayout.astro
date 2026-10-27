@@ -169,13 +169,20 @@ const graph = buildGraph([
 		{/* WebMCP API: Expose client-side tools to browser AI agents */}
 		<script is:inline>
 			(function() {
-				const mc = document.modelContext || (typeof navigator !== "undefined" && navigator.modelContext);
-				if (mc && typeof mc.registerTool === "function") {
-					try {
-						const controller = new AbortController();
-						mc.registerTool({
+				var registered = false;
+				var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+
+				function registerCodingCatWebMcp() {
+					if (registered) return;
+					var mc = document.modelContext || (typeof navigator !== "undefined" && navigator.modelContext);
+					if (!mc || typeof mc.registerTool !== "function") return;
+					registered = true;
+					var opts = controller ? { signal: controller.signal } : undefined;
+
+					var tools = [
+						{
 							name: "search_content",
-							description: "Search CodingCat.dev tutorials, articles, podcasts, guests, and sponsors",
+							description: "Search CodingCat.dev courses, podcasts, blog posts, guests, and sponsors",
 							annotations: {
 								readOnlyHint: true,
 								untrustedContentHint: true,
@@ -185,24 +192,99 @@ const graph = buildGraph([
 								properties: {
 									query: {
 										type: "string",
-										description: "Search keyword, technical topic, or library name (e.g. Astro, React, Sanity, TypeScript)",
+										description: "Search keyword, technical topic, or library name (for example: Astro, React, Sanity, TypeScript, Cloudflare)",
 									},
 								},
 								required: ["query"],
 							},
-							execute: async ({ query }) => {
+							execute: async function(input) {
 								try {
-									const res = await fetch("/api/search?q=" + encodeURIComponent(query));
+									var q = (input && input.query) ? String(input.query) : "";
+									var res = await fetch("/api/search?q=" + encodeURIComponent(q));
 									if (!res.ok) throw new Error("Search failed with status " + res.status);
 									return await res.json();
 								} catch (err) {
 									return { error: String(err) };
 								}
 							},
-						}, { signal: controller.signal });
-					} catch (e) {
-						console.debug("WebMCP registration error:", e);
+						},
+						{
+							name: "ask_agent_aj",
+							description: "Ask Agent AJ technical questions about CodingCat.dev courses, podcast episodes, blog posts, and transcripts",
+							annotations: {
+								readOnlyHint: true,
+								untrustedContentHint: true,
+							},
+							inputSchema: {
+								type: "object",
+								properties: {
+									prompt: {
+										type: "string",
+										description: "Natural language question for Agent AJ",
+									},
+								},
+								required: ["prompt"],
+							},
+							execute: async function(input) {
+								try {
+									var prompt = (input && input.prompt) ? String(input.prompt) : "";
+									var res = await fetch("/api/chat", {
+										method: "POST",
+										headers: { "Content-Type": "application/json" },
+										body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
+									});
+									if (!res.ok) throw new Error("Chat failed with status " + res.status);
+									return await res.json();
+								} catch (err) {
+									return { error: String(err) };
+								}
+							},
+						},
+						{
+							name: "browse_pillar",
+							description: "Navigate to a primary CodingCat.dev content pillar (courses, podcasts, blog, topics, or sponsorships)",
+							annotations: {
+								readOnlyHint: true,
+								untrustedContentHint: false,
+							},
+							inputSchema: {
+								type: "object",
+								properties: {
+									pillar: {
+										type: "string",
+										enum: ["courses", "podcasts", "blog", "topics", "sponsorships"],
+										description: "Target content pillar to open",
+									},
+								},
+								required: ["pillar"],
+							},
+							execute: async function(input) {
+								var pillar = (input && input.pillar) ? String(input.pillar) : "courses";
+								var target = "/" + pillar.replace(/^\/+/, "");
+								window.location.assign(target);
+								return { navigatedTo: target };
+							},
+						},
+					];
+
+					for (var i = 0; i < tools.length; i++) {
+						try {
+							Promise.resolve(mc.registerTool(tools[i], opts)).catch(function() {});
+						} catch (e) {
+							console.debug("WebMCP registration error:", e);
+						}
 					}
+				}
+
+				registerCodingCatWebMcp();
+				if (typeof document !== "undefined") {
+					document.addEventListener("DOMContentLoaded", registerCodingCatWebMcp, { once: true });
+				}
+				if (typeof window !== "undefined") {
+					window.addEventListener("load", registerCodingCatWebMcp, { once: true });
+					window.addEventListener("pagehide", function() {
+						if (controller) controller.abort();
+					}, { once: true });
 				}
 			})();
 		</script>

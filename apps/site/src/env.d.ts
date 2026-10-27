@@ -40,6 +40,7 @@ declare namespace astroHTML.JSX {
 	interface FormHTMLAttributes {
 		toolname?: string;
 		tooldescription?: string;
+		toolautosubmit?: string;
 	}
 	interface InputHTMLAttributes {
 		toolparamdescription?: string;

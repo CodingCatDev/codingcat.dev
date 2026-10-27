@@ -53,11 +53,32 @@ export function createSanityContext({
 		perspectiveParam: url.searchParams.get(PERSPECTIVE_PARAM),
 	});
 
+	const loadCache = new Map<string, Promise<unknown>>();
+	const publishedCache = new Map<string, Promise<unknown>>();
+
 	return {
 		config,
 		preview,
-		loadQuery: (query, params) => loadQuery(config, preview, query, params),
-		fetchPublished: (query, params) => fetchPublished(config, query, params),
+		loadQuery: (query, params) => {
+			const key = `${query}::${params ? JSON.stringify(params) : ""}`;
+			const hit = loadCache.get(key);
+			if (hit) {
+				return hit as Promise<ClientReturn<typeof query>>;
+			}
+			const p = loadQuery(config, preview, query, params);
+			loadCache.set(key, p);
+			return p;
+		},
+		fetchPublished: (query, params) => {
+			const key = `${query}::${params ? JSON.stringify(params) : ""}`;
+			const hit = publishedCache.get(key);
+			if (hit) {
+				return hit as Promise<ClientReturn<typeof query>>;
+			}
+			const p = fetchPublished(config, query, params);
+			publishedCache.set(key, p);
+			return p;
+		},
 		urlForImage: (source) => urlForImage(config, source),
 		resolveOpenGraphImage: (image, width, height) =>
 			resolveOpenGraphImage(config, image, width, height),

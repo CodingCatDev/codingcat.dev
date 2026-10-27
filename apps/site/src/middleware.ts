@@ -45,7 +45,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		(pathname.endsWith(".md") || pathname.endsWith("/index.md"));
 	const acceptMarkdown = context.request.headers
 		.get("Accept")
-		?.includes("text/markdown");
+		?.toLowerCase()
+		.includes("text/markdown");
 	const wantsMarkdown = isMarkdownUrl || Boolean(acceptMarkdown);
 
 	let response: Response;
@@ -101,8 +102,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		"frame-ancestors 'self' https://*.sanity.studio https://*.sanity.io https://sanity.io http://localhost:3333",
 	);
 
-	// AIPREF / AI Preference Headers
+	// AIPREF / AI Preference & Cloudflare Markdown for Agents Headers
 	response.headers.set("Content-Usage", "train-ai=y, search=y");
+	response.headers.set(
+		"Content-Signal",
+		"ai-train=yes, search=yes, ai-input=yes",
+	);
 
 	// Always emit Link headers (RFC 8288) for AI agent discoverability
 	response.headers.set(
@@ -123,9 +128,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			pathname.replace(/\/index\.md$/, "").replace(/\.md$/, "") || "/";
 		const canonicalUrl = `${origin}${canonicalPath}`;
 		const markdown = htmlToMarkdown(html, canonicalUrl);
+		const estimatedTokens = Math.max(1, Math.ceil(markdown.length / 4));
 
 		const headers = new Headers(response.headers);
 		headers.set("content-type", "text/markdown; charset=utf-8");
+		headers.set("x-markdown-tokens", String(estimatedTokens));
 		headers.delete("content-length");
 
 		trackEdgeRequest({
@@ -142,6 +149,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			statusText: response.statusText,
 			headers,
 		});
+	}
+
+	if (
+		contentType.includes("text/markdown") &&
+		!response.headers.has("x-markdown-tokens")
+	) {
+		const cloneText = await response.clone().text();
+		response.headers.set(
+			"x-markdown-tokens",
+			String(Math.max(1, Math.ceil(cloneText.length / 4))),
+		);
 	}
 
 	if (!pathname.startsWith("/ingest") && pathname !== "/api/event") {

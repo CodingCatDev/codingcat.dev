@@ -13,27 +13,8 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 	const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
 	const pageTitle = titleMatch ? decodeEntities(titleMatch[1].trim()) : "";
 
-	// 2. Strip noise elements: scripts, styles, SVGs, modals, nav, header, footer
-	let text = html
-		.replace(/<!--[\s\S]*?-->/g, "")
-		.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-		.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-		.replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, "")
-		.replace(/<dialog\b[^<]*(?:(?!<\/dialog>)<[^<]*)*<\/dialog>/gi, "")
-		.replace(
-			/<aside\b[^>]*id=["']aj-agent-drawer["'][^>]*>[\s\S]*?<\/aside>/gi,
-			"",
-		)
-		.replace(
-			/<div[^>]*class=["'][^"']*transcript-widget[^"']*["'][^>]*>[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>\s*<\/div>/gi,
-			"",
-		)
-		.replace(/<button\b[^<]*(?:(?!<\/button>)<[^<]*)*<\/button>/gi, "")
-		.replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, "")
-		.replace(/<header\b[^<]*(?:(?!<\/header>)<[^<]*)*<\/header>/gi, "")
-		.replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, "");
-
-	// 3. Focus on <main> or <article> if available
+	// 2. Focus on <main> or <article> first so we skip <head>, <header>, <footer>, and modal drawers
+	let text = html;
 	const mainMatch = text.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
 	if (mainMatch) {
 		text = mainMatch[1];
@@ -48,6 +29,26 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
 			}
 		}
 	}
+
+	// 3. Strip noise elements inside main content: scripts, styles, SVGs, modals, nav, buttons
+	text = text
+		.replace(/<!--[\s\S]*?-->/g, "")
+		.replace(/<script\b[\s\S]*?<\/script>/gi, "")
+		.replace(/<style\b[\s\S]*?<\/style>/gi, "")
+		.replace(/<svg\b[\s\S]*?<\/svg>/gi, "")
+		.replace(/<dialog\b[\s\S]*?<\/dialog>/gi, "")
+		.replace(
+			/<aside\b[^>]*id=["']aj-agent-drawer["'][^>]*>[\s\S]*?<\/aside>/gi,
+			"",
+		)
+		.replace(
+			/<div[^>]*class=["'][^"']*transcript-widget[^"']*["'][^>]*>[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>\s*<\/div>/gi,
+			"",
+		)
+		.replace(/<button\b[\s\S]*?<\/button>/gi, "")
+		.replace(/<nav\b[\s\S]*?<\/nav>/gi, "")
+		.replace(/<header\b[\s\S]*?<\/header>/gi, "")
+		.replace(/<footer\b[\s\S]*?<\/footer>/gi, "");
 
 	// 4. Code blocks (<pre><code ...>...</code></pre>)
 	text = text.replace(
