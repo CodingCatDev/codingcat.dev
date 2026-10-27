@@ -748,18 +748,33 @@ async function createGoogleTaskNotification(title, notes) {
     if (!tokenRes.ok) return;
     const { access_token } = await tokenRes.json();
 
-    const taskRes = await fetch("https://tasks.googleapis.com/tasks/v1/lists/@default/tasks", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        notes,
-        due: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      }),
+    let targetListId = "@default";
+    const listsRes = await fetch("https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=100", {
+      headers: { Authorization: `Bearer ${access_token}` },
     });
+    if (listsRes.ok) {
+      const listsData = await listsRes.json();
+      const found = (listsData.items || []).find(
+        (l) => (l.title || "").trim().toLowerCase() === "codingcat.dev posts"
+      );
+      if (found?.id) targetListId = found.id;
+    }
+
+    const taskRes = await fetch(
+      `https://tasks.googleapis.com/tasks/v1/lists/${encodeURIComponent(targetListId)}/tasks`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          notes,
+          due: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        }),
+      }
+    );
     if (taskRes.ok) {
       console.log(`✓ Created Google Task: "${title}"`);
     }
@@ -987,9 +1002,18 @@ async function runForDataset(targetDataset) {
 
   if (targetDataset === "production" && createdDraftInfo) {
     const { signal, draftDoc, socialDrafts } = createdDraftInfo;
+    const baseDraftId = String(draftDoc._id).replace(/^drafts\./, "");
+    const studioDraftUrl = `https://codingcat-prod.sanity.studio/intent/edit/id=${baseDraftId};type=post/`;
     await createGoogleTaskNotification(
       `🔥 [Trend Radar] Review Draft: ${signal.title}`,
-      `Score: ${signal.score}/100 (${signal.rawMetrics})\nSource: ${signal.sourceUrl}\nSanity Draft ID: ${draftDoc._id}\n\nReady-to-post X Draft:\n${socialDrafts.x}`
+      [
+        `Studio Draft: ${studioDraftUrl}`,
+        `Score: ${signal.score}/100 (${signal.rawMetrics})`,
+        `Source: ${signal.sourceUrl}`,
+        ``,
+        `Ready-to-post X Draft:`,
+        socialDrafts.x,
+      ].join("\n")
     );
   }
 }
