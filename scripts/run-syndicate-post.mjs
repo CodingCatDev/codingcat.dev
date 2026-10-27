@@ -60,16 +60,25 @@ async function createGoogleSyndicationTask({ title, canonicalUrl, tags = [] }) {
 
     const hnUrl = `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(canonicalUrl)}&t=${encodeURIComponent(title)}`;
     const taskTitle = title;
-    // Put canonicalUrl on Line 1 so it is immediately clickable on the Google Tasks card preview
+    const baseDocId = String(docId).replace(/^drafts\./, "");
+    const studioUrl = `https://codingcat-prod.sanity.studio/intent/edit/id=${baseDocId};type=post/`;
+    const slugMatch = canonicalUrl.match(/codingcat\.dev\/(?:post|podcast|course)\/([a-z0-9-]+)/i);
+    const extractedSlug = slugMatch ? slugMatch[1] : "";
+    const mobileHashnodeUrl = extractedSlug
+      ? `https://transcripts.codingcat.dev/hashnode/${extractedSlug}`
+      : "https://hashnode.com/draft/6adff331943e682eec05f06c";
+
+    // Put canonicalUrl and Sanity Studio link at the top so they are immediately clickable on the card
     const taskNotes = [
       canonicalUrl,
+      `Studio: ${studioUrl}`,
       `Tags: ${tags.join(", ")}`,
     ].join("\n");
 
     const subtasks = [
       {
-        title: "3. Cross-post to Hashnode",
-        notes: `https://hashnode.com/draft\nCanonical URL: ${canonicalUrl}`,
+        title: "3. Cross-post to Hashnode (1-Tap Copy & Open)",
+        notes: `${mobileHashnodeUrl}\nRaw .md: ${mobileHashnodeUrl}.md\nDraft: https://hashnode.com/draft/6adff331943e682eec05f06c`,
       },
       {
         title: "2. Import to Medium (1-Click)",
