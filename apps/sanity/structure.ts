@@ -56,7 +56,7 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Drafts (In Progress)")
 										.filter(
-											'_type in ["post", "podcast"] && _id in path("drafts.**")',
+											'_type in ["post", "podcast"] && (_id in path("drafts.**") || _originalId in path("drafts.**"))',
 										)
 										.defaultOrdering([
 											{ field: "_updatedAt", direction: "desc" },
@@ -68,7 +68,7 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("In Content Releases")
 										.filter(
-											'_type in ["post", "podcast"] && _id in path("versions.**")',
+											'_type in ["post", "podcast"] && (_id in path("versions.**") || _originalId in path("versions.**"))',
 										)
 										.defaultOrdering([
 											{ field: "_updatedAt", direction: "desc" },
@@ -165,9 +165,7 @@ export const editorialStructure: StructureResolver = (S) =>
 							S.listItem()
 								.title("Outbound Prospects (Sponsor Pool)")
 								.child(
-									S.documentTypeList("sponsorPool").title(
-										"Outbound Prospects",
-									),
+									S.documentTypeList("sponsorPool").title("Outbound Prospects"),
 								),
 							S.divider(),
 							S.listItem()
@@ -206,7 +204,9 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Draft Posts")
 										.schemaType("post")
-										.filter('_type == "post" && _id in path("drafts.**")')
+										.filter(
+											'_type == "post" && (_id in path("drafts.**") || _originalId in path("drafts.**"))',
+										)
 										.defaultOrdering([
 											{ field: "_updatedAt", direction: "desc" },
 										]),
@@ -291,7 +291,9 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Drafts & Upcoming Episodes")
 										.schemaType("podcast")
-										.filter('_type == "podcast" && _id in path("drafts.**")')
+										.filter(
+											'_type == "podcast" && (_id in path("drafts.**") || _originalId in path("drafts.**"))',
+										)
 										.defaultOrdering([
 											{ field: "_updatedAt", direction: "desc" },
 										]),
@@ -387,7 +389,9 @@ export const editorialStructure: StructureResolver = (S) =>
 			S.divider(),
 
 			// 4. People & Sponsors
-			S.documentTypeListItem("author").title("Authors").icon(FaCat),
+			S.documentTypeListItem("author")
+				.title("Authors")
+				.icon(FaCat),
 			S.documentTypeListItem("guest").title("Guests").icon(UserIcon),
 			S.documentTypeListItem("sponsor")
 				.title("Sponsors")
@@ -434,9 +438,7 @@ export const editorialStructure: StructureResolver = (S) =>
 										.filter(
 											'_type == "trendSignal" && status == "discovered" && score >= 70',
 										)
-										.defaultOrdering([
-											{ field: "score", direction: "desc" },
-										]),
+										.defaultOrdering([{ field: "score", direction: "desc" }]),
 								),
 							S.listItem()
 								.title("Published / Covered")
@@ -565,7 +567,9 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("AWS Builder Center Links")
 										.schemaType("syndication")
-										.filter('_type == "syndication" && platform == "awsbuilder"'),
+										.filter(
+											'_type == "syndication" && platform == "awsbuilder"',
+										),
 								),
 							S.listItem()
 								.title("By Platform: Medium")
