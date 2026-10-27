@@ -96,6 +96,32 @@ const components = {
 		}
 	}
 
+	const copyTimers = new WeakMap<HTMLElement, number>();
+
+	async function copyTextToClipboard(text: string): Promise<void> {
+		if (navigator.clipboard?.writeText) {
+			try {
+				await navigator.clipboard.writeText(text);
+				return;
+			} catch {
+				// Fall through to textarea copy fallback
+			}
+		}
+		const ta = document.createElement("textarea");
+		ta.value = text;
+		ta.setAttribute("readonly", "");
+		ta.style.position = "fixed";
+		ta.style.top = "-9999px";
+		ta.style.opacity = "0";
+		document.body.appendChild(ta);
+		ta.select();
+		try {
+			document.execCommand("copy");
+		} finally {
+			document.body.removeChild(ta);
+		}
+	}
+
 	document.addEventListener("click", (event) => {
 		const target = event.target;
 		if (!(target instanceof Element)) {
@@ -104,10 +130,67 @@ const components = {
 
 		const copy = target.closest<HTMLElement>("button.copy-code");
 		if (copy) {
-			const code = copy.dataset.code ?? "";
-			navigator.clipboard?.writeText(code).then(() => {
+			const figure = copy.closest<HTMLElement>("figure");
+			const code =
+				copy.dataset.code ||
+				figure?.querySelector("pre code")?.textContent ||
+				"";
+
+			copyTextToClipboard(code).finally(() => {
 				copy.classList.add("copied");
-				setTimeout(() => copy.classList.remove("copied"), 1500);
+				figure?.classList.add("is-copied");
+
+				// Trigger AJ Mascot Rig WAAPI Celebrate Jump Burst
+				const reducedMotion = window.matchMedia(
+					"(prefers-reduced-motion: reduce)",
+				).matches;
+				if (!reducedMotion && figure) {
+					const bodyRoot = figure.querySelector<SVGGElement>(".aj-body-root");
+					const earLeft =
+						figure.querySelector<SVGGElement>(".aj-bone-ear-left");
+					const earRight =
+						figure.querySelector<SVGGElement>(".aj-bone-ear-right");
+
+					bodyRoot?.animate?.(
+						[
+							{ transform: "translateY(0px) scale(1, 1)" },
+							{ transform: "translateY(10px) scale(1.06, 0.92)", offset: 0.18 },
+							{
+								transform: "translateY(-36px) scale(0.95, 1.07)",
+								offset: 0.52,
+							},
+							{ transform: "translateY(0px) scale(1, 1)" },
+						],
+						{ duration: 680, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" },
+					);
+					earLeft?.animate?.(
+						[
+							{ transform: "rotate(0deg)" },
+							{ transform: "rotate(-16deg)" },
+							{ transform: "rotate(0deg)" },
+						],
+						{ duration: 520, easing: "ease-out" },
+					);
+					earRight?.animate?.(
+						[
+							{ transform: "rotate(0deg)" },
+							{ transform: "rotate(16deg)" },
+							{ transform: "rotate(0deg)" },
+						],
+						{ duration: 520, easing: "ease-out" },
+					);
+				}
+
+				const prevTimer = copyTimers.get(copy);
+				if (prevTimer) {
+					window.clearTimeout(prevTimer);
+				}
+				const timer = window.setTimeout(() => {
+					copy.classList.remove("copied");
+					figure?.classList.remove("is-copied");
+					copyTimers.delete(copy);
+				}, 2000);
+				copyTimers.set(copy, timer);
 			});
 			return;
 		}

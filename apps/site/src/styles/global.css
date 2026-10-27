@@ -224,11 +224,13 @@
  * Tactile 3D Buttons (Dual-Theme: #2A1155 -> #7C3AED in Light Mode, #7C3AED with #4C1D95 lip in Dark Mode)
  */
 .tactile-btn:not([hidden]):not(.hidden),
+.tactile-btn-secondary:not([hidden]):not(.hidden),
 .duo-btn:not([hidden]):not(.hidden) {
 	display: inline-flex;
 }
 
 .tactile-btn,
+.tactile-btn-secondary,
 .duo-btn {
 	align-items: center;
 	justify-content: center;
@@ -247,6 +249,7 @@
 }
 
 .tactile-btn:focus-visible,
+.tactile-btn-secondary:focus-visible,
 .duo-btn:focus-visible {
 	outline: none;
 	box-shadow:
@@ -316,7 +319,8 @@
 		0 4px 10px rgba(124, 58, 237, 0.3);
 }
 
-/* Secondary / Outline Sketch Pill Button ("Watch Teardowns", "All Episodes") */
+/* Secondary / Outline Sketch Pill Button */
+.tactile-btn-secondary,
 .duo-btn-blue,
 .cc-btn-purple,
 .duo-btn-outline,
@@ -328,6 +332,7 @@
 	box-shadow: 3px 4px 0px 0px #2a1155;
 }
 
+.tactile-btn-secondary:hover,
 .duo-btn-blue:hover,
 .cc-btn-purple:hover,
 .duo-btn-outline:hover,
@@ -339,8 +344,20 @@
 	box-shadow: 5px 6px 0px 0px #2a1155;
 }
 
+.tactile-btn-secondary:active,
+.duo-btn-blue:active,
+.cc-btn-purple:active,
+.duo-btn-outline:active,
+.cc-btn-outline:active,
+.cc-btn-lavender:active {
+	transform: translateY(2px);
+	box-shadow: 1px 2px 0px 0px #2a1155;
+}
+
+:root.dark .tactile-btn-secondary,
 :root.dark .duo-btn-blue,
 :root.dark .cc-btn-purple,
+:root.dark .duo-btn-outline,
 :root.dark .duo-btn-outline,
 :root.dark .cc-btn-outline,
 :root.dark .cc-btn-lavender {
@@ -350,6 +367,7 @@
 	box-shadow: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
 }
 
+:root.dark .tactile-btn-secondary:hover,
 :root.dark .duo-btn-blue:hover,
 :root.dark .cc-btn-purple:hover,
 :root.dark .duo-btn-outline:hover,
@@ -510,17 +528,26 @@
 }
 
 .copy-code.copied {
-	color: var(--primary);
+	border-color: #86efac !important;
+	background-color: #064e3b !important;
+	color: #86efac !important;
+	opacity: 1 !important;
+	box-shadow: 0 0 16px rgba(134, 239, 172, 0.45);
 }
 
-.copy-code.copied svg {
-	display: none;
+.copy-code.copied .copy-icon-clipboard {
+	transform: scale(0) rotate(45deg);
+	opacity: 0;
 }
 
-.copy-code.copied::after {
-	content: "✓";
-	font-size: 0.875rem;
-	line-height: 1;
+.copy-code.copied .copy-icon-check {
+	transform: scale(1) rotate(0deg);
+	opacity: 1;
+}
+
+.code-block-figure.is-copied .copy-aj-popup {
+	opacity: 1;
+	transform: translateY(0) scale(1);
 }
 
 /* Persistent Right-Side Resizable Ask Agent Drawer */

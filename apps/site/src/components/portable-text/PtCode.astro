@@ -2,6 +2,7 @@
 import { Code } from "astro:components";
 import { stegaClean } from "@sanity/client/stega";
 import type { Props as PtProps } from "astro-portabletext/types";
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import { normalizeLanguage } from "@/lib/code-languages";
 
@@ -40,21 +41,34 @@ const filename = node.filename;
 		/>
 	) : (
 		code && (
-			<figure class="not-prose duo-card group relative my-6 overflow-hidden">
-				{filename && (
-					<figcaption class="flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A] px-4 py-2.5 font-mono text-xs font-bold text-[#C5E86C]">
-						<span>📄 {filename}</span>
-						<span class="font-hand text-base text-[#B4A7D6]">{language}</span>
-					</figcaption>
-				)}
+			<figure class="code-block-figure not-prose duo-card group relative my-6 overflow-visible">
+				{/* AJ Mascot Rig Celebrate Jump Pop-Up on Copy */}
+				<div
+					class="copy-aj-popup pointer-events-none absolute -top-16 right-12 z-20 flex items-center gap-1.5 opacity-0 translate-y-6 scale-50 origin-bottom-right transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+					aria-hidden="true"
+				>
+					<span class="-rotate-3 rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] px-2.5 py-1 font-hand text-sm font-bold text-[#2A1155] shadow-sketch-sm whitespace-nowrap">
+						Copied! 🐾
+					</span>
+					<AjAnimatedMascot
+						state="celebrate"
+						variant="full-body"
+						angle="three-quarter-left"
+						mouth="smile-open"
+						cls="w-16 h-auto"
+						interactive={false}
+					/>
+				</div>
+
 				<button
 					type="button"
-					class="copy-code absolute right-3 top-2.5 z-10 inline-flex size-8 items-center justify-center rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] text-[#F8FAFC] opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 hover:border-[#C5E86C]"
+					class="copy-code absolute right-3 top-2.5 z-20 inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border border-[#B4A7D6]/45 bg-[#1E293B]/95 text-[#F8FAFC] opacity-90 shadow-sm transition-all duration-200 focus-visible:opacity-100 group-hover:opacity-100 hover:border-[#C5E86C] hover:scale-105 active:scale-95"
 					data-code={code}
 					aria-label="Copy code"
+					title="Copy code to clipboard"
 				>
 					<svg
-						class="size-4"
+						class="copy-icon-clipboard size-4 transition-all duration-200 ease-out"
 						viewBox="0 0 24 24"
 						fill="none"
 						stroke="currentColor"
@@ -66,16 +80,37 @@ const filename = node.filename;
 						<rect x="9" y="9" width="13" height="13" rx="2" />
 						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
 					</svg>
+					<svg
+						class="copy-icon-check absolute size-4 scale-0 -rotate-45 opacity-0 text-[#86EFAC] transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.75"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<polyline points="20 6 9 17 4 12" />
+					</svg>
 				</button>
-				<Code
-					code={code}
-					lang={language}
-					themes={{ light: "github-light", dark: "github-dark" }}
-					class:list={[
-						"overflow-x-auto p-4 text-sm",
-						filename ? "rounded-b-xl" : "rounded-xl",
-					]}
-				/>
+
+				<div class="overflow-hidden rounded-[calc(1.5rem-2px)]">
+					{filename && (
+						<figcaption class="flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A] px-4 py-2.5 pr-14 font-mono text-xs font-bold text-[#C5E86C]">
+							<span>📄 {filename}</span>
+							<span class="font-hand text-base text-[#B4A7D6]">{language}</span>
+						</figcaption>
+					)}
+					<Code
+						code={code}
+						lang={language}
+						themes={{ light: "github-light", dark: "github-dark" }}
+						class:list={[
+							"overflow-x-auto p-4 text-sm",
+							filename ? "rounded-b-xl" : "rounded-xl",
+						]}
+					/>
+				</div>
 			</figure>
 		)
 	)
