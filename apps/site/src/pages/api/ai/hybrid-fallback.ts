@@ -29,7 +29,7 @@ function sanitizeEmDashes(input: string): string {
 	return input.replace(/[\u2014\u2013]/g, ", ");
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
 	const t0 = performance.now();
 	try {
 		const body = (await request
@@ -64,10 +64,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				: DEFAULT_SYSTEM_BY_TASK[task];
 
 		const cfEnv =
-			(locals as { runtime?: { env?: Record<string, unknown> } })?.runtime
-				?.env ||
-			(env as unknown as Record<string, unknown>) ||
-			{};
+			(env as unknown as Record<string, unknown> | undefined) || {};
 
 		const openRouterApiKey =
 			(cfEnv.OPENROUTER_API_KEY as string | undefined) ||
