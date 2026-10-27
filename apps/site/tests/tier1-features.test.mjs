@@ -1591,6 +1591,53 @@ describe("Tier 1 - Feature Coverage", () => {
 					.get("www-authenticate")
 					?.includes("/.well-known/oauth-protected-resource/mcp"),
 			);
+
+			// 7. GET /mcp with Accept: text/markdown returns Markdown for Agents
+			const mdReq = new Request("https://codingcat.dev/mcp", {
+				method: "GET",
+				headers: { Accept: "text/markdown" },
+			});
+			const mdRes = await mcpModule.GET({ request: mdReq, locals });
+			assert.equal(mdRes.status, 200);
+			assert.ok(
+				mdRes.headers.get("content-type")?.includes("text/markdown"),
+				"Must return text/markdown content-type",
+			);
+			assert.ok(
+				mdRes.headers.get("x-markdown-tokens"),
+				"Must include x-markdown-tokens header",
+			);
+
+			// 8. GET /mcp default / browser returns HTML with WebMCP registration and declarative forms
+			const htmlReq = new Request("https://codingcat.dev/mcp", {
+				method: "GET",
+				headers: { Accept: "text/html" },
+			});
+			const htmlRes = await mcpModule.GET({ request: htmlReq, locals });
+			assert.equal(htmlRes.status, 200);
+			assert.ok(
+				htmlRes.headers.get("content-type")?.includes("text/html"),
+				"Must return text/html content-type for browsers",
+			);
+			const htmlBody = await htmlRes.text();
+			assert.ok(
+				htmlBody.includes("document.modelContext") &&
+					htmlBody.includes('toolname="search_content"'),
+				"Must include WebMCP imperative and declarative tool registrations",
+			);
+
+			// 9. GET /mcp with Accept: application/json returns JSON status payload
+			const jsonReq = new Request("https://codingcat.dev/mcp", {
+				method: "GET",
+				headers: { Accept: "application/json" },
+			});
+			const jsonRes = await mcpModule.GET({ request: jsonReq, locals });
+			assert.equal(jsonRes.status, 200);
+			assert.ok(
+				jsonRes.headers.get("content-type")?.includes("application/json"),
+			);
+			const jsonData = await jsonRes.json();
+			assert.equal(jsonData.status, "ok");
 		});
 
 		it("7.18 /oauth2/token normalizes dual client authentication (Basic header + client_secret body) and JSON bodies", async () => {

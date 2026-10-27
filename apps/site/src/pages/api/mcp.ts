@@ -187,7 +187,7 @@ const MCP_TOOLS = [
 		name: "knowledge_base_read",
 		title: "Read Knowledge Base Entries",
 		description:
-			"Read full entries from the CodingCat.dev Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes' — programming & tech dad jokes, Git jokes, SQL jokes, Jeff Dean facts, coding culture). Call initial_context first if you need the knowledgeBaseId and entry paths.",
+			"Read full entries from the CodingCat.dev Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes': programming & tech dad jokes, Git jokes, SQL jokes, Jeff Dean facts, coding culture). Call initial_context first if you need the knowledgeBaseId and entry paths.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -422,6 +422,294 @@ export const DELETE: APIRoute = async ({ request }) => {
 	});
 };
 
+function buildMcpMarkdown(origin: string): string {
+	const toolRows = MCP_TOOLS.map(
+		(t) => `| \`${t.name}\` | ${t.title} | ${t.description} |`,
+	).join("\n");
+
+	return `# CodingCat.dev MCP Server (\`${MCP_SERVER_INFO.name}\`)
+
+The CodingCat.dev Model Context Protocol (MCP) Server exposes semantic search, content retrieval, GROQ querying, and knowledge base tools for Courses, Podcasts, and Blog Posts on [CodingCat.dev](${origin}).
+
+## Connection & Discovery
+
+| Property | Value |
+| :--- | :--- |
+| **Server Name** | \`${MCP_SERVER_INFO.name}\` |
+| **Version** | \`${MCP_SERVER_INFO.version}\` |
+| **Transport** | \`streamable-http\` (\`POST ${origin}/mcp\`) |
+| **Supported Protocol Versions** | ${MCP_SUPPORTED_VERSIONS.map((v) => `\`${v}\``).join(", ")} |
+| **MCP Server Card** | [\`${origin}/.well-known/mcp/server-card.json\`](${origin}/.well-known/mcp/server-card.json) |
+| **JSON Status Endpoint** | [\`${origin}/mcp?format=json\`](${origin}/mcp?format=json) |
+
+## Available MCP Tools
+
+| Tool Name | Title | Description |
+| :--- | :--- | :--- |
+${toolRows}
+
+## Example JSON-RPC Request
+
+\`\`\`bash
+curl -X POST ${origin}/mcp \\
+  -H "Content-Type: application/json" \\
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+\`\`\`
+`;
+}
+
+function buildMcpHtml(
+	origin: string,
+	statusPayload: Record<string, unknown>,
+): string {
+	const toolRowsHtml = MCP_TOOLS.map(
+		(t) =>
+			`<tr><td><code>${t.name}</code></td><td>${t.title}</td><td>${t.description}</td></tr>`,
+	).join("\n\t\t\t\t\t");
+	const statusJson = JSON.stringify(statusPayload, null, 2);
+
+	return `<!doctype html>
+<html lang="en" class="dark">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>CodingCat.dev MCP Server | Model Context Protocol &amp; WebMCP Endpoint</title>
+	<meta name="description" content="Streamable HTTP Model Context Protocol (MCP) and browser WebMCP endpoint for searching CodingCat.dev Courses, Podcasts, and Blog Posts." />
+	<link rel="canonical" href="${origin}/mcp" />
+	<link rel="api-catalog" href="${origin}/.well-known/api-catalog" />
+	<link rel="mcp-server-card" href="${origin}/.well-known/mcp/server-card.json" />
+	<link rel="agent-skills" href="${origin}/.well-known/agent-skills/index.json" />
+	<link rel="llms-txt" href="${origin}/llms.txt" />
+	<script>
+		(function () {
+			var abortController = new AbortController();
+			window.__codingcatWebMcpAbort = abortController;
+			var registeredContexts = new WeakSet();
+
+			var tools = [
+				{
+					name: "search_content",
+					description: "Search CodingCat.dev courses, podcasts, blog posts, guests, and sponsors",
+					inputSchema: {
+						type: "object",
+						properties: {
+							query: {
+								type: "string",
+								description: "Search keywords or topic (e.g. 'Sanity', 'Cloudflare Workers', 'Astro', 'Next.js')"
+							},
+							type: {
+								type: "string",
+								enum: ["all", "course", "podcast", "post", "guest", "author", "sponsor"],
+								description: "Optional content type filter"
+							},
+							limit: {
+								type: "integer",
+								minimum: 1,
+								maximum: 24,
+								default: 10,
+								description: "Maximum number of results to return"
+							}
+						},
+						required: ["query"]
+					},
+					annotations: {
+						readOnlyHint: true,
+						untrustedContentHint: false
+					},
+					execute: async function (args) {
+						var params = new URLSearchParams();
+						params.set("q", String((args && args.query) || ""));
+						if (args && args.type) params.set("type", String(args.type));
+						if (args && args.limit) params.set("limit", String(args.limit));
+						var res = await fetch("/api/search?" + params.toString(), {
+							headers: { Accept: "application/json" },
+							signal: abortController.signal
+						});
+						return await res.json();
+					}
+				},
+				{
+					name: "get_content_by_slug",
+					description: "Retrieve complete details, show notes, transcript summary, and metadata for a CodingCat.dev course, podcast episode, or blog post by slug",
+					inputSchema: {
+						type: "object",
+						properties: {
+							slug: {
+								type: "string",
+								description: "The slug of the content item"
+							}
+						},
+						required: ["slug"]
+					},
+					annotations: {
+						readOnlyHint: true,
+						untrustedContentHint: false
+					},
+					execute: async function (args) {
+						var res = await fetch("/mcp", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({
+								jsonrpc: "2.0",
+								id: 1,
+								method: "tools/call",
+								params: {
+									name: "get_content_by_slug",
+									arguments: { slug: String((args && args.slug) || "") }
+								}
+							}),
+							signal: abortController.signal
+						});
+						return await res.json();
+					}
+				},
+				{
+					name: "ask_agent_aj",
+					description: "Ask Agent AJ technical questions about CodingCat.dev courses, podcast episodes, blog posts, and transcripts",
+					inputSchema: {
+						type: "object",
+						properties: {
+							question: {
+								type: "string",
+								description: "Technical question or topic to ask Agent AJ"
+							}
+						},
+						required: ["question"]
+					},
+					annotations: {
+						readOnlyHint: true,
+						untrustedContentHint: false
+					},
+					execute: async function (args) {
+						var q = String((args && args.question) || "");
+						var res = await fetch("/api/search?q=" + encodeURIComponent(q) + "&limit=5", {
+							headers: { Accept: "application/json" },
+							signal: abortController.signal
+						});
+						return await res.json();
+					}
+				},
+				{
+					name: "browse_pillar",
+					description: "Navigate to a primary CodingCat.dev content pillar (courses, podcasts, blog, topics, or sponsorships)",
+					inputSchema: {
+						type: "object",
+						properties: {
+							pillar: {
+								type: "string",
+								enum: ["courses", "podcasts", "blog", "topics", "sponsorships"],
+								description: "Target content pillar to open"
+							}
+						},
+						required: ["pillar"]
+					},
+					annotations: {
+						readOnlyHint: true,
+						untrustedContentHint: false
+					},
+					execute: async function (args) {
+						var pillar = String((args && args.pillar) || "courses");
+						var targetUrl = "/" + pillar;
+						window.location.assign(targetUrl);
+						return { navigatedTo: targetUrl };
+					}
+				}
+			];
+
+			function registerOnContext(mc) {
+				if (!mc || typeof mc.registerTool !== "function" || registeredContexts.has(mc)) {
+					return;
+				}
+				registeredContexts.add(mc);
+				for (var i = 0; i < tools.length; i++) {
+					try {
+						var p = mc.registerTool(tools[i], { signal: abortController.signal });
+						if (p && typeof p.catch === "function") {
+							p.catch(function () {});
+						}
+					} catch (_e) {}
+				}
+			}
+
+			function registerCodingCatWebMcp() {
+				try {
+					var docMc = document.modelContext;
+					var navMc = typeof navigator !== "undefined" ? navigator.modelContext : undefined;
+					registerOnContext(docMc);
+					if (navMc && navMc !== docMc) {
+						registerOnContext(navMc);
+					}
+				} catch (_err) {}
+			}
+
+			registerCodingCatWebMcp();
+			document.addEventListener("DOMContentLoaded", registerCodingCatWebMcp, { once: true });
+			window.addEventListener("load", registerCodingCatWebMcp, { once: true });
+			window.addEventListener("pagehide", function () {
+				abortController.abort();
+			}, { once: true });
+		})();
+	</script>
+	<style>
+		body { background: #0B1326; color: #F8FAFC; font-family: Inter, system-ui, sans-serif; line-height: 1.6; margin: 0; padding: 2rem 1rem; }
+		main { max-width: 960px; margin: 0 auto; }
+		h1, h2 { font-family: Nunito, system-ui, sans-serif; color: #FFFFFF; }
+		a { color: #C084FC; }
+		code, pre { font-family: "JetBrains Mono", monospace; }
+		pre { background: #131B2E; border: 2px solid #2A1155; border-radius: 12px; padding: 1rem; overflow-x: auto; }
+		table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: #131B2E; border-radius: 12px; overflow: hidden; }
+		th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid #1E293B; }
+		th { background: #1E293B; color: #C084FC; }
+		form { background: #131B2E; border: 2px solid #2A1155; border-radius: 12px; padding: 1rem; margin: 1rem 0; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+		input, select, button { padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #4B2E83; background: #0B1326; color: #F8FAFC; }
+		button { background: #7C3AED; border-color: #7C3AED; font-weight: 700; cursor: pointer; }
+	</style>
+</head>
+<body>
+	<main>
+		<h1>CodingCat.dev MCP Server (<code>${MCP_SERVER_INFO.name}</code>)</h1>
+		<p>Streamable HTTP Model Context Protocol (MCP) and browser WebMCP endpoint for <a href="${origin}">CodingCat.dev</a> Courses, Podcasts, and Blog Posts.</p>
+
+		<h2>Interactive WebMCP Tools</h2>
+		<form action="/search" method="get" toolname="search_content" tooldescription="Search CodingCat.dev courses, podcasts, blog posts, guests, and sponsors">
+			<label for="mcp-q">Search Content:</label>
+			<input id="mcp-q" type="search" name="q" required placeholder="Search Astro, Cloudflare, Sanity..." toolparamdescription="Search query for CodingCat.dev tutorials, podcast episodes, courses, and blog posts" />
+			<select name="type" aria-label="Content type filter" toolparamdescription="Optional content filter: all, course, podcast, post, guest, author, or sponsor">
+				<option value="all">All Content</option>
+				<option value="course">Courses</option>
+				<option value="podcast">Podcasts</option>
+				<option value="post">Blog Posts</option>
+			</select>
+			<button type="submit">Search</button>
+		</form>
+
+		<form action="/sponsorships" method="get" toolname="subscribe_newsletter" tooldescription="Subscribe to the CodingCat.dev web development newsletter">
+			<label for="mcp-email">Newsletter:</label>
+			<input id="mcp-email" type="email" name="email" required placeholder="you@example.com" toolparamdescription="Developer email address to subscribe to the CodingCat.dev newsletter" />
+			<button type="submit">Subscribe</button>
+		</form>
+
+		<h2>Available MCP Tools</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Tool Name</th>
+					<th>Title</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				${toolRowsHtml}
+			</tbody>
+		</table>
+
+		<h2>Server Status Payload (JSON)</h2>
+		<pre><code>${statusJson}</code></pre>
+	</main>
+</body>
+</html>`;
+}
+
 export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = locals.siteUrl.origin;
 	const authErr = checkMcpAuth(request, origin);
@@ -430,7 +718,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
 		return authErr;
 	}
 
+	const url = new URL(request.url);
 	const accept = request.headers.get("accept") || "";
+	const acceptLower = accept.toLowerCase();
 	const hasMcpProtocolHeader = Boolean(
 		request.headers.get("mcp-protocol-version") ||
 			request.headers.get("mcp-session-id"),
@@ -440,7 +730,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 	// When a Streamable HTTP client sends GET /mcp with Accept: text/event-stream to open a standalone
 	// notification stream, a stateless server that does not push unsolicited notifications MUST return 405
 	// Method Not Allowed so the client cleanly disables background SSE polling instead of reconnecting in a loop.
-	if (accept.includes("text/event-stream") && hasMcpProtocolHeader) {
+	if (acceptLower.includes("text/event-stream") && hasMcpProtocolHeader) {
 		await logMcpDebug(request, 405, "GET streamable-http SSE probe -> 405");
 		return new Response(null, {
 			status: 405,
@@ -453,8 +743,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 	// Support legacy 2024-11-05 HTTP+SSE clients that explicitly connect with Accept: text/event-stream only
 	if (
-		accept.includes("text/event-stream") &&
-		!accept.includes("application/json")
+		acceptLower.includes("text/event-stream") &&
+		!acceptLower.includes("application/json")
 	) {
 		await logMcpDebug(request, 200, "GET legacy SSE endpoint event");
 		const encoder = new TextEncoder();
@@ -480,35 +770,74 @@ export const GET: APIRoute = async ({ request, locals }) => {
 		});
 	}
 
-	await logMcpDebug(request, 200, "GET status JSON");
-	return new Response(
-		JSON.stringify(
-			{
-				status: "ok",
-				server: MCP_SERVER_INFO.name,
-				version: MCP_SERVER_INFO.version,
-				protocolVersion: "2024-11-05",
-				supportedVersions: MCP_SUPPORTED_VERSIONS,
-				transport: "streamable-http",
-				endpoint: `${origin}/mcp`,
-				serverCard: `${origin}/.well-known/mcp/server-card.json`,
-				capabilities: {
-					tools: { listChanged: false },
-					resources: { subscribe: false, listChanged: false },
-					prompts: { listChanged: false },
-				},
-				tools: MCP_TOOLS.map((t) => t.name),
+	// Markdown for Agents content negotiation (Accept: text/markdown or /mcp.md)
+	if (
+		acceptLower.includes("text/markdown") ||
+		url.pathname.endsWith(".md") ||
+		url.searchParams.get("format") === "markdown"
+	) {
+		await logMcpDebug(request, 200, "GET status Markdown");
+		const markdown = buildMcpMarkdown(origin);
+		const estimatedTokens = Math.max(1, Math.ceil(markdown.length / 4));
+		return new Response(markdown, {
+			status: 200,
+			headers: {
+				...MCP_HEADERS,
+				"content-type": "text/markdown; charset=utf-8",
+				"x-markdown-tokens": String(estimatedTokens),
+				"content-signal": "ai-train=yes, search=yes, ai-input=yes",
+				"cache-control": "public, max-age=3600",
+				vary: "Accept",
 			},
-			null,
-			2,
-		),
-		{
+		});
+	}
+
+	const statusPayload = {
+		status: "ok",
+		server: MCP_SERVER_INFO.name,
+		version: MCP_SERVER_INFO.version,
+		protocolVersion: "2024-11-05",
+		supportedVersions: MCP_SUPPORTED_VERSIONS,
+		transport: "streamable-http",
+		endpoint: `${origin}/mcp`,
+		serverCard: `${origin}/.well-known/mcp/server-card.json`,
+		capabilities: {
+			tools: { listChanged: false },
+			resources: { subscribe: false, listChanged: false },
+			prompts: { listChanged: false },
+		},
+		tools: MCP_TOOLS.map((t) => t.name),
+	};
+
+	// Explicit JSON status negotiation (Accept: application/json without text/html, or ?format=json)
+	if (
+		url.searchParams.get("format") === "json" ||
+		hasMcpProtocolHeader ||
+		(acceptLower.includes("application/json") &&
+			!acceptLower.includes("text/html"))
+	) {
+		await logMcpDebug(request, 200, "GET status JSON");
+		return new Response(JSON.stringify(statusPayload, null, 2), {
 			headers: {
 				...MCP_HEADERS,
 				"cache-control": "public, max-age=3600",
+				vary: "Accept",
 			},
+		});
+	}
+
+	// Default browser & WebMCP HTML response (Accept: text/html or default GET)
+	await logMcpDebug(request, 200, "GET status HTML + WebMCP");
+	const html = buildMcpHtml(origin, statusPayload);
+	return new Response(html, {
+		status: 200,
+		headers: {
+			...MCP_HEADERS,
+			"content-type": "text/html; charset=utf-8",
+			"cache-control": "public, max-age=3600",
+			vary: "Accept",
 		},
-	);
+	});
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
