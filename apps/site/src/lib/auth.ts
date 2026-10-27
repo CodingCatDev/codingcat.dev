@@ -16,6 +16,8 @@ export const MCP_DEFAULT_SCOPES = [
 	"search",
 	"mcp:tools",
 	"agent",
+	"poppy:read",
+	"poppy:write",
 ] as const;
 
 export const DEFAULT_MCP_USER = {

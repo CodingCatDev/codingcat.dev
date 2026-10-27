@@ -2131,4 +2131,73 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 	});
+
+	// ── 15. Personal Agent Protocol (Poppy) Discovery & Issuer Binding ────
+	describe("Personal Agent Protocol (Poppy) Discovery & OAuth Issuer Binding", () => {
+		it("15.1 /.well-known/poppy.json returns protocol_version 0.1, matching organization.domain, and RFC 8414 issuer binding", async () => {
+			const poppyModule = loadModule("src/pages/.well-known/poppy.json.ts");
+			const oauthServerModule = loadModule(
+				"src/pages/.well-known/oauth-authorization-server.ts",
+			);
+			const locals = {
+				siteUrl: new URL("https://codingcat.dev"),
+			};
+
+			const poppyRes = await poppyModule.GET({
+				request: new Request(
+					"https://www.codingcat.dev/.well-known/poppy.json",
+				),
+				locals,
+			});
+			assert.equal(poppyRes.status, 200);
+			assert.ok(
+				poppyRes.headers.get("content-type")?.includes("application/json"),
+			);
+			const poppy = await poppyRes.json();
+
+			assert.equal(poppy.protocol_version, "0.1");
+			assert.equal(poppy.organization?.name, "CodingCat.dev");
+			assert.equal(
+				poppy.organization?.domain,
+				"codingcat.dev",
+				"organization.domain must match requested hostname ignoring leading www.",
+			);
+			assert.equal(poppy.auth?.issuer, "https://codingcat.dev");
+			assert.ok(Array.isArray(poppy.auth?.direct?.scopes));
+			assert.ok(Array.isArray(poppy.apis) && poppy.apis.length >= 2);
+			assert.equal(typeof poppy.web, "object");
+
+			const oauthRes = await oauthServerModule.GET({
+				request: new Request(
+					"https://codingcat.dev/.well-known/oauth-authorization-server",
+				),
+				locals,
+			});
+			assert.equal(oauthRes.status, 200);
+			const oauthMeta = await oauthRes.json();
+
+			assert.equal(
+				oauthMeta.issuer,
+				poppy.auth.issuer,
+				"RFC 8414 issuer must exactly match poppy.json auth.issuer",
+			);
+			assert.ok(
+				Array.isArray(oauthMeta.poppy_domains) &&
+					oauthMeta.poppy_domains.includes(poppy.organization.domain),
+				"RFC 8414 poppy_domains must include organization.domain",
+			);
+			assert.equal(
+				oauthMeta.token_endpoint,
+				"https://codingcat.dev/oauth2/token",
+			);
+			assert.equal(
+				oauthMeta.revocation_endpoint,
+				"https://codingcat.dev/oauth2/revoke",
+			);
+			assert.equal(
+				oauthMeta.authorization_endpoint,
+				"https://codingcat.dev/oauth2/authorize",
+			);
+		});
+	});
 });

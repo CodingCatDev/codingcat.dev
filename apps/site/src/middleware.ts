@@ -107,7 +107,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// Always emit Link headers (RFC 8288) for AI agent discoverability
 	response.headers.set(
 		"Link",
-		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/.well-known/oauth-authorization-server>; rel="oauth-authorization-server", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md", <${origin}/AGENTS.md>; rel="agent-guide", <${origin}/pricing.md>; rel="pricing"`,
+		`<${origin}/.well-known/api-catalog>; rel="api-catalog", <${origin}/.well-known/mcp/server-card.json>; rel="mcp-server-card", <${origin}/.well-known/agent-skills/index.json>; rel="agent-skills", <${origin}/.well-known/ai-catalog.json>; rel="ai-catalog", <${origin}/.well-known/poppy.json>; rel="poppy", <${origin}/.well-known/oauth-protected-resource>; rel="oauth-protected-resource", <${origin}/.well-known/oauth-authorization-server>; rel="oauth-authorization-server", <${origin}/llms.txt>; rel="llms-txt", <${origin}/auth.md>; rel="auth-md", <${origin}/AGENTS.md>; rel="agent-guide", <${origin}/pricing.md>; rel="pricing"`,
 	);
 	response.headers.append("Vary", "Accept");
 

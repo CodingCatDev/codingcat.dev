@@ -5,10 +5,29 @@ export const prerender = false;
 
 /**
  * OAuth 2.0 Authorization Server Metadata (RFC 8414)
- * powered by Better Auth with Auth.md agent_auth extension for autonomous AI agent discovery
+ * powered by Better Auth with Auth.md agent_auth extension and Personal Agent Protocol (Poppy) issuer binding
  */
 export const GET: APIRoute = async ({ request, locals }) => {
-	const origin = locals.siteUrl.origin;
+	const siteUrl = locals?.siteUrl ?? new URL("https://codingcat.dev");
+	let reqUrl = siteUrl;
+	if (request?.url) {
+		try {
+			reqUrl = new URL(request.url);
+		} catch {
+			reqUrl = siteUrl;
+		}
+	}
+
+	const rawHostname = reqUrl.hostname || siteUrl.hostname || "codingcat.dev";
+	const domain = rawHostname.replace(/^www\./i, "");
+	const protocol =
+		reqUrl.protocol === "https:" || siteUrl.protocol === "https:"
+			? "https:"
+			: reqUrl.protocol || "https:";
+	const origin =
+		rawHostname === "localhost" || rawHostname === "127.0.0.1"
+			? siteUrl.origin
+			: `${protocol}//${domain}`;
 	const auth = getAuth(origin);
 
 	let baseMeta: Record<string, any> = {};
@@ -25,13 +44,20 @@ export const GET: APIRoute = async ({ request, locals }) => {
 		// Fallback if request is invoked offline/in tests
 	}
 
+	const poppyDomains = Array.from(
+		new Set([domain, "codingcat.dev", "dev.codingcat.dev"]),
+	);
+
 	const metadata = {
 		...baseMeta,
 		issuer: origin,
 		authorization_endpoint: `${origin}/oauth2/authorize`,
 		token_endpoint: `${origin}/oauth2/token`,
+		revocation_endpoint: `${origin}/oauth2/revoke`,
+		introspection_endpoint: `${origin}/oauth2/introspect`,
 		registration_endpoint: `${origin}/oauth2/register`,
 		jwks_uri: `${origin}/jwks`,
+		poppy_domains: poppyDomains,
 		scopes_supported: [
 			"openid",
 			"profile",
@@ -41,6 +67,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
 			"search",
 			"mcp:tools",
 			"agent",
+			"poppy:read",
+			"poppy:write",
 		],
 		agent_auth: {
 			skill: `${origin}/auth.md`,
