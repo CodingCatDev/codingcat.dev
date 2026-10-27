@@ -55,21 +55,14 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 				, hands-on courses, podcasts, and blog posts with AJ.
 			</p>
 
-			{/* Primary CTA Stack: Courses, Podcasts, Blog */}
-			<div class="flex flex-wrap items-center gap-3.5 pt-2">
-				<a
-					href="/courses"
-					class="tactile-btn px-7 py-3.5 text-base font-extrabold tracking-wide sm:text-lg"
-				>
-					<span>Explore Courses</span>
-					<span class="text-[#86EFAC]">→</span>
-				</a>
+			{/* Primary CTA Stack: Podcasts on top, Courses & Blog below */}
+			<div class="flex flex-col items-start gap-3.5 pt-2">
 				<a
 					href="/podcasts"
-					class="duo-btn cc-btn-outline inline-flex items-center gap-2 px-5 py-3.5 text-sm font-bold sm:text-base"
+					class="tactile-btn inline-flex items-center gap-2.5 px-7 py-3.5 text-base font-extrabold tracking-wide sm:text-lg"
 				>
 					<svg
-						class="size-5 text-[#7C3AED] dark:text-[#C084FC]"
+						class="size-5 text-[#86EFAC]"
 						fill="currentColor"
 						viewBox="0 0 20 20"
 						aria-hidden="true"
@@ -81,13 +74,22 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 						></path>
 					</svg>
 					<span>Watch Podcasts</span>
+					<span class="text-[#86EFAC]">→</span>
 				</a>
-				<a
-					href="/blog"
-					class="duo-btn cc-btn-outline inline-flex items-center gap-2 px-5 py-3.5 text-sm font-bold sm:text-base"
-				>
-					<span>Read Blog</span>
-				</a>
+				<div class="flex flex-wrap items-center gap-3.5">
+					<a
+						href="/courses"
+						class="duo-btn cc-btn-outline inline-flex items-center gap-2 px-5 py-3.5 text-sm font-bold sm:text-base"
+					>
+						<span>Explore Courses</span>
+					</a>
+					<a
+						href="/blog"
+						class="duo-btn cc-btn-outline inline-flex items-center gap-2 px-5 py-3.5 text-sm font-bold sm:text-base"
+					>
+						<span>Read Blog</span>
+					</a>
+				</div>
 			</div>
 
 			{/* Mini Stats Row */}
