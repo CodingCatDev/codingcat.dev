@@ -2091,4 +2091,44 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(authJson.preset.angle, "three-quarter-left");
 		});
 	});
+
+	// ── 14. Course Detail & Interactive Lesson Routes ─────────────────────
+	describe("Course Detail & Interactive Lesson Routes", () => {
+		it("14.1 /course/[slug].astro links lessons to /course/[slug]/lesson/[lessonSlug] and strips legacy contact blocks", () => {
+			const coursePageSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/course/[slug].astro"),
+				"utf-8",
+			);
+			const lessonPageSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/course/[slug]/lesson/[lessonSlug].astro"),
+				"utf-8",
+			);
+
+			assert.ok(
+				coursePageSrc.includes("lessonHref") &&
+					coursePageSrc.includes("/lesson/"),
+				"Course page must link each lesson to /course/[slug]/lesson/[lessonSlug]",
+			);
+			assert.ok(
+				coursePageSrc.includes("Start Course →"),
+				"Course page must render Start Course CTA button",
+			);
+			assert.ok(
+				coursePageSrc.includes("brittneypostma|codercatdev"),
+				"Course page must filter out legacy BrittneyPostma / codercatdev contact blocks",
+			);
+			assert.ok(
+				lessonPageSrc.includes("PortableTextContent"),
+				"Lesson page must render PortableTextContent for lesson tutorial body",
+			);
+			assert.ok(
+				lessonPageSrc.includes("CoverMedia"),
+				"Lesson page must render CoverMedia for lesson video playback",
+			);
+			assert.ok(
+				!coursePageSrc.includes("\u2014") && !lessonPageSrc.includes("\u2014"),
+				"Course and lesson pages must not contain em-dashes",
+			);
+		});
+	});
 });

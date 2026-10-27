@@ -1,0 +1,345 @@
+---
+/**
+ * `/course/[slug]/lesson/[lessonSlug]` | Interactive Course Lesson Player & Tutorial Page.
+ */
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import CoverMedia from "@/components/CoverMedia.astro";
+import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
+import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { courseQuery } from "@/lib/sanity/queries";
+import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
+
+interface CourseLesson {
+	_id?: string;
+	title?: string | null;
+	slug?: string | null;
+	excerpt?: string | null;
+	coverImage?: CoverImageType | null;
+	videoCloudinary?: { asset?: { _ref?: string } } | null;
+	youtube?: string | null;
+	content?: Array<{
+		_type: string;
+		children?: Array<{ text?: string }>;
+		[key: string]: unknown;
+	}> | null;
+}
+
+interface CourseSection {
+	title?: string | null;
+	lesson?: CourseLesson[] | null;
+}
+
+interface CourseDetail {
+	_id: string;
+	title: string;
+	slug?: string | null;
+	excerpt?: string | null;
+	coverImage?: CoverImageType | null;
+	videoCloudinary?: { asset?: { _ref?: string } } | null;
+	youtube?: string | null;
+	content?: Array<{
+		_type: string;
+		children?: Array<{ text?: string }>;
+		[key: string]: unknown;
+	}> | null;
+	sections?: CourseSection[] | null;
+}
+
+interface IndexedLesson {
+	lesson: CourseLesson;
+	sectionTitle: string;
+	sectionIndex: number;
+	lessonIndex: number;
+	globalIndex: number;
+}
+
+const { sanity } = Astro.locals;
+const { slug, lessonSlug } = Astro.params;
+
+const course = (
+	slug ? await sanity.loadQuery(courseQuery, { slug }) : null
+) as unknown as CourseDetail | null;
+
+if (!course?._id || !lessonSlug) {
+	return new Response(null, { status: 404 });
+}
+
+const sections: CourseSection[] = course.sections ?? [];
+const indexedLessons: IndexedLesson[] = [];
+
+sections.forEach((sec, sIdx) => {
+	const sectionTitle = sec?.title || `Section ${sIdx + 1}`;
+	(sec?.lesson ?? []).forEach((lesson, lIdx) => {
+		if (lesson?.slug) {
+			indexedLessons.push({
+				lesson,
+				sectionTitle,
+				sectionIndex: sIdx + 1,
+				lessonIndex: lIdx + 1,
+				globalIndex: indexedLessons.length + 1,
+			});
+		}
+	});
+});
+
+const currentIdx = indexedLessons.findIndex(
+	(entry) => entry.lesson.slug === lessonSlug,
+);
+
+if (currentIdx === -1) {
+	return new Response(null, { status: 404 });
+}
+
+const currentEntry = indexedLessons[currentIdx];
+const currentLesson = currentEntry.lesson;
+const prevEntry = currentIdx > 0 ? indexedLessons[currentIdx - 1] : null;
+const nextEntry =
+	currentIdx < indexedLessons.length - 1
+		? indexedLessons[currentIdx + 1]
+		: null;
+
+const sanitizedLessonContent = (currentLesson.content ?? []).filter((block) => {
+	const blockText = Array.isArray(block?.children)
+		? block.children.map((child) => child?.text ?? "").join("")
+		: "";
+	return !/brittneypostma|codercatdev/i.test(blockText);
+});
+
+const lessonTitle =
+	currentLesson.title ||
+	`Lesson ${currentEntry.sectionIndex}.${currentEntry.lessonIndex}`;
+const lessonDescription = currentLesson.excerpt || course.excerpt || "";
+---
+
+<BaseLayout
+	title={`${lessonTitle} | ${course.title} | CodingCat.dev Course`}
+	description={lessonDescription}
+	ogFallback={{
+		title: lessonTitle,
+		subtitle: `${course.title} · Lesson ${currentEntry.globalIndex} of ${indexedLessons.length}`,
+		type: "Blog",
+	}}
+	canonical={`/course/${slug}/lesson/${lessonSlug}`}
+>
+	<Breadcrumbs
+		links={[
+			{ title: "Courses", href: "/courses" },
+			{ title: course.title, href: `/course/${slug}` },
+			{ title: lessonTitle },
+		]}
+	/>
+
+	<article class="py-6">
+		<!-- Lesson Header & Top Prev/Next Bar -->
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+			<div class="flex flex-wrap items-center gap-2.5">
+				<a
+					href={`/course/${slug}`}
+					class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] transition hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm"
+				>
+					🧶 {course.title}
+				</a>
+				<span class="rounded-full border-2 border-[#2A1155]/30 bg-white/80 px-3 py-1 font-mono text-xs font-bold text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-slate-200">
+					Section {currentEntry.sectionIndex}.{currentEntry.lessonIndex} · Lesson {currentEntry.globalIndex} of {indexedLessons.length}
+				</span>
+			</div>
+
+			<div class="flex items-center gap-2">
+				{
+					prevEntry?.lesson.slug && (
+						<a
+							href={`/course/${slug}/lesson/${prevEntry.lesson.slug}`}
+							class="inline-flex items-center gap-1.5 rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2 font-mono text-xs font-bold text-[#2A1155] shadow-sketch-sm transition hover:border-[#7C3AED] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100 dark:hover:border-[#C084FC]"
+						>
+							← Prev Lesson
+						</a>
+					)
+				}
+				{
+					nextEntry?.lesson.slug && (
+						<a
+							href={`/course/${slug}/lesson/${nextEntry.lesson.slug}`}
+							class="tactile-btn inline-flex items-center gap-1.5 rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-4 py-2 font-mono text-xs font-extrabold text-white shadow-sketch-sm transition hover:bg-[#6D28D9] dark:border-white/80"
+						>
+							Next Lesson →
+						</a>
+					)
+				}
+			</div>
+		</div>
+
+		<h1 class="mb-8 font-display text-3xl font-black leading-tight tracking-tight text-[#2A1155] dark:text-white md:text-5xl">
+			{lessonTitle}
+		</h1>
+
+		<div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+			<!-- Main Lesson Player & Written Tutorial -->
+			<div class="min-w-0">
+				<div class="mb-10">
+					<CoverMedia
+						image={currentLesson.coverImage ?? course.coverImage}
+						video={currentLesson.videoCloudinary ?? course.videoCloudinary}
+						youtube={currentLesson.youtube ?? course.youtube}
+					/>
+				</div>
+
+				{
+					sanitizedLessonContent.length > 0 ? (
+						<div class="my-8">
+							<PortableTextContent
+								value={sanitizedLessonContent}
+								class="mx-auto prose-violet lg:prose-xl"
+							/>
+						</div>
+					) : (
+						currentLesson.excerpt && (
+							<div class="duo-card hand-border my-8 p-6 text-lg text-slate-700 dark:text-slate-200">
+								{currentLesson.excerpt}
+							</div>
+						)
+					)
+				}
+
+				<ExcalidrawBlueprintCard
+					title={`${course.title}: ${lessonTitle}`}
+					kind="course"
+					tags={[currentEntry.sectionTitle, course.title]}
+				/>
+
+				<!-- Bottom Prev / Next Lesson Cards -->
+				<nav
+					aria-label="Lesson navigation"
+					class="mt-12 grid gap-4 border-t-2 border-dashed border-[#2A1155]/20 pt-8 sm:grid-cols-2 dark:border-white/15"
+				>
+					{
+						prevEntry?.lesson.slug ? (
+							<a
+								href={`/course/${slug}/lesson/${prevEntry.lesson.slug}`}
+								class="duo-card hand-border group flex flex-col justify-between gap-2 p-5 transition hover:-translate-y-0.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
+							>
+								<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+									← Previous Lesson ({prevEntry.sectionIndex}.{prevEntry.lessonIndex})
+								</span>
+								<span class="font-display text-lg font-black text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+									{prevEntry.lesson.title}
+								</span>
+							</a>
+						) : (
+							<a
+								href={`/course/${slug}`}
+								class="duo-card hand-border group flex flex-col justify-between gap-2 p-5 transition hover:-translate-y-0.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
+							>
+								<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+									← Course Overview
+								</span>
+								<span class="font-display text-lg font-black text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+									{course.title}
+								</span>
+							</a>
+						)
+					}
+
+					{
+						nextEntry?.lesson.slug ? (
+							<a
+								href={`/course/${slug}/lesson/${nextEntry.lesson.slug}`}
+								class="duo-card hand-border group flex flex-col justify-between gap-2 p-5 text-right transition hover:-translate-y-0.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
+							>
+								<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+									Next Lesson ({nextEntry.sectionIndex}.{nextEntry.lessonIndex}) →
+								</span>
+								<span class="font-display text-lg font-black text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+									{nextEntry.lesson.title}
+								</span>
+							</a>
+						) : (
+							<a
+								href="/courses"
+								class="duo-card hand-border group flex flex-col justify-between gap-2 p-5 text-right transition hover:-translate-y-0.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
+							>
+								<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+									Course Complete 🎉
+								</span>
+								<span class="font-display text-lg font-black text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+									Explore More Courses →
+								</span>
+							</a>
+						)
+					}
+				</nav>
+			</div>
+
+			<!-- Sticky Course Lessons Sidebar -->
+			<aside class="duo-card hand-border p-5 lg:sticky lg:top-24">
+				<div class="mb-4 flex items-center justify-between border-b-2 border-[#2A1155]/15 pb-3 dark:border-white/15">
+					<div>
+						<a
+							href={`/course/${slug}`}
+							class="font-mono text-[11px] font-extrabold uppercase tracking-wider text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+						>
+							Course Outline
+						</a>
+						<h2 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+							{course.title}
+						</h2>
+					</div>
+					<span class="rounded-full bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-xs font-extrabold text-[#7C3AED] dark:bg-purple-950/60 dark:text-[#C084FC]">
+						{currentEntry.globalIndex}/{indexedLessons.length}
+					</span>
+				</div>
+
+				<div class="max-h-[70vh] space-y-5 overflow-y-auto pr-1">
+					{
+						sections.map((sec, sIdx) => (
+							<div>
+								<div class="mb-2 flex items-center gap-2">
+									<span class="inline-flex size-6 items-center justify-center rounded-full border border-[#2A1155] bg-[#7C3AED] font-mono text-[11px] font-black text-white dark:border-white/40">
+										{sIdx + 1}
+									</span>
+									<h3 class="font-display text-sm font-black text-[#2A1155] dark:text-slate-100">
+										{sec?.title || `Section ${sIdx + 1}`}
+									</h3>
+								</div>
+								<ul class="space-y-1.5">
+									{(sec?.lesson ?? []).map((lesson, lIdx) => {
+										const isActive = lesson?.slug === lessonSlug;
+										const href = lesson?.slug
+											? `/course/${slug}/lesson/${lesson.slug}`
+											: undefined;
+										return (
+											<li>
+												<a
+													href={href}
+													aria-current={isActive ? "page" : undefined}
+													class:list={[
+														"flex items-start gap-2.5 rounded-xl border-2 px-3 py-2 text-xs transition",
+														isActive
+															? "border-[#7C3AED] bg-[#EDE9FE] font-extrabold text-[#2A1155] shadow-sketch-sm dark:border-[#C084FC] dark:bg-purple-950/70 dark:text-white"
+															: "border-transparent bg-[#FAF9FC] font-semibold text-slate-700 hover:border-[#2A1155]/30 hover:bg-white dark:bg-[#0B1326] dark:text-slate-300 dark:hover:border-white/25 dark:hover:bg-[#131B2E]",
+													]}
+												>
+													<span class="mt-0.5 shrink-0 font-mono text-[11px] font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+														{sIdx + 1}.{lIdx + 1}
+													</span>
+													<span class="line-clamp-2 flex-1">
+														{lesson?.title || `Lesson ${lIdx + 1}`}
+													</span>
+													{isActive && (
+														<span class="shrink-0 font-mono text-[10px] font-black text-[#7C3AED] dark:text-[#C084FC]">
+															▶
+														</span>
+													)}
+												</a>
+											</li>
+										);
+									})}
+								</ul>
+							</div>
+						))
+					}
+				</div>
+			</aside>
+		</div>
+	</article>
+</BaseLayout>

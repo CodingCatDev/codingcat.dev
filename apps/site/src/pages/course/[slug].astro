@@ -15,6 +15,8 @@ interface CourseLesson {
 	title?: string | null;
 	slug?: string | null;
 	excerpt?: string | null;
+	youtube?: string | null;
+	videoCloudinary?: { asset?: { _ref?: string } } | null;
 }
 
 interface CourseSection {
@@ -30,7 +32,11 @@ interface CourseDetail {
 	coverImage?: CoverImageType | null;
 	videoCloudinary?: { asset?: { _ref?: string } } | null;
 	youtube?: string | null;
-	content?: Array<{ _type: string; [key: string]: unknown }> | null;
+	content?: Array<{
+		_type: string;
+		children?: Array<{ text?: string }>;
+		[key: string]: unknown;
+	}> | null;
 	sections?: CourseSection[] | null;
 }
 
@@ -45,6 +51,18 @@ if (!course?._id) {
 }
 
 const sections: CourseSection[] = course.sections ?? [];
+const allLessons: CourseLesson[] = sections.flatMap((sec) =>
+	(sec?.lesson ?? []).filter((l): l is CourseLesson => Boolean(l?.slug)),
+);
+const firstLesson = allLessons[0] ?? null;
+
+// Strip legacy blocks mentioning contacting @BrittneyPostma or @codercatdev
+const sanitizedContent = (course.content ?? []).filter((block) => {
+	const blockText = Array.isArray(block?.children)
+		? block.children.map((child) => child?.text ?? "").join("")
+		: "";
+	return !/brittneypostma|codercatdev/i.test(blockText);
+});
 ---
 
 <BaseLayout
@@ -65,8 +83,29 @@ const sections: CourseSection[] = course.sections ?? [];
 	/>
 
 	<article class="py-6">
-		<div class="mb-6 inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
-			🧶 CodingCat.dev Course
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+			<div class="flex flex-wrap items-center gap-3">
+				<div class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+					🧶 CodingCat.dev Course
+				</div>
+				{
+					allLessons.length > 0 && (
+						<span class="rounded-full border-2 border-[#2A1155]/30 bg-white/80 px-3 py-1 font-mono text-xs font-bold text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-slate-200">
+							{allLessons.length} {allLessons.length === 1 ? "Lesson" : "Lessons"}
+						</span>
+					)
+				}
+			</div>
+			{
+				firstLesson?.slug && (
+					<a
+						href={`/course/${slug}/lesson/${firstLesson.slug}`}
+						class="tactile-btn inline-flex items-center gap-2 rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-5 py-2.5 font-display text-sm font-black text-white shadow-sketch-sm transition hover:bg-[#6D28D9] dark:border-white/80"
+					>
+						Start Course →
+					</a>
+				)
+			}
 		</div>
 
 		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-[#2A1155] dark:text-white md:text-6xl">
@@ -88,10 +127,10 @@ const sections: CourseSection[] = course.sections ?? [];
 		/>
 
 		{
-			course.content && (
+			sanitizedContent.length > 0 && (
 				<div class="my-8">
 					<PortableTextContent
-						value={course.content}
+						value={sanitizedContent}
 						class="mx-auto prose-violet lg:prose-xl"
 					/>
 				</div>
@@ -117,16 +156,57 @@ const sections: CourseSection[] = course.sections ?? [];
 								</div>
 								{sec?.lesson && sec.lesson.length > 0 && (
 									<ul class="grid gap-3 sm:grid-cols-2">
-										{sec.lesson.map((lesson, lIdx) => (
-											<li class="flex items-start gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-3.5 dark:border-white/20 dark:bg-[#0B1326] shadow-sketch-sm">
-												<span class="font-mono text-xs font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
-													{sIdx + 1}.{lIdx + 1}
-												</span>
-												<span class="font-bold text-[#2A1155] dark:text-slate-100">
-													{lesson?.title || `Lesson ${lIdx + 1}`}
-												</span>
-											</li>
-										))}
+										{sec.lesson.map((lesson, lIdx) => {
+											const lessonHref = lesson?.slug
+												? `/course/${slug}/lesson/${lesson.slug}`
+												: null;
+											const hasVideo = Boolean(
+												lesson?.youtube || lesson?.videoCloudinary?.asset?._ref,
+											);
+											return (
+												<li>
+													{lessonHref ? (
+														<a
+															href={lessonHref}
+															class="group flex h-full flex-col justify-between gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch-sm transition hover:-translate-y-0.5 hover:border-[#7C3AED] hover:bg-[#F3E8FF]/60 dark:border-white/20 dark:bg-[#0B1326] dark:hover:border-[#C084FC] dark:hover:bg-[#131B2E]"
+														>
+															<div class="flex items-start gap-3">
+																<span class="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-md border border-[#7C3AED]/40 bg-[#EDE9FE] px-2 py-0.5 font-mono text-xs font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-[#C084FC]">
+																	{sIdx + 1}.{lIdx + 1}
+																</span>
+																<div class="min-w-0 flex-1">
+																	<span class="block font-bold text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-slate-100 dark:group-hover:text-[#C084FC]">
+																		{lesson?.title || `Lesson ${lIdx + 1}`}
+																	</span>
+																	{lesson?.excerpt && (
+																		<p class="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-400">
+																			{lesson.excerpt}
+																		</p>
+																	)}
+																</div>
+															</div>
+															<div class="flex items-center justify-between border-t border-[#2A1155]/10 pt-2.5 font-mono text-[11px] font-bold text-[#7C3AED] dark:border-white/10 dark:text-[#C084FC]">
+																<span>
+																	{hasVideo ? "▶ Video + Lesson" : "📖 Written Lesson"}
+																</span>
+																<span class="transition group-hover:translate-x-0.5">
+																	Start Lesson →
+																</span>
+															</div>
+														</a>
+													) : (
+														<div class="flex items-start gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch-sm dark:border-white/20 dark:bg-[#0B1326]">
+															<span class="font-mono text-xs font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+																{sIdx + 1}.{lIdx + 1}
+															</span>
+															<span class="font-bold text-[#2A1155] dark:text-slate-100">
+																{lesson?.title || `Lesson ${lIdx + 1}`}
+															</span>
+														</div>
+													)}
+												</li>
+											);
+										})}
 									</ul>
 								)}
 							</div>
