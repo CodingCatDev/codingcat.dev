@@ -8,6 +8,10 @@ import type { StructureResolver } from "sanity/structure";
 
 const MANAGED_DOCUMENT_TYPES = new Set([
 	"settings",
+	"sponsorConfig",
+	"booking",
+	"sponsorLead",
+	"sponsorPool",
 	"post",
 	"podcast",
 	"podcastType",
@@ -79,6 +83,101 @@ export const editorialStructure: StructureResolver = (S) =>
 											'_type in ["post", "podcast"] && (!defined(coverImage) || !defined(excerpt) || !defined(content))',
 										)
 										.defaultOrdering([{ field: "date", direction: "desc" }]),
+								),
+						]),
+				),
+
+			S.divider(),
+
+			// 2b. Bookings & Sponsor CRM
+			S.listItem()
+				.title("Bookings & Sponsor CRM")
+				.icon(PiCurrencyDollarSimpleFill)
+				.child(
+					S.list()
+						.title("Bookings & Sponsor CRM")
+						.items([
+							S.listItem()
+								.title("All Podcast & Sponsor Bookings")
+								.icon(FaPodcast)
+								.child(
+									S.documentTypeList("booking")
+										.title("All Bookings")
+										.defaultOrdering([
+											{ field: "slotStartAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Pending Booking Holds (Needs Review)")
+								.child(
+									S.documentList()
+										.title("Pending Booking Holds")
+										.schemaType("booking")
+										.filter('_type == "booking" && status == "pending"')
+										.defaultOrdering([
+											{ field: "_createdAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Confirmed / Scheduled Bookings")
+								.child(
+									S.documentList()
+										.title("Confirmed Bookings")
+										.schemaType("booking")
+										.filter(
+											'_type == "booking" && status in ["approved", "scheduled"]',
+										)
+										.defaultOrdering([
+											{ field: "slotStartAt", direction: "asc" },
+										]),
+								),
+							S.divider(),
+							S.listItem()
+								.title("All Sponsor Leads & Deal Rooms")
+								.icon(PiCurrencyDollarSimpleFill)
+								.child(
+									S.documentTypeList("sponsorLead")
+										.title("Sponsor Leads & Deal Rooms")
+										.defaultOrdering([
+											{ field: "_updatedAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Active Sponsor Deals (Gmail & Inbound)")
+								.child(
+									S.documentList()
+										.title("Active Sponsor Deals")
+										.schemaType("sponsorLead")
+										.filter(
+											'_type == "sponsorLead" && status in ["new", "contacted", "replied", "negotiating", "deposit_sent"]',
+										),
+								),
+							S.listItem()
+								.title("Paid / In Production Deals")
+								.child(
+									S.documentList()
+										.title("Paid / In Production")
+										.schemaType("sponsorLead")
+										.filter(
+											'_type == "sponsorLead" && status in ["deposit_paid", "booked", "balance_sent", "paid"]',
+										),
+								),
+							S.listItem()
+								.title("Outbound Prospects (Sponsor Pool)")
+								.child(
+									S.documentTypeList("sponsorPool").title(
+										"Outbound Prospects",
+									),
+								),
+							S.divider(),
+							S.listItem()
+								.title("Sponsor Rate Card & Config")
+								.icon(CogIcon)
+								.child(
+									S.document()
+										.schemaType("sponsorConfig")
+										.documentId("sponsorConfig")
+										.title("Sponsor Rate Card & Config"),
 								),
 						]),
 				),

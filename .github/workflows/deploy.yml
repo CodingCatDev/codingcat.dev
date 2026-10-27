@@ -205,7 +205,7 @@ jobs:
           PRIVATE_HASHNODE: ${{ secrets.PRIVATE_HASHNODE }}
 
   deploy-production:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: production
 
