@@ -1,0 +1,54 @@
+---
+/**
+ * Scroll-driven CodingCat Royal Purple (#7C3AED) & Candy Fuchsia (#C084FC / #D946EF)
+ * unwinding yarn string that connects Excalidraw explanation sections down the page.
+ * Matches Google Stitch screens 8d1319903d504a79ae56110486455e17 & b9e00f99c0d34e9884bf7766a014577b.
+ */
+interface Props {
+	variant?: "left-to-right" | "right-to-left" | "center-wave";
+}
+
+const { variant = "left-to-right" } = Astro.props;
+
+const pathD =
+	variant === "left-to-right"
+		? "M 180 0 C 180 70, 820 50, 820 120"
+		: variant === "right-to-left"
+			? "M 820 0 C 820 70, 180 50, 180 120"
+			: "M 500 0 C 360 40, 640 80, 500 120";
+---
+
+<div class="relative mx-auto my-2 hidden w-full max-w-5xl select-none md:block" aria-hidden="true">
+	<svg
+		viewBox="0 0 1000 120"
+		fill="none"
+		class="h-20 w-full overflow-visible"
+		preserveAspectRatio="none"
+	>
+		{/* Sketchy guide shadow */}
+		<path
+			d={pathD}
+			class="stroke-[#2A1155]/20 dark:stroke-purple-900/60"
+			stroke-width="7"
+			stroke-dasharray="10 10"
+			stroke-linecap="round"
+		/>
+		{/* Glowing Royal Purple & Candy Fuchsia Yarn String */}
+		<path
+			d={pathD}
+			stroke="#7C3AED"
+			stroke-width="4"
+			stroke-linecap="round"
+			class="animate-yarn yarn-glow dark:stroke-[#C084FC]"
+		/>
+		{/* Playful yarn knot midpoint */}
+		<circle
+			cx="500"
+			cy="60"
+			r="9"
+			fill="#7C3AED"
+			stroke="#FEF08A"
+			stroke-width="3"
+		/>
+	</svg>
+</div>

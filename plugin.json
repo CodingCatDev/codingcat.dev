@@ -1,0 +1,34 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "codingcatdev-agent-toolkit",
+  "version": "1.0.0",
+  "description": "Unified 13-module Design System, AJ the Cat Mascot & Excalidraw Visual Studio, and @alex.patterson Voice Toolkit for CodingCat.dev across Google Antigravity, Gemini Web, Claude Code, and Cursor.",
+  "author": {
+    "name": "Alex Patterson",
+    "url": "https://codingcat.dev"
+  },
+  "repository": "https://github.com/CodingCatDev/codingcat.dev",
+  "skills": [
+    {
+      "name": "codingcat-design-system",
+      "path": "skills/codingcat-design-system/SKILL.md",
+      "description": "10-module UI Design System, W3C tokens, Tailwind v4 theme, Nunito/Inter/JetBrains Mono/Virgil typography, and dark-mode components."
+    },
+    {
+      "name": "alex-voice-and-copy",
+      "path": "skills/alex-voice-and-copy/SKILL.md",
+      "description": "Alex Patterson (@alex.patterson) editorial voice, strict zero-em-dash rule, mandatory comparison tables, and WTF is... series templates."
+    },
+    {
+      "name": "codingcat-media-studio",
+      "path": "skills/codingcat-media-studio/SKILL.md",
+      "description": "2D upright bipedal & 3D vinyl-toy AJ the Cat mascot prompts, dark-mode Excalidraw diagrams, 16:9 YouTube thumbnails, and video hooks."
+    }
+  ],
+  "mcpServers": {
+    "codingcat-agent-toolkit": {
+      "url": "https://mcp.codingcat.dev/mcp",
+      "description": "Remote Cloudflare Worker MCP server exposing list_codingcat_rules, get_codingcat_rules, and get_codingcat_tokens."
+    }
+  }
+}

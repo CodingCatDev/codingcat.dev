@@ -1,0 +1,24 @@
+---
+/**
+ * Reusable SVG `<defs>` for AJ the Cat (`#aj-rig`):
+ * - Pastel-rainbow hexagonal "AJ" badge definitions
+ * - Iris clip-paths (`#aj-iris-clip-left`, `#aj-iris-clip-right`) for clamped cursor pupil tracking
+ * - Die-cut white sticker outline filter
+ */
+import { AJ_TRACED_PATHS as P } from "./ajTracedPaths";
+
+interface Props {
+	idPrefix: string;
+}
+
+const { idPrefix } = Astro.props;
+---
+
+<defs>
+	<clipPath id={`${idPrefix}-iris-clip-left`}>
+		<path d={P.left_iris} fill-rule="evenodd" />
+	</clipPath>
+	<clipPath id={`${idPrefix}-iris-clip-right`}>
+		<path d={P.right_iris} fill-rule="evenodd" />
+	</clipPath>
+</defs>

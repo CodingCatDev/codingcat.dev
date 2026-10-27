@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "codingcatdev-mcp-server",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "TOOLKIT_VERSION": "1.0.0",
+    "BRAND_NAME": "CodingCat.dev"
+  },
+  "env": {
+    "production": {
+      "name": "codingcatdev-mcp-server-production",
+      "vars": {
+        "TOOLKIT_VERSION": "1.0.0",
+        "BRAND_NAME": "CodingCat.dev"
+      }
+    }
+  }
+}

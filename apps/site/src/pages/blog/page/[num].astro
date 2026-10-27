@@ -1,7 +1,9 @@
 ---
-import ContentGrid from "@/components/ContentGrid.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePage } from "@/lib/pagination";
@@ -20,6 +22,7 @@ if (!resolved.ok) {
 	return resolved.response;
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
+const initialQuery = Astro.url.searchParams.get("q")?.trim() || "";
 
 const posts = await sanity.loadQuery(morePostQuery, {
 	skip: "none",
@@ -27,7 +30,7 @@ const posts = await sanity.loadQuery(morePostQuery, {
 	limit,
 });
 
-const title = page === 1 ? "Blog" : `Blog — Page ${page}`;
+const title = page === 1 ? "Blog" : `Blog: Page ${page}`;
 const ogCardImageUrl = sanity
 	.urlForImage(posts[0]?.coverImage ?? undefined)
 	?.width(640)
@@ -52,9 +55,34 @@ const ogCardImageUrl = sanity
 		{page < totalPages && <link rel="next" href={`/blog/page/${page + 1}`} />}
 	</Fragment>
 
-	<div class="mb-32">
-		<SectionHeader title="Posts" showHr={false} />
-		<ContentGrid items={posts as ContentListItem[]} />
-		<Pagination base="blog" page={page} totalPages={totalPages} />
+	<Breadcrumbs
+		links={[
+			{ title: "Blog", href: "/blog" },
+			{ title: `Page ${page}` },
+		]}
+	/>
+
+	<div class="mb-24">
+		<SectionHeader title={page === 1 ? "all blog posts" : `blog posts (page ${page})`} showHr={false} />
+		<TopicFilterStrip
+			label="Filter by Topic & Vendor:"
+			basePath="/blog"
+			allLabel="All Blog Posts"
+		/>
+		<InfiniteContentGrid
+			type="post"
+			items={posts as ContentListItem[]}
+			skipId="none"
+			initialOffset={offset + posts.length}
+			totalCount={count}
+			initialQuery={initialQuery}
+			showSearch={true}
+			searchPlaceholder="Filter blog posts by title or keyword..."
+			priorityCount={2}
+			nounPlural="blog posts"
+		/>
+		<noscript>
+			<Pagination base="blog" page={page} totalPages={totalPages} />
+		</noscript>
 	</div>
 </BaseLayout>

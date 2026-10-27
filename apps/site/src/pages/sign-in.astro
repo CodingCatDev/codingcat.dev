@@ -1,4 +1,9 @@
 ---
+/**
+ * `/sign-in` | CodingCat.dev OAuth 2.1 / MCP & Mascot Lab Creator Sign-In Page.
+ * Zero em-dashes used.
+ */
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 export const prerender = false;
@@ -6,49 +11,60 @@ export const prerender = false;
 const query = Astro.url.searchParams;
 const clientId = query.get("client_id") || "";
 const redirectUri = query.get("redirect_uri") || "";
+const redirectPath = query.get("redirect") || "/mascot-lab";
 
 // If this is an OAuth authorization redirect, the authorize endpoint can be linked directly
 const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 ---
 
 <BaseLayout
-	title="Sign In — CodingCat.dev"
-	description="Link your custom assistant or agent to CodingCat.dev"
+	title="Sign In | CodingCat.dev"
+	description="Link your custom assistant, MCP agent, or Mascot Lab creator session to CodingCat.dev"
 >
 	<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
-		<div class="max-w-md w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-8 backdrop-blur shadow-2xl text-center">
-			<div class="w-16 h-16 mx-auto mb-6 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center text-3xl font-bold border border-purple-500/30">
-				🐱
+		<div class="duo-card hand-border max-w-md w-full p-8 text-center">
+			<div class="mx-auto mb-4 flex justify-center">
+				<AjAnimatedMascot
+					id="signin-aj"
+					variant="head"
+					state="idle-wave"
+					angle="three-quarter-right"
+					cls="w-24 h-24"
+					showYarnBall={false}
+				/>
 			</div>
-			
-			<h1 class="text-2xl font-bold text-white mb-2">Connect to CodingCat.dev</h1>
-			<p class="text-slate-400 text-sm mb-6 leading-relaxed">
-				Authorize your AI assistant or Model Context Protocol (MCP) client to search and retrieve web development tutorials, blog posts, and podcasts.
+
+			<h1 class="font-display text-3xl font-black text-[#2A1155] dark:text-white mb-2">
+				Connect to CodingCat.dev
+			</h1>
+			<p class="text-sm font-medium text-[#2A1155]/80 dark:text-slate-300 mb-6 leading-relaxed">
+				Authorize your AI assistant, Model Context Protocol (MCP) client, or Mascot Lab creator session to save presets and retrieve Courses, Podcasts, and Blog Posts.
 			</p>
 
 			{clientId && redirectUri ? (
 				<div class="space-y-4">
-					<div class="bg-slate-800/60 rounded-xl p-4 text-left text-xs text-slate-300 border border-slate-700/50 space-y-1.5">
+					<div class="rounded-xl bg-[#EDE9FE] dark:bg-slate-800/70 p-4 text-left text-xs text-[#2A1155] dark:text-slate-300 border-2 border-[#2A1155] dark:border-slate-700 space-y-1.5">
 						<div class="flex justify-between">
-							<span class="text-slate-400 font-medium">Application</span>
-							<span class="font-mono text-purple-300">Custom MCP / Gemini</span>
+							<span class="font-bold">Application</span>
+							<span class="font-mono font-bold text-[#7C3AED] dark:text-purple-300">
+								Custom MCP / Gemini
+							</span>
 						</div>
 						<div class="flex justify-between">
-							<span class="text-slate-400 font-medium">Access</span>
-							<span>Public Content & Agent Tools</span>
+							<span class="font-bold">Access</span>
+							<span>Public Content &amp; Agent Tools</span>
 						</div>
 					</div>
 
 					<a
 						href={authorizeTarget}
 						id="authorize-button"
-						class="block w-full py-3.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-purple-500/25 active:scale-[0.99]"
+						class="tactile-btn block w-full py-3.5 px-4 text-center text-base font-extrabold"
 					>
 						Authorize &amp; Continue
 					</a>
 
 					<script is:inline>
-						// Auto-proceed if opened in automated webview popup
 						if (window.opener || window.parent !== window) {
 							const btn = document.getElementById("authorize-button");
 							if (btn) {
@@ -58,18 +74,82 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 					</script>
 				</div>
 			) : (
-				<div class="space-y-4">
-					<p class="text-slate-400 text-sm">
-						CodingCat.dev provides open content and agent tools via Model Context Protocol.
-					</p>
-					<a
-						href="/"
-						class="inline-block py-2.5 px-6 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-xl transition border border-slate-700"
+				<form id="creator-signin-form" class="space-y-4 text-left" data-redirect={redirectPath}>
+					<div>
+						<label
+							for="creator-name"
+							class="block font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-purple-200 mb-1.5"
+						>
+							Creator Display Name
+						</label>
+						<input
+							id="creator-name"
+							name="name"
+							type="text"
+							required
+							value="Alex Patterson"
+							class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 text-sm font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+						/>
+					</div>
+
+					<div>
+						<label
+							for="creator-email"
+							class="block font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-purple-200 mb-1.5"
+						>
+							Developer Email
+						</label>
+						<input
+							id="creator-email"
+							name="email"
+							type="email"
+							required
+							value="alex@codingcat.dev"
+							class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 text-sm font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+						/>
+					</div>
+
+					<button
+						type="submit"
+						class="tactile-btn w-full justify-center py-3.5 px-5 text-base font-extrabold cursor-pointer"
 					>
-						Back to Home
-					</a>
-				</div>
+						<span>Sign In &amp; Continue</span>
+						<span class="text-[#86EFAC]">&rarr;</span>
+					</button>
+
+					<div class="pt-2 text-center">
+						<a
+							href={redirectPath}
+							class="font-mono text-xs font-bold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+						>
+							Return to {redirectPath}
+						</a>
+					</div>
+				</form>
 			)}
 		</div>
 	</div>
+
+	<script>
+		const form = document.getElementById("creator-signin-form") as HTMLFormElement | null;
+		form?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const formData = new FormData(form);
+			const name = String(formData.get("name") || "Alex Patterson");
+			const email = String(formData.get("email") || "alex@codingcat.dev");
+			const redirect = form.dataset.redirect || "/mascot-lab";
+
+			try {
+				await fetch("/api/mascot-lab", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ action: "login", name, email }),
+				});
+			} catch {
+				// Fallback cookie in browser if offline
+				document.cookie = `cc_mascot_lab_user=${encodeURIComponent(`${name}|${email}`)}; Path=/; Max-Age=2592000; SameSite=Lax`;
+			}
+			window.location.href = redirect;
+		});
+	</script>
 </BaseLayout>

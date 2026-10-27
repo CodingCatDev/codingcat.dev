@@ -1,5 +1,6 @@
 import type { PortableTextHtmlComponents } from "@portabletext/to-html";
 import { toHTML } from "@portabletext/to-html";
+import { resolvePartnerUrl } from "./partner-links";
 import { escapeXml } from "./xml";
 
 /**
@@ -33,8 +34,10 @@ export function portableTextToHtml(
 	const absolute = (href: string) =>
 		href.startsWith("/") ? `${origin}${href}` : href;
 
-	const renderSocialFeedLink = (label: string) => ({ value: node }: { value?: { url?: string } }) =>
-		node?.url ? `<p>${linkTag(node.url, label)}</p>` : "";
+	const renderSocialFeedLink =
+		(label: string) =>
+		({ value: node }: { value?: { url?: string } }) =>
+			node?.url ? `<p>${linkTag(node.url, label)}</p>` : "";
 
 	const components: Partial<PortableTextHtmlComponents> = {
 		types: {
@@ -75,7 +78,9 @@ export function portableTextToHtml(
 				node?.url ? `<p>${linkTag(node.url, "View on CodeSandbox")}</p>` : "",
 			twitter: ({ value: node }) => {
 				const raw = node?.url || node?.id || "";
-				if (!raw) return "";
+				if (!raw) {
+					return "";
+				}
 				const href = /^https?:\/\//i.test(raw)
 					? raw
 					: `https://x.com/i/status/${raw}`;
@@ -118,7 +123,10 @@ export function portableTextToHtml(
 		},
 		marks: {
 			link: ({ value: mark, children }) =>
-				mark?.href ? linkTag(absolute(mark.href), children) : children,
+				mark?.href
+					? linkTag(resolvePartnerUrl(absolute(mark.href)), children)
+					: children,
+			// Resolved to an href in GROQ; made absolute so it works off-site.
 			internalLink: ({ value: mark, children }) =>
 				mark?.href ? linkTag(absolute(mark.href), children) : children,
 		},

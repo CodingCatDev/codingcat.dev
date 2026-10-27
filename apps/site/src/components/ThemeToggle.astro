@@ -1,24 +1,24 @@
 ---
 /**
- * Replaces the Next `mode-toggle.tsx` (next-themes + Radix dropdown) with a
- * two-state button. The dropdown offered light / dark / system; system is
- * still the default via ThemeScript, and clearing the stored preference is
- * not worth a dropdown's worth of JS on every page.
+ * Dual-theme toggle button switching between CodingCat.dev 2026
+ * Chalkboard Paper Light Mode (`8d1319903d504a79ae56110486455e17`) and
+ * Obsidian Chalkboard Dark Mode (`b9e00f99c0d34e9884bf7766a014577b`).
  */
 ---
 
 <button
 	type="button"
 	id="theme-toggle"
-	class="inline-flex items-center justify-center rounded-md size-9 hover:bg-accent hover:text-accent-foreground transition-colors"
-	aria-label="Toggle theme"
+	class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#EDE9FE] dark:border-white/20 dark:bg-[#0B1326] dark:text-[#C084FC] dark:hover:border-[#C084FC] shadow-sketch-sm"
+	aria-label="Toggle Light and Dark Chalkboard theme"
+	title="Toggle Light / Dark Mode"
 >
 	<svg
-		class="size-5 dark:hidden"
+		class="size-4 dark:hidden"
 		viewBox="0 0 24 24"
 		fill="none"
 		stroke="currentColor"
-		stroke-width="2"
+		stroke-width="2.5"
 		stroke-linecap="round"
 		stroke-linejoin="round"
 		aria-hidden="true"
@@ -27,11 +27,11 @@
 		<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
 	</svg>
 	<svg
-		class="size-5 hidden dark:block"
+		class="hidden size-4 dark:block"
 		viewBox="0 0 24 24"
 		fill="none"
 		stroke="currentColor"
-		stroke-width="2"
+		stroke-width="2.5"
 		stroke-linecap="round"
 		stroke-linejoin="round"
 		aria-hidden="true"
@@ -48,7 +48,7 @@
 		try {
 			localStorage.setItem("theme", dark ? "dark" : "light");
 		} catch {
-			// Private mode — the toggle still applies for this page view.
+			// Private mode fallback.
 		}
 	});
 </script>

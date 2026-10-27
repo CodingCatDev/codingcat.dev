@@ -1,6 +1,7 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
 import type { MarkProps } from "astro-portabletext/types";
+import { resolvePartnerUrl } from "@/lib/partner-links";
 
 /**
  * Mark components receive the mark *definition* on `node.markDef`, not on the
@@ -12,9 +13,10 @@ const { node } = Astro.props;
 
 // stegaClean: href is an attribute — zero-width characters break the URL.
 const rawHref = stegaClean(node.markDef.href) || "#";
-const href = rawHref.startsWith("https://codingcat.dev/")
+const normalizedHref = rawHref.startsWith("https://codingcat.dev/")
 	? rawHref.replace("https://codingcat.dev", "")
 	: rawHref;
+const href = resolvePartnerUrl(normalizedHref) || "#";
 
 // Matches the Next behaviour: anything not starting with "/" is off-site.
 const isExternal = !href.startsWith("/");

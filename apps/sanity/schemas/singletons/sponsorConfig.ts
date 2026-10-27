@@ -105,6 +105,43 @@ export default defineType({
       description: "Maximum sponsor emails to send per cron run. Keeps volume manageable and avoids spam flags",
       initialValue: 10,
     }),
+    defineField({
+      name: "partnerTrackers",
+      title: "Partner Link & UTM/Coupon Trackers",
+      type: "array",
+      description:
+        "Automatic URL rewrites applied whenever a post, podcast, or sponsor card links to a partner domain (e.g. sanity.io -> https://www.sanity.io/manage?coupon=CodingCatDev).",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "name", title: "Partner Name", type: "string" }),
+            defineField({
+              name: "matchDomains",
+              title: "Match Domains",
+              type: "array",
+              of: [{ type: "string" }],
+            }),
+            defineField({
+              name: "landingUrl",
+              title: "Canonical Partner URL",
+              type: "url",
+            }),
+            defineField({
+              name: "couponCode",
+              title: "Coupon Code",
+              type: "string",
+            }),
+            defineField({
+              name: "utmSource",
+              title: "UTM Source",
+              type: "string",
+              initialValue: "codingcatdev",
+            }),
+          ],
+        },
+      ],
+    }),
   ],
   preview: {
     prepare() {

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "codingcat-agent-toolkit": {
+      "type": "http",
+      "url": "http://localhost:8788/mcp",
+      "description": "CodingCat.dev Agent Toolkit & Design System MCP Server (Cloudflare Worker via Hono). Exposes list_codingcat_rules, get_codingcat_rules, and get_codingcat_tokens."
+    }
+  }
+}

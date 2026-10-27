@@ -1,0 +1,1105 @@
+---
+/**
+ * `/mascot-lab` | Interactive 2D Vector AJ Mascot Rig Playground & Bone Inspector.
+ *
+ * Publicly accessible playground where visitors can:
+ * - Toggle between `variant="full-body"` and `variant="head"`
+ * - Switch turnaround angles (`angle="three-quarter-right"` & `angle="three-quarter-left"`)
+ * - Test all 6 core page states + 7 extended feline & developer action poses
+ * - Switch all 4 mouth visemes (`smile-open`, `grin`, `surprised-o`, `talking`)
+ * - Inspect the 14 articulated bone `transform-origin` pivot crosshairs
+ * - Sign in via `/sign-in?redirect=/mascot-lab` to save custom presets to Cloudflare D1
+ */
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
+import {
+	AJ_BONE_PIVOTS,
+	type AjAnimationState,
+} from "@/components/aj-rig/ajRigTypes";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const CORE_STATES: Array<{
+	state: AjAnimationState;
+	label: string;
+	sub: string;
+}> = [
+	{
+		state: "idle-wave",
+		label: "Idle Wave",
+		sub: "Default Hero · Wave + Tail Wag",
+	},
+	{
+		state: "podcast-groove",
+		label: "Podcast Groove",
+		sub: "120 BPM Nod + Soundwaves",
+	},
+	{
+		state: "point-diagram",
+		label: "Point Diagram",
+		sub: "Extends Paw + Lightbulb",
+	},
+	{
+		state: "celebrate",
+		label: "Celebrate Jump",
+		sub: "Double-Paw Cheer + Stars",
+	},
+	{
+		state: "search-curious",
+		label: "Search Curious",
+		sub: "Head Tilt + Magnifier",
+	},
+	{
+		state: "404-confused",
+		label: "404 Confused",
+		sub: "Ear Twitch + Tangled Yarn",
+	},
+];
+
+const EXTENDED_POSES: Array<{
+	state: AjAnimationState;
+	label: string;
+	sub: string;
+}> = [
+	{
+		state: "peek-corner",
+		label: "Ledge / Code Peek",
+		sub: "Gripping Paws Over Card",
+	},
+	{
+		state: "bored-nap",
+		label: "Laying Down Bored",
+		sub: "Cat Loaf + Heavy Eyelids + zZz",
+	},
+	{
+		state: "chase-yarn",
+		label: "Chasing Yarn Ball",
+		sub: "Forward Pounce + Purple Yarn",
+	},
+	{
+		state: "ship-it-laptop",
+		label: "Coding / Ship It!",
+		sub: "Dark-Mode Laptop + Terminal",
+	},
+	{
+		state: "coffee-sip",
+		label: "Debugging Espresso",
+		sub: "Steaming </> Mug + Grin",
+	},
+	{
+		state: "mind-blown",
+		label: "WTF is... Shock",
+		sub: "Floating Headphones + Bolts",
+	},
+	{
+		state: "cool-shades",
+		label: "Boss / Cool Shades",
+		sub: "Crossed Arms + Shades",
+	},
+];
+---
+
+<BaseLayout
+	title="AJ Mascot Lab & Vector Bone Rig Inspector | CodingCat.dev"
+	description="Interactive 2D vector bone rig playground for AJ the Cat: test animation states, turnaround angles, mouth visemes, cursor eye-tracking, and Cloudflare D1 presets."
+	canonical="/mascot-lab"
+>
+	<Breadcrumbs links={[{ title: "Mascot Lab" }]} />
+
+	<section class="py-6 md:py-10">
+		{/* Top Hero Header */}
+		<div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+			<div>
+				<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+					🐾 Interactive 2D Vector SVG Rig · 57 Traced Layers
+				</span>
+				<h1 class="mt-3 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-5xl">
+					AJ <span class="text-[#7C3AED] dark:text-[#C084FC]">mascot lab</span>
+					<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+				</h1>
+				<p class="font-hand mt-1 text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+					Toggle animation states, switch 3/4 turnaround angles, test cursor pupil tracking, and inspect bone pivots.
+				</p>
+			</div>
+
+			{/* Auth / Creator Status Bar */}
+			<div
+				id="lab-auth-bar"
+				class="flex flex-wrap items-center gap-3 rounded-2xl border-2 border-[#2A1155] bg-white px-4 py-2.5 dark:border-purple-400/40 dark:bg-[#131B2E] shadow-sketch-sm"
+			>
+				<span
+					id="lab-auth-badge"
+					class="font-mono text-xs font-bold text-[#2A1155] dark:text-slate-200"
+				>
+					Public Mode (Sign in to save D1 presets)
+				</span>
+				<a
+					id="lab-signin-link"
+					href="/sign-in?redirect=/mascot-lab"
+					class="tactile-btn px-3.5 py-1.5 text-xs font-extrabold"
+				>
+					<span>Sign In</span>
+					<span class="text-[#86EFAC]">&rarr;</span>
+				</a>
+				<button
+					id="lab-signout-btn"
+					type="button"
+					class="hidden rounded-xl border border-[#2A1155] px-3 py-1 font-mono text-xs font-bold text-[#2A1155] hover:bg-purple-100 dark:border-purple-400/40 dark:text-purple-200 dark:hover:bg-purple-950/60 cursor-pointer"
+				>
+					Sign Out
+				</button>
+			</div>
+		</div>
+
+		{/* Main Interactive Workbench Grid */}
+		<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+			{/* Left Column (7 cols): Live Interactive Stage + Code Snippet */}
+			<div class="space-y-6 lg:col-span-7">
+				<div
+					id="lab-stage-well"
+					data-theme="obsidian"
+					class="duo-card hand-border relative flex min-h-[540px] flex-col justify-between overflow-hidden p-6 transition-colors duration-200 bg-[#0B1326] text-white"
+					style="background-image: radial-gradient(rgba(216, 180, 254, 0.14) 1.25px, transparent 1.25px); background-size: 18px 18px;"
+				>
+					{/* Stage Top Bar */}
+					<div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3">
+						<div class="flex items-center gap-2">
+							<span class="size-3 rounded-full bg-[#FCA5A5]"></span>
+							<span class="size-3 rounded-full bg-[#FACC15]"></span>
+							<span class="size-3 rounded-full bg-[#86EFAC]"></span>
+							<span
+								id="lab-active-badge"
+								class="ml-2 rounded-full border border-purple-400/40 bg-purple-950/80 px-3 py-0.5 font-mono text-xs font-bold text-[#C5E86C]"
+							>
+								state=&quot;idle-wave&quot; · angle=&quot;three-quarter-right&quot; · variant=&quot;full-body&quot;
+							</span>
+						</div>
+
+						{/* Stage Background Switcher */}
+						<div class="flex items-center gap-1.5">
+							<button
+								type="button"
+								data-bg-btn="obsidian"
+								class="lab-bg-btn rounded-lg border border-purple-400 bg-[#0B1326] px-2.5 py-1 font-mono text-[11px] font-bold text-[#C5E86C] cursor-pointer"
+							>
+								Obsidian #0B1326
+							</button>
+							<button
+								type="button"
+								data-bg-btn="chalk"
+								class="lab-bg-btn rounded-lg border border-slate-500 bg-[#FAF9FC] px-2.5 py-1 font-mono text-[11px] font-bold text-[#2A1155] cursor-pointer"
+							>
+								Chalk #FAF9FC
+							</button>
+							<button
+								type="button"
+								data-bg-btn="void"
+								class="lab-bg-btn rounded-lg border border-slate-600 bg-black px-2.5 py-1 font-mono text-[11px] font-bold text-white cursor-pointer"
+							>
+								Void #000000
+							</button>
+						</div>
+					</div>
+
+					{/* Pre-rendered Stage Instances for Instant Zero-Latency Switching */}
+					<div class="relative my-auto flex min-h-[410px] items-center justify-center py-4">
+						{
+							[...CORE_STATES, ...EXTENDED_POSES].map((item, idx) => (
+								<div
+									data-stage-pose={item.state}
+									class:list={[
+										"lab-stage-instance flex items-center justify-center transition-opacity duration-150",
+										idx === 0 ? "block" : "hidden",
+									]}
+								>
+									<AjAnimatedMascot
+										id={`lab-aj-${item.state}`}
+										state={item.state}
+										variant="full-body"
+										angle="three-quarter-right"
+										caption="Purrfect code! 🐾"
+										cls="h-[360px] w-auto"
+									/>
+								</div>
+							))
+						}
+					</div>
+
+					{/* Stage Footer Bar */}
+					<div class="flex flex-wrap items-center justify-between gap-2 border-t border-white/15 pt-3 text-xs">
+						<span class="font-mono text-slate-300">
+							Move cursor to test clamped pupil tracking · Click AJ for WAAPI celebrate jump
+						</span>
+						<span
+							id="lab-celebrate-counter"
+							class="rounded-full bg-purple-900/70 px-3 py-0.5 font-mono font-bold text-[#C5E86C]"
+						>
+							Clicks: 0 🐾
+						</span>
+					</div>
+				</div>
+
+				{/* Copyable Astro Component Snippet */}
+				<div class="duo-card hand-border p-5">
+					<div class="mb-2 flex items-center justify-between">
+						<span class="font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+							Generated Astro Component Usage
+						</span>
+						<button
+							id="lab-copy-code-btn"
+							type="button"
+							class="rounded-xl border-2 border-[#2A1155] bg-[#EDE9FE] px-3 py-1 font-mono text-xs font-extrabold text-[#7C3AED] hover:bg-purple-200 dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 cursor-pointer"
+						>
+							Copy Snippet
+						</button>
+					</div>
+					<pre
+						id="lab-code-output"
+						class="overflow-x-auto rounded-xl bg-[#0B1326] p-4 font-mono text-xs text-[#C5E86C] border border-purple-500/30"
+					>&lt;AjAnimatedMascot state=&quot;idle-wave&quot; variant=&quot;full-body&quot; angle=&quot;three-quarter-right&quot; mouth=&quot;smile-open&quot; caption=&quot;Purrfect code! 🐾&quot; /&gt;</pre>
+				</div>
+			</div>
+
+			{/* Right Column (5 cols): Controls, Turnaround Angle, Visemes & D1 Presets */}
+			<div class="space-y-6 lg:col-span-5">
+				{/* 1. Variant & Turnaround Angle Controls */}
+				<div class="duo-card hand-border p-5 space-y-4">
+					<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+						1. Variant &amp; Turnaround Angle
+					</h2>
+
+					<div class="grid grid-cols-2 gap-2.5">
+						<button
+							type="button"
+							data-variant-btn="full-body"
+							class="lab-variant-btn rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-3.5 py-2.5 font-mono text-xs font-extrabold text-white shadow-sketch-sm cursor-pointer"
+						>
+							variant=&quot;full-body&quot;
+						</button>
+						<button
+							type="button"
+							data-variant-btn="head"
+							class="lab-variant-btn rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 font-mono text-xs font-extrabold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#131B2E] dark:text-purple-200 cursor-pointer"
+						>
+							variant=&quot;head&quot;
+						</button>
+					</div>
+
+					<div class="grid grid-cols-2 gap-2.5">
+						<button
+							type="button"
+							data-angle-btn="three-quarter-right"
+							class="lab-angle-btn rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-3.5 py-2.5 font-mono text-xs font-extrabold text-white shadow-sketch-sm cursor-pointer"
+						>
+							angle=&quot;three-quarter-right&quot;
+						</button>
+						<button
+							type="button"
+							data-angle-btn="three-quarter-left"
+							class="lab-angle-btn rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 font-mono text-xs font-extrabold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#131B2E] dark:text-purple-200 cursor-pointer"
+						>
+							angle=&quot;three-quarter-left&quot;
+						</button>
+					</div>
+
+					<div class="flex flex-wrap items-center gap-3 pt-1">
+						<label class="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#2A1155] dark:text-slate-200 cursor-pointer">
+							<input
+								id="lab-toggle-pivots"
+								type="checkbox"
+								class="size-4 accent-[#7C3AED]"
+							/>
+							<span>Show 14 Bone Pivot Crosshairs</span>
+						</label>
+					</div>
+				</div>
+
+				{/* 2. Core Page States & Extended Poses */}
+				<div class="duo-card hand-border p-5 space-y-4">
+					<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+						2. Animation States &amp; Action Poses
+					</h2>
+
+					<div class="font-mono text-[11px] font-bold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+						6 Core Page-Context States
+					</div>
+					<div class="grid grid-cols-2 gap-2">
+						{
+							CORE_STATES.map((item, idx) => (
+								<button
+									type="button"
+									data-state-btn={item.state}
+									class:list={[
+										"lab-state-btn rounded-xl border-2 border-[#2A1155] p-2.5 text-left transition-all cursor-pointer",
+										idx === 0
+											? "bg-[#7C3AED] text-white shadow-sketch-sm"
+											: "bg-white text-[#2A1155] hover:bg-purple-50 dark:border-purple-400/40 dark:bg-[#131B2E] dark:text-slate-100",
+									]}
+								>
+									<div class="font-mono text-xs font-extrabold">{item.state}</div>
+									<div class="mt-0.5 text-[11px] opacity-80">{item.sub}</div>
+								</button>
+							))
+						}
+					</div>
+
+					<div class="pt-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+						7 Extended Feline &amp; Developer Poses
+					</div>
+					<div class="grid grid-cols-2 gap-2">
+						{
+							EXTENDED_POSES.map((item) => (
+								<button
+									type="button"
+									data-state-btn={item.state}
+									class="lab-state-btn rounded-xl border-2 border-[#2A1155] bg-white p-2.5 text-left text-[#2A1155] hover:bg-purple-50 dark:border-purple-400/40 dark:bg-[#131B2E] dark:text-slate-100 transition-all cursor-pointer"
+								>
+									<div class="font-mono text-xs font-extrabold">{item.state}</div>
+									<div class="mt-0.5 text-[11px] opacity-80">{item.sub}</div>
+								</button>
+							))
+						}
+					</div>
+				</div>
+
+				{/* 3. Mouth Visemes & One-Shot Triggers */}
+				<div class="duo-card hand-border p-5 space-y-4">
+					<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+						3. Mouth Visemes &amp; One-Shot Actions
+					</h2>
+					<div class="grid grid-cols-2 gap-2">
+						{
+							(["smile-open", "grin", "surprised-o", "talking"] as const).map(
+								(viseme, idx) => (
+									<button
+										type="button"
+										data-mouth-btn={viseme}
+										class:list={[
+											"lab-mouth-btn rounded-xl border-2 border-[#2A1155] px-3 py-2 font-mono text-xs font-extrabold cursor-pointer",
+											idx === 0
+												? "bg-[#7C3AED] text-white"
+												: "bg-white text-[#2A1155] dark:border-purple-400/40 dark:bg-[#131B2E] dark:text-purple-200",
+										]}
+									>
+										mouth=&quot;{viseme}&quot;
+									</button>
+								),
+							)
+						}
+					</div>
+
+					<div class="flex flex-wrap gap-2 pt-1">
+						<button
+							id="lab-trigger-blink"
+							type="button"
+							class="rounded-xl border-2 border-[#2A1155] bg-[#EDE9FE] px-3 py-2 font-mono text-xs font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 cursor-pointer"
+						>
+							Trigger Double-Blink 👀
+						</button>
+						<button
+							id="lab-trigger-celebrate"
+							type="button"
+							class="rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] px-3 py-2 font-mono text-xs font-extrabold text-[#713F12] cursor-pointer"
+						>
+							Trigger Celebrate Jump 🎉
+						</button>
+					</div>
+				</div>
+
+				{/* 4. Save & Load Cloudflare D1 Presets */}
+				<div class="duo-card hand-border p-5 space-y-4">
+					<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+						4. Saved Presets (Cloudflare D1)
+					</h2>
+
+					<form id="lab-save-preset-form" class="flex gap-2">
+						<input
+							id="lab-preset-name"
+							type="text"
+							placeholder="Name this preset (e.g., Hero Left Wave)"
+							required
+							class="flex-1 rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2 text-xs font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white"
+						/>
+						<button
+							type="submit"
+							class="tactile-btn px-4 py-2 text-xs font-extrabold cursor-pointer"
+						>
+							Save Preset
+						</button>
+					</form>
+					<p
+						id="lab-preset-status"
+						class="hidden font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C5E86C]"
+					></p>
+
+					<div id="lab-presets-list" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+						{/* Populated dynamically from /api/mascot-lab */}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{/* Gallery Showcase: Both Shipped Turnaround Angles + All Poses */}
+		<div class="duo-card hand-border mt-12 p-6 md:p-8">
+			<div class="mb-6 flex flex-col justify-between gap-2 md:flex-row md:items-center">
+				<div>
+					<h2 class="font-display text-2xl font-black text-[#2A1155] dark:text-white md:text-3xl">
+						3/4 Left &amp; Right Turnaround Angles + Action Pose Gallery
+					</h2>
+					<p class="text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
+						Click any card below to load that exact angle and state into the live stage above.
+					</p>
+				</div>
+				<span class="rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-3.5 py-1 font-mono text-xs font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-[#C5E86C]">
+					angle=&quot;three-quarter-left | three-quarter-right&quot;
+				</span>
+			</div>
+
+			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+				<button
+					type="button"
+					data-gallery-load="idle-wave|full-body|three-quarter-left"
+					class="lab-gallery-card flex flex-col items-center justify-between rounded-2xl border-2 border-purple-400/30 bg-[#0B1326] p-4 text-white hover:border-[#C5E86C] transition-all cursor-pointer"
+				>
+					<span class="rounded-full bg-purple-950 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#C084FC]">
+						angle=&quot;three-quarter-left&quot;
+					</span>
+					<div class="my-3 flex h-44 items-center justify-center">
+						<AjAnimatedMascot
+							id="gal-left-full"
+							state="idle-wave"
+							variant="full-body"
+							angle="three-quarter-left"
+							cls="h-40 w-auto"
+							interactive={false}
+						/>
+					</div>
+					<div class="text-center">
+						<div class="font-display text-sm font-black">Looking Left (Full)</div>
+						<div class="text-[11px] text-slate-400">Readable Counter-Flipped Text</div>
+					</div>
+				</button>
+
+				<button
+					type="button"
+					data-gallery-load="idle-wave|full-body|three-quarter-right"
+					class="lab-gallery-card flex flex-col items-center justify-between rounded-2xl border-2 border-purple-400/30 bg-[#0B1326] p-4 text-white hover:border-[#C5E86C] transition-all cursor-pointer"
+				>
+					<span class="rounded-full bg-purple-950 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#C084FC]">
+						angle=&quot;three-quarter-right&quot;
+					</span>
+					<div class="my-3 flex h-44 items-center justify-center">
+						<AjAnimatedMascot
+							id="gal-right-full"
+							state="idle-wave"
+							variant="full-body"
+							angle="three-quarter-right"
+							cls="h-40 w-auto"
+							interactive={false}
+						/>
+					</div>
+					<div class="text-center">
+						<div class="font-display text-sm font-black">Looking Right (Full)</div>
+						<div class="text-[11px] text-slate-400">Canonical 3/4 Right View</div>
+					</div>
+				</button>
+
+				<button
+					type="button"
+					data-gallery-load="idle-wave|head|three-quarter-left"
+					class="lab-gallery-card flex flex-col items-center justify-between rounded-2xl border-2 border-purple-400/30 bg-[#0B1326] p-4 text-white hover:border-[#C5E86C] transition-all cursor-pointer"
+				>
+					<span class="rounded-full bg-purple-950 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#C084FC]">
+						left · variant=&quot;head&quot;
+					</span>
+					<div class="my-3 flex h-44 items-center justify-center">
+						<AjAnimatedMascot
+							id="gal-left-head"
+							state="idle-wave"
+							variant="head"
+							angle="three-quarter-left"
+							cls="h-36 w-36"
+							interactive={false}
+						/>
+					</div>
+					<div class="text-center">
+						<div class="font-display text-sm font-black">Looking Left (Head)</div>
+						<div class="text-[11px] text-slate-400">Diagram Header Cards</div>
+					</div>
+				</button>
+
+				<button
+					type="button"
+					data-gallery-load="idle-wave|head|three-quarter-right"
+					class="lab-gallery-card flex flex-col items-center justify-between rounded-2xl border-2 border-purple-400/30 bg-[#0B1326] p-4 text-white hover:border-[#C5E86C] transition-all cursor-pointer"
+				>
+					<span class="rounded-full bg-purple-950 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#C084FC]">
+						right · variant=&quot;head&quot;
+					</span>
+					<div class="my-3 flex h-44 items-center justify-center">
+						<AjAnimatedMascot
+							id="gal-right-head"
+							state="idle-wave"
+							variant="head"
+							angle="three-quarter-right"
+							cls="h-36 w-36"
+							interactive={false}
+						/>
+					</div>
+					<div class="text-center">
+						<div class="font-display text-sm font-black">Looking Right (Head)</div>
+						<div class="text-[11px] text-slate-400">Agent AJ Chat &amp; Callouts</div>
+					</div>
+				</button>
+
+				<button
+					type="button"
+					data-gallery-load="bored-nap|full-body|three-quarter-right"
+					class="lab-gallery-card flex flex-col items-center justify-between rounded-2xl border-2 border-purple-400/30 bg-[#0B1326] p-4 text-white hover:border-[#C5E86C] transition-all cursor-pointer"
+				>
+					<span class="rounded-full bg-purple-950 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#C084FC]">
+						state=&quot;bored-nap&quot;
+					</span>
+					<div class="my-3 flex h-44 items-center justify-center">
+						<AjAnimatedMascot
+							id="gal-bored"
+							state="bored-nap"
+							variant="full-body"
+							cls="h-36 w-auto"
+							interactive={false}
+						/>
+					</div>
+					<div class="text-center">
+						<div class="font-display text-sm font-black">Laying Down Bored</div>
+						<div class="text-[11px] text-slate-400">Cat Loaf + Heavy Eyelids</div>
+					</div>
+				</button>
+
+				<button
+					type="button"
+					data-gallery-load="chase-yarn|full-body|three-quarter-right"
+					class="lab-gallery-card flex flex-col items-center justify-between rounded-2xl border-2 border-purple-400/30 bg-[#0B1326] p-4 text-white hover:border-[#C5E86C] transition-all cursor-pointer"
+				>
+					<span class="rounded-full bg-purple-950 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#C084FC]">
+						state=&quot;chase-yarn&quot;
+					</span>
+					<div class="my-3 flex h-44 items-center justify-center">
+						<AjAnimatedMascot
+							id="gal-yarn"
+							state="chase-yarn"
+							variant="full-body"
+							cls="h-40 w-auto"
+							interactive={false}
+						/>
+					</div>
+					<div class="text-center">
+						<div class="font-display text-sm font-black">Chasing Yarn Ball</div>
+						<div class="text-[11px] text-slate-400">Forward Pounce + Yarn</div>
+					</div>
+				</button>
+			</div>
+		</div>
+
+		{/* Bone Pivot Hierarchy & Full-Body vs. Head Comparison Tables */}
+		<div class="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
+			{/* Interactive Bone Pivot Table */}
+			<div class="duo-card hand-border p-6 lg:col-span-7">
+				<h2 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+					Rigged Vector Bone Hierarchy (`#aj-rig`)
+				</h2>
+				<p class="mt-1 text-sm text-[#2A1155]/75 dark:text-slate-300">
+					Hover or click any bone row below to highlight that bone group on the active stage.
+				</p>
+
+				<div class="mt-4 overflow-x-auto">
+					<table class="w-full text-left text-xs">
+						<thead>
+							<tr class="border-b-2 border-[#2A1155]/20 dark:border-white/15 font-mono uppercase text-[#7C3AED] dark:text-[#C084FC]">
+								<th class="py-2 pr-3">Bone Group ID</th>
+								<th class="py-2 pr-3">Pivot (`560x1030`)</th>
+								<th class="py-2">Motion &amp; Physics Role</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-[#2A1155]/10 dark:divide-white/10">
+							{
+								AJ_BONE_PIVOTS.map((bone) => (
+									<tr
+										data-highlight-bone={bone.boneSelector}
+										class="lab-bone-row hover:bg-purple-500/10 cursor-pointer transition-colors"
+									>
+										<td class="py-2.5 pr-3 font-mono font-extrabold" style={`color: ${bone.color};`}>
+											{bone.label}
+										</td>
+										<td class="py-2.5 pr-3 font-mono text-[#2A1155] dark:text-slate-300">
+											{bone.x}px, {bone.y}px
+										</td>
+										<td class="py-2.5 text-[#2A1155]/85 dark:text-slate-300">
+											{bone.description}
+										</td>
+									</tr>
+								))
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			{/* Canonical Full-Body vs. Head-Only vs. Static Medallion Comparison Table */}
+			<div class="duo-card hand-border p-6 lg:col-span-5">
+				<h2 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+					Full-Body vs. Head-Only Design System Rules
+				</h2>
+				<p class="mt-1 text-sm text-[#2A1155]/75 dark:text-slate-300">
+					Canonical placement rules across Courses, Podcasts, Blog Posts, and Visual Diagrams.
+				</p>
+
+				<div class="mt-4 overflow-x-auto">
+					<table class="w-full text-left text-xs">
+						<thead>
+							<tr class="border-b-2 border-[#2A1155]/20 dark:border-white/15 font-mono uppercase text-[#7C3AED] dark:text-[#C084FC]">
+								<th class="py-2 pr-2">Variant</th>
+								<th class="py-2 pr-2">ViewBox</th>
+								<th class="py-2">Canonical Placement</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-[#2A1155]/10 dark:divide-white/10">
+							<tr>
+								<td class="py-3 pr-2 font-mono font-bold text-[#7C3AED] dark:text-[#C5E86C]">
+									variant=&quot;full-body&quot;
+								</td>
+								<td class="py-3 pr-2 font-mono">0 0 560 1030</td>
+								<td class="py-3">
+									Homepage Hero, Courses Path Milestones, About Hero, 404 Page, and `/mascot-lab` (`112px to 260px`).
+								</td>
+							</tr>
+							<tr>
+								<td class="py-3 pr-2 font-mono font-bold text-[#7C3AED] dark:text-[#C5E86C]">
+									variant=&quot;head&quot;
+								</td>
+								<td class="py-3 pr-2 font-mono">10 12 540 676</td>
+								<td class="py-3">
+									Visual Diagram Header Cards, Agent AJ Chat Drawer Header, and inline Pro-Tip Callouts (`40px to 96px`).
+								</td>
+							</tr>
+							<tr>
+								<td class="py-3 pr-2 font-mono font-bold text-[#7C3AED] dark:text-[#C5E86C]">
+									&lt;AjHeadphones /&gt;
+								</td>
+								<td class="py-3 pr-2 font-mono">0 0 276 275</td>
+								<td class="py-3">
+									Static zero-JS emblem for Top Navbar Medallion, Footer Medallion, and OG Image Renderer (`24px to 40px`).
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script>
+		let activeState = "idle-wave";
+		let activeVariant = "full-body";
+		let activeAngle = "three-quarter-right";
+		let activeMouth = "smile-open";
+		let activeBg = "obsidian";
+		let showPivots = false;
+		let celebrateCount = 0;
+		let isAuthenticated = false;
+
+		const stageWell = document.getElementById("lab-stage-well");
+		const activeBadge = document.getElementById("lab-active-badge");
+		const codeOutput = document.getElementById("lab-code-output");
+		const copyBtn = document.getElementById("lab-copy-code-btn");
+		const celebrateCounter = document.getElementById("lab-celebrate-counter");
+		const pivotsCheckbox = document.getElementById(
+			"lab-toggle-pivots",
+		) as HTMLInputElement | null;
+
+		function getActiveStageWrapper(): HTMLElement | null {
+			return document.querySelector<HTMLElement>(
+				`[data-stage-pose="${activeState}"] [data-aj-mascot]`,
+			);
+		}
+
+		function syncStageUI() {
+			// Show only the selected state instance
+			document
+				.querySelectorAll<HTMLElement>("[data-stage-pose]")
+				.forEach((el) => {
+					if (el.dataset.stagePose === activeState) {
+						el.classList.remove("hidden");
+						el.classList.add("block");
+					} else {
+						el.classList.add("hidden");
+						el.classList.remove("block");
+					}
+				});
+
+			const wrapper = getActiveStageWrapper();
+			const svg = wrapper?.querySelector<SVGSVGElement>("[data-aj-rig]");
+			if (wrapper && svg) {
+				wrapper.dataset.variant = activeVariant;
+				wrapper.dataset.angle = activeAngle;
+				wrapper.dataset.mouth = activeMouth;
+
+				// Update viewBox for full-body vs head (unless bored-nap or peek-corner)
+				if (activeState === "bored-nap") {
+					svg.setAttribute("viewBox", "-55 75 660 595");
+				} else if (activeState === "peek-corner") {
+					svg.setAttribute("viewBox", "0 40 560 620");
+				} else if (activeVariant === "head") {
+					svg.setAttribute("viewBox", "10 12 540 676");
+				} else {
+					svg.setAttribute("viewBox", "0 0 560 1030");
+				}
+
+				svg.classList.toggle("variant-head", activeVariant === "head");
+				svg.classList.toggle("variant-full-body", activeVariant === "full-body");
+
+				// Update turnaround angle flip + readable text counter-flips
+				const flipGroup = svg.querySelector<SVGGElement>('[id$="-aj-angle-flip"]');
+				if (flipGroup) {
+					if (activeAngle === "three-quarter-left") {
+						flipGroup.setAttribute("transform", "translate(590, 0) scale(-1, 1)");
+					} else {
+						flipGroup.removeAttribute("transform");
+					}
+				}
+
+				// Update active mouth viseme
+				const mouthGroup = svg.querySelector<SVGGElement>('[id$="-aj-mouth"]');
+				mouthGroup?.setAttribute("data-active-viseme", activeMouth);
+
+				// Toggle pivot crosshairs across all stage instances
+				document
+					.querySelectorAll<SVGGElement>(".aj-pivot-overlay")
+					.forEach((piv) => {
+						piv.classList.toggle("hidden", !showPivots);
+					});
+			}
+
+			if (activeBadge) {
+				activeBadge.textContent = `state="${activeState}" · angle="${activeAngle}" · variant="${activeVariant}"`;
+			}
+
+			if (codeOutput) {
+				codeOutput.textContent = `<AjAnimatedMascot state="${activeState}" variant="${activeVariant}" angle="${activeAngle}" mouth="${activeMouth}" caption="Purrfect code! 🐾" />`;
+			}
+
+			// Highlight active buttons
+			document
+				.querySelectorAll<HTMLButtonElement>("[data-state-btn]")
+				.forEach((btn) => {
+					const isAct = btn.dataset.stateBtn === activeState;
+					btn.classList.toggle("bg-[#7C3AED]", isAct);
+					btn.classList.toggle("text-white", isAct);
+					btn.classList.toggle("bg-white", !isAct);
+					btn.classList.toggle("dark:bg-[#131B2E]", !isAct);
+				});
+
+			document
+				.querySelectorAll<HTMLButtonElement>("[data-variant-btn]")
+				.forEach((btn) => {
+					const isAct = btn.dataset.variantBtn === activeVariant;
+					btn.classList.toggle("bg-[#7C3AED]", isAct);
+					btn.classList.toggle("text-white", isAct);
+					btn.classList.toggle("bg-white", !isAct);
+					btn.classList.toggle("dark:bg-[#131B2E]", !isAct);
+				});
+
+			document
+				.querySelectorAll<HTMLButtonElement>("[data-angle-btn]")
+				.forEach((btn) => {
+					const isAct = btn.dataset.angleBtn === activeAngle;
+					btn.classList.toggle("bg-[#7C3AED]", isAct);
+					btn.classList.toggle("text-white", isAct);
+					btn.classList.toggle("bg-white", !isAct);
+					btn.classList.toggle("dark:bg-[#131B2E]", !isAct);
+				});
+
+			document
+				.querySelectorAll<HTMLButtonElement>("[data-mouth-btn]")
+				.forEach((btn) => {
+					const isAct = btn.dataset.mouthBtn === activeMouth;
+					btn.classList.toggle("bg-[#7C3AED]", isAct);
+					btn.classList.toggle("text-white", isAct);
+					btn.classList.toggle("bg-white", !isAct);
+					btn.classList.toggle("dark:bg-[#131B2E]", !isAct);
+				});
+		}
+
+		function setStageBackground(bg: string) {
+			activeBg = bg;
+			if (!stageWell) return;
+			if (bg === "chalk") {
+				stageWell.style.backgroundColor = "#FAF9FC";
+				stageWell.style.color = "#2A1155";
+			} else if (bg === "void") {
+				stageWell.style.backgroundColor = "#000000";
+				stageWell.style.color = "#FFFFFF";
+			} else {
+				stageWell.style.backgroundColor = "#0B1326";
+				stageWell.style.color = "#FFFFFF";
+			}
+		}
+
+		document
+			.querySelectorAll<HTMLButtonElement>("[data-state-btn]")
+			.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					activeState = btn.dataset.stateBtn || "idle-wave";
+					syncStageUI();
+				});
+			});
+
+		document
+			.querySelectorAll<HTMLButtonElement>("[data-variant-btn]")
+			.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					activeVariant = btn.dataset.variantBtn || "full-body";
+					syncStageUI();
+				});
+			});
+
+		document
+			.querySelectorAll<HTMLButtonElement>("[data-angle-btn]")
+			.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					activeAngle = btn.dataset.angleBtn || "three-quarter-right";
+					syncStageUI();
+				});
+			});
+
+		document
+			.querySelectorAll<HTMLButtonElement>("[data-mouth-btn]")
+			.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					activeMouth = btn.dataset.mouthBtn || "smile-open";
+					syncStageUI();
+				});
+			});
+
+		document
+			.querySelectorAll<HTMLButtonElement>("[data-bg-btn]")
+			.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					setStageBackground(btn.dataset.bgBtn || "obsidian");
+				});
+			});
+
+		pivotsCheckbox?.addEventListener("change", () => {
+			showPivots = Boolean(pivotsCheckbox.checked);
+			syncStageUI();
+		});
+
+		document
+			.querySelectorAll<HTMLButtonElement>("[data-gallery-load]")
+			.forEach((card) => {
+				card.addEventListener("click", () => {
+					const [st, vr, ang] = (card.dataset.galleryLoad || "").split("|");
+					if (st) activeState = st;
+					if (vr) activeVariant = vr;
+					if (ang) activeAngle = ang;
+					syncStageUI();
+					stageWell?.scrollIntoView({ behavior: "smooth", block: "center" });
+				});
+			});
+
+		// One-shot Blink & Celebrate triggers
+		document
+			.getElementById("lab-trigger-blink")
+			?.addEventListener("click", () => {
+				const wrapper = getActiveStageWrapper();
+				const svg = wrapper?.querySelector<SVGSVGElement>("[data-aj-rig]");
+				if (!svg) return;
+				svg.classList.add("is-blinking");
+				setTimeout(() => {
+					svg.classList.remove("is-blinking");
+					setTimeout(() => {
+						svg.classList.add("is-blinking");
+						setTimeout(() => svg.classList.remove("is-blinking"), 115);
+					}, 120);
+				}, 115);
+			});
+
+		document
+			.getElementById("lab-trigger-celebrate")
+			?.addEventListener("click", () => {
+				getActiveStageWrapper()?.click();
+			});
+
+		document.addEventListener("aj:celebrate", () => {
+			celebrateCount += 1;
+			if (celebrateCounter) {
+				celebrateCounter.textContent = `Clicks: ${celebrateCount} 🐾`;
+			}
+		});
+
+		// Bone table row hover highlights
+		document
+			.querySelectorAll<HTMLTableRowElement>("[data-highlight-bone]")
+			.forEach((row) => {
+				const selector = row.dataset.highlightBone;
+				if (!selector) return;
+				row.addEventListener("mouseenter", () => {
+					const wrapper = getActiveStageWrapper();
+					wrapper
+						?.querySelectorAll(selector)
+						.forEach((b) => b.classList.add("is-highlighted"));
+				});
+				row.addEventListener("mouseleave", () => {
+					const wrapper = getActiveStageWrapper();
+					wrapper
+						?.querySelectorAll(selector)
+						.forEach((b) => b.classList.remove("is-highlighted"));
+				});
+			});
+
+		copyBtn?.addEventListener("click", async () => {
+			if (!codeOutput?.textContent) return;
+			try {
+				await navigator.clipboard.writeText(codeOutput.textContent);
+				copyBtn.textContent = "Copied! ✓";
+				setTimeout(() => {
+					copyBtn.textContent = "Copy Snippet";
+				}, 1500);
+			} catch {}
+		});
+
+		// Cloudflare D1 Presets & Auth Hydration
+		const authBadge = document.getElementById("lab-auth-badge");
+		const signInLink = document.getElementById("lab-signin-link");
+		const signOutBtn = document.getElementById("lab-signout-btn");
+		const presetsList = document.getElementById("lab-presets-list");
+		const saveForm = document.getElementById(
+			"lab-save-preset-form",
+		) as HTMLFormElement | null;
+		const presetNameInput = document.getElementById(
+			"lab-preset-name",
+		) as HTMLInputElement | null;
+		const presetStatus = document.getElementById("lab-preset-status");
+
+		interface PresetItem {
+			id: string;
+			name: string;
+			state: string;
+			variant: string;
+			angle: string;
+			mouth: string;
+			bgTheme: string;
+			showPivots: number;
+		}
+
+		function renderPresets(presets: PresetItem[]) {
+			if (!presetsList) return;
+			presetsList.innerHTML = presets
+				.map(
+					(p) => `
+				<div class="flex items-center justify-between gap-2 rounded-xl border border-[#2A1155]/20 bg-white/80 px-3 py-2 dark:border-white/15 dark:bg-[#131B2E]">
+					<button
+						type="button"
+						data-load-preset='${JSON.stringify(p).replace(/'/g, "&#39;")}'
+						class="flex-1 text-left cursor-pointer"
+					>
+						<div class="font-display text-xs font-black text-[#2A1155] dark:text-white">${p.name}</div>
+						<div class="font-mono text-[10px] text-[#7C3AED] dark:text-[#C084FC]">${p.state} · ${p.angle || "three-quarter-right"} · ${p.variant}</div>
+					</button>
+				</div>
+			`,
+				)
+				.join("");
+
+			presetsList
+				.querySelectorAll<HTMLButtonElement>("[data-load-preset]")
+				.forEach((btn) => {
+					btn.addEventListener("click", () => {
+						try {
+							const p = JSON.parse(btn.dataset.loadPreset || "{}") as PresetItem;
+							activeState = p.state || "idle-wave";
+							activeVariant = p.variant || "full-body";
+							activeAngle = p.angle || "three-quarter-right";
+							activeMouth = p.mouth || "smile-open";
+							showPivots = Boolean(p.showPivots);
+							if (pivotsCheckbox) pivotsCheckbox.checked = showPivots;
+							setStageBackground(p.bgTheme || "obsidian");
+							syncStageUI();
+						} catch {}
+					});
+				});
+		}
+
+		async function loadLabState() {
+			try {
+				const res = await fetch("/api/mascot-lab");
+				if (!res.ok) return;
+				const data = (await res.json()) as {
+					authenticated: boolean;
+					user?: { name: string; email: string } | null;
+					presets?: PresetItem[];
+				};
+				isAuthenticated = Boolean(data.authenticated);
+				if (isAuthenticated && data.user) {
+					if (authBadge) {
+						authBadge.textContent = `Signed in as ${data.user.name}`;
+					}
+					signInLink?.classList.add("hidden");
+					signOutBtn?.classList.remove("hidden");
+				} else {
+					if (authBadge) {
+						authBadge.textContent = "Public Mode (Sign in to save D1 presets)";
+					}
+					signInLink?.classList.remove("hidden");
+					signOutBtn?.classList.add("hidden");
+				}
+				if (Array.isArray(data.presets)) {
+					renderPresets(data.presets);
+				}
+			} catch {}
+		}
+
+		signOutBtn?.addEventListener("click", async () => {
+			await fetch("/api/mascot-lab", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ action: "logout" }),
+			});
+			await loadLabState();
+		});
+
+		saveForm?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const name = presetNameInput?.value.trim() || "Custom AJ Pose";
+			if (!isAuthenticated) {
+				window.location.href = "/sign-in?redirect=/mascot-lab";
+				return;
+			}
+			const res = await fetch("/api/mascot-lab", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					name,
+					state: activeState,
+					variant: activeVariant,
+					angle: activeAngle,
+					mouth: activeMouth,
+					bgTheme: activeBg,
+					showPivots,
+				}),
+			});
+			if (res.status === 401) {
+				window.location.href = "/sign-in?redirect=/mascot-lab";
+				return;
+			}
+			if (res.ok) {
+				if (presetNameInput) presetNameInput.value = "";
+				if (presetStatus) {
+					presetStatus.textContent = `Saved "${name}" to Cloudflare D1! ✓`;
+					presetStatus.classList.remove("hidden");
+				}
+				await loadLabState();
+			}
+		});
+
+		loadLabState();
+	</script>
+</BaseLayout>

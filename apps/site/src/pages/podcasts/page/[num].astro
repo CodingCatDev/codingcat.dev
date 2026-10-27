@@ -1,7 +1,9 @@
 ---
-import ContentGrid from "@/components/ContentGrid.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePage } from "@/lib/pagination";
@@ -20,10 +22,15 @@ if (!resolved.ok) {
 	return resolved.response;
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
+const initialQuery = Astro.url.searchParams.get("q")?.trim() || "";
 
-const items = await sanity.loadQuery(morePodcastQuery, { skip: "none", offset, limit });
+const items = await sanity.loadQuery(morePodcastQuery, {
+	skip: "none",
+	offset,
+	limit,
+});
 
-const title = page === 1 ? "Podcasts" : `Podcasts — Page ${page}`;
+const title = page === 1 ? "Podcasts" : `Podcasts: Page ${page}`;
 const ogCardImageUrl = sanity
 	.urlForImage(items[0]?.coverImage ?? undefined)
 	?.width(640)
@@ -37,7 +44,8 @@ const ogCardImageUrl = sanity
 	description="Purrfect Web Development podcast episodes, interviews, and conversations."
 	ogFallback={{
 		title,
-		subtitle: "Purrfect Web Development podcast episodes, interviews, and conversations.",
+		subtitle:
+			"Purrfect Web Development podcast episodes, interviews, and conversations.",
 		type: "Podcast",
 		image: ogCardImageUrl,
 	}}
@@ -48,9 +56,34 @@ const ogCardImageUrl = sanity
 		{page < totalPages && <link rel="next" href={`/podcasts/page/${page + 1}`} />}
 	</Fragment>
 
-	<div class="mb-32">
-		<SectionHeader title="Podcasts" showHr={false} />
-		<ContentGrid items={items as ContentListItem[]} />
-		<Pagination base="podcasts" page={page} totalPages={totalPages} />
+	<Breadcrumbs
+		links={[
+			{ title: "Podcasts", href: "/podcasts" },
+			{ title: `Page ${page}` },
+		]}
+	/>
+
+	<div class="mb-24">
+		<SectionHeader title={page === 1 ? "all podcast episodes" : `podcasts (page ${page})`} showHr={false} />
+		<TopicFilterStrip
+			label="Filter by Topic & Vendor:"
+			basePath="/podcasts"
+			allLabel="All Episodes"
+		/>
+		<InfiniteContentGrid
+			type="podcast"
+			items={items as ContentListItem[]}
+			skipId="none"
+			initialOffset={offset + items.length}
+			totalCount={count}
+			initialQuery={initialQuery}
+			showSearch={true}
+			searchPlaceholder="Filter episodes by title or guest..."
+			priorityCount={2}
+			nounPlural="episodes"
+		/>
+		<noscript>
+			<Pagination base="podcasts" page={page} totalPages={totalPages} />
+		</noscript>
 	</div>
 </BaseLayout>

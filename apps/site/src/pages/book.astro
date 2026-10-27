@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 
@@ -18,7 +19,7 @@ const initialSlotParam = searchParams.get("slot") || "";
 
 const { slots: upcomingSlots, liveVerified } = await getMultiCalendarAvailableSlots(6);
 
-const title = "Book a Podcast & Showcase Session — CodingCat.dev";
+const title = "Book a Podcast & Showcase Session | CodingCat.dev";
 const description =
 	"Schedule your guest appearance or fast-track sponsored showcase on the CodingCat.dev Podcast. Choose your track, complete intake questions, and sign your E-SIGN digital media release.";
 ---
@@ -30,13 +31,13 @@ const description =
 		<!-- Header -->
 		<header class="flex flex-col gap-4">
 			<div class="flex flex-col gap-2">
-				<span class="text-xs font-mono uppercase tracking-wider text-primary font-semibold">
-					CodingCat.dev Studio &amp; Google Calendar Sync
+				<span class="w-fit rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+					🎙️ CodingCat.dev Studio &amp; Google Calendar Sync
 				</span>
-				<h1 class="text-3xl font-bold tracking-tight md:text-5xl">
-					CodingCat.dev Podcast Recording Session
+				<h1 class="mt-2 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-6xl">
+					podcast <span class="text-[#7C3AED] dark:text-[#C084FC]">recording session.</span>
 				</h1>
-				<p class="text-lg text-muted-foreground">
+				<p class="font-hand text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
 					Join Alex Patterson for an in-depth conversation exploring AI agents, web engineering, cloud infrastructure, and modern developer tooling.
 				</p>
 			</div>
@@ -60,6 +61,39 @@ const description =
 					<span class="text-foreground font-semibold">Google Calendar Appointment Schedule</span>
 				</div>
 			</div>
+
+			<ExcalidrawDiagram
+				title="Podcast Studio Booking Flow"
+				caption="Multi-calendar FreeBusy check + E-SIGN release + automatic Google Calendar invite"
+				compact={true}
+				nodes={[
+					{
+						id: "track",
+						badge: "Step 1",
+						label: "Choose Track",
+						sublabel: "Editorial or Fast-Track",
+						color: "green",
+					},
+					{
+						id: "slot",
+						badge: "Step 2",
+						label: "Pick Live Slot",
+						sublabel: "4 Google Calendars synced",
+						color: "blue",
+					},
+					{
+						id: "studio",
+						badge: "Step 3",
+						label: "E-SIGN & Record!",
+						sublabel: "Instant calendar invite",
+						color: "orange",
+					},
+				]}
+				edges={[
+					{ from: "track", to: "slot", label: "check FreeBusy" },
+					{ from: "slot", to: "studio", label: "auto-invite!" },
+				]}
+			/>
 		</header>
 
 		<!-- Interactive Booking & Release Form Container -->

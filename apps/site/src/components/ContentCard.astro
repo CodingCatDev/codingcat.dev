@@ -4,13 +4,15 @@ import CoverImage from "@/components/CoverImage.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import { type ContentListItem, isPerson } from "@/lib/content";
 import { resolveHref } from "@/lib/sanity/resolve-href";
+import { matchTopicsForText } from "@/lib/topics";
 
 interface Props {
 	item: ContentListItem;
 	priority?: boolean;
+	deferred?: boolean;
 }
 
-const { item, priority = false } = Astro.props;
+const { item, priority = false, deferred = !priority } = Astro.props;
 
 const href = resolveHref(item._type, item.slug ?? undefined);
 const person = isPerson(item._type);
@@ -18,12 +20,20 @@ const people = [
 	...(item.author ?? []).map((p) => ({ ...p, type: "author" })),
 	...(item.guest ?? []).map((p) => ({ ...p, type: "guest" })),
 ];
+const matchedTopics = !person
+	? matchTopicsForText(item.title, item.excerpt).slice(0, 2)
+	: [];
 ---
 
-<article>
+<article
+	class:list={[
+		"duo-card hand-border group flex h-full flex-col overflow-hidden p-5 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]",
+		deferred && "infinite-card-deferred",
+	]}
+>
 	{
 		href && (
-			<a href={href} class="block mb-5 group">
+			<a href={href} class="mb-4 block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20]">
 				{person ? (
 					<CoverImage
 						image={item.coverImage}
@@ -31,7 +41,7 @@ const people = [
 						width={640}
 						height={640}
 						sizes="(max-width: 768px) 100vw, 560px"
-						class="w-full h-auto aspect-square rounded-md object-cover"
+						class="aspect-square h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
 						priority={priority}
 					/>
 				) : (
@@ -45,36 +55,72 @@ const people = [
 			</a>
 		)
 	}
-	<h3 class="mb-3 text-3xl leading-snug text-balance">
+	<div class="flex flex-1 flex-col justify-between">
+		<div>
+			{
+				!person && (item.date || matchedTopics.length > 0) && (
+					<div class="mb-2.5 flex flex-wrap items-center gap-1.5">
+						{item.date && (
+							<div class="inline-flex rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+								<FormattedDate dateString={item.date} />
+							</div>
+						)}
+						{matchedTopics.map((topic) => (
+							<a
+								href={`/topic/${topic.slug}`}
+								class="inline-flex items-center gap-1.5 rounded-full border border-[#2A1155] bg-white px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#2A1155] transition-colors hover:bg-[#EDE9FE] dark:border-white/25 dark:bg-[#0B1326] dark:text-slate-200 dark:hover:bg-purple-950/60"
+							>
+								{topic.symbolLight && (
+									<img
+										src={topic.symbolLight}
+										alt=""
+										aria-hidden="true"
+										class="h-3 w-auto object-contain dark:hidden"
+										loading="lazy"
+										decoding="async"
+									/>
+								)}
+								{topic.symbolDark && (
+									<img
+										src={topic.symbolDark}
+										alt=""
+										aria-hidden="true"
+										class="hidden h-3 w-auto object-contain dark:block"
+										loading="lazy"
+										decoding="async"
+									/>
+								)}
+								<span>{topic.title}</span>
+							</a>
+						))}
+					</div>
+				)
+			}
+			<h3 class="mb-2.5 font-display text-2xl font-black leading-snug text-balance text-[#2A1155] transition-colors group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
+				{
+					href ? (
+						<a href={href} class="hover:underline">
+							{item.title}
+						</a>
+					) : (
+						item.title
+					)
+				}
+			</h3>
+			{item.excerpt && <p class="mb-4 text-sm font-medium leading-relaxed text-[#2A1155]/75 dark:text-slate-300 text-pretty line-clamp-3">{item.excerpt}</p>}
+		</div>
 		{
-			href ? (
-				<a href={href} class="hover:underline">
-					{item.title}
-				</a>
-			) : (
-				item.title
+			people.length > 0 && (
+				<div class="mt-2 flex flex-wrap gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-3 dark:border-white/15">
+					{people.map((p) => (
+						<Avatar
+							name={p.title}
+							href={resolveHref(p.type, p.slug ?? undefined)}
+							coverImage={p.coverImage}
+						/>
+					))}
+				</div>
 			)
 		}
-	</h3>
-	{
-		!person && item.date && (
-			<div class="mb-4 text-lg text-muted-foreground">
-				<FormattedDate dateString={item.date} />
-			</div>
-		)
-	}
-	{item.excerpt && <p class="mb-4 text-lg leading-relaxed text-pretty">{item.excerpt}</p>}
-	{
-		people.length > 0 && (
-			<div class="flex flex-wrap gap-2">
-				{people.map((p) => (
-					<Avatar
-						name={p.title}
-						href={resolveHref(p.type, p.slug ?? undefined)}
-						coverImage={p.coverImage}
-					/>
-				))}
-			</div>
-		)
-	}
+	</div>
 </article>

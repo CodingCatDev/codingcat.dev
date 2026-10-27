@@ -1,0 +1,277 @@
+---
+/**
+ * `/api/feed-cards` | Astro HTML Partial Endpoint (`export const partial = true`)
+ *
+ * Streams pre-rendered `<ContentCard>` fragments for infinite scrolling and
+ * in-page topic/keyword filtering across `/podcasts`, `/blog`, `/guests`,
+ * `/authors`, `/sponsors`, `/topic/[slug]`, `/author/[slug]`, `/guest/[slug]`,
+ * and `/sponsor/[slug]`.
+ */
+export const partial = true;
+
+import { stegaClean } from "@sanity/client/stega";
+import groq from "groq";
+import ContentCard from "@/components/ContentCard.astro";
+import type { ContentListItem } from "@/lib/content";
+import {
+	authorCountQuery,
+	guestCountQuery,
+	moreAuthorQuery,
+	moreGuestQuery,
+	morePodcastQuery,
+	morePostQuery,
+	moreSponsorQuery,
+	podcastCountQuery,
+	postCountQuery,
+	sponsorCountQuery,
+} from "@/lib/sanity/queries";
+import { baseFieldsNoContent, personRefFields } from "@/lib/sanity/queries/shared";
+import { itemMatchesTopic, TOPICS_BY_SLUG } from "@/lib/topics";
+
+type FeedType = "podcast" | "post" | "author" | "guest" | "sponsor";
+
+const VALID_TYPES = new Set<FeedType>([
+	"podcast",
+	"post",
+	"author",
+	"guest",
+	"sponsor",
+]);
+
+const { sanity } = Astro.locals;
+const params = Astro.url.searchParams;
+
+const rawType = (params.get("type") ?? "podcast") as FeedType;
+if (!VALID_TYPES.has(rawType)) {
+	return new Response("Invalid feed type", { status: 400 });
+}
+
+const skip = stegaClean(params.get("skip") ?? "")
+	.trim()
+	.replace(/^drafts\./, "") || "none";
+const refId = stegaClean(params.get("refId") ?? "")
+	.trim()
+	.replace(/^drafts\./, "");
+const searchQuery = stegaClean(params.get("q") ?? "").trim().toLowerCase();
+const rawOffset = Number.parseInt(params.get("offset") ?? "0", 10);
+const rawLimit = Number.parseInt(params.get("limit") ?? "8", 10);
+const offset = Number.isFinite(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
+const pageSize =
+	Number.isFinite(rawLimit) && rawLimit >= 1 && rawLimit <= 24 ? rawLimit : 8;
+const sliceEnd = offset + pageSize;
+
+const topicSlug = stegaClean(params.get("topic") ?? "").trim();
+const topicDef = topicSlug ? TOPICS_BY_SLUG[topicSlug] : undefined;
+
+const refPodcastQuery = groq`*[_type == "podcast" && references($refId) && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
+	${baseFieldsNoContent},
+	author[]->{ ${personRefFields} },
+	guest[]->{ ${personRefFields} }
+}`;
+const refPodcastCountQuery = groq`count(*[_type == "podcast" && references($refId) && defined(slug.current)])`;
+
+const refPostQuery = groq`*[_type == "post" && references($refId) && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
+	${baseFieldsNoContent},
+	author[]->{ ${personRefFields} }
+}`;
+const refPostCountQuery = groq`count(*[_type == "post" && references($refId) && defined(slug.current)])`;
+
+const matchesSearch = (item: ContentListItem, q: string) => {
+	if (!q) {
+		return true;
+	}
+	const hay = `${stegaClean(item.title ?? "")} ${stegaClean(item.excerpt ?? "")}`.toLowerCase();
+	return hay.includes(q);
+};
+
+let items: ContentListItem[] = [];
+let totalCount = 0;
+
+if (refId && (rawType === "podcast" || rawType === "post")) {
+	if (topicDef || searchQuery) {
+		const query = rawType === "podcast" ? refPodcastQuery : refPostQuery;
+		const allRefItems = ((await sanity.loadQuery(query, {
+			refId,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+		const matched = allRefItems.filter((item) => {
+			const okTopic = topicDef
+				? itemMatchesTopic(
+						stegaClean(item.title ?? ""),
+						stegaClean(item.excerpt ?? ""),
+						topicDef,
+					)
+				: true;
+			const okSearch = matchesSearch(item, searchQuery);
+			return okTopic && okSearch;
+		});
+		totalCount = matched.length;
+		items = matched.slice(offset, sliceEnd);
+	} else if (rawType === "podcast") {
+		const [count, batch] = await Promise.all([
+			sanity.loadQuery(refPodcastCountQuery, { refId }),
+			sanity.loadQuery(refPodcastQuery, { refId, offset, limit: sliceEnd }),
+		]);
+		totalCount = typeof count === "number" ? count : 0;
+		items = (batch ?? []) as ContentListItem[];
+	} else {
+		const [count, batch] = await Promise.all([
+			sanity.loadQuery(refPostCountQuery, { refId }),
+			sanity.loadQuery(refPostQuery, { refId, offset, limit: sliceEnd }),
+		]);
+		totalCount = typeof count === "number" ? count : 0;
+		items = (batch ?? []) as ContentListItem[];
+	}
+} else if (topicDef || searchQuery) {
+	let allItems: ContentListItem[] = [];
+	if (rawType === "podcast") {
+		allItems = ((await sanity.loadQuery(morePodcastQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "post") {
+		allItems = ((await sanity.loadQuery(morePostQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "guest") {
+		allItems = ((await sanity.loadQuery(moreGuestQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "author") {
+		allItems = ((await sanity.loadQuery(moreAuthorQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	} else if (rawType === "sponsor") {
+		allItems = ((await sanity.loadQuery(moreSponsorQuery, {
+			skip,
+			offset: 0,
+			limit: 300,
+		})) ?? []) as ContentListItem[];
+	}
+
+	const matched = allItems.filter((item) => {
+		const okTopic = topicDef
+			? itemMatchesTopic(
+					stegaClean(item.title ?? ""),
+					stegaClean(item.excerpt ?? ""),
+					topicDef,
+				)
+			: true;
+		const okSearch = matchesSearch(item, searchQuery);
+		return okTopic && okSearch;
+	});
+	totalCount = matched.length;
+	items = matched.slice(offset, sliceEnd);
+} else {
+	switch (rawType) {
+		case "podcast": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(podcastCountQuery),
+				sanity.loadQuery(morePodcastQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "post": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(postCountQuery),
+				sanity.loadQuery(morePostQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "author": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(authorCountQuery),
+				sanity.loadQuery(moreAuthorQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "guest": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(guestCountQuery),
+				sanity.loadQuery(moreGuestQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+		case "sponsor": {
+			const [count, batch] = await Promise.all([
+				sanity.loadQuery(sponsorCountQuery),
+				sanity.loadQuery(moreSponsorQuery, {
+					skip,
+					offset,
+					limit: sliceEnd,
+				}),
+			]);
+			totalCount = Math.max(
+				0,
+				(typeof count === "number" ? count : 0) - (skip !== "none" ? 1 : 0),
+			);
+			items = (batch ?? []) as ContentListItem[];
+			break;
+		}
+	}
+}
+
+const nextOffset = offset + items.length;
+const hasMore = items.length > 0 && nextOffset < totalCount;
+
+Astro.response.headers.set("X-Has-More", hasMore ? "true" : "false");
+Astro.response.headers.set("X-Next-Offset", String(nextOffset));
+Astro.response.headers.set("X-Total-Count", String(totalCount));
+Astro.response.headers.set(
+	"Cache-Control",
+	"public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+);
+---
+
+<div
+	data-feed-batch-meta
+	data-has-more={hasMore ? "true" : "false"}
+	data-next-offset={String(nextOffset)}
+	data-total-count={String(totalCount)}
+	hidden
+></div>
+{items.map((item) => <ContentCard item={item} priority={false} deferred={true} />)}

@@ -1,7 +1,9 @@
 ---
+import { stegaClean } from "@sanity/client/stega";
+import groq from "groq";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import UserSocials from "@/components/UserSocials.astro";
@@ -13,10 +15,21 @@ import { breadcrumbSchema, personSchema } from "@/lib/structured-data";
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
 
-const person = slug ? await sanity.loadQuery(guestQueryWithRelated, { slug }) : null;
+const person = slug
+	? await sanity.loadQuery(guestQueryWithRelated, { slug })
+	: null;
 if (!person?._id) {
 	return new Response(null, { status: 404 });
 }
+
+const cleanPersonId = stegaClean(person._id).trim().replace(/^drafts\./, "");
+const countsQuery = groq`{
+	"podcasts": count(*[_type == "podcast" && references($refId) && defined(slug.current)]),
+	"posts": count(*[_type == "post" && references($refId) && defined(slug.current)])
+}`;
+const counts = ((await sanity.loadQuery(countsQuery, {
+	refId: cleanPersonId,
+})) ?? { podcasts: 0, posts: 0 }) as { podcasts?: number; posts?: number };
 
 const path = `/guest/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
@@ -39,11 +52,13 @@ const description =
 
 const relatedPosts = (person.related?.post ?? []) as ContentListItem[];
 const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
+const totalPodcasts = counts.podcasts ?? relatedPodcasts.length;
+const totalPosts = counts.posts ?? relatedPosts.length;
 ---
 
 <BaseLayout
-	title={`${person.title} — Guest | CodingCat.dev`}
-	ogTitle={`${person.title} — CodingCat.dev Podcast Guest`}
+	title={`${person.title}: Podcast Guest | CodingCat.dev`}
+	ogTitle={`${person.title}: CodingCat.dev Podcast Guest`}
 	description={description}
 	ogFallback={{
 		title: person.title,
@@ -53,13 +68,17 @@ const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 	}}
 	canonical={path}
 	schema={[
-		personSchema(origin, {
-			title: person.title,
-			excerpt: description,
-			imageUrl: personImage?.url,
-			socials: person.socials,
-			websites: person.websites,
-		}, path),
+		personSchema(
+			origin,
+			{
+				title: person.title,
+				excerpt: description,
+				imageUrl: personImage?.url,
+				socials: person.socials,
+				websites: person.websites,
+			},
+			path,
+		),
 		breadcrumbSchema(origin, [
 			{ name: "Guests", path: "/guests/page/1" },
 			{ name: person.title, path },
@@ -70,45 +89,73 @@ const relatedPodcasts = (person.related?.podcast ?? []) as ContentListItem[];
 		links={[{ title: "Guests", href: "/guests/page/1" }, { title: person.title }]}
 	/>
 
-	<div class="flex w-full flex-col gap-4 md:gap-8">
-		<div class="flex gap-2 md:gap-8">
-			<div class="shrink-0">
+	<div class="flex w-full flex-col gap-8">
+		<div class="duo-card hand-border flex flex-col items-start gap-6 p-6 sm:flex-row sm:items-center md:p-8">
+			<div class="shrink-0 overflow-hidden rounded-full border-2 border-[#2A1155] shadow-sketch-sm dark:border-white/40">
 				<CoverMedia
 					image={person.coverImage}
 					width={256}
 					height={256}
 					sizes="128px"
-					class="size-24 rounded-md object-cover md:size-32"
+					class="size-24 object-cover md:size-32"
 				/>
 			</div>
 			<div class="flex flex-col gap-2">
-				<h1
-					class="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl"
-				>
+				<span class="w-fit rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+					🎙️ Podcast Guest
+				</span>
+				<h1 class="font-display text-3xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-5xl">
 					{person.title}
 				</h1>
 				<UserSocials socials={person.socials} websites={person.websites} />
 			</div>
 		</div>
 
-		<article>
-			<PortableTextContent value={person.content} class="mx-auto prose-violet lg:prose-xl" />
-		</article>
+		{
+			person.content && (
+				<article class="duo-card hand-border p-6 md:p-8">
+					<PortableTextContent
+						value={person.content}
+						class="mx-auto prose-violet lg:prose-xl"
+					/>
+				</article>
+			)
+		}
 
 		{
 			relatedPodcasts.length > 0 && (
 				<aside>
-					<SectionHeader title="Podcasts" href="/podcasts/page/1" />
-					<ContentGrid items={relatedPodcasts} priorityCount={0} />
+					<SectionHeader title="podcast episodes" />
+					<InfiniteContentGrid
+						type="podcast"
+						items={relatedPodcasts}
+						refId={cleanPersonId}
+						initialOffset={relatedPodcasts.length}
+						totalCount={totalPodcasts}
+						showSearch={totalPodcasts > 4}
+						searchPlaceholder={`Filter ${stegaClean(person.title)} episodes...`}
+						priorityCount={2}
+						nounPlural="episodes"
+					/>
 				</aside>
 			)
 		}
 
 		{
 			relatedPosts.length > 0 && (
-				<aside class="mb-32">
-					<SectionHeader title="Posts" href="/blog/page/1" />
-					<ContentGrid items={relatedPosts} priorityCount={0} />
+				<aside class="mb-24">
+					<SectionHeader title="blog posts" />
+					<InfiniteContentGrid
+						type="post"
+						items={relatedPosts}
+						refId={cleanPersonId}
+						initialOffset={relatedPosts.length}
+						totalCount={totalPosts}
+						showSearch={totalPosts > 4}
+						searchPlaceholder={`Filter ${stegaClean(person.title)} blog posts...`}
+						priorityCount={0}
+						nounPlural="blog posts"
+					/>
 				</aside>
 			)
 		}

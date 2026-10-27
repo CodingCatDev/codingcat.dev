@@ -1,66 +1,73 @@
 @import "tailwindcss";
+@import "../../../../tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
 /*
- * Design tokens ported from apps/web/app/globals.css — the live production
- * stylesheet. This is a migration, not a redesign: the `dev` branch's
- * pre-Next Astro app carried a different, never-shipped token set
- * (dark-first `--bg`/`--text`), and adopting it would have been a visual
- * regression at cutover.
+ * CodingCat.dev 2026 - Dual-Theme Excalidraw Chalkboard & Royal Purple Design System
  *
- * Dashboard-only tokens (--sidebar-*, --chart-*) are intentionally dropped;
- * they are unreferenced by any public route.
+ * Reference Google Stitch Screens:
+ * - Light Mode (Chalkboard Paper): 8d1319903d504a79ae56110486455e17
+ * - Dark Mode (Obsidian Chalkboard): b9e00f99c0d34e9884bf7766a014577b
  */
+
+@font-face {
+	font-family: "Virgil";
+	src: url("/fonts/Virgil.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
 	:root {
-		--radius: 0.65rem;
-		--background: oklch(1 0 0);
-		--foreground: oklch(0.141 0.005 285.823);
-		--card: oklch(1 0 0);
-		--card-foreground: oklch(0.141 0.005 285.823);
-		--popover: oklch(1 0 0);
-		--popover-foreground: oklch(0.141 0.005 285.823);
-		--primary: oklch(0.541 0.281 293.009);
-		--primary-foreground: oklch(0.985 0 0);
-		--secondary: oklch(0.967 0.001 286.375);
-		--secondary-foreground: oklch(0.21 0.006 285.885);
-		--muted: oklch(0.967 0.001 286.375);
-		--muted-foreground: oklch(0.442 0.017 285.786);
-		--accent: oklch(0.967 0.001 286.375);
-		--accent-foreground: oklch(0.21 0.006 285.885);
-		--destructive: oklch(0.577 0.245 27.325);
-		--border: oklch(0.92 0.004 286.32);
-		--input: oklch(0.92 0.004 286.32);
-		--ring: oklch(0.541 0.281 293.009);
+		--radius: 1.25rem;
+		--background: #faf9fc;
+		--foreground: #2a1155;
+		--card: #ffffff;
+		--card-foreground: #2a1155;
+		--popover: #ffffff;
+		--popover-foreground: #2a1155;
+		--primary: #7c3aed;
+		--primary-foreground: #ffffff;
+		--secondary: #ede9fe;
+		--secondary-foreground: #2a1155;
+		--muted: #f5f3fb;
+		--muted-foreground: #4c1d95;
+		--accent: #ede9fe;
+		--accent-foreground: #2a1155;
+		--destructive: #fca5a5;
+		--border: #2a1155;
+		--input: #ffffff;
+		--ring: #7c3aed;
 	}
 
 	.dark {
-		--background: oklch(0.141 0.005 285.823);
-		--foreground: oklch(0.985 0 0);
-		--card: oklch(0.21 0.006 285.885);
-		--card-foreground: oklch(0.985 0 0);
-		--popover: oklch(0.21 0.006 285.885);
-		--popover-foreground: oklch(0.985 0 0);
-		--primary: oklch(0.541 0.281 293.009);
-		--primary-foreground: oklch(0.985 0 0);
-		--secondary: oklch(0.274 0.006 286.033);
-		--secondary-foreground: oklch(0.985 0 0);
-		--muted: oklch(0.274 0.006 286.033);
-		--muted-foreground: oklch(0.705 0.015 286.067);
-		--accent: oklch(0.274 0.006 286.033);
-		--accent-foreground: oklch(0.985 0 0);
-		--destructive: oklch(0.704 0.191 22.216);
-		--border: oklch(1 0 0 / 10%);
-		--input: oklch(1 0 0 / 15%);
-		--ring: oklch(0.541 0.281 293.009);
+		--radius: 1.25rem;
+		--background: #0b1326;
+		--foreground: #f1f5f9;
+		--card: #171f33;
+		--card-foreground: #f1f5f9;
+		--popover: #131b2e;
+		--popover-foreground: #f1f5f9;
+		--primary: #7c3aed;
+		--primary-foreground: #ffffff;
+		--secondary: #131b2e;
+		--secondary-foreground: #f1f5f9;
+		--muted: #131b2e;
+		--muted-foreground: #cbd5e1;
+		--accent: #171f33;
+		--accent-foreground: #c084fc;
+		--destructive: #fca5a5;
+		--border: rgba(255, 255, 255, 0.22);
+		--input: #060e20;
+		--ring: #c084fc;
 	}
 }
 
 @theme inline {
-	--radius-sm: calc(var(--radius) - 4px);
+	--radius-sm: calc(var(--radius) - 6px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
@@ -82,9 +89,11 @@
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
-	/* Bound by the Astro `fonts` config; see astro.config.mjs. */
+	/* Bound by Astro fonts config + Virgil Excalidraw webfont */
 	--font-sans: var(--font-inter), system-ui, sans-serif;
-	--font-display: var(--font-nunito), system-ui, sans-serif;
+	--font-display: var(--font-nunito), var(--font-inter), system-ui, sans-serif;
+	--font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+	--font-hand: "Virgil", var(--font-caveat), cursive, sans-serif;
 }
 
 @layer base {
@@ -92,19 +101,362 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-foreground font-sans antialiased;
+		@apply bg-background text-foreground font-sans antialiased selection:bg-[#7C3AED] selection:text-white;
+		background-color: #faf9fc;
+		background-image: radial-gradient(#d8b4fe 1.25px, transparent 1.25px);
+		background-size: 20px 20px;
 	}
+	:root.dark body {
+		background-color: #0b1326;
+		background-image:
+			radial-gradient(
+				circle at 20% 15%,
+				rgba(124, 58, 237, 0.16) 0%,
+				transparent 45%
+			),
+			radial-gradient(
+				circle at 80% 35%,
+				rgba(217, 70, 239, 0.12) 0%,
+				transparent 40%
+			),
+			radial-gradient(rgba(216, 180, 254, 0.08) 1.25px, transparent 1.25px);
+		background-size:
+			100% 100%,
+			100% 100%,
+			20px 20px;
+	}
+	/* H1 & H2 use chunky rounded Nunito 900 per Stitch reference */
 	h1,
-	h2,
+	h2 {
+		font-family: var(--font-display);
+		letter-spacing: -0.025em;
+	}
 	h3,
 	h4,
 	h5,
 	h6 {
-		font-family: var(--font-display);
+		font-family: var(--font-sans);
+		letter-spacing: -0.02em;
+	}
+	code,
+	pre,
+	kbd {
+		font-family: var(--font-mono);
 	}
 }
 
-/* Algolia's search input renders a native clear affordance we style ourselves. */
+/*
+ * Hand-Drawn Borders & Sketch Shadows (from Stitch 8d131990 & b9e00f99)
+ */
+.hand-border {
+	border: 2px solid var(--cc-border-sketch);
+	border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+.hand-border-rect {
+	border: 2px solid var(--cc-border-sketch);
+	border-radius: 20px 8px 18px 10px;
+}
+
+.shadow-sketch {
+	box-shadow: var(--cc-shadow-sketch);
+}
+
+.shadow-sketch-sm {
+	box-shadow: var(--cc-shadow-sketch-sm);
+}
+
+.shadow-sketch-lg {
+	box-shadow: var(--cc-shadow-sketch-lg);
+}
+
+.shadow-glow-purple {
+	box-shadow: var(--cc-glow-purple);
+}
+
+/* Excalidraw Diagonal Marker Cross-Hatch */
+.chalk-hatch {
+	background-image: repeating-linear-gradient(
+		-45deg,
+		rgba(167, 139, 250, 0.35),
+		rgba(167, 139, 250, 0.35) 4px,
+		transparent 4px,
+		transparent 8px
+	);
+}
+
+:root.dark .chalk-hatch {
+	background-color: rgba(30, 27, 75, 0.7);
+	background-image: repeating-linear-gradient(
+		-45deg,
+		rgba(168, 85, 247, 0.35),
+		rgba(168, 85, 247, 0.35) 4px,
+		transparent 4px,
+		transparent 8px
+	);
+}
+
+/* Hand-drawn Excalidraw annotation & explanation font helpers */
+.font-hand,
+.font-sketch {
+	font-family: var(--font-hand);
+}
+
+.excalidraw-explain {
+	font-family: var(--font-hand);
+	font-size: 1.25rem;
+	line-height: 1.5;
+	color: var(--cc-text-secondary);
+}
+
+/*
+ * Tactile 3D Buttons (Dual-Theme: #2A1155 -> #7C3AED in Light Mode, #7C3AED with #4C1D95 lip in Dark Mode)
+ */
+.tactile-btn:not([hidden]):not(.hidden),
+.duo-btn:not([hidden]):not(.hidden) {
+	display: inline-flex;
+}
+
+.tactile-btn,
+.duo-btn {
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border-radius: 9999px;
+	font-family: var(--font-display);
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	transition:
+		transform 150ms cubic-bezier(0.2, 0, 0, 1),
+		box-shadow 150ms cubic-bezier(0.2, 0, 0, 1),
+		background-color 150ms ease,
+		border-color 150ms ease;
+	cursor: pointer;
+	user-select: none;
+}
+
+.tactile-btn:focus-visible,
+.duo-btn:focus-visible {
+	outline: none;
+	box-shadow:
+		0 0 0 2px var(--background),
+		0 0 0 4px #7c3aed;
+}
+
+/* Primary Royal Purple CTA (Matches Stitch 8d131990 & b9e00f99) */
+.tactile-btn,
+.duo-btn-green,
+.cc-btn-lime,
+.cc-btn-primary {
+	background-color: #2a1155;
+	color: #ffffff;
+	border: 2px solid #2a1155;
+	box-shadow: 3px 4px 0px 0px #2a1155;
+}
+
+.tactile-btn:hover,
+.duo-btn-green:hover,
+.cc-btn-lime:hover,
+.cc-btn-primary:hover {
+	background-color: #7c3aed;
+	border-color: #2a1155;
+	transform: translateY(-2px);
+	box-shadow: 5px 6px 0px 0px #2a1155;
+}
+
+.tactile-btn:active,
+.duo-btn-green:active,
+.cc-btn-lime:active,
+.cc-btn-primary:active {
+	transform: translateY(2px);
+	box-shadow: 1px 2px 0px 0px #2a1155;
+}
+
+:root.dark .tactile-btn,
+:root.dark .duo-btn-green,
+:root.dark .cc-btn-lime,
+:root.dark .cc-btn-primary {
+	background-color: #7c3aed;
+	color: #ffffff;
+	border: 2px solid rgba(255, 255, 255, 0.25);
+	box-shadow:
+		0 4px 0 #4c1d95,
+		0 8px 20px rgba(124, 58, 237, 0.4);
+}
+
+:root.dark .tactile-btn:hover,
+:root.dark .duo-btn-green:hover,
+:root.dark .cc-btn-lime:hover,
+:root.dark .cc-btn-primary:hover {
+	background-color: #8b5cf6;
+	transform: translateY(-2px);
+	box-shadow:
+		0 6px 0 #4c1d95,
+		0 12px 24px rgba(124, 58, 237, 0.55);
+}
+
+:root.dark .tactile-btn:active,
+:root.dark .duo-btn-green:active,
+:root.dark .cc-btn-lime:active,
+:root.dark .cc-btn-primary:active {
+	transform: translateY(2px);
+	box-shadow:
+		0 2px 0 #4c1d95,
+		0 4px 10px rgba(124, 58, 237, 0.3);
+}
+
+/* Secondary / Outline Sketch Pill Button ("Watch Teardowns", "All Episodes") */
+.duo-btn-blue,
+.cc-btn-purple,
+.duo-btn-outline,
+.cc-btn-outline,
+.cc-btn-lavender {
+	background-color: #ffffff;
+	color: #2a1155;
+	border: 2px solid #2a1155;
+	box-shadow: 3px 4px 0px 0px #2a1155;
+}
+
+.duo-btn-blue:hover,
+.cc-btn-purple:hover,
+.duo-btn-outline:hover,
+.cc-btn-outline:hover,
+.cc-btn-lavender:hover {
+	background-color: #ede9fe;
+	color: #2a1155;
+	transform: translateY(-2px);
+	box-shadow: 5px 6px 0px 0px #2a1155;
+}
+
+:root.dark .duo-btn-blue,
+:root.dark .cc-btn-purple,
+:root.dark .duo-btn-outline,
+:root.dark .cc-btn-outline,
+:root.dark .cc-btn-lavender {
+	background-color: #131b2e;
+	color: #f1f5f9;
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	box-shadow: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
+}
+
+:root.dark .duo-btn-blue:hover,
+:root.dark .cc-btn-purple:hover,
+:root.dark .duo-btn-outline:hover,
+:root.dark .cc-btn-outline:hover,
+:root.dark .cc-btn-lavender:hover {
+	background-color: #171f33;
+	border-color: #a855f7;
+	color: #ffffff;
+	transform: translateY(-2px);
+}
+
+/*
+ * Dual-Theme Sketch Cards & Excalidraw Wells
+ */
+.duo-card {
+	background-color: #ffffff;
+	border: 2px solid #2a1155;
+	border-radius: 1.5rem;
+	box-shadow: 3px 4px 0px 0px #2a1155;
+}
+
+:root.dark .duo-card {
+	background-color: rgba(19, 27, 46, 0.92);
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	border-radius: 1.5rem;
+	box-shadow: 3px 4px 0px 0px rgba(0, 0, 0, 0.75);
+}
+
+.excalidraw-well {
+	background-color: #ffffff;
+	background-image: radial-gradient(#d8b4fe 1.25px, transparent 1.25px);
+	background-size: 20px 20px;
+	border: 2px solid #2a1155;
+	border-radius: 1.5rem;
+	box-shadow: 6px 7px 0px 0px #2a1155;
+}
+
+:root.dark .excalidraw-well {
+	background-color: rgba(19, 27, 46, 0.9);
+	background-image: radial-gradient(
+		rgba(216, 180, 254, 0.12) 1.25px,
+		transparent 1.25px
+	);
+	background-size: 20px 20px;
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	border-radius: 1.5rem;
+	box-shadow:
+		6px 7px 0px 0px rgba(0, 0, 0, 0.85),
+		0 0 28px rgba(124, 58, 237, 0.25);
+}
+
+/*
+ * Playful Bobble & Yarn Animations (from Stitch 8d131990 & b9e00f99)
+ */
+@keyframes bobble {
+	0%,
+	100% {
+		transform: translateY(0px) rotate(0deg);
+	}
+	50% {
+		transform: translateY(-7px) rotate(2deg);
+	}
+}
+
+.animate-bobble {
+	animation: bobble 3.8s ease-in-out infinite;
+}
+
+@keyframes pulse-yarn {
+	0%,
+	100% {
+		stroke-dashoffset: 0;
+	}
+	50% {
+		stroke-dashoffset: 18;
+	}
+}
+
+.animate-yarn {
+	stroke-dasharray: 8 6;
+	animation: pulse-yarn 6s linear infinite;
+}
+
+@keyframes excalidraw-pop-in {
+	0% {
+		opacity: 0;
+		transform: translateY(24px) scale(0.97);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes yarn-pulse {
+	0%,
+	100% {
+		filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.55));
+	}
+	50% {
+		filter: drop-shadow(0 0 16px rgba(217, 70, 239, 0.85));
+	}
+}
+
+.yarn-glow {
+	animation: yarn-pulse 3s ease-in-out infinite;
+}
+
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.duo-scroll-reveal {
+			animation: excalidraw-pop-in linear both;
+			animation-timeline: view();
+			animation-range: entry 5% cover 28%;
+		}
+	}
+}
+
 .ais-SearchBox-input[type="search"]::-webkit-search-cancel-button {
 	display: none;
 }
@@ -114,79 +466,28 @@
 		transform: translateY(0px);
 	}
 	50% {
-		transform: translateY(-20px);
+		transform: translateY(-10px);
 	}
 	100% {
 		transform: translateY(0px);
 	}
 }
 
-@keyframes paw-one {
-	0% {
-		transform: translate(0, 0);
-	}
-	20% {
-		transform: translate(-40px, 40px) rotate(-15deg);
-	}
-	40% {
-		transform: translate(-30px, 30px) rotate(-5deg);
-	}
-	60% {
-		transform: translate(-40px, 40px) rotate(-15deg);
-	}
-	80% {
-		transform: translate(-30px, 30px) rotate(-5deg);
-	}
-	100% {
-		transform: translate(0, 0);
-	}
-}
-
-@keyframes paw-two {
-	0% {
-		transform: translate(0, 0);
-	}
-	20% {
-		transform: translate(40px, -40px) rotate(15deg);
-	}
-	40% {
-		transform: translate(30px, -30px) rotate(5deg);
-	}
-	60% {
-		transform: translate(40px, -40px) rotate(15deg);
-	}
-	80% {
-		transform: translate(30px, -30px) rotate(5deg);
-	}
-	100% {
-		transform: translate(0, 0);
-	}
-}
-
 .animate-float {
-	animation: float 6s ease-in-out infinite;
-}
-
-.animate-paw-one {
-	animation: paw-one 8s ease-in-out infinite;
-}
-
-.animate-paw-two {
-	animation: paw-two 8s ease-in-out infinite 2s;
+	animation: float 5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.animate-float,
-	.animate-paw-one,
-	.animate-paw-two {
+	.animate-bobble,
+	.animate-yarn,
+	.yarn-glow {
 		animation: none;
 	}
 }
 
 /*
- * Shiki dual-theme activation. <Code themes={{light,dark}}> emits the dark
- * colours as `--shiki-dark*` custom properties and needs a rule to apply them;
- * without this, code blocks stay light-themed inside dark mode.
+ * Shiki dual-theme activation.
  */
 :root.dark .astro-code,
 :root.dark .astro-code span {
@@ -197,7 +498,6 @@
 	text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
-/* Copy-to-clipboard confirmation, driven by the delegated click handler. */
 .copy-code.copied {
 	color: var(--primary);
 }
@@ -224,4 +524,13 @@ html.aj-drawer-open #aj-agent-drawer {
 	html.aj-drawer-open #site-header {
 		right: var(--aj-drawer-width, 420px);
 	}
+}
+
+/*
+ * Off-screen rendering deferral for infinite scroll feeds (modern-web-guidance: defer-rendering-heavy-content).
+ * Applied strictly to below-the-fold cards so the browser skips layout/paint work until near viewport.
+ */
+.infinite-card-deferred {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 520px;
 }

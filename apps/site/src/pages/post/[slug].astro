@@ -3,6 +3,7 @@ import Avatar from "@/components/Avatar.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
@@ -18,6 +19,7 @@ import {
 	faqSchema,
 	videoObjectSchema,
 } from "@/lib/structured-data";
+import { matchTopicsForText } from "@/lib/topics";
 
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
@@ -47,6 +49,9 @@ const ogCardImageUrl = sanity
 const authors = post.author ?? [];
 const transcriptText =
 	post.transcript?.fullText || post.transcript?.summary || undefined;
+const matchedTopics = matchTopicsForText(
+	`${post.title ?? ""} ${post.excerpt ?? ""}`,
+);
 const videoSchema = post.youtube
 	? videoObjectSchema(
 			origin,
@@ -81,85 +86,129 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 	authors={authors.map((a) => a.title)}
 	canonical={path}
 	schema={[
-		articleSchema(origin, {
-			title: post.title,
-			excerpt: post.excerpt,
-			date: post.date,
-			_updatedAt: post._updatedAt,
-			imageUrl: coverThumbnail?.url,
-			authors,
-		}, path),
+		articleSchema(
+			origin,
+			{
+				title: post.title,
+				excerpt: post.excerpt,
+				date: post.date,
+				_updatedAt: post._updatedAt,
+				imageUrl: coverThumbnail?.url,
+				authors,
+			},
+			path,
+		),
 		breadcrumbSchema(origin, [
-			{ name: "Blog", path: "/blog/page/1" },
+			{ name: "Blog", path: "/blog" },
 			{ name: post.title, path },
 		]),
 		...(videoSchema ? [videoSchema] : []),
 		...(faqNode ? [faqNode] : []),
 	]}
 >
-	<Breadcrumbs links={[{ title: "Blog", href: "/blog/page/1" }, { title: post.title }]} />
+	<Breadcrumbs links={[{ title: "Blog", href: "/blog" }, { title: post.title }]} />
 
-	<article>
-		<h1
-			class="mb-12 text-4xl font-bold leading-tight tracking-tighter text-balance md:text-7xl md:leading-none lg:text-8xl"
-		>
+	<article class="py-4">
+		{/* Post Badge & Matched Official Vendor / Topic Logo Pills */}
+		<div class="mb-4 flex flex-wrap items-center gap-2">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+				✏️ Blog Post
+			</span>
+			{post.date && (
+				<span class="rounded-full border border-[#2A1155]/30 bg-white px-3.5 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-slate-200">
+					<FormattedDate dateString={post.date} />
+				</span>
+			)}
+			{matchedTopics.map((topic) => (
+				<a
+					href={`/topic/${topic.slug}`}
+					class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-white px-3.5 py-1 font-display text-xs font-black text-[#2A1155] transition-all hover:-translate-y-0.5 hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-white dark:hover:bg-purple-950/60 shadow-sketch-sm"
+				>
+					{topic.symbolLight && (
+						<img
+							src={topic.symbolLight}
+							alt=""
+							aria-hidden="true"
+							class="h-3.5 w-auto object-contain dark:hidden"
+						/>
+					)}
+					{topic.symbolDark && (
+						<img
+							src={topic.symbolDark}
+							alt=""
+							aria-hidden="true"
+							class="hidden h-3.5 w-auto object-contain dark:block"
+						/>
+					)}
+					<span>{topic.title}</span>
+				</a>
+			))}
+		</div>
+
+		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-balance text-[#2A1155] dark:text-white md:text-6xl">
 			{post.title}
 		</h1>
-		<div class="mb-8 sm:mx-0 md:mb-16">
+
+		<div class="mb-8 overflow-hidden rounded-3xl border-2 border-[#2A1155] bg-[#2A1155] shadow-sketch dark:border-white/25 dark:bg-[#060E20] md:mb-12">
 			<CoverMedia
 				image={post.coverImage}
 				video={post.videoCloudinary}
 				youtube={post.youtube}
 			/>
 		</div>
-		<div class="mb-6 flex flex-wrap gap-2">
+
+		<div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+			<div class="flex flex-wrap gap-2.5">
+				{
+					authors.map((author) => (
+						<Avatar
+							name={author.title}
+							href={author.slug ? `/author/${author.slug}` : undefined}
+							coverImage={author.coverImage}
+						/>
+					))
+				}
+			</div>
+
 			{
-				authors.map((author) => (
-					<Avatar
-						name={author.title}
-						href={author.slug ? `/author/${author.slug}` : undefined}
-						coverImage={author.coverImage}
-					/>
-				))
+				(post.transcript || post.youtube) && (
+					<div>
+						<TranscriptModal
+							title={post.title}
+							slug={post.slug}
+							transcriptId={post.transcript?._id}
+							youtube={post.youtube}
+						/>
+					</div>
+				)
 			}
 		</div>
-		<div class="mb-4 text-lg text-muted-foreground">
-			<FormattedDate dateString={post.date} />
-		</div>
-
-		{
-			(post.transcript || post.youtube) && (
-				<div class="mb-6">
-					<TranscriptModal
-						title={post.title}
-						slug={post.slug}
-						transcriptId={post.transcript?._id}
-						youtube={post.youtube}
-					/>
-				</div>
-			)
-		}
 
 		{
 			post.sponsor && post.sponsor.length > 0 && (
 				<section class="my-10 flex flex-col">
-					<h2 class="mb-4 text-2xl font-bold">Sponsors</h2>
-					<hr class="border-border" />
-					<div class="my-12">
-						<SponsorCard sponsors={post.sponsor} />
-					</div>
-					<hr class="border-border" />
+					<h2 class="mb-4 font-display text-2xl font-black text-[#2A1155] dark:text-white">
+						Sponsors<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+					</h2>
+					<SponsorCard sponsors={post.sponsor} />
 				</section>
 			)
 		}
 
-		<PortableTextContent value={post.content} class="mx-auto prose-violet lg:prose-xl" />
+		<ExcalidrawBlueprintCard title={post.title} kind="post" />
+
+		<PortableTextContent
+			value={post.content}
+			class="mx-auto prose-violet lg:prose-xl"
+		/>
 
 		{
 			post.transcript?.summary && (
-				<section class="my-8 mx-auto max-w-4xl rounded-xl border border-border bg-card/50 p-6">
-					<h2 class="mb-3 text-xl font-bold">Video Summary</h2>
-					<p class="leading-relaxed text-muted-foreground">
+				<section class="duo-card hand-border mx-auto my-8 max-w-4xl p-6">
+					<h2 class="mb-3 font-display text-xl font-black text-[#2A1155] dark:text-white">
+						✏️ Video Summary
+					</h2>
+					<p class="leading-relaxed text-[#2A1155]/80 dark:text-slate-300">
 						{post.transcript.summary}
 					</p>
 				</section>
@@ -169,8 +218,12 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 
 	{
 		more.length > 0 && (
-			<aside class="mb-32">
-				<SectionHeader title="Recent Posts" href="/blog/page/1" />
+			<aside class="mb-24">
+				<SectionHeader
+					title="recent blog posts"
+					href="/blog"
+					linkText="All Blog Posts"
+				/>
 				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
 			</aside>
 		)
