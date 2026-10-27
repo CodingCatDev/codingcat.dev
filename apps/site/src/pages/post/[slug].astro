@@ -108,7 +108,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 >
 	<Breadcrumbs links={[{ title: "Blog", href: "/blog" }, { title: post.title }]} />
 
-	<article class="py-4">
+	<article class="min-w-0 max-w-full py-4">
 		{/* Post Badge & Matched Official Vendor / Topic Logo Pills */}
 		<div class="mb-4 flex flex-wrap items-center gap-2">
 			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
@@ -145,7 +145,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 			))}
 		</div>
 
-		<h1 class="mb-8 font-display text-4xl font-black leading-tight tracking-tight text-balance text-[#2A1155] dark:text-white md:text-6xl">
+		<h1 class="mb-8 break-words font-display text-3xl font-black leading-tight tracking-tight text-balance text-[#2A1155] dark:text-white sm:text-4xl md:text-6xl">
 			{post.title}
 		</h1>
 

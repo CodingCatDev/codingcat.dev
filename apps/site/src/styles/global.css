@@ -100,6 +100,11 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
+	html,
+	body {
+		max-width: 100%;
+		overflow-x: clip;
+	}
 	body {
 		@apply bg-background text-foreground font-sans antialiased selection:bg-[#7C3AED] selection:text-white;
 		background-color: #faf9fc;
@@ -130,6 +135,7 @@
 	h2 {
 		font-family: var(--font-display);
 		letter-spacing: -0.025em;
+		overflow-wrap: break-word;
 	}
 	h3,
 	h4,
@@ -137,6 +143,11 @@
 	h6 {
 		font-family: var(--font-sans);
 		letter-spacing: -0.02em;
+		overflow-wrap: break-word;
+	}
+	.prose {
+		max-width: 100%;
+		overflow-wrap: break-word;
 	}
 	code,
 	pre,

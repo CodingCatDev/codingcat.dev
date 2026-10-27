@@ -221,14 +221,14 @@ const graph = buildGraph([
 			For OAuth Protected Resource Metadata, see {origin}/.well-known/oauth-protected-resource.
 			For agent registration and authentication, see {origin}/auth.md.
 		</p>
-		<div class="flex flex-col min-h-dvh">
+		<div class="flex min-h-dvh max-w-full flex-col overflow-x-clip">
 			<Header />
-			<main class="flex-1 mt-24">
+			<main class="mt-24 min-w-0 max-w-full flex-1">
 				{
 					bare ? (
 						<slot />
 					) : (
-						<div class="container px-5 mx-auto">
+						<div class="container mx-auto min-w-0 max-w-full px-5">
 							<slot />
 						</div>
 					)
