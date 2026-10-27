@@ -1586,7 +1586,7 @@ function buildPost4(assets) {
         {
           text: " (or a Cloudflare Worker edge gateway calling ",
         },
-        { text: "Gemini 2.5 Flash", strong: true },
+        { text: "Gemini Flash", strong: true },
         {
           text: "), you can build a unified TypeScript router that offloads 70%+ of routine summarization, classification, and UI drafting tasks to the user's device at $0 cost while seamlessly routing complex reasoning or unsupported browsers to the edge.",
         },
@@ -1766,7 +1766,7 @@ export async function runHybridWebAiPrompt(
     }
   }
 
-  // 2. Fallback Lane: Cloudflare Worker / Firebase AI Logic Edge Endpoint (Gemini 2.5 Flash)
+  // 2. Fallback Lane: Cloudflare Worker / Firebase AI Logic Edge Endpoint (Gemini Flash)
   const edgeRes = await fetch("/api/ai/hybrid-fallback", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1843,7 +1843,7 @@ export async function runHybridWebAiPrompt(
     },
     date: "2026-08-11T16:00:00.000Z",
     excerpt: cleanDashes(
-      "Architect a production Hybrid Web AI router in TypeScript that runs 0ms, $0 client-side inference on Chrome's built-in Gemini Nano when available and seamlessly falls back to Gemini 2.5 Flash via Firebase AI Logic and Cloudflare Workers."
+      "Architect a production Hybrid Web AI router in TypeScript that runs 0ms, $0 client-side inference on Chrome's built-in Gemini Nano when available and seamlessly falls back to Gemini Flash via Firebase AI Logic and Cloudflare Workers."
     ),
     featured: 1,
     coverImage: {

@@ -383,6 +383,20 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 			// Swap <main> content while keeping <aside id="aj-agent-drawer"> completely untouched
 			currentMain.replaceWith(newMain);
 
+			// Execute any inline or page-scoped scripts inside the newly swapped <main>
+			newMain.querySelectorAll("script").forEach((oldScript) => {
+				const type = (oldScript.getAttribute("type") || "").toLowerCase();
+				if (type === "application/ld+json" || type === "application/json") {
+					return;
+				}
+				const freshScript = document.createElement("script");
+				Array.from(oldScript.attributes).forEach((attr) => {
+					freshScript.setAttribute(attr.name, attr.value);
+				});
+				freshScript.textContent = oldScript.textContent;
+				oldScript.replaceWith(freshScript);
+			});
+
 			// Update document title & canonical URL
 			if (doc.title) {
 				document.title = doc.title;
