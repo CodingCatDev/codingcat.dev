@@ -1,0 +1,509 @@
+---
+/**
+ * Hand-Drawn Visual Diagram Engine (`ExcalidrawDiagram.astro`).
+ *
+ * Dual-Theme Diagram Canvas matching Google Stitch screens:
+ * - Light Mode: `8d1319903d504a79ae56110486455e17`
+ * - Dark Mode: `b9e00f99c0d34e9884bf7766a014577b`
+ */
+
+export type ExcalidrawColor =
+	| "green"
+	| "blue"
+	| "orange"
+	| "yellow"
+	| "purple"
+	| "red";
+
+export interface ExcalidrawNode {
+	id: string;
+	label: string;
+	sublabel?: string;
+	color?: ExcalidrawColor;
+	badge?: string;
+	status?: "good" | "bad";
+}
+
+export interface ExcalidrawEdge {
+	from: string;
+	to: string;
+	label?: string;
+}
+
+interface Props {
+	title?: string;
+	caption?: string;
+	nodes?: ExcalidrawNode[];
+	edges?: ExcalidrawEdge[];
+	rawCode?: string;
+	compact?: boolean;
+}
+
+const {
+	title = "Architecture Diagram",
+	caption,
+	nodes: propNodes,
+	edges: propEdges,
+	rawCode,
+	compact = false,
+} = Astro.props;
+
+const COLOR_MAP: Record<
+	ExcalidrawColor,
+	{
+		hex: string;
+		patternId: string;
+		border: string;
+		textOnBadge: string;
+		nodeFill: string;
+	}
+> = {
+	/* Mint / Emerald (#86EFAC) */
+	green: {
+		hex: "#86EFAC",
+		patternId: "hatch-mint",
+		border: "#10B981",
+		textOnBadge: "#166534",
+		nodeFill: "#064E3B",
+	},
+	/* Sky Blue (#38BDF8 / #BAE6FD) */
+	blue: {
+		hex: "#BAE6FD",
+		patternId: "hatch-sky",
+		border: "#38BDF8",
+		textOnBadge: "#0369A1",
+		nodeFill: "#0C4A6E",
+	},
+	/* Sunny Yellow (#FEF08A / #FACC15) */
+	orange: {
+		hex: "#FEF08A",
+		patternId: "hatch-yellow",
+		border: "#FACC15",
+		textOnBadge: "#713F12",
+		nodeFill: "#422006",
+	},
+	/* Sunny Yellow (#FEF08A / #FACC15) */
+	yellow: {
+		hex: "#FEF08A",
+		patternId: "hatch-yellow",
+		border: "#FACC15",
+		textOnBadge: "#713F12",
+		nodeFill: "#422006",
+	},
+	/* Royal / Candy Purple (#7C3AED / #C084FC) */
+	purple: {
+		hex: "#EDE9FE",
+		patternId: "hatch-purple",
+		border: "#C084FC",
+		textOnBadge: "#2A1155",
+		nodeFill: "#2A1155",
+	},
+	/* Candy Pink / Coral (#FBCFE8 / #F472B6) */
+	red: {
+		hex: "#FBCFE8",
+		patternId: "hatch-pink",
+		border: "#F472B6",
+		textOnBadge: "#9D174D",
+		nodeFill: "#500724",
+	},
+};
+
+const PALETTE_CYCLE: ExcalidrawColor[] = [
+	"purple",
+	"blue",
+	"yellow",
+	"green",
+	"red",
+];
+
+function parseMermaidOrText(raw: string): {
+	nodes: ExcalidrawNode[];
+	edges: ExcalidrawEdge[];
+} {
+	const nodeMap = new Map<string, ExcalidrawNode>();
+	const edges: ExcalidrawEdge[] = [];
+	const lines = raw
+		.split(/\r?\n/)
+		.map((l) => l.trim())
+		.filter(
+			(l) =>
+				l.length > 0 &&
+				!l.startsWith("%%") &&
+				!l.match(/^(graph|flowchart|sequenceDiagram|stateDiagram)/i),
+		);
+
+	const cleanLabel = (str: string) =>
+		str
+			.replace(/^[\[\(\{\>]+|[\]\)\}]+$/g, "")
+			.replace(/["']/g, "")
+			.trim();
+
+	for (const line of lines) {
+		const arrowMatch = line.match(
+			/^([A-Za-z0-9_-]+)(?:\[([^\]]+)\]|(?:\(([^\)]+)\))|\{([^\}]+)\})?\s*(?:--+>|==+>|-\.+->|--\s*([^-]+)\s*-->)\s*([A-Za-z0-9_-]+)(?:\[([^\]]+)\]|(?:\(([^\)]+)\))|\{([^\}]+)\})?/,
+		);
+		if (arrowMatch) {
+			const [, fromId, f1, f2, f3, edgeLbl, toId, t1, t2, t3] = arrowMatch;
+			const fromLabel = cleanLabel(f1 || f2 || f3 || fromId);
+			const toLabel = cleanLabel(t1 || t2 || t3 || toId);
+			if (!nodeMap.has(fromId)) {
+				nodeMap.set(fromId, {
+					id: fromId,
+					label: fromLabel,
+					color: PALETTE_CYCLE[nodeMap.size % PALETTE_CYCLE.length],
+				});
+			}
+			if (!nodeMap.has(toId)) {
+				nodeMap.set(toId, {
+					id: toId,
+					label: toLabel,
+					color: PALETTE_CYCLE[nodeMap.size % PALETTE_CYCLE.length],
+				});
+			}
+			edges.push({
+				from: fromId,
+				to: toId,
+				label: edgeLbl ? cleanLabel(edgeLbl) : undefined,
+			});
+		}
+	}
+
+	if (nodeMap.size === 0) {
+		const fallbackSteps = lines.slice(0, 4);
+		fallbackSteps.forEach((step, idx) => {
+			const id = `step-${idx}`;
+			nodeMap.set(id, {
+				id,
+				label: step.slice(0, 32),
+				color: PALETTE_CYCLE[idx % PALETTE_CYCLE.length],
+			});
+			if (idx > 0) {
+				edges.push({ from: `step-${idx - 1}`, to: id });
+			}
+		});
+	}
+
+	return { nodes: Array.from(nodeMap.values()).slice(0, 5), edges };
+}
+
+const resolved =
+	propNodes && propNodes.length > 0
+		? { nodes: propNodes, edges: propEdges ?? [] }
+		: rawCode
+			? parseMermaidOrText(rawCode)
+			: {
+					nodes: [
+						{
+							id: "idea",
+							badge: "01. Prompt",
+							label: "User Intent",
+							sublabel: "Ask how it works",
+							color: "purple" as ExcalidrawColor,
+						},
+						{
+							id: "code",
+							badge: "02. Agent Loop",
+							label: "Sketch & Build",
+							sublabel: "Write real code",
+							color: "blue" as ExcalidrawColor,
+							status: "good" as const,
+						},
+						{
+							id: "ship",
+							badge: "03. Edge Deploy",
+							label: "Ship to Prod",
+							sublabel: "✓ Purrfect pattern",
+							color: "green" as ExcalidrawColor,
+							status: "good" as const,
+						},
+					],
+					edges: [
+						{ from: "idea", to: "code", label: "unroll yarn" },
+						{ from: "code", to: "ship", label: "✓ verified" },
+					],
+				};
+
+const nodes = resolved.nodes;
+const edges = resolved.edges;
+const count = Math.max(nodes.length, 1);
+const stepSpan = 336;
+const svgWidth = Math.max(count * stepSpan, 1008);
+const svgHeight = compact ? 236 : 264;
+const boxW = 248;
+const boxH = 104;
+const boxY = Math.round((svgHeight - boxH) / 2) - 8;
+
+const uid = `diagram-${Math.random().toString(36).slice(2, 9)}`;
+const a11ySummary = nodes
+	.map(
+		(n, idx) =>
+			`Step ${idx + 1}: ${n.label}${n.sublabel ? ` (${n.sublabel})` : ""}`,
+	)
+	.join(" -> ");
+---
+
+<figure class="excalidraw-well hand-border duo-scroll-reveal relative my-6 overflow-hidden p-5 md:p-7">
+	{/* Top Diagram Canvas Header Bar */}
+	<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2A1155]/15 pb-3 dark:border-white/15">
+		<div class="flex items-center gap-2">
+			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#FBCFE8] dark:border-black/60 dark:bg-[#F472B6]"></span>
+			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#FEF08A] dark:border-black/60 dark:bg-[#FACC15]"></span>
+			<span class="inline-flex size-3.5 rounded-full border border-[#2A1155] bg-[#86EFAC] dark:border-black/60 dark:bg-[#86EFAC]"></span>
+			<span class="ml-1.5 font-hand text-xl font-bold tracking-wide text-[#2A1155] dark:text-white">
+				✏️ {title}
+			</span>
+		</div>
+		<div class="flex items-center gap-2">
+			<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-2.5 py-0.5 font-mono text-xs font-bold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-[#86EFAC]">
+				✓ Good Pattern
+			</span>
+			<span class="rounded-full border border-[#7C3AED]/40 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
+				VISUAL DIAGRAM
+			</span>
+		</div>
+	</div>
+
+	{/* Responsive Hand-Drawn SVG Flowchart */}
+	<div class="w-full overflow-x-auto rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] p-3 dark:border-white/20 dark:bg-[#060E20]">
+		<svg
+			viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+			class="mx-auto h-auto w-full min-w-[580px] select-none"
+			role="img"
+			aria-labelledby={`${uid}-title ${uid}-desc`}
+		>
+			<title id={`${uid}-title`}>{title}</title>
+			<desc id={`${uid}-desc`}>
+				Visual architectural diagram showing: {a11ySummary}. {caption ?? ""}
+			</desc>
+			<defs>
+				<pattern id="hatch-mint" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#86EFAC" stroke-width="3" stroke-opacity="0.3" />
+				</pattern>
+				<pattern id="hatch-sky" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#38BDF8" stroke-width="3" stroke-opacity="0.3" />
+				</pattern>
+				<pattern id="hatch-yellow" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#FACC15" stroke-width="3" stroke-opacity="0.3" />
+				</pattern>
+				<pattern id="hatch-purple" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#C084FC" stroke-width="3.5" stroke-opacity="0.35" />
+				</pattern>
+				<pattern id="hatch-pink" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+					<line x1="0" y1="0" x2="0" y2="10" stroke="#F472B6" stroke-width="3" stroke-opacity="0.32" />
+				</pattern>
+			</defs>
+
+			{/* Layer 1: Node Boxes */}
+			{
+				nodes.map((node, index) => {
+					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
+					const y = boxY + (index % 2 === 0 ? -4 : 6);
+					const colorKey = node.color ?? PALETTE_CYCLE[index % PALETTE_CYCLE.length];
+					const palette = COLOR_MAP[colorKey];
+					const isBad = colorKey === "red" || node.status === "bad";
+					const isGood =
+						colorKey === "green" ||
+						colorKey === "orange" ||
+						node.status === "good" ||
+						index === nodes.length - 1;
+
+					return (
+						<g>
+							{/* Solid backing inside node for AAA text readability */}
+							<rect
+								x={x}
+								y={y}
+								width={boxW}
+								height={boxH}
+								rx="14"
+								fill={palette.nodeFill}
+								fill-opacity="0.92"
+							/>
+
+							{/* Cross-Hatched Marker Fill */}
+							<rect
+								x={x}
+								y={y}
+								width={boxW}
+								height={boxH}
+								rx="14"
+								fill={`url(#${palette.patternId})`}
+							/>
+
+							{/* Outer Sketchy Chalk Stroke #1 */}
+							<rect
+								x={x}
+								y={y}
+								width={boxW}
+								height={boxH}
+								rx="14"
+								fill="none"
+								stroke="#FFFFFF"
+								stroke-width="2.4"
+							/>
+
+							{/* Offset Double-Stroke Accent Line #2 */}
+							<rect
+								x={x + 2.5}
+								y={y - 2}
+								width={boxW}
+								height={boxH}
+								rx="16"
+								fill="none"
+								stroke={palette.border}
+								stroke-width="2"
+								stroke-opacity="0.95"
+							/>
+
+							{/* Evaluation Marker Badge (✓ Mint or ✗ Coral) */}
+							<g>
+								<circle
+									cx={x + boxW - 18}
+									cy={y + 18}
+									r="11"
+									fill={isBad ? "#FCA5A5" : isGood ? "#86EFAC" : "#EDE9FE"}
+									stroke="#2A1155"
+									stroke-width="2"
+								/>
+								<text
+									x={x + boxW - 18}
+									y={y + 22}
+									text-anchor="middle"
+									fill="#2A1155"
+									style="font-family: var(--font-mono); font-size: 12px; font-weight: 900;"
+								>
+									{isBad ? "✗" : "✓"}
+								</text>
+							</g>
+
+							{/* Optional Step Pill Badge */}
+							{node.badge && (
+								<g>
+									<rect
+										x={x + 14}
+										y={y - 13}
+										width={Math.max(node.badge.length * 8.5 + 18, 64)}
+										height="23"
+										rx="8"
+										fill={palette.hex}
+										stroke="#2A1155"
+										stroke-width="2"
+									/>
+									<text
+										x={x + 14 + Math.max(node.badge.length * 8.5 + 18, 64) / 2}
+										y={y + 2}
+										text-anchor="middle"
+										fill={palette.textOnBadge}
+										style="font-family: var(--font-mono); font-size: 11px; font-weight: 800; text-transform: uppercase;"
+									>
+										{node.badge}
+									</text>
+								</g>
+							)}
+
+							{/* Node Primary Label */}
+							<text
+								x={x + boxW / 2}
+								y={node.sublabel ? y + 48 : y + 58}
+								text-anchor="middle"
+								fill="#FFFFFF"
+								style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
+							>
+								{node.label.length > 26 ? `${node.label.slice(0, 24)}…` : node.label}
+							</text>
+
+							{/* Node Hand-Drawn Sub-label */}
+							{node.sublabel && (
+								<text
+									x={x + boxW / 2}
+									y={y + 76}
+									text-anchor="middle"
+									fill="#FEF08A"
+									style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 400;"
+								>
+									{node.sublabel.length > 30
+										? `${node.sublabel.slice(0, 28)}…`
+										: node.sublabel}
+								</text>
+							)}
+						</g>
+					);
+				})
+			}
+
+			{/* Layer 2: Connecting Arrows & High-Contrast Pill Labels (Never occluded by boxes) */}
+			{
+				nodes.map((_, index) => {
+					if (index >= nodes.length - 1) return null;
+					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
+					const y = boxY + (index % 2 === 0 ? -4 : 6);
+					const nextX = Math.round((index + 1) * stepSpan + (stepSpan - boxW) / 2);
+					const nextY = boxY + ((index + 1) % 2 === 0 ? -4 : 6);
+					const edge = edges[index];
+					const midX = Math.round((x + boxW + nextX) / 2);
+					const labelY = Math.max(y, nextY) + boxH + 26;
+					const pillW = edge?.label ? Math.max(edge.label.length * 8.2 + 22, 88) : 0;
+
+					return (
+						<g>
+							<path
+								d={`M ${x + boxW + 6} ${y + boxH / 2} C ${x + boxW + 34} ${y + boxH / 2 - 18}, ${nextX - 34} ${nextY + boxH / 2 - 18}, ${nextX - 8} ${nextY + boxH / 2}`}
+								fill="none"
+								stroke="#D8B4FE"
+								stroke-width="3"
+								stroke-dasharray="7 5"
+								stroke-linecap="round"
+							/>
+							<path
+								d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
+								fill="none"
+								stroke="#FEF08A"
+								stroke-width="3.2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+							{edge?.label && (
+								<g>
+									<rect
+										x={midX - pillW / 2}
+										y={labelY - 16}
+										width={pillW}
+										height="24"
+										rx="12"
+										fill="#0B1326"
+										fill-opacity="0.92"
+										stroke="#D8B4FE"
+										stroke-width="1.5"
+										stroke-dasharray="4 3"
+									/>
+									<text
+										x={midX}
+										y={labelY}
+										text-anchor="middle"
+										fill="#FEF08A"
+										style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 700;"
+									>
+										{edge.label}
+									</text>
+								</g>
+							)}
+						</g>
+					);
+				})
+			}
+		</svg>
+	</div>
+
+	{/* High-Contrast WCAG AAA Accessible Explanation Strip */}
+	<figcaption class="mt-4 flex flex-col justify-between gap-2 rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] px-4 py-3 text-left dark:border-white/20 dark:bg-[#0B1326] sm:flex-row sm:items-center">
+		<div class="font-hand text-xl font-bold text-[#2A1155] dark:text-slate-100">
+			<span class="mr-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+				[Diagram Walkthrough]
+			</span>
+			{caption ?? a11ySummary}
+		</div>
+		<span class="shrink-0 font-mono text-xs font-bold text-[#4C1D95] dark:text-purple-300">
+			AAA Contrast Verified
+		</span>
+	</figcaption>
+</figure>

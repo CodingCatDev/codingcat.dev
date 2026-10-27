@@ -1,0 +1,627 @@
+---
+/**
+ * State-Specific Vector Props, Particles & Bone Pivot Inspector Overlay (`#aj-fx-layer`).
+ * Supports all 6 core page states + 7 extended feline & developer action poses.
+ */
+import { AJ_BONE_PIVOTS, type AjAnimationState } from "./ajRigTypes";
+
+interface Props {
+	idPrefix: string;
+	state: AjAnimationState;
+	showPivots?: boolean;
+}
+
+const { idPrefix, state, showPivots = false } = Astro.props;
+---
+
+<g id={`${idPrefix}-aj-fx-layer`} class="aj-fx-layer">
+	{
+		state === "podcast-groove" && (
+			<g class="aj-fx-groove">
+				<path
+					d="M 18,240 Q -6,285 10,335"
+					stroke="#C5E86C"
+					stroke-width="5"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M -2,220 Q -32,285 -10,355"
+					stroke="#C084FC"
+					stroke-width="4"
+					stroke-linecap="round"
+					stroke-dasharray="8 8"
+					fill="none"
+				/>
+				<text
+					x="12"
+					y="175"
+					font-family="Nunito, sans-serif"
+					font-weight="900"
+					font-size="48"
+					fill="#C5E86C"
+				>
+					♪
+				</text>
+				<text
+					x="502"
+					y="165"
+					font-family="Nunito, sans-serif"
+					font-weight="900"
+					font-size="44"
+					fill="#C084FC"
+				>
+					♫
+				</text>
+				<text
+					x="530"
+					y="245"
+					font-family="Nunito, sans-serif"
+					font-weight="900"
+					font-size="36"
+					fill="#FACC15"
+				>
+					♪
+				</text>
+			</g>
+		)
+	}
+
+	{
+		state === "point-diagram" && (
+			<g class="aj-fx-bulb" transform="translate(566, 548) scale(0.88)">
+				<circle
+					cx="0"
+					cy="0"
+					r="28"
+					fill="#FEF08A"
+					stroke="#2A1155"
+					stroke-width="3.5"
+				/>
+				<text x="0" y="10" text-anchor="middle" font-size="30">
+					💡
+				</text>
+				<path
+					d="M 0,-40 L 0,-54 M 30,-26 L 42,-36 M 40,4 L 54,4"
+					stroke="#7C3AED"
+					stroke-width="5"
+					stroke-linecap="round"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "celebrate" && (
+			<g class="aj-fx-celebrate">
+				<polygon
+					points="55,130 65,152 88,155 70,170 75,194 55,182 35,194 40,170 22,155 45,152"
+					fill="#C5E86C"
+					stroke="#2A1155"
+					stroke-width="3"
+				/>
+				<polygon
+					points="515,110 523,128 542,130 528,143 532,162 515,152 498,162 502,143 488,130 507,128"
+					fill="#FACC15"
+					stroke="#2A1155"
+					stroke-width="3"
+				/>
+				<polygon
+					points="42,440 50,456 68,458 54,470 58,488 42,478 26,488 30,470 16,458 34,456"
+					fill="#C084FC"
+					stroke="#2A1155"
+					stroke-width="3"
+				/>
+				<circle cx="535" cy="410" r="11" fill="#86EFAC" />
+				<circle cx="85" cy="85" r="9" fill="#F472B6" />
+			</g>
+		)
+	}
+
+	{
+		state === "search-curious" && (
+			<g class="aj-fx-magnifier" transform="translate(518, 526)">
+				<circle
+					cx="0"
+					cy="0"
+					r="34"
+					fill="rgba(197, 232, 108, 0.22)"
+					stroke="#C5E86C"
+					stroke-width="7"
+				/>
+				<line
+					x1="-22"
+					y1="26"
+					x2="-46"
+					y2="56"
+					stroke="#7C3AED"
+					stroke-width="11"
+					stroke-linecap="round"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "404-confused" && (
+			<g class="aj-fx-404">
+				<text
+					x="38"
+					y="165"
+					font-family="Nunito, sans-serif"
+					font-weight="900"
+					font-size="60"
+					fill="#FCA5A5"
+					transform="rotate(-18 38 165)"
+				>
+					?
+				</text>
+				<text
+					x="502"
+					y="155"
+					font-family="Nunito, sans-serif"
+					font-weight="900"
+					font-size="52"
+					fill="#FACC15"
+					transform="rotate(15 502 155)"
+				>
+					?
+				</text>
+				<path
+					d="M 145,985 C 185,945 255,1015 315,965 C 365,925 415,995 455,955"
+					stroke="#C084FC"
+					stroke-width="6"
+					stroke-dasharray="10 6"
+					stroke-linecap="round"
+					fill="none"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "chase-yarn" && (
+			<g class="aj-fx-yarn">
+				<line
+					x1="25"
+					y1="620"
+					x2="85"
+					y2="610"
+					stroke="#38BDF8"
+					stroke-width="5"
+					stroke-linecap="round"
+				/>
+				<line
+					x1="15"
+					y1="675"
+					x2="92"
+					y2="665"
+					stroke="#C5E86C"
+					stroke-width="5"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 110,988 C 205,945 305,1015 390,955 C 440,920 480,885 505,835"
+					stroke="#C084FC"
+					stroke-width="7"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<circle
+					cx="515"
+					cy="795"
+					r="54"
+					fill="#7C3AED"
+					stroke="#F8FAFC"
+					stroke-width="8"
+				/>
+				<path
+					d="M 475,775 Q 515,745 555,785 M 470,798 Q 515,772 560,808 M 485,825 Q 520,802 548,832 M 492,750 Q 530,795 495,840 M 518,745 Q 552,790 520,842"
+					stroke="#C084FC"
+					stroke-width="5"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 435,845 Q 465,785 495,835"
+					stroke="#C5E86C"
+					stroke-width="4.5"
+					stroke-dasharray="8 6"
+					stroke-linecap="round"
+					fill="none"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "ship-it-laptop" && (
+			<g class="aj-fx-laptop" transform="translate(310, 625)">
+				<path
+					d="M -25,95 L 155,95 L 185,115 L -5,115 Z"
+					fill="#334155"
+					stroke="#F8FAFC"
+					stroke-width="5"
+					stroke-linejoin="round"
+				/>
+				<path
+					d="M 55,95 L 95,-15 L 245,-15 L 205,95 Z"
+					fill="#0F172A"
+					stroke="#C084FC"
+					stroke-width="6"
+					stroke-linejoin="round"
+				/>
+				<polygon
+					points="155,22 172,30 172,48 155,56 138,48 138,30"
+					fill="#C5E86C"
+					stroke="#7C3AED"
+					stroke-width="3"
+				/>
+				<line
+					x1="15"
+					y1="55"
+					x2="55"
+					y2="55"
+					stroke="#C5E86C"
+					stroke-width="4.5"
+					stroke-linecap="round"
+				/>
+				<line
+					x1="25"
+					y1="72"
+					x2="72"
+					y2="72"
+					stroke="#38BDF8"
+					stroke-width="4.5"
+					stroke-linecap="round"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "coffee-sip" && (
+			<g class="aj-fx-coffee" transform="translate(465, 535)">
+				<path
+					d="M 48,18 C 72,18 72,56 48,56"
+					stroke="#F8FAFC"
+					stroke-width="14"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 48,18 C 72,18 72,56 48,56"
+					stroke="#7C3AED"
+					stroke-width="8"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<rect
+					x="0"
+					y="6"
+					width="54"
+					height="64"
+					rx="12"
+					fill="#7C3AED"
+					stroke="#F8FAFC"
+					stroke-width="5"
+				/>
+				<text
+					x="27"
+					y="45"
+					text-anchor="middle"
+					font-family="monospace"
+					font-weight="900"
+					font-size="18"
+					fill="#C5E86C"
+				>
+					&lt;/&gt;
+				</text>
+				<path
+					d="M 16,-8 C 8,-26 28,-36 18,-54"
+					stroke="#C084FC"
+					stroke-width="4.5"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 38,-4 C 30,-22 50,-32 40,-50"
+					stroke="#C5E86C"
+					stroke-width="4.5"
+					stroke-linecap="round"
+					fill="none"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "mind-blown" && (
+			<g class="aj-fx-mind-blown">
+				<path
+					d="M 192,615 C 135,585 132,525 168,472"
+					stroke="#F8FAFC"
+					stroke-width="62"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<circle cx="174" cy="462" r="34" fill="#F8FAFC" />
+				<path
+					d="M 392,615 C 448,585 462,525 436,472"
+					stroke="#F8FAFC"
+					stroke-width="62"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<circle cx="430" cy="462" r="34" fill="#F8FAFC" />
+				<path
+					d="M 192,615 C 135,585 132,525 168,472"
+					stroke="#050507"
+					stroke-width="46"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<circle cx="174" cy="462" r="26" fill="#050507" />
+				<path
+					d="M 162,448 L 158,426 M 176,445 L 176,422 M 190,450 L 194,428"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 392,615 C 448,585 462,525 436,472"
+					stroke="#050507"
+					stroke-width="46"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<circle cx="430" cy="462" r="26" fill="#050507" />
+				<path
+					d="M 416,450 L 412,428 M 430,445 L 430,422 M 444,448 L 448,426"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 175,55 L 152,10 L 202,32 L 185,-8"
+					stroke="#C5E86C"
+					stroke-width="6.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					fill="none"
+				/>
+				<path
+					d="M 415,55 L 438,10 L 388,32 L 405,-8"
+					stroke="#FCA5A5"
+					stroke-width="6.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					fill="none"
+				/>
+				<path
+					d="M 295,35 L 295,-12"
+					stroke="#FACC15"
+					stroke-width="7.5"
+					stroke-linecap="round"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "cool-shades" && (
+			<g class="aj-fx-cool-shades">
+				<path
+					d="M 192,625 C 185,715 335,718 392,672"
+					stroke="#F8FAFC"
+					stroke-width="64"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 398,625 C 405,715 255,718 198,672"
+					stroke="#F8FAFC"
+					stroke-width="64"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 192,625 C 185,715 335,718 392,672"
+					stroke="#050507"
+					stroke-width="50"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 398,625 C 405,715 255,718 198,672"
+					stroke="#050507"
+					stroke-width="50"
+					stroke-linecap="round"
+					fill="none"
+				/>
+				<path
+					d="M 195,672 C 235,712 355,712 395,672"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 215,648 C 255,685 335,685 375,648"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 212,642 C 192,642 192,666 214,666"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 378,642 C 398,642 398,666 376,666"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 178,312 L 478,308"
+					stroke="#F8FAFC"
+					stroke-width="9"
+					stroke-linecap="round"
+				/>
+				<path
+					d="M 195,312 L 338,312 L 326,396 C 305,412 222,412 204,392 Z"
+					fill="#0B1326"
+					stroke="#F8FAFC"
+					stroke-width="5.5"
+					stroke-linejoin="round"
+				/>
+				<path
+					d="M 366,310 L 476,308 L 468,392 C 452,408 386,408 372,392 Z"
+					fill="#0B1326"
+					stroke="#F8FAFC"
+					stroke-width="5.5"
+					stroke-linejoin="round"
+				/>
+				<line
+					x1="226"
+					y1="332"
+					x2="254"
+					y2="378"
+					stroke="#C5E86C"
+					stroke-width="5"
+					stroke-linecap="round"
+				/>
+				<line
+					x1="244"
+					y1="332"
+					x2="262"
+					y2="362"
+					stroke="#F8FAFC"
+					stroke-width="3.5"
+					stroke-linecap="round"
+				/>
+				<line
+					x1="394"
+					y1="330"
+					x2="420"
+					y2="374"
+					stroke="#C5E86C"
+					stroke-width="5"
+					stroke-linecap="round"
+				/>
+				<line
+					x1="412"
+					y1="330"
+					x2="428"
+					y2="358"
+					stroke="#F8FAFC"
+					stroke-width="3.5"
+					stroke-linecap="round"
+				/>
+			</g>
+		)
+	}
+
+	{
+		state === "peek-corner" && (
+			<g class="aj-fx-peek">
+				<rect
+					x="20"
+					y="520"
+					width="520"
+					height="90"
+					rx="18"
+					fill="#1E293B"
+					stroke="#C084FC"
+					stroke-width="4"
+				/>
+				<circle cx="54" cy="552" r="9" fill="#FCA5A5" />
+				<circle cx="82" cy="552" r="9" fill="#FACC15" />
+				<circle cx="110" cy="552" r="9" fill="#86EFAC" />
+				<text
+					x="280"
+					y="590"
+					text-anchor="middle"
+					font-family="monospace"
+					font-weight="800"
+					font-size="20"
+					fill="#94A3B8"
+				>
+					// AJ peeking over code block
+				</text>
+				<ellipse cx="195" cy="524" rx="44" ry="30" fill="#F8FAFC" />
+				<ellipse cx="195" cy="524" rx="36" ry="22" fill="#050507" />
+				<path
+					d="M 172,516 L 172,538 M 188,514 L 188,540 M 204,514 L 204,540 M 220,516 L 220,538"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+				<ellipse cx="425" cy="524" rx="44" ry="30" fill="#F8FAFC" />
+				<ellipse cx="425" cy="524" rx="36" ry="22" fill="#050507" />
+				<path
+					d="M 402,516 L 402,538 M 418,514 L 418,540 M 434,514 L 434,540 M 450,516 L 450,538"
+					fill="none"
+					stroke="#F8FAFC"
+					stroke-width="3.2"
+					stroke-linecap="round"
+				/>
+			</g>
+		)
+	}
+</g>
+
+<!-- 11. Bone Pivot & Rig Hierarchy Overlay (For /mascot-lab Inspector) -->
+<g
+	id={`${idPrefix}-aj-pivots`}
+	class:list={["aj-pivot-overlay", !showPivots && "hidden"]}
+>
+	{
+		AJ_BONE_PIVOTS.map((p) => (
+			<g
+				class="aj-pivot-marker"
+				data-pivot-bone={p.id}
+				transform={`translate(${p.x}, ${p.y})`}
+			>
+				<circle
+					cx="0"
+					cy="0"
+					r="14"
+					fill="#0B1326"
+					stroke={p.color}
+					stroke-width="4"
+				/>
+				<line x1="-22" y1="0" x2="22" y2="0" stroke={p.color} stroke-width="3" />
+				<line x1="0" y1="-22" x2="0" y2="22" stroke={p.color} stroke-width="3" />
+				<rect
+					x="18"
+					y="-18"
+					width={p.label.length * 12.5 + 18}
+					height="34"
+					rx="8"
+					fill="#0B1326"
+					stroke={p.color}
+					stroke-width="2.5"
+				/>
+				<text
+					x="27"
+					y="5"
+					font-family="monospace"
+					font-weight="800"
+					font-size="18"
+					fill={p.color}
+				>
+					{p.label}
+				</text>
+			</g>
+		))
+	}
+</g>

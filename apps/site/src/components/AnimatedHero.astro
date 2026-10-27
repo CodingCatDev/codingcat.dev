@@ -1,48 +1,307 @@
 ---
-import AjHeadphones from "@/components/icons/AjHeadphones.astro";
-import AjPrimaryAlt from "@/components/icons/AjPrimaryAlt.astro";
-import { HERO_ICONS } from "@/lib/hero-icons";
-
 /**
- * Ported from the Next `animated-hero.tsx`. Its only state was `isHovered`,
- * driving a transform on the two paw marks — expressed here with
- * `group-hover:`, so the hero ships no JavaScript at all.
+ * CodingCat.dev 2026 - Dual-Theme Video-First Chalkboard Hero (`AnimatedHero.astro`).
+ *
+ * Implements Google Stitch reference screens:
+ * - Light Mode (Chalkboard Paper): 8d1319903d504a79ae56110486455e17
+ * - Dark Mode (Obsidian Chalkboard): b9e00f99c0d34e9884bf7766a014577b
+ *
+ * Uses canonical terminology: Courses, Podcasts, Blog, and Diagrams.
  */
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 ---
 
-<div class="relative w-full h-[500px] overflow-hidden">
-	<div class="absolute inset-0 grid grid-cols-4 grid-rows-3 gap-4" aria-hidden="true">
-		{
-			HERO_ICONS.map((icon, index) => (
-				<div
-					class="flex items-center justify-center text-muted-foreground/20 animate-float"
-					style={`animation-delay: ${index * 0.5}s`}
-				>
-					<svg class="size-16" viewBox={icon.viewBox} fill="currentColor">
-						{icon.paths.map((d) => (
-							<path d={d} />
-						))}
+<section class="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 md:pb-24 md:pt-10">
+	<div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
+		{/* Left Column: High-Impact Brand Copy & Primary Actions */}
+		<div class="space-y-6 lg:col-span-5">
+			<div class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 dark:border-purple-400/40 dark:bg-purple-950/60 hand-border shadow-sketch-sm">
+				<span class="size-2.5 animate-pulse rounded-full bg-[#58CC02] dark:bg-emerald-400"></span>
+				<span class="text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:text-purple-200">
+					Courses · Podcasts · Blog
+				</span>
+			</div>
+
+			<h1 class="font-display text-5xl font-black leading-[1.05] tracking-tight text-[#2A1155] dark:text-white sm:text-6xl lg:text-7xl">
+				free. fun. <br />
+				<span class="relative inline-block text-[#7C3AED] dark:bg-gradient-to-r dark:from-[#C084FC] dark:via-purple-300 dark:to-fuchsia-300 dark:bg-clip-text dark:text-transparent">
+					purrfect.
+					<svg
+						class="absolute -bottom-2 left-0 h-4 w-full text-[#7C3AED] dark:text-[#C084FC]"
+						fill="none"
+						viewBox="0 0 200 16"
+						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
+					>
+						<path
+							d="M3 12C50 4 140 2 197 11"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-width="5"
+						></path>
 					</svg>
-				</div>
-			))
-		}
-	</div>
-	<div class="relative z-10 flex flex-col items-center justify-center h-full space-y-4">
-		<div class="group relative bg-background/80 p-8 rounded-lg">
-			<h1 class="text-4xl font-bold tracking-tighter text-center sm:text-5xl md:text-6xl">
-				CodingCat.dev Podcast
+				</span>
 			</h1>
-			<p class="max-w-[600px] text-center text-muted-foreground md:text-xl/relaxed">
-				Purrfect Podcast for Web Developers
+
+			<p class="font-hand -rotate-1 text-3xl font-bold text-[#2A1155] dark:text-purple-200 sm:text-4xl">
+				learn by building real apps.
 			</p>
-			<div class="absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg pointer-events-none">
-				<AjHeadphones
-					cls="absolute w-24 h-24 -top-12 -right-12 transition-transform duration-500 animate-paw-one group-hover:animate-none group-hover:translate-x-32 group-hover:-translate-y-32 group-hover:rotate-45"
-				/>
-				<AjPrimaryAlt
-					cls="absolute w-24 h-24 -bottom-12 -left-12 transition-transform duration-500 animate-paw-two group-hover:animate-none group-hover:-translate-x-32 group-hover:translate-y-32 group-hover:-rotate-45"
-				/>
+
+			<p class="max-w-md text-lg font-medium leading-relaxed text-[#2A1155]/80 dark:text-slate-300">
+				No dry lectures or generic walls of text. Master full-stack web architecture, AI agents, and modern frameworks through interactive{" "}
+				<strong class="font-bold text-[#7C3AED] underline decoration-[#7C3AED] decoration-wavy dark:text-[#C084FC] dark:decoration-[#C084FC]">
+					visual diagrams
+				</strong>
+				, hands-on courses, podcasts, and blog posts with AJ.
+			</p>
+
+			{/* Primary CTA Stack: Courses, Podcasts, Blog */}
+			<div class="flex flex-wrap items-center gap-3.5 pt-2">
+				<a
+					href="/courses"
+					class="tactile-btn px-7 py-3.5 text-base font-extrabold tracking-wide sm:text-lg"
+				>
+					<span>Explore Courses</span>
+					<span class="text-[#86EFAC]">→</span>
+				</a>
+				<a
+					href="/podcasts"
+					class="duo-btn cc-btn-outline inline-flex items-center gap-2 px-5 py-3.5 text-sm font-bold sm:text-base"
+				>
+					<svg
+						class="size-5 text-[#7C3AED] dark:text-[#C084FC]"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						aria-hidden="true"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+							clip-rule="evenodd"
+						></path>
+					</svg>
+					<span>Watch Podcasts</span>
+				</a>
+				<a
+					href="/blog"
+					class="duo-btn cc-btn-outline inline-flex items-center gap-2 px-5 py-3.5 text-sm font-bold sm:text-base"
+				>
+					<span>Read Blog</span>
+				</a>
+			</div>
+
+			{/* Mini Stats Row */}
+			<div class="flex flex-wrap items-center gap-5 pt-2 text-sm font-bold text-[#2A1155]/75 dark:text-slate-300">
+				<div class="flex items-center gap-1.5">
+					<span class="font-display text-lg font-black text-[#7C3AED] dark:text-[#C084FC]">
+						Courses
+					</span>
+					<span>&amp; Lessons</span>
+				</div>
+				<div class="h-4 w-0.5 bg-[#2A1155]/20 dark:bg-white/20"></div>
+				<div class="flex items-center gap-1.5">
+					<span class="font-display text-lg font-black text-[#7C3AED] dark:text-[#C084FC]">
+						Podcasts
+					</span>
+					<span>&amp; Video</span>
+				</div>
+				<div class="h-4 w-0.5 bg-[#2A1155]/20 dark:bg-white/20"></div>
+				<div class="flex items-center gap-1.5">
+					<span class="font-display text-lg font-black text-[#58CC02] dark:text-[#86EFAC]">
+						Blog
+					</span>
+					<span>&amp; Diagrams</span>
+				</div>
+			</div>
+		</div>
+
+		{/* Right Column: Interactive Diagram Whiteboard/Chalkboard Card with AJ Mascot */}
+		<div class="relative lg:col-span-7">
+			{/* Main Diagram Canvas Card */}
+			<div class="relative z-10 rounded-3xl bg-white p-5 sm:p-7 md:p-8 dark:bg-[#131B2E]/90 hand-border shadow-sketch-lg dark:shadow-glow-purple">
+				{/* Window Top Bar */}
+				<div class="mb-6 flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2A1155]/15 pb-4 dark:border-white/15">
+					<div class="flex items-center gap-2">
+						<span class="size-3.5 rounded-full border border-[#2A1155] bg-[#FBCFE8] dark:border-black/60 dark:bg-[#F472B6]"></span>
+						<span class="size-3.5 rounded-full border border-[#2A1155] bg-[#FEF08A] dark:border-black/60 dark:bg-[#FACC15]"></span>
+						<span class="size-3.5 rounded-full border border-[#2A1155] bg-[#86EFAC] dark:border-black/60 dark:bg-[#86EFAC]"></span>
+						<span class="ml-2 font-mono text-xs font-bold text-[#2A1155]/70 dark:text-slate-300">
+							codingcat-app-flow.diagram
+						</span>
+					</div>
+					<span class="rounded-full border border-[#7C3AED]/40 bg-[#EDE9FE] px-3 py-1 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
+						VISUAL DIAGRAM
+					</span>
+				</div>
+
+				{/* Flowchart Architecture Diagram */}
+				<div class="relative flex flex-col items-center space-y-5 py-2">
+					{/* Top Node: Root Orchestrator */}
+					<div class="relative rounded-2xl border-2 border-[#2A1155] bg-[#7C3AED] px-6 py-3 text-white shadow-sketch dark:border-white/80 chalk-hatch">
+						<div class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#FEF08A]">
+							Root Orchestrator
+						</div>
+						<div class="font-display text-lg font-extrabold tracking-wide">
+							&lt;CodingCatApp /&gt;
+						</div>
+					</div>
+
+					{/* Hand-drawn SVG Branch Connectors */}
+					<svg
+						class="-my-2 h-12 w-full max-w-md"
+						fill="none"
+						viewBox="0 0 400 50"
+						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
+					>
+						<path
+							d="M200 2 C200 25, 70 15, 70 46"
+							class="stroke-[#2A1155] dark:stroke-purple-300"
+							stroke-dasharray="5 4"
+							stroke-linecap="round"
+							stroke-width="2.5"
+						></path>
+						<path
+							d="M200 2 L200 46"
+							class="stroke-[#2A1155] dark:stroke-purple-300"
+							stroke-linecap="round"
+							stroke-width="2.5"
+						></path>
+						<path
+							d="M200 2 C200 25, 330 15, 330 46"
+							class="stroke-[#2A1155] dark:stroke-purple-300"
+							stroke-dasharray="5 4"
+							stroke-linecap="round"
+							stroke-width="2.5"
+						></path>
+						<polygon points="70,49 65,41 75,41" class="fill-[#2A1155] dark:fill-purple-300"></polygon>
+						<polygon points="200,49 195,41 205,41" class="fill-[#2A1155] dark:fill-purple-300"></polygon>
+						<polygon points="330,49 325,41 335,41" class="fill-[#2A1155] dark:fill-purple-300"></polygon>
+					</svg>
+
+					{/* Middle Row Nodes */}
+					<div class="grid w-full grid-cols-3 gap-3 sm:gap-4">
+						{/* Node 1: Sky Blue */}
+						<div class="flex flex-col items-center rounded-2xl border-2 border-[#2A1155] bg-[#BAE6FD] p-3 text-center transition-transform hover:-rotate-2 dark:border-[#38BDF8] dark:bg-sky-950/80 hand-border-rect shadow-sketch-sm">
+							<span class="font-hand text-2xl font-bold text-[#0369A1] dark:text-[#38BDF8]">
+								?
+							</span>
+							<span class="mt-0.5 text-xs font-extrabold text-[#2A1155] dark:text-sky-100 sm:text-sm">
+								Router &amp; Auth
+							</span>
+						</div>
+
+						{/* Node 2: Lilac / Signals Engine */}
+						<div class="flex flex-col items-center rounded-2xl border-2 border-[#2A1155] bg-[#EDE9FE] p-3 text-center transition-transform hover:rotate-1 dark:border-[#C084FC] dark:bg-purple-950/80 hand-border-rect shadow-sketch-sm">
+							<span class="font-mono text-[10px] font-bold text-[#7C3AED] dark:text-purple-300">
+								STATE
+							</span>
+							<span class="mt-1 text-xs font-extrabold text-[#2A1155] dark:text-purple-100 sm:text-sm">
+								Signals Engine
+							</span>
+						</div>
+
+						{/* Node 3: Candy Pink / Edge Cache */}
+						<div class="flex flex-col items-center rounded-2xl border-2 border-[#2A1155] bg-[#FBCFE8] p-3 text-center transition-transform hover:rotate-2 dark:border-[#F472B6] dark:bg-pink-950/80 hand-border-rect shadow-sketch-sm">
+							<span class="font-mono text-[10px] font-bold text-[#9D174D] dark:text-pink-300">
+								DATA
+							</span>
+							<span class="mt-1 text-xs font-extrabold text-[#2A1155] dark:text-pink-100 sm:text-sm">
+								Edge Cache
+							</span>
+						</div>
+					</div>
+
+					{/* Lower Connector & Yellow Sticky Note + Glowing Purple Yarn Swirl + AJ Mascot Row */}
+					<div class="relative flex w-full flex-col items-center justify-between gap-4 pt-2 sm:flex-row sm:px-2">
+						{/* Hand-drawn Yellow Sticky Note */}
+						<div class="relative z-10 max-w-[220px] -rotate-2 rounded-xl border-2 border-[#2A1155] bg-[#FEF08A] p-3.5 text-[#2A1155] shadow-sketch-sm dark:border-yellow-600">
+							<div class="font-hand text-lg font-bold leading-tight text-[#713F12]">
+								✏️ AJ&apos;s Tip:
+							</div>
+							<p class="font-hand text-base leading-snug text-[#854D0E]">
+								&ldquo;No bloated build tools. Pure edge speed!&rdquo;
+							</p>
+						</div>
+
+						{/* Glowing Purple Yarn Curve connecting Sticky Note to Yarn Ball */}
+						<svg
+							class="pointer-events-none hidden h-20 w-40 shrink-0 sm:block"
+							viewBox="0 0 180 80"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<path
+								d="M 4 28 C 42 10, 62 72, 108 56 C 138 44, 152 24, 174 44"
+								stroke="#A855F7"
+								stroke-width="7"
+								stroke-linecap="round"
+								class="opacity-45 blur-[3px]"
+							/>
+							<path
+								d="M 4 28 C 42 10, 62 72, 108 56 C 138 44, 152 24, 174 44"
+								stroke="#7C3AED"
+								stroke-width="3.5"
+								stroke-linecap="round"
+								stroke-dasharray="8 4"
+							/>
+						</svg>
+
+						{/* Center Converging Node */}
+						<div class="relative z-10 rotate-1 rounded-xl border-2 border-[#2A1155] bg-white px-4 py-2 shadow-sketch-sm dark:border-[#A855F7] dark:bg-[#171F33] chalk-hatch">
+							<span class="font-mono text-xs font-extrabold text-[#2A1155] dark:text-purple-100">
+								⚡ WebSockets &amp; AI Stream
+							</span>
+						</div>
+
+						{/* Spacer for AJ Mascot on desktop */}
+						<div class="hidden w-28 sm:block"></div>
+					</div>
+				</div>
+
+				{/* Interactive Purple Yarn Swirl & Ball Footer */}
+				<div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-3 pr-0 sm:pr-32 dark:border-white/15">
+					<div class="flex items-center gap-3">
+						<div class="flex size-9 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#7C3AED] shadow-sketch-sm dark:border-white/80 dark:bg-gradient-to-tr dark:from-[#7C3AED] dark:to-[#D946EF]">
+							<svg class="size-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+								<circle cx="12" cy="12" r="8"></circle>
+								<path d="M6 9c4-2 8-2 12 1M5 13c5-2 9-1 14 2"></path>
+							</svg>
+						</div>
+						<span class="font-hand text-lg font-bold text-[#7C3AED] dark:text-[#C084FC]">
+							Follow the purple yarn trail down the page ↓
+						</span>
+					</div>
+					<a
+						href="/mascot-lab"
+						class="font-mono text-[11px] font-extrabold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+					>
+						Open AJ Mascot Lab →
+					</a>
+				</div>
+
+				{/* Articulated Interactive 2D Vector AJ Mascot + Glowing Yarn Ball in Bottom-Right Corner */}
+				<div class="mt-4 flex items-end justify-center gap-1 sm:absolute sm:-bottom-5 sm:-right-3 sm:mt-0">
+					<div class="relative -mr-3 mb-3 size-12 shrink-0">
+						<div class="absolute inset-0 animate-pulse rounded-full bg-[#A855F7] opacity-60 blur-md"></div>
+						<svg class="relative size-full" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+							<circle cx="50" cy="50" r="42" fill="#7C3AED" stroke="#2A1155" stroke-width="5"></circle>
+							<path d="M 20 40 Q 50 10 80 40" stroke="#DDD6FE" stroke-width="4" stroke-linecap="round"></path>
+							<path d="M 20 60 Q 50 90 80 60" stroke="#C4B5FD" stroke-width="4" stroke-linecap="round"></path>
+							<path d="M 30 25 Q 70 50 40 85" stroke="#EDE9FE" stroke-width="3.5" stroke-linecap="round"></path>
+						</svg>
+					</div>
+					<AjAnimatedMascot
+						id="hero-aj"
+						variant="full-body"
+						state="idle-wave"
+						angle="three-quarter-left"
+						caption="Purrfect code! 🐾"
+						cls="h-auto w-28 sm:w-32"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</section>

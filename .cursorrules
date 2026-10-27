@@ -1,0 +1,12 @@
+# CodingCat.dev Cursor & IDE Rules (`.cursorrules`)
+
+Always follow `AGENTS.md` and `DESIGN.md`:
+
+1. **Canonical Content Pillars & Terminology**:
+   - **Courses** (`/courses` -> `/course/[slug]`), made of **Lessons** (`Explore Courses →`, `Start Course →`).
+   - **Podcasts** (`/podcasts` -> `/podcast/[slug]`), made of **Episodes** (`Watch Podcasts`, `Watch Episode →`).
+   - **Blog** (`/blog` -> `/post/[slug]`), made of **Blog Posts** (`Read Blog`, `Read Post →`).
+   - **Diagrams**: Never write the brand word `"Excalidraw"` in user-facing UI copy, badges, filenames, or captions; call them **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams**. Never invent synonyms like `"Teardowns"`, `"Blueprints"`, `"Curriculum"`, `"Units"`, or `"Skill Trees"`.
+2. **NEVER Use Em-Dashes**: Do not output the em-dash character anywhere.
+3. **Always Use Tables for Comparisons**: Render Markdown or HTML comparison tables.
+4. **Header & Mobile 3-Line Drawer**: Never put a `"Get Started"` button inside `#site-header`; keep the mobile header clean so `#nav-drawer-toggle` (the 3-line menu button) is always visible.

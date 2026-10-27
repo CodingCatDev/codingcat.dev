@@ -1,123 +1,171 @@
 ---
+import AjHeadphones from "@/components/icons/AjHeadphones.astro";
 import { settingsQuery } from "@/lib/sanity/queries";
 import NavLink from "./NavLink.astro";
-import ThemeToggle from "./ThemeToggle.astro";
 import SearchModal from "./SearchModal.astro";
+import ThemeToggle from "./ThemeToggle.astro";
 
 const settings = await Astro.locals.sanity.loadQuery(settingsQuery);
 const navLinks = settings?.navLinks ?? [];
 
-// The Next header split these across a desktop <nav> and a mobile Sheet;
-// `sideOnly` links appear only in the drawer.
 const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
+const hasCoursesLink = desktopLinks.some((link) =>
+	(link?.path ?? "").startsWith("/course"),
+);
+const hasTopicsLink = desktopLinks.some((link) =>
+	(link?.path ?? "").startsWith("/topic"),
+);
+const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 ---
 
 <header
 	id="site-header"
-	class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between px-6 py-4 shadow-md bg-background"
+	class="fixed left-0 right-0 top-0 z-40 px-3 pt-2.5 sm:px-6 sm:pt-4"
 >
-	<div class="flex items-center gap-4">
-		<a class="text-lg font-bold md:text-2xl" href="/">CodingCat.dev</a>
-		<nav class="items-center hidden md:flex gap-6" aria-label="Main">
-			{
-				desktopLinks.map((link) => (
-					<NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>
-				))
-			}
-		</nav>
-	</div>
-	<div class="flex items-center gap-2">
-		<button
-			type="button"
-			id="search-header-trigger"
-			data-track="search_open"
-			data-track-label="header_search"
-			class="inline-flex min-h-8 min-w-8 items-center justify-center sm:justify-between gap-3 rounded-full px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors border border-border/70 cursor-pointer"
-			aria-label="Search CodingCat.dev (⌘K)"
-		>
-			<span class="inline-flex items-center gap-1.5">
+	<div class="mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-full border-2 border-[#2A1155] bg-white/95 px-3.5 py-2 backdrop-blur-md dark:border-white/22 dark:bg-[#131B2E]/90 sm:px-6 sm:py-2.5 shadow-sketch">
+		<div class="flex min-w-0 items-center gap-4 lg:gap-6">
+			<a
+				class="group flex shrink-0 items-center gap-2 font-display text-lg font-black tracking-tight text-[#2A1155] dark:text-white sm:gap-2.5 sm:text-2xl"
+				href="/"
+			>
+				<div class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] transition-transform duration-200 group-hover:-rotate-6 group-hover:scale-105 dark:border-white/40 sm:size-10 shadow-sketch-sm">
+					<AjHeadphones cls="block size-6 sm:size-8" />
+				</div>
+				<span class="truncate">
+					CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
+				</span>
+			</a>
+			<nav class="hidden items-center gap-6 text-sm font-bold text-[#2A1155]/85 dark:text-slate-200 lg:flex" aria-label="Main">
+				{
+					!hasCoursesLink && (
+						<NavLink href="/courses">
+							<span class="inline-flex items-center gap-1.5 font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+								Courses
+							</span>
+						</NavLink>
+					)
+				}
+				{
+					desktopLinks.map((link) => (
+						<NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>
+					))
+				}
+				{
+					!hasTopicsLink && (
+						<NavLink href="/topics">Topics</NavLink>
+					)
+				}
+			</nav>
+		</div>
+
+		<div class="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+			<button
+				type="button"
+				id="search-header-trigger"
+				data-track="search_open"
+				data-track-label="header_search"
+				class="inline-flex size-9 cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-xs font-bold text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#0B1326]/90 dark:text-slate-100 dark:hover:border-[#C084FC] sm:w-auto sm:px-3 sm:py-1.5 shadow-sketch-sm"
+				aria-label="Search CodingCat.dev (⌘K)"
+			>
+				<span class="inline-flex items-center gap-1.5">
+					<svg
+						class="size-4 text-[#7C3AED] dark:text-[#C084FC] sm:size-3.5"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<circle cx="11" cy="11" r="8"></circle>
+						<path d="m21 21-4.3-4.3"></path>
+					</svg>
+					<span class="hidden font-mono text-[11px] uppercase tracking-wider sm:inline">Search</span>
+				</span>
+				<span class="hidden items-center rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-1.5 py-0.5 font-mono text-[10px] font-bold text-[#2A1155] dark:border-white/20 dark:bg-[#171F33] dark:text-[#C084FC] md:inline-flex">⌘K</span>
+			</button>
+
+			<button
+				type="button"
+				id="ask-agent-header-trigger"
+				class="inline-flex size-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] font-mono text-[11px] font-bold uppercase tracking-wider text-[#2A1155] transition-colors hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 dark:hover:border-[#C084FC] md:w-auto md:px-3 md:py-1.5 shadow-sketch-sm"
+				aria-label="Ask Agent AJ"
+			>
 				<svg
-					class="size-3.5"
+					class="size-4 text-[#7C3AED] dark:text-[#C084FC] md:size-3.5"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
-					stroke-width="2"
+					stroke-width="2.5"
 					stroke-linecap="round"
 					stroke-linejoin="round"
 					aria-hidden="true"
 				>
-					<circle cx="11" cy="11" r="8"></circle>
-					<path d="m21 21-4.3-4.3"></path>
+					<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+					<path d="M20 3v4"></path>
+					<path d="M22 5h-4"></path>
 				</svg>
-				<span class="hidden sm:inline font-mono text-[11px] uppercase tracking-wider text-foreground">Search</span>
-			</span>
-			<span class="hidden md:inline-flex items-center text-[10px] font-mono bg-muted text-foreground px-1.5 py-0.5 rounded border border-border">⌘K</span>
-		</button>
-		<button
-			type="button"
-			id="ask-agent-header-trigger"
-			class="inline-flex min-h-8 min-w-8 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-foreground hover:bg-accent transition-colors border border-border/70 cursor-pointer"
-			aria-label="Ask Agent AJ"
-		>
-			<svg
-				class="size-3.5 text-primary"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
+				<span class="hidden md:inline">Ask Agent</span>
+			</button>
+
+			<ThemeToggle />
+
+			<button
+				type="button"
+				id="nav-drawer-toggle"
+				class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#EDE9FE] dark:border-white/20 dark:bg-[#0B1326] dark:text-white lg:hidden shadow-sketch-sm"
+				aria-controls="nav-drawer"
+				aria-expanded="false"
+				aria-label="Open navigation menu"
 			>
-				<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
-				<path d="M20 3v4"></path>
-				<path d="M22 5h-4"></path>
-			</svg>
-			<span class="hidden sm:inline">Ask Agent</span>
-		</button>
-		<ThemeToggle />
-		<button
-			type="button"
-			id="nav-drawer-toggle"
-			class="md:hidden inline-flex items-center justify-center rounded-md size-9 hover:bg-accent hover:text-accent-foreground transition-colors"
-			aria-controls="nav-drawer"
-			aria-expanded="false"
-		>
-			<svg
-				class="size-6"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-			>
-				<path d="M3 6h18M3 12h18M3 18h18"></path>
-			</svg>
-			<span class="sr-only">Toggle navigation menu</span>
-		</button>
+				<svg
+					class="size-5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M3 6h18M3 12h18M3 18h18"></path>
+				</svg>
+				<span class="sr-only">Toggle navigation menu</span>
+			</button>
+		</div>
 	</div>
 </header>
 
 <div
 	id="nav-drawer"
 	hidden
-	class="fixed inset-0 z-50 md:hidden bg-background/95 backdrop-blur"
+	class="fixed inset-0 z-50 bg-[#FAF9FC]/98 backdrop-blur-md dark:bg-[#0B1326]/98 lg:hidden"
 >
-	<div class="flex items-center justify-end px-6 py-4">
+	<div class="flex items-center justify-between border-b border-[#2A1155]/15 px-6 py-4 dark:border-white/15">
+		<a
+			href="/"
+			class="flex items-center gap-2.5 font-display text-xl font-black text-[#2A1155] dark:text-white"
+		>
+			<div class="flex size-8 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] dark:border-white/40">
+				<AjHeadphones cls="block size-6" />
+			</div>
+			<span>
+				CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
+			</span>
+		</a>
 		<button
 			type="button"
 			id="nav-drawer-close"
-			class="inline-flex items-center justify-center rounded-md size-9 hover:bg-accent"
+			class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-white text-[#2A1155] dark:border-white/25 dark:bg-[#131B2E] dark:text-white shadow-sketch-sm"
 			aria-label="Close navigation menu"
 		>
 			<svg
-				class="size-6"
+				class="size-5"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
-				stroke-width="2"
+				stroke-width="2.5"
 				stroke-linecap="round"
 				stroke-linejoin="round"
 				aria-hidden="true"
@@ -126,7 +174,10 @@ const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 			</svg>
 		</button>
 	</div>
-	<nav class="grid gap-2 px-6 py-6 text-lg" aria-label="Mobile">
+	<nav class="grid gap-4 px-6 py-6 text-xl font-bold text-[#2A1155] dark:text-white" aria-label="Mobile">
+		{!hasHomeLink && <NavLink href="/">Home</NavLink>}
+		{!hasCoursesLink && <NavLink href="/courses">Courses</NavLink>}
+		{!hasTopicsLink && <NavLink href="/topics">Topics &amp; Vendors</NavLink>}
 		{navLinks.map((link) => <NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>)}
 	</nav>
 </div>

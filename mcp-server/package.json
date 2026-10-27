@@ -1,0 +1,22 @@
+{
+  "name": "@codingcatdev/mcp-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker MCP Server exposing CodingCat.dev Design System rules, AJ Mascot & Excalidraw visual prompts, @alex.patterson voice rules, and W3C design tokens.",
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "hono": "^4.7.10",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250525.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.16.0"
+  }
+}

@@ -1,7 +1,9 @@
 ---
-import ContentGrid from "@/components/ContentGrid.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import Pagination from "@/components/Pagination.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePage } from "@/lib/pagination";
@@ -20,15 +22,20 @@ if (!resolved.ok) {
 	return resolved.response;
 }
 const { page, totalPages, offset, limit } = resolved.bounds;
+const initialQuery = Astro.url.searchParams.get("q")?.trim() || "";
 
-const items = await sanity.loadQuery(moreSponsorQuery, { skip: "none", offset, limit });
+const items = await sanity.loadQuery(moreSponsorQuery, {
+	skip: "none",
+	offset,
+	limit,
+});
 
-const title = page === 1 ? "Sponsors" : `Sponsors — Page ${page}`;
+const title = page === 1 ? "Sponsors" : `Sponsors: Page ${page}`;
 ---
 
 <BaseLayout
 	title={`${title} | CodingCat.dev`}
-	description="The sponsors who make CodingCat.dev possible."
+	description="The partners and sponsors who support CodingCat.dev."
 	canonical={`/sponsors/page/${page}`}
 >
 	<Fragment slot="head">
@@ -36,9 +43,62 @@ const title = page === 1 ? "Sponsors" : `Sponsors — Page ${page}`;
 		{page < totalPages && <link rel="next" href={`/sponsors/page/${page + 1}`} />}
 	</Fragment>
 
-	<div class="mb-32">
-		<SectionHeader title="Sponsors" showHr={false} />
-		<ContentGrid items={items as ContentListItem[]} />
-		<Pagination base="sponsors" page={page} totalPages={totalPages} />
-	</div>
+	<Breadcrumbs links={[{ title: "Sponsors" }]} />
+
+	<section class="py-4 md:py-8">
+		<div class="mb-6">
+			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+				🤝 CodingCat.dev Partners &amp; Sponsors
+			</span>
+			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+				partners &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">sponsors</span>
+				<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+			</h1>
+			<p class="font-hand mt-2 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+				The developer platforms, cloud providers, and AI tools supporting free courses, podcasts, and blog posts on CodingCat.dev.
+			</p>
+		</div>
+
+		<TopicFilterStrip label="Explore Technology & Vendor Hubs:" />
+
+		{/* Above-the-Fold Sponsorship Callout Banner */}
+		<article class="duo-card hand-border my-8 flex flex-col items-start justify-between gap-6 p-6 md:flex-row md:items-center md:p-8">
+			<div class="max-w-2xl space-y-2">
+				<span class="inline-flex rounded-full border border-[#2A1155] bg-[#FEF08A] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#713F12]">
+					★ Partner with CodingCat.dev
+				</span>
+				<h2 class="font-display text-2xl font-black text-[#2A1155] dark:text-white sm:text-3xl">
+					Reach senior full-stack engineers through code-first tutorials, video podcasts, and architecture diagrams.
+				</h2>
+			</div>
+			<div class="flex shrink-0 flex-wrap gap-3">
+				<a href="/sponsorships" class="tactile-btn px-6 py-3 text-sm">
+					<span>Become a Sponsor</span>
+					<span class="text-[#86EFAC]">&rarr;</span>
+				</a>
+				<a href="/topics" class="duo-btn duo-btn-outline px-5 py-3 text-sm">
+					Vendor Topic Hubs
+				</a>
+			</div>
+		</article>
+
+		<div class="mb-24">
+			<SectionHeader title="all partners & sponsors" showHr={false} />
+			<InfiniteContentGrid
+				type="sponsor"
+				items={items as ContentListItem[]}
+				skipId="none"
+				initialOffset={offset + items.length}
+				totalCount={count}
+				initialQuery={initialQuery}
+				showSearch={true}
+				searchPlaceholder="Filter partners & sponsors..."
+				priorityCount={2}
+				nounPlural="sponsors"
+			/>
+			<noscript>
+				<Pagination base="sponsors" page={page} totalPages={totalPages} />
+			</noscript>
+		</div>
+	</section>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import { Code } from "astro:components";
 import { stegaClean } from "@sanity/client/stega";
 import type { Props as PtProps } from "astro-portabletext/types";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import { normalizeLanguage } from "@/lib/code-languages";
 
 type CodeNode = {
@@ -25,44 +26,57 @@ const { node } = Astro.props;
  * characters would corrupt tokens and land in the copy-to-clipboard payload.
  */
 const code = stegaClean(node.code) ?? "";
-const language = normalizeLanguage(stegaClean(node.language));
+const rawLang = (stegaClean(node.language) ?? "").toLowerCase().trim();
+const isDiagram = rawLang === "mermaid" || rawLang === "excalidraw";
+const language = normalizeLanguage(rawLang);
 const filename = node.filename;
 ---
 
 {
-	code && (
-		<figure class="not-prose group relative my-6">
-			{filename && (
-				<figcaption class="rounded-t-md border border-b-0 border-border bg-muted px-4 py-2 font-mono text-xs text-muted-foreground">
-					{filename}
-				</figcaption>
-			)}
-			<button
-				type="button"
-				class="copy-code absolute right-2 top-2 z-10 inline-flex size-8 items-center justify-center rounded-md border border-border bg-background/80 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
-				data-code={code}
-				aria-label="Copy code"
-			>
-				<svg
-					class="size-4"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
+	code && isDiagram ? (
+		<ExcalidrawDiagram
+			title={filename || "Interactive Chalkboard Diagram"}
+			rawCode={code}
+		/>
+	) : (
+		code && (
+			<figure class="not-prose duo-card group relative my-6 overflow-hidden">
+				{filename && (
+					<figcaption class="flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A] px-4 py-2.5 font-mono text-xs font-bold text-[#C5E86C]">
+						<span>📄 {filename}</span>
+						<span class="font-hand text-base text-[#B4A7D6]">{language}</span>
+					</figcaption>
+				)}
+				<button
+					type="button"
+					class="copy-code absolute right-3 top-2.5 z-10 inline-flex size-8 items-center justify-center rounded-lg border border-[#B4A7D6]/35 bg-[#1E293B] text-[#F8FAFC] opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 hover:border-[#C5E86C]"
+					data-code={code}
+					aria-label="Copy code"
 				>
-					<rect x="9" y="9" width="13" height="13" rx="2" />
-					<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-				</svg>
-			</button>
-			<Code
-				code={code}
-				lang={language}
-				themes={{ light: "github-light", dark: "github-dark" }}
-				class:list={["overflow-x-auto p-4 text-sm", filename ? "rounded-b-md" : "rounded-md"]}
-			/>
-		</figure>
+					<svg
+						class="size-4"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<rect x="9" y="9" width="13" height="13" rx="2" />
+						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+					</svg>
+				</button>
+				<Code
+					code={code}
+					lang={language}
+					themes={{ light: "github-light", dark: "github-dark" }}
+					class:list={[
+						"overflow-x-auto p-4 text-sm",
+						filename ? "rounded-b-xl" : "rounded-xl",
+					]}
+				/>
+			</figure>
+		)
 	)
 }

@@ -1,52 +1,117 @@
 ---
+import AjMascot from "@/components/AjMascot.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
-const title = "About CodingCat.dev — Purrfect Web Development";
+const title = "About CodingCat.dev: Purrfect Web Development";
 const description =
-	"Learn about CodingCat.dev, our mission, podcast, tutorials, and fullstack web development community led by Alex Patterson.";
+	"Learn about CodingCat.dev, our mission, courses, podcasts, blog posts, and full-stack web development community led by Alex Patterson and AJ.";
 ---
 
-<BaseLayout title={title} description={description}>
-	<div class="max-w-3xl mx-auto py-12 md:py-20">
-		<header class="mb-10 text-center">
-			<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">About CodingCat.dev</h1>
-			<p class="text-xl text-muted-foreground">Purrfect Web Development Tutorials, Podcasts & Community</p>
-		</header>
+<BaseLayout title={title} description={description} canonical="/about">
+	<Breadcrumbs links={[{ title: "About" }]} />
 
-		<div class="prose prose-neutral dark:prose-invert max-w-none space-y-6 text-lg leading-relaxed">
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">Our Mission</h2>
-				<p>
-					CodingCat.dev is an educational media platform and developer community dedicated to making modern fullstack web development accessible, engaging, and practical. Founded and hosted by Alex Patterson, CodingCat.dev produces high-quality technical tutorials, in-depth blog posts, and insightful video and audio podcasts interviewing engineering leaders, open source maintainers, and developer advocates across the technology landscape.
-				</p>
-			</section>
+	<section class="mx-auto max-w-4xl py-6 md:py-10">
+		<div class="duo-card hand-border p-8 md:p-12">
+			<div class="grid items-center gap-8 md:grid-cols-12">
+				<div class="space-y-4 md:col-span-8">
+					<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200">
+						🐾 Meet Alex Patterson &amp; AJ
+					</span>
+					<h1 class="font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+						about <span class="text-[#7C3AED] dark:text-[#C084FC]">codingcat.dev</span>
+					</h1>
+					<p class="font-hand text-2xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
+						Purrfect courses, podcasts, and blog posts with hand-drawn visual diagrams.
+					</p>
+				</div>
+				<div class="flex justify-center md:col-span-4">
+					<AjMascot
+						state="podcast-groove"
+						angle="three-quarter-left"
+						cls="w-40 h-auto"
+						caption="Hi, I'm AJ!"
+					/>
+				</div>
+			</div>
 
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">What We Cover</h2>
-				<p>
-					We focus on modern frontend, backend, and cloud architectures, including:
-				</p>
-				<ul class="list-disc pl-6 space-y-2">
-					<li><strong>Frameworks & Runtimes:</strong> Astro, Next.js, React, SvelteKit, TypeScript, Node.js, and Cloudflare Workers.</li>
-					<li><strong>Headless CMS & Content Architecture:</strong> Sanity.io, structured content modeling, Portable Text, and real-time visual editing.</li>
-					<li><strong>Edge & Serverless Computing:</strong> Cloudflare edge infrastructure, serverless databases, KV, and vector search.</li>
-					<li><strong>AI & Autonomous Agents:</strong> Model Context Protocol (MCP), WebMCP, A2A agent cards, and modern Answer Engine Optimization (AEO).</li>
-				</ul>
-			</section>
+			<div class="mt-8">
+				<ExcalidrawDiagram
+					title="How CodingCat.dev Works"
+					caption="Three content pillars backed by visual architecture diagrams and real production code."
+					compact={true}
+					nodes={[
+						{
+							id: "courses",
+							badge: "Pillar 1",
+							label: "Courses & Lessons",
+							sublabel: "Step-by-step video & code",
+							color: "purple",
+						},
+						{
+							id: "podcasts",
+							badge: "Pillar 2",
+							label: "Podcasts & Episodes",
+							sublabel: "✓ Engineering interviews",
+							color: "blue",
+							status: "good",
+						},
+						{
+							id: "blog",
+							badge: "Pillar 3",
+							label: "Blog & Diagrams",
+							sublabel: "✓ Deep-dive tutorials",
+							color: "green",
+							status: "good",
+						},
+					]}
+					edges={[
+						{ from: "courses", to: "podcasts", label: "learn" },
+						{ from: "podcasts", to: "blog", label: "✓ build" },
+					]}
+				/>
+			</div>
 
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">The CodingCat.dev Podcast</h2>
-				<p>
-					The CodingCat.dev Podcast features weekly conversations with software engineers, creators, and innovators. We explore how technology leaders build scalable architectures, navigate developer experience challenges, and leverage emerging standards like AI agent protocols and edge runtimes.
-				</p>
-			</section>
+			<div class="prose prose-violet dark:prose-invert mt-10 max-w-none space-y-6 text-lg leading-relaxed">
+				<section>
+					<h2 class="font-display text-2xl font-black">Our Mission</h2>
+					<p>
+						CodingCat.dev is an educational media platform and developer community dedicated to making modern full-stack web development accessible, visual, and practical. Founded and hosted by Alex Patterson, CodingCat.dev produces structured courses, in-depth blog posts, and weekly video and audio podcast episodes interviewing engineering leaders, open-source maintainers, and developer advocates across the technology landscape.
+					</p>
+				</section>
 
-			<section>
-				<h2 class="text-2xl font-bold mt-8 mb-4">Connect with Us</h2>
-				<p>
-					We believe in building in public and fostering an open, welcoming developer community. You can find our tutorials on YouTube, follow our updates on X, explore our open source repositories on GitHub, and join our newsletter for curated web development insights.
-				</p>
-			</section>
+				<section>
+					<h2 class="font-display text-2xl font-black">What We Cover</h2>
+					<ul class="list-disc space-y-2 pl-6">
+						<li>
+							<strong>Frameworks &amp; Runtimes:</strong> Astro, Next.js, React, SvelteKit, SolidJS, TypeScript, Node.js, and Cloudflare Workers.
+						</li>
+						<li>
+							<strong>Headless CMS &amp; Content Operating Systems:</strong> Sanity.io, GROQ, Content Releases, Portable Text, and real-time visual editing.
+						</li>
+						<li>
+							<strong>Cloud &amp; Serverless Infrastructure:</strong> Firebase, AWS Amplify, Cloudflare edge KV/D1/R2, and serverless databases.
+						</li>
+						<li>
+							<strong>AI &amp; Autonomous Agents:</strong> Model Context Protocol (MCP), WebMCP, A2A agent cards, and Answer Engine Optimization (AEO).
+						</li>
+					</ul>
+				</section>
+
+				<div class="not-prose flex flex-wrap gap-3 pt-4">
+					<a href="/courses" class="tactile-btn px-6 py-3 text-sm">
+						<span>Start a Course</span>
+						<span class="text-[#86EFAC]">&rarr;</span>
+					</a>
+					<a href="/topics" class="tactile-btn-secondary px-5 py-3 text-sm font-extrabold">
+						Explore Topic &amp; Vendor Hubs
+					</a>
+					<a href="/sponsorships" class="tactile-btn-secondary px-5 py-3 text-sm font-extrabold">
+						Sponsor CodingCat.dev
+					</a>
+				</div>
+			</div>
 		</div>
-	</div>
+	</section>
 </BaseLayout>

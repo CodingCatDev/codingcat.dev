@@ -1,4 +1,6 @@
-# CodingCat.dev Monorepo Always-On Skills & Editorial Rules
+# CodingCat.dev Monorepo Always-On Skills & Editorial Rules (`GEMINI.md`)
+
+Always follow [`AGENTS.md`](./AGENTS.md) and [`DESIGN.md`](./DESIGN.md).
 
 Every interactive session, subagent, and script in this repository (`codingcat.dev`) MUST follow these live CodingCat.dev skills:
 
@@ -8,3 +10,14 @@ Every interactive session, subagent, and script in this repository (`codingcat.d
 - @[codingcat-design-system](/home/alex/.gemini/config/skills/codingcat-design-system/SKILL.md)
 - @[codingcat-media-studio](/home/alex/.gemini/config/skills/codingcat-media-studio/SKILL.md)
 - @[codingcat-diagrams](/home/alex/.gemini/config/skills/codingcat-media-studio/references/excalidraw-diagrams.md)
+
+## Key Rules
+
+1. **Canonical Content Pillars**:
+   - **Courses** (`/courses` -> `/course/[slug]`), made of **Lessons** (`Explore Courses →`, `Start Course →`).
+   - **Podcasts** (`/podcasts` -> `/podcast/[slug]`), made of **Episodes** (`Watch Podcasts`, `Watch Episode →`).
+   - **Blog** (`/blog` -> `/post/[slug]`), made of **Blog Posts** (`Read Blog`, `Read Post →`).
+   - **Diagrams**: Never write the brand word `"Excalidraw"` in user-facing UI copy, badges, or captions; call them **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams**. Never invent synonyms like `"Teardowns"`, `"Blueprints"`, `"Curriculum"`, `"Units"`, or `"Skill Trees"`.
+2. **Zero Em-Dashes**: Never use the em-dash character anywhere in prose, UI copy, markdown, or code comments.
+3. **Always Use Tables for Comparisons**: Render Markdown or HTML tables whenever comparing two or more items.
+4. **Header & Mobile Drawer**: Never add a `"Get Started"` button to `#site-header`. Keep the mobile header clean with `Search`, `Ask Agent`, `ThemeToggle`, and the 3-line menu toggle (`#nav-drawer-toggle`).

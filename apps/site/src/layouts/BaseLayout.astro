@@ -107,7 +107,16 @@ const graph = buildGraph([
 			})();
 		</script>
 		<Font cssVariable="--font-inter" preload />
-		<Font cssVariable="--font-nunito" />
+		<Font cssVariable="--font-nunito" preload />
+		<Font cssVariable="--font-caveat" />
+		<Font cssVariable="--font-mono" />
+		<link
+			rel="preload"
+			href="/fonts/Virgil.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin="anonymous"
+		/>
 		<SocialMeta
 			title={title}
 			ogTitle={ogTitle}
@@ -214,7 +223,7 @@ const graph = buildGraph([
 		</p>
 		<div class="flex flex-col min-h-dvh">
 			<Header />
-			<main class="flex-1 mt-20">
+			<main class="flex-1 mt-24">
 				{
 					bare ? (
 						<slot />

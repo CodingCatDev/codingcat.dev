@@ -1,5 +1,6 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
+import { resolvePartnerUrl } from "@/lib/partner-links";
 
 interface Pick {
 	name?: string | null;
@@ -13,8 +14,6 @@ interface Props {
 
 const { picks } = Astro.props;
 
-// Group by the picking guest, alphabetically — same as the Next version, but
-// without the shadcn Card/Table primitives it used for what is a list.
 const grouped = new Map<string, Pick[]>();
 for (const pick of picks ?? []) {
 	const author = pick?.user?.title;
@@ -34,32 +33,33 @@ const sorted = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b));
 
 {
 	sorted.length > 0 && (
-		<>
-			<hr class="mb-8 mt-8 border-border sm:mb-24 sm:mt-28" />
-			<h2 class="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-				Picks
+		<section class="my-14">
+			<hr class="mb-8 border-t-2 border-dashed border-[#2A1155]/20 dark:border-white/15" />
+			<h2 class="mb-6 font-display text-3xl font-black text-[#2A1155] dark:text-white md:text-4xl">
+				episode picks<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 			</h2>
-			<section class="grid gap-4 p-0 sm:gap-8 sm:p-12">
+			<div class="grid gap-6 md:grid-cols-2">
 				{sorted.map(([author, items]) => (
-					<article class="rounded-xl border border-border bg-card">
-						<h3 class="border-b border-border px-6 py-4 text-xl font-bold sm:text-2xl">
-							{author}
+					<article class="duo-card hand-border overflow-hidden p-5">
+						<h3 class="mb-3 border-b-2 border-dashed border-[#2A1155]/15 pb-3 font-display text-xl font-black text-[#2A1155] dark:border-white/15 dark:text-white">
+							🐾 {author}
 						</h3>
-						<ul>
+						<ul class="space-y-2">
 							{items.map((pick) => {
-								const site = stegaClean(pick.site);
+								const rawSite = stegaClean(pick.site);
+								const site = rawSite ? resolvePartnerUrl(rawSite) : "";
 								return (
-									<li class="border-b border-border last:border-b-0">
+									<li>
 										{site ? (
 											<a
 												href={site}
 												target="_blank"
 												rel="noopener noreferrer"
-												class="flex items-center justify-between p-4 text-base transition-colors hover:bg-accent sm:text-xl"
+												class="flex items-center justify-between rounded-xl border border-[#2A1155]/20 bg-[#FAF9FC] px-3.5 py-2.5 text-sm font-bold text-[#2A1155] transition-colors hover:border-[#7C3AED] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/15 dark:bg-[#0B1326] dark:text-slate-100 dark:hover:border-[#C084FC] dark:hover:bg-purple-950/60"
 											>
 												<span>{pick.name}</span>
 												<svg
-													class="size-4 shrink-0"
+													class="size-4 shrink-0 text-[#7C3AED] dark:text-[#C084FC]"
 													viewBox="0 0 24 24"
 													fill="none"
 													stroke="currentColor"
@@ -72,7 +72,9 @@ const sorted = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b));
 												</svg>
 											</a>
 										) : (
-											<span class="block p-4 text-base sm:text-xl">{pick.name}</span>
+											<span class="block rounded-xl border border-[#2A1155]/10 bg-[#FAF9FC] px-3.5 py-2.5 text-sm font-bold text-[#2A1155] dark:border-white/10 dark:bg-[#0B1326] dark:text-slate-200">
+												{pick.name}
+											</span>
 										)}
 									</li>
 								);
@@ -80,7 +82,7 @@ const sorted = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b));
 						</ul>
 					</article>
 				))}
-			</section>
-		</>
+			</div>
+		</section>
 	)
 }

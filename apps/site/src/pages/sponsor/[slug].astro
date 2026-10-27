@@ -1,11 +1,12 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
+import { resolvePartnerUrl } from "@/lib/partner-links";
 import { sponsorQueryWithRelated } from "@/lib/sanity/queries";
 import { breadcrumbSchema } from "@/lib/structured-data";
 
@@ -29,16 +30,18 @@ const rawExcerpt = sponsor.excerpt?.trim();
 const description =
 	rawExcerpt && rawExcerpt.toLowerCase() !== "fix me"
 		? rawExcerpt
-		: `${sponsor.title} — Official sponsor supporting podcasts and web development tutorials on CodingCat.dev.`;
+		: `${sponsor.title}: Official partner supporting podcasts and web development tutorials on CodingCat.dev.`;
 
-// Sponsored content is listed in full rather than capped — `sponsorRelated`
-// uses an unbounded slice, unlike the person queries.
-const relatedPosts = (sponsor.related?.post ?? []) as ContentListItem[];
-const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
+const allRelatedPosts = (sponsor.related?.post ?? []) as ContentListItem[];
+const allRelatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
+const INITIAL_BATCH = 8;
+const relatedPosts = allRelatedPosts.slice(0, INITIAL_BATCH);
+const relatedPodcasts = allRelatedPodcasts.slice(0, INITIAL_BATCH);
+const partnerUrl = sponsor.url ? resolvePartnerUrl(sponsor.url) : undefined;
 ---
 
 <BaseLayout
-	title={`${sponsor.title} — Sponsor | CodingCat.dev`}
+	title={`${sponsor.title}: Sponsor | CodingCat.dev`}
 	ogTitle={sponsor.title}
 	description={description}
 	ogFallback={{
@@ -59,44 +62,85 @@ const relatedPodcasts = (sponsor.related?.podcast ?? []) as ContentListItem[];
 		links={[{ title: "Sponsors", href: "/sponsors/page/1" }, { title: sponsor.title }]}
 	/>
 
-	<div class="flex w-full flex-col gap-4 md:gap-8">
-		<div class="flex items-center gap-4 md:gap-8">
-			<div class="shrink-0">
+	<div class="flex w-full flex-col gap-8">
+		<div class="duo-card hand-border flex flex-col items-start gap-6 p-6 sm:flex-row sm:items-center md:p-8">
+			<div class="shrink-0 overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/25 dark:bg-[#060E20]">
 				<CoverMedia
 					image={sponsor.coverImage}
 					width={640}
 					height={360}
 					sizes="(max-width: 768px) 160px, 256px"
-					class="h-auto w-40 max-h-32 rounded-md object-contain md:w-64"
+					class="h-auto max-h-32 w-40 object-contain md:w-64"
 				/>
 			</div>
-			<div class="flex flex-col gap-2">
-				<h1
-					class="text-xl font-bold leading-tight tracking-tighter text-balance md:text-2xl md:leading-none lg:text-4xl"
-				>
+			<div class="flex flex-col gap-3">
+				<span class="w-fit rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+					🤝 Official Partner &amp; Sponsor
+				</span>
+				<h1 class="font-display text-3xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-5xl">
 					{sponsor.title}
 				</h1>
+				{partnerUrl && (
+					<div class="pt-1">
+						<a
+							href={partnerUrl}
+							target="_blank"
+							rel="noopener noreferrer sponsored"
+							class="tactile-btn inline-flex px-5 py-2 text-xs"
+						>
+							<span>Visit {sponsor.title}</span>
+							<span class="text-[#86EFAC]">&nearr;</span>
+						</a>
+					</div>
+				)}
 			</div>
 		</div>
 
-		<article>
-			<PortableTextContent value={sponsor.content} class="mx-auto prose-violet lg:prose-xl" />
-		</article>
+		{
+			sponsor.content && (
+				<article class="duo-card hand-border p-6 md:p-8">
+					<PortableTextContent
+						value={sponsor.content}
+						class="mx-auto prose-violet lg:prose-xl"
+					/>
+				</article>
+			)
+		}
 
 		{
 			relatedPodcasts.length > 0 && (
 				<aside>
-					<SectionHeader title="Sponsored Podcasts" href="/podcasts/page/1" />
-					<ContentGrid items={relatedPodcasts} priorityCount={0} />
+					<SectionHeader title="sponsored episodes" />
+					<InfiniteContentGrid
+						type="podcast"
+						items={relatedPodcasts}
+						refId={sponsor._id}
+						initialOffset={relatedPodcasts.length}
+						totalCount={allRelatedPodcasts.length}
+						showSearch={allRelatedPodcasts.length > 4}
+						searchPlaceholder={`Filter ${sponsor.title} episodes...`}
+						priorityCount={0}
+						nounPlural="episodes"
+					/>
 				</aside>
 			)
 		}
 
 		{
 			relatedPosts.length > 0 && (
-				<aside class="mb-32">
-					<SectionHeader title="Sponsored Posts" href="/blog/page/1" />
-					<ContentGrid items={relatedPosts} priorityCount={0} />
+				<aside class="mb-24">
+					<SectionHeader title="sponsored blog posts" />
+					<InfiniteContentGrid
+						type="post"
+						items={relatedPosts}
+						refId={sponsor._id}
+						initialOffset={relatedPosts.length}
+						totalCount={allRelatedPosts.length}
+						showSearch={allRelatedPosts.length > 4}
+						searchPlaceholder={`Filter ${sponsor.title} blog posts...`}
+						priorityCount={0}
+						nounPlural="blog posts"
+					/>
 				</aside>
 			)
 		}

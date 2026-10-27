@@ -1,0 +1,60 @@
+---
+/**
+ * AJ the CodingCat.dev Mascot (`AjMascot.astro`)
+ *
+ * Delegates directly to `AjAnimatedMascot.astro` so every existing caller
+ * across Courses, Podcasts, Blog Posts, and Diagrams automatically gets the
+ * 57-path articulated 2D vector bone rig.
+ */
+import AjAnimatedMascot, {
+	type AjAnimationState,
+	type AjMascotVariant,
+	type AjMouthViseme,
+	type AjTurnaroundAngle,
+} from "@/components/AjAnimatedMascot.astro";
+
+interface Props {
+	pose?: "yarn-chase" | "code-peek" | "lever-pull" | "headphones";
+	state?: AjAnimationState;
+	variant?: AjMascotVariant;
+	angle?: AjTurnaroundAngle;
+	mouth?: AjMouthViseme;
+	caption?: string;
+	cls?: string;
+	showYarnBall?: boolean;
+	fullBody?: boolean;
+}
+
+const {
+	pose = "yarn-chase",
+	state,
+	variant,
+	angle = "three-quarter-right",
+	mouth,
+	caption,
+	cls = "w-44 h-auto",
+	showYarnBall = true,
+	fullBody = true,
+} = Astro.props;
+
+const poseToState: Record<NonNullable<Props["pose"]>, AjAnimationState> = {
+	"yarn-chase": "idle-wave",
+	"code-peek": "point-diagram",
+	"lever-pull": "point-diagram",
+	headphones: "podcast-groove",
+};
+
+const resolvedState: AjAnimationState = state ?? poseToState[pose] ?? "idle-wave";
+const resolvedVariant: AjMascotVariant =
+	variant ?? (fullBody ? "full-body" : "head");
+---
+
+<AjAnimatedMascot
+	state={resolvedState}
+	variant={resolvedVariant}
+	angle={angle}
+	mouth={mouth}
+	caption={caption}
+	cls={cls}
+	showYarnBall={showYarnBall}
+/>

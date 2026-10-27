@@ -108,22 +108,28 @@ export const userFields = `
 
 export const userRelated = `
   "related":{
-    "podcast": *[_type == "podcast" && references(^._id)] | order(date desc) [0...4] {
-      ${baseFieldsNoContent}
+    "podcast": *[_type == "podcast" && references(^._id) && defined(slug.current)] | order(date desc, _updatedAt desc) [0...8] {
+      ${baseFieldsNoContent},
+      author[]->{ ${personRefFields} },
+      guest[]->{ ${personRefFields} }
     },
-    "post": *[_type == "post" && references(^._id)] | order(date desc) [0...4] {
-      ${baseFieldsNoContent}
+    "post": *[_type == "post" && references(^._id) && defined(slug.current)] | order(date desc, _updatedAt desc) [0...8] {
+      ${baseFieldsNoContent},
+      author[]->{ ${personRefFields} }
     },
   }
 `;
 
 export const sponsorRelated = `
   "related":{
-    "podcast": *[_type == "podcast" && references(^._id)] | order(date desc) [] {
-      ${baseFieldsNoContent}
+    "podcast": *[_type == "podcast" && references(^._id) && defined(slug.current)] | order(date desc, _updatedAt desc) [] {
+      ${baseFieldsNoContent},
+      author[]->{ ${personRefFields} },
+      guest[]->{ ${personRefFields} }
     },
-    "post": *[_type == "post" && references(^._id)] | order(date desc) [] {
-      ${baseFieldsNoContent}
+    "post": *[_type == "post" && references(^._id) && defined(slug.current)] | order(date desc, _updatedAt desc) [] {
+      ${baseFieldsNoContent},
+      author[]->{ ${personRefFields} }
     },
   }
 `;

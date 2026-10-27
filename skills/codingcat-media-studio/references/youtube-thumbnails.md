@@ -1,0 +1,16 @@
+# YouTube Thumbnails (16:9) Specification (`youtube-thumbnails.md`)
+
+Every CodingCat.dev 16:9 YouTube thumbnail (`1920x1080px`) is engineered for instant mobile recognition, high click-through rate (CTR), and brand consistency.
+
+## 1. The 3-Zone Composition Grid
+
+| Zone | Placement | Visual Contents | Styling & Shadow Rules |
+| :--- | :--- | :--- | :--- |
+| **Zone 1: Character Cutout** | Left or Right Third | High-contrast cutout of **AJ the Cat** (2D `assets/AJ-2D-Bipedal.jpg` or 3D `assets/AJ-3D-Headphones-*.jpg` with headphones covering ears) **OR** studio cutout of **Alex Patterson (`@alex.patterson`)** from `assets/alex-likeness/alex-likeness-01.jpg` .. `13.jpg` (`alex-likeness-10.jpg` / `02.jpg` for right-side pointing left; `alex-likeness-11.jpg` for left-side pointing right; `alex-likeness-03.jpg` / `04.jpg` for shocked/mind-blown). | Apply `--cc-thumbnail-drop` (`0 12px 24px rgba(0, 0, 0, 0.85)`) and a subtle white sticker rim-light or hand-drawn Royal Purple (`#7C3AED` / `#C084FC`) & Sunny Yellow (`#FACC15`) chalk sketch aura. |
+| **Zone 2: Technical Subject** | Center / Opposite Two-Thirds | Simplified dark-mode **hand-drawn architecture diagram** (3 boxes max) or a massive, recognizable **official vendor logo** from `assets/logos/` (`assets/logos/sanity-logos/Sanity-Full_logo/Sanity-Full_logo--white_on_black.png` for Sanity: **NEVER use the old red square `S` icon**; `assets/logos/firebase-brand-assets/` for Firebase; `assets/logos/Amplify.png` for AWS Amplify). | Keep background in Canvas Obsidian (`#0F172A` / `#0B1326`) or Pure Void (`#000000`). |
+| **Zone 3: Display Hook Text** | Top-Left or Top-Center | **Maximum 3 to 4 words** in extra-bold `Nunito` (`900`) or `Inter` (`800`) uppercase/title-case. Never repeat the exact video title word-for-word. | Crisp white (`#FFFFFF`) primary words paired with **1 Electric Lime (`#C5E86C`)** highlight word and hard drop shadow. |
+
+## 2. Mandatory Safe Zones (`1920x1080px`)
+1. **Outer Edge Margin (`96px`)**: Keep all text, logos, and character faces at least `96px` away from the top, bottom, left, and right edges.
+2. **YouTube Timestamp Exclusion Zone (`320x120px` Bottom-Right)**: Never place text, logos, or AJ's face in the bottom-right `320x120px` corner where YouTube renders the video duration overlay.
+3. **No Em-Dashes in Thumbnail Text**: Never use an em-dash character in thumbnail copy. Use a colon, arrow (`->`), or `VS` badge.

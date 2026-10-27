@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { sitemapQuery } from "@/lib/sanity/queries";
+import { TOPICS } from "@/lib/topics";
 import { escapeXml } from "@/lib/xml";
 
 /**
@@ -22,6 +23,66 @@ export const GET: APIRoute = async ({ locals }) => {
 			lastmod: now,
 			changefreq: "daily",
 			priority: "0.1",
+		},
+		{
+			loc: `${origin}/courses`,
+			lastmod: now,
+			changefreq: "weekly",
+			priority: "0.9",
+		},
+		{
+			loc: `${origin}/podcasts`,
+			lastmod: now,
+			changefreq: "daily",
+			priority: "0.9",
+		},
+		{
+			loc: `${origin}/blog`,
+			lastmod: now,
+			changefreq: "daily",
+			priority: "0.9",
+		},
+		{
+			loc: `${origin}/topics`,
+			lastmod: now,
+			changefreq: "weekly",
+			priority: "0.8",
+		},
+		...TOPICS.map((t) => ({
+			loc: `${origin}/topic/${t.slug}`,
+			lastmod: now,
+			changefreq: "weekly",
+			priority: "0.8",
+		})),
+		{
+			loc: `${origin}/about`,
+			lastmod: now,
+			changefreq: "monthly",
+			priority: "0.6",
+		},
+		{
+			loc: `${origin}/sponsorships`,
+			lastmod: now,
+			changefreq: "monthly",
+			priority: "0.7",
+		},
+		{
+			loc: `${origin}/book`,
+			lastmod: now,
+			changefreq: "weekly",
+			priority: "0.6",
+		},
+		{
+			loc: `${origin}/developers`,
+			lastmod: now,
+			changefreq: "monthly",
+			priority: "0.6",
+		},
+		{
+			loc: `${origin}/contact`,
+			lastmod: now,
+			changefreq: "monthly",
+			priority: "0.5",
 		},
 		...content.map((entry) => ({
 			loc: `${origin}${entry._type === "page" ? `/${entry.slug}` : `/${entry._type}/${entry.slug}`}`,

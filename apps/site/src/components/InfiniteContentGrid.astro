@@ -1,0 +1,586 @@
+---
+/**
+ * `InfiniteContentGrid.astro` | SSR-First Infinite Scroll, Live Filter & Topic Hub Grid.
+ *
+ * Performance & Core Web Vitals Architecture:
+ * 1. Initial batch renders synchronously in SSR HTML for instant FCP/LCP.
+ * 2. Off-screen cards use `.infinite-card-deferred` (`content-visibility: auto; contain-intrinsic-size: auto none auto 460px`).
+ * 3. Subsequent batches stream as pre-rendered HTML partials from `/api/feed-cards` via `IntersectionObserver` (`rootMargin: "650px 0px"`).
+ * 4. Supports instant in-page topic filtering (`?topic=sanity`) and keyword/name filtering (`?q=...`) without losing above-the-fold context.
+ */
+import { stegaClean } from "@sanity/client/stega";
+import ContentCard from "@/components/ContentCard.astro";
+import type { ContentListItem } from "@/lib/content";
+import { TOPICS_BY_SLUG } from "@/lib/topics";
+
+interface Props {
+	items: ContentListItem[];
+	type: "podcast" | "post" | "author" | "guest" | "sponsor";
+	skipId?: string;
+	refId?: string;
+	initialOffset?: number;
+	totalCount?: number;
+	batchSize?: number;
+	activeTopic?: string;
+	initialQuery?: string;
+	showSearch?: boolean;
+	searchPlaceholder?: string;
+	priorityCount?: number;
+	nounPlural?: string;
+	fallbackHref?: string;
+	class?: string;
+}
+
+const {
+	items,
+	type,
+	skipId = "none",
+	refId = "",
+	initialOffset = items.length,
+	totalCount = items.length,
+	batchSize = 8,
+	activeTopic = "",
+	initialQuery = "",
+	showSearch = false,
+	searchPlaceholder,
+	priorityCount = 0,
+	nounPlural = type === "podcast"
+		? "episodes"
+		: type === "post"
+			? "blog posts"
+			: type === "guest"
+				? "guests"
+				: type === "author"
+					? "authors"
+					: "sponsors",
+	fallbackHref,
+	class: className,
+} = Astro.props;
+
+const cleanSkipId =
+	stegaClean(skipId).trim().replace(/^drafts\./, "") || "none";
+const cleanRefId = stegaClean(refId).trim().replace(/^drafts\./, "");
+const hasMoreInitial = items.length > 0 && initialOffset < totalCount;
+const activeTopicDef = activeTopic ? TOPICS_BY_SLUG[activeTopic] : undefined;
+const effectivePlaceholder =
+	searchPlaceholder ?? `Filter ${nounPlural} by name or keyword...`;
+---
+
+<div
+	class="infinite-feed-root"
+	data-feed-type={type}
+	data-skip-id={cleanSkipId}
+	data-ref-id={cleanRefId}
+	data-offset={String(initialOffset)}
+	data-total={String(totalCount)}
+	data-batch-size={String(batchSize)}
+	data-has-more={hasMoreInitial ? "true" : "false"}
+	data-active-topic={activeTopic}
+	data-active-query={initialQuery}
+	data-noun-plural={nounPlural}
+>
+	{/* Live In-Page Filter / Status Bar */}
+	<div
+		class="mb-8 flex flex-col justify-between gap-3 rounded-2xl border-2 border-dashed border-[#2A1155]/20 bg-[#FAF9FC] px-4 py-3 dark:border-white/15 dark:bg-[#131B2E]/70 sm:flex-row sm:items-center"
+		data-feed-status-bar
+	>
+		<div class="flex flex-wrap items-center gap-2 font-mono text-xs font-bold text-[#2A1155]/80 dark:text-slate-300">
+			<span
+				class="inline-block size-2 rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"
+				aria-hidden="true"
+			></span>
+			<span data-feed-count-label>
+				Showing {items.length} of {totalCount} {nounPlural}
+			</span>
+			<span
+				data-feed-topic-badge
+				class:list={[
+					"inline-flex items-center gap-1.5 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-purple-200",
+					!activeTopicDef && "hidden",
+				]}
+			>
+				<span data-feed-topic-name>
+					{activeTopicDef ? `Filtered: ${activeTopicDef.title}` : ""}
+				</span>
+			</span>
+		</div>
+
+		<div class="flex flex-wrap items-center gap-3">
+			{
+				showSearch && (
+					<div class="relative w-full sm:w-64">
+						<input
+							type="search"
+							value={initialQuery}
+							placeholder={effectivePlaceholder}
+							aria-label={effectivePlaceholder}
+							data-feed-search-input
+							class="w-full rounded-full border-2 border-[#2A1155] bg-white px-4 py-1.5 font-sans text-xs font-bold text-[#2A1155] placeholder-[#2A1155]/45 focus:border-[#7C3AED] focus:outline-none dark:border-white/25 dark:bg-[#0B1326] dark:text-white dark:placeholder-slate-400 dark:focus:border-[#C084FC]"
+						/>
+					</div>
+				)
+			}
+
+			<a
+				href={activeTopicDef ? `/topic/${activeTopicDef.slug}` : "/topics"}
+				data-feed-hub-link
+				class:list={[
+					"font-display text-xs font-black text-[#7C3AED] hover:underline dark:text-[#C084FC]",
+					!activeTopicDef && "hidden",
+				]}
+			>
+				Open Full Topic Hub &rarr;
+			</a>
+		</div>
+	</div>
+
+	{/* Cards Grid Container */}
+	<div
+		data-feed-grid
+		aria-live="polite"
+		aria-busy="false"
+		class:list={[
+			"grid grid-cols-1 gap-y-20 md:grid-cols-2 md:gap-x-16 md:gap-y-32 lg:gap-x-32",
+			className,
+		]}
+	>
+		{
+			items.map((item, index) => (
+				<ContentCard
+					item={item}
+					priority={index < priorityCount}
+					deferred={index >= Math.max(priorityCount, 8)}
+				/>
+			))
+		}
+	</div>
+
+	{/* Empty Filter State */}
+	<div
+		data-feed-empty
+		class:list={[
+			"duo-card hand-border my-12 p-10 text-center",
+			items.length > 0 && "hidden",
+		]}
+	>
+		<p class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+			No matching {nounPlural} found for this filter.
+		</p>
+		<p class="font-hand mt-2 text-xl font-bold text-[#4C1D95] dark:text-purple-200">
+			Try clearing the filter above to browse the full feed.
+		</p>
+	</div>
+
+	{/* Infinite Scroll Sentinel & Manual Load More Button */}
+	<div
+		data-feed-sentinel
+		class:list={[
+			"mt-16 flex flex-col items-center justify-center gap-4 py-6",
+			!hasMoreInitial && "hidden",
+		]}
+	>
+		<div
+			data-feed-spinner
+			class="hidden items-center gap-3 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] shadow-sketch-sm dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200"
+		>
+			<span class="inline-block size-2.5 animate-ping rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"></span>
+			<span>Loading more {nounPlural}...</span>
+		</div>
+
+		<button
+			type="button"
+			data-feed-load-more
+			class="duo-btn duo-btn-outline px-6 py-3 text-sm"
+		>
+			<span data-feed-load-more-text>Load More {nounPlural}</span>
+			<span class="text-[#7C3AED] dark:text-[#C084FC]">&darr;</span>
+		</button>
+
+		{
+			fallbackHref && (
+				<noscript>
+					<a href={fallbackHref} class="tactile-btn mt-3 inline-flex px-6 py-3 text-sm">
+						Browse Paginated Archive &rarr;
+					</a>
+				</noscript>
+			)
+		}
+	</div>
+
+	{/* End of Feed Indicator */}
+	<div
+		data-feed-end
+		class:list={[
+			"mt-16 flex items-center justify-center",
+			(hasMoreInitial || items.length === 0) && "hidden",
+		]}
+	>
+		<span class="inline-flex items-center gap-2 rounded-full border-2 border-dashed border-[#2A1155]/25 bg-[#FAF9FC] px-5 py-2 font-hand text-lg font-bold text-[#4C1D95] dark:border-white/20 dark:bg-[#131B2E] dark:text-purple-200">
+			✓ All {nounPlural} loaded
+		</span>
+	</div>
+</div>
+
+<script is:inline>
+	(function () {
+		function initInfiniteFeeds() {
+			var roots = document.querySelectorAll(".infinite-feed-root");
+			for (var i = 0; i < roots.length; i++) {
+				var root = roots[i];
+				if (root.dataset.initialized === "true") continue;
+				root.dataset.initialized = "true";
+				setupFeedRoot(root, roots.length === 1);
+			}
+		}
+
+		function setupFeedRoot(root, isSingleFeedPage) {
+			var grid = root.querySelector("[data-feed-grid]");
+			var sentinel = root.querySelector("[data-feed-sentinel]");
+			var spinner = root.querySelector("[data-feed-spinner]");
+			var loadMoreBtn = root.querySelector("[data-feed-load-more]");
+			var loadMoreText = root.querySelector("[data-feed-load-more-text]");
+			var endBadge = root.querySelector("[data-feed-end]");
+			var emptyBox = root.querySelector("[data-feed-empty]");
+			var countLabel = root.querySelector("[data-feed-count-label]");
+			var topicBadge = root.querySelector("[data-feed-topic-badge]");
+			var topicName = root.querySelector("[data-feed-topic-name]");
+			var hubLink = root.querySelector("[data-feed-hub-link]");
+			var searchInput = root.querySelector("[data-feed-search-input]");
+
+			if (!grid || !sentinel) return;
+
+			var feedType = root.dataset.feedType || "podcast";
+			var baseSkipId = root.dataset.skipId || "none";
+			var refId = root.dataset.refId || "";
+			var batchSize = Number.parseInt(root.dataset.batchSize || "8", 10);
+			var nounPlural = root.dataset.nounPlural || "items";
+
+			var offset = Number.parseInt(root.dataset.offset || "0", 10);
+			var total = Number.parseInt(root.dataset.total || "0", 10);
+			var hasMore = root.dataset.hasMore === "true";
+			var activeTopic = root.dataset.activeTopic || "";
+			var activeQuery = root.dataset.activeQuery || "";
+			var isLoading = false;
+			var pendingManual = false;
+			var debounceTimer = null;
+			var observer = null;
+
+			var updateStatusUI = function () {
+				var loadedCount = grid.children.length;
+				if (countLabel) {
+					countLabel.textContent =
+						"Showing " + loadedCount + " of " + total + " " + nounPlural;
+				}
+				if (emptyBox) {
+					emptyBox.classList.toggle("hidden", loadedCount > 0);
+				}
+				sentinel.classList.toggle("hidden", !hasMore);
+				if (endBadge) {
+					endBadge.classList.toggle("hidden", hasMore || loadedCount === 0);
+				}
+				if (loadMoreText) {
+					loadMoreText.textContent = "Load More " + nounPlural;
+				}
+			};
+
+			var fetchBatch = async function (reset, isManualClick) {
+				if (isLoading) {
+					if (isManualClick) {
+						pendingManual = true;
+					}
+					return;
+				}
+				if (!hasMore && !reset) return;
+
+				isLoading = true;
+				grid.setAttribute("aria-busy", "true");
+				if (spinner) {
+					spinner.classList.remove("hidden");
+					spinner.classList.add("inline-flex");
+				}
+				if (loadMoreBtn) loadMoreBtn.disabled = true;
+
+				try {
+					var targetOffset = reset ? 0 : offset;
+					var effectiveSkip =
+						activeTopic || activeQuery ? "none" : baseSkipId;
+					var params = new URLSearchParams({
+						type: feedType,
+						skip: effectiveSkip,
+						offset: String(targetOffset),
+						limit: String(batchSize),
+					});
+					if (refId) {
+						params.set("refId", refId);
+					}
+					if (activeTopic) {
+						params.set("topic", activeTopic);
+					}
+					if (activeQuery) {
+						params.set("q", activeQuery);
+					}
+
+					var response = await fetch("/api/feed-cards?" + params.toString(), {
+						credentials: "same-origin",
+						headers: { Accept: "text/html" },
+					});
+					if (!response.ok) {
+						throw new Error("HTTP " + response.status);
+					}
+
+					var html = await response.text();
+					var parser = new DOMParser();
+					var doc = parser.parseFromString(html, "text/html");
+					var metaEl = doc.querySelector("[data-feed-batch-meta]");
+					var newCards = Array.from(doc.querySelectorAll("article"));
+
+					var rawHasMore =
+						(metaEl && metaEl.getAttribute("data-has-more")) ||
+						response.headers.get("X-Has-More");
+					var rawNextOffset =
+						(metaEl && metaEl.getAttribute("data-next-offset")) ||
+						response.headers.get("X-Next-Offset");
+					var rawTotal =
+						(metaEl && metaEl.getAttribute("data-total-count")) ||
+						response.headers.get("X-Total-Count");
+
+					if (reset) {
+						grid.replaceChildren.apply(grid, newCards);
+					} else {
+						for (var c = 0; c < newCards.length; c++) {
+							grid.appendChild(newCards[c]);
+						}
+					}
+
+					offset = rawNextOffset
+						? Number.parseInt(rawNextOffset, 10)
+						: targetOffset + newCards.length;
+					total = rawTotal ? Number.parseInt(rawTotal, 10) : total;
+					hasMore =
+						rawHasMore !== null
+							? rawHasMore === "true"
+							: newCards.length > 0 && offset < total;
+
+					root.dataset.offset = String(offset);
+					root.dataset.total = String(total);
+					root.dataset.hasMore = String(hasMore);
+					updateStatusUI();
+
+					if (observer && hasMore) {
+						observer.unobserve(sentinel);
+						observer.observe(sentinel);
+					}
+				} catch (err) {
+					console.error("Failed to load more feed items:", err);
+					if (loadMoreText) {
+						loadMoreText.textContent = "Retry Load More " + nounPlural;
+					}
+				} finally {
+					isLoading = false;
+					grid.setAttribute("aria-busy", "false");
+					if (spinner) {
+						spinner.classList.add("hidden");
+						spinner.classList.remove("inline-flex");
+					}
+					if (loadMoreBtn) loadMoreBtn.disabled = false;
+					if (pendingManual && hasMore) {
+						pendingManual = false;
+						void fetchBatch(false, false);
+					}
+				}
+			};
+
+			root.__ccFetchBatch = fetchBatch;
+
+			// 1. IntersectionObserver for automatic infinite scrolling
+			if ("IntersectionObserver" in window) {
+				observer = new IntersectionObserver(
+					function (entries) {
+						for (var e = 0; e < entries.length; e++) {
+							if (entries[e].isIntersecting && hasMore && !isLoading) {
+								void fetchBatch(false, false);
+							}
+						}
+					},
+					{ rootMargin: "550px 0px" },
+				);
+				observer.observe(sentinel);
+			}
+
+			// 2. Live Search / Filter Input (debounced 220ms)
+			if (searchInput) {
+				searchInput.addEventListener("input", function () {
+					if (debounceTimer) clearTimeout(debounceTimer);
+					debounceTimer = setTimeout(function () {
+						var nextQuery = searchInput.value.trim();
+						if (nextQuery === activeQuery) return;
+						activeQuery = nextQuery;
+						root.dataset.activeQuery = activeQuery;
+
+						if (isSingleFeedPage) {
+							var url = new URL(window.location.href);
+							if (activeQuery) {
+								url.searchParams.set("q", activeQuery);
+							} else {
+								url.searchParams.delete("q");
+							}
+							window.history.replaceState(
+								{ topic: activeTopic, q: activeQuery },
+								"",
+								url.toString(),
+							);
+						}
+
+						hasMore = true;
+						void fetchBatch(true, false);
+					}, 220);
+				});
+			}
+
+			// 3. In-page Topic Filter Strip interception (when only 1 primary feed on page)
+			if (isSingleFeedPage) {
+				var filterStrip = document.querySelector(
+					'[data-topic-filter-strip="in-page"]',
+				);
+				if (filterStrip && filterStrip.dataset.bound !== "true") {
+					filterStrip.dataset.bound = "true";
+					var pills = Array.from(
+						filterStrip.querySelectorAll("[data-topic-pill]"),
+					);
+
+					var syncPillStyles = function (selectedSlug, selectedTitle) {
+						for (var p = 0; p < pills.length; p++) {
+							var pill = pills[p];
+							var slug = pill.dataset.topicPill || "";
+							var isActive = slug === selectedSlug;
+							pill.setAttribute("aria-current", isActive ? "true" : "false");
+							if (isActive) {
+								pill.classList.add(
+									"bg-[#7C3AED]",
+									"text-white",
+									"dark:border-white/50",
+								);
+								pill.classList.remove(
+									"bg-white",
+									"text-[#2A1155]",
+									"hover:bg-[#EDE9FE]",
+									"hover:text-[#7C3AED]",
+									"dark:border-white/25",
+									"dark:bg-[#131B2E]",
+									"dark:text-slate-100",
+								);
+							} else {
+								pill.classList.remove(
+									"bg-[#7C3AED]",
+									"text-white",
+									"dark:border-white/50",
+								);
+								pill.classList.add(
+									"bg-white",
+									"text-[#2A1155]",
+									"hover:bg-[#EDE9FE]",
+									"hover:text-[#7C3AED]",
+									"dark:border-white/25",
+									"dark:bg-[#131B2E]",
+									"dark:text-slate-100",
+								);
+							}
+						}
+
+						if (topicBadge && topicName) {
+							if (selectedSlug) {
+								topicName.textContent = "Filtered: " + selectedTitle;
+								topicBadge.classList.remove("hidden");
+							} else {
+								topicBadge.classList.add("hidden");
+							}
+						}
+						if (hubLink) {
+							if (selectedSlug) {
+								hubLink.href = "/topic/" + selectedSlug;
+								hubLink.classList.remove("hidden");
+							} else {
+								hubLink.classList.add("hidden");
+							}
+						}
+					};
+
+					for (var k = 0; k < pills.length; k++) {
+						(function (pill) {
+							pill.addEventListener("click", function (ev) {
+								ev.preventDefault();
+								var nextTopic = pill.dataset.topicPill || "";
+								var nextTitle = pill.dataset.topicTitle || nextTopic;
+								if (nextTopic === activeTopic && !isLoading) return;
+
+								activeTopic = nextTopic;
+								root.dataset.activeTopic = activeTopic;
+								syncPillStyles(activeTopic, nextTitle);
+
+								var url = new URL(window.location.href);
+								if (activeTopic) {
+									url.searchParams.set("topic", activeTopic);
+								} else {
+									url.searchParams.delete("topic");
+								}
+								window.history.pushState(
+									{ topic: activeTopic, q: activeQuery },
+									"",
+									url.toString(),
+								);
+
+								hasMore = true;
+								void fetchBatch(true, false);
+							});
+						})(pills[k]);
+					}
+
+					window.addEventListener("popstate", function () {
+						var url = new URL(window.location.href);
+						var poppedTopic = url.searchParams.get("topic") || "";
+						var poppedQuery = url.searchParams.get("q") || "";
+						if (poppedTopic === activeTopic && poppedQuery === activeQuery)
+							return;
+						activeTopic = poppedTopic;
+						activeQuery = poppedQuery;
+						if (searchInput) searchInput.value = activeQuery;
+						var matchingPill = pills.find(function (p) {
+							return (p.dataset.topicPill || "") === activeTopic;
+						});
+						syncPillStyles(
+							activeTopic,
+							(matchingPill && matchingPill.dataset.topicTitle) || activeTopic,
+						);
+						hasMore = true;
+						void fetchBatch(true, false);
+					});
+				}
+			}
+		}
+
+		if (!window.__ccInfiniteFeedsBound) {
+			window.__ccInfiniteFeedsBound = true;
+
+			// Delegated click handler guarantees clicking any Load More button always works
+			document.addEventListener("click", function (ev) {
+				var target = ev.target;
+				if (!(target instanceof Element)) return;
+				var btn = target.closest("[data-feed-load-more]");
+				if (!btn) return;
+				var root = btn.closest(".infinite-feed-root");
+				if (!root) return;
+				ev.preventDefault();
+				initInfiniteFeeds();
+				if (typeof root.__ccFetchBatch === "function") {
+					void root.__ccFetchBatch(false, true);
+				}
+			});
+
+			document.addEventListener("DOMContentLoaded", initInfiniteFeeds);
+			window.addEventListener("load", initInfiniteFeeds);
+			document.addEventListener("astro:page-load", initInfiniteFeeds);
+		}
+
+		initInfiniteFeeds();
+	})();
+</script>

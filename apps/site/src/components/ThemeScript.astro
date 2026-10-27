@@ -11,18 +11,13 @@
 		const KEY = "theme";
 		try {
 			const stored = localStorage.getItem(KEY);
-			const prefersDark = window.matchMedia(
-				"(prefers-color-scheme: dark)",
-			).matches;
-			const dark = stored ? stored === "dark" : prefersDark;
+			// Default to CodingCat.dev 2026 Duolingo Chalkboard Charcoal ("dark") unless explicitly set to "light".
+			const dark = stored ? stored === "dark" : true;
 			document.documentElement.classList.toggle("dark", dark);
 			document.documentElement.style.colorScheme = dark ? "dark" : "light";
 		} catch {
-			// localStorage can throw in private mode; fall back to the media query.
-			const prefersDark = window.matchMedia(
-				"(prefers-color-scheme: dark)",
-			).matches;
-			document.documentElement.classList.toggle("dark", prefersDark);
+			document.documentElement.classList.add("dark");
+			document.documentElement.style.colorScheme = "dark";
 		}
 	})();
 </script>

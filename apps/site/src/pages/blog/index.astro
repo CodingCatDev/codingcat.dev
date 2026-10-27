@@ -1,27 +1,55 @@
 ---
-import ContentGrid from "@/components/ContentGrid.astro";
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
+import Avatar from "@/components/Avatar.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
-import Avatar from "@/components/Avatar.astro";
+import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
-import { latestPostQuery, morePostQuery } from "@/lib/sanity/queries";
+import {
+	latestPostQuery,
+	morePostQuery,
+	postCountQuery,
+} from "@/lib/sanity/queries";
+import { itemMatchesTopic, TOPICS_BY_SLUG } from "@/lib/topics";
 
 const { sanity } = Astro.locals;
 
-const hero = await sanity.loadQuery(latestPostQuery);
+const selectedTopic = Astro.url.searchParams.get("topic")?.trim() || "";
+const topicDef = selectedTopic ? TOPICS_BY_SLUG[selectedTopic] : undefined;
 
-// Only fetch the follow-on grid once the hero is known, so `$skip` can
-// exclude it. Two round trips, but the alternative is over-fetching and
-// filtering client-side.
-const more = hero?._id
-	? await sanity.loadQuery(morePostQuery, {
-			skip: hero._id,
-			offset: 0,
-			limit: 4,
-		})
-	: [];
+const [hero, rawTotalCount] = await Promise.all([
+	sanity.loadQuery(latestPostQuery),
+	sanity.loadQuery(postCountQuery),
+]);
+
+const INITIAL_BATCH = 8;
+let more: ContentListItem[] = [];
+let totalRemaining = Math.max(
+	0,
+	(typeof rawTotalCount === "number" ? rawTotalCount : 0) - (hero?._id ? 1 : 0),
+);
+
+if (topicDef) {
+	const allPosts = ((await sanity.loadQuery(morePostQuery, {
+		skip: "none",
+		offset: 0,
+		limit: 250,
+	})) ?? []) as ContentListItem[];
+	const filtered = allPosts.filter((item) =>
+		itemMatchesTopic(item.title, item.excerpt, topicDef),
+	);
+	totalRemaining = filtered.length;
+	more = filtered.slice(0, INITIAL_BATCH);
+} else if (hero?._id) {
+	more = ((await sanity.loadQuery(morePostQuery, {
+		skip: hero._id,
+		offset: 0,
+		limit: INITIAL_BATCH,
+	})) ?? []) as ContentListItem[];
+}
 
 const heroHref = hero?.slug ? `/post/${hero.slug}` : undefined;
 const ogCardImageUrl = sanity
@@ -33,8 +61,8 @@ const ogCardImageUrl = sanity
 ---
 
 <BaseLayout
-	title="Blog | CodingCat.dev"
-	description="Purrfect web development tutorials, articles, and guides."
+	title="Blog & Tutorials | CodingCat.dev"
+	description="Purrfect web development blog posts, architecture guides, and hands-on tutorials."
 	ogFallback={{
 		title: "CodingCat.dev Blog",
 		subtitle: "Purrfect web development tutorials, articles, and guides.",
@@ -42,58 +70,130 @@ const ogCardImageUrl = sanity
 		image: ogCardImageUrl,
 	}}
 >
-	{
-		hero ? (
-			<article>
-				{heroHref && (
-					<a class="block mb-8 group md:mb-16" href={heroHref}>
-						<CoverImage image={hero.coverImage} priority />
-					</a>
-				)}
-				<div class="mb-8 md:mb-16 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
-					<div>
-						<h1 class="mb-4 text-4xl leading-tight text-pretty lg:text-6xl">
-							{heroHref ? (
-								<a href={heroHref} class="hover:underline">
-									{hero.title}
-								</a>
-							) : (
-								hero.title
-							)}
-						</h1>
-						<div class="mb-4 text-lg text-muted-foreground md:mb-0">
-							<FormattedDate dateString={hero.date} />
-						</div>
-					</div>
-					<div>
-						{hero.excerpt && (
-							<p class="mb-4 text-lg leading-relaxed text-pretty">{hero.excerpt}</p>
-						)}
-						<div class="flex flex-wrap gap-2">
-							{(hero.author ?? []).map((author) => (
-								<Avatar
-									name={author.title}
-									href={author.slug ? `/author/${author.slug}` : undefined}
-									coverImage={author.coverImage}
-								/>
-							))}
-						</div>
-					</div>
-				</div>
-			</article>
-		) : (
-			<p class="py-32 text-center text-lg text-muted-foreground">
-				No posts published yet.
-			</p>
-		)
-	}
+	<section class="py-8 md:py-12">
+		<div class="mb-6 flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+			<div>
+				<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
+					✏️ CodingCat.dev Blog &amp; Tutorials
+				</span>
+				<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
+					blog &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">tutorials</span>
+					<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+				</h1>
+				<p class="font-hand mt-2 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
+					Deep-dive engineering blog posts, visual system diagrams, and production code guides.
+				</p>
+			</div>
+			<div class="hidden shrink-0 sm:block">
+				<AjAnimatedMascot
+					variant="full-body"
+					state="ship-it-laptop"
+					angle="three-quarter-left"
+					cls="w-28 h-auto"
+					caption="Ship it!"
+				/>
+			</div>
+		</div>
 
-	{
-		more.length > 0 && (
-			<aside class="mb-32">
-				<SectionHeader title="More Posts" href="/blog/page/1" />
-				<ContentGrid items={more as ContentListItem[]} priorityCount={0} />
-			</aside>
-		)
-	}
+		<TopicFilterStrip
+			label="Filter Blog Posts by Topic & Vendor:"
+			basePath="/blog"
+			allLabel="All Blog Posts"
+			activeSlug={topicDef ? topicDef.slug : ""}
+		/>
+
+		{
+			hero ? (
+				<article class="duo-card hand-border my-8 overflow-hidden p-6 md:p-8">
+					<div class="grid items-center gap-8 lg:grid-cols-12">
+						{heroHref && (
+							<a
+								class="group block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20] lg:col-span-7"
+								href={heroHref}
+							>
+								<CoverImage image={hero.coverImage} priority />
+							</a>
+						)}
+						<div class="flex flex-col justify-between space-y-4 lg:col-span-5">
+							<div>
+								<div class="mb-3 flex flex-wrap items-center gap-2">
+									<span class="rounded-full border border-[#2A1155] bg-[#FEF08A] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#713F12]">
+										★ Featured Blog Post
+									</span>
+									{hero.date && (
+										<span class="rounded-full border border-[#2A1155]/30 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/30 dark:bg-purple-950/80 dark:text-purple-200">
+											<FormattedDate dateString={hero.date} />
+										</span>
+									)}
+								</div>
+								<h2 class="font-display text-3xl font-black leading-tight text-balance text-[#2A1155] dark:text-white sm:text-4xl">
+									{heroHref ? (
+										<a
+											href={heroHref}
+											class="transition-colors hover:text-[#7C3AED] hover:underline dark:hover:text-[#C084FC]"
+										>
+											{hero.title}
+										</a>
+									) : (
+										hero.title
+									)}
+								</h2>
+								{hero.excerpt && (
+									<p class="mt-3 text-base font-medium leading-relaxed text-[#2A1155]/80 dark:text-slate-300 text-pretty line-clamp-4">
+										{hero.excerpt}
+									</p>
+								)}
+							</div>
+
+							{(hero.author ?? []).length > 0 && (
+								<div class="flex flex-wrap gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-4 dark:border-white/15">
+									{(hero.author ?? []).map((author) => (
+										<Avatar
+											name={author.title}
+											href={author.slug ? `/author/${author.slug}` : undefined}
+											coverImage={author.coverImage}
+										/>
+									))}
+								</div>
+							)}
+
+							{heroHref && (
+								<div class="pt-2">
+									<a
+										href={heroHref}
+										class="tactile-btn inline-flex items-center gap-2 px-6 py-3 text-sm"
+									>
+										<span>Read Blog Post</span>
+										<span class="text-[#86EFAC]">&rarr;</span>
+									</a>
+								</div>
+							)}
+						</div>
+					</div>
+				</article>
+			) : (
+				<p class="py-24 text-center font-display text-xl font-bold text-[#2A1155]/70 dark:text-slate-400">
+					No blog posts published yet.
+				</p>
+			)
+		}
+
+		<aside class="mb-20">
+			<SectionHeader title="all blog posts" />
+			<InfiniteContentGrid
+				type="post"
+				items={more}
+				skipId={hero?._id ?? "none"}
+				initialOffset={more.length}
+				totalCount={totalRemaining}
+				batchSize={INITIAL_BATCH}
+				activeTopic={topicDef ? topicDef.slug : ""}
+				showSearch={true}
+				searchPlaceholder="Filter blog posts by title or keyword..."
+				priorityCount={0}
+				nounPlural="blog posts"
+				fallbackHref="/blog/page/1"
+			/>
+		</aside>
+	</section>
 </BaseLayout>

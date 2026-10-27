@@ -1,0 +1,948 @@
+---
+/**
+ * `AjAnimatedMascot.astro`
+ *
+ * Production-ready, multi-layered, articulated Interactive SVG + CSS Keyframes +
+ * Web Animations API (WAAPI) & Scroll/Cursor State Machine Component for AJ the Cat.
+ *
+ * Supports:
+ * - `variant="full-body" | "head"`
+ * - `angle="three-quarter-right" | "three-quarter-left"` (with counter-flipped readable text)
+ * - `state="idle-wave" | "podcast-groove" | "point-diagram" | "celebrate" | "search-curious" | "404-confused" | "peek-corner" | "bored-nap" | "chase-yarn" | "ship-it-laptop" | "coffee-sip" | "mind-blown" | "cool-shades" | "canonical-rest"`
+ * - `mouth="smile-open" | "grin" | "surprised-o" | "talking"`
+ * - Viewport-gated `requestAnimationFrame` cursor pupil tracking
+ * - Randomized natural double-blink state machine every 3.2s to 6.0s
+ * - Scroll-driven section glance & head tilt
+ * - Click / keyboard (`Enter` / `Space`) `celebrate` burst
+ * - `@media (prefers-reduced-motion: reduce)` safety overrides
+ */
+import AjFxLayer from "@/components/aj-rig/AjFxLayer.astro";
+import AjHeadBones from "@/components/aj-rig/AjHeadBones.astro";
+import AjHexBadgeDefs from "@/components/aj-rig/AjHexBadgeDefs.astro";
+import AjLowerBodyBones from "@/components/aj-rig/AjLowerBodyBones.astro";
+import { AJ_TRACED_PATHS as P } from "@/components/aj-rig/ajTracedPaths";
+import type {
+	AjAnimationState,
+	AjMascotVariant,
+	AjMouthViseme,
+	AjTurnaroundAngle,
+} from "@/components/aj-rig/ajRigTypes";
+
+export type {
+	AjAnimationState,
+	AjMascotVariant,
+	AjMouthViseme,
+	AjTurnaroundAngle,
+};
+
+export interface Props {
+	state?: AjAnimationState;
+	variant?: AjMascotVariant;
+	angle?: AjTurnaroundAngle;
+	mouth?: AjMouthViseme;
+	caption?: string;
+	cls?: string;
+	showYarnBall?: boolean;
+	showPivots?: boolean;
+	interactive?: boolean;
+	id?: string;
+}
+
+const {
+	state = "idle-wave",
+	variant = "full-body",
+	angle = "three-quarter-right",
+	mouth,
+	caption,
+	cls = variant === "head" ? "w-20 h-20" : "w-44 h-auto",
+	showYarnBall = false,
+	showPivots = false,
+	interactive = true,
+	id = `aj-${Math.random().toString(36).slice(2, 9)}`,
+} = Astro.props;
+
+const defaultMouthByState: Partial<Record<AjAnimationState, AjMouthViseme>> = {
+	"podcast-groove": "grin",
+	"search-curious": "surprised-o",
+	"404-confused": "surprised-o",
+	"coffee-sip": "grin",
+	"mind-blown": "surprised-o",
+	"cool-shades": "grin",
+};
+
+const activeMouth: AjMouthViseme =
+	mouth ?? defaultMouthByState[state] ?? "smile-open";
+
+const effectiveVariant: AjMascotVariant =
+	state === "peek-corner" ? "head" : variant;
+
+const viewBox =
+	state === "bored-nap"
+		? "-55 75 660 595"
+		: state === "peek-corner"
+			? "0 40 560 620"
+			: effectiveVariant === "head"
+				? "10 12 540 676"
+				: "0 0 560 1030";
+
+const isLeftAngle = angle === "three-quarter-left";
+---
+
+<div
+	id={`${id}-container`}
+	data-aj-mascot
+	data-state={state}
+	data-variant={effectiveVariant}
+	data-angle={angle}
+	data-mouth={activeMouth}
+	data-interactive={interactive ? "true" : "false"}
+	class:list={[
+		"aj-mascot-wrapper relative inline-flex flex-col items-center select-none group",
+		interactive && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:focus-visible:ring-[#C084FC] rounded-2xl",
+	]}
+	tabindex={interactive ? 0 : undefined}
+	role={interactive ? "button" : undefined}
+	aria-label={`AJ the CodingCat.dev mascot (${state}, ${angle})`}
+>
+	{
+		caption && (
+			<div class="aj-mascot-caption mb-2.5 -rotate-2 rounded-2xl border-2 border-[#2A1155] bg-[#FEF08A] px-3.5 py-1.5 font-hand text-lg font-bold text-[#713F12] transition-transform group-hover:rotate-1 dark:border-yellow-500 shadow-sketch-sm">
+				{caption}
+			</div>
+		)
+	}
+
+	<div class="relative flex items-center justify-center">
+		<svg
+			id={`${id}-rig`}
+			data-aj-rig
+			class:list={[
+				"aj-rig",
+				`state-${state}`,
+				`variant-${effectiveVariant}`,
+				`angle-${angle}`,
+				cls,
+				"object-contain drop-shadow-[0_10px_20px_rgba(42,17,85,0.35)] transition-transform duration-300",
+			]}
+			viewBox={viewBox}
+			style="overflow: visible;"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			role="img"
+			aria-label={`AJ the CodingCat.dev mascot in ${state} state`}
+		>
+			<AjHexBadgeDefs idPrefix={id} />
+
+			{
+				state === "bored-nap" ? (
+					/* Horizontal Cat Loaf Pose (state="bored-nap") */
+					<g id={`${id}-aj-loaf-root`} transform={isLeftAngle ? "translate(550, 0) scale(-1, 1)" : undefined}>
+						<ellipse
+							id={`${id}-aj-shadow`}
+							cx="275"
+							cy="608"
+							rx="265"
+							ry="20"
+							fill="rgba(15, 23, 42, 0.32)"
+						/>
+						{/* Die-Cut Sticker Underlay for Loaf */}
+						<g>
+							<path
+								d="M 85,535 C 8,528 -22,468 -4,395 C 8,348 -16,322 -32,315"
+								fill="none"
+								stroke="#F8FAFC"
+								stroke-width="52"
+								stroke-linecap="round"
+							/>
+							<path
+								d="M 65,495 C 55,365 225,345 375,395 C 435,415 445,565 375,585 L 105,585 C 62,585 58,545 65,495 Z"
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="18"
+								stroke-linejoin="round"
+								stroke-linecap="round"
+							/>
+							<ellipse cx="145" cy="518" rx="88" ry="72" fill="#F8FAFC" />
+							<ellipse cx="305" cy="586" rx="48" ry="28" fill="#F8FAFC" />
+							<ellipse cx="448" cy="586" rx="48" ry="28" fill="#F8FAFC" />
+						</g>
+						{/* Foreground Loaf Body & Tail */}
+						<path
+							class="aj-bone aj-bone-tail"
+							d="M 85,535 C 8,528 -22,468 -4,395 C 8,348 -16,322 -32,315"
+							fill="none"
+							stroke="#050507"
+							stroke-width="36"
+							stroke-linecap="round"
+						/>
+						<path
+							d="M 65,495 C 55,365 225,345 375,395 C 435,415 445,565 375,585 L 105,585 C 62,585 58,545 65,495 Z"
+							fill="#050507"
+						/>
+						<ellipse cx="145" cy="518" rx="80" ry="64" fill="#050507" />
+						<ellipse cx="305" cy="586" rx="40" ry="20" fill="#050507" />
+						<ellipse cx="448" cy="586" rx="40" ry="20" fill="#050507" />
+						<path
+							d="M 92,462 Q 198,462 206,572"
+							stroke="#2C2C2E"
+							stroke-width="6.5"
+							stroke-linecap="round"
+							fill="none"
+						/>
+						<path
+							d="M 288,574 L 288,598 M 305,572 L 305,600 M 322,574 L 322,598 M 431,574 L 431,598 M 448,572 L 448,600 M 465,574 L 465,598"
+							fill="none"
+							stroke="#F8FAFC"
+							stroke-width="3.2"
+							stroke-linecap="round"
+						/>
+						{/* Scaled Head Resting on Front Paws */}
+						<g transform="translate(142, 118) scale(0.76) rotate(4, 295, 555)">
+							<path
+								d={P.headband_dark}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="18"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.right_earcup_lavender}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="19"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.left_earcup_purple}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="19"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.bone_ear_left_black}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="17"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.bone_ear_right_black}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="17"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.bone_head_black}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="18"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.collar_strap}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="19"
+								fill-rule="evenodd"
+							/>
+							<path
+								d={P.collar_hex_base}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="19"
+								fill-rule="evenodd"
+							/>
+							<AjHeadBones
+								idPrefix={id}
+								state={state}
+								angle={angle}
+								mouth={activeMouth}
+							/>
+							<AjLowerBodyBones
+								idPrefix={id}
+								state={state}
+								variant="head"
+								angle={angle}
+								mode="collar"
+							/>
+						</g>
+						<g transform={isLeftAngle ? "translate(550, 0) scale(-1, 1)" : undefined}>
+							<text
+								x="505"
+								y="215"
+								font-family="Nunito, sans-serif"
+								font-weight="900"
+								font-size="36"
+								fill="#C084FC"
+							>
+								z
+							</text>
+							<text
+								x="535"
+								y="175"
+								font-family="Nunito, sans-serif"
+								font-weight="900"
+								font-size="44"
+								fill="#C5E86C"
+							>
+								Z
+							</text>
+							<text
+								x="568"
+								y="132"
+								font-family="Nunito, sans-serif"
+								font-weight="900"
+								font-size="52"
+								fill="#FACC15"
+							>
+								z
+							</text>
+						</g>
+					</g>
+				) : (
+					/* Standard Articulated Full-Body & Head-Only Bone Rig */
+					<>
+						{effectiveVariant === "full-body" && (
+							<ellipse
+								id={`${id}-aj-shadow`}
+								data-bone="aj-shadow"
+								class="aj-bone aj-bone-shadow"
+								cx="300"
+								cy="1008"
+								rx={state === "celebrate" ? "90" : "124"}
+								ry={state === "celebrate" ? "12" : "18"}
+								fill="rgba(15, 23, 42, 0.28)"
+							/>
+						)}
+
+						<g
+							id={`${id}-aj-angle-flip`}
+							transform={isLeftAngle ? "translate(590, 0) scale(-1, 1)" : undefined}
+						>
+							<g id={`${id}-aj-body-root`} class="aj-body-root">
+								{/* 1. Die-Cut White Sticker Underlay (#F8FAFC + 1px #94A3B8 Rim) */}
+								<AjLowerBodyBones
+									idPrefix={id}
+									state={state}
+									variant={effectiveVariant}
+									angle={angle}
+									mode="underlay"
+								/>
+
+								{/* 2-7. Lower Body Bones (Tail, Hind Legs, Left Arm, Torso, Right Arm) */}
+								<AjLowerBodyBones
+									idPrefix={id}
+									state={state}
+									variant={effectiveVariant}
+									angle={angle}
+									mode="foreground"
+								/>
+
+								{/* 8. Head, Headphones, Ears, Eyes, Nose, Whiskers & Switchable Mouth */}
+								<AjHeadBones
+									idPrefix={id}
+									state={state}
+									angle={angle}
+									mouth={activeMouth}
+								/>
+
+								{/* 9. Soft Lavender Collar & Pastel-Rainbow Hexagonal "AJ" Tag */}
+								<AjLowerBodyBones
+									idPrefix={id}
+									state={state}
+									variant={effectiveVariant}
+									angle={angle}
+									mode="collar"
+								/>
+							</g>
+
+							{/* 10 & 11. State-Specific Vector Props, Particles & Pivot Inspector Overlay */}
+							<AjFxLayer
+								idPrefix={id}
+								state={state}
+								showPivots={showPivots}
+							/>
+						</g>
+					</>
+				)
+			}
+		</svg>
+
+		{
+			showYarnBall && (
+				<svg
+					class="yarn-glow absolute -bottom-2 -right-3 size-14 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+					viewBox="0 0 80 80"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+					aria-hidden="true"
+				>
+					<circle
+						cx="40"
+						cy="40"
+						r="24"
+						fill="#7C3AED"
+						stroke="#2A1155"
+						stroke-width="3"
+					/>
+					<path
+						d="M22 32C30 24 48 24 58 34M20 42C32 34 48 36 60 46M26 52C36 44 48 46 54 54"
+						stroke="#EDE9FE"
+						stroke-width="2.5"
+						stroke-linecap="round"
+					/>
+					<path
+						d="M32 18C26 30 28 48 38 60M44 18C38 32 40 48 50 60"
+						stroke="#D946EF"
+						stroke-width="2.5"
+						stroke-linecap="round"
+					/>
+					<path
+						d="M58 52C66 58 72 64 76 74"
+						stroke="#C084FC"
+						stroke-width="4"
+						stroke-linecap="round"
+					/>
+				</svg>
+			)
+		}
+	</div>
+</div>
+
+<style is:global>
+	/* Explicit SVG Bone Pivot Coordinates (in 560x1030 canonical space) */
+	.aj-rig .aj-bone-shadow {
+		transform-origin: 300px 1008px;
+	}
+	.aj-rig .aj-bone-tail {
+		transform-origin: 186px 650px;
+	}
+	.aj-rig.state-celebrate .aj-bone-tail {
+		transform-origin: 204px 760px;
+	}
+	.aj-rig .aj-bone-leg-left {
+		transform-origin: 242px 860px;
+	}
+	.aj-rig .aj-bone-leg-right {
+		transform-origin: 342px 855px;
+	}
+	.aj-rig .aj-bone-torso {
+		transform-origin: 295px 725px;
+	}
+	.aj-rig .aj-bone-arm-right {
+		transform-origin: 200px 615px;
+	}
+	.aj-rig .aj-bone-arm-left {
+		transform-origin: 385px 615px;
+	}
+	.aj-rig .aj-bone-head {
+		transform-origin: 295px 555px;
+	}
+	.aj-rig .aj-bone-headphones {
+		transform-origin: 295px 200px;
+	}
+	.aj-rig .aj-bone-ear-left {
+		transform-origin: 165px 225px;
+	}
+	.aj-rig .aj-bone-ear-right {
+		transform-origin: 415px 215px;
+	}
+	.aj-rig .aj-bone-eyes {
+		transform-origin: 298px 362px;
+	}
+	.aj-rig .aj-bone-mouth {
+		transform-origin: 388px 505px;
+	}
+	.aj-rig .aj-bone-hex-tag {
+		transform-origin: 340px 585px;
+	}
+
+	/* Eyelid blink layer (hidden by default, scales vertically during double-blink) */
+	.aj-rig .aj-eyelid {
+		transform-origin: 340px 290px;
+		transform: scaleY(0);
+		transition: transform 95ms ease-in-out;
+	}
+	.aj-rig.is-blinking .aj-eyelid {
+		transform: scaleY(1);
+	}
+
+	/* Mouth Viseme Visibility Switching */
+	.aj-rig .aj-viseme {
+		display: none;
+	}
+	.aj-rig [data-active-viseme="smile-open"] .aj-viseme-smile-open,
+	.aj-rig [data-active-viseme="grin"] .aj-viseme-grin,
+	.aj-rig [data-active-viseme="surprised-o"] .aj-viseme-surprised-o,
+	.aj-rig [data-active-viseme="talking"] .aj-viseme-talking {
+		display: inline;
+	}
+	.aj-rig .aj-talking-frame {
+		transform-origin: 388px 505px;
+		animation: aj-viseme-talk 0.32s ease-in-out infinite alternate;
+	}
+
+	/* Bone Highlight Ring when inspected in /mascot-lab */
+	.aj-rig .aj-bone.is-highlighted {
+		filter: drop-shadow(0 0 14px #C5E86C) brightness(1.18);
+	}
+
+	/* 1. Default Idle-Wave Loops */
+	.aj-rig.state-idle-wave .aj-body-root {
+		animation: aj-breathe-bounce 2.8s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-shadow {
+		animation: aj-shadow-pulse 2.8s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-tail {
+		animation: aj-tail-wag 2.6s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-arm-left {
+		animation: aj-paw-wave 2.2s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-arm-right {
+		animation: aj-arm-right-idle 2.8s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave.variant-full-body .aj-bone-head {
+		animation: aj-head-tilt-idle 3.4s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-headphones {
+		animation: aj-headphone-lag 2.8s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-hex-tag {
+		animation: aj-hex-pendulum 2.8s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-ear-left {
+		animation: aj-ear-twitch-l 5.2s ease-in-out infinite;
+	}
+	.aj-rig.state-idle-wave .aj-bone-ear-right {
+		animation: aj-ear-twitch-r 6.4s ease-in-out infinite;
+	}
+
+	/* 2. Podcast-Groove (120 BPM = 0.5s beat) */
+	.aj-rig.state-podcast-groove .aj-body-root {
+		animation: aj-groove-bounce 0.5s ease-in-out infinite alternate;
+	}
+	.aj-rig.state-podcast-groove.variant-full-body .aj-bone-head {
+		animation: aj-groove-nod 0.5s ease-in-out infinite alternate;
+	}
+	.aj-rig.state-podcast-groove .aj-bone-headphones {
+		animation: aj-groove-headphones 0.5s ease-in-out infinite alternate;
+	}
+	.aj-rig.state-podcast-groove .aj-bone-tail {
+		animation: aj-tail-wag 1.0s ease-in-out infinite;
+	}
+	.aj-rig.state-podcast-groove .aj-bone-hex-tag {
+		animation: aj-hex-pendulum 1.0s ease-in-out infinite;
+	}
+	.aj-rig.state-podcast-groove .aj-fx-groove {
+		animation: aj-notes-float 1.2s ease-in-out infinite alternate;
+	}
+
+	/* 3. Point-Diagram & Ship-It-Laptop */
+	.aj-rig.state-point-diagram .aj-body-root,
+	.aj-rig.state-ship-it-laptop .aj-body-root {
+		animation: aj-breathe-bounce 3.0s ease-in-out infinite;
+	}
+	.aj-rig.state-point-diagram.variant-full-body .aj-bone-head {
+		transform: rotate(3deg);
+	}
+	.aj-rig.state-point-diagram .aj-bone-arm-left {
+		animation: aj-point-pulse 1.8s ease-in-out infinite alternate;
+	}
+	.aj-rig.state-point-diagram .aj-bone-tail,
+	.aj-rig.state-ship-it-laptop .aj-bone-tail {
+		animation: aj-tail-wag 2.4s ease-in-out infinite;
+	}
+
+	/* 4. Celebrate Jump */
+	.aj-rig.state-celebrate .aj-body-root {
+		animation: aj-celebrate-jump 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) infinite alternate;
+	}
+	.aj-rig.state-celebrate .aj-bone-shadow {
+		animation: aj-celebrate-shadow 0.9s ease-in-out infinite alternate;
+	}
+	.aj-rig.state-celebrate .aj-bone-tail {
+		animation: aj-tail-wag 0.85s ease-in-out infinite;
+	}
+	.aj-rig.state-celebrate .aj-bone-hex-tag {
+		animation: aj-hex-pendulum-wide 0.9s ease-in-out infinite alternate;
+	}
+
+	/* 5. Search-Curious & Coffee-Sip */
+	.aj-rig.state-search-curious.variant-full-body .aj-bone-head {
+		transform: rotate(7.5deg);
+	}
+	.aj-rig.state-search-curious .aj-body-root,
+	.aj-rig.state-coffee-sip .aj-body-root {
+		animation: aj-breathe-bounce 3.2s ease-in-out infinite;
+	}
+	.aj-rig.state-search-curious .aj-bone-tail,
+	.aj-rig.state-coffee-sip .aj-bone-tail {
+		animation: aj-tail-wag 2.8s ease-in-out infinite;
+	}
+
+	/* 6. 404-Confused */
+	.aj-rig.state-404-confused.variant-full-body .aj-bone-head {
+		transform: rotate(-9.5deg);
+	}
+	.aj-rig.state-404-confused .aj-bone-ear-left {
+		transform: rotate(-10deg);
+	}
+	.aj-rig.state-404-confused .aj-bone-ear-right {
+		transform: rotate(4deg);
+	}
+	.aj-rig.state-404-confused .aj-bone-tail {
+		animation: aj-tail-wag 3.6s ease-in-out infinite;
+	}
+
+	/* 7. Extended States: Chase-Yarn, Mind-Blown, Cool-Shades */
+	.aj-rig.state-chase-yarn .aj-body-root {
+		transform-origin: 295px 780px;
+		transform: translate(-24px, 10px) rotate(14deg);
+	}
+	.aj-rig.state-chase-yarn .aj-bone-arm-left {
+		animation: aj-paw-wave 0.9s ease-in-out infinite;
+	}
+	.aj-rig.state-mind-blown .aj-bone-headphones {
+		transform: translate(0, -34px);
+	}
+	.aj-rig.state-cool-shades .aj-body-root {
+		animation: aj-breathe-bounce 3.4s ease-in-out infinite;
+	}
+
+	/* Keyframes */
+	@keyframes aj-breathe-bounce {
+		0%, 100% {
+			transform: translateY(0px) scale(1, 1);
+		}
+		50% {
+			transform: translateY(-4px) scale(1.008, 0.994);
+		}
+	}
+	@keyframes aj-shadow-pulse {
+		0%, 100% {
+			transform: scale(1, 1);
+		}
+		50% {
+			transform: scale(0.93, 0.93);
+		}
+	}
+	@keyframes aj-tail-wag {
+		0%, 100% {
+			transform: rotate(-4deg);
+		}
+		50% {
+			transform: rotate(8deg);
+		}
+	}
+	@keyframes aj-paw-wave {
+		0%, 100% {
+			transform: rotate(-3deg);
+		}
+		50% {
+			transform: rotate(6deg);
+		}
+	}
+	@keyframes aj-arm-right-idle {
+		0%, 100% {
+			transform: rotate(0deg);
+		}
+		50% {
+			transform: rotate(2deg);
+		}
+	}
+	@keyframes aj-head-tilt-idle {
+		0%, 100% {
+			transform: rotate(-1.5deg);
+		}
+		50% {
+			transform: rotate(2deg);
+		}
+	}
+	@keyframes aj-headphone-lag {
+		0%, 100% {
+			transform: translateY(0px);
+		}
+		50% {
+			transform: translateY(-2px);
+		}
+	}
+	@keyframes aj-hex-pendulum {
+		0%, 100% {
+			transform: rotate(-4deg);
+		}
+		50% {
+			transform: rotate(5deg);
+		}
+	}
+	@keyframes aj-hex-pendulum-wide {
+		0% {
+			transform: rotate(-10deg);
+		}
+		100% {
+			transform: rotate(12deg);
+		}
+	}
+	@keyframes aj-ear-twitch-l {
+		0%, 86%, 100% {
+			transform: rotate(0deg);
+		}
+		90% {
+			transform: rotate(-6deg);
+		}
+		94% {
+			transform: rotate(2deg);
+		}
+	}
+	@keyframes aj-ear-twitch-r {
+		0%, 84%, 100% {
+			transform: rotate(0deg);
+		}
+		89% {
+			transform: rotate(6deg);
+		}
+		93% {
+			transform: rotate(-2deg);
+		}
+	}
+	@keyframes aj-groove-bounce {
+		0% {
+			transform: translateY(0px) scale(1, 1);
+		}
+		100% {
+			transform: translateY(6px) scale(1.012, 0.988);
+		}
+	}
+	@keyframes aj-groove-nod {
+		0% {
+			transform: rotate(-1deg) translateY(0px);
+		}
+		100% {
+			transform: rotate(4.5deg) translateY(4px);
+		}
+	}
+	@keyframes aj-groove-headphones {
+		0% {
+			transform: translateY(0px);
+		}
+		100% {
+			transform: translateY(-3.5px);
+		}
+	}
+	@keyframes aj-notes-float {
+		0% {
+			transform: translateY(0px) scale(0.98);
+		}
+		100% {
+			transform: translateY(-8px) scale(1.04);
+		}
+	}
+	@keyframes aj-point-pulse {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(-4deg);
+		}
+	}
+	@keyframes aj-celebrate-jump {
+		0% {
+			transform: translateY(0px) scale(1.01, 0.99);
+		}
+		100% {
+			transform: translateY(-22px) scale(0.98, 1.02);
+		}
+	}
+	@keyframes aj-celebrate-shadow {
+		0% {
+			transform: scale(1, 1);
+		}
+		100% {
+			transform: scale(0.74, 0.74);
+		}
+	}
+	@keyframes aj-viseme-talk {
+		0% {
+			transform: scaleY(0.45);
+		}
+		100% {
+			transform: scaleY(1.08);
+		}
+	}
+
+	/* Accessibility: Respect prefers-reduced-motion: reduce */
+	@media (prefers-reduced-motion: reduce) {
+		.aj-rig *,
+		.aj-rig .aj-body-root,
+		.aj-rig .aj-bone,
+		.aj-rig .aj-talking-frame {
+			animation: none !important;
+			transition: none !important;
+		}
+	}
+</style>
+
+<script>
+	function initAjMascots() {
+		const reducedMotion = window.matchMedia(
+			"(prefers-reduced-motion: reduce)",
+		).matches;
+
+		const mascots = document.querySelectorAll<HTMLElement>("[data-aj-mascot]");
+		if (!mascots.length) return;
+
+		let pointerX = window.innerWidth / 2;
+		let pointerY = window.innerHeight / 2;
+		let rafPending = false;
+
+		function updatePupilTracking() {
+			rafPending = false;
+			if (reducedMotion) return;
+
+			mascots.forEach((wrapper) => {
+				const svg = wrapper.querySelector<SVGSVGElement>("[data-aj-rig]");
+				if (!svg) return;
+				const rect = svg.getBoundingClientRect();
+				if (
+					rect.bottom < 0 ||
+					rect.top > window.innerHeight ||
+					rect.width === 0
+				) {
+					return;
+				}
+
+				const cx = rect.left + rect.width * 0.56;
+				const cy = rect.top + rect.height * 0.36;
+				const dx = pointerX - cx;
+				const dy = pointerY - cy;
+				const dist = Math.hypot(dx, dy) || 1;
+				const factor = Math.min(dist / 260, 1);
+
+				const isLeft = wrapper.dataset.angle === "three-quarter-left";
+				const signedDx = isLeft ? -dx : dx;
+				const maxRx = 9.5;
+				const maxRy = 8.0;
+				const px = (signedDx / dist) * factor * maxRx;
+				const py = (dy / dist) * factor * maxRy;
+
+				svg
+					.querySelectorAll<SVGGElement>(".aj-pupil-track")
+					.forEach((pupilGroup) => {
+						const scaleX = pupilGroup.classList.contains("aj-pupil-track-right")
+							? 0.72
+							: 1;
+						pupilGroup.style.transform = `translate(${(px * scaleX).toFixed(2)}px, ${py.toFixed(2)}px)`;
+					});
+			});
+		}
+
+		if (!reducedMotion) {
+			window.addEventListener(
+				"pointermove",
+				(e: PointerEvent) => {
+					pointerX = e.clientX;
+					pointerY = e.clientY;
+					if (!rafPending) {
+						rafPending = true;
+						requestAnimationFrame(updatePupilTracking);
+					}
+				},
+				{ passive: true },
+			);
+		}
+
+		mascots.forEach((wrapper) => {
+			if (wrapper.dataset.ajHydrated === "true") return;
+			wrapper.dataset.ajHydrated = "true";
+
+			const svg = wrapper.querySelector<SVGSVGElement>("[data-aj-rig]");
+			if (!svg) return;
+
+			// 1. Randomized natural double-blink every 3.2s to 6.0s
+			if (!reducedMotion) {
+				const scheduleBlink = () => {
+					const delay = 3200 + Math.random() * 2800;
+					window.setTimeout(() => {
+						svg.classList.add("is-blinking");
+						window.setTimeout(() => {
+							svg.classList.remove("is-blinking");
+							if (Math.random() > 0.42) {
+								window.setTimeout(() => {
+									svg.classList.add("is-blinking");
+									window.setTimeout(
+										() => svg.classList.remove("is-blinking"),
+										110,
+									);
+								}, 125);
+							}
+						}, 115);
+						scheduleBlink();
+					}, delay);
+				};
+				scheduleBlink();
+			}
+
+			// 2. Click / Enter / Space Celebrate Burst via Web Animations API (WAAPI)
+			const triggerCelebrate = () => {
+				const bodyRoot = svg.querySelector<SVGGElement>(".aj-body-root");
+				const earLeft = svg.querySelector<SVGGElement>(".aj-bone-ear-left");
+				const earRight = svg.querySelector<SVGGElement>(".aj-bone-ear-right");
+
+				if (!reducedMotion && bodyRoot?.animate) {
+					bodyRoot.animate(
+						[
+							{ transform: "translateY(0px) scale(1, 1)" },
+							{ transform: "translateY(8px) scale(1.04, 0.95)", offset: 0.2 },
+							{ transform: "translateY(-28px) scale(0.96, 1.05)", offset: 0.55 },
+							{ transform: "translateY(0px) scale(1, 1)" },
+						],
+						{ duration: 620, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" },
+					);
+					earLeft?.animate(
+						[
+							{ transform: "rotate(0deg)" },
+							{ transform: "rotate(-14deg)" },
+							{ transform: "rotate(0deg)" },
+						],
+						{ duration: 480, easing: "ease-out" },
+					);
+					earRight?.animate(
+						[
+							{ transform: "rotate(0deg)" },
+							{ transform: "rotate(14deg)" },
+							{ transform: "rotate(0deg)" },
+						],
+						{ duration: 480, easing: "ease-out" },
+					);
+				}
+
+				wrapper.dispatchEvent(
+					new CustomEvent("aj:celebrate", {
+						bubbles: true,
+						detail: {
+							id: wrapper.id,
+							state: wrapper.dataset.state,
+							angle: wrapper.dataset.angle,
+						},
+					}),
+				);
+			};
+
+			if (wrapper.dataset.interactive === "true") {
+				wrapper.addEventListener("click", triggerCelebrate);
+				wrapper.addEventListener("keydown", (e: KeyboardEvent) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						triggerCelebrate();
+					}
+				});
+			}
+		});
+	}
+
+	initAjMascots();
+	window.addEventListener("cc:page-load", initAjMascots);
+</script>

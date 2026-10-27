@@ -1,28 +1,39 @@
 ---
+import AjHeadphones from "@/components/icons/AjHeadphones.astro";
 import NavLink from "./NavLink.astro";
 
 const year = new Date().getUTCFullYear();
 
-const legalLinks = [
+const primaryLinks = [
+	{ href: "/courses", label: "Courses" },
+	{ href: "/podcasts", label: "Podcasts" },
+	{ href: "/blog", label: "Blog" },
+	{ href: "/topics", label: "Topics & Vendors" },
+	{ href: "/search", label: "Search" },
+];
+
+const communityLinks = [
 	{ href: "/about", label: "About" },
-	{ href: "/contact", label: "Contact" },
-	{ href: "/developers", label: "Developers" },
-	{ href: "/privacy", label: "Privacy Policy" },
-	{ href: "/terms-of-use", label: "Terms of Use" },
-	{ href: "/ftc-disclosure", label: "FTC Disclosure" },
+	{ href: "/guests", label: "Podcast Guests" },
+	{ href: "/authors", label: "Authors" },
 	{ href: "/sponsors", label: "Sponsors" },
-	{ href: "/sponsorships", label: "Sponsorships" },
+	{ href: "/mascot-lab", label: "AJ Mascot Lab" },
+	{ href: "/book", label: "Book Podcast Session" },
+	{ href: "/sponsorships", label: "Sponsor CodingCat.dev" },
+	{ href: "/contact", label: "Contact" },
+	{ href: "/privacy", label: "Privacy" },
+	{ href: "/terms-of-use", label: "Terms" },
+	{ href: "/ftc-disclosure", label: "FTC Disclosure" },
 ];
 
 const llmResourceLinks = [
+	{ href: "/developers", label: "Developer & Agent Docs" },
 	{ href: "/llms.txt", label: "llms.txt" },
 	{ href: "/llms-full.txt", label: "llms-full.txt" },
 	{ href: "/.well-known/agent-skills/index.json", label: "Agent Skills" },
 	{ href: "/.well-known/mcp/server-card.json", label: "MCP Card" },
 ];
 
-// Inlined rather than pulled from react-icons — four glyphs do not justify
-// shipping an icon library (and its React runtime) to every page.
 const socialLinks = [
 	{
 		href: "https://twitter.com/codingcatdev",
@@ -47,90 +58,141 @@ const socialLinks = [
 ];
 ---
 
-<footer
-	class="flex flex-col gap-6 lg:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t justify-center"
->
-	<div class="flex flex-col sm:flex-row items-center gap-4">
-		<p class="text-xs text-muted-foreground">
-			&copy; {year} CodingCat.dev. All rights reserved.
-		</p>
-		<nav
-			class="flex flex-wrap items-center justify-center gap-4 sm:gap-6"
-			aria-label="Legal"
-		>
-			{
-				legalLinks.map((link) => (
-					<NavLink
-						href={link.href}
-						class="text-xs hover:underline underline-offset-4"
-						prefix={false}
-					>
-						{link.label}
-					</NavLink>
-				))
-			}
-		</nav>
-		<nav
-			class="flex flex-wrap items-center justify-center gap-3 border-l border-border pl-4"
-			aria-label="LLM Resources"
-		>
-			<span class="text-xs font-semibold text-muted-foreground">LLM Resources:</span>
-			{
-				llmResourceLinks.map((link) => (
-					<a
-						href={link.href}
-						class="text-xs font-mono text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
-					>
-						{link.label}
-					</a>
-				))
-			}
-		</nav>
-	</div>
-	<div class="flex items-center gap-4">
-		{
-			socialLinks.map((link) => (
-				<a
-					href={link.href}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-muted-foreground hover:text-foreground transition-colors"
-				>
-					<svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path d={link.path} />
-					</svg>
-					<span class="sr-only">{link.label}</span>
+<footer class="mx-auto w-full max-w-7xl px-4 pb-12 pt-8 sm:px-6">
+	<div class="rounded-3xl bg-white p-8 md:p-12 dark:bg-[#131B2E]/90 hand-border shadow-sketch">
+		<div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
+			{/* Brand & AJ Bio */}
+			<div class="space-y-4 lg:col-span-3">
+				<a href="/" class="flex items-center gap-3">
+					<div class="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] dark:border-white/40 shadow-sketch-sm">
+						<AjHeadphones cls="block size-8" />
+					</div>
+					<span class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+						CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
+					</span>
 				</a>
-			))
-		}
-	</div>
-	<div class="flex-1 max-w-[300px]">
-		<form
-			class="flex gap-2"
-			action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
-			method="post"
-			target="popupwindow"
-			toolname="subscribe_newsletter"
-			tooldescription="Subscribe to the CodingCat.dev web development newsletter"
-		>
-			<label class="sr-only" for="footer-email">Email</label>
-			<input
-				id="footer-email"
-				name="email"
-				type="email"
-				autocomplete="email"
-				required
-				placeholder="Enter your email"
-				toolparamdescription="Subscriber email address"
-				class="flex-1 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-			/>
-			<input type="hidden" value="1" name="embed" />
-			<button
-				type="submit"
-				class="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-			>
-				Subscribe
-			</button>
-		</form>
+				<p class="max-w-sm text-sm font-medium leading-relaxed text-[#2A1155]/75 dark:text-slate-300">
+					Purrfect courses, podcasts, and blog posts with visual architecture diagrams hosted by Alex Patterson &amp; AJ.
+				</p>
+				<div class="flex items-center gap-3 pt-1">
+					{
+						socialLinks.map((link) => (
+							<a
+								href={link.href}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex size-9 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#7C3AED] hover:text-white dark:border-white/20 dark:bg-[#0B1326] dark:text-slate-300 dark:hover:bg-[#7C3AED] dark:hover:text-white shadow-sketch-sm"
+							>
+								<svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+									<path d={link.path} />
+								</svg>
+								<span class="sr-only">{link.label}</span>
+							</a>
+						))
+					}
+				</div>
+			</div>
+
+			{/* Structured Sitemap Columns */}
+			<div class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:col-span-5">
+				<div class="space-y-2.5">
+					<h4 class="font-display text-sm font-black uppercase tracking-wider text-[#2A1155] dark:text-white">
+						Learn
+					</h4>
+					<nav class="flex flex-col gap-1.5" aria-label="Learn">
+						{
+							primaryLinks.map((link) => (
+								<NavLink
+									href={link.href}
+									class="text-xs font-bold text-[#2A1155]/75 hover:text-[#7C3AED] hover:underline underline-offset-4 dark:text-slate-300 dark:hover:text-[#C084FC]"
+									prefix={false}
+								>
+									{link.label}
+								</NavLink>
+							))
+						}
+					</nav>
+				</div>
+				<div class="space-y-2.5">
+					<h4 class="font-display text-sm font-black uppercase tracking-wider text-[#2A1155] dark:text-white">
+						Community
+					</h4>
+					<nav class="flex flex-col gap-1.5" aria-label="Community">
+						{
+							communityLinks.map((link) => (
+								<NavLink
+									href={link.href}
+									class="text-xs font-bold text-[#2A1155]/75 hover:text-[#7C3AED] hover:underline underline-offset-4 dark:text-slate-300 dark:hover:text-[#C084FC]"
+									prefix={false}
+								>
+									{link.label}
+								</NavLink>
+							))
+						}
+					</nav>
+				</div>
+				<div class="col-span-2 space-y-2.5 sm:col-span-1">
+					<h4 class="font-display text-sm font-black uppercase tracking-wider text-[#7C3AED] dark:text-[#C084FC]">
+						LLM &amp; Agent Ready
+					</h4>
+					<nav class="flex flex-col gap-1.5" aria-label="LLM Resources">
+						{
+							llmResourceLinks.map((link) => (
+								<a
+									href={link.href}
+									class="font-mono text-xs font-bold text-[#2A1155]/80 hover:text-[#7C3AED] hover:underline underline-offset-4 dark:text-slate-300 dark:hover:text-[#C084FC]"
+								>
+									{link.label}
+								</a>
+							))
+						}
+					</nav>
+				</div>
+			</div>
+
+			{/* Newsletter Box ("The Purrfect Dispatch" from Stitch 8d131990 & b9e00f99) */}
+			<div class="rounded-2xl border-2 border-[#2A1155] bg-[#EDE9FE] p-6 dark:border-purple-400/30 dark:bg-purple-950/50 lg:col-span-4 hand-border-rect shadow-sketch-sm">
+				<h4 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+					The Purrfect Dispatch 🐾
+				</h4>
+				<p class="mt-1 mb-4 text-xs font-medium text-[#2A1155]/75 dark:text-purple-200/80">
+					Get weekly courses, podcast episodes, blog posts, and system diagrams in your inbox.
+				</p>
+				<form
+					class="flex gap-2"
+					action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
+					method="post"
+					target="popupwindow"
+					toolname="subscribe_newsletter"
+					tooldescription="Subscribe to the CodingCat.dev web development newsletter"
+				>
+					<label class="sr-only" for="footer-email">Email</label>
+					<input
+						id="footer-email"
+						name="email"
+						type="email"
+						autocomplete="email"
+						required
+						placeholder="you@domain.dev"
+						toolparamdescription="Subscriber email address"
+						class="h-10 flex-1 rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2 text-sm font-medium text-[#2A1155] placeholder:text-[#2A1155]/40 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] dark:border-white/25 dark:bg-[#060E20] dark:text-white dark:placeholder:text-slate-500"
+					/>
+					<input type="hidden" value="1" name="embed" />
+					<button
+						type="submit"
+						class="tactile-btn h-10 px-4 text-xs font-extrabold"
+					>
+						Join
+					</button>
+				</form>
+			</div>
+		</div>
+
+		<div class="mt-8 flex flex-col items-center justify-between gap-2 border-t-2 border-dashed border-[#2A1155]/15 pt-6 text-xs font-bold text-[#2A1155]/60 dark:border-white/10 dark:text-slate-400 sm:flex-row">
+			<p>&copy; {year} CodingCat.dev. Purrfect Web Tutorials.</p>
+			<p class="font-hand text-base text-[#7C3AED] dark:text-[#C084FC]">
+				✏️ Built with Astro + Sanity + Cloudflare Workers
+			</p>
+		</div>
 	</div>
 </footer>

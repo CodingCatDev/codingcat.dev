@@ -1,0 +1,273 @@
+---
+/**
+ * Articulated Lower Body, Tail, Hind Legs, 3D Pear-Shaped Torso, Plush 4-Digit Cat Paws,
+ * Die-Cut White Sticker Underlay, and Soft Lavender Collar + Hexagonal "AJ" Tag (`#aj-collar`).
+ */
+import { AJ_TRACED_PATHS as P } from "./ajTracedPaths";
+import { renderArmLeftSvg, renderArmRightSvg, renderTailSvg } from "./ajLimbRenderers";
+import type { AjAnimationState, AjMascotVariant, AjTurnaroundAngle } from "./ajRigTypes";
+
+interface Props {
+	idPrefix: string;
+	state: AjAnimationState;
+	variant: AjMascotVariant;
+	angle: AjTurnaroundAngle;
+	mode: "underlay" | "foreground" | "collar";
+}
+
+const { idPrefix, state, variant, angle, mode } = Astro.props;
+const isRest = state === "canonical-rest";
+const isLeftAngle = angle === "three-quarter-left";
+---
+
+<g data-lower-body-mode={mode}>
+	{
+		mode === "underlay" && (
+			<g id={`${idPrefix}-aj-sticker-underlay`} stroke-linejoin="round" stroke-linecap="round">
+				{isRest && variant === "full-body" ? (
+					<>
+						<path d={P.sticker_outer_border} fill="#94A3B8" fill-opacity="0.55" fill-rule="evenodd" />
+						<path d={P.sticker_white} fill="#F8FAFC" fill-rule="evenodd" />
+					</>
+				) : (
+					<>
+						{variant === "full-body" && (
+							<>
+								<g class="aj-bone aj-bone-tail" set:html={renderTailSvg(state, true)} />
+								<g class="aj-bone aj-bone-leg-right">
+									<path
+										d={P.bone_leg_right_black}
+										fill="#F8FAFC"
+										stroke="#94A3B8"
+										stroke-opacity="0.5"
+										stroke-width="20"
+										fill-rule="evenodd"
+									/>
+									<path
+										d={P.bone_leg_right_black}
+										fill="#F8FAFC"
+										stroke="#F8FAFC"
+										stroke-width="17.5"
+										fill-rule="evenodd"
+									/>
+								</g>
+								<g class="aj-bone aj-bone-leg-left">
+									<path
+										d={P.bone_leg_left_black}
+										fill="#F8FAFC"
+										stroke="#94A3B8"
+										stroke-opacity="0.5"
+										stroke-width="20"
+										fill-rule="evenodd"
+									/>
+									<path
+										d={P.bone_leg_left_black}
+										fill="#F8FAFC"
+										stroke="#F8FAFC"
+										stroke-width="17.5"
+										fill-rule="evenodd"
+									/>
+								</g>
+								<g class="aj-bone aj-bone-arm-left" set:html={renderArmLeftSvg(state, true)} />
+								<g class="aj-bone aj-bone-torso">
+									<path
+										d={P.bone_torso_black}
+										fill="#F8FAFC"
+										stroke="#94A3B8"
+										stroke-opacity="0.5"
+										stroke-width="20"
+										fill-rule="evenodd"
+									/>
+									<path
+										d={P.bone_torso_black}
+										fill="#F8FAFC"
+										stroke="#F8FAFC"
+										stroke-width="17.5"
+										fill-rule="evenodd"
+									/>
+									{state === "celebrate" && (
+										<>
+											<path
+												d="M 206,610 C 176,668 174,748 192,832 L 235,832 L 235,610 Z"
+												fill="#F8FAFC"
+												stroke="#94A3B8"
+												stroke-opacity="0.5"
+												stroke-width="20"
+											/>
+											<path
+												d="M 206,610 C 176,668 174,748 192,832 L 235,832 L 235,610 Z"
+												fill="#F8FAFC"
+												stroke="#F8FAFC"
+												stroke-width="17.5"
+											/>
+										</>
+									)}
+								</g>
+								<g class="aj-bone aj-bone-arm-right" set:html={renderArmRightSvg(state, true)} />
+							</>
+						)}
+						<g class="aj-bone aj-bone-head">
+							<g class="aj-bone aj-bone-headphones">
+								<path
+									d={P.headband_dark}
+									fill="#F8FAFC"
+									stroke="#94A3B8"
+									stroke-opacity="0.5"
+									stroke-width="17"
+									fill-rule="evenodd"
+								/>
+								<path
+									d={P.headband_dark}
+									fill="#F8FAFC"
+									stroke="#F8FAFC"
+									stroke-width="15"
+									fill-rule="evenodd"
+								/>
+								<path
+									d={P.right_earcup_lavender}
+									fill="#F8FAFC"
+									stroke="#F8FAFC"
+									stroke-width="17.5"
+									fill-rule="evenodd"
+								/>
+								<path
+									d={P.left_earcup_purple}
+									fill="#F8FAFC"
+									stroke="#F8FAFC"
+									stroke-width="17.5"
+									fill-rule="evenodd"
+								/>
+							</g>
+							<g class="aj-bone aj-bone-ear-left">
+								<path
+									d={P.bone_ear_left_black}
+									fill="#F8FAFC"
+									stroke="#F8FAFC"
+									stroke-width="14.5"
+									fill-rule="evenodd"
+								/>
+							</g>
+							<g class="aj-bone aj-bone-ear-right">
+								<path
+									d={P.bone_ear_right_black}
+									fill="#F8FAFC"
+									stroke="#F8FAFC"
+									stroke-width="14.5"
+									fill-rule="evenodd"
+								/>
+							</g>
+							<path
+								d={P.bone_head_black}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="16"
+								fill-rule="evenodd"
+							/>
+						</g>
+						<path
+							d={P.collar_strap}
+							fill="#F8FAFC"
+							stroke="#F8FAFC"
+							stroke-width="17.5"
+							fill-rule="evenodd"
+						/>
+						<g class="aj-bone aj-bone-hex-tag">
+							<path
+								d={P.collar_hex_base}
+								fill="#F8FAFC"
+								stroke="#F8FAFC"
+								stroke-width="17.5"
+								fill-rule="evenodd"
+							/>
+						</g>
+					</>
+				)}
+			</g>
+		)
+	}
+
+	{
+		mode === "foreground" && variant === "full-body" && (
+			<>
+				<g
+					id={`${idPrefix}-aj-tail`}
+					data-bone="aj-tail"
+					class="aj-bone aj-bone-tail"
+					set:html={renderTailSvg(state, false)}
+				/>
+				<g
+					id={`${idPrefix}-aj-leg-right`}
+					data-bone="aj-leg-right"
+					class="aj-bone aj-bone-leg-right"
+				>
+					<path d={P.bone_leg_right_black} fill="#050507" fill-rule="evenodd" />
+					<path d={P.bone_leg_right_creases} fill="#2C2C2E" fill-rule="evenodd" />
+				</g>
+				<g
+					id={`${idPrefix}-aj-leg-left`}
+					data-bone="aj-leg-left"
+					class="aj-bone aj-bone-leg-left"
+				>
+					<path d={P.bone_leg_left_black} fill="#050507" fill-rule="evenodd" />
+					<path d={P.bone_leg_left_creases} fill="#2C2C2E" fill-rule="evenodd" />
+				</g>
+				<g
+					id={`${idPrefix}-aj-arm-left`}
+					data-bone="aj-arm-left"
+					class="aj-bone aj-bone-arm-left"
+					set:html={renderArmLeftSvg(state, false)}
+				/>
+				<g
+					id={`${idPrefix}-aj-torso`}
+					data-bone="aj-torso"
+					class="aj-bone aj-bone-torso"
+				>
+					<path d={P.bone_torso_black} fill="#050507" fill-rule="evenodd" />
+					{state === "celebrate" && (
+						<path
+							d="M 206,610 C 176,668 174,748 192,832 L 235,832 L 235,610 Z"
+							fill="#050507"
+						/>
+					)}
+					<path d={P.belly_patch} fill="#292929" fill-rule="evenodd" />
+					<path d={P.torso_bottom_crease} fill="#2C2C2E" fill-rule="evenodd" />
+				</g>
+				<g
+					id={`${idPrefix}-aj-arm-right`}
+					data-bone="aj-arm-right"
+					class="aj-bone aj-bone-arm-right"
+					set:html={renderArmRightSvg(state, false)}
+				/>
+			</>
+		)
+	}
+
+	{
+		mode === "collar" && (
+			<g id={`${idPrefix}-aj-collar`} data-bone="aj-collar">
+				<path d={P.collar_strap} fill="#B6AAD8" fill-rule="evenodd" />
+				<g
+					id={`${idPrefix}-aj-hex-tag`}
+					data-bone="aj-collar"
+					class="aj-bone aj-bone-hex-tag"
+				>
+					<path d={P.collar_hex_base} fill="#9BE2EE" fill-rule="evenodd" />
+					<path d={P.collar_hex_violet} fill="#856CC2" fill-rule="evenodd" />
+					<path d={P.collar_hex_yellow} fill="#F0CA52" fill-rule="evenodd" />
+					<path d={P.collar_hex_cyan} fill="#9BE2EE" fill-rule="evenodd" />
+					<path d={P.collar_hex_green} fill="#A9DB5C" fill-rule="evenodd" />
+					<path d={P.collar_hex_pink} fill="#F27FB8" fill-rule="evenodd" />
+					<path d={P.collar_hex_inner} fill="#DCD5EE" fill-rule="evenodd" />
+					{isLeftAngle ? (
+						<g transform="translate(697.1, 0) scale(-1, 1)">
+							<path d={P.collar_hex_aj_text} fill="#3D227E" fill-rule="evenodd" />
+						</g>
+					) : (
+						<path d={P.collar_hex_aj_text} fill="#3D227E" fill-rule="evenodd" />
+					)}
+					<path d={P.collar_ring} fill="#8E8D94" fill-rule="evenodd" />
+				</g>
+			</g>
+		)
+	}
+</g>

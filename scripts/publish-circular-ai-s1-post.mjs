@@ -215,7 +215,7 @@ export async function buildCircularAiPost(assetRefs) {
     createRichBlock(
       [
         {
-          text: "Every tech keynote this year tells you we are witnessing a historic free-market explosion in artificial intelligence demand. Then you open ",
+          text: "While reading through ",
         },
         {
           text: "Anthropic's Form S-1 SEC registration statement",
@@ -227,7 +227,7 @@ export async function buildCircularAiPost(assetRefs) {
         },
         { text: "ANT", code: true },
         {
-          text: " and realize that a massive chunk of Big Tech's AI revenue is actually the same pile of cash being passed in a circle between seven CEOs.",
+          text: " today, a few infrastructure and accounting details in the footnotes stood out that show how much of Big Tech's AI revenue is the same pile of capital circulating between seven companies.",
         },
       ],
       { style: "normal", keySeed: "hook_p1" }
@@ -1178,7 +1178,7 @@ export function auditFrenemyCloudFlow(
     _id: DOC_ID,
     _type: "post",
     title: cleanDashes(
-      "Inside Anthropic's S-1: Big Tech's Circular AI Handshake and the $500B 401(k) Timebomb"
+      "Anthropic's S-1, $518B in cloud commitments, and circular AI capex"
     ),
     slug: {
       _type: "slug",

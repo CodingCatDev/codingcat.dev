@@ -1,4 +1,4 @@
-import { defineType } from "sanity";
+import { defineField, defineType } from "sanity";
 import type { IconType } from "react-icons";
 import {
 	FaBluesky,
@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa6";
 
 const socialFields = [
-	{
+	defineField({
 		name: "platform",
 		type: "string",
 		title: "Platform",
@@ -33,34 +33,34 @@ const socialFields = [
 				{ title: "YouTube", value: "youtube" },
 			],
 		},
-	},
-	{
+	}),
+	defineField({
 		name: "url",
 		type: "url",
 		title: "Post URL",
-		validation: (rule: { required: () => unknown }) => rule.required(),
-	},
-	{
+		validation: (rule) => rule.required(),
+	}),
+	defineField({
 		name: "author",
 		type: "string",
 		title: "Author Name (Optional)",
-	},
-	{
+	}),
+	defineField({
 		name: "handle",
 		type: "string",
 		title: "Author Handle (Optional)",
-	},
-	{
+	}),
+	defineField({
 		name: "fallbackText",
 		type: "text",
 		title: "Post Text / Fallback Excerpt (Optional)",
 		rows: 3,
-	},
-	{
+	}),
+	defineField({
 		name: "caption",
 		type: "string",
 		title: "Caption (Optional)",
-	},
+	}),
 ];
 
 function createPlatformEmbedSchema(

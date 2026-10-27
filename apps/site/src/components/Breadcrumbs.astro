@@ -6,22 +6,35 @@ interface Props {
 const { links } = Astro.props;
 ---
 
-<nav class="my-10 text-lg md:text-xl" aria-label="Breadcrumb">
-	<ol class="flex flex-wrap items-center gap-1.5">
-		<li><a href="/" class="hover:underline">Home</a></li>
+<nav class="my-6 md:my-8" aria-label="Breadcrumb">
+	<ol class="inline-flex flex-wrap items-center gap-2 rounded-2xl border-2 border-[#2A1155] bg-white px-4 py-2 font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] shadow-sketch-sm dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-200 hand-border">
+		<li>
+			<a
+				href="/"
+				class="text-[#7C3AED] transition-colors hover:underline dark:text-[#C084FC]"
+			>
+				Home
+			</a>
+		</li>
 		{
 			links.map((link, index) => (
 				<>
-					<li aria-hidden="true" class="text-muted-foreground">
+					<li aria-hidden="true" class="text-[#2A1155]/40 dark:text-slate-500">
 						/
 					</li>
 					<li>
 						{link.href && index < links.length - 1 ? (
-							<a href={link.href} class="hover:underline">
+							<a
+								href={link.href}
+								class="text-[#2A1155] transition-colors hover:text-[#7C3AED] hover:underline dark:text-slate-200 dark:hover:text-[#C084FC]"
+							>
 								{link.title}
 							</a>
 						) : (
-							<span class="text-muted-foreground" aria-current="page">
+							<span
+								class="max-w-[260px] truncate text-[#2A1155]/70 dark:text-slate-400 sm:max-w-md"
+								aria-current="page"
+							>
 								{link.title}
 							</span>
 						)}

@@ -1898,4 +1898,197 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 	});
+
+	// ── 12. Partner & Affiliate Link Tracker Registry ────────────────────
+	describe("Partner & Affiliate Link Tracker Registry", () => {
+		const partnerLinks = loadModule("src/lib/partner-links.ts");
+
+		it("12.1 Rewrites bare sanity.io and sanity.io/manage links to https://www.sanity.io/manage?coupon=CodingCatDev", () => {
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://sanity.io"),
+				"https://www.sanity.io/manage?coupon=CodingCatDev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.sanity.io/"),
+				"https://www.sanity.io/manage?coupon=CodingCatDev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.sanity.io/manage"),
+				"https://www.sanity.io/manage?coupon=CodingCatDev",
+			);
+		});
+
+		it("12.2 Appends coupon=CodingCatDev to deep sanity.io documentation links while leaving cdn.sanity.io untouched", () => {
+			const deepDoc = partnerLinks.resolvePartnerUrl(
+				"https://www.sanity.io/docs/groq",
+			);
+			assert.ok(deepDoc.includes("coupon=CodingCatDev"));
+			assert.ok(deepDoc.includes("/docs/groq"));
+
+			const cdnUrl =
+				"https://cdn.sanity.io/images/hfh83o0w/production/sample.png";
+			assert.equal(partnerLinks.resolvePartnerUrl(cdnUrl), cdnUrl);
+		});
+
+		it("12.3 Applies partner UTM/shortlink tracking for Algolia, Cloudinary, and Sticker Mule", () => {
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.algolia.com/doc/"),
+				"https://www.algolia.com/doc/?utm_source=codingcatdev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://cloudinary.com"),
+				"https://cld.media/codingcatdev",
+			);
+			assert.equal(
+				partnerLinks.resolvePartnerUrl("https://www.stickermule.com"),
+				"https://mule.to/p5h2",
+			);
+		});
+	});
+
+	// ── 13. Articulated 2D Vector AJ Mascot Rig & /mascot-lab ────────────
+	describe("Articulated 2D Vector AJ Mascot Rig & /mascot-lab", () => {
+		it("13.1 AjAnimatedMascot and modular aj-rig bone components define all 14 bone pivots and turnaround angles", () => {
+			const mascotSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/AjAnimatedMascot.astro"),
+				"utf-8",
+			);
+			const headSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/aj-rig/AjHeadBones.astro"),
+				"utf-8",
+			);
+			const lowerSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/aj-rig/AjLowerBodyBones.astro"),
+				"utf-8",
+			);
+			const fxSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/aj-rig/AjFxLayer.astro"),
+				"utf-8",
+			);
+
+			// Verify all required bone IDs and classes exist
+			for (const token of [
+				"-aj-shadow",
+				"-aj-tail",
+				"-aj-leg-left",
+				"-aj-leg-right",
+				"-aj-torso",
+				"-aj-collar",
+				"-aj-hex-tag",
+				"-aj-arm-right",
+				"-aj-arm-left",
+			]) {
+				assert.ok(
+					mascotSrc.includes(token) || lowerSrc.includes(token),
+					`Missing lower body bone ${token}`,
+				);
+			}
+
+			for (const token of [
+				"-aj-head-group",
+				"-aj-headphones",
+				"-aj-eyes-group",
+				"-aj-ears-left",
+				"-aj-ears-right",
+				"-aj-mouth",
+			]) {
+				assert.ok(headSrc.includes(token), `Missing head bone ${token}`);
+			}
+
+			// Verify counter-flipped readable text transforms in three-quarter-left
+			assert.ok(
+				headSrc.includes("translate(594.8, 0) scale(-1, 1)"),
+				"Headband text must counter-flip in three-quarter-left",
+			);
+			assert.ok(
+				headSrc.includes("translate(125.1, 0) scale(-1, 1)"),
+				"Earcup hex AJ text must counter-flip in three-quarter-left",
+			);
+			assert.ok(
+				lowerSrc.includes("translate(697.1, 0) scale(-1, 1)"),
+				"Collar hex AJ text must counter-flip in three-quarter-left",
+			);
+
+			// Verify prefers-reduced-motion accessibility override
+			assert.ok(
+				mascotSrc.includes("prefers-reduced-motion: reduce"),
+				"Must include prefers-reduced-motion accessibility rule",
+			);
+
+			// Verify zero em-dashes in all mascot rig and mascot-lab files
+			const labPageSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/mascot-lab.astro"),
+				"utf-8",
+			);
+			const labApiSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/api/mascot-lab.ts"),
+				"utf-8",
+			);
+			const signInSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "pages/sign-in.astro"),
+				"utf-8",
+			);
+
+			for (const [name, content] of [
+				["AjAnimatedMascot.astro", mascotSrc],
+				["AjHeadBones.astro", headSrc],
+				["AjLowerBodyBones.astro", lowerSrc],
+				["AjFxLayer.astro", fxSrc],
+				["mascot-lab.astro", labPageSrc],
+				["api/mascot-lab.ts", labApiSrc],
+				["sign-in.astro", signInSrc],
+			]) {
+				assert.ok(
+					!content.includes("\u2014") && !content.includes("\u2013"),
+					`${name} must not contain em-dashes or en-dashes`,
+				);
+			}
+		});
+
+		it("13.2 /api/mascot-lab GET and POST handlers manage starter presets and creator sessions", async () => {
+			const mascotLabApi = loadModule("src/pages/api/mascot-lab.ts");
+			const getRes = await mascotLabApi.GET({
+				request: new Request("https://codingcat.dev/api/mascot-lab"),
+			});
+			assert.equal(getRes.status, 200);
+			const getData = await getRes.json();
+			assert.equal(getData.success, true);
+			assert.ok(Array.isArray(getData.presets));
+			assert.ok(getData.presets.length >= 4);
+
+			// Unauthenticated preset save returns 401 with signInUrl
+			const unauthSave = await mascotLabApi.POST({
+				request: new Request("https://codingcat.dev/api/mascot-lab", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ name: "My Pose", state: "celebrate" }),
+				}),
+			});
+			assert.equal(unauthSave.status, 401);
+			const unauthJson = await unauthSave.json();
+			assert.equal(unauthJson.requiresAuth, true);
+			assert.equal(unauthJson.signInUrl, "/sign-in?redirect=/mascot-lab");
+
+			// Authenticated preset save succeeds
+			const authSave = await mascotLabApi.POST({
+				request: new Request("https://codingcat.dev/api/mascot-lab", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Cookie: "cc_mascot_lab_user=Alex%20Patterson|alex@codingcat.dev",
+					},
+					body: JSON.stringify({
+						name: "Left Groove",
+						state: "podcast-groove",
+						angle: "three-quarter-left",
+						variant: "full-body",
+					}),
+				}),
+			});
+			assert.equal(authSave.status, 200);
+			const authJson = await authSave.json();
+			assert.equal(authJson.success, true);
+			assert.equal(authJson.preset.angle, "three-quarter-left");
+		});
+	});
 });

@@ -1,8 +1,7 @@
 ---
 /**
- * Ported from the Next `paginate-list.tsx`, which used the shadcn Pagination
- * primitives. Same link structure and same `/{base}/page/{n}` URLs — those
- * are indexed and must not change.
+ * Dual-Theme Chalkboard & Royal Purple Pagination component.
+ * Preserves canonical `/{base}/page/{n}` URLs for SEO.
  */
 interface Props {
 	base: string;
@@ -15,19 +14,20 @@ const { base, page, totalPages } = Astro.props;
 const href = (n: number) => `/${base}/page/${n}`;
 
 const linkClass =
-	"inline-flex items-center justify-center h-9 min-w-9 px-3 rounded-md text-sm hover:bg-accent hover:text-accent-foreground transition-colors";
-const activeClass = "border border-border bg-accent text-accent-foreground";
+	"inline-flex items-center justify-center h-10 min-w-10 px-3.5 rounded-xl border-2 border-[#2A1155] bg-white font-display text-sm font-black text-[#2A1155] shadow-sketch-sm transition-all hover:-translate-y-0.5 hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-white dark:hover:bg-purple-950/60 dark:hover:text-[#C084FC]";
+const activeClass =
+	"!bg-[#7C3AED] !text-white !border-[#2A1155] dark:!border-white/50";
 ---
 
 {
 	totalPages > 1 && (
-		<nav class="flex justify-center mt-12" aria-label="Pagination">
-			<ul class="flex flex-row items-center gap-1">
+		<nav class="mt-12 flex justify-center" aria-label="Pagination">
+			<ul class="flex flex-wrap items-center gap-2">
 				{page > 1 && (
 					<>
 						<li>
 							<a class={linkClass} href={href(page - 1)} rel="prev">
-								&larr; <span class="ml-1">Previous</span>
+								&larr; <span class="ml-1.5">Previous</span>
 							</a>
 						</li>
 						<li>
@@ -38,7 +38,10 @@ const activeClass = "border border-border bg-accent text-accent-foreground";
 					</>
 				)}
 				{page > 2 && (
-					<li aria-hidden="true" class="px-2 text-muted-foreground">
+					<li
+						aria-hidden="true"
+						class="px-2 font-mono font-bold text-[#2A1155]/60 dark:text-slate-400"
+					>
 						&hellip;
 					</li>
 				)}
@@ -52,7 +55,10 @@ const activeClass = "border border-border bg-accent text-accent-foreground";
 					</a>
 				</li>
 				{page < totalPages - 1 && (
-					<li aria-hidden="true" class="px-2 text-muted-foreground">
+					<li
+						aria-hidden="true"
+						class="px-2 font-mono font-bold text-[#2A1155]/60 dark:text-slate-400"
+					>
 						&hellip;
 					</li>
 				)}
@@ -66,7 +72,7 @@ const activeClass = "border border-border bg-accent text-accent-foreground";
 				{page < totalPages && (
 					<li>
 						<a class={linkClass} href={href(page + 1)} rel="next">
-							<span class="mr-1">Next</span> &rarr;
+							<span class="mr-1.5">Next</span> &rarr;
 						</a>
 					</li>
 				)}
