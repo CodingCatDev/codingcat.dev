@@ -6,7 +6,7 @@ Canonical multimodal character prompts and anatomical guardrails for **AJ the Ca
 
 | Dimension | Alex Patterson (`assets/alex-likeness/`) | AJ the Cat 3D (`assets/AJ-3D-Headphones-*.jpg`) | AJ the Cat 2D (`assets/AJ-2D-Bipedal.jpg`) |
 | :--- | :--- | :--- | :--- |
-| **Best Use Case** | Primary YouTube thumbnails, "WTF is..." presenter hooks, reaction cutouts, and talking-head Scene Builder clips | 1.5-second video bumper transitions, 3D B-roll stingers, and podcast intro animations | UI badges, Pro-Tip callout boxes, slide stickers, and 2D vector overlays |
+| **Best Use Case** | Primary YouTube thumbnails, technical deep-dive presenter hooks, reaction cutouts, and talking-head Scene Builder clips | 1.5-second video bumper transitions, 3D B-roll stingers, and podcast intro animations | UI badges, Pro-Tip callout boxes, slide stickers, and 2D vector overlays |
 | **Canonical Reference Files** | `alex-likeness-01.jpg` to `alex-likeness-13.jpg` (`2048x2048` on `#000000`) | `AJ-3D-Headphones-Front.jpg`, `Left.jpg`, `Right.jpg` | `AJ-2D-Bipedal.jpg`, `AJHeadphones.png` |
 | **Lighting & Separation** | Studio key light with `--cc-thumbnail-drop` (`0 12px 24px rgba(0,0,0,0.85)`) and `#7C3AED` / `#FACC15` rim glow | Pixar-grade vinyl toy subsurface scattering with Royal Purple (`#7C3AED`) and Electric Lime (`#C5E86C`) rim light | Flat 2D vector with crisp white sticker border or `--cc-shadow-sketch` |
 
@@ -19,7 +19,7 @@ Always attach one to three canonical studio portraits from `assets/alex-likeness
 | `alex-likeness-10.jpg` | Pointing left with left index finger, excited smile | **Primary Right-Third Anchor**: Pointing left toward an Architecture Diagram or logo |
 | `alex-likeness-02.jpg` | Pointing left with right index finger, friendly smile | **Alternate Right-Third Anchor**: Conversational tutorial intro pointing left |
 | `alex-likeness-11.jpg` | Pointing right with right index finger, excited smile | **Primary Left-Third Anchor**: Pointing right toward an Architecture Diagram or code block |
-| `alex-likeness-03.jpg` | Mind-blown / shocked, both hands open near head | **High-CTR Hook (`0:00 - 0:05`)**: Reacting to a wild benchmark, outage, or "WTF is..." reveal |
+| `alex-likeness-03.jpg` | Mind-blown / shocked, both hands open near head | **High-CTR Hook (`0:00 - 0:05`)**: Reacting to a wild benchmark, outage, or architectural reveal |
 | `alex-likeness-05.jpg` | Shrugging with both hands open ("Why?!") | **Trade-Off Matrix Intro**: Questioning legacy architecture complexity |
 | `alex-likeness-06.jpg` | Celebrating with double fist-pump | **Shipped / Verdict Clip**: Celebrating a passing build or sub-5ms edge deploy |
 | `alex-likeness-12.jpg` | Stroking chin thoughtfully, looking left | **Deep-Dive Architecture Analysis**: Evaluating system trade-offs |

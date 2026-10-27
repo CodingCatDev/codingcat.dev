@@ -6,7 +6,7 @@ Every interactive session, subagent, and script in this repository (`codingcat.d
 
 - @[alex-voice-and-copy](/home/alex/.gemini/config/skills/alex-voice-and-copy/SKILL.md)
 - @[alex-writing-style](/home/alex/.gemini/config/skills/alex-voice-and-copy/references/writing-style.md)
-- @[alex-wtf-is-series](/home/alex/.gemini/config/skills/alex-voice-and-copy/references/wtf-is-series.md)
+- @[alex-deep-dive-series](/home/alex/.gemini/config/skills/alex-voice-and-copy/references/deep-dive-explainer-series.md)
 - @[codingcat-design-system](/home/alex/.gemini/config/skills/codingcat-design-system/SKILL.md)
 - @[codingcat-media-studio](/home/alex/.gemini/config/skills/codingcat-media-studio/SKILL.md)
 - @[codingcat-diagrams](/home/alex/.gemini/config/skills/codingcat-media-studio/references/excalidraw-diagrams.md)

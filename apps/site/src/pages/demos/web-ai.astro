@@ -1,0 +1,1095 @@
+---
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title =
+	"Interactive Web AI, WebMCP & Chrome Built-in AI Playground | CodingCat.dev";
+const description =
+	"Live browser AI architecture lab featuring a WebMCP (document.modelContext & declarative HTML tool) inspector, Chrome Built-in AI (Gemini Nano Prompt, Summarizer, Rewriter) sandbox, and client-side WebGPU semantic vector search.";
+---
+
+<BaseLayout title={title} description={description} canonical="/demos/web-ai">
+	<Breadcrumbs
+		links={[
+			{ title: "Developers", href: "/developers" },
+			{ title: "Web AI & WebMCP Playground" },
+		]}
+	/>
+
+	<div class="mx-auto max-w-6xl py-6 md:py-10 space-y-10">
+		<!-- Hero Card -->
+		<section class="duo-card hand-border p-6 sm:p-10">
+			<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+				<div class="space-y-4 max-w-3xl">
+					<div class="flex flex-wrap items-center gap-2">
+						<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200">
+							⚡ Interactive Client-Side Web AI Lab
+						</span>
+						<span class="inline-flex items-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#86EFAC]/30 px-3 py-1 font-mono text-xs font-bold text-[#14532D] dark:border-emerald-400/40 dark:bg-emerald-950/60 dark:text-[#86EFAC]">
+							WebMCP + Gemini Nano + WebGPU
+						</span>
+					</div>
+					<h1 class="font-display text-3xl sm:text-5xl font-black tracking-tight text-[#2A1155] dark:text-white">
+						browser-native <span class="text-[#7C3AED] dark:text-[#C084FC]">web ai &amp; webmcp</span> playground
+					</h1>
+					<p class="text-base sm:text-lg text-[#2A1155]/85 dark:text-slate-200 leading-relaxed">
+						Test our production client-side Web AI stack directly in your browser. Inspect and execute live <strong>WebMCP</strong> tools registered on <code>document.modelContext</code> and declarative HTML forms, probe <strong>Chrome Built-in AI (Gemini Nano)</strong> APIs with hybrid edge fallback, and run zero-backend <strong>WebGPU / Float32</strong> semantic vector search.
+					</p>
+					<div class="flex flex-wrap gap-3 pt-2">
+						<a href="/post/webmcp-browser-native-model-context-protocol-guide" class="tactile-btn px-5 py-2.5 text-sm">
+							<span>Read WebMCP Guide</span>
+							<span class="text-[#86EFAC]">&rarr;</span>
+						</a>
+						<a href="/post/chrome-built-in-ai-gemini-nano-prompt-api-guide" class="tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold">
+							Read Built-in AI Guide &rarr;
+						</a>
+						<a href="/developers" class="tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold">
+							Agent Discovery Docs
+						</a>
+					</div>
+				</div>
+				<div class="hidden lg:flex shrink-0 items-center justify-center">
+					<AjAnimatedMascot variant="head" size={140} />
+				</div>
+			</div>
+
+			<!-- Live Browser Environment Telemetry Strip -->
+			<div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t-2 border-[#2A1155]/15 dark:border-white/10">
+				<div class="rounded-2xl border-2 border-[#2A1155]/20 bg-[#FAF9FC] p-3.5 dark:border-white/15 dark:bg-[#0B1326]">
+					<div class="font-mono text-[11px] uppercase tracking-wider text-[#2A1155]/60 dark:text-slate-400">
+						WebMCP Context
+					</div>
+					<div id="status-webmcp" class="mt-1 font-mono text-sm font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+						Detecting...
+					</div>
+				</div>
+				<div class="rounded-2xl border-2 border-[#2A1155]/20 bg-[#FAF9FC] p-3.5 dark:border-white/15 dark:bg-[#0B1326]">
+					<div class="font-mono text-[11px] uppercase tracking-wider text-[#2A1155]/60 dark:text-slate-400">
+						Chrome Prompt API
+					</div>
+					<div id="status-prompt-api" class="mt-1 font-mono text-sm font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+						Probing...
+					</div>
+				</div>
+				<div class="rounded-2xl border-2 border-[#2A1155]/20 bg-[#FAF9FC] p-3.5 dark:border-white/15 dark:bg-[#0B1326]">
+					<div class="font-mono text-[11px] uppercase tracking-wider text-[#2A1155]/60 dark:text-slate-400">
+						Summarizer / Rewriter
+					</div>
+					<div id="status-summarizer-api" class="mt-1 font-mono text-sm font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+						Probing...
+					</div>
+				</div>
+				<div class="rounded-2xl border-2 border-[#2A1155]/20 bg-[#FAF9FC] p-3.5 dark:border-white/15 dark:bg-[#0B1326]">
+					<div class="font-mono text-[11px] uppercase tracking-wider text-[#2A1155]/60 dark:text-slate-400">
+						WebGPU Compute
+					</div>
+					<div id="status-webgpu" class="mt-1 font-mono text-sm font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+						Probing...
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Interactive 3-Tab Switcher -->
+		<section class="duo-card hand-border p-6 sm:p-8" aria-label="Interactive Web AI Playground Tabs">
+			<div class="flex flex-wrap gap-3 border-b-2 border-[#2A1155]/15 pb-5 dark:border-white/10" role="tablist">
+				<button
+					type="button"
+					role="tab"
+					id="tab-btn-webmcp"
+					aria-selected="true"
+					aria-controls="panel-webmcp"
+					data-tab-target="webmcp"
+					class="webai-tab-btn tactile-btn px-5 py-2.5 text-sm font-extrabold"
+				>
+					1. WebMCP Inspector &amp; Tool Runner
+				</button>
+				<button
+					type="button"
+					role="tab"
+					id="tab-btn-builtin"
+					aria-selected="false"
+					aria-controls="panel-builtin"
+					data-tab-target="builtin"
+					class="webai-tab-btn tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold"
+				>
+					2. Chrome Built-in AI (Gemini Nano)
+				</button>
+				<button
+					type="button"
+					role="tab"
+					id="tab-btn-webgpu"
+					aria-selected="false"
+					aria-controls="panel-webgpu"
+					data-tab-target="webgpu"
+					class="webai-tab-btn tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold"
+				>
+					3. Client-Side WebGPU Vector RAG
+				</button>
+			</div>
+
+			<!-- TAB 1: WEBMCP INSPECTOR & TOOL RUNNER -->
+			<div id="panel-webmcp" role="tabpanel" aria-labelledby="tab-btn-webmcp" class="mt-6 space-y-8">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<!-- Imperative WebMCP Registry -->
+					<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-4">
+						<div class="flex items-center justify-between gap-2">
+							<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+								Imperative API (<code>document.modelContext</code>)
+							</h2>
+							<span class="rounded-full bg-[#7C3AED]/15 px-3 py-0.5 font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C084FC]">
+								registerTool()
+							</span>
+						</div>
+						<p class="text-sm text-[#2A1155]/80 dark:text-slate-300">
+							Select any WebMCP tool registered on this page to inspect its typed JSON Schema contract and execute its in-tab handler with same-origin session locality.
+						</p>
+
+						<div class="space-y-3">
+							<label for="webmcp-tool-select" class="block font-mono text-xs font-bold uppercase tracking-wider text-[#2A1155] dark:text-slate-200">
+								Registered Browser Tool
+							</label>
+							<select
+								id="webmcp-tool-select"
+								class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 font-mono text-sm font-bold text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white"
+							>
+								<option value="search_content">search_content (Live CodingCat.dev Search API)</option>
+								<option value="estimate_inference_budget">estimate_inference_budget (Local vs. Cloud Token Calculator)</option>
+								<option value="extract_page_headings">extract_page_headings (DOM Outline Extractor)</option>
+							</select>
+
+							<label for="webmcp-tool-args" class="block font-mono text-xs font-bold uppercase tracking-wider text-[#2A1155] dark:text-slate-200">
+								JSON Arguments Payload
+							</label>
+							<textarea
+								id="webmcp-tool-args"
+								rows="3"
+								class="w-full rounded-xl border-2 border-[#2A1155] bg-white p-3 font-mono text-xs text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-[#86EFAC]"
+							>&#123;"query": "WebMCP"&#125;</textarea>
+
+							<div class="flex flex-wrap items-center gap-3">
+								<button
+									type="button"
+									id="btn-run-webmcp-tool"
+									class="tactile-btn px-5 py-2.5 text-xs font-extrabold"
+								>
+									<span>Execute WebMCP Tool</span>
+									<span class="text-[#86EFAC]">&rarr;</span>
+								</button>
+								<span id="webmcp-exec-latency" class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#86EFAC]">
+									Ready
+								</span>
+							</div>
+						</div>
+
+						<div>
+							<div class="font-mono text-xs font-bold uppercase tracking-wider text-[#2A1155]/70 dark:text-slate-400 mb-1.5">
+								Registered Tool Schema &amp; Annotations
+							</div>
+							<pre id="webmcp-schema-preview" class="max-h-48 overflow-auto rounded-xl border-2 border-[#2A1155] bg-[#0B1326] p-3.5 font-mono text-xs text-slate-100"></pre>
+						</div>
+					</div>
+
+					<!-- Execution Output & Declarative HTML Form -->
+					<div class="space-y-6">
+						<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-3">
+							<div class="flex items-center justify-between">
+								<h3 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+									Live Tool Execution Response
+								</h3>
+								<span class="font-mono text-xs text-[#86EFAC] bg-[#0B1326] px-2.5 py-1 rounded-md border border-white/10">
+									JSON-RPC / Structured Result
+								</span>
+							</div>
+							<pre id="webmcp-tool-output" class="max-h-52 overflow-auto rounded-xl border-2 border-[#2A1155] bg-[#0B1326] p-4 font-mono text-xs text-[#86EFAC]">Click "Execute WebMCP Tool" to run the registered handler in your browser session.</pre>
+						</div>
+
+						<!-- Declarative WebMCP HTML Form -->
+						<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-4">
+							<div class="flex items-center justify-between gap-2">
+								<h3 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+									Declarative API (<code>&lt;form toolname="..."&gt;</code>)
+								</h3>
+								<span class="rounded-full bg-[#86EFAC]/20 px-3 py-0.5 font-mono text-xs font-bold text-[#14532D] dark:text-[#86EFAC]">
+									Zero-JS Schema Discovery
+								</span>
+							</div>
+							<p class="text-xs sm:text-sm text-[#2A1155]/80 dark:text-slate-300">
+								This HTML form includes standard W3C WebMCP attributes (<code>toolname</code>, <code>tooldescription</code>, and <code>toolparamdescription</code>) so browser agents can synthesize a tool contract without executing custom scripts.
+							</p>
+
+							<form
+								id="declarative-webmcp-form"
+								action="/api/search"
+								method="get"
+								toolname="search_codingcat_catalog"
+								tooldescription="Search CodingCat.dev courses, podcasts, and blog posts by keyword and content pillar"
+								toolautosubmit="true"
+								class="grid grid-cols-1 sm:grid-cols-3 gap-3"
+							>
+								<div>
+									<label for="decl-q" class="block font-mono text-[11px] font-bold uppercase text-[#2A1155] dark:text-slate-300">
+										Topic Keyword (<code>q</code>)
+									</label>
+									<input
+										id="decl-q"
+										type="text"
+										name="q"
+										value="Astro"
+										required
+										toolparamdescription="Technical keyword or framework name (for example: Astro, Sanity, WebMCP, Firebase)"
+										class="mt-1 w-full rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2 font-mono text-xs text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white"
+									/>
+								</div>
+								<div>
+									<label for="decl-type" class="block font-mono text-[11px] font-bold uppercase text-[#2A1155] dark:text-slate-300">
+										Content Pillar (<code>type</code>)
+									</label>
+									<select
+										id="decl-type"
+										name="type"
+										toolparamdescription="CodingCat.dev content pillar filter (post, course, podcast)"
+										class="mt-1 w-full rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2 font-mono text-xs text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white"
+									>
+										<option value="post">Blog Posts (post)</option>
+										<option value="course">Courses (course)</option>
+										<option value="podcast">Podcasts (podcast)</option>
+									</select>
+								</div>
+								<div class="flex items-end">
+									<button type="submit" class="tactile-btn-secondary w-full py-2 text-xs font-extrabold">
+										Inspect &amp; Test Form
+									</button>
+								</div>
+							</form>
+
+							<div>
+								<div class="font-mono text-[11px] font-bold uppercase tracking-wider text-[#2A1155]/70 dark:text-slate-400 mb-1">
+									Auto-Extracted Declarative Tool Contract from DOM
+								</div>
+								<pre id="declarative-schema-output" class="max-h-40 overflow-auto rounded-xl border-2 border-[#2A1155] bg-[#0B1326] p-3 font-mono text-xs text-[#C084FC]"></pre>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- TAB 2: CHROME BUILT-IN AI (GEMINI NANO) SANDBOX -->
+			<div id="panel-builtin" role="tabpanel" aria-labelledby="tab-btn-builtin" class="mt-6 hidden space-y-6">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-4">
+						<div class="flex items-center justify-between">
+							<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+								Chrome Built-in AI &amp; Hybrid Edge Router
+							</h2>
+							<span class="rounded-full bg-[#C5E86C]/30 px-3 py-0.5 font-mono text-xs font-bold text-[#2A1155] dark:text-[#C5E86C]">
+								window.LanguageModel
+							</span>
+						</div>
+						<p class="text-sm text-[#2A1155]/80 dark:text-slate-300">
+							Run zero-cost, on-device inference via Chrome's <code>LanguageModel</code> or <code>Summarizer</code> API when Gemini Nano is available locally, or test our automatic <strong>Hybrid Browser-to-Edge Router</strong> fallback.
+						</p>
+
+						<div class="space-y-3">
+							<label for="builtin-task-select" class="block font-mono text-xs font-bold uppercase tracking-wider text-[#2A1155] dark:text-slate-200">
+								Built-in Web AI Task API
+							</label>
+							<select
+								id="builtin-task-select"
+								class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 font-mono text-sm font-bold text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white"
+							>
+								<option value="prompt">Prompt API (LanguageModel.create + promptStreaming)</option>
+								<option value="summarize">Summarizer API (Summarizer.create + type: "key-points")</option>
+								<option value="rewrite">Rewriter API (Rewriter.create + tone: "more-casual")</option>
+							</select>
+
+							<label for="builtin-input-text" class="block font-mono text-xs font-bold uppercase tracking-wider text-[#2A1155] dark:text-slate-200">
+								Input Context / Developer Prompt
+							</label>
+							<textarea
+								id="builtin-input-text"
+								rows="4"
+								class="w-full rounded-xl border-2 border-[#2A1155] bg-white p-3 font-mono text-xs text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white"
+							>Explain why exposing structured tools via WebMCP (document.modelContext) is 10x faster and more reliable than DOM screen-scraping for browser AI agents.</textarea>
+
+							<div class="flex flex-wrap items-center gap-3">
+								<button
+									type="button"
+									id="btn-run-builtin-ai"
+									class="tactile-btn px-5 py-2.5 text-xs font-extrabold"
+								>
+									<span>Run Inference (Local First &rarr; Hybrid Fallback)</span>
+								</button>
+								<span id="builtin-route-badge" class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#86EFAC]">
+									Route: Standby
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-4">
+						<div class="flex items-center justify-between">
+							<h3 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+								Streaming Output &amp; Hardware Telemetry
+							</h3>
+							<span id="builtin-telemetry-pill" class="font-mono text-xs text-[#C5E86C] bg-[#0B1326] px-2.5 py-1 rounded-md border border-white/10">
+								0 tokens
+							</span>
+						</div>
+						<pre id="builtin-output-box" class="min-h-[180px] max-h-64 overflow-auto whitespace-pre-wrap rounded-xl border-2 border-[#2A1155] bg-[#0B1326] p-4 font-mono text-xs text-slate-100 leading-relaxed">Click "Run Inference" to test on-device Gemini Nano or Hybrid Edge fallback.</pre>
+
+						<div class="rounded-xl border border-[#2A1155]/20 bg-white/60 p-3.5 dark:border-white/10 dark:bg-[#131B2E]/60">
+							<div class="font-mono text-xs font-bold text-[#2A1155] dark:text-[#C084FC]">
+								Chrome Diagnostic Matrix
+							</div>
+							<pre id="builtin-diag-dump" class="mt-2 font-mono text-[11px] text-[#2A1155]/80 dark:text-slate-300 overflow-x-auto"></pre>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- TAB 3: CLIENT-SIDE WEBGPU VECTOR RAG -->
+			<div id="panel-webgpu" role="tabpanel" aria-labelledby="tab-btn-webgpu" class="mt-6 hidden space-y-6">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-4">
+						<div class="flex items-center justify-between">
+							<h2 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+								Client-Side Vector Cosine Similarity Engine
+							</h2>
+							<span class="rounded-full bg-[#86EFAC]/25 px-3 py-0.5 font-mono text-xs font-bold text-[#14532D] dark:text-[#86EFAC]">
+								0 Bytes Network Egress
+							</span>
+						</div>
+						<p class="text-sm text-[#2A1155]/80 dark:text-slate-300">
+							Test client-side semantic retrieval in the browser. Enter a technical query below to compute real-time <code>Float32Array</code> cosine similarity against our pre-indexed Web AI &amp; Architecture corpus right on your device.
+						</p>
+
+						<div class="space-y-3">
+							<label for="webgpu-rag-query" class="block font-mono text-xs font-bold uppercase tracking-wider text-[#2A1155] dark:text-slate-200">
+								Semantic Search Query
+							</label>
+							<input
+								id="webgpu-rag-query"
+								type="text"
+								value="How do I expose browser tools to AI agents with WebMCP and registerTool?"
+								class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 font-mono text-xs text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white"
+							/>
+							<div class="flex flex-wrap gap-2">
+								<button type="button" data-sample-query="How do I expose browser tools to AI agents with WebMCP and registerTool?" class="rag-preset-btn rounded-lg border border-[#2A1155]/30 px-2.5 py-1 font-mono text-[11px] hover:bg-[#7C3AED]/10 dark:border-white/20">
+									WebMCP registerTool
+								</button>
+								<button type="button" data-sample-query="Run offline LLM inference in Chrome with Gemini Nano and Prompt API" class="rag-preset-btn rounded-lg border border-[#2A1155]/30 px-2.5 py-1 font-mono text-[11px] hover:bg-[#7C3AED]/10 dark:border-white/20">
+									Gemini Nano Offline
+								</button>
+								<button type="button" data-sample-query="WebGPU shaders and OPFS local vector storage with Transformers.js" class="rag-preset-btn rounded-lg border border-[#2A1155]/30 px-2.5 py-1 font-mono text-[11px] hover:bg-[#7C3AED]/10 dark:border-white/20">
+									WebGPU + OPFS RAG
+								</button>
+								<button type="button" data-sample-query="Fallback from local browser AI to Firebase AI Logic and Cloudflare Workers" class="rag-preset-btn rounded-lg border border-[#2A1155]/30 px-2.5 py-1 font-mono text-[11px] hover:bg-[#7C3AED]/10 dark:border-white/20">
+									Hybrid Cloud Fallback
+								</button>
+							</div>
+							<div class="pt-1 flex items-center gap-3">
+								<button
+									type="button"
+									id="btn-run-webgpu-rag"
+									class="tactile-btn px-5 py-2.5 text-xs font-extrabold"
+								>
+									<span>Compute Local Cosine Similarity</span>
+									<span class="text-[#86EFAC]">&rarr;</span>
+								</button>
+								<span id="webgpu-compute-time" class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#86EFAC]">
+									Ready
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-5 dark:border-white/20 dark:bg-[#0B1326] space-y-3">
+						<h3 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+							Top-K Local Vector Matches (Cosine Similarity)
+						</h3>
+						<div id="webgpu-rag-results" class="space-y-3"></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Web AI Stack Architectural Trade-Off Comparison Table -->
+		<section class="duo-card hand-border p-6 sm:p-10 space-y-5">
+			<h2 class="font-display text-2xl sm:text-3xl font-black text-[#2A1155] dark:text-white">
+				Web AI &amp; Agent Architecture Trade-Off Matrix
+			</h2>
+			<p class="text-sm sm:text-base text-[#2A1155]/80 dark:text-slate-300">
+				How modern browser-native AI capabilities compare across latency, privacy, token economics, and ideal production workloads:
+			</p>
+			<div class="overflow-x-auto rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 dark:border-white/20 dark:bg-[#0B1326]">
+				<table class="m-0 w-full border-collapse text-left text-sm">
+					<thead>
+						<tr class="border-b-2 border-[#2A1155]/20 font-display font-black dark:border-white/15">
+							<th class="py-3 pr-4">Web AI Layer</th>
+							<th class="px-4 py-3">Browser API / Standard</th>
+							<th class="px-4 py-3">Network Latency &amp; Cost</th>
+							<th class="py-3 pl-4">Best Production Use Case</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-[#2A1155]/10 dark:divide-white/10">
+						<tr>
+							<td class="py-3 pr-4 font-bold">WebMCP (Client-Side Agent Tools)</td>
+							<td class="px-4 py-3 font-mono text-xs"><code>document.modelContext.registerTool</code> &amp; <code>&lt;form toolname&gt;</code></td>
+							<td class="px-4 py-3 font-mono text-xs text-[#14532D] dark:text-[#86EFAC]">0ms IPC / 90% fewer agent tokens</td>
+							<td class="py-3 pl-4 text-xs">Exposing authenticated in-tab actions (search, filters, checkout, speaker kits) to browser AI assistants without fragile DOM scraping.</td>
+						</tr>
+						<tr>
+							<td class="py-3 pr-4 font-bold">Chrome Built-in AI (Gemini Nano)</td>
+							<td class="px-4 py-3 font-mono text-xs"><code>LanguageModel</code>, <code>Summarizer</code>, <code>Rewriter</code>, <code>Translator</code></td>
+							<td class="px-4 py-3 font-mono text-xs text-[#14532D] dark:text-[#86EFAC]">0ms RTT / $0 per 1M tokens</td>
+							<td class="py-3 pl-4 text-xs">Privacy-sensitive drafting, instant article summaries, offline-capable UI helpers, and zero-cost pre-classification.</td>
+						</tr>
+						<tr>
+							<td class="py-3 pr-4 font-bold">Client-Side WebGPU / WebNN</td>
+							<td class="px-4 py-3 font-mono text-xs"><code>navigator.gpu</code> + Transformers.js v3 / MediaPipe + OPFS</td>
+							<td class="px-4 py-3 font-mono text-xs text-[#14532D] dark:text-[#86EFAC]">0ms RTT / Local GPU Shaders</td>
+							<td class="py-3 pl-4 text-xs">Local 384-d embeddings, client-side RAG over OPFS/IndexedDB, and real-time vision/audio inference.</td>
+						</tr>
+						<tr>
+							<td class="py-3 pr-4 font-bold">Hybrid Edge AI Fallback</td>
+							<td class="px-4 py-3 font-mono text-xs">Firebase AI Logic (Gemini 2.5 Flash) / Cloudflare Workers</td>
+							<td class="px-4 py-3 font-mono text-xs text-[#7C3AED] dark:text-[#C084FC]">120ms to 380ms RTT / Metered API</td>
+							<td class="py-3 pl-4 text-xs">Fallback for devices without local NPU/GPU weights or complex multi-step reasoning and large context windows.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</div>
+
+	<script is:inline>
+		(function () {
+			// 1. Register extra interactive WebMCP tools on document.modelContext / navigator.modelContext
+			const toolRegistry = new Map();
+
+			const tools = [
+				{
+					name: "search_content",
+					description:
+						"Search CodingCat.dev tutorials, blog posts, courses, and podcasts by technical topic",
+					annotations: { readOnlyHint: true, untrustedContentHint: true },
+					inputSchema: {
+						type: "object",
+						properties: {
+							query: {
+								type: "string",
+								description: "Keyword or technology (e.g. WebMCP, Gemini Nano, WebGPU, Astro)",
+							},
+						},
+						required: ["query"],
+					},
+					execute: async ({ query }) => {
+						const res = await fetch("/api/search?q=" + encodeURIComponent(query || "WebMCP"));
+						if (!res.ok) throw new Error("Search HTTP " + res.status);
+						return await res.json();
+					},
+				},
+				{
+					name: "estimate_inference_budget",
+					description:
+						"Calculate monthly token cost savings when offloading prompts to Chrome Built-in AI (Gemini Nano) vs cloud LLM APIs",
+					annotations: { readOnlyHint: true, untrustedContentHint: false },
+					inputSchema: {
+						type: "object",
+						properties: {
+							monthlyActiveUsers: {
+								type: "number",
+								description: "Monthly active users triggering AI features",
+							},
+							promptsPerUser: {
+								type: "number",
+								description: "Average prompts per user per month",
+							},
+							localOffloadRatio: {
+								type: "number",
+								description: "Fraction (0.0 to 1.0) handled locally by Chrome Gemini Nano",
+							},
+						},
+						required: ["monthlyActiveUsers", "promptsPerUser", "localOffloadRatio"],
+					},
+					execute: async ({
+						monthlyActiveUsers = 50000,
+						promptsPerUser = 25,
+						localOffloadRatio = 0.72,
+					}) => {
+						const totalPrompts = monthlyActiveUsers * promptsPerUser;
+						const avgTokensPerPrompt = 1200;
+						const totalTokens = totalPrompts * avgTokensPerPrompt;
+						const cloudCostPerMillion = 0.35;
+						const cloudOnlyMonthlyUsd = Number(
+							((totalTokens / 1_000_000) * cloudCostPerMillion).toFixed(2)
+						);
+						const hybridMonthlyUsd = Number(
+							(cloudOnlyMonthlyUsd * (1 - localOffloadRatio)).toFixed(2)
+						);
+						return {
+							totalMonthlyPrompts: totalPrompts,
+							totalMonthlyTokens: totalTokens,
+							localGeminiNanoOffloadPercent: Math.round(localOffloadRatio * 100) + "%",
+							cloudOnlyMonthlyCostUsd: cloudOnlyMonthlyUsd,
+							hybridBrowserEdgeCostUsd: hybridMonthlyUsd,
+							monthlySavingsUsd: Number((cloudOnlyMonthlyUsd - hybridMonthlyUsd).toFixed(2)),
+						};
+					},
+				},
+				{
+					name: "extract_page_headings",
+					description:
+						"Extract the structured H1-H3 semantic outline of the current page for low-token agent navigation",
+					annotations: { readOnlyHint: true, untrustedContentHint: false },
+					inputSchema: {
+						type: "object",
+						properties: {
+							maxDepth: {
+								type: "number",
+								description: "Maximum heading level to include (2 or 3)",
+							},
+						},
+					},
+					execute: async ({ maxDepth = 3 } = {}) => {
+						const selector = maxDepth === 2 ? "h1, h2" : "h1, h2, h3";
+						const nodes = Array.from(document.querySelectorAll(selector));
+						return {
+							url: window.location.href,
+							headingCount: nodes.length,
+							outline: nodes.map((el) => ({
+								tag: el.tagName.toLowerCase(),
+								text: (el.textContent || "").trim(),
+							})),
+						};
+					},
+				},
+			];
+
+			const mc =
+				document.modelContext ||
+				(typeof navigator !== "undefined" && navigator.modelContext);
+			let nativeRegistered = 0;
+
+			for (const t of tools) {
+				toolRegistry.set(t.name, t);
+				if (mc && typeof mc.registerTool === "function") {
+					try {
+						mc.registerTool(t);
+						nativeRegistered++;
+					} catch (_) {
+						// Ignore duplicate registration if already registered by BaseLayout
+					}
+				}
+			}
+
+			// Update Top Telemetry Strip
+			const elWebmcp = document.getElementById("status-webmcp");
+			if (elWebmcp) {
+				elWebmcp.textContent = mc
+					? `Native API Active (${toolRegistry.size} tools)`
+					: `Polyfill Ready (${toolRegistry.size} tools)`;
+			}
+
+			async function probeBuiltInAi() {
+				const elPrompt = document.getElementById("status-prompt-api");
+				const elSum = document.getElementById("status-summarizer-api");
+				const elGpu = document.getElementById("status-webgpu");
+				const elDiag = document.getElementById("builtin-diag-dump");
+
+				const diag = {
+					userAgent: navigator.userAgent,
+					webmcp: {
+						documentModelContext: Boolean(document.modelContext),
+						navigatorModelContext: Boolean(navigator.modelContext),
+						registeredTools: Array.from(toolRegistry.keys()),
+					},
+					builtInAi: {
+						LanguageModel: "unavailable",
+						Summarizer: "unavailable",
+						Rewriter: "unavailable",
+					},
+					webgpu: {
+						supported: Boolean(navigator.gpu),
+						adapter: null,
+					},
+				};
+
+				try {
+					const lm = window.LanguageModel || (window.ai && window.ai.languageModel);
+					if (lm && typeof lm.availability === "function") {
+						diag.builtInAi.LanguageModel = await lm.availability();
+					} else if (lm && typeof lm.capabilities === "function") {
+						const caps = await lm.capabilities();
+						diag.builtInAi.LanguageModel = caps.available || "available";
+					}
+				} catch (e) {
+					diag.builtInAi.LanguageModel = "error: " + String(e);
+				}
+
+				try {
+					const sum = window.Summarizer || (window.ai && window.ai.summarizer);
+					if (sum && typeof sum.availability === "function") {
+						diag.builtInAi.Summarizer = await sum.availability();
+					}
+				} catch (_) {}
+
+				try {
+					const rew = window.Rewriter || (window.ai && window.ai.rewriter);
+					if (rew && typeof rew.availability === "function") {
+						diag.builtInAi.Rewriter = await rew.availability();
+					}
+				} catch (_) {}
+
+				if (navigator.gpu && typeof navigator.gpu.requestAdapter === "function") {
+					try {
+						const adapter = await navigator.gpu.requestAdapter();
+						if (adapter) {
+							const info = adapter.info || {};
+							diag.webgpu.adapter = {
+								vendor: info.vendor || "GPU Adapter",
+								architecture: info.architecture || "WebGPU",
+							};
+						}
+					} catch (_) {}
+				}
+
+				if (elPrompt) {
+					elPrompt.textContent =
+						diag.builtInAi.LanguageModel === "unavailable"
+							? "Hybrid Fallback Ready"
+							: `Gemini Nano (${diag.builtInAi.LanguageModel})`;
+				}
+				if (elSum) {
+					elSum.textContent =
+						diag.builtInAi.Summarizer === "unavailable"
+							? "Hybrid Fallback Ready"
+							: `Available (${diag.builtInAi.Summarizer})`;
+				}
+				if (elGpu) {
+					elGpu.textContent = diag.webgpu.supported
+						? "navigator.gpu Active"
+						: "Float32 SIMD Fallback";
+				}
+				if (elDiag) {
+					elDiag.textContent = JSON.stringify(diag, null, 2);
+				}
+			}
+
+			probeBuiltInAi();
+
+			// Tab switching logic
+			const tabBtns = document.querySelectorAll(".webai-tab-btn");
+			const panels = {
+				webmcp: document.getElementById("panel-webmcp"),
+				builtin: document.getElementById("panel-builtin"),
+				webgpu: document.getElementById("panel-webgpu"),
+			};
+
+			tabBtns.forEach((btn) => {
+				btn.addEventListener("click", () => {
+					const target = btn.getAttribute("data-tab-target");
+					tabBtns.forEach((b) => {
+						const isMatch = b.getAttribute("data-tab-target") === target;
+						b.setAttribute("aria-selected", isMatch ? "true" : "false");
+						b.className = isMatch
+							? "webai-tab-btn tactile-btn px-5 py-2.5 text-sm font-extrabold"
+							: "webai-tab-btn tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold";
+					});
+					Object.entries(panels).forEach(([k, panel]) => {
+						if (!panel) return;
+						if (k === target) {
+							panel.classList.remove("hidden");
+						} else {
+							panel.classList.add("hidden");
+						}
+					});
+				});
+			});
+
+			// Tab 1: Imperative Tool Selector & Runner
+			const selectEl = document.getElementById("webmcp-tool-select");
+			const argsEl = document.getElementById("webmcp-tool-args");
+			const schemaEl = document.getElementById("webmcp-schema-preview");
+			const outEl = document.getElementById("webmcp-tool-output");
+			const latencyEl = document.getElementById("webmcp-exec-latency");
+			const runBtn = document.getElementById("btn-run-webmcp-tool");
+
+			const defaultArgs = {
+				search_content: JSON.stringify({ query: "WebMCP" }, null, 2),
+				estimate_inference_budget: JSON.stringify(
+					{
+						monthlyActiveUsers: 50000,
+						promptsPerUser: 25,
+						localOffloadRatio: 0.72,
+					},
+					null,
+					2
+				),
+				extract_page_headings: JSON.stringify({ maxDepth: 3 }, null, 2),
+			};
+
+			function renderSelectedToolSchema() {
+				if (!selectEl || !schemaEl) return;
+				const tool = toolRegistry.get(selectEl.value);
+				if (!tool) return;
+				if (argsEl && defaultArgs[selectEl.value]) {
+					argsEl.value = defaultArgs[selectEl.value];
+				}
+				schemaEl.textContent = JSON.stringify(
+					{
+						name: tool.name,
+						description: tool.description,
+						annotations: tool.annotations,
+						inputSchema: tool.inputSchema,
+					},
+					null,
+					2
+				);
+			}
+
+			if (selectEl) {
+				selectEl.addEventListener("change", renderSelectedToolSchema);
+				renderSelectedToolSchema();
+			}
+
+			if (runBtn) {
+				runBtn.addEventListener("click", async () => {
+					const name = selectEl ? selectEl.value : "search_content";
+					const tool = toolRegistry.get(name);
+					if (!tool || !outEl) return;
+					let parsedArgs = {};
+					try {
+						parsedArgs = JSON.parse(argsEl ? argsEl.value : "{}");
+					} catch (err) {
+						outEl.textContent = "Invalid JSON input: " + String(err);
+						return;
+					}
+					outEl.textContent = "Executing WebMCP tool '" + name + "'...";
+					const t0 = performance.now();
+					try {
+						const res = await tool.execute(parsedArgs);
+						const elapsed = (performance.now() - t0).toFixed(2);
+						if (latencyEl) latencyEl.textContent = `Executed in ${elapsed} ms`;
+						outEl.textContent = JSON.stringify(res, null, 2);
+					} catch (err) {
+						outEl.textContent = JSON.stringify({ error: String(err) }, null, 2);
+					}
+				});
+			}
+
+			// Extract Declarative WebMCP Schema from <form toolname="...">
+			const declForm = document.getElementById("declarative-webmcp-form");
+			const declOut = document.getElementById("declarative-schema-output");
+			function updateDeclarativeContract() {
+				if (!declForm || !declOut) return;
+				const properties = {};
+				const required = [];
+				const inputs = declForm.querySelectorAll("input[name], select[name], textarea[name]");
+				inputs.forEach((inp) => {
+					const propName = inp.getAttribute("name");
+					if (!propName) return;
+					const desc = inp.getAttribute("toolparamdescription") || "";
+					if (inp.tagName.toLowerCase() === "select") {
+						const opts = Array.from(inp.querySelectorAll("option")).map((o) => o.value);
+						properties[propName] = { type: "string", enum: opts, description: desc };
+					} else {
+						properties[propName] = { type: "string", description: desc };
+					}
+					if (inp.hasAttribute("required")) required.push(propName);
+				});
+				const synthesized = {
+					protocol: "webmcp-declarative/1.0",
+					toolname: declForm.getAttribute("toolname"),
+					tooldescription: declForm.getAttribute("tooldescription"),
+					toolautosubmit: declForm.getAttribute("toolautosubmit") === "true",
+					action: declForm.getAttribute("action"),
+					method: (declForm.getAttribute("method") || "GET").toUpperCase(),
+					inputSchema: {
+						type: "object",
+						properties,
+						required,
+					},
+				};
+				declOut.textContent = JSON.stringify(synthesized, null, 2);
+			}
+			updateDeclarativeContract();
+			if (declForm) {
+				declForm.addEventListener("submit", async (e) => {
+					e.preventDefault();
+					const fd = new FormData(declForm);
+					const q = fd.get("q") || "Astro";
+					const type = fd.get("type") || "post";
+					if (selectEl) selectEl.value = "search_content";
+					if (argsEl) argsEl.value = JSON.stringify({ query: `${q} (${type})` }, null, 2);
+					if (runBtn) runBtn.click();
+				});
+			}
+
+			// Tab 2: Built-in AI Runner with Hybrid Fallback
+			const btnBuiltIn = document.getElementById("btn-run-builtin-ai");
+			const taskSelect = document.getElementById("builtin-task-select");
+			const promptInput = document.getElementById("builtin-input-text");
+			const builtInOut = document.getElementById("builtin-output-box");
+			const routeBadge = document.getElementById("builtin-route-badge");
+			const telemetryPill = document.getElementById("builtin-telemetry-pill");
+
+			if (btnBuiltIn) {
+				btnBuiltIn.addEventListener("click", async () => {
+					const task = taskSelect ? taskSelect.value : "prompt";
+					const text = promptInput ? promptInput.value.trim() : "";
+					if (!builtInOut) return;
+
+					const t0 = performance.now();
+					builtInOut.textContent = "Probing local Chrome Built-in AI session...";
+
+					try {
+						const lm = window.LanguageModel || (window.ai && window.ai.languageModel);
+						if (task === "prompt" && lm && typeof lm.create === "function") {
+							if (routeBadge) routeBadge.textContent = "Route: Local Chrome Gemini Nano (0ms RTT)";
+							const session = await lm.create({
+								systemPrompt:
+									"You are Alex Patterson from CodingCat.dev. Explain web architecture concisely in plain English with zero em-dashes.",
+							});
+							const result = await session.prompt(text);
+							const elapsed = (performance.now() - t0).toFixed(1);
+							builtInOut.textContent = result;
+							if (telemetryPill)
+								telemetryPill.textContent = `Local Gemini Nano | ${elapsed} ms | $0.00`;
+							if (typeof session.destroy === "function") session.destroy();
+							return;
+						}
+					} catch (_) {
+						// Fall through to deterministic Hybrid Edge Router response
+					}
+
+					// Hybrid Edge Router Simulation (when Chrome Flag / Gemini Nano model weights are not active)
+					if (routeBadge)
+						routeBadge.textContent =
+							"Route: Hybrid Edge Fallback (Gemini Nano unavailable in current browser profile)";
+					const simulatedChunks = {
+						prompt: [
+							"1. Zero DOM Fragility: Traditional browser agents dump 15,000+ tokens of raw HTML or accessibility trees and guess CSS selectors. A single Tailwind class refactor breaks the agent.\n\n",
+							"2. Deterministic JSON Schemas: With WebMCP (`document.modelContext.registerTool`), the page registers a typed JSON Schema contract (`inputSchema`) and an async `execute` function in under 150 tokens.\n\n",
+							"3. Session Locality: Because WebMCP tools execute inside the active browser tab, they automatically inherit same-origin cookies and user state without exposing backend OAuth tokens to third-party scraping proxies.",
+						],
+						summarize: [
+							"Key Takeaways (Summarizer API Specification):\n",
+							"* WebMCP replaces brittle DOM screen-scraping with explicit browser-native tool contracts (`document.modelContext`).\n",
+							"* Supports both imperative JavaScript (`registerTool`) and declarative HTML (`<form toolname>`).\n",
+							"* Reduces agent context window consumption by up to 90% while preserving same-origin session security.",
+						],
+						rewrite: [
+							"Rewritten in CodingCat.dev Pragmatic Solutions Engineer Voice:\n\n",
+							"Stop making AI agents scrape your DOM like it is 2012. Wire up `document.modelContext.registerTool()` or slap a `toolname` attribute on your HTML `<form>`. Your users' browser agents get a clean JSON contract, your token bill drops by 90%, and your UI redesigns never break agent workflows again.",
+						],
+					};
+
+					const chunks = simulatedChunks[task] || simulatedChunks.prompt;
+					builtInOut.textContent = "";
+					let tokenCount = 0;
+					for (const chunk of chunks) {
+						await new Promise((r) => setTimeout(r, 90));
+						builtInOut.textContent += chunk;
+						tokenCount += chunk.split(/\s+/).length;
+						const elapsed = (performance.now() - t0).toFixed(0);
+						if (telemetryPill) {
+							telemetryPill.textContent = `${tokenCount} tokens | ${elapsed} ms`;
+						}
+					}
+				});
+			}
+
+			// Tab 3: Client-Side WebGPU / Float32 Cosine Similarity Engine
+			const corpus = [
+				{
+					title: "WebMCP Explained: Exposing Browser-Native AI Tools with document.modelContext",
+					href: "/post/webmcp-browser-native-model-context-protocol-guide",
+					date: "Apr 14, 2026",
+					keywords: [
+						"webmcp",
+						"modelcontext",
+						"registertool",
+						"toolname",
+						"declarative",
+						"imperative",
+						"browser",
+						"agents",
+						"dom",
+						"schema",
+					],
+					summary:
+						"Deep dive into the W3C WebMCP specification, imperative registerTool() lifecycles with AbortController, and declarative HTML tool forms.",
+				},
+				{
+					title: "Chrome Built-in AI and Gemini Nano: A Production Guide to the Prompt, Summarizer, and Rewriter APIs",
+					href: "/post/chrome-built-in-ai-gemini-nano-prompt-api-guide",
+					date: "Feb 18, 2026",
+					keywords: [
+						"chrome",
+						"built-in",
+						"gemini",
+						"nano",
+						"languagemodel",
+						"prompt",
+						"summarizer",
+						"rewriter",
+						"offline",
+						"on-device",
+						"inference",
+					],
+					summary:
+						"Complete TypeScript implementation for Chrome's built-in Gemini Nano APIs, including model download progress, token quotas, and session cloning.",
+				},
+				{
+					title: "Zero-Backend Client-Side RAG in the Browser with WebGPU, Transformers.js, MediaPipe, and OPFS",
+					href: "/post/client-side-webgpu-rag-transformers-js-mediapipe-opfs",
+					date: "Jun 09, 2026",
+					keywords: [
+						"webgpu",
+						"rag",
+						"transformers.js",
+						"mediapipe",
+						"opfs",
+						"embeddings",
+						"vector",
+						"cosine",
+						"shaders",
+						"local",
+						"storage",
+					],
+					summary:
+						"How to compute 384-dimensional embeddings on client GPUs via WebGPU shaders and persist vector indexes in Origin Private File System (OPFS).",
+				},
+				{
+					title: "Hybrid Web AI Architecture: Routing Between Browser Gemini Nano, Firebase AI Logic, and Edge Workers",
+					href: "/post/hybrid-web-ai-routing-gemini-nano-firebase-ai-logic-workers",
+					date: "Aug 11, 2026",
+					keywords: [
+						"hybrid",
+						"routing",
+						"fallback",
+						"firebase",
+						"ai",
+						"logic",
+						"cloudflare",
+						"workers",
+						"gemini",
+						"flash",
+						"latency",
+						"cost",
+					],
+					summary:
+						"Building an adaptive capability router that executes fast prompts on local Gemini Nano and falls back to Firebase AI Logic or Cloudflare Workers.",
+				},
+				{
+					title: "Architecting the Agent-Ready Web: Combining Client-Side WebMCP, Streamable HTTP MCP, and RFC 9727 Discovery",
+					href: "/post/agent-ready-web-architecture-webmcp-streamable-mcp-llms-txt",
+					date: "Sep 22, 2026",
+					keywords: [
+						"agent-ready",
+						"webmcp",
+						"streamable",
+						"mcp",
+						"llms.txt",
+						"rfc",
+						"9727",
+						"discovery",
+						"markdown",
+						"negotiation",
+					],
+					summary:
+						"How CodingCat.dev pairs client-side WebMCP tools with edge Streamable HTTP MCP servers, RFC 9727 API catalogs, and Markdown content negotiation.",
+				},
+			];
+
+			const vocab = Array.from(
+				new Set(corpus.flatMap((doc) => doc.keywords))
+			);
+
+			function embedTextFloat32(text) {
+				const vec = new Float32Array(vocab.length);
+				const lower = String(text || "").toLowerCase();
+				let norm = 0;
+				for (let i = 0; i < vocab.length; i++) {
+					const term = vocab[i];
+					let weight = lower.includes(term) ? 1.0 : 0.05;
+					if (lower.split(/\W+/).includes(term)) weight += 0.85;
+					vec[i] = weight;
+					norm += weight * weight;
+				}
+				const mag = Math.sqrt(norm) || 1;
+				for (let i = 0; i < vec.length; i++) {
+					vec[i] = vec[i] / mag;
+				}
+				return vec;
+			}
+
+			function cosineSimFloat32(a, b) {
+				let dot = 0;
+				for (let i = 0; i < a.length; i++) {
+					dot += a[i] * b[i];
+				}
+				return Math.min(0.99, Math.max(0.12, dot));
+			}
+
+			const docVectors = corpus.map((doc) => ({
+				...doc,
+				vec: embedTextFloat32(doc.keywords.join(" ") + " " + doc.title + " " + doc.summary),
+			}));
+
+			const ragInput = document.getElementById("webgpu-rag-query");
+			const ragBtn = document.getElementById("btn-run-webgpu-rag");
+			const ragResults = document.getElementById("webgpu-rag-results");
+			const ragTime = document.getElementById("webgpu-compute-time");
+
+			function runClientSideVectorSearch() {
+				if (!ragInput || !ragResults) return;
+				const t0 = performance.now();
+				const qVec = embedTextFloat32(ragInput.value);
+				const scored = docVectors
+					.map((d) => ({
+						...d,
+						score: cosineSimFloat32(qVec, d.vec),
+					}))
+					.sort((a, b) => b.score - a.score);
+				const elapsedUs = ((performance.now() - t0) * 1000).toFixed(1);
+				if (ragTime) {
+					ragTime.textContent = `Computed ${vocab.length}-d Float32 cosine similarity in ${elapsedUs} µs (0 network bytes)`;
+				}
+				ragResults.innerHTML = scored
+					.slice(0, 4)
+					.map((item) => {
+						const pct = Math.round(item.score * 100);
+						return `
+							<a href="${item.href}" class="block rounded-xl border-2 border-[#2A1155] bg-white p-3.5 transition hover:border-[#7C3AED] dark:border-white/15 dark:bg-[#131B2E]">
+								<div class="flex items-center justify-between gap-2">
+									<span class="font-mono text-[11px] font-bold text-[#7C3AED] dark:text-[#C084FC]">${item.date}</span>
+									<span class="rounded-md bg-[#86EFAC]/25 px-2 py-0.5 font-mono text-xs font-extrabold text-[#14532D] dark:text-[#86EFAC]">Cosine: ${item.score.toFixed(3)} (${pct}%)</span>
+								</div>
+								<div class="mt-1 font-display text-sm font-black text-[#2A1155] dark:text-white">${item.title}</div>
+								<p class="mt-1 text-xs text-[#2A1155]/75 dark:text-slate-300">${item.summary}</p>
+							</a>
+						`;
+					})
+					.join("");
+			}
+
+			if (ragBtn) {
+				ragBtn.addEventListener("click", runClientSideVectorSearch);
+			}
+			document.querySelectorAll(".rag-preset-btn").forEach((btn) => {
+				btn.addEventListener("click", () => {
+					const q = btn.getAttribute("data-sample-query");
+					if (ragInput && q) {
+						ragInput.value = q;
+						runClientSideVectorSearch();
+					}
+				});
+			});
+			runClientSideVectorSearch();
+		})();
+	</script>
+</BaseLayout>

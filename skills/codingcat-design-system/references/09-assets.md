@@ -24,7 +24,7 @@ All 13 studio portraits from the canonical likeness album (`https://photos.app.g
 | :--- | :--- | :--- |
 | `assets/alex-likeness/alex-likeness-01.jpg` | Pointing up-right with left index finger, looking up-right with curious expression | Bottom-left placement pointing up-right toward header hook or diagram |
 | `assets/alex-likeness/alex-likeness-02.jpg` | Pointing left with right index finger, friendly smile looking at camera | **Right-third placement** pointing left at an architecture diagram |
-| `assets/alex-likeness/alex-likeness-03.jpg` | Mind-blown / shocked with both hands open near head | Breaking news, CVEs, wild benchmarks, or `"WTF is..."` deep dives |
+| `assets/alex-likeness/alex-likeness-03.jpg` | Mind-blown / shocked with both hands open near head | Breaking news, CVEs, wild benchmarks, or technical deep dives |
 | `assets/alex-likeness/alex-likeness-04.jpg` | Surprised / wide-eyed with both hands framing head | Unexpected framework changes or production incident stories |
 | `assets/alex-likeness/alex-likeness-05.jpg` | Shrugging with both hands open (`"Why / What?!"` pose) | Trade-off comparisons, anti-patterns, or myth-busting covers |
 | `assets/alex-likeness/alex-likeness-06.jpg` | Celebrating / double fist-pump with huge smile | Major releases, shipped milestones, or performance wins |

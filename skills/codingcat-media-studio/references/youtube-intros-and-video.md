@@ -1,6 +1,6 @@
 # YouTube Intros, Hooks & Video Motion Rules (`youtube-intros-and-video.md`)
 
-Guidelines for scripting, storyboarding, and editing YouTube tutorials, "WTF is..." episodes, podcasts, and 9:16 vertical Shorts on CodingCat.dev.
+Guidelines for scripting, storyboarding, and editing YouTube tutorials, technical deep-dive explainers, podcasts, and 9:16 vertical Shorts on CodingCat.dev.
 
 ## 1. The First-15-Second Retention Hook
 Never open a video with *"Hey guys, welcome back to the channel, don't forget to like and subscribe."* Viewers decide in the first 15 seconds whether the video delivers on the thumbnail's promise.

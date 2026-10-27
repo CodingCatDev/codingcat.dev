@@ -1,6 +1,6 @@
 # Dark-Mode Excalidraw Architecture Diagrams (`excalidraw-diagrams.md`)
 
-CodingCat.dev uses hand-drawn dark-mode **Excalidraw** diagrams for system architecture walkthroughs, "WTF is..." mental models, and side-by-side anti-pattern vs. recommended pattern comparisons.
+CodingCat.dev uses hand-drawn dark-mode **Excalidraw** diagrams for system architecture walkthroughs, technical mental models, and side-by-side anti-pattern vs. recommended pattern comparisons.
 
 ## 1. Visual Token Rules for Excalidraw Canvases
 

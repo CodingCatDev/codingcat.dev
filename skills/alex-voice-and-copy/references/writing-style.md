@@ -13,7 +13,7 @@ Never output the em-dash character in any context. AI models frequently overuse 
 | Clause interruption | Use **parentheses** `(like this)` for side notes or caveats. |
 | Defining or expanding a term | Use a **colon** (`:`) followed by a direct explanation. |
 | Connecting two independent clauses | Use a **period** (`.`) and start a new, punchy sentence, or use a **comma** with a coordinating conjunction. |
-| Title / Subtitle separation | Use a **colon** (`WTF is Cloudflare D1: SQLite at the Edge`) or a **pipe** (`|`). |
+| Title / Subtitle separation | Use a **colon** (`Cloudflare D1 Explained: SQLite at the Edge`) or a **pipe** (`|`). |
 
 ## 3. Mandatory Comparison Tables
 Whenever an article, script, or documentation page compares options (for example, Astro vs. Next.js, Cloudflare D1 vs. Turso, or Better-Auth vs. Clerk), always include a structured Markdown table:

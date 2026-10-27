@@ -47,8 +47,8 @@ Notice: Never use em-dashes in `title` or `excerpt`.
 
 ```yaml
 ---
-title: "WTF is Cloudflare D1: Serverless SQLite at the Edge"
-slug: "wtf-is-cloudflare-d1"
+title: "Cloudflare D1 Explained: Serverless SQLite at the Edge"
+slug: "cloudflare-d1-serverless-sqlite-at-the-edge"
 excerpt: "Learn how Cloudflare D1 runs distributed SQLite in your Hono and Astro Workers, including read replication, Drizzle ORM setup, and pricing comparisons."
 publishedAt: "2026-10-26T12:00:00Z"
 updatedAt: "2026-10-26T12:00:00Z"
@@ -62,8 +62,8 @@ tags:
   - "astro"
   - "hono"
 coverImage:
-  src: "/assets/covers/wtf-is-cloudflare-d1.jpg"
-  alt: "AJ the Cat reacting to a dark-mode Excalidraw diagram of Cloudflare D1 edge read replicas"
+  src: "/assets/covers/cloudflare-d1-serverless-sqlite.jpg"
+  alt: "AJ the Cat reacting to a dark-mode Architecture Diagram of Cloudflare D1 edge read replicas"
 youtubeId: "dQw4w9WgXcQ"
 draft: false
 ---
@@ -89,5 +89,5 @@ How D1 compares to Turso and PlanetScale for edge reads:
 
 ## CTA Tweet (Post 3)
 Full video breakdown + copy-pasteable Astro 7 & Hono starter repo on CodingCat.dev:
-https://codingcat.dev/post/wtf-is-cloudflare-d1
+https://codingcat.dev/post/cloudflare-d1-serverless-sqlite-at-the-edge
 ```
