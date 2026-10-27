@@ -58,41 +58,96 @@ async function createGoogleSyndicationTask({ title, canonicalUrl, tags = [] }) {
       return;
     }
 
-    const taskTitle = `Cross-post to Hashnode & Medium: ${title}`;
+    const hnUrl = `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(canonicalUrl)}&t=${encodeURIComponent(title)}`;
+    const taskTitle = `Post: ${title}`;
     const taskNotes = [
-      `Canonical URL: ${canonicalUrl}`,
+      `📌 COPY-PASTE TITLE:`,
+      title,
+      ``,
+      `🔗 CANONICAL URL:`,
+      canonicalUrl,
       `Tags: ${tags.join(", ")}`,
       ``,
-      `1. Hashnode (Free UI Editor):`,
-      `   - Open: https://hashnode.com/draft`,
-      `   - Set Original Article URL (Canonical): ${canonicalUrl}`,
+      `🚀 1-TAP CROSS-POST LINKS:`,
+      `1. Hacker News (1-Tap Submit):`,
+      `   ${hnUrl}`,
       ``,
-      `2. Medium (1-Click Import):`,
-      `   - Open: https://medium.com/p/import`,
-      `   - Paste: ${canonicalUrl} (automatically sets canonical tag)`,
+      `2. Medium (1-Click Import - automatically sets canonical tag):`,
+      `   https://medium.com/p/import`,
+      `   Paste: ${canonicalUrl}`,
       ``,
-      `3. daily.dev Squad:`,
-      `   - Open: https://daily.dev/squads/codingcatdev -> Click "Share a link" -> Paste ${canonicalUrl}`,
+      `3. Hashnode (Free UI Editor):`,
+      `   https://hashnode.com/draft`,
+      `   Original Article URL: ${canonicalUrl}`,
     ].join("\n");
 
-    // 1. Try Google Tasks API first
-    const tasksRes = await fetch("https://tasks.googleapis.com/tasks/v1/lists/@default/tasks", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: taskTitle,
-        notes: taskNotes,
-        due: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      }),
+    // 1. Try Google Tasks API first (targeting the "CodingCat.dev Posts" list)
+    let targetListId = "@default";
+    const listsRes = await fetch("https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=100", {
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
+    if (listsRes.ok) {
+      const listsData = await listsRes.json();
+      const lists = listsData.items || [];
+      const foundList = lists.find(
+        (l) => (l.title || "").trim().toLowerCase() === "codingcat.dev posts"
+      );
+      if (foundList?.id) {
+        targetListId = foundList.id;
+      } else {
+        const createListRes = await fetch("https://tasks.googleapis.com/tasks/v1/users/@me/lists", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title: "CodingCat.dev Posts" }),
+        });
+        if (createListRes.ok) {
+          const createdList = await createListRes.json();
+          if (createdList?.id) targetListId = createdList.id;
+        }
+      }
 
-    if (tasksRes.ok) {
-      const createdTask = await tasksRes.json();
-      console.log(`✓ Created Google Task: "${taskTitle}" (ID: ${createdTask.id})`);
-      return;
+      // Check existing tasks in targetListId to prevent duplicates
+      const existingTasksRes = await fetch(
+        `https://tasks.googleapis.com/tasks/v1/lists/${encodeURIComponent(targetListId)}/tasks?maxResults=100`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      if (existingTasksRes.ok) {
+        const existingData = await existingTasksRes.json();
+        const existingTask = (existingData.items || []).find(
+          (t) =>
+            (t.notes && t.notes.includes(canonicalUrl)) ||
+            (t.title && t.title.toLowerCase() === taskTitle.toLowerCase())
+        );
+        if (existingTask) {
+          console.log(`✓ Google Task already exists in "CodingCat.dev Posts": "${taskTitle}" (ID: ${existingTask.id})`);
+          return;
+        }
+      }
+
+      const tasksRes = await fetch(
+        `https://tasks.googleapis.com/tasks/v1/lists/${encodeURIComponent(targetListId)}/tasks`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: taskTitle,
+            notes: taskNotes,
+            due: new Date().toISOString(),
+          }),
+        }
+      );
+
+      if (tasksRes.ok) {
+        const createdTask = await tasksRes.json();
+        console.log(`✓ Created Google Task in "CodingCat.dev Posts": "${taskTitle}" (ID: ${createdTask.id})`);
+        return;
+      }
     }
 
     // 2. Fallback to Google Calendar To-Do Event on alex.patterson@gmail.com if Tasks scope is not yet authorized
