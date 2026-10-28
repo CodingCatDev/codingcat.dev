@@ -9,11 +9,12 @@ This skill governs all visual media, mascot illustration prompts, hand-drawn dar
 
 ## 0. Mandatory Pre-Tool Prompt Compiler & Reference Attachment Rule
 
-1. **Always Attach Bundled Reference Images (`assets/*`) on the First Tool Call**:
+1. **Always Attach Bundled `1376x768` Template Images (`assets/*`) on the First Tool Call**:
    Before calling your image generation tool, you **MUST** load and pass the actual PNG/JPG files from `assets/` (and from any `@`-mentioned skill like `@sanity-brand-guidelines`, `@sanitybrand`, `@alex.patterson`, or `@codingcatthumbnails`) as **input reference images** to the image generation tool call:
-   - `assets/excalidraw-thumbnail-left-pose.png` or `assets/excalidraw-thumbnail-right-pose.png` (authentic Rough.js double-stroked white boxes, 45-degree diagonal hachure fills, Coral `X`, and green checkmark; **NEVER** draw a macOS window with red/yellow/green dots or circular UI icons).
+   - `assets/sanity-thumbnail-template-left.jpg` or `assets/sanity-thumbnail-template-right.jpg` or `assets/diagram-base-purple-green.jpg` (full-resolution `1376x768` templates featuring the 100% photorealistic cutout of Alex Patterson, official Sanity logos, double-stroked white boxes, 45-degree diagonal hachure fills, Coral `X`, and green checkmark; **NEVER** draw a macOS window with red/yellow/green dots or circular UI icons, and **NEVER** turn the presenter into a cartoon drawing or sketch).
    - `assets/Sanity-Full_logo--white_on_black.png` and `assets/Sanity-Symbol--white_on_black.png` (official stepped diagonal 3-line geometric symbol + bold serif `Sanity` wordmark; **NEVER** invent a red square `"S"` app icon).
    - `assets/alex_pointing_left.jpg` or `assets/alex_mind_blown.jpg` (photorealistic studio cutout of `@alex.patterson`).
+   - **CRITICAL ANTI-CARTOON RULE**: Never write the word `"Excalidraw"` in the prompt sent to `image_generation` when a presenter is included (writing `"Excalidraw"` causes the image rewriter to turn the presenter into a cartoon sketch). Instead, pass `assets/sanity-thumbnail-template-left.jpg` as Input Image 0 and instruct the tool to keep the **photorealistic studio photograph cutout** of Alex Patterson 100% unchanged while updating the title text and 2D double-stroked diagram node labels.
 2. **Compile Any 1-Sentence Request into the Full 6-Part Prompt**:
    Whenever the user asks for a diagram, thumbnail, or video with a short 1-sentence request (for example, *"Create a diagram for Sanity Content Releases"* or *"Make a thumbnail for WebMCP"*), **YOU (Gemini) must automatically compile their short request into the full 6-Part Zero-Shot Excalidraw Prompt in `references/excalidraw-diagrams.md` (or the 3-Zone Thumbnail Prompt in `references/youtube-thumbnails.md`) and pass that full expanded prompt into the image generation tool**. Never pass a short unexpanded summary to the image generator, and never ask the user to copy-paste the template themselves.
 

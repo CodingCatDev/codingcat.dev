@@ -17,12 +17,14 @@ You MUST follow this **3-Step Execution Protocol** before calling your image gen
 
 ## Mandatory 4-Step Execution Protocol
 
-### Step 0: Attach Bundled Reference Images (`assets/*`) to the Image Generator Tool Call
-**CRITICAL**: Never call the image generator with text alone when generating thumbnails, presenter cutouts, or vendor logos!
-Before calling your image generation tool, you **MUST** load and pass the actual image files from this skill's `assets/` directory (and from any `@`-mentioned skill such as `@sanity-brand-guidelines`, `@sanitybrand`, `@alex.patterson`, or `@codingcatthumbnails`) as **input reference images** to the image generation tool call on the **very first attempt**:
-- **Whiteboard Diagram Style & Layout Reference**: Attach `assets/excalidraw-thumbnail-left-pose.png` or `assets/excalidraw-thumbnail-right-pose.png` so the image generator copies the exact Rough.js double-stroked white boxes, 45-degree diagonal hachure fills, sketchy Coral Red `X`, and green checkmark (NEVER generate a macOS window with red/yellow/green dots or circular UI icons).
-- **Sanity Official Logo Files**: Whenever Sanity is mentioned, attach `assets/Sanity-Full_logo--white_on_black.png` (stepped diagonal 3-line geometric symbol + bold serif `Sanity` wordmark) and/or `assets/Sanity-Symbol--white_on_black.png` directly to the image generation tool call. **NEVER** invent a red square `"S"` app icon or sans-serif `"SANITY"` text on the shirt.
-- **Alex Patterson Likeness Cutouts**: Attach `assets/alex_pointing_left.jpg` or `assets/alex_mind_blown.jpg` (or the `@alex.patterson` avatar images) directly to the image generation tool call.
+### Step 0: Use `assets/sanity-thumbnail-template-left.jpg` (or `sanity-thumbnail-template-right.jpg`) as the Base Image for `image_generation`
+**CRITICAL**: Never call the image generator with text alone, and **NEVER write the word `"Excalidraw"` in the prompt sent to the image generator** when a presenter is included (writing `"Excalidraw"` causes the image rewriter to turn the presenter into a cartoon drawing instead of a realistic photograph!).
+Before calling your image generation tool, you **MUST** load and pass the bundled `1376x768` template files from `assets/` as **input reference images** to the image generation tool call on the **very first attempt**:
+- **`assets/sanity-thumbnail-template-left.jpg`** (`1376x768`): Full-resolution finished template with the photorealistic mind-blown cutout of Alex Patterson on the bottom-left (wearing a black t-shirt with `Sanity-Symbol--white_on_black.png` and a round black Pixel Watch), `Sanity-Full_logo--white_on_black.png` at the top center, bold white + OrangeRed (`#FF5500`) title text, and the 2D double-stroked white diagram on the right.
+- **`assets/sanity-thumbnail-template-right.jpg`** (`1376x768`): Full-resolution finished template with the photorealistic smiling/gesturing cutout of Alex Patterson on the right third (with OrangeRed `#FF5500` rim outline) and the 2D double-stroked white diagram with 45-degree diagonal hachure fills on the left two-thirds.
+- **`assets/diagram-base-purple-green.jpg`** (`1376x768`): Full-resolution template with Royal Purple (`#4B2E83`), Soft Lavender (`#B4A7D6`), and Electric Lime (`#C5E86C`) hachure diagram + photorealistic Alex Patterson cutout on the right.
+- **`assets/Sanity-Full_logo--white_on_black.png`** & **`assets/Sanity-Symbol--white_on_black.png`**: Official white-on-black Sanity logo files.
+- **`assets/alex_pointing_left.jpg`** & **`assets/alex_mind_blown.jpg`**: Photorealistic studio cutouts of Alex Patterson.
 
 ### Step 1: Extract the 3-Stage Architecture Model from the User's Topic
 Automatically map the user's short topic into three concrete columns (using **1 to 3 words max per box** so text is 100% legible):
@@ -66,26 +68,19 @@ Flat 2D hand-drawn dark-mode whiteboard software architecture diagram (16:9 aspe
 - Use all color values strictly as visual rendering guidelines; never render hex codes, UI toolbars, or watermarks as text on the canvas.
 ```
 
-#### Mode B: 16:9 YouTube Thumbnail with `@alex.patterson` (When user mentions thumbnail, `@alex.patterson`, or `@codingcatthumbnails`)
+#### Mode B: 16:9 YouTube Thumbnail with Photorealistic Alex Patterson Cutout (Pass `assets/sanity-thumbnail-template-left.jpg` or `assets/sanity-thumbnail-template-right.jpg` as Input Image 0!)
 ```text
-High-contrast 16:9 YouTube thumbnail on a pure black (#000000) background with a faint dark gray (#212121) 20px technical gridline pattern.
+Edit `assets/sanity-thumbnail-template-left.jpg` (16:9 aspect ratio): keep the exact PHOTOREALISTIC STUDIO PHOTOGRAPH CUTOUT of Alex Patterson on the bottom-left (preserving 100% of his real photographic skin texture, facial likeness, short light-brown hair, blue-green eyes, trimmed salt-and-pepper beard, round black smartwatch on his left wrist, bare hands with no rings, and his black #0B0B0B crew-neck t-shirt with the white stepped Sanity symbol from `assets/Sanity-Symbol--white_on_black.png` printed on the chest; NEVER turn the presenter into a drawing, sketch, or cartoon illustration).
 
-1. Left Third (Presenter Cutout - @alex.patterson):
-- Position a photorealistic studio cutout of @alex.patterson strictly on the left third (0% to 33%) of the frame, completely clear of any diagram boxes or text.
-- Likeness lock: Caucasian man in his mid-40s, very short styled light-brown hair, warm blue-green eyes, neatly trimmed salt-and-pepper beard, wearing NO glasses. He is in an expressive reaction pose (shocked mind-blown hands by head, or pointing right toward the diagram), wearing a round black Pixel Watch on his left wrist (no rings, bare right wrist) and a black crew-neck t-shirt with the official white brand symbol on the chest.
+Keep the official white-on-black Sanity logo lockup (`assets/Sanity-Full_logo--white_on_black.png`, stepped diagonal zig-zag symbol on the left + bold serif 'Sanity' wordmark on the right) centered at the top.
 
-2. Top Center-Right (Brand Lockup & 2-Word Headline):
-- Centered near the top above the diagram is the official white brand logo lockup.
-- Directly below the logo is the large, bold 2-word headline "[HEADLINE_WORD_1] [HEADLINE_WORD_2]" in a heavy geometric grotesque font, with "[HEADLINE_WORD_1]" in crisp white (#FFFFFF) and "[HEADLINE_WORD_2]" in vibrant glowing accent color (#FF5500 or #C5E86C).
+Directly below the top Sanity logo, change the 2-word headline text to "[HEADLINE_WORD_1] [HEADLINE_WORD_2]" in the exact same heavy geometric grotesque font, with "[HEADLINE_WORD_1]" in crisp white (#FFFFFF) and "[HEADLINE_WORD_2]" in vibrant Sanity OrangeRed (#FF5500), ensuring Alex Patterson's head and hands do not overlap or cover the title text.
 
-3. Right Two-Thirds (Flat 2D Hand-Drawn Dark-Mode Whiteboard Diagram):
-- Authentic flat 2D whiteboard sketch aesthetic (Rough.js / Excalidraw style) with zero 3D perspective.
-- Every box is drawn with TWO slightly offset, overlapping, hand-drawn sketchy white (#FFFFFF) marker strokes and 45-degree diagonal hachure hatch fills.
-- Left side of diagram: A double-stroked sketchy boundary box labeled "[LEFT_ALL_CAPS_CAPTION]" in white Virgil hand-drawn marker font, containing three stacked cards ("[BAD_NODE_1]", "[BAD_NODE_2]", "[BAD_NODE_3]") slashed with a large Coral Red (#FCA5A5) hand-drawn "X" mark.
-- Center of diagram: Sketchy white hand-drawn arrows point from the left cards into a single central document card (with folded top-right corner) labeled "[CENTER_CORE_NODE]".
-- Right side of diagram: Two sketchy white arrows branch from "[CENTER_CORE_NODE]" to two double-stroked boxes labeled "[GOOD_NODE_1]" and "[GOOD_NODE_2]".
-- Above the right-side boxes, draw a large, vibrant Electric Lime Green (#C5E86C) and Mint (#86EFAC) hand-drawn checkmark labeled "[RIGHT_ALL_CAPS_CAPTION]" in white Virgil marker font.
-- Maintain a 96px safe margin from all edges, keep the bottom-right 320x120px clear for the YouTube timestamp, ensure zero overlap between @alex.patterson and the diagram boxes, and never render hex codes as text.
+On the right side on the pure black (#000000) background, keep the exact same 2D hand-drawn white (#FFFFFF) double-stroked diagram box style and layout, updating only the text labels inside the boxes for this topic:
+- Left diagram cluster: Double-stroked sketchy boundary box labeled "[LEFT_ALL_CAPS_CAPTION]" at top and bottom in white Virgil hand-drawn marker font, containing three stacked cards ("[BAD_NODE_1]", "[BAD_NODE_2]", "[BAD_NODE_3]") crossed out with a large Coral Red (#FCA5A5) hand-drawn "X" mark.
+- Center diagram card: Connected by sketchy white arrows to a single central document card (with folded top-right corner) labeled "[CENTER_CORE_NODE]".
+- Right diagram cluster: Two sketchy white arrows branching from "[CENTER_CORE_NODE]" to two double-stroked boxes on the far right labeled "[GOOD_NODE_1]" and "[GOOD_NODE_2]", topped with a bright green (#C5E86C / #86EFAC) hand-drawn checkmark and "[RIGHT_ALL_CAPS_CAPTION]" label in white Virgil marker font.
+The hex codes are color values only. Do not render them as text in the image.
 ```
 
 ### Step 3: Call the Image Generator Immediately + Output a Markdown Comparison Table
