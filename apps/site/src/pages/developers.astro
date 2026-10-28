@@ -1,4 +1,5 @@
 ---
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
@@ -13,24 +14,35 @@ const origin = Astro.locals.siteUrl.origin;
 
 	<section class="mx-auto max-w-4xl py-6 md:py-10">
 		<div class="duo-card hand-border p-8 md:p-12">
-			<header class="mb-8">
-				<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200">
-					🤖 Agent-Ready &amp; Open APIs
-				</span>
-				<h1 class="mt-3 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-5xl">
-					developer &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">agent docs</span>
-				</h1>
-				<p class="font-hand mt-2 text-2xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
-					Machine-readable manifests, Streamable HTTP MCP endpoints, and Markdown content negotiation.
-				</p>
-				<div class="mt-5 flex flex-wrap gap-3">
-					<a href="/demos/web-ai" class="tactile-btn px-5 py-2.5 text-sm font-extrabold">
-						<span>Launch Interactive Web AI &amp; WebMCP Playground</span>
-						<span class="text-[#86EFAC]">&rarr;</span>
-					</a>
-					<a href="/post/webmcp-browser-native-model-context-protocol-guide" class="tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold">
-						Read WebMCP Architecture Guide &rarr;
-					</a>
+			<header class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+				<div>
+					<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200">
+						🤖 Agent-Ready &amp; Open APIs
+					</span>
+					<h1 class="mt-3 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-5xl">
+						developer &amp; <span class="text-[#7C3AED] dark:text-[#C084FC]">agent docs</span>
+					</h1>
+					<p class="font-hand mt-2 text-2xl font-bold text-[#7C3AED] dark:text-[#C084FC]">
+						Machine-readable manifests, Streamable HTTP MCP endpoints, and Markdown content negotiation.
+					</p>
+					<div class="mt-5 flex flex-wrap gap-3">
+						<a href="/demos/web-ai" class="tactile-btn px-5 py-2.5 text-sm font-extrabold">
+							<span>Launch Interactive Web AI &amp; WebMCP Playground</span>
+							<span class="text-[#86EFAC]">&rarr;</span>
+						</a>
+						<a href="/post/webmcp-browser-native-model-context-protocol-guide" class="tactile-btn-secondary px-5 py-2.5 text-sm font-extrabold">
+							Read WebMCP Architecture Guide &rarr;
+						</a>
+					</div>
+				</div>
+				<div class="hidden sm:flex shrink-0 items-center justify-center">
+					<AjAnimatedMascot
+						variant="full-body"
+						state="point-diagram"
+						angle="three-quarter-left"
+						cls="w-28 h-auto"
+						caption="Agent Ready!"
+					/>
 				</div>
 			</header>
 
