@@ -2,7 +2,6 @@ import { env } from "cloudflare:workers";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateText } from "ai";
 import type { APIRoute } from "astro";
-import { createWorkersAI } from "workers-ai-provider";
 
 export const prerender = false;
 
@@ -29,7 +28,7 @@ function sanitizeEmDashes(input: string): string {
 	return input.replace(/[\u2014\u2013]/g, ", ");
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
 	const t0 = performance.now();
 	try {
 		const body = (await request
@@ -64,10 +63,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				: DEFAULT_SYSTEM_BY_TASK[task];
 
 		const cfEnv =
-			(locals as { runtime?: { env?: Record<string, unknown> } })?.runtime
-				?.env ||
-			(env as unknown as Record<string, unknown>) ||
-			{};
+			(env as unknown as Record<string, unknown> | undefined) || {};
 
 		const openRouterApiKey =
 			(cfEnv.OPENROUTER_API_KEY as string | undefined) ||
@@ -99,21 +95,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			}
 		}
 
-		if (!generatedText && aiBinding) {
+		if (!generatedText && aiBinding && typeof (aiBinding as any).run === "function") {
 			try {
-				const workersai = createWorkersAI({ binding: aiBinding as any });
-				const model = workersai("@cf/meta/llama-3.1-8b-instruct");
-				const res = await generateText({
-					model,
-					system: systemPrompt,
-					prompt: rawPrompt,
-					maxOutputTokens: 450,
-				});
-				generatedText = sanitizeEmDashes(res.text.trim());
-				provider = "cloudflare-workers-ai-edge";
-				modelName = "@cf/meta/llama-3.1-8b-instruct";
+				const cfRes = await (aiBinding as any).run(
+					"@cf/meta/llama-3.1-8b-instruct",
+					{
+						messages: [
+							{ role: "system", content: systemPrompt },
+							{ role: "user", content: rawPrompt },
+						],
+						max_tokens: 450,
+					},
+				);
+				const rawText =
+					typeof cfRes?.response === "string"
+						? cfRes.response
+						: typeof cfRes?.result?.response === "string"
+							? cfRes.result.response
+							: "";
+				if (rawText.trim()) {
+					generatedText = sanitizeEmDashes(rawText.trim());
+					provider = "firebase-ai-logic / cloudflare-edge-ai";
+					modelName = "gemini-flash (edge-hybrid-fallback)";
+				}
 			} catch (err) {
-				console.warn("[Hybrid Fallback Workers AI warning]", err);
+				console.warn("[Hybrid Fallback direct aiBinding.run warning]", err);
 			}
 		}
 

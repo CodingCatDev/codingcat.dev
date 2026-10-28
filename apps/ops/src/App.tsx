@@ -1,7 +1,39 @@
 import { useClient } from "@sanity/sdk-react";
 import { useCallback, useEffect, useState } from "react";
 
-type WorkspaceTab = "crm" | "bookings" | "billing" | "syndication";
+type WorkspaceTab = "crm" | "bookings" | "billing" | "syndication" | "drafts";
+
+interface DraftContentItem {
+	_id: string;
+	_type: "post" | "podcast" | "course" | "lesson";
+	title?: string;
+	slug?: string;
+	_updatedAt?: string;
+	_createdAt?: string;
+	excerpt?: string;
+	contentLen?: number;
+	hasCover?: boolean;
+	hasPublishedVersion?: boolean;
+}
+
+interface TrendSignalDoc {
+	_id: string;
+	title: string;
+	slug?: string;
+	source?: string;
+	sourceUrl?: string;
+	score?: number;
+	status?: string;
+	summary?: string;
+	rawMetrics?: string;
+	discoveredAt?: string;
+	socialDrafts?: {
+		x?: string;
+		linkedin?: string;
+		reddit?: string;
+		dailydev?: string;
+	};
+}
 
 interface DeliverableItem {
 	_key?: string;
@@ -173,6 +205,9 @@ export function App() {
 	const [syndicationFilter, setSyndicationFilter] = useState<
 		"all" | "missing" | "youtube"
 	>("all");
+	const [draftItems, setDraftItems] = useState<DraftContentItem[]>([]);
+	const [trendSignals, setTrendSignals] = useState<TrendSignalDoc[]>([]);
+	const [expandedTrendId, setExpandedTrendId] = useState<string | null>(null);
 
 	// Outbound scraper state
 	const [discovering, setDiscovering] = useState(false);
@@ -209,7 +244,10 @@ export function App() {
 				bookings: BookingDoc[];
 				syndicatedContent: SyndicatedContentItem[];
 				syndicationDocCount: number;
-			}>(`{
+				draftItems: DraftContentItem[];
+				trendSignals: TrendSignalDoc[];
+			}>(
+				`{
 				"leads": *[_type == "sponsorLead" && !(_id in path("drafts.**"))] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc),
 				"bookings": *[_type == "booking" && !(_id in path("drafts.**"))] | order(coalesce(slotStartAt, _createdAt) desc),
 				"syndicatedContent": *[_type in ["post", "podcast"] && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...50] {
@@ -226,14 +264,43 @@ export function App() {
 					medium,
 					reddit
 				},
-				"syndicationDocCount": count(*[_type == "syndication"])
-			}`);
+				"syndicationDocCount": count(*[_type == "syndication"]),
+				"draftItems": *[_type in ["post", "podcast", "course", "lesson"] && _id in path("drafts.**")] | order(_updatedAt desc) {
+					_id,
+					_type,
+					title,
+					"slug": slug.current,
+					_updatedAt,
+					_createdAt,
+					excerpt,
+					"contentLen": count(content),
+					"hasCover": defined(coverImage.asset)
+				},
+				"trendSignals": *[_type == "trendSignal"] | order(coalesce(discoveredAt, _createdAt) desc)[0...40] {
+					_id,
+					title,
+					"slug": slug.current,
+					source,
+					sourceUrl,
+					score,
+					status,
+					summary,
+					rawMetrics,
+					discoveredAt,
+					socialDrafts
+				}
+			}`,
+				{},
+				{ perspective: "raw" },
+			);
 
 			if (res) {
 				setLeads(res.leads || []);
 				setBookings(res.bookings || []);
 				setSyndicatedContent(res.syndicatedContent || []);
 				setSyndicationDocCount(res.syndicationDocCount || 0);
+				setDraftItems(res.draftItems || []);
+				setTrendSignals(res.trendSignals || []);
 			}
 		} catch (err: any) {
 			console.error("Failed to fetch Ops data:", err);
@@ -401,6 +468,43 @@ export function App() {
 			// Ignore network errors
 		} finally {
 			setDiscovering(false);
+		}
+	};
+
+	const handleDeleteDraft = async (draftId: string, title?: string) => {
+		try {
+			await client.delete(draftId);
+			setDraftItems((prev) => prev.filter((d) => d._id !== draftId));
+			showFlash(`Deleted draft "${title || draftId}"`);
+		} catch (err: any) {
+			showFlash(`Error deleting draft: ${err?.message || "Unknown error"}`);
+		}
+	};
+
+	const handleUpdateTrendStatus = async (
+		trendId: string,
+		newStatus: string,
+	) => {
+		try {
+			await client.patch(trendId).set({ status: newStatus }).commit();
+			setTrendSignals((prev) =>
+				prev.map((t) =>
+					t._id === trendId ? { ...t, status: newStatus } : t,
+				),
+			);
+			showFlash(`Updated trend status to "${newStatus}"`);
+		} catch (err: any) {
+			showFlash(`Error updating trend: ${err?.message || "Unknown error"}`);
+		}
+	};
+
+	const handleDeleteTrend = async (trendId: string) => {
+		try {
+			await client.delete(trendId);
+			setTrendSignals((prev) => prev.filter((t) => t._id !== trendId));
+			showFlash("Removed trend signal from radar");
+		} catch (err: any) {
+			showFlash(`Error deleting trend: ${err?.message || "Unknown error"}`);
 		}
 	};
 
@@ -580,6 +684,23 @@ export function App() {
 						}}
 					>
 						4. Content Syndication ({syndicatedContent.length} Posts)
+					</button>
+					<button
+						type="button"
+						onClick={() => setActiveTab("drafts")}
+						style={{
+							padding: "8px 14px",
+							borderRadius: 8,
+							border: "1px solid #d1d5db",
+							background: activeTab === "drafts" ? "#111827" : "#fff",
+							color: activeTab === "drafts" ? "#fff" : "#111827",
+							fontWeight: 600,
+							cursor: "pointer",
+							fontSize: 13,
+						}}
+					>
+						5. Drafts &amp; Trend Review ({draftItems.length} Drafts /{" "}
+						{trendSignals.length} Trends)
 					</button>
 					<button
 						type="button"
@@ -1859,6 +1980,520 @@ export function App() {
 						</table>
 					</div>
 				</section>
+			)}
+
+			{/* TAB 5: DRAFTS & TREND RADAR REVIEW QUEUE */}
+			{!loading && activeTab === "drafts" && (
+				<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+					<section
+						style={{
+							padding: 20,
+							border: "1px solid #e5e7eb",
+							borderRadius: 12,
+							background: "#fff",
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								flexWrap: "wrap",
+								gap: 12,
+								marginBottom: 16,
+							}}
+						>
+							<div>
+								<h2 style={{ margin: 0, fontSize: 18 }}>
+									Pending Sanity Drafts ({draftItems.length})
+								</h2>
+								<p style={{ margin: "4px 0 0", color: "#4b5563", fontSize: 13 }}>
+									Inspect all unpublished <code>drafts.*</code> documents in
+									Sanity before they are published or syndicated. Open directly
+									in Sanity Studio, launch a live Draft Preview on{" "}
+									<code>{siteOrigin}</code>, or delete unwanted drafts in 1
+									click.
+								</p>
+							</div>
+						</div>
+
+						<div style={{ overflowX: "auto" }}>
+							<table
+								style={{
+									width: "100%",
+									borderCollapse: "collapse",
+									fontSize: 13,
+								}}
+							>
+								<thead>
+									<tr
+										style={{
+											textAlign: "left",
+											borderBottom: "2px solid #e5e7eb",
+											color: "#374151",
+										}}
+									>
+										<th style={{ padding: "8px 6px" }}>Updated</th>
+										<th style={{ padding: "8px 6px" }}>Type</th>
+										<th style={{ padding: "8px 6px" }}>Draft ID &amp; Title</th>
+										<th style={{ padding: "8px 6px" }}>Blocks / Cover</th>
+										<th style={{ padding: "8px 6px" }}>Excerpt Preview</th>
+										<th style={{ padding: "8px 6px" }}>Review &amp; Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{draftItems.map((draft) => {
+										const baseId = draft._id.replace(/^drafts\./, "");
+										const studioHost = isDev
+											? "https://codingcat-dev.sanity.studio"
+											: "https://codingcat-prod.sanity.studio";
+										const studioEditUrl = `${studioHost}/intent/edit/id=${encodeURIComponent(baseId)};type=${encodeURIComponent(draft._type)}/`;
+										const routePrefix =
+											draft._type === "podcast"
+												? "/podcast/"
+												: draft._type === "course"
+													? "/course/"
+													: "/post/";
+										const previewUrl = draft.slug
+											? `${siteOrigin}/api/draft-mode/enable?redirect=${encodeURIComponent(`${routePrefix}${draft.slug}`)}`
+											: null;
+										const hashnodeCopyUrl =
+											draft.slug && draft._type === "post"
+												? `https://transcripts.codingcat.dev/hashnode/${draft.slug}`
+												: null;
+
+										return (
+											<tr
+												key={draft._id}
+												style={{ borderBottom: "1px solid #f3f4f6" }}
+											>
+												<td
+													style={{
+														padding: "10px 6px",
+														whiteSpace: "nowrap",
+														color: "#6b7280",
+													}}
+												>
+													{formatDateTime(draft._updatedAt || draft._createdAt)}
+												</td>
+												<td style={{ padding: "10px 6px" }}>
+													<span
+														style={{
+															fontSize: 11,
+															fontWeight: 700,
+															textTransform: "uppercase",
+															color:
+																draft._type === "podcast"
+																	? "#7c3aed"
+																	: "#2563eb",
+														}}
+													>
+														{draft._type}
+													</span>
+												</td>
+												<td style={{ padding: "10px 6px" }}>
+													<div style={{ fontWeight: 700 }}>
+														{draft.title || "(Untitled Draft)"}
+													</div>
+													<div
+														style={{
+															fontSize: 11,
+															color: "#6b7280",
+															fontFamily: "monospace",
+														}}
+													>
+														{draft._id}
+													</div>
+												</td>
+												<td
+													style={{
+														padding: "10px 6px",
+														whiteSpace: "nowrap",
+													}}
+												>
+													<span style={{ fontWeight: 600 }}>
+														{draft.contentLen ?? 0} blocks
+													</span>{" "}
+													·{" "}
+													<span
+														style={{
+															color: draft.hasCover ? "#059669" : "#d97706",
+															fontWeight: 600,
+														}}
+													>
+														{draft.hasCover ? "✓ Cover" : "No Cover"}
+													</span>
+												</td>
+												<td
+													style={{
+														padding: "10px 6px",
+														maxWidth: 320,
+														color: "#4b5563",
+														fontSize: 12,
+													}}
+												>
+													{draft.excerpt || "No excerpt set."}
+												</td>
+												<td style={{ padding: "10px 6px" }}>
+													<div
+														style={{
+															display: "flex",
+															gap: 6,
+															flexWrap: "wrap",
+														}}
+													>
+														<a
+															href={studioEditUrl}
+															target="_blank"
+															rel="noreferrer"
+															style={primaryBtnStyle}
+														>
+															Open in Studio ↗
+														</a>
+														{previewUrl && (
+															<a
+																href={previewUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={btnStyle}
+															>
+																Live Preview ↗
+															</a>
+														)}
+														{hashnodeCopyUrl && (
+															<a
+																href={hashnodeCopyUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={btnStyle}
+															>
+																1-Tap Copy MD ↗
+															</a>
+														)}
+														<button
+															type="button"
+															onClick={() =>
+																handleDeleteDraft(draft._id, draft.title)
+															}
+															style={{
+																...btnStyle,
+																color: "#dc2626",
+																borderColor: "#fecaca",
+																background: "#fef2f2",
+															}}
+														>
+															Delete Draft
+														</button>
+													</div>
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						</div>
+					</section>
+
+					<section
+						style={{
+							padding: 20,
+							border: "1px solid #e5e7eb",
+							borderRadius: 12,
+							background: "#fff",
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								flexWrap: "wrap",
+								gap: 12,
+								marginBottom: 16,
+							}}
+						>
+							<div>
+								<h2 style={{ margin: 0, fontSize: 18 }}>
+									Trend Radar Discovery Queue ({trendSignals.length})
+								</h2>
+								<p style={{ margin: "4px 0 0", color: "#4b5563", fontSize: 13 }}>
+									Discovered Web Dev &amp; AI signals from Hacker News, GitHub
+									Trending, Google Trends, Reddit, and daily.dev. Nothing goes
+									out automatically: review pre-drafted social copy here or
+									dismiss noisy trends.
+								</p>
+							</div>
+						</div>
+
+						<div style={{ overflowX: "auto" }}>
+							<table
+								style={{
+									width: "100%",
+									borderCollapse: "collapse",
+									fontSize: 13,
+								}}
+							>
+								<thead>
+									<tr
+										style={{
+											textAlign: "left",
+											borderBottom: "2px solid #e5e7eb",
+											color: "#374151",
+										}}
+									>
+										<th style={{ padding: "8px 6px" }}>Score</th>
+										<th style={{ padding: "8px 6px" }}>Source</th>
+										<th style={{ padding: "8px 6px" }}>Topic &amp; Summary</th>
+										<th style={{ padding: "8px 6px" }}>Status</th>
+										<th style={{ padding: "8px 6px" }}>Review &amp; Social Copy</th>
+									</tr>
+								</thead>
+								<tbody>
+									{trendSignals.map((trend) => {
+										const isExpanded = expandedTrendId === trend._id;
+										return (
+											<>
+												<tr
+													key={trend._id}
+													style={{ borderBottom: "1px solid #f3f4f6" }}
+												>
+													<td
+														style={{
+															padding: "10px 6px",
+															fontWeight: 800,
+															color:
+																(trend.score || 0) >= 85
+																	? "#059669"
+																	: "#4B2E83",
+														}}
+													>
+														{trend.score || 0}/100
+													</td>
+													<td
+														style={{
+															padding: "10px 6px",
+															whiteSpace: "nowrap",
+															fontSize: 12,
+															fontWeight: 600,
+														}}
+													>
+														{trend.source || "web"}
+													</td>
+													<td style={{ padding: "10px 6px", maxWidth: 440 }}>
+														<div style={{ fontWeight: 700 }}>
+															{trend.sourceUrl ? (
+																<a
+																	href={trend.sourceUrl}
+																	target="_blank"
+																	rel="noreferrer"
+																	style={{
+																		color: "#111827",
+																		textDecoration: "none",
+																	}}
+																>
+																	{trend.title} ↗
+																</a>
+															) : (
+																trend.title
+															)}
+														</div>
+														<div
+															style={{
+																fontSize: 12,
+																color: "#6b7280",
+																marginTop: 2,
+															}}
+														>
+															{trend.summary || trend.rawMetrics}
+														</div>
+													</td>
+													<td style={{ padding: "10px 6px" }}>
+														<select
+															value={trend.status || "discovered"}
+															onChange={(e) =>
+																handleUpdateTrendStatus(
+																	trend._id,
+																	e.target.value,
+																)
+															}
+															style={{
+																padding: "5px 8px",
+																borderRadius: 6,
+																border: "1px solid #d1d5db",
+																fontSize: 12,
+																fontWeight: 600,
+															}}
+														>
+															<option value="discovered">Discovered</option>
+															<option value="drafted">Approved / Drafted</option>
+															<option value="shared">Shared on Social</option>
+															<option value="ignored">Ignored</option>
+														</select>
+													</td>
+													<td style={{ padding: "10px 6px" }}>
+														<div
+															style={{
+																display: "flex",
+																gap: 6,
+																flexWrap: "wrap",
+															}}
+														>
+															<button
+																type="button"
+																onClick={() =>
+																	setExpandedTrendId(
+																		isExpanded ? null : trend._id,
+																	)
+																}
+																style={primaryBtnStyle}
+															>
+																{isExpanded
+																	? "Hide Social Copy"
+																	: "Inspect Social Drafts"}
+															</button>
+															{trend.sourceUrl && (
+																<a
+																	href={trend.sourceUrl}
+																	target="_blank"
+																	rel="noreferrer"
+																	style={btnStyle}
+																>
+																	Source ↗
+																</a>
+															)}
+															<button
+																type="button"
+																onClick={() => handleDeleteTrend(trend._id)}
+																style={{
+																	...btnStyle,
+																	color: "#dc2626",
+																	borderColor: "#fecaca",
+																	background: "#fef2f2",
+																}}
+															>
+																Delete
+															</button>
+														</div>
+													</td>
+												</tr>
+												{isExpanded && (
+													<tr
+														key={`${trend._id}-social`}
+														style={{
+															background: "#f9fafb",
+															borderBottom: "2px solid #e5e7eb",
+														}}
+													>
+														<td colSpan={5} style={{ padding: 16 }}>
+															<div
+																style={{
+																	display: "grid",
+																	gridTemplateColumns:
+																		"repeat(auto-fit, minmax(280px, 1fr))",
+																	gap: 12,
+																}}
+															>
+																<div>
+																	<div
+																		style={{
+																			display: "flex",
+																			justifyContent: "space-between",
+																			alignItems: "center",
+																			marginBottom: 6,
+																		}}
+																	>
+																		<strong style={{ fontSize: 12 }}>
+																			X / Twitter Draft
+																		</strong>
+																		{trend.socialDrafts?.x && (
+																			<button
+																				type="button"
+																				onClick={() =>
+																					handleCopy(
+																						trend.socialDrafts?.x || "",
+																						`${trend._id}-x`,
+																					)
+																				}
+																				style={btnStyle}
+																			>
+																				{copiedId === `${trend._id}-x`
+																					? "✓ Copied"
+																					: "Copy X"}
+																			</button>
+																		)}
+																	</div>
+																	<pre
+																		style={{
+																			margin: 0,
+																			whiteSpace: "pre-wrap",
+																			fontFamily: "inherit",
+																			fontSize: 12,
+																			background: "#fff",
+																			padding: 10,
+																			borderRadius: 6,
+																			border: "1px solid #e5e7eb",
+																		}}
+																	>
+																		{trend.socialDrafts?.x || "No X draft."}
+																	</pre>
+																</div>
+																<div>
+																	<div
+																		style={{
+																			display: "flex",
+																			justifyContent: "space-between",
+																			alignItems: "center",
+																			marginBottom: 6,
+																		}}
+																	>
+																		<strong style={{ fontSize: 12 }}>
+																			LinkedIn Draft
+																		</strong>
+																		{trend.socialDrafts?.linkedin && (
+																			<button
+																				type="button"
+																				onClick={() =>
+																					handleCopy(
+																						trend.socialDrafts?.linkedin || "",
+																						`${trend._id}-li`,
+																					)
+																				}
+																				style={btnStyle}
+																			>
+																				{copiedId === `${trend._id}-li`
+																					? "✓ Copied"
+																					: "Copy LinkedIn"}
+																			</button>
+																		)}
+																	</div>
+																	<pre
+																		style={{
+																			margin: 0,
+																			whiteSpace: "pre-wrap",
+																			fontFamily: "inherit",
+																			fontSize: 12,
+																			background: "#fff",
+																			padding: 10,
+																			borderRadius: 6,
+																			border: "1px solid #e5e7eb",
+																		}}
+																	>
+																		{trend.socialDrafts?.linkedin ||
+																			"No LinkedIn draft."}
+																	</pre>
+																</div>
+															</div>
+														</td>
+													</tr>
+												)}
+											</>
+										);
+									})}
+								</tbody>
+							</table>
+						</div>
+					</section>
+				</div>
 			)}
 		</div>
 	);
