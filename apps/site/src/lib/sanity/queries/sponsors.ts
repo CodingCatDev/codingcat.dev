@@ -13,7 +13,8 @@ export const sponsorQuery =
 	defineQuery(`*[_type == "sponsor" && slug.current == $slug] [0] {
   ${baseFieldsNoContent},
   ${portableTextFields},
-  url
+  url,
+  socials
 }`);
 
 export const sponsorQueryWithRelated =
@@ -21,6 +22,7 @@ export const sponsorQueryWithRelated =
   ${baseFieldsNoContent},
   ${portableTextFields},
   url,
+  socials,
   ${sponsorRelated}
 }`);
 

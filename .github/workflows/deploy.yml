@@ -42,8 +42,10 @@ jobs:
           path: /tmp/sanity-production-backup.ndjson.gz
           retention-days: 30
 
-      - name: Sync Enriched Guest Socials to Sanity Dataset
-        run: node apps/sanity/scripts/sync-guest-socials.mjs
+      - name: Sync Enriched Guest & Sponsor Socials to Sanity Dataset
+        run: |
+          node apps/sanity/scripts/sync-guest-socials.mjs
+          node apps/sanity/scripts/sync-sponsor-socials.mjs
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
@@ -235,8 +237,10 @@ jobs:
           path: /tmp/sanity-production-backup.ndjson.gz
           retention-days: 30
 
-      - name: Sync Enriched Guest Socials to Sanity Dataset
-        run: node apps/sanity/scripts/sync-guest-socials.mjs
+      - name: Sync Enriched Guest & Sponsor Socials to Sanity Dataset
+        run: |
+          node apps/sanity/scripts/sync-guest-socials.mjs
+          node apps/sanity/scripts/sync-sponsor-socials.mjs
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}

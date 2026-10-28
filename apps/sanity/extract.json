@@ -3777,6 +3777,14 @@
         },
         "optional": true
       },
+      "socials": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "socials"
+        },
+        "optional": true
+      },
       "url": {
         "type": "objectAttribute",
         "value": {

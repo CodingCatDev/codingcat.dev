@@ -4,9 +4,10 @@ import CoverMedia from "@/components/CoverMedia.astro";
 import InfiniteContentGrid from "@/components/InfiniteContentGrid.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
+import UserSocials from "@/components/UserSocials.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
-import { resolvePartnerUrl } from "@/lib/partner-links";
+import { resolvePartnerUrl, SPONSOR_SOCIALS_BY_SLUG } from "@/lib/partner-links";
 import { sponsorQueryWithRelated } from "@/lib/sanity/queries";
 import { breadcrumbSchema } from "@/lib/structured-data";
 
@@ -38,6 +39,10 @@ const INITIAL_BATCH = 8;
 const relatedPosts = allRelatedPosts.slice(0, INITIAL_BATCH);
 const relatedPodcasts = allRelatedPodcasts.slice(0, INITIAL_BATCH);
 const partnerUrl = sponsor.url ? resolvePartnerUrl(sponsor.url) : undefined;
+const sponsorSocials = {
+	...(slug ? SPONSOR_SOCIALS_BY_SLUG[slug] : undefined),
+	...(sponsor.socials ?? {}),
+};
 ---
 
 <BaseLayout
@@ -80,6 +85,7 @@ const partnerUrl = sponsor.url ? resolvePartnerUrl(sponsor.url) : undefined;
 				<h1 class="font-display text-3xl font-black tracking-tight text-[#2A1155] dark:text-white md:text-5xl">
 					{sponsor.title}
 				</h1>
+				<UserSocials socials={sponsorSocials} />
 				{partnerUrl && (
 					<div class="pt-1">
 						<a

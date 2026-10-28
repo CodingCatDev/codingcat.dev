@@ -113,6 +113,95 @@ export const PARTNER_LINK_RULES: readonly PartnerLinkRule[] = [
 	},
 ];
 
+/**
+ * Canonical sponsor social media accounts by sponsor slug.
+ * Merged with Sanity `sponsor.socials` on `/sponsor/[slug]` so official
+ * partner social icons are always available and overridable in Studio.
+ */
+export const SPONSOR_SOCIALS_BY_SLUG: Record<string, Record<string, string>> = {
+	algolia: {
+		twitter: "https://x.com/algolia",
+		github: "https://github.com/algolia",
+		linkedin: "https://www.linkedin.com/company/algolia/",
+		youtube: "https://www.youtube.com/user/Algolia",
+		discord: "https://discord.com/invite/ytbZuTQukV",
+		bluesky: "https://bsky.app/profile/algolia.bsky.social",
+		instagram: "https://www.instagram.com/algolia.search/",
+		facebook: "https://www.facebook.com/algolia/",
+		devto: "https://dev.to/algolia",
+	},
+	authzed: {
+		twitter: "https://x.com/authzed",
+		github: "https://github.com/authzed",
+		linkedin: "https://www.linkedin.com/company/authzed/",
+		youtube: "https://www.youtube.com/@authzed",
+		discord: "https://discord.gg/TUd4k5McMX",
+		bluesky: "https://bsky.app/profile/authzed.com",
+	},
+	"builder-io": {
+		twitter: "https://x.com/builderio",
+		github: "https://github.com/BuilderIO",
+		linkedin: "https://www.linkedin.com/company/builder-io/",
+		youtube: "https://www.youtube.com/@Builderio",
+		bluesky: "https://bsky.app/profile/builderio.bsky.social",
+		devto: "https://dev.to/builderio",
+	},
+	cloudinary: {
+		twitter: "https://x.com/cloudinary",
+		github: "https://github.com/cloudinary",
+		linkedin: "https://www.linkedin.com/company/cloudinary/",
+		youtube: "https://www.youtube.com/@Cloudinary",
+		discord: "https://discord.com/invite/D8ddQj6KnH",
+		bluesky: "https://bsky.app/profile/cloudinary.bsky.social",
+		instagram: "https://www.instagram.com/cloudinarylife",
+		facebook: "https://www.facebook.com/Cloudinary",
+		devto: "https://dev.to/cloudinary",
+	},
+	jamstackconf: {
+		twitter: "https://x.com/jamstackconf",
+		github: "https://github.com/jamstack",
+		youtube: "https://www.youtube.com/c/JAMstackConf",
+		discord: "https://discord.com/invite/jamstack",
+	},
+	multiplayer: {
+		twitter: "https://x.com/trymultiplayer",
+		github: "https://github.com/multiplayer-app",
+		linkedin: "https://www.linkedin.com/company/multiplayer-app/",
+		youtube: "https://www.youtube.com/@trymultiplayer",
+		bluesky: "https://bsky.app/profile/multiplayer.app",
+		threads: "https://www.threads.net/@trymultiplayer",
+	},
+	refine: {
+		twitter: "https://x.com/refine_dev",
+		github: "https://github.com/refinedev/refine",
+		linkedin: "https://www.linkedin.com/company/refine-dev",
+		youtube: "https://www.youtube.com/@refinedev",
+		discord: "https://discord.gg/refine",
+		bluesky: "https://bsky.app/profile/refine.dev",
+		devto: "https://dev.to/refine",
+	},
+	stickermule: {
+		twitter: "https://x.com/stickermule",
+		github: "https://github.com/stickermule",
+		linkedin: "https://www.linkedin.com/company/sticker-mule/",
+		youtube: "https://www.youtube.com/user/stickermule",
+		instagram: "https://www.instagram.com/stickermule/",
+		facebook: "https://www.facebook.com/stickermule",
+	},
+	storyblok: {
+		twitter: "https://x.com/storyblok",
+		github: "https://github.com/storyblok",
+		linkedin: "https://www.linkedin.com/company/storyblok",
+		youtube: "https://www.youtube.com/c/Storyblok-com",
+		discord: "https://discord.com/invite/storyblok",
+		bluesky: "https://bsky.app/profile/storyblok.com",
+		twitch: "https://www.twitch.tv/storyblok",
+		instagram: "https://www.instagram.com/storybloklife/",
+		facebook: "https://www.facebook.com/storyblok/",
+		devto: "https://dev.to/storyblok",
+	},
+};
+
 function hostnameMatches(hostname: string, domain: string): boolean {
 	const cleanHost = hostname.toLowerCase().replace(/^www\./, "");
 	const cleanDomain = domain.toLowerCase().replace(/^www\./, "");

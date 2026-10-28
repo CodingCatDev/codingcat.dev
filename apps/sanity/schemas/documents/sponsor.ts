@@ -2,14 +2,22 @@ import { PiCurrencyDollarSimpleFill } from "react-icons/pi";
 import { defineField, defineType } from "sanity";
 
 import baseType from "../partials/base";
+import { socialsField } from "../partials/user";
 
 export default defineType({
 	name: "sponsor",
 	title: "Sponsor",
 	icon: PiCurrencyDollarSimpleFill,
 	type: "document",
+	groups: [
+		{
+			name: "socials",
+			title: "Social Links",
+		},
+	],
 	fields: [
 		...baseType.fields,
+		socialsField,
 		defineField({
 			title: "Partner Landing / Tracking Link",
 			name: "url",
