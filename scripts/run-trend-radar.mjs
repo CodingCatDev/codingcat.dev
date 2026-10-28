@@ -928,8 +928,8 @@ async function runForDataset(targetDataset) {
     let status = "discovered";
     let draftPostId = undefined;
 
-    // Auto-create a full Sanity Draft Post for the #1 breakout trend (score >= 70)
-    if (i === 0 && sig.score >= 70 && !hasRecentDraft) {
+    // Never auto-create boilerplate Mad-Libs draft posts; store trendSignal for review in the Sanity App SDK first
+    if (false && i === 0 && sig.score >= 70 && !hasRecentDraft) {
       const draftDoc = buildDraftPostDocument(sig, matchedDocs, fallbackCoverImage);
       status = "drafted";
       draftPostId = draftDoc._id;
