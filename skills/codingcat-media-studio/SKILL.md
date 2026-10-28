@@ -1,35 +1,35 @@
 ---
 name: codingcat-media-studio
-description: Visual and video generation rules for CodingCat.dev, including 2D upright bipedal and 3D vinyl-toy AJ the Cat mascot prompts, hand-drawn architecture diagrams, 16:9 YouTube thumbnails, and high-retention video intros. Activate whenever generating images, diagrams, thumbnails, or video scripts/storyboards.
+description: Visual and video generation rules for CodingCat.dev, including Gemini App Avatar (@alex.patterson) & Style workflows, 2D/3D AJ the Cat mascot prompts, hand-drawn dark-mode Excalidraw architecture diagrams, 16:9 YouTube thumbnails, and Veo 3.1 / Gemini App video prompts. Activate whenever generating images, diagrams, thumbnails, or video scripts/storyboards.
 ---
 
 # CodingCat.dev Media Studio Skill
 
-This skill governs all visual media, mascot illustration prompts, hand-drawn architecture diagrams, YouTube thumbnails, and video production workflows for **CodingCat.dev**.
+This skill governs all visual media, mascot illustration prompts, hand-drawn dark-mode architecture diagrams, YouTube thumbnails, and video production workflows for **CodingCat.dev** across **Gemini App (`gemini.google.com`)**, **Google Flow (`Veo 3.1`)**, and **Google Antigravity (`agy`)**.
 
-## Canonical Terminology Guardrail
+## 1. Environment-Aware Asset & Likeness Resolution (Gemini App vs. Antigravity)
+
+Because **Gemini App (`gemini.google.com`)** uses **Avatar (`@alex.patterson`) + Styles + Skills** (rather than legacy Gems with attached photo folders), always resolve likenesses, brand marks, and styles based on the active runtime:
+
+| Asset / Element | In Gemini App (`gemini.google.com`) | In Google Antigravity (`agy` Local Repo) |
+| :--- | :--- | :--- |
+| **Alex Patterson Likeness** | Invoke `@alex.patterson` (or `@codingcatthumbnails`) + always include the **Explicit Physical Likeness Lock** in the image/video prompt (mid-40s Caucasian man, short light-brown hair, blue-green eyes, trimmed salt-and-pepper beard, **NO glasses**, black crew-neck t-shirt, round black Pixel Watch on left wrist, no rings). | Read directly from `assets/alex-likeness/alex-likeness-01.jpg` .. `13.jpg` (`10.jpg`/`02.jpg` pointing left; `11.jpg` pointing right; `03.jpg`/`04.jpg` mind-blown). |
+| **Vendor Brand Logos (Sanity, Firebase, Amplify)** | Invoke `@sanitybrand` (or attach official white-on-black PNG) and explicitly specify: `"stepped diagonal 3-line geometric zig-zag symbol + bold serif Sanity wordmark, NEVER a red square or lightning bolt"`. | Read directly from `assets/logos/sanity-logos/Sanity-Full_logo/Sanity-Full_logo--white_on_black.png`, `assets/logos/firebase-brand-assets/`, and `assets/logos/Amplify.png`. |
+| **Hand-Drawn Architecture Diagrams** | Expand every diagram request into the **6-Part Zero-Shot Excalidraw Geometry Prompt** in `references/excalidraw-diagrams.md` (double-stroked wobbly white outlines, 45-degree diagonal hachure line fills, max 4-5 nodes, 2-3 word Virgil labels, zero hex code text rendered on canvas). | Use `references/excalidraw-diagrams.md` or render interactive SVG diagrams via `ExcalidrawDiagram.astro`. |
+| **AJ the Cat Mascot** | Use the self-contained 2D/3D anatomical prompt lock in `references/aj-mascot-prompts.md`. | Ground in `assets/AJHeadphones.png`, `assets/AJ-2D-Bipedal.jpg`, and `assets/AJ-3D-Headphones-*.jpg`. |
+
+## 2. Canonical Terminology Guardrail
 
 - In user-facing UI text, captions, and badges, always call diagrams **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams** (never write the brand name `"Excalidraw"` in user-facing UI copy, and never call content `"Teardowns"` or `"Blueprints"`).
 - Content pillars are strictly **Courses** (made of **Lessons**), **Podcasts** (made of **Episodes**), and **Blog** (made of **Blog Posts**).
+- **Never Print Hex Codes as Visible Text**: When expanding color tokens (`#000000`, `#C5E86C`, `#FCA5A5`, `#B4A7D6`) into an image generation prompt, always instruct the image generator: `"Use these colors strictly for rendering; never write hex codes or metadata text onto the image canvas."`
 
-## Canonical Reference Assets
-
-Always ground multimodal image and video generation in the canonical reference files stored in `assets/`:
-- `assets/AJHeadphones.png`: Canonical 2D vector head-and-collar emblem of AJ wearing `"CodingCat.dev Podcast"` over-ear headphones and the pastel rainbow hexagonal `"AJ"` tag.
-- `assets/AJ-2D-Bipedal.jpg`: Canonical 2D flat vector full-body upright bipedal AJ standing on two legs.
-- `assets/AJ-3D-Headphones-Front.jpg`: Canonical 3D stylized vinyl-toy front 3/4 turnaround render on a matte black pedestal.
-- `assets/AJ-3D-Headphones-Left.jpg`: Canonical 3D stylized vinyl-toy left profile turnaround render.
-- `assets/AJ-3D-Headphones-Right.jpg`: Canonical 3D stylized vinyl-toy right profile turnaround render.
-- `assets/alex-likeness/alex-likeness-01.jpg` .. `assets/alex-likeness/alex-likeness-13.jpg`: Canonical `2048x2048` studio reaction & pointing portraits of **Alex Patterson** against `#000000` black (sourced from `https://photos.app.goo.gl/bmrt6shq5YKfG16SA`). Use `alex-likeness-10.jpg` or `alex-likeness-02.jpg` when Alex is placed on the right pointing left at a diagram, and `alex-likeness-11.jpg` when Alex is placed on the left pointing right at a diagram.
-- `assets/logos/sanity-logos/`: Canonical **Sanity** brand logos (`Sanity-Full_logo/Sanity-Full_logo--white_on_black.png`, `Sanity-Symbol/Sanity-Symbol--white_on_black.png`, `Sanity-Logotype/Sanity-Logotype--white_on_black.png`, plus SVG & light-mode variants). **CRITICAL RULE**: Always read and use these official Sanity logos (angular zig-zag symbol + serif `Sanity` wordmark). **NEVER** generate or use the legacy red/coral square `"S"` icon.
-- `assets/logos/firebase-brand-assets/` & `assets/logos/Amplify.png`: Official **Firebase** (Primary Lockup, Logomark, and Product Icons for Genkit, App Hosting, Data Connect, Firestore, etc.) and **AWS Amplify** brand logos.
-
-## Reference Modules (`references/`)
+## 3. Reference Modules (`references/`)
 
 | Reference File | Purpose |
 | :--- | :--- |
-| [`references/aj-mascot-prompts.md`](./references/aj-mascot-prompts.md) | Exact 2D upright bipedal vector prompt, 3D vinyl-toy turnaround prompt modifiers, and anatomical guardrails for AJ |
-| [`references/excalidraw-diagrams.md`](./references/excalidraw-diagrams.md) | Hand-drawn architecture diagram style rules, `Virgil` labels, Coral `#FCA5A5` `✗` vs. Mint `#86EFAC` `✓` checkmarks |
-| [`references/youtube-thumbnails.md`](./references/youtube-thumbnails.md) | 16:9 YouTube thumbnail composition, safe zones (`96px` edge, `320x120px` bottom-right clear), and 3-4 word `Nunito` display text rules |
+| [`references/excalidraw-diagrams.md`](./references/excalidraw-diagrams.md) | **6-Part Zero-Shot Excalidraw Prompt Expander**, Gemini App `Style` preset, Rough.js double-stroke + hachure geometry rules, and Gemini Canvas interactive SVG mode |
+| [`references/youtube-thumbnails.md`](./references/youtube-thumbnails.md) | 16:9 YouTube thumbnail 3-zone grid, `@alex.patterson` non-overlapping likeness lock, and brand logo rules |
+| [`references/google-flow-veo.md`](./references/google-flow-veo.md) | Gemini App 9:16 & 16:9 talking-head video prompts (`@alex.patterson` with synced audio) + Google Flow (Veo 3.1) 3-slot recipes |
+| [`references/aj-mascot-prompts.md`](./references/aj-mascot-prompts.md) | Self-contained 2D upright bipedal vector prompt and 3D vinyl-toy turnaround prompt modifiers for AJ |
 | [`references/youtube-intros-and-video.md`](./references/youtube-intros-and-video.md) | First-15-second retention hooks, presenter cutaway rules, lower-third plates, and 9:16 vertical Shorts safe zones |
-| [`references/google-flow-veo.md`](./references/google-flow-veo.md) | Google Flow (Veo 3.1) Ingredients-to-Video 3-slot casting, Frames-to-Video transitions, and Gemini App video prompts |

@@ -1,53 +1,52 @@
-# Google Flow & Gemini App Video Generation Guide (`google-flow-veo.md`)
+# Gemini App & Google Flow (Veo 3.1) Video Generation Guide (`google-flow-veo.md`)
 
-Instructions and prompt templates for generating brand-consistent **CodingCat.dev** videos using **Google Flow** (`labs.google/fx/tools/flow` with **Veo 3.1**) and the **Gemini App** (`gemini.google.com`).
+Instructions and proven prompt templates for generating brand-consistent **CodingCat.dev** videos using the **Gemini App (`gemini.google.com`)** and **Google Flow (`labs.google/fx/tools/flow` with Veo 3.1)**.
+
+---
 
 ## 1. Platform Workflow Comparison: Gemini App vs. Google Flow vs. Antigravity MCP
 
-| Capability | Gemini App (`gemini.google.com`) | Google Flow (`flow.google.com` / Veo 3.1) | Antigravity / Claude Code / Cursor |
+| Capability | Gemini App (`gemini.google.com`) | Google Flow (`flow.google.com` / Veo 3.1) | Antigravity (`agy` Local Repo) |
 | :--- | :--- | :--- | :--- |
-| **Skill / Rule Mechanism** | Upload `.zip` or `.bundle.md` in **Settings -> Skills** (or attach to a custom **Gem**) | Use a **Custom Agent / System Prompt** in Flow chat or generate prompts via your Gemini Skill first | Automatic via `~/.gemini/config/skills/` and the `codingcat-agent-toolkit` MCP server |
-| **Personalization Photos (`alex-likeness`)** | Attach `alex-likeness-*.jpg` directly in chat or store in a **Gem's Knowledge files** | Upload `alex-likeness-*.jpg` & `AJ-3D-Headphones-*.jpg` into the project **Ingredients Drawer** and tag with `@` | Referenced directly from `/home/alex/codingcat.dev/assets/alex-likeness/` |
-| **Best Video Mode** | Rapid single-clip generation, script writing, and storyboard breakdown | Multi-scene **Ingredients to Video** (up to 3 reference images), **Frames to Video** transitions, and **Scene Builder** timelines | Automated asset preparation, FFmpeg / Remotion assembly, and social publishing |
+| **Skill / Style Mechanism** | Upload `.skill.zip` or `.bundle.md` in **Skills** + save a **Gemini Style** | Use a **Custom System Prompt** in Flow or generate prompts via your Gemini Skill first | Automatic via `~/.gemini/config/skills/` and `/home/alex/codingcat.dev/skills/` |
+| **Personal Likeness (`@alex.patterson`)** | Invoke `@alex.patterson` / `@codingcatthumbnails` + include the **Explicit Physical Likeness & Ownership Lock** (proven in `le9vMnfVm3fb`) | Upload `alex-likeness-*.jpg` & `AJ-3D-Headphones-*.jpg` into the **Ingredients Drawer** and tag with `@` | Referenced directly from `/home/alex/codingcat.dev/assets/alex-likeness/` |
+| **Best Video Mode** | **9:16 Vertical Shorts & 16:9 Talking-Head Clips** with synchronized lip movement, spoken dialogue, and on-screen text cards | Multi-scene **Ingredients to Video** (up to 3 reference images) and **Frames to Video** transitions | Automated asset preparation, Remotion / FFmpeg assembly, and social publishing |
 
-## 2. Google Flow "Ingredients to Video" 3-Slot Casting Recipe
+---
 
-Veo 3.1 in Google Flow lets you anchor up to **3 reference images ("Ingredients")** per shot so faces, mascots, logos, and color palettes never drift across clips. Always cast the 3 slots using this structure:
+## 2. Proven Gemini App Talking-Head Video Formula (`le9vMnfVm3fb` Pattern)
+
+When generating a 9:16 vertical Short or 16:9 talking-head clip of `@alex.patterson` directly inside the Gemini App with synchronized audio and lip movement, **always use this exact 5-block structure**:
+
+```text
+Cinematic 9:16 vertical video, photorealistic, 4k resolution. Front-facing talking head shot of @alex.patterson speaking directly to the camera with audio and synchronized lip movement.
+
+Spoken Dialogue / Voiceover:
+"[Insert punchy 12-to-20 word spoken script here. Zero em-dashes. Direct, authoritative Senior Solutions Engineer delivery.]"
+
+Subject appearance and likeness:
+A man in his mid-40s with short styled light-brown hair, warm blue-green eyes, and a neatly trimmed salt-and-pepper beard. Exact facial features, bone structure, and facial hair pattern matching the presenter from @codingcatthumbnails watermarked_img_7983427428736598214.jpg. He is wearing a clean black crew-neck t-shirt and a sleek round black smartwatch (Google Pixel Watch) on his left wrist. Both hands have no rings, and his right wrist is completely bare.
+
+Action, delivery, and background setting:
+Alex delivers a decisive, authoritative statement, looking straight down the lens with strong confidence. He brings both hands forward in a steady, natural hand gesture to punctuate the final line. A bold, clean text card snaps on-screen for a beat reading "[3-4 WORD ALL-CAPS HOOK]" before fading.
+Background is a stylized purple and black checkered pattern extending edge-to-edge completely filling the background wall behind him, with zero ceiling showing. Rich purple rim lighting sculpting his shoulders and hair, razor-sharp focus on his face, crisp synchronized audio.
+
+THIS IS ME I OWN ALL LIKENESS FOR VIDEO!
+```
+
+### Critical Guardrails for Gemini App Video Prompts
+1. **Always Include the Ownership Declaration**: End talking-head prompts of `@alex.patterson` with `THIS IS ME I OWN ALL LIKENESS FOR VIDEO!` so safety filters recognize authorized first-party creator likeness usage.
+2. **Lock Wrist & Hand Details**: Always specify `"sleek round black smartwatch (Google Pixel Watch) on his left wrist. Both hands have no rings, and his right wrist is completely bare."`
+3. **Edge-to-Edge Studio Backdrop**: Specify `"extending edge-to-edge completely filling the background wall behind him, with zero ceiling showing"` so the camera never drifts upward into fake studio rafters.
+
+---
+
+## 3. Google Flow "Ingredients to Video" 3-Slot Casting Recipe
+
+Veo 3.1 in Google Flow lets you anchor up to **3 reference images ("Ingredients")** per shot so faces, mascots, logos, and color palettes never drift across clips:
 
 | Ingredient Slot | What to Upload from `assets/` | Purpose in Veo 3.1 |
 | :--- | :--- | :--- |
-| **Slot 1: Character / Presenter (`@Alex` or `@AJ`)** | `assets/alex-likeness/alex-likeness-10.jpg` (or `02`, `03`, `11`) **OR** `assets/AJ-3D-Headphones-Front.jpg` | Locks in Alex Patterson's exact facial likeness, glasses/beard/wardrobe, or AJ the Cat's 3D vinyl-toy proportions and headphones. |
-| **Slot 2: Technical Subject (`@Diagram` or `@Logo`)** | Dark-mode Architecture Diagram (`#000000` canvas) **OR** official vendor logo (`Sanity-Full_logo--white_on_black.png`, Firebase, AWS Amplify) | Anchors the exact technical diagram or official brand mark (preventing hallucinated logos like the old red Sanity square). |
-| **Slot 3: Studio Environment / Style (`@Studio`)** | Dark Obsidian studio background (`#0B1326` / `#0F172A`) or a previous frame saved from your Flow timeline | Maintains consistent Royal Purple (`#7C3AED`) and Electric Lime (`#C5E86C`) rim lighting across every cut in Scene Builder. |
-
-## 3. Google Flow "Frames to Video" Recipes for the 15-Second Hook
-
-Use **Frames to Video** (Start Frame + End Frame) in Google Flow to animate the signature CodingCat.dev 15-second retention hook:
-
-1. **Beat 1 (`0:00 - 0:05` | The Pain Point)**:
-   - **Start Frame**: `assets/alex-likeness/alex-likeness-03.jpg` (shocked/mind-blown) or `alex-likeness-10.jpg` composited on `#0B1326` obsidian.
-   - **Motion Prompt**:
-     ```text
-     Locked-off medium studio shot on 35mm lens. @Alex reacts with expressive hand gestures and points toward the left side of the frame where a floating dark-mode architecture diagram materializes. Crisp studio key light, subtle Royal Purple (#7C3AED) and Electric Lime (#C5E86C) rim lighting on pure dark obsidian (#0B1326) background.
-     ```
-2. **Beat 2 (`0:05 - 0:10` | Visual Architecture Reveal)**:
-   - **Start Frame**: Dark-mode hand-drawn Architecture Diagram (`#000000` canvas, Coral `#FCA5A5` `X` on the legacy left side).
-   - **End Frame**: Complete Architecture Diagram with glowing Mint (`#86EFAC`) and Electric Lime (`#C5E86C`) checkmark on the recommended edge architecture.
-   - **Motion Prompt**:
-     ```text
-     Flat 2D dark-mode whiteboard animation on a pure black (#000000) canvas. Hand-drawn white (#FFFFFF) and Soft Lavender (#B4A7D6) sketchy arrows animate from left to right, lighting up the Royal Purple (#4B2E83) cross-hatched worker node with a glowing Electric Lime (#C5E86C) checkmark. Crisp high-contrast 60fps motion graphics.
-     ```
-3. **Beat 3 (`0:10 - 0:15` | 3D AJ Bumper Stinger)**:
-   - **Start Frame**: `assets/AJ-3D-Headphones-Left.jpg`
-   - **End Frame**: `assets/AJ-3D-Headphones-Front.jpg`
-   - **Motion Prompt**:
-     ```text
-     Smooth gimbal arc shot around @AJ, a 3D vinyl-toy black cat mascot standing upright on two legs wearing over-ear "CodingCat.dev Podcast" headphones and a pastel rainbow hexagonal "AJ" collar tag. AJ turns toward the camera, nods to the beat, and gives a cheerful smile as his Electric Lime Green (#C5E86C) eyes catch the studio rim light. Subtle dark obsidian (#0B1326) studio backdrop with soft purple bokeh.
-     ```
-
-## 4. Camera, Lighting & Audio Tokens for Veo 3.1
-
-Always include these three token blocks when prompting Veo 3.1 in Google Flow or the Gemini App:
-- **Camera Framing**: Specify `"locked-off tripod medium shot"`, `"slow 35mm dolly-in"`, or `"smooth gimbal arc"`. Avoid handheld shake on technical diagrams.
-- **Color & Lighting Palette**: Specify `"Canvas Obsidian (#0B1326 / #0F172A) background, CodingCat Royal Purple (#7C3AED) key rim light, and Electric Lime (#C5E86C) accent glow"`.
-- **Native Audio Cues**: Specify `"clean studio room tone, subtle low-fi synth pulse underscore, crisp tactile UI pop on diagram checkmarks"`.
+| **Slot 1: Character / Presenter (`@Alex` or `@AJ`)** | `assets/alex-likeness/alex-likeness-10.jpg` (or `02`, `03`, `11`) **OR** `assets/AJ-3D-Headphones-Front.jpg` | Locks in Alex Patterson's exact facial likeness or AJ the Cat's 3D vinyl-toy proportions and headphones. |
+| **Slot 2: Technical Subject (`@Diagram` or `@Logo`)** | Dark-mode Architecture Diagram (`#000000` canvas) **OR** official vendor logo (`Sanity-Full_logo--white_on_black.png`, Firebase, AWS Amplify) | Anchors the exact technical diagram or official brand mark. |
+| **Slot 3: Studio Environment / Style (`@Studio`)** | Purple & black checkered studio wall or Dark Obsidian (`#0B1326` / `#0F172A`) backdrop | Maintains consistent Royal Purple (`#7C3AED`) and Electric Lime (`#C5E86C`) rim lighting across cuts. |
