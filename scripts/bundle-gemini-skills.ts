@@ -71,8 +71,12 @@ function zipSkill(skillName: string): void {
 	const skillPath = join(SKILLS_DIR, skillName);
 	const zipOutFile = join(OUT_DIR, `${skillName}.skill.zip`);
 	rmSync(zipOutFile, { force: true });
+	const entries = ["SKILL.md", "references"];
+	if (statSync(join(skillPath, "assets"), { throwIfNoEntry: false })?.isDirectory()) {
+		entries.push("assets");
+	}
 	try {
-		execFileSync("zip", ["-rq", zipOutFile, "SKILL.md", "references"], {
+		execFileSync("zip", ["-rq", zipOutFile, ...entries], {
 			cwd: skillPath,
 		});
 		console.log(`[bundle-gemini-skills] Wrote ${zipOutFile}`);

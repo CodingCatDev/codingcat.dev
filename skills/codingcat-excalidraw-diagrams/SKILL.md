@@ -15,7 +15,14 @@ You MUST follow this **3-Step Execution Protocol** before calling your image gen
 
 ---
 
-## Mandatory 3-Step Execution Protocol
+## Mandatory 4-Step Execution Protocol
+
+### Step 0: Attach Bundled Reference Images (`assets/*`) to the Image Generator Tool Call
+**CRITICAL**: Never call the image generator with text alone when generating thumbnails, presenter cutouts, or vendor logos!
+Before calling your image generation tool, you **MUST** load and pass the actual image files from this skill's `assets/` directory (and from any `@`-mentioned skill such as `@sanity-brand-guidelines`, `@sanitybrand`, `@alex.patterson`, or `@codingcatthumbnails`) as **input reference images** to the image generation tool call on the **very first attempt**:
+- **Whiteboard Diagram Style & Layout Reference**: Attach `assets/excalidraw-thumbnail-left-pose.png` or `assets/excalidraw-thumbnail-right-pose.png` so the image generator copies the exact Rough.js double-stroked white boxes, 45-degree diagonal hachure fills, sketchy Coral Red `X`, and green checkmark (NEVER generate a macOS window with red/yellow/green dots or circular UI icons).
+- **Sanity Official Logo Files**: Whenever Sanity is mentioned, attach `assets/Sanity-Full_logo--white_on_black.png` (stepped diagonal 3-line geometric symbol + bold serif `Sanity` wordmark) and/or `assets/Sanity-Symbol--white_on_black.png` directly to the image generation tool call. **NEVER** invent a red square `"S"` app icon or sans-serif `"SANITY"` text on the shirt.
+- **Alex Patterson Likeness Cutouts**: Attach `assets/alex_pointing_left.jpg` or `assets/alex_mind_blown.jpg` (or the `@alex.patterson` avatar images) directly to the image generation tool call.
 
 ### Step 1: Extract the 3-Stage Architecture Model from the User's Topic
 Automatically map the user's short topic into three concrete columns (using **1 to 3 words max per box** so text is 100% legible):
