@@ -7,6 +7,10 @@ description: Visual and video generation rules for CodingCat.dev, including Gemi
 
 This skill governs all visual media, mascot illustration prompts, hand-drawn dark-mode architecture diagrams, YouTube thumbnails, and video production workflows for **CodingCat.dev** across **Gemini App (`gemini.google.com`)**, **Google Flow (`Veo 3.1`)**, and **Google Antigravity (`agy`)**.
 
+## 0. Mandatory Pre-Tool Prompt Compiler Rule (Never Make the User Paste Long Prompts!)
+
+Whenever the user asks for a diagram, thumbnail, or video with a short 1-sentence request (for example, *"Create a diagram for Sanity Content Releases"* or *"Make a thumbnail for WebMCP"*), **YOU (Gemini) must automatically compile their short request into the full 6-Part Zero-Shot Excalidraw Prompt in `references/excalidraw-diagrams.md` (or the 3-Zone Thumbnail Prompt in `references/youtube-thumbnails.md`) and pass that full expanded prompt into the image generation tool**. Never pass a short unexpanded summary to the image generator, and never ask the user to copy-paste the template themselves.
+
 ## 1. Environment-Aware Asset & Likeness Resolution (Gemini App vs. Antigravity)
 
 Because **Gemini App (`gemini.google.com`)** uses **Avatar (`@alex.patterson`) + Styles + Skills** (rather than legacy Gems with attached photo folders), always resolve likenesses, brand marks, and styles based on the active runtime:
