@@ -24,7 +24,8 @@ interface ManageBookingPayload {
 		| "approve_recording"
 		| "request_pre_meeting"
 		| "schedule_pre_meeting"
-		| "bypass_pre_meeting";
+		| "bypass_pre_meeting"
+		| "reconcile_calendar_holds";
 	bookingId?: string;
 	eventId?: string;
 	guestName?: string;
@@ -35,6 +36,8 @@ interface ManageBookingPayload {
 	preMeetingSlotStartAt?: string;
 	topics?: string;
 	portalToken?: string;
+	docs?: Array<Record<string, any>>;
+	patches?: Array<{ id: string; set: Record<string, any> }>;
 }
 
 export const POST: APIRoute = async ({ request, url }) => {
@@ -49,6 +52,38 @@ export const POST: APIRoute = async ({ request, url }) => {
 	}
 
 	const { client, canWrite } = getSanityServerClient();
+
+	if (body.action === "reconcile_calendar_holds") {
+		if (!canWrite) {
+			return new Response(
+				JSON.stringify({ ok: false, message: "Sanity write token unavailable" }),
+				{ status: 500, headers: CORS_HEADERS },
+			);
+		}
+		let patched = 0;
+		let created = 0;
+		for (const doc of body.docs || []) {
+			if (doc._id && doc._type === "booking") {
+				await client.createOrReplace(doc as any);
+				created++;
+			}
+		}
+		for (const p of body.patches || []) {
+			if (p.id && p.set) {
+				try {
+					await client.patch(p.id).set(p.set).commit();
+					patched++;
+				} catch {
+					// Ignore if doc does not exist in target dataset
+				}
+			}
+		}
+		return new Response(
+			JSON.stringify({ ok: true, created, patched }),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
 	const bookingId = body.bookingId?.trim();
 	if (!bookingId || !body.action) {
 		return new Response(
@@ -100,7 +135,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			company,
 			track,
 			startAt: slotStartAt,
-			durationMinutes: 45,
+			durationMinutes: 60,
 			topics,
 			portalUrl,
 		});

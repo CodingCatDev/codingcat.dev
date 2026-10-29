@@ -486,7 +486,11 @@ export function App() {
 					b._id === bookingId ? { ...b, status: newStatus } : b,
 				),
 			);
-			showFlash(`Updated booking status to "${newStatus}"`);
+			if (newStatus === "approved" || newStatus === "scheduled") {
+				await handleBookingManage(bookingId, "approve_recording");
+			} else {
+				showFlash(`Updated booking status to "${newStatus}"`);
+			}
 		} catch (err: any) {
 			showFlash(`Error updating booking: ${err?.message || "Unknown error"}`);
 		}

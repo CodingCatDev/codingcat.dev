@@ -490,7 +490,7 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		Boolean(opts.isPreMeeting) ||
 		opts.track === "sponsor-kickoff" ||
 		opts.durationMinutes === 15;
-	const durationMinutes = opts.durationMinutes ?? (isPreMeeting ? 15 : 45);
+	const durationMinutes = opts.durationMinutes ?? (isPreMeeting ? 15 : 60);
 	const isApprovedRecording =
 		!isPreMeeting && Boolean(opts.autoApproveRecording);
 
@@ -501,10 +501,10 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		? `[PRE-MEETING · 15m] ${opts.company} × CodingCat.dev (${opts.guestName})`
 		: isApprovedRecording
 			? `CodingCat.dev Podcast Recording: ${opts.guestName} (${opts.company})`
-			: `[HOLD - PENDING APPROVAL] CodingCat.dev Podcast: ${opts.guestName} (${opts.company})`;
+			: `[HOLD] CodingCat.dev Podcast: ${opts.guestName} (${opts.company})`;
 
 	const descriptionLines = [
-		`CodingCat.dev Session (${isPreMeeting ? "15m Pre-Meeting (Google Meet)" : `45m Podcast Recording (${opts.track.toUpperCase()})`})`,
+		`CodingCat.dev Session (${isPreMeeting ? "15m Pre-Meeting (Google Meet)" : `${durationMinutes}m Podcast Recording (${opts.track.toUpperCase()})`})`,
 		`Guest / Contact: ${opts.guestName} <${opts.guestEmail}>`,
 		`Company: ${opts.company}`,
 		`Topics / Goals: ${opts.topics}`,
@@ -512,15 +512,15 @@ export async function createGoogleCalendarBookingEvent(opts: {
 			? "Meeting Room: Google Meet (auto-attached to this calendar invite)"
 			: isApprovedRecording
 				? `Recording Studio (StreamYard): ${STREAMYARD_STUDIO_URL}`
-				: `Status: Opaque Calendar Hold (Blocks FreeBusy). Approve in CodingCat Ops App to send StreamYard invite (${STREAMYARD_STUDIO_URL}) to guest.`,
+				: "Status: Calendar Hold Reserved. Once Alex confirms your session, this calendar invite will automatically update with your StreamYard studio link.",
 		...(opts.portalUrl
-			? [`Deal Room & Sanity Media Vault: ${opts.portalUrl}#vault`]
+			? [`Guest Portal & Sanity Media Vault: ${opts.portalUrl}#vault`]
 			: []),
 	];
 	const description = descriptionLines.join("\n");
 
 	const addToCalendarUrl = buildGoogleCalendarTemplateUrl({
-		title: summary.replace(/^\[HOLD - PENDING APPROVAL\]\s*/, ""),
+		title: summary.replace(/^\[HOLD\]\s*/, ""),
 		startAt: start.toISOString(),
 		durationMinutes,
 		description: isPreMeeting
@@ -562,17 +562,14 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		}
 	}
 
-	// Pre-meetings and explicitly approved recordings invite the guest immediately;
-	// unapproved recording holds block Alex's calendars as CONFIRMED + OPAQUE (Busy)
-	// with sendUpdates=none until approved in the Ops App.
-	const inviteGuestNow = isPreMeeting || isApprovedRecording;
-	const sendUpdates = inviteGuestNow ? "all" : "none";
+	// Always invite the guest immediately (sendUpdates=all) so the event lands on their
+	// Google Calendar right away. Unapproved recording holds withhold the StreamYard URL
+	// until Alex clicks Approve in the Ops App.
+	const sendUpdates = "all";
 	const attendees = [
 		{ email: "alex.patterson@gmail.com", responseStatus: "accepted" },
 		{ email: "alex@codingcat.dev", responseStatus: "accepted" },
-		...(inviteGuestNow
-			? [{ email: opts.guestEmail, displayName: opts.guestName }]
-			: []),
+		{ email: opts.guestEmail, displayName: opts.guestName },
 	];
 
 	const queryParams = new URLSearchParams({ sendUpdates });
@@ -590,7 +587,9 @@ export async function createGoogleCalendarBookingEvent(opts: {
 			? "Google Meet"
 			: isApprovedRecording
 				? STREAMYARD_STUDIO_URL
-				: "CodingCat.dev Studio Hold (Pending Approval)",
+				: opts.portalUrl
+					? `${opts.portalUrl}#vault`
+					: "CodingCat.dev Studio (StreamYard link sent upon approval)",
 		start: { dateTime: start.toISOString() },
 		end: { dateTime: end.toISOString() },
 		attendees,
@@ -681,7 +680,7 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 		return { ok: false, recordingUrl: STREAMYARD_STUDIO_URL };
 	}
 
-	const durationMinutes = opts.durationMinutes ?? 45;
+	const durationMinutes = opts.durationMinutes ?? 60;
 	const start = new Date(opts.startAt);
 	const end = new Date(start.getTime() + durationMinutes * 60_000);
 	const summary = `CodingCat.dev Podcast Recording: ${opts.guestName} (${opts.company})`;
