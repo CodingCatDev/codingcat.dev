@@ -1067,7 +1067,7 @@ export function App() {
 					<button
 						type="button"
 						onClick={handleSendDailyDigestEmail}
-						disabled={sendingDailyDigest}
+						disabled={sendingDigest}
 						style={{
 							...btnStyle,
 							padding: "8px 12px",
@@ -1078,7 +1078,7 @@ export function App() {
 						}}
 						title="Email Today's Action Queue & Ongoing Schedule to alex@codingcat.dev"
 					>
-						{sendingDailyDigest
+						{sendingDigest
 							? "📧 Sending Digest..."
 							: "📧 Email Today's Digest"}
 					</button>
@@ -1139,7 +1139,7 @@ export function App() {
 								<button
 									type="button"
 									onClick={handleSendDailyDigestEmail}
-									disabled={sendingDailyDigest}
+									disabled={sendingDigest}
 									style={{
 										...btnStyle,
 										background: "#1d4ed8",
@@ -1148,7 +1148,7 @@ export function App() {
 										fontWeight: 700,
 									}}
 								>
-									{sendingDailyDigest
+									{sendingDigest
 										? "📧 Sending Digest to alex@codingcat.dev..."
 										: "📧 Email Today's Action Digest Now"}
 								</button>
@@ -1471,32 +1471,37 @@ export function App() {
 
 											const bookingEventIds = new Set(
 												bookings
-													.map((b) => b.calendarEventId)
+													.flatMap((b) => [
+														b.googleCalendarEventId,
+														`alex@codingcat.dev:${b.googleCalendarEventId}`,
+													])
 													.filter(Boolean),
 											);
 
 											const externalEvents = masterCalendarEvents
-												.filter(
-													(ev) =>
+												.filter((ev) => {
+													const title = ev.title || "";
+													return (
 														!bookingEventIds.has(ev.id) &&
-														!ev.summary.startsWith("[CodingCat.dev]") &&
-														!ev.summary.startsWith("CodingCat.dev Podcast") &&
-														!ev.summary.startsWith(
+														!title.startsWith("[CodingCat.dev]") &&
+														!title.startsWith("CodingCat.dev Podcast") &&
+														!title.startsWith(
 															"[HOLD] CodingCat.dev Podcast",
 														) &&
-														Date.parse(ev.start) >= nowMs,
-												)
+														Date.parse(ev.startAt) >= nowMs
+													);
+												})
 												.map((ev) => ({
-													id: `${ev.calendarId}:${ev.id}`,
-													startAt: ev.start,
+													id: ev.id,
+													startAt: ev.startAt,
 													calendarLabel:
 														ev.calendarId === "alex.patterson@sanity.io"
 															? "🟧 alex.patterson@sanity.io"
 															: "🟪 alex@codingcat.dev",
-													title: ev.summary,
+													title: ev.title || "(Busy)",
 													status: ev.visibility === "private" ? "private" : "busy",
 													streamyardUrl: ev.htmlLink || "",
-													booking: null as PodcastBooking | null,
+													booking: null as BookingDoc | null,
 												}));
 
 											const combined = [...bookingEvents, ...externalEvents].sort(
