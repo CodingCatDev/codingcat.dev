@@ -44,6 +44,29 @@ interface DeliverableItem {
 	views?: number;
 }
 
+interface SharedAssetItem {
+	_key?: string;
+	title?: string;
+	category?: string;
+	uploadedBy?: "partner" | "codingcat" | "passionfroot";
+	source?: "direct" | "passionfroot";
+	externalUrl?: string;
+	fileUrl?: string;
+	mimeType?: string;
+	sizeBytes?: number;
+	notes?: string;
+	uploadedAt?: string;
+}
+
+interface PassionfrootMessageItem {
+	_key?: string;
+	messageId?: string;
+	senderType?: string;
+	senderName?: string;
+	text?: string;
+	createdAt?: string;
+}
+
 interface SponsorLeadDoc {
 	_id: string;
 	companyName: string;
@@ -52,6 +75,7 @@ interface SponsorLeadDoc {
 	website?: string;
 	portalToken?: string;
 	source?: string;
+	billingProvider?: "stripe" | "passionfroot";
 	status: string;
 	rateCard?: string;
 	totalAmountCents?: number;
@@ -63,10 +87,22 @@ interface SponsorLeadDoc {
 	stripeDepositInvoiceUrl?: string;
 	stripeBalanceCheckoutUrl?: string;
 	stripeBalanceInvoiceUrl?: string;
+	passionfrootCollaborationId?: string;
+	passionfrootRequestId?: string;
+	passionfrootProposalId?: string;
+	passionfrootPlacementId?: string;
+	passionfrootConversationId?: string;
+	passionfrootPartnerId?: string;
+	passionfrootStatus?: string;
+	passionfrootGrossBudgetCents?: number;
+	passionfrootNetEarningsCents?: number;
+	passionfrootCurrency?: string;
+	passionfrootMessages?: PassionfrootMessageItem[];
 	intent?: string;
 	threadId?: string;
 	notes?: string;
 	deliverables?: DeliverableItem[];
+	sharedAssets?: SharedAssetItem[];
 }
 
 interface BookingDoc {
@@ -77,15 +113,26 @@ interface BookingDoc {
 	company?: string;
 	socialUrl?: string;
 	track?: string;
+	bookingSource?: "direct" | "passionfroot";
+	sessionType?: "recording" | "pre_meeting";
 	status?: string;
 	slotStartAt?: string;
+	recordingUrl?: string;
+	preMeetingStatus?: "none" | "requested" | "scheduled" | "completed" | "bypassed";
+	preMeetingSlotStartAt?: string;
+	preMeetingGoogleEventId?: string;
+	preMeetingMeetUrl?: string;
 	topics?: string;
 	appointmentScheduleUrl?: string;
 	googleCalendarEventId?: string;
+	passionfrootCollaborationId?: string;
+	passionfrootPlacementId?: string;
+	passionfrootConversationId?: string;
 	signatureMode?: "draw" | "type";
 	signatureData?: string;
 	signedAt?: string;
 	portalToken?: string;
+	sharedAssets?: SharedAssetItem[];
 }
 
 interface SyndicatedContentItem {
@@ -228,6 +275,34 @@ export function App() {
 		null,
 	);
 	const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+	const [expandedCrmLeadId, setExpandedCrmLeadId] = useState<string | null>(
+		null,
+	);
+
+	// Source Filters & Passionfroot API integration state
+	const [leadSourceFilter, setLeadSourceFilter] = useState<
+		"all" | "passionfroot" | "direct" | "inbound"
+	>("all");
+	const [bookingSourceFilter, setBookingSourceFilter] = useState<
+		"all" | "passionfroot" | "direct"
+	>("all");
+	const [syncingPassionfroot, setSyncingPassionfroot] = useState(false);
+	const [showPassionfrootConfig, setShowPassionfrootConfig] = useState(false);
+	const [passionfrootApiKey, setPassionfrootApiKey] = useState<string>(() => {
+		try {
+			return localStorage.getItem("codingcat_pf_api_key") || "";
+		} catch {
+			return "";
+		}
+	});
+	const [pfChatInput, setPfChatInput] = useState<Record<string, string>>({});
+	const [vaultTitleInput, setVaultTitleInput] = useState<Record<string, string>>(
+		{},
+	);
+	const [vaultUrlInput, setVaultUrlInput] = useState<Record<string, string>>(
+		{},
+	);
+	const [busyActionId, setBusyActionId] = useState<string | null>(null);
 
 	const showFlash = useCallback((msg: string) => {
 		setStatusBanner(msg);
@@ -416,6 +491,173 @@ export function App() {
 			showFlash(`Error updating booking: ${err?.message || "Unknown error"}`);
 		}
 	};
+
+	const handleBookingManage = async (
+		bookingId: string,
+		action:
+			| "approve_recording"
+			| "request_pre_meeting"
+			| "bypass_pre_meeting",
+	) => {
+		setBusyActionId(`${bookingId}:${action}`);
+		try {
+			const res = await fetch(`${siteOrigin}/api/book/manage`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ bookingId, action }),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.error || "Failed to update booking");
+			}
+			await fetchAllData();
+			if (action === "approve_recording") {
+				showFlash(
+					`Approved recording and sent StreamYard studio link (${data.recordingUrl || "https://streamyard.com/c4kv26is93"}) to guest calendar invite.`,
+				);
+			} else if (action === "request_pre_meeting") {
+				showFlash(
+					"Flagged booking for a 15-minute Google Meet pre-meeting.",
+				);
+			} else {
+				showFlash("Bypassed 15-minute pre-meeting.");
+			}
+		} catch (err: any) {
+			showFlash(`Booking action error: ${err?.message || "Unknown error"}`);
+		} finally {
+			setBusyActionId(null);
+		}
+	};
+
+	const handleSyncPassionfroot = async () => {
+		setSyncingPassionfroot(true);
+		try {
+			const res = await fetch(`${siteOrigin}/api/ops/passionfroot`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					action: "sync",
+					apiKey: passionfrootApiKey.trim() || undefined,
+				}),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.error || "Passionfroot sync failed");
+			}
+			await fetchAllData();
+			showFlash(
+				`Synced Passionfroot Workspace (${data.creatorName || "CodingCat.dev"}): ${data.syncedLeadsCount || 0} collaborations, ${data.syncedBookingsCount || 0} placements, ${data.ingestedAttachmentsCount || 0} Media Library assets mirrored.`,
+			);
+		} catch (err: any) {
+			showFlash(`Passionfroot Sync: ${err?.message || "Unknown error"}`);
+		} finally {
+			setSyncingPassionfroot(false);
+		}
+	};
+
+	const handlePassionfrootAction = async (
+		lead: SponsorLeadDoc,
+		action:
+			| "accept_request"
+			| "decline_request"
+			| "accept_proposal"
+			| "send_portal_link"
+			| "send_message",
+		extra?: Record<string, any>,
+	) => {
+		const token =
+			lead.portalToken || lead._id.replace(/^sponsorLead-/, "");
+		setBusyActionId(`${lead._id}:${action}`);
+		try {
+			const res = await fetch(`${siteOrigin}/api/ops/passionfroot`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					action,
+					apiKey: passionfrootApiKey.trim() || undefined,
+					leadId: lead._id,
+					portalToken: token,
+					requestId: lead.passionfrootRequestId,
+					proposalId: lead.passionfrootProposalId,
+					conversationId: lead.passionfrootConversationId,
+					partnerId: lead.passionfrootPartnerId,
+					autoInvoice: true,
+					requestAssets: true,
+					...extra,
+				}),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.error || "Passionfroot action failed");
+			}
+			await fetchAllData();
+			showFlash(
+				`Passionfroot action "${action}" completed for ${lead.companyName}.`,
+			);
+		} catch (err: any) {
+			showFlash(`Passionfroot Action Error: ${err?.message || "Unknown error"}`);
+		} finally {
+			setBusyActionId(null);
+		}
+	};
+
+	const handleAddSharedAssetLink = async (
+		docId: string,
+		token: string,
+		sourceType: "direct" | "passionfroot",
+	) => {
+		const title = (vaultTitleInput[docId] || "").trim();
+		const externalUrl = (vaultUrlInput[docId] || "").trim();
+		if (!title && !externalUrl) return;
+		setBusyActionId(`${docId}:vault`);
+		try {
+			const formData = new FormData();
+			formData.set("token", token);
+			formData.set("title", title || externalUrl);
+			formData.set("category", "script_brief");
+			formData.set("uploadedBy", "codingcat");
+			formData.set("source", sourceType);
+			if (externalUrl) formData.set("externalUrl", externalUrl);
+
+			const res = await fetch(`${siteOrigin}/api/portal/assets`, {
+				method: "POST",
+				body: formData,
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.error || "Failed to add asset to vault");
+			}
+			setVaultTitleInput((prev) => ({ ...prev, [docId]: "" }));
+			setVaultUrlInput((prev) => ({ ...prev, [docId]: "" }));
+			await fetchAllData();
+			showFlash("Added item to Sanity Media Library 2-Way Asset Vault (#vault).");
+		} catch (err: any) {
+			showFlash(`Vault Error: ${err?.message || "Unknown error"}`);
+		} finally {
+			setBusyActionId(null);
+		}
+	};
+
+	const filteredLeads = leads.filter((l) => {
+		const isPf =
+			l.source === "passionfroot" ||
+			l.billingProvider === "passionfroot" ||
+			Boolean(l.passionfrootCollaborationId);
+		const isDirect = l.source === "booking";
+		if (leadSourceFilter === "passionfroot") return isPf;
+		if (leadSourceFilter === "direct") return isDirect;
+		if (leadSourceFilter === "inbound") return !isPf && !isDirect;
+		return true;
+	});
+
+	const filteredBookings = bookings.filter((b) => {
+		const isPf =
+			b.bookingSource === "passionfroot" ||
+			Boolean(b.passionfrootCollaborationId);
+		if (bookingSourceFilter === "passionfroot") return isPf;
+		if (bookingSourceFilter === "direct") return !isPf;
+		return true;
+	});
 
 	const handleConvertBookingToDeal = async (b: BookingDoc) => {
 		const slugToken =
@@ -745,21 +987,141 @@ export function App() {
 						>
 							<div>
 								<h2 style={{ margin: 0, fontSize: 18 }}>
-									Active Sponsor Deals &amp; Inbound Leads ({leads.length})
+									Active Sponsor Deals &amp; Inbound Leads ({filteredLeads.length} /{" "}
+									{leads.length})
 								</h2>
 								<p style={{ margin: "4px 0 0", color: "#4b5563", fontSize: 13 }}>
-									Click any action button to open the Gmail thread, launch the
-									Sponsor Deal Room, copy the portal link, or update deal status
-									in Sanity.
+									Differentiates <strong>🌱 Passionfroot API</strong> deals vs.{" "}
+									<strong>⚡ Direct Book</strong> &amp; <strong>📬 Inbound</strong>{" "}
+									leads, with 1-click Passionfroot actions and Sanity Media Library
+									Asset Vaults (<code>#vault</code>).
 								</p>
 							</div>
-							<button
-								type="button"
-								onClick={() => setShowNewLeadForm((v) => !v)}
-								style={primaryBtnStyle}
+							<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+								<button
+									type="button"
+									onClick={handleSyncPassionfroot}
+									disabled={syncingPassionfroot}
+									style={{
+										...btnStyle,
+										background: "#ecfdf5",
+										borderColor: "#10b981",
+										color: "#065f46",
+										fontWeight: 700,
+									}}
+								>
+									{syncingPassionfroot
+										? "🌱 Syncing Passionfroot..."
+										: "🌱 Sync Passionfroot API"}
+								</button>
+								<button
+									type="button"
+									onClick={() => setShowPassionfrootConfig((v) => !v)}
+									style={btnStyle}
+									title="Configure Passionfroot API Key override"
+								>
+									⚙️ API Key
+								</button>
+								<button
+									type="button"
+									onClick={() => setShowNewLeadForm((v) => !v)}
+									style={primaryBtnStyle}
+								>
+									{showNewLeadForm ? "Cancel" : "+ New Sponsor Deal Room"}
+								</button>
+							</div>
+						</div>
+
+						{showPassionfrootConfig && (
+							<div
+								style={{
+									marginBottom: 16,
+									padding: 12,
+									borderRadius: 8,
+									background: "#f0fdf4",
+									border: "1px solid #bbf7d0",
+									display: "flex",
+									gap: 8,
+									alignItems: "center",
+									flexWrap: "wrap",
+								}}
 							>
-								{showNewLeadForm ? "Cancel" : "+ New Sponsor Deal Room"}
-							</button>
+								<span style={{ fontSize: 12, fontWeight: 700, color: "#065f46" }}>
+									Passionfroot Workspace API Key (<code>apik_...</code>):
+								</span>
+								<input
+									type="password"
+									value={passionfrootApiKey}
+									onChange={(e) => {
+										const val = e.target.value;
+										setPassionfrootApiKey(val);
+										try {
+											localStorage.setItem("codingcat_pf_api_key", val);
+										} catch {
+											// Ignore storage errors
+										}
+									}}
+									placeholder="Uses Cloudflare PASSIONFROOT_API_KEY env by default, or paste apik_... here"
+									style={{
+										flex: 1,
+										minWidth: 280,
+										padding: "6px 10px",
+										borderRadius: 6,
+										border: "1px solid #86efac",
+										fontSize: 12,
+									}}
+								/>
+								<button
+									type="button"
+									onClick={() => setShowPassionfrootConfig(false)}
+									style={btnStyle}
+								>
+									Done
+								</button>
+							</div>
+						)}
+
+						<div
+							style={{
+								display: "flex",
+								gap: 8,
+								flexWrap: "wrap",
+								marginBottom: 16,
+							}}
+						>
+							{(
+								[
+									{ id: "all", label: `All Deals (${leads.length})` },
+									{
+										id: "passionfroot",
+										label: `🌱 Passionfroot (${leads.filter((l) => l.source === "passionfroot" || l.billingProvider === "passionfroot" || Boolean(l.passionfrootCollaborationId)).length})`,
+									},
+									{
+										id: "direct",
+										label: `⚡ Direct Book (${leads.filter((l) => l.source === "booking").length})`,
+									},
+									{
+										id: "inbound",
+										label: `📬 Inbound / Gmail (${leads.filter((l) => l.source !== "passionfroot" && l.billingProvider !== "passionfroot" && !l.passionfrootCollaborationId && l.source !== "booking").length})`,
+									},
+								] as const
+							).map((f) => (
+								<button
+									key={f.id}
+									type="button"
+									onClick={() => setLeadSourceFilter(f.id)}
+									style={{
+										...btnStyle,
+										background:
+											leadSourceFilter === f.id ? "#111827" : "#f9fafb",
+										color: leadSourceFilter === f.id ? "#fff" : "#374151",
+										borderColor:
+											leadSourceFilter === f.id ? "#111827" : "#d1d5db",
+									}}
+								>
+									{f.label}
+								</button>
+							))}
 						</div>
 
 						{showNewLeadForm && (
@@ -928,139 +1290,625 @@ export function App() {
 											color: "#374151",
 										}}
 									>
-										<th style={{ padding: "10px 8px" }}>Company</th>
+										<th style={{ padding: "10px 8px" }}>Company &amp; Source</th>
 										<th style={{ padding: "10px 8px" }}>Contact</th>
 										<th style={{ padding: "10px 8px" }}>Package &amp; Notes</th>
-										<th style={{ padding: "10px 8px" }}>Total / 50% Deposit</th>
+										<th style={{ padding: "10px 8px" }}>
+											Total / Payout &amp; Billing
+										</th>
 										<th style={{ padding: "10px 8px" }}>Stage (Editable)</th>
 										<th style={{ padding: "10px 8px" }}>Execute / Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-									{leads.map((lead) => {
-										const portalUrl = lead.portalToken
-											? `${siteOrigin}/portal/${lead.portalToken}`
-											: `${siteOrigin}/portal/${lead._id.replace(/^sponsorLead-/, "")}`;
+									{filteredLeads.map((lead) => {
+										const token =
+											lead.portalToken ||
+											lead._id.replace(/^sponsorLead-/, "");
+										const portalUrl = `${siteOrigin}/portal/${token}`;
+										const vaultUrl = `${portalUrl}#vault`;
 										const gmailUrl = lead.threadId
 											? `https://mail.google.com/mail/u/0/#inbox/${lead.threadId}`
 											: `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(lead.contactEmail || lead.companyName)}`;
+										const isPf =
+											lead.source === "passionfroot" ||
+											lead.billingProvider === "passionfroot" ||
+											Boolean(lead.passionfrootCollaborationId);
+										const isDirect = lead.source === "booking";
+										const isExpanded = expandedCrmLeadId === lead._id;
+										const assetCount = lead.sharedAssets?.length || 0;
 
 										return (
-											<tr
-												key={lead._id}
-												style={{ borderBottom: "1px solid #f3f4f6" }}
-											>
-												<td style={{ padding: "10px 8px", fontWeight: 700 }}>
-													{lead.companyName}
-												</td>
-												<td style={{ padding: "10px 8px" }}>
-													<a
-														href={`mailto:${lead.contactEmail}`}
-														style={{
-															color: "#2563eb",
-															textDecoration: "none",
-															fontWeight: 500,
-														}}
-													>
-														{lead.contactName
-															? `${lead.contactName} <${lead.contactEmail}>`
-															: lead.contactEmail}
-													</a>
-												</td>
-												<td style={{ padding: "10px 8px", maxWidth: 280 }}>
-													<div style={{ fontWeight: 600 }}>
-														{RATE_CARD_TIERS[lead.rateCard || ""]?.label ||
-															lead.rateCard ||
-															"Custom Package"}
-													</div>
-													{lead.intent && (
+											<>
+												<tr
+													key={lead._id}
+													style={{ borderBottom: "1px solid #f3f4f6" }}
+												>
+													<td style={{ padding: "10px 8px", fontWeight: 700 }}>
+														<div>{lead.companyName}</div>
 														<div
 															style={{
-																fontSize: 12,
-																color: "#6b7280",
-																marginTop: 2,
+																display: "flex",
+																gap: 6,
+																flexWrap: "wrap",
+																marginTop: 4,
 															}}
 														>
-															{lead.intent}
+															<span
+																style={{
+																	padding: "2px 7px",
+																	borderRadius: 999,
+																	fontSize: 10,
+																	fontWeight: 700,
+																	background: isPf
+																		? "#dcfce7"
+																		: isDirect
+																			? "#ede9fe"
+																			: "#f3f4f6",
+																	color: isPf
+																		? "#065f46"
+																		: isDirect
+																			? "#5b21b6"
+																			: "#374151",
+																}}
+															>
+																{isPf
+																	? "🌱 Passionfroot"
+																	: isDirect
+																		? "⚡ Direct Book"
+																		: "📬 Inbound / Gmail"}
+															</span>
+															{lead.passionfrootStatus && (
+																<span
+																	style={{
+																		padding: "2px 6px",
+																		borderRadius: 999,
+																		fontSize: 10,
+																		fontWeight: 600,
+																		background: "#fef3c7",
+																		color: "#92400e",
+																	}}
+																>
+																	PF: {lead.passionfrootStatus}
+																</span>
+															)}
 														</div>
-													)}
-												</td>
-												<td
-													style={{
-														padding: "10px 8px",
-														whiteSpace: "nowrap",
-														fontWeight: 600,
-													}}
-												>
-													{formatUsd(lead.totalAmountCents)}{" "}
-													<span style={{ color: "#6b7280", fontWeight: 400 }}>
-														({formatUsd(lead.depositAmountCents)} deposit)
-													</span>
-												</td>
-												<td style={{ padding: "10px 8px" }}>
-													<select
-														value={lead.status || "new"}
-														onChange={(e) =>
-															handleUpdateLeadStatus(lead._id, e.target.value)
-														}
+													</td>
+													<td style={{ padding: "10px 8px" }}>
+														<a
+															href={`mailto:${lead.contactEmail}`}
+															style={{
+																color: "#2563eb",
+																textDecoration: "none",
+																fontWeight: 500,
+															}}
+														>
+															{lead.contactName
+																? `${lead.contactName} <${lead.contactEmail}>`
+																: lead.contactEmail}
+														</a>
+													</td>
+													<td style={{ padding: "10px 8px", maxWidth: 280 }}>
+														<div style={{ fontWeight: 600 }}>
+															{RATE_CARD_TIERS[lead.rateCard || ""]?.label ||
+																lead.rateCard ||
+																"Custom Package"}
+														</div>
+														{lead.intent && (
+															<div
+																style={{
+																	fontSize: 12,
+																	color: "#6b7280",
+																	marginTop: 2,
+																}}
+															>
+																{lead.intent}
+															</div>
+														)}
+													</td>
+													<td
 														style={{
-															padding: "5px 8px",
-															borderRadius: 6,
-															border: "1px solid #d1d5db",
-															fontSize: 12,
+															padding: "10px 8px",
+															whiteSpace: "nowrap",
 															fontWeight: 600,
-															background:
-																lead.status === "paid" ||
-																lead.status === "deposit_paid"
-																	? "#dcfce7"
-																	: lead.status === "replied"
-																		? "#fef3c7"
-																		: "#f9fafb",
 														}}
 													>
-														{LEAD_STATUS_OPTIONS.map((opt) => (
-															<option key={opt.value} value={opt.value}>
-																{opt.label}
-															</option>
-														))}
-													</select>
-												</td>
-												<td style={{ padding: "10px 8px" }}>
-													<div
+														{isPf ? (
+															<div>
+																<div style={{ color: "#059669" }}>
+																	Net:{" "}
+																	{formatUsd(
+																		lead.passionfrootNetEarningsCents ||
+																			lead.totalAmountCents,
+																	)}
+																</div>
+																<div
+																	style={{
+																		fontSize: 11,
+																		color: "#6b7280",
+																		fontWeight: 400,
+																	}}
+																>
+																	Gross:{" "}
+																	{formatUsd(
+																		lead.passionfrootGrossBudgetCents ||
+																			lead.totalAmountCents,
+																	)}{" "}
+																	(PF Billing)
+																</div>
+															</div>
+														) : (
+															<div>
+																{formatUsd(lead.totalAmountCents)}{" "}
+																<span
+																	style={{ color: "#6b7280", fontWeight: 400 }}
+																>
+																	({formatUsd(lead.depositAmountCents)} deposit)
+																</span>
+															</div>
+														)}
+													</td>
+													<td style={{ padding: "10px 8px" }}>
+														<select
+															value={lead.status || "new"}
+															onChange={(e) =>
+																handleUpdateLeadStatus(lead._id, e.target.value)
+															}
+															style={{
+																padding: "5px 8px",
+																borderRadius: 6,
+																border: "1px solid #d1d5db",
+																fontSize: 12,
+																fontWeight: 600,
+																background:
+																	lead.status === "paid" ||
+																	lead.status === "deposit_paid"
+																		? "#dcfce7"
+																		: lead.status === "replied"
+																			? "#fef3c7"
+																			: "#f9fafb",
+															}}
+														>
+															{LEAD_STATUS_OPTIONS.map((opt) => (
+																<option key={opt.value} value={opt.value}>
+																	{opt.label}
+																</option>
+															))}
+														</select>
+													</td>
+													<td style={{ padding: "10px 8px" }}>
+														<div
+															style={{
+																display: "flex",
+																gap: 6,
+																flexWrap: "wrap",
+															}}
+														>
+															<button
+																type="button"
+																onClick={() =>
+																	setExpandedCrmLeadId(
+																		isExpanded ? null : lead._id,
+																	)
+																}
+																style={{
+																	...btnStyle,
+																	background: isExpanded
+																		? "#111827"
+																		: "#f3f4f6",
+																	color: isExpanded ? "#fff" : "#111827",
+																}}
+															>
+																{isExpanded
+																	? "Hide Vault & Actions"
+																	: `${isPf ? "🌱 PF Actions" : "📁 Vault"} (${assetCount})`}
+															</button>
+															<a
+																href={portalUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={primaryBtnStyle}
+																title="Open interactive Sponsor Deal Room"
+															>
+																Deal Room ↗
+															</a>
+															<button
+																type="button"
+																onClick={() =>
+																	handleCopy(vaultUrl, `vault-${lead._id}`)
+																}
+																style={btnStyle}
+																title="Copy direct Sanity Media Library Asset Vault link (#vault)"
+															>
+																{copiedId === `vault-${lead._id}`
+																	? "✓ Vault Copied"
+																	: "Copy #vault Link"}
+															</button>
+															<a
+																href={gmailUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={btnStyle}
+																title="Open thread or draft in Gmail"
+															>
+																Gmail ↗
+															</a>
+														</div>
+													</td>
+												</tr>
+												{isExpanded && (
+													<tr
+														key={`${lead._id}-crm-expanded`}
 														style={{
-															display: "flex",
-															gap: 6,
-															flexWrap: "wrap",
+															background: "#f9fafb",
+															borderBottom: "2px solid #e5e7eb",
 														}}
 													>
-														<a
-															href={gmailUrl}
-															target="_blank"
-															rel="noreferrer"
-															style={btnStyle}
-															title="Open thread or draft in Gmail"
-														>
-															Gmail ↗
-														</a>
-														<a
-															href={portalUrl}
-															target="_blank"
-															rel="noreferrer"
-															style={primaryBtnStyle}
-															title="Open interactive Sponsor Deal Room"
-														>
-															Deal Room ↗
-														</a>
-														<button
-															type="button"
-															onClick={() => handleCopy(portalUrl, lead._id)}
-															style={btnStyle}
-														>
-															{copiedId === lead._id ? "✓ Copied" : "Copy Link"}
-														</button>
-													</div>
-												</td>
-											</tr>
+														<td colSpan={6} style={{ padding: 16 }}>
+															<div
+																style={{
+																	display: "grid",
+																	gridTemplateColumns:
+																		"repeat(auto-fit, minmax(320px, 1fr))",
+																	gap: 16,
+																}}
+															>
+																{isPf && (
+																	<div
+																		style={{
+																			padding: 14,
+																			background: "#ecfdf5",
+																			border: "1px solid #a7f3d0",
+																			borderRadius: 10,
+																		}}
+																	>
+																		<h4
+																			style={{
+																				margin: "0 0 8px",
+																				fontSize: 13,
+																				color: "#065f46",
+																			}}
+																		>
+																			🌱 Passionfroot Creator API Quick Actions
+																		</h4>
+																		<div
+																			style={{
+																				display: "flex",
+																				gap: 8,
+																				flexWrap: "wrap",
+																				marginBottom: 12,
+																			}}
+																		>
+																			{lead.passionfrootRequestId && (
+																				<>
+																					<button
+																						type="button"
+																						disabled={
+																							busyActionId ===
+																							`${lead._id}:accept_request`
+																						}
+																						onClick={() =>
+																							handlePassionfrootAction(
+																								lead,
+																								"accept_request",
+																							)
+																						}
+																						style={{
+																							...btnStyle,
+																							background: "#059669",
+																							borderColor: "#059669",
+																							color: "#fff",
+																						}}
+																					>
+																						✓ Accept Request (Auto-Invoice +
+																						Request Assets)
+																					</button>
+																					<button
+																						type="button"
+																						disabled={
+																							busyActionId ===
+																							`${lead._id}:decline_request`
+																						}
+																						onClick={() =>
+																							handlePassionfrootAction(
+																								lead,
+																								"decline_request",
+																							)
+																						}
+																						style={{
+																							...btnStyle,
+																							color: "#b91c1c",
+																							borderColor: "#fca5a5",
+																						}}
+																					>
+																						✕ Decline Request
+																					</button>
+																				</>
+																			)}
+																			{lead.passionfrootProposalId && (
+																				<button
+																					type="button"
+																					disabled={
+																						busyActionId ===
+																						`${lead._id}:accept_proposal`
+																					}
+																					onClick={() =>
+																						handlePassionfrootAction(
+																							lead,
+																							"accept_proposal",
+																						)
+																					}
+																					style={{
+																						...btnStyle,
+																						background: "#059669",
+																						borderColor: "#059669",
+																						color: "#fff",
+																					}}
+																				>
+																					✓ Accept Proposal
+																				</button>
+																			)}
+																			<button
+																				type="button"
+																				disabled={
+																					busyActionId ===
+																					`${lead._id}:send_portal_link`
+																				}
+																				onClick={() =>
+																					handlePassionfrootAction(
+																						lead,
+																						"send_portal_link",
+																					)
+																				}
+																				style={primaryBtnStyle}
+																			>
+																				📤 Send CodingCat Portal &amp; Calendar
+																				Link to PF Chat
+																			</button>
+																		</div>
+
+																		<div
+																			style={{
+																				display: "flex",
+																				gap: 6,
+																				marginBottom: 10,
+																			}}
+																		>
+																			<input
+																				value={pfChatInput[lead._id] || ""}
+																				onChange={(e) =>
+																					setPfChatInput((prev) => ({
+																						...prev,
+																						[lead._id]: e.target.value,
+																					}))
+																				}
+																				placeholder="Reply directly to partner in Passionfroot chat..."
+																				style={{
+																					flex: 1,
+																					padding: "6px 10px",
+																					borderRadius: 6,
+																					border: "1px solid #6ee7b7",
+																					fontSize: 12,
+																				}}
+																			/>
+																			<button
+																				type="button"
+																				disabled={
+																					busyActionId ===
+																					`${lead._id}:send_message`
+																				}
+																				onClick={() => {
+																					const msg = (
+																						pfChatInput[lead._id] || ""
+																					).trim();
+																					if (!msg) return;
+																					handlePassionfrootAction(
+																						lead,
+																						"send_message",
+																						{ messageText: msg },
+																					);
+																					setPfChatInput((prev) => ({
+																						...prev,
+																						[lead._id]: "",
+																					}));
+																				}}
+																				style={btnStyle}
+																			>
+																				Send Reply
+																			</button>
+																		</div>
+
+																		{(lead.passionfrootMessages || []).length >
+																			0 && (
+																			<div
+																				style={{
+																					maxHeight: 140,
+																					overflowY: "auto",
+																					background: "#fff",
+																					padding: 8,
+																					borderRadius: 6,
+																					border: "1px solid #d1fae5",
+																					fontSize: 12,
+																				}}
+																			>
+																				{(lead.passionfrootMessages || [])
+																					.slice(-5)
+																					.map((m, idx) => (
+																						<div
+																							key={m._key || idx}
+																							style={{ marginBottom: 6 }}
+																						>
+																							<strong>
+																								{m.senderName || m.senderType}:
+																							</strong>{" "}
+																							{m.text}
+																						</div>
+																					))}
+																			</div>
+																		)}
+																	</div>
+																)}
+
+																<div
+																	style={{
+																		padding: 14,
+																		background: "#fff",
+																		border: "1px solid #e5e7eb",
+																		borderRadius: 10,
+																	}}
+																>
+																	<div
+																		style={{
+																			display: "flex",
+																			justifyContent: "space-between",
+																			alignItems: "center",
+																			marginBottom: 8,
+																		}}
+																	>
+																		<h4
+																			style={{
+																				margin: 0,
+																				fontSize: 13,
+																				color: "#111827",
+																			}}
+																		>
+																			📁 Sanity Media Library 2-Way Asset Vault
+																			({assetCount})
+																		</h4>
+																		<button
+																			type="button"
+																			onClick={() =>
+																				handleCopy(
+																					vaultUrl,
+																					`vault-inner-${lead._id}`,
+																				)
+																			}
+																			style={btnStyle}
+																		>
+																			{copiedId === `vault-inner-${lead._id}`
+																				? "✓ Copied #vault Link"
+																				: "Copy Partner Dropzone URL"}
+																		</button>
+																	</div>
+
+																	{assetCount === 0 ? (
+																		<p
+																			style={{
+																				margin: "0 0 10px",
+																				fontSize: 12,
+																				color: "#6b7280",
+																			}}
+																		>
+																			No shared assets yet. Share{" "}
+																			<code>{vaultUrl}</code> with the partner
+																			or drop a link below.
+																		</p>
+																	) : (
+																		<ul
+																			style={{
+																				margin: "0 0 10px",
+																				paddingLeft: 18,
+																				fontSize: 12,
+																				lineHeight: 1.6,
+																			}}
+																		>
+																			{(lead.sharedAssets || []).map(
+																				(a, idx) => (
+																					<li key={a._key || idx}>
+																						<strong>{a.title}</strong> (
+																						{a.uploadedBy || "partner"} ·{" "}
+																						{a.source === "passionfroot"
+																							? "🌱 PF"
+																							: "⚡ Direct"}
+																						)
+																						{(a.externalUrl || a.fileUrl) && (
+																							<>
+																								{" "}
+																								·{" "}
+																								<a
+																									href={
+																										a.externalUrl || a.fileUrl
+																									}
+																									target="_blank"
+																									rel="noreferrer"
+																									style={{ color: "#2563eb" }}
+																								>
+																									Open Asset ↗
+																								</a>
+																							</>
+																						)}
+																					</li>
+																				),
+																			)}
+																		</ul>
+																	)}
+
+																	<div
+																		style={{
+																			display: "flex",
+																			gap: 6,
+																			flexWrap: "wrap",
+																		}}
+																	>
+																		<input
+																			value={vaultTitleInput[lead._id] || ""}
+																			onChange={(e) =>
+																				setVaultTitleInput((prev) => ({
+																					...prev,
+																					[lead._id]: e.target.value,
+																				}))
+																			}
+																			placeholder="Asset label (e.g. Draft Cut, Thumbnail)"
+																			style={{
+																				flex: 1,
+																				minWidth: 140,
+																				padding: "6px 8px",
+																				borderRadius: 6,
+																				border: "1px solid #d1d5db",
+																				fontSize: 12,
+																			}}
+																		/>
+																		<input
+																			value={vaultUrlInput[lead._id] || ""}
+																			onChange={(e) =>
+																				setVaultUrlInput((prev) => ({
+																					...prev,
+																					[lead._id]: e.target.value,
+																				}))
+																			}
+																			placeholder="https://... (Sanity CDN, Frame.io, Docs)"
+																			style={{
+																				flex: 1,
+																				minWidth: 160,
+																				padding: "6px 8px",
+																				borderRadius: 6,
+																				border: "1px solid #d1d5db",
+																				fontSize: 12,
+																			}}
+																		/>
+																		<button
+																			type="button"
+																			disabled={
+																				busyActionId === `${lead._id}:vault`
+																			}
+																			onClick={() =>
+																				handleAddSharedAssetLink(
+																					lead._id,
+																					token,
+																					isPf ? "passionfroot" : "direct",
+																				)
+																			}
+																			style={btnStyle}
+																		>
+																			+ Add to Vault
+																		</button>
+																	</div>
+																</div>
+															</div>
+														</td>
+													</tr>
+												)}
+											</>
 										);
 									})}
 								</tbody>
@@ -1172,16 +2020,35 @@ export function App() {
 						>
 							<div>
 								<h2 style={{ margin: 0, fontSize: 18 }}>
-									Podcast &amp; Sponsor Calendar Bookings ({bookings.length})
+									Podcast &amp; Sponsor Calendar Bookings (
+									{filteredBookings.length} / {bookings.length})
 								</h2>
 								<p style={{ margin: "4px 0 0", color: "#4b5563", fontSize: 13 }}>
-									Bookings submitted via <code>codingcat.dev/book</code> and
-									synced with Google Calendar &amp; Google Tasks. Click{" "}
-									<strong>Topics &amp; E-SIGN</strong> to inspect talking points
-									and digital signatures.
+									All placeholders hard-block{" "}
+									<code>alex@codingcat.dev</code> as <strong>Busy</strong> so
+									nothing jumps the slot. Click{" "}
+									<strong>✓ Approve &amp; Send StreamYard</strong> to unlock{" "}
+									<code>https://streamyard.com/c4kv26is93</code>, or request a{" "}
+									<strong>15m Google Meet Pre-Meeting</strong>.
 								</p>
 							</div>
-							<div style={{ display: "flex", gap: 8 }}>
+							<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+								<button
+									type="button"
+									onClick={handleSyncPassionfroot}
+									disabled={syncingPassionfroot}
+									style={{
+										...btnStyle,
+										background: "#ecfdf5",
+										borderColor: "#10b981",
+										color: "#065f46",
+										fontWeight: 700,
+									}}
+								>
+									{syncingPassionfroot
+										? "🌱 Syncing..."
+										: "🌱 Sync Passionfroot Placements"}
+								</button>
 								<a
 									href={`${siteOrigin}/book`}
 									target="_blank"
@@ -1201,6 +2068,45 @@ export function App() {
 							</div>
 						</div>
 
+						<div
+							style={{
+								display: "flex",
+								gap: 8,
+								flexWrap: "wrap",
+								marginBottom: 16,
+							}}
+						>
+							{(
+								[
+									{ id: "all", label: `All Bookings (${bookings.length})` },
+									{
+										id: "direct",
+										label: `⚡ Direct Book (${bookings.filter((b) => b.bookingSource !== "passionfroot" && !b.passionfrootCollaborationId).length})`,
+									},
+									{
+										id: "passionfroot",
+										label: `🌱 Passionfroot Placements (${bookings.filter((b) => b.bookingSource === "passionfroot" || Boolean(b.passionfrootCollaborationId)).length})`,
+									},
+								] as const
+							).map((f) => (
+								<button
+									key={f.id}
+									type="button"
+									onClick={() => setBookingSourceFilter(f.id)}
+									style={{
+										...btnStyle,
+										background:
+											bookingSourceFilter === f.id ? "#111827" : "#f9fafb",
+										color: bookingSourceFilter === f.id ? "#fff" : "#374151",
+										borderColor:
+											bookingSourceFilter === f.id ? "#111827" : "#d1d5db",
+									}}
+								>
+									{f.label}
+								</button>
+							))}
+						</div>
+
 						<div style={{ overflowX: "auto" }}>
 							<table
 								style={{
@@ -1217,17 +2123,34 @@ export function App() {
 											color: "#374151",
 										}}
 									>
-										<th style={{ padding: "10px 8px" }}>Recording Slot</th>
-										<th style={{ padding: "10px 8px" }}>Guest &amp; Company</th>
+										<th style={{ padding: "10px 8px" }}>
+											Slot &amp; Pre-Meeting
+										</th>
+										<th style={{ padding: "10px 8px" }}>
+											Guest, Company &amp; Source
+										</th>
 										<th style={{ padding: "10px 8px" }}>Track</th>
-										<th style={{ padding: "10px 8px" }}>E-SIGN Release</th>
+										<th style={{ padding: "10px 8px" }}>E-SIGN &amp; Studio</th>
 										<th style={{ padding: "10px 8px" }}>Status (Editable)</th>
 										<th style={{ padding: "10px 8px" }}>Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-									{bookings.map((b) => {
+									{filteredBookings.map((b) => {
 										const isExpanded = expandedBookingId === b._id;
+										const isPf =
+											b.bookingSource === "passionfroot" ||
+											Boolean(b.passionfrootCollaborationId);
+										const isApproved =
+											b.status === "approved" ||
+											b.status === "scheduled" ||
+											b.status === "recorded" ||
+											b.status === "published";
+										const token =
+											b.portalToken || b._id.replace(/^booking-/, "");
+										const portalUrl = `${siteOrigin}/portal/${token}`;
+										const vaultUrl = `${portalUrl}#vault`;
+										const assetCount = b.sharedAssets?.length || 0;
 										const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(b.guestEmail)}&su=${encodeURIComponent(`CodingCat.dev Podcast: ${b.guestName} (${b.company || "Recording"})`)}`;
 
 										return (
@@ -1243,10 +2166,87 @@ export function App() {
 															fontWeight: 600,
 														}}
 													>
-														{formatDateTime(b.slotStartAt || b._createdAt)}
+														<div>
+															{formatDateTime(b.slotStartAt || b._createdAt)}
+														</div>
+														<div
+															style={{
+																display: "flex",
+																gap: 4,
+																flexWrap: "wrap",
+																marginTop: 4,
+															}}
+														>
+															<span
+																style={{
+																	padding: "2px 6px",
+																	borderRadius: 999,
+																	fontSize: 10,
+																	fontWeight: 700,
+																	background:
+																		b.sessionType === "pre_meeting"
+																			? "#dbeafe"
+																			: "#f3f4f6",
+																	color:
+																		b.sessionType === "pre_meeting"
+																			? "#1d4ed8"
+																			: "#374151",
+																}}
+															>
+																{b.sessionType === "pre_meeting"
+																	? "📅 15m Google Meet Pre-Call"
+																	: "🎙️ 60m StreamYard Hold"}
+															</span>
+															{b.preMeetingStatus &&
+																b.preMeetingStatus !== "none" && (
+																	<span
+																		style={{
+																			padding: "2px 6px",
+																			borderRadius: 999,
+																			fontSize: 10,
+																			fontWeight: 700,
+																			background:
+																				b.preMeetingStatus === "scheduled" ||
+																				b.preMeetingStatus === "completed"
+																					? "#dcfce7"
+																					: "#fef3c7",
+																			color:
+																				b.preMeetingStatus === "scheduled" ||
+																				b.preMeetingStatus === "completed"
+																					? "#065f46"
+																					: "#92400e",
+																		}}
+																	>
+																		Pre-Meet: {b.preMeetingStatus}
+																	</span>
+																)}
+														</div>
 													</td>
 													<td style={{ padding: "10px 8px" }}>
-														<div style={{ fontWeight: 700 }}>{b.guestName}</div>
+														<div
+															style={{
+																display: "flex",
+																alignItems: "center",
+																gap: 6,
+																flexWrap: "wrap",
+															}}
+														>
+															<span style={{ fontWeight: 700 }}>
+																{b.guestName}
+															</span>
+															<span
+																style={{
+																	padding: "2px 7px",
+																	borderRadius: 999,
+																	fontSize: 10,
+																	fontWeight: 700,
+																	background: isPf ? "#dcfce7" : "#ede9fe",
+																	color: isPf ? "#065f46" : "#5b21b6",
+																}}
+															>
+																{isPf ? "🌱 Passionfroot" : "⚡ Direct Book"}
+															</span>
+														</div>
 														<div style={{ fontSize: 12, color: "#4b5563" }}>
 															{b.company || "Independent"} ·{" "}
 															<a
@@ -1293,21 +2293,65 @@ export function App() {
 														</span>
 													</td>
 													<td style={{ padding: "10px 8px" }}>
-														{b.signatureData ? (
-															<span
-																style={{
-																	color: "#059669",
-																	fontWeight: 600,
-																	fontSize: 12,
-																}}
-															>
-																✓ Signed ({b.signatureMode || "type"})
-															</span>
-														) : (
-															<span style={{ color: "#9ca3af", fontSize: 12 }}>
-																Unsigned
-															</span>
-														)}
+														<div>
+															{b.signatureData ? (
+																<span
+																	style={{
+																		color: "#059669",
+																		fontWeight: 600,
+																		fontSize: 12,
+																	}}
+																>
+																	✓ Signed ({b.signatureMode || "type"})
+																</span>
+															) : (
+																<span
+																	style={{ color: "#9ca3af", fontSize: 12 }}
+																>
+																	Unsigned
+																</span>
+															)}
+														</div>
+														<div style={{ marginTop: 4, fontSize: 11 }}>
+															{isApproved ? (
+																<a
+																	href={
+																		b.recordingUrl ||
+																		"https://streamyard.com/c4kv26is93"
+																	}
+																	target="_blank"
+																	rel="noreferrer"
+																	style={{
+																		color: "#059669",
+																		fontWeight: 700,
+																		textDecoration: "none",
+																	}}
+																>
+																	🎙️ StreamYard Unlocked ↗
+																</a>
+															) : (
+																<span style={{ color: "#d97706" }}>
+																	🔒 StreamYard Withheld
+																</span>
+															)}
+															{b.preMeetingMeetUrl && (
+																<>
+																	{" · "}
+																	<a
+																		href={b.preMeetingMeetUrl}
+																		target="_blank"
+																		rel="noreferrer"
+																		style={{
+																			color: "#2563eb",
+																			fontWeight: 700,
+																			textDecoration: "none",
+																		}}
+																	>
+																		Google Meet ↗
+																	</a>
+																</>
+															)}
+														</div>
 													</td>
 													<td style={{ padding: "10px 8px" }}>
 														<select
@@ -1348,6 +2392,71 @@ export function App() {
 																flexWrap: "wrap",
 															}}
 														>
+															{!isApproved && (
+																<button
+																	type="button"
+																	disabled={
+																		busyActionId ===
+																		`${b._id}:approve_recording`
+																	}
+																	onClick={() =>
+																		handleBookingManage(
+																			b._id,
+																			"approve_recording",
+																		)
+																	}
+																	style={{
+																		...btnStyle,
+																		background: "#059669",
+																		borderColor: "#059669",
+																		color: "#fff",
+																	}}
+																	title="Approve recording hold on Google Calendar and send StreamYard link (https://streamyard.com/c4kv26is93) to guest"
+																>
+																	{busyActionId ===
+																	`${b._id}:approve_recording`
+																		? "Approving..."
+																		: "✓ Approve & Send StreamYard"}
+																</button>
+															)}
+															{b.preMeetingStatus !== "requested" &&
+																b.preMeetingStatus !== "scheduled" && (
+																	<button
+																		type="button"
+																		disabled={
+																			busyActionId ===
+																			`${b._id}:request_pre_meeting`
+																		}
+																		onClick={() =>
+																			handleBookingManage(
+																				b._id,
+																				"request_pre_meeting",
+																			)
+																		}
+																		style={btnStyle}
+																		title="Request a 15-minute Google Meet pre-meeting with this guest"
+																	>
+																		📅 Request 15m Pre-Call
+																	</button>
+																)}
+															{b.preMeetingStatus === "requested" && (
+																<button
+																	type="button"
+																	disabled={
+																		busyActionId ===
+																		`${b._id}:bypass_pre_meeting`
+																	}
+																	onClick={() =>
+																		handleBookingManage(
+																			b._id,
+																			"bypass_pre_meeting",
+																		)
+																	}
+																	style={btnStyle}
+																>
+																	Skip Pre-Call
+																</button>
+															)}
 															<button
 																type="button"
 																onClick={() =>
@@ -1359,8 +2468,17 @@ export function App() {
 															>
 																{isExpanded
 																	? "Hide Details"
-																	: "Topics & E-SIGN"}
+																	: `Topics, E-SIGN & Vault (${assetCount})`}
 															</button>
+															<a
+																href={vaultUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={btnStyle}
+																title="Open guest portal and Sanity Media Library Asset Vault"
+															>
+																Portal &amp; Vault ↗
+															</a>
 															{b.appointmentScheduleUrl && (
 																<a
 																	href={b.appointmentScheduleUrl}
@@ -1403,7 +2521,7 @@ export function App() {
 																style={{
 																	display: "grid",
 																	gridTemplateColumns:
-																		"repeat(auto-fit, minmax(300px, 1fr))",
+																		"repeat(auto-fit, minmax(280px, 1fr))",
 																	gap: 16,
 																}}
 															>
@@ -1432,6 +2550,49 @@ export function App() {
 																	>
 																		{b.topics || "No talking points provided."}
 																	</pre>
+																	<div
+																		style={{
+																			marginTop: 10,
+																			padding: 10,
+																			borderRadius: 8,
+																			background: "#fff",
+																			border: "1px solid #e5e7eb",
+																			fontSize: 12,
+																		}}
+																	>
+																		<div>
+																			<strong>StreamYard Studio:</strong>{" "}
+																			<a
+																				href={
+																					b.recordingUrl ||
+																					"https://streamyard.com/c4kv26is93"
+																				}
+																				target="_blank"
+																				rel="noreferrer"
+																				style={{ color: "#2563eb" }}
+																			>
+																				{b.recordingUrl ||
+																					"https://streamyard.com/c4kv26is93"}{" "}
+																				↗
+																			</a>
+																		</div>
+																		{b.preMeetingMeetUrl && (
+																			<div style={{ marginTop: 4 }}>
+																				<strong>
+																					15m Google Meet Pre-Call:
+																				</strong>{" "}
+																				<a
+																					href={b.preMeetingMeetUrl}
+																					target="_blank"
+																					rel="noreferrer"
+																					style={{ color: "#059669" }}
+																				>
+																					{b.preMeetingMeetUrl} ↗
+																				</a>{" "}
+																				({formatDateTime(b.preMeetingSlotStartAt)})
+																			</div>
+																		)}
+																	</div>
 																</div>
 																<div>
 																	<h4
@@ -1482,6 +2643,151 @@ export function App() {
 																		</div>
 																	)}
 																</div>
+																<div
+																	style={{
+																		background: "#fff",
+																		padding: 12,
+																		borderRadius: 8,
+																		border: "1px solid #e5e7eb",
+																	}}
+																>
+																	<div
+																		style={{
+																			display: "flex",
+																			justifyContent: "space-between",
+																			alignItems: "center",
+																			marginBottom: 8,
+																		}}
+																	>
+																		<h4
+																			style={{
+																				margin: 0,
+																				fontSize: 13,
+																				color: "#111827",
+																			}}
+																		>
+																			📁 Sanity Media Library Vault ({assetCount}
+																			)
+																		</h4>
+																		<button
+																			type="button"
+																			onClick={() =>
+																				handleCopy(
+																					vaultUrl,
+																					`book-vault-${b._id}`,
+																				)
+																			}
+																			style={btnStyle}
+																		>
+																			{copiedId === `book-vault-${b._id}`
+																				? "✓ Copied"
+																				: "Copy #vault URL"}
+																		</button>
+																	</div>
+																	{assetCount === 0 ? (
+																		<p
+																			style={{
+																				margin: "0 0 8px",
+																				fontSize: 12,
+																				color: "#6b7280",
+																			}}
+																		>
+																			Guest can drop headshots, slides, or B-roll
+																			at <code>{vaultUrl}</code>.
+																		</p>
+																	) : (
+																		<ul
+																			style={{
+																				margin: "0 0 8px",
+																				paddingLeft: 18,
+																				fontSize: 12,
+																				lineHeight: 1.6,
+																			}}
+																		>
+																			{(b.sharedAssets || []).map((a, idx) => (
+																				<li key={a._key || idx}>
+																					<strong>{a.title}</strong> (
+																					{a.uploadedBy || "partner"})
+																					{(a.externalUrl || a.fileUrl) && (
+																						<>
+																							{" · "}
+																							<a
+																								href={
+																									a.externalUrl || a.fileUrl
+																								}
+																								target="_blank"
+																								rel="noreferrer"
+																								style={{ color: "#2563eb" }}
+																							>
+																								Open ↗
+																							</a>
+																						</>
+																					)}
+																				</li>
+																			))}
+																		</ul>
+																	)}
+																	<div
+																		style={{
+																			display: "flex",
+																			gap: 6,
+																			flexWrap: "wrap",
+																		}}
+																	>
+																		<input
+																			value={vaultTitleInput[b._id] || ""}
+																			onChange={(e) =>
+																				setVaultTitleInput((prev) => ({
+																					...prev,
+																					[b._id]: e.target.value,
+																				}))
+																			}
+																			placeholder="Asset title..."
+																			style={{
+																				flex: 1,
+																				minWidth: 110,
+																				padding: "5px 8px",
+																				borderRadius: 6,
+																				border: "1px solid #d1d5db",
+																				fontSize: 12,
+																			}}
+																		/>
+																		<input
+																			value={vaultUrlInput[b._id] || ""}
+																			onChange={(e) =>
+																				setVaultUrlInput((prev) => ({
+																					...prev,
+																					[b._id]: e.target.value,
+																				}))
+																			}
+																			placeholder="https://..."
+																			style={{
+																				flex: 1,
+																				minWidth: 130,
+																				padding: "5px 8px",
+																				borderRadius: 6,
+																				border: "1px solid #d1d5db",
+																				fontSize: 12,
+																			}}
+																		/>
+																		<button
+																			type="button"
+																			disabled={
+																				busyActionId === `${b._id}:vault`
+																			}
+																			onClick={() =>
+																				handleAddSharedAssetLink(
+																					b._id,
+																					token,
+																					isPf ? "passionfroot" : "direct",
+																				)
+																			}
+																			style={btnStyle}
+																		>
+																			+ Add
+																		</button>
+																	</div>
+																</div>
 															</div>
 														</td>
 													</tr>
@@ -1508,13 +2814,16 @@ export function App() {
 						}}
 					>
 						<h2 style={{ marginTop: 0, fontSize: 18 }}>
-							Sponsor Deal Rooms &amp; 50/50 Milestone Billing ({leads.length})
+							Sponsor Deal Rooms, Passionfroot Billing &amp; 50/50 Milestone
+							Billing ({filteredLeads.length} / {leads.length})
 						</h2>
 						<p style={{ color: "#4b5563", fontSize: 13, marginBottom: 16 }}>
 							Every Sponsor Deal Room at{" "}
 							<code>{siteOrigin}/portal/[token]</code> includes live Google
-							Calendar kickoff/recording booking, 50% upfront deposit checkout,
-							Net-15 corporate invoices, and deliverable ROI tracking.
+							Calendar kickoff/recording booking, Sanity Media Library 2-Way
+							Asset Vault (<code>#vault</code>), and either{" "}
+							<strong>⚡ Direct 50/50 Stripe Milestone Billing</strong> or{" "}
+							<strong>🌱 Passionfroot Managed Billing</strong>.
 						</p>
 
 						<div style={{ overflowX: "auto" }}>
@@ -1533,19 +2842,30 @@ export function App() {
 											color: "#374151",
 										}}
 									>
-										<th style={{ padding: "10px 8px" }}>Company</th>
+										<th style={{ padding: "10px 8px" }}>
+											Company &amp; Billing Provider
+										</th>
 										<th style={{ padding: "10px 8px" }}>Deal Room Token</th>
-										<th style={{ padding: "10px 8px" }}>50% Upfront Deposit</th>
-										<th style={{ padding: "10px 8px" }}>50% Publish Balance</th>
+										<th style={{ padding: "10px 8px" }}>
+											50% Upfront Deposit / PF Gross
+										</th>
+										<th style={{ padding: "10px 8px" }}>
+											50% Publish Balance / PF Net Payout
+										</th>
 										<th style={{ padding: "10px 8px" }}>Billing Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-									{leads.map((lead) => {
+									{filteredLeads.map((lead) => {
 										const token =
 											lead.portalToken ||
 											lead._id.replace(/^sponsorLead-/, "");
 										const portalUrl = `${siteOrigin}/portal/${token}`;
+										const vaultUrl = `${portalUrl}#vault`;
+										const isPf =
+											lead.source === "passionfroot" ||
+											lead.billingProvider === "passionfroot" ||
+											Boolean(lead.passionfrootCollaborationId);
 										const isDepositPaid =
 											Boolean(lead.depositPaidAt) ||
 											lead.status === "deposit_paid" ||
@@ -1562,41 +2882,95 @@ export function App() {
 													style={{ borderBottom: "1px solid #f3f4f6" }}
 												>
 													<td style={{ padding: "10px 8px", fontWeight: 700 }}>
-														{lead.companyName}
+														<div>{lead.companyName}</div>
 														<div
 															style={{
-																fontSize: 11,
-																color: "#6b7280",
-																fontWeight: 400,
+																display: "flex",
+																gap: 6,
+																alignItems: "center",
+																marginTop: 4,
 															}}
 														>
-															{lead.contactEmail}
+															<span
+																style={{
+																	padding: "2px 7px",
+																	borderRadius: 999,
+																	fontSize: 10,
+																	fontWeight: 700,
+																	background: isPf ? "#dcfce7" : "#ede9fe",
+																	color: isPf ? "#065f46" : "#5b21b6",
+																}}
+															>
+																{isPf
+																	? "🌱 Passionfroot Escrow"
+																	: "⚡ Direct Stripe 50/50"}
+															</span>
+															<span
+																style={{
+																	fontSize: 11,
+																	color: "#6b7280",
+																	fontWeight: 400,
+																}}
+															>
+																{lead.contactEmail}
+															</span>
 														</div>
 													</td>
 													<td style={{ padding: "10px 8px" }}>
 														<code>{token}</code>
 													</td>
 													<td style={{ padding: "10px 8px" }}>
-														<span
-															style={{
-																fontWeight: 700,
-																color: isDepositPaid ? "#059669" : "#d97706",
-															}}
-														>
-															{formatUsd(lead.depositAmountCents)} ·{" "}
-															{isDepositPaid ? "✓ PAID" : "Pending"}
-														</span>
+														{isPf ? (
+															<span
+																style={{
+																	fontWeight: 700,
+																	color: "#374151",
+																}}
+															>
+																Gross:{" "}
+																{formatUsd(
+																	lead.passionfrootGrossBudgetCents ||
+																		lead.totalAmountCents,
+																)}{" "}
+																· <code>{lead.passionfrootStatus || "PF"}</code>
+															</span>
+														) : (
+															<span
+																style={{
+																	fontWeight: 700,
+																	color: isDepositPaid ? "#059669" : "#d97706",
+																}}
+															>
+																{formatUsd(lead.depositAmountCents)} ·{" "}
+																{isDepositPaid ? "✓ PAID" : "Pending"}
+															</span>
+														)}
 													</td>
 													<td style={{ padding: "10px 8px" }}>
-														<span
-															style={{
-																fontWeight: 700,
-																color: isBalancePaid ? "#059669" : "#6b7280",
-															}}
-														>
-															{formatUsd(lead.balanceAmountCents)} ·{" "}
-															{isBalancePaid ? "✓ PAID" : "Due on Publish"}
-														</span>
+														{isPf ? (
+															<span
+																style={{
+																	fontWeight: 700,
+																	color: "#059669",
+																}}
+															>
+																Net Payout:{" "}
+																{formatUsd(
+																	lead.passionfrootNetEarningsCents ||
+																		lead.totalAmountCents,
+																)}
+															</span>
+														) : (
+															<span
+																style={{
+																	fontWeight: 700,
+																	color: isBalancePaid ? "#059669" : "#6b7280",
+																}}
+															>
+																{formatUsd(lead.balanceAmountCents)} ·{" "}
+																{isBalancePaid ? "✓ PAID" : "Due on Publish"}
+															</span>
+														)}
 													</td>
 													<td style={{ padding: "10px 8px" }}>
 														<div
@@ -1617,15 +2991,15 @@ export function App() {
 															<button
 																type="button"
 																onClick={() =>
-																	handleCopy(portalUrl, `billing-${lead._id}`)
+																	handleCopy(vaultUrl, `billing-${lead._id}`)
 																}
 																style={btnStyle}
 															>
 																{copiedId === `billing-${lead._id}`
-																	? "✓ Copied"
-																	: "Copy Portal URL"}
+																	? "✓ Copied #vault"
+																	: "Copy #vault URL"}
 															</button>
-															{!isDepositPaid && (
+															{!isPf && !isDepositPaid && (
 																<button
 																	type="button"
 																	onClick={() =>
@@ -1639,7 +3013,7 @@ export function App() {
 																	Mark 50% Deposit Paid
 																</button>
 															)}
-															{isDepositPaid && !isBalancePaid && (
+															{!isPf && isDepositPaid && !isBalancePaid && (
 																<button
 																	type="button"
 																	onClick={() =>
@@ -1660,8 +3034,8 @@ export function App() {
 																style={btnStyle}
 															>
 																{isExpanded
-																	? "Hide Deliverables"
-																	: `Deliverables (${lead.deliverables?.length || 0})`}
+																	? "Hide Deliverables & Vault"
+																	: `Deliverables (${lead.deliverables?.length || 0}) & Vault (${lead.sharedAssets?.length || 0})`}
 															</button>
 														</div>
 													</td>
@@ -1677,42 +3051,98 @@ export function App() {
 														<td colSpan={5} style={{ padding: 14 }}>
 															<div
 																style={{
-																	fontSize: 12,
-																	fontWeight: 700,
-																	marginBottom: 8,
+																	display: "grid",
+																	gridTemplateColumns:
+																		"repeat(auto-fit, minmax(280px, 1fr))",
+																	gap: 16,
 																}}
 															>
-																Campaign Deliverables for {lead.companyName}:
+																<div>
+																	<div
+																		style={{
+																			fontSize: 12,
+																			fontWeight: 700,
+																			marginBottom: 8,
+																		}}
+																	>
+																		Campaign Deliverables for{" "}
+																		{lead.companyName}:
+																	</div>
+																	<ul
+																		style={{
+																			margin: 0,
+																			paddingLeft: 18,
+																			fontSize: 12,
+																			lineHeight: 1.7,
+																		}}
+																	>
+																		{(lead.deliverables || []).map((d, idx) => (
+																			<li key={d._key || idx}>
+																				<strong>{d.title}</strong> ({d.channel})
+																				: <code>{d.status}</code>
+																				{d.url && (
+																					<>
+																						{" "}
+																						·{" "}
+																						<a
+																							href={d.url}
+																							target="_blank"
+																							rel="noreferrer"
+																							style={{ color: "#2563eb" }}
+																						>
+																							{d.url} ↗
+																						</a>
+																					</>
+																				)}
+																			</li>
+																		))}
+																	</ul>
+																</div>
+																<div>
+																	<div
+																		style={{
+																			fontSize: 12,
+																			fontWeight: 700,
+																			marginBottom: 8,
+																		}}
+																	>
+																		📁 Sanity Media Library Vault (
+																		{lead.sharedAssets?.length || 0}):
+																	</div>
+																	<ul
+																		style={{
+																			margin: 0,
+																			paddingLeft: 18,
+																			fontSize: 12,
+																			lineHeight: 1.7,
+																		}}
+																	>
+																		{(lead.sharedAssets || []).map((a, idx) => (
+																			<li key={a._key || idx}>
+																				<strong>{a.title}</strong> (
+																				{a.uploadedBy || "partner"} ·{" "}
+																				{a.source === "passionfroot"
+																					? "🌱 PF"
+																					: "⚡ Direct"}
+																				)
+																				{(a.externalUrl || a.fileUrl) && (
+																					<>
+																						{" · "}
+																						<a
+																							href={a.externalUrl || a.fileUrl}
+																							target="_blank"
+																							rel="noreferrer"
+																							style={{ color: "#2563eb" }}
+																						>
+																							Open Asset ↗
+																						</a>
+																					</>
+																				)}
+																			</li>
+																		))}
+																	</ul>
+																</div>
 															</div>
-															<ul
-																style={{
-																	margin: 0,
-																	paddingLeft: 18,
-																	fontSize: 12,
-																	lineHeight: 1.7,
-																}}
-															>
-																{(lead.deliverables || []).map((d, idx) => (
-																	<li key={d._key || idx}>
-																		<strong>{d.title}</strong> ({d.channel}) :{" "}
-																		<code>{d.status}</code>
-																		{d.url && (
-																			<>
-																				{" "}
-																				·{" "}
-																				<a
-																					href={d.url}
-																					target="_blank"
-																					rel="noreferrer"
-																					style={{ color: "#2563eb" }}
-																				>
-																					{d.url} ↗
-																				</a>
-																			</>
-																		)}
-																	</li>
-																))}
-															</ul>
 														</td>
 													</tr>
 												)}

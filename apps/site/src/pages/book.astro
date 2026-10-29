@@ -10,16 +10,28 @@ const initialTrack =
 		? "sponsored"
 		: searchParams.get("track") === "full-stack-launch"
 			? "full-stack-launch"
-			: "editorial";
+			: searchParams.get("track") === "sponsor-kickoff"
+				? "sponsor-kickoff"
+				: "editorial";
 const initialCompany = searchParams.get("company") || "";
 const initialName = searchParams.get("name") || "";
 const initialEmail = searchParams.get("email") || "";
 const initialPortalToken = searchParams.get("portalToken") || "";
 const initialSlotParam = searchParams.get("slot") || "";
 const initialStartDate = searchParams.get("startDate") || undefined;
+const initialPreMeetingFor = searchParams.get("preMeetingFor") || "";
 
-const { slots: upcomingSlots, liveVerified } =
-	await getMultiCalendarAvailableSlots(9, 45, initialStartDate);
+const [
+	{ slots: upcomingSlots, liveVerified },
+	{ slots: preMeetingSlots },
+] = await Promise.all([
+	getMultiCalendarAvailableSlots(
+		9,
+		initialTrack === "sponsor-kickoff" ? 15 : 45,
+		initialStartDate,
+	),
+	getMultiCalendarAvailableSlots(6, 15, initialStartDate),
+]);
 
 const title = "Book a Podcast and Showcase Session | CodingCat.dev";
 const description =
@@ -268,6 +280,49 @@ const description =
 						))
 					}
 				</div>
+
+				<!-- Hybrid Pre-Meeting Toggle (15-min Google Meet) -->
+				<div class="mt-2 rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-3">
+					<label class="flex items-start gap-2.5 cursor-pointer">
+						<input
+							type="checkbox"
+							id="chk-request-pre-meeting"
+							class="mt-0.5 rounded border-border text-primary focus:ring-primary"
+						/>
+						<div class="flex flex-col gap-0.5">
+							<span class="text-xs font-bold text-foreground">
+								Also add a 15-minute Google Meet Pre-Meeting / Tech Check (Optional)
+							</span>
+							<span class="text-[11px] text-muted-foreground">
+								Pre-meetings automatically generate a Google Meet room on your calendar invite. Your 45-minute recording session uses StreamYard (<code>https://streamyard.com/c4kv26is93</code>) once approved.
+							</span>
+						</div>
+					</label>
+
+					<div id="pre-meeting-slot-container" class="hidden flex-col gap-2 pt-2 border-t border-border/60">
+						<span class="text-xs font-semibold text-foreground">
+							Select 15-Minute Google Meet Pre-Call Slot:
+						</span>
+						<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5" id="pre-meeting-slot-grid">
+							{
+								preMeetingSlots.map((slot, index) => (
+									<button
+										type="button"
+										data-pre-slot-start={slot.startAt}
+										class={`pre-slot-btn p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+											index === 0
+												? "border-primary bg-primary/10 ring-1 ring-primary"
+												: "border-border bg-background hover:border-primary"
+										}`}
+									>
+										<span class="font-semibold text-xs text-foreground">{slot.displayDate}</span>
+										<span class="text-[11px] text-muted-foreground font-mono">{slot.displayTime}</span>
+									</button>
+								))
+							}
+						</div>
+					</div>
+				</div>
 			</section>
 
 			<!-- Step 2: Guest Intake Information -->
@@ -480,10 +535,10 @@ const description =
 					href="/sponsorships"
 					class="hidden px-5 py-3 rounded-xl border border-primary bg-primary/10 text-primary text-sm font-semibold text-center hover:bg-primary/20 transition-colors"
 				>
-					Open Your Sponsor Deal Room &rarr;
+					Open Deal Room &amp; Private Sanity Asset Vault &rarr;
 				</a>
 				<p id="confirmed-calendar-note" class="text-[11px] text-muted-foreground">
-					A calendar hold and E-SIGN receipt have been created for your selected recording window.
+					An opaque calendar hold and E-SIGN receipt have been created for your selected window. Once approved, your StreamYard recording studio link (https://streamyard.com/c4kv26is93) is sent automatically.
 				</p>
 			</div>
 
@@ -513,13 +568,43 @@ const description =
 	</div>
 </BaseLayout>
 
-<script is:inline define:vars={{ initialTrack, initialPortalToken, initialSlotParam }}>
+<script is:inline define:vars={{ initialTrack, initialPortalToken, initialSlotParam, initialPreMeetingFor }}>
 	(function () {
 		let selectedTrack = initialTrack || "editorial";
 		let selectedSlotStart = initialSlotParam || "";
+		let selectedPreMeetingSlotStart = "";
 		let signatureMode = "draw";
 		let hasDrawn = false;
 		let isDrawing = false;
+
+		const chkPreMeeting = document.getElementById("chk-request-pre-meeting");
+		const preMeetingContainer = document.getElementById("pre-meeting-slot-container");
+		const preSlotButtons = document.querySelectorAll(".pre-slot-btn");
+		if (preSlotButtons.length > 0) {
+			selectedPreMeetingSlotStart = preSlotButtons[0].getAttribute("data-pre-slot-start") || "";
+		}
+		preSlotButtons.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				preSlotButtons.forEach((b) => {
+					b.classList.remove("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+					b.classList.add("border-border", "bg-background");
+				});
+				btn.classList.add("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+				btn.classList.remove("border-border", "bg-background");
+				selectedPreMeetingSlotStart = btn.getAttribute("data-pre-slot-start") || "";
+			});
+		});
+		if (chkPreMeeting && preMeetingContainer) {
+			chkPreMeeting.addEventListener("change", () => {
+				if (chkPreMeeting.checked) {
+					preMeetingContainer.classList.remove("hidden");
+					preMeetingContainer.classList.add("flex");
+				} else {
+					preMeetingContainer.classList.add("hidden");
+					preMeetingContainer.classList.remove("flex");
+				}
+			});
+		}
 
 		// Track selection
 		const trackButtons = document.querySelectorAll(".track-btn");
@@ -854,17 +939,21 @@ const description =
 				btnConfirm.textContent = "Saving E-SIGN Release & Booking...";
 
 				try {
+					const wantsPreMeeting = Boolean(chkPreMeeting && chkPreMeeting.checked);
 					const res = await fetch("/api/booking", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
 							portalToken: initialPortalToken || undefined,
+							preMeetingForBookingId: initialPreMeetingFor || undefined,
 							guestName: name,
 							guestEmail: email,
 							company,
 							socialUrl,
 							track: selectedTrack,
 							slotStartAt: selectedSlotStart,
+							requestPreMeeting: wantsPreMeeting,
+							preMeetingSlotStartAt: wantsPreMeeting ? selectedPreMeetingSlotStart : undefined,
 							topics,
 							signatureMode,
 							signatureData,
@@ -922,8 +1011,8 @@ const description =
 							confirmedCalLink.setAttribute("href", calHref);
 						}
 
-						if (data.isSponsored && data.portalUrl && confirmedPortalLink) {
-							confirmedPortalLink.setAttribute("href", data.portalUrl);
+						if (data.portalUrl && confirmedPortalLink) {
+							confirmedPortalLink.setAttribute("href", `${data.portalUrl}#vault`);
 							confirmedPortalLink.classList.remove("hidden");
 						}
 

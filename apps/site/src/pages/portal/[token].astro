@@ -27,12 +27,27 @@ interface DeliverableItem {
 	publishedAt?: string;
 }
 
+interface VaultAssetItem {
+	_key?: string;
+	title: string;
+	category?: string;
+	visibility?: "private" | "public";
+	uploadedBy?: "partner" | "codingcat" | "passionfroot";
+	uploadedAt?: string;
+	assetId?: string;
+	mimeType?: string;
+	fileSize?: number;
+	externalUrl?: string;
+}
+
 interface LeadPortalData {
 	_id: string;
 	portalToken: string;
 	companyName: string;
 	contactName: string;
 	contactEmail: string;
+	source: string;
+	billingProvider: string;
 	status: string;
 	rateCard: string;
 	packageName: string;
@@ -47,6 +62,13 @@ interface LeadPortalData {
 	stripeBalanceCheckoutUrl?: string;
 	stripeBalanceInvoiceUrl?: string;
 	deliverables: DeliverableItem[];
+	sharedAssets: VaultAssetItem[];
+	bookingStatus?: string;
+	bookingSlotStartAt?: string;
+	recordingUrl?: string;
+	preMeetingStatus?: string;
+	preMeetingSlotStartAt?: string;
+	preMeetingMeetUrl?: string;
 }
 
 const fallbackTier = resolveSponsorTier(searchParams.get("tier") || "full-stack-launch");
@@ -62,6 +84,8 @@ let portalData: LeadPortalData = {
 	companyName: fallbackCompany,
 	contactName: fallbackName,
 	contactEmail: fallbackEmail,
+	source: token?.startsWith("spt_pf_") ? "passionfroot" : "booking",
+	billingProvider: token?.startsWith("spt_pf_") ? "passionfroot" : "stripe",
 	status: paymentNotice === "deposit_success" ? "deposit_paid" : "new",
 	rateCard: fallbackTier.id,
 	packageName: fallbackTier.name,
@@ -74,48 +98,88 @@ let portalData: LeadPortalData = {
 		channel: d.channel,
 		status: paymentNotice === "deposit_success" ? "in-progress" : "pending",
 	})),
+	sharedAssets: [],
 };
 
 try {
 	const { client } = getSanityServerClient();
-	const doc = await client.fetch<Record<string, any> | null>(
-		`*[_type == "sponsorLead" && (portalToken == $portalToken || _id == $leadId)][0]`,
-		{ portalToken: token ?? "", leadId: `sponsorLead-${token ?? ""}` },
-	);
-	if (doc) {
-		const tier = resolveSponsorTier(doc.rateCard || fallbackTier.id);
+	const [doc, bookingDoc] = await Promise.all([
+		client.fetch<Record<string, any> | null>(
+			`*[_type == "sponsorLead" && (portalToken == $portalToken || _id == $leadId)][0]`,
+			{ portalToken: token ?? "", leadId: `sponsorLead-${token ?? ""}` },
+		),
+		client.fetch<Record<string, any> | null>(
+			`*[_type == "booking" && portalToken == $portalToken] | order(_createdAt desc)[0]`,
+			{ portalToken: token ?? "" },
+		),
+	]);
+	if (doc || bookingDoc) {
+		const tier = resolveSponsorTier(doc?.rateCard || fallbackTier.id);
+		const combinedAssets = [
+			...(Array.isArray(doc?.sharedAssets) ? doc.sharedAssets : []),
+			...(Array.isArray(bookingDoc?.sharedAssets) ? bookingDoc.sharedAssets : []),
+		];
+		const isPf =
+			doc?.source === "passionfroot" ||
+			doc?.billingProvider === "passionfroot" ||
+			bookingDoc?.bookingSource === "passionfroot" ||
+			Boolean(token?.startsWith("spt_pf_"));
 		portalData = {
-			_id: doc._id,
-			portalToken: doc.portalToken || token || "demo",
-			companyName: doc.companyName || fallbackCompany,
-			contactName: doc.contactName || fallbackName,
-			contactEmail: doc.contactEmail || fallbackEmail,
+			_id: doc?._id || bookingDoc?._id || `sponsorLead-${token}`,
+			portalToken: doc?.portalToken || bookingDoc?.portalToken || token || "demo",
+			companyName:
+				doc?.companyName || bookingDoc?.company || fallbackCompany,
+			contactName:
+				doc?.contactName || bookingDoc?.guestName || fallbackName,
+			contactEmail:
+				doc?.contactEmail || bookingDoc?.guestEmail || fallbackEmail,
+			source: isPf
+				? "passionfroot"
+				: doc?.source || bookingDoc?.track || "booking",
+			billingProvider: isPf ? "passionfroot" : doc?.billingProvider || "stripe",
 			status:
 				paymentNotice === "deposit_success"
 					? "deposit_paid"
 					: paymentNotice === "balance_success"
 						? "paid"
-						: doc.status || "new",
+						: doc?.status || bookingDoc?.status || "new",
 			rateCard: tier.id,
-			packageName: tier.name,
-			packageDescription: tier.description,
-			totalAmountCents: doc.totalAmountCents || tier.totalAmountCents,
-			depositAmountCents: doc.depositAmountCents || tier.depositAmountCents,
-			balanceAmountCents: doc.balanceAmountCents || tier.balanceAmountCents,
-			depositPaidAt: doc.depositPaidAt,
-			balancePaidAt: doc.balancePaidAt,
-			stripeDepositCheckoutUrl: doc.stripeDepositCheckoutUrl,
-			stripeDepositInvoiceUrl: doc.stripeDepositInvoiceUrl,
-			stripeBalanceCheckoutUrl: doc.stripeBalanceCheckoutUrl,
-			stripeBalanceInvoiceUrl: doc.stripeBalanceInvoiceUrl,
+			packageName:
+				!doc && bookingDoc?.track === "editorial"
+					? "Editorial Podcast Session"
+					: tier.name,
+			packageDescription:
+				!doc && bookingDoc?.track === "editorial"
+					? "45-minute technical deep-dive recording on CodingCat.dev Studio + Sanity Media Library Asset Vault."
+					: tier.description,
+			totalAmountCents:
+				!doc && bookingDoc?.track === "editorial"
+					? 0
+					: doc?.totalAmountCents || tier.totalAmountCents,
+			depositAmountCents: doc?.depositAmountCents || tier.depositAmountCents,
+			balanceAmountCents: doc?.balanceAmountCents || tier.balanceAmountCents,
+			depositPaidAt: doc?.depositPaidAt,
+			balancePaidAt: doc?.balancePaidAt,
+			stripeDepositCheckoutUrl: doc?.stripeDepositCheckoutUrl,
+			stripeDepositInvoiceUrl: doc?.stripeDepositInvoiceUrl,
+			stripeBalanceCheckoutUrl: doc?.stripeBalanceCheckoutUrl,
+			stripeBalanceInvoiceUrl: doc?.stripeBalanceInvoiceUrl,
 			deliverables:
-				Array.isArray(doc.deliverables) && doc.deliverables.length > 0
+				Array.isArray(doc?.deliverables) && doc.deliverables.length > 0
 					? doc.deliverables
 					: tier.deliverables.map((d) => ({
 							title: d.title,
 							channel: d.channel,
 							status: "pending",
 						})),
+			sharedAssets: combinedAssets,
+			bookingStatus: bookingDoc?.status,
+			bookingSlotStartAt: bookingDoc?.slotStartAt,
+			recordingUrl:
+				bookingDoc?.recordingUrl || "https://streamyard.com/c4kv26is93",
+			preMeetingStatus: bookingDoc?.preMeetingStatus,
+			preMeetingSlotStartAt: bookingDoc?.preMeetingSlotStartAt,
+			preMeetingMeetUrl: bookingDoc?.preMeetingMeetUrl,
 		};
 	}
 } catch {
@@ -177,31 +241,120 @@ const isBalancePaid =
 		<!-- Header Banner -->
 		<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl border border-border bg-card shadow-xs">
 			<div class="flex flex-col gap-2">
-				<div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-primary">
-					<span>CodingCat.dev Sponsor Deal Room</span>
+				<div class="flex flex-wrap items-center gap-2 text-xs font-mono uppercase tracking-wider text-primary">
+					<span>CodingCat.dev Studio &amp; Deal Room</span>
 					<span>&middot;</span>
 					<span>Token: {portalData.portalToken}</span>
+					{portalData.source === "passionfroot" ? (
+						<span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 font-bold">
+							🌱 Passionfroot Partner
+						</span>
+					) : (
+						<span class="px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30 font-bold">
+							⚡ Direct Book
+						</span>
+					)}
 				</div>
 				<h1 class="text-2xl md:text-4xl font-bold tracking-tight">
 					{portalData.companyName} &times; CodingCat.dev
 				</h1>
 				<p class="text-sm text-muted-foreground max-w-2xl">
-					{portalData.packageName} &mdash; {portalData.packageDescription}
+					{portalData.packageName}: {portalData.packageDescription}
 				</p>
 			</div>
 
 			<div class="flex flex-col items-start md:items-end gap-1 shrink-0">
 				<span class="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-					Total Campaign Value
+					{portalData.totalAmountCents === 0 ? "Session Track" : "Total Campaign Value"}
 				</span>
 				<span class="text-3xl font-bold text-foreground">
-					{formatUsd(portalData.totalAmountCents)}
+					{portalData.totalAmountCents === 0 ? "Editorial Guest" : formatUsd(portalData.totalAmountCents)}
 				</span>
 				<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
-					50% Deposit ({formatUsd(portalData.depositAmountCents)}) + 50% on Publish
+					{portalData.billingProvider === "passionfroot"
+						? "Billed via Passionfroot Escrow"
+						: portalData.totalAmountCents === 0
+							? "Includes StreamYard Studio & Sanity Asset Vault"
+							: `50% Deposit (${formatUsd(portalData.depositAmountCents)}) + 50% on Publish`}
 				</span>
 			</div>
 		</header>
+
+		<!-- Live Recording Studio & Google Meet Pre-Call Status Strip -->
+		<section class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 rounded-2xl border border-primary/30 bg-primary/5">
+			<div class="flex flex-col justify-between gap-2 p-4 rounded-xl border border-border bg-card">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-mono uppercase tracking-wider text-primary font-bold">
+						🎙️ 45-Min Recording Studio (StreamYard)
+					</span>
+					<span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+						portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed"
+							? "bg-green-500/15 text-green-600 dark:text-green-400"
+							: "bg-amber-500/15 text-amber-600 dark:text-amber-300"
+					}`}>
+						{portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed"
+							? "✓ Approved & Ready"
+							: "⏳ Calendar Hold (Pending Host Approval)"}
+					</span>
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{portalData.bookingSlotStartAt
+						? `Held Window: ${new Date(portalData.bookingSlotStartAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}`
+						: "Select a 45-minute recording window below to block Alex's studio calendar."}
+				</p>
+				{portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed" ? (
+					<a
+						href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold text-center hover:bg-primary/90 transition-colors"
+					>
+						Enter StreamYard Recording Studio (https://streamyard.com/c4kv26is93) &nearr;
+					</a>
+				) : (
+					<span class="text-[11px] font-mono text-muted-foreground">
+						Your StreamYard studio link (<code>https://streamyard.com/c4kv26is93</code>) unlocks automatically as soon as Alex approves the recording hold.
+					</span>
+				)}
+			</div>
+
+			<div class="flex flex-col justify-between gap-2 p-4 rounded-xl border border-border bg-card">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-mono uppercase tracking-wider text-primary font-bold">
+						📹 15-Min Pre-Meeting / Tech Check (Google Meet)
+					</span>
+					<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted text-foreground">
+						{portalData.preMeetingStatus === "scheduled"
+							? "✓ Scheduled"
+							: portalData.preMeetingStatus === "bypassed"
+								? "Bypassed"
+								: "Optional / On-Demand"}
+					</span>
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{portalData.preMeetingSlotStartAt
+						? `Pre-Call: ${new Date(portalData.preMeetingSlotStartAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}`
+						: "Need a quick 15-minute alignment or tech check before recording? Pick a 15-minute slot below to auto-generate a Google Meet room."}
+				</p>
+				{portalData.preMeetingMeetUrl ? (
+					<a
+						href={portalData.preMeetingMeetUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-1 px-4 py-2 rounded-lg border border-primary bg-primary/10 text-primary text-xs font-bold text-center hover:bg-primary/20 transition-colors"
+					>
+						Join 15-Min Google Meet Pre-Call &nearr;
+					</a>
+				) : (
+					<a
+						href="#schedule-section"
+						class="text-xs font-semibold text-primary hover:underline"
+					>
+						Book a 15-Minute Google Meet Pre-Call Below &darr;
+					</a>
+				)}
+			</div>
+		</section>
 
 		<!-- Verified First-Party Telemetry Strip -->
 		<section class="grid grid-cols-1 sm:grid-cols-4 gap-4 p-5 rounded-2xl border border-border bg-card/60">
@@ -234,131 +387,158 @@ const isBalancePaid =
 				<div class="flex flex-col gap-4">
 					<div class="flex items-center justify-between">
 						<h2 class="text-xl font-bold tracking-tight">
-							1. Milestone Billing (50% / 50%)
+							1. Campaign Billing &amp; Status
 						</h2>
 						<span class="text-xs font-mono px-2.5 py-1 rounded bg-muted text-muted-foreground">
-							Stripe Verified
+							{portalData.billingProvider === "passionfroot"
+								? "🌱 Passionfroot Managed"
+								: portalData.totalAmountCents === 0
+									? "Editorial Guest"
+									: "Stripe Verified"}
 						</span>
 					</div>
-					<p class="text-xs text-muted-foreground leading-relaxed">
-						Lock your production and recording window with a 50% upfront deposit via instant card/ACH checkout or a Net-15 corporate invoice. The remaining 50% balance is billed only when your deliverables go live.
-					</p>
 
-					<!-- Milestone 1: 50% Upfront Deposit -->
-					<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
-						<div class="flex items-center justify-between">
-							<div>
-								<span class="text-xs font-semibold uppercase tracking-wider text-primary">
-									Milestone 1 &middot; Upfront Deposit (50%)
-								</span>
-								<h3 class="text-base font-bold text-foreground">
-									Lock Production &amp; Calendar Slot
-								</h3>
-							</div>
-							<span class="text-xl font-bold text-foreground">
-								{formatUsd(portalData.depositAmountCents)}
+					{portalData.billingProvider === "passionfroot" ? (
+						<div class="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex flex-col gap-2">
+							<span class="text-xs font-mono uppercase tracking-wider text-amber-600 dark:text-amber-300 font-bold">
+								🌱 Passionfroot Collaboration Billing
 							</span>
+							<p class="text-xs text-foreground leading-relaxed">
+								Invoicing and payment for this collaboration are managed directly through your Passionfroot workspace. No separate Stripe deposit is required here. Use Step 2 to pick your Google Calendar slot and Step 4 (#vault) to exchange permanent assets.
+							</p>
 						</div>
-
-						{
-							isDepositPaid ? (
-								<div class="text-xs font-semibold text-green-600 dark:text-green-400">
-									✓ 50% Deposit Paid {portalData.depositPaidAt ? `on ${new Date(portalData.depositPaidAt).toLocaleDateString()}` : ""}
-								</div>
-							) : (
-								<div class="flex flex-wrap gap-2 pt-1">
-									{portalData.stripeDepositCheckoutUrl ? (
-										<a
-											href={portalData.stripeDepositCheckoutUrl}
-											class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
-										>
-											Pay {formatUsd(portalData.depositAmountCents)} Deposit Now &rarr;
-										</a>
-									) : (
-										<button
-											type="button"
-											data-milestone="deposit"
-											data-mode="checkout"
-											class="stripe-action-btn px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
-										>
-											Pay {formatUsd(portalData.depositAmountCents)} Deposit (Card / ACH) &rarr;
-										</button>
-									)}
-
-									{portalData.stripeDepositInvoiceUrl ? (
-										<a
-											href={portalData.stripeDepositInvoiceUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors"
-										>
-											View Net-15 Corporate Invoice &nearr;
-										</a>
-									) : (
-										<button
-											type="button"
-											data-milestone="deposit"
-											data-mode="invoice"
-											class="stripe-action-btn px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
-										>
-											Request Net-15 Hosted Invoice
-										</button>
-									)}
-								</div>
-							)
-						}
-					</div>
-
-					<!-- Milestone 2: 50% Final Balance -->
-					<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
-						<div class="flex items-center justify-between">
-							<div>
-								<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-									Milestone 2 &middot; Final Balance on Publish (50%)
-								</span>
-								<h3 class="text-base font-bold text-foreground">
-									Due Upon Campaign Publication
-								</h3>
-							</div>
-							<span class="text-xl font-bold text-foreground">
-								{formatUsd(portalData.balanceAmountCents)}
+					) : portalData.totalAmountCents === 0 ? (
+						<div class="p-4 rounded-xl border border-primary/30 bg-primary/5 flex flex-col gap-2">
+							<span class="text-xs font-mono uppercase tracking-wider text-primary font-bold">
+								🎙️ Editorial Guest Session (No Fee)
 							</span>
+							<p class="text-xs text-foreground leading-relaxed">
+								Editorial podcast appearances are 100% free. Use Step 2 if you need a 15-minute Google Meet pre-call and Step 4 (#vault) below to drop headshots, slides, or demo links into our Sanity Media Library.
+							</p>
 						</div>
+					) : (
+						<>
+							<p class="text-xs text-muted-foreground leading-relaxed">
+								Lock your production and recording window with a 50% upfront deposit via instant card/ACH checkout or a Net-15 corporate invoice. The remaining 50% balance is billed only when your deliverables go live.
+							</p>
 
-						{
-							isBalancePaid ? (
-								<div class="text-xs font-semibold text-green-600 dark:text-green-400">
-									✓ Paid in Full
+							<!-- Milestone 1: 50% Upfront Deposit -->
+							<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
+								<div class="flex items-center justify-between">
+									<div>
+										<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+											Milestone 1 &middot; Upfront Deposit (50%)
+										</span>
+										<h3 class="text-base font-bold text-foreground">
+											Lock Production &amp; Calendar Slot
+										</h3>
+									</div>
+									<span class="text-xl font-bold text-foreground">
+										{formatUsd(portalData.depositAmountCents)}
+									</span>
 								</div>
-							) : (
-								<div class="flex flex-wrap gap-2 pt-1">
-									<button
-										type="button"
-										data-milestone="balance"
-										data-mode="checkout"
-										class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
-									>
-										Pay {formatUsd(portalData.balanceAmountCents)} Balance (Checkout)
-									</button>
-									<button
-										type="button"
-										data-milestone="balance"
-										data-mode="invoice"
-										class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
-									>
-										Generate Net-15 Balance Invoice
-									</button>
-								</div>
-							)
-						}
-					</div>
 
-					<div id="stripe-feedback" class="hidden text-xs p-3 rounded-lg border border-border bg-muted/50"></div>
+								{
+									isDepositPaid ? (
+										<div class="text-xs font-semibold text-green-600 dark:text-green-400">
+											✓ 50% Deposit Paid {portalData.depositPaidAt ? `on ${new Date(portalData.depositPaidAt).toLocaleDateString()}` : ""}
+										</div>
+									) : (
+										<div class="flex flex-wrap gap-2 pt-1">
+											{portalData.stripeDepositCheckoutUrl ? (
+												<a
+													href={portalData.stripeDepositCheckoutUrl}
+													class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+												>
+													Pay {formatUsd(portalData.depositAmountCents)} Deposit Now &rarr;
+												</a>
+											) : (
+												<button
+													type="button"
+													data-milestone="deposit"
+													data-mode="checkout"
+													class="stripe-action-btn px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+												>
+													Pay {formatUsd(portalData.depositAmountCents)} Deposit (Card / ACH) &rarr;
+												</button>
+											)}
+
+											{portalData.stripeDepositInvoiceUrl ? (
+												<a
+													href={portalData.stripeDepositInvoiceUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors"
+												>
+													View Net-15 Corporate Invoice &nearr;
+												</a>
+											) : (
+												<button
+													type="button"
+													data-milestone="deposit"
+													data-mode="invoice"
+													class="stripe-action-btn px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+												>
+													Request Net-15 Hosted Invoice
+												</button>
+											)}
+										</div>
+									)
+								}
+							</div>
+
+							<!-- Milestone 2: 50% Final Balance -->
+							<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
+								<div class="flex items-center justify-between">
+									<div>
+										<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+											Milestone 2 &middot; Final Balance on Publish (50%)
+										</span>
+										<h3 class="text-base font-bold text-foreground">
+											Due Upon Campaign Publication
+										</h3>
+									</div>
+									<span class="text-xl font-bold text-foreground">
+										{formatUsd(portalData.balanceAmountCents)}
+									</span>
+								</div>
+
+								{
+									isBalancePaid ? (
+										<div class="text-xs font-semibold text-green-600 dark:text-green-400">
+											✓ Paid in Full
+										</div>
+									) : (
+										<div class="flex flex-wrap gap-2 pt-1">
+											<button
+												type="button"
+												data-milestone="balance"
+												data-mode="checkout"
+												class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+											>
+												Pay {formatUsd(portalData.balanceAmountCents)} Balance (Checkout)
+											</button>
+											<button
+												type="button"
+												data-milestone="balance"
+												data-mode="invoice"
+												class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+											>
+												Generate Net-15 Balance Invoice
+											</button>
+										</div>
+									)
+								}
+							</div>
+
+							<div id="stripe-feedback" class="hidden text-xs p-3 rounded-lg border border-border bg-muted/50"></div>
+						</>
+					)}
 				</div>
 			</section>
 
 			<!-- Calendar & Kickoff Card -->
-			<section class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
+			<section id="schedule-section" class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
 				<div class="flex flex-col gap-4">
 					<div class="flex items-center justify-between gap-2">
 						<h2 class="text-xl font-bold tracking-tight">
@@ -540,6 +720,160 @@ const isBalancePaid =
 						</div>
 					))
 				}
+			</div>
+		</section>
+
+		<!-- Section 4 (#vault): 2-Way Sanity Media Library Asset Vault -->
+		<section id="vault" class="flex flex-col gap-5 p-6 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+				<div class="flex flex-col gap-1">
+					<div class="flex items-center gap-2">
+						<h2 class="text-xl font-bold tracking-tight">
+							4. Private Sanity Media Library Asset Vault
+						</h2>
+						<span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+							🔒 Token-Gated Exchange
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Drop brand logos (SVG/PNG), talking-point briefs, slide decks, or demo clips directly into our Sanity Media Library. Files marked <strong>Private to Deal Room</strong> are proxied through your unique portal token.
+					</p>
+				</div>
+				<span class="text-xs font-mono px-2.5 py-1 rounded bg-muted text-muted-foreground shrink-0">
+					{portalData.sharedAssets.length} Vault Items
+				</span>
+			</div>
+
+			<!-- Upload Dropzone Form -->
+			<form id="vault-upload-form" class="grid grid-cols-1 md:grid-cols-12 gap-3 p-4 rounded-xl border border-dashed border-primary/40 bg-background">
+				<div class="md:col-span-4 flex flex-col gap-1">
+					<label for="vault-file" class="text-xs font-semibold text-foreground">
+						Upload File (Logo, PDF Brief, Slides, Video)
+					</label>
+					<input
+						type="file"
+						id="vault-file"
+						name="file"
+						class="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs text-foreground file:mr-2 file:rounded file:border-0 file:bg-primary/10 file:px-2 file:py-1 file:text-xs file:font-semibold file:text-primary"
+					/>
+				</div>
+				<div class="md:col-span-3 flex flex-col gap-1">
+					<label for="vault-title" class="text-xs font-semibold text-foreground">
+						Asset Title / Note
+					</label>
+					<input
+						type="text"
+						id="vault-title"
+						name="title"
+						placeholder="e.g. Primary White SVG Logo or Ad Script"
+						class="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+					/>
+				</div>
+				<div class="md:col-span-2 flex flex-col gap-1">
+					<label for="vault-category" class="text-xs font-semibold text-foreground">
+						Category
+					</label>
+					<select
+						id="vault-category"
+						name="category"
+						class="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs text-foreground"
+					>
+						<option value="logo">Brand Logo / SVG</option>
+						<option value="brief">Talking Points / Brief</option>
+						<option value="slides">Slide Deck / Demo</option>
+						<option value="legal">Contract / Legal</option>
+						<option value="media">Raw Audio / Video</option>
+					</select>
+				</div>
+				<div class="md:col-span-3 flex flex-col justify-end gap-1">
+					<label for="vault-visibility" class="text-xs font-semibold text-foreground">
+						Access Level
+					</label>
+					<div class="flex items-center gap-2">
+						<select
+							id="vault-visibility"
+							name="visibility"
+							class="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs text-foreground"
+						>
+							<option value="private">🔒 Private Vault</option>
+							<option value="public">🌐 Public Brand Asset</option>
+						</select>
+						<button
+							type="submit"
+							id="btn-vault-upload"
+							class="px-4 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer shrink-0"
+						>
+							Upload &rarr;
+						</button>
+					</div>
+				</div>
+				<div class="md:col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+					<input
+						type="url"
+						id="vault-external-url"
+						name="externalUrl"
+						placeholder="Or paste an external Figma / Google Doc / Notion / GitHub repo link..."
+						class="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+					/>
+				</div>
+				<div id="vault-upload-feedback" class="hidden md:col-span-12 text-xs p-2.5 rounded-lg border border-border bg-muted/50"></div>
+			</form>
+
+			<!-- Shared Assets List -->
+			<div id="vault-assets-list" class="divide-y divide-border rounded-xl border border-border overflow-hidden">
+				{portalData.sharedAssets.length === 0 ? (
+					<div class="p-5 bg-background text-center text-xs text-muted-foreground">
+						No assets uploaded yet. Drop your brand logos, talking points, or demo slides above to sync them directly to Sanity Media Library.
+					</div>
+				) : (
+					portalData.sharedAssets.map((asset) => (
+						<div class="p-4 bg-background flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+							<div class="flex flex-col gap-1">
+								<div class="flex flex-wrap items-center gap-2">
+									<span class="text-sm font-semibold text-foreground">
+										{asset.title}
+									</span>
+									<span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-muted text-muted-foreground">
+										{asset.category || "brief"}
+									</span>
+									<span class={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
+										asset.uploadedBy === "codingcat"
+											? "bg-purple-500/15 text-purple-600 dark:text-purple-300"
+											: asset.uploadedBy === "passionfroot"
+												? "bg-amber-500/15 text-amber-600 dark:text-amber-300"
+												: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300"
+									}`}>
+										{asset.uploadedBy === "codingcat"
+											? "From CodingCat.dev"
+											: asset.uploadedBy === "passionfroot"
+												? "🌱 Passionfroot Auto-Mirrored"
+												: "Uploaded by Partner"}
+									</span>
+									{asset.visibility !== "public" && (
+										<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-primary/10 text-primary">
+											🔒 Private
+										</span>
+									)}
+								</div>
+								{asset.uploadedAt && (
+									<span class="text-[11px] text-muted-foreground font-mono">
+										Added {new Date(asset.uploadedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}
+									</span>
+								)}
+							</div>
+							{asset.externalUrl && (
+								<a
+									href={asset.externalUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="px-3.5 py-1.5 rounded-lg border border-primary bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors shrink-0"
+								>
+									Open / Download Asset &nearr;
+								</a>
+							)}
+						</div>
+					))
+				)}
 			</div>
 		</section>
 	</div>
@@ -762,4 +1096,101 @@ const isBalancePaid =
 			}
 		});
 	});
+
+	// Sanity Media Library 2-Way Asset Vault Upload Handler
+	const vaultForm = document.getElementById("vault-upload-form");
+	const vaultBtn = document.getElementById("btn-vault-upload");
+	const vaultFeedback = document.getElementById("vault-upload-feedback");
+	if (vaultForm && vaultForm instanceof HTMLFormElement) {
+		vaultForm.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const fileInput = document.getElementById("vault-file");
+			const titleInput = document.getElementById("vault-title");
+			const categorySelect = document.getElementById("vault-category");
+			const visibilitySelect = document.getElementById("vault-visibility");
+			const extUrlInput = document.getElementById("vault-external-url");
+
+			const file =
+				fileInput && fileInput instanceof HTMLInputElement && fileInput.files
+					? fileInput.files[0]
+					: null;
+			const extUrl =
+				extUrlInput && extUrlInput instanceof HTMLInputElement
+					? extUrlInput.value.trim()
+					: "";
+
+			if (!file && !extUrl) {
+				if (vaultFeedback) {
+					vaultFeedback.textContent =
+						"Please choose a file to upload or paste an external link.";
+					vaultFeedback.classList.remove("hidden");
+				}
+				return;
+			}
+
+			if (vaultBtn) {
+				vaultBtn.setAttribute("disabled", "true");
+				vaultBtn.textContent = "Uploading to Sanity...";
+			}
+			if (vaultFeedback) vaultFeedback.classList.add("hidden");
+
+			try {
+				const formData = new FormData();
+				formData.set("token", portalToken);
+				formData.set("docId", leadId);
+				formData.set(
+					"title",
+					titleInput && titleInput instanceof HTMLInputElement
+						? titleInput.value.trim()
+						: "",
+				);
+				formData.set(
+					"category",
+					categorySelect && categorySelect instanceof HTMLSelectElement
+						? categorySelect.value
+						: "brief",
+				);
+				formData.set(
+					"visibility",
+					visibilitySelect && visibilitySelect instanceof HTMLSelectElement
+						? visibilitySelect.value
+						: "private",
+				);
+				formData.set("uploadedBy", "partner");
+				if (extUrl) formData.set("externalUrl", extUrl);
+				if (file) formData.set("file", file);
+
+				const res = await fetch("/api/portal/assets", {
+					method: "POST",
+					body: formData,
+				});
+				const data = await res.json();
+				if (res.ok && data.ok) {
+					if (vaultFeedback) {
+						vaultFeedback.innerHTML =
+							"<strong>✓ Asset synced to Sanity Media Library Vault!</strong> Refreshing list...";
+						vaultFeedback.classList.remove("hidden");
+					}
+					setTimeout(() => window.location.reload(), 800);
+					return;
+				}
+				if (vaultFeedback) {
+					vaultFeedback.textContent =
+						data.message || "Could not upload asset. Please try again.";
+					vaultFeedback.classList.remove("hidden");
+				}
+			} catch {
+				if (vaultFeedback) {
+					vaultFeedback.textContent =
+						"Network error while uploading to Sanity Media Library.";
+					vaultFeedback.classList.remove("hidden");
+				}
+			} finally {
+				if (vaultBtn) {
+					vaultBtn.removeAttribute("disabled");
+					vaultBtn.textContent = "Upload →";
+				}
+			}
+		});
+	}
 </script>

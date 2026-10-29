@@ -44,10 +44,23 @@ export default defineType({
           {title: 'Inbound Website', value: 'inbound'},
           {title: 'Gmail Thread', value: 'gmail'},
           {title: 'Outbound Scraper', value: 'outbound'},
-          {title: 'Fast-Track Booking', value: 'booking'},
+          {title: 'Fast-Track Direct Booking', value: 'booking'},
+          {title: 'Passionfroot Creator API', value: 'passionfroot'},
         ],
       },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'billingProvider',
+      title: 'Billing Provider',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'CodingCat.dev Stripe (50% Deposit / 50% Balance)', value: 'stripe'},
+          {title: 'Passionfroot Managed Billing', value: 'passionfroot'},
+        ],
+      },
+      initialValue: 'stripe',
     }),
     defineField({
       name: 'status',
@@ -226,6 +239,140 @@ export default defineType({
       name: 'notes',
       title: 'Notes',
       type: 'text',
+    }),
+    defineField({
+      name: 'passionfrootPartnerId',
+      title: 'Passionfroot Partner ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'passionfrootCollaborationId',
+      title: 'Passionfroot Collaboration ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'passionfrootConversationId',
+      title: 'Passionfroot Conversation ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'passionfrootRequestId',
+      title: 'Passionfroot Active Request ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'passionfrootProposalId',
+      title: 'Passionfroot Active Proposal ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'passionfrootProposalStatus',
+      title: 'Passionfroot Proposal / Request Status',
+      type: 'string',
+    }),
+    defineField({
+      name: 'passionfrootNetEarningsCents',
+      title: 'Passionfroot Net Creator Earnings (Cents)',
+      type: 'number',
+      description: 'Creator payout after Passionfroot fees and before taxes',
+    }),
+    defineField({
+      name: 'passionfrootGrossBudgetCents',
+      title: 'Passionfroot Disclosed Brand Gross Budget (Cents)',
+      type: 'number',
+    }),
+    defineField({
+      name: 'passionfrootCurrency',
+      title: 'Passionfroot Currency',
+      type: 'string',
+      initialValue: 'USD',
+    }),
+    defineField({
+      name: 'passionfrootUnread',
+      title: 'Passionfroot Unread Messages',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'passionfrootLastMessageAt',
+      title: 'Passionfroot Last Message At',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'passionfrootMessages',
+      title: 'Passionfroot Conversation Timeline',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'messageId', title: 'Message ID', type: 'string'}),
+            defineField({name: 'senderType', title: 'Sender Type', type: 'string'}),
+            defineField({name: 'itemType', title: 'Item Type', type: 'string'}),
+            defineField({name: 'text', title: 'Message Text', type: 'text'}),
+            defineField({name: 'createdAt', title: 'Created At', type: 'datetime'}),
+            defineField({name: 'requestId', title: 'Request ID', type: 'string'}),
+            defineField({name: 'proposalId', title: 'Proposal ID', type: 'string'}),
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'sharedAssets',
+      title: 'Sanity Media Library Vault Assets',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'title', title: 'Asset Title / Filename', type: 'string'}),
+            defineField({
+              name: 'category',
+              title: 'Category',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Brand Logo / SVG', value: 'logo'},
+                  {title: 'Talking Points / Brief', value: 'brief'},
+                  {title: 'Slide Deck / Demo Assets', value: 'slides'},
+                  {title: 'Contract / Legal', value: 'legal'},
+                  {title: 'Raw Audio / Video / B-Roll', value: 'media'},
+                ],
+              },
+            }),
+            defineField({
+              name: 'visibility',
+              title: 'Visibility',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Private to Deal Room (Token-Gated)', value: 'private'},
+                  {title: 'Public Brand Asset', value: 'public'},
+                ],
+              },
+              initialValue: 'private',
+            }),
+            defineField({
+              name: 'uploadedBy',
+              title: 'Uploaded By',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Partner / Guest', value: 'partner'},
+                  {title: 'CodingCat.dev Studio', value: 'codingcat'},
+                  {title: 'Passionfroot Auto-Ingest', value: 'passionfroot'},
+                ],
+              },
+              initialValue: 'partner',
+            }),
+            defineField({name: 'uploadedAt', title: 'Uploaded At', type: 'datetime'}),
+            defineField({name: 'assetId', title: 'Sanity Asset ID', type: 'string'}),
+            defineField({name: 'mimeType', title: 'MIME Type', type: 'string'}),
+            defineField({name: 'fileSize', title: 'File Size (Bytes)', type: 'number'}),
+            defineField({name: 'externalUrl', title: 'Direct / Proxied URL', type: 'url'}),
+          ],
+        },
+      ],
     }),
   ],
   preview: {

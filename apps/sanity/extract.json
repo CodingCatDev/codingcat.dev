@@ -1064,6 +1064,44 @@
         },
         "optional": true
       },
+      "bookingSource": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "direct"
+            },
+            {
+              "type": "string",
+              "value": "passionfroot"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "sessionType": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "recording-45m"
+            },
+            {
+              "type": "string",
+              "value": "pre-meeting-15m"
+            },
+            {
+              "type": "string",
+              "value": "recording-with-pre-meeting"
+            }
+          ]
+        },
+        "optional": true
+      },
       "track": {
         "type": "objectAttribute",
         "value": {
@@ -1080,6 +1118,10 @@
             {
               "type": "string",
               "value": "full-stack-launch"
+            },
+            {
+              "type": "string",
+              "value": "sponsor-kickoff"
             }
           ]
         },
@@ -1104,6 +1146,10 @@
             },
             {
               "type": "string",
+              "value": "confirmed"
+            },
+            {
+              "type": "string",
               "value": "recorded"
             },
             {
@@ -1119,6 +1165,63 @@
         "optional": true
       },
       "slotStartAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "recordingUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "preMeetingStatus": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "not_needed"
+            },
+            {
+              "type": "string",
+              "value": "requested"
+            },
+            {
+              "type": "string",
+              "value": "scheduled"
+            },
+            {
+              "type": "string",
+              "value": "completed"
+            },
+            {
+              "type": "string",
+              "value": "bypassed"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "preMeetingSlotStartAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "preMeetingGoogleEventId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "preMeetingMeetUrl": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
@@ -1210,6 +1313,159 @@
         "value": {
           "type": "inline",
           "name": "sponsorLead.reference"
+        },
+        "optional": true
+      },
+      "passionfrootCollaborationId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootPlacementId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootConversationId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "sharedAssets": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "title": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "category": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "logo"
+                    },
+                    {
+                      "type": "string",
+                      "value": "brief"
+                    },
+                    {
+                      "type": "string",
+                      "value": "slides"
+                    },
+                    {
+                      "type": "string",
+                      "value": "legal"
+                    },
+                    {
+                      "type": "string",
+                      "value": "media"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "visibility": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "private"
+                    },
+                    {
+                      "type": "string",
+                      "value": "public"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "uploadedBy": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "partner"
+                    },
+                    {
+                      "type": "string",
+                      "value": "codingcat"
+                    },
+                    {
+                      "type": "string",
+                      "value": "passionfroot"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "uploadedAt": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "assetId": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "mimeType": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "fileSize": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "number"
+                },
+                "optional": true
+              },
+              "externalUrl": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "optional": true
       }
@@ -1536,6 +1792,27 @@
             {
               "type": "string",
               "value": "booking"
+            },
+            {
+              "type": "string",
+              "value": "passionfroot"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "billingProvider": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "stripe"
+            },
+            {
+              "type": "string",
+              "value": "passionfroot"
             }
           ]
         },
@@ -1857,6 +2134,287 @@
         "type": "objectAttribute",
         "value": {
           "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootPartnerId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootCollaborationId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootConversationId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootRequestId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootProposalId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootProposalStatus": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootNetEarningsCents": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
+      "passionfrootGrossBudgetCents": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
+      "passionfrootCurrency": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootUnread": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
+        },
+        "optional": true
+      },
+      "passionfrootLastMessageAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "passionfrootMessages": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "messageId": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "senderType": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "itemType": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "text": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "createdAt": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "requestId": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "proposalId": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "optional": true
+      },
+      "sharedAssets": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "title": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "category": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "logo"
+                    },
+                    {
+                      "type": "string",
+                      "value": "brief"
+                    },
+                    {
+                      "type": "string",
+                      "value": "slides"
+                    },
+                    {
+                      "type": "string",
+                      "value": "legal"
+                    },
+                    {
+                      "type": "string",
+                      "value": "media"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "visibility": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "private"
+                    },
+                    {
+                      "type": "string",
+                      "value": "public"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "uploadedBy": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "partner"
+                    },
+                    {
+                      "type": "string",
+                      "value": "codingcat"
+                    },
+                    {
+                      "type": "string",
+                      "value": "passionfroot"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "uploadedAt": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "assetId": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "mimeType": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "fileSize": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "number"
+                },
+                "optional": true
+              },
+              "externalUrl": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "optional": true
       }

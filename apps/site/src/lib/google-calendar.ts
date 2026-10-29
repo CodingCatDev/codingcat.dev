@@ -1,4 +1,7 @@
 import { env } from "cloudflare:workers";
+import { getSanityServerClient } from "@/lib/sanity/write-client";
+
+export const STREAMYARD_STUDIO_URL = "https://streamyard.com/c4kv26is93";
 
 export const CODINGCAT_CALENDAR_IDS = [
 	"alex.patterson@gmail.com",
@@ -358,7 +361,51 @@ export async function getMultiCalendarAvailableSlots(
 		timeMax,
 	);
 
-	if (!liveVerified) {
+	// Also subtract active Sanity booking holds & pre-meetings so placeholders
+	// immediately block slots even before Google Calendar FreeBusy propagation.
+	try {
+		const { client } = getSanityServerClient();
+		const heldBookings = await client.fetch<
+			Array<{
+				slotStartAt?: string;
+				preMeetingSlotStartAt?: string;
+				sessionType?: string;
+				track?: string;
+			}>
+		>(
+			`*[_type == "booking" && status != "cancelled" && (defined(slotStartAt) || defined(preMeetingSlotStartAt))]{
+				slotStartAt,
+				preMeetingSlotStartAt,
+				sessionType,
+				track
+			}`,
+		);
+		for (const b of heldBookings || []) {
+			if (b.slotStartAt) {
+				const startMs = new Date(b.slotStartAt).getTime();
+				const dur =
+					b.sessionType === "pre-meeting-15m" || b.track === "sponsor-kickoff"
+						? 15
+						: 45;
+				if (!Number.isNaN(startMs)) {
+					busyRanges.push({ startMs, endMs: startMs + dur * 60_000 });
+				}
+			}
+			if (b.preMeetingSlotStartAt) {
+				const preStartMs = new Date(b.preMeetingSlotStartAt).getTime();
+				if (!Number.isNaN(preStartMs)) {
+					busyRanges.push({
+						startMs: preStartMs,
+						endMs: preStartMs + 15 * 60_000,
+					});
+				}
+			}
+		}
+	} catch {
+		// Non-fatal fallback to Google Calendar busyRanges
+	}
+
+	if (!liveVerified && busyRanges.length === 0) {
 		return {
 			slots: spreadSlotsAcrossDays(candidates, maxSlots),
 			liveVerified: false,
@@ -410,11 +457,14 @@ export function buildGoogleCalendarTemplateUrl(opts: {
 }
 
 /**
- * Creates a Google Calendar event on alex@codingcat.dev (and invites alex.patterson@gmail.com + alex@flipfeeds.com):
- * - Sponsored bookings ("sponsored" | "full-stack-launch" | "sponsor-kickoff"):
- *   Immediately creates a CONFIRMED event and sends Google Calendar invites (sendUpdates=all) to the sponsor and Alex.
- * - Editorial bookings ("editorial"):
- *   Creates a TENTATIVE calendar hold on Alex's calendar (sendUpdates=none) so the slot is reserved pending editorial approval.
+ * Creates a Google Calendar event on alex@codingcat.dev (and invites alex.patterson@gmail.com):
+ * - 15-minute Pre-Meetings ("pre-meeting-15m" | "sponsor-kickoff"):
+ *   Immediately creates a CONFIRMED, OPAQUE (Busy) event with an auto-generated Google Meet room
+ *   (conferenceDataVersion=1) and sends invites (sendUpdates=all) to the guest and Alex.
+ * - 45-minute Recording Sessions ("recording-45m"):
+ *   Immediately creates a CONFIRMED, OPAQUE (Busy) calendar placeholder on Alex's calendars
+ *   (sendUpdates=none) so nothing else can jump the slot. Once approved in the Ops App,
+ *   approveGoogleCalendarRecordingEvent() reveals https://streamyard.com/c4kv26is93 and invites the guest.
  */
 export async function createGoogleCalendarBookingEvent(opts: {
 	guestName: string;
@@ -425,48 +475,67 @@ export async function createGoogleCalendarBookingEvent(opts: {
 	durationMinutes?: number;
 	topics: string;
 	portalUrl?: string;
+	isPreMeeting?: boolean;
+	autoApproveRecording?: boolean;
 }): Promise<{
 	eventId?: string;
 	htmlLink?: string;
+	meetUrl?: string;
+	recordingUrl: string;
 	addToCalendarUrl: string;
 	calendarMode: "confirmed_invite" | "tentative_hold" | "template_fallback";
 	conflictDetected?: boolean;
 }> {
-	const isEditorial = opts.track === "editorial";
-	const isKickoff = opts.track === "sponsor-kickoff";
-	const durationMinutes = opts.durationMinutes ?? (isKickoff ? 15 : 45);
+	const isPreMeeting =
+		Boolean(opts.isPreMeeting) ||
+		opts.track === "sponsor-kickoff" ||
+		opts.durationMinutes === 15;
+	const durationMinutes = opts.durationMinutes ?? (isPreMeeting ? 15 : 45);
+	const isApprovedRecording =
+		!isPreMeeting && Boolean(opts.autoApproveRecording);
 
 	const start = new Date(opts.startAt);
 	const end = new Date(start.getTime() + durationMinutes * 60_000);
 
-	const summary = isKickoff
-		? `[SPONSOR KICKOFF] ${opts.company} × CodingCat.dev (${opts.guestName})`
-		: isEditorial
-			? `[HOLD - EDITORIAL] CodingCat.dev Podcast: ${opts.guestName} (${opts.company})`
-			: `[SPONSORED] CodingCat.dev Showcase: ${opts.guestName} (${opts.company})`;
+	const summary = isPreMeeting
+		? `[PRE-MEETING · 15m] ${opts.company} × CodingCat.dev (${opts.guestName})`
+		: isApprovedRecording
+			? `CodingCat.dev Podcast Recording: ${opts.guestName} (${opts.company})`
+			: `[HOLD - PENDING APPROVAL] CodingCat.dev Podcast: ${opts.guestName} (${opts.company})`;
 
 	const descriptionLines = [
-		`CodingCat.dev Session (${opts.track.toUpperCase()} · ${durationMinutes} min)`,
+		`CodingCat.dev Session (${isPreMeeting ? "15m Pre-Meeting (Google Meet)" : `45m Podcast Recording (${opts.track.toUpperCase()})`})`,
 		`Guest / Contact: ${opts.guestName} <${opts.guestEmail}>`,
 		`Company: ${opts.company}`,
 		`Topics / Goals: ${opts.topics}`,
-		isEditorial
-			? "Status: Tentative Editorial Hold (Approve in Google Calendar to invite guest)"
-			: "Status: Confirmed Sponsored Session",
-		...(opts.portalUrl ? [`Sponsor Deal Room: ${opts.portalUrl}`] : []),
+		isPreMeeting
+			? "Meeting Room: Google Meet (auto-attached to this calendar invite)"
+			: isApprovedRecording
+				? `Recording Studio (StreamYard): ${STREAMYARD_STUDIO_URL}`
+				: `Status: Opaque Calendar Hold (Blocks FreeBusy). Approve in CodingCat Ops App to send StreamYard invite (${STREAMYARD_STUDIO_URL}) to guest.`,
+		...(opts.portalUrl
+			? [`Deal Room & Sanity Media Vault: ${opts.portalUrl}#vault`]
+			: []),
 	];
 	const description = descriptionLines.join("\n");
 
 	const addToCalendarUrl = buildGoogleCalendarTemplateUrl({
-		title: summary.replace(/^\[HOLD - EDITORIAL\]\s*/, ""),
+		title: summary.replace(/^\[HOLD - PENDING APPROVAL\]\s*/, ""),
 		startAt: start.toISOString(),
 		durationMinutes,
-		description,
+		description: isPreMeeting
+			? description
+			: [
+					`CodingCat.dev Podcast Recording (${durationMinutes} min)`,
+					`Guest: ${opts.guestName} (${opts.company})`,
+					...(opts.portalUrl ? [`Deal Room & Asset Vault: ${opts.portalUrl}#vault`] : []),
+				].join("\n"),
 	});
 
 	const accessToken = await getAccessToken();
 	if (!accessToken) {
 		return {
+			recordingUrl: STREAMYARD_STUDIO_URL,
 			addToCalendarUrl,
 			calendarMode: "template_fallback",
 		};
@@ -485,6 +554,7 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		);
 		if (hasConflict) {
 			return {
+				recordingUrl: STREAMYARD_STUDIO_URL,
 				addToCalendarUrl,
 				calendarMode: "template_fallback",
 				conflictDetected: true,
@@ -492,54 +562,208 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		}
 	}
 
-	const sendUpdates = isEditorial ? "none" : "all";
-	const status = isEditorial ? "tentative" : "confirmed";
+	// Pre-meetings and explicitly approved recordings invite the guest immediately;
+	// unapproved recording holds block Alex's calendars as CONFIRMED + OPAQUE (Busy)
+	// with sendUpdates=none until approved in the Ops App.
+	const inviteGuestNow = isPreMeeting || isApprovedRecording;
+	const sendUpdates = inviteGuestNow ? "all" : "none";
 	const attendees = [
-		{ email: "alex.patterson@gmail.com" },
-		{ email: "alex@codingcat.dev" },
-		{ email: "alex@flipfeeds.com" },
-		...(isEditorial
-			? []
-			: [{ email: opts.guestEmail, displayName: opts.guestName }]),
+		{ email: "alex.patterson@gmail.com", responseStatus: "accepted" },
+		{ email: "alex@codingcat.dev", responseStatus: "accepted" },
+		...(inviteGuestNow
+			? [{ email: opts.guestEmail, displayName: opts.guestName }]
+			: []),
 	];
+
+	const queryParams = new URLSearchParams({ sendUpdates });
+	if (isPreMeeting) {
+		queryParams.set("conferenceDataVersion", "1");
+	}
+
+	const eventBody: Record<string, unknown> = {
+		summary,
+		description,
+		// Always "confirmed" + "opaque" so FreeBusy blocks this slot across all calendars!
+		status: "confirmed",
+		transparency: "opaque",
+		location: isPreMeeting
+			? "Google Meet"
+			: isApprovedRecording
+				? STREAMYARD_STUDIO_URL
+				: "CodingCat.dev Studio Hold (Pending Approval)",
+		start: { dateTime: start.toISOString() },
+		end: { dateTime: end.toISOString() },
+		attendees,
+	};
+
+	if (isPreMeeting) {
+		eventBody.conferenceData = {
+			createRequest: {
+				requestId: `cc-meet-${crypto.randomUUID().slice(0, 12)}`,
+				conferenceSolutionKey: { type: "hangoutsMeet" },
+			},
+		};
+	}
 
 	try {
 		const res = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events?sendUpdates=${sendUpdates}`,
+			`https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events?${queryParams.toString()}`,
 			{
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					summary,
-					description,
-					status,
-					start: { dateTime: start.toISOString() },
-					end: { dateTime: end.toISOString() },
-					attendees,
-				}),
+				body: JSON.stringify(eventBody),
 			},
 		);
 
 		if (!res.ok) {
 			return {
+				recordingUrl: STREAMYARD_STUDIO_URL,
 				addToCalendarUrl,
 				calendarMode: "template_fallback",
 			};
 		}
-		const event = (await res.json()) as { id?: string; htmlLink?: string };
+		const event = (await res.json()) as {
+			id?: string;
+			htmlLink?: string;
+			hangoutLink?: string;
+			conferenceData?: {
+				entryPoints?: Array<{ entryPointType?: string; uri?: string }>;
+			};
+		};
+		const meetUrl =
+			event.hangoutLink ||
+			event.conferenceData?.entryPoints?.find(
+				(e) => e.entryPointType === "video",
+			)?.uri;
 		return {
 			eventId: event.id,
 			htmlLink: event.htmlLink,
+			meetUrl,
+			recordingUrl: STREAMYARD_STUDIO_URL,
 			addToCalendarUrl,
-			calendarMode: isEditorial ? "tentative_hold" : "confirmed_invite",
+			calendarMode: inviteGuestNow ? "confirmed_invite" : "tentative_hold",
 		};
 	} catch {
 		return {
+			recordingUrl: STREAMYARD_STUDIO_URL,
 			addToCalendarUrl,
 			calendarMode: "template_fallback",
 		};
+	}
+}
+
+/**
+ * Upgrades an existing opaque calendar hold on alex@codingcat.dev to an approved
+ * recording invite: reveals https://streamyard.com/c4kv26is93, adds the guest as an
+ * attendee, and triggers Google Calendar email notifications (sendUpdates=all).
+ */
+export async function approveGoogleCalendarRecordingEvent(opts: {
+	eventId?: string;
+	guestName: string;
+	guestEmail: string;
+	company: string;
+	track: string;
+	startAt: string;
+	durationMinutes?: number;
+	topics: string;
+	portalUrl?: string;
+}): Promise<{
+	ok: boolean;
+	eventId?: string;
+	htmlLink?: string;
+	recordingUrl: string;
+}> {
+	const accessToken = await getAccessToken();
+	if (!accessToken) {
+		return { ok: false, recordingUrl: STREAMYARD_STUDIO_URL };
+	}
+
+	const durationMinutes = opts.durationMinutes ?? 45;
+	const start = new Date(opts.startAt);
+	const end = new Date(start.getTime() + durationMinutes * 60_000);
+	const summary = `CodingCat.dev Podcast Recording: ${opts.guestName} (${opts.company})`;
+	const description = [
+		`CodingCat.dev Podcast Recording (${durationMinutes} min)`,
+		`Recording Studio (StreamYard): ${STREAMYARD_STUDIO_URL}`,
+		`Guest / Contact: ${opts.guestName} <${opts.guestEmail}>`,
+		`Company: ${opts.company}`,
+		`Topics: ${opts.topics}`,
+		...(opts.portalUrl
+			? [`Deal Room & Sanity Media Vault: ${opts.portalUrl}#vault`]
+			: []),
+	].join("\n");
+
+	const payload = {
+		summary,
+		description,
+		location: STREAMYARD_STUDIO_URL,
+		status: "confirmed",
+		transparency: "opaque",
+		start: { dateTime: start.toISOString() },
+		end: { dateTime: end.toISOString() },
+		attendees: [
+			{ email: "alex.patterson@gmail.com", responseStatus: "accepted" },
+			{ email: "alex@codingcat.dev", responseStatus: "accepted" },
+			{ email: opts.guestEmail, displayName: opts.guestName },
+		],
+	};
+
+	try {
+		if (opts.eventId) {
+			const patchRes = await fetch(
+				`https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events/${encodeURIComponent(opts.eventId)}?sendUpdates=all`,
+				{
+					method: "PATCH",
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(payload),
+				},
+			);
+			if (patchRes.ok) {
+				const updated = (await patchRes.json()) as {
+					id?: string;
+					htmlLink?: string;
+				};
+				return {
+					ok: true,
+					eventId: updated.id || opts.eventId,
+					htmlLink: updated.htmlLink,
+					recordingUrl: STREAMYARD_STUDIO_URL,
+				};
+			}
+		}
+
+		// Fallback: create a fresh confirmed recording event if no prior eventId existed
+		const postRes = await fetch(
+			"https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events?sendUpdates=all",
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(payload),
+			},
+		);
+		if (!postRes.ok) {
+			return { ok: false, recordingUrl: STREAMYARD_STUDIO_URL };
+		}
+		const created = (await postRes.json()) as {
+			id?: string;
+			htmlLink?: string;
+		};
+		return {
+			ok: true,
+			eventId: created.id,
+			htmlLink: created.htmlLink,
+			recordingUrl: STREAMYARD_STUDIO_URL,
+		};
+	} catch {
+		return { ok: false, recordingUrl: STREAMYARD_STUDIO_URL };
 	}
 }
