@@ -3,7 +3,11 @@ import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 export const STREAMYARD_STUDIO_URL = "https://streamyard.com/c4kv26is93";
 
-export const CODINGCAT_CALENDAR_IDS = ["alex@codingcat.dev"];
+export const CODINGCAT_CALENDAR_IDS = [
+	"alex@codingcat.dev",
+	"alex.patterson@gmail.com",
+	"alex.patterson@sanity.io",
+];
 
 export interface AvailableCalendarSlot {
 	id: string;
