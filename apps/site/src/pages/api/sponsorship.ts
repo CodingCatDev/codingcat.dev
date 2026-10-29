@@ -251,7 +251,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 	// 4. Fire-and-forget notification email via Cloudflare Email Routing if bound
 	await sendCodingCatEmail({
-		to: "alex.patterson@gmail.com",
+		to: "alex@codingcat.dev",
 		subject: `[CodingCat.dev Sponsor Inquiry] ${company} (${selectedTier.name} - $${selectedTier.priceUsd})`,
 		text: [
 			"New Sponsorship Inquiry on CodingCat.dev",

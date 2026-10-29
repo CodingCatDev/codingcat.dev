@@ -3,15 +3,7 @@ import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 export const STREAMYARD_STUDIO_URL = "https://streamyard.com/c4kv26is93";
 
-export const CODINGCAT_CALENDAR_IDS = [
-	"alex.patterson@gmail.com",
-	"alex@codingcat.dev",
-	"alex@flipfeeds.com",
-	"alex.patterson@sanity.io",
-	"mikqhmn29svd9p9m99quch9nuo@group.calendar.google.com", // Oliver - Alex
-	"2em0afukjm0gk9k3n0ohh5ag3g@group.calendar.google.com", // Oliver - Events
-	"a1jir6k8sl9k38fbbohoei5f80@group.calendar.google.com", // Oliver - Heidi
-];
+export const CODINGCAT_CALENDAR_IDS = ["alex@codingcat.dev"];
 
 export interface AvailableCalendarSlot {
 	id: string;
@@ -39,8 +31,12 @@ async function getAccessToken(
 	const clientId = workerEnv.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
 	const clientSecret =
 		workerEnv.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET;
+	// Prefer GOOGLE_WORKSPACE_REFRESH_TOKEN (alex@codingcat.dev) so all bookings and FreeBusy
+	// checks operate under the CodingCat.dev workspace account and never expose personal emails.
 	const refreshToken =
 		refreshTokenOverride ||
+		workerEnv.GOOGLE_WORKSPACE_REFRESH_TOKEN ||
+		process.env.GOOGLE_WORKSPACE_REFRESH_TOKEN ||
 		workerEnv.GOOGLE_REFRESH_TOKEN ||
 		process.env.GOOGLE_REFRESH_TOKEN;
 
@@ -457,14 +453,14 @@ export function buildGoogleCalendarTemplateUrl(opts: {
 }
 
 /**
- * Creates a Google Calendar event on alex@codingcat.dev (and invites alex.patterson@gmail.com):
+ * Creates a Google Calendar event exclusively on alex@codingcat.dev:
  * - 15-minute Pre-Meetings ("pre-meeting-15m" | "sponsor-kickoff"):
  *   Immediately creates a CONFIRMED, OPAQUE (Busy) event with an auto-generated Google Meet room
- *   (conferenceDataVersion=1) and sends invites (sendUpdates=all) to the guest and Alex.
- * - 45-minute Recording Sessions ("recording-45m"):
- *   Immediately creates a CONFIRMED, OPAQUE (Busy) calendar placeholder on Alex's calendars
- *   (sendUpdates=none) so nothing else can jump the slot. Once approved in the Ops App,
- *   approveGoogleCalendarRecordingEvent() reveals https://streamyard.com/c4kv26is93 and invites the guest.
+ *   (conferenceDataVersion=1) and sends invites (sendUpdates=all) to the guest and alex@codingcat.dev.
+ * - 60-minute Recording Sessions ("recording-60m"):
+ *   Immediately creates a CONFIRMED, OPAQUE (Busy) calendar hold on alex@codingcat.dev and sends
+ *   the calendar hold invite to the guest (sendUpdates=all) so it lands on their calendar right away,
+ *   while withholding https://streamyard.com/c4kv26is93 until approved in the Ops App.
  */
 export async function createGoogleCalendarBookingEvent(opts: {
 	guestName: string;
@@ -562,13 +558,11 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		}
 	}
 
-	// Always invite the guest immediately (sendUpdates=all) so the event lands on their
-	// Google Calendar right away. Unapproved recording holds withhold the StreamYard URL
-	// until Alex clicks Approve in the Ops App.
+	// Always invite the guest immediately (sendUpdates=all) on alex@codingcat.dev so the event
+	// lands on their Google Calendar right away without exposing any personal email address.
 	const sendUpdates = "all";
 	const attendees = [
-		{ email: "alex.patterson@gmail.com", responseStatus: "accepted" },
-		{ email: "alex@codingcat.dev", responseStatus: "accepted" },
+		{ email: "alex@codingcat.dev", displayName: "Alex Patterson", responseStatus: "accepted" },
 		{ email: opts.guestEmail, displayName: opts.guestName },
 	];
 
@@ -580,7 +574,7 @@ export async function createGoogleCalendarBookingEvent(opts: {
 	const eventBody: Record<string, unknown> = {
 		summary,
 		description,
-		// Always "confirmed" + "opaque" so FreeBusy blocks this slot across all calendars!
+		// Always "confirmed" + "opaque" so FreeBusy blocks this slot on alex@codingcat.dev!
 		status: "confirmed",
 		transparency: "opaque",
 		location: isPreMeeting
@@ -643,7 +637,10 @@ export async function createGoogleCalendarBookingEvent(opts: {
 			meetUrl,
 			recordingUrl: STREAMYARD_STUDIO_URL,
 			addToCalendarUrl,
-			calendarMode: inviteGuestNow ? "confirmed_invite" : "tentative_hold",
+			calendarMode:
+				isPreMeeting || isApprovedRecording
+					? "confirmed_invite"
+					: "tentative_hold",
 		};
 	} catch {
 		return {
@@ -704,8 +701,7 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 		start: { dateTime: start.toISOString() },
 		end: { dateTime: end.toISOString() },
 		attendees: [
-			{ email: "alex.patterson@gmail.com", responseStatus: "accepted" },
-			{ email: "alex@codingcat.dev", responseStatus: "accepted" },
+			{ email: "alex@codingcat.dev", displayName: "Alex Patterson", responseStatus: "accepted" },
 			{ email: opts.guestEmail, displayName: opts.guestName },
 		],
 	};

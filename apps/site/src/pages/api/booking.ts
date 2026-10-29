@@ -337,7 +337,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		: "Opaque Busy hold created on Alex's Google Calendar (Approve in Ops App to send StreamYard https://streamyard.com/c4kv26is93)";
 
 	await sendCodingCatEmail({
-		to: "alex.patterson@gmail.com",
+		to: "alex@codingcat.dev",
 		subject: `[CodingCat.dev ${subjectLabel}] ${guestName} (${company})`,
 		text: [
 			`New CodingCat.dev ${subjectLabel}`,
