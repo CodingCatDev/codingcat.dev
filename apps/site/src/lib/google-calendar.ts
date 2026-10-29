@@ -9,6 +9,98 @@ export const CODINGCAT_CALENDAR_IDS = [
 	"alex.patterson@sanity.io",
 ];
 
+const PRIVATE_SHADOW_CALENDAR_IDS = [
+	"alex.patterson@sanity.io",
+	"alex.patterson@gmail.com",
+];
+
+/**
+ * Writes or updates a native `visibility: "private"`, `transparency: "opaque"` (Busy)
+ * calendar block on alex.patterson@sanity.io and alex.patterson@gmail.com with ZERO
+ * attendees so coworkers at Sanity.io see the slot as Busy ("Private") while external
+ * podcast guests never see personal or Sanity email addresses.
+ */
+async function syncPrivateShadowCalendarBlocks(opts: {
+	accessToken: string;
+	startIso: string;
+	endIso: string;
+	guestName: string;
+	company: string;
+	portalUrl?: string;
+	isPreMeeting?: boolean;
+	meetUrl?: string;
+}): Promise<void> {
+	const studioOrMeet = opts.isPreMeeting
+		? opts.meetUrl || "Google Meet"
+		: STREAMYARD_STUDIO_URL;
+	const body = {
+		summary: `[CodingCat.dev] ${opts.isPreMeeting ? "15m Pre-Meeting" : "Podcast Recording"}: ${opts.guestName} (${opts.company})`,
+		description: [
+			"Private Calendar Block synced from alex@codingcat.dev",
+			`Room: ${studioOrMeet}`,
+			`Guest: ${opts.guestName} (${opts.company})`,
+			...(opts.portalUrl
+				? [`Portal & Asset Vault: ${opts.portalUrl}#vault`]
+				: []),
+		].join("\n"),
+		location: studioOrMeet,
+		status: "confirmed",
+		transparency: "opaque",
+		visibility: "private",
+		start: { dateTime: opts.startIso },
+		end: { dateTime: opts.endIso },
+	};
+
+	await Promise.all(
+		PRIVATE_SHADOW_CALENDAR_IDS.map(async (calId) => {
+			try {
+				const listRes = await fetch(
+					`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?timeMin=${encodeURIComponent(opts.startIso)}&timeMax=${encodeURIComponent(opts.endIso)}&singleEvents=true`,
+					{ headers: { Authorization: `Bearer ${opts.accessToken}` } },
+				);
+				const listData = (await listRes.json()) as {
+					items?: Array<{ id?: string; summary?: string }>;
+				};
+				const firstToken = opts.guestName.split(" ")[0]?.toLowerCase() || "";
+				const existing = (listData.items || []).find(
+					(e) =>
+						(e.summary || "").toLowerCase().includes("codingcat") ||
+						(firstToken &&
+							(e.summary || "").toLowerCase().includes(firstToken)),
+				);
+
+				if (existing?.id) {
+					await fetch(
+						`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(existing.id)}?sendUpdates=none`,
+						{
+							method: "PATCH",
+							headers: {
+								Authorization: `Bearer ${opts.accessToken}`,
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify(body),
+						},
+					);
+				} else {
+					await fetch(
+						`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?sendUpdates=none`,
+						{
+							method: "POST",
+							headers: {
+								Authorization: `Bearer ${opts.accessToken}`,
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify(body),
+						},
+					);
+				}
+			} catch {
+				// Non-fatal shadow sync error
+			}
+		}),
+	);
+}
+
 export interface AvailableCalendarSlot {
 	id: string;
 	startAt: string;
@@ -635,6 +727,18 @@ export async function createGoogleCalendarBookingEvent(opts: {
 			event.conferenceData?.entryPoints?.find(
 				(e) => e.entryPointType === "video",
 			)?.uri;
+
+		await syncPrivateShadowCalendarBlocks({
+			accessToken,
+			startIso: start.toISOString(),
+			endIso: end.toISOString(),
+			guestName: opts.guestName,
+			company: opts.company,
+			portalUrl: opts.portalUrl,
+			isPreMeeting,
+			meetUrl,
+		});
+
 		return {
 			eventId: event.id,
 			htmlLink: event.htmlLink,
@@ -711,6 +815,15 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 	};
 
 	try {
+		await syncPrivateShadowCalendarBlocks({
+			accessToken,
+			startIso: start.toISOString(),
+			endIso: end.toISOString(),
+			guestName: opts.guestName,
+			company: opts.company,
+			portalUrl: opts.portalUrl,
+		});
+
 		if (opts.eventId) {
 			const patchRes = await fetch(
 				`https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events/${encodeURIComponent(opts.eventId)}?sendUpdates=all`,
@@ -764,5 +877,75 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 		};
 	} catch {
 		return { ok: false, recordingUrl: STREAMYARD_STUDIO_URL };
+	}
+}
+
+/**
+ * Cancels/deletes a Google Calendar booking on alex@codingcat.dev and removes
+ * the matching private busy blocks on alex.patterson@sanity.io and alex.patterson@gmail.com.
+ */
+export async function cancelGoogleCalendarBookingEvent(opts: {
+	eventId?: string;
+	startAt?: string;
+	durationMinutes?: number;
+	guestName: string;
+}): Promise<{ ok: boolean }> {
+	const accessToken = await getAccessToken();
+	if (!accessToken) {
+		return { ok: false };
+	}
+
+	try {
+		if (opts.eventId) {
+			await fetch(
+				`https://www.googleapis.com/calendar/v3/calendars/alex%40codingcat.dev/events/${encodeURIComponent(opts.eventId)}?sendUpdates=all`,
+				{
+					method: "DELETE",
+					headers: { Authorization: `Bearer ${accessToken}` },
+				},
+			);
+		}
+
+		if (opts.startAt) {
+			const start = new Date(opts.startAt);
+			const end = new Date(
+				start.getTime() + (opts.durationMinutes ?? 60) * 60_000,
+			);
+			const firstToken = opts.guestName.split(" ")[0]?.toLowerCase() || "";
+			await Promise.all(
+				PRIVATE_SHADOW_CALENDAR_IDS.map(async (calId) => {
+					try {
+						const listRes = await fetch(
+							`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?timeMin=${encodeURIComponent(start.toISOString())}&timeMax=${encodeURIComponent(end.toISOString())}&singleEvents=true`,
+							{ headers: { Authorization: `Bearer ${accessToken}` } },
+						);
+						const listData = (await listRes.json()) as {
+							items?: Array<{ id?: string; summary?: string }>;
+						};
+						for (const item of listData.items || []) {
+							const sum = (item.summary || "").toLowerCase();
+							if (
+								item.id &&
+								(sum.includes("codingcat") ||
+									(firstToken && sum.includes(firstToken)))
+							) {
+								await fetch(
+									`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(item.id)}?sendUpdates=none`,
+									{
+										method: "DELETE",
+										headers: { Authorization: `Bearer ${accessToken}` },
+									},
+								);
+							}
+						}
+					} catch {
+						// Non-fatal
+					}
+				}),
+			);
+		}
+		return { ok: true };
+	} catch {
+		return { ok: false };
 	}
 }

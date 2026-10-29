@@ -3,6 +3,7 @@ import type { APIRoute } from "astro";
 import { sendCodingCatEmail } from "@/lib/email";
 import {
 	approveGoogleCalendarRecordingEvent,
+	cancelGoogleCalendarBookingEvent,
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
 } from "@/lib/google-calendar";
@@ -22,6 +23,7 @@ export const OPTIONS: APIRoute = async () => {
 interface ManageBookingPayload {
 	action?:
 		| "approve_recording"
+		| "cancel_booking"
 		| "request_pre_meeting"
 		| "schedule_pre_meeting"
 		| "bypass_pre_meeting"
@@ -302,6 +304,34 @@ export const POST: APIRoute = async ({ request, url }) => {
 				action: "bypass_pre_meeting",
 				bookingId,
 				preMeetingStatus: "bypassed",
+			}),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
+	if (body.action === "cancel_booking") {
+		await cancelGoogleCalendarBookingEvent({
+			eventId: googleCalendarEventId,
+			startAt: slotStartAt,
+			durationMinutes: 60,
+			guestName,
+		});
+		if (canWrite) {
+			try {
+				await client
+					.patch(bookingId)
+					.set({ status: "cancelled" })
+					.commit();
+			} catch {
+				// Non-fatal
+			}
+		}
+		return new Response(
+			JSON.stringify({
+				ok: true,
+				action: "cancel_booking",
+				bookingId,
+				status: "cancelled",
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);

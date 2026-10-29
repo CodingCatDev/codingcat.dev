@@ -1,7 +1,25 @@
 import { useClient } from "@sanity/sdk-react";
 import { useCallback, useEffect, useState } from "react";
 
-type WorkspaceTab = "crm" | "bookings" | "billing" | "syndication" | "drafts";
+type WorkspaceTab =
+	| "schedule"
+	| "crm"
+	| "bookings"
+	| "billing"
+	| "syndication"
+	| "drafts";
+
+interface MasterCalendarEvent {
+	id: string;
+	calendarId: string;
+	title: string;
+	startAt: string;
+	endAt: string;
+	location?: string;
+	htmlLink?: string;
+	visibility?: string;
+	status?: string;
+}
 
 interface DraftContentItem {
 	_id: string;
@@ -190,7 +208,9 @@ const LEAD_STATUS_OPTIONS = [
 	{ value: "deposit_paid", label: "50% Deposit Paid" },
 	{ value: "booked", label: "Booked / In Production" },
 	{ value: "balance_sent", label: "Final 50% Balance Sent" },
-	{ value: "paid", label: "Paid in Full (100%)" },
+	{ value: "paid", label: "Paid in Full (100% — Archive)" },
+	{ value: "cancelled", label: "Cancelled / Declined (Archive)" },
+	{ value: "archived", label: "Archived / Completed" },
 ];
 
 const BOOKING_STATUS_OPTIONS = [
@@ -198,9 +218,19 @@ const BOOKING_STATUS_OPTIONS = [
 	{ value: "approved", label: "Approved" },
 	{ value: "scheduled", label: "Confirmed on Calendar" },
 	{ value: "recorded", label: "Recorded" },
-	{ value: "published", label: "Published" },
-	{ value: "cancelled", label: "Declined / Cancelled" },
+	{ value: "published", label: "Published (Archive)" },
+	{ value: "cancelled", label: "Declined / Cancelled (Archive)" },
 ];
+
+function isArchivedLeadStatus(status?: string): boolean {
+	return (
+		status === "paid" || status === "cancelled" || status === "archived"
+	);
+}
+
+function isArchivedBookingStatus(status?: string): boolean {
+	return status === "published" || status === "cancelled";
+}
 
 function formatUsd(cents?: number): string {
 	if (!cents && cents !== 0) return "$0";
@@ -237,10 +267,16 @@ export function App() {
 
 	const client = useClient({ apiVersion: "2025-09-30" });
 
-	const [activeTab, setActiveTab] = useState<WorkspaceTab>("crm");
+	const [activeTab, setActiveTab] = useState<WorkspaceTab>("schedule");
 	const [loading, setLoading] = useState(true);
 	const [statusBanner, setStatusBanner] = useState<string | null>(null);
 	const [copiedId, setCopiedId] = useState<string | null>(null);
+	const [showArchivedLeads, setShowArchivedLeads] = useState(false);
+	const [showArchivedBookings, setShowArchivedBookings] = useState(false);
+	const [masterCalendarEvents, setMasterCalendarEvents] = useState<
+		MasterCalendarEvent[]
+	>([]);
+	const [sendingDigest, setSendingDigest] = useState(false);
 
 	// Data states loaded via authenticated Sanity SDK client
 	const [leads, setLeads] = useState<SponsorLeadDoc[]>([]);
@@ -377,12 +413,24 @@ export function App() {
 				setDraftItems(res.draftItems || []);
 				setTrendSignals(res.trendSignals || []);
 			}
+
+			try {
+				const calRes = await fetch(`${siteOrigin}/api/ops/daily-digest`);
+				if (calRes.ok) {
+					const calData = await calRes.json();
+					if (Array.isArray(calData.calendarEvents)) {
+						setMasterCalendarEvents(calData.calendarEvents);
+					}
+				}
+			} catch {
+				// Ignore calendar digest fetch errors
+			}
 		} catch (err: any) {
 			console.error("Failed to fetch Ops data:", err);
 		} finally {
 			setLoading(false);
 		}
-	}, [client]);
+	}, [client, siteOrigin]);
 
 	useEffect(() => {
 		fetchAllData();
@@ -488,6 +536,8 @@ export function App() {
 			);
 			if (newStatus === "approved" || newStatus === "scheduled") {
 				await handleBookingManage(bookingId, "approve_recording");
+			} else if (newStatus === "cancelled") {
+				await handleBookingManage(bookingId, "cancel_booking");
 			} else {
 				showFlash(`Updated booking status to "${newStatus}"`);
 			}
@@ -500,6 +550,7 @@ export function App() {
 		bookingId: string,
 		action:
 			| "approve_recording"
+			| "cancel_booking"
 			| "request_pre_meeting"
 			| "bypass_pre_meeting",
 	) => {
@@ -517,7 +568,11 @@ export function App() {
 			await fetchAllData();
 			if (action === "approve_recording") {
 				showFlash(
-					`Approved recording and sent StreamYard studio link (${data.recordingUrl || "https://streamyard.com/c4kv26is93"}) to guest calendar invite.`,
+					`Approved recording, synced private block to alex.patterson@sanity.io, and sent StreamYard link (${data.recordingUrl || "https://streamyard.com/c4kv26is93"}) to guest.`,
+				);
+			} else if (action === "cancel_booking") {
+				showFlash(
+					"Cancelled booking, archived record, and removed calendar blocks from alex@codingcat.dev and alex.patterson@sanity.io.",
 				);
 			} else if (action === "request_pre_meeting") {
 				showFlash(
@@ -530,6 +585,28 @@ export function App() {
 			showFlash(`Booking action error: ${err?.message || "Unknown error"}`);
 		} finally {
 			setBusyActionId(null);
+		}
+	};
+
+	const handleSendDailyDigestEmail = async () => {
+		setSendingDigest(true);
+		try {
+			const res = await fetch(`${siteOrigin}/api/ops/daily-digest`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ sendEmail: true, to: "alex@codingcat.dev" }),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.message || "Failed to send digest email");
+			}
+			showFlash(
+				`Sent Today's Action Digest email to alex@codingcat.dev (${data.summary?.pendingHoldsCount || 0} holds, ${data.summary?.upcoming72hCount || 0} upcoming recordings, ${data.summary?.actionLeadsCount || 0} deals).`,
+			);
+		} catch (err: any) {
+			showFlash(`Digest Email Error: ${err?.message || "Unknown error"}`);
+		} finally {
+			setSendingDigest(false);
 		}
 	};
 
@@ -642,7 +719,23 @@ export function App() {
 		}
 	};
 
+	const activeLeadsCount = leads.filter(
+		(l) => !isArchivedLeadStatus(l.status),
+	).length;
+	const archivedLeadsCount = leads.filter((l) =>
+		isArchivedLeadStatus(l.status),
+	).length;
+	const activeBookingsCount = bookings.filter(
+		(b) => !isArchivedBookingStatus(b.status),
+	).length;
+	const archivedBookingsCount = bookings.filter((b) =>
+		isArchivedBookingStatus(b.status),
+	).length;
+
 	const filteredLeads = leads.filter((l) => {
+		const isArch = isArchivedLeadStatus(l.status);
+		if (showArchivedLeads ? !isArch : isArch) return false;
+
 		const isPf =
 			l.source === "passionfroot" ||
 			l.billingProvider === "passionfroot" ||
@@ -655,6 +748,9 @@ export function App() {
 	});
 
 	const filteredBookings = bookings.filter((b) => {
+		const isArch = isArchivedBookingStatus(b.status);
+		if (showArchivedBookings ? !isArch : isArch) return false;
+
 		const isPf =
 			b.bookingSource === "passionfroot" ||
 			Boolean(b.passionfrootCollaborationId);
@@ -869,6 +965,22 @@ export function App() {
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 					<button
 						type="button"
+						onClick={() => setActiveTab("schedule")}
+						style={{
+							padding: "8px 14px",
+							borderRadius: 8,
+							border: "1px solid #d1d5db",
+							background: activeTab === "schedule" ? "#111827" : "#fff",
+							color: activeTab === "schedule" ? "#fff" : "#111827",
+							fontWeight: 700,
+							cursor: "pointer",
+							fontSize: 13,
+						}}
+					>
+						0. 📅 Schedule &amp; Today
+					</button>
+					<button
+						type="button"
 						onClick={() => setActiveTab("crm")}
 						style={{
 							padding: "8px 14px",
@@ -881,7 +993,8 @@ export function App() {
 							fontSize: 13,
 						}}
 					>
-						1. Sponsor CRM ({leads.length})
+						1. Sponsor CRM (
+						{leads.filter((l) => !isArchivedLeadStatus(l.status)).length} Active)
 					</button>
 					<button
 						type="button"
@@ -897,7 +1010,9 @@ export function App() {
 							fontSize: 13,
 						}}
 					>
-						2. Podcast Bookings &amp; E-SIGN ({bookings.length})
+						2. Podcast Bookings (
+						{bookings.filter((b) => !isArchivedBookingStatus(b.status)).length}{" "}
+						Active)
 					</button>
 					<button
 						type="button"
@@ -913,7 +1028,8 @@ export function App() {
 							fontSize: 13,
 						}}
 					>
-						3. Deal Rooms &amp; 50/50 Billing ({leads.length})
+						3. Deal Rooms &amp; 50/50 Billing (
+						{leads.filter((l) => !isArchivedLeadStatus(l.status)).length})
 					</button>
 					<button
 						type="button"
@@ -950,6 +1066,24 @@ export function App() {
 					</button>
 					<button
 						type="button"
+						onClick={handleSendDailyDigestEmail}
+						disabled={sendingDailyDigest}
+						style={{
+							...btnStyle,
+							padding: "8px 12px",
+							background: "#eff6ff",
+							borderColor: "#3b82f6",
+							color: "#1d4ed8",
+							fontWeight: 700,
+						}}
+						title="Email Today's Action Queue & Ongoing Schedule to alex@codingcat.dev"
+					>
+						{sendingDailyDigest
+							? "📧 Sending Digest..."
+							: "📧 Email Today's Digest"}
+					</button>
+					<button
+						type="button"
 						onClick={fetchAllData}
 						style={{
 							...btnStyle,
@@ -965,6 +1099,591 @@ export function App() {
 			{loading && (
 				<div style={{ padding: 24, color: "#6b7280", fontSize: 14 }}>
 					Loading live Sanity documents...
+				</div>
+			)}
+
+			{/* TAB 0: UNIFIED SCHEDULE & TODAY'S ACTION QUEUE */}
+			{!loading && activeTab === "schedule" && (
+				<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+					<section
+						style={{
+							padding: 20,
+							border: "1px solid #e5e7eb",
+							borderRadius: 12,
+							background: "#fff",
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								flexWrap: "wrap",
+								gap: 12,
+								marginBottom: 16,
+							}}
+						>
+							<div>
+								<h2 style={{ margin: 0, fontSize: 18 }}>
+									⚡ Today&apos;s Action Queue &amp; Master Ongoing Schedule
+								</h2>
+								<p style={{ margin: "4px 0 0", color: "#4b5563", fontSize: 13 }}>
+									Unified view across <code>alex@codingcat.dev</code>,{" "}
+									<code>alex.patterson@sanity.io</code> (private blocks),{" "}
+									<strong>Podcast Bookings</strong>, and{" "}
+									<strong>Active Sponsor Deals</strong>. Paid in Full (100%) and
+									Cancelled items are automatically archived.
+								</p>
+							</div>
+							<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+								<button
+									type="button"
+									onClick={handleSendDailyDigestEmail}
+									disabled={sendingDailyDigest}
+									style={{
+										...btnStyle,
+										background: "#1d4ed8",
+										borderColor: "#1d4ed8",
+										color: "#fff",
+										fontWeight: 700,
+									}}
+								>
+									{sendingDailyDigest
+										? "📧 Sending Digest to alex@codingcat.dev..."
+										: "📧 Email Today's Action Digest Now"}
+								</button>
+								<button
+									type="button"
+									onClick={handleSyncPassionfroot}
+									disabled={syncingPassionfroot}
+									style={{
+										...btnStyle,
+										background: "#ecfdf5",
+										borderColor: "#10b981",
+										color: "#065f46",
+										fontWeight: 700,
+									}}
+								>
+									{syncingPassionfroot
+										? "🌱 Syncing PF..."
+										: "🌱 Sync Passionfroot"}
+								</button>
+							</div>
+						</div>
+
+						<div
+							style={{
+								display: "grid",
+								gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+								gap: 16,
+								marginBottom: 24,
+							}}
+						>
+							{/* Action Card 1: Unapproved Holds */}
+							<div
+								style={{
+									padding: 16,
+									borderRadius: 10,
+									border: "1px solid #fde68a",
+									background: "#fffbeb",
+								}}
+							>
+								<h3 style={{ margin: "0 0 8px", fontSize: 15, color: "#92400e" }}>
+									⏳ Unapproved Recording Holds (
+									{
+										bookings.filter(
+											(b) =>
+												b.status === "pending" &&
+												!isArchivedBookingStatus(b.status),
+										).length
+									}
+									)
+								</h3>
+								<p style={{ margin: "0 0 12px", fontSize: 12, color: "#78350f" }}>
+									These slots already hard-block <code>alex@codingcat.dev</code>{" "}
+									and have a private busy block on{" "}
+									<code>alex.patterson@sanity.io</code>. Approve to send{" "}
+									<code>https://streamyard.com/c4kv26is93</code> or Cancel to
+									free the calendars.
+								</p>
+								{bookings.filter(
+									(b) =>
+										b.status === "pending" &&
+										!isArchivedBookingStatus(b.status),
+								).length === 0 ? (
+									<div
+										style={{
+											fontSize: 13,
+											color: "#065f46",
+											fontWeight: 600,
+										}}
+									>
+										✓ Zero unapproved holds waiting!
+									</div>
+								) : (
+									<div style={{ display: "grid", gap: 10 }}>
+										{bookings
+											.filter(
+												(b) =>
+													b.status === "pending" &&
+													!isArchivedBookingStatus(b.status),
+											)
+											.map((b) => (
+												<div
+													key={b._id}
+													style={{
+														padding: 10,
+														borderRadius: 8,
+														background: "#fff",
+														border: "1px solid #fcd34d",
+														display: "flex",
+														justifyContent: "space-between",
+														alignItems: "center",
+														gap: 8,
+														flexWrap: "wrap",
+													}}
+												>
+													<div>
+														<div style={{ fontWeight: 700, fontSize: 13 }}>
+															{b.guestName} ({b.company || "Independent"})
+														</div>
+														<div style={{ fontSize: 12, color: "#4b5563" }}>
+															{formatDateTime(b.slotStartAt || b._createdAt)} ·{" "}
+															{b.guestEmail}
+														</div>
+													</div>
+													<div style={{ display: "flex", gap: 6 }}>
+														<button
+															type="button"
+															disabled={
+																busyActionId === `${b._id}:approve_recording`
+															}
+															onClick={() =>
+																handleBookingManage(b._id, "approve_recording")
+															}
+															style={{
+																...btnStyle,
+																background: "#059669",
+																borderColor: "#059669",
+																color: "#fff",
+															}}
+														>
+															✓ Approve &amp; Send StreamYard
+														</button>
+														<button
+															type="button"
+															disabled={
+																busyActionId === `${b._id}:cancel_booking`
+															}
+															onClick={() =>
+																handleBookingManage(b._id, "cancel_booking")
+															}
+															style={{
+																...btnStyle,
+																color: "#b91c1c",
+																borderColor: "#fca5a5",
+															}}
+														>
+															✕ Cancel
+														</button>
+													</div>
+												</div>
+											))}
+									</div>
+								)}
+							</div>
+
+							{/* Action Card 2: Active Deals Needing Action */}
+							<div
+								style={{
+									padding: 16,
+									borderRadius: 10,
+									border: "1px solid #bfdbfe",
+									background: "#eff6ff",
+								}}
+							>
+								<h3 style={{ margin: "0 0 8px", fontSize: 15, color: "#1e40af" }}>
+									💼 Active Sponsor Deals Needing Action (
+									{leads.filter((l) => !isArchivedLeadStatus(l.status)).length})
+								</h3>
+								<p style={{ margin: "0 0 12px", fontSize: 12, color: "#1e3a8a" }}>
+									Mark <strong>Paid in Full (100%)</strong> or{" "}
+									<strong>✕ Cancel</strong> to automatically archive out of your
+									active queue.
+								</p>
+								<div
+									style={{
+										display: "grid",
+										gap: 8,
+										maxHeight: 280,
+										overflowY: "auto",
+									}}
+								>
+									{leads
+										.filter((l) => !isArchivedLeadStatus(l.status))
+										.map((lead) => {
+											const token =
+												lead.portalToken ||
+												lead._id.replace(/^sponsorLead-/, "");
+											const portalUrl = `${siteOrigin}/portal/${token}`;
+											const isPf =
+												lead.source === "passionfroot" ||
+												lead.billingProvider === "passionfroot" ||
+												Boolean(lead.passionfrootCollaborationId);
+											return (
+												<div
+													key={lead._id}
+													style={{
+														padding: 10,
+														borderRadius: 8,
+														background: "#fff",
+														border: "1px solid #dbeafe",
+														display: "flex",
+														justifyContent: "space-between",
+														alignItems: "center",
+														gap: 8,
+														flexWrap: "wrap",
+													}}
+												>
+													<div>
+														<div style={{ fontWeight: 700, fontSize: 13 }}>
+															{lead.companyName}{" "}
+															<span
+																style={{
+																	fontSize: 11,
+																	fontWeight: 600,
+																	color: isPf ? "#059669" : "#4b5563",
+																}}
+															>
+																({isPf ? "🌱 PF" : "⚡ Direct"} ·{" "}
+																{formatUsd(
+																	lead.passionfrootNetEarningsCents ||
+																		lead.totalAmountCents,
+																)}
+																)
+															</span>
+														</div>
+														<div style={{ fontSize: 11, color: "#6b7280" }}>
+															Stage: <code>{lead.status || "new"}</code> ·{" "}
+															{lead.contactEmail}
+														</div>
+													</div>
+													<div style={{ display: "flex", gap: 6 }}>
+														<a
+															href={portalUrl}
+															target="_blank"
+															rel="noreferrer"
+															style={btnStyle}
+														>
+															Portal ↗
+														</a>
+														<button
+															type="button"
+															onClick={() =>
+																handleUpdateLeadStatus(lead._id, "paid")
+															}
+															style={{
+																...btnStyle,
+																background: "#dcfce7",
+																borderColor: "#86efac",
+																color: "#065f46",
+															}}
+															title="Mark 100% Paid in Full and Archive"
+														>
+															✓ Paid (Archive)
+														</button>
+														<button
+															type="button"
+															onClick={() =>
+																handleUpdateLeadStatus(lead._id, "cancelled")
+															}
+															style={{
+																...btnStyle,
+																color: "#b91c1c",
+																borderColor: "#fca5a5",
+															}}
+															title="Cancel deal and move to Archive"
+														>
+															✕ Cancel
+														</button>
+													</div>
+												</div>
+											);
+										})}
+								</div>
+							</div>
+						</div>
+
+						{/* Ongoing Master Calendar Timeline */}
+						<div>
+							<h3 style={{ margin: "0 0 12px", fontSize: 16 }}>
+								📅 Ongoing Multi-Calendar Schedule (Next 45 Days)
+							</h3>
+							<div style={{ overflowX: "auto" }}>
+								<table
+									style={{
+										width: "100%",
+										borderCollapse: "collapse",
+										fontSize: 13,
+									}}
+								>
+									<thead>
+										<tr
+											style={{
+												textAlign: "left",
+												borderBottom: "2px solid #e5e7eb",
+												color: "#374151",
+											}}
+										>
+											<th style={{ padding: "10px 8px" }}>Date &amp; Time (ET)</th>
+											<th style={{ padding: "10px 8px" }}>Calendar / Source</th>
+											<th style={{ padding: "10px 8px" }}>
+												Event / Podcast Recording
+											</th>
+											<th style={{ padding: "10px 8px" }}>
+												Status &amp; Studio Link
+											</th>
+											<th style={{ padding: "10px 8px" }}>Quick Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{(() => {
+											const nowMs = Date.now() - 12 * 60 * 60 * 1000;
+											const bookingEvents = bookings
+												.filter(
+													(b) =>
+														!isArchivedBookingStatus(b.status) &&
+														b.slotStartAt &&
+														Date.parse(b.slotStartAt) >= nowMs,
+												)
+												.map((b) => ({
+													id: b._id,
+													startAt: b.slotStartAt!,
+													calendarLabel:
+														"🎙️ CodingCat Podcast + 🔒 Sanity Private Block",
+													title: `${b.guestName} (${b.company || "Independent"})`,
+													status: b.status || "pending",
+													streamyardUrl:
+														b.recordingUrl ||
+														"https://streamyard.com/c4kv26is93",
+													booking: b,
+												}));
+
+											const bookingEventIds = new Set(
+												bookings
+													.map((b) => b.calendarEventId)
+													.filter(Boolean),
+											);
+
+											const externalEvents = masterCalendarEvents
+												.filter(
+													(ev) =>
+														!bookingEventIds.has(ev.id) &&
+														!ev.summary.startsWith("[CodingCat.dev]") &&
+														!ev.summary.startsWith("CodingCat.dev Podcast") &&
+														!ev.summary.startsWith(
+															"[HOLD] CodingCat.dev Podcast",
+														) &&
+														Date.parse(ev.start) >= nowMs,
+												)
+												.map((ev) => ({
+													id: `${ev.calendarId}:${ev.id}`,
+													startAt: ev.start,
+													calendarLabel:
+														ev.calendarId === "alex.patterson@sanity.io"
+															? "🟧 alex.patterson@sanity.io"
+															: "🟪 alex@codingcat.dev",
+													title: ev.summary,
+													status: ev.visibility === "private" ? "private" : "busy",
+													streamyardUrl: ev.htmlLink || "",
+													booking: null as PodcastBooking | null,
+												}));
+
+											const combined = [...bookingEvents, ...externalEvents].sort(
+												(a, b) => Date.parse(a.startAt) - Date.parse(b.startAt),
+											);
+
+											if (combined.length === 0) {
+												return (
+													<tr>
+														<td
+															colSpan={5}
+															style={{ padding: 16, color: "#6b7280" }}
+														>
+															No upcoming events found in the next 45 days.
+														</td>
+													</tr>
+												);
+											}
+
+											return combined.map((item) => {
+												const b = item.booking;
+												const isApproved =
+													b &&
+													(b.status === "approved" ||
+														b.status === "scheduled" ||
+														b.status === "recorded");
+												return (
+													<tr
+														key={item.id}
+														style={{
+															borderBottom: "1px solid #f3f4f6",
+															background: b ? "#f5f3ff" : "#fff",
+														}}
+													>
+														<td
+															style={{
+																padding: "10px 8px",
+																whiteSpace: "nowrap",
+																fontWeight: 700,
+															}}
+														>
+															{formatDateTime(item.startAt)}
+														</td>
+														<td style={{ padding: "10px 8px" }}>
+															<span
+																style={{
+																	padding: "2px 8px",
+																	borderRadius: 999,
+																	fontSize: 11,
+																	fontWeight: 700,
+																	background: b ? "#ede9fe" : "#f3f4f6",
+																	color: b ? "#5b21b6" : "#374151",
+																}}
+															>
+																{item.calendarLabel}
+															</span>
+														</td>
+														<td style={{ padding: "10px 8px", fontWeight: 600 }}>
+															{item.title}
+															{b && (
+																<div
+																	style={{
+																		fontSize: 11,
+																		color: "#6b7280",
+																		fontWeight: 400,
+																	}}
+																>
+																	{b.guestEmail} ·{" "}
+																	{b.bookingSource === "passionfroot"
+																		? "🌱 Passionfroot"
+																		: "⚡ Direct Book"}
+																</div>
+															)}
+														</td>
+														<td style={{ padding: "10px 8px" }}>
+															{b ? (
+																<div>
+																	<span
+																		style={{
+																			padding: "2px 7px",
+																			borderRadius: 999,
+																			fontSize: 11,
+																			fontWeight: 700,
+																			background: isApproved
+																				? "#dcfce7"
+																				: "#fef3c7",
+																			color: isApproved ? "#065f46" : "#92400e",
+																		}}
+																	>
+																		{isApproved
+																			? "✓ Approved (StreamYard Sent)"
+																			: "⏳ Hold (Pending Approval)"}
+																	</span>
+																	<div style={{ marginTop: 4, fontSize: 11 }}>
+																		<a
+																			href="https://streamyard.com/c4kv26is93"
+																			target="_blank"
+																			rel="noreferrer"
+																			style={{
+																				color: "#2563eb",
+																				fontWeight: 600,
+																			}}
+																		>
+																			StreamYard Studio ↗
+																		</a>
+																	</div>
+																</div>
+															) : (
+																<span
+																	style={{ fontSize: 12, color: "#6b7280" }}
+																>
+																	Calendar Busy Block
+																</span>
+															)}
+														</td>
+														<td style={{ padding: "10px 8px" }}>
+															{b ? (
+																<div
+																	style={{
+																		display: "flex",
+																		gap: 6,
+																		flexWrap: "wrap",
+																	}}
+																>
+																	{!isApproved && (
+																		<button
+																			type="button"
+																			disabled={
+																				busyActionId ===
+																				`${b._id}:approve_recording`
+																			}
+																			onClick={() =>
+																				handleBookingManage(
+																					b._id,
+																					"approve_recording",
+																				)
+																			}
+																			style={{
+																				...btnStyle,
+																				background: "#059669",
+																				borderColor: "#059669",
+																				color: "#fff",
+																			}}
+																		>
+																			✓ Approve
+																		</button>
+																	)}
+																	<button
+																		type="button"
+																		disabled={
+																			busyActionId === `${b._id}:cancel_booking`
+																		}
+																		onClick={() =>
+																			handleBookingManage(
+																				b._id,
+																				"cancel_booking",
+																			)
+																		}
+																		style={{
+																			...btnStyle,
+																			color: "#b91c1c",
+																			borderColor: "#fca5a5",
+																		}}
+																	>
+																		✕ Cancel
+																	</button>
+																</div>
+															) : item.streamyardUrl ? (
+																<a
+																	href={item.streamyardUrl}
+																	target="_blank"
+																	rel="noreferrer"
+																	style={btnStyle}
+																>
+																	Open in GCal ↗
+																</a>
+															) : null}
+														</td>
+													</tr>
+												);
+											});
+										})()}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</section>
 				</div>
 			)}
 
@@ -1093,20 +1812,49 @@ export function App() {
 								marginBottom: 16,
 							}}
 						>
+							<button
+								type="button"
+								onClick={() => setShowArchivedLeads(false)}
+								style={{
+									...btnStyle,
+									background: !showArchivedLeads ? "#059669" : "#f9fafb",
+									color: !showArchivedLeads ? "#fff" : "#374151",
+									borderColor: !showArchivedLeads ? "#059669" : "#d1d5db",
+									fontWeight: 700,
+								}}
+							>
+								⚡ Active Queue (
+								{leads.filter((l) => !isArchivedLeadStatus(l.status)).length})
+							</button>
+							<button
+								type="button"
+								onClick={() => setShowArchivedLeads(true)}
+								style={{
+									...btnStyle,
+									background: showArchivedLeads ? "#4b5563" : "#f9fafb",
+									color: showArchivedLeads ? "#fff" : "#374151",
+									borderColor: showArchivedLeads ? "#4b5563" : "#d1d5db",
+									fontWeight: 700,
+								}}
+							>
+								🗄️ Archived: Paid in Full / Cancelled (
+								{leads.filter((l) => isArchivedLeadStatus(l.status)).length})
+							</button>
+							<span style={{ color: "#d1d5db", alignSelf: "center" }}>|</span>
 							{(
 								[
-									{ id: "all", label: `All Deals (${leads.length})` },
+									{ id: "all", label: `All Sources (${filteredLeads.length})` },
 									{
 										id: "passionfroot",
-										label: `🌱 Passionfroot (${leads.filter((l) => l.source === "passionfroot" || l.billingProvider === "passionfroot" || Boolean(l.passionfrootCollaborationId)).length})`,
+										label: `🌱 Passionfroot (${leads.filter((l) => (showArchivedLeads ? isArchivedLeadStatus(l.status) : !isArchivedLeadStatus(l.status)) && (l.source === "passionfroot" || l.billingProvider === "passionfroot" || Boolean(l.passionfrootCollaborationId))).length})`,
 									},
 									{
 										id: "direct",
-										label: `⚡ Direct Book (${leads.filter((l) => l.source === "booking").length})`,
+										label: `⚡ Direct Book (${leads.filter((l) => (showArchivedLeads ? isArchivedLeadStatus(l.status) : !isArchivedLeadStatus(l.status)) && l.source === "booking").length})`,
 									},
 									{
 										id: "inbound",
-										label: `📬 Inbound / Gmail (${leads.filter((l) => l.source !== "passionfroot" && l.billingProvider !== "passionfroot" && !l.passionfrootCollaborationId && l.source !== "booking").length})`,
+										label: `📬 Inbound / Gmail (${leads.filter((l) => (showArchivedLeads ? isArchivedLeadStatus(l.status) : !isArchivedLeadStatus(l.status)) && l.source !== "passionfroot" && l.billingProvider !== "passionfroot" && !l.passionfrootCollaborationId && l.source !== "booking").length})`,
 									},
 								] as const
 							).map((f) => (
@@ -1537,6 +2285,25 @@ export function App() {
 															>
 																Gmail ↗
 															</a>
+															{!isArchivedLeadStatus(lead.status) && (
+																<button
+																	type="button"
+																	onClick={() =>
+																		handleUpdateLeadStatus(
+																			lead._id,
+																			"cancelled",
+																		)
+																	}
+																	style={{
+																		...btnStyle,
+																		color: "#b91c1c",
+																		borderColor: "#fca5a5",
+																	}}
+																	title="Cancel deal and move to Archive"
+																>
+																	✕ Cancel
+																</button>
+															)}
 														</div>
 													</td>
 												</tr>
@@ -2080,16 +2847,56 @@ export function App() {
 								marginBottom: 16,
 							}}
 						>
+							<button
+								type="button"
+								onClick={() => setShowArchivedBookings(false)}
+								style={{
+									...btnStyle,
+									background: !showArchivedBookings ? "#059669" : "#f9fafb",
+									color: !showArchivedBookings ? "#fff" : "#374151",
+									borderColor: !showArchivedBookings ? "#059669" : "#d1d5db",
+									fontWeight: 700,
+								}}
+							>
+								🎙️ Active Bookings (
+								{
+									bookings.filter((b) => !isArchivedBookingStatus(b.status))
+										.length
+								}
+								)
+							</button>
+							<button
+								type="button"
+								onClick={() => setShowArchivedBookings(true)}
+								style={{
+									...btnStyle,
+									background: showArchivedBookings ? "#4b5563" : "#f9fafb",
+									color: showArchivedBookings ? "#fff" : "#374151",
+									borderColor: showArchivedBookings ? "#4b5563" : "#d1d5db",
+									fontWeight: 700,
+								}}
+							>
+								🗄️ Archived: Published / Cancelled (
+								{
+									bookings.filter((b) => isArchivedBookingStatus(b.status))
+										.length
+								}
+								)
+							</button>
+							<span style={{ color: "#d1d5db", alignSelf: "center" }}>|</span>
 							{(
 								[
-									{ id: "all", label: `All Bookings (${bookings.length})` },
+									{
+										id: "all",
+										label: `All Sources (${filteredBookings.length})`,
+									},
 									{
 										id: "direct",
-										label: `⚡ Direct Book (${bookings.filter((b) => b.bookingSource !== "passionfroot" && !b.passionfrootCollaborationId).length})`,
+										label: `⚡ Direct Book (${bookings.filter((b) => (showArchivedBookings ? isArchivedBookingStatus(b.status) : !isArchivedBookingStatus(b.status)) && b.bookingSource !== "passionfroot" && !b.passionfrootCollaborationId).length})`,
 									},
 									{
 										id: "passionfroot",
-										label: `🌱 Passionfroot Placements (${bookings.filter((b) => b.bookingSource === "passionfroot" || Boolean(b.passionfrootCollaborationId)).length})`,
+										label: `🌱 Passionfroot Placements (${bookings.filter((b) => (showArchivedBookings ? isArchivedBookingStatus(b.status) : !isArchivedBookingStatus(b.status)) && (b.bookingSource === "passionfroot" || Boolean(b.passionfrootCollaborationId))).length})`,
 									},
 								] as const
 							).map((f) => (
@@ -2509,6 +3316,25 @@ export function App() {
 															>
 																+ Deal Room
 															</button>
+															{!isArchivedBookingStatus(b.status) && (
+																<button
+																	type="button"
+																	disabled={
+																		busyActionId === `${b._id}:cancel_booking`
+																	}
+																	onClick={() =>
+																		handleBookingManage(b._id, "cancel_booking")
+																	}
+																	style={{
+																		...btnStyle,
+																		color: "#b91c1c",
+																		borderColor: "#fca5a5",
+																	}}
+																	title="Cancel booking and remove holds from alex@codingcat.dev and alex.patterson@sanity.io"
+																>
+																	✕ Cancel
+																</button>
+															)}
 														</div>
 													</td>
 												</tr>
@@ -3041,6 +3867,25 @@ export function App() {
 																	? "Hide Deliverables & Vault"
 																	: `Deliverables (${lead.deliverables?.length || 0}) & Vault (${lead.sharedAssets?.length || 0})`}
 															</button>
+															{!isArchivedLeadStatus(lead.status) && (
+																<button
+																	type="button"
+																	onClick={() =>
+																		handleUpdateLeadStatus(
+																			lead._id,
+																			"cancelled",
+																		)
+																	}
+																	style={{
+																		...btnStyle,
+																		color: "#b91c1c",
+																		borderColor: "#fca5a5",
+																	}}
+																	title="Cancel deal and move to Archive"
+																>
+																	✕ Cancel
+																</button>
+															)}
 														</div>
 													</td>
 												</tr>

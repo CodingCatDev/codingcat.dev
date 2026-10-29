@@ -1858,6 +1858,14 @@
             {
               "type": "string",
               "value": "paid"
+            },
+            {
+              "type": "string",
+              "value": "cancelled"
+            },
+            {
+              "type": "string",
+              "value": "archived"
             }
           ]
         },
