@@ -33,7 +33,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const portalToken =
 		body.portalToken ||
 		`spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-	const leadId = body.leadId || `sponsorLead-${portalToken}`;
+	const rawLeadId = body.leadId || `private.sponsorLead-${portalToken}`;
+	const leadId = rawLeadId.startsWith("private.")
+		? rawLeadId
+		: `private.${rawLeadId}`;
 	const milestone = body.milestone || "deposit";
 	const mode = body.mode || "checkout";
 	const tier = resolveSponsorTier(body.tier);

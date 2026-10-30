@@ -46,6 +46,7 @@ jobs:
         run: |
           node apps/sanity/scripts/sync-guest-socials.mjs
           node apps/sanity/scripts/sync-sponsor-socials.mjs
+          node apps/sanity/scripts/migrate-private-ids.mjs
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
@@ -271,6 +272,7 @@ jobs:
         run: |
           node apps/sanity/scripts/sync-guest-socials.mjs
           node apps/sanity/scripts/sync-sponsor-socials.mjs
+          node apps/sanity/scripts/migrate-private-ids.mjs
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}

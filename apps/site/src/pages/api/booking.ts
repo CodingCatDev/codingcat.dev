@@ -90,9 +90,12 @@ export const POST: APIRoute = async ({ request, url }) => {
 		);
 	}
 
-	const bookingId =
+	const rawBookingId =
 		data.preMeetingForBookingId?.trim() ||
 		`booking-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+	const bookingId = rawBookingId.startsWith("private.")
+		? rawBookingId
+		: `private.${rawBookingId}`;
 	const existingToken = data.portalToken?.trim();
 	const portalToken =
 		existingToken && existingToken.length > 0
@@ -127,7 +130,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		const tier = resolveSponsorTier(
 			track === "full-stack-launch" ? "full-stack-launch" : "podcast-showcase",
 		);
-		const leadId = `sponsorLead-${portalToken}`;
+		const leadId = `private.sponsorLead-${portalToken}`;
 
 		if (!existingToken && bookingSource !== "passionfroot") {
 			try {

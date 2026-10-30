@@ -232,7 +232,7 @@ export function getSanityServerClient(): {
 		apiVersion,
 		useCdn: false,
 		token,
-		perspective: "published",
+		perspective: "raw",
 	});
 
 	return {

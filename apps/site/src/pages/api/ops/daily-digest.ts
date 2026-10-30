@@ -265,7 +265,7 @@ async function buildAndOptionallySendDigest(opts: {
 			? ["   - No recordings in the next 72 hours."]
 			: upcoming72hBookings.map(
 					(b) =>
-						`   - [${fmtTime(b.slotStartAt)}] ${b.guestName} (${b.company || "Independent"}) · Status: ${b.status} · Vault: ${opts.siteOrigin}/portal/${b.portalToken || b._id.replace(/^booking-/, "")}#vault`,
+						`   - [${fmtTime(b.slotStartAt)}] ${b.guestName} (${b.company || "Independent"}) · Status: ${b.status} · Vault: ${opts.siteOrigin}/portal/${b.portalToken || b._id.replace(/^(private\.)?booking-/, "")}#vault`,
 				)),
 		"",
 		`4. ACTIVE SPONSOR DEALS NEEDING FOLLOW-UP (${actionLeads.length}):`,
@@ -273,7 +273,7 @@ async function buildAndOptionallySendDigest(opts: {
 			? ["   - All active sponsor deals are up to date."]
 			: actionLeads.map(
 					(l) =>
-						`   - ${l.companyName} (${l.contactEmail}) · Stage: ${l.status} · Source: ${l.source || "inbound"} · Deal Room: ${opts.siteOrigin}/portal/${l.portalToken || l._id.replace(/^sponsorLead-/, "")}`,
+						`   - ${l.companyName} (${l.contactEmail}) · Stage: ${l.status} · Source: ${l.source || "inbound"} · Deal Room: ${opts.siteOrigin}/portal/${l.portalToken || l._id.replace(/^(private\.)?sponsorLead-/, "")}`,
 				)),
 		"",
 		`Open CodingCat.dev Studio & Ops App: ${opts.siteOrigin}`,
@@ -300,17 +300,9 @@ async function buildAndOptionallySendDigest(opts: {
 			actionLeadsCount: actionLeads.length,
 		},
 		todayCalendarEvents,
-		pendingHolds,
-		upcoming72hBookings,
-		actionLeads,
-		allBookings: data.allBookings || data.bookings || [],
-		allLeads: data.allLeads || data.leads || [],
 		syndicatedContent: data.syndicatedContent || [],
 		syndicationDocCount: data.syndicationDocCount || 0,
-		draftItems: data.draftItems || [],
-		trendSignals: data.trendSignals || [],
 		calendarEvents,
-		emailText,
 		emailResult,
 	};
 }

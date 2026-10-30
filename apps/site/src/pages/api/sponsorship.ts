@@ -132,7 +132,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 	const selectedTier = resolveSponsorTier(rawTier);
 	const portalToken = `spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-	const leadId = `sponsorLead-${portalToken}`;
+	const leadId = `private.sponsorLead-${portalToken}`;
 
 	const workerEnv = (env ?? {}) as unknown as Record<
 		string,

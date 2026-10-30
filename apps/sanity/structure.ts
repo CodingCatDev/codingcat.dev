@@ -101,8 +101,13 @@ export const editorialStructure: StructureResolver = (S) =>
 								.title("All Podcast & Sponsor Bookings")
 								.icon(FaPodcast)
 								.child(
-									S.documentTypeList("booking")
+									S.documentList()
 										.title("All Bookings")
+										.schemaType("booking")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "booking" && (_id in path("private.**") || _id in path("*"))',
+										)
 										.defaultOrdering([
 											{ field: "slotStartAt", direction: "desc" },
 										]),
@@ -113,7 +118,10 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Pending Booking Holds")
 										.schemaType("booking")
-										.filter('_type == "booking" && status == "pending"')
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "booking" && status == "pending" && (_id in path("private.**") || _id in path("*"))',
+										)
 										.defaultOrdering([
 											{ field: "_createdAt", direction: "desc" },
 										]),
@@ -124,8 +132,9 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Confirmed Bookings")
 										.schemaType("booking")
+										.apiVersion("2025-02-19")
 										.filter(
-											'_type == "booking" && status in ["approved", "scheduled"]',
+											'_type == "booking" && status in ["approved", "scheduled"] && (_id in path("private.**") || _id in path("*"))',
 										)
 										.defaultOrdering([
 											{ field: "slotStartAt", direction: "asc" },
@@ -136,8 +145,13 @@ export const editorialStructure: StructureResolver = (S) =>
 								.title("All Sponsor Leads & Deal Rooms")
 								.icon(PiCurrencyDollarSimpleFill)
 								.child(
-									S.documentTypeList("sponsorLead")
+									S.documentList()
 										.title("Sponsor Leads & Deal Rooms")
+										.schemaType("sponsorLead")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "sponsorLead" && (_id in path("private.**") || _id in path("*"))',
+										)
 										.defaultOrdering([
 											{ field: "_updatedAt", direction: "desc" },
 										]),
@@ -148,8 +162,9 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Active Sponsor Deals")
 										.schemaType("sponsorLead")
+										.apiVersion("2025-02-19")
 										.filter(
-											'_type == "sponsorLead" && status in ["new", "contacted", "replied", "negotiating", "deposit_sent"]',
+											'_type == "sponsorLead" && status in ["new", "contacted", "replied", "negotiating", "deposit_sent"] && (_id in path("private.**") || _id in path("*"))',
 										),
 								),
 							S.listItem()
@@ -158,14 +173,21 @@ export const editorialStructure: StructureResolver = (S) =>
 									S.documentList()
 										.title("Paid / In Production")
 										.schemaType("sponsorLead")
+										.apiVersion("2025-02-19")
 										.filter(
-											'_type == "sponsorLead" && status in ["deposit_paid", "booked", "balance_sent", "paid"]',
+											'_type == "sponsorLead" && status in ["deposit_paid", "booked", "balance_sent", "paid"] && (_id in path("private.**") || _id in path("*"))',
 										),
 								),
 							S.listItem()
 								.title("Outbound Prospects (Sponsor Pool)")
 								.child(
-									S.documentTypeList("sponsorPool").title("Outbound Prospects"),
+									S.documentList()
+										.title("Outbound Prospects")
+										.schemaType("sponsorPool")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "sponsorPool" && (_id in path("private.**") || _id in path("*"))',
+										),
 								),
 							S.divider(),
 							S.listItem()
@@ -411,8 +433,13 @@ export const editorialStructure: StructureResolver = (S) =>
 								.title("All Discovered Trends (Ranked)")
 								.icon(FaFire)
 								.child(
-									S.documentTypeList("trendSignal")
+									S.documentList()
 										.title("All Discovered Trends")
+										.schemaType("trendSignal")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "trendSignal" && (_id in path("trend.**") || _id in path("*"))',
+										)
 										.defaultOrdering([
 											{ field: "score", direction: "desc" },
 											{ field: "discoveredAt", direction: "desc" },

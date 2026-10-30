@@ -536,7 +536,7 @@ export function App() {
 			.slice(0, 12)}_${Math.random().toString(36).slice(2, 6)}`;
 		const tier =
 			RATE_CARD_TIERS[newRateCard] || RATE_CARD_TIERS["full-stack-launch"];
-		const docId = `sponsorLead-${slugToken}`;
+		const docId = `private.sponsorLead-${slugToken}`;
 
 		const newDoc: SponsorLeadDoc & { _type: "sponsorLead" } = {
 			_id: docId,
@@ -714,7 +714,7 @@ export function App() {
 		extra?: Record<string, any>,
 	) => {
 		const token =
-			lead.portalToken || lead._id.replace(/^sponsorLead-/, "");
+			lead.portalToken || lead._id.replace(/^(private\.)?sponsorLead-/, "");
 		setBusyActionId(`${lead._id}:${action}`);
 		try {
 			const res = await fetch(`${siteOrigin}/api/ops/passionfroot`, {
@@ -833,7 +833,7 @@ export function App() {
 				.toLowerCase()
 				.replace(/[^a-z0-9]/g, "")
 				.slice(0, 12)}`;
-		const docId = `sponsorLead-${slugToken}`;
+		const docId = `private.sponsorLead-${slugToken}`;
 		const newDoc: SponsorLeadDoc & { _type: "sponsorLead" } = {
 			_id: docId,
 			_type: "sponsorLead",
@@ -1391,7 +1391,7 @@ export function App() {
 										.map((lead) => {
 											const token =
 												lead.portalToken ||
-												lead._id.replace(/^sponsorLead-/, "");
+												lead._id.replace(/^(private\.)?sponsorLead-/, "");
 											const portalUrl = `${siteOrigin}/portal/${token}`;
 											const isPf =
 												lead.source === "passionfroot" ||
@@ -2128,7 +2128,7 @@ export function App() {
 									{filteredLeads.map((lead) => {
 										const token =
 											lead.portalToken ||
-											lead._id.replace(/^sponsorLead-/, "");
+											lead._id.replace(/^(private\.)?sponsorLead-/, "");
 										const portalUrl = `${siteOrigin}/portal/${token}`;
 										const vaultUrl = `${portalUrl}#vault`;
 										const gmailUrl = lead.threadId
@@ -3030,7 +3030,7 @@ export function App() {
 											b.status === "recorded" ||
 											b.status === "published";
 										const token =
-											b.portalToken || b._id.replace(/^booking-/, "");
+											b.portalToken || b._id.replace(/^(private\.)?booking-/, "");
 										const portalUrl = `${siteOrigin}/portal/${token}`;
 										const vaultUrl = `${portalUrl}#vault`;
 										const assetCount = b.sharedAssets?.length || 0;
@@ -3761,7 +3761,7 @@ export function App() {
 									{filteredLeads.map((lead) => {
 										const token =
 											lead.portalToken ||
-											lead._id.replace(/^sponsorLead-/, "");
+											lead._id.replace(/^(private\.)?sponsorLead-/, "");
 										const portalUrl = `${siteOrigin}/portal/${token}`;
 										const vaultUrl = `${portalUrl}#vault`;
 										const isPf =

@@ -63,9 +63,17 @@ export const POST: APIRoute = async ({ request }) => {
 		const { client, canWrite } = getSanityServerClient();
 		if (canWrite && leadId) {
 			try {
+				const strippedLeadId = leadId.replace(/^private\./, "");
+				const privateLeadId = `private.${strippedLeadId}`;
+				const existingLead = await client.fetch<{ _id: string } | null>(
+					`*[_type == "sponsorLead" && _id in [$privateLeadId, $strippedLeadId]][0]{ _id }`,
+					{ privateLeadId, strippedLeadId },
+				);
+				const resolvedLeadId = existingLead?._id || privateLeadId;
+
 				if (milestone === "deposit") {
 					await client
-						.patch(leadId)
+						.patch(resolvedLeadId)
 						.set({
 							status: "deposit_paid",
 							depositPaidAt: nowIso,
@@ -73,7 +81,7 @@ export const POST: APIRoute = async ({ request }) => {
 						.commit();
 				} else {
 					// Final 50% balance paid -> mark paid in full and ensure public sponsor doc exists
-					const sponsorId = `sponsor-${leadId.replace(/^sponsorLead-/, "")}`;
+					const sponsorId = `sponsor-${resolvedLeadId.replace(/^(private\.)?sponsorLead-/, "")}`;
 					if (companyName) {
 						await client.createIfNotExists({
 							_id: sponsorId,
@@ -83,7 +91,7 @@ export const POST: APIRoute = async ({ request }) => {
 						});
 					}
 					await client
-						.patch(leadId)
+						.patch(resolvedLeadId)
 						.set({
 							status: "paid",
 							balancePaidAt: nowIso,

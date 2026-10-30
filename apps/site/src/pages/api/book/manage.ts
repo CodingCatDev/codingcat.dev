@@ -27,7 +27,8 @@ interface ManageBookingPayload {
 		| "request_pre_meeting"
 		| "schedule_pre_meeting"
 		| "bypass_pre_meeting"
-		| "reconcile_calendar_holds";
+		| "reconcile_calendar_holds"
+		| "migrate_private_ids";
 	bookingId?: string;
 	eventId?: string;
 	guestName?: string;
@@ -55,6 +56,47 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 	const { client, canWrite } = getSanityServerClient();
 
+	if (body.action === "migrate_private_ids") {
+		if (!canWrite) {
+			return new Response(
+				JSON.stringify({ ok: false, message: "Sanity write token unavailable" }),
+				{ status: 500, headers: CORS_HEADERS },
+			);
+		}
+		const publicDocs = await client.fetch<Array<Record<string, any>>>(
+			`*[_type in ["booking", "sponsorLead", "sponsorPool"] && !(_id in path("private.**")) && !(_id in path("drafts.**"))]`,
+		);
+		const migratedIds: string[] = [];
+		const deletedIds: string[] = [];
+		for (const d of publicDocs || []) {
+			const oldId = String(d._id || "");
+			if (!oldId || oldId.startsWith("private.")) continue;
+			const newId = `private.${oldId}`;
+			const { _rev, ...rest } = d;
+			await client.createOrReplace({
+				...rest,
+				_id: newId,
+			} as any);
+			migratedIds.push(newId);
+			try {
+				await client.delete(oldId);
+				deletedIds.push(oldId);
+			} catch {
+				// Ignore if referenced
+			}
+		}
+		return new Response(
+			JSON.stringify({
+				ok: true,
+				migratedCount: migratedIds.length,
+				deletedCount: deletedIds.length,
+				migratedIds,
+				deletedIds,
+			}),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
 	if (body.action === "reconcile_calendar_holds") {
 		if (!canWrite) {
 			return new Response(
@@ -66,17 +108,29 @@ export const POST: APIRoute = async ({ request, url }) => {
 		let created = 0;
 		for (const doc of body.docs || []) {
 			if (doc._id && doc._type === "booking") {
-				await client.createOrReplace(doc as any);
+				const normalizedId = String(doc._id).startsWith("private.")
+					? String(doc._id)
+					: `private.${doc._id}`;
+				await client.createOrReplace({
+					...doc,
+					_id: normalizedId,
+				} as any);
 				created++;
 			}
 		}
 		for (const p of body.patches || []) {
 			if (p.id && p.set) {
-				try {
-					await client.patch(p.id).set(p.set).commit();
-					patched++;
-				} catch {
-					// Ignore if doc does not exist in target dataset
+				const targetIds = [
+					p.id,
+					p.id.startsWith("private.") ? p.id.replace(/^private\./, "") : `private.${p.id}`,
+				];
+				for (const tid of targetIds) {
+					try {
+						await client.patch(tid).set(p.set).commit();
+						patched++;
+					} catch {
+						// Ignore if doc does not exist in target dataset
+					}
 				}
 			}
 		}
@@ -86,8 +140,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 		);
 	}
 
-	const bookingId = body.bookingId?.trim();
-	if (!bookingId || !body.action) {
+	const rawBookingId = body.bookingId?.trim();
+	if (!rawBookingId || !body.action) {
 		return new Response(
 			JSON.stringify({
 				ok: false,
@@ -97,14 +151,18 @@ export const POST: APIRoute = async ({ request, url }) => {
 		);
 	}
 
+	const strippedId = rawBookingId.replace(/^private\./, "");
+	const privateId = `private.${strippedId}`;
 	let doc: Record<string, any> | null = null;
 	try {
-		doc = await client.fetch(`*[_type == "booking" && _id == $id][0]`, {
-			id: bookingId,
-		});
+		doc = await client.fetch(
+			`*[_type == "booking" && _id in [$privateId, $strippedId]][0]`,
+			{ privateId, strippedId },
+		);
 	} catch {
 		// Fallback to payload fields
 	}
+	const bookingId = doc?._id || privateId;
 
 	const guestName = body.guestName || doc?.guestName || "Podcast Guest";
 	const guestEmail = body.guestEmail || doc?.guestEmail || "";
@@ -118,7 +176,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const portalToken =
 		body.portalToken ||
 		doc?.portalToken ||
-		`spt_${bookingId.replace(/^booking-/, "").slice(0, 12)}`;
+		`spt_${bookingId.replace(/^(private\.)?booking-/, "").slice(0, 12)}`;
 	const googleCalendarEventId = body.eventId || doc?.googleCalendarEventId;
 
 	const workerEnv = (env ?? {}) as unknown as Record<

@@ -79,7 +79,7 @@ const paymentNotice = searchParams.get("payment");
 const bookedSlotParam = searchParams.get("bookedSlot");
 
 let portalData: LeadPortalData = {
-	_id: `sponsorLead-${token}`,
+	_id: `private.sponsorLead-${token}`,
 	portalToken: token || "demo",
 	companyName: fallbackCompany,
 	contactName: fallbackName,
@@ -105,8 +105,12 @@ try {
 	const { client } = getSanityServerClient();
 	const [doc, bookingDoc] = await Promise.all([
 		client.fetch<Record<string, any> | null>(
-			`*[_type == "sponsorLead" && (portalToken == $portalToken || _id == $leadId)][0]`,
-			{ portalToken: token ?? "", leadId: `sponsorLead-${token ?? ""}` },
+			`*[_type == "sponsorLead" && (portalToken == $portalToken || _id == $privateLeadId || _id == $leadId)][0]`,
+			{
+				portalToken: token ?? "",
+				privateLeadId: `private.sponsorLead-${token ?? ""}`,
+				leadId: `sponsorLead-${token ?? ""}`,
+			},
 		),
 		client.fetch<Record<string, any> | null>(
 			`*[_type == "booking" && portalToken == $portalToken] | order(_createdAt desc)[0]`,
@@ -125,7 +129,7 @@ try {
 			bookingDoc?.bookingSource === "passionfroot" ||
 			Boolean(token?.startsWith("spt_pf_"));
 		portalData = {
-			_id: doc?._id || bookingDoc?._id || `sponsorLead-${token}`,
+			_id: doc?._id || bookingDoc?._id || `private.sponsorLead-${token}`,
 			portalToken: doc?.portalToken || bookingDoc?.portalToken || token || "demo",
 			companyName:
 				doc?.companyName || bookingDoc?.company || fallbackCompany,

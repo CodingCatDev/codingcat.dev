@@ -182,7 +182,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 			}
 
 			const portalToken = `spt_pf_${collab.id.replace(/[^a-zA-Z0-9]/g, "").slice(0, 16)}`;
-			const leadId = `sponsorLead-${portalToken}`;
+			const leadId = `private.sponsorLead-${portalToken}`;
+			const legacyLeadId = `sponsorLead-${portalToken}`;
 
 			// Check existing doc so we don't re-upload already mirrored attachments
 			const existingDoc = canWrite
@@ -192,7 +193,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 							title?: string;
 							assetId?: string;
 						}>;
-					} | null>(`*[_id == $id][0]{ sharedAssets }`, { id: leadId })
+					} | null>(`*[_id in [$id, $legacyId]][0]{ sharedAssets }`, {
+						id: leadId,
+						legacyId: legacyLeadId,
+					})
 				: null;
 			const existingSharedAssets = Array.isArray(existingDoc?.sharedAssets)
 				? [...existingDoc.sharedAssets]

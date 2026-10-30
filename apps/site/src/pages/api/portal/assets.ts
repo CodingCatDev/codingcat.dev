@@ -62,7 +62,7 @@ export const GET: APIRoute = async ({ url }) => {
 
 	const { client } = getSanityServerClient();
 	const ownerDoc = await client.fetch<Record<string, any> | null>(
-		`*[_type in ["sponsorLead", "booking", "guest"] && (portalToken == $token || _id == $token)][0]{
+		`*[_type in ["sponsorLead", "booking", "guest"] && (portalToken == $token || _id == $token || _id == "private." + $token || _id == "private.sponsorLead-" + $token || _id == "sponsorLead-" + $token)][0]{
 			_id,
 			portalToken,
 			sharedAssets
@@ -226,8 +226,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 	>(
 		`*[_type in ["sponsorLead", "booking"] && (
 			($token != "" && portalToken == $token) ||
-			($docId != "" && _id == $docId) ||
-			($token != "" && _id == "sponsorLead-" + $token)
+			($docId != "" && (_id == $docId || _id == "private." + $docId)) ||
+			($token != "" && (_id == "private.sponsorLead-" + $token || _id == "sponsorLead-" + $token))
 		)]{
 			_id,
 			_type,
@@ -243,7 +243,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 	const primaryDoc = targetDocs?.[0];
 	const resolvedToken =
-		token || primaryDoc?.portalToken || docId.replace(/^sponsorLead-/, "");
+		token || primaryDoc?.portalToken || docId.replace(/^(private\.)?sponsorLead-/, "");
 	const partnerLabel =
 		primaryDoc?.companyName ||
 		primaryDoc?.company ||
@@ -340,7 +340,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 			updatedIds.push(d._id);
 		}
 	} else if (resolvedToken) {
-		const fallbackLeadId = docId || `sponsorLead-${resolvedToken}`;
+		const rawLeadId = docId || `private.sponsorLead-${resolvedToken}`;
+		const fallbackLeadId = rawLeadId.startsWith("private.")
+			? rawLeadId
+			: `private.${rawLeadId}`;
 		await client.createIfNotExists({
 			_id: fallbackLeadId,
 			_type: "sponsorLead",

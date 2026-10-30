@@ -242,7 +242,7 @@ export const POST: APIRoute = async ({ request }) => {
 					.toLowerCase()
 					.replace(/[^a-z0-9]+/g, "-");
 				await client.createOrReplace({
-					_id: `sponsorPool-${slugId}`,
+					_id: `private.sponsorPool-${slugId}`,
 					_type: "sponsorPool",
 					companyName: body.companyName,
 					contactName: body.contactName || "Founding Team",
@@ -286,7 +286,7 @@ export const POST: APIRoute = async ({ request }) => {
 			try {
 				const slugId = p.companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 				await client.createOrReplace({
-					_id: `sponsorPool-${slugId}`,
+					_id: `private.sponsorPool-${slugId}`,
 					_type: "sponsorPool",
 					companyName: p.companyName,
 					contactName: p.contactName,
