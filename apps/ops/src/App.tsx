@@ -350,68 +350,77 @@ export function App() {
 	const fetchAllData = useCallback(async () => {
 		setLoading(true);
 		try {
-			const res = await client.fetch<{
-				leads: SponsorLeadDoc[];
-				bookings: BookingDoc[];
-				syndicatedContent: SyndicatedContentItem[];
-				syndicationDocCount: number;
-				draftItems: DraftContentItem[];
-				trendSignals: TrendSignalDoc[];
-			}>(
-				`{
-				"leads": *[_type == "sponsorLead" && !(_id in path("drafts.**"))] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc),
-				"bookings": *[_type == "booking" && !(_id in path("drafts.**"))] | order(coalesce(slotStartAt, _createdAt) desc),
-				"syndicatedContent": *[_type in ["post", "podcast"] && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...50] {
-					_id,
-					_type,
-					title,
-					"slug": slug.current,
-					"date": coalesce(date, _createdAt),
-					youtube,
-					dailydev,
-					devto,
-					hashnode,
-					awsbuilder,
-					medium,
-					reddit
-				},
-				"syndicationDocCount": count(*[_type == "syndication"]),
-				"draftItems": *[_type in ["post", "podcast", "course", "lesson"] && _id in path("drafts.**")] | order(_updatedAt desc) {
-					_id,
-					_type,
-					title,
-					"slug": slug.current,
-					_updatedAt,
-					_createdAt,
-					excerpt,
-					"contentLen": count(content),
-					"hasCover": defined(coverImage.asset)
-				},
-				"trendSignals": *[_type == "trendSignal"] | order(coalesce(discoveredAt, _createdAt) desc)[0...40] {
-					_id,
-					title,
-					"slug": slug.current,
-					source,
-					sourceUrl,
-					score,
-					status,
-					summary,
-					rawMetrics,
-					discoveredAt,
-					socialDrafts
-				}
-			}`,
-				{},
-				{ perspective: "raw" },
-			);
+			let loadedFromSanityClient = false;
+			try {
+				const res = await client.fetch<{
+					leads: SponsorLeadDoc[];
+					bookings: BookingDoc[];
+					syndicatedContent: SyndicatedContentItem[];
+					syndicationDocCount: number;
+					draftItems: DraftContentItem[];
+					trendSignals: TrendSignalDoc[];
+				}>(
+					`{
+					"leads": *[_type == "sponsorLead" && !(_id in path("drafts.**"))] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc),
+					"bookings": *[_type == "booking" && !(_id in path("drafts.**"))] | order(coalesce(slotStartAt, _createdAt) desc),
+					"syndicatedContent": *[_type in ["post", "podcast"] && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...50] {
+						_id,
+						_type,
+						title,
+						"slug": slug.current,
+						"date": coalesce(date, _createdAt),
+						youtube,
+						dailydev,
+						devto,
+						hashnode,
+						awsbuilder,
+						medium,
+						reddit
+					},
+					"syndicationDocCount": count(*[_type == "syndication"]),
+					"draftItems": *[_type in ["post", "podcast", "course", "lesson"] && _id in path("drafts.**")] | order(_updatedAt desc) {
+						_id,
+						_type,
+						title,
+						"slug": slug.current,
+						_updatedAt,
+						_createdAt,
+						excerpt,
+						"contentLen": count(content),
+						"hasCover": defined(coverImage.asset)
+					},
+					"trendSignals": *[_type == "trendSignal"] | order(coalesce(discoveredAt, _createdAt) desc)[0...40] {
+						_id,
+						title,
+						"slug": slug.current,
+						source,
+						sourceUrl,
+						score,
+						status,
+						summary,
+						rawMetrics,
+						discoveredAt,
+						socialDrafts
+					}
+				}`,
+					{},
+					{ perspective: "raw" },
+				);
 
-			if (res) {
-				setLeads(res.leads || []);
-				setBookings(res.bookings || []);
-				setSyndicatedContent(res.syndicatedContent || []);
-				setSyndicationDocCount(res.syndicationDocCount || 0);
-				setDraftItems(res.draftItems || []);
-				setTrendSignals(res.trendSignals || []);
+				if (res && (res.leads?.length || res.bookings?.length)) {
+					loadedFromSanityClient = true;
+					setLeads(res.leads || []);
+					setBookings(res.bookings || []);
+					setSyndicatedContent(res.syndicatedContent || []);
+					setSyndicationDocCount(res.syndicationDocCount || 0);
+					setDraftItems(res.draftItems || []);
+					setTrendSignals(res.trendSignals || []);
+				}
+			} catch (err) {
+				console.warn(
+					"Direct Sanity client fetch blocked by CORS, falling back to codingcat.dev API:",
+					err,
+				);
 			}
 
 			try {
@@ -420,6 +429,44 @@ export function App() {
 					const calData = await calRes.json();
 					if (Array.isArray(calData.calendarEvents)) {
 						setMasterCalendarEvents(calData.calendarEvents);
+					}
+					if (!loadedFromSanityClient) {
+						if (Array.isArray(calData.allLeads)) {
+							setLeads(calData.allLeads);
+						} else if (Array.isArray(calData.actionLeads)) {
+							setLeads(calData.actionLeads);
+						}
+						if (Array.isArray(calData.allBookings)) {
+							setBookings(calData.allBookings);
+						} else if (
+							Array.isArray(calData.pendingHolds) ||
+							Array.isArray(calData.upcoming72hBookings)
+						) {
+							const seen = new Set<string>();
+							const mergedBookings: BookingDoc[] = [];
+							for (const b of [
+								...(calData.pendingHolds || []),
+								...(calData.upcoming72hBookings || []),
+							]) {
+								if (b && b._id && !seen.has(b._id)) {
+									seen.add(b._id);
+									mergedBookings.push(b);
+								}
+							}
+							setBookings(mergedBookings);
+						}
+						if (Array.isArray(calData.syndicatedContent)) {
+							setSyndicatedContent(calData.syndicatedContent);
+						}
+						if (typeof calData.syndicationDocCount === "number") {
+							setSyndicationDocCount(calData.syndicationDocCount);
+						}
+						if (Array.isArray(calData.draftItems)) {
+							setDraftItems(calData.draftItems);
+						}
+						if (Array.isArray(calData.trendSignals)) {
+							setTrendSignals(calData.trendSignals);
+						}
 					}
 				}
 			} catch {
@@ -442,6 +489,26 @@ export function App() {
 		setTimeout(() => setCopiedId(null), 2000);
 	};
 
+	const patchDocWithFallback = async (
+		docId: string,
+		patchData: Record<string, any>,
+	) => {
+		try {
+			await client.patch(docId).set(patchData).commit();
+		} catch {
+			const res = await fetch(`${siteOrigin}/api/ops/daily-digest`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					action: "patch_doc",
+					docId,
+					patch: patchData,
+				}),
+			});
+			if (!res.ok) throw new Error("Failed to patch document");
+		}
+	};
+
 	const handleUpdateLeadStatus = async (leadId: string, newStatus: string) => {
 		try {
 			const patchData: Record<string, any> = { status: newStatus };
@@ -450,7 +517,7 @@ export function App() {
 			} else if (newStatus === "paid") {
 				patchData.balancePaidAt = new Date().toISOString();
 			}
-			await client.patch(leadId).set(patchData).commit();
+			await patchDocWithFallback(leadId, patchData);
 			setLeads((prev) =>
 				prev.map((l) => (l._id === leadId ? { ...l, ...patchData } : l)),
 			);
@@ -528,7 +595,7 @@ export function App() {
 		newStatus: string,
 	) => {
 		try {
-			await client.patch(bookingId).set({ status: newStatus }).commit();
+			await patchDocWithFallback(bookingId, { status: newStatus });
 			setBookings((prev) =>
 				prev.map((b) =>
 					b._id === bookingId ? { ...b, status: newStatus } : b,

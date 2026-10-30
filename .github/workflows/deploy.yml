@@ -106,6 +106,36 @@ jobs:
             echo "Creating and deploying new $APP_TITLE app in organization $ORG_ID..."
             npx sanity deploy -y --create --title "$APP_TITLE"
           fi
+          node -e "
+            const origins = [
+              'https://*.sanity.studio',
+              'https://day5rb83rkkd.sanity.studio',
+              'https://*.sanity.io',
+              'https://sanity.io',
+              'https://codingcat.dev',
+              'https://dev.codingcat.dev'
+            ];
+            (async () => {
+              const res = await fetch('https://api.sanity.io/v2021-06-07/projects/' + process.env.SANITY_STUDIO_PROJECT_ID + '/cors', {
+                headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
+              });
+              const existing = res.ok ? await res.json() : [];
+              const existingSet = new Set((existing || []).map(x => x.origin));
+              for (const origin of origins) {
+                if (!existingSet.has(origin)) {
+                  const r = await fetch('https://api.sanity.io/v2021-06-07/projects/' + process.env.SANITY_STUDIO_PROJECT_ID + '/cors', {
+                    method: 'POST',
+                    headers: {
+                      Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ origin, allowCredentials: true })
+                  });
+                  console.log('Added Sanity CORS origin:', origin, r.status);
+                }
+              }
+            })().catch(e => console.warn('CORS sync warning:', e));
+          "
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}
@@ -301,6 +331,36 @@ jobs:
             echo "Creating and deploying new $APP_TITLE app in organization $ORG_ID..."
             npx sanity deploy -y --create --title "$APP_TITLE"
           fi
+          node -e "
+            const origins = [
+              'https://*.sanity.studio',
+              'https://day5rb83rkkd.sanity.studio',
+              'https://*.sanity.io',
+              'https://sanity.io',
+              'https://codingcat.dev',
+              'https://dev.codingcat.dev'
+            ];
+            (async () => {
+              const res = await fetch('https://api.sanity.io/v2021-06-07/projects/' + process.env.SANITY_STUDIO_PROJECT_ID + '/cors', {
+                headers: { Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN }
+              });
+              const existing = res.ok ? await res.json() : [];
+              const existingSet = new Set((existing || []).map(x => x.origin));
+              for (const origin of origins) {
+                if (!existingSet.has(origin)) {
+                  const r = await fetch('https://api.sanity.io/v2021-06-07/projects/' + process.env.SANITY_STUDIO_PROJECT_ID + '/cors', {
+                    method: 'POST',
+                    headers: {
+                      Authorization: 'Bearer ' + process.env.SANITY_AUTH_TOKEN,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ origin, allowCredentials: true })
+                  });
+                  console.log('Added Sanity CORS origin:', origin, r.status);
+                }
+              }
+            })().catch(e => console.warn('CORS sync warning:', e));
+          "
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_DATASET: ${{ vars.SANITY_STUDIO_DATASET }}

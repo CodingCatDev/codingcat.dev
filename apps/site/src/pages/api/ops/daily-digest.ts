@@ -140,9 +140,56 @@ async function buildAndOptionallySendDigest(opts: {
 	const data = await client.fetch<{
 		bookings: Array<Record<string, any>>;
 		leads: Array<Record<string, any>>;
+		allBookings: Array<Record<string, any>>;
+		allLeads: Array<Record<string, any>>;
+		syndicatedContent: Array<Record<string, any>>;
+		syndicationDocCount: number;
+		draftItems: Array<Record<string, any>>;
+		trendSignals: Array<Record<string, any>>;
 	}>(`{
 		"bookings": *[_type == "booking" && !(_id in path("drafts.**")) && !(status in ["cancelled", "published", "archived"])] | order(coalesce(slotStartAt, _createdAt) asc),
-		"leads": *[_type == "sponsorLead" && !(_id in path("drafts.**")) && !(status in ["cancelled", "paid", "archived"])] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc)
+		"leads": *[_type == "sponsorLead" && !(_id in path("drafts.**")) && !(status in ["cancelled", "paid", "archived"])] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc),
+		"allBookings": *[_type == "booking" && !(_id in path("drafts.**"))] | order(coalesce(slotStartAt, _createdAt) desc),
+		"allLeads": *[_type == "sponsorLead" && !(_id in path("drafts.**"))] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc),
+		"syndicatedContent": *[_type in ["post", "podcast"] && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...50] {
+			_id,
+			_type,
+			title,
+			"slug": slug.current,
+			"date": coalesce(date, _createdAt),
+			youtube,
+			dailydev,
+			devto,
+			hashnode,
+			awsbuilder,
+			medium,
+			reddit
+		},
+		"syndicationDocCount": count(*[_type == "syndication"]),
+		"draftItems": *[_type in ["post", "podcast", "course", "lesson"] && _id in path("drafts.**")] | order(_updatedAt desc) {
+			_id,
+			_type,
+			title,
+			"slug": slug.current,
+			_updatedAt,
+			_createdAt,
+			excerpt,
+			"contentLen": count(content),
+			"hasCover": defined(coverImage.asset)
+		},
+		"trendSignals": *[_type == "trendSignal"] | order(coalesce(discoveredAt, _createdAt) desc)[0...40] {
+			_id,
+			title,
+			"slug": slug.current,
+			source,
+			sourceUrl,
+			score,
+			status,
+			summary,
+			rawMetrics,
+			discoveredAt,
+			socialDrafts
+		}
 	}`);
 
 	const calendarEvents = await fetchUpcomingCalendarEvents(45);
@@ -256,6 +303,12 @@ async function buildAndOptionallySendDigest(opts: {
 		pendingHolds,
 		upcoming72hBookings,
 		actionLeads,
+		allBookings: data.allBookings || data.bookings || [],
+		allLeads: data.allLeads || data.leads || [],
+		syndicatedContent: data.syndicatedContent || [],
+		syndicationDocCount: data.syndicationDocCount || 0,
+		draftItems: data.draftItems || [],
+		trendSignals: data.trendSignals || [],
 		calendarEvents,
 		emailText,
 		emailResult,
@@ -281,12 +334,45 @@ export const GET: APIRoute = async ({ url, request }) => {
 };
 
 export const POST: APIRoute = async ({ url, request }) => {
-	let body: { sendEmail?: boolean; to?: string } = {};
+	let body: {
+		action?: "patch_doc" | "create_doc" | "delete_doc";
+		docId?: string;
+		patch?: Record<string, any>;
+		doc?: Record<string, any>;
+		sendEmail?: boolean;
+		to?: string;
+	} = {};
 	try {
 		body = await request.json();
 	} catch {
 		// Default to sending email on POST
 	}
+
+	if (body.action) {
+		const { client } = getSanityServerClient();
+		if (body.action === "patch_doc" && body.docId && body.patch) {
+			const updated = await client.patch(body.docId).set(body.patch).commit();
+			return new Response(JSON.stringify({ ok: true, doc: updated }), {
+				status: 200,
+				headers: CORS_HEADERS,
+			});
+		}
+		if (body.action === "create_doc" && body.doc) {
+			const created = await client.createOrReplace(body.doc as any);
+			return new Response(JSON.stringify({ ok: true, doc: created }), {
+				status: 200,
+				headers: CORS_HEADERS,
+			});
+		}
+		if (body.action === "delete_doc" && body.docId) {
+			await client.delete(body.docId);
+			return new Response(JSON.stringify({ ok: true, deletedId: body.docId }), {
+				status: 200,
+				headers: CORS_HEADERS,
+			});
+		}
+	}
+
 	const siteOrigin = url.origin || new URL(request.url).origin;
 	const payload = await buildAndOptionallySendDigest({
 		sendEmail: body.sendEmail ?? true,
