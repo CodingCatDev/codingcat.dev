@@ -339,9 +339,9 @@ const pageDescription = !portalFound
 				</h1>
 				<p class="text-xs md:text-sm text-muted-foreground leading-relaxed">
 					To protect private StreamYard studio links, Google Meet pre-call rooms, run-of-show outlines, and Sanity Media Library vault assets, please enter the email address associated with this invite
-					{maskedPortalEmail ? (
+					{maskedEmailHint ? (
 						<span>
-							{" "}(hint: <code class="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono">{maskedPortalEmail}</code> or the same company domain)
+							{" "}(hint: <code class="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono">{maskedEmailHint}</code> or the same company domain)
 						</span>
 					) : null}.
 				</p>
@@ -358,7 +358,7 @@ const pageDescription = !portalFound
 						name="email"
 						required
 						autocomplete="email"
-						placeholder={maskedPortalEmail || "you@company.com"}
+						placeholder={maskedEmailHint || "you@company.com"}
 						class="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 					/>
 				</div>
