@@ -119,6 +119,12 @@ interface SponsorLeadDoc {
 	intent?: string;
 	threadId?: string;
 	notes?: string;
+	preCallNotes?: string;
+	runOfShowNotes?: string;
+	guestQuestions?: string;
+	runOfShowUpdatedAt?: string;
+	runOfShowUpdatedBy?: string;
+	legacyPortalToken?: string;
 	deliverables?: DeliverableItem[];
 	sharedAssets?: SharedAssetItem[];
 }
@@ -141,6 +147,11 @@ interface BookingDoc {
 	preMeetingGoogleEventId?: string;
 	preMeetingMeetUrl?: string;
 	topics?: string;
+	preCallNotes?: string;
+	runOfShowNotes?: string;
+	guestQuestions?: string;
+	runOfShowUpdatedAt?: string;
+	runOfShowUpdatedBy?: string;
 	appointmentScheduleUrl?: string;
 	googleCalendarEventId?: string;
 	passionfrootCollaborationId?: string;
@@ -150,6 +161,7 @@ interface BookingDoc {
 	signatureData?: string;
 	signedAt?: string;
 	portalToken?: string;
+	legacyPortalToken?: string;
 	sharedAssets?: SharedAssetItem[];
 }
 
@@ -338,6 +350,16 @@ export function App() {
 	const [vaultUrlInput, setVaultUrlInput] = useState<Record<string, string>>(
 		{},
 	);
+	const [rosDrafts, setRosDrafts] = useState<
+		Record<
+			string,
+			{
+				preCallNotes: string;
+				runOfShowNotes: string;
+				guestQuestions: string;
+			}
+		>
+	>({});
 	const [busyActionId, setBusyActionId] = useState<string | null>(null);
 
 	const showFlash = useCallback((msg: string) => {
@@ -524,6 +546,39 @@ export function App() {
 			showFlash(`Updated deal status to "${newStatus}"`);
 		} catch (err: any) {
 			showFlash(`Error updating deal: ${err?.message || "Unknown error"}`);
+		}
+	};
+
+	const handleSaveRunOfShow = async (
+		docId: string,
+		values: {
+			preCallNotes: string;
+			runOfShowNotes: string;
+			guestQuestions: string;
+		},
+	) => {
+		setBusyActionId(`${docId}:ros`);
+		try {
+			const nowIso = new Date().toISOString();
+			const patchData = {
+				preCallNotes: values.preCallNotes,
+				runOfShowNotes: values.runOfShowNotes,
+				guestQuestions: values.guestQuestions,
+				runOfShowUpdatedAt: nowIso,
+				runOfShowUpdatedBy: "Alex Patterson (Ops App)",
+			};
+			await patchDocWithFallback(docId, patchData);
+			setBookings((prev) =>
+				prev.map((b) => (b._id === docId ? { ...b, ...patchData } : b)),
+			);
+			setLeads((prev) =>
+				prev.map((l) => (l._id === docId ? { ...l, ...patchData } : l)),
+			);
+			showFlash("✓ Saved Run-of-Show & Pre-Call Notes to Sanity (live on Guest Portal)");
+		} catch (err: any) {
+			showFlash(`Error saving Run-of-Show: ${err?.message || "Unknown error"}`);
+		} finally {
+			setBusyActionId(null);
 		}
 	};
 
@@ -3349,10 +3404,10 @@ export function App() {
 																}
 																style={primaryBtnStyle}
 															>
-																{isExpanded
-																	? "Hide Details"
-																	: `Topics, E-SIGN & Vault (${assetCount})`}
-															</button>
+																	{isExpanded
+																		? "Hide Details"
+																		: `Run-of-Show, E-SIGN & Vault (${assetCount})`}
+																</button>
 															<a
 																href={vaultUrl}
 																target="_blank"
@@ -3691,6 +3746,283 @@ export function App() {
 																	</div>
 																</div>
 															</div>
+
+															{/* Shared 2-Way Run-of-Show & Pre-Call Notes Co-Editor */}
+															{(() => {
+																const currentRos = rosDrafts[b._id] || {
+																	preCallNotes: b.preCallNotes || "",
+																	runOfShowNotes: b.runOfShowNotes || "",
+																	guestQuestions: b.guestQuestions || "",
+																};
+																return (
+																	<div
+																		style={{
+																			marginTop: 16,
+																			padding: 16,
+																			borderRadius: 10,
+																			background: "#fff",
+																			border: "2px solid #c4b5fd",
+																		}}
+																	>
+																		<div
+																			style={{
+																				display: "flex",
+																				justifyContent: "space-between",
+																				alignItems: "center",
+																				flexWrap: "wrap",
+																				gap: 8,
+																				marginBottom: 12,
+																			}}
+																		>
+																			<div>
+																				<h4
+																					style={{
+																						margin: 0,
+																						fontSize: 14,
+																						color: "#4B2E83",
+																					}}
+																				>
+																					📝 2-Way Run-of-Show &amp; Pre-Call
+																					Coordination Notes (Syncs Live with{" "}
+																					<code>{portalUrl}#run-of-show</code>)
+																				</h4>
+																				<div
+																					style={{
+																						fontSize: 11,
+																						color: "#6b7280",
+																						marginTop: 2,
+																					}}
+																				>
+																					Both you and{" "}
+																					<strong>{b.guestName}</strong> can
+																					edit these notes before and during the
+																					session.
+																					{b.runOfShowUpdatedAt
+																						? ` Last saved ${formatDateTime(b.runOfShowUpdatedAt)} by ${b.runOfShowUpdatedBy || "Host"}.`
+																						: ""}
+																				</div>
+																			</div>
+																			<div
+																				style={{
+																					display: "flex",
+																					gap: 6,
+																					flexWrap: "wrap",
+																				}}
+																			>
+																				<button
+																					type="button"
+																					onClick={() =>
+																						setRosDrafts((prev) => ({
+																							...prev,
+																							[b._id]: {
+																								preCallNotes:
+																									currentRos.preCallNotes ||
+																									[
+																										`• Target Audience Takeaway: Practical mental model + live demo of ${b.company || b.guestName}`,
+																										`• Screen-Share Check: 1080p editor/browser zoomed to 125%-150%`,
+																										`• Audio/Video Check: Headphones on (no echo in StreamYard)`,
+																									].join("\n"),
+																								guestQuestions:
+																									currentRos.guestQuestions ||
+																									[
+																										`• Must-Ask #1: What developer pain point sparked ${b.company || "this project"}?`,
+																										`• Must-Ask #2: Walk us through the architecture & live code`,
+																										`• Lower-Third Links: ${b.socialUrl || "https://codingcat.dev"}`,
+																									].join("\n"),
+																								runOfShowNotes: [
+																									`00:00 - 03:00 | 1. Cold Open & Origin Story`,
+																									`  • Welcome ${b.guestName} (${b.company || "Guest"}) to CodingCat.dev`,
+																									`  • The 30-second elevator pitch: What problem were you tired of hitting in production?`,
+																									``,
+																									`03:00 - 12:00 | 2. Architecture Mental Model`,
+																									`  • How developers used to wire this up vs. how ${b.company || b.guestName} approaches it`,
+																									`  • Under-the-hood primitives, state flow, and developer ergonomics`,
+																									``,
+																									`12:00 - 28:00 | 3. Show Me the Code (Live Screen-Share / Demo)`,
+																									`  • Step-by-step walkthrough in real code (zero slideware)`,
+																									`  • Key workflows, CLI/UI ergonomics, and live inspection`,
+																									``,
+																									`28:00 - 38:00 | 4. Production Trade-Offs & Sharp Edges`,
+																									`  • Where this shines vs. when teams should use something else`,
+																									`  • Security, performance, and scaling gotchas`,
+																									``,
+																									`38:00 - 45:00 | 5. Verdict, Roadmap & Where to Try It`,
+																									`  • What is shipping next on the roadmap`,
+																									`  • Links to docs, GitHub repo, and starter templates`,
+																								].join("\n"),
+																							},
+																						}))
+																					}
+																					style={btnStyle}
+																				>
+																					Load 5-Part Episode Template
+																				</button>
+																				<button
+																					type="button"
+																					onClick={() =>
+																						handleCopy(
+																							`${portalUrl}#run-of-show`,
+																							`ros-link-${b._id}`,
+																						)
+																					}
+																					style={btnStyle}
+																				>
+																					{copiedId === `ros-link-${b._id}`
+																						? "✓ Copied #run-of-show URL"
+																						: "Copy #run-of-show URL"}
+																				</button>
+																				<button
+																					type="button"
+																					disabled={
+																						busyActionId === `${b._id}:ros`
+																					}
+																					onClick={() =>
+																						handleSaveRunOfShow(
+																							b._id,
+																							currentRos,
+																						)
+																					}
+																					style={primaryBtnStyle}
+																				>
+																					{busyActionId === `${b._id}:ros`
+																						? "Saving..."
+																						: "💾 Save Run-of-Show to Sanity"}
+																				</button>
+																			</div>
+																		</div>
+
+																		<div
+																			style={{
+																				display: "grid",
+																				gridTemplateColumns:
+																					"repeat(auto-fit, minmax(280px, 1fr))",
+																				gap: 12,
+																			}}
+																		>
+																			<div
+																				style={{
+																					display: "flex",
+																					flexDirection: "column",
+																					gap: 8,
+																				}}
+																			>
+																				<div>
+																					<label
+																						style={{
+																							display: "block",
+																							fontSize: 11,
+																							fontWeight: 700,
+																							color: "#374151",
+																							marginBottom: 4,
+																						}}
+																					>
+																						1. 15m Pre-Call Alignment &amp; Tech
+																						Check Notes:
+																					</label>
+																					<textarea
+																						rows={5}
+																						value={currentRos.preCallNotes}
+																						onChange={(e) =>
+																							setRosDrafts((prev) => ({
+																								...prev,
+																								[b._id]: {
+																									...currentRos,
+																									preCallNotes: e.target.value,
+																								},
+																							}))
+																						}
+																						placeholder="Pre-call takeaways, screen-share setup, bio/pronunciation notes..."
+																						style={{
+																							width: "100%",
+																							padding: 8,
+																							borderRadius: 6,
+																							border: "1px solid #d1d5db",
+																							fontFamily: "monospace",
+																							fontSize: 12,
+																							lineHeight: 1.4,
+																						}}
+																					/>
+																				</div>
+																				<div>
+																					<label
+																						style={{
+																							display: "block",
+																							fontSize: 11,
+																							fontWeight: 700,
+																							color: "#374151",
+																							marginBottom: 4,
+																						}}
+																					>
+																						2. Guest Prompts, Links &amp;
+																						Lower-Third Callouts:
+																					</label>
+																					<textarea
+																						rows={4}
+																						value={currentRos.guestQuestions}
+																						onChange={(e) =>
+																							setRosDrafts((prev) => ({
+																								...prev,
+																								[b._id]: {
+																									...currentRos,
+																									guestQuestions:
+																										e.target.value,
+																								},
+																							}))
+																						}
+																						placeholder="Must-ask questions, GitHub repo URL, docs links..."
+																						style={{
+																							width: "100%",
+																							padding: 8,
+																							borderRadius: 6,
+																							border: "1px solid #d1d5db",
+																							fontFamily: "monospace",
+																							fontSize: 12,
+																							lineHeight: 1.4,
+																						}}
+																					/>
+																				</div>
+																			</div>
+																			<div>
+																				<label
+																					style={{
+																						display: "block",
+																						fontSize: 11,
+																						fontWeight: 700,
+																						color: "#374151",
+																						marginBottom: 4,
+																					}}
+																				>
+																					3. 45-Minute Episode Run-of-Show
+																					Outline (5-Part Arc):
+																				</label>
+																				<textarea
+																					rows={11}
+																					value={currentRos.runOfShowNotes}
+																					onChange={(e) =>
+																						setRosDrafts((prev) => ({
+																							...prev,
+																							[b._id]: {
+																								...currentRos,
+																								runOfShowNotes: e.target.value,
+																							},
+																						}))
+																					}
+																					placeholder="00:00 - 03:00 | 1. Cold Open & Origin Story..."
+																					style={{
+																						width: "100%",
+																						padding: 8,
+																						borderRadius: 6,
+																						border: "1px solid #d1d5db",
+																						fontFamily: "monospace",
+																						fontSize: 12,
+																						lineHeight: 1.4,
+																					}}
+																				/>
+																			</div>
+																		</div>
+																	</div>
+																);
+															})()}
 														</td>
 													</tr>
 												)}

@@ -3,9 +3,16 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 import {
+	maskEmailAddress,
+	verifyPortalRequestAuth,
+} from "@/lib/portal-security";
+import {
 	getSanityServerClient,
 	resolveSponsorTier,
 } from "@/lib/sanity/write-client";
+
+Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+Astro.response.headers.set("Cache-Control", "private, no-store, max-age=0");
 
 const { token } = Astro.params;
 const searchParams = Astro.url.searchParams;
@@ -69,6 +76,12 @@ interface LeadPortalData {
 	preMeetingStatus?: string;
 	preMeetingSlotStartAt?: string;
 	preMeetingMeetUrl?: string;
+	topics?: string;
+	preCallNotes?: string;
+	runOfShowNotes?: string;
+	guestQuestions?: string;
+	runOfShowUpdatedAt?: string;
+	runOfShowUpdatedBy?: string;
 }
 
 const fallbackTier = resolveSponsorTier(searchParams.get("tier") || "full-stack-launch");
@@ -78,9 +91,14 @@ const fallbackEmail = searchParams.get("email") || "";
 const paymentNotice = searchParams.get("payment");
 const bookedSlotParam = searchParams.get("bookedSlot");
 
+let portalFound = false;
+let isPortalAuthorized = false;
+let maskedEmailHint = "your invited email address";
+let verifiedPortalEmail = "";
+
 let portalData: LeadPortalData = {
 	_id: `private.sponsorLead-${token}`,
-	portalToken: token || "demo",
+	portalToken: token || "",
 	companyName: fallbackCompany,
 	contactName: fallbackName,
 	contactEmail: fallbackEmail,
@@ -105,7 +123,7 @@ try {
 	const { client } = getSanityServerClient();
 	const [doc, bookingDoc] = await Promise.all([
 		client.fetch<Record<string, any> | null>(
-			`*[_type == "sponsorLead" && (portalToken == $portalToken || _id == $privateLeadId || _id == $leadId)][0]`,
+			`*[_type == "sponsorLead" && (portalToken == $portalToken || legacyPortalToken == $portalToken || _id == $privateLeadId || _id == $leadId)][0]`,
 			{
 				portalToken: token ?? "",
 				privateLeadId: `private.sponsorLead-${token ?? ""}`,
@@ -113,11 +131,34 @@ try {
 			},
 		),
 		client.fetch<Record<string, any> | null>(
-			`*[_type == "booking" && portalToken == $portalToken] | order(_createdAt desc)[0]`,
-			{ portalToken: token ?? "" },
+			`*[_type == "booking" && (portalToken == $portalToken || legacyPortalToken == $portalToken || _id == $privateBookingId)] | order(_createdAt desc)[0]`,
+			{
+				portalToken: token ?? "",
+				privateBookingId: `private.booking-${token ?? ""}`,
+			},
 		),
 	]);
 	if (doc || bookingDoc) {
+		portalFound = true;
+		const canonicalToken =
+			doc?.portalToken || bookingDoc?.portalToken || token || "";
+		const allowedEmails = [doc?.contactEmail, bookingDoc?.guestEmail];
+		maskedEmailHint = maskEmailAddress(
+			bookingDoc?.guestEmail || doc?.contactEmail,
+		);
+
+		const authResult = await verifyPortalRequestAuth({
+			request: Astro.request,
+			url: Astro.url,
+			token: canonicalToken,
+			allowedEmails,
+		});
+		isPortalAuthorized = authResult.authorized;
+		verifiedPortalEmail = authResult.verifiedEmail || "";
+		if (authResult.setCookieHeader) {
+			Astro.response.headers.set("Set-Cookie", authResult.setCookieHeader);
+		}
+
 		const tier = resolveSponsorTier(doc?.rateCard || fallbackTier.id);
 		const combinedAssets = [
 			...(Array.isArray(doc?.sharedAssets) ? doc.sharedAssets : []),
@@ -128,9 +169,15 @@ try {
 			doc?.billingProvider === "passionfroot" ||
 			bookingDoc?.bookingSource === "passionfroot" ||
 			Boolean(token?.startsWith("spt_pf_"));
+		const resolvedBookingStatus = bookingDoc?.status;
+		const isRecordingApproved =
+			resolvedBookingStatus === "approved" ||
+			resolvedBookingStatus === "scheduled" ||
+			resolvedBookingStatus === "confirmed";
+
 		portalData = {
 			_id: doc?._id || bookingDoc?._id || `private.sponsorLead-${token}`,
-			portalToken: doc?.portalToken || bookingDoc?.portalToken || token || "demo",
+			portalToken: canonicalToken,
 			companyName:
 				doc?.companyName || bookingDoc?.company || fallbackCompany,
 			contactName:
@@ -177,17 +224,30 @@ try {
 							status: "pending",
 						})),
 			sharedAssets: combinedAssets,
-			bookingStatus: bookingDoc?.status,
+			bookingStatus: resolvedBookingStatus,
 			bookingSlotStartAt: bookingDoc?.slotStartAt,
-			recordingUrl:
-				bookingDoc?.recordingUrl || "https://streamyard.com/c4kv26is93",
+			recordingUrl: isRecordingApproved
+				? bookingDoc?.recordingUrl || "https://streamyard.com/c4kv26is93"
+				: undefined,
 			preMeetingStatus: bookingDoc?.preMeetingStatus,
 			preMeetingSlotStartAt: bookingDoc?.preMeetingSlotStartAt,
 			preMeetingMeetUrl: bookingDoc?.preMeetingMeetUrl,
+			topics: bookingDoc?.topics || doc?.intent || "",
+			preCallNotes: bookingDoc?.preCallNotes || doc?.preCallNotes || "",
+			runOfShowNotes: bookingDoc?.runOfShowNotes || doc?.runOfShowNotes || "",
+			guestQuestions: bookingDoc?.guestQuestions || doc?.guestQuestions || "",
+			runOfShowUpdatedAt:
+				bookingDoc?.runOfShowUpdatedAt || doc?.runOfShowUpdatedAt,
+			runOfShowUpdatedBy:
+				bookingDoc?.runOfShowUpdatedBy || doc?.runOfShowUpdatedBy,
 		};
 	}
 } catch {
-	// Uses resilient fallback portalData
+	// Handled by portalFound check below
+}
+
+if (!portalFound) {
+	Astro.response.status = 404;
 }
 
 const formatUsd = (cents: number) =>
@@ -206,19 +266,117 @@ const isDepositPaid =
 
 const isBalancePaid =
 	Boolean(portalData.balancePaidAt) || portalData.status === "paid";
+
+const pageTitle = !portalFound
+	? "Studio Portal Not Found | CodingCat.dev"
+	: !isPortalAuthorized
+		? "Verify Studio Portal Access | CodingCat.dev"
+		: `${portalData.companyName} x CodingCat.dev: Studio & Deal Room`;
+
+const pageDescription = !portalFound
+	? "This CodingCat.dev Studio Portal link was not found."
+	: !isPortalAuthorized
+		? "Verify your invited guest or sponsor email address to unlock your private CodingCat.dev Studio Portal."
+		: `Live studio coordination, run-of-show notes, calendar scheduling, and asset vault for ${portalData.companyName}.`;
 ---
 
 <BaseLayout
-	title={`${portalData.companyName} × CodingCat.dev — Sponsor Deal Room`}
-	description={`Live sponsorship deal room, milestone billing, calendar scheduling, and multi-channel deliverable tracking for ${portalData.companyName}.`}
+	title={pageTitle}
+	description={pageDescription}
 >
 	<Breadcrumbs
 		links={[
 			{ title: "Sponsorships", href: "/sponsorships" },
-			{ title: `${portalData.companyName} Deal Room` },
+			{
+				title:
+					portalFound && isPortalAuthorized
+						? `${portalData.companyName} Studio Portal`
+						: "Studio Portal",
+			},
 		]}
 	/>
 
+	{!portalFound ? (
+		<div class="w-full max-w-2xl mx-auto my-12 p-8 rounded-2xl border border-border bg-card shadow-xs flex flex-col gap-4 text-center">
+			<span class="mx-auto px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider bg-destructive/15 text-destructive font-bold">
+				404 &middot; Portal Token Not Found
+			</span>
+			<h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+				Studio Portal Link Not Recognized
+			</h1>
+			<p class="text-sm text-muted-foreground leading-relaxed">
+				We could not find an active guest booking or sponsor deal room matching this token. If you recently received an updated portal invite from Alex Patterson, please use the latest link in your calendar invite or email.
+			</p>
+			<div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+				<a
+					href="/book"
+					class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+				>
+					Book a Podcast or Sponsor Session &rarr;
+				</a>
+				<a
+					href="mailto:alex@codingcat.dev"
+					class="px-4 py-2 rounded-lg border border-border bg-background text-foreground text-xs font-semibold hover:bg-muted transition-colors"
+				>
+					Email alex@codingcat.dev
+				</a>
+			</div>
+		</div>
+	) : !isPortalAuthorized ? (
+		<div class="w-full max-w-xl mx-auto my-12 p-6 md:p-8 rounded-2xl border-2 border-primary/40 bg-card shadow-xs flex flex-col gap-5">
+			<div class="flex items-center justify-between gap-2">
+				<span class="px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider bg-primary/15 text-primary font-bold">
+					🔒 Private Studio Checkpoint
+				</span>
+				<span class="text-xs font-mono text-muted-foreground">
+					Private Sanity ACL
+				</span>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+					Verify Email to Unlock Studio Portal
+				</h1>
+				<p class="text-xs md:text-sm text-muted-foreground leading-relaxed">
+					To protect private StreamYard studio links, Google Meet pre-call rooms, run-of-show outlines, and Sanity Media Library vault assets, please enter the email address associated with this invite
+					{maskedPortalEmail ? (
+						<span>
+							{" "}(hint: <code class="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono">{maskedPortalEmail}</code> or the same company domain)
+						</span>
+					) : null}.
+				</p>
+			</div>
+
+			<form id="portal-verify-form" class="flex flex-col gap-3">
+				<div class="flex flex-col gap-1.5">
+					<label for="portal-verify-email" class="text-xs font-semibold text-foreground">
+						Invited Guest / Sponsor Email Address
+					</label>
+					<input
+						type="email"
+						id="portal-verify-email"
+						name="email"
+						required
+						autocomplete="email"
+						placeholder={maskedPortalEmail || "you@company.com"}
+						class="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</div>
+				<button
+					type="submit"
+					id="btn-portal-verify"
+					class="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+				>
+					Verify Email &amp; Unlock Studio Portal &rarr;
+				</button>
+				<div id="portal-verify-feedback" class="hidden text-xs p-3 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive"></div>
+			</form>
+
+			<p class="text-[11px] text-muted-foreground font-mono">
+				Verification sets an encrypted 30-day HttpOnly session cookie for this browser. Need help or want a colleague added? Email <a href="mailto:alex@codingcat.dev" class="text-primary underline">alex@codingcat.dev</a>.
+			</p>
+		</div>
+	) : (
 	<div class="w-full flex flex-col gap-8 md:gap-10 my-8 md:my-12 max-w-5xl mx-auto">
 		{
 			paymentNotice === "deposit_success" && (
@@ -248,7 +406,9 @@ const isBalancePaid =
 				<div class="flex flex-wrap items-center gap-2 text-xs font-mono uppercase tracking-wider text-primary">
 					<span>CodingCat.dev Studio &amp; Deal Room</span>
 					<span>&middot;</span>
-					<span>Token: {portalData.portalToken}</span>
+					<span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-bold">
+						🔒 Verified Session
+					</span>
 					{portalData.source === "passionfroot" ? (
 						<span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 font-bold">
 							🌱 Passionfroot Partner
@@ -258,6 +418,14 @@ const isBalancePaid =
 							⚡ Direct Book
 						</span>
 					)}
+					<button
+						type="button"
+						id="btn-portal-lock"
+						class="px-2 py-0.5 rounded border border-border bg-background text-muted-foreground hover:text-foreground text-[10px] font-mono cursor-pointer"
+						title="Clear session cookie and lock this portal"
+					>
+						Lock Portal
+					</button>
 				</div>
 				<h1 class="text-2xl md:text-4xl font-bold tracking-tight">
 					{portalData.companyName} &times; CodingCat.dev
@@ -313,11 +481,11 @@ const isBalancePaid =
 						rel="noopener noreferrer"
 						class="mt-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold text-center hover:bg-primary/90 transition-colors"
 					>
-						Enter StreamYard Recording Studio (https://streamyard.com/c4kv26is93) &nearr;
+						Enter StreamYard Recording Studio &nearr;
 					</a>
 				) : (
 					<span class="text-[11px] font-mono text-muted-foreground">
-						Your StreamYard studio link (<code>https://streamyard.com/c4kv26is93</code>) unlocks automatically as soon as Alex approves the recording hold.
+						Your private StreamYard studio link unlocks automatically here as soon as Alex approves the recording hold.
 					</span>
 				)}
 			</div>
@@ -358,6 +526,117 @@ const isBalancePaid =
 					</a>
 				)}
 			</div>
+		</section>
+
+		<!-- Shared 2-Way Run-of-Show & Pre-Call Notes Co-Editor -->
+		<section id="run-of-show" class="flex flex-col gap-5 p-6 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+				<div class="flex flex-col gap-1">
+					<div class="flex flex-wrap items-center gap-2">
+						<h2 class="text-xl font-bold tracking-tight">
+							Shared Run-of-Show &amp; Pre-Call Notes
+						</h2>
+						<span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+							📝 2-Way Live Sanity Sync
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Collaborate directly with Alex Patterson on your pre-call notes, 45-minute episode outline, live demo flow, and lower-third links. Changes save directly to your private Sanity record (`private.*`) with zero Google Docs permission headaches.
+					</p>
+				</div>
+				<div class="flex flex-wrap items-center gap-2 shrink-0">
+					<button
+						type="button"
+						id="btn-load-ros-template"
+						class="px-3 py-1.5 rounded-lg border border-border bg-background hover:bg-muted text-xs font-semibold text-foreground transition-colors cursor-pointer"
+					>
+						Load 5-Part Episode Template
+					</button>
+					{portalData.runOfShowUpdatedAt && (
+						<span class="text-[11px] font-mono px-2.5 py-1 rounded bg-muted text-muted-foreground">
+							Saved {new Date(portalData.runOfShowUpdatedAt).toLocaleString("en-US", { dateStyle: "short", timeStyle: "short" })}
+							{portalData.runOfShowUpdatedBy ? ` by ${portalData.runOfShowUpdatedBy}` : ""}
+						</span>
+					)}
+				</div>
+			</div>
+
+			<form id="run-of-show-form" class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+				<div class="lg:col-span-5 flex flex-col gap-4">
+					<div class="flex flex-col gap-1.5">
+						<label for="ros-precall-notes" class="text-xs font-bold uppercase tracking-wider text-primary">
+							1. Pre-Call Alignment &amp; Tech Check Notes
+						</label>
+						<p class="text-[11px] text-muted-foreground">
+							Target audience takeaways, mic/camera check notes, and what to emphasize or skip.
+						</p>
+						<textarea
+							id="ros-precall-notes"
+							name="preCallNotes"
+							rows="6"
+							placeholder="• Primary developer pain point we are solving&#10;• Demo repo or localhost setup needed&#10;• Pronunciation / bio check"
+							class="w-full rounded-xl border border-border bg-background p-3 text-xs font-mono text-foreground leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary"
+						>{portalData.preCallNotes}</textarea>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<label for="ros-guest-questions" class="text-xs font-bold uppercase tracking-wider text-primary">
+							2. Prompts, Links &amp; Lower-Third Callouts
+						</label>
+						<p class="text-[11px] text-muted-foreground">
+							Specific questions you want Alex to ask, plus URLs to flash on screen during the show.
+						</p>
+						<textarea
+							id="ros-guest-questions"
+							name="guestQuestions"
+							rows="5"
+							placeholder="• Must-ask question #1&#10;• GitHub repo / docs URL for lower-third banner&#10;• Call-to-action at wrap-up"
+							class="w-full rounded-xl border border-border bg-background p-3 text-xs font-mono text-foreground leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary"
+						>{portalData.guestQuestions}</textarea>
+					</div>
+				</div>
+
+				<div class="lg:col-span-7 flex flex-col gap-1.5">
+					<label for="ros-outline-notes" class="text-xs font-bold uppercase tracking-wider text-primary">
+						3. 45-Minute Episode Run-of-Show (5-Part Arc)
+					</label>
+					<p class="text-[11px] text-muted-foreground">
+						We keep episodes conversational and code-first. Edit timestamps, talking points, or screen-share cues below.
+					</p>
+					<textarea
+						id="ros-outline-notes"
+						name="runOfShowNotes"
+						rows="13"
+						placeholder="00:00 - 03:00 | 1. Cold Open & Origin Story&#10;03:00 - 12:00 | 2. The Problem & Architecture Mental Model&#10;12:00 - 28:00 | 3. Live Code / Screen-Share Walkthrough&#10;28:00 - 38:00 | 4. Production Trade-Offs & Sharp Edges&#10;38:00 - 45:00 | 5. Roadmap & Where to Try It"
+						class="w-full h-full min-h-[280px] rounded-xl border border-border bg-background p-3.5 text-xs font-mono text-foreground leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary"
+					>{portalData.runOfShowNotes}</textarea>
+				</div>
+
+				<div class="lg:col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+					<div class="flex items-center gap-2">
+						<label for="ros-updated-by" class="text-xs font-semibold text-muted-foreground">
+							Saving as:
+						</label>
+						<input
+							type="text"
+							id="ros-updated-by"
+							name="updatedBy"
+							value={portalData.contactName || portalData.companyName}
+							class="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-foreground"
+						/>
+					</div>
+					<div class="flex items-center gap-3">
+						<span id="ros-save-feedback" class="hidden text-xs font-medium"></span>
+						<button
+							type="submit"
+							id="btn-save-ros"
+							class="px-5 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+						>
+							Save Run-of-Show &amp; Notes &rarr;
+						</button>
+					</div>
+				</div>
+			</form>
 		</section>
 
 		<!-- Verified First-Party Telemetry Strip -->
@@ -881,19 +1160,236 @@ const isBalancePaid =
 			</div>
 		</section>
 	</div>
+	)}
 </BaseLayout>
 
 <script
 	is:inline
 	define:vars={{
 		portalToken: portalData.portalToken,
-		leadId: portalData._id,
-		companyName: portalData.companyName,
-		contactName: portalData.contactName,
-		contactEmail: portalData.contactEmail,
-		tierId: portalData.rateCard,
+		leadId: isPortalAuthorized ? portalData._id : "",
+		companyName: isPortalAuthorized ? portalData.companyName : "",
+		contactName: isPortalAuthorized ? portalData.contactName : "",
+		contactEmail: isPortalAuthorized ? portalData.contactEmail : "",
+		tierId: isPortalAuthorized ? portalData.rateCard : "",
 	}}
 >
+	// 0. Studio Portal Email Verification Gate & Session Lock
+	(function () {
+		const verifyForm = document.getElementById("portal-verify-form");
+		const verifyBtn = document.getElementById("btn-portal-verify");
+		const verifyFeedback = document.getElementById("portal-verify-feedback");
+
+		if (verifyForm && verifyForm instanceof HTMLFormElement) {
+			verifyForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const emailInput = document.getElementById("portal-verify-email");
+				const email =
+					emailInput && emailInput instanceof HTMLInputElement
+						? emailInput.value.trim()
+						: "";
+				if (!email || !email.includes("@")) {
+					if (verifyFeedback) {
+						verifyFeedback.textContent =
+							"Please enter the email address associated with this portal invite.";
+						verifyFeedback.classList.remove("hidden");
+					}
+					return;
+				}
+				if (verifyBtn) {
+					verifyBtn.setAttribute("disabled", "true");
+					verifyBtn.textContent = "Verifying Email...";
+				}
+				if (verifyFeedback) verifyFeedback.classList.add("hidden");
+
+				try {
+					const res = await fetch("/api/portal/verify", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							token: portalToken,
+							email,
+						}),
+					});
+					const data = await res.json();
+					if (res.ok && data.ok) {
+						window.location.reload();
+						return;
+					}
+					if (verifyFeedback) {
+						verifyFeedback.textContent =
+							data.message ||
+							"Email did not match this studio portal. Please try your invited email or contact alex@codingcat.dev.";
+						verifyFeedback.classList.remove("hidden");
+					}
+				} catch {
+					if (verifyFeedback) {
+						verifyFeedback.textContent =
+							"Network error while verifying portal access. Please try again.";
+						verifyFeedback.classList.remove("hidden");
+					}
+				} finally {
+					if (verifyBtn) {
+						verifyBtn.removeAttribute("disabled");
+						verifyBtn.textContent = "Verify Email & Unlock Studio Portal →";
+					}
+				}
+			});
+		}
+
+		const lockBtn = document.getElementById("btn-portal-lock");
+		if (lockBtn) {
+			lockBtn.addEventListener("click", async () => {
+				try {
+					await fetch("/api/portal/verify", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							token: portalToken,
+							action: "logout",
+						}),
+					});
+				} finally {
+					const cleanUrl = new URL(window.location.href);
+					cleanUrl.searchParams.delete("key");
+					window.location.href = cleanUrl.toString();
+				}
+			});
+		}
+	})();
+
+	// 0.5 Shared 2-Way Run-of-Show & Pre-Call Notes Co-Editor
+	(function () {
+		const rosForm = document.getElementById("run-of-show-form");
+		const rosSaveBtn = document.getElementById("btn-save-ros");
+		const rosFeedback = document.getElementById("ros-save-feedback");
+		const loadTemplateBtn = document.getElementById("btn-load-ros-template");
+
+		if (loadTemplateBtn) {
+			loadTemplateBtn.addEventListener("click", () => {
+				const outlineEl = document.getElementById("ros-outline-notes");
+				const precallEl = document.getElementById("ros-precall-notes");
+				if (outlineEl && outlineEl instanceof HTMLTextAreaElement) {
+					const existing = outlineEl.value.trim();
+					if (
+						existing &&
+						!window.confirm(
+							"Replace current Episode Run-of-Show text with the 5-Part CodingCat.dev Template?",
+						)
+					) {
+						return;
+					}
+					outlineEl.value = [
+						`00:00 - 03:00 | 1. Cold Open & Origin Story`,
+						`  • Welcome ${contactName || companyName} to CodingCat.dev`,
+						`  • The 30-second elevator pitch: What problem were you tired of hitting in production?`,
+						``,
+						`03:00 - 12:00 | 2. Architecture Mental Model`,
+						`  • How developers used to wire this up vs. how ${companyName} approaches it`,
+						`  • Under-the-hood primitives, state flow, and developer ergonomics`,
+						``,
+						`12:00 - 28:00 | 3. Show Me the Code (Live Screen-Share / Demo)`,
+						`  • Step-by-step walkthrough in real code (zero slideware)`,
+						`  • Key workflows, CLI/UI ergonomics, and live inspection`,
+						``,
+						`28:00 - 38:00 | 4. Production Trade-Offs & Sharp Edges`,
+						`  • Where this shines vs. when teams should use something else`,
+						`  • Security, performance, and scaling gotchas`,
+						``,
+						`38:00 - 45:00 | 5. Verdict, Roadmap & Where to Try It`,
+						`  • What is shipping next on the roadmap`,
+						`  • Links to docs, GitHub repo, and starter templates`,
+					].join("\n");
+				}
+				if (
+					precallEl &&
+					precallEl instanceof HTMLTextAreaElement &&
+					!precallEl.value.trim()
+				) {
+					precallEl.value = [
+						`• Target Audience Takeaway: Practical architectural mental model + working demo`,
+						`• Screen-Share Check: 1080p browser/editor zoomed to 125%-150% for mobile viewers`,
+						`• Audio/Video Check: Headphones on (prevents echo in StreamYard), mic selected`,
+					].join("\n");
+				}
+			});
+		}
+
+		if (rosForm && rosForm instanceof HTMLFormElement) {
+			rosForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const precallEl = document.getElementById("ros-precall-notes");
+				const outlineEl = document.getElementById("ros-outline-notes");
+				const questionsEl = document.getElementById("ros-guest-questions");
+				const updatedByEl = document.getElementById("ros-updated-by");
+
+				const preCallNotes =
+					precallEl && precallEl instanceof HTMLTextAreaElement
+						? precallEl.value
+						: "";
+				const runOfShowNotes =
+					outlineEl && outlineEl instanceof HTMLTextAreaElement
+						? outlineEl.value
+						: "";
+				const guestQuestions =
+					questionsEl && questionsEl instanceof HTMLTextAreaElement
+						? questionsEl.value
+						: "";
+				const updatedBy =
+					updatedByEl && updatedByEl instanceof HTMLInputElement
+						? updatedByEl.value.trim()
+						: contactName || companyName || "guest";
+
+				if (rosSaveBtn) {
+					rosSaveBtn.setAttribute("disabled", "true");
+					rosSaveBtn.textContent = "Saving to Sanity...";
+				}
+				if (rosFeedback) {
+					rosFeedback.classList.add("hidden");
+				}
+
+				try {
+					const res = await fetch("/api/portal/notes", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							token: portalToken,
+							preCallNotes,
+							runOfShowNotes,
+							guestQuestions,
+							updatedBy,
+						}),
+					});
+					const data = await res.json();
+					if (res.ok && data.ok) {
+						if (rosFeedback) {
+							rosFeedback.textContent = `✓ Saved to Sanity (${new Date(data.updatedAt || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})`;
+							rosFeedback.className =
+								"text-xs font-semibold text-emerald-600 dark:text-emerald-400";
+						}
+						return;
+					}
+					if (rosFeedback) {
+						rosFeedback.textContent =
+							data.message || "Could not save notes. Please try again.";
+						rosFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} catch {
+					if (rosFeedback) {
+						rosFeedback.textContent =
+							"Network error while saving notes to Sanity.";
+						rosFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} finally {
+					if (rosSaveBtn) {
+						rosSaveBtn.removeAttribute("disabled");
+						rosSaveBtn.textContent = "Save Run-of-Show & Notes →";
+					}
+				}
+			});
+		}
+	})();
+
 	// 1-Click Deal Room Calendar Booking
 	(function () {
 		let activeTrack = "sponsor-kickoff";

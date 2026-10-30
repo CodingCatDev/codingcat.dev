@@ -1,5 +1,9 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
+import {
+	isForbiddenDocumentId,
+	isForbiddenPrivateQuery,
+} from "../../lib/portal-security";
 import { createResilientClient } from "../../lib/sanity/client";
 import {
 	semanticSearchQuery,
@@ -307,20 +311,18 @@ async function callSanityContextMcpTool(
 
 function getSanityClient() {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
-	const token =
-		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
-		(cfEnv?.SANITY_AUTH_TOKEN as string | undefined) ||
-		process.env.SANITY_API_READ_TOKEN ||
-		process.env.SANITY_AUTH_TOKEN;
 
+	// SECURITY CHECKPOINT: MCP Sanity queries are strictly anonymous public reads
+	// against published content (post, podcast, course, lesson, author, guest, sponsor, transcript).
+	// Never attach SANITY_API_READ_TOKEN or SANITY_AUTH_TOKEN here so private.** and drafts.**
+	// documents remain 100% inaccessible at the Content Lake ACL layer.
 	return createResilientClient({
 		projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
 		dataset: (cfEnv?.PUBLIC_SANITY_DATASET as string) || "production",
 		apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
-		useCdn: !token,
+		useCdn: true,
 		perspective: "published",
 		stega: false,
-		...(token ? { token } : {}),
 	});
 }
 
@@ -1401,7 +1403,7 @@ async function handleQueryContent(
 		};
 	}
 
-	// Safety check: allow only read operations
+	// Safety check: allow only read operations and block private/CRM document types
 	const lower = rawQuery.toLowerCase();
 	if (
 		lower.includes("delete") ||
@@ -1415,6 +1417,21 @@ async function handleQueryContent(
 					type: "text",
 					text: JSON.stringify({
 						error: "Only read-only GROQ queries are permitted.",
+					}),
+				},
+			],
+			isError: true,
+		};
+	}
+
+	if (isForbiddenPrivateQuery(rawQuery)) {
+		return {
+			content: [
+				{
+					type: "text",
+					text: JSON.stringify({
+						error:
+							"Access denied: GROQ queries via MCP are restricted to public content types (podcast, post, course, lesson, author, guest, sponsor, transcript).",
 					}),
 				},
 			],
@@ -1881,7 +1898,22 @@ async function handleArrayFieldReader(
 		};
 	}
 
-	const query = `*[_id == $id || _id == "drafts." + $id][0][$field]`;
+	if (isForbiddenDocumentId(documentId) || isForbiddenPrivateQuery(field)) {
+		return {
+			content: [
+				{
+					type: "text",
+					text: JSON.stringify({
+						error:
+							"Access denied: Only public published content documents may be read via array_field_reader.",
+					}),
+				},
+			],
+			isError: true,
+		};
+	}
+
+	const query = `*[_id == $id && _type in ["podcast", "post", "course", "lesson", "author", "guest", "sponsor", "page"]][0][$field]`;
 	const data = await client.fetch(query, { id: documentId, field });
 	return {
 		content: [{ type: "text", text: JSON.stringify(data || [], null, 2) }],

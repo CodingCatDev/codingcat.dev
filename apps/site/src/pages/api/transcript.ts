@@ -14,18 +14,14 @@ const CORS_HEADERS = {
 
 function getSanityClient() {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
-	const token =
-		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
-		process.env.SANITY_API_READ_TOKEN;
 
 	return createResilientClient({
 		projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
 		dataset: (cfEnv?.PUBLIC_SANITY_DATASET as string) || "production",
 		apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
-		useCdn: !token,
+		useCdn: true,
 		perspective: "published",
 		stega: false,
-		...(token ? { token } : {}),
 	});
 }
 

@@ -1,10 +1,12 @@
 import type { APIRoute } from "astro";
+import { verifyPortalRequestAuth } from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
 	"Access-Control-Allow-Origin": "*",
 	"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-	"Access-Control-Allow-Headers": "Content-Type, Authorization",
+	"Access-Control-Allow-Headers":
+		"Content-Type, Authorization, X-Portal-Key, X-Portal-Email",
 };
 
 export const OPTIONS: APIRoute = async () => {
@@ -46,7 +48,7 @@ export async function ensureSanityMediaTags(
  * Token-gated asset download proxy for private Sanity Media Library files.
  * GET /api/portal/assets?token=spt_...&assetId=file-...
  */
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ request, url }) => {
 	const token = url.searchParams.get("token")?.trim();
 	const assetId = url.searchParams.get("assetId")?.trim();
 
@@ -62,9 +64,12 @@ export const GET: APIRoute = async ({ url }) => {
 
 	const { client } = getSanityServerClient();
 	const ownerDoc = await client.fetch<Record<string, any> | null>(
-		`*[_type in ["sponsorLead", "booking", "guest"] && (portalToken == $token || _id == $token || _id == "private." + $token || _id == "private.sponsorLead-" + $token || _id == "sponsorLead-" + $token)][0]{
+		`*[_type in ["sponsorLead", "booking", "guest"] && (portalToken == $token || legacyPortalToken == $token || _id == $token || _id == "private." + $token || _id == "private.sponsorLead-" + $token || _id == "sponsorLead-" + $token)][0]{
 			_id,
 			portalToken,
+			legacyPortalToken,
+			guestEmail,
+			contactEmail,
 			sharedAssets
 		}`,
 		{ token },
@@ -73,6 +78,26 @@ export const GET: APIRoute = async ({ url }) => {
 	if (!ownerDoc) {
 		return new Response(
 			JSON.stringify({ ok: false, message: "Invalid or expired portal token" }),
+			{
+				status: 403,
+				headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+			},
+		);
+	}
+
+	const canonicalToken = ownerDoc.portalToken || token;
+	const auth = await verifyPortalRequestAuth({
+		request,
+		url,
+		token: canonicalToken,
+		allowedEmails: [ownerDoc.guestEmail, ownerDoc.contactEmail],
+	});
+	if (!auth.authorized) {
+		return new Response(
+			JSON.stringify({
+				ok: false,
+				message: "Please unlock the studio portal with your invited email to download private vault assets.",
+			}),
 			{
 				status: 403,
 				headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
@@ -217,33 +242,74 @@ export const POST: APIRoute = async ({ request, url }) => {
 			_id: string;
 			_type: string;
 			portalToken?: string;
+			legacyPortalToken?: string;
 			companyName?: string;
 			company?: string;
 			guestName?: string;
+			guestEmail?: string;
+			contactEmail?: string;
 			source?: string;
 			bookingSource?: string;
 		}>
 	>(
 		`*[_type in ["sponsorLead", "booking"] && (
-			($token != "" && portalToken == $token) ||
+			($token != "" && (portalToken == $token || legacyPortalToken == $token)) ||
 			($docId != "" && (_id == $docId || _id == "private." + $docId)) ||
 			($token != "" && (_id == "private.sponsorLead-" + $token || _id == "sponsorLead-" + $token))
 		)]{
 			_id,
 			_type,
 			portalToken,
+			legacyPortalToken,
 			companyName,
 			company,
 			guestName,
+			guestEmail,
+			contactEmail,
 			source,
 			bookingSource
 		}`,
 		{ token, docId },
 	);
 
-	const primaryDoc = targetDocs?.[0];
+	if (!targetDocs || targetDocs.length === 0) {
+		return new Response(
+			JSON.stringify({
+				ok: false,
+				message: "Studio portal not found.",
+			}),
+			{
+				status: 404,
+				headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+			},
+		);
+	}
+
+	const primaryDoc = targetDocs[0];
 	const resolvedToken =
-		token || primaryDoc?.portalToken || docId.replace(/^(private\.)?sponsorLead-/, "");
+		primaryDoc?.portalToken ||
+		token ||
+		docId.replace(/^(private\.)?sponsorLead-/, "");
+
+	const auth = await verifyPortalRequestAuth({
+		request,
+		url: url ?? new URL(request.url),
+		token: resolvedToken,
+		allowedEmails: targetDocs.flatMap((d) => [d.guestEmail, d.contactEmail]),
+	});
+	if (!auth.authorized) {
+		return new Response(
+			JSON.stringify({
+				ok: false,
+				message:
+					"Unauthorized: Please verify your invited guest email before uploading to the Studio Vault.",
+			}),
+			{
+				status: 403,
+				headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+			},
+		);
+	}
 	const partnerLabel =
 		primaryDoc?.companyName ||
 		primaryDoc?.company ||

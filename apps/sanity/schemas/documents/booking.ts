@@ -133,6 +133,39 @@ export default defineType({
       type: 'text',
     }),
     defineField({
+      name: 'preCallNotes',
+      title: '15m Pre-Call Alignment & Tech Check Notes',
+      type: 'text',
+      description: 'Shared notes from the 15-minute Google Meet pre-call (mic/camera check, angle, target publish window).',
+    }),
+    defineField({
+      name: 'runOfShowNotes',
+      title: '45m Run-of-Show & Demo Outline (2-Way Co-Edited)',
+      type: 'text',
+      description: 'Co-editable 5-part show outline synced between Sanity Studio, Ops App, and the Guest Portal.',
+    }),
+    defineField({
+      name: 'guestQuestions',
+      title: 'Guest Links, Picks & Must-Ask Questions',
+      type: 'text',
+      description: 'Specific questions, links, or picks dropped by the guest for show notes.',
+    }),
+    defineField({
+      name: 'runOfShowUpdatedAt',
+      title: 'Run-of-Show Last Updated At',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'runOfShowUpdatedBy',
+      title: 'Run-of-Show Last Updated By',
+      type: 'string',
+    }),
+    defineField({
+      name: 'legacyPortalToken',
+      title: 'Legacy Short Portal Token Alias',
+      type: 'string',
+    }),
+    defineField({
       name: 'appointmentScheduleUrl',
       title: 'Google Calendar Event / Booking Link',
       type: 'url',

@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import { sendCodingCatEmail } from "@/lib/email";
 import { createGoogleCalendarBookingEvent } from "@/lib/google-calendar";
+import { computePortalAccessKey } from "@/lib/portal-security";
 import {
 	getSanityServerClient,
 	resolveSponsorTier,
@@ -141,11 +142,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
 
+	const accessKey = await computePortalAccessKey(portalToken, email);
 	const queryFallback = new URLSearchParams({
-		company,
-		name,
-		email,
-		tier: selectedTier.id,
+		key: accessKey,
 		...(kickoffSlotStartAt ? { bookedSlot: kickoffSlotStartAt } : {}),
 	});
 	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;

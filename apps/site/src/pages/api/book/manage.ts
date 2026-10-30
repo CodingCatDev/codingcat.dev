@@ -7,6 +7,7 @@ import {
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
 } from "@/lib/google-calendar";
+import { computePortalAccessKey } from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
@@ -68,6 +69,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		);
 		const migratedIds: string[] = [];
 		const deletedIds: string[] = [];
+		const rotatedTokens: Array<{ id: string; legacyToken: string; newToken: string }> = [];
 		for (const d of publicDocs || []) {
 			const oldId = String(d._id || "");
 			if (!oldId || oldId.startsWith("private.")) continue;
@@ -85,6 +87,79 @@ export const POST: APIRoute = async ({ request, url }) => {
 				// Ignore if referenced
 			}
 		}
+
+		// Rotate predictable human-readable portalToken values and seed Marie Lo Gerard's Run-of-Show
+		const privatePortalDocs = await client.fetch<Array<Record<string, any>>>(
+			`*[_type in ["booking", "sponsorLead"] && _id in path("private.**")]`,
+		);
+		for (const doc of privatePortalDocs || []) {
+			const token = String(doc.portalToken || "").trim();
+			const isPredictable =
+				token.length > 0 &&
+				!token.startsWith("spt_") &&
+				!/^.+_[0-9a-f]{12}$/.test(token);
+			const patchFields: Record<string, any> = {};
+
+			if (isPredictable) {
+				const hashBuf = await crypto.subtle.digest(
+					"SHA-256",
+					new TextEncoder().encode(`codingcat-portal-token:${doc._id}:${token}`),
+				);
+				const suffix = Array.from(new Uint8Array(hashBuf))
+					.map((b) => b.toString(16).padStart(2, "0"))
+					.join("")
+					.slice(0, 12);
+				const newToken = `${token}_${suffix}`;
+				patchFields.portalToken = newToken;
+				patchFields.legacyPortalToken = doc.legacyPortalToken || token;
+				rotatedTokens.push({ id: doc._id, legacyToken: token, newToken });
+			}
+
+			if (
+				doc._id === "private.booking-edaa31db78dc4c21" &&
+				!doc.runOfShowNotes
+			) {
+				patchFields.preCallNotes = [
+					"• Pre-Call Completed (Fri Oct 30, 2026) with Marie Lo Gerard (Lastware: bref-ui)",
+					"• Primary Angle: Why UI component ergonomics and serverless/modern full-stack developer workflows need bref-ui",
+					"• Screen-Share Prep: 1080p browser + editor zoomed to 135% for live component walkthrough",
+					"• StreamYard Studio: Headphones on, mic & camera verified",
+				].join("\n");
+				patchFields.guestQuestions = [
+					"• What was the exact frustration at Lastware that led you to build bref-ui?",
+					"• How does bref-ui compare against existing component primitives in production?",
+					"• Live Demo: Building & customizing a real workflow with bref-ui",
+					"• What is next on the Lastware / bref-ui roadmap and where can developers try it?",
+				].join("\n");
+				patchFields.runOfShowNotes = [
+					"00:00 - 03:00 | 1. Cold Open & Origin Story",
+					"  • Welcome Marie Lo Gerard (Lastware: bref-ui) to CodingCat.dev",
+					"  • The 30-second hook: What is bref-ui and what problem does it solve?",
+					"",
+					"03:00 - 12:00 | 2. The Architecture Mental Model",
+					"  • Why traditional UI kits get in the way vs. how bref-ui structures components",
+					"  • Design tokens, accessibility, and developer experience trade-offs",
+					"",
+					"12:00 - 28:00 | 3. Show Me the Code (Live Screen-Share Walkthrough)",
+					"  • Live walkthrough of bref-ui in action",
+					"  • Composing real views, state handling, and styling patterns",
+					"",
+					"28:00 - 38:00 | 4. Production Trade-Offs & Sharp Edges",
+					"  • Lessons learned building Lastware and bref-ui",
+					"  • Performance, bundle size, and AI-assisted UI generation",
+					"",
+					"38:00 - 45:00 | 5. Verdict, Roadmap & Where to Try It",
+					"  • Upcoming releases and community links",
+				].join("\n");
+				patchFields.runOfShowUpdatedAt = new Date().toISOString();
+				patchFields.runOfShowUpdatedBy = "Alex Patterson";
+			}
+
+			if (Object.keys(patchFields).length > 0) {
+				await client.patch(doc._id).set(patchFields).commit();
+			}
+		}
+
 		return new Response(
 			JSON.stringify({
 				ok: true,
@@ -92,6 +167,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				deletedCount: deletedIds.length,
 				migratedIds,
 				deletedIds,
+				rotatedTokens,
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);
@@ -185,7 +261,12 @@ export const POST: APIRoute = async ({ request, url }) => {
 	>;
 	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
-	const portalUrl = `${siteUrl}/portal/${portalToken}?company=${encodeURIComponent(company)}&name=${encodeURIComponent(guestName)}&email=${encodeURIComponent(guestEmail)}`;
+	const accessKey = guestEmail
+		? await computePortalAccessKey(portalToken, guestEmail)
+		: "";
+	const portalUrl = accessKey
+		? `${siteUrl}/portal/${portalToken}?key=${encodeURIComponent(accessKey)}`
+		: `${siteUrl}/portal/${portalToken}`;
 
 	if (body.action === "approve_recording") {
 		const approved = await approveGoogleCalendarRecordingEvent({

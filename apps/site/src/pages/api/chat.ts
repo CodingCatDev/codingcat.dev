@@ -4,6 +4,7 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { isStepCount, jsonSchema, streamText, tool } from "ai";
 import type { APIRoute } from "astro";
 import { createWorkersAI } from "workers-ai-provider";
+import { isForbiddenPrivateQuery } from "@/lib/portal-security";
 import { createResilientClient } from "@/lib/sanity/client";
 import {
 	semanticSearchQuery,
@@ -538,15 +539,17 @@ export const POST: APIRoute = async ({ request }) => {
 	let mcpClient: Awaited<ReturnType<typeof createMCPClient>> | undefined;
 
 	try {
-		// Configure Sanity client (fall back to public 'production' dataset when no read token is present or dataset is missing)
+		// SECURITY CHECKPOINT: Agent AJ Chat only queries public published content.
+		// Never attach SANITY_API_READ_TOKEN or SANITY_AUTH_TOKEN to sanityClient here
+		// so private.** (bookings, sponsorLeads, sponsorPools) and drafts.** cannot be queried.
 		const configuredDataset =
 			(cfEnv?.PUBLIC_SANITY_DATASET as string) || "production";
 		const sanityClient = createResilientClient({
 			projectId: (cfEnv?.PUBLIC_SANITY_PROJECT_ID as string) || "hfh83o0w",
-			dataset: sanityToken ? configuredDataset : "production",
+			dataset: configuredDataset,
 			apiVersion: (cfEnv?.PUBLIC_SANITY_API_VERSION as string) || "2025-09-30",
-			useCdn: !sanityToken,
-			...(sanityToken ? { token: sanityToken } : {}),
+			useCdn: true,
+			perspective: "published",
 		});
 
 		const collectedToolItems: Array<{
@@ -833,9 +836,17 @@ export const POST: APIRoute = async ({ request }) => {
 				}
 			}
 
+			const ALLOWED_REMOTE_MCP_TOOLS = new Set([
+				"knowledge_base_read",
+				"initial_context",
+			]);
 			const wrappedMcpTools: Record<string, any> = {};
 			for (const [toolName, mcpTool] of Object.entries(rawMcpTools)) {
-				if (!mcpTool || typeof mcpTool !== "object") {
+				if (
+					!ALLOWED_REMOTE_MCP_TOOLS.has(toolName) ||
+					!mcpTool ||
+					typeof mcpTool !== "object"
+				) {
 					continue;
 				}
 				const origExecute = (mcpTool as any).execute;
@@ -991,6 +1002,12 @@ export const POST: APIRoute = async ({ request }) => {
 						required: ["query"],
 					}),
 					execute: async ({ query }: { query: string }) => {
+						if (isForbiddenPrivateQuery(query)) {
+							return {
+								error:
+									"Access denied: Agent AJ only queries public content types (podcast, post, course, lesson, author, guest, sponsor).",
+							};
+						}
 						let cleanQuery = query.trim();
 						if (
 							!cleanQuery.startsWith("*") &&
@@ -1017,32 +1034,6 @@ export const POST: APIRoute = async ({ request }) => {
 							"$1*$2*$1",
 						);
 						cleanQuery = cleanQuery.replace(/\[_score\s*>\s*0\]/g, "");
-
-						if (mcpGroqTool?.execute) {
-							try {
-								const mcpResult = await mcpGroqTool.execute(
-									{ query: cleanQuery },
-									{} as any,
-								);
-								const parsed =
-									typeof mcpResult === "string"
-										? JSON.parse(mcpResult)
-										: mcpResult;
-								const results =
-									parsed?.result ||
-									(Array.isArray(parsed?.content) && parsed.content[0]?.text
-										? JSON.parse(parsed.content[0].text)?.result
-										: null);
-								const arr = Array.isArray(results)
-									? results
-									: results && typeof results === "object"
-										? [results]
-										: [];
-								if (arr.length > 0) {
-									return normalizeAndCollectItems(arr);
-								}
-							} catch {}
-						}
 
 						try {
 							const directResult = await sanityClient.fetch(cleanQuery);

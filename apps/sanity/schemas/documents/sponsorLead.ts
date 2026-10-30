@@ -36,6 +36,36 @@ export default defineType({
       description: 'Unique token used for codingcat.dev/portal/[token]',
     }),
     defineField({
+      name: 'legacyPortalToken',
+      title: 'Legacy Short Portal Token Alias',
+      type: 'string',
+    }),
+    defineField({
+      name: 'preCallNotes',
+      title: '15m Pre-Call Alignment & Tech Check Notes',
+      type: 'text',
+    }),
+    defineField({
+      name: 'runOfShowNotes',
+      title: '45m Run-of-Show & Demo Outline (2-Way Co-Edited)',
+      type: 'text',
+    }),
+    defineField({
+      name: 'guestQuestions',
+      title: 'Sponsor / Guest Links, CTA & Key Talking Points',
+      type: 'text',
+    }),
+    defineField({
+      name: 'runOfShowUpdatedAt',
+      title: 'Run-of-Show Last Updated At',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'runOfShowUpdatedBy',
+      title: 'Run-of-Show Last Updated By',
+      type: 'string',
+    }),
+    defineField({
       name: 'source',
       title: 'Source',
       type: 'string',
