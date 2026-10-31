@@ -82,10 +82,45 @@ const PUBLIC_EMAIL_DOMAINS = new Set([
 	"fastmail.com",
 ]);
 
+const CORPORATE_DOMAIN_ALIASES: Record<string, string[]> = {
+	"aws.com": ["amazon.com", "aws.amazon.com"],
+	"amazon.com": ["aws.com", "aws.amazon.com"],
+};
+
+/**
+ * Extracts all allowed email addresses (including `coordinatorEmails` and comma-separated lists)
+ * from one or more Sanity booking / sponsorLead documents.
+ */
+export function extractPortalAllowedEmails(
+	...docs: Array<Record<string, any> | null | undefined>
+): string[] {
+	const out = new Set<string>();
+	for (const doc of docs) {
+		if (!doc || typeof doc !== "object") continue;
+		const rawStrings = [
+			doc.guestEmail,
+			doc.contactEmail,
+			doc.coordinatorEmail,
+			...(Array.isArray(doc.coordinatorEmails) ? doc.coordinatorEmails : []),
+			...(Array.isArray(doc.allowedEmails) ? doc.allowedEmails : []),
+		];
+		for (const item of rawStrings) {
+			if (typeof item !== "string") continue;
+			for (const part of item.split(/[,;\s]+/)) {
+				const clean = part.trim().toLowerCase();
+				if (clean && clean.includes("@")) {
+					out.add(clean);
+				}
+			}
+		}
+	}
+	return Array.from(out);
+}
+
 /**
  * Checks whether an authenticated Better-Auth user's email is authorized to unlock
- * a specific Studio Portal (exact guest/sponsor email, same non-public corporate domain,
- * or CodingCat.dev host admin).
+ * a specific Studio Portal (exact guest/sponsor email, coordinator email, same non-public
+ * corporate domain, or CodingCat.dev host admin).
  */
 export function isAllowedPortalEmail(
 	candidateEmail: string,
@@ -99,18 +134,19 @@ export function isAllowedPortalEmail(
 	const candidateDomain = cleanCandidate.split("@")[1] || "";
 
 	for (const rawAllowed of allowedEmails) {
-		const cleanAllowed = (rawAllowed || "").trim().toLowerCase();
-		if (!cleanAllowed || !cleanAllowed.includes("@")) continue;
-		if (cleanCandidate === cleanAllowed) return true;
+		if (!rawAllowed) continue;
+		for (const part of String(rawAllowed).split(/[,;\s]+/)) {
+			const cleanAllowed = part.trim().toLowerCase();
+			if (!cleanAllowed || !cleanAllowed.includes("@")) continue;
+			if (cleanCandidate === cleanAllowed) return true;
 
-		// Allow teammates from the same corporate email domain (e.g. @mastra.ai, @fusionauth.io)
-		const allowedDomain = cleanAllowed.split("@")[1] || "";
-		if (
-			allowedDomain &&
-			!PUBLIC_EMAIL_DOMAINS.has(allowedDomain) &&
-			candidateDomain === allowedDomain
-		) {
-			return true;
+			// Allow teammates from the same corporate email domain (e.g. @mastra.ai, @fusionauth.io, @aws.com <-> @amazon.com)
+			const allowedDomain = cleanAllowed.split("@")[1] || "";
+			if (allowedDomain && !PUBLIC_EMAIL_DOMAINS.has(allowedDomain)) {
+				if (candidateDomain === allowedDomain) return true;
+				const aliases = CORPORATE_DOMAIN_ALIASES[allowedDomain] || [];
+				if (aliases.includes(candidateDomain)) return true;
+			}
 		}
 	}
 

@@ -683,6 +683,15 @@ export async function createGoogleCalendarBookingEvent(opts: {
 		start: { dateTime: start.toISOString() },
 		end: { dateTime: end.toISOString() },
 		attendees,
+		reminders: {
+			useDefault: false,
+			overrides: [
+				{ method: "email", minutes: 1440 },
+				{ method: "popup", minutes: 1440 },
+				{ method: "email", minutes: 60 },
+				{ method: "popup", minutes: 60 },
+			],
+		},
 	};
 
 	if (isPreMeeting) {
@@ -812,6 +821,15 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 			{ email: "alex@codingcat.dev", displayName: "Alex Patterson", responseStatus: "accepted" },
 			{ email: opts.guestEmail, displayName: opts.guestName },
 		],
+		reminders: {
+			useDefault: false,
+			overrides: [
+				{ method: "email", minutes: 1440 },
+				{ method: "popup", minutes: 1440 },
+				{ method: "email", minutes: 60 },
+				{ method: "popup", minutes: 60 },
+			],
+		},
 	};
 
 	try {

@@ -192,6 +192,39 @@ export const POST: APIRoute = async ({ request, url }) => {
 					_id: normalizedId,
 				} as any);
 				created++;
+			} else if (doc._id && doc._type === "guest") {
+				const { avatarImageUrl, ...guestFields } = doc;
+				let coverImage = guestFields.coverImage;
+				if (!coverImage && typeof avatarImageUrl === "string" && avatarImageUrl.startsWith("http")) {
+					try {
+						const imgRes = await fetch(avatarImageUrl);
+						if (imgRes.ok) {
+							const contentType = imgRes.headers.get("content-type") || "image/jpeg";
+							const arrayBuf = await imgRes.arrayBuffer();
+							const asset = await client.assets.upload(
+								"image",
+								new Blob([arrayBuf], { type: contentType }),
+								{ filename: `${String(doc._id).replace(/[^a-z0-9-_]/gi, "-")}.jpg` },
+							);
+							if (asset?._id) {
+								coverImage = {
+									_type: "image",
+									asset: {
+										_type: "reference",
+										_ref: asset._id,
+									},
+								};
+							}
+						}
+					} catch {
+						// Ignore avatar upload error
+					}
+				}
+				await client.createOrReplace({
+					...guestFields,
+					...(coverImage ? { coverImage } : {}),
+				} as any);
+				created++;
 			}
 		}
 		for (const p of body.patches || []) {

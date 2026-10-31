@@ -1,5 +1,8 @@
 import type { APIRoute } from "astro";
-import { verifyPortalRequestAuth } from "@/lib/portal-security";
+import {
+	extractPortalAllowedEmails,
+	verifyPortalRequestAuth,
+} from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
@@ -84,7 +87,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 			portalToken,
 			legacyPortalToken,
 			guestEmail,
-			contactEmail
+			contactEmail,
+			coordinatorEmail,
+			coordinatorEmails,
+			allowedEmails
 		}`,
 		{ token, docId },
 	);
@@ -100,10 +106,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 	}
 
 	const canonicalToken = targetDocs[0]?.portalToken || token;
-	const allowedEmails = targetDocs.flatMap((d) => [
-		d.guestEmail,
-		d.contactEmail,
-	]);
+	const allowedEmails = extractPortalAllowedEmails(...targetDocs);
 
 	const auth = await verifyPortalRequestAuth({
 		request,

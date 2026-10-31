@@ -2,7 +2,9 @@
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
+import { portableTextToHtml } from "@/lib/guest-portal";
 import {
+	extractPortalAllowedEmails,
 	maskEmailAddress,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
@@ -82,7 +84,114 @@ interface LeadPortalData {
 	guestQuestions?: string;
 	runOfShowUpdatedAt?: string;
 	runOfShowUpdatedBy?: string;
+	hasSignedRelease?: boolean;
+	signedAt?: string;
+	signatureMode?: string;
+	guestSlug?: string;
+	guestTitle?: string;
+	guestAvatarUrl?: string;
+	guestExcerpt?: string;
+	guestAboutHtml?: string;
+	guestWebsiteUrl?: string;
+	guestSocials?: Record<string, string>;
 }
+
+function slugifyGuestName(name: string): string {
+	return (name || "")
+		.toLowerCase()
+		.normalize("NFKD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.slice(0, 64);
+}
+
+const socialFields = [
+	{
+		key: "twitter",
+		label: "X (Twitter)",
+		placeholder: "@username or https://x.com/username",
+		priority: true,
+	},
+	{
+		key: "bluesky",
+		label: "Bluesky",
+		placeholder: "handle.bsky.social or https://bsky.app/profile/...",
+		priority: true,
+	},
+	{
+		key: "linkedin",
+		label: "LinkedIn",
+		placeholder: "https://www.linkedin.com/in/username",
+		priority: true,
+	},
+	{
+		key: "github",
+		label: "GitHub",
+		placeholder: "username or https://github.com/username",
+		priority: true,
+	},
+	{
+		key: "youtube",
+		label: "YouTube Channel",
+		placeholder: "@channel or https://www.youtube.com/@channel",
+		priority: true,
+	},
+	{
+		key: "twitch",
+		label: "Twitch",
+		placeholder: "https://www.twitch.tv/username",
+		priority: true,
+	},
+	{
+		key: "instagram",
+		label: "Instagram",
+		placeholder: "@username or https://www.instagram.com/username",
+		priority: false,
+	},
+	{
+		key: "threads",
+		label: "Threads",
+		placeholder: "@username or https://www.threads.net/@username",
+		priority: false,
+	},
+	{
+		key: "mastodon",
+		label: "Mastodon",
+		placeholder: "@user@mastodon.social or full URL",
+		priority: false,
+	},
+	{
+		key: "tiktok",
+		label: "TikTok",
+		placeholder: "@username or https://www.tiktok.com/@username",
+		priority: false,
+	},
+	{
+		key: "facebook",
+		label: "Facebook",
+		placeholder: "https://www.facebook.com/username",
+		priority: false,
+	},
+	{
+		key: "substack",
+		label: "Substack",
+		placeholder: "https://username.substack.com",
+		priority: false,
+	},
+	{
+		key: "devto",
+		label: "Dev.to",
+		placeholder: "https://dev.to/username",
+		priority: false,
+	},
+	{
+		key: "medium",
+		label: "Medium",
+		placeholder: "https://medium.com/@username",
+		priority: false,
+	},
+];
 
 const fallbackTier = resolveSponsorTier(searchParams.get("tier") || "full-stack-launch");
 const fallbackCompany = searchParams.get("company") || "Sponsor Partner";
@@ -144,9 +253,9 @@ try {
 		portalFound = true;
 		const canonicalToken =
 			doc?.portalToken || bookingDoc?.portalToken || token || "";
-		const allowedEmails = [doc?.contactEmail, bookingDoc?.guestEmail];
+		const allowedEmails = extractPortalAllowedEmails(doc, bookingDoc);
 		maskedEmailHint = maskEmailAddress(
-			bookingDoc?.guestEmail || doc?.contactEmail,
+			bookingDoc?.guestEmail || doc?.contactEmail || allowedEmails[0],
 		);
 
 		const authResult = await verifyPortalRequestAuth({
@@ -159,6 +268,48 @@ try {
 		isPortalAuthenticated = authResult.authenticated;
 		authReason = authResult.reason;
 		verifiedPortalEmail = authResult.verifiedEmail || "";
+
+		const resolvedGuestName =
+			bookingDoc?.guestName || doc?.contactName || fallbackName;
+		const candidateSlug =
+			bookingDoc?.guestSlug ||
+			doc?.guestSlug ||
+			slugifyGuestName(resolvedGuestName) ||
+			canonicalToken;
+		const guestProfileDoc = await client
+			.fetch<{
+				_id: string;
+				title?: string;
+				slug?: { current?: string };
+				avatarUrl?: string;
+				excerpt?: string;
+				content?: unknown[];
+				socials?: Record<string, string>;
+				websites?: Array<{ site?: string; link?: { href?: string } }>;
+			} | null>(
+				`*[_type in ["guest", "author"] && (
+					slug.current == $slug ||
+					_id in [$docId, $draftId, $pubId] ||
+					lower(title) == lower($guestName)
+				)] | order(_id asc)[0]{
+					_id,
+					title,
+					slug,
+					"avatarUrl": coverImage.asset->url,
+					excerpt,
+					content,
+					socials,
+					websites
+				}`,
+				{
+					slug: candidateSlug,
+					docId: bookingDoc?.guestDocId || `drafts.guest-${candidateSlug}`,
+					draftId: `drafts.guest-${candidateSlug}`,
+					pubId: `guest-${candidateSlug}`,
+					guestName: resolvedGuestName,
+				},
+			)
+			.catch(() => null);
 
 		const tier = resolveSponsorTier(doc?.rateCard || fallbackTier.id);
 		const combinedAssets = [
@@ -241,6 +392,29 @@ try {
 				bookingDoc?.runOfShowUpdatedAt || doc?.runOfShowUpdatedAt,
 			runOfShowUpdatedBy:
 				bookingDoc?.runOfShowUpdatedBy || doc?.runOfShowUpdatedBy,
+			hasSignedRelease: Boolean(bookingDoc?.signatureData),
+			signedAt: bookingDoc?.signedAt,
+			signatureMode: bookingDoc?.signatureMode,
+			guestSlug: guestProfileDoc?.slug?.current || candidateSlug,
+			guestTitle:
+				guestProfileDoc?.title ||
+				bookingDoc?.guestName ||
+				doc?.contactName ||
+				fallbackName,
+			guestAvatarUrl: guestProfileDoc?.avatarUrl || "",
+			guestExcerpt:
+				guestProfileDoc?.excerpt &&
+				guestProfileDoc.excerpt.trim().toLowerCase() !== "fix me"
+					? guestProfileDoc.excerpt.trim()
+					: `${bookingDoc?.guestName || doc?.contactName || fallbackName} (${bookingDoc?.company || doc?.companyName || fallbackCompany})`,
+			guestAboutHtml: portableTextToHtml(guestProfileDoc?.content),
+			guestWebsiteUrl:
+				guestProfileDoc?.websites?.[0]?.link?.href ||
+				guestProfileDoc?.websites?.[0]?.site ||
+				bookingDoc?.socialUrl ||
+				doc?.website ||
+				"",
+			guestSocials: guestProfileDoc?.socials || {},
 		};
 	}
 } catch {
@@ -544,6 +718,141 @@ const pageDescription = !portalFound
 			</div>
 		</header>
 
+		<!-- PodMatch-Style Self-Serve Guest Readiness Checklist & Live Draft Preview Bar -->
+		<section class="flex flex-col gap-4 p-5 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+				<div class="flex flex-col gap-1">
+					<div class="flex flex-wrap items-center gap-2">
+						<span class="text-xs font-mono uppercase tracking-wider text-primary font-bold">
+							✅ Pre-Show Readiness Checklist (Self-Serve)
+						</span>
+						<span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold">
+							🔔 Auto-Reminders: 24h &amp; 1h Before Show (Google Calendar)
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Complete these 4 steps before we go live so your speaker card, lower-third banners, and episode outline are ready to roll.
+					</p>
+				</div>
+				{portalData.guestSlug && (
+					<div class="flex flex-wrap items-center gap-2 shrink-0">
+						<a
+							href={`/guest/${portalData.guestSlug}?sanity-preview-perspective=drafts`}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-2 border-primary bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-colors"
+						>
+							👁️ Preview Guest Page (Draft) &nearr;
+						</a>
+					</div>
+				)}
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+				<a
+					href="#guest-profile"
+					class={`flex flex-col justify-between gap-1.5 p-3.5 rounded-xl border transition-colors ${
+						portalData.guestProfileExists && portalData.guestAvatarUrl && portalData.guestAboutHtml
+							? "border-emerald-500/40 bg-emerald-500/10"
+							: "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/15"
+					}`}
+				>
+					<div class="flex items-center justify-between">
+						<span class="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+							Step 1 &middot; Guest Profile
+						</span>
+						<span class={`text-[11px] font-mono font-bold ${
+							portalData.guestProfileExists && portalData.guestAvatarUrl && portalData.guestAboutHtml
+								? "text-emerald-600 dark:text-emerald-400"
+								: "text-amber-600 dark:text-amber-300"
+						}`}>
+							{portalData.guestProfileExists && portalData.guestAvatarUrl && portalData.guestAboutHtml ? "✓ Ready" : "Action Needed"}
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Headshot, bio, website &amp; 14 social links (`drafts.guest-{portalData.guestSlug}`)
+					</p>
+				</a>
+
+				<a
+					href="#esign-release"
+					class={`flex flex-col justify-between gap-1.5 p-3.5 rounded-xl border transition-colors ${
+						portalData.hasSignedRelease
+							? "border-emerald-500/40 bg-emerald-500/10"
+							: "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/15"
+					}`}
+				>
+					<div class="flex items-center justify-between">
+						<span class="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+							Step 2 &middot; E-SIGN Release
+						</span>
+						<span class={`text-[11px] font-mono font-bold ${
+							portalData.hasSignedRelease
+								? "text-emerald-600 dark:text-emerald-400"
+								: "text-amber-600 dark:text-amber-300"
+						}`}>
+							{portalData.hasSignedRelease ? "✓ Signed" : "Sign Inline"}
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						{portalData.hasSignedRelease
+							? `Signed ${portalData.signedAt ? new Date(portalData.signedAt).toLocaleDateString() : "on file"}`
+							: "10-second inline media & recording consent signature"}
+					</p>
+				</a>
+
+				<a
+					href="#run-of-show"
+					class={`flex flex-col justify-between gap-1.5 p-3.5 rounded-xl border transition-colors ${
+						portalData.runOfShowNotes && portalData.runOfShowNotes.trim().length > 20
+							? "border-emerald-500/40 bg-emerald-500/10"
+							: "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/15"
+					}`}
+				>
+					<div class="flex items-center justify-between">
+						<span class="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+							Step 3 &middot; Run-of-Show
+						</span>
+						<span class={`text-[11px] font-mono font-bold ${
+							portalData.runOfShowNotes && portalData.runOfShowNotes.trim().length > 20
+								? "text-emerald-600 dark:text-emerald-400"
+								: "text-amber-600 dark:text-amber-300"
+						}`}>
+							{portalData.runOfShowNotes && portalData.runOfShowNotes.trim().length > 20 ? "✓ Seeded" : "Add Outline"}
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Review 5-part episode arc, demo flow &amp; questions
+					</p>
+				</a>
+
+				<a
+					href={portalData.recordingUrl || "#schedule-section"}
+					target={portalData.recordingUrl ? "_blank" : undefined}
+					rel={portalData.recordingUrl ? "noopener noreferrer" : undefined}
+					class={`flex flex-col justify-between gap-1.5 p-3.5 rounded-xl border transition-colors ${
+						portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed"
+							? "border-emerald-500/40 bg-emerald-500/10"
+							: "border-primary/40 bg-primary/5 hover:bg-primary/10"
+					}`}
+				>
+					<div class="flex items-center justify-between">
+						<span class="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
+							Step 4 &middot; Studio Slot
+						</span>
+						<span class="text-[11px] font-mono font-bold text-primary">
+							{portalData.bookingSlotStartAt ? "✓ Scheduled" : "Pick Window"}
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						{portalData.bookingSlotStartAt
+							? new Date(portalData.bookingSlotStartAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
+							: "Select 45-min StreamYard window"}
+					</p>
+				</a>
+			</div>
+		</section>
+
 		<!-- Live Recording Studio & Google Meet Pre-Call Status Strip -->
 		<section class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 rounded-2xl border border-primary/30 bg-primary/5">
 			<div class="flex flex-col justify-between gap-2 p-4 rounded-xl border border-border bg-card">
@@ -626,6 +935,295 @@ const pageDescription = !portalFound
 					</a>
 				)}
 			</div>
+		</section>
+
+		<!-- Self-Serve Speaker Profile, Headshot (512x512 Crop) & 14 Social Links Editor -->
+		<section id="guest-profile" class="flex flex-col gap-5 p-6 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+				<div class="flex flex-col gap-1">
+					<div class="flex flex-wrap items-center gap-2">
+						<h2 class="text-xl font-bold tracking-tight">
+							Speaker Bio, Headshot &amp; 14 Social Links
+						</h2>
+						<span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+							🎙️ Saves to `drafts.guest-{portalData.guestSlug}`
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Update your public speaker card, upload/crop a square headshot, and verify your social links. Changes save directly to your Sanity draft document so you can preview your guest page immediately before we publish.
+					</p>
+				</div>
+				{portalData.guestSlug && (
+					<a
+						href={`/guest/${portalData.guestSlug}?sanity-preview-perspective=drafts`}
+						target="_blank"
+						rel="noopener noreferrer"
+						id="btn-preview-guest-draft"
+						class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-primary bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-colors shrink-0"
+					>
+						👁️ Open Draft Guest Page &nearr;
+					</a>
+				)}
+			</div>
+
+			<form id="guest-profile-form" class="flex flex-col gap-6">
+				<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+					<!-- Headshot Upload & 512x512 Crop Column -->
+					<div class="lg:col-span-4 flex flex-col items-center sm:items-start gap-3 p-4 rounded-xl border border-border bg-background">
+						<span class="text-xs font-bold uppercase tracking-wider text-primary">
+							1. Square Speaker Headshot (512&times;512)
+						</span>
+						<div class="flex items-center gap-4 w-full">
+							<div class="size-24 rounded-full overflow-hidden border-2 border-primary/40 bg-muted shrink-0 flex items-center justify-center">
+								<img
+									id="gp-avatar-preview"
+									src={portalData.guestAvatarUrl || "/images/avatars/aj-avatar.png"}
+									alt={portalData.guestTitle}
+									class="size-full object-cover"
+								/>
+							</div>
+							<div class="flex flex-col gap-2 flex-1">
+								<label
+									for="gp-avatar-file"
+									class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer text-center"
+								>
+									Upload &amp; Crop Photo
+								</label>
+								<input
+									type="file"
+									id="gp-avatar-file"
+									accept="image/png,image/jpeg,image/webp"
+									class="hidden"
+								/>
+								<input type="hidden" id="gp-avatar-data-url" value="" />
+								<span class="text-[11px] text-muted-foreground leading-tight">
+									PNG, JPG, or WebP. Interactive 1:1 square crop tool opens automatically.
+								</span>
+							</div>
+						</div>
+
+						<!-- Interactive Square Cropper Panel (hidden until file chosen) -->
+						<div id="gp-crop-panel" class="hidden flex-col gap-2.5 w-full pt-2 border-t border-border">
+							<div class="flex items-center justify-between">
+								<span class="text-[11px] font-mono font-bold text-primary">
+									Drag to Reposition &amp; Zoom
+								</span>
+								<button
+									type="button"
+									id="btn-gp-apply-crop"
+									class="px-2.5 py-1 rounded bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-500 cursor-pointer"
+								>
+									✓ Apply 512&times;512 Crop
+								</button>
+							</div>
+							<div class="relative mx-auto size-48 overflow-hidden rounded-xl border-2 border-primary bg-black">
+								<canvas
+									id="gp-crop-canvas"
+									width="512"
+									height="512"
+									class="size-full cursor-move touch-none"
+								></canvas>
+							</div>
+							<div class="flex items-center gap-2">
+								<span class="text-[10px] font-mono text-muted-foreground">Zoom</span>
+								<input
+									type="range"
+									id="gp-crop-zoom"
+									min="1"
+									max="3"
+									step="0.02"
+									value="1"
+									class="flex-1 accent-primary"
+								/>
+							</div>
+						</div>
+					</div>
+
+					<!-- Name, Headline, Website & Bio Column -->
+					<div class="lg:col-span-8 flex flex-col gap-4">
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+							<div class="flex flex-col gap-1">
+								<label for="gp-title" class="text-xs font-bold uppercase tracking-wider text-primary">
+									2. Display Name (Lower-Third Title)
+								</label>
+								<input
+									type="text"
+									id="gp-title"
+									required
+									value={portalData.guestTitle}
+									placeholder="Darko Mesaroš"
+									class="rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+								/>
+							</div>
+							<div class="flex flex-col gap-1">
+								<label for="gp-website" class="text-xs font-bold uppercase tracking-wider text-primary">
+									3. Primary Website / Project URL
+								</label>
+								<input
+									type="url"
+									id="gp-website"
+									value={portalData.guestWebsiteUrl}
+									placeholder="https://rup12.net/"
+									class="rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+								/>
+							</div>
+						</div>
+
+						<div class="flex flex-col gap-1">
+							<label for="gp-excerpt" class="text-xs font-bold uppercase tracking-wider text-primary">
+								4. One-Line Role / Headline (Shown on Episode Cards &amp; OG Image)
+							</label>
+							<input
+								type="text"
+								id="gp-excerpt"
+								value={portalData.guestExcerpt}
+								placeholder="Principal Developer Advocate at AWS • Spec-Driven AI Development with Kiro"
+								class="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</div>
+
+						<div class="flex flex-col gap-1">
+							<label for="gp-bio-textarea" class="text-xs font-bold uppercase tracking-wider text-primary">
+								5. Speaker Bio (Show Notes &amp; `/guest/{portalData.guestSlug}` Page)
+							</label>
+							<textarea
+								id="gp-bio-textarea"
+								rows="4"
+								placeholder="Write 1 to 3 short paragraphs about what you build, your role, and what developers should check out..."
+								class="w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary"
+							>{portalData.guestAboutHtml
+								.replace(/<\/p>\s*<p>/gi, "\n\n")
+								.replace(/<br\s*\/?>/gi, "\n")
+								.replace(/<[^>]+>/g, "")
+								.trim()}</textarea>
+						</div>
+					</div>
+				</div>
+
+				<!-- 14 Social Links Grid -->
+				<div class="flex flex-col gap-2.5 pt-2 border-t border-border">
+					<span class="text-xs font-bold uppercase tracking-wider text-primary">
+						6. Social Profiles (Used for Auto-Tagging Across X, LinkedIn, Bluesky, YouTube &amp; GitHub)
+					</span>
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+						{socialFields.map((field) => (
+							<div class="flex flex-col gap-1">
+								<label for={`gp-social-${field.key}`} class="text-[11px] font-semibold text-muted-foreground">
+									{field.label}
+								</label>
+								<input
+									type="url"
+									id={`gp-social-${field.key}`}
+									data-social-key={field.key}
+									value={portalData.guestSocials[field.key] || ""}
+									placeholder={field.placeholder}
+									class="gp-social-input rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+								/>
+							</div>
+						))}
+					</div>
+				</div>
+
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+					<span class="text-[11px] font-mono text-muted-foreground">
+						Target Sanity Document: `drafts.guest-{portalData.guestSlug}`
+					</span>
+					<div class="flex flex-wrap items-center gap-3">
+						<span id="gp-save-feedback" class="hidden text-xs font-semibold"></span>
+						<button
+							type="submit"
+							id="btn-save-guest-profile"
+							class="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+						>
+							Save Bio, Headshot &amp; Socials to Sanity (Draft) &rarr;
+						</button>
+					</div>
+				</div>
+			</form>
+		</section>
+
+		<!-- Inline E-SIGN Media & Recording Release Card -->
+		<section id="esign-release" class="flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card shadow-xs">
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+				<div class="flex flex-col gap-1">
+					<div class="flex flex-wrap items-center gap-2">
+						<h2 class="text-xl font-bold tracking-tight">
+							Media &amp; Podcast Recording Release (E-SIGN)
+						</h2>
+						<span class={`text-xs font-mono px-2.5 py-0.5 rounded-full font-semibold ${
+							portalData.hasSignedRelease
+								? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+								: "bg-amber-500/15 text-amber-600 dark:text-amber-300"
+						}`}>
+							{portalData.hasSignedRelease ? "✓ Signed & Verified" : "✍️ Signature Requested"}
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Standard podcast appearance &amp; clip distribution consent for CodingCat.dev (YouTube, Spotify, Apple Podcasts, and social clips).
+					</p>
+				</div>
+			</div>
+
+			{portalData.hasSignedRelease ? (
+				<div class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+					<div class="flex flex-col gap-1">
+						<span class="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+							✓ Electronic Media Release Signed ({portalData.signatureMode === "draw" ? "Drawn Signature" : "Typed E-Signature"})
+						</span>
+						<span class="text-[11px] font-mono text-muted-foreground">
+							Signed {portalData.signedAt ? new Date(portalData.signedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : "on file"} &middot; Stored in `private.{portalData._id.replace(/^private\./, "")}`
+						</span>
+					</div>
+					{portalData.signatureMode === "type" && portalData.signatureData && (
+						<span class="px-4 py-1.5 rounded-lg border border-emerald-500/30 bg-background font-serif italic text-base text-foreground">
+							{portalData.signatureData}
+						</span>
+					)}
+				</div>
+			) : (
+				<form id="portal-esign-form" class="flex flex-col gap-4 p-4 rounded-xl border border-border bg-background">
+					<div class="text-xs text-muted-foreground leading-relaxed space-y-1.5">
+						<p>
+							By signing below, I grant <strong>CodingCat.dev</strong> permission to record, edit, publish, and distribute my audio/video appearance, name, likeness, and biographical information across CodingCat.dev podcast feeds, YouTube, written tutorials, and promotional social clips.
+						</p>
+					</div>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+						<label class="flex items-start gap-2 text-xs text-foreground cursor-pointer">
+							<input type="checkbox" id="esign-consent-recording" checked required class="mt-0.5 accent-primary" />
+							<span>I consent to audio/video recording during our StreamYard session.</span>
+						</label>
+						<label class="flex items-start gap-2 text-xs text-foreground cursor-pointer">
+							<input type="checkbox" id="esign-consent-release" checked required class="mt-0.5 accent-primary" />
+							<span>I agree to the Electronic Media &amp; Distribution Release above.</span>
+						</label>
+					</div>
+					<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pt-2 border-t border-border">
+						<div class="flex flex-col gap-1 flex-1 max-w-md">
+							<label for="esign-typed-name" class="text-[11px] font-mono uppercase tracking-wider text-primary font-bold">
+								Type Full Legal Name to E-Sign
+							</label>
+							<input
+								type="text"
+								id="esign-typed-name"
+								required
+								value={portalData.contactName || portalData.guestTitle}
+								placeholder="Full Legal Name"
+								class="rounded-xl border border-border bg-card px-3.5 py-2 font-serif italic text-base text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</div>
+						<div class="flex items-center gap-3">
+							<span id="esign-feedback" class="hidden text-xs font-semibold"></span>
+							<button
+								type="submit"
+								id="btn-submit-esign"
+								class="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+							>
+								Sign Media Release &rarr;
+							</button>
+						</div>
+					</div>
+				</form>
+			)}
 		</section>
 
 		<!-- Shared 2-Way Run-of-Show & Pre-Call Notes Co-Editor -->
@@ -1975,4 +2573,265 @@ const pageDescription = !portalFound
 			}
 		});
 	}
+
+	// Self-Serve Speaker Bio, 512x512 Headshot Cropper & 14 Social Links Editor
+	(function () {
+		const gpForm = document.getElementById("guest-profile-form");
+		const gpSaveBtn = document.getElementById("btn-save-guest-profile");
+		const gpFeedback = document.getElementById("gp-save-feedback");
+		const fileInput = document.getElementById("gp-avatar-file");
+		const dataUrlInput = document.getElementById("gp-avatar-data-url");
+		const previewImg = document.getElementById("gp-avatar-preview");
+		const cropPanel = document.getElementById("gp-crop-panel");
+		const cropCanvas = document.getElementById("gp-crop-canvas");
+		const cropZoom = document.getElementById("gp-crop-zoom");
+		const applyCropBtn = document.getElementById("btn-gp-apply-crop");
+
+		let loadedImage = null;
+		let zoom = 1;
+		let offsetX = 0;
+		let offsetY = 0;
+		let isDragging = false;
+		let startX = 0;
+		let startY = 0;
+
+		function renderCropCanvas() {
+			if (!cropCanvas || !(cropCanvas instanceof HTMLCanvasElement) || !loadedImage) return;
+			const ctx = cropCanvas.getContext("2d");
+			if (!ctx) return;
+			const size = 512;
+			ctx.clearRect(0, 0, size, size);
+			const iw = loadedImage.width;
+			const ih = loadedImage.height;
+			const baseScale = Math.max(size / iw, size / ih);
+			const drawW = iw * baseScale * zoom;
+			const drawH = ih * baseScale * zoom;
+			const x = (size - drawW) / 2 + offsetX;
+			const y = (size - drawH) / 2 + offsetY;
+			ctx.drawImage(loadedImage, x, y, drawW, drawH);
+		}
+
+		if (fileInput && fileInput instanceof HTMLInputElement) {
+			fileInput.addEventListener("change", () => {
+				const file = fileInput.files && fileInput.files[0];
+				if (!file) return;
+				const reader = new FileReader();
+				reader.onload = (ev) => {
+					const src = ev.target && typeof ev.target.result === "string" ? ev.target.result : "";
+					if (!src) return;
+					const img = new Image();
+					img.onload = () => {
+						loadedImage = img;
+						zoom = 1;
+						offsetX = 0;
+						offsetY = 0;
+						if (cropZoom && cropZoom instanceof HTMLInputElement) cropZoom.value = "1";
+						if (cropPanel) {
+							cropPanel.classList.remove("hidden");
+							cropPanel.classList.add("flex");
+						}
+						renderCropCanvas();
+						if (cropCanvas && cropCanvas instanceof HTMLCanvasElement) {
+							const cropped = cropCanvas.toDataURL("image/jpeg", 0.92);
+							if (dataUrlInput && dataUrlInput instanceof HTMLInputElement) dataUrlInput.value = cropped;
+							if (previewImg && previewImg instanceof HTMLImageElement) previewImg.src = cropped;
+						}
+					};
+					img.src = src;
+				};
+				reader.readAsDataURL(file);
+			});
+		}
+
+		if (cropZoom && cropZoom instanceof HTMLInputElement) {
+			cropZoom.addEventListener("input", () => {
+				zoom = Number(cropZoom.value) || 1;
+				renderCropCanvas();
+			});
+		}
+
+		if (cropCanvas && cropCanvas instanceof HTMLCanvasElement) {
+			cropCanvas.addEventListener("pointerdown", (e) => {
+				isDragging = true;
+				startX = e.clientX - offsetX;
+				startY = e.clientY - offsetY;
+				cropCanvas.setPointerCapture(e.pointerId);
+			});
+			cropCanvas.addEventListener("pointermove", (e) => {
+				if (!isDragging) return;
+				offsetX = e.clientX - startX;
+				offsetY = e.clientY - startY;
+				renderCropCanvas();
+			});
+			cropCanvas.addEventListener("pointerup", () => {
+				isDragging = false;
+			});
+		}
+
+		if (applyCropBtn && cropCanvas && cropCanvas instanceof HTMLCanvasElement) {
+			applyCropBtn.addEventListener("click", () => {
+				renderCropCanvas();
+				const cropped = cropCanvas.toDataURL("image/jpeg", 0.92);
+				if (dataUrlInput && dataUrlInput instanceof HTMLInputElement) {
+					dataUrlInput.value = cropped;
+				}
+				if (previewImg && previewImg instanceof HTMLImageElement) {
+					previewImg.src = cropped;
+				}
+				if (cropPanel) {
+					cropPanel.classList.add("hidden");
+					cropPanel.classList.remove("flex");
+				}
+			});
+		}
+
+		if (gpForm && gpForm instanceof HTMLFormElement) {
+			gpForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const titleEl = document.getElementById("gp-title");
+				const websiteEl = document.getElementById("gp-website");
+				const excerptEl = document.getElementById("gp-excerpt");
+				const bioEl = document.getElementById("gp-bio-textarea");
+
+				const title = titleEl && titleEl instanceof HTMLInputElement ? titleEl.value.trim() : "";
+				const websiteUrl = websiteEl && websiteEl instanceof HTMLInputElement ? websiteEl.value.trim() : "";
+				const excerpt = excerptEl && excerptEl instanceof HTMLInputElement ? excerptEl.value.trim() : "";
+				const rawBio = bioEl && bioEl instanceof HTMLTextAreaElement ? bioEl.value.trim() : "";
+				const aboutHtml = rawBio
+					? rawBio
+							.split(/\n{2,}/)
+							.map((p) => `<p>${p.trim().replace(/\n/g, "<br/>")}</p>`)
+							.join("")
+					: "";
+				const avatarDataUrl =
+					dataUrlInput && dataUrlInput instanceof HTMLInputElement ? dataUrlInput.value : "";
+
+				const socials = {};
+				document.querySelectorAll(".gp-social-input").forEach((el) => {
+					if (el instanceof HTMLInputElement) {
+						const k = el.getAttribute("data-social-key");
+						if (k) socials[k] = el.value.trim();
+					}
+				});
+
+				if (gpSaveBtn) {
+					gpSaveBtn.setAttribute("disabled", "true");
+					gpSaveBtn.textContent = "Saving Guest Profile to Sanity...";
+				}
+				if (gpFeedback) gpFeedback.classList.add("hidden");
+
+				try {
+					const res = await fetch("/api/portal/guest-profile", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							token: portalToken,
+							title,
+							excerpt,
+							aboutHtml,
+							websiteUrl,
+							socials,
+							avatarDataUrl: avatarDataUrl || undefined,
+						}),
+					});
+					const data = await res.json();
+					if (res.ok && data.ok) {
+						if (gpFeedback) {
+							gpFeedback.innerHTML = `✓ Saved to <code>${data.draftId}</code>! <a href="${data.previewUrl}" target="_blank" rel="noopener noreferrer" class="underline font-bold">Open Draft Preview &nearr;</a>`;
+							gpFeedback.className = "text-xs font-semibold text-emerald-600 dark:text-emerald-400";
+						}
+						return;
+					}
+					if (gpFeedback) {
+						gpFeedback.textContent = data.message || "Could not save guest profile.";
+						gpFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} catch {
+					if (gpFeedback) {
+						gpFeedback.textContent = "Network error while saving guest profile.";
+						gpFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} finally {
+					if (gpSaveBtn) {
+						gpSaveBtn.removeAttribute("disabled");
+						gpSaveBtn.textContent = "Save Bio, Headshot & Socials to Sanity (Draft) →";
+					}
+				}
+			});
+		}
+	})();
+
+	// Inline E-SIGN Media Release Handler
+	(function () {
+		const esignForm = document.getElementById("portal-esign-form");
+		const esignBtn = document.getElementById("btn-submit-esign");
+		const esignFeedback = document.getElementById("esign-feedback");
+
+		if (esignForm && esignForm instanceof HTMLFormElement) {
+			esignForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const typedEl = document.getElementById("esign-typed-name");
+				const recEl = document.getElementById("esign-consent-recording");
+				const relEl = document.getElementById("esign-consent-release");
+
+				const signatureData =
+					typedEl && typedEl instanceof HTMLInputElement ? typedEl.value.trim() : "";
+				const consentRecording =
+					recEl && recEl instanceof HTMLInputElement ? recEl.checked : false;
+				const consentRelease =
+					relEl && relEl instanceof HTMLInputElement ? relEl.checked : false;
+
+				if (!signatureData || signatureData.length < 2) {
+					if (esignFeedback) {
+						esignFeedback.textContent = "Please type your full legal name to sign.";
+						esignFeedback.className = "text-xs font-semibold text-destructive";
+					}
+					return;
+				}
+
+				if (esignBtn) {
+					esignBtn.setAttribute("disabled", "true");
+					esignBtn.textContent = "Recording E-Signature...";
+				}
+				if (esignFeedback) esignFeedback.classList.add("hidden");
+
+				try {
+					const res = await fetch("/api/portal/sign-release", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							token: portalToken,
+							signatureMode: "type",
+							signatureData,
+							consentRecording,
+							consentRelease,
+						}),
+					});
+					const data = await res.json();
+					if (res.ok && data.ok) {
+						if (esignFeedback) {
+							esignFeedback.textContent = "✓ Media Release Signed! Refreshing...";
+							esignFeedback.className = "text-xs font-semibold text-emerald-600 dark:text-emerald-400";
+						}
+						setTimeout(() => window.location.reload(), 600);
+						return;
+					}
+					if (esignFeedback) {
+						esignFeedback.textContent = data.message || "Could not record signature.";
+						esignFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} catch {
+					if (esignFeedback) {
+						esignFeedback.textContent = "Network error while recording signature.";
+						esignFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} finally {
+					if (esignBtn) {
+						esignBtn.removeAttribute("disabled");
+						esignBtn.textContent = "Sign Media Release →";
+					}
+				}
+			});
+		}
+	})();
 </script>

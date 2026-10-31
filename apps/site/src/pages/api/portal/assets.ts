@@ -1,5 +1,8 @@
 import type { APIRoute } from "astro";
-import { verifyPortalRequestAuth } from "@/lib/portal-security";
+import {
+	extractPortalAllowedEmails,
+	verifyPortalRequestAuth,
+} from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
@@ -70,6 +73,9 @@ export const GET: APIRoute = async ({ request, url }) => {
 			legacyPortalToken,
 			guestEmail,
 			contactEmail,
+			coordinatorEmail,
+			coordinatorEmails,
+			allowedEmails,
 			sharedAssets
 		}`,
 		{ token },
@@ -90,7 +96,7 @@ export const GET: APIRoute = async ({ request, url }) => {
 		request,
 		url,
 		token: canonicalToken,
-		allowedEmails: [ownerDoc.guestEmail, ownerDoc.contactEmail],
+		allowedEmails: extractPortalAllowedEmails(ownerDoc),
 	});
 	if (!auth.authorized) {
 		return new Response(
@@ -266,6 +272,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 			guestName,
 			guestEmail,
 			contactEmail,
+			coordinatorEmail,
+			coordinatorEmails,
+			allowedEmails,
 			source,
 			bookingSource
 		}`,
@@ -295,7 +304,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		request,
 		url: url ?? new URL(request.url),
 		token: resolvedToken,
-		allowedEmails: targetDocs.flatMap((d) => [d.guestEmail, d.contactEmail]),
+		allowedEmails: extractPortalAllowedEmails(...targetDocs),
 	});
 	if (!auth.authorized) {
 		return new Response(

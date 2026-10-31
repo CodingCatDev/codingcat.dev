@@ -41,7 +41,31 @@ let expiresAtIso = verification.payload?.exp
 	: "";
 let guestDoc: GuestDoc | null = null;
 
+if (token) {
+	const directPortalMatch = await client.fetch<{ portalToken?: string } | null>(
+		`*[_type in ["booking", "sponsorLead"] && (portalToken == $token || legacyPortalToken == $token)][0]{ portalToken }`,
+		{ token },
+	);
+	if (directPortalMatch?.portalToken) {
+		return Astro.redirect(
+			`/portal/${directPortalMatch.portalToken}#guest-profile`,
+			302,
+		);
+	}
+}
+
 if (isValid && verification.payload) {
+	const linkedPortalMatch = await client.fetch<{ portalToken?: string } | null>(
+		`*[_type in ["booking", "sponsorLead"] && defined(portalToken) && (guestSlug == $slug || guestDocId == $id || guestDocId == "drafts." + $id)][0]{ portalToken }`,
+		{ id: verification.payload.id, slug: verification.payload.slug },
+	);
+	if (linkedPortalMatch?.portalToken) {
+		return Astro.redirect(
+			`/portal/${linkedPortalMatch.portalToken}#guest-profile`,
+			302,
+		);
+	}
+
 	guestDoc = await client.fetch<GuestDoc | null>(
 		`*[_type in ["guest", "author"] && (_id == $id || slug.current == $slug)][0]{
 			_id,

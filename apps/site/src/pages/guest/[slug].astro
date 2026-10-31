@@ -14,6 +14,7 @@ import { breadcrumbSchema, personSchema } from "@/lib/structured-data";
 
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
+const isDraftPreview = sanity.preview.enabled;
 
 const person = slug
 	? await sanity.loadQuery(guestQueryWithRelated, { slug })
@@ -90,6 +91,26 @@ const totalPosts = counts.posts ?? relatedPosts.length;
 	/>
 
 	<div class="flex w-full flex-col gap-8">
+		{
+			isDraftPreview && (
+				<div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-500/40 bg-amber-500/10 px-5 py-3.5 text-xs">
+					<div class="flex items-center gap-2.5">
+						<span class="rounded-full bg-amber-500/20 px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+							👁️ Sanity Draft Preview
+						</span>
+						<span class="font-medium text-[#2A1155] dark:text-amber-100">
+							You are viewing the live draft state of this speaker profile (`drafts.guest-{slug}`) before publication.
+						</span>
+					</div>
+					<a
+						href={`/guest/${slug}`}
+						class="font-mono text-[11px] font-bold text-[#7C3AED] underline hover:no-underline dark:text-purple-300"
+					>
+						Switch to Published View &rarr;
+					</a>
+				</div>
+			)
+		}
 		<div class="duo-card hand-border flex flex-col items-start gap-6 p-6 sm:flex-row sm:items-center md:p-8">
 			<div class="shrink-0 overflow-hidden rounded-full border-2 border-[#2A1155] shadow-sketch-sm dark:border-white/40">
 				<CoverMedia

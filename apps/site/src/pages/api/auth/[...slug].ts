@@ -1,7 +1,10 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import { ensureDefaultUserAndSession, getPortalAuth } from "@/lib/auth";
-import { isAllowedPortalEmail } from "@/lib/portal-security";
+import {
+	extractPortalAllowedEmails,
+	isAllowedPortalEmail,
+} from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 export const prerender = false;
@@ -36,16 +39,16 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 			const candidateEmail = (cloned.email || "").trim().toLowerCase();
 			const { client } = getSanityServerClient();
 			const [leadDoc, bookingDoc] = await Promise.all([
-				client.fetch<{ contactEmail?: string } | null>(
-					`*[_type == "sponsorLead" && (portalToken == $token || legacyPortalToken == $token || _id == $privateLeadId || _id == $leadId)][0]{ contactEmail }`,
+				client.fetch<Record<string, any> | null>(
+					`*[_type == "sponsorLead" && (portalToken == $token || legacyPortalToken == $token || _id == $privateLeadId || _id == $leadId)][0]{ contactEmail, coordinatorEmail, coordinatorEmails, allowedEmails }`,
 					{
 						token: portalTokenHeader,
 						privateLeadId: `private.sponsorLead-${portalTokenHeader}`,
 						leadId: `sponsorLead-${portalTokenHeader}`,
 					},
 				),
-				client.fetch<{ guestEmail?: string } | null>(
-					`*[_type == "booking" && (portalToken == $token || legacyPortalToken == $token || _id == $privateBookingId)] | order(_createdAt desc)[0]{ guestEmail }`,
+				client.fetch<Record<string, any> | null>(
+					`*[_type == "booking" && (portalToken == $token || legacyPortalToken == $token || _id == $privateBookingId)] | order(_createdAt desc)[0]{ guestEmail, coordinatorEmail, coordinatorEmails, allowedEmails }`,
 					{
 						token: portalTokenHeader,
 						privateBookingId: `private.booking-${portalTokenHeader}`,
@@ -53,7 +56,7 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 				),
 			]);
 
-			const allowedEmails = [leadDoc?.contactEmail, bookingDoc?.guestEmail];
+			const allowedEmails = extractPortalAllowedEmails(leadDoc, bookingDoc);
 			if (!isAllowedPortalEmail(candidateEmail, allowedEmails)) {
 				return new Response(
 					JSON.stringify({
